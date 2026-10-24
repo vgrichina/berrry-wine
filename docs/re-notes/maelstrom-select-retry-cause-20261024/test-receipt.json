@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/maelstrom-select-retry-cause-oct24/repo/tools/maelstrom-select-retry-proof.py",
+    "--original",
+    "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6",
+    "--crt",
+    "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+    "--evidence",
+    "/tmp/maelstrom-select-retry-cause-oct24/repo/docs/re-notes/maelstrom-select-retry-cause-20261024",
+    "--source-repo",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "--current-repo",
+    "/tmp/maelstrom-select-retry-cause-oct24/repo",
+    "--git-stderr",
+    "/tmp/maelstrom-select-retry-cause-oct24/git-stderr.log"
+  ],
+  "returncode": 0,
+  "elapsed": 0.11591833992861211,
+  "cpu": 0.071003,
+  "fresh_memavailable": 3007246336,
+  "required_memavailable": 805306368,
+  "cpu_limit": 60,
+  "wall_limit": 60,
+  "node_heap_mib": 256,
+  "no_node": true,
+  "instantiation": false
+}

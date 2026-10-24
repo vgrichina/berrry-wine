@@ -1,0 +1,67 @@
+[
+  {
+    "path": "disassembly-recipe.json",
+    "bytes": 1276,
+    "sha256": "97d6e9154341e7e82c884fc461324f80a98120e49939a8538023ba9a6022db4e"
+  },
+  {
+    "path": "donor-verification.json",
+    "bytes": 1173,
+    "sha256": "b0750fa3966cac648d997bb675e142395f306374524d138ad7a7fc88299df9fa"
+  },
+  {
+    "path": "native-0.txt",
+    "bytes": 4824,
+    "sha256": "17f15489b3860229c179893c011b949a5c7d2bc94459d50eff5acadd81f2e7d5"
+  },
+  {
+    "path": "native-1.txt",
+    "bytes": 410,
+    "sha256": "ceed37d78dcc313d85131395b6fdc51ac268e6358f17cb14637addae8b4bd135"
+  },
+  {
+    "path": "native-2.txt",
+    "bytes": 845,
+    "sha256": "c6d92e3a813f2a74d125027f673321d255a250a6876c6fef6465069674b2c44b"
+  },
+  {
+    "path": "prior-analysis.json",
+    "bytes": 4222,
+    "sha256": "2fa5e2aecf65b093cc936acf501612cfb4e12de8be5f78b962d90046c93b02e5"
+  },
+  {
+    "path": "prior-command.json",
+    "bytes": 2052,
+    "sha256": "d8ca6a06c551a01c9eaf9f55d6756167df473be073627b49715fe47ae6bdfa91"
+  },
+  {
+    "path": "prior-output.log",
+    "bytes": 6508,
+    "sha256": "24ae6cc515f7d0a94e3979c6393a82065f9beefd95f4755c6eb545722c54cdd1"
+  },
+  {
+    "path": "prior-recipe-identity.json",
+    "bytes": 709,
+    "sha256": "73a2c5f29542f8b38c6ad70eec44fb0003a76d66e17edad69aeff7533d7228fa"
+  },
+  {
+    "path": "prior-terminal.json",
+    "bytes": 309,
+    "sha256": "ae37d78733391d7d06eaffda14d4d86778bb5551d65609637b7d51b37732f473"
+  },
+  {
+    "path": "proof-result.json",
+    "bytes": 2291,
+    "sha256": "ef6e3016b59d84e2d47b7ffc4be43de76610882801e2cdfb7583e84ff55fb1b6"
+  },
+  {
+    "path": "source-proof.json",
+    "bytes": 9193,
+    "sha256": "8b435e448007c297cc816e839b1f55662051ef135f2e5e5f38085f9c32c88072"
+  },
+  {
+    "path": "test-receipt.json",
+    "bytes": 917,
+    "sha256": "f2618f4682f02771f2654eac7b517a4349e3745cda1f674ac86dd9aa7d4d3d0c"
+  }
+]

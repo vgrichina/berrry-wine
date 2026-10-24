@@ -1,0 +1,22 @@
+
+/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+78003857 <.text+0x2857>:
+78003857:	56                   	push   %esi
+78003858:	57                   	push   %edi
+78003859:	ff 15 4c 10 03 78    	call   *0x7803104c
+7800385f:	ff 35 e0 a6 03 78    	push   0x7803a6e0
+78003865:	8b f8                	mov    %eax,%edi
+78003867:	ff 15 74 10 03 78    	call   *0x78031074
+7800386d:	8b f0                	mov    %eax,%esi
+7800386f:	85 f6                	test   %esi,%esi
+78003871:	0f 84 17 82 00 00    	je     0x7800ba8e
+78003877:	57                   	push   %edi
+78003878:	ff 15 70 10 03 78    	call   *0x78031070
+7800387e:	8b c6                	mov    %esi,%eax
+78003880:	5f                   	pop    %edi
+78003881:	5e                   	pop    %esi
+78003882:	c3                   	ret

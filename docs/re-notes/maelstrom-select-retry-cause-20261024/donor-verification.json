@@ -1,0 +1,32 @@
+[
+  {
+    "path": "docs/re-notes/maelstrom-single-return-sync-capture-20261024/output.log",
+    "sha256": "24ae6cc515f7d0a94e3979c6393a82065f9beefd95f4755c6eb545722c54cdd1",
+    "bytes": 6508
+  },
+  {
+    "path": "docs/re-notes/maelstrom-single-return-sync-capture-20261024/analysis.json",
+    "sha256": "2fa5e2aecf65b093cc936acf501612cfb4e12de8be5f78b962d90046c93b02e5",
+    "bytes": 4222
+  },
+  {
+    "path": "docs/re-notes/maelstrom-single-return-sync-capture-20261024/command.json",
+    "sha256": "d8ca6a06c551a01c9eaf9f55d6756167df473be073627b49715fe47ae6bdfa91",
+    "bytes": 2052
+  },
+  {
+    "path": "docs/re-notes/maelstrom-single-return-sync-capture-20261024/terminal.json",
+    "sha256": "ae37d78733391d7d06eaffda14d4d86778bb5551d65609637b7d51b37732f473",
+    "bytes": 309
+  },
+  {
+    "path": "docs/re-notes/maelstrom-single-return-sync-capture-20261024/recipe-identity.json",
+    "sha256": "73a2c5f29542f8b38c6ad70eec44fb0003a76d66e17edad69aeff7533d7228fa",
+    "bytes": 709
+  },
+  {
+    "sync_note_revision": "6c265033d01e547a3d9320316cc17027bbb7cb0b",
+    "bytes": 11119,
+    "sha256": "9b5ecdf37aba25a59838323271bcba9a7fb67fcc5e89ff35a3290a0400b178a3"
+  }
+]

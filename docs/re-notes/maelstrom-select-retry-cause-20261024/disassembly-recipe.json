@@ -1,0 +1,46 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "objdump",
+        "-d",
+        "--start-address=0x100012b0",
+        "--stop-address=0x100013a8",
+        "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll"
+      ],
+      "output": "native-0.txt",
+      "bytes": 4824,
+      "sha256": "17f15489b3860229c179893c011b949a5c7d2bc94459d50eff5acadd81f2e7d5"
+    },
+    {
+      "argv": [
+        "objdump",
+        "-d",
+        "--start-address=0x7800c430",
+        "--stop-address=0x7800c442",
+        "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll"
+      ],
+      "output": "native-1.txt",
+      "bytes": 410,
+      "sha256": "ceed37d78dcc313d85131395b6fdc51ac268e6358f17cb14637addae8b4bd135"
+    },
+    {
+      "argv": [
+        "objdump",
+        "-d",
+        "--start-address=0x78003857",
+        "--stop-address=0x78003883",
+        "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll"
+      ],
+      "output": "native-2.txt",
+      "bytes": 845,
+      "sha256": "c6d92e3a813f2a74d125027f673321d255a250a6876c6fef6465069674b2c44b"
+    }
+  ],
+  "installed_tool": {
+    "path": "/usr/bin/objdump",
+    "bytes": 390848,
+    "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+  },
+  "readonly_inputs": true
+}
