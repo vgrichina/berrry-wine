@@ -1,0 +1,13 @@
+{
+  "at": 1792848055.7072763,
+  "box": "bx_7wpw3hf6",
+  "actualState": "RUNNING APIidle healthok",
+  "expiry": "2026-10-24T13:43:12.173Z",
+  "shutdownOwner": "coordinator",
+  "watchdog": "13:38UTC",
+  "guestAttempts": 1,
+  "ownedGroups": [],
+  "noSecondGuest": true,
+  "firstRejection": "capture byte limit",
+  "acceptedFrame": null
+}

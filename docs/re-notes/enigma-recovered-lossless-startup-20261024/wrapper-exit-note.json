@@ -1,0 +1,7 @@
+{
+  "remoteGuestExit": 1,
+  "localWrapperAlsoRaised": true,
+  "rawReceipt": "first-rejection.json",
+  "correction": "copy unchanged response to guest-supervisor-api.json only; no guest retry",
+  "guestAttempts": 1
+}

@@ -1,0 +1,9 @@
+{
+  "at": 1792847982.8667421,
+  "guestAttempts": 1,
+  "command": "env MAELSTROM_CAPTURE_INSTALL=1 ENIGMA_RUNNER_ROOT=/tmp/enigma-provider-complete-startup-oct24/runner ENIGMA_FINDFIRST_RUNNER_ROOT=/tmp/enigma-provider-complete-startup-oct24/runner ENIGMA_TERMINAL_CAPTURE_INSTALL=1 ENIGMA_CAPTURE_PATH=/tmp/enigma-provider-complete-startup-oct24/capture.cjs ENIGMA_TERMINAL_RECEIPT=/tmp/enigma-provider-complete-startup-oct24/guest/capture-terminal.json ENIGMA_LOSSLESS_CAPTURE=1 python3 /tmp/enigma-provider-complete-startup-oct24/supervise.py guest && python3 -c 'import pathlib;pathlib.Path('\"'\"'/tmp/enigma-provider-complete-startup-oct24/guest/dependent-after-supervisor'\"'\"').write_text(\"supervisor exited zero\")'",
+  "box": "bx_7wpw3hf6",
+  "acceptedSuitesReused": 4,
+  "configuration": "FTQ then unchanged original capture",
+  "limits": "unchanged original schedule max10000000/55s firstPNG30000 screen640x480"
+}

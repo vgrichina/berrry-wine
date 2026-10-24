@@ -1,0 +1,39 @@
+{
+  "firstRejection": "capture byte limit",
+  "batch": 30000,
+  "actualCodecStack": "accepted/tools/lossless-capture-png.cjs:55:10",
+  "boundedStrategiesExhausted": [
+    3,
+    0
+  ],
+  "exactEncodedSizes": null,
+  "acceptedPNG": null,
+  "pixelsRetained": false,
+  "scene": null,
+  "menuAccepted": false,
+  "LuaDynamicLoaderEntry": null,
+  "counters": null,
+  "apiRecords": [
+    "[API #81] GetProcAddress(mod=h:0x013d5e54, name=\"IsProcessorFeaturePresent\") [esp=0x074fffcc ret=0x00b0f5c0]",
+    "[API #192] LoadLibraryA(name=\"DDRAW.DLL\") [esp=0x074ffdfc ret=0x005de288]",
+    "[API #373] LoadLibraryA(name=\"shfolder.dll\") [esp=0x074ff6bc ret=0x00581b13]",
+    "[API #374] GetProcAddress(mod=h:0x00400000, name=\"SHGetFolderPathA\") [esp=0x074ff6bc ret=0x00581b36]",
+    "[API #22114] GetProcAddress(mod=h:0x014d6004, name=\"TrackMouseEvent\") [esp=0x074ff13c ret=0x00ebeb35]",
+    "[API #22364] LoadLibraryA(name=\"jpeg.dll\") [esp=0x074ff79c ret=0x00ecc8dd]",
+    "[API #22373] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_calc_output_dimensions\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22374] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_CreateDecompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22375] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_destroy_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22376] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_finish_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22377] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_read_header\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22378] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_read_scanlines\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22379] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_resync_to_restart\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22380] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_start_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22381] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_std_error\") [esp=0x074ff79c ret=0x00ecc974]",
+    "[API #22382] LoadLibraryA(name=\"libpng12-0.dll\") [esp=0x074ff79c ret=0x00ecc8dd]"
+  ],
+  "ordinaryFSReadLogs": 0,
+  "laterRegexFailure": false,
+  "gameplayAccepted": false,
+  "packedOriginalAccepted": false,
+  "guestAttempts": 1
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ywiukjsnxrip",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T13:19:42.807Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-24T13:19:42.735Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 49206599680, \"memAvailable\": 7237595136, \"materialized\": 45211648, \"largest\": 6287872}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

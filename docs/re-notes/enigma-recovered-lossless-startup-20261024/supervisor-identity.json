@@ -1,0 +1,11 @@
+{
+  "original": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73",
+  "acceptedTransformed": "4c95819e81ab9cdd4ec0c08a8291cc1324cfc05cc3d402ff21f16813e609da00",
+  "deployed": "d1d51400cc4211875cca44c3b40caa4a74c89948f6fa4a7e807d8a638d3f9e34",
+  "configurationOnly": [
+    "lateststart13:32UTC",
+    "box",
+    "shutdown13:38UTC",
+    "actual expiry2026-10-24T13:43:12.173Z"
+  ]
+}

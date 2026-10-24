@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-recovered-lossless-startup-oct24/launch.py", line 12, in <module>
+    save('guest-supervisor-api.json',remote(cmd,75,allow_exit=True))
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-recovered-lossless-startup-oct24/work.py", line 24, in remote
+    save('first-rejection.json',j);raise RuntimeError('remote rejection retained')
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: remote rejection retained

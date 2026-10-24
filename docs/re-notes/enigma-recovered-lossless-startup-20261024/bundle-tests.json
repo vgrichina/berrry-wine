@@ -1,0 +1,5 @@
+{
+  "passGate": true,
+  "assertions": "one guest, unchanged capture/supervisor originals, actual encoder stack, exit1+shellAND blocked, cleanup reaped,16APIs,2659files, realpngjs7, no acceptedPNG/no later regex",
+  "testsNotGuest": true
+}

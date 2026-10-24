@@ -1,0 +1,18 @@
+{
+  "donor": "/tmp/enigma-lossless-independent-integrate-oct24/repo",
+  "revision": "2545fba6c8234031bc8fbdcb5273491cbc4461ca",
+  "acceptedPaths": {
+    "tools/enigma-findfirst-compat.cjs": "c7d43b204bae560d421d11d326b336737b5f0d14b0cb271971b57b63d0aa16ed",
+    "tools/enigma-terminal-capture-guard.cjs": "458677a467a9bb2abc67244fb7319423166e4c7185339e02fc579b2145702851",
+    "tools/enigma-quiet-filesystem.cjs": "cc9bb22fb39058b581883f836724f7a62eaf8dfbe2d2e42f3cd765f3abd8741e",
+    "lib/filesystem.js": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+    "tools/lossless-capture-png.cjs": "537acd267b07490bca0694116b0fbc20a81d553487dac2606be27ec20811f03e"
+  },
+  "manifest": "/tmp/enigma-provider-complete-startup-oct24/manifest.json",
+  "manifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+  "closureRehash": "/home/user/wine-assembly/scratch/usage-watch/enigma-lossless-startup-closure-oct24.json",
+  "historicalModule": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+  "historicalModuleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "priorRuntimeReport": "/tmp/enigma-accepted-guards-startup-oct24/repo/docs/re-notes/enigma-accepted-guards-startup-20261024.md",
+  "fourAcceptedSuitesReport": "/tmp/enigma-lossless-independent-integrate-oct24/repo/docs/re-notes/enigma-lossless-independent-integrate-20261024.md"
+}

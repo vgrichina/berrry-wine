@@ -1,0 +1,18 @@
+{
+  "main": "2545fba6c8234031bc8fbdcb5273491cbc4461ca",
+  "candidate": "8c099562d034508ce2496430da79d2d0b07bd50b",
+  "suites": 4,
+  "report": "/tmp/enigma-lossless-independent-integrate-oct24/repo/docs/re-notes/enigma-lossless-independent-integrate-20261024.md",
+  "all20CommittedSeals": "coordinator verified",
+  "closureRehash": "/home/user/wine-assembly/scratch/usage-watch/enigma-lossless-startup-closure-oct24.json",
+  "entries": 2659,
+  "bytes": 37476538,
+  "closureErrors": 0,
+  "fullCompileAndSupervisorAccepted": true,
+  "syntheticFrameIsNotOriginalFitProof": true,
+  "originalPackedTreeReadonly": "/tmp/enigma-original-win32-closure-oct24/original/Enigma-1.01",
+  "overlaysSeparate": "/tmp/enigma-authentic-static-unpack-oct24/outputs",
+  "historicalModuleSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "ABI": 291,
+  "layout": "9a3bc9149d58209c"
+}

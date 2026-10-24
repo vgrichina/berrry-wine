@@ -1,0 +1,22 @@
+[
+  {
+    "path": "guest/command.json",
+    "bytes": 2254,
+    "sha256": "a8785ecad730e289fb656cef6aa85cb31547d5676ea369b719ad4d113675a1c1"
+  },
+  {
+    "path": "guest/output.log",
+    "bytes": 48479,
+    "sha256": "cb5eea7be91cc305d1213e9194915c3ac8c1bd7f70ec763625c370273a5a2dea"
+  },
+  {
+    "path": "guest/terminal.json",
+    "bytes": 728,
+    "sha256": "93f5e54e2f67ee2d063b0efeb56a286a66bb3c2c8e849dba1450ebd33c4f995c"
+  },
+  {
+    "path": "guest/capture-terminal.json",
+    "bytes": 328,
+    "sha256": "21c921d1641b459cbd39acb5bdd73122f99bdafebc46a52d9c2b047674aa27cf"
+  }
+]

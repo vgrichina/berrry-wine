@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_we8z3twscllt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T13:19:33.097Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-24T13:19:33.042Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"sibling\":\"/tmp/enigma-provider-complete-startup-oct24/accepted/tools/lossless-capture-png.cjs\",\"adapter\":\"/tmp/enigma-provider-complete-startup-oct24/accepted/tools/enigma-terminal-capture-guard.cjs\",\"originalCaptureSHA256\":\"6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079\",\"absoluteSiblingBound\":true,\"ordinaryUserWrite\":true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
