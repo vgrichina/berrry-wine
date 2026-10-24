@@ -5098,6 +5098,46 @@
         ]
       },
       "notes": "LOCAL ONLY candidate recipe. Preserve all 38 companions: BBLOOGIE.000, SOS9502.DLL and 36 AIF files. Guest executable C:\\BBLOOGIE.EXE, working directory C:\\, companion VFS paths C:\\<filename>. No registry seeds or DLL substitutions. Archive is retained in scratch/runs/20261020-hock-loogie-original-intake-oct20; do not redownload for registration. Separate explicit-EXE gameplay/scoring evidence is accepted; this candidate route and app-selector gameplay are not runtime qualified. See docs/re-notes/hock-a-loogie.md for hashes, tests, corpus-runner acceptance blocker and remaining gaps."
+    },
+    {
+      "id": "penguin-command-1611",
+      "appIds": [
+        "penguin_command_1611"
+      ],
+      "name": "Penguin Command 1.6.11 (original, local only)",
+      "kind": "game",
+      "version": "1.6.11 original Windows release",
+      "executables": [
+        "game/penguin-command.exe"
+      ],
+      "localOnly": true,
+      "license": "Original local compatibility fixture only; no payload redistribution or public deployment authorized.",
+      "packages": [],
+      "browser": {
+        "fileRoot": "game",
+        "exe": "game/penguin-command.exe"
+      },
+      "cli": {
+        "exeGuestPath": "C:/penguin-command.exe",
+        "cwd": "C:/",
+        "args": "--windowed --nosound",
+        "dlls": [
+          "game/msvcrt.dll",
+          "game/SDL.dll",
+          "game/zlib1.dll",
+          "game/libpng12-0.dll",
+          "game/jpeg.dll",
+          "game/SDL_image.dll",
+          "game/SDL_mixer.dll"
+        ],
+        "vfsInclude": [
+          "**/*"
+        ],
+        "maxBatches": 200000,
+        "batchSize": 1000
+      },
+      "manual": "Use tools/verify-penguin-command.js --prepare ORIGINAL CRT FRESH_DEST to prepare the exact accepted recovery game subset, including standing authentic msvcrt.dll. No acquisition packages, installer, executable patching or replacement libraries. See test/candidate-corpus/penguin-command-README.md.",
+      "notes": "91 original runtime game files / 1778442 bytes. Historical b41a7c5 module/runner evidence: Normal Game, score 160 to 240 and Wave 2, Hiscores/menu; no isolated projectile causality, audio or current-main runtime qualification. Local selector/corpus route is filesystem tested only; ordinary loading depends on the shared manifest boundary adapter."
     }
   ]
 }
