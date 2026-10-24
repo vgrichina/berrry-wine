@@ -1,0 +1,8 @@
+{
+  "harnessBytes": 10690102,
+  "moduleBytes": 1879746,
+  "originalVfsBytes": 2632138,
+  "dllBytes": 1440280,
+  "copies": 2,
+  "note": "Prospective overlapping two-host materialization; no runtime transfer performed. Missing pinned PNG codec is NOT counted as supplied."
+}

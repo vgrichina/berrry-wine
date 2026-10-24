@@ -1,0 +1,87 @@
+[
+  {
+    "path": "bootstrap-admission.json",
+    "bytes": 320,
+    "sha256": "e767334a13a5a59e93552b981f3de1c7c6dddf527c40f63c6174488bf4ad40f0"
+  },
+  {
+    "path": "checkout.json",
+    "bytes": 886,
+    "sha256": "3c0392331223f044d74c66789ab24d391d76e094cadcd0b2533ef0d0ea3ed645"
+  },
+  {
+    "path": "codec-command.json",
+    "bytes": 511,
+    "sha256": "de832a324717a3314826f2a3414e16358e513c0fcf0b92e58fbdb0056b267526"
+  },
+  {
+    "path": "codec-probe.raw.json",
+    "bytes": 670,
+    "sha256": "a4d9e8fabab1738124f52d5dfcc6db27902ad5f3231c93c0dfd519ca6ea4731c"
+  },
+  {
+    "path": "codec-probe.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "consolidated-admission.json",
+    "bytes": 2295,
+    "sha256": "c2f187c38ac97d69c8523f6cb2b34898651ca97571142ab063adbc09de3cb98a"
+  },
+  {
+    "path": "dll-identities.json",
+    "bytes": 1851,
+    "sha256": "2296a2560e0be3e2b02346c7b976d5e92be4a27ec43bc83c81ccf9a06d819ece"
+  },
+  {
+    "path": "historical-harness-manifest.json",
+    "bytes": 40476,
+    "sha256": "0222c1c4c4463a7b053d51b7acdc372d1e84e46a70200181c2bb2fb4c87d8828"
+  },
+  {
+    "path": "index-correction.json",
+    "bytes": 232,
+    "sha256": "0413c8bac9200226f8c9da3a49e38bc54ae29ba60488adb5fe5b970d5d00d035"
+  },
+  {
+    "path": "inspect.py",
+    "bytes": 5047,
+    "sha256": "6b3dfdceba47c0d8046cc4843611b13dfcd895b96fc3da86f2330046fa3c0544"
+  },
+  {
+    "path": "installed-tools.json",
+    "bytes": 744,
+    "sha256": "a5ccdc8aef688219869a5bb788fb2e1f7e6250cdbca12b597de62e5f04192114"
+  },
+  {
+    "path": "lifecycle.json",
+    "bytes": 393,
+    "sha256": "b2ecfc1b58f7d3b6381fddec8d7b53c20dadcf84c1c5e803ba4aacfcef4e7860"
+  },
+  {
+    "path": "module-identity.json",
+    "bytes": 728,
+    "sha256": "3c233f3f53986f7ccd367542bb55ea60d0a1a908510375edef36807c0d89568b"
+  },
+  {
+    "path": "original-vfs-verified.json",
+    "bytes": 12566,
+    "sha256": "66632b6077e0fb2e817ad4fcff0f66e9fa27cfa1321f699a255c34fedffe4874"
+  },
+  {
+    "path": "prospective-staging.json",
+    "bytes": 273,
+    "sha256": "f6b3741e558af0a94714e9389d74cf062bbe040b9452e008cfc6897763bbad7e"
+  },
+  {
+    "path": "recipe-print-check.json",
+    "bytes": 2705,
+    "sha256": "666f2ea5389a0a4832842095f561a83900e1153c9a715832a2347c83fe66fdc3"
+  },
+  {
+    "path": "recovery.py",
+    "bytes": 1856,
+    "sha256": "cc2544b7a918cce584da88691b58dbb25e1dabd9f7feae110e3a239f4ab770e6"
+  }
+]

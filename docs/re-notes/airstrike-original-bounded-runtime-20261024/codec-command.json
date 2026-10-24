@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "bx_jydd4z26",
+    "--",
+    "node",
+    "--max-old-space-size=256",
+    "-e",
+    "try { const p=require(\"pngjs/package.json\"); console.log(JSON.stringify({available:true,version:p.version,path:require.resolve(\"pngjs/package.json\")})); } catch(e) { console.log(JSON.stringify({available:false,code:e.code,message:e.message,searchPaths:require.resolve.paths(\"pngjs\")})); process.exitCode=2; }"
+  ],
+  "exit": 2
+}

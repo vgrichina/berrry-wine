@@ -1,0 +1,17 @@
+{
+  "base": "e5f45399bc5564a84b6b1428e15ffa412db9e929",
+  "privateRepo": "/tmp/airstrike-original-bounded-runtime-oct24/repo",
+  "readonlyObjectStores": [
+    "/tmp/owned-popup-independent-integrate-oct24/integration/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/tmp/d3d-render-artifact-phase-oct23/repo/.git/objects",
+    "/tmp/d3d-render-cache-focused-oct23/repo/.git/objects",
+    "/tmp/d3d-render-cache-independent-closeout-oct23/repo/.git/objects",
+    "/tmp/d3d-scoped-native-qualification-oct23/repo/.git/objects",
+    "/tmp/legacy-texture-operation-caps-oct23/repo/.git/objects",
+    "/tmp/owned-popup-clipping-current-main-oct24/repo/.git/objects",
+    "/tmp/owned-popup-independent-integrate-oct24/repo/.git/objects"
+  ],
+  "indexSkipCorrection": 0,
+  "note": "Private Git only; no root refs/index changed, no checkout materialization, donors read-only."
+}

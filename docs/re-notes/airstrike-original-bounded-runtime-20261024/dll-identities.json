@@ -1,0 +1,42 @@
+[
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL.dll",
+    "bytes": 229376,
+    "sha256": "7644c783c600b821f84e25b6ade44217e53e2bbae85fcc59e6296a0363a5a0a9"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_image.dll",
+    "bytes": 36864,
+    "sha256": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_mixer.dll",
+    "bytes": 270336,
+    "sha256": "331e6ade3e42718cddd73d8ada553f0c400db8ae7fe87062bd51636622703e75"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/jpeg.dll",
+    "bytes": 169443,
+    "sha256": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/libpng1.dll",
+    "bytes": 94720,
+    "sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/msvcr70.dll",
+    "bytes": 307200,
+    "sha256": "90ba388a08475bea3e2febb51c3f17ced0ccda3c9ba3e7b1831db046cf38bc37"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+    "bytes": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+  },
+  {
+    "path": "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+    "bytes": 53760,
+    "sha256": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9"
+  }
+]

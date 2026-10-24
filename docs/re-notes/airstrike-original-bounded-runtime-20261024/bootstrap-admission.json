@@ -1,0 +1,10 @@
+{
+  "time": 1792806650.0488045,
+  "bootstrapCaptureCharged": 700000,
+  "captureCap": 1048576,
+  "projectedMetadataOnly": 33554432,
+  "cap": 67108864,
+  "reserve": 8388608,
+  "free": 4375498752,
+  "note": "Metadata admission only; guest and staging remain blocked pending full focused manifest and codec prerequisites."
+}

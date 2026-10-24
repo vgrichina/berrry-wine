@@ -1,0 +1,6 @@
+{
+  "initialStatus": "missing worktree files exposed as D because initial stdin needed -z; no commit/add performed",
+  "correctedCommand": "git update-index --skip-worktree -z --stdin",
+  "statusAfter": "",
+  "rootUntouched": true
+}

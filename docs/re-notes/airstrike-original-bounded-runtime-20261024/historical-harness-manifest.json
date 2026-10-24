@@ -1,0 +1,1693 @@
+{
+  "candidate": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "files": [
+    {
+      "path": "test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "lib/gl-compat.js",
+      "bytes": 106632,
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d"
+    },
+    {
+      "path": "lib/mem-utils.js",
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    {
+      "path": "lib/gl-command-stream.js",
+      "bytes": 7766,
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "bytes": 49253,
+      "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd"
+    },
+    {
+      "path": "lib/dib.js",
+      "bytes": 12071,
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34"
+    },
+    {
+      "path": "tools/dump_sprites.js",
+      "bytes": 3035,
+      "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05"
+    },
+    {
+      "path": "lib/save-bundle.js",
+      "bytes": 28589,
+      "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848"
+    },
+    {
+      "path": "lib/storage.js",
+      "bytes": 79616,
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe"
+    },
+    {
+      "path": "lib/zip-mount.js",
+      "bytes": 32525,
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274"
+    },
+    {
+      "path": "lib/byte-provider.js",
+      "bytes": 35492,
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+    },
+    {
+      "path": "lib/control-server.js",
+      "bytes": 7126,
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    },
+    {
+      "path": "tools/disasm.js",
+      "bytes": 29904,
+      "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166"
+    },
+    {
+      "path": "tools/simd-ops.js",
+      "bytes": 8592,
+      "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e"
+    },
+    {
+      "path": "lib/vfs-overlay.js",
+      "bytes": 14961,
+      "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5"
+    },
+    {
+      "path": "lib/overlay-store.js",
+      "bytes": 22486,
+      "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e"
+    },
+    {
+      "path": "lib/media-cli.js",
+      "bytes": 3730,
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4"
+    },
+    {
+      "path": "lib/cdrom.js",
+      "bytes": 14034,
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727"
+    },
+    {
+      "path": "lib/media-import.js",
+      "bytes": 37173,
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47"
+    },
+    {
+      "path": "lib/iso9660.js",
+      "bytes": 23867,
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544"
+    },
+    {
+      "path": "lib/app-files.js",
+      "bytes": 12067,
+      "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278"
+    },
+    {
+      "path": "lib/process-boot.js",
+      "bytes": 52033,
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"
+    },
+    {
+      "path": "lib/ne-guest-bridge.js",
+      "bytes": 4652,
+      "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a"
+    },
+    {
+      "path": "lib/ne-invoke.js",
+      "bytes": 5358,
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5"
+    },
+    {
+      "path": "lib/ne-load-error.js",
+      "bytes": 676,
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa"
+    },
+    {
+      "path": "lib/ne-lifecycle.js",
+      "bytes": 12104,
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4"
+    },
+    {
+      "path": "lib/ne-image.js",
+      "bytes": 7091,
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0"
+    },
+    {
+      "path": "lib/ne-sources.js",
+      "bytes": 3473,
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2"
+    },
+    {
+      "path": "lib/dll-loader.js",
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+    },
+    {
+      "path": "lib/pe.js",
+      "bytes": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    {
+      "path": "lib/dll-registry.js",
+      "bytes": 6443,
+      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981"
+    },
+    {
+      "path": "lib/guest-thread-host.js",
+      "bytes": 73126,
+      "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "bytes": 47664,
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945"
+    },
+    {
+      "path": "lib/render-worker.js",
+      "bytes": 17410,
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa"
+    },
+    {
+      "path": "lib/thread-send-waits.js",
+      "bytes": 14963,
+      "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747"
+    },
+    {
+      "path": "lib/guest-rpc.js",
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    {
+      "path": "lib/named-event-authority.js",
+      "bytes": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+    },
+    {
+      "path": "lib/vlan-wire.js",
+      "bytes": 13050,
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659"
+    },
+    {
+      "path": "lib/present-frame-audit.js",
+      "bytes": 6506,
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de"
+    },
+    {
+      "path": "tools/build-page-translation-stats.js",
+      "bytes": 6442,
+      "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9"
+    },
+    {
+      "path": "test/compile-src.js",
+      "bytes": 2508,
+      "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76"
+    },
+    {
+      "path": "lib/d3dim-gpu.js",
+      "bytes": 52919,
+      "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "bytes": 65335,
+      "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "bytes": 29976,
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "bytes": 47006,
+      "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "bytes": 9130,
+      "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434"
+    },
+    {
+      "path": "lib/thread-manager.js",
+      "bytes": 226864,
+      "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40"
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "bytes": 22458,
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+    },
+    {
+      "path": "tools/diablo-gameplay-bench.js",
+      "bytes": 10737,
+      "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58"
+    },
+    {
+      "path": "lib/headless-gl.js",
+      "bytes": 14928,
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb"
+    },
+    {
+      "path": "test/runner-experiments.js",
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    {
+      "path": "test/runner-win-census.js",
+      "bytes": 7071,
+      "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5"
+    },
+    {
+      "path": "test/runner-experiment-report.js",
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    {
+      "path": "lib/renderer.js",
+      "bytes": 214278,
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2"
+    },
+    {
+      "path": "lib/renderer-input.js",
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    {
+      "path": "lib/canvas-compat.js",
+      "bytes": 984,
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373"
+    },
+    {
+      "path": "lib/raster-canvas.js",
+      "bytes": 17590,
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3"
+    },
+    {
+      "path": "lib/presentation-filter.js",
+      "bytes": 53087,
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058"
+    },
+    {
+      "path": "lib/surface.js",
+      "bytes": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b"
+    },
+    {
+      "path": "host.js",
+      "bytes": 368727,
+      "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4"
+    },
+    {
+      "path": "lib/main-io-wait.js",
+      "bytes": 3133,
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef"
+    },
+    {
+      "path": "lib/startup-clock.js",
+      "bytes": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+    },
+    {
+      "path": "lib/guest-clock.js",
+      "bytes": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    {
+      "path": "lib/batch-clock.js",
+      "bytes": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    {
+      "path": "lib/tinysynth-offline.js",
+      "bytes": 11712,
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53"
+    },
+    {
+      "path": "lib/vendor/webaudio-tinysynth.js",
+      "bytes": 62376,
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c"
+    },
+    {
+      "path": "lib/cli-recorder.js",
+      "bytes": 9287,
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae"
+    },
+    {
+      "path": "lib/apps.js",
+      "bytes": 411370,
+      "sha256": "5a438ebd6c312a99f0f638d3cc57336885d4daa707b9bb03d227de008cafbd54"
+    },
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "bytes": 304086,
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+    },
+    {
+      "path": "lib/font-substitutions.js",
+      "bytes": 2966,
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16"
+    },
+    {
+      "path": "lib/api-format.js",
+      "bytes": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    {
+      "path": "lib/vfs-export.js",
+      "bytes": 4975,
+      "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d"
+    },
+    {
+      "path": "lib/vfs-host-files.js",
+      "bytes": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+    },
+    {
+      "path": "lib/vfs-seed.js",
+      "bytes": 8258,
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d"
+    },
+    {
+      "path": "lib/app-profiles.js",
+      "bytes": 18930,
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8"
+    },
+    {
+      "path": "lib/host-window.js",
+      "bytes": 63698,
+      "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3"
+    },
+    {
+      "path": "lib/frame-intervals.js",
+      "bytes": 5466,
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "bytes": 197066,
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "bytes": 157994,
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+    },
+    {
+      "path": "lib/resources-icon.js",
+      "bytes": 20791,
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "bytes": 89674,
+      "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "bytes": 87766,
+      "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "bytes": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "bytes": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+    },
+    {
+      "path": "lib/glide-host.js",
+      "bytes": 17374,
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591"
+    },
+    {
+      "path": "lib/glide-software.js",
+      "bytes": 27955,
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46"
+    },
+    {
+      "path": "lib/glide-backend.js",
+      "bytes": 41345,
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3"
+    },
+    {
+      "path": "lib/gl-render-host.js",
+      "bytes": 15356,
+      "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812"
+    },
+    {
+      "path": "lib/host-audio.js",
+      "bytes": 207077,
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb"
+    },
+    {
+      "path": "lib/audio-worklet-host.js",
+      "bytes": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+    },
+    {
+      "path": "lib/gdi-surface.js",
+      "bytes": 20152,
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a"
+    },
+    {
+      "path": "lib/cli-failure-cleanup.js",
+      "bytes": 717,
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435"
+    },
+    {
+      "path": "fonts/Courier.fon",
+      "bytes": 4816,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+    },
+    {
+      "path": "fonts/Fixedsys.fon",
+      "bytes": 5264,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+    },
+    {
+      "path": "fonts/MSSansSerif.fon",
+      "bytes": 20128,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+    },
+    {
+      "path": "fonts/System.fon",
+      "bytes": 13456,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+    },
+    {
+      "path": "fonts/Terminal.fon",
+      "bytes": 5168,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+    },
+    {
+      "path": "fonts/comic-relief/ComicRelief-Bold.ttf",
+      "bytes": 63808,
+      "sha256": "371fd5e24cb1f4ef5bd38940702e9a7d2caf325732e206f0eccdb49ee5345c0c"
+    },
+    {
+      "path": "fonts/comic-relief/ComicRelief-Regular.ttf",
+      "bytes": 53252,
+      "sha256": "557a7ea8e01c3617267ad7bb908eed3fb95591984eca749677cb340f591ad26d"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Bold.ttf",
+      "bytes": 307996,
+      "sha256": "bd62a0672d0b9b6710b01df434c80ad54fa5f0835207eb7b17b7a761463067bb"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-BoldItalic.ttf",
+      "bytes": 284068,
+      "sha256": "79451f3c09fe25116098853b7a2ca6e2436220ccc11af022979adbcf195be130"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Italic.ttf",
+      "bytes": 281536,
+      "sha256": "605c01c711b44480a7508d349dfbf3264e81fa43d69e61cfa7d10b86e764c4d1"
+    },
+    {
+      "path": "fonts/liberation/LiberationMono-Regular.ttf",
+      "bytes": 319508,
+      "sha256": "f2b83c763e8afd21709333370bed4774337fae82267937e2b5aea7e2fbd922c1"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Bold.ttf",
+      "bytes": 414456,
+      "sha256": "788abee4c806d660e8aee46689dd8540cd4bb98da03dcc9d171ce3efd99a9173"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-BoldItalic.ttf",
+      "bytes": 408996,
+      "sha256": "698da70fc191cc5f33ad4d6d3fe830fe4624b898ea2e3169955928b7c491f1ee"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Italic.ttf",
+      "bytes": 415816,
+      "sha256": "e5bae5c4cde31f22142753855f4f8fb86da6ff39955ed3c0a11248b0d16948b0"
+    },
+    {
+      "path": "fonts/liberation/LiberationSans-Regular.ttf",
+      "bytes": 410712,
+      "sha256": "76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Bold.ttf",
+      "bytes": 370096,
+      "sha256": "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-BoldItalic.ttf",
+      "bytes": 376772,
+      "sha256": "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Italic.ttf",
+      "bytes": 375632,
+      "sha256": "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e"
+    },
+    {
+      "path": "fonts/liberation/LiberationSerif-Regular.ttf",
+      "bytes": 393576,
+      "sha256": "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74"
+    },
+    {
+      "path": "fonts/substitutions.json",
+      "bytes": 10654,
+      "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3"
+    },
+    {
+      "path": "fonts/wine/marlett.ttf",
+      "bytes": 6136,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "fonts/wine/small_fonts.ttf",
+      "bytes": 19068,
+      "sha256": "c8b7ec4e4db4b9de2f588094376c21306cf829ad5d90b3238f86b34070b74ef6"
+    },
+    {
+      "path": "fonts/wine/symbol.ttf",
+      "bytes": 26028,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "fonts/wine/tahoma.ttf",
+      "bytes": 143884,
+      "sha256": "90f1abad4da0ce03da5d2277ee75a9600ce812d37c90eab76e0838ffa7937e55"
+    },
+    {
+      "path": "fonts/wine/tahomabd.ttf",
+      "bytes": 137836,
+      "sha256": "508a2acc88cd6abdd399ae79c9965db43fba75a46bb115117b55d2be2272d889"
+    },
+    {
+      "path": "fonts/wine/webdings.ttf",
+      "bytes": 4300,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "fonts/wine/wingding.ttf",
+      "bytes": 9524,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "package-lock.json",
+      "bytes": 22493,
+      "sha256": "0057c3be43c6b6dac68158f84a8c1b7831ccc44c8a92bd3d263df5fbc6425eef"
+    },
+    {
+      "path": "src/02-thread-table.wat",
+      "bytes": 33956,
+      "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426"
+    },
+    {
+      "path": "src/api_table.json",
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    },
+    {
+      "path": "src/win16-ordinals.generated.json",
+      "bytes": 42442,
+      "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4"
+    },
+    {
+      "path": "test/binaries/tlbs/stdole2.tlb",
+      "bytes": 15088,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+    }
+  ],
+  "totalBytes": 10690102,
+  "edges": [
+    [
+      "test/run.js",
+      "../lib/cli-failure-cleanup",
+      "lib/cli-failure-cleanup.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/host-imports",
+      "lib/host-imports.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/frame-intervals",
+      "lib/frame-intervals.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/dll-loader",
+      "lib/dll-loader.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/host-window",
+      "lib/host-window.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/process-boot",
+      "lib/process-boot.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/app-profiles",
+      "lib/app-profiles.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/worker-imports",
+      "lib/worker-imports.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vfs-seed",
+      "lib/vfs-seed.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vfs-host-files",
+      "lib/vfs-host-files.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vfs-export",
+      "lib/vfs-export.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/api-format",
+      "lib/api-format.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/font-substitutions",
+      "lib/font-substitutions.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/apps",
+      "lib/apps.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/cli-recorder",
+      "lib/cli-recorder.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/tinysynth-offline",
+      "lib/tinysynth-offline.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/batch-clock",
+      "lib/batch-clock.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/guest-clock",
+      "lib/guest-clock.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/startup-clock",
+      "lib/startup-clock.js"
+    ],
+    [
+      "test/run.js",
+      "../host.js",
+      "host.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/region-map.generated.js",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/canvas-compat",
+      "lib/canvas-compat.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/renderer",
+      "lib/renderer.js"
+    ],
+    [
+      "test/run.js",
+      "./runner-experiments",
+      "test/runner-experiments.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/gl-compat",
+      "lib/gl-compat.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/zip-mount",
+      "lib/zip-mount.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/iso9660",
+      "lib/iso9660.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/app-files",
+      "lib/app-files.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/headless-gl",
+      "lib/headless-gl.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/watx-closure.js",
+      "tools/watx-closure.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/region-layout-hash.js",
+      "tools/region-layout-hash.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/d3d-command-stream",
+      "lib/d3d-command-stream.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vlan-wire",
+      "lib/vlan-wire.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/diablo-gameplay-bench",
+      "tools/diablo-gameplay-bench.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vlan-wire",
+      "lib/vlan-wire.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vlan-wire",
+      "lib/vlan-wire.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/thread-manager",
+      "lib/thread-manager.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/region-layout-hash.js",
+      "tools/region-layout-hash.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/d3d-command-stream",
+      "lib/d3d-command-stream.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/d3dim-gpu",
+      "lib/d3dim-gpu.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/build-page-translation-stats.js",
+      "tools/build-page-translation-stats.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/present-frame-audit",
+      "lib/present-frame-audit.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vlan-wire",
+      "lib/vlan-wire.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/guest-thread-host",
+      "lib/guest-thread-host.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/process-boot",
+      "lib/process-boot.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/process-boot",
+      "lib/process-boot.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/process-boot",
+      "lib/process-boot.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/dib",
+      "lib/dib.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/app-files",
+      "lib/app-files.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/app-files",
+      "lib/app-files.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/zip-mount",
+      "lib/zip-mount.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/iso9660",
+      "lib/iso9660.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/cdrom",
+      "lib/cdrom.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/cdrom",
+      "lib/cdrom.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/media-cli",
+      "lib/media-cli.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/media-import",
+      "lib/media-import.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/media-cli",
+      "lib/media-cli.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/overlay-store",
+      "lib/overlay-store.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/vfs-overlay",
+      "lib/vfs-overlay.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/save-bundle",
+      "lib/save-bundle.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/disasm",
+      "tools/disasm.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/control-server",
+      "lib/control-server.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/storage",
+      "lib/storage.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/save-bundle",
+      "lib/save-bundle.js"
+    ],
+    [
+      "test/run.js",
+      "../tools/dump_sprites",
+      "tools/dump_sprites.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/dib",
+      "lib/dib.js"
+    ],
+    [
+      "test/run.js",
+      "../lib/gl-compat",
+      "lib/gl-compat.js"
+    ],
+    [
+      "lib/gl-compat.js",
+      "./gpu-backend",
+      "lib/gpu-backend.js"
+    ],
+    [
+      "lib/gl-compat.js",
+      "./gl-command-stream",
+      "lib/gl-command-stream.js"
+    ],
+    [
+      "lib/gl-compat.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/mem-utils.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/save-bundle.js",
+      "./zip-mount",
+      "lib/zip-mount.js"
+    ],
+    [
+      "lib/save-bundle.js",
+      "./storage",
+      "lib/storage.js"
+    ],
+    [
+      "lib/storage.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/storage.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/zip-mount.js",
+      "./byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "tools/disasm.js",
+      "./simd-ops",
+      "tools/simd-ops.js"
+    ],
+    [
+      "lib/vfs-overlay.js",
+      "./overlay-store",
+      "lib/overlay-store.js"
+    ],
+    [
+      "lib/media-cli.js",
+      "./media-import",
+      "lib/media-import.js"
+    ],
+    [
+      "lib/media-cli.js",
+      "./byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "lib/media-cli.js",
+      "./cdrom",
+      "lib/cdrom.js"
+    ],
+    [
+      "lib/iso9660.js",
+      "./zip-mount",
+      "lib/zip-mount.js"
+    ],
+    [
+      "lib/iso9660.js",
+      "./byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "lib/process-boot.js",
+      "./dll-registry",
+      "lib/dll-registry.js"
+    ],
+    [
+      "lib/process-boot.js",
+      "./pe",
+      "lib/pe.js"
+    ],
+    [
+      "lib/process-boot.js",
+      "./dll-loader",
+      "lib/dll-loader.js"
+    ],
+    [
+      "lib/process-boot.js",
+      "./dib",
+      "lib/dib.js"
+    ],
+    [
+      "lib/process-boot.js",
+      "./ne-guest-bridge",
+      "lib/ne-guest-bridge.js"
+    ],
+    [
+      "lib/ne-guest-bridge.js",
+      "./ne-sources",
+      "lib/ne-sources.js"
+    ],
+    [
+      "lib/ne-guest-bridge.js",
+      "./ne-lifecycle",
+      "lib/ne-lifecycle.js"
+    ],
+    [
+      "lib/ne-guest-bridge.js",
+      "./ne-load-error",
+      "lib/ne-load-error.js"
+    ],
+    [
+      "lib/ne-guest-bridge.js",
+      "./ne-invoke",
+      "lib/ne-invoke.js"
+    ],
+    [
+      "lib/ne-lifecycle.js",
+      "./ne-image",
+      "lib/ne-image.js"
+    ],
+    [
+      "lib/ne-lifecycle.js",
+      "./ne-invoke",
+      "lib/ne-invoke.js"
+    ],
+    [
+      "lib/ne-lifecycle.js",
+      "./ne-load-error",
+      "lib/ne-load-error.js"
+    ],
+    [
+      "lib/ne-image.js",
+      "./ne-load-error",
+      "lib/ne-load-error.js"
+    ],
+    [
+      "lib/ne-sources.js",
+      "./ne-image",
+      "lib/ne-image.js"
+    ],
+    [
+      "lib/ne-sources.js",
+      "./ne-load-error",
+      "lib/ne-load-error.js"
+    ],
+    [
+      "lib/dll-loader.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/guest-thread-host.js",
+      "./guest-rpc.js",
+      "lib/guest-rpc.js"
+    ],
+    [
+      "lib/guest-thread-host.js",
+      "./process-boot.js",
+      "lib/process-boot.js"
+    ],
+    [
+      "lib/guest-thread-host.js",
+      "./thread-send-waits.js",
+      "lib/thread-send-waits.js"
+    ],
+    [
+      "lib/guest-thread-host.js",
+      "./d3d-command-stream",
+      "lib/d3d-command-stream.js"
+    ],
+    [
+      "lib/d3d-command-stream.js",
+      "./render-worker",
+      "lib/render-worker.js"
+    ],
+    [
+      "lib/guest-rpc.js",
+      "./gl-command-stream",
+      "lib/gl-command-stream.js"
+    ],
+    [
+      "lib/guest-rpc.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/guest-rpc.js",
+      "./named-event-authority",
+      "lib/named-event-authority.js"
+    ],
+    [
+      "tools/build-page-translation-stats.js",
+      "../test/compile-src",
+      "test/compile-src.js"
+    ],
+    [
+      "tools/build-page-translation-stats.js",
+      "./region-layout-hash",
+      "tools/region-layout-hash.js"
+    ],
+    [
+      "test/compile-src.js",
+      "../tools/watx-closure.js",
+      "tools/watx-closure.js"
+    ],
+    [
+      "lib/d3dim-gpu.js",
+      "./d3d9-backend",
+      "lib/d3d9-backend.js"
+    ],
+    [
+      "lib/d3d9-backend.js",
+      "./gpu-backend",
+      "lib/gpu-backend.js"
+    ],
+    [
+      "lib/d3d9-backend.js",
+      "./d3d9-shader",
+      "lib/d3d9-shader.js"
+    ],
+    [
+      "lib/d3d9-backend.js",
+      "./d3d9-fixed",
+      "lib/d3d9-fixed.js"
+    ],
+    [
+      "lib/d3d9-shader.js",
+      "./d3d-shader-ir",
+      "lib/d3d-shader-ir.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./named-event-authority",
+      "lib/named-event-authority.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./worker-imports",
+      "lib/worker-imports.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./dll-loader",
+      "lib/dll-loader.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./guest-rpc",
+      "lib/guest-rpc.js"
+    ],
+    [
+      "lib/thread-manager.js",
+      "./named-event-authority",
+      "lib/named-event-authority.js"
+    ],
+    [
+      "test/runner-experiments.js",
+      "./runner-experiment-report",
+      "test/runner-experiment-report.js"
+    ],
+    [
+      "test/runner-experiments.js",
+      "./runner-win-census",
+      "test/runner-win-census.js"
+    ],
+    [
+      "test/runner-win-census.js",
+      "../lib/region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/renderer.js",
+      "./surface",
+      "lib/surface.js"
+    ],
+    [
+      "lib/renderer.js",
+      "./presentation-filter",
+      "lib/presentation-filter.js"
+    ],
+    [
+      "lib/renderer.js",
+      "./canvas-compat",
+      "lib/canvas-compat.js"
+    ],
+    [
+      "lib/renderer.js",
+      "./renderer-input",
+      "lib/renderer-input.js"
+    ],
+    [
+      "lib/renderer-input.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/renderer-input.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/canvas-compat.js",
+      "./raster-canvas",
+      "lib/raster-canvas.js"
+    ],
+    [
+      "lib/raster-canvas.js",
+      "./headless-gl",
+      "lib/headless-gl.js"
+    ],
+    [
+      "lib/raster-canvas.js",
+      "./headless-gl",
+      "lib/headless-gl.js"
+    ],
+    [
+      "lib/raster-canvas.js",
+      "./headless-gl",
+      "lib/headless-gl.js"
+    ],
+    [
+      "lib/raster-canvas.js",
+      "./headless-gl",
+      "lib/headless-gl.js"
+    ],
+    [
+      "host.js",
+      "./lib/mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "host.js",
+      "./lib/main-io-wait.js",
+      "lib/main-io-wait.js"
+    ],
+    [
+      "lib/tinysynth-offline.js",
+      "./vendor/webaudio-tinysynth",
+      "lib/vendor/webaudio-tinysynth.js"
+    ],
+    [
+      "lib/apps.js",
+      "./app-file-sizes.generated.js",
+      "lib/app-file-sizes.generated.js"
+    ],
+    [
+      "lib/app-profiles.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./dib",
+      "lib/dib.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./gdi-surface",
+      "lib/gdi-surface.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./api-format",
+      "lib/api-format.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./host-audio",
+      "lib/host-audio.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./host-window",
+      "lib/host-window.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./gl-compat",
+      "lib/gl-compat.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./gl-render-host",
+      "lib/gl-render-host.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./glide-host",
+      "lib/glide-host.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./d3d9-shader",
+      "lib/d3d9-shader.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./d3d9-host",
+      "lib/d3d9-host.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./gl-command-stream",
+      "lib/gl-command-stream.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./resources-icon",
+      "lib/resources-icon.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./vlan-wire",
+      "lib/vlan-wire.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./canvas-compat",
+      "lib/canvas-compat.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./storage",
+      "lib/storage.js"
+    ],
+    [
+      "lib/host-imports.js",
+      "./filesystem",
+      "lib/filesystem.js"
+    ],
+    [
+      "lib/filesystem.js",
+      "./byte-provider",
+      "lib/byte-provider.js"
+    ],
+    [
+      "lib/filesystem.js",
+      "./mem-utils",
+      "lib/mem-utils.js"
+    ],
+    [
+      "lib/filesystem.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/resources-icon.js",
+      "./dib",
+      "lib/dib.js"
+    ],
+    [
+      "lib/d3d9-host.js",
+      "./d3d9-backend",
+      "lib/d3d9-backend.js"
+    ],
+    [
+      "lib/d3d9-host.js",
+      "./d3d9-texture",
+      "lib/d3d9-texture.js"
+    ],
+    [
+      "lib/d3d9-host.js",
+      "./d3d-shader-ir",
+      "lib/d3d-shader-ir.js"
+    ],
+    [
+      "lib/d3d9-host.js",
+      "./d3d-command-stream",
+      "lib/d3d-command-stream.js"
+    ],
+    [
+      "lib/d3d9-host.js",
+      "./d3d9-software-backend",
+      "lib/d3d9-software-backend.js"
+    ],
+    [
+      "lib/d3d9-software-backend.js",
+      "./d3d-shader-ir",
+      "lib/d3d-shader-ir.js"
+    ],
+    [
+      "lib/d3d9-software-backend.js",
+      "./d3d-command-stream",
+      "lib/d3d-command-stream.js"
+    ],
+    [
+      "lib/d3d9-software-backend.js",
+      "./d3d-geometry-batches",
+      "lib/d3d-geometry-batches.js"
+    ],
+    [
+      "lib/glide-host.js",
+      "./gpu-backend",
+      "lib/gpu-backend.js"
+    ],
+    [
+      "lib/glide-host.js",
+      "./glide-backend",
+      "lib/glide-backend.js"
+    ],
+    [
+      "lib/glide-host.js",
+      "./glide-software",
+      "lib/glide-software.js"
+    ],
+    [
+      "lib/glide-host.js",
+      "./render-worker",
+      "lib/render-worker.js"
+    ],
+    [
+      "lib/glide-software.js",
+      "./glide-backend",
+      "lib/glide-backend.js"
+    ],
+    [
+      "lib/glide-software.js",
+      "./d3d9-software-backend",
+      "lib/d3d9-software-backend.js"
+    ],
+    [
+      "lib/gl-render-host.js",
+      "./gl-compat",
+      "lib/gl-compat.js"
+    ],
+    [
+      "lib/gl-render-host.js",
+      "./gl-command-stream",
+      "lib/gl-command-stream.js"
+    ],
+    [
+      "lib/gl-render-host.js",
+      "./render-worker",
+      "lib/render-worker.js"
+    ],
+    [
+      "lib/host-audio.js",
+      "./region-map.generated",
+      "lib/region-map.generated.js"
+    ],
+    [
+      "lib/host-audio.js",
+      "./audio-worklet-host",
+      "lib/audio-worklet-host.js"
+    ],
+    [
+      "lib/audio-worklet-host.js",
+      "./guest-rpc",
+      "lib/guest-rpc.js"
+    ]
+  ],
+  "unavailable": [],
+  "externalRequires": {
+    "fs": [
+      "test/run.js",
+      "lib/region-map.generated.js",
+      "tools/dump_sprites.js",
+      "lib/save-bundle.js",
+      "lib/byte-provider.js",
+      "tools/disasm.js",
+      "lib/overlay-store.js",
+      "lib/media-cli.js",
+      "lib/pe.js",
+      "tools/build-page-translation-stats.js",
+      "tools/diablo-gameplay-bench.js",
+      "lib/raster-canvas.js",
+      "lib/cli-recorder.js",
+      "lib/vfs-export.js",
+      "lib/vfs-host-files.js",
+      "lib/host-audio.js"
+    ],
+    "path": [
+      "test/run.js",
+      "test/run.js",
+      "test/run.js",
+      "lib/region-map.generated.js",
+      "lib/save-bundle.js",
+      "lib/overlay-store.js",
+      "lib/media-cli.js",
+      "tools/build-page-translation-stats.js",
+      "lib/cli-recorder.js",
+      "lib/vfs-export.js",
+      "lib/vfs-host-files.js"
+    ],
+    "child_process": [
+      "test/run.js",
+      "test/run.js",
+      "test/run.js",
+      "lib/cli-recorder.js"
+    ],
+    "pngjs": [
+      "test/run.js",
+      "tools/diablo-gameplay-bench.js",
+      "lib/raster-canvas.js",
+      "lib/surface.js"
+    ],
+    "skia-canvas": [
+      "test/run.js"
+    ],
+    "os": [
+      "test/run.js",
+      "test/run.js",
+      "test/run.js",
+      "tools/build-page-translation-stats.js",
+      "tools/diablo-gameplay-bench.js"
+    ],
+    "worker_threads": [
+      "test/run.js",
+      "test/run.js",
+      "lib/guest-thread-host.js"
+    ],
+    "readline": [
+      "test/run.js",
+      "test/run.js"
+    ],
+    "inspector": [
+      "test/run.js",
+      "tools/diablo-gameplay-bench.js",
+      "tools/diablo-gameplay-bench.js"
+    ],
+    "zlib": [
+      "lib/zip-mount.js"
+    ],
+    "http": [
+      "lib/control-server.js"
+    ],
+    "crypto": [
+      "lib/overlay-store.js",
+      "tools/diablo-gameplay-bench.js"
+    ],
+    "@node-3d/glfw": [
+      "lib/headless-gl.js"
+    ],
+    "@node-3d/webgl": [
+      "lib/headless-gl.js"
+    ]
+  },
+  "excludedInactiveBuild": [
+    "tools/region-layout-hash.js",
+    "tools/watx-closure.js"
+  ],
+  "pngjsPin": {
+    "version": "7.0.0",
+    "resolved": "https://registry.npmjs.org/pngjs/-/pngjs-7.0.0.tgz",
+    "integrity": "sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==",
+    "license": "MIT",
+    "engines": {
+      "node": ">=14.19.0"
+    }
+  },
+  "scope": "Literal relative require closure plus ordinary runtime font/API/ordinal data. Conditional paths included conservatively; dynamic requires are reported by runner source and remain unqualified."
+}

@@ -1,0 +1,13 @@
+{
+  "boxId": "bx_jydd4z26",
+  "actualApiState": "idle",
+  "health": "ok",
+  "expiry": "2026-10-24T02:18:31.180Z",
+  "shutdownCheckpoint": "2026-10-24T02:08:31Z",
+  "source": "actual boat --no-update --json info bx_jydd4z26 read during task",
+  "workerStoppedOrResumedBox": false,
+  "runtimeTransferred": false,
+  "guestStarted": false,
+  "guestGroups": [],
+  "coordinatorOwnsShutdown": true
+}
