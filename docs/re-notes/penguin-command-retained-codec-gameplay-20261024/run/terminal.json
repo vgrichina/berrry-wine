@@ -1,0 +1,12 @@
+{
+  "reason": "capture-guard",
+  "returncode": 0,
+  "elapsed": 1.2675197529999878,
+  "TERM": true,
+  "KILL": false,
+  "reaped": [],
+  "remainingGroup": false,
+  "box": "bx_9nngcsvf",
+  "lifecycle": "leave RUNNING coordinator owns shutdown",
+  "expires": "2026-10-24T02:47:54Z"
+}

@@ -1,0 +1,21 @@
+{
+  "command": "python3 /tmp/penguin-retained-codec-oct24/supervise.py",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/23193.err.log",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T02:12:56.465Z",
+  "known": true,
+  "logPath": "/home/user/.ascii/processes/23193.log",
+  "oomKilled": false,
+  "pid": 23193,
+  "processId": 23193,
+  "running": false,
+  "signal": null,
+  "startedAt": "2026-10-24T02:12:55.613Z",
+  "status": "exited",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true
+}

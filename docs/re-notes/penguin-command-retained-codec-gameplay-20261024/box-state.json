@@ -1,0 +1,10 @@
+{
+  "id": "bx_9nngcsvf",
+  "state": "idle",
+  "health": "ok",
+  "archiveAfter": "2026-10-24T02:47:54.557Z",
+  "createdAt": "2026-10-24T02:07:54.544Z",
+  "shutdownOwner": "coordinator",
+  "checkpoint": "2026-10-24T02:37:00Z",
+  "leftRunning": true
+}

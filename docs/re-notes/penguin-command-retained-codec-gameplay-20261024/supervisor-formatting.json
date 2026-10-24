@@ -1,0 +1,6 @@
+{
+  "executedSHA256": "f8e4ff13ea71447da0df56d6d00ee1dcbfb7c44d6ad3b161f6904aaf034adcc5",
+  "executedArchive": "executed-supervise.py.gz",
+  "readableCopySHA256": "3645fdc6a6f9907dc0787570af9c066a4095651915f5964af0dcfe3c51ca4dd9",
+  "change": "Trailing-space-only cleanup in readable recovery copy; exact executed original retained compressed; no rerun"
+}

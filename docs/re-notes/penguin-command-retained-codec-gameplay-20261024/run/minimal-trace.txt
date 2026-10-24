@@ -1,0 +1,58 @@
+PE loaded. Entry: 0x00401290
+Extra cmdline args: "--windowed --nosound"
+DLL: msvcrt.dll at 0x67a000, DllMain=0x67d428, thunks=1950, origBase=0x78000000
+DLL: SDL.dll at 0x7be000, DllMain=0x7bf060, thunks=2097, origBase=0x68100000
+DLL: zlib1.dll at 0x91b000, DllMain=0x91c060, thunks=2100, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xa32000, DllMain=0xa33060, thunks=2103, origBase=0x69c80000
+DLL: jpeg.dll at 0xb58000, DllMain=0xb59060, thunks=2106, origBase=0x66240000
+DLL: SDL_image.dll at 0xc78000, DllMain=0xc79060, thunks=2109, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0xd98000, DllMain=0xd99060, thunks=2124, origBase=0x61700000
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #5 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #6 (SDL_mixer.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #2 (zlib1.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2139 thunks
+Calling DllMain at 0x67d428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bf060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x91c060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa33060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb59060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc79060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd99060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x6b5edc] = 0xe0e5c4
+Patched __p__environ [0x6b4be4] = 0xe0e5a4
+Patched __p___winitenv [0x6b60ec] = 0xe0e5c4
+Patched __p___initenv [0x6b8c9c] = 0xe0e5a4
+Calling MSVCRT!_set_sbh_threshold(0) at 0x68699d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[Per-batch register lines omitted from this excerpt; complete output.log retained.]
+[4663] EIP=0x00b6c915 EAX=0x0000000c ECX=0x00000011 EDX=0x0000007d EBX=0x00e28c34 ESP=0x074ff848 EBP=0x074ff888 ESI=0x7ec2f47f EDI=0x000000a9
+[signal] SIGTERM requested orderly shutdown
+uop: installs=48 kills=1 retired-poor=1 enters=121242 blocks=4488266 head-exits=0 reguards=34107 rg-pages=545712 rg-nonadj=0 win-kept=121242 win-reset=0 gen=3 | compiled=48 declined=15 insns=5379 uops=23380 flushes=0 traces=15
+  declines: no-backedge=10 call-indirect=4 head-unsupported=1
+uop nobump: skips=78145
+uop hot: decays=10080 halvings=5
+
+Stats: 761 API calls, 4666 batches in 0.721s (6470 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+Wrote /tmp/penguin-retained-codec-oct24/run/exit.png (3729 bytes, canvas 640x480)

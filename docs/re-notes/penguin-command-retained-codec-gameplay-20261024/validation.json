@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "checks": [
+    "syntax:prepare.py",
+    "syntax:api.py",
+    "syntax:supervise.py",
+    "syntax:add-runtime-helper.py",
+    "syntax:add-font-data.py",
+    "syntax:collect.py",
+    "syntax:preflight.py",
+    "syntax:transfer.py",
+    "22 collected file seals",
+    "all7 DllMain successful",
+    "no crash marker before guard",
+    "TERM and empty group",
+    "zero control inputs",
+    "PNG640x480 structurally valid and visually inspected black client",
+    "executed supervisor original retained byte-exact gzip; readable copy only trailing whitespace removed"
+  ],
+  "scope": "Host evidence consistency only; no gameplay/runtime retry"
+}

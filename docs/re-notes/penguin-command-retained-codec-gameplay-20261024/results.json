@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "startedAt": "2026-10-24T02:14:00.383Z",
+  "outcome": "blocked",
+  "verification": "reviewed",
+  "checkpoint": "startup",
+  "candidateId": null,
+  "candidateRegistration": "Absent from exact current-main candidate corpus; investigation only",
+  "summary": "Original EXE/DLL initialization reached Penguin Command window; black client frame. Supervisor output guard stopped per-batch log flood before input/menu/gameplay. No gameplay acceptance.",
+  "sourceRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "moduleBytes": 1879746,
+  "renderer": "historical production rasterCanvas",
+  "engine": "Node24.22.1",
+  "artifacts": {
+    "screenshot": "run/exit.png",
+    "log": "run/output.log",
+    "trace": "run/minimal-trace.txt",
+    "argv": "run/command.json",
+    "inputs": "run/input-events.json",
+    "terminal": "run/terminal.json",
+    "resources": "resource-final.json"
+  },
+  "box": {
+    "id": "bx_9nngcsvf",
+    "state": "idle",
+    "health": "ok",
+    "archiveAfter": "2026-10-24T02:47:54.557Z",
+    "createdAt": "2026-10-24T02:07:54.544Z",
+    "shutdownOwner": "coordinator",
+    "checkpoint": "2026-10-24T02:37:00Z",
+    "leftRunning": true
+  },
+  "limits": {
+    "guestSeconds": 60,
+    "maxBatches": 200000,
+    "cpuWallSeconds": 90,
+    "oldspaceMiB": 512,
+    "fixedSharedArenaMiB": 512,
+    "fileMaxBytes": 25165824,
+    "taskMaxBytes": 67108864,
+    "supervisorLogGuardBytes": 524288,
+    "internalCumulativeCaptureBytes": 1048576
+  },
+  "resumeCorrection": "Coordinator-owned fresh assignment; include supported --quiet-blocks and fresh admission; no retry performed"
+}

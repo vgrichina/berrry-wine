@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "/tmp/penguin-retained-codec-oct24/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/penguin-retained-codec-oct24/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/penguin-retained-codec-oct24/game/penguin-command.exe",
+    "--exe-guest-path=C:\\penguin-command.exe",
+    "--cwd=C:\\",
+    "--args=--windowed --nosound",
+    "--dlls=/tmp/penguin-retained-codec-oct24/game/msvcrt.dll,/tmp/penguin-retained-codec-oct24/game/SDL.dll,/tmp/penguin-retained-codec-oct24/game/zlib1.dll,/tmp/penguin-retained-codec-oct24/game/libpng12-0.dll,/tmp/penguin-retained-codec-oct24/game/jpeg.dll,/tmp/penguin-retained-codec-oct24/game/SDL_image.dll,/tmp/penguin-retained-codec-oct24/game/SDL_mixer.dll",
+    "--vfs-include=data/gfx/*.png",
+    "--vfs-include=data/gfx/*.jpg",
+    "--quiet-api",
+    "--no-close",
+    "--max-seconds=60",
+    "--max-batches=200000",
+    "--control-stdin",
+    "--memory-mb=512",
+    "--png=/tmp/penguin-retained-codec-oct24/run/exit.png",
+    "--save-vfs=/tmp/penguin-retained-codec-oct24/run/vfs",
+    "--save-vfs-suffix=.dat"
+  ],
+  "pid": 23197,
+  "pgid": 23197,
+  "startedAt": 1792807976.1938567,
+  "memAvailable": 7145086976,
+  "limits": {
+    "oldspaceMiB": 512,
+    "arenaMiB": 512,
+    "cpu": 90,
+    "wall": 90,
+    "guestSeconds": 60,
+    "maxBatches": 200000
+  }
+}
