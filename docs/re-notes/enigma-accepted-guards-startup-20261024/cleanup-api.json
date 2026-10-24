@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gsvqldwbjiso",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T12:16:52.538Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T12:16:52.495Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48717860864, \"ownedBytes\": 45264896, \"taskNode\": [], \"dependentExists\": false, \"pngExists\": false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ifoolbkrbjn1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T12:16:14.311Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-24T12:16:14.099Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 2659, \"bytes\": 37476538, \"ordinaryUID\": 1000, \"manifestPass\": true, \"probe\": {\"codec\": \"7.0.0\", \"node\": \"v24.22.1\", \"preambleLoaded\": true, \"fontFiles\": 28, \"captureBytes\": 2062, \"rasterCaptureBytes\": 1271, \"rejectingControls\": 2, \"pixelsEqual\": true}, \"passPreGuest\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

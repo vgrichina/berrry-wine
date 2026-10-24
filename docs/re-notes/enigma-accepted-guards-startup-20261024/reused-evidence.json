@@ -1,0 +1,62 @@
+[
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/compiler-recipe.json",
+    "bytes": 336,
+    "sha256": "8237796a790393f9d3267c223fb0a33636e96689c1e3f7303a698ff359e2f936"
+  },
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/external-cases.json",
+    "bytes": 22636,
+    "sha256": "7dbeadef694b7d473831b046655c29e6e99744e36833be5530485470611697ba"
+  },
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/independent-bound-oracle.json",
+    "bytes": 279,
+    "sha256": "9275f8b32b6b0a19deb15fcf3124cee18f37d34979b2d2a6a9bd2396bd9a8f14"
+  },
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/producer-entry.json",
+    "bytes": 296,
+    "sha256": "a705ff570f4e4b0119dd05a9a2c7ef7a63686673cc297e2686ef14270672e45c"
+  },
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/terminal-suite.json",
+    "bytes": 303,
+    "sha256": "c3b1033b83cb2d6b87534bb35a8e743fcdb311dc1ee35b79c9a462196cf3a4e6"
+  },
+  {
+    "path": "/tmp/enigma-supervisor-independent-integrate-oct24/repo/docs/re-notes/enigma-supervisor-independent-20261024/findfirst-suite.json",
+    "bytes": 297,
+    "sha256": "044d853e9ed01e7d5c149d6ba4d2c410e2fc1029292ff435601ae228c551f558"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/runtime-accepted-inputs-20261024T1209Z.json",
+    "bytes": 2318,
+    "sha256": "8e5da662ab69dae425c08cbbe39e72ba227f6f0c5c27a9086bd0fde1c74a226a"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/runtime-closure-preflight-20261024T1210Z.json",
+    "bytes": 418,
+    "sha256": "344c1521d96eb3a5737c13686144a4a6894647a8fe602e6858ad9cda59727d3d"
+  },
+  {
+    "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/provider-positive.json.gz",
+    "bytes": 4444,
+    "sha256": "cdf419f08cfa2b94266e7db2daad42b2a3ec065999c51d90ed9e9dca599677e8"
+  },
+  {
+    "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/provider-readiness.json",
+    "bytes": 1655,
+    "sha256": "7d86883f876ffb4d1367c71051fb510fd94a1483d12a72d7adf4098f64b1022f"
+  },
+  {
+    "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/twenty-pins.json",
+    "bytes": 4179,
+    "sha256": "810fce82f25e964aef1a68180d71ad643eceaf4714ab7012a8549482704a4a44"
+  },
+  {
+    "path": "/tmp/enigma-provider-complete-startup-oct24/repo/docs/re-notes/enigma-provider-complete-startup-20261024/trace-capability.json",
+    "bytes": 497,
+    "sha256": "61c01d2a0f64ce0f7dad9500b6d301f6945b754f78415f9012f6849cec35feed"
+  }
+]

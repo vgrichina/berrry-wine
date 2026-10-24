@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_zy0qehuatlje",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-24T12:16:26.640Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T12:16:19.574Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"TERM\": false, \"KILL\": false, \"returncode\": 1, \"reaped\": [], \"remainingGroup\": false, \"reason\": \"capture-byte-limit\", \"elapsed\": 7.031739594999976, \"box\": \"bx_jhed6zf3\", \"lifecycle\": \"leave RUNNING; coordinator owns shutdown12:33UTC\", \"expires\": \"2026-10-24T12:38:43Z\", \"outputBytes\": 48354, \"captureTerminal\": {\"version\": 1, \"terminal\": true, \"reason\": \"capture-byte-limit\", \"runnerSHA256\": \"4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809\", \"captureSHA256\": \"6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079\", \"name\": \"AssertionError\", \"code\": \"ERR_ASSERTION\", \"message\": \"capture byte limit\", \"artifactAccepted\": false}}\n",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

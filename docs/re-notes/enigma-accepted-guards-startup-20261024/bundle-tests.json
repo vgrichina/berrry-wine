@@ -1,0 +1,13 @@
+{
+  "passBundle": true,
+  "artifacts": 52,
+  "guestAttempts": 1,
+  "apiRecords": 16,
+  "outputBytes": 48354,
+  "files": 2659,
+  "mappings": 2460,
+  "configurationExact": true,
+  "immediateCaptureStopSatisfied": true,
+  "frameProduced": false,
+  "staticEvidenceValidationOnly": true
+}

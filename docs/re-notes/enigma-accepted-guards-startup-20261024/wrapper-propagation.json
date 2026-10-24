@@ -1,0 +1,6 @@
+{
+  "originalResponsePreserved": "first-rejection.json",
+  "CLIExitNonzeroPropagated": true,
+  "guestRelaunched": false,
+  "bookkeepingCorrection": "Retained response bound as guest-supervisor-api; no command retried"
+}

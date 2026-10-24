@@ -1,0 +1,8 @@
+{
+  "MAELSTROM_CAPTURE_INSTALL": "1",
+  "ENIGMA_RUNNER_ROOT": "/tmp/enigma-provider-complete-startup-oct24/runner",
+  "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-provider-complete-startup-oct24/runner",
+  "ENIGMA_TERMINAL_CAPTURE_INSTALL": "1",
+  "ENIGMA_CAPTURE_PATH": "/tmp/enigma-provider-complete-startup-oct24/capture.cjs",
+  "ENIGMA_TERMINAL_RECEIPT": "/tmp/enigma-provider-complete-startup-oct24/guest/capture-terminal.json"
+}

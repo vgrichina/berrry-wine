@@ -1,0 +1,19 @@
+{
+  "original": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73",
+  "acceptedTransformed": "4c95819e81ab9cdd4ec0c08a8291cc1324cfc05cc3d402ff21f16813e609da00",
+  "deployed": "093e5da800f459c19a85e8f243f96a5019d1295d439a47d17329add744f3b536",
+  "configurationOnly": [
+    "latest start12:27UTC",
+    "box ID",
+    "coordinator shutdown12:33UTC",
+    "expiry12:38:43UTC"
+  ],
+  "environment": {
+    "MAELSTROM_CAPTURE_INSTALL": "1",
+    "ENIGMA_RUNNER_ROOT": "/tmp/enigma-provider-complete-startup-oct24/runner",
+    "ENIGMA_FINDFIRST_RUNNER_ROOT": "/tmp/enigma-provider-complete-startup-oct24/runner",
+    "ENIGMA_TERMINAL_CAPTURE_INSTALL": "1",
+    "ENIGMA_CAPTURE_PATH": "/tmp/enigma-provider-complete-startup-oct24/capture.cjs",
+    "ENIGMA_TERMINAL_RECEIPT": "/tmp/enigma-provider-complete-startup-oct24/guest/capture-terminal.json"
+  }
+}

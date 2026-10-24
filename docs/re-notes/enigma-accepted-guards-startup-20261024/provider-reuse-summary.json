@@ -1,0 +1,16 @@
+{
+  "providers": [
+    "msvcrt.dll",
+    "zlib1.dll",
+    "libpng12-0.dll",
+    "sdl.dll",
+    "sdl_image.dll",
+    "sdl_mixer.dll",
+    "libfreetype-6.dll",
+    "sdl_ttf.dll"
+  ],
+  "nativeBindingCount": 527,
+  "SDL_getenvRVA": 37536,
+  "identityBoundByManifest": true,
+  "testsRepeated": false
+}
