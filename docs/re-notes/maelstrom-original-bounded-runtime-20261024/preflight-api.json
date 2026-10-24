@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ikrvhfs86vne",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:54:59.299Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 10,
+  "startedAt": "2026-10-24T06:54:59.140Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 247, \"bytes\": 17027463, \"ordinaryUID\": 1000, \"manifestPass\": true, \"probe\": {\"codec\": \"7.0.0\", \"node\": \"v24.22.1\", \"preambleLoaded\": true, \"fontFiles\": 28, \"captureBytes\": 2062, \"rasterCaptureBytes\": 1271, \"rejectingControls\": 2, \"pixelsEqual\": true}, \"passPreGuest\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

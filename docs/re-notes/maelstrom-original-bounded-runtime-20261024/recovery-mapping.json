@@ -1,0 +1,242 @@
+[
+  {
+    "relativePath": "COPYING.GPL.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/COPYING.GPL.txt",
+    "guestPath": "C:\\maelstrom\\COPYING.GPL.txt"
+  },
+  {
+    "relativePath": "COPYING.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/COPYING.txt",
+    "guestPath": "C:\\maelstrom\\COPYING.txt"
+  },
+  {
+    "relativePath": "Docs/Ambrosia_Software,_Inc._FAQ.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Ambrosia_Software,_Inc._FAQ.txt",
+    "guestPath": "C:\\maelstrom\\Docs\\Ambrosia_Software,_Inc._FAQ.txt"
+  },
+  {
+    "relativePath": "Docs/MaelstromGPL_press_release.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/MaelstromGPL_press_release.txt",
+    "guestPath": "C:\\maelstrom\\Docs\\MaelstromGPL_press_release.txt"
+  },
+  {
+    "relativePath": "Docs/Networking.Paper",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Networking.Paper",
+    "guestPath": "C:\\maelstrom\\Docs\\Networking.Paper"
+  },
+  {
+    "relativePath": "Docs/Porting.Paper",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Porting.Paper",
+    "guestPath": "C:\\maelstrom\\Docs\\Porting.Paper"
+  },
+  {
+    "relativePath": "Docs/Technical_Notes-v1.0",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Technical_Notes-v1.0",
+    "guestPath": "C:\\maelstrom\\Docs\\Technical_Notes-v1.0"
+  },
+  {
+    "relativePath": "Docs/Technical_Notes-v1.1",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Technical_Notes-v1.1",
+    "guestPath": "C:\\maelstrom\\Docs\\Technical_Notes-v1.1"
+  },
+  {
+    "relativePath": "Docs/Technical_Notes-v2.0",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Docs/Technical_Notes-v2.0",
+    "guestPath": "C:\\maelstrom\\Docs\\Technical_Notes-v2.0"
+  },
+  {
+    "relativePath": "icon.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/icon.bmp",
+    "guestPath": "C:\\maelstrom\\icon.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#100.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#100.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#100.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#101.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#101.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#101.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#102.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#102.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#102.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#103.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#103.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#103.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#104.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#104.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#104.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#110.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#110.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#110.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#128.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#128.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#128.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#129.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#129.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#129.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#130.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#130.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#130.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#131.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#131.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#131.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#132.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#132.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#132.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#133.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#133.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#133.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#134.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#134.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#134.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#135.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#135.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#135.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#136.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#136.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#136.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Icon#137.cicn",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Icon#137.cicn",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Icon#137.cicn"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#100.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#100.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#100.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#101.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#101.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#101.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#102.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#102.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#102.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#128.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#128.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#128.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#129.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#129.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#129.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#130.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#130.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#130.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#133.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#133.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#133.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#134.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#134.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#134.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#135.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#135.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#135.bmp"
+  },
+  {
+    "relativePath": "Images/Maelstrom_Titles#999.bmp",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Images/Maelstrom_Titles#999.bmp",
+    "guestPath": "C:\\maelstrom\\Images\\Maelstrom_Titles#999.bmp"
+  },
+  {
+    "relativePath": "Maelstrom_Fonts",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Maelstrom_Fonts",
+    "guestPath": "C:\\maelstrom\\Maelstrom_Fonts"
+  },
+  {
+    "relativePath": "Maelstrom_Sounds",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Maelstrom_Sounds",
+    "guestPath": "C:\\maelstrom\\Maelstrom_Sounds"
+  },
+  {
+    "relativePath": "Maelstrom_Sprites",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Maelstrom_Sprites",
+    "guestPath": "C:\\maelstrom\\Maelstrom_Sprites"
+  },
+  {
+    "relativePath": "Maelstrom-Scores",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Maelstrom-Scores",
+    "guestPath": "C:\\maelstrom\\Maelstrom-Scores"
+  },
+  {
+    "relativePath": "Maelstrom.exe",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/Maelstrom.exe",
+    "guestPath": "C:\\maelstrom\\Maelstrom.exe"
+  },
+  {
+    "relativePath": "README-SDL.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/README-SDL.txt",
+    "guestPath": "C:\\maelstrom\\README-SDL.txt"
+  },
+  {
+    "relativePath": "README.joystick.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/README.joystick.txt",
+    "guestPath": "C:\\maelstrom\\README.joystick.txt"
+  },
+  {
+    "relativePath": "README.network.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/README.network.txt",
+    "guestPath": "C:\\maelstrom\\README.network.txt"
+  },
+  {
+    "relativePath": "README.options.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/README.options.txt",
+    "guestPath": "C:\\maelstrom\\README.options.txt"
+  },
+  {
+    "relativePath": "README.txt",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/README.txt",
+    "guestPath": "C:\\maelstrom\\README.txt"
+  },
+  {
+    "relativePath": "SDL_net.dll",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/SDL_net.dll",
+    "guestPath": "C:\\maelstrom\\SDL_net.dll"
+  },
+  {
+    "relativePath": "SDL.dll",
+    "staged": "/tmp/maelstrom-original-bounded-runtime-oct24/vfs/maelstrom/SDL.dll",
+    "guestPath": "C:\\maelstrom\\SDL.dll"
+  }
+]

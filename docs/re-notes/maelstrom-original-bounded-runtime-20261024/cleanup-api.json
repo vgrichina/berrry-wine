@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wdv848lnor4m",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T06:58:06.166Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-24T06:58:06.130Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"noOwnedNodePids\": true, \"pids\": [], \"files\": 257, \"bytes\": 17134015, \"maxFile\": 1879746, \"free\": 48767143936, \"guestPNGs\": 0, \"keptForCoordinator\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

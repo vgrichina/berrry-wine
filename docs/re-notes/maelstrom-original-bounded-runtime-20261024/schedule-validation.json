@@ -1,0 +1,19 @@
+{
+  "maxBatches": 42000,
+  "menuCapture": 30000,
+  "startKey": [
+    31000,
+    31200,
+    80
+  ],
+  "gameCapture": 34000,
+  "inputStart": 35000,
+  "inputEnd": 36500,
+  "finalCapture": 39000,
+  "allInputsBeforeLimit": true,
+  "noForcedState": true,
+  "originalPSourceProof": "/tmp/maelstrom-original-win32-closure-oct24/repo/docs/re-notes/maelstrom-original-win32-20261024/source-path-proof.json",
+  "movementControls": "Arrow left/up and Space proposed; actual semantics require runtime pixels; no control claim in advance",
+  "tick": "default200ms per batch",
+  "guestDeadline": "07:07UTC"
+}

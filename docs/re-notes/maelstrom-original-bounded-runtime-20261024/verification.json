@@ -1,0 +1,13 @@
+{
+  "completeRawLog": true,
+  "rawBytes": 1513,
+  "dllInitializersReturnedOne": 3,
+  "entry": "0x00417474",
+  "mountTokenizationFailure": true,
+  "mainLoopReached": false,
+  "actualInputDispatches": [],
+  "screenshots": 0,
+  "guestRuns": 1,
+  "secondGuestRun": false,
+  "terminalGroupClean": true
+}

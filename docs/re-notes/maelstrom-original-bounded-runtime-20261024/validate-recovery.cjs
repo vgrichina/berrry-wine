@@ -1,0 +1,28 @@
+const fs=require('fs'),path=require('path'),assert=require('assert'),Module=require('module');
+const H=__dirname;
+const donor='/home/user/wine-assembly-shadow-man-span-static-canonical-oct23';
+const source=require('child_process').execFileSync('git',['-C',donor,'show','d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e:lib/vfs-host-files.js'],{encoding:'utf8'});
+const mod=new Module(path.join(H,'vfs-host-files.cjs'));mod.filename=path.join(H,'vfs-host-files.cjs');mod.paths=module.paths;mod._compile(source,mod.filename);
+const {expandIncludePatterns,guestPathInTree}=mod.exports;
+const manifest=JSON.parse(fs.readFileSync(path.join(H,'manifest.json')));
+const game=manifest.filter(x=>x.target.startsWith('game/'));
+assert.equal(game.length,48);
+const input=game.find(x=>x.target.includes('Ambrosia_Software,'));assert(input);
+const broken=(input.path+'=C:\\maelstrom\\Docs\\Ambrosia_Software,_Inc._FAQ.txt').split(',');
+assert(broken.some(x=>x.lastIndexOf('=')<=0));
+const original='/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6';
+const expanded=expandIncludePatterns(original,['**/*']);assert.equal(expanded.length,48);
+assert.deepStrictEqual(expanded.map(x=>x.relativePath).sort(),game.map(x=>x.target.slice(5)).sort());
+const tree=path.join(H,'vfs');
+const mapping=expanded.map(x=>({relativePath:x.relativePath,staged:path.join(tree,'maelstrom',x.relativePath),guestPath:guestPathInTree(tree,path.join(tree,'maelstrom',x.relativePath))}));
+for(const x of mapping)assert.equal(x.guestPath,'C:\\maelstrom\\'+x.relativePath.replaceAll('/','\\'));
+assert(mapping.find(x=>x.relativePath.includes('Ambrosia_Software,')).guestPath.includes('Ambrosia_Software,_Inc._FAQ.txt'));
+function validate(rows){assert.equal(rows.length,48);for(const x of rows)assert(x.guestPath.startsWith('C:\\maelstrom\\'));}
+validate(mapping);assert.throws(()=>validate(mapping.map((x,i)=>i?x:{...x,guestPath:'C:\\wrong'})));assert.throws(()=>validate(mapping.slice(1)));
+const previous=JSON.parse(fs.readFileSync(path.join(H,'guest-args.json')));
+const args=previous.filter(x=>!x.startsWith('--vfs-mount='));
+for(let i=0;i<args.length;i++)args[i]=args[i].replaceAll(H+'/game/',H+'/vfs/maelstrom/');
+args.push('--vfs-tree='+tree);
+fs.writeFileSync(path.join(H,'recovery-args.json'),JSON.stringify(args,null,2)+'\n');
+fs.writeFileSync(path.join(H,'recovery-mapping.json'),JSON.stringify(mapping,null,2)+'\n');
+console.log(JSON.stringify({pass:true,actualHelper:'lib/vfs-host-files.js',files:48,originalCommaRejected:true,correctedMappingPreservesOriginalNames:true,negativeControls:3,guestRerun:false,recipeOnly:true}));
