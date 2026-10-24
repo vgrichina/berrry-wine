@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "test/test-wave-error-text-native.js",
+    "--wasm=/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "--sha256=8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+  ],
+  "cwd": "/tmp/madbomber-winmm-retained-native-oct24/inputs",
+  "pid": 3209474,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.12529634195379913,
+  "MemAvailable": 2981269504,
+  "memoryFloor": 2684354560,
+  "cpuWallLimit": 90,
+  "captureBytes": 154,
+  "processGroupRemaining": false,
+  "subreaper": true,
+  "reaped": true,
+  "maxChildRSSBytes": 76705792
+}
