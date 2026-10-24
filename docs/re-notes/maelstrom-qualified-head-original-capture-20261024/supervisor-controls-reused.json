@@ -1,0 +1,43 @@
+{
+  "unchangedStopAndLimits": true,
+  "receipts": [
+    {
+      "path": "/tmp/maelstrom-single-return-sync-capture-oct24/collected/watchdog-negative-control.json",
+      "sha256": "9b151ebb54da625395e730999ca0510128ad067a64441b42e2eed7e569ee27a1",
+      "receipt": {
+        "TERM": true,
+        "KILL": true,
+        "returncode": -9,
+        "reaped": [
+          [
+            22573,
+            9
+          ]
+        ],
+        "remainingGroup": false
+      }
+    },
+    {
+      "path": "/tmp/maelstrom-single-return-sync-capture-oct24/collected/output-control/receipt.json",
+      "sha256": "1069504927d42d7222e3abe54e1a635922a0153990cc34b6ce8f9b24e4c4d03e",
+      "receipt": {
+        "TERM": true,
+        "KILL": false,
+        "returncode": -15,
+        "reaped": [],
+        "remainingGroup": false,
+        "reason": "output-guard",
+        "bytes": 131072,
+        "failedOutputRetained": true
+      }
+    }
+  ],
+  "frameCapture": false,
+  "limits": {
+    "cpu": 90,
+    "wall": 60,
+    "output": 131072,
+    "heapMiB": 512,
+    "arenaMiB": 512
+  }
+}

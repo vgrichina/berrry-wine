@@ -1,0 +1,15 @@
+{
+  "at": 1792860278.4801996,
+  "guestStarts": 0,
+  "actualGuestCommand": null,
+  "plannedArgv": "/tmp/maelstrom-qualified-head-original-capture-oct24/guest-args.json",
+  "reason": "literal No guest starts after12:28 conflicts with16:55; required clarification unanswered",
+  "terminal": "NOT STARTED",
+  "registers": null,
+  "haltReadback": null,
+  "yieldReasonFlag": null,
+  "entryCounts": null,
+  "cacheObservations": null,
+  "movCallExecuted": "UNKNOWN",
+  "originalCause": "UNKNOWN"
+}

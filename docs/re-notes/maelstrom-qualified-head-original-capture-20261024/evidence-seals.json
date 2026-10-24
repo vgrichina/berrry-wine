@@ -1,0 +1,207 @@
+[
+  {
+    "path": "materialized-source-controls.json",
+    "bytes": 86,
+    "sha256": "810faa8ec2316efc11e7208bebd9ba64c71231bce00de882bd3c4249dc48a59e"
+  },
+  {
+    "path": "cleanup-api.json",
+    "bytes": 471,
+    "sha256": "5995d7a667e51de9fc2b60924c4cce1a49e51a0e84a8a00bdb03d819233c51e1"
+  },
+  {
+    "path": "prepare.py",
+    "bytes": 7339,
+    "sha256": "4916a3515a39212f5f0a52571379145f33ae6065c395c41e89f3ed870000db45"
+  },
+  {
+    "path": "intended-originals.json",
+    "bytes": 14230,
+    "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
+  },
+  {
+    "path": "transfer-receipts.json",
+    "bytes": 39866,
+    "sha256": "291cdd5dc05c32748038c6ca599e7143f63fc0e4f7ee8b8546f5a209d73742d4"
+  },
+  {
+    "path": "api-history.jsonl",
+    "bytes": 90466,
+    "sha256": "a0a02d62a51e59d4e5e9b9c63f2c6c0f8314fd0443e22ebfd8ab21e98ce09029"
+  },
+  {
+    "path": "supervise.py",
+    "bytes": 4291,
+    "sha256": "c04cce4409561f223e24a70c95113ad1b33be6a6b56800cf977f7d51b2570897"
+  },
+  {
+    "path": "preflight-api.json",
+    "bytes": 983,
+    "sha256": "0fba675fd66eb93e0669401246fdacf8bacb850b861a92b6344154f16c827873"
+  },
+  {
+    "path": "guest-args.json",
+    "bytes": 1216,
+    "sha256": "f8fb43c348dd388ca26687010adf0f19d1a607b1eee7436fe45ecb783f4f8a2a"
+  },
+  {
+    "path": "sqlite-baseline.json",
+    "bytes": 956,
+    "sha256": "eb049dbe81210dd01dc781441166f7971c28296912a258b40af43f86b7437314"
+  },
+  {
+    "path": "guest-not-executed.json",
+    "bytes": 489,
+    "sha256": "28b03caff045d70c1821a8c5e1e4896ec5c14f7f99023c75a0504856d0d32349"
+  },
+  {
+    "path": "remote-rehash.json",
+    "bytes": 446,
+    "sha256": "3ff75e590cb08504c4b73bc15be0a950ce2caafebde1c382149ae6d0920d0ea0"
+  },
+  {
+    "path": "account.py",
+    "bytes": 1010,
+    "sha256": "cf70dfaa20bd1292be52a10a9c193bdbf543d4c3c7c60b90c849547d52c25e1f"
+  },
+  {
+    "path": "extras.py",
+    "bytes": 3794,
+    "sha256": "dc596974dd2976a8f5b2e96b6ec2267c65b2325de215136b1e59f45ce34f652b"
+  },
+  {
+    "path": "supervisor-controls-reused.json",
+    "bytes": 1063,
+    "sha256": "a11bcd0b0a0cd2516f7a8c0ad690a0a162003f042c0fc179de3c82d893e5e462"
+  },
+  {
+    "path": "resource-publication.json",
+    "bytes": 459,
+    "sha256": "fb4d675b852173f40073e35eb69fd52f052f9f69cb6008f47cf64c5959a7447c"
+  },
+  {
+    "path": "setup-complete.json",
+    "bytes": 70,
+    "sha256": "967bb2ef4b272a23185436c1992698ec222efc906081b37e245f0840e8bf150a"
+  },
+  {
+    "path": "remote_gate.py",
+    "bytes": 1126,
+    "sha256": "05b10fbd7c8717f87038af4b1347cef131504b47dec0e0509f2b7013c41db8b6"
+  },
+  {
+    "path": "resource-preguest.json",
+    "bytes": 459,
+    "sha256": "09e1be122bac182f6002af890a185fd9f016dd1616f4c957f999a12c448f318b"
+  },
+  {
+    "path": "transform-tree-receipt.json",
+    "bytes": 1060,
+    "sha256": "40cb4faef7b2199fe4a62c3d3922402e16bf8b7cd4878fd7977d95aeb4f37983"
+  },
+  {
+    "path": "manifest.json",
+    "bytes": 81831,
+    "sha256": "86111762b21d2c589925d13686bb2285bed23c89cce5243d1c27c407beb244fe"
+  },
+  {
+    "path": "admission.json",
+    "bytes": 1284,
+    "sha256": "5156e8dd613d92888b64167a697502f83e4e497613cdca55df116874694b053c"
+  },
+  {
+    "path": "resource-prepublication.json",
+    "bytes": 457,
+    "sha256": "78f4e15711fcf39c7e5e1a8485621d866d41cdaea4af813953eccc0b1ed25c49"
+  },
+  {
+    "path": "pacing.json",
+    "bytes": 418,
+    "sha256": "3faff8a331f0dbb90e640aea498e70dad914aeddcbe700440907f20e4cb5b4ec"
+  },
+  {
+    "path": "read-accounting-limit.json",
+    "bytes": 496,
+    "sha256": "540a12e8f909418fd0d97709748e0986c7c3266fde6e67625c0146c2c1635a02"
+  },
+  {
+    "path": "publish.py",
+    "bytes": 1388,
+    "sha256": "9bb1891a273451f1313d76004d8a9dfd42cd4d400ff81feab9cb24a009c70d45"
+  },
+  {
+    "path": "precheckout-parser.json",
+    "bytes": 285,
+    "sha256": "30975846db17859506d8e17f2fa0e0f40d4ea817068ce7e7378e9116b09c8e07"
+  },
+  {
+    "path": "remote-admission.json",
+    "bytes": 457,
+    "sha256": "84803b5e7de6ec53688762ee56f5b8c044859198481bd4155a75239fb600e63c"
+  },
+  {
+    "path": "resource-staged.json",
+    "bytes": 459,
+    "sha256": "17eccc74786644a1c7beaaa94a8a23e1eeac161cf732018212593d5637b0bb02"
+  },
+  {
+    "path": "collect.py",
+    "bytes": 1925,
+    "sha256": "ebe7ac03f074db81e8e78a2f4dcc327a1f54917ac2449b9290d090434cb22e26"
+  },
+  {
+    "path": "transport.py",
+    "bytes": 1544,
+    "sha256": "5522089f33eace2991c8c02f22105ce9120b19f14a3c3cdcb131f306974eb81d"
+  },
+  {
+    "path": "stage.py",
+    "bytes": 2011,
+    "sha256": "bc885bd890b2c092366581e356125019ceb610cf841fd95b13815c52458576bf"
+  },
+  {
+    "path": "validate-tree.cjs",
+    "bytes": 3129,
+    "sha256": "f7da414ba58437c5a0fdd3580df974cc4619abaeb6caf0e73c3a43a2543e72a8"
+  },
+  {
+    "path": "capture-accounting.json",
+    "bytes": 172,
+    "sha256": "9069ce6c15f10fa422acde1ad9ee1da89565f28c879151e9877f95cceb9c336a"
+  },
+  {
+    "path": "box-info-preguest.json",
+    "bytes": 1206,
+    "sha256": "cb8fc88cc82a6f41edf6d76968b4641f16039c85a6bbbaeb62d8bae37192ce7a"
+  },
+  {
+    "path": "trusted-remote.json",
+    "bytes": 298,
+    "sha256": "0e016023ae0782abfa126d8b296b630a52f7918c000977f3c37d08b473a09956"
+  },
+  {
+    "path": "collect-inventory-api.json",
+    "bytes": 492,
+    "sha256": "b2dac83767b0ba8fa30376b406825b3433a94cba623e8b7c146a9cd9cb102248"
+  },
+  {
+    "path": "stage-bookkeeping-correction.json",
+    "bytes": 257,
+    "sha256": "c5fb1b3a339b4a4335251334c62e767616f905fcaf06dfa14da6e2d2572b489e"
+  },
+  {
+    "path": "schedule-preserved.json",
+    "bytes": 439,
+    "sha256": "96baf3f5ed96c7378d27a4877be3910a8c1900b0cb9f72d63584a9fcb2568ef7"
+  },
+  {
+    "path": "collected/preflight.json",
+    "bytes": 565,
+    "sha256": "a07e896b3a584f7e0e093022115bb850f2cb95c791afb046bb56ef77ef392e01"
+  },
+  {
+    "path": "collected/tree-validation.json",
+    "bytes": 9517,
+    "sha256": "3e9a8dff7111aff1c03fc2f2878eac559faed19bff459c8d85833915fc2c415b"
+  }
+]

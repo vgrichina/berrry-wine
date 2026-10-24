@@ -1,0 +1,20 @@
+{
+  "at": 1792860020.9941576,
+  "charges": {
+    "localOwned": 1753088,
+    "sessionFull": 599562,
+    "launcherFull": 188416,
+    "sqlitePositive": 425984,
+    "remoteOwnedProjected": 19000000,
+    "transferOverlap": 1000000,
+    "futureSQLite": 4194304,
+    "externalFuture": 12000000,
+    "publicationFuture": 2000000,
+    "reserve": 8388608
+  },
+  "peak": 49549962,
+  "cap": 67108864,
+  "free": 3448426496,
+  "after": 3398876534,
+  "passAdmission": true
+}

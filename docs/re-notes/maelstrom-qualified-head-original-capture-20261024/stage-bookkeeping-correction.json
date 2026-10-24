@@ -1,0 +1,6 @@
+{
+  "firstReturncode": 1,
+  "diagnostic": "FileNotFoundError task-root admission.json; ledger is ops/admission.json",
+  "remoteTransfersBeforeError": 0,
+  "correction": "Use same passing owner ledger at ops/admission.json and pass key; unchanged controls"
+}

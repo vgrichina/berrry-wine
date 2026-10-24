@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_vapkpxfrrdkx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:43:01.972Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-24T16:43:01.934Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"path\": \"preflight.json\", \"bytes\": 565}, {\"path\": \"tree-validation.json\", \"bytes\": 9517}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

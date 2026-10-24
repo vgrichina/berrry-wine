@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jum5xbejrx1h",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:40:22.930Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 21,
+  "startedAt": "2026-10-24T16:40:22.865Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 247, \"bytes\": 17027463, \"passHash\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
