@@ -1,0 +1,734 @@
+{
+  "compiler": [
+    {
+      "path": "tools/watx.js",
+      "gitBlob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "gitBlob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "gitBlob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "gitBlob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "gitBlob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    }
+  ],
+  "assembledBytes": 104827,
+  "assembledSHA256": "997006b0cb75e170a9d05a1501fe2c4b45e4076eb76fbb89d89425299b5ff225",
+  "excerpts": [
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_fill_device_desc7",
+      "startByte": 515423,
+      "endByteExclusive": 518743,
+      "startLine": 8252,
+      "endLine": 8292,
+      "bytes": 3320,
+      "sha256": "94bf6df8291757b0945259c9e51d4e9d2daf10dfa060969707ab9a9c175b611d"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_div255",
+      "startByte": 311742,
+      "endByteExclusive": 311937,
+      "startLine": 4974,
+      "endLine": 4978,
+      "bytes": 195,
+      "sha256": "d70d2f89fab2ef14b96bea188a5191fa8f13df44b291ec6703d851e4d554e9e4"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_modulate_rgb",
+      "startByte": 311941,
+      "endByteExclusive": 313031,
+      "startLine": 4980,
+      "endLine": 4996,
+      "bytes": 1090,
+      "sha256": "66015910598e2c03b331512af8481fb1696d225d137f21056f55d9e52107c71e"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_texture_stage_combine",
+      "startByte": 314909,
+      "endByteExclusive": 317609,
+      "startLine": 5029,
+      "endLine": 5068,
+      "bytes": 2700,
+      "sha256": "a29a0b9f5ad25741a25be5e9e947b8ad73159c0529315d32bc22f256246b7659"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_bound_texture_entry",
+      "startByte": 214444,
+      "endByteExclusive": 216179,
+      "startLine": 3412,
+      "endLine": 3436,
+      "bytes": 1735,
+      "sha256": "b2e783096898b6337cab52fea6223b3a79e578388d22f82d0d5f36fc93cf89ec"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_set_tss",
+      "startByte": 227863,
+      "endByteExclusive": 228416,
+      "startLine": 3626,
+      "endLine": 3632,
+      "bytes": 553,
+      "sha256": "063f4ee390125ec4873fd3cec2ff9f01067a7f66d6cc58081d667c5f63371cf8"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_tss_load",
+      "startByte": 222857,
+      "endByteExclusive": 223163,
+      "startLine": 3547,
+      "endLine": 3551,
+      "bytes": 306,
+      "sha256": "f0a8991332698f87e76e922ca9c1c34e93c77dc41796fdefc3e5356167e30b32"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_draw_tl_triangle_maybe_textured",
+      "startByte": 458556,
+      "endByteExclusive": 459202,
+      "startLine": 7335,
+      "endLine": 7348,
+      "bytes": 646,
+      "sha256": "6153059a30e7a5cda0dbda90f840a5c00ba27a65d74c6f9024bbe326603ca2a1"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_draw_tl_triangle_dp_raw",
+      "startByte": 468118,
+      "endByteExclusive": 469246,
+      "startLine": 7498,
+      "endLine": 7518,
+      "bytes": 1128,
+      "sha256": "7b2ca21888eda0ddb59d40092c752e6c651d763d86e4fc67f21af754c91016b2"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_draw_tl_triangle_textured",
+      "startByte": 447343,
+      "endByteExclusive": 456515,
+      "startLine": 7148,
+      "endLine": 7295,
+      "bytes": 9172,
+      "sha256": "b699d833f41862c63b16e3df28e76d4af47e87d823e2aa985c42e0151880359c"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_tss_addr",
+      "startByte": 219057,
+      "endByteExclusive": 220785,
+      "startLine": 3486,
+      "endLine": 3510,
+      "bytes": 1728,
+      "sha256": "23bf0601cbc5ec28acf5050ad93bf149390781a259eaa7799a1ec36f62f83b1f"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $rasterize_triangle_textured",
+      "startByte": 388389,
+      "endByteExclusive": 400157,
+      "startLine": 6201,
+      "endLine": 6362,
+      "bytes": 11768,
+      "sha256": "19a5b9dd7f89af43e3675765b6cb8d4ea8a88e52ddb210f8fdbb53c7ac6e4a44"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $viewport_draw_textured_span",
+      "startByte": 335267,
+      "endByteExclusive": 366111,
+      "startLine": 5349,
+      "endLine": 5830,
+      "bytes": 30844,
+      "sha256": "405bf13d66de01fdd8b13d0f1e16e704c3c293a85f8789afe868f8e628b99923"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_color_lerp",
+      "startByte": 310229,
+      "endByteExclusive": 311586,
+      "startLine": 4944,
+      "endLine": 4970,
+      "bytes": 1357,
+      "sha256": "d3e0604be47c737b52bc60ffe10eea3d74bec217dbe5b888a04914f7c510550d"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_texture_sample_prepared",
+      "startByte": 301755,
+      "endByteExclusive": 302394,
+      "startLine": 4812,
+      "endLine": 4821,
+      "bytes": 639,
+      "sha256": "c7488b21cb8a87b0dffd73781ebb9ae48218bda1f9170c156729f58649e5a418"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_point_index",
+      "startByte": 331790,
+      "endByteExclusive": 332730,
+      "startLine": 5293,
+      "endLine": 5308,
+      "bytes": 940,
+      "sha256": "8e8fb71532db84c7bec0747d214b088e22f1ef3efc4da23c8d4db559f09ed56c"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_decode_surface_pixel_fmt",
+      "startByte": 193683,
+      "endByteExclusive": 196226,
+      "startLine": 3078,
+      "endLine": 3112,
+      "bytes": 2543,
+      "sha256": "c1f3c63b20a0539439093dd71f38cffe55580b99cbd8b7f08cdb3329a124d52d"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_alpha_pass",
+      "startByte": 330220,
+      "endByteExclusive": 331275,
+      "startLine": 5271,
+      "endLine": 5285,
+      "bytes": 1055,
+      "sha256": "ecc2b251f86b84c9ffb20661479d91e598106a658c530a3656ad0ec1ed30bae8"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_clip_row_out",
+      "startByte": 9691,
+      "endByteExclusive": 9955,
+      "startLine": 155,
+      "endLine": 158,
+      "bytes": 264,
+      "sha256": "521f216458137405eecf74c4c7ade05596d86d3e59d9cb3a83f98d9c264d4c65"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_texture_sample_keyed",
+      "startByte": 303464,
+      "endByteExclusive": 307801,
+      "startLine": 4841,
+      "endLine": 4896,
+      "bytes": 4337,
+      "sha256": "1a789658cbe18dfb7c8147ea4726b26445a22aa5391bd173576d32f41301fa35"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_decode_surface_pixel",
+      "startByte": 196230,
+      "endByteExclusive": 196458,
+      "startLine": 3114,
+      "endLine": 3117,
+      "bytes": 228,
+      "sha256": "e0a2af4d70d4730208b5733d865aa0602535e961592072b0da357241390a08be"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_address_texel",
+      "startByte": 295975,
+      "endByteExclusive": 297646,
+      "startLine": 4714,
+      "endLine": 4742,
+      "bytes": 1671,
+      "sha256": "d57b2472e442b698e1d41134d11e35563f0f6c7e5f90af591365d1b45515a3ab"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_texture_fetch_keyed",
+      "startByte": 302552,
+      "endByteExclusive": 303460,
+      "startLine": 4825,
+      "endLine": 4839,
+      "bytes": 908,
+      "sha256": "599efbbab79aa347138453af6c6c7c25c0a7cec9ad9af36b6b74bee6ef5cc88e"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_texture_fetch_prepared",
+      "startByte": 297650,
+      "endByteExclusive": 301567,
+      "startLine": 4744,
+      "endLine": 4807,
+      "bytes": 3917,
+      "sha256": "e2f8b70bd2d01ea779447e9cb26516aeff3f5d3768d1466dd0f6f73e47bd0b15"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_stage_operation",
+      "startByte": 314321,
+      "endByteExclusive": 314830,
+      "startLine": 5020,
+      "endLine": 5026,
+      "bytes": 509,
+      "sha256": "fecb912b6e51ebff8414fb1fffe05fdf524800dc98c156d44654fde1804986f8"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func $d3dim_tss_init",
+      "startByte": 313182,
+      "endByteExclusive": 314017,
+      "startLine": 5000,
+      "endLine": 5014,
+      "bytes": 835,
+      "sha256": "64799e549521d93ef038db7e5de190ddbc2d1f5560de09283fd6e3503eabb92f"
+    },
+    {
+      "file": "src/09a8g-gl-raster.wat",
+      "marker": "(func $gl_sw_sample_prepared",
+      "startByte": 31112,
+      "endByteExclusive": 32201,
+      "startLine": 513,
+      "endLine": 528,
+      "bytes": 1089,
+      "sha256": "67b8361449d56ba2547501e59ceef531f07a8f5d8ba3e443e371f603f25422b5"
+    },
+    {
+      "file": "src/09a8cd-gl-color-mask.wat",
+      "marker": "(func $gl_color_merge",
+      "startByte": 1343,
+      "endByteExclusive": 1568,
+      "startLine": 25,
+      "endLine": 27,
+      "bytes": 225,
+      "sha256": "b8248a9249f580c3440ed79d11ffdd05ef52c24c5aa2a89b74328ca8b8932ea7"
+    },
+    {
+      "file": "src/09a8-handlers-directx.wat",
+      "marker": "(func $d3ddev_init_state",
+      "startByte": 852816,
+      "endByteExclusive": 854184,
+      "startLine": 13527,
+      "endLine": 13546,
+      "bytes": 1368,
+      "sha256": "a9e622901c86ec0956eca8bae72b1482ae89344856f54bf221951dcc4776666f"
+    },
+    {
+      "file": "src/09a8-handlers-directx.wat",
+      "marker": "(func $fill_primcaps",
+      "startByte": 221244,
+      "endByteExclusive": 223494,
+      "startLine": 3590,
+      "endLine": 3616,
+      "bytes": 2250,
+      "sha256": "7d12fb6ea442ca2a274cd343cfe30e78fdfa918de0800e1d2ee6511e0b06e61a"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(func (export \"d3dim_gpu_describe\")",
+      "startByte": 39794,
+      "endByteExclusive": 47675,
+      "startLine": 648,
+      "endLine": 750,
+      "bytes": 7881,
+      "sha256": "fc8487c6971466617b5952af9608bd07e4bd5728744863b5accc5ca3d388293a"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3ddev_state",
+      "startByte": 855020,
+      "endByteExclusive": 855765,
+      "startLine": 13558,
+      "endLine": 13570,
+      "bytes": 745,
+      "sha256": "90e2da02241cb06ee2422e6aa874a51249868b5d3df13d7d82e0f01b4188cb5c"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_texture_entry_from_slot",
+      "startByte": 212726,
+      "endByteExclusive": 214440,
+      "startLine": 3382,
+      "endLine": 3410,
+      "bytes": 1714,
+      "sha256": "635201bd9cdead5aa24f946bbd9a8bdd5553c5ed489a800ab740ccc57737445d"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_draw_tl_triangle",
+      "startByte": 445323,
+      "endByteExclusive": 447339,
+      "startLine": 7114,
+      "endLine": 7146,
+      "bytes": 2016,
+      "sha256": "18cadd425c93288001f67f36c0e32298f6673acf3bba6ae93de3e5465bc71aa0"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_cull_tri",
+      "startByte": 377162,
+      "endByteExclusive": 378736,
+      "startLine": 6004,
+      "endLine": 6027,
+      "bytes": 1574,
+      "sha256": "aa15a1403794e62495162f5fc203741936e58cd1dc21e6cce57861fdfe2f95bc"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_coord_i",
+      "startByte": 292049,
+      "endByteExclusive": 292264,
+      "startLine": 4658,
+      "endLine": 4662,
+      "bytes": 215,
+      "sha256": "955bf3d90dac39c64892bcc4bbe274bd407a0b3201c07123cfc4da0deff80692"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_wrap_flags",
+      "startByte": 456947,
+      "endByteExclusive": 457406,
+      "startLine": 7303,
+      "endLine": 7310,
+      "bytes": 459,
+      "sha256": "35a546d6a28dbd7eb3c511606097a2460ca2927a0aa9de9afebc2bd7d26c32ff"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_wrap_coord",
+      "startByte": 457487,
+      "endByteExclusive": 457849,
+      "startLine": 7313,
+      "endLine": 7318,
+      "bytes": 362,
+      "sha256": "7b7d198b382701dedc45db1fea173569e1bfed6787200f79aa37299838608621"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_vertex_fog_on",
+      "startByte": 457929,
+      "endByteExclusive": 458315,
+      "startLine": 7321,
+      "endLine": 7327,
+      "bytes": 386,
+      "sha256": "3e7a77b3d32f41f866d2c35a0bcf8d51993724be2746fa03f998df8bb0d5bc9a"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_ensure_zbuffer",
+      "startByte": 265714,
+      "endByteExclusive": 267239,
+      "startLine": 4232,
+      "endLine": 4255,
+      "bytes": 1525,
+      "sha256": "a6e7a4b50fcbcef3c79f17c0087fa0d2bfcd9085f10f7bedc5130a46af263594"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_fog_factor",
+      "startByte": 458384,
+      "endByteExclusive": 458552,
+      "startLine": 7330,
+      "endLine": 7333,
+      "bytes": 168,
+      "sha256": "4476855cd02b522fd53d605095200ef3d18bea5c2fcfd6d3a0020fff1af25554"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_tex_block",
+      "startByte": 221383,
+      "endByteExclusive": 222237,
+      "startLine": 3520,
+      "endLine": 3534,
+      "bytes": 854,
+      "sha256": "cc388d2b8841812c65056c0c481cb07cd3088158bcfe8f2cf7aae7340fb29858"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $dx_surf_fmt_get",
+      "startByte": 46222,
+      "endByteExclusive": 46588,
+      "startLine": 777,
+      "endLine": 782,
+      "bytes": 366,
+      "sha256": "be88d3ef2da610abf3ac7de2cbb7391f7ec504459858ea0278183fcd40679356"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $dx_surf_pal_get",
+      "startByte": 79624,
+      "endByteExclusive": 80189,
+      "startLine": 1356,
+      "endLine": 1367,
+      "bytes": 565,
+      "sha256": "8ec55b0845f479961263d4652f6cbe8694ebf70d4288be0c224ffe424b8602cf"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $dx_surf_pal_alpha",
+      "startByte": 1057341,
+      "endByteExclusive": 1057679,
+      "startLine": 16329,
+      "endLine": 16334,
+      "bytes": 338,
+      "sha256": "0d4faf38acbc74c148e4cdbbae808797bc37010b21e18f09e8c889162fbe2249"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_exec_extent_draw",
+      "startByte": 97259,
+      "endByteExclusive": 97957,
+      "startLine": 1577,
+      "endLine": 1587,
+      "bytes": 698,
+      "sha256": "cc04f7f5eb558ac4f72a0a95f0c2ca5d1757b3e51cf402b63e98a00759d0f0da"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_filter_has_key_index",
+      "startByte": 334835,
+      "endByteExclusive": 335263,
+      "startLine": 5340,
+      "endLine": 5347,
+      "bytes": 428,
+      "sha256": "62d6a54dad031296ea94a9fac0b6d0fbb48d7b517fdf9ba69f1af3dddb4870d0"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_filter_key_mask",
+      "startByte": 332939,
+      "endByteExclusive": 334831,
+      "startLine": 5313,
+      "endLine": 5338,
+      "bytes": 1892,
+      "sha256": "f72e5b4652a291cf75e0efdece19a88a0df72e2257df92a5ac7d8ac1bddb67ec"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $rast_apply_t1",
+      "startByte": 129119,
+      "endByteExclusive": 130893,
+      "startLine": 2152,
+      "endLine": 2177,
+      "bytes": 1774,
+      "sha256": "9d22dbb25e9bf665851ca1d36614286485d9aca95c8dd4b3ef53f0a87ba6d5f2"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $gl_stencil_test",
+      "startByte": 3389,
+      "endByteExclusive": 4091,
+      "startLine": 64,
+      "endLine": 74,
+      "bytes": 702,
+      "sha256": "96edde712615135aa9dd5a2877f559aa32bae195b83e370984f1afb94b5369b9"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_depth_compare_u",
+      "startByte": 324012,
+      "endByteExclusive": 325260,
+      "startLine": 5170,
+      "endLine": 5189,
+      "bytes": 1248,
+      "sha256": "f380758bfac9471f94c63aa9c08be63dddf51911484175d1bd7a3d1b05435c7d"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_depth_compare_f32",
+      "startByte": 325264,
+      "endByteExclusive": 326288,
+      "startLine": 5191,
+      "endLine": 5207,
+      "bytes": 1024,
+      "sha256": "5ee6c37bfed766e6cc84a85fcd95b63f57fc288a7ca70987f7719fd10392b853"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $gl_stencil_apply",
+      "startByte": 2171,
+      "endByteExclusive": 3307,
+      "startLine": 46,
+      "endLine": 61,
+      "bytes": 1136,
+      "sha256": "f4c7b3c088612ddd06a8c3e6470399a06e03cf2994076f91e880fdc2e436856d"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $gl_stencil_address",
+      "startByte": 1887,
+      "endByteExclusive": 2167,
+      "startLine": 41,
+      "endLine": 44,
+      "bytes": 280,
+      "sha256": "e0e7a33152f052a53dffc6eadc8a371ce19b8087a77ac81e737bf7994f248f7d"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $rast_apply_fog",
+      "startByte": 125643,
+      "endByteExclusive": 126241,
+      "startLine": 2091,
+      "endLine": 2100,
+      "bytes": 598,
+      "sha256": "7528b61ed81c6be264278c45d84b42d540967e816e871975bdf3db416dcab8a0"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_blend_rgb",
+      "startByte": 320505,
+      "endByteExclusive": 323794,
+      "startLine": 5108,
+      "endLine": 5165,
+      "bytes": 3289,
+      "sha256": "22a233ce5d52fb3a0bddf358bcc14077245fb267a708c2eb52d66b5935937704"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_pack_rgb565",
+      "startByte": 326568,
+      "endByteExclusive": 329856,
+      "startLine": 5213,
+      "endLine": 5264,
+      "bytes": 3288,
+      "sha256": "0c78d4297d1748c2bc443b8c79359e268a66c8548c28b126ccd909912209ad26"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_encode_surface_pixel",
+      "startByte": 196514,
+      "endByteExclusive": 198444,
+      "startLine": 3120,
+      "endLine": 3153,
+      "bytes": 1930,
+      "sha256": "29933b68dd36b92d9c00f78fedd91a56252c4b12d28d9056046062dd159bd71f"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_expand5",
+      "startByte": 193241,
+      "endByteExclusive": 193395,
+      "startLine": 3068,
+      "endLine": 3070,
+      "bytes": 154,
+      "sha256": "54c2cac8026e5cfa16b486d0c846b14d094ce5e27c13df74f6f9171795004176"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_expand6",
+      "startByte": 193399,
+      "endByteExclusive": 193553,
+      "startLine": 3072,
+      "endLine": 3074,
+      "bytes": 154,
+      "sha256": "12d5e12f49d86ae5e27aab3d30d83ab4356f448b4e6f21b113c35546629872b0"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_bilerp",
+      "startByte": 308447,
+      "endByteExclusive": 309922,
+      "startLine": 4908,
+      "endLine": 4938,
+      "bytes": 1475,
+      "sha256": "b4a73e6eb7d7552b2d391f0fdca59abc31a1f79bff87811b93b1f8f3f3c38442"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $gl_sw_border_sample",
+      "startByte": 26582,
+      "endByteExclusive": 30615,
+      "startLine": 448,
+      "endLine": 503,
+      "bytes": 4033,
+      "sha256": "e4fdcf56d70aa6cd0c2495d5068e2d8f149cd0b6db66c2c1e5d59cc493386762"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $gl_sw_address_enum",
+      "startByte": 30769,
+      "endByteExclusive": 31108,
+      "startLine": 507,
+      "endLine": 511,
+      "bytes": 339,
+      "sha256": "090495ab9bad6812bb0db1426bfc98f89c3e4b458d668d6bc3b6f2eb8a0ac920"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3ddev_rt_entry",
+      "startByte": 262950,
+      "endByteExclusive": 263347,
+      "startLine": 4182,
+      "endLine": 4187,
+      "bytes": 397,
+      "sha256": "e9ae41f3bedb1a64864d7c93ba5abc0c9784d40cd72effee6389f4194c5806ed"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_gpu_buffer",
+      "startByte": 34460,
+      "endByteExclusive": 34667,
+      "startLine": 564,
+      "endLine": 567,
+      "bytes": 207,
+      "sha256": "4c9c6d6a41003cd7fd32c4fe1cae67934cd1970d87d21eb356b78167c1447306"
+    },
+    {
+      "file": "import-signature-only",
+      "marker": "(func $d3dim_clip_compute",
+      "startByte": 7030,
+      "endByteExclusive": 9346,
+      "startLine": 114,
+      "endLine": 146,
+      "bytes": 2316,
+      "sha256": "14d6e54c8371397f688e2269ddf217368d1a0dc7a3ff68f0ca9e47b8833f121a"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(global $D3DIM_OFF_TEX_STAGE",
+      "startByte": 3656,
+      "endByteExclusive": 3706,
+      "startLine": 58,
+      "endLine": 58,
+      "bytes": 50,
+      "sha256": "2e50ed930eb789a4a7c0201b6263a8d680e81b80e71b54d9641d1c0828e046bd"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(global $d3dim_dbg_tex_last",
+      "startByte": 3238,
+      "endByteExclusive": 3291,
+      "startLine": 51,
+      "endLine": 51,
+      "bytes": 53,
+      "sha256": "314931144b9b9a7d065113a3bcbbeae466fc09fb13494fea99aab418653d994c"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(global $D3DIM_OFF_TSS_STATE",
+      "startByte": 3762,
+      "endByteExclusive": 3812,
+      "startLine": 60,
+      "endLine": 60,
+      "bytes": 50,
+      "sha256": "e2489a7577327784a94788d742569ed818719ed0be69490181ddd41c71995c1e"
+    },
+    {
+      "file": "src/09ab-handlers-d3dim-core.wat",
+      "marker": "(global $D3DIM_OFF_TSS_EXT",
+      "startByte": 4372,
+      "endByteExclusive": 4420,
+      "startLine": 71,
+      "endLine": 71,
+      "bytes": 48,
+      "sha256": "4dc96b9746423112499fe920235c0d5e2225726d2fa26ae21420149a18a34af0"
+    }
+  ],
+  "qualification": "manifest capture followed initial test runs; compiler exact accepted standing inputs, no acquisition"
+}

@@ -1,0 +1,7 @@
+{
+  "test/test-legacy-texture-operation-caps.js": "c7d931252dd37778d70b17c82c1dd059cc2a69ccaba884624005e8c37d7565ae",
+  "docs/re-notes/legacy-texture-caps-independent-accept-20261023/argument-reproducer.js": "0ec40eb4098b37a01656406c0e76059a5677ad4583c374e99404b0b893a2352a",
+  "src/09ab-handlers-d3dim-core.wat": "15743b3d9f6d67495c199323662e44fa28e9de3d069839d9846ea110f0364e7c",
+  "lib/d3dim-gpu.js": "f0bc4d36f5d80554bb236ff54bbec76024abc5b7e4ffd1797202d586c26db13b",
+  "test/test-legacy-texture-disable.js": "eda643d110c2c1975379a9909ebe62f71b1eb7a2a29162a4afb4851488f43502"
+}

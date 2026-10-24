@@ -3413,6 +3413,10 @@
     (local $state i32) (local $slot i32) (local $entry i32) (local $key i32)
     (local.set $state (call $d3ddev_state (local.get $this)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    ;; COLOROP=DISABLE terminates the cascade, including alpha processing.
+    ;; Do not resolve/sample a bound texture or apply its color key.
+    (if (i32.eq (call $d3dim_tss_load (local.get $state) (i32.const 0) (i32.const 1)) (i32.const 1))
+      (then (return (i32.const 0))))
     (local.set $slot (call $gl32 (i32.add (local.get $state) (global.get $D3DIM_OFF_TEX_STAGE))))
     (local.set $entry (call $d3dim_texture_entry_from_slot (local.get $slot)))
     ;; kind=16 TexBind: slot, resolved entry, packed w|h<<16, packed bpp|pitch<<16.
@@ -5026,6 +5030,10 @@
     (param $tex i32) (param $diffuse i32) (param $colorop i32) (param $alphaop i32)
     (result i32)
     (local $mod i32) (local $rgb i32) (local $alpha i32) (local $arg1 i32) (local $arg2 i32)
+    ;; Stage-zero CURRENT is incoming diffuse RGBA. Disable precedes operand
+    ;; selection and disables alpha too, regardless of ALPHAOP/argument bits.
+    (if (i32.eq (i32.and (local.get $colorop) (i32.const 255)) (i32.const 1))
+      (then (return (local.get $diffuse))))
     (local.set $arg1 (i32.or
       (i32.and (if (result i32) (i32.and (local.get $colorop) (i32.const 256))
         (then (local.get $diffuse)) (else (local.get $tex))) (i32.const 0x00ffffff))
@@ -8274,8 +8282,8 @@
     (f32.store (i32.add (local.get $wa) (i32.const 168)) (f32.const 0.0))
     (i32.store (i32.add (local.get $wa) (i32.const 176)) (i32.const 8))       ;; dwFVFCaps: 8 texcoord sets
     ;; SELECTARG1 | SELECTARG2 | MODULATE: the software stage combiner and
-    ;; legacy GPU lowering implement these operations. Other values modulate,
-    ;; including DISABLE: a bound texture stays active in both outer paths.
+    ;; legacy GPU lowering implement these operations. DISABLE terminates
+    ;; stage zero; other unsupported values retain the legacy fallback.
     ;; Do not advertise operations that would silently produce another result.
     (i32.store (i32.add (local.get $wa) (i32.const 180)) (i32.const 0x0000E));; dwTextureOpCaps
     (i32.store16 (i32.add (local.get $wa) (i32.const 184)) (i32.const 1))    ;; wMaxTextureBlendStages

@@ -1,0 +1,1 @@
+PASS D3DIM batching: owned vertices, transparency order, state/fallback/release/clear barriers, bound and failure

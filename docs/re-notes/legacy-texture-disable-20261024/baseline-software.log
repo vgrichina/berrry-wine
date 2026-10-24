@@ -1,0 +1,24 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: d3dim_draw_tl_triangle_maybe_textured actual software pixel 1/2: got a0485038, want 8060a0e0
+    at Object.softwareOuter (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-operation-caps.js:175:38)
+    at Object.<anonymous> (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-operation-caps.js:320:50)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object.<anonymous> (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-disable.js:77:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 2689093688,
+  expected: 2153816288,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

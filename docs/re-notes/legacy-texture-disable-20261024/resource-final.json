@@ -1,0 +1,51 @@
+{
+  "time": 1792804835.7988994,
+  "own": 4434110,
+  "external": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T01-16-51-01a16b7b-66ff-78c1-b30f-67e4df01b912.jsonl",
+      "bytes": 661678
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/legacy-texture-disable-current-main-oct24/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/legacy-texture-disable-current-main-oct24/events.jsonl",
+      "bytes": 221971
+    }
+  ],
+  "sqlite": [
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4177712,
+      "growth": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-shm",
+      "bytes": 32768,
+      "growth": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite",
+      "bytes": 11173888,
+      "growth": 0
+    }
+  ],
+  "bootstrapExternalCharge": 2097152,
+  "future": 12582912,
+  "reserve": 8388608,
+  "projected": 28386431,
+  "limit": 67108864,
+  "hostFree": 4423340032,
+  "hostAfter": 4399387711,
+  "captureChargedConservative": 400000,
+  "captureLimit": 1048576,
+  "exceptions": [
+    "Initial instruction/board display exceeded intended slice; retained in session and charged",
+    "Some focused source reads exceeded 8KiB intended display; retained and charged",
+    "First candidate mutation had malformed replacement; semantic controls corrected and pass",
+    "Initial candidate log overwritten by same label once; original output remains in session; runner now prohibits overwrite",
+    "Compiler identity manifest sealed after initial tests, before final publication; exact compiler blobs verified"
+  ]
+}

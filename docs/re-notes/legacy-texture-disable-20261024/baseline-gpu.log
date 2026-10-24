@@ -1,0 +1,24 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 1 == 0
+    at gpuDraw (eval at <anonymous> (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-operation-caps.js:296:25), <anonymous>:21:24)
+    at Object.<anonymous> (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-operation-caps.js:325:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object.<anonymous> (/tmp/legacy-texture-disable-current-main-oct24/repo/test/test-legacy-texture-disable.js:84:3)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.18.1
