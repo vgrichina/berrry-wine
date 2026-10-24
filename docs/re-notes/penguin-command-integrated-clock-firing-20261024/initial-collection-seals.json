@@ -1,0 +1,38 @@
+[
+  {
+    "path": "control/b35000.png",
+    "zbytes": 800089,
+    "bytes": 844642,
+    "sha256": "e7a67dc35da30536d19e25d05dd5f94a91f0434835cad9be4ddc42a52d0d3647"
+  },
+  {
+    "path": "control/terminal.json",
+    "zbytes": 230,
+    "bytes": 313,
+    "sha256": "e4a5c7bcd4dc42a19ceb9e1a2d2a402cc87c96c9f243b82a7af52fc4cd31d0d5"
+  },
+  {
+    "path": "control/output.log",
+    "zbytes": 2729,
+    "bytes": 10960,
+    "sha256": "32eb9296ace990ec917359ef170d12eb5f7fd707237880130797ce5b490884c2"
+  },
+  {
+    "path": "actual-host-instantiation.json",
+    "zbytes": 204,
+    "bytes": 261,
+    "sha256": "b66b10cfe641b55615650a7597a467198a1c28bc41f1e281913772b630cf313b"
+  },
+  {
+    "path": "preflight.json",
+    "zbytes": 3291,
+    "bytes": 69123,
+    "sha256": "28b1248ebaf3544da7aab283a80e45eed414d7dff127b2a629eff1ca406062c6"
+  },
+  {
+    "path": "watchdog-negative-control.json",
+    "zbytes": 78,
+    "bytes": 97,
+    "sha256": "0fa24c4d1ed483019fc5a9be6cb14d49a4c75ed72b59eb6cb46e0ef279a77460"
+  }
+]

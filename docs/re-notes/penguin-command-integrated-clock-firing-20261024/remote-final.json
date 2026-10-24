@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_dnf5a8f1ixwy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T04:53:58.983Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T04:53:58.926Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ownedBytes\": 26478368, \"maxFile\": 1879746, \"free\": 48757207040, \"exactRunnerPids\": [], \"controlFiles\": [{\"path\": \"control/b38000.png\", \"bytes\": 813155, \"sha256\": \"ff827fff6df0810e6cad947a1e1f5a1f9492a0ac9ca72e0f48e8bf246c3e0acf\"}, {\"path\": \"control/output.log\", \"bytes\": 10960, \"sha256\": \"32eb9296ace990ec917359ef170d12eb5f7fd707237880130797ce5b490884c2\"}, {\"path\": \"control/b35999.png\", \"bytes\": 844642, \"sha256\": \"e7a67dc35da30536d19e25d05dd5f94a91f0434835cad9be4ddc42a52d0d3647\"}, {\"path\": \"control/b40000.png\", \"bytes\": 806077, \"sha256\": \"95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972\"}, {\"path\": \"control/b36100.png\", \"bytes\": 813166, \"sha256\": \"a3ff631eab777df2a1a9674b44eaba3f2e263a3a1261f1404eed4740ad4d7307\"}, {\"path\": \"control/b36001.png\", \"bytes\": 844642, \"sha256\": \"e7a67dc35da30536d19e25d05dd5f94a91f0434835cad9be4ddc42a52d0d3647\"}, {\"path\": \"control/b36020.png\", \"bytes\": 844642, \"sha256\": \"e7a67dc35da30536d19e25d05dd5f94a91f0434835cad9be4ddc42a52d0d3647\"}, {\"path\": \"control/exit.png\", \"bytes\": 819180, \"sha256\": \"5886c2cd943dec67666a617d2da597cb8cc141fc10684228e8d61596e2b9964b\"}, {\"path\": \"control/terminal.json\", \"bytes\": 313, \"sha256\": \"e4a5c7bcd4dc42a19ceb9e1a2d2a402cc87c96c9f243b82a7af52fc4cd31d0d5\"}, {\"path\": \"control/b36201.png\", \"bytes\": 813166, \"sha256\": \"a3ff631eab777df2a1a9674b44eaba3f2e263a3a1261f1404eed4740ad4d7307\"}, {\"path\": \"control/b42000.png\", \"bytes\": 819180, \"sha256\": \"5886c2cd943dec67666a617d2da597cb8cc141fc10684228e8d61596e2b9964b\"}, {\"path\": \"control/b35000.png\", \"bytes\": 844642, \"sha256\": \"e7a67dc35da30536d19e25d05dd5f94a91f0434835cad9be4ddc42a52d0d3647\"}, {\"path\": \"control/b36500.png\", \"bytes\": 813166, \"sha256\": \"a3ff631eab777df2a1a9674b44eaba3f2e263a3a1261f1404eed4740ad4d7307\"}, {\"path\": \"control/b37000.png\", \"bytes\": 813166, \"sha256\": \"a3ff631eab777df2a1a9674b44eaba3f2e263a3a1261f1404eed4740ad4d7307\"}, {\"path\": \"control/command.json\", \"bytes\": 2384, \"sha256\": \"480f5f45326db2a54310dd9713d33da9cddaf6b28847ee70faade5d451c804d5\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

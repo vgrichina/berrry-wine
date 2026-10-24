@@ -1,0 +1,22 @@
+[
+  {
+    "path": "test/run.js",
+    "bytes": 687068,
+    "sha256": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e"
+  },
+  {
+    "path": "test/input-consumption-trace.js",
+    "bytes": 2508,
+    "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be"
+  },
+  {
+    "path": "lib/host-imports.js",
+    "bytes": 197066,
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60"
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+  }
+]

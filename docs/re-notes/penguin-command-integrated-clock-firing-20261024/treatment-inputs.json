@@ -1,0 +1,19 @@
+[
+  "33000:mousemove:420:360",
+  "34000:mousedown:420:360",
+  "34500:mouseup:420:360",
+  "34800:mousemove:260:220",
+  "35000:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b35000.png",
+  "35999:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b35999.png",
+  "36000:keydown:65",
+  "36001:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b36001.png",
+  "36020:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b36020.png",
+  "36100:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b36100.png",
+  "36200:keyup:65",
+  "36201:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b36201.png",
+  "36500:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b36500.png",
+  "37000:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b37000.png",
+  "38000:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b38000.png",
+  "40000:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b40000.png",
+  "42000:png:/tmp/penguin-integrated-clock-firing-oct24/treatment/b42000.png"
+]

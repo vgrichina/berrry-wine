@@ -1,0 +1,26 @@
+{
+  "verdict": "blocked-before-firing",
+  "guestRuns": 1,
+  "treatmentLaunched": false,
+  "firstControlFrame": "control/b35000.png",
+  "firstFrameObserved": "authentic menu",
+  "laterFullPlayArea": "control/b38000.png",
+  "causality": "unknown",
+  "source": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "historicalModuleSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "viewport": [
+    840,
+    660
+  ],
+  "noGuestExitClaim": true,
+  "validatedCollectedFiles": 10,
+  "recipeSyntax": "all Python recipes compile",
+  "nativeInstantiation": true,
+  "codecFonts": true,
+  "inputDiagnosticRegression": true,
+  "watchdogNegativeControl": true,
+  "box": "bx_fkg5uw8h",
+  "boxState": "RUNNING/API idle",
+  "expiry": "2026-10-24T05:24:53.790Z",
+  "shutdownOwner": "coordinator05:15UTC"
+}

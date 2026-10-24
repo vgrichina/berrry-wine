@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_v8syjo7e4i6z",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T04:49:33.781Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T04:49:33.729Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "PASS production startup batch14/raw1400, release/stale returns, automatic release, nonstartup/rebased/paused batch, real scaled/mapped clocks, host import, disabled equivalence, cap/no probes\nPASS rejecting mutation raw-state-label\nPASS rejecting mutation remap-history\nPASS rejecting mutation trace-probes-clock\nPASS rejecting mutation detached-host-reader\nPASS rejecting mutation drop-last-tick\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

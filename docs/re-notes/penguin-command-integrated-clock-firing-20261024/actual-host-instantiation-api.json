@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_io9xr8qwvntt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T04:49:33.633Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-24T04:49:33.457Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

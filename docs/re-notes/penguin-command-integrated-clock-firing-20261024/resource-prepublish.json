@@ -1,0 +1,21 @@
+{
+  "charges": {
+    "localOwned": 16954654,
+    "remoteOwned": 26478368,
+    "session": 5413510,
+    "externalLauncher": 332297,
+    "positiveSQLite": 524480,
+    "futureGitTransportEvidenceSession": 4000000,
+    "reserve": 8388608
+  },
+  "peak": 62091917,
+  "cap": 67108864,
+  "free": 4099985408,
+  "remoteFree": 48757207040,
+  "textCaptureConservative": 800000,
+  "textCap": 1048576,
+  "allImageSessionGrowthCharged": true,
+  "historyRetained": true,
+  "maxFile": 1130297,
+  "pass": true
+}
