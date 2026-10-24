@@ -1,0 +1,14 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+68133518 <.text+0x32518>:
+68133518:	85 d2                	test   edx,edx
+6813351a:	89 d0                	mov    eax,edx
+6813351c:	0f 85 20 ff ff ff    	jne    0x68133442
+68133522:	e9 19 ff ff ff       	jmp    0x68133440
+68133527:	8d 46 a5             	lea    eax,[esi-0x5b]
+6813352a:	83 f8 02             	cmp    eax,0x2
+6813352d:	e9 02 ff ff ff       	jmp    0x68133434

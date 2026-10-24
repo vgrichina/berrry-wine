@@ -1,0 +1,50 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+68106cc0 <.text+0x5cc0>:
+68106cc0:	85 c9                	test   ecx,ecx
+68106cc2:	74 16                	je     0x68106cda
+68106cc4:	31 c0                	xor    eax,eax
+68106cc6:	38 99 c8 d9 14 68    	cmp    BYTE PTR [ecx+0x6814d9c8],bl
+68106ccc:	74 bd                	je     0x68106c8b
+68106cce:	89 3d 18 db 14 68    	mov    DWORD PTR ds:0x6814db18,edi
+68106cd4:	88 99 c8 d9 14 68    	mov    BYTE PTR [ecx+0x6814d9c8],bl
+68106cda:	0f b6 45 c8          	movzx  eax,BYTE PTR [ebp-0x38]
+68106cde:	c7 45 c4 00 00 00 00 	mov    DWORD PTR [ebp-0x3c],0x0
+68106ce5:	80 b8 80 4c 15 68 01 	cmp    BYTE PTR [eax+0x68154c80],0x1
+68106cec:	74 55                	je     0x68106d43
+68106cee:	8b 45 c4             	mov    eax,DWORD PTR [ebp-0x3c]
+68106cf1:	8b 5d f4             	mov    ebx,DWORD PTR [ebp-0xc]
+68106cf4:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+68106cf7:	8b 7d fc             	mov    edi,DWORD PTR [ebp-0x4]
+68106cfa:	89 ec                	mov    esp,ebp
+68106cfc:	5d                   	pop    ebp
+68106cfd:	c3                   	ret
+68106cfe:	66 90                	xchg   ax,ax
+68106d00:	8b 4e 04             	mov    ecx,DWORD PTR [esi+0x4]
+68106d03:	81 f9 31 01 00 00    	cmp    ecx,0x131
+68106d09:	0f 84 ea 00 00 00    	je     0x68106df9
+68106d0f:	0f 87 90 00 00 00    	ja     0x68106da5
+68106d15:	81 f9 2d 01 00 00    	cmp    ecx,0x12d
+68106d1b:	0f 84 96 01 00 00    	je     0x68106eb7
+68106d21:	0f 87 e0 00 00 00    	ja     0x68106e07
+68106d27:	85 c9                	test   ecx,ecx
+68106d29:	0f 84 49 ff ff ff    	je     0x68106c78
+68106d2f:	81 f9 2c 01 00 00    	cmp    ecx,0x12c
+68106d35:	0f 84 06 02 00 00    	je     0x68106f41
+68106d3b:	89 7e 08             	mov    DWORD PTR [esi+0x8],edi
+68106d3e:	e9 df 00 00 00       	jmp    0x68106e22
+68106d43:	88 5d ca             	mov    BYTE PTR [ebp-0x36],bl
+68106d46:	8b 45 c0             	mov    eax,DWORD PTR [ebp-0x40]
+68106d49:	8b 3e                	mov    edi,DWORD PTR [esi]
+68106d4b:	85 c0                	test   eax,eax
+68106d4d:	89 7d cc             	mov    DWORD PTR [ebp-0x34],edi
+68106d50:	8b 5e 04             	mov    ebx,DWORD PTR [esi+0x4]
+68106d53:	89 5d d0             	mov    DWORD PTR [ebp-0x30],ebx
+68106d56:	8b 4e 08             	mov    ecx,DWORD PTR [esi+0x8]
+68106d59:	89 4d d4             	mov    DWORD PTR [ebp-0x2c],ecx
+68106d5c:	8b 56 0c             	mov    edx,DWORD PTR [esi+0xc]
+68106d5f:	89                   	.byte 0x89

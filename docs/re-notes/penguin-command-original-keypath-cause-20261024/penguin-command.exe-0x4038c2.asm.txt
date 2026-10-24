@@ -1,0 +1,9 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/penguin-command.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+004038c2 <.text+0x28c2>:
+  4038c2:	c7 04 24 50 31 40 00 	mov    DWORD PTR [esp],0x403150
+  4038c9:	e8 b2 bd 00 00       	call   0x40f680

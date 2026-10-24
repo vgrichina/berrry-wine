@@ -1,0 +1,12 @@
+{
+  "revision": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "path": "test/run.js",
+  "full_sha256": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e",
+  "full_bytes": 687068,
+  "lines": [
+    10520,
+    10590
+  ],
+  "excerpt_bytes": 3538,
+  "excerpt_sha256": "660e8f4f38ab3c6d251ef23ec28771116b5d281074df5422bacf13035c665aa5"
+}

@@ -1,0 +1,49 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+681067f0 <.text+0x57f0>:
+681067f0:	55                   	push   ebp
+681067f1:	89 e5                	mov    ebp,esp
+681067f3:	83 ec 08             	sub    esp,0x8
+681067f6:	8b 0d 68 c5 14 68    	mov    ecx,DWORD PTR ds:0x6814c568
+681067fc:	85 c9                	test   ecx,ecx
+681067fe:	75 30                	jne    0x68106830
+68106800:	a1 b0 f4 14 68       	mov    eax,ds:0x6814f4b0
+68106805:	85 c0                	test   eax,eax
+68106807:	74 09                	je     0x68106812
+68106809:	89 04 24             	mov    DWORD PTR [esp],eax
+6810680c:	ff 90 30 01 00 00    	call   DWORD PTR [eax+0x130]
+68106812:	e8 a9 07 00 00       	call   0x68106fc0
+68106817:	80 3d d4 f4 14 68 00 	cmp    BYTE PTR ds:0x6814f4d4,0x0
+6810681e:	74 10                	je     0x68106830
+68106820:	f7 05 58 c5 14 68 80 	test   DWORD PTR ds:0x6814c558,0xf80
+68106827:	0f 00 00 
+6810682a:	75 06                	jne    0x68106832
+6810682c:	8d 74 26 00          	lea    esi,[esi+eiz*1+0x0]
+68106830:	c9                   	leave
+68106831:	c3                   	ret
+68106832:	c9                   	leave
+68106833:	e9 b8 8c 02 00       	jmp    0x6812f4f0
+68106838:	90                   	nop
+68106839:	8d b4 26 00 00 00 00 	lea    esi,[esi+eiz*1+0x0]
+68106840:	55                   	push   ebp
+68106841:	89 e5                	mov    ebp,esp
+68106843:	83 ec 18             	sub    esp,0x18
+68106846:	e8 a5 ff ff ff       	call   0x681067f0
+6810684b:	b8 ff ff ff ff       	mov    eax,0xffffffff
+68106850:	89 44 24 0c          	mov    DWORD PTR [esp+0xc],eax
+68106854:	b8 02 00 00 00       	mov    eax,0x2
+68106859:	89 44 24 08          	mov    DWORD PTR [esp+0x8],eax
+6810685d:	b8 01 00 00 00       	mov    eax,0x1
+68106862:	89 44 24 04          	mov    DWORD PTR [esp+0x4],eax
+68106866:	8b 45 08             	mov    eax,DWORD PTR [ebp+0x8]
+68106869:	89 04 24             	mov    DWORD PTR [esp],eax
+6810686c:	e8 3f fc ff ff       	call   0x681064b0
+68106871:	c9                   	leave
+68106872:	85 c0                	test   eax,eax
+68106874:	0f 9f c0             	setg   al
+68106877:	0f b6 c0             	movzx  eax,al
+6810687a:	c3                   	ret

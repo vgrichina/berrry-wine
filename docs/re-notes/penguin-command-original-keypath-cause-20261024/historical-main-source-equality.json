@@ -1,0 +1,34 @@
+[
+  {
+    "path": "lib/renderer-input.js",
+    "historical": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "main": "5691793a58b4670fd2a621114d7926100a1e47de",
+    "identical": true,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "bytes": 177069
+  },
+  {
+    "path": "src/09a7-handlers-dispatch.wat",
+    "historical": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "main": "5691793a58b4670fd2a621114d7926100a1e47de",
+    "identical": true,
+    "sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58",
+    "bytes": 416616
+  },
+  {
+    "path": "src/09a-handlers3-sync.wat",
+    "historical": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "main": "5691793a58b4670fd2a621114d7926100a1e47de",
+    "identical": true,
+    "sha256": "a6e66153d90c4c98db4ccd5500a324832cc1eb195a206e3380596209d2ef94a1",
+    "bytes": 84580
+  },
+  {
+    "path": "src/09a5-handlers-window.wat",
+    "historical": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "main": "5691793a58b4670fd2a621114d7926100a1e47de",
+    "identical": true,
+    "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+    "bytes": 292766
+  }
+]

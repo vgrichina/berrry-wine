@@ -1,0 +1,81 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+681333b0 <.text+0x323b0>:
+681333b0:	55                   	push   ebp
+681333b1:	89 e5                	mov    ebp,esp
+681333b3:	81 ec 48 01 00 00    	sub    esp,0x148
+681333b9:	89 5d f4             	mov    DWORD PTR [ebp-0xc],ebx
+681333bc:	8b 5d 08             	mov    ebx,DWORD PTR [ebp+0x8]
+681333bf:	89 75 f8             	mov    DWORD PTR [ebp-0x8],esi
+681333c2:	89 c6                	mov    esi,eax
+681333c4:	89 7d fc             	mov    DWORD PTR [ebp-0x4],edi
+681333c7:	89 d7                	mov    edi,edx
+681333c9:	88 13                	mov    BYTE PTR [ebx],dl
+681333cb:	8b 55 0c             	mov    edx,DWORD PTR [ebp+0xc]
+681333ce:	c7 43 08 00 00 00 00 	mov    DWORD PTR [ebx+0x8],0x0
+681333d5:	66 c7 43 0c 00 00    	mov    WORD PTR [ebx+0xc],0x0
+681333db:	85 d2                	test   edx,edx
+681333dd:	74 0d                	je     0x681333ec
+681333df:	a1 c0 d9 14 68       	mov    eax,ds:0x6814d9c0
+681333e4:	85 c0                	test   eax,eax
+681333e6:	0f 85 c4 00 00 00    	jne    0x681334b0
+681333ec:	83 fe 0d             	cmp    esi,0xd
+681333ef:	0f 84 93 00 00 00    	je     0x68133488
+681333f5:	a1 c0 f5 14 68       	mov    eax,ds:0x6814f5c0
+681333fa:	89 44 24 08          	mov    DWORD PTR [esp+0x8],eax
+681333fe:	b8 01 00 00 00       	mov    eax,0x1
+68133403:	89 44 24 04          	mov    DWORD PTR [esp+0x4],eax
+68133407:	89 f8                	mov    eax,edi
+68133409:	25 ff 00 00 00       	and    eax,0xff
+6813340e:	89 04 24             	mov    DWORD PTR [esp],eax
+68133411:	e8 8a bb 00 00       	call   0x6813efa0
+68133416:	83 ec 0c             	sub    esp,0xc
+68133419:	83 fe 6b             	cmp    esi,0x6b
+6813341c:	89 c2                	mov    edx,eax
+6813341e:	7e 40                	jle    0x68133460
+68133420:	83 fe 6f             	cmp    esi,0x6f
+68133423:	74 1b                	je     0x68133440
+68133425:	0f 8e e5 00 00 00    	jle    0x68133510
+6813342b:	8d 86 60 ff ff ff    	lea    eax,[esi-0xa0]
+68133431:	83 f8 05             	cmp    eax,0x5
+68133434:	77 3f                	ja     0x68133475
+68133436:	8d 76 00             	lea    esi,[esi+0x0]
+68133439:	8d bc 27 00 00 00 00 	lea    edi,[edi+eiz*1+0x0]
+68133440:	89 f0                	mov    eax,esi
+68133442:	8b 04 85 d0 f5 14 68 	mov    eax,DWORD PTR [eax*4+0x6814f5d0]
+68133449:	89 43 04             	mov    DWORD PTR [ebx+0x4],eax
+6813344c:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+6813344f:	89 d8                	mov    eax,ebx
+68133451:	8b 7d fc             	mov    edi,DWORD PTR [ebp-0x4]
+68133454:	8b 5d f4             	mov    ebx,DWORD PTR [ebp-0xc]
+68133457:	89 ec                	mov    esp,ebp
+68133459:	5d                   	pop    ebp
+6813345a:	c3                   	ret
+6813345b:	90                   	nop
+6813345c:	8d 74 26 00          	lea    esi,[esi+eiz*1+0x0]
+68133460:	83 fe 6a             	cmp    esi,0x6a
+68133463:	7d db                	jge    0x68133440
+68133465:	83 fe 2c             	cmp    esi,0x2c
+68133468:	74 d6                	je     0x68133440
+6813346a:	0f 8f b7 00 00 00    	jg     0x68133527
+68133470:	83 fe 13             	cmp    esi,0x13
+68133473:	74 cb                	je     0x68133440
+68133475:	8d 42 f4             	lea    eax,[edx-0xc]
+68133478:	83 f8 22             	cmp    eax,0x22
+6813347b:	0f 87 97 00 00 00    	ja     0x68133518
+68133481:	ff 24 85 1c 77 14 68 	jmp    DWORD PTR [eax*4+0x6814771c]
+68133488:	f7 c7 00 01 00 00    	test   edi,0x100
+6813348e:	0f 84 61 ff ff ff    	je     0x681333f5
+68133494:	c7 43 04 0f 01 00 00 	mov    DWORD PTR [ebx+0x4],0x10f
+6813349b:	89 d8                	mov    eax,ebx
+6813349d:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+681334a0:	8b 5d f4             	mov    ebx,DWORD PTR [ebp-0xc]
+681334a3:	8b 7d fc             	mov    edi,DWORD PTR [ebp-0x4]
+681334a6:	89 ec                	mov    esp,ebp
+681334a8:	5d                   	pop    ebp
+681334a9:	c3                   	ret
+681334aa:	8d b6 00 00 00 00    	lea    esi,[esi+0x0]

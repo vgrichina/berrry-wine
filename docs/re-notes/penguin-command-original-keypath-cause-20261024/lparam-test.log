@@ -1,0 +1,9 @@
+A numeric down: 0x1e0001 PASS
+A numeric up: 0xc01e0001 PASS
+A physical down: 0x1e0001 PASS
+A repeat: 0x401e0001 PASS
+S numeric down: 0x1f0001 PASS
+D numeric down: 0x200001 PASS
+Left control down: 0x14b0001 PASS
+Left control up: 0xc14b0001 PASS
+8 production-source cases PASS; source-only JS, no SDL/guest/VM qualification

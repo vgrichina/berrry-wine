@@ -1,0 +1,12 @@
+{
+  "revision": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "path": "src/09a7-handlers-dispatch.wat",
+  "full_sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58",
+  "full_bytes": 416616,
+  "lines": [
+    4490,
+    4570
+  ],
+  "excerpt_bytes": 5303,
+  "excerpt_sha256": "f7f014436b3a2123c17b85ffe8a1019283c715b28c59b79a02a7c09dc5b577b4"
+}

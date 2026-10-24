@@ -1,0 +1,27 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+681337c0 <.text+0x327c0>:
+681337c0:	8d 75 c8             	lea    esi,[ebp-0x38]
+681337c3:	89 34 24             	mov    DWORD PTR [esp],esi
+681337c6:	31 c0                	xor    eax,eax
+681337c8:	c1 ef 10             	shr    edi,0x10
+681337cb:	89 44 24 04          	mov    DWORD PTR [esp+0x4],eax
+681337cf:	89 fa                	mov    edx,edi
+681337d1:	89 d8                	mov    eax,ebx
+681337d3:	e8 d8 fb ff ff       	call   0x681333b0
+681337d8:	89 44 24 04          	mov    DWORD PTR [esp+0x4],eax
+681337dc:	c7 04 24 00 00 00 00 	mov    DWORD PTR [esp],0x0
+681337e3:	e8 48 34 fd ff       	call   0x68106c30
+681337e8:	a3 fc f4 14 68       	mov    ds:0x6814f4fc,eax
+681337ed:	31 d2                	xor    edx,edx
+681337ef:	8b 5d f4             	mov    ebx,DWORD PTR [ebp-0xc]
+681337f2:	8b 75 f8             	mov    esi,DWORD PTR [ebp-0x8]
+681337f5:	89 d0                	mov    eax,edx
+681337f7:	8b 7d fc             	mov    edi,DWORD PTR [ebp-0x4]
+681337fa:	89 ec                	mov    esp,ebp
+681337fc:	5d                   	pop    ebp
+681337fd:	c3                   	ret

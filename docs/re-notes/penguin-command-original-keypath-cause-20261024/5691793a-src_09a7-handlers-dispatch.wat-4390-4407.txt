@@ -1,0 +1,18 @@
+
+  ;; Reverse table: PS/2 set-1 scancode → VK (uMapType=1). Indexed by scancode
+  ;; 0x00..0x58 (89 bytes). Pinball's Player Controls dialog walks scan 0..0xFF
+  ;; calling MapVirtualKey(scan,1) to populate its key-binding combobox; without
+  ;; this table every entry collapses to vk=0. Numpad scancodes (0x47..0x53)
+  ;; map to VK_NUMPAD*/_DECIMAL/_ADD/_SUBTRACT/_MULTIPLY/_DIVIDE — the arrow
+  ;; vkeys come from extended (0xE0-prefixed) scancodes, not the base table.
+  (data (region.addr $VK_SCAN_TABLES 0x20)
+    "\00\1b\31\32\33\34\35\36\37\38"   ;; 0x00..0x09
+    "\39\30\bd\bb\08\09\51\57\45\52"   ;; 0x0a..0x13
+    "\54\59\55\49\4f\50\db\dd\0d\11"   ;; 0x14..0x1d
+    "\41\53\44\46\47\48\4a\4b\4c\ba"   ;; 0x1e..0x27
+    "\de\c0\10\dc\5a\58\43\56\42\4e"   ;; 0x28..0x31
+    "\4d\bc\be\bf\10\6a\12\20\14\70"   ;; 0x32..0x3b
+    "\71\72\73\74\75\76\77\78\79\90"   ;; 0x3c..0x45
+    "\91\67\26\69\6d\25\65\27\6b\61"   ;; 0x46..0x4f (4B/4D/48 favor arrow VKs)
+    "\28\63\60\6e\00\00\00\7a\7b")     ;; 0x50..0x58 (50 favors VK_DOWN over NP2)
+

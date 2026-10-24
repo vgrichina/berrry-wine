@@ -1,0 +1,9 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll:     file format pei-i386
+
+
+Disassembly of section .text:
+
+68106df0 <.text+0x5df0>:
+68106df0:	c6 45 c8 02          	mov    BYTE PTR [ebp-0x38],0x2
+68106df4:	e9 c7 fe ff ff       	jmp    0x68106cc0

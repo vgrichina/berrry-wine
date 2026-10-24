@@ -1,0 +1,28 @@
+{
+  "free_before": 4074164224,
+  "allocation": 67108864,
+  "projection": {
+    "checkout_git_transport": 20000000,
+    "evidence_temp": 2000000,
+    "external_session_sqlite_launcher_growth_and_future": 30000000,
+    "reserve": 8388608
+  },
+  "session_files": [
+    [
+      "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T05-19-36-01a16c59-a33d-7cd1-b34d-819494dc47e9.jsonl",
+      260424
+    ]
+  ],
+  "launcher_existing_bytes": 55030,
+  "MemAvailable": "MemAvailable:    2904232 kB",
+  "standing_tools": {
+    "/usr/bin/git": 4066232,
+    "/usr/bin/objdump": 390848,
+    "/usr/bin/python3": 8020928,
+    "/usr/bin/node": 98932688
+  },
+  "limits": "per file 25165824; internal capture cumulative 1048576; code slices 8192; instructions 65536; no VM/build/node needed",
+  "projected_total": 60388608,
+  "free_after": 4013775616,
+  "admitted": true
+}

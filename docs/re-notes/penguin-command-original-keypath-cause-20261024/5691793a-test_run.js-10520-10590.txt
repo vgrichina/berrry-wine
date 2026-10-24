@@ -1,0 +1,71 @@
+          if (e.get_flag_res && e.get_flag_op && e.get_flag_a && e.get_flag_b && e.get_flag_sign_shift) {
+            flagInfo = ` flags{op=${e.get_flag_op()} a=${hex(e.get_flag_a())} b=${hex(e.get_flag_b())} res=${hex(e.get_flag_res())} sh=${e.get_flag_sign_shift()}}`;
+          }
+          let memInfo = '';
+          if (traceAtMem.length) {
+            const regValue = (name) => {
+              switch (String(name || '').toLowerCase()) {
+                case 'eax': return e.get_eax() >>> 0;
+                case 'ecx': return e.get_ecx() >>> 0;
+                case 'edx': return e.get_edx() >>> 0;
+                case 'ebx': return e.get_ebx() >>> 0;
+                case 'esp': return e.get_esp() >>> 0;
+                case 'ebp': return e.get_ebp() >>> 0;
+                case 'esi': return e.get_esi() >>> 0;
+                case 'edi': return e.get_edi() >>> 0;
+                case 'eip': return e.get_eip() >>> 0;
+                default: return null;
+              }
+            };
+            const parseAddrExpr = (expr) => {
+              let s = String(expr || '').replace(/^\[/, '').replace(/\]$/, '').trim();
+              let deref = false;
+              if (s.startsWith('*')) { deref = true; s = s.slice(1).trim(); }
+              const inner = parseAddrExprBase(s);
+              if (inner === null || !deref) return inner;
+              try { return dv.getUint32(g2w(inner), true) >>> 0; } catch (_) { return null; }
+            };
+            const parseAddrExprBase = (s) => {
+              // Win16 far form, e.g. es:esi-2 (a VB p-code pointer): the
+              // selector's base from the loader's table plus the offset.
+              const far = s.match(/^(cs|ds|es|ss):(.+)$/i);
+              if (far && e.win16_seg_base) {
+                const sel = e[`get_sreg_${far[1].toLowerCase()}`]?.();
+                const off = parseAddrExprBase(far[2].trim());
+                if (sel === undefined || off === null) return null;
+                return (e.win16_seg_base(sel >>> 3) + (off & 0xffff)) >>> 0;
+              }
+              const m = s.match(/^(e(?:ax|bx|cx|dx|sp|bp|si|di|ip))\s*([+-])?\s*(0x[0-9a-fA-F]+|\d+)?$/i);
+              if (m) {
+                const base = regValue(m[1]);
+                if (base === null) return null;
+                const off = m[3] ? parseInt(m[3]) : 0;
+                return ((m[2] === '-') ? (base - off) : (base + off)) >>> 0;
+              }
+              const addr = parseInt(s, 16);
+              return Number.isFinite(addr) ? (addr >>> 0) : null;
+            };
+            const parts = [];
+            for (const d of traceAtMem) {
+              const addr = parseAddrExpr(d.expr);
+              if (addr === null) {
+                parts.push(`${d.expr}=<?>`);
+                continue;
+              }
+              try {
+                const wa = g2w(addr);
+                let val;
+                if (d.str) {
+                  const u8 = new Uint8Array(memory.buffer);
+                  let out = '';
+                  for (let i = 0; i < 128; i++) {
+                    const c = u8[wa + i];
+                    if (!c) break;
+                    out += (c >= 0x20 && c < 0x7f) ? String.fromCharCode(c) : '.';
+                  }
+                  parts.push(`${d.expr}@${hex(addr)}="${out}"`);
+                  continue;
+                }
+                if (d.len === 1) val = dv.getUint8(wa);
+                else if (d.len === 2) val = dv.getUint16(wa, true);
+                else if (d.len === 4) val = dv.getUint32(wa, true) >>> 0;

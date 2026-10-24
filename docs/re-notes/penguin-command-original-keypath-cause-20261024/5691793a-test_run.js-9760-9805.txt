@@ -1,0 +1,46 @@
+        // each character to the find-dialog edit ("ABC" → "AABBCC").
+        renderer.handleKeyPress(ev.code);
+        logs.push(`[input] keypress code=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'ime-start' && renderer && renderer.handleCompositionStart) {
+        renderer.handleCompositionStart();
+        logs.push(`[input] ime-start at batch ${batch}`);
+      } else if (ev.action === 'ime-update' && renderer && renderer.handleCompositionUpdate) {
+        renderer.handleCompositionUpdate(ev.text);
+        logs.push(`[input] ime-update text=${JSON.stringify(ev.text)} at batch ${batch}`);
+      } else if (ev.action === 'ime-commit' && renderer && renderer.handleCompositionEnd) {
+        renderer.handleCompositionEnd(ev.text);
+        logs.push(`[input] ime-commit text=${JSON.stringify(ev.text)} at batch ${batch}`);
+      } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {
+        renderer.handleKeyDown(ev.code);
+        logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {
+        renderer.handleKeyUp(ev.code);
+        logs.push(`[input] keyup vk=${ev.code} at batch ${batch}`);
+      } else if ((ev.action === 'di-keydown' || ev.action === 'di-keyup') && renderer) {
+        if (!renderer._asyncKeys) renderer._asyncKeys = Object.create(null);
+        if (!renderer._asyncPressedKeys) renderer._asyncPressedKeys = Object.create(null);
+        const key = ev.code & 0xFF;
+        const down = ev.action === 'di-keydown';
+        renderer._asyncKeys[key] = down;
+        if (renderer.pokeKeyDownState) renderer.pokeKeyDownState(key, down);
+        if (down) renderer._asyncPressedKeys[key] = true;
+        // Event-buffered DirectInput devices must wake for test-injected state
+        // changes just as they do for renderer.handleKeyDown/handleKeyUp.
+        if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(1);
+        logs.push(`[input] ${ev.action} vk=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'di-wheel' && renderer) {
+        if (renderer._queueDirectInputMouseWheel) {
+          renderer._queueDirectInputMouseWheel(renderer._pointerInputMemory || renderer.wasmMemory, ev.delta);
+        }
+        if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(2);
+        logs.push(`[input] di-wheel ${ev.delta} at batch ${batch}`);
+      } else if ((ev.action === 'di-mousedown' || ev.action === 'di-mouseup') && renderer) {
+        const mask = ev.button === 2 ? 0x0002 : ev.button === 3 ? 0x0010 : 0x0001;
+        const vk = ev.button === 2 ? 0x02 : ev.button === 3 ? 0x04 : 0x01;
+        const down = ev.action === 'di-mousedown';
+        const wasDown = !!((renderer._mouseButtonsMask || 0) & mask);
+        renderer._mouseButtonsMask = down
+          ? ((renderer._mouseButtonsMask || 0) | mask)
+          : ((renderer._mouseButtonsMask || 0) & ~mask);
+        if (!renderer._asyncPressedKeys) renderer._asyncPressedKeys = Object.create(null);
+        if (down) renderer._asyncPressedKeys[vk] = true;

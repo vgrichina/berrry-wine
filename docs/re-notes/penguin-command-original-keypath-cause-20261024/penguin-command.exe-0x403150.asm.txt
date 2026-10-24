@@ -1,0 +1,58 @@
+
+/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/penguin-command.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00403150 <.text+0x2150>:
+  403150:	55                   	push   ebp
+  403151:	89 e5                	mov    ebp,esp
+  403153:	53                   	push   ebx
+  403154:	83 ec 14             	sub    esp,0x14
+  403157:	8b 5d 08             	mov    ebx,DWORD PTR [ebp+0x8]
+  40315a:	0f b6 03             	movzx  eax,BYTE PTR [ebx]
+  40315d:	83 f8 05             	cmp    eax,0x5
+  403160:	0f 84 9e 00 00 00    	je     0x403204
+  403166:	7e 28                	jle    0x403190
+  403168:	83 f8 0a             	cmp    eax,0xa
+  40316b:	0f 84 d1 00 00 00    	je     0x403242
+  403171:	83 f8 0c             	cmp    eax,0xc
+  403174:	0f 84 15 01 00 00    	je     0x40328f
+  40317a:	8d b6 00 00 00 00    	lea    esi,[esi+0x0]
+  403180:	83 c4 14             	add    esp,0x14
+  403183:	b8 01 00 00 00       	mov    eax,0x1
+  403188:	5b                   	pop    ebx
+  403189:	5d                   	pop    ebp
+  40318a:	c3                   	ret
+  40318b:	90                   	nop
+  40318c:	8d 74 26 00          	lea    esi,[esi+eiz*1+0x0]
+  403190:	83 f8 02             	cmp    eax,0x2
+  403193:	75 eb                	jne    0x403180
+  403195:	c7 04 24 00 00 00 00 	mov    DWORD PTR [esp],0x0
+  40319c:	e8 ef c4 00 00       	call   0x40f690
+  4031a1:	8b 53 08             	mov    edx,DWORD PTR [ebx+0x8]
+  4031a4:	b8 01 00 00 00       	mov    eax,0x1
+  4031a9:	83 fa 61             	cmp    edx,0x61
+  4031ac:	0f 84 bb 00 00 00    	je     0x40326d
+  4031b2:	83 fa 73             	cmp    edx,0x73
+  4031b5:	b8 02 00 00 00       	mov    eax,0x2
+  4031ba:	0f 84 ad 00 00 00    	je     0x40326d
+  4031c0:	83 fa 64             	cmp    edx,0x64
+  4031c3:	0f 84 9f 00 00 00    	je     0x403268
+  4031c9:	83 fa 1b             	cmp    edx,0x1b
+  4031cc:	0f 84 fa 00 00 00    	je     0x4032cc
+  4031d2:	83 fa 0d             	cmp    edx,0xd
+  4031d5:	0f 84 cf 00 00 00    	je     0x4032aa
+  4031db:	83 fa 13             	cmp    edx,0x13
+  4031de:	0f 94 c0             	sete   al
+  4031e1:	83 fa 70             	cmp    edx,0x70
+  4031e4:	0f 94 c2             	sete   dl
+  4031e7:	09 d0                	or     eax,edx
+  4031e9:	a8 01                	test   al,0x1
+  4031eb:	74 93                	je     0x403180
+  4031ed:	8b 0d 64 30 41 00    	mov    ecx,DWORD PTR ds:0x413064
+  4031f3:	85 c9                	test   ecx,ecx
+  4031f5:	75 89                	jne    0x403180
+  4031f7:	89 1c 24             	mov    DWORD PTR [esp],ebx
+  4031fa:	e8 a1 fd ff ff       	call   0x402fa0
+  4031ff:	e9 7c ff ff ff       	jmp    0x403180

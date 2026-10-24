@@ -1,0 +1,12 @@
+{
+  "revision": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "path": "src/09a5-handlers-window.wat",
+  "full_sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33",
+  "full_bytes": 292766,
+  "lines": [
+    2796,
+    2825
+  ],
+  "excerpt_bytes": 2029,
+  "excerpt_sha256": "840138acbf9274810a8f2ba0c055d308f5be6e1164136c464dc727265a0c958f"
+}

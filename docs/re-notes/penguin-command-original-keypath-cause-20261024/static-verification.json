@@ -1,0 +1,242 @@
+{
+  "binaries": {
+    "penguin-command.exe": {
+      "path": "/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/penguin-command.exe",
+      "bytes": 107008,
+      "sha256": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1",
+      "preferred_base": "0x400000"
+    },
+    "SDL.dll": {
+      "path": "/home/user/wine-assembly-penguin-command-retained-closure-oct23/docs/re-notes/penguin-command-retained-closure-20261023/original/penguin-command-1.6.11/SDL.dll",
+      "bytes": 321536,
+      "sha256": "15537c9176d7e6d5c28c607c4b147c8c2a7c45102b1b8e836b38d2f9449fc8ce",
+      "preferred_base": "0x68100000"
+    }
+  },
+  "slices": [
+    {
+      "file": "penguin-command.exe-0x403150.asm.txt",
+      "start_VA": "0x403150",
+      "stop_VA_exclusive": "0x403204",
+      "file_offset": "0x2550",
+      "raw_bytes": "5589e55383ec148b5d080fb60383f8050f849e0000007e2883f80a0f84d100000083f80c0f84150100008db60000000083c414b8010000005b5dc3908d74260083f80275ebc7042400000000e8efc400008b5308b80100000083fa610f84bb00000083fa73b8020000000f84ad00000083fa640f849f00000083fa1b0f84fa00000083fa0d0f84cf00000083fa130f94c083fa700f94c209d0a80174938b0d6430410085c97589891c24e8a1fdffffe97cffffff",
+      "disassembly_sha256": "2966d61c650a11d19db9934ca7371ac3775657443c6550e1bcfe19081df1dc91"
+    },
+    {
+      "file": "penguin-command.exe-0x403268.asm.txt",
+      "start_VA": "0x403268",
+      "stop_VA_exclusive": "0x40328f",
+      "file_offset": "0x2668",
+      "raw_bytes": "b80300000089442408a1303f410089442404a1503e4100890424e8f93a00008b5308e93affffff",
+      "disassembly_sha256": "3b9e04275414de6d25ae5d74f98d9fa0c32b24acb890508c678e9a7acf2508f2"
+    },
+    {
+      "file": "penguin-command.exe-0x4038c2.asm.txt",
+      "start_VA": "0x4038c2",
+      "stop_VA_exclusive": "0x4038ce",
+      "file_offset": "0x2cc2",
+      "raw_bytes": "c7042450314000e8b2bd0000",
+      "disassembly_sha256": "32d79d325b75adaaf14e9685a66ebea4b2a670f7a24f3de68b11cad863b13fc9"
+    },
+    {
+      "file": "penguin-command.exe-0x403b80.asm.txt",
+      "start_VA": "0x403b80",
+      "stop_VA_exclusive": "0x403b9a",
+      "file_offset": "0x2f80",
+      "raw_bytes": "5589e55383ec14e814bb00008b150000410085d20f84e6010000",
+      "disassembly_sha256": "3953d5911142ec654ecd91052ef8f8fa733b4c17d54efd44ff863ce513c43fc5"
+    },
+    {
+      "file": "penguin-command.exe-0x406d80.asm.txt",
+      "start_VA": "0x406d80",
+      "stop_VA_exclusive": "0x406df7",
+      "file_offset": "0x6180",
+      "raw_bytes": "5589e557565383ec1c8b7d10817d0cfe0100007e07c7450cfe01000083ff030f8f5b010000a1a030410085c00f855601000069c75e0100008b0da43041002d2c0100008945ec85c9741569c12c7d00008b5508399048074d000f844b0100008b04bd0c01410085c00f8e1201000083f9130f8f1f010000",
+      "disassembly_sha256": "7ca6aa67571cdcfd7ec37b5282e699ad5ae1bcef84375539b1875b69c47658cb"
+    },
+    {
+      "file": "penguin-command.exe-0x406ec4.asm.txt",
+      "start_VA": "0x406ec4",
+      "stop_VA_exclusive": "0x406f3b",
+      "file_offset": "0x62c4",
+      "raw_bytes": "8b14bd0c0141008d4101a3a430410083fa0a750cb800401c468904bd3c074d008d42ffba100141008944bafc8d47ff890424e835faffffe8f029000083c41c5b5e5f5dc3b80400000029f889c7e99cfeffffc70424cc1f4100e87e8d000083c41c5b5e5f5dc38b550c39904c074d000f85a6feffffebc5",
+      "disassembly_sha256": "d0b9136f6ece372e615acf35e5fb4c727682c6b6059e85b87c63e8885f017a46"
+    },
+    {
+      "file": "SDL.dll-0x681067f0.asm.txt",
+      "start_VA": "0x681067f0",
+      "stop_VA_exclusive": "0x6810687b",
+      "file_offset": "0x5bf0",
+      "raw_bytes": "5589e583ec088b0d68c5146885c97530a1b0f4146885c07409890424ff9030010000e8a9070000803dd4f41468007410f70558c51468800f000075068d742600c9c3c9e9b88c0200908db426000000005589e583ec18e8a5ffffffb8ffffffff8944240cb80200000089442408b801000000894424048b4508890424e83ffcffffc985c00f9fc00fb6c0c3",
+      "disassembly_sha256": "3eefd973ed2d53a74c3f3ca493177aed728a1ffaafa9a4c4fc44fb5e3a12111a"
+    },
+    {
+      "file": "SDL.dll-0x68106bc0.asm.txt",
+      "start_VA": "0x68106bc0",
+      "stop_VA_exclusive": "0x68106bd7",
+      "file_offset": "0x5fc0",
+      "raw_bytes": "5589e58b450885c07406c700430100005db8c8d91468c3",
+      "disassembly_sha256": "574fcfb3bec2053b785c1854203f308f70e973f54f0b2fc075f87640d0ef329a"
+    },
+    {
+      "file": "SDL.dll-0x68106cc0.asm.txt",
+      "start_VA": "0x68106cc0",
+      "stop_VA_exclusive": "0x68106d60",
+      "file_offset": "0x60c0",
+      "raw_bytes": "85c9741631c03899c8d9146874bd893d18db14688899c8d914680fb645c8c745c40000000080b8804c15680174558b45c48b5df48b75f88b7dfc89ec5dc366908b4e0481f9310100000f84ea0000000f879000000081f92d0100000f84960100000f87e000000085c90f8449ffffff81f92c0100000f8406020000897e08e9df000000885dca8b45c08b3e85c0897dcc8b5e04895dd08b4e08894dd48b560c89",
+      "disassembly_sha256": "253749e9010db12a47c67f08910190cea135b50bdfba0f3484517dada0cfdf7b"
+    },
+    {
+      "file": "SDL.dll-0x68106d72.asm.txt",
+      "start_VA": "0x68106d72",
+      "stop_VA_exclusive": "0x68106da5",
+      "file_offset": "0x6172",
+      "raw_bytes": "a150c5146885c074108d55c8891424ffd085c00f8463ffffffc745c4010000008d45c8890424e853fbffff8b45c4e94cffffff",
+      "disassembly_sha256": "429dda6289bc34527cfc2b2fcfaa9643a176ae3fb690f6092dc8882fc94644ea"
+    },
+    {
+      "file": "SDL.dll-0x68106df0.asm.txt",
+      "start_VA": "0x68106df0",
+      "stop_VA_exclusive": "0x68106df9",
+      "file_offset": "0x61f0",
+      "raw_bytes": "c645c802e9c7feffff",
+      "disassembly_sha256": "300bb160ec8337046cb3ae2c14e992391343f9535e8f174f368fd730ec81448f"
+    },
+    {
+      "file": "SDL.dll-0x68132fce.asm.txt",
+      "start_VA": "0x68132fce",
+      "stop_VA_exclusive": "0x68132fee",
+      "file_offset": "0x323ce",
+      "raw_bytes": "b861000000890df0f51468b92d0000008915f4f51468ba2e000000a3d4f61468",
+      "disassembly_sha256": "86e775c54044059c7d99b548be0c2e78b9ef9b685f302436f9cb75cb8f2782fe"
+    },
+    {
+      "file": "SDL.dll-0x681333b0.asm.txt",
+      "start_VA": "0x681333b0",
+      "stop_VA_exclusive": "0x681334b0",
+      "file_offset": "0x327b0",
+      "raw_bytes": "5589e581ec48010000895df48b5d088975f889c6897dfc89d788138b550cc743080000000066c7430c000085d2740da1c0d9146885c00f85c400000083fe0d0f8493000000a1c0f5146889442408b8010000008944240489f825ff000000890424e88abb000083ec0c83fe6b89c27e4083fe6f741b0f8ee50000008d8660ffffff83f805773f8d76008dbc270000000089f08b0485d0f514688943048b75f889d88b7dfc8b5df489ec5dc3908d74260083fe6a7ddb83fe2c74d60f8fb700000083fe1374cb8d42f483f8220f8797000000ff24851c771468f7c7000100000f8461ffffffc743040f01000089d88b75f88b5df48b7dfc89ec5dc38db600000000",
+      "disassembly_sha256": "83257498949c135e260cd5afe867ebc1625693fcdbcc67b6dcc669051f64f3db"
+    },
+    {
+      "file": "SDL.dll-0x68133518.asm.txt",
+      "start_VA": "0x68133518",
+      "stop_VA_exclusive": "0x68133532",
+      "file_offset": "0x32918",
+      "raw_bytes": "85d289d00f8520ffffffe919ffffff8d46a583f802e902ffffff",
+      "disassembly_sha256": "ee15455e81e744d1f50bc10d389544d9ae1529f1523c41160a386872a8cda9c7"
+    },
+    {
+      "file": "SDL.dll-0x68133640.asm.txt",
+      "start_VA": "0x68133640",
+      "stop_VA_exclusive": "0x6813366a",
+      "file_offset": "0x32a40",
+      "raw_bytes": "5589e583ec788975f88b7510895df48b5d148d8600ffffff897dfc83f8128b7d18773dff2485a8771468",
+      "disassembly_sha256": "188af346051883cc8a1197e17c315222a997cfd492f1af2efad31d79afb53672"
+    },
+    {
+      "file": "SDL.dll-0x68133701.asm.txt",
+      "start_VA": "0x68133701",
+      "stop_VA_exclusive": "0x6813374e",
+      "file_offset": "0x32b01",
+      "raw_bytes": "31d2f7c70000004075c783fb110f84990100000f87c501000083fb100f84f7010000b801000000c1ef1089fa894424048d45d889042489d8e872fcffff89442404c7042401000000e995000000",
+      "disassembly_sha256": "3bbb12b12700642451ef287e9bc5d106e72fda43bd181bab28d96f2fb16a549a"
+    },
+    {
+      "file": "SDL.dll-0x681337c0.asm.txt",
+      "start_VA": "0x681337c0",
+      "stop_VA_exclusive": "0x681337fe",
+      "file_offset": "0x32bc0",
+      "raw_bytes": "8d75c889342431c0c1ef108944240489fa89d8e8d8fbffff89442404c7042400000000e84834fdffa3fcf4146831d28b5df48b75f889d08b7dfc89ec5dc3",
+      "disassembly_sha256": "b812dd23ad4b0efc368e33b902e80444c0fa053568a45de5d9b7452eee7b2d3c"
+    }
+  ],
+  "anchors": [
+    {
+      "binary": "penguin-command.exe",
+      "VA": "0x4031a9",
+      "file_offset": "0x25a9",
+      "bytes": "83fa61",
+      "meaning": "A SDL symbol compare",
+      "pass": true
+    },
+    {
+      "binary": "penguin-command.exe",
+      "VA": "0x403282",
+      "file_offset": "0x2682",
+      "bytes": "e8f93a0000",
+      "meaning": "cannon call",
+      "pass": true
+    },
+    {
+      "binary": "penguin-command.exe",
+      "VA": "0x406ddf",
+      "file_offset": "0x61df",
+      "bytes": "8b04bd0c014100",
+      "meaning": "ammo indexed read",
+      "pass": true
+    },
+    {
+      "binary": "penguin-command.exe",
+      "VA": "0x406ece",
+      "file_offset": "0x62ce",
+      "bytes": "a3a4304100",
+      "meaning": "projectile count write",
+      "pass": true
+    },
+    {
+      "binary": "SDL.dll",
+      "VA": "0x68132fce",
+      "file_offset": "0x323ce",
+      "bytes": "b861000000",
+      "meaning": "lowercase a value",
+      "pass": true
+    },
+    {
+      "binary": "SDL.dll",
+      "VA": "0x68132fe9",
+      "file_offset": "0x323e9",
+      "bytes": "a3d4f61468",
+      "meaning": "VK A table store",
+      "pass": true
+    },
+    {
+      "binary": "SDL.dll",
+      "VA": "0x68133442",
+      "file_offset": "0x32842",
+      "bytes": "8b0485d0f51468",
+      "meaning": "translated VK table lookup",
+      "pass": true
+    },
+    {
+      "binary": "SDL.dll",
+      "VA": "0x68133703",
+      "file_offset": "0x32b03",
+      "bytes": "f7c700000040",
+      "meaning": "previous-down suppression",
+      "pass": true
+    },
+    {
+      "binary": "SDL.dll",
+      "VA": "0x68106cd4",
+      "file_offset": "0x60d4",
+      "bytes": "8899c8d91468",
+      "meaning": "SDL key-state write",
+      "pass": true
+    }
+  ],
+  "SDL_wndproc_jump_table": {
+    "0x100": "0x68133701",
+    "0x101": "0x68133750",
+    "0x104": "0x68133701",
+    "0x105": "0x68133750"
+  },
+  "retained_log": {
+    "path": "/tmp/penguin-postrelease-matched-firing-oct24/repo/docs/re-notes/penguin-command-postrelease-matched-firing-20261024/treatment/output.log",
+    "sha256": "ee7e3dc631b45c57497c6c8659f4aa02453e39d049b6d705a2a9a67611b046c1",
+    "dispatch_lines": [
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40032 guestMs=8006400 clock=batch lastGuestTick=8006404",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40282 guestMs=8056400 clock=batch lastGuestTick=8056404"
+    ]
+  }
+}

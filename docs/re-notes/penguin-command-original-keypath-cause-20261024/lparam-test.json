@@ -1,0 +1,9 @@
+{
+  "returncode": 0,
+  "seconds": 0.16368002002127469,
+  "MemAvailable": 3147620352,
+  "cpu_limit": 60,
+  "wall_limit": 60,
+  "node_oldspace_mb": 256,
+  "guest_execution": false
+}

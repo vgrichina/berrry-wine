@@ -1,0 +1,12 @@
+{
+  "revision": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "path": "lib/renderer-input.js",
+  "full_sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+  "full_bytes": 177069,
+  "lines": [
+    1,
+    36
+  ],
+  "excerpt_bytes": 2229,
+  "excerpt_sha256": "191a854582aebd2ed0b940ea6680558c297c8e6d0946a50a76850ada6138e0c5"
+}

@@ -1,0 +1,36 @@
+// Win98Renderer input handling — split from renderer.js
+// Mixed into Win98Renderer.prototype
+
+// Emulator-private addresses come from the region map generated out of
+// src/00-regions.wat (docs/watx-region-safety-design.md §6). Only the pinned
+// regions have fixed addresses; everything else is placed by the allocator, so
+// a literal here goes stale silently. In the browser the map arrives as the
+// global lib/region-map.generated.js installs, loaded first by index.html.
+var _regionMapInput = typeof require !== 'undefined' ? require('./region-map.generated')
+  : (typeof self !== 'undefined' ? self.RegionMap : globalThis.RegionMap);
+var _memUtilsInput = typeof require !== 'undefined' ? require('./mem-utils')
+  : (typeof self !== 'undefined' ? self.memUtils : globalThis.memUtils);
+
+// Pointer instrumentation for the perf HUD. Null in the CLI, and null in the
+// browser until the HUD is switched on, so the queue path costs one property
+// read per event when nobody is measuring. See lib/perf-hud.js.
+const _perfNow = () => (typeof performance !== 'undefined' && performance.now
+  ? performance.now() : Date.now());
+const _perfHud = () => (typeof window !== 'undefined' && window.WinePerf
+  && window.WinePerf.enabled ? window.WinePerf : null);
+const _perfInputMove = coalesced => { const p = _perfHud(); if (p) p.inputMove(coalesced); };
+const _perfInputTake = queuedAt => { const p = _perfHud(); if (p) p.inputTake(queuedAt); };
+
+// The shortest press the guest is shown (takeInput), on top of "not in the
+// same pump": well under a double-click interval or a deliberate hold. A page
+// may override it (window.__waMinButtonHoldMs) for an A/B; a negative value
+// turns the whole hold off.
+const _minButtonHoldMs = () => (typeof window !== 'undefined'
+  && Number.isFinite(window.__waMinButtonHoldMs) ? window.__waMinButtonHoldMs : 30);
+const _inputNow = _perfNow;
+// 1/2/3 for the left/right/middle press (incl. the double-click press) or
+// release, else 0.
+const _buttonOfDown = msg => (msg === 0x0201 || msg === 0x0203 ? 1
+  : msg === 0x0204 || msg === 0x0206 ? 2 : msg === 0x0207 || msg === 0x0209 ? 3 : 0);
+const _buttonOfUp = msg => (msg === 0x0202 ? 1 : msg === 0x0205 ? 2 : msg === 0x0208 ? 3 : 0);
+
