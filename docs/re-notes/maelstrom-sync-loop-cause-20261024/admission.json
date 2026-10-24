@@ -1,0 +1,53 @@
+{
+  "task": "maelstrom-sync-loop-cause-oct24",
+  "external": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-sync-loop-cause-oct24",
+  "history": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T08-43-31-01a16d14-5692-79a1-9d87-f5acda90435a.jsonl",
+  "sqliteBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4296704,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 13049856
+  },
+  "standing": [
+    {
+      "path": "/usr/bin/python3.12",
+      "size": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "size": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/usr/bin/git",
+      "size": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/x86_64-linux-gnu-objdump",
+      "size": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    }
+  ],
+  "standingInputs": [
+    "/tmp/maelstrom-select-return-capture-oct24/repo",
+    "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6"
+  ],
+  "projected": {
+    "sourceGit": 4194304,
+    "newTools": 0,
+    "tenModuleIO": 2097152,
+    "evidenceTemps": 2097152,
+    "externalHistory": 8388608,
+    "sqlitePositiveFuture": 8388608,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "capturePriorCharged": 100000,
+  "perFileCap": 25165824,
+  "projectedTotal": 50331648,
+  "free": 3161014272,
+  "hostAfter": 3110682624,
+  "memAvailable": 2232414208,
+  "pass": true
+}

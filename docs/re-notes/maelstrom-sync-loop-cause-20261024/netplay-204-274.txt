@@ -1,0 +1,71 @@
+
+	/* Check to make sure we have all the players */
+	if ( ! UseServer ) {
+		for ( i=0, gNumPlayers=0; i<MAX_PLAYERS; ++i ) {
+			if ( GotPlayer[i] )
+				++gNumPlayers;
+		}
+		/* Add ourselves if needed */
+		if ( gNumPlayers == 0 ) {
+			AddPlayer("1");
+			gNumPlayers = 1;
+			FoundUs = 1;
+		}
+		for ( i=0; i<gNumPlayers; ++i ) {
+			if ( ! GotPlayer[i] ) {
+				error(
+"Player %d not specified!  Use the -player option for all players.\r\n", i+1);
+				return(-1);
+			}
+		}
+	}
+	if ( ! FoundUs ) {
+		error("Which player are you?  (Use the -player N option)\r\n");
+		return(-1);
+	}
+	if ( (gOurPlayer+1) > gNumPlayers ) {
+		error("You cannot be player %d in a %d player game.\r\n",
+						gOurPlayer+1, gNumPlayers);
+		return(-1);
+	}
+	if ( (gNumPlayers == 1) && gDeathMatch ) {
+		error("Warning: No deathmatch in a single player game!\r\n");
+		gDeathMatch = 0;
+	}
+
+	/* Oh heck, create the UDP socket here... */
+	port = SDL_SwapBE16(PlayAddr[gOurPlayer].port);
+	gNetFD = SDLNet_UDP_Open(port);
+	if ( gNetFD == NULL ) {
+		error("Couldn't create bound network socket");
+		return(-1);
+	}
+	SocketSet = SDLNet_AllocSocketSet(1);
+	if ( SocketSet == NULL ) {
+		error("Couldn't create socket watch set");
+		return(-1);
+	}
+	SDLNet_UDP_AddSocket(SocketSet, gNetFD);
+
+	/* Now, so we can send to ourselves... */
+	PlayAddr[gOurPlayer] = *SDLNet_UDP_GetPeerAddress(gNetFD, -1);
+	if ( ! PlayAddr[gOurPlayer].host ) {
+		SDLNet_ResolveHost(&PlayAddr[gOurPlayer], "127.0.0.1", port);
+	}
+
+	/* Bind all of our players to the channels */
+	if ( ! UseServer ) {
+		for ( i=0; i<gNumPlayers; ++i ) {
+			SDLNet_UDP_Bind(gNetFD, 0, &PlayAddr[i]);
+			SDLNet_UDP_Bind(gNetFD, i+1, &PlayAddr[i]);
+		}
+	}
+	return(0);
+}
+
+
+void QueueKey(unsigned char Op, unsigned char Type)
+{
+	/* Drop keys on a full buffer (assumed never to really happen) */
+	if ( OutLen >= (BUFSIZ-2) )
+		return;

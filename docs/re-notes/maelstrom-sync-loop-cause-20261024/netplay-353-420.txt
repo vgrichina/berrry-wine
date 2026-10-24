@@ -1,0 +1,68 @@
+			error("Unknown packet: 0x%x\n", buf[0]);
+			continue;
+		}
+		if ( sent.channel <= 0 ) {
+			error("Packet from unknown source\n");
+			continue;
+		}
+		index = sent.channel - 1;
+
+		/* Ignore it if it is a duplicate packet */
+		if ( SyncPtr[index] != NULL ) {
+			continue;
+		}
+
+		/* Check the frame number */
+		frame = SDLNet_Read32(&buf[1]);
+//error("Received a packet of frame %lu from player %d\r\n", frame, index+1);
+		if ( frame != NextFrame ) {
+			/* We kept the last frame cached, so send it */
+			if ( frame == (NextFrame-1) ) {
+error("Transmitting packet for old frame (%lu)\r\n", frame);
+				SDLNet_UDP_Send(gNetFD, sent.channel, OutBound[!CurrOut]);
+			} else if ( frame == (NextFrame+1) ) {
+error("Received packet for next frame! (%lu, current = %lu)\r\n",
+						frame, NextFrame);
+				/* Send this player our current frame */
+				SDLNet_UDP_Send(gNetFD, sent.channel, OutBound[CurrOut]);
+				/* Cache this frame for next round,
+				   skip consistency check, for now */
+				memcpy(NextBuf[NextSync], &buf[PDATA_OFFSET], sent.len-PDATA_OFFSET);
+				NextPtr[index] = NextBuf[NextSync];
+				NextLen[index] = sent.len-PDATA_OFFSET;
+				++NextSync;
+			}
+else
+error("Warning! Received packet for really old frame! (%lu, current = %lu)\r\n",
+							frame, NextFrame);
+			/* Go to select, reset timeout */
+			continue;
+		}
+
+		/* Do a consistency check!! */
+		Uint32 newseed = SDLNet_Read32(&buf[1+sizeof(frame)]);
+		if ( newseed != seed ) {
+//error("New seed (from player %d) is: 0x%x\r\n", index+1, newseed);
+			if ( gOurPlayer == 0 ) {
+				error(
+"Warning!! \a Frame consistency error with player %d!! (corrected)\r\n", index+1);
+SDL_Delay(3000);
+			} else	/* Player 1 sent us good seed */
+				SeedRandom(newseed);
+		}
+
+		/* Okay, we finally have a valid timely packet */
+		memcpy(SyncBuf[ThisSync], &buf[PDATA_OFFSET], sent.len-PDATA_OFFSET);
+		SyncPtr[index] = SyncBuf[ThisSync];
+		SyncLen[index] = sent.len-PDATA_OFFSET;
+		++ThisSync;
+		--nleft;
+	}
+
+	/* Set the next outbound packet buffer */
+	++NextFrame;
+	TOGGLE(CurrOut);
+	OutLen = PDATA_OFFSET;
+
+	return(0);
+}

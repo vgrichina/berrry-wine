@@ -1,0 +1,27 @@
+  ;; host re-enters this same handler with the same arguments once the wire
+  ;; has moved.
+  ;;
+  ;; $handler_set_eip is what keeps that true. $run's thunk-zone auto-pop fires
+  ;; whenever a handler leaves EIP alone — yield or no yield — and sets
+  ;; EIP = [ESP], splicing the call out: the guest resumes past its own connect
+  ;; or recv with the arguments still on the stack, having never made the call,
+  ;; and drifts by $unpop bytes every park. Every re-entering thunk raises this;
+  ;; see the CACA000x continuations and $cs_block, where the same omission cost a
+  ;; session before it was found.
+  (func $vsock_block (param $unpop i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (local.get $unpop)))
+    (global.set $handler_set_eip (i32.const 1))
+    ;; And re-enter the CALL rather than the block that made it: an API call
+    ;; dispatched inline from inside a decoded block leaves EIP naming that
+    ;; block's first instruction, so a park that does not set EIP resumes by
+    ;; re-executing the argument pushes. See the same line in $cs_block, where
+    ;; that cost 8 bytes of stack per park and a wild jump much later.
+    (global.set $eip (global.get $current_thunk_eip))
+    (global.set $yield_reason (i32.const 8))
+    (global.set $yield_flag (i32.const 1))
+    (global.set $steps (i32.const 0)))
+
+  ;; IPv4/ICMP packet primitives for the room transport. Addresses below are
+  ;; host-owned WASM buffer spans, NOT guest pointers. Callers validate spans.
+  ;; RFC 792 checksum: big-endian words, odd tail padded with a low zero byte.
+  (func $vsock_inet_checksum (param $p i32) (param $n i32) (result i32)

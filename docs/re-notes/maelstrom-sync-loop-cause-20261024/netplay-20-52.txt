@@ -1,0 +1,33 @@
+static IPaddress      PlayAddr[MAX_PLAYERS];
+static IPaddress      ServAddr;
+static int            FoundUs, UseServer;
+static Uint32         NextFrame;
+UDPpacket            *OutBound[2];
+static int            CurrOut;
+/* This is the data offset of a SYNC packet */
+#define PDATA_OFFSET	(1+1+sizeof(Uint32)+sizeof(Uint32))
+
+/* We keep one packet backlogged for retransmission */
+#define OutBuf		OutBound[CurrOut]->data
+#define OutLen		OutBound[CurrOut]->len
+#define LastBuf		OutBound[!CurrOut]->data
+#define LastLen		OutBound[!CurrOut]->len
+
+static unsigned char *SyncPtrs[2][MAX_PLAYERS];
+static unsigned char  SyncBufs[2][MAX_PLAYERS][BUFSIZ];
+static int            SyncLens[2][MAX_PLAYERS];
+static int            ThisSyncs[2];
+static int            CurrIn;
+static SDLNet_SocketSet SocketSet;
+
+/* We cache one packet if the other player is ahead of us */
+#define SyncPtr		SyncPtrs[CurrIn]
+#define SyncBuf		SyncBufs[CurrIn]
+#define SyncLen		SyncLens[CurrIn]
+#define ThisSync	ThisSyncs[CurrIn]
+#define NextPtr		SyncPtrs[!CurrIn]
+#define NextBuf		SyncBufs[!CurrIn]
+#define NextLen		SyncLens[!CurrIn]
+#define NextSync	ThisSyncs[!CurrIn]
+
+#define TOGGLE(var)	var = !var

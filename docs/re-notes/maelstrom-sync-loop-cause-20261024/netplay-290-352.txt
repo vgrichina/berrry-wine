@@ -1,0 +1,63 @@
+int SyncNetwork(void)
+{
+	UDPpacket sent;
+	Uint32 seed, frame;
+	unsigned char buf[BUFSIZ];
+	int index, nleft;
+
+	/* Set the next inbound packet buffer */
+	TOGGLE(CurrIn);
+
+	/* Set the frame number */
+	frame = NextFrame;
+	SDLNet_Write32(frame, &OutBuf[1]);
+	seed = GetRandSeed();
+	SDLNet_Write32(seed, &OutBuf[1+sizeof(frame)]);
+
+	/* Send the packet to all the players */
+	SDLNet_UDP_Send(gNetFD, 0, OutBound[CurrOut]);
+	for ( nleft=0, index=0; index<gNumPlayers; ++index ) {
+		if ( SyncPtr[index] == NULL ) {
+			++nleft;
+		}
+	}
+	NextSync = 0;
+
+	/* Get the inbound packet ready for data */
+	sent.data = buf;
+	sent.maxlen = sizeof(buf);
+
+	/* Wait for Ack's */
+	while ( nleft ) {
+		int ready = SDLNet_CheckSockets(SocketSet, 1000+60*gOurPlayer);
+		if ( ready == 0 ) {
+error("Timed out waiting for frame %ld\r\n", NextFrame);
+			/* Timeout, resend the sync packet */
+			for ( index=0; index<gNumPlayers; ++index ) {
+				if ( SyncPtr[index] == NULL ) {
+					SDLNet_UDP_Send(gNetFD, index+1, OutBound[CurrOut]);
+				}
+			}
+		}
+		if ( ready <= 0 ) {
+			continue;
+		}
+
+		/* We are guaranteed that there is data here */
+		if ( SDLNet_UDP_Recv(gNetFD, &sent) <= 0 ) {
+			error("Network error: SDLNet_UDP_Recv()");
+			return(-1);
+		}
+//error("Received packet!\r\n");
+
+		/* We have a packet! */
+		if ( buf[0] == NEW_GAME ) {
+			/* Send it back if we are not the server.. */
+			if ( gOurPlayer != 0 ) {
+				buf[1] = gOurPlayer;
+				SDLNet_UDP_Send(gNetFD, -1, &sent);
+			}
+//error("NEW_GAME packet!\r\n");
+			continue;
+		}
+		if ( buf[0] != SYNC_MSG ) {

@@ -1,0 +1,12 @@
+  (func $vsock_read_ready (param $idx i32) (result i32)
+    (local $rec i32) (local $st i32)
+    (local.set $rec (call $vsock_rec (local.get $idx)))
+    (local.set $st (load.field VSock state (local.get $rec)))
+    (if (i32.eq (local.get $st) (i32.const 3))
+      (then (return (i32.gt_u (load.field VSock acc_count (local.get $rec)) (i32.const 0)))))
+    (if (i32.gt_u (load.field VSock rx_len (local.get $rec)) (i32.const 0))
+      (then (return (i32.const 1))))
+    (i32.ne (i32.and (load.field VSock flags (local.get $rec)) (i32.const 5))
+            (i32.const 0)))
+
+  ;; Write-ready: a connected stream whose write half is open and whose

@@ -1,0 +1,14 @@
+{
+  "ownBlocks": 2605056,
+  "externalHistoryBlocks": 1019904,
+  "positiveSQLiteGrowth": 20480,
+  "future": 20971520,
+  "reserve": 8388608,
+  "total": 33005568,
+  "hostFree": 3727876096,
+  "hostAfter": 3698515968,
+  "captureCharged": 350000,
+  "maxNativeSlice": 7793,
+  "nativeTotal": 25811,
+  "passCheck": true
+}

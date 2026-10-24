@@ -1,0 +1,127 @@
+[
+  {
+    "file": "sync-initial-1.asm",
+    "bytes": 7791,
+    "sha256": "bb8bab90d4107170eaaee79e2672caf4e7b73fafeb6086db416e7026315cbfb9",
+    "kind": "objdump -d -Mintel",
+    "input": "Maelstrom.exe",
+    "initialMisalignedBytes": null,
+    "formatNormalization": "strip trailing whitespace only; raw complete objdump retained taskroot"
+  },
+  {
+    "file": "sync-initial-2.asm",
+    "bytes": 1121,
+    "sha256": "63afdd84a5bbb84bdf45ba5093d116c0d1527ef33f2b509735adbf245eb451a4",
+    "kind": "objdump -d -Mintel",
+    "input": "Maelstrom.exe",
+    "initialMisalignedBytes": null,
+    "formatNormalization": "strip trailing whitespace only; raw complete objdump retained taskroot"
+  },
+  {
+    "file": "sync-tail-1.asm",
+    "bytes": 7793,
+    "sha256": "10a4bdd3f4e1e2b3f30b4035b7a3f6d5d6360cc53b8aa0971859101488c02c3b",
+    "kind": "objdump -d -Mintel",
+    "input": "Maelstrom.exe",
+    "initialMisalignedBytes": null,
+    "formatNormalization": "strip trailing whitespace only; raw complete objdump retained taskroot"
+  },
+  {
+    "file": "sync-tail-2.asm",
+    "bytes": 1803,
+    "sha256": "b9b1c0c684b9c9181fdaad677609c1a92a6aedf8c55b20bb80a8a4f70e09faf4",
+    "kind": "objdump -d -Mintel",
+    "input": "Maelstrom.exe",
+    "initialMisalignedBytes": null,
+    "formatNormalization": "strip trailing whitespace only; raw complete objdump retained taskroot"
+  },
+  {
+    "file": "sdl-select-1.asm",
+    "bytes": 7301,
+    "sha256": "27c4d5279b06d37a9354ed2f3562fc7bd1bbf7e00cac300299f7f1e5700c9511",
+    "kind": "objdump -d -Mintel",
+    "input": "SDL_net.dll",
+    "initialMisalignedBytes": "10001280-100012af ignored",
+    "formatNormalization": "strip trailing whitespace only; raw complete objdump retained taskroot"
+  },
+  {
+    "file": "historical-winsock-681-692.txt",
+    "bytes": 644,
+    "sha256": "97631615dc2a0526ae942fb077d062b3fe55ec7f75d41336a34a00205bfddc76",
+    "path": "/tmp/maelstrom-sync-loop-cause-oct24/historical-winsock.wat",
+    "first": 681,
+    "last": 692,
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+  },
+  {
+    "file": "historical-winsock-1315-1341.txt",
+    "bytes": 1689,
+    "sha256": "05e9d26bc2398f9ca61ec46491eb10a52865e8b4014a2b548442e662b45d55c8",
+    "path": "/tmp/maelstrom-sync-loop-cause-oct24/historical-winsock.wat",
+    "first": 1315,
+    "last": 1341,
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+  },
+  {
+    "file": "historical-winsock-2692-2738.txt",
+    "bytes": 2591,
+    "sha256": "559abfa09c3aeb18e2dc51c63679b7c17dcbedf0c28be658882a0d3302a469ea",
+    "path": "/tmp/maelstrom-sync-loop-cause-oct24/historical-winsock.wat",
+    "first": 2692,
+    "last": 2738,
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+  },
+  {
+    "file": "historical-winsock-2740-2784.txt",
+    "bytes": 2663,
+    "sha256": "33bb6c6d42d2b288480b0d00bcb5afe02c1c82ad63c92b927c21716537718aa4",
+    "path": "/tmp/maelstrom-sync-loop-cause-oct24/historical-winsock.wat",
+    "first": 2740,
+    "last": 2784,
+    "fullSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a"
+  },
+  {
+    "file": "netplay-20-52.txt",
+    "bytes": 1166,
+    "sha256": "a939d6c98734de9ecb86fdba49c43529c629ff63f091bd3c26742be555b2c37a",
+    "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/netplay.cpp",
+    "first": 20,
+    "last": 52,
+    "fullSHA256": "88d2b274c227e9fa55c6aceac2a6ba2ea8794e1e9d814ddc722e2f9f29d9e816",
+    "revision": "reference archive e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46"
+  },
+  {
+    "file": "netplay-204-274.txt",
+    "bytes": 1838,
+    "sha256": "12a236aaea1e95c8d01dbe69247231c91541265b7a46c7ed7742b99ee4ed2f80",
+    "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/netplay.cpp",
+    "first": 204,
+    "last": 274,
+    "fullSHA256": "88d2b274c227e9fa55c6aceac2a6ba2ea8794e1e9d814ddc722e2f9f29d9e816",
+    "revision": "reference archive e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46"
+  },
+  {
+    "file": "netplay-290-352.txt",
+    "bytes": 1538,
+    "sha256": "07f317d0c4e69cde44c2081b51b8bd04f6470579a77aa87be989ca7ed0faa9cf",
+    "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/netplay.cpp",
+    "first": 290,
+    "last": 352,
+    "fullSHA256": "88d2b274c227e9fa55c6aceac2a6ba2ea8794e1e9d814ddc722e2f9f29d9e816",
+    "revision": "reference archive e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46"
+  },
+  {
+    "file": "netplay-353-420.txt",
+    "bytes": 2072,
+    "sha256": "f59cf64a2fb0f11a660105fc9020d039a066fe0e769d29d6f9c40ee442632116",
+    "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/netplay.cpp",
+    "first": 353,
+    "last": 420,
+    "fullSHA256": "88d2b274c227e9fa55c6aceac2a6ba2ea8794e1e9d814ddc722e2f9f29d9e816",
+    "revision": "reference archive e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46"
+  }
+]

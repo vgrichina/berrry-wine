@@ -1,0 +1,237 @@
+{
+  "passChecks": true,
+  "identities": [
+    {
+      "name": "Maelstrom.exe",
+      "bytes": 135168,
+      "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+    },
+    {
+      "name": "SDL.dll",
+      "bytes": 225280,
+      "sha256": "02433232425e68009843bd3ecec20ad67453a48487f7b5828c595b76e2f9d373"
+    },
+    {
+      "name": "SDL_net.dll",
+      "bytes": 24576,
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+    }
+  ],
+  "anchors": [
+    {
+      "va": "0x40e125",
+      "fileOffset": 57637,
+      "hex": "e8c2530000"
+    },
+    {
+      "va": "0x40e12a",
+      "fileOffset": 57642,
+      "hex": "83c40885c0756e"
+    },
+    {
+      "va": "0x40e1b1",
+      "fileOffset": 57777,
+      "hex": "e830530000"
+    },
+    {
+      "va": "0x40e1b6",
+      "fileOffset": 57782,
+      "hex": "83c40885c00f8ecb020000"
+    },
+    {
+      "va": "0x40e439",
+      "fileOffset": 58425,
+      "hex": "404b89049524fa4100895c2410"
+    },
+    {
+      "va": "0x40e44a",
+      "fileOffset": 58442,
+      "hex": "85db0f85b9fcffff"
+    },
+    {
+      "va": "0x40e452",
+      "fileOffset": 58450,
+      "hex": "8b15f8f94100"
+    },
+    {
+      "va": "0x1000135d",
+      "fileOffset": 4957,
+      "hex": "e8ee090000"
+    },
+    {
+      "va": "0x10001362",
+      "fileOffset": 4962,
+      "hex": "8be8ffd783380474a2"
+    },
+    {
+      "va": "0x1000139c",
+      "fileOffset": 5020,
+      "hex": "8bc55e5d5b81c414010000c3"
+    }
+  ],
+  "nativeMutationRejects": 2,
+  "controls": [
+    {
+      "inputs": [],
+      "variant": {},
+      "remaining": [],
+      "action": "success"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "ready": 0
+      },
+      "remaining": [
+        0
+      ],
+      "action": "resend"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "ready": -1
+      },
+      "remaining": [
+        0
+      ],
+      "action": "retry"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "recv": 0
+      },
+      "remaining": [
+        0
+      ],
+      "action": "error"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "kind": 1
+      },
+      "remaining": [
+        0
+      ],
+      "action": "new-game"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "kind": 2
+      },
+      "remaining": [
+        0
+      ],
+      "action": "unknown-type"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "channel": 0
+      },
+      "remaining": [
+        0
+      ],
+      "action": "unknown-source"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "channel": 2
+      },
+      "remaining": [
+        0
+      ],
+      "action": "duplicate"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "frame": 6
+      },
+      "remaining": [
+        0
+      ],
+      "action": "resend-old"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "frame": 8
+      },
+      "remaining": [
+        0
+      ],
+      "action": "cache-next"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {
+        "frame": 3
+      },
+      "remaining": [
+        0
+      ],
+      "action": "wrong-frame"
+    },
+    {
+      "inputs": [
+        0
+      ],
+      "variant": {},
+      "remaining": [],
+      "action": "success"
+    },
+    {
+      "inputs": [
+        0,
+        1
+      ],
+      "variant": {
+        "seed": 10
+      },
+      "remaining": [
+        1
+      ],
+      "action": "accept-delay"
+    },
+    {
+      "inputs": [
+        0,
+        1
+      ],
+      "variant": {
+        "seed": 10,
+        "our": 1
+      },
+      "remaining": [
+        1
+      ],
+      "action": "accept-reseed"
+    }
+  ],
+  "limitations": "Source semantics only; no guest/native/WASM execution and no observed return values."
+}
