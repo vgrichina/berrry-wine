@@ -1,0 +1,11 @@
+{
+  "passValidation": true,
+  "exactRelocatedRecipe": true,
+  "original48MappingHashes": true,
+  "remote247Closure": true,
+  "fullRawSixSeals": true,
+  "allSixCountersZero": true,
+  "noTraceRecords": true,
+  "noGuestRerun": true,
+  "terminalReaped": true
+}

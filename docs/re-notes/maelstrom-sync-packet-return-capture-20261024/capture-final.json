@@ -1,0 +1,12 @@
+{
+  "priorConservative": 400000,
+  "collected": 23919,
+  "total": 423919,
+  "cap": 1048576,
+  "slice": 8192,
+  "instructionReadCap": 65536,
+  "instructionReadEstimate": 4096,
+  "codeSliceCap": 8192,
+  "note": "400000-byte conservative prior includes all earlier tool presentation and API/transfer log capture; full oversized historical recipe presentations retained/charged, bounded recovery slices separately retained.",
+  "codeCorrection": "/tmp/maelstrom-sync-packet-return-capture-oct24/recovery-slices.json"
+}

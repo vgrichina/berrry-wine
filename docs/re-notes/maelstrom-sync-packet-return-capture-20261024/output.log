@@ -1,0 +1,78 @@
+PE loaded. Entry: 0x00417474
+Guest environment: MAELSTROM_LIB="."
+Guest environment: HOME="."
+DLL: msvcrt.dll at 0x522000, DllMain=0x525428, thunks=1954, origBase=0x78000000
+DLL: SDL.dll at 0x666000, DllMain=0x68f8df, thunks=2069, origBase=0x10000000
+DLL: SDL_net.dll at 0x7a2000, DllMain=0x7a3e4f, thunks=2091, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_net.dll -> DLL #2 (SDL_net.dll)
+Patching EXE imports: MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_net.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_net.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2094 thunks
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x68f8df...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7a3e4f...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x55dedc] = 0x7ae97c
+Patched __p__environ [0x55cbe4] = 0x7ae95c
+Patched __p___winitenv [0x55e0ec] = 0x7ae97c
+Patched __p___initenv [0x560c9c] = 0x7ae95c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x52e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\maelstrom
+[trace-window] tracing batches 30000..end
+[capture] pixel-preserving png 1 2061 bytes
+[input] png /tmp/maelstrom-sync-packet-return-capture-oct24/guest/menu.png (2061 bytes) at batch 30000 guest-ms=6000000
+[input] keydown vk=80 at batch 31000
+[input] keyup vk=80 at batch 31200
+[capture] pixel-preserving png 2 2061 bytes
+[input] png /tmp/maelstrom-sync-packet-return-capture-oct24/guest/play.png (2061 bytes) at batch 34000 guest-ms=6800000
+[input] keydown vk=37 at batch 35000
+[input] keydown vk=38 at batch 35200
+[input] keydown vk=32 at batch 35500
+[input] keyup vk=37 at batch 36000
+[input] keyup vk=38 at batch 36200
+[input] keyup vk=32 at batch 36500
+[capture] pixel-preserving png 3 2061 bytes
+[input] png /tmp/maelstrom-sync-packet-return-capture-oct24/guest/input.png (2061 bytes) at batch 39000 guest-ms=7800000
+
+--- Final state ---
+EIP=0x00417430 EAX=0x00000001 ECX=0x00000000 EDX=0x00000a48 EBX=0x00000001 ESP=0x074ffbcc EBP=0x000018e0 ESI=0x007c9c86 EDI=0x007cb7c4
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505038 num_thunks: 2567
+heap_ptr: 0x007cc630
+free_list: 0x007c5588
+heap stats: allocs=444 frees=40 steps=71 (0.2/alloc) misses=321 missSteps=6 freeList=4 [16:4]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x083f0000
+heap_base: 0x007a8000
+cache: full clears M 2
+cache: block decodes 2445 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 61 | index hits 44439 misses 1987 (95.7% hit) | desk trips skipped 3751
+runs:  extended 422 | blocks chained 784 | free fall-throughs 1273
+       fall-through branches 2747 | free 1273 | paid 1474 (53.7% of fall-throughs are the defrag headroom)
+chunks: samples 11 | used mean 2033 max 7088 | <=4K 9 <=8K 11 <=12K 11 <=16K 11 | grows 6 reuses 5 unpublished 0
+cache: page invalidations 99 that dropped a block 137 last 0x00415000
+       blocks retired one at a time 137 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 1 / 512   dc_mark 1
+gdi: dib arena pages used 2 free 16126 largest free run 16125 of 16128
+uop: installs=9 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=3 | compiled=9 declined=12 insns=109 uops=586 flushes=0 traces=6
+  declines: no-backedge=9 head-unsupported=2 call-indirect=1
+uop nobump: skips=0
+uop hot: decays=5427 halvings=1
+
+Stats: 4702 API calls, 42000 batches in 0.428s (98061 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+Hit counts:
+  0x0040287d = 0
+  0x007a3362 = 0
+  0x0040e000 = 0
+  0x004019a0 = 0
+  0x00406378 = 0
+  0x075040f8 = 0

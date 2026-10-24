@@ -1,0 +1,51 @@
+{
+  "charges": {
+    "remoteClosure": 17027463,
+    "remoteHelpersEvidence": 1500000,
+    "checkoutGit": 3500000,
+    "localHelpersEvidence": 2500000,
+    "transferOverlap": 1000000,
+    "sessionFull": 467445,
+    "launcherFull": 155648,
+    "sqlitePositive": 0,
+    "externalFuture": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 50539164,
+  "cap": 67108864,
+  "free": 3715981312,
+  "after": 3665442148,
+  "remoteFree": 48802037760,
+  "remoteAfter": 48751498596,
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-06-15-01a16d29-2701-7b21-a785-c26276ebc281.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-sync-packet-return-capture-oct24",
+  "sourceMemAvailable": 3736838144,
+  "perFileMax": 1879746,
+  "standingManifest": "/tmp/maelstrom-select-return-capture-oct24/manifest.json",
+  "standingTools": [
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    }
+  ],
+  "capturePriorCharged": 100000,
+  "instructionBytes": 0,
+  "codeSliceCap": 8192,
+  "passAdmission": true
+}

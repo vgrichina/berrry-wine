@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hqxnuj63ujau",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:08:58.109Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-24T09:08:58.061Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 247, \"bytes\": 17027463, \"passHash\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

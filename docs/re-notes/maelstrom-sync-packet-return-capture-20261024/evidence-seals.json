@@ -1,0 +1,32 @@
+[
+  {
+    "path": "guest/output.log",
+    "bytes": 3897,
+    "sha256": "35fd9554d372aa7d156f9e5c61a37a74aa66c0df6139ff409483f2002efb06cf"
+  },
+  {
+    "path": "guest/terminal.json",
+    "bytes": 309,
+    "sha256": "02f9be98494f504a21c8fe2ea5dc90b0f3ed3c2b4a4c747de928055e43abeb1c"
+  },
+  {
+    "path": "guest/command.json",
+    "bytes": 2088,
+    "sha256": "0ea30dabb7c609103df71e8eb51a95bca17e8a8de4e4af011fa6879af13f5dc7"
+  },
+  {
+    "path": "guest/menu.png",
+    "bytes": 2061,
+    "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+  },
+  {
+    "path": "guest/play.png",
+    "bytes": 2061,
+    "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+  },
+  {
+    "path": "guest/input.png",
+    "bytes": 2061,
+    "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+  }
+]

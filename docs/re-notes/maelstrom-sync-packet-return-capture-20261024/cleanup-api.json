@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_fgru7opedgxc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:09:38.793Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-24T09:09:38.755Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48771952640, \"ownedBytes\": 17149407, \"taskNode\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

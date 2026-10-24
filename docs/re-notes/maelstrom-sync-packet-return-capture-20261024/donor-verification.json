@@ -1,0 +1,7 @@
+{
+  "head": "6c265033d01e547a3d9320316cc17027bbb7cb0b",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "returncode": 0,
+  "stdout": "6c265033d01e547a3d9320316cc17027bbb7cb0b\trefs/heads/task/maelstrom-sync-loop-cause-oct24\n",
+  "stderr": ""
+}

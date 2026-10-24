@@ -1,0 +1,18 @@
+{
+  "supervisorSHA256": "071d20f83d0144f4878625deb99d63eec20c3b7f78cacff8c7c662249c901ea1",
+  "historicalSupervisorSHA256": "c360fdd3f93ea863262083b821ce603186e48ab232b2313fc4a16e6084d17d27",
+  "preloadSHA256": "4b78b07b9f6346df3ef35115a137b3a675ac1e436e6128fd3d357e78406e5245",
+  "observerSHA256": "d76eb1c03fd73389f0e6c263321610a7a9f9bda4f0a2e3b216398d498e7d42cf",
+  "captureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+  "watchdogControlsReused": [
+    "/tmp/maelstrom-select-return-capture-oct24/watchdog-descendant-api.json",
+    "/tmp/maelstrom-select-return-capture-oct24/output-control-api.json"
+  ],
+  "changes": [
+    "allocation path",
+    "box ID",
+    "latest start09:24",
+    "expiry09:34:43.880",
+    "coordinator shutdown09:29"
+  ]
+}

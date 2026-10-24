@@ -1,0 +1,14 @@
+[
+  {
+    "name": "validate-tree.cjs",
+    "returncode": 0,
+    "stdout": "{\"pass\":true,\"canonicalParserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\",\"fullArgv\":true,\"treeOnlyMaelstrom\":true,\"files\":48,\"mapping\":\"48 hashed mappings retained\",\"brokenCommaRejected\":true,\"wrongRootRejected\":true,\"missingFileRejected\":true,\"schedule\":[{\"batch\":30000,\"action\":\"png\"},{\"batch\":31000,\"action\":\"keydown\"},{\"batch\":31200,\"action\":\"keyup\"},{\"batch\":34000,\"action\":\"png\"},{\"batch\":35000,\"action\":\"keydown\"},{\"batch\":35200,\"action\":\"keydown\"},{\"batch\":35500,\"action\":\"keydown\"},{\"batch\":36000,\"action\":\"keyup\"},{\"batch\":36200,\"action\":\"keyup\"},{\"batch\":36500,\"action\":\"keyup\"},{\"batch\":39000,\"action\":\"png\"}],\"limit\":42000,\"guestInvoked\":false}\n",
+    "stderr": ""
+  },
+  {
+    "name": "observer-test.cjs",
+    "returncode": 0,
+    "stdout": "{\"pass\":true,\"reachable\":true,\"phaseGate\":true,\"completedReturnControl\":true,\"badPointerRejected\":true,\"wrongReturnRejected\":true,\"readOnly\":true,\"rows\":[{\"batch\":36000,\"offset\":0,\"eip\":122700024,\"esp\":100,\"counts\":[4,0,1,1,1,1],\"tick\":{\"batch\":36000,\"lastTick\":7200000},\"yield\":8,\"frame\":[8008546,4,200,0,0,240],\"timeval\":[1,0,0,0,0,0,0,0],\"fdsets\":[[1,0,0,0,42,0,0,0],null,null]},{\"batch\":36010,\"offset\":10,\"eip\":122700024,\"esp\":100,\"counts\":[4,1,1,1,1,10],\"tick\":{\"batch\":36010,\"lastTick\":7202000},\"yield\":8,\"frame\":[8008546,4,200,0,0,240],\"timeval\":[1,0,0,0,0,0,0,0],\"fdsets\":[[1,0,0,0,42,0,0,0],null,null]}]}\n",
+    "stderr": ""
+  }
+]

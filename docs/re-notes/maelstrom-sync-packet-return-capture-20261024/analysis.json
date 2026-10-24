@@ -1,0 +1,79 @@
+{
+  "task": "maelstrom-sync-packet-return-capture-oct24",
+  "outcome": "bounded-trace-reachability-blocker",
+  "guestExecutions": 1,
+  "requestedTraceRecords": 16,
+  "observedTraceRecords": 0,
+  "requestedPCs": [
+    "7a3362",
+    "40e12a",
+    "40e1b6",
+    "40e44a",
+    "40e452"
+  ],
+  "traceStartBatch": 36163,
+  "maxRawMemoryBytes": 8384,
+  "observedRawMemoryBytes": 0,
+  "counts": {
+    "0x0040287d": 0,
+    "0x007a3362": 0,
+    "0x0040e000": 0,
+    "0x004019a0": 0,
+    "0x00406378": 0,
+    "0x075040f8": 0
+  },
+  "afterNextWave": 0,
+  "SyncEntries": 0,
+  "finalEIP": "0x00417430",
+  "finalEAX": "0x00000001",
+  "finalEAXIsRequestedReturn": false,
+  "missingSlots": null,
+  "packetMetadata": null,
+  "selectedBranch": null,
+  "unresolvedPredicate": "No requested return/block PC reached; cannot select CheckSockets timeout, positive readiness/rejected packet, or SDL_net errno retry.",
+  "firstBlocker": "Unchanged 42000-batch window ended before observed afterNextWave/Sync/select return entry; all six exact counters zero.",
+  "hostProcessExit": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 0,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 0.6315852519999794,
+    "box": "bx_bewteqdp",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown09:29UTC",
+    "expires": "2026-10-24T09:34:43.880Z",
+    "outputBytes": 3897
+  },
+  "guestNormalExitProven": false,
+  "fullOutputBytes": 3897,
+  "outputGuardBytes": 131072,
+  "noOutputTruncation": true,
+  "argvExactExceptOwnedAllocationRelocation": true,
+  "images": [
+    {
+      "file": "menu.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "file": "play.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    },
+    {
+      "file": "input.png",
+      "bytes": 2061,
+      "sha256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68"
+    }
+  ],
+  "screenshotReview": "menu.png visually inspected: uniform teal; the other two PNG files have identical full hashes. No main-menu/gameplay claim.",
+  "box": {
+    "id": "bx_bewteqdp",
+    "state": "RUNNING (API idle)",
+    "health": "ok",
+    "expiry": "2026-10-24T09:34:43.880Z",
+    "coordinatorOwnsShutdown": true
+  },
+  "noSecondGuest": true
+}
