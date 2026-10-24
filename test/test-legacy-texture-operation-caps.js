@@ -221,7 +221,7 @@ function caps(f) {
   assert.equal(f.dv.getUint32(p + 236, true), 0xa5a5a5a5);
   const result = f.dv.getUint32(p + 180, true);
   receipts.descriptorHex = Buffer.from(f.e.memory.buffer, p, 236).toString('hex');
-  assert.equal(result, 0x0000000e, 'TextureOpCaps must advertise exactly proven SELECTARG1/2/MODULATE');
+  assert.equal(result, 0x0000000f, 'TextureOpCaps must advertise exactly proven DISABLE/SELECTARG1/2/MODULATE');
   assert.equal(f.dv.getUint16(p + 184, true), 1);
   assert.equal(f.dv.getUint16(p + 186, true), 1);
   assert.equal(f.dv.getUint32(p + 176, true), 8);
@@ -317,8 +317,8 @@ try {
   if (argumentStateRepair) receipts.argumentCases = argumentCases(makeFixture(assembled));
   const acceptedDescriptor = receipts.descriptorHex;
   if (mutations) {
-    for (const mask of ['0x0000F', '0x0001E', '0x00006']) {
-      const altered = assembled.replace('(i32.const 0x0000E)', `(i32.const ${mask})`);
+    for (const mask of ['0x0000E', '0x0001F', '0x00007']) {
+      const altered = assembled.replace('(i32.const 0x0000F)', `(i32.const ${mask})`);
       assert.notEqual(altered, assembled); reject(`capability mutation ${mask}`, () => caps(makeFixture(altered)));
     }
     const wrongSoftware = assembled.replace('(then (local.set $rgb (i32.and (local.get $tex)',
