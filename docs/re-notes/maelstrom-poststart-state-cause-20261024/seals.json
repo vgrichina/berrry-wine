@@ -1,0 +1,147 @@
+[
+  {
+    "path": "tools/maelstrom-poststart-proof.py",
+    "bytes": 18106,
+    "sha256": "21c9066e5c458aad92f607fcd21b96e7bd4c99140475ccb92c0a64405c0c66a1"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024.md",
+    "bytes": 16945,
+    "sha256": "2a63d744b2311eebe683d2364af312d34712e2acaf9fe6403a0567ef98b4dc12"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/capture-delta.json",
+    "bytes": 3049,
+    "sha256": "56f71f37edb6737de3c2b76859db301606ea09493b968b0ea5010d8198e8e828"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/event-drain.asm",
+    "bytes": 1586,
+    "sha256": "05406422f904dd7e3ddde86aa547e6c8ef7f32e1b9483d83172a9063b1ec4e82"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/fade.asm",
+    "bytes": 3474,
+    "sha256": "503309e694e6b3882dd2141461fe39a948770328cb8a4ce65d2b4410c21f1d41"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/frame-draw-timing.asm",
+    "bytes": 4680,
+    "sha256": "f7652081810479be83ab7632b6e24f468e77f5607c28f7f4eb81f31104f33c0b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/frame-input.asm",
+    "bytes": 1520,
+    "sha256": "6e451700212aeec9460e2845572733f5a56799ab3758ad05845c67a0e98a32f7"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/framebuffer-update.asm",
+    "bytes": 3170,
+    "sha256": "b4638c4735e7afa4ee2c8e21426d0e08d1ae4d59f49983f4df94c0a4ccedc6a4"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/harness-parser-fixture.cjs",
+    "bytes": 39536,
+    "sha256": "6006925e34b5e21585d9705a9403e98d79cf73637c9b6d47e831d0f35c7d4faa"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/harness-parser-test.log",
+    "bytes": 152,
+    "sha256": "87acb6d08a58150cce7e39de200799d14b23e8a076f5171852fb16706e6ce409"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/new-game.asm",
+    "bytes": 5027,
+    "sha256": "3dce38ce13976812e58764e1180d5a4f5cdeb3970538e8639f594215ead5792d"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/object-identities.json",
+    "bytes": 494,
+    "sha256": "dac4c0387a84e7a2dabc78251e15703cb31db9f8e4b1975226ae219788df0fbc"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/p-key-call.asm",
+    "bytes": 265,
+    "sha256": "de5271893fc820eed08e731d6b5f044df1e6e94b8e407066b2c3d58905e2ccad"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/p-key-decode.asm",
+    "bytes": 580,
+    "sha256": "9abd5262f0b4659eb6cecc983135dfb141cbed147a29ed7be5d45bf7ac4bca68"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/player-start.asm",
+    "bytes": 4696,
+    "sha256": "a990298cfb55e6f2d98d4936afcd8e412943e24c49c3b10de7c12b3b1a6787d8"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/proof.json",
+    "bytes": 14649,
+    "sha256": "8cc5251baf45ff7d3af013fe3ae841586bbc1440af0026f78dfc56438d2123b4"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/reference-source-excerpts.json",
+    "bytes": 9545,
+    "sha256": "1af7842d32f57ecd7ba152680c78f7603ece393368706bd6e1492af77b360f33"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/resource-admission.json",
+    "bytes": 25860,
+    "sha256": "5eb2589b3410c38ba0fc633195d80202a89f105fbf38444158bdd63d4e1fdbe0"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/resource-final.json",
+    "bytes": 12050,
+    "sha256": "1a6fa3b447f9eec3b420e86fc96bb4c55fc1184f49feeef5356c46fb7d7e6016"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-command.json",
+    "bytes": 1743,
+    "sha256": "3a41b84a1c77e5f502f261ad194483c93daf3cd1fdc22bd59eedd0d054adc877"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-guest-args.json",
+    "bytes": 1262,
+    "sha256": "d5c3b22ddc99942ff261bd56ff3bae547e779f173eb6a365a48a943e8a9f98ce"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-input-receipt.json",
+    "bytes": 1557,
+    "sha256": "40c0a159c8deabf8a7f556c7d73fa3eebcf834a1c5f3069160d25f0095719e56"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-output.log",
+    "bytes": 6393,
+    "sha256": "ea8e7be66655df53166908c7c9c134fbd62188612fdd5e99a7d4b74e6483ffaa"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/sdl-clock.asm",
+    "bytes": 2689,
+    "sha256": "cb5027f2ebd9c2018b21fca42cabcd7537d1bfa05005172d3df1f3900a7414c3"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/ship-create.asm",
+    "bytes": 3489,
+    "sha256": "47ad76fee7c99c32ee7ad92aea4c5bf644065ea7275b02ecfa9b4cec694c2263"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/start-action.asm",
+    "bytes": 2324,
+    "sha256": "8c19c8070df023a2828bff6a94b35c4b2ed7f97605e5c3e3e14f4495e8ac81a7"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/status-labels.asm",
+    "bytes": 7321,
+    "sha256": "3fd4792e16bc28a865c0a97b828260869020ac5cd46596d75dbf58d4b979f65e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/wave-publish.asm",
+    "bytes": 5540,
+    "sha256": "3af41accd9aee1a47bbbe53ca1d912c214ddfd06206129dee199093c68bdef56"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-poststart-state-cause-20261024/wave-start.asm",
+    "bytes": 1380,
+    "sha256": "6e2264d60d9be4c10349bab604c5ef0a1350a5ec9368bb96b0d4d0fd9df71413"
+  }
+]

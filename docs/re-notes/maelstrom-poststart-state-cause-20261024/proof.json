@@ -1,0 +1,620 @@
+{
+  "passOffline": true,
+  "exeSHA": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5",
+  "sdlSHA": "02433232425e68009843bd3ecec20ad67453a48487f7b5828c595b76e2f9d373",
+  "harnessSHA": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "imageBase": "0x400000",
+  "runtimeEXEBase": "0x400000",
+  "relocationDirectoryAbsent": true,
+  "sections": [
+    {
+      "name": ".text",
+      "rva": 4096,
+      "vsize": 94720,
+      "rawsize": 98304,
+      "offset": 4096
+    },
+    {
+      "name": ".rdata",
+      "rva": 102400,
+      "vsize": 7242,
+      "rawsize": 8192,
+      "offset": 102400
+    },
+    {
+      "name": ".data",
+      "rva": 110592,
+      "vsize": 23912,
+      "rawsize": 20480,
+      "offset": 110592
+    },
+    {
+      "name": ".rsrc",
+      "rva": 135168,
+      "vsize": 960,
+      "rawsize": 4096,
+      "offset": 131072
+    }
+  ],
+  "state": [
+    {
+      "name": "gStartLives",
+      "va": "0x41f9ac",
+      "referenceVA": "0x40b0c6",
+      "referenceBytes": "c705acf9410003000000"
+    },
+    {
+      "name": "gStartLevel",
+      "va": "0x41f9bc",
+      "referenceVA": "0x40b0d0",
+      "referenceBytes": "c705bcf9410001000000"
+    },
+    {
+      "name": "gNoDelay",
+      "va": "0x41f990",
+      "referenceVA": "0x40b0da",
+      "referenceBytes": "c70590f9410000000000"
+    },
+    {
+      "name": "gGameOn",
+      "va": "0x41f2a4",
+      "referenceVA": "0x406323",
+      "referenceBytes": "c705a4f2410001000000"
+    },
+    {
+      "name": "gPaused",
+      "va": "0x41f314",
+      "referenceVA": "0x40632d",
+      "referenceBytes": "c70514f3410000000000"
+    },
+    {
+      "name": "gWave",
+      "va": "0x41f29c",
+      "referenceVA": "0x406337",
+      "referenceBytes": "a39cf24100"
+    },
+    {
+      "name": "gNumPlayers",
+      "va": "0x41f9fc",
+      "referenceVA": "0x406317",
+      "referenceBytes": "8b35fcf94100"
+    },
+    {
+      "name": "gNumSprites",
+      "va": "0x41f4e0",
+      "referenceVA": "0x406369",
+      "referenceBytes": "c705e0f4410000000000"
+    },
+    {
+      "name": "gLastDrawn",
+      "va": "0x41f724",
+      "referenceVA": "0x40635f",
+      "referenceBytes": "c70524f7410000000000"
+    },
+    {
+      "name": "screen",
+      "va": "0x41f97c",
+      "referenceVA": "0x4062a8",
+      "referenceBytes": "8b0d7cf94100"
+    },
+    {
+      "name": "geneva",
+      "va": "0x41f348",
+      "referenceVA": "0x40627c",
+      "referenceBytes": "a348f34100"
+    },
+    {
+      "name": "gNumRocks",
+      "va": "0x41f30c",
+      "referenceVA": "0x40650c",
+      "referenceBytes": "891d0cf34100"
+    },
+    {
+      "name": "gStatusLine",
+      "va": "0x41f8c4",
+      "referenceVA": "0x4058a6",
+      "referenceBytes": "8b15c4f84100"
+    },
+    {
+      "name": "gPlayers_first",
+      "va": "0x420c0c",
+      "referenceVA": "0x401d75",
+      "referenceBytes": "8b0cb50c0c4200"
+    },
+    {
+      "name": "gPlayerShip",
+      "va": "0x41f8e4",
+      "referenceVA": "0x41142f",
+      "referenceBytes": "a1e4f84100"
+    }
+  ],
+  "anchors": [
+    {
+      "name": "RunPlayGame",
+      "va": "0x40b0c0",
+      "fileOffset": "0xb0c0",
+      "bytes": "8b0d74f94100"
+    },
+    {
+      "name": "NewGame",
+      "va": "0x406230",
+      "fileOffset": "0x6230",
+      "bytes": "833dfcf9410001"
+    },
+    {
+      "name": "NextWave",
+      "va": "0x4064f0",
+      "fileOffset": "0x64f0",
+      "bytes": "a1d8f94100"
+    },
+    {
+      "name": "Player_NewGame",
+      "va": "0x411300",
+      "fileOffset": "0x11300",
+      "bytes": "b801000000"
+    },
+    {
+      "name": "Player_NewWave",
+      "va": "0x411340",
+      "fileOffset": "0x11340",
+      "bytes": "568bf15733ff"
+    },
+    {
+      "name": "Player_NewShip",
+      "va": "0x411410",
+      "fileOffset": "0x11410",
+      "bytes": "568bf15733ff"
+    },
+    {
+      "name": "DrawStatus",
+      "va": "0x4057a0",
+      "fileOffset": "0x57a0",
+      "bytes": "8a44240481ec80020000"
+    },
+    {
+      "name": "NextWave_stars",
+      "va": "0x40682a",
+      "fileOffset": "0x682a",
+      "bytes": "8b357cf94100"
+    },
+    {
+      "name": "Fade",
+      "va": "0x416850",
+      "fileOffset": "0x16850",
+      "bytes": "81ec04020000"
+    },
+    {
+      "name": "NewGame_after_NextWave",
+      "va": "0x406378",
+      "fileOffset": "0x6378",
+      "bytes": "e823b6ffff"
+    },
+    {
+      "name": "RunFrame",
+      "va": "0x4019a0",
+      "fileOffset": "0x19a0",
+      "bytes": "566a00e8a80e0000"
+    },
+    {
+      "name": "RunFrame_after_HandleEvents",
+      "va": "0x4019ab",
+      "fileOffset": "0x19ab",
+      "bytes": "e850c60000"
+    },
+    {
+      "name": "RunFrame_after_SyncNetwork",
+      "va": "0x4019c5",
+      "fileOffset": "0x19c5",
+      "bytes": "a1fcf94100"
+    },
+    {
+      "name": "RunFrame_after_player_blits",
+      "va": "0x401d84",
+      "fileOffset": "0x1d84",
+      "bytes": "8b0d7cf94100"
+    },
+    {
+      "name": "RunFrame_return_path",
+      "va": "0x401e58",
+      "fileOffset": "0x1e58",
+      "bytes": "8bc75f5b5ec3"
+    },
+    {
+      "name": "DoHouseKeeping",
+      "va": "0x4063c0",
+      "fileOffset": "0x63c0",
+      "bytes": "a114f34100"
+    }
+  ],
+  "calls": [
+    {
+      "va": "0x40ace4",
+      "target": "0x40b0c0"
+    },
+    {
+      "va": "0x40b134",
+      "target": "0x406230"
+    },
+    {
+      "va": "0x406306",
+      "target": "0x416850"
+    },
+    {
+      "va": "0x406373",
+      "target": "0x4064f0"
+    },
+    {
+      "va": "0x406378",
+      "target": "0x4019a0"
+    },
+    {
+      "va": "0x40638b",
+      "target": "0x4063c0"
+    },
+    {
+      "va": "0x4067d9",
+      "target": "0x4057a0"
+    },
+    {
+      "va": "0x4067e8",
+      "target": "0x415e20"
+    },
+    {
+      "va": "0x406877",
+      "target": "0x415e20"
+    },
+    {
+      "va": "0x40689e",
+      "target": "0x416850"
+    },
+    {
+      "va": "0x4019a3",
+      "target": "0x402850"
+    },
+    {
+      "va": "0x4019ab",
+      "target": "0x40e000"
+    },
+    {
+      "va": "0x401d8c",
+      "target": "0x415e20"
+    },
+    {
+      "va": "0x401dfa",
+      "target": "0x41342c"
+    },
+    {
+      "va": "0x401e23",
+      "target": "0x413420"
+    }
+  ],
+  "imports": {
+    "0x419100": [
+      "SDL.dll",
+      "SDL_Delay"
+    ],
+    "0x419150": [
+      "SDL.dll",
+      "SDL_PollEvent"
+    ],
+    "0x419154": [
+      "SDL.dll",
+      "SDL_GetTicks"
+    ]
+  },
+  "sdlExports": {
+    "SDL_Delay": {
+      "preferred": "0x10022d50",
+      "retainedRuntime": "0x688d50"
+    },
+    "SDL_GetTicks": {
+      "preferred": "0x10022cd0",
+      "retainedRuntime": "0x688cd0"
+    },
+    "SDL_PollEvent": {
+      "preferred": "0x10017f60",
+      "retainedRuntime": "0x67df60"
+    },
+    "SDL_WaitEvent": {
+      "preferred": "0x10017f90",
+      "retainedRuntime": "0x67df90"
+    }
+  },
+  "controls": [
+    "wrong-address",
+    "wrong-bytes",
+    "zero-fill-state-is-not-retained-runtime-memory",
+    "wrong-brightness-relationship",
+    "moved-star-fixture"
+  ],
+  "moduleSHA": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "moduleExportProof": [
+    {
+      "name": "get_eip",
+      "kind": 0,
+      "index": 12109
+    },
+    {
+      "name": "get_esp",
+      "kind": 0,
+      "index": 12112
+    },
+    {
+      "name": "set_bp",
+      "kind": 0,
+      "index": 12479
+    },
+    {
+      "name": "set_count",
+      "kind": 0,
+      "index": 12487
+    },
+    {
+      "name": "get_count",
+      "kind": 0,
+      "index": 12488
+    }
+  ],
+  "harnessTest": {
+    "memAvailable": 2678226944,
+    "oldspaceMiB": 256,
+    "cpuWallSeconds": 60,
+    "result": {
+      "pass": true,
+      "exactParserBytes": 29889,
+      "events": 43,
+      "dumpReads": 28,
+      "counterSnapshots": 4,
+      "rejected17Counters": true,
+      "traceFlagsAndPointerExpressions": true
+    },
+    "fixtureSHA": "6006925e34b5e21585d9705a9403e98d79cf73637c9b6d47e831d0f35c7d4faa",
+    "parserSHA": "e1f26d02363b4428d0c8b2acd2dd3701f9a512087e38ad6e4f8671c4cfb57959",
+    "dumpBranchSHA": "63b9af49d982f42d84b7d3fba151d2f6686191f82ee2a84ce38466658c342a30",
+    "hitBranchSHA": "496d799275aa25ccc3a106f9958feff7f9b2fd31eab3177b7e4a8421d3412d89"
+  },
+  "pixels": {
+    "changedPixels": 30,
+    "coordinates": [
+      [
+        149,
+        36
+      ],
+      [
+        354,
+        36
+      ],
+      [
+        318,
+        58
+      ],
+      [
+        64,
+        62
+      ],
+      [
+        350,
+        96
+      ],
+      [
+        241,
+        101
+      ],
+      [
+        509,
+        123
+      ],
+      [
+        545,
+        148
+      ],
+      [
+        153,
+        149
+      ],
+      [
+        36,
+        155
+      ],
+      [
+        111,
+        184
+      ],
+      [
+        174,
+        194
+      ],
+      [
+        522,
+        204
+      ],
+      [
+        368,
+        221
+      ],
+      [
+        551,
+        227
+      ],
+      [
+        45,
+        232
+      ],
+      [
+        331,
+        238
+      ],
+      [
+        438,
+        241
+      ],
+      [
+        602,
+        243
+      ],
+      [
+        422,
+        259
+      ],
+      [
+        243,
+        266
+      ],
+      [
+        584,
+        277
+      ],
+      [
+        499,
+        290
+      ],
+      [
+        574,
+        303
+      ],
+      [
+        172,
+        306
+      ],
+      [
+        457,
+        336
+      ],
+      [
+        146,
+        429
+      ],
+      [
+        209,
+        431
+      ],
+      [
+        334,
+        432
+      ],
+      [
+        49,
+        439
+      ]
+    ],
+    "allEarlierChannelsFloorLaterDiv8": true,
+    "allChangeInsidePlayfield": true,
+    "bottomRowsEqual": true,
+    "allNonblackCoordinatesEqual": true
+  },
+  "disassembly": [
+    {
+      "name": "p-key-decode",
+      "start": "0x40ab72",
+      "end": "0x40ab94",
+      "bytesSHA": "e7aecee785184d6134756c99e0cc708cdc575b5040ddadc1e7287c42c994c78f",
+      "disassemblySHA": "9abd5262f0b4659eb6cecc983135dfb141cbed147a29ed7be5d45bf7ac4bca68",
+      "rawObjdumpSHA": "9abd5262f0b4659eb6cecc983135dfb141cbed147a29ed7be5d45bf7ac4bca68"
+    },
+    {
+      "name": "p-key-call",
+      "start": "0x40ace4",
+      "end": "0x40acee",
+      "bytesSHA": "c2139735f68490af5fc928ff29898865870af094585600951002f5360dc9f21c",
+      "disassemblySHA": "de5271893fc820eed08e731d6b5f044df1e6e94b8e407066b2c3d58905e2ccad",
+      "rawObjdumpSHA": "de5271893fc820eed08e731d6b5f044df1e6e94b8e407066b2c3d58905e2ccad"
+    },
+    {
+      "name": "start-action",
+      "start": "0x40b0c0",
+      "end": "0x40b145",
+      "bytesSHA": "e588bd7ab690bc38b3cd79555dc256410ce002f30c3f971db9afdc82a972986d",
+      "disassemblySHA": "8c19c8070df023a2828bff6a94b35c4b2ed7f97605e5c3e3e14f4495e8ac81a7",
+      "rawObjdumpSHA": "37a2efeca715d54851472529f8ea6161304bc0934f3b9e4ade7069f6f0afa8da"
+    },
+    {
+      "name": "new-game",
+      "start": "0x406230",
+      "end": "0x4063b5",
+      "bytesSHA": "a7bd83ebe284b5039f8019d2dd46ebe5f5e93d981b3dc2a6463be9135da53b6e",
+      "disassemblySHA": "3dce38ce13976812e58764e1180d5a4f5cdeb3970538e8639f594215ead5792d",
+      "rawObjdumpSHA": "58c9586dd62f4b2d8ad27e612df5ca88e724c944c2a6d2e4fd341d051a7cf932"
+    },
+    {
+      "name": "wave-start",
+      "start": "0x4064f0",
+      "end": "0x406548",
+      "bytesSHA": "4f354b83dc53fb52b43b21d90ea9081de6f3ff9b6abad81c5ed34126e343375b",
+      "disassemblySHA": "6e2264d60d9be4c10349bab604c5ef0a1350a5ec9368bb96b0d4d0fd9df71413",
+      "rawObjdumpSHA": "6e2264d60d9be4c10349bab604c5ef0a1350a5ec9368bb96b0d4d0fd9df71413"
+    },
+    {
+      "name": "wave-publish",
+      "start": "0x40674f",
+      "end": "0x4068a3",
+      "bytesSHA": "20b6a7667a9bfd665f1225ab1239f845ae586954990b1fd49b494a4bb30e3bdf",
+      "disassemblySHA": "3af41accd9aee1a47bbbe53ca1d912c214ddfd06206129dee199093c68bdef56",
+      "rawObjdumpSHA": "3af41accd9aee1a47bbbe53ca1d912c214ddfd06206129dee199093c68bdef56"
+    },
+    {
+      "name": "fade",
+      "start": "0x416850",
+      "end": "0x41690c",
+      "bytesSHA": "01a980d19716ee4e0b9c815d2beb84a563076af6d8d7d99edd644702b1e8b789",
+      "disassemblySHA": "503309e694e6b3882dd2141461fe39a948770328cb8a4ce65d2b4410c21f1d41",
+      "rawObjdumpSHA": "503309e694e6b3882dd2141461fe39a948770328cb8a4ce65d2b4410c21f1d41"
+    },
+    {
+      "name": "frame-input",
+      "start": "0x4019a0",
+      "end": "0x4019f3",
+      "bytesSHA": "645ba8c38b6b19e8e9acc2eb3bddf878edd18489154a5d1398683c64e5e6d951",
+      "disassemblySHA": "6e451700212aeec9460e2845572733f5a56799ab3758ad05845c67a0e98a32f7",
+      "rawObjdumpSHA": "6e451700212aeec9460e2845572733f5a56799ab3758ad05845c67a0e98a32f7"
+    },
+    {
+      "name": "frame-draw-timing",
+      "start": "0x401d4c",
+      "end": "0x401e5e",
+      "bytesSHA": "28f69de3e038919782c0cb7cb3bdb8778cc00bac978e2c073329c8f7e71f9d62",
+      "disassemblySHA": "f7652081810479be83ab7632b6e24f468e77f5607c28f7f4eb81f31104f33c0b",
+      "rawObjdumpSHA": "f7652081810479be83ab7632b6e24f468e77f5607c28f7f4eb81f31104f33c0b"
+    },
+    {
+      "name": "event-drain",
+      "start": "0x402850",
+      "end": "0x40289e",
+      "bytesSHA": "402031cdffd723e14cac1051314c36caedde7cda1d5562a0ec5fa9b9b3f4f203",
+      "disassemblySHA": "05406422f904dd7e3ddde86aa547e6c8ef7f32e1b9483d83172a9063b1ec4e82",
+      "rawObjdumpSHA": "05406422f904dd7e3ddde86aa547e6c8ef7f32e1b9483d83172a9063b1ec4e82"
+    },
+    {
+      "name": "status-labels",
+      "start": "0x4057a0",
+      "end": "0x40598f",
+      "bytesSHA": "ca342b662bc4793e3cce32ffffc1b96541a49e914529db878ca144e95ddbaffc",
+      "disassemblySHA": "3fd4792e16bc28a865c0a97b828260869020ac5cd46596d75dbf58d4b979f65e",
+      "rawObjdumpSHA": "3fd4792e16bc28a865c0a97b828260869020ac5cd46596d75dbf58d4b979f65e"
+    },
+    {
+      "name": "framebuffer-update",
+      "start": "0x415e20",
+      "end": "0x415ec6",
+      "bytesSHA": "c9c783e2aab7aac1e6e2728b3db0f8ae0fb474a3d2cad8847cc22e96045c5457",
+      "disassemblySHA": "b4638c4735e7afa4ee2c8e21426d0e08d1ae4d59f49983f4df94c0a4ccedc6a4",
+      "rawObjdumpSHA": "8cedf7dc46e73d53b217109bb157270cedff235bcc07fe6a1155fba6bdf00b74"
+    },
+    {
+      "name": "player-start",
+      "start": "0x411300",
+      "end": "0x411408",
+      "bytesSHA": "ab9f3f931b53e41e546badc7ee2f5bb238aa7afef424c84ac7948640cbcc5be4",
+      "disassemblySHA": "a990298cfb55e6f2d98d4936afcd8e412943e24c49c3b10de7c12b3b1a6787d8",
+      "rawObjdumpSHA": "a990298cfb55e6f2d98d4936afcd8e412943e24c49c3b10de7c12b3b1a6787d8"
+    },
+    {
+      "name": "ship-create",
+      "start": "0x411410",
+      "end": "0x4114e3",
+      "bytesSHA": "79d9911204f5d1e57f1b25792082a5ff6e65f8a844293dae47692716519d3288",
+      "disassemblySHA": "47ad76fee7c99c32ee7ad92aea4c5bf644065ea7275b02ecfa9b4cec694c2263",
+      "rawObjdumpSHA": "e99c1be75f963f215b24e963f8fef3664bf32809dfe3ece4e14f8bef5627e2ee"
+    }
+  ],
+  "noGuestExecution": true
+}

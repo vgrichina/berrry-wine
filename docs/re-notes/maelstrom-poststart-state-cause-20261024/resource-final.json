@@ -1,0 +1,481 @@
+{
+  "ownedAllocatedOrLogical": 2629632,
+  "externalFull": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T07-30-10-01a16cd1-2e47-7453-acb3-1cab64858210.jsonl",
+      "bytes": 1451587
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-poststart-state-cause-oct24/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-poststart-state-cause-oct24/events.jsonl",
+      "bytes": 537116
+    }
+  ],
+  "positiveSQLite": 77824,
+  "priorProjectionRetained": 36956888,
+  "futureExternalAndOutputs": 18000000,
+  "reserve": 8388608,
+  "projectedPeak": 36956888,
+  "limit": 67108864,
+  "hostFree": 3307823104,
+  "freeAfterEntireProjection": 3270866216,
+  "floor": 2982150144,
+  "perFileMax": 1451587,
+  "perFileLimit": 25165824,
+  "capture": {
+    "priorChargesRetained": true,
+    "cumulativeConservative": 400000,
+    "futureAllowance": 100000,
+    "limit": 1048576,
+    "codeSliceLimit": 8192,
+    "instructionReadConservative": 60000,
+    "instructionLimit": 65536
+  },
+  "standingWasm": {
+    "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "bytes": 1879746,
+    "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+  },
+  "ownedFiles": [
+    {
+      "path": "nextwave.asm",
+      "bytes": 15109
+    },
+    {
+      "path": "pixels.json",
+      "bytes": 2701
+    },
+    {
+      "path": "resource-final.json",
+      "bytes": 8674
+    },
+    {
+      "path": "newgame.asm",
+      "bytes": 9655
+    },
+    {
+      "path": "object-identities.json",
+      "bytes": 494
+    },
+    {
+      "path": "watcher.pid",
+      "bytes": 8
+    },
+    {
+      "path": "frame-tail-probe.asm",
+      "bytes": 11137
+    },
+    {
+      "path": "canonical-run.js",
+      "bytes": 685960
+    },
+    {
+      "path": "player-start.asm",
+      "bytes": 6217
+    },
+    {
+      "path": "admit.py",
+      "bytes": 2675
+    },
+    {
+      "path": "admission.json",
+      "bytes": 25860
+    },
+    {
+      "path": "player-real.asm",
+      "bytes": 6809
+    },
+    {
+      "path": "board-watch.log",
+      "bytes": 7867
+    },
+    {
+      "path": "pixels.py",
+      "bytes": 1746
+    },
+    {
+      "path": "resource.py",
+      "bytes": 1846
+    },
+    {
+      "path": "repo/CLAUDE.md",
+      "bytes": 22221
+    },
+    {
+      "path": "source/logic.h",
+      "bytes": 722
+    },
+    {
+      "path": "source/manifest.json",
+      "bytes": 1735
+    },
+    {
+      "path": "source/main.cpp",
+      "bytes": 16895
+    },
+    {
+      "path": "repo/.git/description",
+      "bytes": 73
+    },
+    {
+      "path": "repo/.git/config",
+      "bytes": 321
+    },
+    {
+      "path": "repo/.git/HEAD",
+      "bytes": 59
+    },
+    {
+      "path": "repo/.git/index",
+      "bytes": 1137397
+    },
+    {
+      "path": "repo/tools/maelstrom-poststart-proof.py",
+      "bytes": 18106
+    },
+    {
+      "path": "repo/.git/logs/HEAD",
+      "bytes": 219
+    },
+    {
+      "path": "repo/.git/hooks/applypatch-msg.sample",
+      "bytes": 478
+    },
+    {
+      "path": "repo/.git/hooks/post-update.sample",
+      "bytes": 189
+    },
+    {
+      "path": "repo/.git/hooks/commit-msg.sample",
+      "bytes": 896
+    },
+    {
+      "path": "repo/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783
+    },
+    {
+      "path": "repo/.git/hooks/pre-receive.sample",
+      "bytes": 544
+    },
+    {
+      "path": "repo/.git/hooks/update.sample",
+      "bytes": 3650
+    },
+    {
+      "path": "repo/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416
+    },
+    {
+      "path": "repo/.git/hooks/pre-rebase.sample",
+      "bytes": 4898
+    },
+    {
+      "path": "repo/.git/hooks/pre-commit.sample",
+      "bytes": 1643
+    },
+    {
+      "path": "repo/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308
+    },
+    {
+      "path": "repo/.git/hooks/pre-applypatch.sample",
+      "bytes": 424
+    },
+    {
+      "path": "repo/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726
+    },
+    {
+      "path": "repo/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492
+    },
+    {
+      "path": "repo/.git/hooks/pre-push.sample",
+      "bytes": 1374
+    },
+    {
+      "path": "repo/.git/info/sparse-checkout",
+      "bytes": 163
+    },
+    {
+      "path": "repo/.git/info/exclude",
+      "bytes": 240
+    },
+    {
+      "path": "repo/.git/objects/ac/8982a69006069ea0ae011b281cacd66f77aa1d",
+      "bytes": 198
+    },
+    {
+      "path": "repo/.git/objects/3e/f5567b689f6cbe58d1629e87204a06fe2ec5a1",
+      "bytes": 1411
+    },
+    {
+      "path": "repo/.git/objects/a1/55db610c303f7f2233e00ed5677b1a9ac1201a",
+      "bytes": 7116
+    },
+    {
+      "path": "repo/.git/objects/ea/4b19e09afeefe95675c9a020c4ffe6114ed763",
+      "bytes": 1016
+    },
+    {
+      "path": "repo/.git/objects/b7/c7ffedc5b69c1d7db3fe5a7163e4202c0638a7",
+      "bytes": 1316
+    },
+    {
+      "path": "repo/.git/objects/69/cbc9be6919afac74e3c7313d1c7e303558bb1f",
+      "bytes": 1905
+    },
+    {
+      "path": "repo/.git/objects/27/f5cff22fa1598648abf0bb01922b69cef3baf2",
+      "bytes": 3625
+    },
+    {
+      "path": "repo/.git/objects/e9/0d83a9ca2971939c6ac46bc741873fb7160685",
+      "bytes": 193
+    },
+    {
+      "path": "repo/.git/objects/c2/bea294524619610c2cdcfaba889c08ed87c43a",
+      "bytes": 1895
+    },
+    {
+      "path": "repo/.git/objects/cd/ee3fdf0c01b2e5b2ba2f40dfb6946a606bff4a",
+      "bytes": 1657
+    },
+    {
+      "path": "repo/.git/objects/bb/f2c7ad2d706eca875e1f94d52aeaba353ad819",
+      "bytes": 1048
+    },
+    {
+      "path": "repo/.git/objects/62/1209514380c88ee7928a634223a9f4e51534c2",
+      "bytes": 871
+    },
+    {
+      "path": "repo/.git/objects/c1/4a100e325889994e3453350d5d34de2a2e3c27",
+      "bytes": 10708
+    },
+    {
+      "path": "repo/.git/objects/dd/291071023f12b3bf8bb4a3b2f23d9398cfbe0b",
+      "bytes": 1166
+    },
+    {
+      "path": "repo/.git/objects/info/alternates",
+      "bytes": 3312
+    },
+    {
+      "path": "repo/.git/objects/48/e5b0c5fbdca920cbfb19fced97f5c9c8c2c8ea",
+      "bytes": 7867
+    },
+    {
+      "path": "repo/.git/objects/63/bbe9e9eb3b6585500c9442b01b0383e45434b7",
+      "bytes": 611
+    },
+    {
+      "path": "repo/.git/objects/83/ef45094f422d3a09a53a01772a57ad9c711c04",
+      "bytes": 562
+    },
+    {
+      "path": "repo/.git/objects/19/cf2aa17e55471229ff5f644c31d025131bddee",
+      "bytes": 137
+    },
+    {
+      "path": "repo/.git/objects/14/a9505b711d30ec7f58e2d164d22c0d2035e7ea",
+      "bytes": 4275
+    },
+    {
+      "path": "repo/.git/objects/ba/b2abc0a448ed36c54e804f8dbc8f044d6a3e68",
+      "bytes": 617
+    },
+    {
+      "path": "repo/.git/objects/e2/44d0f0d7b50a4269db757f67aa457499074179",
+      "bytes": 1775
+    },
+    {
+      "path": "repo/.git/objects/03/af7b98182c2fb521ed7bfd6a998b0e3c920792",
+      "bytes": 607
+    },
+    {
+      "path": "repo/.git/objects/f9/a11c492e630d227b0837d4f80d6bf89ea499df",
+      "bytes": 1493
+    },
+    {
+      "path": "repo/.git/objects/64/f6714dcffc0de7c18dfea0dc59fbb7826315ff",
+      "bytes": 8161
+    },
+    {
+      "path": "repo/.git/objects/ce/b85752f3bda1091012d0bb30677e5076cd9d58",
+      "bytes": 808
+    },
+    {
+      "path": "repo/.git/objects/26/0cff32b35a3685335e9e43b52687c28cb3bb52",
+      "bytes": 331
+    },
+    {
+      "path": "repo/.git/refs/heads/task/maelstrom-poststart-state-cause-oct24",
+      "bytes": 41
+    },
+    {
+      "path": "repo/.git/logs/refs/heads/task/maelstrom-poststart-state-cause-oct24",
+      "bytes": 206
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024.md",
+      "bytes": 16945
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/framebuffer-update.asm",
+      "bytes": 3170
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/wave-start.asm",
+      "bytes": 1380
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/resource-final.json",
+      "bytes": 8674
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/start-action.asm",
+      "bytes": 2324
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/seals.json",
+      "bytes": 5697
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/capture-delta.json",
+      "bytes": 3049
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/p-key-decode.asm",
+      "bytes": 580
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/frame-draw-timing.asm",
+      "bytes": 4680
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-input-receipt.json",
+      "bytes": 1557
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/fade.asm",
+      "bytes": 3474
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/p-key-call.asm",
+      "bytes": 265
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/sdl-clock.asm",
+      "bytes": 2689
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/proof.json",
+      "bytes": 14649
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/object-identities.json",
+      "bytes": 494
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/reference-source-excerpts.json",
+      "bytes": 9545
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/wave-publish.asm",
+      "bytes": 5540
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/event-drain.asm",
+      "bytes": 1586
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/player-start.asm",
+      "bytes": 4696
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-guest-args.json",
+      "bytes": 1262
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/resource-admission.json",
+      "bytes": 25860
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-output.log",
+      "bytes": 6393
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/frame-input.asm",
+      "bytes": 1520
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/ship-create.asm",
+      "bytes": 3489
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/harness-parser-test.log",
+      "bytes": 152
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/new-game.asm",
+      "bytes": 5027
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/harness-parser-fixture.cjs",
+      "bytes": 39536
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/status-labels.asm",
+      "bytes": 7321
+    },
+    {
+      "path": "repo/docs/re-notes/maelstrom-poststart-state-cause-20261024/retained-command.json",
+      "bytes": 1743
+    },
+    {
+      "path": "source/netlogic/globals.h",
+      "bytes": 618
+    },
+    {
+      "path": "source/netlogic/objects.cpp",
+      "bytes": 3229
+    },
+    {
+      "path": "source/netlogic/netplay.cpp",
+      "bytes": 20392
+    },
+    {
+      "path": "source/netlogic/player.cpp",
+      "bytes": 14646
+    },
+    {
+      "path": "source/netlogic/object.cpp",
+      "bytes": 2243
+    },
+    {
+      "path": "source/netlogic/logic.cpp",
+      "bytes": 2252
+    },
+    {
+      "path": "source/netlogic/blit.cpp",
+      "bytes": 3927
+    },
+    {
+      "path": "source/netlogic/game.cpp",
+      "bytes": 25458
+    },
+    {
+      "path": "source/netlogic/player.h",
+      "bytes": 3296
+    },
+    {
+      "path": "source/screenlib/SDL_FrameBuf.cpp",
+      "bytes": 20142
+    }
+  ],
+  "pass": true
+}

@@ -1,0 +1,24 @@
+{
+  "count": "0x40b0c0,0x406230,0x4064f0,0x411300,0x411340,0x411410,0x4057a0,0x40682a,0x416850,0x406378,0x4019a0,0x4019ab,0x4019c5,0x401d84,0x401e58,0x4063c0",
+  "tickMsPerBatch": 200,
+  "maxBatches": 42000,
+  "traceAt": [
+    "--trace-at=0x406378",
+    "--trace-at-start-batch=30000",
+    "--trace-at-limit=1",
+    "--trace-at-dump=0x41f280:256,0x41f720:64,0x41f970:160,0x420c0c:32",
+    "--trace-at-mem=*0x41f97c:64,*0x420c0c:176"
+  ],
+  "input": "30000:png:OWN/menu.png,31000:keydown:80,31200:keyup:80,34000:png:OWN/play.png,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32,39000:png:OWN/input.png,30000:hit-counts:phase,30000:dump-mem:0x41f280:256,30000:dump-mem:0x41f4e0:16,30000:dump-mem:0x41f720:64,30000:dump-mem:0x41f8c0:64,30000:dump-mem:0x41f970:160,30000:dump-mem:0x420c0c:32,30000:dump-mem:0x74ff000:4096,34000:hit-counts:phase,34000:dump-mem:0x41f280:256,34000:dump-mem:0x41f4e0:16,34000:dump-mem:0x41f720:64,34000:dump-mem:0x41f8c0:64,34000:dump-mem:0x41f970:160,34000:dump-mem:0x420c0c:32,34000:dump-mem:0x74ff000:4096,39000:hit-counts:phase,39000:dump-mem:0x41f280:256,39000:dump-mem:0x41f4e0:16,39000:dump-mem:0x41f720:64,39000:dump-mem:0x41f8c0:64,39000:dump-mem:0x41f970:160,39000:dump-mem:0x420c0c:32,39000:dump-mem:0x74ff000:4096,41900:hit-counts:phase,41900:dump-mem:0x41f280:256,41900:dump-mem:0x41f4e0:16,41900:dump-mem:0x41f720:64,41900:dump-mem:0x41f8c0:64,41900:dump-mem:0x41f970:160,41900:dump-mem:0x420c0c:32,41900:dump-mem:0x74ff000:4096",
+  "argvDelta": [
+    "--count=0x40b0c0,0x406230,0x4064f0,0x411300,0x411340,0x411410,0x4057a0,0x40682a,0x416850,0x406378,0x4019a0,0x4019ab,0x4019c5,0x401d84,0x401e58,0x4063c0",
+    "--input=30000:png:OWN/menu.png,31000:keydown:80,31200:keyup:80,34000:png:OWN/play.png,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32,39000:png:OWN/input.png,30000:hit-counts:phase,30000:dump-mem:0x41f280:256,30000:dump-mem:0x41f4e0:16,30000:dump-mem:0x41f720:64,30000:dump-mem:0x41f8c0:64,30000:dump-mem:0x41f970:160,30000:dump-mem:0x420c0c:32,30000:dump-mem:0x74ff000:4096,34000:hit-counts:phase,34000:dump-mem:0x41f280:256,34000:dump-mem:0x41f4e0:16,34000:dump-mem:0x41f720:64,34000:dump-mem:0x41f8c0:64,34000:dump-mem:0x41f970:160,34000:dump-mem:0x420c0c:32,34000:dump-mem:0x74ff000:4096,39000:hit-counts:phase,39000:dump-mem:0x41f280:256,39000:dump-mem:0x41f4e0:16,39000:dump-mem:0x41f720:64,39000:dump-mem:0x41f8c0:64,39000:dump-mem:0x41f970:160,39000:dump-mem:0x420c0c:32,39000:dump-mem:0x74ff000:4096,41900:hit-counts:phase,41900:dump-mem:0x41f280:256,41900:dump-mem:0x41f4e0:16,41900:dump-mem:0x41f720:64,41900:dump-mem:0x41f8c0:64,41900:dump-mem:0x41f970:160,41900:dump-mem:0x420c0c:32,41900:dump-mem:0x74ff000:4096",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--trace-at=0x406378",
+    "--trace-at-start-batch=30000",
+    "--trace-at-limit=1",
+    "--trace-at-dump=0x41f280:256,0x41f720:64,0x41f970:160,0x420c0c:32",
+    "--trace-at-mem=*0x41f97c:64,*0x420c0c:176"
+  ]
+}

@@ -1,0 +1,571 @@
+{
+  "manifest": [
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom-Scores",
+      "bytes": 280,
+      "sha256": "7d1e7519e9bd73dbb201fcd19c48bdb809c66e6763599e50d6020b649c06674a"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Fonts",
+      "bytes": 153211,
+      "sha256": "9435a3d03d985a0d28f4dcfb1f8ad2f3ebd4619975c44e29e8bc94dadd27ac0b"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.network.txt",
+      "bytes": 1160,
+      "sha256": "a410f4b856069fbd9c6a6173965400a375604a63b662c8f833dc87c6e9686d48"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README-SDL.txt",
+      "bytes": 425,
+      "sha256": "61475b80fc8a54c99406801b8c7576ef1fb97942e3714405f962b1445caf9347"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Sprites",
+      "bytes": 729966,
+      "sha256": "4adedd68054508eca34052a62008cd4b65e0e157677e69462fee3ae78a945195"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom.exe",
+      "bytes": 135168,
+      "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/COPYING.GPL.txt",
+      "bytes": 15429,
+      "sha256": "e04a437dea1edb0118eaeb213a46f465ce6baa1f2aacf26d0162df757909df24"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/icon.bmp",
+      "bytes": 2732,
+      "sha256": "fdfb76dcfbc453ba4c5baee6eb38bb737514ed4f505254bb49b99426c1d005fd"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL.dll",
+      "bytes": 225280,
+      "sha256": "02433232425e68009843bd3ecec20ad67453a48487f7b5828c595b76e2f9d373"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll",
+      "bytes": 24576,
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.options.txt",
+      "bytes": 2425,
+      "sha256": "be727bb4a60815efd1034ea46155489aa84311d8cf2542365c01ba78ab12fa86"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/COPYING.txt",
+      "bytes": 568,
+      "sha256": "4ef83a1364b4a59f88a23f42ede8123e596d448502b0dd3995a3fd4a3ff36d05"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom_Sounds",
+      "bytes": 413235,
+      "sha256": "e0ae5e50fefa890ef1f316c9e91ef0b36f9097a10fe49cb8238862461a16f492"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.txt",
+      "bytes": 1042,
+      "sha256": "e0f024da42022ffb7f2e0cca93514ebcd4de0cc6a4e928c19f421217f32945a2"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/README.joystick.txt",
+      "bytes": 352,
+      "sha256": "80dad0399ef91fe3b935975549d763cf2815a5b13e8761411a9707d5085a2881"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Ambrosia_Software,_Inc._FAQ.txt",
+      "bytes": 19086,
+      "sha256": "3dd1e019e4236d6a4f45f1b0da4bc84f10902fa4a520cd412cffb6a0733db22c"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/MaelstromGPL_press_release.txt",
+      "bytes": 5153,
+      "sha256": "10a2c837f0d8d810e8add0da227555ea1bb40e082d3cbb2934c367c3b270d862"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Porting.Paper",
+      "bytes": 19689,
+      "sha256": "0d8da2936f071a3f9d0356cf90ddf2ceed917961c21ae6373aa746deb99deb9d"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v2.0",
+      "bytes": 6676,
+      "sha256": "24205700f1f0a8738369560c55890f05119a23a6846fceb9266134ad1db454df"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Networking.Paper",
+      "bytes": 9606,
+      "sha256": "4842f5b6f9c95a0e2f7ba06bf1e7cd077522b709e38056f46dc7cfef7423a381"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v1.0",
+      "bytes": 14644,
+      "sha256": "6943db183b6ad5b5cc5fcd10418a09d8f78159a64e16d4c0b17007d71ad3a79b"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Docs/Technical_Notes-v1.1",
+      "bytes": 1279,
+      "sha256": "02a5f44971b2fb0a8b70dc8c7d7047752fe3004d5ba26ce443065c8f2041c3f6"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#102.bmp",
+      "bytes": 14478,
+      "sha256": "b6b785b7a6ed5de0c07e0536defdda8469dc307bb6210f477eb938d20f620204"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#110.cicn",
+      "bytes": 1156,
+      "sha256": "15e10b303f85a2f37b11fe51942d3737939d82cbfbc30fadbd9901db4d9424c5"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#129.bmp",
+      "bytes": 42262,
+      "sha256": "543ebbea174430514e840fa81c7a7d252c7b9b46ac587b6d874918987a9e3f69"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#103.cicn",
+      "bytes": 1156,
+      "sha256": "89784c08b62566959373c78a6bf1325a343ef8a3c7cbbeb90d3d5c4075a04334"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#128.cicn",
+      "bytes": 76,
+      "sha256": "a10877a69ac340765f07547c0cacfd348672d9c5183b67628be257fdbe5f5103"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#135.bmp",
+      "bytes": 197686,
+      "sha256": "b3ae1df44badfaf944eb524f9db85a931e89da51720489d408b6009d3c8260a6"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#137.cicn",
+      "bytes": 76,
+      "sha256": "1bf4ec939cd2f14277dd34e815f763c9401ffbd57ad85b9d2fbba85efb738b04"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#104.cicn",
+      "bytes": 1156,
+      "sha256": "eb4ea9991ccd640dbf9fe0cc002b52b7999c9d6c07a8ebe9473758796eb586aa"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#128.bmp",
+      "bytes": 17654,
+      "sha256": "39568c8f6e10d215a1e42c8ebcfdade3bc3e7e8fb3011fe6a8ce76f2d5df1184"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#129.cicn",
+      "bytes": 76,
+      "sha256": "f15bc9cebc7d698dbae6821e29dfe63f69d370141cf068bc6442a19b4627d20d"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#999.bmp",
+      "bytes": 92598,
+      "sha256": "a1b8d3c34063e2d3fe4e19ab94b15401e7e9f8b341bb6d26e215a27f6851b8d1"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#134.bmp",
+      "bytes": 197686,
+      "sha256": "6da118f013416f623750854625881ce33a0165436ef2a77ecf5ef84156058863"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#100.bmp",
+      "bytes": 24478,
+      "sha256": "831c71d74411e5db8cf16841d71c00e5315c1cad35e55d0a6a5b7aeb0dd2877b"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#130.bmp",
+      "bytes": 197686,
+      "sha256": "9d5d1deaf048d3b1be2a6675c6a7d915a7fff0e0abb7ac176b138beeaa60929c"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#101.cicn",
+      "bytes": 1156,
+      "sha256": "c663d036dd37c53c627cc9c4287eb0260dd60c83c29bd879fd2f7c9ca6a3aa64"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#135.cicn",
+      "bytes": 76,
+      "sha256": "64198cf80de13b48c5b0d65a2b89ad24ade4a57dba96f18682df8ee9ed46ab58"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#102.cicn",
+      "bytes": 1156,
+      "sha256": "d98ec7a709b3ea16df62c5a7457de1eaef25210c6e93f9ed20e791354e129def"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#100.cicn",
+      "bytes": 1156,
+      "sha256": "b6c35eb355140160ddb7f65aec08eaa62ea2ac7e8505c9fec6572d7f08fbaaa1"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#134.cicn",
+      "bytes": 76,
+      "sha256": "8d42867053fcf68a33b0ef1deb55b655ec03eaad599fbba3617c5354554e0dd7"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#133.bmp",
+      "bytes": 197686,
+      "sha256": "9c9d544de30d594f837e5280de5fdea8b17d8d9666ebff360c593eae601a6300"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#132.cicn",
+      "bytes": 76,
+      "sha256": "8e4cb326b5ba15b5dfba716e237078608a551b4c767eb86a6fa36755997a4aea"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Titles#101.bmp",
+      "bytes": 22278,
+      "sha256": "f0c45c6f57c042a9b4d6c065c625aff95b5e42124c81da7a94d11cbdd41db8ca"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#130.cicn",
+      "bytes": 76,
+      "sha256": "28f15ccfc40ef989353a244f9d81a9b169b4deb4e90ebb12b1e39520033b5dcf"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#136.cicn",
+      "bytes": 76,
+      "sha256": "2e68c846692c0b109b2eb03be9e38c4fab0577f86b60d1e8d5adb474da5e46ac"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#131.cicn",
+      "bytes": 76,
+      "sha256": "88863846862eadf41d7b6b7c3a56463d53d0108d05fc0e9ff1f977d960ecdb84"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Images/Maelstrom_Icon#133.cicn",
+      "bytes": 76,
+      "sha256": "264babd78e8326d34ab592527b10a028cd93f500d76bedc166b90bd951692c44"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/scores.cpp",
+      "bytes": 6563,
+      "sha256": "5c763c555ba5473397c3b8efaa693cdcd10abf4693e8b8bd94de46f45e0cc07d"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/init.cpp",
+      "bytes": 33467,
+      "sha256": "c6c135425057107bd9d501c031f00a2748413c4cd241457d64679f6d79620397"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/README.options",
+      "bytes": 2358,
+      "sha256": "21dc66be88b710391d4ac81366e62c165275048dbb2eefd62fdb3621f62f6de9"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/load.h",
+      "bytes": 2391,
+      "sha256": "dcc65a59f6629de5a39607162385d05e5a1d6670ccb0dcbf57199a71cdca9e32"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/COPYING",
+      "bytes": 484,
+      "sha256": "f7f0c34454a93e85b48ca24a7355fb6e4e085042e40cffbf2b515bc6986ccb7d"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/load.cpp",
+      "bytes": 3239,
+      "sha256": "cc6a877991e937529162c1849a07acfe16597f1a00e3b3d5ea9eb90f0d0f5413"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/main.cpp",
+      "bytes": 16895,
+      "sha256": "110d4daffb5c95835fb69a6529a378c193d5759aa15499c863c53a97c877be53"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/Changelog",
+      "bytes": 11750,
+      "sha256": "e4baf40967270ca5db929430d66e5529b674ee19446b663de8371345b2400554"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/Maelstrom.h",
+      "bytes": 1864,
+      "sha256": "fdfcf973b79c85598639807444f091e9dae4e3c4b547bd26e5e75d728771c646"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/controls.cpp",
+      "bytes": 13979,
+      "sha256": "cf49caaf048d95991fbe04e904e55ce7f9bd66324f7be985d4db36307337fed8"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/screenlib/SDL_FrameBuf.h",
+      "bytes": 5662,
+      "sha256": "f7f8bd47adab6966704d3e7c62c88af4ecd9f672545714c10345b14a9e4d467b"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/screenlib/SDL_FrameBuf.cpp",
+      "bytes": 20142,
+      "sha256": "15e02893a3cfc89e1e12f1475a82485107c33124b4bfeadbe33b7b259c56cc23"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/maclib/Mac_Resource.cpp",
+      "bytes": 14499,
+      "sha256": "03bf15529486d26549f5fef30b60919e96df02a9fdb094ac8bd4f2ef9da036e4"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/watchdog-negative-control.json",
+      "bytes": 97,
+      "sha256": "0fa24c4d1ed483019fc5a9be6cb14d49a4c75ed72b59eb6cb46e0ef279a77460"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/prepare.py",
+      "bytes": 1043,
+      "sha256": "13185f2bc441dc390f4108a6a36f856b18ff4e2c29c524d4047250a6e69e0ada"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/resource-launch.json",
+      "bytes": 402,
+      "sha256": "b27e7b9c25110721327c45d9be3d6e623bf038a91a51ac6f9ec00e1f7fc27325"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/output.log",
+      "bytes": 6393,
+      "sha256": "ea8e7be66655df53166908c7c9c134fbd62188612fdd5e99a7d4b74e6483ffaa"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/work.py",
+      "bytes": 2325,
+      "sha256": "b0d8503405ea57009d66db36984ddc864d1dcff894994a7529892584e1fae91b"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/input-receipt.json",
+      "bytes": 1557,
+      "sha256": "40c0a159c8deabf8a7f556c7d73fa3eebcf834a1c5f3069160d25f0095719e56"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/box-final.json",
+      "bytes": 173,
+      "sha256": "9316b0ca73c2966dbb833406aee1512fb2203934d6349f61ef1b2a6d6a4ec55d"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/supervise.py",
+      "bytes": 3399,
+      "sha256": "a8cfb82d321769cb556cd736dd34354356a53eab7a6b836e2503ff7f92a7bf92"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/resource-postguest.json",
+      "bytes": 402,
+      "sha256": "872c4cfe9fbb084cae9b05af42926e42a6a4c80bf6912e1f037a5729c0d47c05"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/tree-validation-api.json",
+      "bytes": 1171,
+      "sha256": "7b24d7ac5970d89a59b2926a7858340880d5d5082627022ec6baa323e7f621bd"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/play.png",
+      "bytes": 2331,
+      "sha256": "5a7684def6a9b406d890efe034f6e162601c2bf664874b3c4466eba18f06ef52"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/preflight-api.json",
+      "bytes": 704,
+      "sha256": "c873129a800865598563fa61467b8cc0366136fc083c38deeafca5211f1ce2e1"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/guest-args.json",
+      "bytes": 1262,
+      "sha256": "d5c3b22ddc99942ff261bd56ff3bae547e779f173eb6a365a48a943e8a9f98ce"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/watchdog-control-api.json",
+      "bytes": 484,
+      "sha256": "9c3d4e6e6da96f7ab2b8a92857baf0eb40631e517d5609a5f9cda9a6539d9ef0"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/remote-rehash.json",
+      "bytes": 446,
+      "sha256": "9529b5103c2fabb23a4ba9f497bb8e285c63aff52ab8adef8f96e815eec0275b"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/prior-identities.json",
+      "bytes": 1585,
+      "sha256": "a3c5939295f41a353dbaefd967116a8516353b9963af8aa9a29368715ee5dc26"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/resource-preguest.json",
+      "bytes": 402,
+      "sha256": "d3b338608d21600e86a5a70de8c03b98341f8edc7dc6c9c8362a66c819e18b9a"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/prior-static-abi.json",
+      "bytes": 640,
+      "sha256": "ebddd4d6a8bdb0a455070cd2e192bf818a1e323c21f6cf34394ebc809135611b"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/cleanup-corrected-api.json",
+      "bytes": 500,
+      "sha256": "a4e5391a92ec7a1db845672b2aabeee920807d88b84935c265eac3f5155461d1"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/preflight.json",
+      "bytes": 333,
+      "sha256": "05547638b22bdbea5da38ea867540153d51b23cd2ba222df667d6e097fcfd4b8"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/manifest.json",
+      "bytes": 81830,
+      "sha256": "c69a4ae34c5275b64ebe583351601e017e70a014a34b75ada7e41786b16710ba"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/admission.json",
+      "bytes": 1768,
+      "sha256": "54da5a4cba3ea4b18eadb8dd88b91110a0338780428a0d4dd39d6c4f662b9fa0"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/input.png",
+      "bytes": 2309,
+      "sha256": "d0a05bb2c6616dc6a7ac3d3d57f2b136998fc03d1755a6ef48a574eb8db5c0b0"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/menu.png",
+      "bytes": 40715,
+      "sha256": "5e14f13ed68b7f9a5e6b6105f2b0a4f613ff2baa2803d3a4f7c508d8e773ec20"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/cleanup-probe-controls.json",
+      "bytes": 189,
+      "sha256": "36fa73808dd82f929078b3a0a7a504e0f1f69b6dfce9ea4b21320b8d26e8c9f7"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/terminal.json",
+      "bytes": 309,
+      "sha256": "c7e4108c924bf63089b6069127ab45f1a0cea04965f9857caa89788fae12d112"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/cleanup-check.py",
+      "bytes": 1321,
+      "sha256": "eae994f3d7d6c2e74a38cdca25aaf18990d80b700ae6974f75a2785a79033b36"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/tree-validation.json",
+      "bytes": 9160,
+      "sha256": "132a467180c0293abe1badf3712480f477eea06209f05a98cabf40f8c932846a"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/result.json",
+      "bytes": 3852,
+      "sha256": "9dd064398d6777c744c336248a97aefc295171ef7af81ae91c18ffaa00400989"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/send-helpers.py",
+      "bytes": 748,
+      "sha256": "f18910a14e83fd5e372d09408e94862fc31aebc6ecde01600c973e64f95499b6"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/collect.py",
+      "bytes": 1751,
+      "sha256": "cdab959239900788813e687c3a1f0adda9e6bbf470ba67adc5b301b0c6ffeb94"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/stage.py",
+      "bytes": 2011,
+      "sha256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/capture.cjs",
+      "bytes": 1226,
+      "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/validate-tree.cjs",
+      "bytes": 3129,
+      "sha256": "0965bbb6b3a3c61e4809e5bd0da5b62bc77c1138ef5c0cba38d2e507a3cfa199"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/capture-accounting.json",
+      "bytes": 164,
+      "sha256": "52a2c34f7a56bac1854e47f8047df8461057675a036eac83958de3f43e695ec1"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/visual-review.json",
+      "bytes": 570,
+      "sha256": "812014b64b0256be3b5f03fec4327c19a5cf741231bfe1f272a601b963b271b8"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/preflight.py",
+      "bytes": 2536,
+      "sha256": "a4e588f8fb1c708bf502238df98f90790c61b051878b733265bfae76c036328f"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/artifact-seals.json",
+      "bytes": 4903,
+      "sha256": "5042d1def501d8595cb71b3ad72c935405ec62d936e81252967674f24b612720"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/command.json",
+      "bytes": 1743,
+      "sha256": "3a41b84a1c77e5f502f261ad194483c93daf3cd1fdc22bd59eedd0d054adc877"
+    },
+    {
+      "path": "/tmp/maelstrom-tree-mounted-runtime-oct24/repo/docs/re-notes/maelstrom-tree-mounted-runtime-20261024/guest-launch-api.json",
+      "bytes": 704,
+      "sha256": "9e43a0e3169bbd315e7a3b2c37cd221d4558d2c4139307881ac7b17443827f81"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/archives/Maelstrom-3.0.6.tar.gz",
+      "bytes": 1013073,
+      "sha256": "e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46"
+    },
+    {
+      "git": "d8cd8c54:test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    }
+  ],
+  "charges": {
+    "checkoutGit": 3000000,
+    "generatedTempEvidence": 4000000,
+    "sourceExtraction": 1000000,
+    "futureOutputs": 2000000,
+    "fullSession": 415135,
+    "fullLauncher": 153145,
+    "positiveSQLite": 0,
+    "futureExternal": 18000000,
+    "reserve": 8388608
+  },
+  "peak": 36956888,
+  "limit": 67108864,
+  "free": 3947372544,
+  "afterProjected": 3910415656,
+  "floor": 2982150144,
+  "sqliteBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 12570624
+  },
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T07-30-10-01a16cd1-2e47-7453-acb3-1cab64858210.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-poststart-state-cause-oct24",
+  "capturePriorConservative": 110000,
+  "captureLimit": 1048576,
+  "instructionsReadBudget": 65536,
+  "sliceLimit": 8192,
+  "nodeOldspaceMiB": 256,
+  "cpuWallSeconds": 60,
+  "standingTools": [
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/usr/bin/x86_64-linux-gnu-objdump",
+      "bytes": 390848,
+      "sha256": "325c4205a4c658a9d1e1ebc469ae55975a2b897a3d3c1e79d9b158612d37f745"
+    }
+  ],
+  "pass": true
+}

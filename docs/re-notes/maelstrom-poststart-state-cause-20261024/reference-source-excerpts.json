@@ -1,0 +1,77 @@
+{
+  "archiveSHA256": "e7983c2c7376cdcca1944db1706d92aedd529638cf13358c88a60df982ba7b46",
+  "referenceOnly": true,
+  "notAssertedBuildReproducible": true,
+  "excerpts": [
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/main.cpp",
+      "fileSHA256": "110d4daffb5c95835fb69a6529a378c193d5759aa15499c863c53a97c877be53",
+      "firstLine": 54,
+      "lastLine": 63,
+      "excerpt": "static void RunPlayGame(void)\n{\n\tgStartLives = 3;\n\tgStartLevel = 1;\n\tgNoDelay = 0;\n\tsound->PlaySound(gNewLife, 5);\n\tDelay(SOUND_DELAY);\n\tNewGame();\n\tMessage(NULL);\t\t/* Clear any messages */\n}\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/main.cpp",
+      "fileSHA256": "110d4daffb5c95835fb69a6529a378c193d5759aa15499c863c53a97c877be53",
+      "firstLine": 409,
+      "lastLine": 432,
+      "excerpt": "int DrawText(int x, int y, char *text, MFont *font, Uint8 style,\n\t\t\t\t\tUint8 R, Uint8 G, Uint8 B)\n{\n\tSDL_Surface *textimage;\n\tint width;\n\n\ttextimage = fontserv->TextImage(text, font, style, R, G, B);\n\tif ( textimage == NULL ) {\n\t\twidth = 0;\n\t} else {\n\t\tscreen->QueueBlit(x, y-textimage->h+2, textimage, NOCLIP);\n\t\twidth = textimage->w;\n\t\tfontserv->FreeText(textimage);\n\t}\n\treturn(width);\n}\n\n\n/* ----------------------------------------------------------------- */\n/* -- Draw the current sound volume */\nstatic void DrawSoundLevel(void)\n{\n\tstatic int need_init=1;\n\tstatic MFont *geneva;\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/game.cpp",
+      "fileSHA256": "b5278191e92b56cef808f8b48c8ce2cffe517383203a251dae3bd0f9590f88d4",
+      "firstLine": 431,
+      "lastLine": 478,
+      "excerpt": "void NewGame(void)\n{\n\tint i;\n\n\t/* Send a \"NEW_GAME\" packet onto the network */\n\tif ( gNumPlayers > 1 ) {\n\t\tif ( gOurPlayer == 0 ) {\n\t\t\tif ( Send_NewGame(&gStartLevel,&gStartLives,&gNoDelay)\n\t\t\t\t\t\t\t\t\t< 0)\n\t\t\t\treturn;\n\t\t} else {\n\t\t\tif ( Await_NewGame(&gStartLevel,&gStartLives,&gNoDelay)\n\t\t\t\t\t\t\t\t\t< 0 )\n\t\t\t\treturn;\n\t\t}\n\t}\n\n\t/* Load the font and colors we use everywhere */\n\tif ( (geneva = fontserv->NewFont(\"Geneva\", 9)) == NULL ) {\n\t\terror(\"Can't use Geneva font! -- Exiting.\\n\");\n\t\texit(255);\n\t}\n\ttext_height = fontserv->TextHeight(geneva);\n\tourGrey = screen->MapRGB(30000>>8, 30000>>8, 0xFF);\n\tourWhite = screen->MapRGB(0xFF, 0xFF, 0xFF);\n\tourBlack = screen->MapRGB(0x00, 0x00, 0x00);\n\n\t/* Fade into game mode */\n\tscreen->Fade();\n\tscreen->HideCursor();\n\n\t/* Initialize some game variables */\n\tgGameOn = 1;\n\tgPaused = 0;\n\tgWave = gStartLevel - 1;\n\tfor ( i=gNumPlayers; i--; )\n\t\tgPlayers[i]->NewGame(gStartLives);\n\tgLastStar = STAR_DELAY;\n\tgLastDrawn = 0L;\n\tgNumSprites = 0;\n\n\tNextWave();\n\n\t/* Play the game, dammit! */\n\twhile ( (RunFrame() > 0) && gGameOn )\n\t\tDoHouseKeeping();\n\t\n/* -- Do the game over stuff */\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/game.cpp",
+      "fileSHA256": "b5278191e92b56cef808f8b48c8ce2cffe517383203a251dae3bd0f9590f88d4",
+      "firstLine": 625,
+      "lastLine": 678,
+      "excerpt": "\t\ttemp = 1;\n\n\tNewRoids = FastRandom(temp) + (gWave / 5) + 3;\n\n\t/* -- Black the screen out and draw the wave */\n\tscreen->Clear();\n\n\t/* -- Kill any existing sprites */\n\twhile (gNumSprites > 0)\n\t\tdelete gSprites[gNumSprites-1];\n\n\t/* -- Initialize some variables */\n\tgLastDrawn = 0L;\n\tgBoomDelay = (60/FRAME_DELAY);\n\tgNextBoom = gBoomDelay;\n\tgBoomPhase = 0;\n\tgWhenDone = 0;\n\n\t/* -- Create the ship's sprite */\n\tfor ( index=gNumPlayers; index--; )\n\t\tgPlayers[index]->NewWave();\n\tDrawStatus(true, false);\n\tscreen->Update();\n\n\t/* -- Create some asteroids */\n\tfor (index = 0; index < NewRoids; index++) {\n\t\tint\trandval;\n\t\n\t\tx = FastRandom(SCREEN_WIDTH) * SCALE_FACTOR;\n\t\ty = 0;\n\t\n\t\trandval = FastRandom(10);\n\n\t\t/* -- See what kind of asteroid to make */\n\t\tif (randval == 0)\n\t\t\tMakeSteelRoid(x, y);\n\t\telse\n\t\t\tMakeLargeRock(x, y);\n\t}\n\n\t/* -- Create the star field */\n\tscreen->FocusBG();\n\tfor ( index=0; index<MAX_STARS; ++index ) {\n\t\tscreen->DrawPoint(gTheStars[index]->xCoord, \n\t\t\tgTheStars[index]->yCoord, gTheStars[index]->color);\n\t}\n\tscreen->Update(1);\n\tscreen->FocusFG();\n\tscreen->Fade();\n}\t/* -- NextWave */\n\n/* ----------------------------------------------------------------- */\n/* -- Do the game over display */\n\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/player.cpp",
+      "fileSHA256": "e0ae1a90488d0cf15caf56253dea6a6eb02e24cf77b3917814ff0debe57704b6",
+      "firstLine": 54,
+      "lastLine": 125,
+      "excerpt": "Player::NewGame(int lives)\n{\n\tPlaying = 1;\n\tif ( gDeathMatch )\n\t\tLives = 1;\n\telse\n\t\tLives = lives;\n\tScore = 0;\n\tFrags = 0;\n\tspecial = 0;\n\tNewShip();\n}\nvoid \nPlayer::NewWave(void)\n{\n\tint i;\n\n\t/* If we were exploding, rejuvinate us */\n\tif ( Exploding || (!Alive() && Playing) ) {\n\t\tIncrLives(1);\n\t\tNewShip();\n\t}\n\tBonus = INITIAL_BONUS;\n\tBonusMult = 1;\n\tCutBonus = BONUS_DELAY;\n\tShieldOn = 0;\n\tAutoShield = SAFE_TIME;\n\tWasShielded = 0;\n\tSphase = 0;\n\tSetPos(\n\t\t((SCREEN_WIDTH/2-((gNumPlayers/2-Index)*(2*SPRITES_WIDTH)))\n\t\t\t\t\t\t\t*SCALE_FACTOR),\n\t\t((SCREEN_HEIGHT/2)*SCALE_FACTOR)\n\t);\n\txvec = yvec = 0;\n\tThrusting = 0;\n\tNoThrust = 0;\n\tThrustBlit = gThrust1;\n\tShooting = 0;\n\tWasShooting = 0;\n\tRotating = 0;\n\tphase = 0;\n\tOBJ_LOOP(i, numshots)\n\t\tKillShot(i);\n}\n/* Returns the number of lives left */\nint \nPlayer::NewShip(void)\n{\n\tif ( Lives == 0 )\n\t\treturn(-1);\n\tsolid = 1;\n\tshootable = 1;\n\tSet_Blit(gPlayerShip);\n\tSet_Points(PLAYER_PTS);\n\tSet_HitPoints(PLAYER_HITS);\n\tShieldOn = 0;\n\tShieldLevel = INITIAL_SHIELD;\n\tAutoShield = SAFE_TIME;\n\tWasShielded = 1;\n\tSphase = 0;\n\txvec = yvec = 0;\n\tThrusting = 0;\n\tWasThrusting = 0;\n\tThrustBlit = gThrust1;\n\tShooting = 0;\n\tWasShooting = 0;\n\tRotating = 0;\n\tphase = 0;\n\tphasetime = NO_PHASE_CHANGE;\n\tDead = 0;\n\tExploding = 0;\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/screenlib/SDL_FrameBuf.cpp",
+      "fileSHA256": "15e02893a3cfc89e1e12f1475a82485107c33124b4bfeadbe33b7b259c56cc23",
+      "firstLine": 268,
+      "lastLine": 289,
+      "excerpt": "FrameBuf:: Update(int auto_update)\n{\n\tint i;\n\n\t/* Blit and update the changed rectangles */\n\tPerformBlits();\n\tif ( (screen == screenbg) && auto_update ) {\n\t\tfor ( i=0; i<updatelen; ++i ) {\n\t\t\tSDL_LowerBlit(screenbg, &updatelist[i],\n\t\t\t \t\tscreenfg, &updatelist[i]);\n\t\t}\n\t\tSDL_UpdateRects(screenfg, updatelen, updatelist);\n\t} else {\n\t\tSDL_UpdateRects(screen, updatelen, updatelist);\n\t}\n\tClearDirtyList();\n}\n\n/* Drawing routines */\nvoid\nFrameBuf:: Clear(Sint16 x, Sint16 y, Uint16 w, Uint16 h, clipval do_clip)\n{\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/screenlib/SDL_FrameBuf.cpp",
+      "fileSHA256": "15e02893a3cfc89e1e12f1475a82485107c33124b4bfeadbe33b7b259c56cc23",
+      "firstLine": 534,
+      "lastLine": 560,
+      "excerpt": "FrameBuf:: Fade(void)\n{\n\tconst int max = 32;\n\tUint16 ramp[256];   \n\n\tfor ( int j = 1; j <= max; j++ ) {\n\t\tint v = faded ? j : max - j + 1;\n\t\tfor ( int i = 0; i < 256; i++ ) {\n\t\t\tramp[i] = (i * v / max) << 8;\n\t\t}\n\t\tSDL_SetGammaRamp(ramp, ramp, ramp);\n\t\tSDL_Delay(10);\n\t}\n\tfaded = !faded;\n\n        if ( faded ) {\n\t\tfor ( int i = 0; i < 256; i++ ) {\n\t\t\tramp[i] = 0;\n\t\t}\n\t\tSDL_SetGammaRamp(ramp, ramp, ramp);\n\t}\n} \n\nSDL_Surface *\nFrameBuf:: GrabArea(Uint16 x, Uint16 y, Uint16 w, Uint16 h)\n{\n\tSDL_Surface *area;\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/blit.cpp",
+      "fileSHA256": "c7d8f9e9decafa0a7a5ffeea5a03ed32d36d4be8724734e65fea62f341096a3b",
+      "firstLine": 16,
+      "lastLine": 40,
+      "excerpt": "/* Returns the number of players left in the game */\nint RunFrame(void)\n{\n\tint i, j, PlayersLeft;\n\n\t/* Read in keyboard input for our ship */\n\tHandleEvents(0);\n\n\t/* Send Sync! signal to all players, and handle keyboard. */\n\tif ( SyncNetwork() < 0 ) {\n\t\terror(\"Game aborted!\\n\");\n\t\treturn(0);\n\t}\n\tOBJ_LOOP(i, gNumPlayers)\n\t\tgPlayers[i]->HandleKeys();\n\n\tif ( gPaused > 0 )\n\t\treturn(1);\n\n\t/* Play the boom sounds */\n\tif ( --gNextBoom == 0 ) {\n\t\tif ( gBoomPhase ) {\n\t\t\tsound->PlaySound(gBoom1, 0);\n\t\t\tgBoomPhase = 0;\n\t\t} else {\n"
+    },
+    {
+      "path": "/tmp/maelstrom-poststart-state-cause-oct24/source/netlogic/blit.cpp",
+      "fileSHA256": "c7d8f9e9decafa0a7a5ffeea5a03ed32d36d4be8724734e65fea62f341096a3b",
+      "firstLine": 170,
+      "lastLine": 183,
+      "excerpt": ""
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/source-slices/Maelstrom.h",
+      "fileSHA256": "fdfcf973b79c85598639807444f091e9dae4e3c4b547bd26e5e75d728771c646",
+      "firstLine": 10,
+      "lastLine": 24,
+      "excerpt": "\n#define SCREEN_WIDTH\t\t640\n#define SCREEN_HEIGHT\t\t480\n\n#define\tSOUND_DELAY\t\t6\n#define\tFADE_STEPS\t\t40\n\n/* Time in 60'th of second between frames */\n#define FRAME_DELAY\t\t2\n\n#define MAX_SPRITES\t\t100\n#define MAX_SPRITE_FRAMES\t60\n#define\tMAX_STARS\t\t30\n#define\tSHIP_FRAMES\t\t48\n#define\tSPRITES_WIDTH\t\t32\n"
+    }
+  ]
+}
