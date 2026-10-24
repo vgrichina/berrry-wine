@@ -1,0 +1,37 @@
+  // Load DLLs: explicit --dlls=path1,path2,... or auto-detect from EXE imports
+  const dllArg = getArg('dlls', null);
+  const dllDir = path.join(path.dirname(EXE_PATH), 'dlls');
+  let dlls;
+  if (dllArg) {
+    dlls = dllArg.split(',').map(p => ({
+      name: path.basename(p.trim()),
+      bytes: fs.readFileSync(p.trim()),
+    }));
+  } else {
+    // Auto-detect: scan EXE imports, load any DLLs found in test/binaries/dlls/
+    // Only load DLLs that work as real PE DLLs; others are handled by WAT stub
+    // handlers — the one list, shared with the browser (lib/dll-registry.js),
+    // as is the graph walk itself (lib/process-boot.js).
+    const exeDir = path.dirname(EXE_PATH);
+    const dllSearchDirs = [
+  if (dlls.length > 0) {
+    mountLoadedDllFiles(ctx.vfs, dlls);
+    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
+      onLoadLibraryYield,
+      exeName: path.basename(EXE_PATH),
+      extraArgs: EXTRA_ARGS || '',
+      registerDllResources: (dllConfigs, results) => {
+        const { extractBitmapBytes } = require('../lib/dib');
+        ctx.dllResources = ctx.dllResources || {};
+        for (let i = 0; i < dllConfigs.length && i < results.length; i++) {
+          try {
+            const bitmapBytes = extractBitmapBytes(dllConfigs[i].bytes);
+            const count = Object.keys(bitmapBytes).length;
+            if (count > 0) {
+              ctx.dllResources[results[i].loadAddr] = { bitmapBytes };
+              console.log(`DLL resources: ${dllConfigs[i].name} has ${count} bitmaps`);
+            }
+          } catch (_) {}
+        }
+      },
+    });

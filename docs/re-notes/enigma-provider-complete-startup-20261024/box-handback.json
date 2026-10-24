@@ -1,0 +1,7 @@
+{
+  "status": 0,
+  "stdout": "{\"sandbox\":{\"access\":\"owner\",\"archiveAfter\":\"2026-10-24T10:02:44.741Z\",\"billingMultiplier\":1,\"createdAt\":\"2026-10-24T09:32:44.727Z\",\"createdBy\":\"vgrichina\",\"createdById\":\"sandbox_23337a3f0dc2ab057f51992768a51ce6\",\"dataExpiredAt\":null,\"degradedSince\":null,\"desktopAvailable\":true,\"desktopUrl\":null,\"environment\":\"base\",\"environmentVersion\":1,\"error\":null,\"health\":\"ok\",\"healthReason\":null,\"holdsCreatorLogins\":true,\"hydrated\":true,\"hydratedAt\":null,\"hydration\":null,\"id\":\"bx_fvkjwxap\",\"ip\":\"2001:41d0:8:8cd1:100::31\",\"lastReboot\":null,\"lastSnapshotAttemptAt\":\"2026-10-24T09:39:49.545Z\",\"lastSnapshotStatus\":\"completed\",\"machineProvider\":\"baremetal\",\"memoryGB\":8,\"monitoring\":true,\"name\":\"Box 2026-10-24 09:32\",\"setupError\":null,\"setupStatus\":null,\"snapshotAvailable\":true,\"snapshotCompletedAt\":\"2026-10-24T09:39:50.821Z\",\"snapshotVerifiedAt\":\"2026-10-24T09:39:50.821Z\",\"snapshots\":true,\"sshEndpoint\":\"5.39.74.209:19049\",\"state\":\"idle\",\"stop\":null,\"subdomain\":\"box-node-bde6d60d7ca0d045\",\"team\":null,\"ttlSeconds\":1800,\"type\":\"default\",\"updatedAt\":\"2026-10-24T09:32:46.409Z\",\"url\":\"https://box-node-bde6d60d7ca0d045.on.boat.dev\",\"vcpu\":4,\"visibility\":null,\"wipePendingUntilRestart\":false}}\n",
+  "stderr": "",
+  "lifecycle": "leave RUNNING; coordinator owns shutdown09:57",
+  "expiry": "2026-10-24T10:02:44.741Z"
+}

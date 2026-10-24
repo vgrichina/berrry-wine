@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lfuiuxrfw5ah",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:40:11.191Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T09:40:11.154Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"path\": \"preflight.json\", \"bytes\": 334, \"sha256\": \"dde48bc73d5abf88d82af688c4aee8f908297cbe4eebf89b9aab588925094109\"}, {\"path\": \"tree-validation.json.gz\", \"bytes\": 128361, \"sha256\": \"4da7f06f39f8435efc6ae4f96f4b1ba3391ac4f34c2122b9d142e22eb911181f\"}, {\"path\": \"watchdog-negative-control.json\", \"bytes\": 133, \"sha256\": \"047f61bf88e2770c2fff000054b9e882c1315d8cd52044ed6248fa45d3a79447\"}, {\"path\": \"output-control/receipt.json\", \"bytes\": 178, \"sha256\": \"1069504927d42d7222e3abe54e1a635922a0153990cc34b6ce8f9b24e4c4d03e\"}, {\"path\": \"guest/output.log\", \"bytes\": 131072, \"sha256\": \"8ea70003d2504fe59480de9e77ba43e4033a1d8122f5a4a864753364d3b68f65\"}, {\"path\": \"guest/command.json\", \"bytes\": 1937, \"sha256\": \"9622b3c1e826bd2013978131508c86a4ca81c981f73316f35ef98332d8dff7e4\"}, {\"path\": \"guest/terminal.json\", \"bytes\": 314, \"sha256\": \"a6f728e4d645f950e470e8905f74f0c2c1153f691e0f2a8251e2b18e001878ec\"}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,133 @@
+{
+  "candidateId": "enigma-1.01",
+  "candidateRegistryMatched": false,
+  "dashboardPublished": false,
+  "route": "authentic-unpacked-diagnostic-startup",
+  "outcome": "bounded-output-guard",
+  "verification": "tested",
+  "guestAttempts": 1,
+  "firstGuestFailureAPI": null,
+  "summary": "Complete explicit native providers pass prior SDL_getenv trap; all eight DllMains return1, then startup graphics filesystem logging reaches131072-byte output guard. No established Lua-loader cache, menu, frame or gameplay acceptance.",
+  "command": {
+    "argv": [
+      "node",
+      "--max-old-space-size=512",
+      "--require=/tmp/enigma-provider-complete-startup-oct24/preload.cjs",
+      "/tmp/enigma-provider-complete-startup-oct24/runner/test/run.js",
+      "--no-build",
+      "--wasm=/tmp/enigma-provider-complete-startup-oct24/runtime/build/wine-assembly.wasm",
+      "--exe=/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/enigma.exe",
+      "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+      "--cwd=C:\\Enigma-1.01",
+      "--dlls=/tmp/enigma-provider-complete-startup-oct24/system/msvcrt.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-provider-complete-startup-oct24/vfs/Enigma-1.01/SDL_ttf.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=55",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/enigma-provider-complete-startup-oct24/vfs",
+      "--max-batches=10000000",
+      "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+      "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+      "--input=30000:png:/tmp/enigma-provider-complete-startup-oct24/guest/startup.png"
+    ],
+    "pid": 27457,
+    "pgid": 27457,
+    "startedAt": 1792834803.5652273,
+    "memAvailable": 7161896960,
+    "uid": 1000,
+    "environment": {
+      "MAELSTROM_CAPTURE_INSTALL": "1",
+      "removed": [
+        "WINE_RUN_EXTRA_ARGS",
+        "WINE_REGION_MAP"
+      ]
+    },
+    "limits": {
+      "oldspaceMiB": 512,
+      "arenaMiB": 512,
+      "cpu": 90,
+      "wall": 60,
+      "guestSeconds": 60,
+      "maxBatches": 10000000,
+      "outputBytes": 131072
+    }
+  },
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "moduleSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "ABI": 291,
+  "layout": "9a3bc9149d58209c",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "exeSHA256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45",
+  "providers": [
+    "msvcrt.dll",
+    "zlib1.dll",
+    "libpng12-0.dll",
+    "sdl.dll",
+    "sdl_image.dll",
+    "sdl_mixer.dll",
+    "libfreetype-6.dll",
+    "sdl_ttf.dll"
+  ],
+  "nativeBindingCount": 527,
+  "SDL_getenvRVA": 37536,
+  "terminal": {
+    "TERM": true,
+    "KILL": true,
+    "returncode": -9,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "output-guard",
+    "elapsed": 7.395026590000043,
+    "box": "bx_fvkjwxap",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown09:57UTC",
+    "expires": "2026-10-24T10:02:44.741Z",
+    "outputBytes": 131072
+  },
+  "frame": null,
+  "LuaEntry": null,
+  "LuaCache": null,
+  "priorCaptureViolationRetained": true,
+  "newCapture": {
+    "prior": {
+      "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+      "priorSessionBytes": 1162054,
+      "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+      "priorToolOutputBytes": 256646,
+      "priorRemoteResponseBytes": 1093346,
+      "carriedCharge": 1349992,
+      "newAllowance": 2097152,
+      "totalAllowance": 3447144,
+      "historicalCapViolationRetained": true,
+      "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+    },
+    "newToolText": 195814,
+    "newRemoteFullTransportResponses": 719457,
+    "newCharged": 915271,
+    "newAllowance": 2097152,
+    "totalCharge": 2265263,
+    "totalAllowance": 3447144,
+    "passNewCapture": true,
+    "historicalViolationUnchanged": true,
+    "method": "raw retained tool text plus remote full JSON stdout/stderr, includes metadata/base64; overlap conservatively double-charged"
+  },
+  "lifecycle": {
+    "box": "bx_fvkjwxap",
+    "state": "RUNNING; API idle healthok",
+    "expiry": "2026-10-24T10:02:44.741Z",
+    "shutdownOwner": "coordinator09:57",
+    "ownedGroupsRemaining": false,
+    "taskNode": []
+  },
+  "artifacts": [
+    "output.log",
+    "terminal.json",
+    "command.json",
+    "api-traces.json",
+    "diagnostic-result.json",
+    "manifest.json.gz",
+    "tree-validation.json.gz",
+    "evidence-seals.json"
+  ]
+}

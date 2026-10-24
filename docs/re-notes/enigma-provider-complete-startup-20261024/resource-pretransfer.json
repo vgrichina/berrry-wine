@@ -1,0 +1,22 @@
+{
+  "stage": "pretransfer",
+  "charges": {
+    "localOwned": 2633728,
+    "sessionFull": 548864,
+    "launcherFull": 200704,
+    "sqlitePositive": 0,
+    "remoteMaterialized": 43741184,
+    "remoteHelpersEvidence": 2097152,
+    "transferOverlap": 262144,
+    "localGitFuture": 524288,
+    "externalFuture": 2097152,
+    "reserve": 8388608
+  },
+  "peak": 60493824,
+  "cap": 67108864,
+  "sourceFree": 3678048256,
+  "sourceAfter": 3617554432,
+  "remoteFree": 48797433856,
+  "remoteAfter": 48736940032,
+  "passAdmission": true
+}

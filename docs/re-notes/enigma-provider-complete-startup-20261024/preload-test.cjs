@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto'),Module=require('module');
+const H=__dirname,source=fs.readFileSync('/tmp/maelstrom-poststart-state-cause-oct24/canonical-run.js','utf8');
+assert.equal(crypto.createHash('sha256').update(source).digest('hex'),'4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809');
+const preload=fs.readFileSync(H+'/preload.cjs','utf8');let modified;
+const Fake={prototype:{_compile(s,f){modified=s;return s;}}};
+vm.runInNewContext(preload,{require:n=>n==='module'?Fake:n==='./capture.cjs'?{}:require(n),__dirname:H});
+Fake.prototype._compile(source,H+'/runner/test/run.js');
+assert(modified.includes('diagnosticRecords < 16 && TRACE_API'));
+const start=modified.indexOf('  let diagnosticRecords=0;'),end=modified.indexOf('  let inputEvent =',start);
+const fixture='const logs=[];const TRACE_API_DEDUP=false;const flushDedup=()=>{};let dedupLast=null;'+modified.slice(start,end)+';for(let i=0;i<40;i++)pushApi("record"+i);logs';
+assert.equal(vm.runInNewContext(fixture).length,16);
+assert.throws(()=>Fake.prototype._compile(source+'\n',H+'/runner/test/run.js'));
+console.log(JSON.stringify({pass:true,canonicalSHA:true,boundedRecords:16,rejectChangedSource:true,guestCompiled:false,guestLaunched:false,providerSemanticsChanged:false}));

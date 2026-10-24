@@ -1,0 +1,6 @@
+{
+  "firstFailure": "retained old one-provider assertion; canonical getArgs(dlls) splits eight providers",
+  "guestStarted": false,
+  "change": "assert exact eight parsed paths against actual raw --dlls argument",
+  "configurationUnchanged": true
+}

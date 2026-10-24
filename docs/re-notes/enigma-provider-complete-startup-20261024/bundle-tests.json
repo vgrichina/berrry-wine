@@ -1,0 +1,27 @@
+{
+  "passBundle": true,
+  "sealedArtifacts": 60,
+  "normalBindingCount": 527,
+  "exactTreeFiles": 2460,
+  "completeClosureFiles": 2659,
+  "providerControls": [
+    {
+      "fixture": "manifest.json.gz",
+      "status": 0,
+      "stdoutSHA256": "4fb8129cbfaaf669602493f4659f0cc1b71ab099c774a6f5c7553b0bb5a40b97",
+      "stderr": "",
+      "helperSHA256": "5e31b33d076f9b1b144bcfa336cee002fb18526831f2e48d2864649ad1150488"
+    },
+    {
+      "fixture": "reject-missing-sdl-manifest.json.gz",
+      "status": 2,
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderr": "REJECT: provider absent from manifest: vfs/Enigma-1.01/SDL.dll\n",
+      "helperSHA256": "5e31b33d076f9b1b144bcfa336cee002fb18526831f2e48d2864649ad1150488"
+    }
+  ],
+  "terminalGuardVerified": true,
+  "frameProduced": false,
+  "guestAttempts": 1,
+  "staticOnly": true
+}

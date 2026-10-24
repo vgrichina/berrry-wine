@@ -1,0 +1,104 @@
+{
+  "passGate": true,
+  "providers": [
+    "msvcrt.dll",
+    "zlib1.dll",
+    "libpng12-0.dll",
+    "sdl.dll",
+    "sdl_image.dll",
+    "sdl_mixer.dll",
+    "libfreetype-6.dll",
+    "sdl_ttf.dll"
+  ],
+  "edges": [
+    [
+      "enigma.exe",
+      "libpng12-0.dll"
+    ],
+    [
+      "libpng12-0.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "libpng12-0.dll",
+      "zlib1.dll"
+    ],
+    [
+      "zlib1.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "enigma.exe",
+      "msvcrt.dll"
+    ],
+    [
+      "enigma.exe",
+      "sdl.dll"
+    ],
+    [
+      "sdl.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "enigma.exe",
+      "sdl_image.dll"
+    ],
+    [
+      "sdl_image.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "sdl_image.dll",
+      "sdl.dll"
+    ],
+    [
+      "enigma.exe",
+      "sdl_mixer.dll"
+    ],
+    [
+      "sdl_mixer.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "sdl_mixer.dll",
+      "sdl.dll"
+    ],
+    [
+      "enigma.exe",
+      "sdl_ttf.dll"
+    ],
+    [
+      "sdl_ttf.dll",
+      "libfreetype-6.dll"
+    ],
+    [
+      "libfreetype-6.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "libfreetype-6.dll",
+      "zlib1.dll"
+    ],
+    [
+      "sdl_ttf.dll",
+      "msvcrt.dll"
+    ],
+    [
+      "sdl_ttf.dll",
+      "sdl.dll"
+    ],
+    [
+      "enigma.exe",
+      "zlib1.dll"
+    ]
+  ],
+  "omittedNotNormalImport": [
+    "jpeg.dll",
+    "mikmod.dll"
+  ],
+  "rejectMissingSDL": "missing required providers: ['sdl.dll']",
+  "SDL_getenvRVA": 37536,
+  "parserSHA256": "f949185c282300ac3463b5524420464f87883b5ab5cb6e833fdf564cf6d83bbf",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "normalImportsOnly": true
+}

@@ -1,0 +1,12 @@
+{
+  "priorFullSession": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-11-30-01a16d2d-f54d-75a1-8408-75e1b20d2c67.jsonl",
+  "priorSessionBytes": 1162054,
+  "priorSessionSHA256": "45a0cb0beba479ee5652e399d28287896c9f8dc9a638887322612b5069c09e97",
+  "priorToolOutputBytes": 256646,
+  "priorRemoteResponseBytes": 1093346,
+  "carriedCharge": 1349992,
+  "newAllowance": 2097152,
+  "totalAllowance": 3447144,
+  "historicalCapViolationRetained": true,
+  "method": "sum UTF8 bytes of every retained custom_tool_call_output text block plus all recorded remote stdout/stderr responseBytes; conservative double-charge overlap, no deletion/reset"
+}

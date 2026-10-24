@@ -1,0 +1,1002 @@
+PE loaded. Entry: 0x004012a0
+DLL: msvcrt.dll at 0xb0b000, DllMain=0xb0e428, thunks=2187, origBase=0x78000000
+DLL: zlib1.dll at 0xc4f000, DllMain=0xc50060, thunks=2190, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xd68000, DllMain=0xd69060, thunks=2193, origBase=0x69c80000
+DLL: SDL.dll at 0xe8e000, DllMain=0xe8f000, thunks=2341, origBase=0x68100000
+DLL: SDL_image.dll at 0xfe9000, DllMain=0xfea060, thunks=2344, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0x110a000, DllMain=0x110b060, thunks=2356, origBase=0x61700000
+DLL: libfreetype-6.dll at 0x1255000, DllMain=0x1256060, thunks=2359, origBase=0x6fbc0000
+DLL: SDL_ttf.dll at 0x13c7000, DllMain=0x13c8060, thunks=2362, origBase=0x6f4c0000
+Patching EXE imports: libpng12-0.dll -> DLL #2 (libpng12-0.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #3 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #4 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #5 (SDL_mixer.dll)
+Patching EXE imports: SDL_ttf.dll -> DLL #7 (SDL_ttf.dll)
+Patching EXE imports: zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: libfreetype-6.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libfreetype-6.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL_ttf.dll→libfreetype-6.dll -> DLL #6 (libfreetype-6.dll)
+Patching DLL imports: SDL_ttf.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_ttf.dll→SDL.dll -> DLL #3 (SDL.dll)
+After patching: 2382 thunks
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xb46edc] = 0x13d557c
+Patched __p__environ [0xb45be4] = 0x13d555c
+Patched __p___winitenv [0xb470ec] = 0x13d557c
+Patched __p___initenv [0xb49c9c] = 0x13d555c
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb1799d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\enigma-1.01
+[count] slot 0 armed at 0x005ab8f0
+[count] slot 1 armed at 0x005ab957
+[count] slot 2 armed at 0x005ab965
+[count] slot 3 armed at 0x005ab98e
+[API #81] GetProcAddress(mod=h:0x013d5e54, name="IsProcessorFeaturePresent") [esp=0x074fffcc ret=0x00b0f5c0]
+  => h:0x013d7634
+[API #192] LoadLibraryA(name="DDRAW.DLL") [esp=0x074ffdfc ret=0x005de288]
+  => h:0x013ebc4c
+[API #373] LoadLibraryA(name="shfolder.dll") [esp=0x074ff6bc ret=0x00581b13]
+  => h:0x00400000
+[API #374] GetProcAddress(mod=h:0x00400000, name="SHGetFolderPathA") [esp=0x074ff6bc ret=0x00581b36]
+  => h:0x07505920
+[FF] FindFirst("C:\WINDOWS\Application Data") => "application data" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\compat.lua") => "compat.lua" size=4075
+[FS] ReadFile(h=0x70000001, buf=0x144834c, n=0x1000, read=0xfeb, pos=0x0, path=c:\enigma-1.01\data\compat.lua) tid=1 b=2886 mainDepth=0
+[FS] ReadFile(h=0x70000001, buf=0x144834c, n=0x1000, read=0x0, pos=0xfeb, path=c:\enigma-1.01\data\compat.lua) tid=1 b=3025 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\startup.lua") => "startup.lua" size=9436
+[FS] ReadFile(h=0x70000002, buf=0x1456e1c, n=0x1000, read=0x1000, pos=0x0, path=c:\enigma-1.01\data\startup.lua) tid=1 b=3182 mainDepth=0
+[FS] ReadFile(h=0x70000002, buf=0x1456e1c, n=0x1000, read=0x1000, pos=0x1000, path=c:\enigma-1.01\data\startup.lua) tid=1 b=3305 mainDepth=0
+[FS] ReadFile(h=0x70000002, buf=0x1456e1c, n=0x1000, read=0x4dc, pos=0x2000, path=c:\enigma-1.01\data\startup.lua) tid=1 b=3473 mainDepth=0
+[FS] ReadFile(h=0x70000002, buf=0x1456e1c, n=0x1000, read=0x0, pos=0x24dc, path=c:\enigma-1.01\data\startup.lua) tid=1 b=3513 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\enigma_conf.lua") => "enigma_conf.lua" size=0
+[FS] ReadFile(h=0x70000003, buf=0x1462da4, n=0x1000, read=0x0, pos=0x0, path=c:\enigma-1.01\data\enigma_conf.lua) tid=1 b=3849 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/enigmarc.xml") => "enigmarc.xml" size=878
+[FS] ReadFile(h=0x70000009, buf=0x148e838, n=0xc000, read=0x36e, pos=0x0, path=c:\enigma-1.01\data\schemas\enigmarc.xml) tid=1 b=3869 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/preferences.xsd") => "preferences.xsd" size=1707
+[FS] ReadFile(h=0x7000000a, buf=0x14c4ff0, n=0xc000, read=0x6ab, pos=0x0, path=c:\enigma-1.01\data\schemas\preferences.xsd) tid=1 b=3891 mainDepth=0
+[FS] ReadFile(h=0x7000000a, buf=0x14c4ff0, n=0xc000, read=0x0, pos=0x6ab, path=c:\enigma-1.01\data\schemas\preferences.xsd) tid=1 b=3969 mainDepth=0
+[FS] ReadFile(h=0x70000009, buf=0x148e838, n=0xc000, read=0x0, pos=0x36e, path=c:\enigma-1.01\data\schemas\enigmarc.xml) tid=1 b=4089 mainDepth=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma") => "enigma" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels") => "levels" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels") => "levels" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma") => "enigma" size=0
+[API #22114] GetProcAddress(mod=h:0x014d6004, name="TrackMouseEvent") [esp=0x074ff13c ret=0x00ebeb35]
+  => 0
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+[API #22364] LoadLibraryA(name="jpeg.dll") [esp=0x074ff79c ret=0x00ecc8dd]
+  => 0
+[API #22373] GetProcAddress(mod=h:0x015d3000, name="jpeg_calc_output_dimensions") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015de080
+[API #22374] GetProcAddress(mod=h:0x015d3000, name="jpeg_CreateDecompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd1b0
+[API #22375] GetProcAddress(mod=h:0x015d3000, name="jpeg_destroy_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd2b0
+[API #22376] GetProcAddress(mod=h:0x015d3000, name="jpeg_finish_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd6b0
+[API #22377] GetProcAddress(mod=h:0x015d3000, name="jpeg_read_header") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd580
+[API #22378] GetProcAddress(mod=h:0x015d3000, name="jpeg_read_scanlines") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd9a0
+[API #22379] GetProcAddress(mod=h:0x015d3000, name="jpeg_resync_to_restart") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015e0eb0
+[API #22380] GetProcAddress(mod=h:0x015d3000, name="jpeg_start_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd880
+[API #22381] GetProcAddress(mod=h:0x015d3000, name="jpeg_std_error") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015ea990
+[API #22382] LoadLibraryA(name="libpng12-0.dll") [esp=0x074ff79c ret=0x00ecc8dd]
+  => h:0x00d68000
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[SetWindowText] ""
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_marble.png") => "enigma_marble.png" size=16723
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4961 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4962 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d439b, n=0x1c61, read=0x1c61, pos=0x400, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=4963 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d3ffc, n=0x2000, read=0x2000, pos=0x2061, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=5180 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x14d2b94, n=0x400, read=0xf2, pos=0x4061, path=c:\enigma-1.01\data\gfx\enigma_marble.png) tid=1 b=5411 mainDepth=0
+[FS] ReadFile(h=0x7000000c, buf=0x14b570c, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=5839 mainDepth=0
+[SetWindowText] "Enigma v1.01"
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/cur-magic.png") => "cur-magic.png" size=446
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x14ba074, n=0x400, read=0x1be, pos=0x0, path=c:\enigma-1.01\data\gfx\cur-magic.png) tid=1 b=5845 mainDepth=0
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xb0e7c5 param=0x14c1b1c flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb0e7c5 ESP=0x7efffff8
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[FF] FindFirst("C:\Enigma-1.01/data\sound-defaults.lua") => "sound-defaults.lua" size=14673
+[FS] ReadFile(h=0x70000012, buf=0x14ad28c, n=0x1000, read=0x1000, pos=0x0, path=c:\enigma-1.01\data\sound-defaults.lua) tid=1 b=5893 mainDepth=0
+[FS] ReadFile(h=0x70000012, buf=0x14ad28c, n=0x1000, read=0x1000, pos=0x1000, path=c:\enigma-1.01\data\sound-defaults.lua) tid=1 b=5918 mainDepth=0
+[FS] ReadFile(h=0x70000012, buf=0x14ad28c, n=0x1000, read=0x1000, pos=0x2000, path=c:\enigma-1.01\data\sound-defaults.lua) tid=1 b=5947 mainDepth=0
+[FS] ReadFile(h=0x70000012, buf=0x14ad28c, n=0x1000, read=0x951, pos=0x3000, path=c:\enigma-1.01\data\sound-defaults.lua) tid=1 b=5971 mainDepth=0
+[FS] ReadFile(h=0x70000012, buf=0x14ad28c, n=0x1000, read=0x0, pos=0x3951, path=c:\enigma-1.01\data\sound-defaults.lua) tid=1 b=5986 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets") => "soundsets" size=0
+[FF] FindFirst("C:\enigma-1.01\data\soundsets\*") => "." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/.") => "soundsets" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/..") => "data" size=0
+[FF] FindNext => "enigma" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/enigma") => "enigma" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\compat.lua") => "compat.lua" size=4075
+[FS] ReadFile(h=0x70000013, buf=0x1792c3c, n=0x1000, read=0xfeb, pos=0x0, path=c:\enigma-1.01\data\compat.lua) tid=1 b=6583 mainDepth=0
+[FS] ReadFile(h=0x70000013, buf=0x1792c3c, n=0x1000, read=0x0, pos=0xfeb, path=c:\enigma-1.01\data\compat.lua) tid=1 b=6618 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[FS] ReadFile(h=0x70000014, buf=0x179c0d4, n=0x1000, read=0x1ca, pos=0x0, path=c:\enigma-1.01\data\models-32.lua) tid=1 b=6629 mainDepth=0
+[FS] ReadFile(h=0x70000014, buf=0x179c0d4, n=0x1000, read=0x0, pos=0x1ca, path=c:\enigma-1.01\data\models-32.lua) tid=1 b=6629 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\models-2d.lua") => "models-2d.lua" size=50928
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x0, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6638 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x1000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6670 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x2000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6709 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x3000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6742 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x4000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6779 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x5000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6810 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x6000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6849 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x7000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6877 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x8000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6917 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0x9000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6948 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0xa000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=6981 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x1000, pos=0xb000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=7008 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x6f0, pos=0xc000, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=7041 mainDepth=0
+[FS] ReadFile(h=0x70000015, buf=0x179c0d4, n=0x1000, read=0x0, pos=0xc6f0, path=c:\enigma-1.01\data\models-2d.lua) tid=1 b=7054 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\models.lua") => "models.lua" size=9752
+[FS] ReadFile(h=0x70000016, buf=0x17c20cc, n=0x1000, read=0x1000, pos=0x0, path=c:\enigma-1.01\data\models.lua) tid=1 b=7057 mainDepth=0
+[FS] ReadFile(h=0x70000016, buf=0x17c20cc, n=0x1000, read=0x1000, pos=0x1000, path=c:\enigma-1.01\data\models.lua) tid=1 b=7089 mainDepth=0
+[FS] ReadFile(h=0x70000016, buf=0x17c20cc, n=0x1000, read=0x618, pos=0x2000, path=c:\enigma-1.01\data\models.lua) tid=1 b=7127 mainDepth=0
+[FS] ReadFile(h=0x70000016, buf=0x17c20cc, n=0x1000, read=0x0, pos=0x2618, path=c:\enigma-1.01\data\models.lua) tid=1 b=7145 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/dummy.png") => "dummy.png" size=295
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FS] ReadFile(h=0x70000017, buf=0x17c2a64, n=0x400, read=0x127, pos=0x0, path=c:\enigma-1.01\data\gfx32\dummy.png) tid=1 b=7157 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/invisible.png") => "invisible.png" size=126
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FS] ReadFile(h=0x70000018, buf=0x17de7c4, n=0x400, read=0x7e, pos=0x0, path=c:\enigma-1.01\data\gfx32\invisible.png) tid=1 b=7165 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x14, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x59, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x9e, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0xb1, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0xce, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x107, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x122, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x179bccc, n=0x400, read=0x400, pos=0x14d, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x0, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7175 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x1000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7278 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x2000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7405 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x3000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7521 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x4000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7622 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x1000, pos=0x5000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7732 mainDepth=0
+[FS] ReadFile(h=0x70000019, buf=0x17be884, n=0x1000, read=0x520, pos=0x6000, path=c:\enigma-1.01\data\gfx32\menu_bg.jpg) tid=1 b=7830 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x179bccc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8438 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x17bcbeb, n=0x1c61, read=0x1c61, pos=0x400, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8439 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x17bc84c, n=0x2000, read=0x2000, pos=0x2061, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8491 mainDepth=0
+[FS] ReadFile(h=0x7000001a, buf=0x17bc84c, n=0x114c, read=0x114c, pos=0x4061, path=c:\enigma-1.01\data\gfx\enigma_logo3.png) tid=1 b=8557 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/DejaVuSansCondensed.ttf") => "DejaVuSansCondensed.ttf" size=408940
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x4, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x1c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x2c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x3c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x4c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x5c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x6c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x7c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8669 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xac, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x48cec, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xbc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xcc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xdc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xec, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xfc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x10c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x11c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x12c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x13c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x14c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0xc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x48ce0, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x53f10, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x53f16, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1800fcc, n=0x6ea, read=0x6ea, pos=0x77b8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x562a4, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x562aa, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8670 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x5a534, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8671 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x48d18, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8671 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x17f914c, n=0x3ae4, read=0x3ae4, pos=0x48d3c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8671 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x7760, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8673 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x77ae, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8673 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x81a4, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8674 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x81a8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8674 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x17f5534, n=0x3c06, read=0x3c06, pos=0x4c820, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8674 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x5a1f5, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8675 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x5a219, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8675 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x17f1a3c, n=0x3ae8, read=0x3ae8, pos=0x50428, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8676 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x7ea4, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8676 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x80f8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8676 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x17fc264, n=0x568, read=0x568, pos=0x634d0, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8676 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9794, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8776 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9108, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8777 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8dd8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8777 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8d14, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8777 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9250, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8777 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8f10, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8777 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8c68, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8778 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8fb8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8778 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9090, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8778 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8dd8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8d14, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9250, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8e84, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8f10, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8c68, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8779 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9130, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8780 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9090, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8780 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x953c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8780 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x963c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8780 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9660, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8781 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9698, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8781 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9478, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8781 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x93c0, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8781 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x95f8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8782 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9a4c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8782 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9acc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8782 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98a8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8782 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9794, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8782 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x94d8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8783 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8783 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9420, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8783 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9a4c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8783 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9acc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8784 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98a8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8784 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9794, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8784 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x94d8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8784 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8784 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9420, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8785 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x97e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8785 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9848, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8785 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x957c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8785 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9660, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8786 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9a8c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8786 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8e84, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8786 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9794, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8787 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9350, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8788 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9478, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8790 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x963c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8791 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9750, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8792 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x957c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8793 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8795 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x97e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8797 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98a8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8798 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9960, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8799 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x94d8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8801 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x96e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8802 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x96cc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8804 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x8e84, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8805 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9794, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8806 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9350, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8809 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9478, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8812 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x963c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8815 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9750, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8816 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x957c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8818 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8822 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x97e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8825 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x98a8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8828 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x9960, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8830 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x94d8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8831 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x96e8, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8834 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x96cc, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=8838 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-top.png") => "fg-top.png" size=7151
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17f1124, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8844 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x17eeb89, n=0x17df, read=0x17df, pos=0x400, path=c:\enigma-1.01\data\gfx32\fg-top.png) tid=1 b=8845 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-top.png") => "sh-top.png" size=158
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8972 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x19444fc, n=0x400, read=0x9e, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-top.png) tid=1 b=8973 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-rotor.png") => "fg-rotor.png" size=6334
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x19444fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8995 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x193c5a3, n=0x14ae, read=0x14ae, pos=0x400, path=c:\enigma-1.01\data\gfx32\fg-rotor.png) tid=1 b=8996 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-rotor.png") => "sh-rotor.png" size=6850
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1962d84, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9144 mainDepth=0
+[FS] ReadFile(h=0x7000001f, buf=0x1960d0b, n=0x16b2, read=0x16b2, pos=0x400, path=c:\enigma-1.01\data\gfx32\sh-rotor.png) tid=1 b=9145 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-horse.png") => "fg-horse.png" size=2114
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x1980844, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9281 mainDepth=0
+[FS] ReadFile(h=0x70000020, buf=0x197e7b9, n=0x432, read=0x432, pos=0x400, path=c:\enigma-1.01\data\gfx32\fg-horse.png) tid=1 b=9282 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-horse.png") => "sh-horse.png" size=194
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9299 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9300 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9300 mainDepth=0
+[FS] ReadFile(h=0x70000021, buf=0x197b864, n=0x400, read=0xc2, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-horse.png) tid=1 b=9300 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-whiteball-small.png") => "sh-whiteball-small.png" size=232
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9309 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9310 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9310 mainDepth=0
+[FS] ReadFile(h=0x70000022, buf=0x1959054, n=0x400, read=0xe8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small.png) tid=1 b=9310 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball-small.png") => "fg-whiteball-small.png" size=423
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FS] ReadFile(h=0x70000023, buf=0x180ae84, n=0x400, read=0x1a7, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-small.png) tid=1 b=9321 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-fall.png") => "ac-whiteball-small-fall.png" size=1558
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9335 mainDepth=0
+[FS] ReadFile(h=0x70000024, buf=0x1995ecc, n=0x400, read=0x216, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-fall.png) tid=1 b=9336 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-shatter.png") => "ac-whiteball-small-shatter.png" size=1607
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FS] ReadFile(h=0x70000025, buf=0x19a84ac, n=0x400, read=0x247, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shatter.png) tid=1 b=9403 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-shattered.png") => "ac-whiteball-small-shattered.png" size=602
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FS] ReadFile(h=0x70000026, buf=0x19b952c, n=0x400, read=0x25a, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-shattered.png) tid=1 b=9456 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-jump.png") => "ac-whiteball-small-jump.png" size=5009
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19b3bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9472 mainDepth=0
+[FS] ReadFile(h=0x70000027, buf=0x19c8a01, n=0xf81, read=0xf81, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-small-jump.png) tid=1 b=9473 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-whiteball-small-jump.png") => "sh-whiteball-small-jump.png" size=432
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FS] ReadFile(h=0x70000028, buf=0x19d18e4, n=0x400, read=0x1b0, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-whiteball-small-jump.png) tid=1 b=9548 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-shatter.png") => "ac-blackball-shatter.png" size=3756
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e8004, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FS] ReadFile(h=0x70000029, buf=0x19e5ef9, n=0xa9c, read=0xa9c, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-blackball-shatter.png) tid=1 b=9644 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-shatter.png") => "ac-whiteball-shatter.png" size=1886
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9734 mainDepth=0
+[FS] ReadFile(h=0x7000002a, buf=0x1a09a4c, n=0x400, read=0x35e, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-shatter.png) tid=1 b=9735 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball-sink.png") => "sh-blackball-sink.png" size=556
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FS] ReadFile(h=0x7000002b, buf=0x1a1c74c, n=0x400, read=0x22c, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-sink.png) tid=1 b=9798 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-blackball-sink.png") => "fg-blackball-sink.png" size=1283
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9885 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FS] ReadFile(h=0x7000002c, buf=0x1a43bcc, n=0x400, read=0x103, pos=0x400, path=c:\enigma-1.01\data\gfx32\fg-blackball-sink.png) tid=1 b=9886 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball-sink.png") => "fg-whiteball-sink.png" size=2131
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a6251c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FS] ReadFile(h=0x7000002d, buf=0x1a60489, n=0x443, read=0x443, pos=0x400, path=c:\enigma-1.01\data\gfx32\fg-whiteball-sink.png) tid=1 b=9981 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball.png") => "sh-blackball.png" size=171
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FS] ReadFile(h=0x7000002e, buf=0x1a81b2c, n=0x400, read=0xab, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball.png) tid=1 b=10079 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-blackball.png") => "fg-blackball.png" size=735
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FS] ReadFile(h=0x7000002f, buf=0x1a7c9cc, n=0x400, read=0x2df, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-blackball.png) tid=1 b=10090 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-fall.png") => "ac-blackball-fall.png" size=2050
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10114 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10114 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10114 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FS] ReadFile(h=0x70000030, buf=0x1a583ec, n=0x400, read=0x400, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-blackball-fall.png) tid=1 b=10115 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball.png") => "fg-whiteball.png" size=857
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FS] ReadFile(h=0x70000031, buf=0x1a9ecac, n=0x400, read=0x359, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-whiteball.png) tid=1 b=10255 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-fall.png") => "ac-whiteball-fall.png" size=1408
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FS] ReadFile(h=0x70000032, buf=0x1a9992c, n=0x400, read=0x180, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-fall.png) tid=1 b=10273 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-jump.png") => "ac-blackball-jump.png" size=2421
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10381 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abddd4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10382 mainDepth=0
+[FS] ReadFile(h=0x70000033, buf=0x1abbd41, n=0x565, read=0x565, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-blackball-jump.png) tid=1 b=10382 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball-jump.png") => "sh-blackball-jump.png" size=760
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FS] ReadFile(h=0x70000034, buf=0x19e25b4, n=0x400, read=0x2f8, pos=0x0, path=c:\enigma-1.01\data\gfx32\sh-blackball-jump.png) tid=1 b=10454 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-jump.png") => "ac-whiteball-jump.png" size=6788
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1adf41c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FS] ReadFile(h=0x70000035, buf=0x1add389, n=0x1674, read=0x1674, pos=0x400, path=c:\enigma-1.01\data\gfx32\ac-whiteball-jump.png) tid=1 b=10543 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-bug.png") => "fg-bug.png" size=561
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FS] ReadFile(h=0x70000036, buf=0x1ad8f44, n=0x400, read=0x231, pos=0x0, path=c:\enigma-1.01\data\gfx32\fg-bug.png) tid=1 b=10640 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/inv-blackball.png") => "inv-blackball.png" size=418
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FS] ReadFile(h=0x70000037, buf=0x1adcb8c, n=0x400, read=0x1a2, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-blackball.png) tid=1 b=10652 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/inv-whiteball.png") => "inv-whiteball.png" size=606
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FS] ReadFile(h=0x70000038, buf=0x1adc13c, n=0x400, read=0x25e, pos=0x0, path=c:\enigma-1.01\data\gfx32\inv-whiteball.png) tid=1 b=10660 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x953c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=10754 mainDepth=0
+[FS] ReadFile(h=0x7000001b, buf=0x1807334, n=0x400, read=0x400, pos=0x953c, path=c:\enigma-1.01\data\fonts\dejavusanscondensed.ttf) tid=1 b=10757 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-gradient2.png") => "fl-gradient2.png" size=40907
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b0ec19, n=0x1c63, read=0x1c63, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10765 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x2063, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10804 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b0ec70, n=0x1c0c, read=0x1c0c, pos=0x2463, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10804 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x406f, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10841 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b0ec70, n=0x1c0c, read=0x1c0c, pos=0x446f, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10841 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x607b, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10879 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b0ec70, n=0x1c0c, read=0x1c0c, pos=0x647b, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10879 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b055b4, n=0x400, read=0x400, pos=0x8087, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10916 mainDepth=0
+[FS] ReadFile(h=0x70000039, buf=0x1b0ec70, n=0x1b34, read=0x1b34, pos=0x8487, path=c:\enigma-1.01\data\gfx32\fl-gradient2.png) tid=1 b=10916 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-leaves.png") => "fl-leaves.png" size=22918
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b1e18b, n=0x1c29, read=0x1c29, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11048 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x2029, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11086 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b1e1a8, n=0x1c0c, read=0x1c0c, pos=0x2429, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11086 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b201dc, n=0x400, read=0x400, pos=0x4035, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11126 mainDepth=0
+[FS] ReadFile(h=0x7000003a, buf=0x1b1e1a8, n=0x1541, read=0x1541, pos=0x4435, path=c:\enigma-1.01\data\gfx32\fl-leaves.png) tid=1 b=11126 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-wood.png") => "fl-wood.png" size=7428
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b52694, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11247 mainDepth=0
+[FS] ReadFile(h=0x7000003b, buf=0x1b50609, n=0x18f4, read=0x18f4, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-wood.png) tid=1 b=11248 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rock1.png") => "fl-rock1.png" size=2616
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4cd34, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FS] ReadFile(h=0x7000003c, buf=0x1b4acbb, n=0x628, read=0x628, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-rock1.png) tid=1 b=11317 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rock2.png") => "fl-rock2.png" size=2548
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b4a2fc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FS] ReadFile(h=0x7000003d, buf=0x1b18f3b, n=0x5e4, read=0x5e4, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-rock2.png) tid=1 b=11336 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-abyss.png") => "fl-abyss.png" size=140
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FS] ReadFile(h=0x7000003e, buf=0x1b4f54c, n=0x400, read=0x8c, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-abyss.png) tid=1 b=11355 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-dunes.png") => "fl-dunes.png" size=2741
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b17e2c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FS] ReadFile(h=0x7000003f, buf=0x1b28c29, n=0x6a5, read=0x6a5, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-dunes.png) tid=1 b=11362 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-sand.png") => "fl-sand.png" size=2540
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b323ec, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FS] ReadFile(h=0x70000040, buf=0x1b6f3b9, n=0x5dc, read=0x5dc, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-sand.png) tid=1 b=11381 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bluegreen.png") => "fl-bluegreen.png" size=2169
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b27c7c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x1b773c1, n=0x469, read=0x469, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-bluegreen.png) tid=1 b=11399 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bluegreenx.png") => "fl-bluegreenx.png" size=1310
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11417 mainDepth=0
+[FS] ReadFile(h=0x70000042, buf=0x1b6e3b4, n=0x400, read=0x11e, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-bluegreenx.png) tid=1 b=11420 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-inverse.png") => "fl-inverse.png" size=1538
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x1b76414, n=0x400, read=0x202, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-inverse.png) tid=1 b=11427 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-inverse2.png") => "fl-inverse2.png" size=840
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x1b7e41c, n=0x400, read=0x348, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-inverse2.png) tid=1 b=11443 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-white.png") => "fl-white.png" size=716
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11454 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x1b86424, n=0x400, read=0x2cc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-white.png) tid=1 b=11455 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-black.png") => "fl-black.png" size=732
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x1b8e42c, n=0x400, read=0x2dc, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-black.png) tid=1 b=11466 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-acwhite.png") => "fl-acwhite.png" size=833
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x1b963dc, n=0x400, read=0x341, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acwhite.png) tid=1 b=11477 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-acblack.png") => "fl-acblack.png" size=958
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FS] ReadFile(h=0x70000048, buf=0x1b9e43c, n=0x400, read=0x3be, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-acblack.png) tid=1 b=11489 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-springboard.png") => "fl-springboard.png" size=115
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x1ba63b4, n=0x400, read=0x73, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-springboard.png) tid=1 b=11502 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-normal.png") => "fl-normal.png" size=2288
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bae44c, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x1bbf409, n=0x4e0, read=0x4e0, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-normal.png) tid=1 b=11510 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-hay.png") => "fl-hay.png" size=3117
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bb63d4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11530 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x1bc710d, n=0x81d, read=0x81d, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-hay.png) tid=1 b=11533 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-floor_001.png") => "fl-floor_001.png" size=2425
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bbda54, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x1bcf419, n=0x569, read=0x569, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-floor_001.png) tid=1 b=11560 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-ice.png") => "fl-ice.png" size=2210
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bcc6f4, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11583 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x1bd7421, n=0x492, read=0x492, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-ice.png) tid=1 b=11584 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-stone.png") => "fl-stone.png" size=1550
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11601 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x1bcdbdc, n=0x400, read=0x20e, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-stone.png) tid=1 b=11605 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-dummy.png") => "fl-dummy.png" size=501
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x1bd6474, n=0x400, read=0x1f5, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-dummy.png) tid=1 b=11613 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-light.png") => "fl-light.png" size=1949
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11619 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x1bde174, n=0x400, read=0x39d, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-light.png) tid=1 b=11620 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-lightgray.png") => "fl-lightgray.png" size=1839
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x1be6484, n=0x400, read=0x32f, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-lightgray.png) tid=1 b=11637 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-darkgray.png") => "fl-darkgray.png" size=1634
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x1bee434, n=0x400, read=0x262, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-darkgray.png) tid=1 b=11654 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-trigger.png") => "fl-trigger.png" size=1759
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11671 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x1bf6494, n=0x400, read=0x2df, pos=0x400, path=c:\enigma-1.01\data\gfx32\fl-trigger.png) tid=1 b=11672 mainDepth=0
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-concrete.png") => "fl-concrete.png" size=10755
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x1bfe314, n=0x400, read=0x400, pos=0x0, path=c:\enigma-1.01\data\gfx32\fl-concrete.png) tid=1 b=11689 mainDepth=0
+[FS] ReadFile(

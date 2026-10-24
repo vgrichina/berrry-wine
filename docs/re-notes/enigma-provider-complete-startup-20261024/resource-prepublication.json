@@ -1,0 +1,23 @@
+{
+  "stage": "prepublication",
+  "charges": {
+    "localOwned": 4620288,
+    "sessionFull": 966656,
+    "launcherFull": 323584,
+    "sqliteBeforeFirstMeasurementAllowance": 1048576,
+    "sqlitePositive": 565248,
+    "remoteMaterialized": 43741184,
+    "remoteHelpersEvidence": 2097152,
+    "transferOverlap": 262144,
+    "localGitFuture": 524288,
+    "externalFuture": 2097152,
+    "reserve": 8388608
+  },
+  "peak": 64634880,
+  "cap": 67108864,
+  "sourceFree": 3671535616,
+  "sourceAfter": 3606900736,
+  "remoteFree": 48717930496,
+  "remoteAfter": 48653295616,
+  "passAdmission": true
+}

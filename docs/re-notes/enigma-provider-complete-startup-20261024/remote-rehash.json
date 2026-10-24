@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cndzxubs2aed",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T09:39:19.540Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T09:39:19.456Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 2659, \"bytes\": 37476538, \"passHash\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

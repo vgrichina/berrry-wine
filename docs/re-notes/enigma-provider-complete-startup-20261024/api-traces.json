@@ -1,0 +1,82 @@
+[
+  {
+    "line": 61,
+    "request": "[API #81] GetProcAddress(mod=h:0x013d5e54, name=\"IsProcessorFeaturePresent\") [esp=0x074fffcc ret=0x00b0f5c0]",
+    "result": "  => h:0x013d7634"
+  },
+  {
+    "line": 63,
+    "request": "[API #192] LoadLibraryA(name=\"DDRAW.DLL\") [esp=0x074ffdfc ret=0x005de288]",
+    "result": "  => h:0x013ebc4c"
+  },
+  {
+    "line": 65,
+    "request": "[API #373] LoadLibraryA(name=\"shfolder.dll\") [esp=0x074ff6bc ret=0x00581b13]",
+    "result": "  => h:0x00400000"
+  },
+  {
+    "line": 67,
+    "request": "[API #374] GetProcAddress(mod=h:0x00400000, name=\"SHGetFolderPathA\") [esp=0x074ff6bc ret=0x00581b36]",
+    "result": "  => h:0x07505920"
+  },
+  {
+    "line": 90,
+    "request": "[API #22114] GetProcAddress(mod=h:0x014d6004, name=\"TrackMouseEvent\") [esp=0x074ff13c ret=0x00ebeb35]",
+    "result": "  => 0"
+  },
+  {
+    "line": 97,
+    "request": "[API #22364] LoadLibraryA(name=\"jpeg.dll\") [esp=0x074ff79c ret=0x00ecc8dd]",
+    "result": "  => 0"
+  },
+  {
+    "line": 99,
+    "request": "[API #22373] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_calc_output_dimensions\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015de080"
+  },
+  {
+    "line": 101,
+    "request": "[API #22374] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_CreateDecompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd1b0"
+  },
+  {
+    "line": 103,
+    "request": "[API #22375] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_destroy_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd2b0"
+  },
+  {
+    "line": 105,
+    "request": "[API #22376] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_finish_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd6b0"
+  },
+  {
+    "line": 107,
+    "request": "[API #22377] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_read_header\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd580"
+  },
+  {
+    "line": 109,
+    "request": "[API #22378] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_read_scanlines\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd9a0"
+  },
+  {
+    "line": 111,
+    "request": "[API #22379] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_resync_to_restart\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015e0eb0"
+  },
+  {
+    "line": 113,
+    "request": "[API #22380] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_start_decompress\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015dd880"
+  },
+  {
+    "line": 115,
+    "request": "[API #22381] GetProcAddress(mod=h:0x015d3000, name=\"jpeg_std_error\") [esp=0x074ff79c ret=0x00ecc974]",
+    "result": "  => h:0x015ea990"
+  },
+  {
+    "line": 117,
+    "request": "[API #22382] LoadLibraryA(name=\"libpng12-0.dll\") [esp=0x074ff79c ret=0x00ecc8dd]",
+    "result": "  => h:0x00d68000"
+  }
+]

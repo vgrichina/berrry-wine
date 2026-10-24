@@ -1,0 +1,36 @@
+{
+  "reads": [
+    {
+      "path": "CLAUDE.md",
+      "start": 1,
+      "end": 180,
+      "bytes": 21284
+    },
+    {
+      "path": "CLAUDE.md",
+      "start": 1,
+      "end": 85,
+      "bytes": 13579
+    },
+    {
+      "path": "scratch/usage-watch/coordinator-policy.md",
+      "start": 1,
+      "end": 180,
+      "bytes": 11500
+    },
+    {
+      "path": "/home/user/.codex/skills/boat/SKILL.md",
+      "start": 1,
+      "end": 180,
+      "bytes": 3418
+    },
+    {
+      "path": "/home/user/.codex/skills/boat/SKILL.md",
+      "start": 180,
+      "end": 280,
+      "bytes": 2001
+    }
+  ],
+  "instructionBytes": 51782,
+  "cap": 65536
+}
