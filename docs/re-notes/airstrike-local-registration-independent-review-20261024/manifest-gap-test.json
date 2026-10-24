@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/airstrike-local-registration-independent-integrate-oct24/reproduce-manifest-gap.js",
+    "/tmp/airstrike-local-registration-independent-integrate-oct24/repo",
+    "/tmp/airstrike-local-registration-independent-integrate-oct24",
+    "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a",
+    "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+    "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll"
+  ],
+  "mem_available": 3374608384,
+  "exit": 0,
+  "seconds": 0.08166598901152611
+}

@@ -1,0 +1,75 @@
+{
+  "seals": [
+    {
+      "path": "admission.json",
+      "bytes": 2507,
+      "sha256": "d0e19c7345fd870b2dac909604e0a099b167750b1728750c2be45d9b8c60b8d2"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 219,
+      "sha256": "c216e668a31bf3b9d510757fb5717848a6e8a3e4cf8f667ea975cfab3bd86230"
+    },
+    {
+      "path": "git-publication.log",
+      "bytes": 11637,
+      "sha256": "1e6be7859422b9af955f7ff5e6a0db71e672fe011ffb71d15447a99ef1eb94e4"
+    },
+    {
+      "path": "publication.json",
+      "bytes": 1032,
+      "sha256": "6e030696f72cd747c7f02c645013ee7802a14b3eb74edad30c82de4b0a4aab37"
+    },
+    {
+      "path": "remote-main.txt",
+      "bytes": 57,
+      "sha256": "70d092448b05f0ccc64f2ecbe976518e466156c9f38fedde0b5db65e72fda9d6"
+    },
+    {
+      "path": "resource-checkpoint.json",
+      "bytes": 1570,
+      "sha256": "7cfb70760feacc18cbe0657153e40942b7a0d166328ab74d332c9c151d1ceddd"
+    },
+    {
+      "path": "resource-final.json",
+      "bytes": 2252,
+      "sha256": "f76473b4ac795e0096407c181593f51ce4969cbee55ab89deaebb220133b7e70"
+    },
+    {
+      "path": "test-airstrike-pre6a-local-registration-default.log",
+      "bytes": 116,
+      "sha256": "7da716ec6381d0e6d924bfafd13274560e403b709cf497dc9181c65d0519b57b"
+    },
+    {
+      "path": "test-airstrike-pre6a-local-registration-final.log",
+      "bytes": 217,
+      "sha256": "5a3d9cd592964221fd8dd56ffb0cfcaf939daddbf76eddb2f02c2cf29ecf64bd"
+    },
+    {
+      "path": "test-airstrike-pre6a-local-registration.log",
+      "bytes": 217,
+      "sha256": "5a3d9cd592964221fd8dd56ffb0cfcaf939daddbf76eddb2f02c2cf29ecf64bd"
+    },
+    {
+      "path": "test-candidate-browser-manifest.log",
+      "bytes": 382,
+      "sha256": "cb1162569776c56b3e37c53ea72dc02ac056610124dd13a8ba39540f4d28798a"
+    },
+    {
+      "path": "test-candidate-cli-silver-launch.log",
+      "bytes": 467,
+      "sha256": "32461d9e53560639f40ae90e60486bb6e1a46ed0555906cbc11a6af2f90a165a"
+    },
+    {
+      "path": "test-local-proprietary-demo-dropdown.log",
+      "bytes": 69,
+      "sha256": "335b9ab9cd4a5bb9c580bbfc75d967be79ad7e6ff273137b45401459a9f19085"
+    },
+    {
+      "path": "tests.json",
+      "bytes": 2653,
+      "sha256": "d68ee8fdc0feb09467fb21a6e0fd6d322504dbfba69b70fbf0474a2e6a384d39"
+    }
+  ],
+  "verdict": "all14 producer seals PASS"
+}

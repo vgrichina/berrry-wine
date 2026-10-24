@@ -1,0 +1,86 @@
+[
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-airstrike-pre6a-local-registration.js",
+      "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a",
+      "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+      "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll"
+    ],
+    "mem_available": 3145388032,
+    "exit": 0,
+    "seconds": 0.18809637799859047,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-0.log",
+    "output_bytes": 217,
+    "real_inputs": true
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-candidate-cli-silver-launch.js"
+    ],
+    "mem_available": 3102998528,
+    "exit": 0,
+    "seconds": 0.02787469804752618,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-1.log",
+    "output_bytes": 467,
+    "real_inputs": false
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-candidate-browser-manifest.js"
+    ],
+    "mem_available": 3113521152,
+    "exit": 0,
+    "seconds": 0.12023175496142358,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-2.log",
+    "output_bytes": 382,
+    "real_inputs": false
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-local-proprietary-demo-dropdown.js"
+    ],
+    "mem_available": 3114557440,
+    "exit": 0,
+    "seconds": 0.047051734989508986,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-3.log",
+    "output_bytes": 69,
+    "real_inputs": false
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-airstrike-pre6a-local-registration.js",
+      "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a",
+      "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+      "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll"
+    ],
+    "mem_available": 3116363776,
+    "exit": 0,
+    "seconds": 0.1395184190478176,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-4.log",
+    "output_bytes": 217,
+    "real_inputs": true
+  },
+  {
+    "command": [
+      "node",
+      "--max-old-space-size=256",
+      "test/test-airstrike-pre6a-local-registration.js"
+    ],
+    "mem_available": 3111292928,
+    "exit": 0,
+    "seconds": 0.044242518953979015,
+    "log": "/tmp/airstrike-local-registration-independent-integrate-oct24/producer-test-5.log",
+    "output_bytes": 116,
+    "real_inputs": false
+  }
+]

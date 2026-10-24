@@ -1,0 +1,6 @@
+PREP   sample: ../../wa-browser-manifest-qSO56Y/sample
+PREP   sample: ../../wa-browser-manifest-qSO56Y/sample
+KEEP   sample: ../../wa-browser-manifest-qSO56Y/sample
+PREP   sample: ../../wa-browser-manifest-qSO56Y/sample
+KEEP   sample: ../../wa-browser-manifest-qSO56Y/sample
+PASS candidate manifest: 645 inventory paths, stable prepare/keep, host sidecars excluded, saves preserved

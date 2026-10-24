@@ -1,0 +1,9 @@
+PASS silver-demo manifest keeps the documented dual mount
+PASS silver-demo generates the dual-drive launch arguments
+PASS missing original zip media is refused, not launched
+PASS missing install tree media is refused, not launched
+PASS malformed media entries are schema rejections
+PASS overlapping zip roots are rejected
+PASS spawned argv keeps --wasm at the original position
+PASS older cli contracts launch unchanged
+candidate-cli silver launch contract: 8 checks

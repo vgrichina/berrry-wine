@@ -1,0 +1,67 @@
+[
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024.md",
+    "bytes": 6907,
+    "sha256": "be533e3759e676c1dc87ce3e96928aab99afde4fe0faec7f2fb561526e4f420f"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/reproduce-manifest-gap.js",
+    "bytes": 2986,
+    "sha256": "b70cc81bcbd5ac8530d6f303491dbd5aa7a606fc618713d84b4848e77d786ec4"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/manifest-gap.log",
+    "bytes": 1191,
+    "sha256": "0995b90d63c8e67a6406fda4b7f892a98828bc930dd070b2d950685271184d64"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/manifest-gap-test.json",
+    "bytes": 656,
+    "sha256": "2bbf6dd0692ffb09cae0b69359bc3ec81f6a7cc26a74dcdb9039cb8c7f2bbf18"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/tests.json",
+    "bytes": 2746,
+    "sha256": "935e891b1b2d20d296458ab937bfc65aa2cafb57756d36e32031f5c7dd7df170"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/independent-identities.json",
+    "bytes": 26487,
+    "sha256": "4b0b3ca96f055e554fc808d4fc51a560fc01e44e78d9470057219e694ca5b60b"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-seals-review.json",
+    "bytes": 2325,
+    "sha256": "e9333f9c92b97b13e1633543f4ba24db5aac678095bb80a3b9a3af00a8989cd6"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-0.log",
+    "bytes": 217,
+    "sha256": "5a3d9cd592964221fd8dd56ffb0cfcaf939daddbf76eddb2f02c2cf29ecf64bd"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-1.log",
+    "bytes": 467,
+    "sha256": "32461d9e53560639f40ae90e60486bb6e1a46ed0555906cbc11a6af2f90a165a"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-2.log",
+    "bytes": 382,
+    "sha256": "9aa496bd582522609184d04782a564ca809d15bfe016a4468979afa9c0f67a41"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-3.log",
+    "bytes": 69,
+    "sha256": "335b9ab9cd4a5bb9c580bbfc75d967be79ad7e6ff273137b45401459a9f19085"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-4.log",
+    "bytes": 217,
+    "sha256": "5a3d9cd592964221fd8dd56ffb0cfcaf939daddbf76eddb2f02c2cf29ecf64bd"
+  },
+  {
+    "path": "docs/re-notes/airstrike-local-registration-independent-review-20261024/producer-test-5.log",
+    "bytes": 116,
+    "sha256": "7da716ec6381d0e6d924bfafd13274560e403b709cf497dc9181c65d0519b57b"
+  }
+]
