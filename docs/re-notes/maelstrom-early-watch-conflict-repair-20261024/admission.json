@@ -1,0 +1,257 @@
+{
+  "time": 1792842186.3244567,
+  "candidate": "9fcd3188383b18756232580026840522a454358b",
+  "base": "f879fd0cd81d918ea54a18b1b222fae25dd6d618",
+  "manifest": [
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024.md",
+      "blob": "8c1ef6a4a942a5386a9948a2d1b52844cd281e01",
+      "bytes": 5011
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/admission.json",
+      "blob": "c460261c5d6e9603baa343dc27c686fa8a64e1e5",
+      "bytes": 5285
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-oracle.json",
+      "blob": "3cc3222ec8207951f4db3f98d650417595634591",
+      "bytes": 454
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-oracle.stderr",
+      "blob": "e95ca388f34b5a1bd58a1e430f0f3583cc8c91b5",
+      "bytes": 964
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-oracle.stdout",
+      "blob": "a16b5abe6902158693790ac6e2487941fa33ba8c",
+      "bytes": 11037
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-reproducer.json",
+      "blob": "13e530f0f98bf26536a72caf0ab5e013a0e698b2",
+      "bytes": 441
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-reproducer.stderr",
+      "blob": "449b25ab8479285e3a719307ae6a3d0eed1823a2",
+      "bytes": 841
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/baseline-reproducer.stdout",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/candidate-unchanged-oracle.json",
+      "blob": "c3847acd602e0de9788c60b71871bfcaa3388447",
+      "bytes": 453
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/candidate-unchanged-oracle.stderr",
+      "blob": "1b3bf5eb4c2ccda542dccb18164ee185645477c9",
+      "bytes": 1182
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/candidate-unchanged-oracle.stdout",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/configuration.json",
+      "blob": "b698de592a8c97bbcd802195cbc710298146dbb4",
+      "bytes": 423
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/identity.json",
+      "blob": "710c40117a5d926eeb6b76fe9501ae330a797ab8",
+      "bytes": 1321
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/maelstrom-breakpoint-boundary-audit.cjs.diff.gz",
+      "blob": "6d102d43b6dc38e8c5f7a4a48f4334a9fca506ca",
+      "bytes": 842
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test-final.json",
+      "blob": "48cf21e7f3f3ec00a7ebe389793f0f73d29922bc",
+      "bytes": 277
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test-final.stderr",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test-final.stdout",
+      "blob": "5ecbcb333f7913e34730ea8dd4587fe0c91f5e65",
+      "bytes": 3806
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test.json",
+      "blob": "2d2b440a8d37649ecffa3c0fa6f00133f63e2593",
+      "bytes": 288
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test.stderr",
+      "blob": "da59ceaf308d47aff9edf9a355f5ff30a1f9b08d",
+      "bytes": 1296
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/repaired-test.stdout",
+      "blob": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/test-maelstrom-breakpoint-boundary-audit.js.diff.gz",
+      "blob": "0cd2f05b32bffbd019ab8db65ef5ddf9cba5194d",
+      "bytes": 2210
+    },
+    {
+      "path": "docs/re-notes/maelstrom-boundary-halt-cause-repair-20261024/unchanged-independent-reproduce.cjs",
+      "blob": "12da74ba9d3e2d87a0d029b5377ab22ceaa277bc",
+      "bytes": 4824
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024.md",
+      "blob": "d76a5eaa57cf270106e35127128bc57034712b98",
+      "bytes": 9715
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/adapter-generation.json",
+      "blob": "9ac58af704632a54bd70469fff15a783022bdc63",
+      "bytes": 901
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/canonical-identity.json",
+      "blob": "18b5e1bd13d052221c44c5127b329499b6ba67af",
+      "bytes": 319
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/code-identity.json",
+      "blob": "57da30e1116e3ce21049c22723191ac5d8980ef5",
+      "bytes": 322
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/export-semantics.json",
+      "blob": "7a5f5795c746e678c9207e0af24202d663962827",
+      "bytes": 3982
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-13-exports.wat.gz",
+      "blob": "75abf7fec9b42fc07ec2e86824b7b7e11f80a75d",
+      "bytes": 71142
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/historical-runner.js.gz",
+      "blob": "1a7fd5568fc0fe198ae14360405edc972bf02e20",
+      "bytes": 196142
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/inputs.json",
+      "blob": "5e2f646808fab70ff644e654cce72eb4b01f1b18",
+      "bytes": 520
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/prior-controls.json",
+      "blob": "63dabb116cedbd9d33106c5c7e26c39706fbc3aa",
+      "bytes": 887
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/runner-injection.diff",
+      "blob": "ce07536a8a7b27a65f05fc0799b5f261837e707f",
+      "bytes": 6064
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/seals.json",
+      "blob": "bc54992810d52673eccf23135495dc791cb0be46",
+      "bytes": 2328
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/supplemental-seals.json",
+      "blob": "49006938c5429bc6b6ea3fe573511ac6116b38b3",
+      "bytes": 2294
+    },
+    {
+      "path": "docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024/test.json",
+      "blob": "1f461fd180cd869b545a64835c046ba7e002dedc",
+      "bytes": 4344
+    },
+    {
+      "path": "test/test-maelstrom-breakpoint-boundary-audit.js",
+      "blob": "5d9964cfbb918b3876a250d79625101dc6e94391",
+      "bytes": 14293
+    },
+    {
+      "path": "tools/maelstrom-breakpoint-boundary-audit.cjs",
+      "blob": "3e3ddea44a541603c4d0b8efc449b21b5f310e35",
+      "bytes": 8069
+    },
+    {
+      "path": "tools/test-tiers.js",
+      "blob": "15e23d1ef41f52def7841cf6510a85464cb57af2",
+      "bytes": 7763
+    }
+  ],
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T11-42-07-01a16db7-d883-70e2-a5cb-8798ef599402.jsonl",
+  "capture": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-early-watch-conflict-repair-oct24",
+  "sqliteHistoryBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75059200,
+    "/home/user/.codex/queue_1.sqlite": 57344,
+    "/home/user/.codex/history.jsonl": 229376,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 733663232,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 4173824,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4296704,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4313088,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 14020608
+  },
+  "projection": {
+    "focusedSource": 370040,
+    "git": 8388608,
+    "tempEvidence": 4194304,
+    "fullExternalCurrent": 603499,
+    "externalFuture": 12582912,
+    "sqliteHistoryFuture": 8388608,
+    "reserve": 8388608
+  },
+  "projectedPeak": 42916579,
+  "hostFree": 3642859520,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A no guest launch, no filename-bearing mount argv; no conditional guest execution authorized",
+  "standingReadonly": [
+    "/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo",
+    "/tmp/enigma-findfirst-independent-integrate-oct24/repo",
+    "/tmp/maelstrom-boundary-audit-independent-oct24/repo",
+    "/tmp/maelstrom-breakpoint-boundary-audit-oct24/repo"
+  ],
+  "tools": {
+    "/usr/bin/node": {
+      "realpath": "/usr/bin/node",
+      "bytes": 98932688
+    },
+    "/usr/bin/git": {
+      "realpath": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "/usr/bin/python3": {
+      "realpath": "/usr/bin/python3.12",
+      "bytes": 8020928
+    }
+  },
+  "hostAfter": 3599942941,
+  "pass": true
+}

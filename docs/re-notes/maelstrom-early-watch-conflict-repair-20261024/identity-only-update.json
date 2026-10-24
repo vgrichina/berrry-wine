@@ -1,0 +1,14 @@
+[
+  {
+    "path": "acceptance.cjs",
+    "old": "d0f2ccd205be29c38598137f0c894486dc694f9de91b855852721b85f998b606",
+    "new": "06a54af6c2150589b1848c1a5223682b793ead57c34258142bf83acaa6961c80",
+    "onlyChange": "one adapter SHA256 literal; assertions unchanged"
+  },
+  {
+    "path": "js-only-minimal.cjs",
+    "old": "d0f2ccd205be29c38598137f0c894486dc694f9de91b855852721b85f998b606",
+    "new": "06a54af6c2150589b1848c1a5223682b793ead57c34258142bf83acaa6961c80",
+    "onlyChange": "one adapter SHA256 literal; assertions unchanged"
+  }
+]

@@ -1,0 +1,22 @@
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /watchpoint configuration conflicts/. Input:
+
+'ReferenceError: readGuestSized is not defined'
+
+    at async conflictOracle (/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:121:5)
+    at async /tmp/maelstrom-boundary-halt-cause-repair-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:129:88 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: ReferenceError: readGuestSized is not defined
+      at activateWatchpoint (evalmachine.<anonymous>:9:7)
+      at evalmachine.<anonymous>:13:27
+      at evalmachine.<anonymous>:133:3
+      at Script.runInContext (node:vm:149:12)
+      at Script.runInNewContext (node:vm:154:17)
+      at Object.runInNewContext (node:vm:310:38)
+      at execute (/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:87:12)
+      at conflictOracle (/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:121:26)
+      at /tmp/maelstrom-boundary-halt-cause-repair-oct24/repo/test/test-maelstrom-breakpoint-boundary-audit.js:129:94,
+  expected: /watchpoint configuration conflicts/,
+  operator: 'rejects',
+  diff: 'simple'
+}

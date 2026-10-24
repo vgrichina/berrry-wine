@@ -1,0 +1,11 @@
+--- independent/acceptance.cjs
++++ identity-only/acceptance.cjs
+@@ -6,7 +6,7 @@
+ const root = path.resolve(process.argv[2]);
+ const hash = s => crypto.createHash('sha256').update(s).digest('hex');
+ const adapterPath = path.join(root, 'tools/maelstrom-breakpoint-boundary-audit.cjs');
+-assert.equal(hash(fs.readFileSync(adapterPath)), 'd0f2ccd205be29c38598137f0c894486dc694f9de91b855852721b85f998b606');
++assert.equal(hash(fs.readFileSync(adapterPath)), '06a54af6c2150589b1848c1a5223682b793ead57c34258142bf83acaa6961c80');
+ const adapter = require(adapterPath);
+ const dir = path.join(root, 'docs/re-notes/maelstrom-breakpoint-boundary-audit-20261024');
+ const source = zlib.gunzipSync(fs.readFileSync(path.join(dir, 'historical-runner.js.gz'))).toString();

@@ -1,0 +1,14 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "docs/re-notes/maelstrom-halt-cause-independent-20261024/acceptance.cjs",
+    "/tmp/maelstrom-boundary-halt-cause-repair-oct24/repo"
+  ],
+  "returncode": 1,
+  "wallSeconds": 0.11736594198737293,
+  "cpuSeconds": 0.087767,
+  "memAvailable": 2677346304,
+  "stdoutBytes": 11515,
+  "stderrBytes": 1095
+}

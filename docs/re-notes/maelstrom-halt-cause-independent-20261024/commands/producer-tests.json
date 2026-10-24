@@ -1,0 +1,13 @@
+{
+  "command": [
+    "node",
+    "--max-old-space-size=256",
+    "test/test-maelstrom-breakpoint-boundary-audit.js"
+  ],
+  "returncode": 0,
+  "wallSeconds": 0.36589236196596175,
+  "cpuSeconds": 0.387591,
+  "memAvailable": 2717769728,
+  "stdoutBytes": 3806,
+  "stderrBytes": 0
+}
