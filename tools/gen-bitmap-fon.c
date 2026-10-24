@@ -66,14 +66,23 @@ static _Noreturn void die_ft(const char *operation, FT_Error error) {
   exit(1);
 }
 
+static size_t checked_mul(size_t a, size_t b) {
+  if (a != 0 && b > SIZE_MAX / a) die("output is too large");
+  return a * b;
+}
+
+static size_t checked_add(size_t a, size_t b) {
+  if (b > SIZE_MAX - a) die("output is too large");
+  return a + b;
+}
+
 static void reserve(Buffer *buffer, size_t needed) {
   size_t next;
   uint8_t *data;
   if (needed <= buffer->cap) return;
   next = buffer->cap ? buffer->cap : 256;
   while (next < needed) {
-    if (next > SIZE_MAX / 2) die("output is too large");
-    next *= 2;
+    next = checked_mul(next, 2);
   }
   data = (uint8_t *)realloc(buffer->data, next);
   if (!data) die("out of memory");
