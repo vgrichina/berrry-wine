@@ -1,0 +1,53 @@
+{
+  "charges": {
+    "remoteClosure": 17027463,
+    "remoteHelpersEvidence": 1500000,
+    "localCheckoutGit": 2500000,
+    "localHelpersEvidence": 2500000,
+    "transferOverlapTemporary": 1000000,
+    "sessionFull": 536951,
+    "launcherFull": 227003,
+    "sqlitePositive": 0,
+    "externalFuture": 16000000,
+    "reserve": 8388608
+  },
+  "peak": 49680025,
+  "cap": 67108864,
+  "free": 3962945536,
+  "after": 3913265511,
+  "remoteFree": 48775458816,
+  "remoteAfter": 48725778791,
+  "session": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T07-12-37-01a16cc1-1aa1-7312-a6e2-4bfeee3b29bd.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-tree-mounted-runtime-oct24",
+  "sourceMemAvailable": 3626217472,
+  "sourceMin": 805306368,
+  "guestMin": 2684354560,
+  "perFileMax": 1879746,
+  "perFileCap": 25165824,
+  "internalCapturePrior": 75000,
+  "internalCaptureCap": 1048576,
+  "standingInputs": "immutable closure and bounded-runtime donors; canonical harness/module, pngjs installed codec; original 48-file manifest reused",
+  "standingTools": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8455064,
+      "sha256": "34246cb73e356bb055ef5f28c9bcb395741d041fa425c6c749233ba223af4a4d"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  ],
+  "passAdmission": true
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_4klaxgfrrtrs",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:16:40.253Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-24T07:16:40.221Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48740950016, \"ownedBytes\": 17184235, \"taskNode\": [], \"executableMatched\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

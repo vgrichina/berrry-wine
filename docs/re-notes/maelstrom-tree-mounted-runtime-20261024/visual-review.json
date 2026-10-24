@@ -1,0 +1,13 @@
+{
+  "reviewer": "codex:01a16cc1-1aa1-7312-a6e2-4bfeee3b29bd",
+  "inspection": "All three actual PNGs viewed using view_image, 2026-10-24",
+  "menu": "Colorful Maelstrom title, high scores and P Start playing Maelstrom menu",
+  "play": "Sparse starfield on black with teal bottom strip; no visible ship, HUD or shot",
+  "input": "Changed sparse starfield on black with same bottom strip; no visible ship, HUD or shot",
+  "menuProven": true,
+  "pTransitionProven": true,
+  "gameplayProven": false,
+  "movementProven": false,
+  "fireProven": false,
+  "audioProven": false
+}

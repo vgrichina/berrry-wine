@@ -1,0 +1,6 @@
+{
+  "passControls": true,
+  "pythonContainingNodeRejected": true,
+  "realNodeAccepted": true,
+  "priorFalsePositive": "original substring probe matched itself; original receipt retained"
+}

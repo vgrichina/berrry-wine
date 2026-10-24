@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ooyeajzedgxc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:15:21.412Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T07:15:21.220Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 247, \"bytes\": 17027463, \"ordinaryUID\": 1000, \"manifestPass\": true, \"probe\": {\"codec\": \"7.0.0\", \"node\": \"v24.22.1\", \"preambleLoaded\": true, \"fontFiles\": 28, \"captureBytes\": 2062, \"rasterCaptureBytes\": 1271, \"rejectingControls\": 2, \"pixelsEqual\": true}, \"passPreGuest\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

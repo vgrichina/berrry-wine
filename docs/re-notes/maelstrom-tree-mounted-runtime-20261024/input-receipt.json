@@ -1,0 +1,30 @@
+{
+  "scheduled": [
+    "[input] png /tmp/maelstrom-tree-mounted-runtime-oct24/guest/menu.png (40715 bytes) at batch 30000 guest-ms=6000000",
+    "[input] keydown vk=80 at batch 31000",
+    "[input] keyup vk=80 at batch 31200",
+    "[input] png /tmp/maelstrom-tree-mounted-runtime-oct24/guest/play.png (2331 bytes) at batch 34000 guest-ms=6800000",
+    "[input] keydown vk=37 at batch 35000",
+    "[input] keydown vk=38 at batch 35200",
+    "[input] keydown vk=32 at batch 35500",
+    "[input] keyup vk=37 at batch 36000",
+    "[input] keyup vk=38 at batch 36200",
+    "[input] keyup vk=32 at batch 36500",
+    "[input] png /tmp/maelstrom-tree-mounted-runtime-oct24/guest/input.png (2309 bytes) at batch 39000 guest-ms=7800000"
+  ],
+  "actualWindowDispatch": [
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x50 lParam=0x190001",
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x50 lParam=0xc0190001",
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x25 lParam=0x14b0001",
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x26 lParam=0x1480001",
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x20 lParam=0x390001",
+    "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x25 lParam=0xc14b0001"
+  ],
+  "individualWallTimes": null,
+  "dispatchTiming": "ordered raw lines only; injected batch numbers recorded, no fabricated per-dispatch wall/batch timestamp",
+  "undispatchedKeyups": [
+    38,
+    32
+  ],
+  "plannedBeforeLimit": true
+}

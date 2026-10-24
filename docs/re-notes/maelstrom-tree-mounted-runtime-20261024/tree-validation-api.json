@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hld6xsalhebe",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T07:15:21.131Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-24T07:15:21.082Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"pass\":true,\"canonicalParserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\",\"fullArgv\":true,\"treeOnlyMaelstrom\":true,\"files\":48,\"mapping\":\"48 hashed mappings retained\",\"brokenCommaRejected\":true,\"wrongRootRejected\":true,\"missingFileRejected\":true,\"schedule\":[{\"batch\":30000,\"action\":\"png\"},{\"batch\":31000,\"action\":\"keydown\"},{\"batch\":31200,\"action\":\"keyup\"},{\"batch\":34000,\"action\":\"png\"},{\"batch\":35000,\"action\":\"keydown\"},{\"batch\":35200,\"action\":\"keydown\"},{\"batch\":35500,\"action\":\"keydown\"},{\"batch\":36000,\"action\":\"keyup\"},{\"batch\":36200,\"action\":\"keyup\"},{\"batch\":36500,\"action\":\"keyup\"},{\"batch\":39000,\"action\":\"png\"}],\"limit\":42000,\"guestInvoked\":false}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

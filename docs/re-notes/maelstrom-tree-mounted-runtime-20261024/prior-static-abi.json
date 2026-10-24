@@ -1,0 +1,13 @@
+{
+  "moduleSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "stamp": "9a3bc9149d58209c",
+  "mirrorSha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+  "passStaticABI": true,
+  "nativeCompilation": false,
+  "importCount": 291,
+  "exportCount": 2228,
+  "fullInventorySha256": "d08b271e4e20db2a62ba7eaf629ff580870e6ba4a8301ac648440ef5b3de4851",
+  "fullInventoryDonor": "/tmp/maelstrom-original-bounded-runtime-oct24/repo/docs/re-notes/maelstrom-original-bounded-runtime-20261024/static-abi.json",
+  "fullInventoryCommit": "21c91f279cddfc9926b46c6b58be56c98365e293",
+  "reuseOnly": true
+}
