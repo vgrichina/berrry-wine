@@ -1,0 +1,2046 @@
+{
+  "external_artifacts": {
+    "admission.json": {
+      "bytes": 3309,
+      "sha256": "524130bcd40d539a3e8b8bf63bb8d453ab2ba303449d225147df2a52b9294bb2"
+    },
+    "asset-pin.json": {
+      "bytes": 1744,
+      "sha256": "33e7ac198e5756551aba54c38f5db711720cc0481c4993e4db48c772f7c79433"
+    },
+    "capture-accounting.json": {
+      "bytes": 407,
+      "sha256": "ec1dd8d0543beeb60f7a0d5cd28d8767f12bf3e28416b993380add6264e77e76"
+    },
+    "cli-doc-slice.txt": {
+      "bytes": 2761,
+      "sha256": "76ed53f30c4810684d3926f73fe8084ee427d5b34e1ce0f4927be4d881fea8eb"
+    },
+    "cli-verification-command.json": {
+      "bytes": 570,
+      "sha256": "8a095e9cee2753bd3ccda42937af6ddf7185cf16869c3984e8493abedf29f7bd"
+    },
+    "cli-verification.json": {
+      "bytes": 44387,
+      "sha256": "133308bad46e13431ce4198603a861edd505281773438781ad790a429a410b43"
+    },
+    "disassembly-commands.json": {
+      "bytes": 7455,
+      "sha256": "ee0df148b6e1371e8c3231428657fc5bf77edce92db46046ad7d5c73c820de4f"
+    },
+    "dynamic-sites.json": {
+      "bytes": 3629,
+      "sha256": "9a6d12df8ed110f6f691aae41cfae81ef224a9e95cbac3d756b5d935afdcf497"
+    },
+    "final-tests-command.json": {
+      "bytes": 352,
+      "sha256": "ef25ec9b28c5c6c70b331db583f6e56bd2b70f3102ae6315094db27c2663577e"
+    },
+    "final-tests.log": {
+      "bytes": 2585,
+      "sha256": "dc553d11ddda7bf6a23e05c8a06482952b7872d0cb52eeb5cddcc9b9b8439b01"
+    },
+    "fixed-dynamic.json": {
+      "bytes": 15638,
+      "sha256": "d80e6aade7d9b8383fd66414b2a20c1534d0c3a400b644401f3abd4dbf11ff11"
+    },
+    "installed-tools.json": {
+      "bytes": 1354,
+      "sha256": "d2835679fd18e40cb27c7299d72d5e00d646b8bdb610b7a8fc2d79a5da7d51e3"
+    },
+    "metadata-fetch.json": {
+      "bytes": 776,
+      "sha256": "afd4b798e40687852700d865a29e6554d51121ff9a13cd3611cb35a4573effca"
+    },
+    "module-bindings.json": {
+      "bytes": 13227,
+      "sha256": "3584b43077fd910e093e6604f53bb61ee3489af8c74aa107ec898633ff5491a6"
+    },
+    "original-preservation.json": {
+      "bytes": 686,
+      "sha256": "45e07e9ed2544d0431a9966f2de5ca64b3b2de81c5f889155f069dcbda453619"
+    },
+    "pre-download-controls.log": {
+      "bytes": 1417,
+      "sha256": "40124290ec6797ba2b0395d2de6e592663efef562962ac883014f5be8ca20c6c"
+    },
+    "recovered-tables.json": {
+      "bytes": 295555,
+      "sha256": "ed9ce9356cee885544a4cf0b6be054bf05dbf4a6aaed704020a4749e43079584"
+    },
+    "resource-checkpoint.json": {
+      "bytes": 242,
+      "sha256": "4ee8698e4113aa4c26100208da2e9e01fb59478b5ecf2e0930595853094932f0"
+    },
+    "system-dynamic-candidates.json": {
+      "bytes": 2821,
+      "sha256": "810b40e7f3deb969f2c24dbc1d9af5d5abc6f45b6cda2c87e7c4b8add65ff846"
+    },
+    "test-controls.json": {
+      "bytes": 1889,
+      "sha256": "d7ca77a2f23cf7500b681cfcf072f511c284cfd269535b0a82abd5b15e466625"
+    },
+    "tool-fetch.json": {
+      "bytes": 812,
+      "sha256": "cd7b8f2a2e232d16deaec9d99a6acc91bbe5b2ee01e5e7d2b4919de936adb763"
+    },
+    "tool-identity.json": {
+      "bytes": 553,
+      "sha256": "bc46daf993513be0eaa01dde5ff5304a9b308e3f74f25fc8f3e6da6bacddc7a4"
+    },
+    "tool-inventory.json": {
+      "bytes": 926,
+      "sha256": "450db42b50d8e2808c8a6bf0952472f77c80b415f8f8110dbb96ec8a17844129"
+    },
+    "unpacked-closure.json": {
+      "bytes": 360920,
+      "sha256": "9828293849d636d4b58ecd5536dc7a883a50d196ba7b25f725b84f0829d7c12e"
+    },
+    "upstream-release.json": {
+      "bytes": 23836,
+      "sha256": "920dcac9c874aaeb5af70fd1b9c1fcfb51e2239307e869ff38a743b6c7b3c720"
+    }
+  },
+  "fixed_dynamic": {
+    "bridges": [
+      {
+        "bytes": "5589e581ec38020000897dfc8b7d088975f8895df4893c24e8b3150000",
+        "call": "0x6813e8d8",
+        "export": "SDL_LoadObject",
+        "start": "0x6813e8c0",
+        "target": "LoadLibraryA"
+      },
+      {
+        "bytes": "5589e581ec38020000897dfc8b45088b7d0c8975f8895df4897c2404890424e8fc140000",
+        "call": "0x6813e96f",
+        "export": "SDL_LoadFunction",
+        "start": "0x6813e950",
+        "target": "GetProcAddress"
+      }
+    ],
+    "codec_initializers": [
+      {
+        "bytes": "c7042430b3e462e844570000a384c6e562",
+        "calls": [
+          {
+            "bytes": "890424ba39b3e46289542404e815570000",
+            "name_va": "0x62e4b339",
+            "site": "0x62e436f6"
+          },
+          {
+            "bytes": "b855b3e46289442404a184c6e562890424e8f2560000",
+            "name_va": "0x62e4b355",
+            "site": "0x62e43719"
+          },
+          {
+            "bytes": "b86bb3e46289442404a184c6e562890424e8cf560000",
+            "name_va": "0x62e4b36b",
+            "site": "0x62e4373c"
+          },
+          {
+            "bytes": "b883b3e46289442404a184c6e562890424e8ac560000",
+            "name_va": "0x62e4b383",
+            "site": "0x62e4375f"
+          },
+          {
+            "bytes": "b89ab3e46289442404a184c6e562890424e889560000",
+            "name_va": "0x62e4b39a",
+            "site": "0x62e43782"
+          },
+          {
+            "bytes": "b8abb3e46289442404a184c6e562890424e866560000",
+            "name_va": "0x62e4b3ab",
+            "site": "0x62e437a5"
+          },
+          {
+            "bytes": "b9bfb3e462894c2404a184c6e562890424e847560000",
+            "name_va": "0x62e4b3bf",
+            "site": "0x62e437c4"
+          },
+          {
+            "bytes": "bad6b3e46289542404a184c6e562890424e828560000",
+            "name_va": "0x62e4b3d6",
+            "site": "0x62e437e3"
+          },
+          {
+            "bytes": "b8ecb3e46289442404a184c6e562890424e809560000",
+            "name_va": "0x62e4b3ec",
+            "site": "0x62e43802"
+          }
+        ],
+        "dll": "jpeg.dll",
+        "load_call": "0x62e436d7",
+        "module": "sdl_image.dll",
+        "name_va": "0x62e4b330",
+        "status": "PACKAGED_EXPORTS_BIND",
+        "symbols": [
+          "jpeg_calc_output_dimensions",
+          "jpeg_CreateDecompress",
+          "jpeg_destroy_decompress",
+          "jpeg_finish_decompress",
+          "jpeg_read_header",
+          "jpeg_read_scanlines",
+          "jpeg_resync_to_restart",
+          "jpeg_start_decompress",
+          "jpeg_std_error"
+        ]
+      },
+      {
+        "bytes": "c7042480b5e462e8c43a0000a3b4c6e562",
+        "calls": [
+          {
+            "bytes": "890424ba8fb5e46289542404e8953a0000",
+            "name_va": "0x62e4b58f",
+            "site": "0x62e45376"
+          },
+          {
+            "bytes": "b8a6b5e46289442404a1b4c6e562890424e8723a0000",
+            "name_va": "0x62e4b5a6",
+            "site": "0x62e45399"
+          },
+          {
+            "bytes": "b8bdb5e46289442404a1b4c6e562890424e84f3a0000",
+            "name_va": "0x62e4b5bd",
+            "site": "0x62e453bc"
+          },
+          {
+            "bytes": "b8d5b5e46289442404a1b4c6e562890424e82c3a0000",
+            "name_va": "0x62e4b5d5",
+            "site": "0x62e453df"
+          },
+          {
+            "bytes": "b8e2b5e46289442404a1b4c6e562890424e8093a0000",
+            "name_va": "0x62e4b5e2",
+            "site": "0x62e45402"
+          },
+          {
+            "bytes": "b9f1b5e462894c2404a1b4c6e562890424e8e6390000",
+            "name_va": "0x62e4b5f1",
+            "site": "0x62e45425"
+          },
+          {
+            "bytes": "bafeb5e46289542404a1b4c6e562890424e8c3390000",
+            "name_va": "0x62e4b5fe",
+            "site": "0x62e45448"
+          },
+          {
+            "bytes": "b80cb6e46289442404a1b4c6e562890424e8a0390000",
+            "name_va": "0x62e4b60c",
+            "site": "0x62e4546b"
+          },
+          {
+            "bytes": "b81bb6e46289442404a1b4c6e562890424e87d390000",
+            "name_va": "0x62e4b61b",
+            "site": "0x62e4548e"
+          },
+          {
+            "bytes": "b829b6e46289442404a1b4c6e562890424e85a390000",
+            "name_va": "0x62e4b629",
+            "site": "0x62e454b1"
+          },
+          {
+            "bytes": "b83eb6e46289442404a1b4c6e562890424e837390000",
+            "name_va": "0x62e4b63e",
+            "site": "0x62e454d4"
+          },
+          {
+            "bytes": "b84db6e46289442404a1b4c6e562890424e814390000",
+            "name_va": "0x62e4b64d",
+            "site": "0x62e454f7"
+          },
+          {
+            "bytes": "b861b6e46289442404a1b4c6e562890424e8f1380000",
+            "name_va": "0x62e4b661",
+            "site": "0x62e4551a"
+          },
+          {
+            "bytes": "b971b6e462894c2404a1b4c6e562890424e8d2380000",
+            "name_va": "0x62e4b671",
+            "site": "0x62e45539"
+          },
+          {
+            "bytes": "ba81b6e46289542404a1b4c6e562890424e8b3380000",
+            "name_va": "0x62e4b681",
+            "site": "0x62e45558"
+          },
+          {
+            "bytes": "b892b6e46289442404a1b4c6e562890424e894380000",
+            "name_va": "0x62e4b692",
+            "site": "0x62e45577"
+          }
+        ],
+        "dll": "libpng12-0.dll",
+        "load_call": "0x62e45357",
+        "module": "sdl_image.dll",
+        "name_va": "0x62e4b580",
+        "status": "PACKAGED_EXPORTS_BIND",
+        "symbols": [
+          "png_create_info_struct",
+          "png_create_read_struct",
+          "png_destroy_read_struct",
+          "png_get_IHDR",
+          "png_get_io_ptr",
+          "png_get_tRNS",
+          "png_get_valid",
+          "png_read_image",
+          "png_read_info",
+          "png_read_update_info",
+          "png_set_expand",
+          "png_set_gray_to_rgb",
+          "png_set_packing",
+          "png_set_read_fn",
+          "png_set_strip_16",
+          "png_sig_cmp"
+        ]
+      },
+      {
+        "bytes": "c7042480b8e462e8d4260000a304c7e562",
+        "calls": [
+          {
+            "bytes": "890424ba8eb8e46289542404e8a5260000",
+            "name_va": "0x62e4b88e",
+            "site": "0x62e46766"
+          },
+          {
+            "bytes": "b89db8e46289442404a104c7e562890424e882260000",
+            "name_va": "0x62e4b89d",
+            "site": "0x62e46789"
+          },
+          {
+            "bytes": "b9a7b8e462894c2404a104c7e562890424e863260000",
+            "name_va": "0x62e4b8a7",
+            "site": "0x62e467a8"
+          },
+          {
+            "bytes": "bab4b8e46289542404a104c7e562890424e844260000",
+            "name_va": "0x62e4b8b4",
+            "site": "0x62e467c7"
+          },
+          {
+            "bytes": "b8c6b8e46289442404a104c7e562890424e825260000",
+            "name_va": "0x62e4b8c6",
+            "site": "0x62e467e6"
+          }
+        ],
+        "dll": "libtiff-3.dll",
+        "load_call": "0x62e46747",
+        "module": "sdl_image.dll",
+        "name_va": "0x62e4b880",
+        "status": "MISSING_CODEC_UNPROVEN_REQUIRED",
+        "symbols": [
+          "TIFFClientOpen",
+          "TIFFClose",
+          "TIFFGetField",
+          "TIFFReadRGBAImage",
+          "TIFFSetErrorHandler"
+        ]
+      },
+      {
+        "bytes": "c70424c0077261e803c70000a364327261",
+        "calls": [
+          {
+            "bytes": "890424bacb07726189542404e8d2c60000",
+            "name_va": "0x617207cb",
+            "site": "0x61709f29"
+          },
+          {
+            "bytes": "b8d707726189442404a164327261890424e8afc60000",
+            "name_va": "0x617207d7",
+            "site": "0x61709f4c"
+          },
+          {
+            "bytes": "b8e907726189442404a164327261890424e88cc60000",
+            "name_va": "0x617207e9",
+            "site": "0x61709f6f"
+          },
+          {
+            "bytes": "b8fb07726189442404a164327261890424e869c60000",
+            "name_va": "0x617207fb",
+            "site": "0x61709f92"
+          },
+          {
+            "bytes": "b80708726189442404a164327261890424e846c60000",
+            "name_va": "0x61720807",
+            "site": "0x61709fb5"
+          },
+          {
+            "bytes": "b82108726189442404a164327261890424e823c60000",
+            "name_va": "0x61720821",
+            "site": "0x61709fd8"
+          },
+          {
+            "bytes": "b937087261894c2404a164327261890424e800c60000",
+            "name_va": "0x61720837",
+            "site": "0x61709ffb"
+          },
+          {
+            "bytes": "ba4408726189542404a164327261890424e8ddc50000",
+            "name_va": "0x61720844",
+            "site": "0x6170a01e"
+          },
+          {
+            "bytes": "b85408726189442404a164327261890424e8bac50000",
+            "name_va": "0x61720854",
+            "site": "0x6170a041"
+          },
+          {
+            "bytes": "b86208726189442404a164327261890424e897c50000",
+            "name_va": "0x61720862",
+            "site": "0x6170a064"
+          },
+          {
+            "bytes": "b86e08726189442404a164327261890424e874c50000",
+            "name_va": "0x6172086e",
+            "site": "0x6170a087"
+          },
+          {
+            "bytes": "b88108726189442404a164327261890424e851c50000",
+            "name_va": "0x61720881",
+            "site": "0x6170a0aa"
+          },
+          {
+            "bytes": "b89408726189442404a164327261890424e82ec50000",
+            "name_va": "0x61720894",
+            "site": "0x6170a0cd"
+          },
+          {
+            "bytes": "b8a508726189442404a164327261890424e80bc50000",
+            "name_va": "0x617208a5",
+            "site": "0x6170a0f0"
+          },
+          {
+            "bytes": "b9b2087261894c2404a164327261890424e8e8c40000",
+            "name_va": "0x617208b2",
+            "site": "0x6170a113"
+          },
+          {
+            "bytes": "babe08726189542404a164327261890424e8c5c40000",
+            "name_va": "0x617208be",
+            "site": "0x6170a136"
+          },
+          {
+            "bytes": "b8cc08726189442404a164327261890424e8a2c40000",
+            "name_va": "0x617208cc",
+            "site": "0x6170a159"
+          },
+          {
+            "bytes": "b8d408726189442404a164327261890424e87fc40000",
+            "name_va": "0x617208d4",
+            "site": "0x6170a17c"
+          },
+          {
+            "bytes": "b8de08726189442404a164327261890424e85cc40000",
+            "name_va": "0x617208de",
+            "site": "0x6170a19f"
+          },
+          {
+            "bytes": "b8e908726189442404a164327261890424e839c40000",
+            "name_va": "0x617208e9",
+            "site": "0x6170a1c2"
+          },
+          {
+            "bytes": "b8f108726189442404a164327261890424e816c40000",
+            "name_va": "0x617208f1",
+            "site": "0x6170a1e5"
+          },
+          {
+            "bytes": "b80009726189442404a164327261890424e8f3c30000",
+            "name_va": "0x61720900",
+            "site": "0x6170a208"
+          },
+          {
+            "bytes": "b90a097261894c2404a164327261890424e8d4c30000",
+            "name_va": "0x6172090a",
+            "site": "0x6170a227"
+          },
+          {
+            "bytes": "ba1409726189542404a164327261890424e8b5c30000",
+            "name_va": "0x61720914",
+            "site": "0x6170a246"
+          },
+          {
+            "bytes": "b82309726189442404a164327261890424e896c30000",
+            "name_va": "0x61720923",
+            "site": "0x6170a265"
+          }
+        ],
+        "dll": "mikmod.dll",
+        "load_call": "0x61709f08",
+        "module": "sdl_mixer.dll",
+        "name_va": "0x617207c0",
+        "status": "PACKAGED_EXPORTS_BIND",
+        "symbols": [
+          "MikMod_Exit",
+          "MikMod_InfoDriver",
+          "MikMod_InfoLoader",
+          "MikMod_Init",
+          "MikMod_RegisterAllLoaders",
+          "MikMod_RegisterDriver",
+          "MikMod_errno",
+          "MikMod_strerror",
+          "Player_Active",
+          "Player_Free",
+          "Player_LoadGeneric",
+          "Player_SetPosition",
+          "Player_SetVolume",
+          "Player_Start",
+          "Player_Stop",
+          "VC_WriteBytes",
+          "drv_nos",
+          "md_device",
+          "md_mixfreq",
+          "md_mode",
+          "md_musicvolume",
+          "md_pansep",
+          "md_reverb",
+          "md_sndfxvolume",
+          "md_volume"
+        ]
+      },
+      {
+        "bytes": "c70424201e7261e8640e0000a3f4657261",
+        "calls": [
+          {
+            "bytes": "890424ba341e726189542404e8350e0000",
+            "name_va": "0x61721e34",
+            "site": "0x617157c6"
+          },
+          {
+            "bytes": "b83d1e726189442404a1f4657261890424e8120e0000",
+            "name_va": "0x61721e3d",
+            "site": "0x617157e9"
+          },
+          {
+            "bytes": "b8451e726189442404a1f4657261890424e8ef0d0000",
+            "name_va": "0x61721e45",
+            "site": "0x6171580c"
+          },
+          {
+            "bytes": "b9571e7261894c2404a1f4657261890424e8d00d0000",
+            "name_va": "0x61721e57",
+            "site": "0x6171582b"
+          },
+          {
+            "bytes": "ba641e726189542404a1f4657261890424e8b10d0000",
+            "name_va": "0x61721e64",
+            "site": "0x6171584a"
+          },
+          {
+            "bytes": "b86c1e726189442404a1f4657261890424e8920d0000",
+            "name_va": "0x61721e6c",
+            "site": "0x61715869"
+          }
+        ],
+        "dll": "libvorbisfile-3.dll",
+        "load_call": "0x617157a7",
+        "module": "sdl_mixer.dll",
+        "name_va": "0x61721e20",
+        "status": "MISSING_CODEC_UNPROVEN_REQUIRED",
+        "symbols": [
+          "ov_clear",
+          "ov_info",
+          "ov_open_callbacks",
+          "ov_pcm_total",
+          "ov_read",
+          "ov_time_seek"
+        ]
+      },
+      {
+        "bytes": "c70424001f7261e834040000a334667261",
+        "calls": [
+          {
+            "bytes": "890424ba0a1f726189542404e805040000",
+            "name_va": "0x61721f0a",
+            "site": "0x617161f6"
+          },
+          {
+            "bytes": "b81b1f726189442404a134667261890424e8e2030000",
+            "name_va": "0x61721f1b",
+            "site": "0x61716219"
+          },
+          {
+            "bytes": "b9281f7261894c2404a134667261890424e8bf030000",
+            "name_va": "0x61721f28",
+            "site": "0x6171623c"
+          },
+          {
+            "bytes": "ba3a1f726189542404a134667261890424e89c030000",
+            "name_va": "0x61721f3a",
+            "site": "0x6171625f"
+          },
+          {
+            "bytes": "b84c1f726189442404a134667261890424e879030000",
+            "name_va": "0x61721f4c",
+            "site": "0x61716282"
+          },
+          {
+            "bytes": "b8561f726189442404a134667261890424e856030000",
+            "name_va": "0x61721f56",
+            "site": "0x617162a5"
+          },
+          {
+            "bytes": "b8661f726189442404a134667261890424e833030000",
+            "name_va": "0x61721f66",
+            "site": "0x617162c8"
+          },
+          {
+            "bytes": "b8711f726189442404a134667261890424e810030000",
+            "name_va": "0x61721f71",
+            "site": "0x617162eb"
+          },
+          {
+            "bytes": "b8811f726189442404a134667261890424e8ed020000",
+            "name_va": "0x61721f81",
+            "site": "0x6171630e"
+          },
+          {
+            "bytes": "b88e1f726189442404a134667261890424e8ca020000",
+            "name_va": "0x61721f8e",
+            "site": "0x61716331"
+          },
+          {
+            "bytes": "b99e1f7261894c2404a134667261890424e8ab020000",
+            "name_va": "0x61721f9e",
+            "site": "0x61716350"
+          },
+          {
+            "bytes": "baa91f726189542404a134667261890424e88c020000",
+            "name_va": "0x61721fa9",
+            "site": "0x6171636f"
+          },
+          {
+            "bytes": "b8b61f726189442404a134667261890424e86d020000",
+            "name_va": "0x61721fb6",
+            "site": "0x6171638e"
+          }
+        ],
+        "dll": "smpeg.dll",
+        "load_call": "0x617161d7",
+        "module": "sdl_mixer.dll",
+        "name_va": "0x61721f00",
+        "status": "MISSING_CODEC_UNPROVEN_REQUIRED",
+        "symbols": [
+          "SMPEG_actualSpec",
+          "SMPEG_delete",
+          "SMPEG_enableaudio",
+          "SMPEG_enablevideo",
+          "SMPEG_new",
+          "SMPEG_new_rwops",
+          "SMPEG_play",
+          "SMPEG_playAudio",
+          "SMPEG_rewind",
+          "SMPEG_setvolume",
+          "SMPEG_skip",
+          "SMPEG_status",
+          "SMPEG_stop"
+        ]
+      }
+    ],
+    "scope": "six decoded fixed-name initializers only; invocation/asset necessity and generic loaders unproven"
+  },
+  "module_bindings": [
+    {
+      "original": {
+        "image_size": 114688,
+        "path": "Enigma-1.01/zlib1.dll",
+        "sha256": "5ce32c8afd7660fe8fedd424bdf851103356c108d45e6aa654dbfdacb43a0a8f",
+        "size": 42496
+      },
+      "output_bytes": 74752,
+      "output_sha256": "49244b51914d0a6e62bfd1465d11f7fdfc9f090981c590f736bc5efa6fd7e626",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/zlib1.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/zlib1.dll.test.log",
+        "log_sha256": "819065ee9c9387f5d3261f8e0f8541273723325599ff045bbd07c22504293fd5",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/zlib1.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/zlib1.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/zlib1.dll.unpack.log",
+        "log_sha256": "0417416edd97147a6aae24ef819e47fbc26af6ed9dcfd1164f02b9e3ac3eff69",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 6451200,
+        "path": "Enigma-1.01/enigma.exe",
+        "sha256": "ce4ff5d66de3af85d3e0b1aef88995a54be7f44e78de81793169eb65e71e046e",
+        "size": 1459200
+      },
+      "output_bytes": 6287872,
+      "output_sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/enigma.exe"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/enigma.exe.test.log",
+        "log_sha256": "0cbd630d9db4fd36c46caaca3bb9f19149fce02de3242a74f2a140c9cae5b957",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/enigma.exe",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/enigma.exe"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/enigma.exe.unpack.log",
+        "log_sha256": "ee98dbfbd8f80d0a0f20fd4648f677e601c4c1f85c14303ae5d669b25782d522",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 143360,
+        "path": "Enigma-1.01/jpeg.dll",
+        "sha256": "b278e21030069a7ffd53ef5a14680ff30d0bc6625b5909e612ac1119787138c3",
+        "size": 58880
+      },
+      "output_bytes": 113664,
+      "output_sha256": "a8ce1785929b093225d41e79e493412e995ea5e7695719ee35b0d3fcca167fea",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/jpeg.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/jpeg.dll.test.log",
+        "log_sha256": "0183e0a66b193c05e11990c831835f17b8e31c6a267dd213f81c3245d753c9b0",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/jpeg.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/jpeg.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/jpeg.dll.unpack.log",
+        "log_sha256": "9eccf938438321ebbdb7f203af5a5cba0bd5ce74fa49c0d28c78b387c9fad53f",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 393216,
+        "path": "Enigma-1.01/SDL.dll",
+        "sha256": "17f42459a4aa9b73d9115e1c09cd4fb4e9fd4ca08e4137b46e8a6a9b56c9043f",
+        "size": 133632
+      },
+      "output_bytes": 321024,
+      "output_sha256": "66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL.dll.test.log",
+        "log_sha256": "8d10f08c04f02ff8e3dd515a335ed1458d6e7725a4b94626127a78501d3887d8",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL.dll.unpack.log",
+        "log_sha256": "17c72efc7d5ca7dc0ba710210bb574b03dcb213848b6d7b95dfa12a15a41d950",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 294912,
+        "path": "Enigma-1.01/mikmod.dll",
+        "sha256": "96ea656667a758a87aad9aec785b472fea4f4a57568b72b6326f2fe185e6d087",
+        "size": 96768
+      },
+      "output_bytes": 246272,
+      "output_sha256": "29b8030a02e0e039f0f6a57329e4b4bff0774a771c9164627dd69c4a2efea71f",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/mikmod.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/mikmod.dll.test.log",
+        "log_sha256": "7ff1a405761814ce70112f74b172de09af58ee5e81a549a7ce8e71a2416211f5",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/mikmod.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/mikmod.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/mikmod.dll.unpack.log",
+        "log_sha256": "014e1d0be00f446c2da9b54f97df0b985f5f2654a65b6ba2a3bfe8a4c84d6c12",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 61440,
+        "path": "Enigma-1.01/SDL_ttf.dll",
+        "sha256": "8e8e543e0ce882b9ba82cf40c78df4b03e82096b849b24cfe7fae620f9d29b26",
+        "size": 12288
+      },
+      "output_bytes": 20992,
+      "output_sha256": "905c0c3782bb669083e78dcfb3d0fa491fe02ff1b1138b79a7a32818470e9f05",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_ttf.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_ttf.dll.test.log",
+        "log_sha256": "644bc063635843bf3a4e86989fdf22991fae2d2667e0de6ed18caa9bceeaefbb",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_ttf.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_ttf.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_ttf.dll.unpack.log",
+        "log_sha256": "26f20d9ba75ef3a6c717a6dd7b2d8d4eeb05c33f483661380f38719c81ef7ce9",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 487424,
+        "path": "Enigma-1.01/libfreetype-6.dll",
+        "sha256": "6cd4e0860fb26625346dea2af9a9c0a2896a123f3b8bff9d36411ebf42192bdc",
+        "size": 227328
+      },
+      "output_bytes": 444928,
+      "output_sha256": "ec840982058e08e40fd70646a19bca418d648629cb8c82b8716e619b9f2f1fd3",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/libfreetype-6.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/libfreetype-6.dll.test.log",
+        "log_sha256": "6398b7d2fbc7bfae1566aa517331da32a0b697750f60e57b6e9b2579619f10d9",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/libfreetype-6.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/libfreetype-6.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/libfreetype-6.dll.unpack.log",
+        "log_sha256": "7cb15573dbdedb871139e7d68938fe6a546278873d12d5b80afa3660f550dc24",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 147456,
+        "path": "Enigma-1.01/SDL_image.dll",
+        "sha256": "2129acb54f56dc5f670aebe3e2320583fe0e00e5622e0c38cc9b15f614f65770",
+        "size": 22528
+      },
+      "output_bytes": 43520,
+      "output_sha256": "96e28e9f1ba5ebb564cacc96469c50b5431a0c18f677a6028b7f69e95c3bf321",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_image.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_image.dll.test.log",
+        "log_sha256": "1e010f7cd57c810b6d6de5644adc0681cacb5db9f71ab8a42cba6a5a8b2d9fcf",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_image.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_image.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_image.dll.unpack.log",
+        "log_sha256": "bdd5fd95bd6c94d5d3aed04cfe4a40a9609d4a53cd23b8a49485a193e9cf15e7",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 323584,
+        "path": "Enigma-1.01/SDL_mixer.dll",
+        "sha256": "06fde1067326daae3cdb50c9ae84962e41184b95e3e827734eaa8ec99c8f1dd3",
+        "size": 58368
+      },
+      "output_bytes": 143872,
+      "output_sha256": "5d0c0e380a39465b8b7f90cdb954b81f179e73e59261f9e9b32dcaec16c21162",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_mixer.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_mixer.dll.test.log",
+        "log_sha256": "d2dd6eb69944441cb15e6501b28bcafa59be12e7bfcfac65bb59584490cf88fc",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/SDL_mixer.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/SDL_mixer.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/SDL_mixer.dll.unpack.log",
+        "log_sha256": "23aa750333d4f098cb4e2ed070f8cf73d13a540cc3ca9a38d1abfcd1c562fc50",
+        "status": 0
+      }
+    },
+    {
+      "original": {
+        "image_size": 176128,
+        "path": "Enigma-1.01/libpng12-0.dll",
+        "sha256": "3258c9ad45d669313073c60874e068e81be35415ae897c0c6ce646ffbfa0a974",
+        "size": 65536
+      },
+      "output_bytes": 132096,
+      "output_sha256": "6e1a15ecd3c451ad5e4082ffc2ca6cf91780869de6c49ecf7eba4b7a70332031",
+      "test": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-t",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/libpng12-0.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/libpng12-0.dll.test.log",
+        "log_sha256": "78d3b7e5061fae0e2419947add089371acb9f232215d9297f90bf89fcf44f2d2",
+        "status": 0
+      },
+      "tool_release": "v5.0.2",
+      "tool_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "unpack": {
+        "argv": [
+          "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+          "-d",
+          "-o",
+          "/tmp/enigma-authentic-static-unpack-oct24/outputs/libpng12-0.dll",
+          "/tmp/enigma-authentic-static-unpack-oct24/inputs/libpng12-0.dll"
+        ],
+        "log": "/tmp/enigma-authentic-static-unpack-oct24/libpng12-0.dll.unpack.log",
+        "log_sha256": "aecd9c187b1b1e9193e89097a8be024d24a6831a9b077b1010d01a838fe9dcd9",
+        "status": 0
+      }
+    }
+  ],
+  "module_summary": {
+    "enigma.exe": {
+      "entry_rva": 4768,
+      "export_names": 0,
+      "export_ordinals": 0,
+      "image_base": 4194304,
+      "image_size": 6336512,
+      "imports": 352,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".idata",
+        ".rsrc"
+      ],
+      "sha256": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+    },
+    "jpeg.dll": {
+      "entry_rva": 4192,
+      "export_names": 101,
+      "export_ordinals": 101,
+      "image_base": 1713635328,
+      "image_size": 131072,
+      "imports": 20,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".reloc"
+      ],
+      "sha256": "a8ce1785929b093225d41e79e493412e995ea5e7695719ee35b0d3fcca167fea"
+    },
+    "libfreetype-6.dll": {
+      "entry_rva": 4192,
+      "export_names": 342,
+      "export_ordinals": 342,
+      "image_base": 1874591744,
+      "image_size": 466944,
+      "imports": 36,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".reloc"
+      ],
+      "sha256": "ec840982058e08e40fd70646a19bca418d648629cb8c82b8716e619b9f2f1fd3"
+    },
+    "libpng12-0.dll": {
+      "entry_rva": 4192,
+      "export_names": 363,
+      "export_ordinals": 363,
+      "image_base": 1774714880,
+      "image_size": 155648,
+      "imports": 33,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".reloc"
+      ],
+      "sha256": "6e1a15ecd3c451ad5e4082ffc2ca6cf91780869de6c49ecf7eba4b7a70332031"
+    },
+    "mikmod.dll": {
+      "entry_rva": 4192,
+      "export_names": 402,
+      "export_ordinals": 402,
+      "image_base": 1773404160,
+      "image_size": 270336,
+      "imports": 45,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".reloc"
+      ],
+      "sha256": "29b8030a02e0e039f0f6a57329e4b4bff0774a771c9164627dd69c4a2efea71f"
+    },
+    "sdl.dll": {
+      "entry_rva": 4096,
+      "export_names": 200,
+      "export_ordinals": 200,
+      "image_base": 1745879040,
+      "image_size": 372736,
+      "imports": 184,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".rsrc",
+        ".reloc"
+      ],
+      "sha256": "66136f9cc7091b7fa59514afe88792e45476926f8415f0080a6401f5f1b6366b"
+    },
+    "sdl_image.dll": {
+      "entry_rva": 4192,
+      "export_names": 35,
+      "export_ordinals": 35,
+      "image_base": 1659109376,
+      "image_size": 135168,
+      "imports": 44,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".rsrc",
+        ".reloc"
+      ],
+      "sha256": "96e28e9f1ba5ebb564cacc96469c50b5431a0c18f677a6028b7f69e95c3bf321"
+    },
+    "sdl_mixer.dll": {
+      "entry_rva": 4192,
+      "export_names": 69,
+      "export_ordinals": 69,
+      "image_base": 1634729984,
+      "image_size": 307200,
+      "imports": 68,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".rsrc",
+        ".reloc"
+      ],
+      "sha256": "5d0c0e380a39465b8b7f90cdb954b81f179e73e59261f9e9b32dcaec16c21162"
+    },
+    "sdl_ttf.dll": {
+      "entry_rva": 4192,
+      "export_names": 43,
+      "export_ordinals": 43,
+      "image_base": 1867251712,
+      "image_size": 49152,
+      "imports": 39,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".rsrc",
+        ".reloc"
+      ],
+      "sha256": "905c0c3782bb669083e78dcfb3d0fa491fe02ff1b1138b79a7a32818470e9f05"
+    },
+    "zlib1.dll": {
+      "entry_rva": 4192,
+      "export_names": 72,
+      "export_ordinals": 72,
+      "image_base": 1659371520,
+      "image_size": 102400,
+      "imports": 28,
+      "sections": [
+        ".text",
+        ".data",
+        ".rdata",
+        ".bss",
+        ".edata",
+        ".idata",
+        ".rsrc",
+        ".reloc"
+      ],
+      "sha256": "49244b51914d0a6e62bfd1465d11f7fdfc9f090981c590f736bc5efa6fd7e626"
+    }
+  },
+  "normal_edges": [
+    {
+      "source": "zlib1.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "zlib1.dll",
+      "symbols": 25,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 52,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 4,
+      "system": true,
+      "target": "advapi32.dll"
+    },
+    {
+      "source": "libpng12-0.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "libpng12-0.dll",
+      "symbols": 21,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "libpng12-0.dll",
+      "symbols": 9,
+      "system": false,
+      "target": "zlib1.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 11,
+      "system": false,
+      "target": "libpng12-0.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 155,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 38,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "advapi32.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 24,
+      "system": true,
+      "target": "gdi32.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 36,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 67,
+      "system": true,
+      "target": "user32.dll"
+    },
+    {
+      "source": "sdl.dll",
+      "symbols": 16,
+      "system": true,
+      "target": "winmm.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 56,
+      "system": false,
+      "target": "sdl.dll"
+    },
+    {
+      "source": "sdl_image.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "sdl_image.dll",
+      "symbols": 24,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "sdl_image.dll",
+      "symbols": 17,
+      "system": false,
+      "target": "sdl.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 5,
+      "system": false,
+      "target": "sdl_image.dll"
+    },
+    {
+      "source": "sdl_mixer.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "sdl_mixer.dll",
+      "symbols": 34,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "sdl_mixer.dll",
+      "symbols": 22,
+      "system": false,
+      "target": "sdl.dll"
+    },
+    {
+      "source": "sdl_mixer.dll",
+      "symbols": 9,
+      "system": true,
+      "target": "winmm.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 22,
+      "system": false,
+      "target": "sdl_mixer.dll"
+    },
+    {
+      "source": "sdl_ttf.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "libfreetype-6.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "libfreetype-6.dll",
+      "symbols": 29,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "libfreetype-6.dll",
+      "symbols": 4,
+      "system": false,
+      "target": "zlib1.dll"
+    },
+    {
+      "source": "sdl_ttf.dll",
+      "symbols": 18,
+      "system": false,
+      "target": "libfreetype-6.dll"
+    },
+    {
+      "source": "sdl_ttf.dll",
+      "symbols": 11,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "sdl_ttf.dll",
+      "symbols": 7,
+      "system": false,
+      "target": "sdl.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 11,
+      "system": false,
+      "target": "sdl_ttf.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 3,
+      "system": true,
+      "target": "winmm.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 23,
+      "system": true,
+      "target": "ws2_32.dll"
+    },
+    {
+      "source": "enigma.exe",
+      "symbols": 10,
+      "system": false,
+      "target": "zlib1.dll"
+    },
+    {
+      "source": "jpeg.dll",
+      "symbols": 3,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "jpeg.dll",
+      "symbols": 17,
+      "system": true,
+      "target": "msvcrt.dll"
+    },
+    {
+      "source": "mikmod.dll",
+      "symbols": 6,
+      "system": true,
+      "target": "kernel32.dll"
+    },
+    {
+      "source": "mikmod.dll",
+      "symbols": 39,
+      "system": true,
+      "target": "msvcrt.dll"
+    }
+  ],
+  "normal_import_entries": 849,
+  "original_preservation": {
+    "archive_bytes": 12132834,
+    "files": 2460,
+    "manifest_sha256_after": "74a65c35b0742c00f0a53f4590fe1c888715e6b59acae8f0349d1d98c1dbb574",
+    "manifest_sha256_before": "74a65c35b0742c00f0a53f4590fe1c888715e6b59acae8f0349d1d98c1dbb574",
+    "original_archive_sha256": "a738a8b1508675bfaf12db07b7bdb42356f013f4c2d5c2a494516d78d25070a1",
+    "original_readonly": true,
+    "original_verdict": "BLOCKED_PACKED_IMPORTS",
+    "packed_modules": 10,
+    "test/enigma-original-closure.test.py": "6ea3634bf9b0028776500871d0d136a32389adfe1372b18f880bb564afc5a18c",
+    "tools/enigma-original-closure.py": "e29aa3fb9f182a1a6ca48e8f932dc7e6857b3404c0d945be685f8ad2e47225fe",
+    "visible_packed_imports": 81
+  },
+  "packaged_normal_bindings": 192,
+  "schema": "enigma-authentic-static-unpack-v1",
+  "source_commit": "b9450836983365a8f7f90d3f9f8213bf7f629f31",
+  "system_dynamic_candidates": [
+    {
+      "call": "0x581b0e",
+      "intervening_bytes": "c70424c7619500c78588feffffffffffff",
+      "literal_candidate": "shfolder.dll",
+      "module": "enigma.exe",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x5ab960",
+      "intervening_bytes": null,
+      "literal_candidate": null,
+      "module": "enigma.exe",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x5de283",
+      "intervening_bytes": "c7042400b79500",
+      "literal_candidate": "DDRAW.DLL",
+      "module": "enigma.exe",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x60acba",
+      "intervening_bytes": "c7042490269a00b8ffffffff898528feffff",
+      "literal_candidate": "WSOCK32",
+      "module": "enigma.exe",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x681328bd",
+      "intervening_bytes": null,
+      "literal_candidate": null,
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x68137c85",
+      "intervening_bytes": "c70424307a1468",
+      "literal_candidate": "DINPUT.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x68137cb0",
+      "intervening_bytes": "c704243b7a146831c0898568ffffff",
+      "literal_candidate": "DDRAW.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x68137f33",
+      "intervening_bytes": "c704243b7a1468",
+      "literal_candidate": "DDRAW.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x68137f4f",
+      "intervening_bytes": "c70424307a1468",
+      "literal_candidate": "DINPUT.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x6813c174",
+      "intervening_bytes": "c7042471831468",
+      "literal_candidate": "DSOUND.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x6813c268",
+      "intervening_bytes": "c7042471831468",
+      "literal_candidate": "DSOUND.DLL",
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    },
+    {
+      "call": "0x6813e8d8",
+      "intervening_bytes": null,
+      "literal_candidate": null,
+      "module": "sdl.dll",
+      "qualification": "bounded disassembly inspected; generic caller reachability not proved"
+    }
+  ],
+  "system_requirements": {
+    "advapi32.dll": [
+      "RegCloseKey",
+      "RegEnumKeyExA",
+      "RegOpenKeyExA",
+      "RegQueryValueExA"
+    ],
+    "gdi32.dll": [
+      "BitBlt",
+      "ChoosePixelFormat",
+      "CreateCompatibleBitmap",
+      "CreateCompatibleDC",
+      "CreateDIBSection",
+      "CreatePalette",
+      "DeleteDC",
+      "DeleteObject",
+      "DescribePixelFormat",
+      "GetDIBits",
+      "GetDeviceCaps",
+      "GetDeviceGammaRamp",
+      "GetSystemPaletteEntries",
+      "GetSystemPaletteUse",
+      "RealizePalette",
+      "SelectObject",
+      "SelectPalette",
+      "SetDIBColorTable",
+      "SetDeviceGammaRamp",
+      "SetPaletteEntries",
+      "SetPixelFormat",
+      "SetSystemPaletteUse",
+      "SwapBuffers",
+      "UnrealizeObject"
+    ],
+    "kernel32.dll": [
+      "AddAtomA",
+      "CloseHandle",
+      "CreateEventA",
+      "CreateFileA",
+      "CreateFileW",
+      "CreateMutexA",
+      "CreateSemaphoreA",
+      "DeleteCriticalSection",
+      "DuplicateHandle",
+      "EnterCriticalSection",
+      "ExitProcess",
+      "FindAtomA",
+      "FormatMessageA",
+      "FreeLibrary",
+      "GetACP",
+      "GetAtomNameA",
+      "GetCommandLineA",
+      "GetCurrentDirectoryA",
+      "GetCurrentDirectoryW",
+      "GetCurrentProcess",
+      "GetCurrentThread",
+      "GetCurrentThreadId",
+      "GetDriveTypeA",
+      "GetEnvironmentVariableA",
+      "GetFileAttributesA",
+      "GetFileSize",
+      "GetFullPathNameA",
+      "GetFullPathNameW",
+      "GetLastError",
+      "GetLocaleInfoA",
+      "GetModuleFileNameA",
+      "GetModuleHandleA",
+      "GetProcAddress",
+      "GetStartupInfoA",
+      "GetStdHandle",
+      "GetSystemTimeAsFileTime",
+      "GetThreadLocale",
+      "GetVersionExA",
+      "InitializeCriticalSection",
+      "InterlockedDecrement",
+      "InterlockedExchange",
+      "InterlockedIncrement",
+      "IsDBCSLeadByteEx",
+      "IsValidCodePage",
+      "LeaveCriticalSection",
+      "LoadLibraryA",
+      "MultiByteToWideChar",
+      "QueryPerformanceCounter",
+      "ReadFile",
+      "ReleaseMutex",
+      "ReleaseSemaphore",
+      "SetEnvironmentVariableA",
+      "SetErrorMode",
+      "SetFilePointer",
+      "SetLastError",
+      "SetThreadPriority",
+      "SetUnhandledExceptionFilter",
+      "Sleep",
+      "TerminateThread",
+      "TlsAlloc",
+      "TlsFree",
+      "TlsGetValue",
+      "TlsSetValue",
+      "WaitForSingleObject",
+      "WideCharToMultiByte",
+      "WriteFile"
+    ],
+    "msvcrt.dll": [
+      "__dllonexit",
+      "__getmainargs",
+      "__mb_cur_max",
+      "__p__environ",
+      "__p__fmode",
+      "__set_app_type",
+      "_assert",
+      "_beginthreadex",
+      "_cexit",
+      "_close",
+      "_ctype",
+      "_endthreadex",
+      "_errno",
+      "_fdopen",
+      "_filbuf",
+      "_filelengthi64",
+      "_findclose",
+      "_findfirst",
+      "_findnext",
+      "_flsbuf",
+      "_fstat",
+      "_fstati64",
+      "_fullpath",
+      "_getcwd",
+      "_iob",
+      "_isatty",
+      "_isctype",
+      "_lseeki64",
+      "_mkdir",
+      "_onexit",
+      "_open",
+      "_pclose",
+      "_pctype",
+      "_popen",
+      "_putenv",
+      "_read",
+      "_setjmp",
+      "_setmode",
+      "_snprintf",
+      "_snwprintf",
+      "_stat",
+      "_strdup",
+      "_stricmp",
+      "_strnicmp",
+      "_unlink",
+      "_vsnprintf",
+      "_vsnwprintf",
+      "_wcsicmp",
+      "_wcslwr",
+      "_wcsnicmp",
+      "_wcsupr",
+      "_write",
+      "abort",
+      "acos",
+      "asin",
+      "atan",
+      "atan2",
+      "atexit",
+      "atof",
+      "atoi",
+      "atol",
+      "bsearch",
+      "calloc",
+      "ceil",
+      "clearerr",
+      "clock",
+      "cos",
+      "cosh",
+      "difftime",
+      "div",
+      "exit",
+      "exp",
+      "fclose",
+      "fflush",
+      "fgetc",
+      "fgetpos",
+      "fgets",
+      "floor",
+      "fmod",
+      "fopen",
+      "fprintf",
+      "fputc",
+      "fputs",
+      "fputwc",
+      "fread",
+      "free",
+      "freopen",
+      "frexp",
+      "fscanf",
+      "fseek",
+      "fsetpos",
+      "ftell",
+      "fwrite",
+      "getc",
+      "getenv",
+      "gmtime",
+      "isalnum",
+      "isdigit",
+      "ldexp",
+      "localeconv",
+      "localtime",
+      "log",
+      "log10",
+      "longjmp",
+      "malloc",
+      "memchr",
+      "memcpy",
+      "memmove",
+      "memset",
+      "mktime",
+      "modf",
+      "perror",
+      "pow",
+      "printf",
+      "putc",
+      "qsort",
+      "raise",
+      "rand",
+      "realloc",
+      "remove",
+      "rename",
+      "setbuf",
+      "setlocale",
+      "setvbuf",
+      "signal",
+      "sin",
+      "sinh",
+      "sprintf",
+      "sqrt",
+      "srand",
+      "sscanf",
+      "strcat",
+      "strchr",
+      "strcmp",
+      "strcoll",
+      "strcpy",
+      "strcspn",
+      "strerror",
+      "strftime",
+      "strlen",
+      "strncat",
+      "strncmp",
+      "strncpy",
+      "strpbrk",
+      "strrchr",
+      "strstr",
+      "strtod",
+      "strtok",
+      "strtol",
+      "strtoul",
+      "strxfrm",
+      "system",
+      "tan",
+      "tanh",
+      "time",
+      "tmpfile",
+      "tmpnam",
+      "tolower",
+      "toupper",
+      "ungetc",
+      "vfprintf",
+      "vfwprintf",
+      "vsprintf",
+      "wcschr"
+    ],
+    "user32.dll": [
+      "AdjustWindowRect",
+      "AdjustWindowRectEx",
+      "BeginPaint",
+      "CallWindowProcA",
+      "ChangeDisplaySettingsA",
+      "ClientToScreen",
+      "ClipCursor",
+      "CreateCursor",
+      "CreateIconFromResourceEx",
+      "CreateWindowExA",
+      "DefWindowProcA",
+      "DestroyCursor",
+      "DestroyIcon",
+      "DestroyWindow",
+      "DispatchMessageA",
+      "EndPaint",
+      "EnumDisplaySettingsA",
+      "GetClassInfoA",
+      "GetClientRect",
+      "GetCursor",
+      "GetCursorPos",
+      "GetDC",
+      "GetDesktopWindow",
+      "GetForegroundWindow",
+      "GetKeyState",
+      "GetKeyboardLayout",
+      "GetKeyboardLayoutNameA",
+      "GetKeyboardState",
+      "GetMenu",
+      "GetMessageA",
+      "GetParent",
+      "GetSystemMetrics",
+      "GetWindowLongA",
+      "GetWindowRect",
+      "InvalidateRect",
+      "IsZoomed",
+      "KillTimer",
+      "LoadImageA",
+      "LoadKeyboardLayoutA",
+      "MapVirtualKeyA",
+      "MapVirtualKeyExA",
+      "MapWindowPoints",
+      "MsgWaitForMultipleObjects",
+      "PeekMessageA",
+      "PostMessageA",
+      "PostQuitMessage",
+      "PtInRect",
+      "RegisterClassA",
+      "ReleaseCapture",
+      "ReleaseDC",
+      "ScreenToClient",
+      "SetCapture",
+      "SetClassLongA",
+      "SetCursor",
+      "SetCursorPos",
+      "SetFocus",
+      "SetForegroundWindow",
+      "SetTimer",
+      "SetWindowLongA",
+      "SetWindowPos",
+      "SetWindowTextA",
+      "ShowWindow",
+      "ToAsciiEx",
+      "ToUnicode",
+      "TranslateMessage",
+      "UnregisterClassA",
+      "WindowFromPoint"
+    ],
+    "winmm.dll": [
+      "joyGetDevCapsA",
+      "joyGetNumDevs",
+      "joyGetPosEx",
+      "mciGetErrorStringA",
+      "mciSendCommandA",
+      "midiOutPrepareHeader",
+      "midiOutSetVolume",
+      "midiOutUnprepareHeader",
+      "midiStreamClose",
+      "midiStreamOpen",
+      "midiStreamOut",
+      "midiStreamProperty",
+      "midiStreamRestart",
+      "midiStreamStop",
+      "timeBeginPeriod",
+      "timeEndPeriod",
+      "timeGetTime",
+      "timeKillEvent",
+      "timeSetEvent",
+      "waveOutClose",
+      "waveOutGetErrorTextA",
+      "waveOutOpen",
+      "waveOutPrepareHeader",
+      "waveOutUnprepareHeader",
+      "waveOutWrite"
+    ],
+    "ws2_32.dll": [
+      "WSACleanup",
+      "WSAGetLastError",
+      "WSARecvFrom",
+      "WSASendTo",
+      "WSAStartup",
+      "__WSAFDIsSet",
+      "accept",
+      "bind",
+      "closesocket",
+      "connect",
+      "gethostbyaddr",
+      "gethostbyname",
+      "htonl",
+      "htons",
+      "inet_addr",
+      "inet_ntoa",
+      "ioctlsocket",
+      "listen",
+      "ntohl",
+      "ntohs",
+      "select",
+      "setsockopt",
+      "socket"
+    ]
+  },
+  "task_root": "/tmp/enigma-authentic-static-unpack-oct24",
+  "tests": [
+    {
+      "pass": true,
+      "pre_download_controls": [
+        {
+          "control": "allocation",
+          "sentinel_absent": true,
+          "status": 1
+        },
+        {
+          "control": "release identity",
+          "sentinel_absent": true,
+          "status": 1
+        }
+      ]
+    },
+    {
+      "pass": true,
+      "positive_ordinal_forwarder": true,
+      "real_unpacked_controls": [
+        {
+          "control": "missing DLL",
+          "rejected": "missing/extra DLL or EXE"
+        },
+        {
+          "control": "changed unpacked DLL",
+          "rejected": "changed unpacked module"
+        },
+        {
+          "control": "wrong original binding",
+          "rejected": "wrong original binding"
+        },
+        {
+          "control": "wrong tool identity",
+          "rejected": "wrong tool identity"
+        },
+        {
+          "control": "failed UPX test",
+          "rejected": "UPX command failed"
+        },
+        {
+          "control": "wrong unpack command",
+          "rejected": "wrong unpack command"
+        },
+        {
+          "control": "unresolved DLL",
+          "rejected": "unresolved DLL absent.dll"
+        },
+        {
+          "control": "unresolved export",
+          "rejected": "unresolved export sdl.dll!absent_export"
+        },
+        {
+          "control": "unresolved forwarded ordinal",
+          "rejected": "unresolved export b.dll!#13"
+        },
+        {
+          "control": "forward cycle",
+          "rejected": "forward cycle"
+        },
+        {
+          "control": "entrypoint",
+          "rejected": "unbacked/nonexecutable entrypoint"
+        },
+        {
+          "control": "section raw bounds",
+          "rejected": "PE file bounds"
+        },
+        {
+          "control": "packed input is not diagnostic output",
+          "rejected": "still packed"
+        },
+        {
+          "control": "codec argument instruction changed",
+          "rejected": "codec literal argument"
+        }
+      ],
+      "six_codec_initializers": true
+    }
+  ],
+  "tool": {
+    "asset": {
+      "browser_download_url": "https://github.com/upx/upx/releases/download/v5.0.2/upx-5.0.2-amd64_linux.tar.xz",
+      "content_type": "application/octet-stream",
+      "created_at": "2025-07-20T13:24:15Z",
+      "digest": "sha256:ddc2654063fe4dc80d95b420788494e4db078ebb01a650692d623b5a9906e61e",
+      "download_count": 585298,
+      "id": 274629604,
+      "label": null,
+      "name": "upx-5.0.2-amd64_linux.tar.xz",
+      "node_id": "RA_kwDOA_7QAM4QXoPk",
+      "size": 626608,
+      "state": "uploaded",
+      "updated_at": "2025-07-20T13:24:19Z",
+      "uploader": {
+        "avatar_url": "https://avatars.githubusercontent.com/u/2130496?v=4",
+        "events_url": "https://api.github.com/users/markus-oberhumer/events{/privacy}",
+        "followers_url": "https://api.github.com/users/markus-oberhumer/followers",
+        "following_url": "https://api.github.com/users/markus-oberhumer/following{/other_user}",
+        "gists_url": "https://api.github.com/users/markus-oberhumer/gists{/gist_id}",
+        "gravatar_id": "",
+        "html_url": "https://github.com/markus-oberhumer",
+        "id": 2130496,
+        "login": "markus-oberhumer",
+        "node_id": "MDQ6VXNlcjIxMzA0OTY=",
+        "organizations_url": "https://api.github.com/users/markus-oberhumer/orgs",
+        "received_events_url": "https://api.github.com/users/markus-oberhumer/received_events",
+        "repos_url": "https://api.github.com/users/markus-oberhumer/repos",
+        "site_admin": false,
+        "starred_url": "https://api.github.com/users/markus-oberhumer/starred{/owner}{/repo}",
+        "subscriptions_url": "https://api.github.com/users/markus-oberhumer/subscriptions",
+        "type": "User",
+        "url": "https://api.github.com/users/markus-oberhumer",
+        "user_view_type": "public"
+      },
+      "url": "https://api.github.com/repos/upx/upx/releases/assets/274629604"
+    },
+    "identity": {
+      "api": "https://api.github.com/repos/upx/upx/releases/tags/v5.0.2",
+      "archive_sha256": "ddc2654063fe4dc80d95b420788494e4db078ebb01a650692d623b5a9906e61e",
+      "argv": [
+        "/tmp/enigma-authentic-static-unpack-oct24/upx-5.0.2-amd64_linux/upx",
+        "--version"
+      ],
+      "executable_sha256": "992aa498ea367409359e424da5afdca8b2818eb55486ffcf7d4a63576cde4501",
+      "log": "/tmp/enigma-authentic-static-unpack-oct24/tool-version.log",
+      "log_sha256": "793caec45d2d6b3dc802bb72391b28df81f47788cf20dca2842be086882120e2",
+      "release": "v5.0.2",
+      "status": 0
+    },
+    "release": "v5.0.2",
+    "release_id": 233751065,
+    "release_url": "https://github.com/upx/upx/releases/tag/v5.0.2"
+  },
+  "verdict": {
+    "emulator_implementation": "UNPROVEN",
+    "full_dynamic_closure": "UNPROVEN",
+    "normal_imports": "PASS",
+    "original_verifier": "BLOCKED_PACKED_IMPORTS",
+    "runtime": "NOT RUN",
+    "static_fixed_codec_requests": "74 decoded; 50 packaged bindings PASS; 24 target three absent codec DLLs"
+  }
+}
