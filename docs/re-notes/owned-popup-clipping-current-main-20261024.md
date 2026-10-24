@@ -1,6 +1,6 @@
 # Owned popup compositor clipping (2026-10-24)
 
-Source-level implementation only; pending independent review/integration.
+Source-level implementation; independently accepted with focused test additions.
 No guest/game, browser, native compiler, GPU or lifecycle qualification.
 
 Baseline: actual strict-SSH remote main
@@ -8,8 +8,9 @@ Baseline: actual strict-SSH remote main
 The exact renderer blob is `ea371310c14bf39f070c3f23050dac9784700d45`,
 SHA-256 `3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2`.
 
-`createWindow` classifies by WS_CHILD; `createDialog` records parentHwnd even
-for a non-child dialog. `host-window.set_parent` also records parentHwnd but
+`createWindow` classifies by WS_CHILD; `createDialog` stores a non-child
+dialog's relationship in ownerHwnd and clears parentHwnd. `host-window.set_parent`
+records parentHwnd even for a non-child popup but
 only classifies a window as a child when WS_CHILD and an extant parent agree.
 Actual owner lookup is separately available through `_windowOwnerHwnd` (WAT
 `wnd_get_owner`); the recorded parentHwnd link alone is not child geometry.
@@ -92,3 +93,54 @@ The ledger includes all task files, conservative full initial SQLite bytes plus
 sampled positive growth, external session/launcher allowance, future growth and
 8 MiB reserve. See the final receipt for measured totals. No main integration
 authority was exercised. No box assigned; shutdown remains coordinator-owned.
+
+## Independent review (2026-10-24)
+
+Reviewed producer commit `ad114b9de8f36b94c0ab7b4406836a43599553a4`
+against its exact remote-main parent above; strict trusted SSH verified both refs.
+All 27 producer source/evidence seals match. Independently reran the unmodified
+producer test: baseline 30 failures / 42 passes, candidate 72 passes, rejecting
+owner-walk 13 failures, owned-traversal 3 failures, no-child-clip 18 failures.
+The unchanged SetParent regression passes.
+
+Verdict: PASS for this source-level repair. Inspection confirms `isChild` controls
+child geometry and traversal; ownership alone does not. The regression loads the
+real renderer, Surface and host methods. Synthetic exports provide absolute
+window geometry; the canvas adapter delegates blits and clipping to RasterSurface.
+Its no-op translate is used only by the separate dialog visitation assertion,
+which proves traversal rather than chrome pixel placement. Surface tests bypass
+drawWindow to isolate composition; the separate assertion calls real drawWindow.
+Hidden/deleted owners are synthetic host records, not guest lifecycle tests.
+
+The reviewer corrected the createDialog description above: it already separates
+ownerHwnd from parentHwnd. The failing case is a non-child popup with a recorded
+parentHwnd (exercised through real set_parent), not ordinary createDialog alone.
+No production changes beyond the producer's two-file repair were needed.
+
+Added 13 independent checks for GPU client-layer offsets and ancestor clipping
+through single-source, stack and ordinary screen composition, plus empty child
+clips and restoration before a later sibling. Expanded test: candidate 85 passes;
+exact baseline 37 failures / 48 passes. Expanded rejecting controls: owner-walk
+21 failures, owned-traversal 3, no-child-clip 23. Independent source mutations
+removing GPU offset or only single-source child clipping fail 3 and 5 checks,
+respectively. These controls preserve the production module and change only the
+named behavior; they are retained outside the committed source.
+
+Review evidence and recovery scripts are in
+`/tmp/owned-popup-independent-integrate-oct24`: `test-receipts.jsonl`, individual
+logs, producer-seal verification, exact baseline renderer, rejecting renderer
+copies, `checks.py`, focused manifest, strict remote receipts, standing donor/tool
+identities and resource history. Recover the test and repair from the published
+review branch; rerun the test with the baseline/POPUP_MUTATION options above.
+GPU-offset control inserts a zero return at _frameLayerOffset; the single-source
+control replaces only that branch's clip lookup with null.
+
+The private checkout uses explicit sparse paths and immutable object alternates.
+An initial Git checkout failed because nested alternates exceeded Git's traversal
+depth; listing the same standing chain explicitly, deepest first, fixed it without
+copying or modifying donors. This was a fixture dependency correction, not a
+resource denial. No full builds, packages, guest execution, browser/GPU runtime,
+boxes or other workers were used. Initial broad board/status and a few display
+slices exceeded the intended focused display size; retained tool captures remain
+within the conservative 260000-byte charge and 1 MiB cap. All resource history is
+retained; final integration/ref and cleanup receipts are published separately.

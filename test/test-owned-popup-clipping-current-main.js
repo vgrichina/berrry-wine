@@ -177,6 +177,38 @@ for (const state of ['visible','hidden','destroyed']) {
   r._compositeChildSurfaces(popup);
   check('hidden child suppresses branch',()=>assert.deepStrictEqual(rgb(r.surface,67,43),[0,0,0]));
 }
+// Independent review: GPU client offsets must share the true-child clip in
+// both postprocessing branches and ordinary composition. No renderer method
+// is replaced here: only the window-local layer pixels are synthetic.
+for (const mode of ['single', 'stack', 'screen']) {
+  const {r,popup,nested}=fixture();
+  nested._dxFrameLayer={kind:'gpu',canvas:canvas(20,20,'#123abc')};
+  nested.clientRect={x:66,y:42,w:19,h:18};
+  let output;
+  if (mode==='screen') {
+    r._compositeChildSurfaces(popup);
+    output=(x,y)=>rgb(r.surface,x,y);
+  } else {
+    const c=r._buildExclusivePresentationSource(popup,mode==='stack'?[popup]:undefined);
+    output=(x,y)=>[...c._data.slice(((y-20)*35+x-40)*4,((y-20)*35+x-40)*4+3)];
+  }
+  check(`${mode} GPU client offset`,()=>assert.deepStrictEqual(output(65,41),[0,238,17]));
+  check(`${mode} GPU visible ancestor intersection`,()=>assert.deepStrictEqual(output(67,43),[18,58,188]));
+  check(`${mode} GPU clipped by real parent`,()=>assert.deepStrictEqual(output(72,48),mode==='screen'?[0,0,0]:[51,68,85]));
+}
+// An empty child clip must neither paint nor leak to a later sibling. This
+// also checks the canvas save/restore adapter against the production Surface.
+for (const mode of ['single','stack']) {
+  const {r,popup,child,unrelated}=fixture();
+  child.x=90;child.y=60;
+  unrelated.isChild=true;unrelated.parentHwnd=popup.hwnd;
+  unrelated.x=71;unrelated.y=24;unrelated._canonicalOwnSurface=true;
+  unrelated.zOrder=8;
+  const c=r._buildExclusivePresentationSource(popup,mode==='stack'?[popup]:undefined);
+  const output=(x,y)=>[...c._data.slice(((y-20)*35+x-40)*4,((y-20)*35+x-40)*4+3)];
+  check(`${mode} empty nested clip suppresses pixels`,()=>assert.deepStrictEqual(output(67,43),[51,68,85]));
+  check(`${mode} clip restored for later sibling`,()=>assert.deepStrictEqual(output(72,25),[153,153,153]));
+}
 if(failures.length) {
   console.error(`FAIL ${failures.length} checks (${assertions} passed)`);
   console.error(failures.slice(0,12).join('\n'));
