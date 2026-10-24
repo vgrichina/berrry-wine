@@ -10,6 +10,11 @@
     "sha256": "e4e7a9160c645fc8068254766a4137dc046cdf70318f24ab701c17bf245fa95e"
   },
   {
+    "path": "resource-final.json",
+    "bytes": 411,
+    "sha256": "0a39c4f832242f5f5f2322b8904d58019ab231da6ac48fd9bae08354b3f84d12"
+  },
+  {
     "path": "cleanup-api.json",
     "bytes": 471,
     "sha256": "c510388abb4102fc64dd78db5e62e2e81c67c685ed88402b36e6ba2305133155"
@@ -70,9 +75,19 @@
     "sha256": "fdc224e80f508f9bfcea86e8d7f3904c802dd9024a61bb26974cc457013c18a1"
   },
   {
+    "path": "cleanup-final.json",
+    "bytes": 617,
+    "sha256": "9120619026a4d6143dd3dda5cd72ac409090131115e0c756d88e061f248b6727"
+  },
+  {
     "path": "remote-rehash.json",
     "bytes": 446,
     "sha256": "7b1e4d70134b01a8072c5f89ec9e9bc8c8a0249a57dea3155a8984f6e2c39e4d"
+  },
+  {
+    "path": "git-publication.jsonl",
+    "bytes": 11844,
+    "sha256": "dea50e5c77f97278ef292720a3d4b247a53b98e98e6624fff87e823fad22b91d"
   },
   {
     "path": "final-gates-api.json",
@@ -130,6 +145,11 @@
     "sha256": "b31731b7567b77065717f6ddb235710d8370f1118968d66c16963c24e30ec293"
   },
   {
+    "path": "publish.py",
+    "bytes": 10421,
+    "sha256": "0f727ae2fa513bad0dbbbe5baf1dbb279fed93b69014c416526d2c3889c98e50"
+  },
+  {
     "path": "precheckout-parser.json",
     "bytes": 169,
     "sha256": "039c9ff16c79d301ed2a307728713ead89b1f233dd4262ba2cd219d9808b0c68"
@@ -150,6 +170,11 @@
     "sha256": "5d9ebedbc1a9d5f2dcf22e8156a86f5d0a6b170222f9b0c24a43feb3ee265a00"
   },
   {
+    "path": "initial-publication.json",
+    "bytes": 416,
+    "sha256": "63e52028113cf86c362e862f3fa3a8baafe4854900f75a3c83f048796073fbe9"
+  },
+  {
     "path": "capture.cjs",
     "bytes": 1226,
     "sha256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
@@ -158,6 +183,11 @@
     "path": "validate-tree.cjs",
     "bytes": 3129,
     "sha256": "0965bbb6b3a3c61e4809e5bd0da5b62bc77c1138ef5c0cba38d2e507a3cfa199"
+  },
+  {
+    "path": "staged-review.json",
+    "bytes": 249,
+    "sha256": "6e7ff70ea75f7da2b68d504f2152c032981228faf5fd0043092f24286214cb43"
   },
   {
     "path": "preflight.py",

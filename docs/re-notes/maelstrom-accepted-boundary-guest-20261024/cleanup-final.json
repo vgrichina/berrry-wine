@@ -1,0 +1,18 @@
+{
+  "stoppedWatchers": [
+    3856486
+  ],
+  "watchersAbsent": true,
+  "guestProcessesRemaining": false,
+  "remoteCleanupReceipt": "cleanup-api.json",
+  "lifecycle": "coordinator",
+  "box": "bx_qsz5ra8d",
+  "boxAPIState": "idle",
+  "workerStopIssued": false,
+  "expiry": "2026-10-24T12:38:44.745Z",
+  "publicationCorrections": [
+    "Preserved exact historical supervisor trailing-space byte; targeted whitespace check exception only.",
+    "Initial local evidence seal generation preceded final resource write; corrected seal order before successful true-blob verification and push."
+  ],
+  "historyPreserved": true
+}

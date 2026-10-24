@@ -1,0 +1,4 @@
+{
+  "stat": ".../evidence-seals.json                                        |  7 +------\n .../resource-prepublication.json                               | 10 +++++-----\n 2 files changed, 6 insertions(+), 11 deletions(-)",
+  "onlyEvidence": true
+}
