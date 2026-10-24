@@ -14,7 +14,7 @@ with open('/home/user/wine-assembly/scratch/usage-watch/shared-integration.lock'
  seals=json.load(open(E/'artifact-seals.json'))
  for x in seals:
   b=(E/x['path']).read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],x['path']
- run('add','docs/re-notes/penguin-command-immediate-shot-state-20261024.md','docs/re-notes/penguin-command-immediate-shot-state-20261024')
+ run('add','-f','docs/re-notes/penguin-command-immediate-shot-state-20261024.md','docs/re-notes/penguin-command-immediate-shot-state-20261024')
  staged=run('diff','--cached','--name-only').splitlines()
  assert all(p.startswith('docs/re-notes/penguin-command-immediate-shot-state-20261024') for p in staged)
  # Preserve the authentic raw trace's single trailing space byte-for-byte.

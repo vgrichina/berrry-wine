@@ -146,8 +146,8 @@
   },
   {
     "path": "publish.py",
-    "bytes": 2742,
-    "sha256": "2eafff7562da5ea045c91a85896973484c3a3ef1214b69d16852c04d21ba096c"
+    "bytes": 2747,
+    "sha256": "47e18ce17c0f090102f0aed6b3103fb3b4bb374aea9c67e1ad362ab182294970"
   },
   {
     "path": "remote-rehash.json",
