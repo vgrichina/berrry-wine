@@ -1,0 +1,27 @@
+{
+  "at": 1792810258.4535491,
+  "charges": {
+    "localOwned": 6102716,
+    "remoteOwned": 20429551,
+    "priorRetainedHistory": 5327752,
+    "externalLauncher": 306290,
+    "session": 5582005,
+    "positiveSQLite": 1557536,
+    "futureGitPushTransport": 9437184,
+    "futureEvidence": 1048576,
+    "futureEventsSessionSQLite": 4194304,
+    "reserve": 8388608
+  },
+  "projectedPeak": 62374522,
+  "cap": 67108864,
+  "localFree": 4275548160,
+  "localAfter": 4213173638,
+  "remoteAfter": 48674135430,
+  "maxLocalFile": 1088917,
+  "remoteMax": 1879746,
+  "captureConservativeText": 400000,
+  "captureCap": 1048576,
+  "historyRetained": true,
+  "standingInputs": "exact immutable 287-file manifest and installed tools separately identified in admission; no copies hidden by links",
+  "passAdmission": true
+}

@@ -1,0 +1,34 @@
+{
+  "aim-fire-centre.png": {
+    "bytes": 542266,
+    "sha256": "cbc12189bd7076eb7b8ed9e394ffbac29615d9e13407dfe43ce7f52ff4c3c2cc"
+  },
+  "later.png": {
+    "bytes": 474637,
+    "sha256": "a1054bebf356543ea311ae9a29670d13be7d27bb101a34f24427d3931951e5fb"
+  },
+  "exit.png": {
+    "bytes": 474637,
+    "sha256": "a1054bebf356543ea311ae9a29670d13be7d27bb101a34f24427d3931951e5fb"
+  },
+  "aim-fire-right.png": {
+    "bytes": 473919,
+    "sha256": "ff964d659589eede52c3567447b187aba15fddc2d215fc443a29a884cfad2401"
+  },
+  "final-scheduled.png": {
+    "bytes": 474637,
+    "sha256": "a1054bebf356543ea311ae9a29670d13be7d27bb101a34f24427d3931951e5fb"
+  },
+  "menu.png": {
+    "bytes": 473550,
+    "sha256": "69aac362a17c2d288c0a9a1ae69a96f921fef30bca570fdb785fa4d9b525e3c0"
+  },
+  "aim-fire-left.png": {
+    "bytes": 501217,
+    "sha256": "63caa3dd2c8c3a9b7bdac109026e7fc9cdb705427f1225d88acc03c8516b0304"
+  },
+  "after-selection.png": {
+    "bytes": 493014,
+    "sha256": "4e2c1a1ece93faceb51770e4c8c6a6362e3c38d7d2f75af8fed6e7a19b74c51d"
+  }
+}

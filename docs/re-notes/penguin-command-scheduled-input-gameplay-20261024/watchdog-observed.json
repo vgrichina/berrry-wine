@@ -1,0 +1,11 @@
+{
+  "at": 1792810026.1435149,
+  "path": "/home/user/wine-assembly/scratch/usage-watch/penguin-scheduled-box-watchdog-oct24.py",
+  "sha256": "9068d49f0a0d0556ac471967336833f31acf548b2c9e86aac1b99506cd4c70f4",
+  "bytes": 1416,
+  "process": "    PID    PPID                  STARTED COMMAND\n3197673  752162 Sat Oct 24 02:41:29 2026 python3 scratch/usage-watch/penguin-scheduled-box-watchdog-oct24.py\n",
+  "deadline": "2026-10-24T03:08:00Z",
+  "owner": "coordinator",
+  "executedShutdown": false,
+  "receiptStatus": "live watchdog observed; deadline has not arrived"
+}

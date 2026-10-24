@@ -1,0 +1,10 @@
+{
+  "passValidation": true,
+  "sealedCollectedFiles": 15,
+  "scheduledActions": 22,
+  "scheduledPNGs": 7,
+  "outputBytes": 8039,
+  "visualReview": "menu, Score160 Wave Scoring, Score240 Starting Wave2, Hiscores and returned menu reviewed; stable last three frames byte-identical",
+  "causalFiringVerified": false,
+  "singleGuestRun": true
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_rplzqpazuji0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T02:47:46.191Z",
+  "launcherFailed": false,
+  "noticedMs": 4,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-24T02:47:46.165Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"ownedBytes\": 20429551, \"maxFile\": 1879746, \"free\": 48736509952, \"guestProcesses\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

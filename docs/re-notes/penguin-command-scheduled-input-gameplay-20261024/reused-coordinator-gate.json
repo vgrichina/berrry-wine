@@ -1,0 +1,31 @@
+{
+  "recordedAt": "2026-10-24T02:37:38.695804+00:00",
+  "review": "20261024T022106Z",
+  "status": "Reuse exact retained runner closure; fresh destination execution admission required before gameplay dispatch",
+  "verifiedSeals": {
+    "airstrike": 136,
+    "penguin": 26,
+    "popupIndependent": 32
+  },
+  "exactRunner": {
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "bytes": 685960
+  },
+  "checksBeforeNextGameplay": [
+    "Verify complete retained manifest, including pngjs 7.0.0, fonts and region helpers; do not reuse incomplete earlier manifests",
+    "Execute dependency resolution and PNG encode/decode probe as actual runtime user from actual runner path",
+    "Validate serialized staging request size, use the previously successful 36000-byte chunks and stop first rejected operation",
+    "Bind --quiet-api and --quiet-blocks to this exact runner; retain output/capture limits",
+    "Schedule ordinary game inputs before launch using supported batch input syntax; Penguin prior startup reached batch 30376 and exited before delayed live click",
+    "Fresh memory, disk, allocation, process and lifecycle admission; prior receipts do not authorize current execution"
+  ],
+  "retainedEvidence": {
+    "airstrike": "/tmp/airstrike-retained-codec-gameplay-oct24/repo/docs/re-notes/airstrike-retained-codec-gameplay-20261024",
+    "penguin": "/tmp/penguin-quiet-gameplay-oct24/repo/docs/re-notes/penguin-command-quiet-original-gameplay-20261024"
+  },
+  "lifecycle": {
+    "bx_9nngcsvf": "stopped",
+    "bx_754uted8": "stopped"
+  },
+  "dispatch": "No automatic refill from scheduled efficiency review."
+}
