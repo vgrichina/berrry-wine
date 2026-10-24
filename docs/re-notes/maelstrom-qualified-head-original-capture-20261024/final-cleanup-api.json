@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_uxdxgf1rgf0s",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:45:12.999Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-24T16:45:12.956Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"taskNode\": [], \"guestDirectory\": false, \"uid\": 1000}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,9 @@
+{
+  "firstDiffCheck": 2,
+  "reason": "historical supervisor trailing space",
+  "correction": "whitespace-only supervisor line synchronized local/remote; stop/limits unchanged",
+  "firstCommit": 128,
+  "identity": "task-local Wine Ops identity copied from immutable donor config",
+  "guardCorrection": "All following publication dependencies use checked subprocess calls",
+  "guestExecuted": false
+}

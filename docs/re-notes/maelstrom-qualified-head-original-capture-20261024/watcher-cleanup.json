@@ -1,0 +1,9 @@
+{
+  "pid": 4130999,
+  "TERM": true,
+  "boxLifecycleMutations": 0,
+  "coordinatorOwnsShutdown": true,
+  "toolSession": 60578,
+  "terminalExitCode": 143,
+  "reaped": true
+}

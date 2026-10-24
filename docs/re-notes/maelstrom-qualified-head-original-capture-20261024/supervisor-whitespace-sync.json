@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_t1axoqe60kja",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-24T16:44:19.511Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-24T16:44:19.472Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

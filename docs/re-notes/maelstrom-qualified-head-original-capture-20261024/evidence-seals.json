@@ -15,6 +15,11 @@
     "sha256": "4916a3515a39212f5f0a52571379145f33ae6065c395c41e89f3ed870000db45"
   },
   {
+    "path": "watcher-cleanup.json",
+    "bytes": 170,
+    "sha256": "ef085a11a8d5de6439cf50e2ace8937d49569cb26f5908d515e8020ca6412e18"
+  },
+  {
     "path": "intended-originals.json",
     "bytes": 14230,
     "sha256": "fec172de0f901c63321d3a470762ad6016ac40a319440ac39f3e05eb9d98d906"
@@ -25,9 +30,14 @@
     "sha256": "291cdd5dc05c32748038c6ca599e7143f63fc0e4f7ee8b8546f5a209d73742d4"
   },
   {
+    "path": "final-cleanup-api.json",
+    "bytes": 449,
+    "sha256": "419ed7267cbe0b2bb4a069485396aea6c934a135528c7b36e121fc1bbd891d60"
+  },
+  {
     "path": "api-history.jsonl",
-    "bytes": 90466,
-    "sha256": "a0a02d62a51e59d4e5e9b9c63f2c6c0f8314fd0443e22ebfd8ab21e98ce09029"
+    "bytes": 90654,
+    "sha256": "5042956482a5e2160d2f0290eb19c58c953bc89b607e30d4907f265361c0c175"
   },
   {
     "path": "supervise.py",
@@ -45,9 +55,19 @@
     "sha256": "f8fb43c348dd388ca26687010adf0f19d1a607b1eee7436fe45ecb783f4f8a2a"
   },
   {
+    "path": "resource-handoff.json",
+    "bytes": 459,
+    "sha256": "09fb5f4d50da71ddb2197ab20b78a1b275ec5e8104ce97bf52326f246f9050e7"
+  },
+  {
     "path": "sqlite-baseline.json",
     "bytes": 956,
     "sha256": "eb049dbe81210dd01dc781441166f7971c28296912a258b40af43f86b7437314"
+  },
+  {
+    "path": "supervisor-whitespace-sync.json",
+    "bytes": 387,
+    "sha256": "1a0623792a06a5f76b0312b9480f1e86e4b8da62a9f184494b76252e8f66bea1"
   },
   {
     "path": "guest-not-executed.json",
@@ -108,6 +128,11 @@
     "path": "admission.json",
     "bytes": 1284,
     "sha256": "5156e8dd613d92888b64167a697502f83e4e497613cdca55df116874694b053c"
+  },
+  {
+    "path": "box-handoff-api.json",
+    "bytes": 1490,
+    "sha256": "2980edde10f13ff5b1e9232686029060adf90f7aaaf70b6ee1dfdb3875640998"
   },
   {
     "path": "resource-prepublication.json",
@@ -183,6 +208,11 @@
     "path": "collect-inventory-api.json",
     "bytes": 492,
     "sha256": "b2dac83767b0ba8fa30376b406825b3433a94cba623e8b7c146a9cd9cb102248"
+  },
+  {
+    "path": "publication-bookkeeping-correction.json",
+    "bytes": 399,
+    "sha256": "2ec70b7b115392011556325a957819a6985dd1cf3e6a703188b77a0771750a34"
   },
   {
     "path": "stage-bookkeeping-correction.json",
