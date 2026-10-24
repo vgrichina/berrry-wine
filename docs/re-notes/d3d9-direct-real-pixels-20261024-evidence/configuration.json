@@ -1,0 +1,10 @@
+{
+  "session": "01a16d30-4ce4-7dd3-a4d5-8eb069f007f0",
+  "sourceHead": "0e927b73b64b29931f83d1e9ed77282c5b1bf731",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "Not applicable: local CDP browser, no guest or mount command",
+  "capturePriorCharged": 1125240,
+  "captureAdditionalAuthorized": 1048576,
+  "captureCumulativeLimit": 2173816
+}

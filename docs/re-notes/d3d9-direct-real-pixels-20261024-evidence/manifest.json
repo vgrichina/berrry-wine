@@ -1,0 +1,210 @@
+{
+  "intermediate-stencil-rectangle-origin.png": {
+    "bytes": 129,
+    "sha256": "d872f3ad871c97fcff8f94e2b62ca6fdf40f15563420475df929f66cbbe8dca0"
+  },
+  "candidate-implicit-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "producer-named-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "accounting.json": {
+    "bytes": 606,
+    "sha256": "338bdc031d814d99e2caaa68431f761287410566017b2971d1135e9a1fdd80bb"
+  },
+  "producer-named-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "producer.json": {
+    "bytes": 11965,
+    "sha256": "d91801dba8ce3f99ec3aa4a68982fd882369448be2cd893998cb9b29a0671b4b"
+  },
+  "producer-implicit-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "reject-rectangles-named-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-implicit-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "watcher-cleanup.json": {
+    "bytes": 36,
+    "sha256": "64308d1f4db554d57bf5f49a333ccf1e2e2490fd6624a90e66c00d3e4f75e16f"
+  },
+  "intermediate-clipped-top-left-red-channel.png": {
+    "bytes": 128,
+    "sha256": "850011da02eb7d03eba9ced0e90e57e984b809efcc7c38f75e75987a205a3e0b"
+  },
+  "producer-clipped-top-left-red-channel.png": {
+    "bytes": 128,
+    "sha256": "850011da02eb7d03eba9ced0e90e57e984b809efcc7c38f75e75987a205a3e0b"
+  },
+  "reject-rectangles.json": {
+    "bytes": 13169,
+    "sha256": "3cbc4dfcf580a6316deafd452208bffb82d62b5772c56344a567a7023500cb5c"
+  },
+  "candidate.json": {
+    "bytes": 11723,
+    "sha256": "234655332c6d54e46ae4890e6c8709628349c219f313012f60b9b0a098c15854"
+  },
+  "chrome.log": {
+    "bytes": 7567,
+    "sha256": "1a16a43900116e61425b6d89b23e2eed023fb0e6bc147ee31c0f9a8c7add06e0"
+  },
+  "producer-implicit-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "producer-implicit-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "configuration.json": {
+    "bytes": 518,
+    "sha256": "a9eb60b7c8e3aac46200bd1abf44510f82478dfb711360c51cc7a750754867d7"
+  },
+  "candidate-named-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "intermediate-named-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "candidate-implicit-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "cleanup-resource.json": {
+    "bytes": 976,
+    "sha256": "b2691bb316b932bd3648622167e73900e3843ed754883c61f8b8fac0516e0f3e"
+  },
+  "producer-named-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "reject-rectangles-named-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "reject-rectangles-implicit-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-named-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "numeric-outcomes.json": {
+    "bytes": 8916,
+    "sha256": "2916166d7c3da09c38e1c58b327e07c6dd4f6b2f1540050074131791bd317fe9"
+  },
+  "producer-wrapper-default-one-after-quarter.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-stencil-rectangle-origin.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "candidate-stencil-rectangle-origin.png": {
+    "bytes": 129,
+    "sha256": "d872f3ad871c97fcff8f94e2b62ca6fdf40f15563420475df929f66cbbe8dca0"
+  },
+  "candidate-clipped-top-left-red-channel.png": {
+    "bytes": 128,
+    "sha256": "850011da02eb7d03eba9ced0e90e57e984b809efcc7c38f75e75987a205a3e0b"
+  },
+  "intermediate-implicit-75-fresh-stencil-52.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "candidate-wrapper-default-one-after-quarter.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "intermediate.json": {
+    "bytes": 12994,
+    "sha256": "5db9dffbf20249606759a6ef7d85927d90c590de1b2830ccc1fb1f3d8ca4e43e"
+  },
+  "intermediate-implicit-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-wrapper-default-one-after-quarter.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "reject-rectangles-implicit-75-fresh-stencil-52.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "candidate-implicit-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-depth-rectangle-and-stencil-retention.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "intermediate-wrapper-default-one-after-quarter.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "candidate-named-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "reject-rectangles-clipped-top-left-red-channel.png": {
+    "bytes": 106,
+    "sha256": "db523af49db71eabe67f2288735aa64939e406dd614fd5f76638f7f58a3cb874"
+  },
+  "intermediate-implicit-75-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "candidate-depth-rectangle-and-stencil-retention.png": {
+    "bytes": 131,
+    "sha256": "72025835bbd130750e6479539b26682e79959d736c28fffb51bdd78b0a0025fc"
+  },
+  "intermediate-named-80-fresh-quarter-rejects-half.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "summary.json": {
+    "bytes": 1952,
+    "sha256": "44e3ff8c2a2dc822ee1aa5171f4011fd8b2dc84808b72ce2cd1ca56a97ae9a6a"
+  },
+  "harness.log": {
+    "bytes": 1479,
+    "sha256": "8ff12db8201326b8be9286e6a2047aaaf4f9156de6a89d6d08434ce19c777eca"
+  },
+  "producer-depth-rectangle-and-stencil-retention.png": {
+    "bytes": 131,
+    "sha256": "72025835bbd130750e6479539b26682e79959d736c28fffb51bdd78b0a0025fc"
+  },
+  "intermediate-named-75-fresh-quarter-rejects-half.png": {
+    "bytes": 104,
+    "sha256": "5fdb90ad5ffe7f3255b14f9d0a05630381d93a07a08f392570027d6bd30d5875"
+  },
+  "intermediate-depth-rectangle-and-stencil-retention.png": {
+    "bytes": 131,
+    "sha256": "72025835bbd130750e6479539b26682e79959d736c28fffb51bdd78b0a0025fc"
+  },
+  "candidate-named-80-fresh-quarter-rejects-half.png": {
+    "bytes": 107,
+    "sha256": "201a64e1f65cf126c85c519415de28850b9e505fde301583de27ae767a928bdf"
+  },
+  "producer-stencil-rectangle-origin.png": {
+    "bytes": 129,
+    "sha256": "d872f3ad871c97fcff8f94e2b62ca6fdf40f15563420475df929f66cbbe8dca0"
+  }
+}

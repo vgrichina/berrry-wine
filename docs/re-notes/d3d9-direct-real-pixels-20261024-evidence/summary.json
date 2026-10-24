@@ -1,0 +1,73 @@
+{
+  "accepted": true,
+  "browser": {
+    "protocolVersion": "1.3",
+    "product": "Chrome/151.0.7922.108",
+    "revision": "@0000000000000000000000000000000000000000",
+    "userAgent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+    "jsVersion": "15.1.206.16"
+  },
+  "chromeArgs": [
+    "--headless=new",
+    "--remote-debugging-address=127.0.0.1",
+    "--remote-debugging-port=0",
+    "--user-data-dir=/tmp/d3d9px25/run/p",
+    "--no-first-run",
+    "--no-default-browser-check",
+    "--bw-timezone=Etc/UTC",
+    "--disable-background-networking",
+    "--disable-component-update",
+    "--disable-sync",
+    "--disk-cache-size=1048576",
+    "--media-cache-size=1048576",
+    "--js-flags=--max-old-space-size=256",
+    "about:blank"
+  ],
+  "results": [
+    {
+      "variant": "candidate",
+      "passed": 56,
+      "failed": 0,
+      "errors": [],
+      "failedNames": []
+    },
+    {
+      "variant": "producer",
+      "passed": 55,
+      "failed": 1,
+      "errors": [],
+      "failedNames": [
+        "wrapper-default-one-after-quarter"
+      ]
+    },
+    {
+      "variant": "intermediate",
+      "passed": 50,
+      "failed": 6,
+      "errors": [],
+      "failedNames": [
+        "named-80-fresh-quarter-rejects-half",
+        "named-80-existing-depth-retained",
+        "implicit-75-fresh-stencil-52",
+        "implicit-75-existing-stencil-retained",
+        "named-75-fresh-quarter-rejects-half",
+        "named-75-existing-depth-retained"
+      ]
+    },
+    {
+      "variant": "reject-rectangles",
+      "passed": 49,
+      "failed": 7,
+      "errors": [],
+      "failedNames": [
+        "clipped-top-left-red-channel",
+        "color-only-preserves-quarter-depth",
+        "depth-rectangle-and-stencil-retention",
+        "stencil-only-retains-depth",
+        "stencil-rectangle-origin",
+        "empty-regions-retain-color",
+        "empty-regions-retain-depth"
+      ]
+    }
+  ]
+}

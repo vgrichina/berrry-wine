@@ -1,0 +1,13 @@
+{
+  "allocation": "/tmp/d3d9px25",
+  "external": [
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-14-04-01a16d30-4ce4-7dd3-a4d5-8eb069f007f0.jsonl",
+    "/home/user/wine-assembly/scratch/usage-watch/d3d9-direct-real-pixels-oct24",
+    "/tmp/d3d9pix24",
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T09-03-17-01a16d26-6cb2-7aa2-98b6-3566f42ba8b8.jsonl",
+    "/home/user/wine-assembly/scratch/usage-watch/d3d9-accepted-oracle-real-pixels-oct24"
+  ],
+  "sqliteBaseline": "/tmp/d3d9pix24/sqlite-baseline.json",
+  "sqliteDirectory": "/home/user/.codex",
+  "future": 16777216
+}
