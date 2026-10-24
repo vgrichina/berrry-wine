@@ -1,0 +1,18 @@
+{
+  "outcome": "BLOCKED: first actual denied upstream operation; no retry or archive request",
+  "url": "https://olofson.net/kobodl/",
+  "method": "HEAD",
+  "exception": "urllib.error.HTTPError",
+  "http_status": 403,
+  "message": "Forbidden",
+  "archive_url": "https://olofson.net/kobodl/download/KoboDeluxe-0.5.1-Win32-bin.zip",
+  "archive_request_attempted": false,
+  "downloaded_game_bytes": 0,
+  "dependency_closure": "NOT EVALUATED: no archive acquired",
+  "license": "NOT VERIFIED: upstream page inaccessible and no archive acquired",
+  "evidence": "upstream-first-denial.txt",
+  "sequence": "local guard self-test PASS -> root page HEAD403 -> propagated exit1 -> archive stage skipped",
+  "network_attempts": 1,
+  "no_retry": true,
+  "source_tool_output_id": "ctco_01a16c9e-724d-77e0-b0c6-fb7c21072c1f"
+}

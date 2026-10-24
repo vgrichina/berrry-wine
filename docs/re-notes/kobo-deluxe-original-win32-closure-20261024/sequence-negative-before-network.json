@@ -1,0 +1,15 @@
+{
+  "receipt": {
+    "metadata": {
+      "propagated_nonzero": true,
+      "error": "byte guard rejected 65 > 64",
+      "sentinel_absent": true
+    },
+    "bytes": {
+      "propagated_nonzero": true,
+      "error": "byte guard rejected 129 > 64",
+      "sentinel_absent": true
+    }
+  },
+  "provenance": "Initial self-test receipt, recovered verbatim fields from retained pre-network tool output; later stronger subprocess test retained separately."
+}

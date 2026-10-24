@@ -1,0 +1,28 @@
+{
+  "metadata": {
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py",
+      "--reject-fixture",
+      "metadata",
+      "--sentinel",
+      "/tmp/kobo-deluxe-original-win32-closure-oct24/evidence/forbidden-sentinel-download"
+    ],
+    "exit_code": 1,
+    "error": "Traceback (most recent call last):\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 111, in <module>\n    sequence([lambda: guard_size(65 if args.reject_fixture == 'metadata' else 129, 64),\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 15, in sequence\n    stage()\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 111, in <lambda>\n    sequence([lambda: guard_size(65 if args.reject_fixture == 'metadata' else 129, 64),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 20, in guard_size\n    raise ValueError(f\"byte guard rejected {size} > {limit}\")\nValueError: byte guard rejected 65 > 64\n",
+    "sentinel_absent": true
+  },
+  "bytes": {
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py",
+      "--reject-fixture",
+      "bytes",
+      "--sentinel",
+      "/tmp/kobo-deluxe-original-win32-closure-oct24/evidence/forbidden-sentinel-download"
+    ],
+    "exit_code": 1,
+    "error": "Traceback (most recent call last):\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 111, in <module>\n    sequence([lambda: guard_size(65 if args.reject_fixture == 'metadata' else 129, 64),\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 15, in sequence\n    stage()\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 111, in <lambda>\n    sequence([lambda: guard_size(65 if args.reject_fixture == 'metadata' else 129, 64),\n                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/kobo-deluxe-original-win32-closure-oct24/repo/tools/kobo-deluxe-acquire.py\", line 20, in guard_size\n    raise ValueError(f\"byte guard rejected {size} > {limit}\")\nValueError: byte guard rejected 129 > 64\n",
+    "sentinel_absent": true
+  }
+}

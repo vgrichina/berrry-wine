@@ -1,0 +1,54 @@
+{
+  "time": 1792823628.1262429,
+  "base": "f6571101e38985b3fa34d328f2ccadd9735a7573",
+  "parts": {
+    "checkout_git": 2097152,
+    "archive": 6291456,
+    "extracted": 18874368,
+    "temp_evidence": 2097152,
+    "external_session_events_logs_positive_sqlite": 18874368,
+    "future_growth": 6291456,
+    "reserve": 8388608
+  },
+  "projected_peak": 62914560,
+  "limit": 67108864,
+  "per_file_limit": 25165824,
+  "free": 3982352384,
+  "free_after_projected": 3919437824,
+  "minimum_free": 2982150144,
+  "mem_available": 2343522304,
+  "minimum_mem": 805306368,
+  "external_baseline": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T06-33-08-01a16c9c-f503-77f2-a3f3-f2d74d59e6b7.jsonl": 315845,
+    "/home/user/wine-assembly/scratch/usage-watch/kobo-deluxe-original-win32-closure-oct24/stderr.log": 189,
+    "/home/user/wine-assembly/scratch/usage-watch/kobo-deluxe-original-win32-closure-oct24/events.jsonl": 98740,
+    "/home/user/.codex/state_5.sqlite-wal": 4288952,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 12337152
+  },
+  "sqlite_policy": "standing baseline separately; positive growth and entire owned session/events charged; future growth retained",
+  "standing_donor": "/tmp/penguin-shot-state-independent-integrate-oct24/repo read-only Git alternate; no object copying/repack",
+  "tools": {
+    "python3": {
+      "realpath": "/usr/bin/python3.12",
+      "bytes": 8020928
+    },
+    "git": {
+      "realpath": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "curl": {
+      "realpath": "/usr/bin/curl",
+      "bytes": 297288
+    },
+    "node": {
+      "realpath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816
+    },
+    "unzip": {
+      "realpath": "/usr/bin/unzip",
+      "bytes": 178608
+    }
+  },
+  "command_policy": "Python static parsers; no compile/guest. Node if needed oldspace256 CPU/wall60 with fresh memory. Capture <=1048576 bytes."
+}
