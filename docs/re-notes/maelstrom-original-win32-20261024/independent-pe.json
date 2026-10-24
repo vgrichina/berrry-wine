@@ -1,0 +1,51 @@
+[
+  {
+    "module": "Maelstrom.exe",
+    "tool": "/usr/bin/objdump -p",
+    "format": "pei-i386",
+    "entry_rva": 95348,
+    "DLL_import_order": [
+      "sdl.dll",
+      "sdl_net.dll",
+      "msvcrt.dll",
+      "kernel32.dll"
+    ],
+    "named_exports": 0,
+    "output_bytes": 6651,
+    "output_sha256": "809811657c7c95112c0255432dd0517681edca69ab7c2d1070783acfb3f162df",
+    "all_checks": "PASS"
+  },
+  {
+    "module": "SDL.dll",
+    "tool": "/usr/bin/objdump -p",
+    "format": "pei-i386",
+    "entry_rva": 170207,
+    "DLL_import_order": [
+      "winmm.dll",
+      "kernel32.dll",
+      "user32.dll",
+      "gdi32.dll",
+      "msvcrt.dll"
+    ],
+    "named_exports": 177,
+    "output_bytes": 175584,
+    "output_sha256": "457e5098ec5fc0825f9f88ffe5cd05003e1f65d72a44032c9ad139c0847aec11",
+    "all_checks": "PASS"
+  },
+  {
+    "module": "SDL_net.dll",
+    "tool": "/usr/bin/objdump -p",
+    "format": "pei-i386",
+    "entry_rva": 7759,
+    "DLL_import_order": [
+      "wsock32.dll",
+      "sdl.dll",
+      "msvcrt.dll",
+      "kernel32.dll"
+    ],
+    "named_exports": 33,
+    "output_bytes": 9517,
+    "output_sha256": "608a40a60bb5d6d1a678dc8f83f52687c9b34d1495af9fbee98e1a54fcf719fb",
+    "all_checks": "PASS"
+  }
+]

@@ -1,0 +1,89 @@
+[
+  {
+    "archive_member": "Maelstrom-3.0.6/load.h",
+    "member_bytes": 2391,
+    "member_sha256": "dcc65a59f6629de5a39607162385d05e5a1d6670ccb0dcbf57199a71cdca9e32",
+    "slices": [
+      {
+        "first_line": 100,
+        "last_line": 126,
+        "text": "#endif\n\t\t}\n\n\t\tif ( path != NULL )\n\t\t\tdelete[] path;\n\t\tpath = new char[strlen(directory)+1+strlen(filename)+1];\n\t\tif ( strcmp(directory, DIR_SEP) == 0 ) {\n\t\t\tsprintf(path, DIR_SEP\"%s\", filename);\n\t\t} else {\n\t\t\tsprintf(path, \"%s\"DIR_SEP\"%s\", directory, filename);\n\t\t}\n\t\treturn(path);\n\t}\n\tconst char *Path(void) {\n\t\treturn(path);\n\t}\n\nprivate:\n\tchar *path;\n};\n\n/* Functions exported from load.cc */\nextern SDL_Surface *Load_Icon(char **xpm);\nextern SDL_Surface *Load_Title(FrameBuf *screen, int title_id);\nextern SDL_Surface *GetCIcon(FrameBuf *screen, short cicn_id);\n\n#endif /* _load_h */\n"
+      }
+    ]
+  },
+  {
+    "archive_member": "Maelstrom-3.0.6/load.cpp",
+    "member_bytes": 3239,
+    "member_sha256": "cc6a877991e937529162c1849a07acfe16597f1a00e3b3d5ea9eb90f0d0f5413",
+    "slices": [
+      {
+        "first_line": 76,
+        "last_line": 110,
+        "text": "\nSDL_Surface *Load_Title(FrameBuf *screen, int title_id)\n{\n\tchar file[256];\n\tLibPath path;\n\tSDL_Surface *bmp, *title;\n\t\n\t/* Open the title file -- we know its colormap is our global one */\n\tsprintf(file, \"Images\"DIR_SEP\"Maelstrom_Titles#%d.bmp\", title_id);\n\tbmp = SDL_LoadBMP(path.Path(file));\n\tif ( bmp == NULL ) {\n\t\treturn(NULL);\n\t}\n\n\t/* Create an image from the BMP */\n\ttitle = screen->LoadImage(bmp->w, bmp->h, (Uint8 *)bmp->pixels, NULL);\n\tSDL_FreeSurface(bmp);\n\treturn(title);\n}\n\nSDL_Surface *GetCIcon(FrameBuf *screen, short cicn_id)\n{\n\tchar file[256];\n\tLibPath path;\n\tSDL_Surface *cicn;\n\tSDL_RWops *cicn_src;\n\tUint8 *pixels, *mask;\n\tUint16 w, h;\n\t\n\t/* Open the cicn sprite file.. */\n\tsprintf(file, \"Images\"DIR_SEP\"Maelstrom_Icon#%hd.cicn\", cicn_id);\n\tif ( (cicn_src=SDL_RWFromFile(path.Path(file), \"r\")) == NULL ) {\n\t\terror(\"GetCIcon(%hd): Can't open CICN %s: \",\n\t\t\t\t\tcicn_id, path.Path(file));\n\t\treturn(NULL);\n"
+      }
+    ]
+  },
+  {
+    "archive_member": "Maelstrom-3.0.6/init.cpp",
+    "member_bytes": 33467,
+    "member_sha256": "c6c135425057107bd9d501c031f00a2748413c4cd241457d64679f6d79620397",
+    "slices": [
+      {
+        "first_line": 749,
+        "last_line": 780,
+        "text": "\t\t\terror(\"Warning: Couldn't open joystick '%s' : %s\\n\",\n\t\t\t\tSDL_JoystickName(0), SDL_GetError());\n\t\t}\n\t}\n#endif\n\n\t/* Load the Font Server */\n\tfontserv = new FontServ(library.Path(\"Maelstrom Fonts\"));\n\tif ( fontserv->Error() ) {\n\t\terror(\"Fatal: %s\\n\", fontserv->Error());\n\t\treturn(-1);\n\t}\n\n\t/* Load the Sound Server and initialize sound */\n\tsound = new Sound(library.Path(\"Maelstrom Sounds\"), gSoundLevel);\n\tif ( sound->Error() ) {\n\t\terror(\"Fatal: %s\\n\", sound->Error());\n\t\treturn(-1);\n\t}\n\n\t/* Load the Maelstrom icon */\n\ticon = SDL_LoadBMP(library.Path(\"icon.bmp\"));\n\tif ( icon == NULL ) {\n\t\terror(\"Fatal: Couldn't load icon: %s\\n\", SDL_GetError());\n\t\treturn(-1);\n\t}\n\n\t/* Initialize the screen */\n\tscreen = new FrameBuf;\n\tif (screen->Init(SCREEN_WIDTH, SCREEN_HEIGHT, video_flags,\n\t\t\t\t\tcolors[gGammaCorrect], icon) < 0){\n\t\terror(\"Fatal: %s\\n\", screen->Error());\n"
+      },
+      {
+        "first_line": 819,
+        "last_line": 835,
+        "text": "\tscreen->Fade();\n\n\t/* -- Load in our sprites and other needed resources */\n\t{\n\t\tMac_Resource spriteres(library.Path(\"Maelstrom Sprites\"));\n\n\t\tif ( spriteres.Error() ) {\n\t\t\terror(\"%s\\n\", spriteres.Error());\n\t\t\treturn(-1);\n\t\t}\n\t\tif ( LoadBlits(&spriteres) < 0 ) {\n\t\t\treturn(-1);\n\t\t}\n\t}\n\n\t/* -- Create the shots array */\n\tInitShots();\n"
+      }
+    ]
+  },
+  {
+    "archive_member": "Maelstrom-3.0.6/maclib/Mac_Resource.cpp",
+    "member_bytes": 14499,
+    "member_sha256": "03bf15529486d26549f5fef30b60919e96df02a9fdb094ac8bd4f2ef9da036e4",
+    "slices": [
+      {
+        "first_line": 174,
+        "last_line": 234,
+        "text": "static FILE *Open_MacRes(char **original, Uint32 *resbase)\n{\n\tchar *filename, *dirname, *basename, *ptr, *newname;\n\tFILE *resfile=NULL;\n\n\t/* Search and replace characters */\n\tconst int N_SNRS = 2;\n\tstruct searchnreplace {\n\t\tchar search;\n\t\tchar replace;\n\t} snr[N_SNRS] = {\n\t\t{ '\\0',\t'\\0' },\n\t\t{ ' ',\t'_' },\n\t};\n\tint iterations=0;\n\n\t/* Separate the Mac name from a UNIX path */\n\tfilename = new char[strlen(*original)+1];\n\tstrcpy(filename, *original);\n\tif ( (basename=strrchr(filename, '/')) != NULL ) {\n\t\tdirname = filename;\n\t\t*(basename++) = '\\0';\n\t} else {\n\t\tdirname = \"\";\n\t\tbasename = filename;\n\t}\n\n\tfor ( iterations=0; iterations < N_SNRS; ++iterations ) {\n\t\t/* Translate ' ' into '_', etc */\n\t\t/* Note that this translation is irreversible */\n\t\tfor ( ptr = basename; *ptr; ++ptr ) {\n\t\t\tif ( *ptr == snr[iterations].search )\n\t\t\t\t*ptr = snr[iterations].replace;\n\t\t}\n\n\t\t/* First look for Executor (tm) resource forks */\n\t\tnewname = new char[strlen(dirname)+2+1+strlen(basename)+1];\n\t\tsprintf(newname, \"%s%s%%%s\", dirname, (*dirname ? \"/\" : \"\"),\n\t\t\t\t\t\t\t\tbasename);\n\t\tif ( (resfile=fopen(newname, \"rb\")) != NULL ) {\n\t\t\tbreak;\n\t\t}\n\t\tdelete[] newname;\n\n\t\t/* Look for MacBinary files */\n\t\tnewname = new char[strlen(dirname)+2+strlen(basename)+4+1];\n\t\tsprintf(newname, \"%s%s%s.bin\", dirname, (*dirname ? \"/\" : \"\"),\n\t\t\t\t\t\t\t\tbasename);\n\t\tif ( (resfile=fopen(newname, \"rb\")) != NULL ) {\n\t\t\tbreak;\n\t\t}\n\t\tdelete[] newname;\n\n\t\t/* Look for raw resource fork.. */\n\t\tnewname = new char[strlen(dirname)+2+strlen(basename)+1];\n\t\tsprintf(newname, \"%s%s%s\", dirname, (*dirname ? \"/\" : \"\"),\n\t\t\t\t\t\t\t\tbasename);\n\t\tif ( (resfile=fopen(newname, \"rb\")) != NULL ) {\n\t\t\tbreak;\n\t\t}\n\t}\n"
+      }
+    ]
+  },
+  {
+    "archive_member": "Maelstrom-3.0.6/controls.cpp",
+    "member_bytes": 13979,
+    "member_sha256": "cf49caaf048d95991fbe04e904e55ce7f9bd66324f7be985d4db36307337fed8",
+    "slices": [
+      {
+        "first_line": 70,
+        "last_line": 90,
+        "text": "static FILE *OpenData(char *mode, char **fname)\n{\n\tstatic char datafile[BUFSIZ];\n\tchar *home;\n\tFILE *data;\n\n\tif ( (home=getenv(\"HOME\")) == NULL ) {\n\t\tif ( strcmp(CUR_DIR, DIR_SEP) != 0 ) {\n\t\t\thome = CUR_DIR;\n\t\t} else {\n\t\t\thome=\"\";\n\t\t}\n\t}\n\tif ( fname ) {\n\t\t*fname = datafile;\n\t}\n\tsprintf(datafile,  \"%s\"DIR_SEP\"%s\", home, MAELSTROM_DATA);\n\tif ( (data=fopen(datafile, mode)) == NULL )\n\t\treturn(NULL);\n\treturn(data);\n}\n"
+      }
+    ]
+  },
+  {
+    "archive_member": "Maelstrom-3.0.6/main.cpp",
+    "member_bytes": 16895,
+    "member_sha256": "110d4daffb5c95835fb69a6529a378c193d5759aa15499c863c53a97c877be53",
+    "slices": [
+      {
+        "first_line": 169,
+        "last_line": 177,
+        "text": "{\n\t/* Command line flags */\n\tint doprinthigh = 0;\n\tint speedtest = 0;\n\tUint32 video_flags = SDL_SWSURFACE;\n\n\t/* Normal variables */\n\tSDL_Event event;\n\tLibPath::SetExePath(argv[0]);\n"
+      },
+      {
+        "first_line": 193,
+        "last_line": 198,
+        "text": "\n\t/* Parse command line arguments */\n\tfor ( progname=argv[0]; --argc; ++argv ) {\n\t\tif ( strcmp(argv[1], \"-fullscreen\") == 0 ) {\n\t\t\tvideo_flags |= SDL_FULLSCREEN;\n\t\t} else\n"
+      },
+      {
+        "first_line": 570,
+        "last_line": 578,
+        "text": "\toffset = 34;\n\n\tpt.h = rightDiv + 10;\n\tpt.v = yOff + 10;\n\tDrawKey(&pt, \"P\", \" Start playing Maelstrom\", RunPlayGame);\n\n\tpt.h = rightDiv + 10;\n\tpt.v += offset;\n\tDrawKey(&pt, \"C\", \" Configure the game controls\", RunConfigureControls);\n"
+      }
+    ]
+  }
+]

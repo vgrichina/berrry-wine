@@ -1,0 +1,67 @@
+{
+  "time": 1792823639.4254794,
+  "caps": {
+    "checkout_git": 4194304,
+    "archive": 6291456,
+    "extracted": 12582912,
+    "metadata_temp": 2097152,
+    "scripts_evidence": 2097152,
+    "external_history_sqlite_future": 25165824,
+    "reserve": 8388608
+  },
+  "projected_peak": 60817408,
+  "limit": 67108864,
+  "per_file": 25165824,
+  "free_before": 3999432704,
+  "free_after_projected": 3938615296,
+  "floor": 2982150144,
+  "mem_available": 2368200704,
+  "memory_floor": 805306368,
+  "external_baseline": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T06-33-08-01a16c9c-f503-77f2-a3f3-f2d74d59e6b7.jsonl",
+      "bytes": 328442
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T06-33-08-01a16c9c-f503-7493-92d7-9894c54e62bc.jsonl",
+      "bytes": 325421
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4288952
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-shm",
+      "bytes": 32768
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite",
+      "bytes": 12337152
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-original-win32-closure-oct24/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-original-win32-closure-oct24/events.jsonl",
+      "bytes": 84792
+    }
+  ],
+  "standing_tools": [
+    {
+      "path": "/usr/bin/node",
+      "bytes": 98932688
+    },
+    {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232
+    }
+  ],
+  "donor": "/tmp/penguin-shot-state-independent-integrate-oct24/repo",
+  "donor_commit": "f6571101e38985b3fa34d328f2ccadd9735a7573",
+  "limits": "Node --max-old-space-size=256, timeout 60s, ulimit -t 60; no compiler/guest/browser; 1MiB capture"
+}

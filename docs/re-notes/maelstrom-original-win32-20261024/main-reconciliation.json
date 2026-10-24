@@ -1,0 +1,11 @@
+{
+  "time": "2026-10-24T06:44:04.771957+00:00",
+  "donor_head": "f6571101e38985b3fa34d328f2ccadd9735a7573",
+  "remote_main": "f6571101e38985b3fa34d328f2ccadd9735a7573",
+  "initial_remote_main": "f6571101e38985b3fa34d328f2ccadd9735a7573",
+  "absent_at_base": [
+    "lib/apps.js:maelstrom",
+    "TODOS.md:maelstrom"
+  ],
+  "SSH": "BatchMode=yes IdentitiesOnly=yes StrictHostKeyChecking=yes named Wine key/known_hosts"
+}

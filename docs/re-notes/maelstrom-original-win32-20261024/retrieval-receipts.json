@@ -1,0 +1,140 @@
+{
+  "author-binary.html.receipt.json": {
+    "url": "https://slouken.libsdl.org/projects/Maelstrom/binary.html",
+    "limit": 65536,
+    "final_url": "https://slouken.libsdl.org/projects/Maelstrom/binary.html",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:35:19 GMT",
+      "Server": "Apache/2.4.58 (Ubuntu)",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Last-Modified": "Sat, 17 Aug 2013 17:28:45 GMT",
+      "ETag": "\"1169-4e4280a088d40\"",
+      "Accept-Ranges": "bytes",
+      "Content-Length": "4457",
+      "Vary": "Accept-Encoding",
+      "Connection": "close",
+      "Content-Type": "text/html"
+    },
+    "bytes": 4457,
+    "sha256": "729f1b91b3861c75fd236f225eb1b100c378188727fb695eb08fa6d470ff62a7",
+    "exit": 0
+  },
+  "author-index.html.receipt.json": {
+    "url": "https://slouken.libsdl.org/projects/Maelstrom/",
+    "limit": 65536,
+    "final_url": "https://slouken.libsdl.org/projects/Maelstrom/",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:35:14 GMT",
+      "Server": "Apache/2.4.58 (Ubuntu)",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Last-Modified": "Sat, 17 Aug 2013 17:28:45 GMT",
+      "ETag": "\"e6e-4e4280a088d40\"",
+      "Accept-Ranges": "bytes",
+      "Content-Length": "3694",
+      "Vary": "Accept-Encoding",
+      "Connection": "close",
+      "Content-Type": "text/html"
+    },
+    "bytes": 3694,
+    "sha256": "cf592460003a40fb3090bbb6ab292e37fd6d9dbe40081b30c07eaa664d8e2511",
+    "exit": 0
+  },
+  "author-source.html.receipt.json": {
+    "url": "https://slouken.libsdl.org/projects/Maelstrom/source.html",
+    "limit": 65536,
+    "final_url": "https://slouken.libsdl.org/projects/Maelstrom/source.html",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:36:30 GMT",
+      "Server": "Apache/2.4.58 (Ubuntu)",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Last-Modified": "Sat, 17 Aug 2013 17:28:45 GMT",
+      "ETag": "\"d93-4e4280a088d40\"",
+      "Accept-Ranges": "bytes",
+      "Content-Length": "3475",
+      "Vary": "Accept-Encoding",
+      "Connection": "close",
+      "Content-Type": "text/html"
+    },
+    "bytes": 3475,
+    "sha256": "d0b3ec91de64a73e13535d6715dd004148aa0af178e55383842d1ab49c78e649",
+    "exit": 0
+  },
+  "historical-release-index.html.receipt.json": {
+    "url": "https://www.libsdl.org/projects/Maelstrom/release/",
+    "limit": 131072,
+    "final_url": "https://www.libsdl.org/projects/Maelstrom/release/",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:34:57 GMT",
+      "Server": "Apache/2.4.58 (Ubuntu)",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Vary": "Accept-Encoding",
+      "Content-Length": "5661",
+      "Connection": "close",
+      "Content-Type": "text/html;charset=UTF-8"
+    },
+    "bytes": 5661,
+    "sha256": "9b74902468cfbf19514679ce81008eb783f0a34b434fc359e4c927e750debc8f",
+    "exit": 0
+  },
+  "releases.json.receipt.json": {
+    "url": "https://api.github.com/repos/libsdl-org/Maelstrom/releases",
+    "limit": 262144,
+    "final_url": "https://api.github.com/repos/libsdl-org/Maelstrom/releases",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:34:50 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "public, max-age=60, s-maxage=60",
+      "Vary": "Accept,Accept-Encoding, Accept, X-Requested-With",
+      "ETag": "W/\"276546be120a65a471a1894d2dd3ddb1d5a4825a07804a09e1d5bb96d8a23983\"",
+      "X-GitHub-Media-Type": "github.v3; format=json",
+      "x-github-api-version-selected": "2022-11-28",
+      "Access-Control-Expose-Headers": "ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning",
+      "Access-Control-Allow-Origin": "*",
+      "Strict-Transport-Security": "max-age=31536000; includeSubdomains; preload",
+      "X-Frame-Options": "deny",
+      "X-Content-Type-Options": "nosniff",
+      "X-XSS-Protection": "0",
+      "Referrer-Policy": "origin-when-cross-origin, strict-origin-when-cross-origin",
+      "Content-Security-Policy": "default-src 'none'",
+      "Server": "github.com",
+      "Accept-Ranges": "bytes",
+      "X-RateLimit-Limit": "60",
+      "X-RateLimit-Remaining": "58",
+      "X-RateLimit-Used": "2",
+      "X-RateLimit-Resource": "core",
+      "X-RateLimit-Reset": "1792827128",
+      "Transfer-Encoding": "chunked",
+      "X-GitHub-Request-Id": "EC40:1046D1:46BB745:69D5947:6ADC518A",
+      "x-github-edge-region": "fra",
+      "connection": "close"
+    },
+    "bytes": 27530,
+    "sha256": "276546be120a65a471a1894d2dd3ddb1d5a4825a07804a09e1d5bb96d8a23983",
+    "exit": 0
+  },
+  "original_archive": {
+    "url": "https://slouken.libsdl.org/projects/Maelstrom/bin/Maelstrom-3.0.6-Windows.zip",
+    "limit": 2097152,
+    "final_url": "https://slouken.libsdl.org/projects/Maelstrom/bin/Maelstrom-3.0.6-Windows.zip",
+    "status": 200,
+    "headers": {
+      "Date": "Sat, 24 Oct 2026 06:35:32 GMT",
+      "Server": "Apache/2.4.58 (Ubuntu)",
+      "Strict-Transport-Security": "max-age=31536000",
+      "Last-Modified": "Sat, 17 Aug 2013 17:28:43 GMT",
+      "ETag": "\"dd3ec-4e42809ea08c0\"",
+      "Accept-Ranges": "bytes",
+      "Content-Length": "906220",
+      "Connection": "close",
+      "Content-Type": "application/zip"
+    },
+    "bytes": 906220,
+    "sha256": "6cc9ef78eda9a0c3591dbd6f67b8c534682ef3f30bda0acd3b0138a0a0c52db5",
+    "exit": 0
+  }
+}

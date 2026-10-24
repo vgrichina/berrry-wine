@@ -1,0 +1,212 @@
+[
+  {
+    "source_path": "Maelstrom-3.0.6/Maelstrom_Sprites",
+    "windows_path": "Maelstrom_Sprites",
+    "source_sha256": "4adedd68054508eca34052a62008cd4b65e0e157677e69462fee3ae78a945195",
+    "windows_sha256": "4adedd68054508eca34052a62008cd4b65e0e157677e69462fee3ae78a945195",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/icon.bmp",
+    "windows_path": "icon.bmp",
+    "source_sha256": "fdfb76dcfbc453ba4c5baee6eb38bb737514ed4f505254bb49b99426c1d005fd",
+    "windows_sha256": "fdfb76dcfbc453ba4c5baee6eb38bb737514ed4f505254bb49b99426c1d005fd",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Maelstrom_Fonts",
+    "windows_path": "Maelstrom_Fonts",
+    "source_sha256": "9435a3d03d985a0d28f4dcfb1f8ad2f3ebd4619975c44e29e8bc94dadd27ac0b",
+    "windows_sha256": "9435a3d03d985a0d28f4dcfb1f8ad2f3ebd4619975c44e29e8bc94dadd27ac0b",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#133.bmp",
+    "windows_path": "Images/Maelstrom_Titles#133.bmp",
+    "source_sha256": "9c9d544de30d594f837e5280de5fdea8b17d8d9666ebff360c593eae601a6300",
+    "windows_sha256": "9c9d544de30d594f837e5280de5fdea8b17d8d9666ebff360c593eae601a6300",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#130.cicn",
+    "windows_path": "Images/Maelstrom_Icon#130.cicn",
+    "source_sha256": "28f15ccfc40ef989353a244f9d81a9b169b4deb4e90ebb12b1e39520033b5dcf",
+    "windows_sha256": "28f15ccfc40ef989353a244f9d81a9b169b4deb4e90ebb12b1e39520033b5dcf",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#128.bmp",
+    "windows_path": "Images/Maelstrom_Titles#128.bmp",
+    "source_sha256": "39568c8f6e10d215a1e42c8ebcfdade3bc3e7e8fb3011fe6a8ce76f2d5df1184",
+    "windows_sha256": "39568c8f6e10d215a1e42c8ebcfdade3bc3e7e8fb3011fe6a8ce76f2d5df1184",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#999.bmp",
+    "windows_path": "Images/Maelstrom_Titles#999.bmp",
+    "source_sha256": "290a11da3b8a80d910db75efebc1016ffd763d7be0347412133ae66c62e48610",
+    "windows_sha256": "a1b8d3c34063e2d3fe4e19ab94b15401e7e9f8b341bb6d26e215a27f6851b8d1",
+    "equal": false
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#100.cicn",
+    "windows_path": "Images/Maelstrom_Icon#100.cicn",
+    "source_sha256": "b6c35eb355140160ddb7f65aec08eaa62ea2ac7e8505c9fec6572d7f08fbaaa1",
+    "windows_sha256": "b6c35eb355140160ddb7f65aec08eaa62ea2ac7e8505c9fec6572d7f08fbaaa1",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#131.cicn",
+    "windows_path": "Images/Maelstrom_Icon#131.cicn",
+    "source_sha256": "88863846862eadf41d7b6b7c3a56463d53d0108d05fc0e9ff1f977d960ecdb84",
+    "windows_sha256": "88863846862eadf41d7b6b7c3a56463d53d0108d05fc0e9ff1f977d960ecdb84",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#129.bmp",
+    "windows_path": "Images/Maelstrom_Titles#129.bmp",
+    "source_sha256": "543ebbea174430514e840fa81c7a7d252c7b9b46ac587b6d874918987a9e3f69",
+    "windows_sha256": "543ebbea174430514e840fa81c7a7d252c7b9b46ac587b6d874918987a9e3f69",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#102.bmp",
+    "windows_path": "Images/Maelstrom_Titles#102.bmp",
+    "source_sha256": "b6b785b7a6ed5de0c07e0536defdda8469dc307bb6210f477eb938d20f620204",
+    "windows_sha256": "b6b785b7a6ed5de0c07e0536defdda8469dc307bb6210f477eb938d20f620204",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#136.cicn",
+    "windows_path": "Images/Maelstrom_Icon#136.cicn",
+    "source_sha256": "2e68c846692c0b109b2eb03be9e38c4fab0577f86b60d1e8d5adb474da5e46ac",
+    "windows_sha256": "2e68c846692c0b109b2eb03be9e38c4fab0577f86b60d1e8d5adb474da5e46ac",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#132.cicn",
+    "windows_path": "Images/Maelstrom_Icon#132.cicn",
+    "source_sha256": "8e4cb326b5ba15b5dfba716e237078608a551b4c767eb86a6fa36755997a4aea",
+    "windows_sha256": "8e4cb326b5ba15b5dfba716e237078608a551b4c767eb86a6fa36755997a4aea",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#110.cicn",
+    "windows_path": "Images/Maelstrom_Icon#110.cicn",
+    "source_sha256": "15e10b303f85a2f37b11fe51942d3737939d82cbfbc30fadbd9901db4d9424c5",
+    "windows_sha256": "15e10b303f85a2f37b11fe51942d3737939d82cbfbc30fadbd9901db4d9424c5",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#134.bmp",
+    "windows_path": "Images/Maelstrom_Titles#134.bmp",
+    "source_sha256": "6da118f013416f623750854625881ce33a0165436ef2a77ecf5ef84156058863",
+    "windows_sha256": "6da118f013416f623750854625881ce33a0165436ef2a77ecf5ef84156058863",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#137.cicn",
+    "windows_path": "Images/Maelstrom_Icon#137.cicn",
+    "source_sha256": "1bf4ec939cd2f14277dd34e815f763c9401ffbd57ad85b9d2fbba85efb738b04",
+    "windows_sha256": "1bf4ec939cd2f14277dd34e815f763c9401ffbd57ad85b9d2fbba85efb738b04",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#100.bmp",
+    "windows_path": "Images/Maelstrom_Titles#100.bmp",
+    "source_sha256": "831c71d74411e5db8cf16841d71c00e5315c1cad35e55d0a6a5b7aeb0dd2877b",
+    "windows_sha256": "831c71d74411e5db8cf16841d71c00e5315c1cad35e55d0a6a5b7aeb0dd2877b",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#129.cicn",
+    "windows_path": "Images/Maelstrom_Icon#129.cicn",
+    "source_sha256": "f15bc9cebc7d698dbae6821e29dfe63f69d370141cf068bc6442a19b4627d20d",
+    "windows_sha256": "f15bc9cebc7d698dbae6821e29dfe63f69d370141cf068bc6442a19b4627d20d",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#134.cicn",
+    "windows_path": "Images/Maelstrom_Icon#134.cicn",
+    "source_sha256": "8d42867053fcf68a33b0ef1deb55b655ec03eaad599fbba3617c5354554e0dd7",
+    "windows_sha256": "8d42867053fcf68a33b0ef1deb55b655ec03eaad599fbba3617c5354554e0dd7",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#103.cicn",
+    "windows_path": "Images/Maelstrom_Icon#103.cicn",
+    "source_sha256": "89784c08b62566959373c78a6bf1325a343ef8a3c7cbbeb90d3d5c4075a04334",
+    "windows_sha256": "89784c08b62566959373c78a6bf1325a343ef8a3c7cbbeb90d3d5c4075a04334",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#101.bmp",
+    "windows_path": "Images/Maelstrom_Titles#101.bmp",
+    "source_sha256": "f0c45c6f57c042a9b4d6c065c625aff95b5e42124c81da7a94d11cbdd41db8ca",
+    "windows_sha256": "f0c45c6f57c042a9b4d6c065c625aff95b5e42124c81da7a94d11cbdd41db8ca",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#133.cicn",
+    "windows_path": "Images/Maelstrom_Icon#133.cicn",
+    "source_sha256": "264babd78e8326d34ab592527b10a028cd93f500d76bedc166b90bd951692c44",
+    "windows_sha256": "264babd78e8326d34ab592527b10a028cd93f500d76bedc166b90bd951692c44",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#128.cicn",
+    "windows_path": "Images/Maelstrom_Icon#128.cicn",
+    "source_sha256": "a10877a69ac340765f07547c0cacfd348672d9c5183b67628be257fdbe5f5103",
+    "windows_sha256": "a10877a69ac340765f07547c0cacfd348672d9c5183b67628be257fdbe5f5103",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#130.bmp",
+    "windows_path": "Images/Maelstrom_Titles#130.bmp",
+    "source_sha256": "9d5d1deaf048d3b1be2a6675c6a7d915a7fff0e0abb7ac176b138beeaa60929c",
+    "windows_sha256": "9d5d1deaf048d3b1be2a6675c6a7d915a7fff0e0abb7ac176b138beeaa60929c",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#104.cicn",
+    "windows_path": "Images/Maelstrom_Icon#104.cicn",
+    "source_sha256": "eb4ea9991ccd640dbf9fe0cc002b52b7999c9d6c07a8ebe9473758796eb586aa",
+    "windows_sha256": "eb4ea9991ccd640dbf9fe0cc002b52b7999c9d6c07a8ebe9473758796eb586aa",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Titles#135.bmp",
+    "windows_path": "Images/Maelstrom_Titles#135.bmp",
+    "source_sha256": "b3ae1df44badfaf944eb524f9db85a931e89da51720489d408b6009d3c8260a6",
+    "windows_sha256": "b3ae1df44badfaf944eb524f9db85a931e89da51720489d408b6009d3c8260a6",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#101.cicn",
+    "windows_path": "Images/Maelstrom_Icon#101.cicn",
+    "source_sha256": "c663d036dd37c53c627cc9c4287eb0260dd60c83c29bd879fd2f7c9ca6a3aa64",
+    "windows_sha256": "c663d036dd37c53c627cc9c4287eb0260dd60c83c29bd879fd2f7c9ca6a3aa64",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#135.cicn",
+    "windows_path": "Images/Maelstrom_Icon#135.cicn",
+    "source_sha256": "64198cf80de13b48c5b0d65a2b89ad24ade4a57dba96f18682df8ee9ed46ab58",
+    "windows_sha256": "64198cf80de13b48c5b0d65a2b89ad24ade4a57dba96f18682df8ee9ed46ab58",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Images/Maelstrom_Icon#102.cicn",
+    "windows_path": "Images/Maelstrom_Icon#102.cicn",
+    "source_sha256": "d98ec7a709b3ea16df62c5a7457de1eaef25210c6e93f9ed20e791354e129def",
+    "windows_sha256": "d98ec7a709b3ea16df62c5a7457de1eaef25210c6e93f9ed20e791354e129def",
+    "equal": true
+  },
+  {
+    "source_path": "Maelstrom-3.0.6/Maelstrom_Sounds",
+    "windows_path": "Maelstrom_Sounds",
+    "source_sha256": "e0ae5e50fefa890ef1f316c9e91ef0b36f9097a10fe49cb8238862461a16f492",
+    "windows_sha256": "e0ae5e50fefa890ef1f316c9e91ef0b36f9097a10fe49cb8238862461a16f492",
+    "equal": true
+  }
+]

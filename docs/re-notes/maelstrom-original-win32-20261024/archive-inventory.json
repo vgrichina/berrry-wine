@@ -1,0 +1,313 @@
+{
+  "files": [
+    {
+      "name": "Maelstrom-3.0.6/",
+      "bytes": 0,
+      "compressed": 0,
+      "crc": "0x0"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/",
+      "bytes": 0,
+      "compressed": 0,
+      "crc": "0x0"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Networking.Paper",
+      "bytes": 9606,
+      "compressed": 3827,
+      "crc": "0x132d3156"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Porting.Paper",
+      "bytes": 19689,
+      "compressed": 8120,
+      "crc": "0x6354dbed"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Ambrosia_Software,_Inc._FAQ.txt",
+      "bytes": 19086,
+      "compressed": 6587,
+      "crc": "0x39edcc57"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Technical_Notes-v1.0",
+      "bytes": 14644,
+      "compressed": 5846,
+      "crc": "0x288ac1ec"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Technical_Notes-v1.1",
+      "bytes": 1279,
+      "compressed": 663,
+      "crc": "0x4c873546"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/Technical_Notes-v2.0",
+      "bytes": 6676,
+      "compressed": 2692,
+      "crc": "0x8073560"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Docs/MaelstromGPL_press_release.txt",
+      "bytes": 5153,
+      "compressed": 2432,
+      "crc": "0x35e33405"
+    },
+    {
+      "name": "Maelstrom-3.0.6/SDL_net.dll",
+      "bytes": 24576,
+      "compressed": 4316,
+      "crc": "0x80ccf50b"
+    },
+    {
+      "name": "Maelstrom-3.0.6/SDL.dll",
+      "bytes": 225280,
+      "compressed": 95590,
+      "crc": "0xfa94d528"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/",
+      "bytes": 0,
+      "compressed": 0,
+      "crc": "0x0"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#101.cicn",
+      "bytes": 1156,
+      "compressed": 133,
+      "crc": "0xf8adbc97"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#102.cicn",
+      "bytes": 1156,
+      "compressed": 298,
+      "crc": "0x5ade8744"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#103.cicn",
+      "bytes": 1156,
+      "compressed": 451,
+      "crc": "0x97ba56f5"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#104.cicn",
+      "bytes": 1156,
+      "compressed": 364,
+      "crc": "0xed6f5080"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#999.bmp",
+      "bytes": 92598,
+      "compressed": 21245,
+      "crc": "0xc59b286a"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#110.cicn",
+      "bytes": 1156,
+      "compressed": 310,
+      "crc": "0x272ab2d1"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#128.cicn",
+      "bytes": 76,
+      "compressed": 41,
+      "crc": "0x66575a36"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#129.cicn",
+      "bytes": 76,
+      "compressed": 51,
+      "crc": "0x85ab22fc"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#130.cicn",
+      "bytes": 76,
+      "compressed": 22,
+      "crc": "0x62d94d37"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#131.cicn",
+      "bytes": 76,
+      "compressed": 21,
+      "crc": "0x9080bf31"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#132.cicn",
+      "bytes": 76,
+      "compressed": 26,
+      "crc": "0xbc2f2797"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#133.cicn",
+      "bytes": 76,
+      "compressed": 43,
+      "crc": "0x43cd818f"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#134.cicn",
+      "bytes": 76,
+      "compressed": 25,
+      "crc": "0x1c3ad535"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#135.cicn",
+      "bytes": 76,
+      "compressed": 38,
+      "crc": "0xa9111846"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#136.cicn",
+      "bytes": 76,
+      "compressed": 29,
+      "crc": "0xa2be4241"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#137.cicn",
+      "bytes": 76,
+      "compressed": 44,
+      "crc": "0xea7abe70"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#100.bmp",
+      "bytes": 24478,
+      "compressed": 3795,
+      "crc": "0xe4092cba"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#101.bmp",
+      "bytes": 22278,
+      "compressed": 3911,
+      "crc": "0xf8cdd659"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#102.bmp",
+      "bytes": 14478,
+      "compressed": 2956,
+      "crc": "0x51d06f09"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#128.bmp",
+      "bytes": 17654,
+      "compressed": 3861,
+      "crc": "0x9f0c414"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#129.bmp",
+      "bytes": 42262,
+      "compressed": 10534,
+      "crc": "0xab96e699"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#130.bmp",
+      "bytes": 197686,
+      "compressed": 55358,
+      "crc": "0x98ea2cf7"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#133.bmp",
+      "bytes": 197686,
+      "compressed": 9794,
+      "crc": "0x148a64a8"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#134.bmp",
+      "bytes": 197686,
+      "compressed": 6693,
+      "crc": "0xda88cddb"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Titles#135.bmp",
+      "bytes": 197686,
+      "compressed": 6803,
+      "crc": "0xb3e6561b"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Images/Maelstrom_Icon#100.cicn",
+      "bytes": 1156,
+      "compressed": 95,
+      "crc": "0x1aaafd05"
+    },
+    {
+      "name": "Maelstrom-3.0.6/README.joystick.txt",
+      "bytes": 352,
+      "compressed": 231,
+      "crc": "0xe42152b8"
+    },
+    {
+      "name": "Maelstrom-3.0.6/COPYING.GPL.txt",
+      "bytes": 15429,
+      "compressed": 5883,
+      "crc": "0x799ea71a"
+    },
+    {
+      "name": "Maelstrom-3.0.6/COPYING.txt",
+      "bytes": 568,
+      "compressed": 347,
+      "crc": "0x59fa612a"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Maelstrom_Fonts",
+      "bytes": 153211,
+      "compressed": 93115,
+      "crc": "0xec8c9e1d"
+    },
+    {
+      "name": "Maelstrom-3.0.6/icon.bmp",
+      "bytes": 2732,
+      "compressed": 1259,
+      "crc": "0x4738ee52"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Maelstrom-Scores",
+      "bytes": 280,
+      "compressed": 157,
+      "crc": "0xb6daee1e"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Maelstrom_Sprites",
+      "bytes": 729966,
+      "compressed": 163177,
+      "crc": "0x48cf96f1"
+    },
+    {
+      "name": "Maelstrom-3.0.6/README-SDL.txt",
+      "bytes": 425,
+      "compressed": 261,
+      "crc": "0x7063ff1e"
+    },
+    {
+      "name": "Maelstrom-3.0.6/README.txt",
+      "bytes": 1042,
+      "compressed": 535,
+      "crc": "0xeb571c06"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Maelstrom.exe",
+      "bytes": 135168,
+      "compressed": 57554,
+      "crc": "0x18c1b0d5"
+    },
+    {
+      "name": "Maelstrom-3.0.6/Maelstrom_Sounds",
+      "bytes": 413235,
+      "compressed": 315489,
+      "crc": "0x912f2fb2"
+    },
+    {
+      "name": "Maelstrom-3.0.6/README.network.txt",
+      "bytes": 1160,
+      "compressed": 495,
+      "crc": "0x7675c609"
+    },
+    {
+      "name": "Maelstrom-3.0.6/README.options.txt",
+      "bytes": 2425,
+      "compressed": 1049,
+      "crc": "0x998842a3"
+    }
+  ],
+  "expanded_bytes": 2794170,
+  "compressed_bytes": 906220,
+  "overlap_bytes": 3700390
+}

@@ -1,0 +1,7 @@
+{
+  "actual_wrapper": "repo/tools/maelstrom-batch.py",
+  "guard_exit": 42,
+  "wrapper_exit": 42,
+  "sentinel_exists": false,
+  "pass": true
+}

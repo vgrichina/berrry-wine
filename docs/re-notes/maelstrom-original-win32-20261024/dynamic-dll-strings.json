@@ -1,0 +1,92 @@
+{
+  "Maelstrom.exe": [
+    {
+      "offset": 108254,
+      "name": "SDL.dll"
+    },
+    {
+      "offset": 108574,
+      "name": "SDL_net.dll"
+    },
+    {
+      "offset": 108924,
+      "name": "MSVCRT.dll"
+    },
+    {
+      "offset": 109176,
+      "name": "KERNEL32.dll"
+    },
+    {
+      "offset": 126996,
+      "name": "DDRAW.DLL"
+    }
+  ],
+  "SDL.dll": [
+    {
+      "offset": 183164,
+      "name": "WINMM.dll"
+    },
+    {
+      "offset": 183528,
+      "name": "KERNEL32.dll"
+    },
+    {
+      "offset": 184504,
+      "name": "USER32.dll"
+    },
+    {
+      "offset": 184900,
+      "name": "GDI32.dll"
+    },
+    {
+      "offset": 185120,
+      "name": "MSVCRT.dll"
+    },
+    {
+      "offset": 187010,
+      "name": "SDL.dll"
+    },
+    {
+      "offset": 193868,
+      "name": "DSOUND.DLL"
+    },
+    {
+      "offset": 199924,
+      "name": "DDRAW.DLL"
+    },
+    {
+      "offset": 199936,
+      "name": "DINPUT.DLL"
+    },
+    {
+      "offset": 205152,
+      "name": "USER32.DLL"
+    },
+    {
+      "offset": 207420,
+      "name": "OPENGL32.DLL"
+    }
+  ],
+  "SDL_net.dll": [
+    {
+      "offset": 8548,
+      "name": "WSOCK32.dll"
+    },
+    {
+      "offset": 8576,
+      "name": "SDL.dll"
+    },
+    {
+      "offset": 8612,
+      "name": "MSVCRT.dll"
+    },
+    {
+      "offset": 8680,
+      "name": "KERNEL32.dll"
+    },
+    {
+      "offset": 9074,
+      "name": "SDL_net.dll"
+    }
+  ]
+}

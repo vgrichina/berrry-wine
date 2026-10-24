@@ -1,0 +1,137 @@
+{
+  "status": "PASS",
+  "tests": [
+    {
+      "test": "pristine original archive and all files",
+      "exit": 0,
+      "stdout": "{\"files\": 48, \"gameplay\": \"NOT RUN\", \"modules\": 3, \"packaged_symbol_bindings\": 58, \"status\": \"PASS static packaged closure\", \"system_dlls\": [\"gdi32.dll\", \"kernel32.dll\", \"msvcrt.dll\", \"user32.dll\", \"winmm.dll\", \"wsock32.dll\"]}",
+      "stderr": ""
+    },
+    {
+      "test": "reproducible guarded extraction",
+      "exit": 0,
+      "stdout": "{\"files\": 48, \"gameplay\": \"NOT RUN\", \"modules\": 3, \"packaged_symbol_bindings\": 58, \"status\": \"PASS static packaged closure\", \"system_dlls\": [\"gdi32.dll\", \"kernel32.dll\", \"msvcrt.dll\", \"user32.dll\", \"winmm.dll\", \"wsock32.dll\"]}",
+      "stderr": ""
+    },
+    {
+      "test": "existing extraction refused",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: extraction destination already exists"
+    },
+    {
+      "test": "missing Maelstrom.exe",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['Maelstrom.exe']"
+    },
+    {
+      "test": "missing SDL.dll",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['SDL.dll']"
+    },
+    {
+      "test": "missing SDL_net.dll",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['SDL_net.dll']"
+    },
+    {
+      "test": "missing Maelstrom_Sprites",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['Maelstrom_Sprites']"
+    },
+    {
+      "test": "missing Maelstrom_Fonts",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['Maelstrom_Fonts']"
+    },
+    {
+      "test": "missing Maelstrom_Sounds",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['Maelstrom_Sounds']"
+    },
+    {
+      "test": "missing Images/Maelstrom_Titles#130.bmp",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['Images/Maelstrom_Titles#130.bmp']"
+    },
+    {
+      "test": "missing COPYING.txt",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: missing/extra files: ['COPYING.txt']"
+    },
+    {
+      "test": "changed byte Maelstrom.exe",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: file SHA256 mismatch: Maelstrom.exe"
+    },
+    {
+      "test": "changed byte SDL.dll",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: file SHA256 mismatch: SDL.dll"
+    },
+    {
+      "test": "changed byte SDL_net.dll",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: file SHA256 mismatch: SDL_net.dll"
+    },
+    {
+      "test": "changed byte Maelstrom_Sprites",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: file SHA256 mismatch: Maelstrom_Sprites"
+    },
+    {
+      "test": "changed byte Images/Maelstrom_Icon#100.cicn",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: file SHA256 mismatch: Images/Maelstrom_Icon#100.cicn"
+    },
+    {
+      "test": "changed archive byte",
+      "exit": 1,
+      "stdout": "",
+      "stderr": "REJECT: archive SHA256 mismatch"
+    },
+    {
+      "test": "actual batch/shared byte guard propagates rejection, sentinel absent",
+      "exit": 42
+    },
+    {
+      "test": "missing recursive SDL dependency",
+      "rejected": "missing non-system DLL: sdl.dll"
+    },
+    {
+      "test": "unsatisfied EXE SDL export",
+      "rejected": "unsatisfied export: sdl.dll!SDL_Init"
+    },
+    {
+      "test": "unsatisfied SDL_net -> SDL export",
+      "rejected": "unsatisfied export: sdl.dll!SDL_SetError"
+    },
+    {
+      "test": "export forwarder to absent DLL",
+      "rejected": "missing non-system DLL: absent.dll"
+    },
+    {
+      "test": "malformed/truncated PE",
+      "rejected": "missing PE"
+    },
+    {
+      "test": "restored original bytes",
+      "exit": 0,
+      "stdout": "{\"files\": 48, \"gameplay\": \"NOT RUN\", \"modules\": 3, \"packaged_symbol_bindings\": 58, \"status\": \"PASS static packaged closure\", \"system_dlls\": [\"gdi32.dll\", \"kernel32.dll\", \"msvcrt.dll\", \"user32.dll\", \"winmm.dll\", \"wsock32.dll\"]}",
+      "stderr": ""
+    }
+  ]
+}
