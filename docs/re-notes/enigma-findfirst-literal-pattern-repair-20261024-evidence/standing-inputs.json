@@ -1,0 +1,50 @@
+{
+  "node": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "standingBytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "git": {
+    "path": "/usr/bin/git",
+    "standingBytes": 4066232,
+    "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+  },
+  "python3": {
+    "path": "/usr/bin/python3.12",
+    "standingBytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "timeout": {
+    "path": "/usr/bin/timeout",
+    "standingBytes": 39880,
+    "sha256": "4fccd5b0192653a2446b745d5385ea547b78e466150e07ade9e2caff2b7f4e08"
+  },
+  "ssh": {
+    "path": "/usr/bin/ssh",
+    "standingBytes": 846888,
+    "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+  },
+  "readonlySelectedDonorBlobs": {
+    "CLAUDE.md": {
+      "bytes": 22221,
+      "sha256": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb"
+    },
+    "lib/filesystem.js": {
+      "bytes": 157994,
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+    },
+    "lib/mem-utils.js": {
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    "lib/region-map.generated.js": {
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    "tools/test-tiers.js": {
+      "bytes": 7763,
+      "sha256": "705ed852b9fff9a2942e1aaabe1e6bfffacb3547dcba9227010a5ac0f46e49b7"
+    }
+  },
+  "standingObjectViews": "Symlinks to readonly donor object paths; no copied stores, only task-owned metadata charged. Exact paths in alternates.json."
+}

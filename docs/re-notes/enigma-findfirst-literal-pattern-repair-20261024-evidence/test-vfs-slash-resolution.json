@@ -1,0 +1,22 @@
+{
+  "label": "test-vfs-slash-resolution",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "--max-old-space-size=256",
+    "test/test-vfs-slash-resolution.js"
+  ],
+  "gate": {
+    "memAvailable": 2953052160,
+    "hostFree": 3716120576,
+    "projectedIncremental": 40201062,
+    "memFloor": 805306368,
+    "hostFreeAfterFloor": 2982150144
+  },
+  "elapsedSeconds": 0.028322043013758957,
+  "exit": 0,
+  "stdout": "PASS slash normalization before drive/UNC/root/relative classification; actual chdir and relative file lookup; no guest\n",
+  "stderr": "",
+  "expected": true
+}

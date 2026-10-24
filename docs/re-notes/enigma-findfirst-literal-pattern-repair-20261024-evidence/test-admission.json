@@ -1,0 +1,15 @@
+{
+  "mem": 2993459200,
+  "mem_floor": 805306368,
+  "free": 3717771264,
+  "projected": 40201062,
+  "pass": true,
+  "node_heap_mib": 256,
+  "cpu_wall_seconds": 60,
+  "dependencies": [
+    "lib/filesystem.js",
+    "lib/mem-utils.js",
+    "lib/region-map.generated.js"
+  ],
+  "dependency_bytes": 207668
+}

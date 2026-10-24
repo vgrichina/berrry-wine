@@ -1,0 +1,23 @@
+{
+  "label": "unescaped-parentheses",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/enigma-findfirst-literal-pattern-repair-oct24/repo/test/test-vfs-findfirst-literals.js",
+    "/tmp/enigma-findfirst-literal-pattern-repair-oct24/repo/docs/re-notes/enigma-findfirst-literal-pattern-repair-20261024-evidence/findfirst-controls-wzf_veok/unescaped-parentheses.js"
+  ],
+  "gate": {
+    "memAvailable": 2943664128,
+    "hostFree": 3715465216,
+    "projectedIncremental": 40201062,
+    "memFloor": 805306368,
+    "hostFreeAfterFloor": 2982150144
+  },
+  "elapsedSeconds": 0.028194856946356595,
+  "exit": 1,
+  "stdout": "",
+  "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: (ab).txt\n+ actual - expected\n\n  [\n+   'ab.txt'\n-   '(ab).txt'\n  ]\n\n    at Object.<anonymous> (/tmp/enigma-findfirst-literal-pattern-repair-oct24/repo/test/test-vfs-findfirst-literals.js:53:10)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: [ 'ab.txt' ],\n  expected: [ '(ab).txt' ],\n  operator: 'deepStrictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n",
+  "expected": false
+}

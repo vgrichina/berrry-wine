@@ -1,0 +1,8 @@
+{
+  "baseCommit": "979042c93eec78095d0e4ee078d4efb25a55a5ff",
+  "baselineBlob": "d1d97aab7235ae58ff0fbff6ac84687744a92f40",
+  "runtimeReportPath": "/tmp/enigma-quiet-filesystem-startup-oct24/repo/docs/re-notes/enigma-quiet-filesystem-startup-20261024.md",
+  "runtimeReportSHA256": "0d03bcfda0532b33a6997ca882e405daf0c10f29c84cafa39c8fdc9a60b4ce9a",
+  "runtimeReportCommit": "6f8e9294d7bd15ca33ee1a4955d4309820fb5de8",
+  "readonlyInputs": "Original runtime inputs and donors untouched; only exact current-main production source used"
+}

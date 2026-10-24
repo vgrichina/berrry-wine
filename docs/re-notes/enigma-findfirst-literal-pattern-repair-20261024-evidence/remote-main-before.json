@@ -1,0 +1,6 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "returncode": 0,
+  "stdout": "979042c93eec78095d0e4ee078d4efb25a55a5ff\trefs/heads/main\n",
+  "stderr": ""
+}

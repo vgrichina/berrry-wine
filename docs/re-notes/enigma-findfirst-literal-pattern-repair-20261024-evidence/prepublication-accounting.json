@@ -1,0 +1,31 @@
+{
+  "task": {
+    "logical": 2357837,
+    "allocated": 11411456,
+    "largest": 1181780
+  },
+  "externalFullCurrent": {
+    "/home/user/.codex/sessions/2026/10/24/rollout-2026-10-24T10-34-24-01a16d79-d783-7072-99f5-98b0cc25fbd7.jsonl": 568800,
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-findfirst-literal-pattern-repair-oct24/stderr.log": 189,
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-findfirst-literal-pattern-repair-oct24/dispatch.json": 973,
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-findfirst-literal-pattern-repair-oct24/events.jsonl": 147923
+  },
+  "sqlitePositiveGrowth": {
+    "/home/user/.codex/state_5.sqlite": 53248,
+    "/home/user/.codex/state_5.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 0,
+    "/home/user/.codex/history.jsonl": 0
+  },
+  "projectedPeakUnchanged": 40201062,
+  "reserve": 8388608,
+  "hostFree": 3081637888,
+  "hostFreeAfterProjection": 3041436826,
+  "captureAllowance": 1048576,
+  "historyReset": false,
+  "limits": {
+    "total": 67108864,
+    "perFile": 25165824,
+    "hostFreeAfter": 2982150144
+  },
+  "pass": true
+}

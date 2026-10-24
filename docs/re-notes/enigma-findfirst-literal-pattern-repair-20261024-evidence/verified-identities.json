@@ -1,0 +1,7 @@
+{
+  "baselineSHA256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+  "candidateSHA256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+  "testSHA256": "f64ad4b0758b4abdfbcbaada059d93531da2366626bd075807cb1a864d4e6ab1",
+  "node": "v24.18.1",
+  "cleanup": "Temporary control modules removed; no guest, box, build or worker process started"
+}

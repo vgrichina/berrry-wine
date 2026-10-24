@@ -1,0 +1,23 @@
+{
+  "label": "test-tier",
+  "command": [
+    "timeout",
+    "60",
+    "node",
+    "--max-old-space-size=256",
+    "-e",
+    "const t=require('./tools/test-tiers'); const n='test-vfs-findfirst-literals.js'; if(t.classifyTest(n)!=='unit')process.exit(1); console.log(n+': unit by filename convention');"
+  ],
+  "gate": {
+    "memAvailable": 2953060352,
+    "hostFree": 3716112384,
+    "projectedIncremental": 40201062,
+    "memFloor": 805306368,
+    "hostFreeAfterFloor": 2982150144
+  },
+  "elapsedSeconds": 0.019726835074834526,
+  "exit": 0,
+  "stdout": "test-vfs-findfirst-literals.js: unit by filename convention\n",
+  "stderr": "",
+  "expected": true
+}
