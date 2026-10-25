@@ -10,6 +10,11 @@
     "sha256": "173f69e97803e40857756b0e0f59b92156097506c6a211d85eb52a8c2609c555"
   },
   {
+    "path": "initial-packaging-failure.json",
+    "bytes": 564,
+    "sha256": "d5bb5176bfde5bff12db2f979752e8fb364ff764413a8c94225222123b7b2b8f"
+  },
+  {
     "path": "reproduce.cjs",
     "bytes": 1991,
     "sha256": "dccbc1f1667332d85805146fb499bff94a744c6e95437368eedfa9dbcfa9f91c"
@@ -20,19 +25,14 @@
     "sha256": "6da58b9fd9500bb680514c15a1db66b3dc8bdbc5f280af0d7c312312adfc3961"
   },
   {
-    "path": "control.json",
-    "bytes": 564,
-    "sha256": "d5bb5176bfde5bff12db2f979752e8fb364ff764413a8c94225222123b7b2b8f"
-  },
-  {
     "path": "execution-admission.json",
     "bytes": 7828,
     "sha256": "96e33e15f36fc5db654804879ed31e792e10477f4c8ef7d379c7f03c980a62e1"
   },
   {
     "path": "README.md",
-    "bytes": 2389,
-    "sha256": "7dc551958950d6825b9784b0ba80d4b3de99ceb69aedb01484ef9c139379a5ef"
+    "bytes": 2959,
+    "sha256": "648756b51edd4280c4304bc16647280cfcd401173e2fb23521d055eade5f1c14"
   },
   {
     "path": "forged-source-binding.json",
