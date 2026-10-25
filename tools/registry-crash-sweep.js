@@ -14,8 +14,8 @@
 //     [--budget=300] [--batch-size=20000] [--seconds=90] [--timeout=150]
 //     [--baseline=FILE] [--limit=N]
 //
-// Resumable: an app whose DIR/<id>.log already exists is not run again, so a
-// long sweep can be done in bounded chunks (--limit=N runs at most N apps).
+// Resumable: only completed logs with matching run settings are reused.
+// Interrupted/legacy logs are rerun (--limit=N runs at most N apps).
 // Writes DIR/result.json (machine-readable) and DIR/table.md.
 const fs = require('fs');
 const path = require('path');
@@ -33,6 +33,7 @@ const BUDGET = Number(arg('budget', 300));
 const BATCH_SIZE = Number(arg('batch-size', 20000));
 const SECONDS = Number(arg('seconds', 90));
 const TIMEOUT = Number(arg('timeout', 150));
+const RUN_CONFIG = JSON.stringify({ budget: BUDGET, batchSize: BATCH_SIZE, seconds: SECONDS, timeout: TIMEOUT });
 const LIMIT = Number(arg('limit', Infinity));
 const BASELINE = path.resolve(ROOT, arg('baseline', 'docs/block-executor-design/sweep-2026-09-15.json'));
 // Same non-starters block-exec-sweep.js leaves out, plus the bigMemory apps:
@@ -54,20 +55,23 @@ const ids = (only.length ? only : Object.keys(APPS)).filter(id => !SKIP[id]);
 let baseline = new Map();
 try {
   for (const r of JSON.parse(fs.readFileSync(BASELINE, 'utf8')).results) {
-    const run = r.runs && (r.runs[`off${BUDGET}`] || r.runs.off300);
-    if (run) baseline.set(r.id, { crash: !!run.crash, crashLine: run.crashLine || null, painted: !!run.painted });
+    const run = r.runs && r.runs[`off${BUDGET}`];
+    if (run && typeof run.crash === 'boolean') baseline.set(r.id, { crash: run.crash, crashLine: run.crashLine || null, painted: !!run.painted });
   }
 } catch (_) { baseline = new Map(); }
 
 function runOne(id) {
   const png = path.join(OUT, `${id}.png`), log = path.join(OUT, `${id}.log`);
+  // A retried incomplete attempt must not inherit the previous screenshot.
+  fs.rmSync(png, { force: true });
   const args = [String(TIMEOUT), 'node', 'test/run.js', `--app=${id}`, '--no-build',
     `--batch-size=${BATCH_SIZE}`, `--max-batches=${BUDGET}`, `--max-seconds=${SECONDS}`,
     '--stuck-after=1000000', '--quiet-api', '--quiet-blocks', '--no-close', `--png=${png}`];
   return new Promise(resolve => {
     execFile('timeout', args, { cwd: ROOT, encoding: 'utf8', maxBuffer: 256 * 1024 * 1024 }, (err, stdout, stderr) => {
       const out = String(stdout || '') + String(stderr || '');
-      fs.writeFileSync(log, out + `\n[sweep] exit=${err ? (err.code == null ? -1 : err.code) : 0}\n`);
+      const code = err ? (Number.isInteger(err.code) ? err.code : -1) : 0;
+      fs.writeFileSync(log, `[sweep] config=${RUN_CONFIG}\n` + out + `\n[sweep] exit=${code}\n`);
       resolve();
     });
   });
@@ -76,7 +80,13 @@ function runOne(id) {
 function readResult(id) {
   const log = path.join(OUT, `${id}.log`);
   const out = fs.readFileSync(log, 'utf8');
-  const code = Number((/\[sweep\] exit=(-?\d+)/.exec(out) || [])[1]);
+  // Only the final, newline-terminated wrapper record proves completion.
+  // An earlier marker can belong to output followed by an interrupted attempt.
+  const exit = /(?:^|\n)\[sweep\] exit=(-?\d+)\n$/.exec(out);
+  const code = exit && Number.isSafeInteger(Number(exit[1])) ? Number(exit[1]) : null;
+  const config = /^\[sweep\] config=(.*)\n/.exec(out);
+  const settingsMatch = !!config && config[1] === RUN_CONFIG;
+  const completed = code !== null && settingsMatch;
   const crashLine = (out.split('\n').find(l => CRASH.test(l)) || '').trim().slice(0, 240) || null;
   let reached = null;
   for (const m of out.matchAll(/(\d+) batches in /g)) reached = Number(m[1]);
@@ -89,16 +99,19 @@ function readResult(id) {
   const status = crash ? (before ? (before.crash ? 'STILL CRASH' : 'NEW CRASH') : 'CRASH (no baseline)')
     : noFixture ? 'NO FIXTURE'
     : timedOut ? 'TIMEOUT'
+    : !completed ? 'INCOMPLETE'
+    : code !== 0 ? 'RUNNER ERROR'
+    : reached === null ? 'INCONCLUSIVE'
     : before && before.crash ? 'FIXED' : 'OK';
-  return { id, status, code, reached, painted: fs.existsSync(path.join(OUT, `${id}.png`)),
-    crashLine, baseline: before };
+  return { id, status, code, completed, settingsMatch, reached, painted: fs.existsSync(path.join(OUT, `${id}.png`)),
+    crashLine, baseline: before, baselineStatus: before ? 'MATCHED' : 'UNKNOWN' };
 }
 
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   let ran = 0;
   for (const id of ids) {
-    if (fs.existsSync(path.join(OUT, `${id}.log`))) continue;
+    if (fs.existsSync(path.join(OUT, `${id}.log`)) && readResult(id).completed) continue;
     if (ran >= LIMIT) break;
     process.stdout.write(`[${ids.indexOf(id) + 1}/${ids.length}] ${id} ... `);
     await runOne(id); ran++;
@@ -109,18 +122,21 @@ function readResult(id) {
   const counts = {};
   for (const r of results) counts[r.status] = (counts[r.status] || 0) + 1;
   const pending = ids.length - results.length;
+  const status = results.some(r => r.crashLine) ? 'FAIL'
+    : pending || results.some(r => !['OK', 'FIXED'].includes(r.status) || r.baselineStatus === 'UNKNOWN')
+      ? 'INCONCLUSIVE' : 'PASS';
   fs.writeFileSync(path.join(OUT, 'result.json'), JSON.stringify({
     generated: new Date().toISOString(), budget: BUDGET, batchSize: BATCH_SIZE, seconds: SECONDS,
-    baseline: path.relative(ROOT, BASELINE), counts, pending,
+    baseline: path.relative(ROOT, BASELINE), status, counts, pending,
     skipped: Object.entries(SKIP).filter(([id]) => APPS[id]).map(([id, why]) => ({ id, why })), results }, null, 1));
-  const order = ['NEW CRASH', 'CRASH (no baseline)', 'TIMEOUT', 'STILL CRASH', 'NO FIXTURE', 'FIXED', 'OK'];
+  const order = ['NEW CRASH', 'CRASH (no baseline)', 'TIMEOUT', 'STILL CRASH', 'RUNNER ERROR', 'INCOMPLETE', 'INCONCLUSIVE', 'NO FIXTURE', 'FIXED', 'OK'];
   const rows = results.slice().sort((a, b) => order.indexOf(a.status) - order.indexOf(b.status) || a.id.localeCompare(b.id));
   const md = [`# Registry crash sweep`, '',
-    `${results.length} of ${ids.length} apps run (${pending} pending), ${BUDGET} batches at --batch-size=${BATCH_SIZE}, ` +
-    `--max-seconds=${SECONDS}. Baseline: ${path.relative(ROOT, BASELINE)} (off@${BUDGET}).`, '',
+    `Summary: **${status}**. ${results.length} of ${ids.length} apps have logs (${pending} pending), ${BUDGET} batches at --batch-size=${BATCH_SIZE}, ` +
+    `--max-seconds=${SECONDS}. Baseline requested: ${path.relative(ROOT, BASELINE)} (exact off@${BUDGET}; unmatched rows are UNKNOWN).`, '',
     Object.entries(counts).map(([k, v]) => `**${v}** ${k}`).join(' · '), '',
-    '| app | status | exit | batches | crash line |', '|---|---|---|---|---|',
-    ...rows.map(r => `| ${r.id} | ${r.status} | ${r.code} | ${r.reached ?? '-'} | ${r.crashLine ? '`' + r.crashLine.replace(/\|/g, '\\|') + '`' : ''} |`)];
+    '| app | status | exit | batches | baseline | crash line |', '|---|---|---|---|---|---|',
+    ...rows.map(r => `| ${r.id} | ${r.status} | ${r.code ?? 'unknown'} | ${r.reached ?? '-'} | ${r.baselineStatus} | ${r.crashLine ? '`' + r.crashLine.replace(/\|/g, '\\|') + '`' : ''} |`)];
   fs.writeFileSync(path.join(OUT, 'table.md'), md.join('\n') + '\n');
   console.log(`counts ${JSON.stringify(counts)} pending ${pending}`);
 })().catch(error => { console.error(error); process.exitCode = 1; });
