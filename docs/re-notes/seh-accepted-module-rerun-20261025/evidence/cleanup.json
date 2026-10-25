@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-25T22:39:14.008249+00:00",
+  "watcherStopped": true,
+  "heavyProcessesReaped": true,
+  "lockReleased": true,
+  "binariesCopied": 0,
+  "binariesModified": false,
+  "donorsReadonly": true,
+  "rootIndexRefsUnchanged": true,
+  "box": null,
+  "state": "notassigned",
+  "expiry": null,
+  "lifecycleOwner": "coordinator",
+  "protectedBox": "bx_69aem736 untouched",
+  "BoatQueries": 0,
+  "SSHRuntimeAttempts": 0
+}

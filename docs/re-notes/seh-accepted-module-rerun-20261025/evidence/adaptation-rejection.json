@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs",
+    "/tmp/seh-current-canonical-qualifier-oct25/ops/contract.json",
+    "/tmp/seh-corrected-memory-canonical-build-oct25/ops/wine-assembly.wasm",
+    "0000000000000000000000000000000000000000000000000000000000000000"
+  ],
+  "exit": 1,
+  "stdout": "",
+  "stderr": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: expected hash not allowed\n+ actual - expected\n\n+ '0000000000000000000000000000000000000000000000000000000000000000'\n- 'bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9'\n\n    at select (/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs:49:83)\n    at main (/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs:107:12)\n    at Object.<anonymous> (/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs:118:26)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: '0000000000000000000000000000000000000000000000000000000000000000',\n  expected: 'bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9',\n  operator: 'strictEqual',\n  diff: 'simple'\n}\n\nNode.js v24.18.1\n",
+  "passControl": true,
+  "beforeNativeModule": true,
+  "adaptation": "Only qualifier path selects accepted pinned sparse file. Contract/absolute binary/guard unchanged.",
+  "historicalControls": "/tmp/seh-current-canonical-qualifier-oct25/ops/controls.json",
+  "acceptedFinalTests": "/tmp/seh-trust-anchor-independent-closeout-oct25/ops/final-tree-tests.json",
+  "acceptedIndependentAttacks": "/tmp/seh-trust-anchor-independent-closeout-oct25/ops/final-tree-controls.json"
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=2048",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs",
+    "/tmp/seh-current-canonical-qualifier-oct25/ops/contract.json",
+    "/tmp/seh-corrected-memory-canonical-build-oct25/ops/wine-assembly.wasm",
+    "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9"
+  ],
+  "cwd": "/tmp/seh-accepted-module-rerun-oct25/repo",
+  "pid": 1652744,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.04611717304214835,
+  "streamBytes": {
+    "stdout": 688,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 688,
+  "fileMax": 25165824,
+  "cpuSeconds": 900,
+  "wallSeconds": 900,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 140902400
+}

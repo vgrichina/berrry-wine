@@ -1,0 +1,13 @@
+{
+  "timestamp": "2026-10-25T22:36:55.887791+00:00",
+  "availableMemoryBytes": 4268158976,
+  "freeDiskBytes": 5354831872,
+  "threeTaskIncrementalBytes": 201326592,
+  "volatilityBytes": 627523584,
+  "diskFloorBytes": 2982150144,
+  "lightPass": true,
+  "heavyMemoryRequired": 3689041920,
+  "heavyPass": true,
+  "dashboardPid": 1645265,
+  "userRestartResolved": true
+}

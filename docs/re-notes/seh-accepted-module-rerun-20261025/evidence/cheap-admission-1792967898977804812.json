@@ -1,0 +1,371 @@
+{
+  "at": 1792967899.1768885,
+  "charges": {
+    "coordinatorViewMetadata": 1789952,
+    "owned": 1675264,
+    "externalLauncher": 184320,
+    "currentSession": 512000,
+    "fullSharedWALSHM": 26800128,
+    "positiveDBGrowth": 65536,
+    "board": 8192,
+    "futureSparseGit": 503808,
+    "futureBothModules": 0,
+    "futureOps": 2015232,
+    "futurePublication": 6291456,
+    "futureSessionLauncher": 8388608,
+    "futureDB": 4194304,
+    "reserve": 8388608
+  },
+  "peak": 60817408,
+  "cap": 67108864,
+  "free": 5341306880,
+  "conservativeFreeAfterWholeAllocation": 5274198016,
+  "afterFuture": 5311524864,
+  "floor": 2982150144,
+  "memAvailable": 3008233472,
+  "minimumMemory": 2684354560,
+  "precheckoutVolatilityCushion": 0,
+  "passAdmission": true,
+  "manifest": {
+    "owned": [
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/setup.py",
+        "bytes": 5063,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/board-watch.txt",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/checkout.json",
+        "bytes": 16263,
+        "allocated": 16384
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/bootstrap.py",
+        "bytes": 2348,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/supervise.py",
+        "bytes": 4598,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/sqlite-baseline.json",
+        "bytes": 279,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/watcher.pid",
+        "bytes": 7,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/reuse-semantics.json",
+        "bytes": 826,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/account.py",
+        "bytes": 3848,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/admission-precheckout.json",
+        "bytes": 6283,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/control.py",
+        "bytes": 1203,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/root-before.json",
+        "bytes": 323,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/trusted-configuration.json",
+        "bytes": 699,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/pinned-inputs.json",
+        "bytes": 1948,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/ops/coordinator-launch-admission.json",
+        "bytes": 366,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/description",
+        "bytes": 73,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/config",
+        "bytes": 323,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/HEAD",
+        "bytes": 53,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/index",
+        "bytes": 1463771,
+        "allocated": 1466368
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/logs/HEAD",
+        "bytes": 198,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/applypatch-msg.sample",
+        "bytes": 478,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/post-update.sample",
+        "bytes": 189,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/commit-msg.sample",
+        "bytes": 896,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/push-to-checkout.sample",
+        "bytes": 2783,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-receive.sample",
+        "bytes": 544,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/update.sample",
+        "bytes": 3650,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-merge-commit.sample",
+        "bytes": 416,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-rebase.sample",
+        "bytes": 4898,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-commit.sample",
+        "bytes": 1643,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/sendemail-validate.sample",
+        "bytes": 2308,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-applypatch.sample",
+        "bytes": 424,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/fsmonitor-watchman.sample",
+        "bytes": 4726,
+        "allocated": 8192
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/prepare-commit-msg.sample",
+        "bytes": 1492,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/hooks/pre-push.sample",
+        "bytes": 1374,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/info/sparse-checkout",
+        "bytes": 119,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/info/exclude",
+        "bytes": 240,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/objects/info/alternates",
+        "bytes": 14514,
+        "allocated": 16384
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/refs/heads/task/seh-accepted-module-rerun-oct25",
+        "bytes": 41,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/.git/logs/refs/heads/task/seh-accepted-module-rerun-oct25",
+        "bytes": 191,
+        "allocated": 4096
+      },
+      {
+        "path": "/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs",
+        "bytes": 11070,
+        "allocated": 12288
+      }
+    ],
+    "launcher": [
+      {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/seh-accepted-module-rerun-oct25/stderr.log",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/seh-accepted-module-rerun-oct25/root-ref-digest.json",
+        "bytes": 196,
+        "allocated": 4096
+      },
+      {
+        "path": "/home/user/wine-assembly/scratch/usage-watch/seh-accepted-module-rerun-oct25/events.jsonl",
+        "bytes": 179112,
+        "allocated": 180224
+      }
+    ],
+    "session": [
+      {
+        "path": "/home/user/.codex/sessions/2026/10/25/rollout-2026-10-25T22-36-59-01a17535-c0e5-7413-87df-a4783cf1600b.jsonl",
+        "bytes": 511372,
+        "allocated": 512000
+      }
+    ],
+    "fullSharedWALSHM": [
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-wal",
+        "bytes": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-wal",
+        "bytes": 12244672,
+        "allocated": 12251136
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-wal",
+        "bytes": 4152992,
+        "allocated": 4157440
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-wal",
+        "bytes": 1619192,
+        "allocated": 1626112
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-wal",
+        "bytes": 4317792,
+        "allocated": 4325376
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+        "bytes": 4235392,
+        "allocated": 4243456
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      },
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-shm",
+        "bytes": 32768,
+        "allocated": 32768
+      }
+    ]
+  },
+  "standingTools": [
+    {
+      "name": "node",
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+      "newBytes": 0
+    },
+    {
+      "name": "git",
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "newBytes": 0
+    },
+    {
+      "name": "python3",
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "newBytes": 0
+    },
+    {
+      "name": "ssh",
+      "path": "/usr/bin/ssh",
+      "bytes": 846888,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+      "newBytes": 0
+    }
+  ],
+  "standingInputs": "Immutable donor and standing canonical closure/compiler used read-only in place; streamed Git overlays in memory. No full tree or object copies.",
+  "limits": {
+    "compilerCPUWall": 900,
+    "oldSpaceMiB": 2048,
+    "cheapCPUWall": 60,
+    "cheapHeapMiB": 256,
+    "compilerOutput": 524288,
+    "cheapOutput": 131072,
+    "fileMax": 25165824,
+    "reapSeconds": 5,
+    "reserve": 8388608
+  },
+  "commands": {
+    "checkout": "python3 ops/setup.py: explicit sparse checkout, flattened readonly alternates",
+    "compiler": "FORBIDDEN: no rebuild",
+    "module": "node --max-old-space-size=2048 --require PINNED_GUARD TASK_QUALIFIER ALLOWED_DONOR_PATH PINNED_SHA, one per output",
+    "static": "python3 ops/inspect.py, imports/exports/types/noStart/layout/data bounds, no instances",
+    "publication": "strict dedicated SSH git push task branch only"
+  },
+  "previousDiskDenial": "2678181888-byte failed coordinator sample retained in scratch; capacity not assumed stable",
+  "noGuest": true,
+  "noMounts": true
+}

@@ -1,0 +1,20 @@
+[
+  {
+    "path": "/tmp/seh-current-canonical-qualifier-oct25/ops/controls.json",
+    "sha256": "59360753494991f3e41f343fd784fac23764b8b3020b66af9f4b7a46ebba6d4f",
+    "bytes": 4179,
+    "reusedNotRerun": true
+  },
+  {
+    "path": "/tmp/seh-trust-anchor-independent-closeout-oct25/ops/final-tree-tests.json",
+    "sha256": "88ed8db612ee4714f7bc45d6c53bb5aedc8f900bf9d7964f030618959a2c1bf3",
+    "bytes": 1935,
+    "reusedNotRerun": true
+  },
+  {
+    "path": "/tmp/seh-trust-anchor-independent-closeout-oct25/ops/final-tree-controls.json",
+    "sha256": "59360753494991f3e41f343fd784fac23764b8b3020b66af9f4b7a46ebba6d4f",
+    "bytes": 4179,
+    "reusedNotRerun": true
+  }
+]

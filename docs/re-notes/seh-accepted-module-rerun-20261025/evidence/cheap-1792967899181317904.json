@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/seh-accepted-module-rerun-oct25/ops/control.py"
+  ],
+  "cwd": "/tmp/seh-accepted-module-rerun-oct25/repo",
+  "pid": 1652679,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.06925432605203241,
+  "streamBytes": {
+    "stdout": 79,
+    "stderr": 0
+  },
+  "aggregateLogMax": 131072,
+  "retained": 79,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 140640256
+}

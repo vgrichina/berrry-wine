@@ -1,0 +1,13 @@
+{
+  "pins": {
+    "account.py": "18b8fe0d11e730c3711d7739e13a7227e0a573eee6aa9e5aeccf891805e691b3",
+    "supervise.py": "0dccd283ae90dfcd46c75f4e4c483f06124c895da90c2bf22ead565d601246de"
+  },
+  "priorSupervisor": "c2ee4204502d9998703d86520b01055f5c025f40dd53d97a30962eef0aae6911",
+  "resolvedFinalManifest": true,
+  "inspection": "Final retained supervisor explicitly admits Module stages with aggregate524288, heavy lock, kernel CPU/FSIZE,900s wall,5s TERM/KILL/reap, strict SSH. Historical hash is not final retained file. No supervisor code adaptation.",
+  "adaptations": [
+    "account launcher ownership path only; __file__ derives owned roots"
+  ],
+  "preserved": "RAM2684354560 ALL stages;64MiB including view1789952, shared WALSHM, DB growth, futures+8MiB reserve; precheckout volatility627523584; no module copies"
+}

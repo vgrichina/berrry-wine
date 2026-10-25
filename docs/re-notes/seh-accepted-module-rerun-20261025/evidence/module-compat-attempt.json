@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=2048",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs",
+    "/tmp/seh-current-canonical-qualifier-oct25/ops/contract.json",
+    "/tmp/seh-corrected-memory-canonical-build-oct25/ops/wine-assembly.compat.wasm",
+    "ff495de2b12c308013fa489b9fb291ca836171929655ca20df03440946c54dbc"
+  ],
+  "at": 1792967908.3617768,
+  "lock": "/tmp/wine-ops-heavy-runtime.lock"
+}

@@ -1,0 +1,45 @@
+{
+  "qualifierRevision": "ae188c981dad2337050acf88d74d567d5644c367",
+  "qualifierTree": "755d5831544556b5e9333b57863a4502ca6a1736",
+  "sourceRevision": "a3fe340b962da3f31df249881074afe41d6c69a2",
+  "compiledBuildEvidence": "9d85af30e9ed0c19bac7f9ba99d1b540a508f4e4",
+  "inputs": [
+    {
+      "path": "/tmp/seh-current-canonical-qualifier-oct25/ops/contract.json",
+      "sha256": "4aca68bf97038d771390dd499703fac2e559146186d23f34e6e27425a5083a4b",
+      "bytes": 4357,
+      "usedInPlace": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+      "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+      "bytes": 2462,
+      "usedInPlace": true
+    },
+    {
+      "path": "/tmp/seh-corrected-memory-canonical-build-oct25/ops/wine-assembly.wasm",
+      "sha256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+      "bytes": 1880317,
+      "usedInPlace": true
+    },
+    {
+      "path": "/tmp/seh-corrected-memory-canonical-build-oct25/ops/wine-assembly.compat.wasm",
+      "sha256": "ff495de2b12c308013fa489b9fb291ca836171929655ca20df03440946c54dbc",
+      "bytes": 1882890,
+      "usedInPlace": true
+    },
+    {
+      "path": "/tmp/seh-accepted-module-rerun-oct25/repo/docs/re-notes/seh-current-canonical-qualifier-20261025/qualify.cjs",
+      "sha256": "c4f2d1383bb7fa253b2134443548820a4b6cd40991c4581cdd10d5a8db97cf70",
+      "bytes": 11070,
+      "usedInPlace": true
+    }
+  ],
+  "acceptedStaticEvidence": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/seh-trust-anchor-closeout-coordinator-review-oct25.json",
+    "sha256": "6bb7da4d2a314ca10366c7cb54cc05113947f51069bff5ddb38f2adb14fda232",
+    "verifiedFiles": 198,
+    "repeated": false
+  },
+  "historicalNativeReturns": "separately retained in prior qualifier ops; predate trust-anchor repair"
+}

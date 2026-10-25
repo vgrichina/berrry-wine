@@ -1,0 +1,14 @@
+{
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "reusedReceipt": {
+    "path": "/tmp/seh-current-canonical-qualifier-oct25/ops/trusted-configuration.json",
+    "sha256": "17dcd2cc27d5f4e993800e87a5e89ffa01c4a09c7515f68318ec1e683bde7614"
+  },
+  "mountArgv": [],
+  "intendedFiles": [],
+  "validation": "Exact unchanged empty configuration; no mount command or conditional guest execution. Canonical filename parser not applicable to zero mount arguments.",
+  "box": null,
+  "state": "notassigned",
+  "expiry": null,
+  "protectedBox": "bx_69aem736 untouched"
+}
