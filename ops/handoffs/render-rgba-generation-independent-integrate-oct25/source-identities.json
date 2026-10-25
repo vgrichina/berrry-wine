@@ -1,0 +1,18 @@
+{
+  "lib/d3d9-host.js": {
+    "sha256": "15f5a3fc1e24ae273cdcb720b331d51408d0b4fc20eccc3686e033fb490b88e0",
+    "blob": "9045299dfaf4d2767aee22c483d4797783743b8c"
+  },
+  "src/09ae-d3d9-resources.wat": {
+    "sha256": "fd8e0fc4b98bd1c8631934e19ea50f483b50398fb5033c22ce64be0a9f792955",
+    "blob": "8554598ff15d677c4e505663828592c14ccda7c0"
+  },
+  "src/09ad-handlers-d3d9.wat": {
+    "sha256": "3cff68503bcd1ac0699a8d0fe2fd1d54ed79c2b7cfceacce7739069f5ca4a64c",
+    "blob": "323133e0a80e8fa5b46c702c0ee8b44b466937c1"
+  },
+  "src/09ac-handlers-d3d8.wat": {
+    "sha256": "73ee973c7aaf374f2b378ec502ea268279908b69917204907ff6c237be818922",
+    "blob": "4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c"
+  }
+}

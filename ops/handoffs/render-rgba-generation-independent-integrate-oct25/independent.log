@@ -1,0 +1,38 @@
+✔ single unsigned counter rollover invalidates an observed old generation (18.246946ms)
+✖ an unbound cached mip cannot inherit bytes after a complete allocation-counter cycle (12.557107ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 1
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 129.393671
+
+✖ failing tests:
+
+test at test/test-d3d9-rgba-generation-independent.js:87:1
+✖ an unbound cached mip cannot inherit bytes after a complete allocation-counter cycle (12.557107ms)
+  AssertionError [ERR_ASSERTION]: replacement texture must publish its current bytes after counter ABA
+  + actual - expected
+
+    [
+  +   10,
+  +   20,
+  +   30,
+  -   71,
+  -   82,
+  -   93,
+      255
+    ]
+
+      at TestContext.<anonymous> (/tmp/render-rgba-generation-independent-integrate-oct25/repo/test/test-d3d9-rgba-generation-independent.js:104:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 10, 20, 30, 255 ],
+    expected: [ 71, 82, 93, 255 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

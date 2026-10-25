@@ -1,0 +1,10 @@
+{
+  "base-independent": {
+    "exitCode": 1,
+    "expected": 1
+  },
+  "forced-fresh-control": {
+    "exitCode": 0,
+    "expected": 0
+  }
+}

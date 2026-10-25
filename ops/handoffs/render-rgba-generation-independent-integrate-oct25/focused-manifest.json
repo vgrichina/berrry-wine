@@ -1,0 +1,10 @@
+{
+  "libFiles": 147,
+  "libBytes": 5282029,
+  "sourcePaths": [
+    "src/09ae-d3d9-resources.wat",
+    "src/09ad-handlers-d3d9.wat",
+    "src/09ac-handlers-d3d8.wat"
+  ],
+  "projectedLimit": 41943040
+}

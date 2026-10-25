@@ -1,0 +1,7 @@
+{
+  "exitCode": 1,
+  "expectedSingleRollover": "PASS",
+  "requiredFullCycle": "FAIL means reject",
+  "modeledAllocations": 4294967296,
+  "actualGuestExecution": false
+}

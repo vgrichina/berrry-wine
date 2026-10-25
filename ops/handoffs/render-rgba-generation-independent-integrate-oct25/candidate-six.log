@@ -1,0 +1,14 @@
+✔ replacement at the same mip address cannot inherit a sparse fingerprint collision (7.548244ms)
+✔ queued update and device release retain both original byte snapshots in order (7.19939ms)
+✔ budget rejection publishes no partial definition or retirement and retry is complete (2.865474ms)
+✔ device incarnation and mip subresources have distinct references (2.924443ms)
+✔ unchanged identity sends a reference without decoding or publishing RGBA again (1.288195ms)
+✔ reset retires consumer residency and the next draw republishes its definition (1.83517ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.578528

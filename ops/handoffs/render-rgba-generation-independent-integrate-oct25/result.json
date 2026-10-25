@@ -1,0 +1,25 @@
+{
+  "decision": "REJECT; NO MAIN INTEGRATION",
+  "candidate": "9f3fcdc221ec48b64293f212500cbeadfd7f21fc",
+  "base": "397cdb6ca37c1f247cdd6e2618f6e1f3529342c4",
+  "sourceSHA256": "15f5a3fc1e24ae273cdcb720b331d51408d0b4fc20eccc3686e033fb490b88e0",
+  "finding": "32-bit allocation-generation ABA can reuse stale RGBA after a full counter cycle with no inspection of the retained mip",
+  "severity": "Correctness acceptance gap; requires 4294967296 successful allocations since the cached snapshot, not a single ordinary rollover",
+  "inherited": true,
+  "regressionIntroducedByCandidate": false,
+  "tests": {
+    "supplied": "6 PASS",
+    "independent": "single rollover PASS; full-cycle replacement FAIL",
+    "base": "same full-cycle failure",
+    "forcedFreshMutation": "2 PASS"
+  },
+  "scope": "JS behavioral fixtures with real host/queue/worker endpoint and mock device; full cycle represented algebraically, not executed",
+  "integration": "Rejected before remote-main fetch, merge or push; candidate source unchanged",
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "blockers": "Acceptance defect; no platform access attempted"
+}

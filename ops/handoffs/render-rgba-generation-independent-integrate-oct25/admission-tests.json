@@ -1,0 +1,14 @@
+{
+  "ram": 4137394176,
+  "free": 5331873792,
+  "allocated": 2076672,
+  "projected": 44019712,
+  "cap": 67108864,
+  "reserve": 8388608,
+  "floor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "No mounts intended; canonical mount parser not invoked because no conditional guest execution",
+  "standing": "Installed git/python/node; immutable donor objects and flattened views executed/read in place; no duplicate accounting",
+  "passGate": true
+}
