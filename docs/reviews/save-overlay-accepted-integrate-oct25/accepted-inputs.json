@@ -1,0 +1,29 @@
+{
+  "candidate": "a1ef17a1947db697bd9713b76208d2b32141f5b7",
+  "review": "55155fecaead98cccc9844411a0566575ef046bc",
+  "seals": {
+    "existing.json": "3c6741649df6f7c6bcd2486a3cf1174eef314f51e454b51880d05abc040675bf",
+    "tests.json": "6b99df950bf5c0ef95330d913062b8e7299f7a765926d8a3be32f648d616702b",
+    "intended-tree.json": "5fa8fadf1c762a955b4bab7a40728794b1f9eadab36ea2320f85cd868c5f844a",
+    "configuration.json": "dc5f30094616e25e69b7f92d6a2234dee9872f2343edfd93ddf29a5dde989b97",
+    "candidate-diff.json": "46611de3aee0322486fd9ff2ed9cad8cdec0ca1f69c726bff12edc409d62e6b9",
+    "admission-independent-final.json": "2ed61604bf408dc6f67eb8964d38c1804c93c2b3895766e316ed2840bd2006a1",
+    "standing-inputs.json": "a6e2bf995becfafd0c88af12cb104349748a584d89108a38580d212697d76cc9",
+    "focused.json": "51174a3d25a69848747e5f50ffd41315be01515e26a3e7cc35b4e24ecb432ab0",
+    "independent.js": "d7153132dca75877c52cc51e0a401bf33a5c5b2a125150bbaa72f63fcc1345ca",
+    "baseline-overlay.js": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e",
+    "independent-baseline.json": "baba7053fdf80c0f6473484e3d423cc7ed613e4e1dc35e74d62fcc3470adc962",
+    "admission-checkout.json": "79c3ec9cb7466800a278422bfed65eff9d5dde1bc7db27669c43015f934ef78d",
+    "result.json": "fc595322c2449626b26fcae797fe15a9ce63e7d1c58199e5ee4f8472f7eb5873",
+    "admission-tests.json": "9e807563cdaf9ebb939920241c4fa65f52463f201cb922eb9fef623ea4d5ed39",
+    "root-ref-comparison.json": "0d4c96a91a7e5064a60534c1004d121013c2fd47be1611f8049e51fa5399101a",
+    "candidate-evidence-validation.json": "5caba5edbd0d2b4e6759023280508cf91e8d031ab404280e2db6c9f1f640f911",
+    "additional-pins.json": "7da9b3436a70585e6976b786774626c26b8a907ed9654d97cf43ca7af522eb19",
+    "admission-publication.json": "74ab8ced10b17af7c6dbec12ed1eb80837e09a4a806ce3fc067c182088208527",
+    "independent.json": "9a4d398e258bafaa3479cbe52aa3b9b169e363a840eca57b148d24b828e645b6",
+    "REVIEW.md": "b1ae909288c9538d52d7429a0d5686238bd11c747f6ed2b12af565b58c7c15d7"
+  },
+  "count": 20,
+  "verified": true,
+  "sourceSHA256": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+}

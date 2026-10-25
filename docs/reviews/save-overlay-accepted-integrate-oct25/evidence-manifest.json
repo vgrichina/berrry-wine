@@ -1,0 +1,21 @@
+{
+  "admission-tests-complete.json": "a83fcbe28faa16ff35f00508f843df92abc280d4557907e7b32381318c67cc8b",
+  "merged-independent-complete.json": "14fa9009e2acd39723d5100290fbf5ac66c61f8c9aad443d7a6553d24d7585e7",
+  "merged-focused.json": "7870397f8b222ebc388e7a55b0f18a9b3078e90705e107748a80959f22bcde3c",
+  "tests.json": "14e1ad3afb6945bea18db797363dda36cd0c38bd66840e4bd7f0377992d49205",
+  "merged-existing-complete.json": "fa5bdf78f066c42ecf7677b077d6eb6886c641b35b6ac9f24abb7f377c06a3d1",
+  "configuration.json": "e6caa5688c84ce33f8d7e081be8448de905ebddc50264ae36d27cee14f02625d",
+  "standing-inputs.json": "9a3dad8f4269c0e398ad257f6e9eb046939b0d3948e0b41dd3bc57828b679747",
+  "merged-tree.json": "3523e7761b97e01a5a9cf1bf76931f97ce0bec4f7365ebf36e7e8f0f7bb71d54",
+  "admission-push.json": "6af1b8872684cc9658b55189c62ce9a5c7c9ad8661c9b41eadf9313871268718",
+  "final-seals.json": "dab231de66d4c1fd89c236bc4d4cd4babf58134b0234998ddd7c8b3a46b9c3f6",
+  "admission-checkout.json": "c4195446e25f4bf1ce86a0c6a9c6cd5a024004d635b4a6c5cbd396d39869254e",
+  "result.json": "8cf2ebd613decd88c278e55e86858eada1c3cc1add4313fca9303407c5ae6b96",
+  "root-ref-comparison.json": "0d4c96a91a7e5064a60534c1004d121013c2fd47be1611f8049e51fa5399101a",
+  "publication.json": "e64dc9bafb778df66ff898cb2a7bbafbde43fd00dfb483edea62b53673ad4b56",
+  "admission-publication.json": "5cd999c2a179b1a73f7863bb0da4fc100bc59417cc4a12a4a9b79bffdff526ae",
+  "admission-receipt.json": "089a122aefaf9e830d8e309757fbdfbcf6bff72bdab1bd15b4af5ce04041231d",
+  "accepted-inputs.json": "8629b4df82a7c2e8f1bd23271525e07bb474ee286d36e1f6d66c84bbdde57256",
+  "INTEGRATION.md": "71ece30c3c6aeee2f9b33cbb9d024c3f1cce975cc5d3b787fc286a890b795ed3",
+  "closure-final.json": "1582f3f9419030569abb99b4e51ff7fadedf909eb4e5aa75fa33dd060a826c8e"
+}

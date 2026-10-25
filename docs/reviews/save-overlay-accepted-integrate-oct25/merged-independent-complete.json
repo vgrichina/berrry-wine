@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "docs/reviews/save-overlay-atomic-independent-accept-oct25/independent.js",
+    "/tmp/save-overlay-accepted-integrate-oct25/repo/lib/overlay-store.js"
+  ],
+  "cwd": "/tmp/save-overlay-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.036436769063584507,
+  "stdout": "\u2714 independent: invalid tail after duplicate overwrite, addition, dir and whiteout rolls back complete metadata (1.40227ms)\n\u2714 independent: iterator next failure preserves original saves and listing order (1.003191ms)\n\u2714 independent: conversion fails after bytes were staged; iterator closes and no publication (0.365916ms)\n\u2714 independent: coercion and metadata getter failures roll back staged duplicate paths (0.391684ms)\n\u2714 independent: successful duplicate paths last wins and remove stale bytes across kind changes (0.187952ms)\n\u2714 independent: Buffer and Uint8Array subview input and read buffers retain ownership (0.149962ms)\n\u2714 independent: staged input mutation by later iterator step cannot alter staged payload (0.129232ms)\n\u2714 independent: empty and null batches preserve every metadata field and bytes; rejected batch can retry (0.209462ms)\n\u2139 tests 8\n\u2139 suites 0\n\u2139 pass 8\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 11.237364\n",
+  "stderr": "",
+  "guardFailure": null
+}

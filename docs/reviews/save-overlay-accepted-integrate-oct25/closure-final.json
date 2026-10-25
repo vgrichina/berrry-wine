@@ -1,0 +1,10 @@
+{
+  "objects": 11955,
+  "inventorySHA256": "5bd6b3e2c216e2acfaadf9c9c34501d6c5ec3124101807d2afbf1d6747e2dfd8",
+  "allPresent": true,
+  "standingBytes": 452536978,
+  "baseFlatResult": "merged-object-closure.json",
+  "supplementalResult": "extended-closure.json",
+  "noRecursiveAlternates": true,
+  "objectBytesCopied": 0
+}

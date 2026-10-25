@@ -1,0 +1,16 @@
+{
+  "charges": {
+    "owned": 2699264,
+    "session": 233472,
+    "futureGitCheckoutEvidencePublication": 16777216,
+    "launcherSessionSharedWALSHMPositiveDBFutures": 25165824,
+    "reserve": 8388608
+  },
+  "projectedPeak": 53264384,
+  "free": 5287034880,
+  "availableRAM": 3547881472,
+  "passAdmission": true,
+  "limits": "heap128MiB CPU/wall60s file24MiB combinedcapture128KiB TERM2s/KILL3s/reap5s",
+  "standing": "readonly flat object leaves, donor files and installed executables in place; no double charge",
+  "commands": "Git sparse plumbing, fixture JS tests, strict Git SSH only; no runtime/mount/compiler"
+}

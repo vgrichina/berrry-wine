@@ -1,0 +1,33 @@
+{
+  "focused": {
+    "argv": [
+      "node",
+      "test/test-overlay-memory-publication.js"
+    ],
+    "expectedPass": 10,
+    "exitCode": 0,
+    "outputSHA256": "bfbf5704875f09e6fd8a64582c62c30a124e4516306a5545a5f36f46feb81eda",
+    "evidence": "merged-focused.json"
+  },
+  "existing": {
+    "argv": [
+      "node",
+      "test/test-vfs-overlay.js"
+    ],
+    "expectedPass": 20,
+    "exitCode": 0,
+    "outputSHA256": "bb4cac1f64448d2d862d4bada5e1ba00e83d208cf84a2b3e7315a6ebcd974617",
+    "evidence": "merged-existing-complete.json"
+  },
+  "independent": {
+    "argv": [
+      "node",
+      "docs/reviews/save-overlay-atomic-independent-accept-oct25/independent.js",
+      "/tmp/save-overlay-accepted-integrate-oct25/repo/lib/overlay-store.js"
+    ],
+    "expectedPass": 8,
+    "exitCode": 0,
+    "outputSHA256": "f6ae05ff26fba19c6f9ca6fb3f7f5e06901ef473080a0c2f6573c89fd828fdba",
+    "evidence": "merged-independent-complete.json"
+  }
+}

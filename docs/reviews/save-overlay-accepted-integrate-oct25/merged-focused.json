@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "test/test-overlay-memory-publication.js"
+  ],
+  "cwd": "/tmp/save-overlay-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.05317903496325016,
+  "stdout": "\u2714 memory: invalid tail rolls back overwritten bytes and metadata (1.358077ms)\n\u2714 memory: failed whiteout and directory replacement preserve old saves (1.036723ms)\n\u2714 memory: payload conversion failure cannot publish even its metadata (0.342492ms)\n\u2714 memory: interrupted input iteration rolls back, then a retry commits (0.2821ms)\n\u2714 memory: successful duplicate paths, whiteouts and empty batches retain semantics (0.396955ms)\n\u2714 node-dir: invalid tail rolls back overwritten bytes and metadata (6.880984ms)\n\u2714 node-dir: failed whiteout and directory replacement preserve old saves (1.315085ms)\n\u2714 node-dir: payload conversion failure cannot publish even its metadata (1.358779ms)\n\u2714 node-dir: interrupted input iteration rolls back, then a retry commits (1.619157ms)\n\u2714 node-dir: successful duplicate paths, whiteouts and empty batches retain semantics (1.318753ms)\n\u2139 tests 10\n\u2139 suites 0\n\u2139 pass 10\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 23.370988\n",
+  "stderr": "",
+  "guardFailure": null
+}
