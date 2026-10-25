@@ -1,0 +1,41 @@
+{
+  "verdict": "REJECT",
+  "candidate": "6495520aa2d130a5d576f611d7ad4c4ebcd6fdc8",
+  "base": "ae188c981dad2337050acf88d74d567d5644c367",
+  "reason": "Valid UTF-8 goal condition is corrupted when the reverse scan byte-window boundary splits a multibyte character. Confirmed in actual analyticsSnapshot and its unchanged cached repeat.",
+  "introducedByCandidate": false,
+  "scope": "Missed semantic correctness flaw in the goal reader; inherited independent-per-window UTF-8 decoding remains in candidate. No candidate repair.",
+  "reproducer": "ops/session-unicode-boundary-repro.js",
+  "expected": "goal \u00e9\u6f22\ud83d\ude00 complete",
+  "actual": "goal \u00e9\u6f22\ufffd\ufffd\ufffd\ufffd complete",
+  "fixtureBytes": 1356242,
+  "independentTests": {
+    "pass": 3,
+    "fail": 1
+  },
+  "suppliedFocused": {
+    "pass": 3,
+    "fail": 0
+  },
+  "analytics": {
+    "pass": 7,
+    "fail": 0
+  },
+  "standaloneReproducerExit": 1,
+  "commands": [
+    "python3 ../ops/supervise.py independent node --test ops/session-memory-independent.test.js",
+    "python3 ../ops/supervise.py unicode-reader node ops/session-unicode-boundary-repro.js",
+    "python3 ../ops/supervise.py supplied-focused node --test ops/session-retention.test.js",
+    "python3 ../ops/supervise.py analytics node --test ops/analytics.test.js"
+  ],
+  "limits": "Node heap128MiB; CPU/wall60s; file24MiB; stdout+stderr128KiB; TERM2s/KILL+reap3s; core0; TMPDIR owned. No forced GC.",
+  "liveRSSMeasured": false,
+  "serviceChanges": false,
+  "integration": false,
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  }
+}

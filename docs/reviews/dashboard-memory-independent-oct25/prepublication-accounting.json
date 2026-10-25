@@ -1,0 +1,15 @@
+{
+  "ownedAllocated": 3031040,
+  "launcherAllocated": 184320,
+  "fullCurrentSharedWALCharge": 25993216,
+  "objectViewMetadataCharge": 1789952,
+  "futureSessionDBPublicationAllowance": 12582912,
+  "reserveInside": 8388608,
+  "projectedTotal": 51970048,
+  "ceiling": 67108864,
+  "diskFree": 5404553216,
+  "memoryAvailable": 2706350080,
+  "capturedCommandOutput": 9012,
+  "standingReadOnly": "Donor/flattened object view; installed Node/Git; installed deps not copied",
+  "pass": true
+}

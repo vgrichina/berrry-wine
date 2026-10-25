@@ -1,0 +1,3 @@
+{
+  "rawOutput": "✔ compact session summaries do not retain transcript-sized backing strings (578.358467ms)\nℹ heapUsed=25243152; sessions=190; inputBytesEach=921600\n✔ refreshes preserve tokens and goals, invalidate replacements and remove deleted sessions (80.798658ms)\n✔ snapshot text reads remain bounded when a file grows after stat (60.179011ms)\nℹ tests 3\nℹ suites 0\nℹ pass 3\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 818.529544\n"
+}
