@@ -1,0 +1,13 @@
+✔ equal content cannot excuse duplicate run IDs: both reject (2.796914ms)
+✔ equal content cannot excuse lexically distinct paths resolving to one file (3.465556ms)
+✔ equal content cannot excuse symlink aliases (4.100018ms)
+✔ equal-content distinct paths still require correct hashes (0.755016ms)
+✔ equal-content malformed duplicate app/backend poisons every competitor in either order (1.414321ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.007956

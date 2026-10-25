@@ -1,0 +1,87 @@
+{
+  "review/gfx-equal-pixel-independent-oct25/REVIEW.txt": {
+    "sha256": "88978167b0bfe39a094df699b061fa0daf4523fccae9f0746358057a6e7b2392",
+    "bytes": 1618
+  },
+  "review/gfx-equal-pixel-independent-oct25/account.py": {
+    "sha256": "318c6ac31e30d9a20eb8f144269dde428de19691d6b4350f713fea975aba8f74",
+    "bytes": 2059
+  },
+  "review/gfx-equal-pixel-independent-oct25/independent.log": {
+    "sha256": "de97a11f2f5c8a786a96e2120dda23f69276ecce8a48ae0b7d5a1a44d7fcd108",
+    "bytes": 1946
+  },
+  "review/gfx-equal-pixel-independent-oct25/narrow.log": {
+    "sha256": "ad27e30caaf0b590c915bb38091a3801ba575b1d4e1102b2d346a6dd982364a7",
+    "bytes": 522
+  },
+  "review/gfx-equal-pixel-independent-oct25/narrow.test.js": {
+    "sha256": "a67d14217ec7642fbf7240ade734b6a7d9bc98ba00a784b278d5d1dcf4cabaf7",
+    "bytes": 2664
+  },
+  "review/gfx-equal-pixel-independent-oct25/parent-independent.raw.json": {
+    "sha256": "155a271073bcc40274110be87a884c79bc83d56764fdd1b1aaa71e3185e56adf",
+    "bytes": 3573
+  },
+  "review/gfx-equal-pixel-independent-oct25/preflight.json": {
+    "sha256": "fef2635e16640169624d63e2dce90e618fa343bceb8550cbdf1650af346ea335",
+    "bytes": 2813
+  },
+  "review/gfx-equal-pixel-independent-oct25/publication-resource.json": {
+    "sha256": "7f2ffdda8fe62182cb86ad0d8f2a9965f1e14963d064e498ad701df638578d69",
+    "bytes": 1866
+  },
+  "review/gfx-equal-pixel-independent-oct25/result.json": {
+    "sha256": "d73763547ea8c4142d6eaa7de677bee8893d31092375ec88213df16da34f84c0",
+    "bytes": 2851
+  },
+  "review/gfx-equal-pixel-independent-oct25/supervise.py": {
+    "sha256": "8be06df8acec3e310756d11f85d4ec3e50f716fe633751aec527caa1e9965396",
+    "bytes": 1572
+  },
+  "review/gfx-equal-pixel-independent-oct25/supplied.log": {
+    "sha256": "68872903593a0534f48f3f79337f705a05b591fad9872835c80f2297ab69a529",
+    "bytes": 1248
+  },
+  "tools/gfx-runtime-coverage.js": {
+    "sha256": "8620fa6bcad421e5c3c01e33d894ee91b82cb6e0d9a3b4f030cf1a3187c87d09",
+    "bytes": 5657
+  },
+  "test/gfx-runtime-coverage.test.js": {
+    "sha256": "74ebf9c313c8d9e75dab4024f30eac7a202c0cc6bbad0674ac305c3282fa31b3",
+    "bytes": 7693
+  },
+  "docs/gfx-runtime-coverage.md": {
+    "sha256": "e37d2d66ed11ac8698bf8ba374f23c509c007177a88631ccb95476fca7bbd632",
+    "bytes": 4303
+  },
+  "repair/gfx-equal-pixel-evidence-oct25/independent.test.js": {
+    "sha256": "9241dbb93788e85d6164c272d5cba618a5efe424f2d3147fd3eecd8b2e0cbe10",
+    "bytes": 5382
+  },
+  "/tmp/gfx-equal-pixel-independent-accept-oct25/ops/reproducer/actual.json": {
+    "sha256": "4aad2c354396de067ffbd987b0de15ece9023e1af5916217ff20cd65de89d854",
+    "bytes": 795,
+    "retention": "local only; regenerate with unchanged fixture and GFX_REPRO_DIR"
+  },
+  "/tmp/gfx-equal-pixel-independent-accept-oct25/ops/reproducer/evidence.json": {
+    "sha256": "87ca2eeb33b3d828f39d048aef0fe6a271f875f02f6a7a85abbaaed16a7fd2e5",
+    "bytes": 841,
+    "retention": "local only; regenerate with unchanged fixture and GFX_REPRO_DIR"
+  },
+  "/tmp/gfx-equal-pixel-independent-accept-oct25/ops/reproducer/manifest.json": {
+    "sha256": "545c5dba42fc9b148b54956eca7887f354696b4dad0cb7e89374f0db3773db50",
+    "bytes": 114,
+    "retention": "local only; regenerate with unchanged fixture and GFX_REPRO_DIR"
+  },
+  "/tmp/gfx-equal-pixel-independent-accept-oct25/ops/reproducer/software-frame120.png": {
+    "sha256": "4d48018034323bc65bb826b321e0c8b9a22c5028969b2b188d7f9e440178f072",
+    "bytes": 911,
+    "retention": "local only; regenerate with unchanged fixture and GFX_REPRO_DIR"
+  },
+  "/tmp/gfx-equal-pixel-independent-accept-oct25/ops/reproducer/webgl-frame120.png": {
+    "sha256": "4d48018034323bc65bb826b321e0c8b9a22c5028969b2b188d7f9e440178f072",
+    "bytes": 911,
+    "retention": "local only; regenerate with unchanged fixture and GFX_REPRO_DIR"
+  }
+}

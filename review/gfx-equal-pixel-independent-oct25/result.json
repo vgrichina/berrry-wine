@@ -1,0 +1,57 @@
+{
+  "decision": "ACCEPT",
+  "testedCommit": "fbd7ffe64d4d7e8e14e8d28815484845a354dfe0",
+  "parent": "378f0b8c776af24e078a267dbe26e528faa8390f",
+  "immutableSource": "ae188c981dad2337050acf88d74d567d5644c367",
+  "originalReviewer": "b675d6c0c16c4b802fe3ae546e379062323ade3d",
+  "unchangedFixtureSHA256": "9241dbb93788e85d6164c272d5cba618a5efe424f2d3147fd3eecd8b2e0cbe10",
+  "tests": {
+    "unchangedIndependent": {
+      "pass": 41,
+      "fail": 0
+    },
+    "supplied": {
+      "pass": 26,
+      "fail": 0
+    },
+    "narrowIndependent": {
+      "pass": 5,
+      "fail": 0
+    },
+    "parentUnchangedIndependent": {
+      "pass": 40,
+      "fail": 1,
+      "onlyFailure": "LEGITIMATE separate same-scene PNG captures must pass even when pixel and file bytes match"
+    }
+  },
+  "commandsFromRepoRoot": [
+    "GFX_VERIFIER=\"$PWD/tools/gfx-runtime-coverage.js\" GFX_LOG=independent.log python3 review/gfx-equal-pixel-independent-oct25/supervise.py node --test repair/gfx-equal-pixel-evidence-oct25/independent.test.js",
+    "GFX_LOG=supplied.log python3 review/gfx-equal-pixel-independent-oct25/supervise.py node --test test/gfx-runtime-coverage.test.js",
+    "GFX_LOG=narrow.log python3 review/gfx-equal-pixel-independent-oct25/supervise.py node --test review/gfx-equal-pixel-independent-oct25/narrow.test.js",
+    "git show 378f0b8c776af24e078a267dbe26e528faa8390f:tools/gfx-runtime-coverage.js > /tmp/gfx-equal-pixel-independent-accept-oct25/ops/parent-verifier.js",
+    "GFX_LOG=parent-independent.log GFX_VERIFIER=/tmp/gfx-equal-pixel-independent-accept-oct25/ops/parent-verifier.js python3 review/gfx-equal-pixel-independent-oct25/supervise.py node --test repair/gfx-equal-pixel-evidence-oct25/independent.test.js"
+  ],
+  "staticCensusGitBlobs": {
+    "ae188c981dad2337050acf88d74d567d5644c367": "e9ffe0d208012863a597541013512be4a5e497fd",
+    "378f0b8c776af24e078a267dbe26e528faa8390f": "e9ffe0d208012863a597541013512be4a5e497fd",
+    "fbd7ffe64d4d7e8e14e8d28815484845a354dfe0": "e9ffe0d208012863a597541013512be4a5e497fd"
+  },
+  "sourceAndDocsReview": "Only digest-uniqueness group removed from verifier. Per-file computed SHA-256, run/path uniqueness, whole-group app/backend rejection and completeness unchanged. Supplied test replaces invalid digest-uniqueness expectation with equal-content acceptance plus mutation failure. Docs now correctly distinguish file content from capture identity and retain authenticity limits.",
+  "limits": {
+    "nodeHeapMiB": 128,
+    "cpuSeconds": 60,
+    "wallSeconds": 60,
+    "fileBytes": 25165824,
+    "combinedOutputBytes": 131072,
+    "termKillReapSeconds": 5
+  },
+  "ownedPaths": "review/gfx-equal-pixel-independent-oct25 only",
+  "runtimeClaim": false,
+  "mainIntegration": false,
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  }
+}

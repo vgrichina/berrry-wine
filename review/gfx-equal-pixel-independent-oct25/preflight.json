@@ -1,0 +1,67 @@
+{
+  "candidate": "fbd7ffe64d4d7e8e14e8d28815484845a354dfe0",
+  "pins": {
+    "tools/gfx-runtime-coverage.js": {
+      "sha256": "8620fa6bcad421e5c3c01e33d894ee91b82cb6e0d9a3b4f030cf1a3187c87d09",
+      "bytes": 5657
+    },
+    "test/gfx-runtime-coverage.test.js": {
+      "sha256": "74ebf9c313c8d9e75dab4024f30eac7a202c0cc6bbad0674ac305c3282fa31b3",
+      "bytes": 7693
+    },
+    "docs/gfx-runtime-coverage.md": {
+      "sha256": "e37d2d66ed11ac8698bf8ba374f23c509c007177a88631ccb95476fca7bbd632",
+      "bytes": 4303
+    },
+    "repair/gfx-equal-pixel-evidence-oct25/independent.test.js": {
+      "sha256": "9241dbb93788e85d6164c272d5cba618a5efe424f2d3147fd3eecd8b2e0cbe10",
+      "bytes": 5382
+    }
+  },
+  "originalReviewerFixtureMatch": true,
+  "memoryAvailableBytes": 2488086528,
+  "diskFreeBytes": 5397196800,
+  "projectedIncrementalBytes": 58720256,
+  "allocationBytes": 67108864,
+  "budgetBreakdown": {
+    "checkoutGit": 8388608,
+    "fixturesTempEvidence": 4194304,
+    "launcherSessionLogs": 8388608,
+    "sharedDBWALGrowth": 8388608,
+    "publication": 4194304,
+    "sharedViewMetadata": 1789952,
+    "growthAllowance": 14690176,
+    "reserve": 8388608
+  },
+  "sharedDBWALBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 69632,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 777150464,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 1108312,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4317792,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4235392,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 17461248
+  },
+  "standingInputs": "Read-only donor/object leaves; no object content copied. Installed Node/Git/Python in place. Sparse nonrecursive object view metadata 1789952 charged.",
+  "tools": {
+    "node": "/usr/local/bin/node",
+    "git": "/usr/bin/git",
+    "python3": "/usr/bin/python3"
+  },
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A no mount or conditional guest invocation; exact offline configuration",
+  "pass": true
+}
