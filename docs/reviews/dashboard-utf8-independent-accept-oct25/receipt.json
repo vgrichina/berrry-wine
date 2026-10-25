@@ -1,0 +1,42 @@
+{
+  "verdict": "ACCEPT",
+  "testedCommit": "0cc4b28fd6aca9278e8aef6deb74f0c685b0b407",
+  "baselineCommit": "6495520aa2d130a5d576f611d7ad4c4ebcd6fdc8",
+  "originalReviewerCommit": "c33c4f8df4262548e703f660c300bd10d1c52012",
+  "pins": {
+    "ops/readers.js": "320ee6362b63497f7094bf6699ac1f95371047554e377b9e261401e6c3fa6137",
+    "ops/session-utf8-window.test.js": "444ec0c3c9f0372990c8a0854f03ec735f04b491d0925d7be7dd3c68e17c390e",
+    "ops/session-memory-independent.test.js": "5cdb504f8c02225b0ddf51bee618c82e1c99acf112482a610aa087cc1599f63e",
+    "ops/session-unicode-boundary-repro.js": "f0bdfc50a8c908552a8efa49e90dbb52b52b7fcd13ad974dd1dc87829147176d",
+    "ops/session-retention.test.js": "10768b47886b718a56879ae46db7d435c7c017749d5632aec63f825d7fec2d5b"
+  },
+  "requestedDistinctCases": 28,
+  "counts": {
+    "independent": 4,
+    "suppliedFocused": 3,
+    "relevantOps": 12,
+    "analytics": 7,
+    "utf8Focused": 2,
+    "additionalIndependentControls": 2
+  },
+  "totalDistinctCases": 30,
+  "standaloneReproducer": "baseline exit1; repair exit0; not counted as node:test case",
+  "baselineIndependent": "3 pass, exactly 1 expected UTF8 boundary failure",
+  "semanticOverlap": "Suites overlap on Unicode, goal selection, cache invalidation and bounded reads. Twelve split/provider-form combinations are assertions within one test, not twelve cases.",
+  "sourceReview": "Only scanGoal changes: byte concatenation before decoding; byte LF search and copied carry; original UTF16 16MiB carry cap preserved. Cache/retention code unchanged. No source repair in this review. Existing short-read behavior and scans that start inside excluded records are not expanded by this repair.",
+  "limits": "retained supervisor CPU/wall60s Node heap128MiB file24MiB combined output128KiB TERM2s KILL/reap3s; no forced GC",
+  "claims": {
+    "deployment": false,
+    "restart": false,
+    "liveRSS": false,
+    "nativeGuestBrowserCompiler": false,
+    "mainIntegration": false
+  },
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "remotePublication": "Own review branch only; resulting commit and verified remote SHA retained in /tmp/dashboard-utf8-independent-accept-oct25/ops/publication.json and root append-only messageboard"
+}

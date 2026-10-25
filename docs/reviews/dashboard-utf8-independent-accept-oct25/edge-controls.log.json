@@ -1,0 +1,1 @@
+"✔ latest goal or clear wins after oversized irrelevant record, including unterminated final records (41.872538ms)\n✔ reverse scan honors byte stop/end and closes handle without reading later appended goal (9.865339ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 109.791118\n"

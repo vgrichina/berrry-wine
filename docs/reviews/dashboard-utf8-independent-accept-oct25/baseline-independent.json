@@ -1,0 +1,1 @@
+{"argv": ["node", "--test", "ops/session-memory-independent.test.js"], "exit": 1, "bytes": 1419, "reason": null, "seconds": 0.28361831000074744}

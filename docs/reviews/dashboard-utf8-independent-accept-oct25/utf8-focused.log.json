@@ -1,0 +1,1 @@
+"✔ all internal UTF-8 splits preserve attachment and command goals through cached snapshots (132.074584ms)\n✔ reverse goal scan skips oversized records and keeps byte reads bounded (13.326429ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 191.153185\n"

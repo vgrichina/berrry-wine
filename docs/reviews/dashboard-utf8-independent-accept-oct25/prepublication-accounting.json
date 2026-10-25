@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-10-25T22:19:02.463961+00:00",
+  "taskOwnedBytes": 4255744,
+  "launcherBytes": 237568,
+  "viewMetadataCharged": 1789952,
+  "remainingPublicationTemporary": 16000000,
+  "sharedDBWALAndSessionGrowthAllowance": 10000000,
+  "reserveInside": 8388608,
+  "projectedPeak": 40671872,
+  "cap": 67108864,
+  "RAM": 2934427648,
+  "diskFree": 5378314240,
+  "floor": 2982150144,
+  "volatility": 627523584,
+  "futureGrowthCharged": 26000000,
+  "pass": true
+}
