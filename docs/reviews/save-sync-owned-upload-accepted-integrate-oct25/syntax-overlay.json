@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--check",
+    "lib/overlay-store.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.018095704959705472,
+  "stdout": "",
+  "stderr": "",
+  "guardFailure": null
+}

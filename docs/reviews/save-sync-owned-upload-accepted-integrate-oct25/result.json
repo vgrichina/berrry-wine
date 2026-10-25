@@ -1,0 +1,184 @@
+{
+  "decision": "ACCEPT AND INTEGRATED",
+  "preMain": "880654e00710fe89c1ea95aa2d583a53ad4de890",
+  "candidate": "a86f708fdb65e99ebd067ce4ea5dfbeb33c47c98",
+  "review": "1cab775d047f651a91b4752d031854cf8c835068",
+  "merged": "d9012a86a91c13dbe70dbcc4dceff2d7895c18a4",
+  "tree": "0ea654d3449ec283665ce819fe867800aa499a68",
+  "branch": "task/save-sync-owned-upload-accepted-integrate-oct25",
+  "refs": {
+    "refs/heads/main": "d9012a86a91c13dbe70dbcc4dceff2d7895c18a4",
+    "refs/heads/task/save-sync-owned-upload-accepted-integrate-oct25": "d9012a86a91c13dbe70dbcc4dceff2d7895c18a4"
+  },
+  "verified": true,
+  "normalNonforceAtomicPush": true,
+  "sourceIdentity": {
+    "saveSync": "87bc3878b4700b64f93a82f8920977677e9caeb2bbfcbecd1a572eb750d2dced",
+    "renderer": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "overlay": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+  },
+  "tests": {
+    "tree": "0ea654d3449ec283665ce819fe867800aa499a68",
+    "results": {
+      "supplied": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-save-sync-owned-upload.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 15,
+        "outputSHA256": "11a6d51ffb7e9fe33634af1f59b79244e36e0cf84141d17115b9b14321620484"
+      },
+      "independent": {
+        "argv": [
+          "node",
+          "docs/reviews/save-sync-upload-independent-accept-oct25/independent.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 13,
+        "outputSHA256": "f001083cc7de3173f3e403f88a7cc79a7309975d4166d97057647cc912cf02d4"
+      },
+      "existing-upload-validation": {
+        "argv": [
+          "node",
+          "test/test-save-sync-upload-validation.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "8e7b3f4f857c605cb17cf77cdafc0b4755fb8685fb5f70efc655b476e0f548cf"
+      },
+      "offline-url-deadline": {
+        "argv": [
+          "node",
+          "docs/reviews/save-sync-upload-independent-accept-oct25/offline.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 47,
+        "outputSHA256": "06493532c1868b8880c874d7a45b98758f02557d83423bb0a0386ea7217ad8fa"
+      },
+      "overlay-existing": {
+        "argv": [
+          "node",
+          "test/test-vfs-overlay.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 20,
+        "outputSHA256": "bb4cac1f64448d2d862d4bada5e1ba00e83d208cf84a2b3e7315a6ebcd974617"
+      },
+      "renderer-focused": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-d3d9-immutable-rgba-snapshot.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 6,
+        "outputSHA256": "872fd37af4495b9ed1e371c8f4d9f3a5a319c0fe51fee3461295e0b87fe3565e"
+      },
+      "syntax-save-sync": {
+        "argv": [
+          "node",
+          "--check",
+          "lib/save-sync.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "syntax-supplied": {
+        "argv": [
+          "node",
+          "--check",
+          "test/test-save-sync-owned-upload.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "syntax-renderer": {
+        "argv": [
+          "node",
+          "--check",
+          "lib/d3d9-host.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "syntax-overlay": {
+        "argv": [
+          "node",
+          "--check",
+          "lib/overlay-store.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "allPass": true,
+    "reusedRejectingControls": [
+      {
+        "label": "reject-alias",
+        "exitCode": 1,
+        "expected": 1,
+        "summary": [
+          "\u2139 tests 13",
+          "\u2139 pass 3",
+          "\u2139 fail 10",
+          "\u2139 cancelled 0"
+        ]
+      },
+      {
+        "label": "reject-copy-after-validation",
+        "exitCode": 1,
+        "expected": 1,
+        "summary": [
+          "\u2139 tests 13",
+          "\u2139 pass 3",
+          "\u2139 fail 10",
+          "\u2139 cancelled 0"
+        ]
+      },
+      {
+        "label": "reject-redundant-upload-copy",
+        "exitCode": 1,
+        "expected": 1,
+        "summary": [
+          "\u2139 tests 13",
+          "\u2139 pass 4",
+          "\u2139 fail 9",
+          "\u2139 cancelled 0"
+        ]
+      },
+      {
+        "label": "reject-skip-local-app-check",
+        "exitCode": 1,
+        "expected": 1,
+        "summary": [
+          "\u2139 tests 13",
+          "\u2139 pass 12",
+          "\u2139 fail 1",
+          "\u2139 cancelled 0"
+        ]
+      }
+    ],
+    "controlReuseReason": "Exact candidate and independent fixture bytes unchanged; integration touches no dependencies used by controls; accepted external seals verified. No duplicate semantic review."
+  },
+  "acceptedSeals": 73,
+  "rootRefsUnchanged": true,
+  "unrelatedAcceptedSourcePreserved": true,
+  "blockers": [],
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "limitations": [
+    "Offline JS fixtures only; no real-network saves, storage durability, browser, runtime or gameplay acceptance",
+    "No deployment/restart/BoatSSH/guest/wasm/compiler/heavy execution"
+  ],
+  "recovery": "RECOVERY.md"
+}

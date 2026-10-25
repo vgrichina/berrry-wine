@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/save-sync-owned-upload-accepted-integrate-oct25"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 1.4453428690321743,
+  "stdout": "d9012a86a91c13dbe70dbcc4dceff2d7895c18a4\trefs/heads/main\nd9012a86a91c13dbe70dbcc4dceff2d7895c18a4\trefs/heads/task/save-sync-owned-upload-accepted-integrate-oct25\n",
+  "stderr": "",
+  "guardFailure": null
+}

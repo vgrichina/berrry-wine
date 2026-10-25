@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/main"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 1.395240810001269,
+  "stdout": "880654e00710fe89c1ea95aa2d583a53ad4de890\trefs/heads/main\n",
+  "stderr": "",
+  "guardFailure": null
+}

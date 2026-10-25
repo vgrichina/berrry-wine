@@ -1,0 +1,7 @@
+{
+  "expected": "886c8277c45050aa25d8fd0f9e2b03103ff25fbe",
+  "recovered": true,
+  "records": 4971,
+  "donorReadonly": true,
+  "normalWriteTree": true
+}

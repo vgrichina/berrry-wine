@@ -1,0 +1,17 @@
+{
+  "owned": 9330688,
+  "launch": 180224,
+  "session": 630784,
+  "sharedWALSHM": 27332608,
+  "positiveDBgrowth": 352256,
+  "projected": 54603776,
+  "cap": 67108864,
+  "reserve": 8388608,
+  "futureCheckoutGitEvidencePublicationCaptureSessionSharedGrowth": 8388608,
+  "free": 5258964992,
+  "availableRAM": 3916156928,
+  "passGate": true,
+  "commands": "focused offline JS fixtures, syntax, sparse Git plumbing, strict Git SSH; no compiler/browser/guest/wasm",
+  "limits": "heap128MiB CPUwall60s file24MiB combinedcapture128KiB cumulative2MiB TERM2KILL3reap5s",
+  "standing": "readonly flattened donor objects and installed tools in place, no duplicate staging"
+}

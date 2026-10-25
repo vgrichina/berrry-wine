@@ -1,0 +1,6 @@
+{
+  "sourceClean": true,
+  "acceptedEvidenceWhitespacePreserved": true,
+  "diagnostic": "accepted-whitespace.json",
+  "reason": "Unchanged accepted diff and rejecting-control artifacts contain whitespace; preserve evidence byte identity."
+}

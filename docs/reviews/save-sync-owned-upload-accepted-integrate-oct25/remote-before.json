@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/save-sync-upload-independent-accept-oct25",
+    "refs/heads/task/save-sync-owned-upload-repair-oct25"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 1.465471278061159,
+  "stdout": "880654e00710fe89c1ea95aa2d583a53ad4de890\trefs/heads/main\na86f708fdb65e99ebd067ce4ea5dfbeb33c47c98\trefs/heads/task/save-sync-owned-upload-repair-oct25\n1cab775d047f651a91b4752d031854cf8c835068\trefs/heads/task/save-sync-upload-independent-accept-oct25\n",
+  "stderr": "",
+  "guardFailure": null
+}

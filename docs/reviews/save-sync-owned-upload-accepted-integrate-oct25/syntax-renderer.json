@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--check",
+    "lib/d3d9-host.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.016219847020693123,
+  "stdout": "",
+  "stderr": "",
+  "guardFailure": null
+}

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "fetch",
+    "--no-tags",
+    "--no-auto-maintenance",
+    "origin",
+    "+refs/heads/main:refs/remotes/origin/main",
+    "+refs/heads/task/save-sync-upload-independent-accept-oct25:refs/remotes/origin/accepted"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 1,
+  "seconds": 1.3056433140300214,
+  "stdout": "",
+  "stderr": "fatal: bad object .alternate\nerror: github.com:vgrichina/wine-assembly.git did not send all necessary objects\n\n",
+  "guardFailure": null
+}

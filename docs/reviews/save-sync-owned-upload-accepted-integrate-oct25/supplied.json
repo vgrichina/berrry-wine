@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "test/test-save-sync-owned-upload.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.11619082395918667,
+  "stdout": "\u2714 push owns Uint8Array before asynchronous transport consumes it (11.169626ms)\n\u2714 sync owns Uint8Array across delayed no-metadata (1.395207ms)\n\u2714 sync owns Uint8Array across delayed missing-record (0.706324ms)\n\u2714 sync owns Uint8Array across delayed older-remote (7.834683ms)\n\u2714 push owns subarray before asynchronous transport consumes it (0.571642ms)\n\u2714 sync owns subarray across delayed no-metadata (0.573446ms)\n\u2714 sync owns subarray across delayed missing-record (0.585738ms)\n\u2714 sync owns subarray across delayed older-remote (0.488095ms)\n\u2714 push owns Buffer before asynchronous transport consumes it (0.439795ms)\n\u2714 sync owns Buffer across delayed no-metadata (1.17858ms)\n\u2714 sync owns Buffer across delayed missing-record (0.588063ms)\n\u2714 sync owns Buffer across delayed older-remote (0.357269ms)\n\u2714 invalid invocation bytes never write even if caller immediately repairs them (1.404304ms)\n\u2714 snapshot preserves remote-newer and equal timestamp policy (0.739978ms)\n\u2714 owned upload preserves method override and signed-out errors (0.706575ms)\n\u2139 tests 15\n\u2139 suites 0\n\u2139 pass 15\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 77.685434\n",
+  "stderr": "",
+  "guardFailure": null
+}

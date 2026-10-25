@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "test/test-save-sync-upload-validation.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.032706725993193686,
+  "stdout": "PASS save sync upload validation: wrong-app and corrupt input rejected on every upload path\n",
+  "stderr": "",
+  "guardFailure": null
+}

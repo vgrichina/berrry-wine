@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "docs/reviews/save-sync-upload-independent-accept-oct25/independent.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.057524007046595216,
+  "stdout": "\u2714 push Uint8Array: validator mutates caller before reading snapshot (4.274064ms)\n\u2714 push subarray: validator mutates caller before reading snapshot (0.557165ms)\n\u2714 push Buffer: validator mutates caller before reading snapshot (0.349675ms)\n\u2714 push: validator reenters push without cross-invocation state (0.630223ms)\n\u2714 sync Uint8Array: validator mutates caller before reading snapshot (0.61872ms)\n\u2714 sync subarray: validator mutates caller before reading snapshot (0.445476ms)\n\u2714 sync Buffer: validator mutates caller before reading snapshot (0.41595ms)\n\u2714 sync: validator reenters push without cross-invocation state (4.075123ms)\n\u2714 sync: supported validation option getter mutates caller before parser reads (0.570801ms)\n\u2714 sync: deferred pull body and transport retain same local validated buffer (1.197727ms)\n\u2714 invalid initial bytes, wrong app, and validator rejection issue zero requests (1.091628ms)\n\u2714 no local bundle validates nothing; remote capture time decides and identity errors survive (2.007655ms)\n\u2714 push and sync upload timeouts abort stalled injected transport and clear deadlines (0.737614ms)\n\u2139 tests 13\n\u2139 suites 0\n\u2139 pass 13\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 21.514466\n",
+  "stderr": "",
+  "guardFailure": null
+}

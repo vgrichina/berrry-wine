@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--check",
+    "test/test-save-sync-owned-upload.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.018539797980338335,
+  "stdout": "",
+  "stderr": "",
+  "guardFailure": null
+}

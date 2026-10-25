@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "docs/reviews/save-sync-upload-independent-accept-oct25/offline.js"
+  ],
+  "cwd": "/tmp/save-sync-owned-upload-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.04108662996441126,
+  "stdout": "PASS existing URL and deadline checks: 47\n",
+  "stderr": "",
+  "guardFailure": null
+}
