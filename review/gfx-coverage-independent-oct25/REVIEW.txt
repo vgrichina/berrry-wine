@@ -25,7 +25,7 @@ No accepted SEH review, compiler, Wasm Module/Memory/Instance, guest or test box
 Box ID/state/expiry: none assigned; lifecycle remains coordinator-owned.
 
 Reproduce from this directory using exact pinned candidate verifier (hash in preflight):
-GFX_VERIFIER=/tmp/gfx-dual-backend-evidence-gate-oct25/repo/tools/gfx-runtime-coverage.js node --max-old-space-size=128 --test independent.test.js
+GFX_REPRO_DIR=reproducer GFX_VERIFIER=/tmp/gfx-dual-backend-evidence-gate-oct25/repo/tools/gfx-runtime-coverage.js node --max-old-space-size=128 --test independent.test.js
 For bounded execution, run through retained supervise.py from original ops location;
 its GFX_LOG selects log name. All test commands used that supervisor, CPU/wall 60s,
 Node heap 128MiB, file 24MiB, combined output 128KiB; TERM/KILL/reap <=5s.
@@ -37,3 +37,6 @@ Retrieve ONLY its three pinned files by bounded git show if needed; no full clon
 Independent source contains generator for both PNG files; no ignored artifact dependency.
 
 Committed logs have trailing whitespace normalized; ops retains original captures.
+
+PNG run artifacts are intentionally untracked; the command above recreates both
+from the committed deterministic generator before running the CLI reproducer.
