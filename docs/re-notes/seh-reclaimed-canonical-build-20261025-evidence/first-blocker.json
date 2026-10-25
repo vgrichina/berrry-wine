@@ -1,0 +1,12 @@
+{
+  "stage": "current input verification before compiler",
+  "terminalReceipt": "/tmp/seh-reclaimed-canonical-build-oct25/ops/cheap-1792956472353621777.json",
+  "terminalReceiptSHA256": "f1f0fc4d98923748fbcdb4cb73e8ea0e27e7be89ec4c297d090e4d1d3524b316",
+  "compiledCount": 0,
+  "reason": "aggregate stdout+stderr overflow",
+  "stderrBytes": 131223,
+  "limit": 131072,
+  "cause": "Git recursively reads standing alternate stores and repeatedly emits nesting-too-deep warnings. Flattening the top-level alternate list did not remove donor recursion.",
+  "retry": false,
+  "remedy": "Coordinator must resolve an effective read-only object access method avoiding recursive donor warnings, preserving exact Git identities and capture limits; no automatic retry or worker expansion."
+}

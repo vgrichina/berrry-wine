@@ -1,0 +1,54 @@
+{
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "remoteMain": "a3fe340b962da3f31df249881074afe41d6c69a2\trefs/heads/main\n",
+  "donorCommit": "a3fe340b962da3f31df249881074afe41d6c69a2",
+  "mountArgv": [],
+  "mountValidation": "No mount argv or filenames: offline task. Canonical guest parser not invoked; no conditional guest execution.",
+  "runtime": {
+    "at": "2026-10-25T19:17:07.840327+00:00",
+    "workerId": "01a1747e-9226-7830-aebe-e8ac548750ac",
+    "processes": [
+      {
+        "pid": 1436620,
+        "argv": [
+          "python3",
+          "scratch/usage-watch/start-worker.py",
+          "scratch/usage-watch/seh-current-main-canonical-build-oct25.task.txt",
+          "scratch/usage-watch/seh-current-main-canonical-build-oct25"
+        ]
+      },
+      {
+        "pid": 1436621,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/seh-current-main-canonical-build-oct25/final.txt",
+          "-"
+        ]
+      }
+    ],
+    "runtimeVerified": {
+      "model": "gpt-6.1-sol",
+      "effort": "medium",
+      "autoCompact": 200000,
+      "scope": "total",
+      "basis": "actual live exec argv and thread.started event; no compaction event yet"
+    },
+    "shellSession": 40879,
+    "task": "seh-current-main-canonical-build-oct25",
+    "output": "scratch/usage-watch/seh-current-main-canonical-build-oct25",
+    "fallbackNotBefore": "2026-10-25T19:27:07.840327+00:00"
+  }
+}

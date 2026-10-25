@@ -1,0 +1,107 @@
+[
+  {
+    "path": "account.py",
+    "bytes": 3784,
+    "sha256": "4fa0a45399bc1bc99a87536f3a7a7129c4b21da0d2e863b04da4dd8db25dc84f"
+  },
+  {
+    "path": "admission-precheckout.json",
+    "bytes": 6251,
+    "sha256": "e1c7ae011512da0f16ae780b3c258892fffacf56ab150ed4318e86f64ce26410"
+  },
+  {
+    "path": "build.cjs",
+    "bytes": 3599,
+    "sha256": "39a3e6ebdbb9839b869e437a51d025729a702b8fbea01a2d56ec83411cdfafd7"
+  },
+  {
+    "path": "cheap-1792956472353621777.json",
+    "bytes": 577,
+    "sha256": "f1f0fc4d98923748fbcdb4cb73e8ea0e27e7be89ec4c297d090e4d1d3524b316"
+  },
+  {
+    "path": "cheap-1792956472353621777.stderr",
+    "bytes": 131072,
+    "sha256": "1b2129bf4873180b5f13993136f4b40c7696bbd58c5cca93bfc08d935c25202d"
+  },
+  {
+    "path": "cheap-1792956472353621777.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "cheap-admission-1792956472202534762.json",
+    "bytes": 11153,
+    "sha256": "789738ca5bd0234d672277ca7d69182c30b92b10baf4092bc31af4bb498cda40"
+  },
+  {
+    "path": "checkout.json",
+    "bytes": 16200,
+    "sha256": "f56a856f194f419cb53a036fd99169ff21a1ae54c18d404d3c06eb3af8ae55a1"
+  },
+  {
+    "path": "cleanup.json",
+    "bytes": 393,
+    "sha256": "8e16494b7bed5008d0f69e30151798982b704a3d7ec4faec309eb4d69aef0ebc"
+  },
+  {
+    "path": "closure.json",
+    "bytes": 74301,
+    "sha256": "e7c815df0a2fa50160d3a5601e5cec468bd5d3ccbed57d17585e3d1968e5f3e7"
+  },
+  {
+    "path": "expected-abi-layout.json",
+    "bytes": 392748,
+    "sha256": "fa81c4941fc02ee68c82a38d2d669728b7a9bfc384c1ef3f2a5f72f944d95fd1"
+  },
+  {
+    "path": "first-blocker.json",
+    "bytes": 780,
+    "sha256": "60aa905c48dd66ab4341c850df789e05edcf28f41b8a638d02f8a856c7ff3642"
+  },
+  {
+    "path": "guard-reuse.json",
+    "bytes": 1470,
+    "sha256": "53e018ae860de983e94537c52b16540db779ac2961e26bb832bdd4bce9e5b831"
+  },
+  {
+    "path": "input-pins.json",
+    "bytes": 48905,
+    "sha256": "fc2f979804ade8316383b16809d77b28fbac81571d68d9343a45d8db6cd00e48"
+  },
+  {
+    "path": "recovery-verified.json",
+    "bytes": 568,
+    "sha256": "1a33b22565b88de8718cb68cf4a66026499b6d5e5d7f5d646ed36c895260d195"
+  },
+  {
+    "path": "result.json",
+    "bytes": 923,
+    "sha256": "d6d9859aa45e2596c460487bccba2d6489329c11045b4dc71e3857e8251f5c66"
+  },
+  {
+    "path": "setup.py",
+    "bytes": 3168,
+    "sha256": "db9f6726df4dc105e839b9f84548f07c0289e1aee31180e4aad50c9fa8d1347b"
+  },
+  {
+    "path": "standing-pins-verified.json",
+    "bytes": 1651,
+    "sha256": "33df8e005dc082a58b4ef6fa7be4d5ef41b9af6776d371bb991bbbf452d7599f"
+  },
+  {
+    "path": "supervise.py",
+    "bytes": 4564,
+    "sha256": "c2ee4204502d9998703d86520b01055f5c025f40dd53d97a30962eef0aae6911"
+  },
+  {
+    "path": "trusted-configuration.json",
+    "bytes": 2034,
+    "sha256": "cc1884ea4a688b4b5ecdf7a243aed204e4b2eb5b70794adaead83c92a79d4c2b"
+  },
+  {
+    "path": "verify-current.py",
+    "bytes": 2127,
+    "sha256": "a48f2ced09cc15248abdf99ea10a7375d7adcf0d903caa9e2d718b053e38b62c"
+  }
+]

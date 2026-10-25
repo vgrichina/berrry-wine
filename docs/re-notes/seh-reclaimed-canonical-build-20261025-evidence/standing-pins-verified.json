@@ -1,0 +1,37 @@
+[
+  {
+    "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/recipe.py",
+    "bytes": 14140,
+    "sha256": "47fef8efbe4a04e74f67385416fdb0992ba2826967cd6681edd395491eff1d46"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.py",
+    "bytes": 12344,
+    "sha256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "bytes": 2462,
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+  },
+  {
+    "path": "/tmp/host-worker-lifecycle-fixture-repair-oct25/ops/checkout.py",
+    "bytes": 2268,
+    "sha256": "8d8bbf54b92692d3e0999c1cd927dbeda2026fd62af1e983995a229769be0648"
+  },
+  {
+    "path": "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/account.py",
+    "bytes": 4040,
+    "sha256": "275ca0735df4db2308445bc7feb8280b11cc59b896cf4ad93f5b87034fdf6a8e"
+  },
+  {
+    "path": "/tmp/maelstrom-select-hook-recovered-canonical-native-oct24/ops/supervise.py",
+    "bytes": 4469,
+    "sha256": "63bdc5638538186340f22b53041aa16778490f5fcaa965d03796ff674186dd5a"
+  },
+  {
+    "path": "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/docs/re-notes/shadow-man-capture-build-readiness-20261023/qualify-after-admission.cjs",
+    "bytes": 1817,
+    "sha256": "4f8b0bbddac21abc821f7da77dc4d7a8573a81b15358a3ff75f173b40a862bdc"
+  }
+]

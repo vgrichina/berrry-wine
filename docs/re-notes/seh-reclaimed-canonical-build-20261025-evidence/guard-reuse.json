@@ -1,0 +1,31 @@
+{
+  "guard": {
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "bytes": 2462,
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+  },
+  "qualifier": {
+    "path": "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/docs/re-notes/shadow-man-capture-build-readiness-20261023/qualify-after-admission.cjs",
+    "bytes": 1817,
+    "sha256": "4f8b0bbddac21abc821f7da77dc4d7a8573a81b15358a3ff75f173b40a862bdc"
+  },
+  "receipts": [
+    {
+      "path": "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/docs/re-notes/render-positiont-guarded-com-qualification-20261023/independent-review.json",
+      "sha256": "0e59d01919e728e58a65f74124fa5269a91500c5baa184acc58236e21c8b6b33"
+    },
+    {
+      "path": "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/docs/re-notes/render-positiont-guarded-com-qualification-20261023/boundary-acceptance.json",
+      "sha256": "c37e301fcd836e53946307a316df8cf843420f085b9827cbdf3d14faa064b17d"
+    }
+  ],
+  "accepted": true,
+  "scope": "Exact synchronous Buffer Module callsite only; not a hostile-code sandbox",
+  "explicitSourceRoots": [
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23",
+    "/tmp/seh-current-main-canonical-build-oct25/repo"
+  ],
+  "Memory": false,
+  "Instance": false,
+  "guest": false
+}

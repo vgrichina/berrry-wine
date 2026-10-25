@@ -1,0 +1,15 @@
+{
+  "watcherPID": 1447650,
+  "watcherStopped": true,
+  "childGroupReaped": true,
+  "remainingChildGroups": [],
+  "compilerStarted": false,
+  "heavyLockAcquired": false,
+  "rootTrackedIndexRefsUnchanged": true,
+  "donorsReadOnly": true,
+  "box": null,
+  "boxState": "N/A none assigned or queried",
+  "expiry": null,
+  "shutdownOwner": "coordinator",
+  "protectedBox": "bx_69aem736 untouched"
+}

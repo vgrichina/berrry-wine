@@ -1,0 +1,21 @@
+{
+  "status": "BLOCKED_INPUT_VERIFICATION_OUTPUT_LIMIT",
+  "candidate": "a3fe340b962da3f31df249881074afe41d6c69a2",
+  "compiledCount": 0,
+  "requestedCompiledCount": 2,
+  "moduleHashes": [],
+  "closureSHA256": "e9c212ccd85445de89271af25660b331b548f8cb2d40ffa5271b312c6c0e699d",
+  "closureQualification": "Historical exact-current preflight reused; this session revalidation terminated incomplete",
+  "compilerPath": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/watx.js",
+  "compilerSHA256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+  "compilerInventory": "NOT_RUN",
+  "binaryABI": "NOT_RUN",
+  "guardedModule": "NOT_RUN",
+  "firstBlocker": "/tmp/seh-reclaimed-canonical-build-oct25/ops/first-blocker.json",
+  "branch": "task/seh-reclaimed-canonical-build-oct25",
+  "commit": null,
+  "remoteVerified": false,
+  "noMemory": true,
+  "noInstance": true,
+  "noGuest": true
+}

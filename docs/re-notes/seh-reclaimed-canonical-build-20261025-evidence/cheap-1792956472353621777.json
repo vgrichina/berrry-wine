@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/seh-reclaimed-canonical-build-oct25/ops/verify-current.py"
+  ],
+  "cwd": "/tmp/seh-reclaimed-canonical-build-oct25/repo",
+  "pid": 1447920,
+  "exit": -15,
+  "reason": "aggregate stdout+stderr overflow",
+  "elapsed": 1.4718124449718744,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 131223
+  },
+  "aggregateLogMax": 131072,
+  "retained": 131072,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 140902400
+}
