@@ -1,0 +1,9 @@
+{
+  "supervisorSHA256": "0dccd283ae90dfcd46c75f4e4c483f06124c895da90c2bf22ead565d601246de",
+  "session": "01a174e7-4ebb-7971-a291-d5c4abb39f52",
+  "mountArgv": [],
+  "intendedFiles": [],
+  "mountReceiptReuse": "/tmp/seh-current-canonical-qualifier-oct25/ops/trusted-configuration.json",
+  "mountConfiguration": "unchanged exact offline empty configuration; no runtime or mount execution",
+  "limits": "all bootstrap CPU/wall60s file24MiB output128KiB"
+}

@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/seh-canonical-qualifier-independent-integrate-oct25/ops/preserve.py"
+  ],
+  "cwd": "/tmp/seh-canonical-qualifier-independent-integrate-oct25/ops",
+  "pid": 1552619,
+  "exit": 1,
+  "reason": null,
+  "elapsed": 0.2789777960861102,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 715
+  },
+  "aggregateLogMax": 131072,
+  "retained": 715,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 140902400
+}
