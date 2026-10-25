@@ -13,7 +13,10 @@ const { createActivityReader, boardEntry, linkCommits } = require('./activity');
 const { buildDosCorpus } = require('./dos-corpus');
 
 const MB = 1024 * 1024;
-const clip = (value, n = 220) => typeof value === 'string' ? value.replace(/\s+/g, ' ').slice(0, n) : '';
+// V8 slices can retain their entire transcript-sized parent. Copy only the
+// clipped UTF-16 code units, preserving even unmatched surrogates verbatim.
+const clip = (value, n = 220) => typeof value === 'string'
+  ? Buffer.from(value.replace(/\s+/g, ' ').slice(0, n), 'utf16le').toString('utf16le') : '';
 const number = value => typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null;
 const date = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value)) ? new Date(value).toISOString() : null;
 const inside = (root, file) => file === root || file.startsWith(root + path.sep);
@@ -47,7 +50,16 @@ async function readText(file, limit = 2 * MB) {
   try {
     const stat = await h.stat();
     if (stat.size > limit) throw new Error(`file exceeds ${limit / MB} MiB read limit`);
-    return await h.readFile('utf8');
+    // Reading to EOF after stat can allocate without limit when a writer keeps
+    // appending. Pin this read to the bounded size we actually checked.
+    const buffer = Buffer.alloc(stat.size);
+    let offset = 0;
+    while (offset < buffer.length) {
+      const { bytesRead } = await h.read(buffer, offset, buffer.length - offset, offset);
+      if (!bytesRead) break;
+      offset += bytesRead;
+    }
+    return buffer.subarray(0, offset).toString('utf8');
   } finally { await h.close(); }
 }
 
@@ -90,7 +102,7 @@ async function scanGoal(file, end, stop) {
       if (first >= 0) text = text.slice(first + 1);
       const lines = text.split('\n');
       for (let i = lines.length - 1; i >= 0; i--) {
-        if (!lines[i].includes('"goal_status"') && !lines[i].includes('Goal set: ') && !lines[i].includes('Goal cleared')) continue;
+        if (!lines[i].includes('"goal_status"') && !/Goal (?:set: |cleared|removed)/i.test(lines[i])) continue;
         try { const e = JSON.parse(lines[i]); const goal = goalOf(e, date(e.timestamp)); if (goal !== undefined) return goal; } catch { /* partial line */ }
       }
       if (carry.length > 16 * MB) carry = '';
@@ -333,9 +345,13 @@ function createReader(options = {}) {
     for (const entry of discovery) {
       try {
         const stat = await fs.stat(entry.file);
-        const key = `${stat.size}:${stat.mtimeMs}`;
+        const identity = `${stat.dev}:${stat.ino}:${stat.birthtimeMs}`;
+        const key = `${identity}:${stat.size}:${stat.mtimeMs}:${stat.ctimeMs}`;
         let cached = sessionCache.get(entry.file);
         if (!cached || cached.key !== key) {
+          // A replacement or truncation is a new history, not an append. In
+          // particular, never inherit the former file's goal after rotation.
+          if (cached && (cached.identity !== identity || stat.size <= cached.goalSize)) cached = null;
           const { records, partial } = await logWindows(entry.file, stat.size);
           const session = parseSession(entry.provider, records, entry.file, partial, root);
           // In a windowed log the newest goal record may sit in the unread middle:
@@ -346,11 +362,14 @@ function createReader(options = {}) {
             const found = await scanGoal(entry.file, stat.size, Math.max(0, Math.min(before, stat.size) - MB));
             session.goal = found !== undefined ? found : cached?.session ? cached.session.goal : session.goal;
           }
-          cached = { key, session, goalSize: stat.size };
+          cached = { key, identity, session, goalSize: stat.size };
           sessionCache.set(entry.file, cached);
         }
         if (cached.session) result.push({ ...cached.session, logFile: entry.file });
-      } catch (e) { warnings.push(`${entry.provider}: could not read a session log (${e.code || e.message}).`); }
+      } catch (e) {
+        sessionCache.delete(entry.file);
+        warnings.push(`${entry.provider}: could not read a session log (${e.code || e.message}).`);
+      }
     }
     const seen = new Set();
     return result.sort((a, b) => (b.lastActivityAt || '').localeCompare(a.lastActivityAt || '')).filter(a => {
