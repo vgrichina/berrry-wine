@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "test/test-d3d9-immutable-rgba-snapshot.js"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.15417789993807673,
+  "stdout": "\u2714 replacement at the same mip address cannot inherit a sparse fingerprint collision (14.006466ms)\n\u2714 queued update and device release retain both original byte snapshots in order (5.526705ms)\n\u2714 budget rejection publishes no partial definition or retirement and retry is complete (3.137063ms)\n\u2714 device incarnation and mip subresources have distinct references (7.210573ms)\n\u2714 unchanged identity sends a reference without decoding or publishing RGBA again (1.869205ms)\n\u2714 reset retires consumer residency and the next draw republishes its definition (2.342123ms)\n\u2139 tests 6\n\u2139 suites 0\n\u2139 pass 6\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 114.485395\n",
+  "stderr": "",
+  "guardFailure": null
+}

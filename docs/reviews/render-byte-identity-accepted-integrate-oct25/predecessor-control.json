@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "test/test-d3d9-byte-identity-acceptance.js"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 1,
+  "seconds": 0.07970088301226497,
+  "stdout": "\u2716 independent exact-byte interior collision, equal-byte reuse and private ownership (5.722532ms)\n\u2714 independent zero-cache budget retains no source aliases across replacement (5.25851ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 1\n\u2139 fail 1\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 52.149867\n\n\u2716 failing tests:\n\ntest at test/test-d3d9-byte-identity-acceptance.js:77:1\n\u2716 independent exact-byte interior collision, equal-byte reuse and private ownership (5.722532ms)\n  TypeError: Cannot read properties of undefined (reading 'buffer')\n      at TestContext.<anonymous> (/tmp/render-byte-identity-accepted-integrate-oct25/repo/test/test-d3d9-byte-identity-acceptance.js:80:22)\n      at async Test.run (node:internal/test_runner/test:1332:7)\n      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)\n",
+  "stderr": "",
+  "guardFailure": null
+}

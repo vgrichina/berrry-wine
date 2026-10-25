@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "fetch",
+    "--no-tags",
+    "--no-auto-maintenance",
+    "origin",
+    "+refs/heads/main:refs/remotes/origin/main",
+    "+refs/heads/task/render-byte-identity-independent-accept-oct25:refs/remotes/origin/accepted"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 1.750254419981502,
+  "stdout": "",
+  "stderr": "From github.com:vgrichina/wine-assembly\n * [new branch]          main       -> origin/main\n * [new branch]          task/render-byte-identity-independent-accept-oct25 -> origin/accepted\n * [new branch]          task/render-byte-identity-independent-accept-oct25 -> origin/task/render-byte-identity-independent-accept-oct25\n",
+  "guardFailure": null
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "test/test-d3d9-rgba-generation-independent.js"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.09412197605706751,
+  "stdout": "\u2714 single unsigned counter rollover invalidates an observed old generation (13.392755ms)\n\u2714 an unbound cached mip cannot inherit bytes after a complete allocation-counter cycle (5.455091ms)\n\u2139 tests 2\n\u2139 suites 0\n\u2139 pass 2\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 68.350688\n",
+  "stderr": "",
+  "guardFailure": null
+}

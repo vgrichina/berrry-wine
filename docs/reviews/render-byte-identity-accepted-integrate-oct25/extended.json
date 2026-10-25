@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "test/test-d3d9-rgba-source-identity.js"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.11845025094226003,
+  "stdout": "\u2714 wrapped metadata rejects a change in the last source byte (10.31868ms)\n\u2714 wrapped replacement queued behind the old draw owns fresh immutable bytes (8.048034ms)\n\u2714 source copies share the bounded LRU budget; resident budget counts RGBA only (4.601388ms)\n\u2714 full source identity covers format 23 (2.571411ms)\n\u2714 full source identity covers format 50 (1.949656ms)\n\u2714 full source identity covers format 827611204 (2.61264ms)\n\u2139 tests 6\n\u2139 suites 0\n\u2139 pass 6\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 83.162103\n",
+  "stderr": "",
+  "guardFailure": null
+}

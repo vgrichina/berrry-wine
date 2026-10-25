@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "test/test-d3d9-texture-snapshot-cache.js",
+    "--js-only"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.04634893708862364,
+  "stdout": "PASS test-d3d9-texture-snapshot-cache JS-only; WAT omitted\n",
+  "stderr": "",
+  "guardFailure": null
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--check",
+    "lib/d3d9-host.js"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 0.018496657023206353,
+  "stdout": "",
+  "stderr": "",
+  "guardFailure": null
+}

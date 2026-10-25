@@ -1,0 +1,65 @@
+{
+  "seals": 25,
+  "candidate": "f50fb2cdba10b67b60063f40beac9291711eddfd",
+  "review": "23c78ef013eae85c84c0e9986cb361612dfee7a3",
+  "acceptedResult": {
+    "decision": "ACCEPTED READY FOR SERIALIZED INTEGRATION",
+    "candidate": "f50fb2cdba10b67b60063f40beac9291711eddfd",
+    "tree": "733820d4fd7f93a8ca2e5899774562a2f2911c4a",
+    "base": "397cdb6ca37c1f247cdd6e2618f6e1f3529342c4",
+    "predecessor": "9f3fcdc221ec48b64293f212500cbeadfd7f21fc",
+    "sourceSHA256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "tests": {
+      "original-six": {
+        "exitCode": 0
+      },
+      "unchanged-reviewer": {
+        "exitCode": 0
+      },
+      "extended": {
+        "exitCode": 0
+      },
+      "legacy-js": {
+        "exitCode": 0
+      },
+      "syntax": {
+        "exitCode": 0
+      },
+      "independent": {
+        "exitCode": 0,
+        "tests": 2
+      },
+      "predecessor-control": {
+        "exitCode": 1,
+        "required": 1
+      },
+      "alias-control": {
+        "exitCode": 1,
+        "required": 1
+      }
+    },
+    "integration": "NO MAIN INTEGRATION; coordinator serializes separately",
+    "blockers": [],
+    "box": {
+      "id": null,
+      "state": "not assigned",
+      "expiry": null,
+      "lifecycleOwner": "coordinator"
+    },
+    "limitations": [
+      "Source and mock-device JS contract only; no GPU/browser/native/guest/gameplay/compiler/Wasm execution",
+      "2**32 allocation recurrence modeled algebraically; no allocation cycle executed",
+      "Linear full-source scan per bound mip; reduced cache capacity; no benchmark or throughput acceptance",
+      "Requested external RECOVERY.md absent; recovery commands verified in committed README"
+    ]
+  },
+  "publication": {
+    "commit": "23c78ef013eae85c84c0e9986cb361612dfee7a3",
+    "branch": "task/render-byte-identity-independent-accept-oct25",
+    "remoteSHA": "23c78ef013eae85c84c0e9986cb361612dfee7a3",
+    "verified": true,
+    "candidate": "f50fb2cdba10b67b60063f40beac9291711eddfd",
+    "reviewTree": "8e02166edc60656dfbff4f1d1e2a8caaec560271",
+    "mainPushed": false
+  }
+}

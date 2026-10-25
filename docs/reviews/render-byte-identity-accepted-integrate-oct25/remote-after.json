@@ -1,0 +1,16 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/main",
+    "refs/heads/task/render-byte-identity-accepted-integrate-oct25"
+  ],
+  "cwd": "/tmp/render-byte-identity-accepted-integrate-oct25/repo",
+  "exitCode": 0,
+  "seconds": 1.8210175560088828,
+  "stdout": "880654e00710fe89c1ea95aa2d583a53ad4de890\trefs/heads/main\n880654e00710fe89c1ea95aa2d583a53ad4de890\trefs/heads/task/render-byte-identity-accepted-integrate-oct25\n",
+  "stderr": "",
+  "guardFailure": null
+}

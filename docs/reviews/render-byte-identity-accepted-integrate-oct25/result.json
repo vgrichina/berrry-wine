@@ -1,0 +1,118 @@
+{
+  "decision": "ACCEPT AND INTEGRATED",
+  "preMain": "0ab4aec7650b86d1056f0697fd1d927c33c36a77",
+  "candidate": "f50fb2cdba10b67b60063f40beac9291711eddfd",
+  "review": "23c78ef013eae85c84c0e9986cb361612dfee7a3",
+  "merged": "880654e00710fe89c1ea95aa2d583a53ad4de890",
+  "tree": "90331e48683b375c5aaf1fc2d098f1803a603eea",
+  "branch": "task/render-byte-identity-accepted-integrate-oct25",
+  "refs": {
+    "refs/heads/main": "880654e00710fe89c1ea95aa2d583a53ad4de890",
+    "refs/heads/task/render-byte-identity-accepted-integrate-oct25": "880654e00710fe89c1ea95aa2d583a53ad4de890"
+  },
+  "verified": true,
+  "normalNonforceAtomicPush": true,
+  "sourceIdentity": {
+    "renderer": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "overlay": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+  },
+  "tests": {
+    "tree": "90331e48683b375c5aaf1fc2d098f1803a603eea",
+    "results": {
+      "original-six": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-d3d9-immutable-rgba-snapshot.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 6,
+        "outputSHA256": "34cc8f4b56056b973a530f61acc3578f543760e83c9798291cf4d305bfd62ad1"
+      },
+      "unchanged-reviewer": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-d3d9-rgba-generation-independent.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 2,
+        "outputSHA256": "fa60f7956fd56303f8546ad7264d40ce8b2cf80d50d2a7de922e5d39648a3be5"
+      },
+      "extended": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-d3d9-rgba-source-identity.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 6,
+        "outputSHA256": "950b6c702ac76ec7364736d4f73d826c487453666ebf84a02ec50bd6c77eb195"
+      },
+      "independent": {
+        "argv": [
+          "node",
+          "--test",
+          "test/test-d3d9-byte-identity-acceptance.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 2,
+        "outputSHA256": "c9a969919dd2da437922252ed3cae2d58759c09707c731986d10d4b42302c1cf"
+      },
+      "legacy-js": {
+        "argv": [
+          "node",
+          "test/test-d3d9-texture-snapshot-cache.js",
+          "--js-only"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "8db39d2d9ae4d0afbc306687496944f8284d208cc4aa29b3d2befb3a1e876acc"
+      },
+      "syntax": {
+        "argv": [
+          "node",
+          "--check",
+          "lib/d3d9-host.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": null,
+        "outputSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "overlay-existing": {
+        "argv": [
+          "node",
+          "test/test-vfs-overlay.js"
+        ],
+        "exitCode": 0,
+        "expectedPass": 20,
+        "outputSHA256": "bb4cac1f64448d2d862d4bada5e1ba00e83d208cf84a2b3e7315a6ebcd974617"
+      },
+      "predecessor-control": {
+        "exitCode": 1,
+        "requiredExit": 1,
+        "outputSHA256": "3b29d2dc96740ebfbcc3455238c32d085c21571bbb166d09ca3f987aedc376d0"
+      },
+      "alias-control": {
+        "exitCode": 1,
+        "requiredExit": 1,
+        "outputSHA256": "738a533effc7e91a65536e6f46c1b3601a32f8055d429fb2266d00725295977b"
+      }
+    },
+    "allPass": true
+  },
+  "blockers": [],
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "limitations": [
+    "Source/mock-device JS contracts only; no GPU/runtime/gameplay/compiler/wasm/browser execution",
+    "Linear scans and reduced cache capacity remain unbenchmarked",
+    "2**32 generation recurrence modeled algebraically; not executed"
+  ],
+  "recovery": "RECOVERY.md",
+  "internalCorrections": "Missing standing overlay review objects during scoped fetch resolved by adding existing validated nonrecursive flat leaves and pinned-base own shallow boundary; original diagnostic retained; no denial/access retry or limit increase"
+}

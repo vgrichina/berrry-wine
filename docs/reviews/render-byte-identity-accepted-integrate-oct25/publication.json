@@ -1,0 +1,18 @@
+{
+  "preMain": "0ab4aec7650b86d1056f0697fd1d927c33c36a77",
+  "candidate": "f50fb2cdba10b67b60063f40beac9291711eddfd",
+  "review": "23c78ef013eae85c84c0e9986cb361612dfee7a3",
+  "merged": "880654e00710fe89c1ea95aa2d583a53ad4de890",
+  "tree": "90331e48683b375c5aaf1fc2d098f1803a603eea",
+  "branch": "task/render-byte-identity-accepted-integrate-oct25",
+  "refs": {
+    "refs/heads/main": "880654e00710fe89c1ea95aa2d583a53ad4de890",
+    "refs/heads/task/render-byte-identity-accepted-integrate-oct25": "880654e00710fe89c1ea95aa2d583a53ad4de890"
+  },
+  "verified": true,
+  "normalNonforceAtomicPush": true,
+  "sourceIdentity": {
+    "renderer": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "overlay": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+  }
+}
