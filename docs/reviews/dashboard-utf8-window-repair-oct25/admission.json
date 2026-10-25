@@ -1,0 +1,22 @@
+{
+  "RAM": 2525790208,
+  "disk": 5395152896,
+  "projectedPeak": 67108864,
+  "reserveInside": 8388608,
+  "mountArgv": [],
+  "mountValidation": "Offline Node/Git only, no mount invocation or filename-bearing mounts",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "standingDonor": "/tmp/dashboard-bounded-memory-repair-oct25/repo",
+  "standingNode": "/usr/local/bin/node",
+  "standingGit": "/usr/bin/git",
+  "standingDependencies": "/tmp/wa-local-runtime-deps/node_modules (read-only, not copied)",
+  "objectViewMetadataCharge": 1789952,
+  "ops/readers.js": {
+    "sha256": "4f8afd555b01307c3cfd6f4251e35d084f023f46192b639ba49f650dc9a40e85",
+    "bytes": 40483
+  },
+  "ops/session-retention.test.js": {
+    "sha256": "10768b47886b718a56879ae46db7d435c7c017749d5632aec63f825d7fec2d5b",
+    "bytes": 4998
+  }
+}

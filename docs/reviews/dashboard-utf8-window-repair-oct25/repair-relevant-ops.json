@@ -1,0 +1,1 @@
+{"argv": ["node", "--test", "--test-name-pattern", "session|usage|bounded logs|goal|subagent|forked|file ingestion|task APIs", "ops/ops.test.js"], "exit": 0, "bytes": 1366, "reason": null, "seconds": 0.8833944319048896}

@@ -1,0 +1,13 @@
+{
+  "fixtureBytes": 1356235,
+  "windowStart": 307659,
+  "cutWithinEmojiByte": 1,
+  "expected": "goal é漢😀 complete",
+  "scanGoal": "goal é漢😀 complete",
+  "analyticsGoal": "goal é漢😀 complete",
+  "usage": {
+    "input": 60,
+    "output": 5
+  },
+  "repeatedSnapshotGoal": "goal é漢😀 complete"
+}

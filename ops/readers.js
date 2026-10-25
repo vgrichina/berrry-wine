@@ -92,20 +92,22 @@ function goalOf(e, time) {
 async function scanGoal(file, end, stop) {
   const h = await fs.open(file, 'r');
   try {
-    let carry = '';
+    let carry = Buffer.alloc(0);
     while (end > stop) {
       const start = Math.max(stop, end - MB), buffer = Buffer.alloc(end - start);
       await h.read(buffer, 0, buffer.length, start);
-      let text = buffer.toString('utf8') + carry;
-      const first = start > 0 ? text.indexOf('\n') : -1;
-      carry = first >= 0 ? text.slice(0, first) : '';
-      if (first >= 0) text = text.slice(first + 1);
+      // Join record bytes before decoding: a byte window can split UTF-8.
+      const bytes = carry.length ? Buffer.concat([buffer, carry]) : buffer;
+      const first = start > 0 ? bytes.indexOf(10) : -1;
+      carry = first >= 0 ? Buffer.from(bytes.subarray(0, first)) : Buffer.alloc(0);
+      const text = bytes.subarray(first >= 0 ? first + 1 : 0).toString('utf8');
       const lines = text.split('\n');
       for (let i = lines.length - 1; i >= 0; i--) {
         if (!lines[i].includes('"goal_status"') && !/Goal (?:set: |cleared|removed)/i.test(lines[i])) continue;
         try { const e = JSON.parse(lines[i]); const goal = goalOf(e, date(e.timestamp)); if (goal !== undefined) return goal; } catch { /* partial line */ }
       }
-      if (carry.length > 16 * MB) carry = '';
+      // Preserve the existing UTF-16 length limit, with a cheap byte precheck.
+      if (carry.length > 16 * MB && carry.toString('utf8').length > 16 * MB) carry = Buffer.alloc(0);
       end = start;
     }
     return undefined;
