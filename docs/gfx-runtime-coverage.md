@@ -26,8 +26,10 @@ Identity strings are nonempty and have no surrounding whitespace. Artifact paths
 resolve relative to the explicit third argument, including through symlinks, and
 must remain inside it. Artifacts must be existing regular files. SHA-256 is
 computed from their retained bytes, in chunks. Screenshots, logs, or other retained
-files are allowed; duplicate paths, symlink aliases, and duplicate artifact digests
-are rejected, as are shared run IDs. Every member of a duplicate group is rejected.
+files are allowed; duplicate paths, symlink aliases, and shared run IDs are rejected.
+Separate files from distinct runs may have identical bytes and SHA-256 digests,
+for example screenshots of the same scene from both backends.
+Every member of a duplicate group is rejected.
 An app/backend duplicate is invalid even if one competing record is malformed.
 
 Output is deterministic JSON: apps sorted by ID, software then WebGL, each with

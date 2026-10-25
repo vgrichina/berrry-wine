@@ -34,6 +34,19 @@ test('missing backend remains missing', t => {
   assert.equal(f.check().complete, false);
   assert.equal(f.check().apps[0].backends[1].status, 'missing');
 });
+test('same bytes in separate files with distinct runs pass; hashes still checked', t => {
+  const f = fixture(t);
+  fs.copyFileSync(path.join(f.root, 'software.txt'), path.join(f.root, 'webgl.txt'));
+  f.evidence.records[1].artifact.sha256 = f.evidence.records[0].artifact.sha256;
+  const result = f.check();
+  assert.equal(result.complete, true);
+  assert.deepEqual(result.rejected, []);
+  assert.deepEqual(result.apps[0].backends.map(x => x.status), ['accepted', 'accepted']);
+  fs.appendFileSync(path.join(f.root, 'webgl.txt'), 'changed');
+  const changed = f.check();
+  assert.equal(changed.complete, false);
+  assert.deepEqual(changed.rejected.map(x => x.reasons), [['artifact-sha256-mismatch']]);
+});
 const mutations = [
   ['duplicate pair rejects all candidates', f => f.evidence.records.push(structuredClone(f.evidence.records[0])), 'duplicate-app-backend'],
   ['missing backend', f => delete f.evidence.records[0].backend, 'unknown-or-missing-backend'],
@@ -48,7 +61,6 @@ const mutations = [
   ['missing run', f => delete f.evidence.records[0].run, 'missing-run'],
   ['shared run', f => f.evidence.records[1].run = f.evidence.records[0].run, 'duplicate-run'],
   ['same artifact', f => f.evidence.records[1].artifact = structuredClone(f.evidence.records[0].artifact), 'reused-artifact'],
-  ['same bytes in separate file', f => { fs.copyFileSync(path.join(f.root, 'software.txt'), path.join(f.root, 'webgl.txt')); f.evidence.records[1].artifact.sha256 = f.evidence.records[0].artifact.sha256; }, 'reused-artifact-digest'],
   ['artifact deleted', f => fs.unlinkSync(path.join(f.root, 'software.txt')), 'artifact-unavailable'],
   ['artifact changed', f => fs.appendFileSync(path.join(f.root, 'software.txt'), 'changed'), 'artifact-sha256-mismatch'],
   ['malformed hash', f => f.evidence.records[0].artifact.sha256 = 'bogus', 'invalid-artifact-schema'],

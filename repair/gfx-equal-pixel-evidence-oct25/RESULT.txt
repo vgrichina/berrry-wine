@@ -1,0 +1,41 @@
+ACCEPT: bounded repair of candidate 378f0b8c776af24e078a267dbe26e528faa8390f.
+Accepted finding from review b675d6c0c16c4b802fe3ae546e379062323ade3d:
+distinct runs and separate paths can retain byte-identical screenshots.
+Removed only the global reused-artifact-digest rejection. Per-file hash integrity,
+run/path uniqueness, app/backend/build identity, duplicate/ambiguous records,
+and missing/extra coverage checks remain. Updated the faulty supplied assertion
+to accept identical bytes and then reject changed bytes with the original digest.
+Documentation now permits matching digests for distinct captures.
+
+UNCHANGED independent.test.js SHA-256:
+9241dbb93788e85d6164c272d5cba618a5efe424f2d3147fd3eecd8b2e0cbe10
+Copied byte-for-byte from reviewer fixture, verified against dispatch receipt.
+Baseline independent suite: 40 pass, 1 fail, exit 1; only failure is the legitimate
+same-scene PNG case, with both records rejected solely reused-artifact-digest.
+Repair independent suite: 41 pass, 0 fail, exit 0.
+Updated supplied suite: 26 pass, 0 fail, exit 0.
+Repair exact identical-PNG CLI reproducer: complete=true, rejected=[], exit 0.
+git diff --check passed. Static census unchanged; no schema/authenticity expansion.
+
+Commands (run from isolated repo, installed Node/Python executed in place):
+OPS=/tmp/gfx-equal-pixel-evidence-repair-oct25/ops
+GFX_VERIFIER=$PWD/tools/gfx-runtime-coverage.js GFX_LOG=baseline-independent.log python3 "$OPS/supervise.py" node --max-old-space-size=128 --test "$OPS/independent.test.js"
+The baseline command was run before editing the candidate verifier.
+GFX_VERIFIER=$PWD/tools/gfx-runtime-coverage.js GFX_REPRO_DIR=$OPS/reproducer GFX_LOG=repair-independent.log python3 "$OPS/supervise.py" node --max-old-space-size=128 --test "$OPS/independent.test.js"
+GFX_LOG=repair-supplied.log python3 "$OPS/supervise.py" node --max-old-space-size=128 --test test/gfx-runtime-coverage.test.js
+GFX_LOG=repair-cli.log python3 "$OPS/supervise.py" node --max-old-space-size=128 tools/gfx-runtime-coverage.js "$OPS/reproducer/manifest.json" "$OPS/reproducer/evidence.json" "$OPS/reproducer"
+All test/CLI commands used retained supervisor: Node heap 128MiB, CPU/wall 60s,
+file size 24MiB, combined output 128KiB, TERM/KILL/reap within 5s.
+Original logs retained in ops; committed log trailing whitespace normalized.
+
+Recovery: the unchanged committed independent fixture generates deterministic PNGs
+when GFX_REPRO_DIR is set. No binary artifacts are needed in Git. Baseline source
+is pinned candidate's tools/gfx-runtime-coverage.js; retrieve that single blob with
+bounded git show, then set GFX_VERIFIER to its retained path for reproduction.
+The retained supervisor writes logs to the original OPS path; recreate that
+directory for recovery or change only its output destination on another host.
+Resource and strict-SSH publication receipts: original ops/preflight.json,
+publication-admission.json and publication.json. No main merge or shared refs edit.
+Synthetic verifier fixtures only: no real runtime, corpus, or gameplay claim.
+No guest/browser/compiler/native Wasm/service/workers/test box operations.
+Box ID/state/expiry: none assigned. Lifecycle remains coordinator-owned.

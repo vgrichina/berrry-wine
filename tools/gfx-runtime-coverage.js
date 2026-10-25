@@ -67,7 +67,6 @@ function verify(manifest, evidence, artifactRoot) {
     ['duplicate-app-backend', row => apps.has(row.r.app) && BACKENDS.includes(row.r.backend) ? JSON.stringify([row.r.app, row.r.backend]) : null],
     ['duplicate-run', row => text(row.r.run) ? row.r.run : null],
     ['reused-artifact', row => row.resolved || null],
-    ['reused-artifact-digest', row => /^[a-f0-9]{64}$/.test(row.r.artifact?.sha256) ? row.r.artifact.sha256 : null],
   ]) {
     const groups = new Map();
     for (const row of rows) {
