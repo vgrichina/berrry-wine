@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "records": [
+    {
+      "app": "scene-app",
+      "backend": "software",
+      "build": "sha256:immutable-build",
+      "kind": "runtime",
+      "run": "run-software",
+      "observation": "Fixture models separate same-scene capture; not corpus evidence.",
+      "artifact": {
+        "path": "software-frame120.png",
+        "sha256": "4d48018034323bc65bb826b321e0c8b9a22c5028969b2b188d7f9e440178f072"
+      }
+    },
+    {
+      "app": "scene-app",
+      "backend": "webgl",
+      "build": "sha256:immutable-build",
+      "kind": "runtime",
+      "run": "run-webgl",
+      "observation": "Fixture models separate same-scene capture; not corpus evidence.",
+      "artifact": {
+        "path": "webgl-frame120.png",
+        "sha256": "4d48018034323bc65bb826b321e0c8b9a22c5028969b2b188d7f9e440178f072"
+      }
+    }
+  ]
+}

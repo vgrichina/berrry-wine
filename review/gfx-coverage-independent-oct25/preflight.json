@@ -1,0 +1,46 @@
+{
+  "candidate": "378f0b8c776af24e078a267dbe26e528faa8390f",
+  "base": "ae188c981dad2337050acf88d74d567d5644c367",
+  "pins": {
+    "tools/gfx-runtime-coverage.js": {
+      "sha256": "039465baa5883ec5294bbc353587d0121220847681b5393a7644da9c07aa752f",
+      "bytes": 5774
+    },
+    "test/gfx-runtime-coverage.test.js": {
+      "sha256": "7e62d703abf571407d058efe5a74447fd59d136590f7dadb6a698dfa6a8b768c",
+      "bytes": 7220
+    },
+    "docs/gfx-runtime-coverage.md": {
+      "sha256": "1b89e936be53abd3259d118deedde1aaf2efc3c362ef1a6b3c6fb1770ac3e8b2",
+      "bytes": 4196
+    }
+  },
+  "staticCensusBlob": "e9ffe0d208012863a597541013512be4a5e497fd",
+  "staticCensusUnchanged": true,
+  "memoryAvailableBytes": 2982416384,
+  "freeDiskBytes": 5418524672,
+  "projectedBytes": 62914560,
+  "allocation": 67108864,
+  "reserveIncluded": 8388608,
+  "viewChargeBytes": 1789952,
+  "sharedDBGrowthAllowance": 30000000,
+  "futurePublicationAllowance": 8388608,
+  "standingTools": {
+    "node": {
+      "path": "/usr/local/bin/node",
+      "bytes": 123656816
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "python3": {
+      "path": "/usr/bin/python3",
+      "bytes": 8020928
+    }
+  },
+  "mountArgv": [],
+  "mountValidation": "N/A no mounts, guest or runtime invocation",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pass": true
+}

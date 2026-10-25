@@ -1,0 +1,72 @@
+✔ separate backend runs observing the same scene with distinct logs pass (3.781653ms)
+✔ app: rejects null (0.926358ms)
+✔ app: rejects number (0.931917ms)
+✔ app: rejects array (0.696296ms)
+✔ app: rejects object (0.95985ms)
+✔ app: rejects empty (0.656201ms)
+✔ app: rejects whitespace (0.673803ms)
+✔ app: rejects wrong (0.66067ms)
+✔ app: rejects missing (0.744567ms)
+✔ backend: rejects null (0.671358ms)
+✔ backend: rejects number (0.569968ms)
+✔ backend: rejects array (0.559939ms)
+✔ backend: rejects object (0.702687ms)
+✔ backend: rejects empty (0.560491ms)
+✔ backend: rejects whitespace (0.499376ms)
+✔ backend: rejects wrong (0.635151ms)
+✔ backend: rejects missing (0.589806ms)
+✔ build: rejects null (0.44803ms)
+✔ build: rejects number (0.402416ms)
+✔ build: rejects array (0.424265ms)
+✔ build: rejects object (1.605071ms)
+✔ build: rejects empty (0.686819ms)
+✔ build: rejects whitespace (0.705422ms)
+✔ build: rejects wrong (0.87947ms)
+✔ build: rejects missing (0.814187ms)
+✔ extra identity field (0.822602ms)
+✔ extra artifact field (0.888416ms)
+✔ false completion metadata (0.574277ms)
+✔ missing webgl despite complete claim (0.605045ms)
+✔ altered bytes with original digest (0.909736ms)
+✔ missing file (0.838001ms)
+✔ duplicate valid identity plus malformed competitor (1.235408ms)
+✔ unknown additional app prevents completion (0.698178ms)
+✔ unknown additional backend prevents completion (0.946245ms)
+✔ shared run identity (0.509575ms)
+✔ one path claimed by both runs (0.769663ms)
+✔ manifest missing build (0.755246ms)
+✔ manifest extra backend identity (0.55983ms)
+✔ manifest malformed app (0.843032ms)
+✔ evidence extra field (0.57074ms)
+✖ LEGITIMATE separate same-scene PNG captures must pass even when pixel and file bytes match (11.787107ms)
+ℹ tests 41
+ℹ suites 0
+ℹ pass 40
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92.051973
+
+✖ failing tests:
+
+test at ../../../tmp/gfx-coverage-independent-integrate-oct25/ops/review/independent.test.js:38:1
+✖ LEGITIMATE separate same-scene PNG captures must pass even when pixel and file bytes match (11.787107ms)
+  AssertionError [ERR_ASSERTION]: {"version":1,"complete":false,"apps":[{"app":"scene-app","build":"sha256:immutable-build","backends":[{"backend":"software","status":"rejected"},{"backend":"webgl","status":"rejected"}]}],"rejected":[{"record":0,"app":"scene-app","backend":"software","reasons":["reused-artifact-digest"]},{"record":1,"app":"scene-app","backend":"webgl","reasons":["reused-artifact-digest"]}]}
+
+  false !== true
+
+      at TestContext.<anonymous> (/tmp/gfx-coverage-independent-integrate-oct25/ops/review/independent.test.js:58:9)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,34 @@
+✔ accepts two distinct synthetic records; deterministic output (6.16884ms)
+✔ missing backend remains missing (1.226991ms)
+✔ duplicate pair rejects all candidates (2.469962ms)
+✔ missing backend (0.797405ms)
+✔ unknown backend (0.874489ms)
+✔ app mismatch (0.749696ms)
+✔ build mismatch (0.876744ms)
+✔ missing build (0.625683ms)
+✔ static imports only (0.617267ms)
+✔ static kind (0.732143ms)
+✔ imports field cannot smuggle static census (0.657283ms)
+✔ missing observation (4.089419ms)
+✔ missing run (1.895165ms)
+✔ shared run (1.377714ms)
+✔ same artifact (0.586148ms)
+✔ same bytes in separate file (2.030679ms)
+✔ artifact deleted (0.614372ms)
+✔ artifact changed (0.577743ms)
+✔ malformed hash (0.456778ms)
+✔ directory artifact (0.466284ms)
+✔ symlink alias (1.235506ms)
+✔ outside-root symlink (1.666266ms)
+✔ null record (0.555802ms)
+✔ manifest identities and schemas fail closed (0.89034ms)
+✔ explicit additional expected app cannot disappear; apps sort by ID (0.529784ms)
+✔ CLI exit codes 0/1/2 and parseable deterministic JSON (218.183249ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 326.505106

@@ -1,0 +1,13 @@
+{
+  "ownedAllocatedBytes": 2125824,
+  "allCurrentSharedWALChargedBytes": 25915392,
+  "viewMetadataChargedBytes": 1789952,
+  "dbGrowthAllowanceBytes": 3000000,
+  "futurePublicationAndSessionBytes": 8388608,
+  "reserveBytes": 8388608,
+  "projectedBytes": 49608384,
+  "allocationBytes": 67108864,
+  "freeDiskBytes": 5415325696,
+  "memoryAvailableBytes": 2964070400,
+  "pass": true
+}

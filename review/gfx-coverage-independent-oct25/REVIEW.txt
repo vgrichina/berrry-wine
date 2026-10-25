@@ -1,0 +1,39 @@
+REJECT candidate 378f0b8c776af24e078a267dbe26e528faa8390f. No merge, no repair.
+Base ae188c981dad2337050acf88d74d567d5644c367; branch contains review evidence only.
+Substantive false rejection at tools/gfx-runtime-coverage.js:70 (applied at :77):
+identical artifact hashes reject EVERY member regardless of distinct app/backend/run/path.
+Two separate same-scene backend runs may emit byte-identical PNGs. The schema permits
+screenshots as the only artifact and requires no run metadata in those screenshot bytes.
+A file digest identifies content, not the run that produced it. Distinct run IDs and
+separate regular files with correct hashes satisfy the non-authenticity contract.
+The retained reproducer uses a deterministic 320x200 menu framebuffer PNG with valid
+PNG chunks/CRCs, two backend identities, unique run IDs and separate files. Both
+records are rejected ONLY for reused-artifact-digest; expected complete=true, exit 0;
+actual complete=false, exit 1. A comparable same-scene case using distinct logs passes.
+This is a synthetic semantic fixture modeling a legitimate capture, not a real run.
+No corpus, gameplay, runtime authenticity or historical 27-app coverage claim.
+
+Supplied suite: 26 pass, 0 fail. Independent suite: 40 pass, 1 fail (the reproducer).
+Tests cover false completion, null/numeric/array/object/empty/whitespace/unknown/missing
+app/backend/build, extra fields, changed/missing artifacts, ambiguous duplicates,
+unknown extra evidence, shared paths/runs and legitimate separate backend runs.
+Source test that expects same bytes in separate files to fail encodes the faulty rule.
+No speculative security requirements; arbitrary metadata authenticity is out of scope.
+Static census Git blob e9ffe0d208012863a597541013512be4a5e497fd unchanged base/candidate.
+Only the candidate's three paths and narrow workflow/receipt context reviewed.
+No accepted SEH review, compiler, Wasm Module/Memory/Instance, guest or test box.
+Box ID/state/expiry: none assigned; lifecycle remains coordinator-owned.
+
+Reproduce from this directory using exact pinned candidate verifier (hash in preflight):
+GFX_VERIFIER=/tmp/gfx-dual-backend-evidence-gate-oct25/repo/tools/gfx-runtime-coverage.js node --max-old-space-size=128 --test independent.test.js
+For bounded execution, run through retained supervise.py from original ops location;
+its GFX_LOG selects log name. All test commands used that supervisor, CPU/wall 60s,
+Node heap 128MiB, file 24MiB, combined output 128KiB; TERM/KILL/reap <=5s.
+Exact CLI reproducer, from this directory (supervise in production):
+node --max-old-space-size=128 /tmp/gfx-dual-backend-evidence-gate-oct25/repo/tools/gfx-runtime-coverage.js reproducer/manifest.json reproducer/evidence.json reproducer
+
+Recovery: source exists in read-only candidate donor and published candidate branch.
+Retrieve ONLY its three pinned files by bounded git show if needed; no full clone.
+Independent source contains generator for both PNG files; no ignored artifact dependency.
+
+Committed logs have trailing whitespace normalized; ops retains original captures.

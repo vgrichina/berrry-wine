@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "complete": false,
+  "apps": [
+    {
+      "app": "scene-app",
+      "build": "sha256:immutable-build",
+      "backends": [
+        {
+          "backend": "software",
+          "status": "rejected"
+        },
+        {
+          "backend": "webgl",
+          "status": "rejected"
+        }
+      ]
+    }
+  ],
+  "rejected": [
+    {
+      "record": 0,
+      "app": "scene-app",
+      "backend": "software",
+      "reasons": [
+        "reused-artifact-digest"
+      ]
+    },
+    {
+      "record": 1,
+      "app": "scene-app",
+      "backend": "webgl",
+      "reasons": [
+        "reused-artifact-digest"
+      ]
+    }
+  ]
+}
