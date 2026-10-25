@@ -1,0 +1,12 @@
+Restart=on-failure
+RestartUSec=5s
+ExecStart={ path=/usr/bin/env ; argv[]=/usr/bin/env node /home/user/wine-dashboard-b0b9bc090/ops/server.js --port=8098 --root=/home/user/wine-assembly ; ignore_errors=no ; start_time=[Sun 2026-10-25 20:45:19 UTC] ; stop_time=[n/a] ; pid=1522619 ; code=(null) ; status=0/0 }
+Environment=WINE_EMULATOR_ROOT=/home/user/wine-dashboard-b0b9bc090 WINE_INVENTORY_ROOT=/home/user/wine-dashboard-b0b9bc090
+UMask=0077
+WorkingDirectory=/home/user/wine-assembly
+StandardOutput=journal
+StandardError=inherit
+User=user
+NoNewPrivileges=yes
+FragmentPath=/etc/systemd/system/wine-ops.service
+DropInPaths=/etc/systemd/system/wine-ops.service.d/web-checkout.conf

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-25T22:26:04.897707+00:00",
+  "method": "GET",
+  "url": "http://127.0.0.1:8098/api/state",
+  "limit": 2097152,
+  "requestCount": 1,
+  "status": 200,
+  "bodyBytes": 2097153,
+  "ok": false,
+  "error": "body accounting cap exceeded"
+}

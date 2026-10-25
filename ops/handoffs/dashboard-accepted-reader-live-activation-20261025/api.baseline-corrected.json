@@ -1,0 +1,33 @@
+[
+  {
+    "at": "2026-10-25T22:26:33.519212+00:00",
+    "method": "HEAD",
+    "path": "/api/state",
+    "bodyLimit": 131072,
+    "status": 200,
+    "bodyBytes": 0,
+    "ok": true
+  },
+  {
+    "at": "2026-10-25T22:26:33.540418+00:00",
+    "method": "GET",
+    "path": "/api/work-status",
+    "bodyLimit": 131072,
+    "status": 200,
+    "bodyBytes": 355,
+    "shape": {
+      "type": "array",
+      "count": 2,
+      "itemKeys": [
+        "agentId",
+        "id",
+        "idle",
+        "promptOpen",
+        "provider",
+        "screenHash",
+        "stalled"
+      ]
+    },
+    "ok": true
+  }
+]

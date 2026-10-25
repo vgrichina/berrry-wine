@@ -1,0 +1,19 @@
+# Internal dashboard reader activation blocked — 2026-10-25
+
+Source: `397cdb6ca37c1f247cdd6e2618f6e1f3529342c4`, accepted memory+UTF8 integration; existing 30-case plus standalone acceptance reused. No rebuild or re-review.
+
+The single scoped `systemctl restart wine-ops.service` returned exit 1 at 2026-10-25T22:27:11.132746+00:00: **Interactive authentication required**. No escalation, alternative control path, second restart, or 60s observation followed. Read-only verification found the existing service active/running with original PID 1522619. Activation is NOT established. Accepted reader bytes are on disk; the original process remains running with its previously loaded reader. A future incidental restart may load the new reader, so this pending on-disk state requires coordinator attention.
+
+Live checkout HEAD remains `a050a9ef28e58bd9d08207fe797352a000f5b550`. Only tracked modification is `ops/readers.js`. Unit/drop-in/environment/user/cwd/port/auth preserved; environment digest and uid/cwd baseline are in activation.json. No public deployment or box operation.
+
+Original reader SHA256: `c0894ddf9fa1d8aaaa2bc45fcde290213a9831fffdcb28ba31b8f77753186e35`.
+Accepted on-disk SHA256: `320ee6362b63497f7094bf6699ac1f95371047554e377b9e261401e6c3fa6137`.
+Both exact reader files are retained alongside this receipt. SHA256SUMS binds the evidence.
+
+Recovery, for the authorized coordinator after resolving the service-control permission blocker: first check current checkout HEAD, live reader hash, ownership and process state. To undo only this task's file, verify `readers.original.js` against the original SHA, stage it outside the checkout on the same `/home` filesystem, preserve the target mode/uid/gid, recheck live hash is the accepted SHA, then atomically rename over ONLY `/home/user/wine-dashboard-b0b9bc090/ops/readers.js`. Do not overwrite an intervening owner's change. If the reader has been loaded and activation health regresses, restore that verified preimage and use at most one authorized recovery restart, recording the exact reason. No recovery restart was used here because activation restart was denied. Do not change unit/environment or use alternate privileges to evade the denial. For activation instead, obtain valid service-control access through the coordinator, then separately qualify a new PID, API and RSS.
+
+Baseline RSS at 22:26:04.896620 UTC was 2,008,035,328 bytes (MemAvailable 2,827,530,240). After the ordinary bounded API probes at 22:26:33.612084 UTC RSS was 2,027,339,776 bytes (MemAvailable 2,787,848,192). Immediately before actual replacement at 22:27:10.915084 UTC RSS was 2,033,758,208 bytes (MemAvailable 2,611,834,880). All are original PID 1522619. No post-activation RSS exists and no leak-elimination claim is made.
+
+Five local API requests total. All returned HTTP 200. Full-state GET exceeded the 2MiB in-memory parsing bound (one-byte lookahead retained only transiently); no raw body was captured. Two HEAD /api/state requests exercised ordinary state refresh without receiving bodies. Two GET /api/work-status requests each read 355 bytes; the first validator incorrectly expected an object, corrected probe validated a nonempty array of 2 records and keys agentId/id/idle/promptOpen/provider/screenHash/stalled. Raw state/transcripts were never saved or printed. JSON qualification is for work-status, not full-state JSON. No forced GC, extra load loop, browser, game, native or compiler run. Syntax check passed with Node heap128MiB, CPU/wall60s, file24MiB; output empty. Other Node acceptance was reused.
+
+Cross-mount rename failure was retained and occurred before mutation. Same-filesystem staging under /home/user succeeded; temporary staging file was consumed by atomic rename. No permission denial was bypassed. The sole restart denial is the final runtime blocker. No 60s observation or new-PID verification can qualify this failed activation.

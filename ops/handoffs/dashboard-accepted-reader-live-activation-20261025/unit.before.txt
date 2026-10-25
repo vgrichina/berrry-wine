@@ -1,0 +1,24 @@
+# /etc/systemd/system/wine-ops.service
+[Unit]
+Description=Wine Assembly dashboard (loopback only)
+After=network.target
+
+[Service]
+Type=simple
+User=user
+WorkingDirectory=/home/user/wine-assembly
+ExecStart=/usr/bin/env node ops/server.js --port=8098
+Restart=on-failure
+RestartSec=5
+UMask=0077
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
+
+# /etc/systemd/system/wine-ops.service.d/web-checkout.conf
+[Service]
+Environment=WINE_EMULATOR_ROOT=/home/user/wine-dashboard-b0b9bc090
+Environment=WINE_INVENTORY_ROOT=/home/user/wine-dashboard-b0b9bc090
+ExecStart=
+ExecStart=/usr/bin/env node /home/user/wine-dashboard-b0b9bc090/ops/server.js --port=8098 --root=/home/user/wine-assembly

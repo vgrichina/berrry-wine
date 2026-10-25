@@ -1,0 +1,60 @@
+{
+  "startedAt": "2026-10-25T22:27:10.895450+00:00",
+  "source": "397cdb6ca37c1f247cdd6e2618f6e1f3529342c4",
+  "originalSHA256": "c0894ddf9fa1d8aaaa2bc45fcde290213a9831fffdcb28ba31b8f77753186e35",
+  "acceptedSHA256": "320ee6362b63497f7094bf6699ac1f95371047554e377b9e261401e6c3fa6137",
+  "restartCount": 1,
+  "recoveryRestartCount": 0,
+  "beforeIdentity": {
+    "envSHA256": "f4f793e3709aa9eb8aff660705d1d1f40164c07c45400c9971c45a0ff24e865f",
+    "cwd": "/home/user/wine-assembly",
+    "uid": 1000
+  },
+  "replacedAt": "2026-10-25T22:27:10.937004+00:00",
+  "restart": {
+    "at": "2026-10-25T22:27:11.132746+00:00",
+    "exit": 1,
+    "stdout": "",
+    "stderr": "Failed to restart wine-ops.service: Interactive authentication required.\nSee system logs and 'systemctl status wine-ops.service' for details.\n"
+  },
+  "result": "BLOCKER_NOT_ACTIVATED",
+  "reason": "systemctl restart denied/failed; stop without workaround",
+  "finishedAt": "2026-10-25T22:27:11.133632+00:00",
+  "serviceAfterDenial": {
+    "MainPID": 1522619,
+    "ActiveState": "active",
+    "SubState": "running"
+  },
+  "observation60s": "NOT RUN: mandatory stop after actual restart permission denial",
+  "postActivationAPI": "NOT RUN: restart denied; no new PID",
+  "bodyCapture": {
+    "rawBodiesRetainedBytes": 0,
+    "initialInMemoryReadBytes": 2097153,
+    "initialReadIssue": "2 MiB bound detected with one-byte lookahead; raw body neither printed nor saved",
+    "laterPerResponseLimit": 131072,
+    "laterBytesRead": 710,
+    "capturedShapeOnly": true
+  },
+  "requestCounts": {
+    "GET /api/state": 1,
+    "HEAD /api/state": 2,
+    "GET /api/work-status": 2,
+    "total": 5
+  },
+  "errors": [
+    "Initial full state exceeded parser limit; no body retained",
+    "First work-status validator incorrectly required object; actual API is a two-element array; corrected probe passed",
+    "Cross-mount atomic rename failed before mutation; retained; same-filesystem staging succeeded",
+    "One systemctl restart denied: Interactive authentication required"
+  ],
+  "box": {
+    "id": null,
+    "state": "not assigned",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "qualification": "Internal service activation attempt only; no guest/runtime/gameplay acceptance",
+  "rootRefsUnchanged": true,
+  "serviceUnitUnchanged": true,
+  "liveTrackedStatus": " M ops/readers.js\n"
+}

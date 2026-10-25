@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-25T22:25:37.302468+00:00",
+  "MemAvailable": 2773663744,
+  "diskFree": 5369348096,
+  "projected": {
+    "checkout_git": 8388608,
+    "readers_rollback_diff": 1048576,
+    "evidence_receipt_copies": 3145728,
+    "launcher_session_shared_db_future": 25165824,
+    "reserve": 8388608
+  },
+  "hostFloor": 2982150144,
+  "volatility": 627523584,
+  "mountArgv": [],
+  "mountValidation": "No guest/native/browser execution or mounts in task; canonical parser checkpoint not applicable. Intended mounted files: none.",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "standingInputs": {
+    "/usr/bin/node": 98932688,
+    "/usr/bin/git": 4066232,
+    "/usr/bin/python3": 8020928,
+    "/tmp/dashboard-accepted-memory-utf8-integrate-oct25/repo/ops/readers.js": 40790,
+    "/home/user/wine-dashboard-b0b9bc090/ops/readers.js": 39287
+  },
+  "projectedTotal": 46137344,
+  "pass": true
+}
