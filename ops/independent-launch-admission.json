@@ -1,0 +1,46 @@
+{
+  "memAvailable": 3865735168,
+  "requiredIncremental": 3445936128,
+  "clients": [
+    {
+      "pid": 3114985,
+      "rss": 196562944,
+      "args": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 3115073,
+      "rss": 195919872,
+      "args": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 3116726,
+      "rss": 193458176,
+      "args": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 3116874,
+      "rss": 195981312,
+      "args": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    }
+  ],
+  "diskProjected": 17522688,
+  "hostProjectedFree": 3731197952,
+  "roots": [
+    "/tmp/gl-launch-controls-independent-accept-oct26",
+    "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-independent-accept-oct26",
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-04-03-01a17a07-07ef-7182-a650-1418455f5d64.jsonl"
+  ],
+  "limits": {
+    "RSS": 268435456,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDATA": 536870912,
+    "NodeDATA": "inherited",
+    "NodeAS": "inherited"
+  },
+  "mountArgv": null,
+  "mountValidation": "N/A local readonly paths, no guest or mount"
+}

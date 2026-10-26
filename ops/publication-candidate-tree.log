@@ -1,0 +1,5 @@
+100644 blob 6814ae990fb31b96362e056bdc1f88782d5cc968	test/helpers/palette-browser-launch.js
+100644 blob dc425c3b10944fa0f434ada2b2880937bccbf902	test/helpers/palette-browser-supervisor.py
+100644 blob 46f0556920270acbc04194614541be99601bced5	test/test-d3dim-palette-gpu-web.js
+100644 blob 9eab18476d0ae5b342b124e7b8501911201044be	test/test-palette-browser-launch-controls.js
+100644 blob 490dd8f29303a8fe9daddf0653252265e70b8071	test/test-palette-browser-supervisor.py

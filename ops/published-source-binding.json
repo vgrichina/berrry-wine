@@ -1,0 +1,32 @@
+[
+  {
+    "path": "test/helpers/palette-browser-launch.js",
+    "blob": "6814ae990fb31b96362e056bdc1f88782d5cc968",
+    "sha256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+    "bytes": 2893
+  },
+  {
+    "path": "test/helpers/palette-browser-supervisor.py",
+    "blob": "dc425c3b10944fa0f434ada2b2880937bccbf902",
+    "sha256": "63d4cfdfa7363b9246b34d6515844dd48de98990473c527f0ce0558ab6e0fa54",
+    "bytes": 10480
+  },
+  {
+    "path": "test/test-d3dim-palette-gpu-web.js",
+    "blob": "46f0556920270acbc04194614541be99601bced5",
+    "sha256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+    "bytes": 4436
+  },
+  {
+    "path": "test/test-palette-browser-launch-controls.js",
+    "blob": "9eab18476d0ae5b342b124e7b8501911201044be",
+    "sha256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+    "bytes": 2997
+  },
+  {
+    "path": "test/test-palette-browser-supervisor.py",
+    "blob": "490dd8f29303a8fe9daddf0653252265e70b8071",
+    "sha256": "86353cfb73f5317eced34f6bb9af6916bd076e2911a1de6225bfba6fb54fcc23",
+    "bytes": 3925
+  }
+]

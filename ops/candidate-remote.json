@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "maintenance.auto=false",
+    "ls-remote",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/task/gl-browser-launch-control-repair-oct26"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 15642624,
+  "wall": 1.4524034108035266,
+  "outputBytes": 96
+}

@@ -1,0 +1,27 @@
+{
+  "/usr/local/bin/node": {
+    "resolved": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "/usr/bin/git": {
+    "resolved": "/usr/bin/git",
+    "bytes": 4066232,
+    "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+  },
+  "/usr/bin/python3": {
+    "resolved": "/usr/bin/python3.12",
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "/usr/bin/prlimit": {
+    "resolved": "/usr/bin/prlimit",
+    "bytes": 27536,
+    "sha256": "f27cfd8c1512a4cc6541b59b80cb4cdfd6ef28c34aa21db4299b48264cd0d128"
+  },
+  "/usr/bin/google-chrome": {
+    "resolved": "/opt/google/chrome/google-chrome",
+    "bytes": 2034,
+    "sha256": "2f2e4f9a09195c8fc6d72c4ba5be81867378f5267eaf9b70bb1776d643dc3dd8"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-26T21:04:02.546152+00:00",
+  "candidate": "716cd7181e811f8eb94cc19799deb478ca960385",
+  "source": "/tmp/gl-browser-launch-control-repair-oct26/source",
+  "files": [
+    {
+      "path": "test/test-d3dim-palette-gpu-web.js",
+      "bytes": 4436,
+      "sha256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a"
+    },
+    {
+      "path": "test/helpers/palette-browser-launch.js",
+      "bytes": 2893,
+      "sha256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547"
+    },
+    {
+      "path": "test/helpers/palette-browser-supervisor.py",
+      "bytes": 10480,
+      "sha256": "63d4cfdfa7363b9246b34d6515844dd48de98990473c527f0ce0558ab6e0fa54"
+    },
+    {
+      "path": "test/test-palette-browser-launch-controls.js",
+      "bytes": 2997,
+      "sha256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3"
+    },
+    {
+      "path": "test/test-palette-browser-supervisor.py",
+      "bytes": 3925,
+      "sha256": "86353cfb73f5317eced34f6bb9af6916bd076e2911a1de6225bfba6fb54fcc23"
+    }
+  ]
+}

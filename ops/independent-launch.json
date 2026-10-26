@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/gl-launch-controls-independent-accept-oct26/ops/independent-launch.js"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 59850752,
+  "wall": 0.08294007601216435,
+  "outputBytes": 266
+}

@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "maintenance.auto=false",
+    "init",
+    "--initial-branch=task/gl-launch-controls-independent-accept-oct26",
+    "/tmp/gl-launch-controls-independent-accept-oct26/repo"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 23199744,
+  "cpuSeconds": 0,
+  "owned": [
+    [
+      3126856,
+      "109609045"
+    ]
+  ],
+  "wall": 0.01348053989931941,
+  "outputBytes": 96
+}

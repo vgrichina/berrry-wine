@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "maintenance.auto=false",
+    "-C",
+    "/tmp/gl-browser-launch-control-repair-oct26/source",
+    "ls-tree",
+    "-r",
+    "716cd7181e811f8eb94cc19799deb478ca960385",
+    "--",
+    "test/test-d3dim-palette-gpu-web.js",
+    "test/helpers/palette-browser-launch.js",
+    "test/helpers/palette-browser-supervisor.py",
+    "test/test-palette-browser-launch-controls.js",
+    "test/test-palette-browser-supervisor.py"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 19005440,
+  "cpuSeconds": 0,
+  "owned": [
+    [
+      3127570,
+      "109610340"
+    ]
+  ],
+  "wall": 0.004420720040798187,
+  "outputBytes": 467
+}

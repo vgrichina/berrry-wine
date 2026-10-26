@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "test/test-d3dim-palette-gpu-web.js",
+    "--launch-config-check"
+  ],
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 49098752,
+  "wall": 0.06530218082480133,
+  "outputBytes": 1243
+}

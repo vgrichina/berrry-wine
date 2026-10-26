@@ -1,0 +1,17 @@
+/tmp/gl-browser-launch-control-repair-oct26/source/test/helpers/palette-browser-launch.js:16
+    throw new Error(`Browser wrapper rejected before invocation: ${requested} -> ${executablePath}; supply a reviewed explicit ELF executable`);
+    ^
+
+Error: Browser wrapper rejected before invocation: /usr/bin/google-chrome -> /opt/google/chrome/google-chrome; supply a reviewed explicit ELF executable
+    at checkedExecutable (/tmp/gl-browser-launch-control-repair-oct26/source/test/helpers/palette-browser-launch.js:16:11)
+    at Object.launchConfiguration (/tmp/gl-browser-launch-control-repair-oct26/source/test/helpers/palette-browser-launch.js:27:19)
+    at Object.<anonymous> (/tmp/gl-browser-launch-control-repair-oct26/source/test/test-d3dim-palette-gpu-web.js:13:36)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47
+
+Node.js v24.18.1
