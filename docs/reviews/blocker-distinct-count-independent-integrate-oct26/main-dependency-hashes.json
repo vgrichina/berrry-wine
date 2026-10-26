@@ -46,9 +46,5 @@
   "ops/work-watchdog.js": {
     "bytes": 11664,
     "sha256": "e8e8a82bb585b35342bfd9d5ec04fa4c68b0c92907ee3236958f68385864aa67"
-  },
-  "ops/index.html": {
-    "bytes": 7128,
-    "sha256": "9302ea0a779e8d7a0b15cfab6b9c9cadc7b686c88b378787d38cbd878e587294"
   }
 }
