@@ -1,0 +1,250 @@
+{
+  "task": "enigma-capture-budget-gameplay-oct26",
+  "outcome": {
+    "status": "INPUT_ACKNOWLEDGED_REQUIRES_PIXEL_INSPECTION",
+    "stepRequests": 498,
+    "acknowledgedBatches": 126978,
+    "snapshots": 499,
+    "requests": 1000,
+    "pending": false,
+    "lastBatch": 126978,
+    "controllerAcknowledged": true,
+    "elapsed": 70.70994234085083
+  },
+  "terminal": {
+    "reason": "owned-stop",
+    "returncode": 0,
+    "elapsed": 70.75808500699986,
+    "peakTreeRSS": 361078784,
+    "peakTreeCPU": 69.96,
+    "outputBytes": 65032,
+    "identities": {
+      "49311": {
+        "ppid": 49310,
+        "state": "R",
+        "start": "261458",
+        "cpu": 69.96,
+        "rss": 359657472
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_eugbptb7",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "traceVerification": {
+    "firstN1": 1,
+    "steps": 498,
+    "batches": 126978,
+    "zeroCreditSnapshots": 499,
+    "allAcknowledged": true,
+    "noOverlap": true,
+    "images": [
+      {
+        "name": "after-gameplay.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      },
+      {
+        "name": "before.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      },
+      {
+        "name": "qualification.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      }
+    ]
+  },
+  "pixelInspection": {
+    "inspected": true,
+    "path": "/tmp/enigma-capture-budget-gameplay-oct26/ops/retained/after-gameplay.png",
+    "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "description": "Inspected final 640x480 post-click PNG: Enigma Main Menu with Start Game, Level Pack, Options, Credits and Quit remains visible. Final frame is byte-identical to qualification. Exactly one accepted atomic click344,212 at batch120833 was acknowledged and logged by runner; five seconds of serial acknowledged post-click progression did not visually transition to gameplay. All three lossless captures succeeded; cumulative1169739B. Gameplay NOT established. This bounded observation does not establish a game failure.",
+    "gameplayEstablished": false,
+    "actualGameFailureClaim": false,
+    "additionalAttempt": false
+  },
+  "admission": {
+    "at": 1793050477.731361,
+    "charges": {
+      "localOwned": 9158656,
+      "remoteOwned": 45629440,
+      "launchers": 1892352,
+      "sessions": 5419008,
+      "positiveWALOnce": 10891264,
+      "prospectiveGrowth": 67108864,
+      "captureCollectionPublication": 10313728,
+      "reserve": 8388608
+    },
+    "total": 158801920,
+    "cap": 201326592,
+    "memAvailable": 3186675712,
+    "minimumMemory": 2550136832,
+    "free": 3665244160,
+    "projectedFree": 3506442240,
+    "diskFloor": 2982150144,
+    "earliestBaseline": {
+      "/home/user/.codex/memories_1.sqlite": 45056,
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/queue_1.sqlite-shm": 32768,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+      "/home/user/.codex/logs_2.sqlite": 75059200,
+      "/home/user/.codex/queue_1.sqlite": 69632,
+      "/home/user/.codex/goals_1.sqlite-shm": 32768,
+      "/home/user/.codex/thread_history_1.sqlite": 861757440,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/logs_2.sqlite-shm": 32768,
+      "/home/user/.codex/goals_1.sqlite-wal": 3055616,
+      "/home/user/.codex/goals_1.sqlite": 32768,
+      "/home/user/.codex/memories_1.sqlite-shm": 32768,
+      "/home/user/.codex/state_5.sqlite-wal": 4399104,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4243456,
+      "/home/user/.codex/.sqlite-maintenance.lock": 0,
+      "/home/user/.codex/state_5.sqlite-shm": 32768,
+      "/home/user/.codex/state_5.sqlite": 22822912
+    },
+    "accounting": "earliest inter-task DB bridge included; positive WAL once; clients already resident deducted; Civ768 GL256 helpers256 client320 host768 local64 MiB",
+    "pass": true
+  },
+  "readback": {
+    "commandId": "cmd_9yjnszw6rcxg",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:34:14.074Z",
+    "launcherFailed": false,
+    "noticedMs": 20,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 20,
+    "startedAt": "2026-10-26T21:34:13.999Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"pins\": {\"runner/test/run.js\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\", \"runner/test/run-presented.cjs\": \"a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da\", \"controller.cjs\": \"c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6\", \"click.cjs\": \"8574aa3a46e9b969083cca5d85e2ace502d8e7dc4241ed352bf594e097c2e7d9\", \"runtime/build/wine-assembly.wasm\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\"}, \"argvUnchanged\": true, \"oldGuestClean\": true, \"loggerAppend\": true, \"memAvailable\": 7398166528}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "startup": {
+    "commandId": "cmd_bb22g6czsni8",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:34:37.491Z",
+    "launcherFailed": false,
+    "noticedMs": 24,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 24,
+    "startedAt": "2026-10-26T21:34:37.405Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"executable\":\"/home/user/.nvm/versions/node/v24.22.1/bin/node\",\"version\":\"v24.22.1\",\"argv\":[\"--max-old-space-size=2048\",\"--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-budget/capture-wrapper.cjs\",\"-e\",\"console.log(JSON.stringify({executable:process.execPath,version:process.version,argv:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8'),environment:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|ENIGMA|WINE|MAELSTROM)/.test(k)))}))\"],\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              90                   90                   seconds   \\nMax file size             25165824             25165824             bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             31546                31546                processes \\nMax open files            524288               524288               files     \\nMax locked memory         8388608              8388608              bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       31546                31546                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\",\"environment\":{}}\n\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "reused": {
+    "fullManifest2661": "/tmp/enigma-accepted-mode-api-single-frame-oct26/readback.json",
+    "groups": "29/13/9/7 unchanged",
+    "canonicalParser": "/tmp/enigma-accepted-mode-api-single-frame-oct26/reused-canonical-parser.json",
+    "mountArgvUnchanged": true
+  },
+  "captureWrapperSHA": "af0bba1be523f5d2395ec7e61453bc8449f757efcfe6f4dd28c1e52890bcde5a",
+  "priorPublishedCommit": "97e4530c163c011513366259cf2ffebb067dffa3",
+  "priorReceiptSHA": "2f178fc7f213525ae98e84e23bfcfcdfaaeced7eb1d9df89ab88d883abd7459a",
+  "historicalIncident": "Original third capture failed 1MiB cumulative cap; prior no-gameplay claim preserved. No game failure inferred.",
+  "moduleQualification": "Retained historical static unpack; not current main or original acceptance.",
+  "lifecycle": {
+    "box": "bx_eugbptb7",
+    "state": "RUNNING",
+    "guestCutoff": "2026-10-26T21:38:00Z",
+    "handback": "2026-10-26T21:42:00Z",
+    "shutdown": "2026-10-26T21:45:00Z",
+    "expiry": "2026-10-26T22:23:15.028Z",
+    "watchPID": 3103171,
+    "shutdownOwner": "coordinator"
+  },
+  "finalStatus": "INSPECTED_POSTCLICK_MENU_NO_GAMEPLAY",
+  "closeoutAdmission": {
+    "at": 1793050631.568538,
+    "charges": {
+      "localOwned": 13160448,
+      "remoteOwned": 46985216,
+      "launchers": 1933312,
+      "sessions": 6635520,
+      "positiveWALOnce": 11505664,
+      "prospectiveGrowth": 67108864,
+      "captureCollectionPublication": 10313728,
+      "reserve": 8388608
+    },
+    "total": 166031360,
+    "cap": 201326592,
+    "memAvailable": 3911340032,
+    "minimumMemory": 2550136832,
+    "free": 3651436544,
+    "projectedFree": 3485405184,
+    "diskFloor": 2982150144,
+    "earliestBaseline": {
+      "/home/user/.codex/memories_1.sqlite": 45056,
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/queue_1.sqlite-shm": 32768,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+      "/home/user/.codex/logs_2.sqlite": 75059200,
+      "/home/user/.codex/queue_1.sqlite": 69632,
+      "/home/user/.codex/goals_1.sqlite-shm": 32768,
+      "/home/user/.codex/thread_history_1.sqlite": 861757440,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/logs_2.sqlite-shm": 32768,
+      "/home/user/.codex/goals_1.sqlite-wal": 3055616,
+      "/home/user/.codex/goals_1.sqlite": 32768,
+      "/home/user/.codex/memories_1.sqlite-shm": 32768,
+      "/home/user/.codex/state_5.sqlite-wal": 4399104,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4243456,
+      "/home/user/.codex/.sqlite-maintenance.lock": 0,
+      "/home/user/.codex/state_5.sqlite-shm": 32768,
+      "/home/user/.codex/state_5.sqlite": 22822912
+    },
+    "accounting": "earliest inter-task DB bridge included; positive WAL once; clients already resident deducted; Civ768 GL256 helpers256 client320 host768 local64 MiB",
+    "pass": true
+  },
+  "verifiedCounts": {
+    "firstN1": 1,
+    "steps": 498,
+    "batches": 126978,
+    "zeroCreditSnapshots": 499,
+    "allAcknowledged": true,
+    "noOverlap": true,
+    "images": [
+      {
+        "name": "after-gameplay.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      },
+      {
+        "name": "before.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      },
+      {
+        "name": "qualification.png",
+        "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+        "bytes": 389913,
+        "width": 640,
+        "height": 480
+      }
+    ]
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "at": 1793050631.568538,
+  "charges": {
+    "localOwned": 13160448,
+    "remoteOwned": 46985216,
+    "launchers": 1933312,
+    "sessions": 6635520,
+    "positiveWALOnce": 11505664,
+    "prospectiveGrowth": 67108864,
+    "captureCollectionPublication": 10313728,
+    "reserve": 8388608
+  },
+  "total": 166031360,
+  "cap": 201326592,
+  "memAvailable": 3911340032,
+  "minimumMemory": 2550136832,
+  "free": 3651436544,
+  "projectedFree": 3485405184,
+  "diskFloor": 2982150144,
+  "earliestBaseline": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/thread_history_1.sqlite-shm": 32768,
+    "/home/user/.codex/logs_2.sqlite": 75059200,
+    "/home/user/.codex/queue_1.sqlite": 69632,
+    "/home/user/.codex/goals_1.sqlite-shm": 32768,
+    "/home/user/.codex/thread_history_1.sqlite": 861757440,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/logs_2.sqlite-shm": 32768,
+    "/home/user/.codex/goals_1.sqlite-wal": 3055616,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/memories_1.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite-wal": 4399104,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243456,
+    "/home/user/.codex/.sqlite-maintenance.lock": 0,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 22822912
+  },
+  "accounting": "earliest inter-task DB bridge included; positive WAL once; clients already resident deducted; Civ768 GL256 helpers256 client320 host768 local64 MiB",
+  "pass": true
+}
