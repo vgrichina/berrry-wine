@@ -1,0 +1,28 @@
+{
+  "at": 1793048996.7660236,
+  "charges": {
+    "localOwned": 733184,
+    "remoteOwned": 49197056,
+    "remoteGuestLogs": 1310720,
+    "remoteCaptures": 1048576,
+    "localEvidence": 1048576,
+    "publicationGit": 1048576,
+    "launcher": 540672,
+    "session": 1019904,
+    "positiveWAL": 1847296,
+    "futureSessionEventsWAL": 2097152,
+    "reserve": 8388608
+  },
+  "total": 68280320,
+  "cap": 67108864,
+  "projectedHostFree": 3731861504,
+  "hostFloor": 2982150144,
+  "remote": {
+    "allocated": 49197056,
+    "memAvailable": 7218880512,
+    "diskFree": 48954769408
+  },
+  "helperRSSCap": 67108864,
+  "workerClientReserve": 268435456,
+  "passGate": false
+}

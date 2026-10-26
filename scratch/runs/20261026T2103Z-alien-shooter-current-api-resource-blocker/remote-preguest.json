@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wmwavppzxpk7",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:09:56.712Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-26T21:09:56.659Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"allocated\": 49197056, \"memAvailable\": 7218880512, \"diskFree\": 48954769408}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

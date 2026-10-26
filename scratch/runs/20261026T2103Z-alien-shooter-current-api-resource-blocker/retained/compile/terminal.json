@@ -1,0 +1,1 @@
+{"reason": "natural", "returncode": 0, "elapsed": 3.409282327000028, "peakTreeRSS": 342941696, "peakTreeCPU": 4.78, "outputBytes": 94, "identities": {"21129": {"ppid": 21128, "state": "R", "start": "51554", "cpu": 4.78, "rss": 311590912}}, "remainingOwnedLive": [], "box": "bx_a9dwsx2x", "boxState": "RUNNING", "shutdownOwner": "coordinator"}

@@ -1,0 +1,14 @@
+{
+  "box": "bx_a9dwsx2x",
+  "state": "idle",
+  "stop": null,
+  "expiry": "2026-10-26T22:31:02.925Z",
+  "health": "ok",
+  "remoteRoot": "/tmp/alien-shooter-current-gameplay-api-oct26",
+  "guestLaunched": false,
+  "ownedLiveChildren": [],
+  "shutdownOwner": "coordinator",
+  "cutoff": "2026-10-26T21:50:00Z",
+  "handback": "2026-10-26T21:55:00Z",
+  "shutdown": "2026-10-26T22:00:00Z"
+}

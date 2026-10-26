@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_7sjwyf82ubqt",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-26T21:07:25.497Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T21:07:25.390Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\nAssertionError: node:internal/modules/cjs/loader:1568\n  throw err;\n  ^\n\nError: Cannot find module './runner/node_modules/pngjs'\nRequire stack:\n- /tmp/alien-shooter-current-gameplay-api-oct26/capture-wrapper.cjs\n- internal/preload\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)\n    at Module._load (node:internal/modules/cjs/loader:1341:5)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.require (node:internal/modules/cjs/loader:1674:12)\n    at require (node:internal/modules/helpers:157:16)\n    at Object.<anonymous> (/tmp/alien-shooter-current-gameplay-api-oct26/capture-wrapper.cjs:1:30)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [\n    '/tmp/alien-shooter-current-gameplay-api-oct26/capture-wrapper.cjs',\n    'internal/preload'\n  ]\n}\n\nNode.js v24.22.1\n\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ywgm7i86fbn0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:06:20.665Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-26T21:06:20.621Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"terminal\": {\"reason\": \"natural\", \"returncode\": 0, \"elapsed\": 3.409282327000028, \"peakTreeRSS\": 342941696, \"peakTreeCPU\": 4.78, \"outputBytes\": 94, \"identities\": {\"21129\": {\"ppid\": 21128, \"state\": \"R\", \"start\": \"51554\", \"cpu\": 4.78, \"rss\": 311590912}}, \"remainingOwnedLive\": [], \"box\": \"bx_a9dwsx2x\", \"boxState\": \"RUNNING\", \"shutdownOwner\": \"coordinator\"}, \"moduleSHA256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"moduleBytes\": 1880280}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

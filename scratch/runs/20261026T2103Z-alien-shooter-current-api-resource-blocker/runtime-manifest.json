@@ -1,0 +1,3566 @@
+[
+  {
+    "path": "lib/d3d9-backend.js",
+    "bytes": 65687,
+    "sha256": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d9-fixed.js",
+    "bytes": 29976,
+    "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d9-shader.js",
+    "bytes": 47578,
+    "sha256": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3dim-gpu.js",
+    "bytes": 53302,
+    "sha256": "f0bc4d36f5d80554bb236ff54bbec76024abc5b7e4ffd1797202d586c26db13b",
+    "mode": 436
+  },
+  {
+    "path": "lib/gpu-backend.js",
+    "bytes": 49276,
+    "sha256": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d",
+    "mode": 436
+  },
+  {
+    "path": "lib/render-clear.js",
+    "bytes": 4377,
+    "sha256": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9",
+    "mode": 436
+  },
+  {
+    "path": "test/compile-src.js",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+    "mode": 436
+  },
+  {
+    "path": "test/helpers/palette-gpu-browser.js",
+    "bytes": 17077,
+    "sha256": "3972b7e3bd48141654ec33dfd26bf8da05fb64ee6184b852fb80c2208946d4cf",
+    "mode": 436
+  },
+  {
+    "path": "test/helpers/palette-gpu-wat.js",
+    "bytes": 2854,
+    "sha256": "d702dd06f8e1e2021830bbcb3c27f4f320171bf89d05d7ed30daf5d2d87bd046",
+    "mode": 436
+  },
+  {
+    "path": "test/test-d3dim-palette-gpu-web.js",
+    "bytes": 4367,
+    "sha256": "2900b8ffeb2578e232215245d6a2e010cd081818204b0bd86c3aa2d4a277145b",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-closure.js",
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/CHANGELOG.md",
+    "bytes": 115884,
+    "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/PROVENANCE.md",
+    "bytes": 8451,
+    "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/compiler-codegen.js",
+    "bytes": 302257,
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/compiler-parser.js",
+    "bytes": 38100,
+    "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/compiler-stages.js",
+    "bytes": 31195,
+    "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx-src/compiler.js",
+    "bytes": 18610,
+    "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+    "mode": 436
+  },
+  {
+    "path": "tools/watx.js",
+    "bytes": 2663,
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "mode": 436
+  },
+  {
+    "path": "test/run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+    "mode": 436
+  },
+  {
+    "path": "lib/gl-compat.js",
+    "bytes": 106632,
+    "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+    "mode": 436
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "mode": 436
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+    "mode": 436
+  },
+  {
+    "path": "lib/gl-command-stream.js",
+    "bytes": 7766,
+    "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+    "mode": 436
+  },
+  {
+    "path": "lib/dib.js",
+    "bytes": 12071,
+    "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+    "mode": 436
+  },
+  {
+    "path": "tools/dump_sprites.js",
+    "bytes": 3035,
+    "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05",
+    "mode": 436
+  },
+  {
+    "path": "lib/save-bundle.js",
+    "bytes": 29124,
+    "sha256": "4ac22b490b0c201d5c4d7ee0047882522eeb4690d93b095e4eb755d84590f3ee",
+    "mode": 436
+  },
+  {
+    "path": "lib/storage.js",
+    "bytes": 79616,
+    "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+    "mode": 436
+  },
+  {
+    "path": "lib/zip-mount.js",
+    "bytes": 32525,
+    "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274",
+    "mode": 436
+  },
+  {
+    "path": "lib/byte-provider.js",
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+    "mode": 436
+  },
+  {
+    "path": "lib/control-server.js",
+    "bytes": 7126,
+    "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+    "mode": 436
+  },
+  {
+    "path": "tools/disasm.js",
+    "bytes": 29904,
+    "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166",
+    "mode": 436
+  },
+  {
+    "path": "tools/simd-ops.js",
+    "bytes": 8592,
+    "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e",
+    "mode": 436
+  },
+  {
+    "path": "lib/vfs-overlay.js",
+    "bytes": 14961,
+    "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+    "mode": 436
+  },
+  {
+    "path": "lib/overlay-store.js",
+    "bytes": 22883,
+    "sha256": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9",
+    "mode": 436
+  },
+  {
+    "path": "lib/media-cli.js",
+    "bytes": 3730,
+    "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4",
+    "mode": 436
+  },
+  {
+    "path": "lib/cdrom.js",
+    "bytes": 14034,
+    "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727",
+    "mode": 436
+  },
+  {
+    "path": "lib/media-import.js",
+    "bytes": 37173,
+    "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47",
+    "mode": 436
+  },
+  {
+    "path": "lib/iso9660.js",
+    "bytes": 23867,
+    "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544",
+    "mode": 436
+  },
+  {
+    "path": "lib/app-files.js",
+    "bytes": 16426,
+    "sha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+    "mode": 436
+  },
+  {
+    "path": "lib/process-boot.js",
+    "bytes": 52033,
+    "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-guest-bridge.js",
+    "bytes": 4652,
+    "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-invoke.js",
+    "bytes": 5358,
+    "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-load-error.js",
+    "bytes": 676,
+    "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-lifecycle.js",
+    "bytes": 12104,
+    "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-image.js",
+    "bytes": 7091,
+    "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0",
+    "mode": 436
+  },
+  {
+    "path": "lib/ne-sources.js",
+    "bytes": 3473,
+    "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2",
+    "mode": 436
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "mode": 436
+  },
+  {
+    "path": "lib/pe.js",
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
+    "mode": 436
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "bytes": 6443,
+    "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
+    "mode": 436
+  },
+  {
+    "path": "lib/guest-thread-host.js",
+    "bytes": 73126,
+    "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d-command-stream.js",
+    "bytes": 47664,
+    "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945",
+    "mode": 436
+  },
+  {
+    "path": "lib/render-worker.js",
+    "bytes": 17410,
+    "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa",
+    "mode": 436
+  },
+  {
+    "path": "lib/thread-send-waits.js",
+    "bytes": 14963,
+    "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747",
+    "mode": 436
+  },
+  {
+    "path": "lib/guest-rpc.js",
+    "bytes": 59680,
+    "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "mode": 436
+  },
+  {
+    "path": "lib/named-event-authority.js",
+    "bytes": 15058,
+    "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+    "mode": 436
+  },
+  {
+    "path": "lib/vlan-wire.js",
+    "bytes": 13050,
+    "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+    "mode": 436
+  },
+  {
+    "path": "lib/present-frame-audit.js",
+    "bytes": 6506,
+    "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de",
+    "mode": 436
+  },
+  {
+    "path": "tools/build-page-translation-stats.js",
+    "bytes": 6442,
+    "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9",
+    "mode": 436
+  },
+  {
+    "path": "tools/region-layout-hash.js",
+    "bytes": 8031,
+    "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac",
+    "mode": 436
+  },
+  {
+    "path": "tools/region-layout.js",
+    "bytes": 8174,
+    "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d-shader-ir.js",
+    "bytes": 15243,
+    "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056",
+    "mode": 436
+  },
+  {
+    "path": "lib/thread-manager.js",
+    "bytes": 226864,
+    "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+    "mode": 436
+  },
+  {
+    "path": "lib/worker-imports.js",
+    "bytes": 22458,
+    "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+    "mode": 436
+  },
+  {
+    "path": "tools/diablo-gameplay-bench.js",
+    "bytes": 10737,
+    "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58",
+    "mode": 436
+  },
+  {
+    "path": "lib/headless-gl.js",
+    "bytes": 14928,
+    "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+    "mode": 436
+  },
+  {
+    "path": "test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+    "mode": 436
+  },
+  {
+    "path": "test/runner-win-census.js",
+    "bytes": 7071,
+    "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5",
+    "mode": 436
+  },
+  {
+    "path": "test/runner-experiment-report.js",
+    "bytes": 24188,
+    "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+    "mode": 436
+  },
+  {
+    "path": "lib/renderer.js",
+    "bytes": 214846,
+    "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03",
+    "mode": 436
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "bytes": 181810,
+    "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78",
+    "mode": 436
+  },
+  {
+    "path": "lib/canvas-compat.js",
+    "bytes": 984,
+    "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+    "mode": 436
+  },
+  {
+    "path": "lib/raster-canvas.js",
+    "bytes": 17590,
+    "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+    "mode": 436
+  },
+  {
+    "path": "lib/presentation-filter.js",
+    "bytes": 53087,
+    "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+    "mode": 436
+  },
+  {
+    "path": "lib/surface.js",
+    "bytes": 14312,
+    "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+    "mode": 436
+  },
+  {
+    "path": "host.js",
+    "bytes": 369423,
+    "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993",
+    "mode": 436
+  },
+  {
+    "path": "lib/main-io-wait.js",
+    "bytes": 3133,
+    "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef",
+    "mode": 436
+  },
+  {
+    "path": "lib/startup-clock.js",
+    "bytes": 3363,
+    "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+    "mode": 436
+  },
+  {
+    "path": "test/input-consumption-trace.js",
+    "bytes": 2508,
+    "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be",
+    "mode": 436
+  },
+  {
+    "path": "lib/guest-clock.js",
+    "bytes": 3204,
+    "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+    "mode": 436
+  },
+  {
+    "path": "lib/batch-clock.js",
+    "bytes": 2726,
+    "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+    "mode": 436
+  },
+  {
+    "path": "lib/tinysynth-offline.js",
+    "bytes": 11712,
+    "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53",
+    "mode": 436
+  },
+  {
+    "path": "lib/vendor/webaudio-tinysynth.js",
+    "bytes": 62376,
+    "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c",
+    "mode": 436
+  },
+  {
+    "path": "lib/cli-recorder.js",
+    "bytes": 9287,
+    "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae",
+    "mode": 436
+  },
+  {
+    "path": "lib/apps.js",
+    "bytes": 413346,
+    "sha256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d",
+    "mode": 436
+  },
+  {
+    "path": "lib/app-file-sizes.generated.js",
+    "bytes": 304086,
+    "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+    "mode": 436
+  },
+  {
+    "path": "lib/font-substitutions.js",
+    "bytes": 2966,
+    "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+    "mode": 436
+  },
+  {
+    "path": "lib/api-format.js",
+    "bytes": 34699,
+    "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+    "mode": 436
+  },
+  {
+    "path": "lib/vfs-export.js",
+    "bytes": 4975,
+    "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+    "mode": 436
+  },
+  {
+    "path": "lib/vfs-host-files.js",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7",
+    "mode": 436
+  },
+  {
+    "path": "lib/vfs-seed.js",
+    "bytes": 8258,
+    "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d",
+    "mode": 436
+  },
+  {
+    "path": "lib/app-profiles.js",
+    "bytes": 18930,
+    "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8",
+    "mode": 436
+  },
+  {
+    "path": "lib/host-window.js",
+    "bytes": 63752,
+    "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d",
+    "mode": 436
+  },
+  {
+    "path": "lib/frame-intervals.js",
+    "bytes": 5466,
+    "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b",
+    "mode": 436
+  },
+  {
+    "path": "lib/host-imports.js",
+    "bytes": 197066,
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "mode": 436
+  },
+  {
+    "path": "lib/filesystem.js",
+    "bytes": 158109,
+    "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+    "mode": 436
+  },
+  {
+    "path": "lib/resources-icon.js",
+    "bytes": 20791,
+    "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d9-host.js",
+    "bytes": 87300,
+    "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d9-software-backend.js",
+    "bytes": 87802,
+    "sha256": "d73d855a6936881712c7b75e203cfc717c43dd82ca38fe67a576f4fc37da93ee",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d-geometry-batches.js",
+    "bytes": 3149,
+    "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+    "mode": 436
+  },
+  {
+    "path": "lib/d3d9-texture.js",
+    "bytes": 3107,
+    "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+    "mode": 436
+  },
+  {
+    "path": "lib/glide-host.js",
+    "bytes": 17374,
+    "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591",
+    "mode": 436
+  },
+  {
+    "path": "lib/glide-software.js",
+    "bytes": 27955,
+    "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+    "mode": 436
+  },
+  {
+    "path": "lib/glide-backend.js",
+    "bytes": 41345,
+    "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+    "mode": 436
+  },
+  {
+    "path": "lib/gl-render-host.js",
+    "bytes": 15356,
+    "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812",
+    "mode": 436
+  },
+  {
+    "path": "lib/host-audio.js",
+    "bytes": 207077,
+    "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+    "mode": 436
+  },
+  {
+    "path": "lib/audio-worklet-host.js",
+    "bytes": 14592,
+    "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+    "mode": 436
+  },
+  {
+    "path": "lib/gdi-surface.js",
+    "bytes": 20152,
+    "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+    "mode": 436
+  },
+  {
+    "path": "lib/cli-failure-cleanup.js",
+    "bytes": 717,
+    "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435",
+    "mode": 436
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.cfg",
+    "bytes": 611,
+    "sha256": "2bffe1e4be07b4a77a47fe223cca5d22f4251c8f51ea221ecc86c7964990d278",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Bmp/951.BMP",
+    "bytes": 614456,
+    "sha256": "b8d57da39aad72755fbb386f8761e9b040a8885fa309fd690cea7a3e806c47a7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Bmp/952.BMP",
+    "bytes": 614456,
+    "sha256": "8c50c5e325ed82b4d1a8c9724db7620eb5a07e0c9bd6ed1e4fa0e6df85e4d4f5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Bmp/953.BMP",
+    "bytes": 614456,
+    "sha256": "7e0930d747d7b555b735f155ec81de080961a07fd966b659c65029943935470f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/cursores/arrow.ani",
+    "bytes": 326,
+    "sha256": "d471e75c58159720be0420139fc057bca61374d3c9fee17457cc4a45d01fa6c8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/cursores/attack.ANI",
+    "bytes": 3350,
+    "sha256": "2dc1254e8ae42dea0166e43d84b48d2fd455359af4de1dff42d5cc131e7a3311",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Font/001font.tga",
+    "bytes": 179756,
+    "sha256": "43baf0d75ce7352a2358905265b3c01961b69839132be1fefd54c09244ed6e6f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Font/002font.tga",
+    "bytes": 61484,
+    "sha256": "71cc782395c69d8d69e3698adf2395f4583c53c425f8cb0876ebd477f744bff1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Font/003font.tga",
+    "bytes": 1079,
+    "sha256": "775675a024e337a81ac5e0a91d7c5bf5988ca0a8c1d1eb714944bf60ec77f03d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/license.txt",
+    "bytes": 10288,
+    "sha256": "94e706662cacc615b579c9f854b8dce94172e142af24419449a08a7ff7882fa3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Logs/error.log",
+    "bytes": 2,
+    "sha256": "7eb70257593da06f682a3ddda54a9d260d4fc514f645237f5ca74b08f8da61a6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_compaign.lgc",
+    "bytes": 1308,
+    "sha256": "d468ffe0a1ec58cbe094ce6f647913792dbaf727de1f04738cdb9045e5ed5af1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_event.lgc",
+    "bytes": 10525,
+    "sha256": "5d7468f550350811a1b72c42a6ec5deef926b3757da9e3695a7af349873d2fa8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_fame.lgc",
+    "bytes": 3617,
+    "sha256": "a19ad237bcdf909562ce43b92b17a25577fa626a5bcaa399c5374b6dd6dddab5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_menu.lgc",
+    "bytes": 4502,
+    "sha256": "3cc5cbd329731e58d9c71c554030e88211725279adda1cb20a82036d7f345181",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_statebar.lgc",
+    "bytes": 6143,
+    "sha256": "d683836899125c1da4bb44ed1e8478d026d677a183de201bbf7e9457280c3e9f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_survive.lgc",
+    "bytes": 3299,
+    "sha256": "208f624d859097cd2cb30180a2a7235ccacc7db73445e75651a3b73f6d9e9815",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/common_table.lgc",
+    "bytes": 862,
+    "sha256": "6b71fac56e521060a233616403ce2e8ba31c106a7e7d3cc775e20cacad79bb80",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/COMMON.LGC",
+    "bytes": 21777,
+    "sha256": "4c7f8cf21589ff5c7dda10b61d5b7a977eeef502d33ac55ece886f3169b21e8e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/compaign_birth.lgc",
+    "bytes": 2294,
+    "sha256": "5e4cd8783bd562f6502101fdef4f3f1a7645975bf28d2ec797639ba1e4a8c2a6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/credits.men",
+    "bytes": 254,
+    "sha256": "119b25e0ef451f6bb9920170fba1b2da39a3e50e537587dfcb2a1eb9b4734e7b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/default.lgc",
+    "bytes": 3521,
+    "sha256": "a9e10acca958845c937f507afd5cf331c0d7d059e6073d6a0a62523f311423f0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/end.lgc",
+    "bytes": 624,
+    "sha256": "307824b501ba205b75fcecc5caf73f8bc99826bb027ba969939055be0d06e449",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/end.map",
+    "bytes": 9852,
+    "sha256": "ebcc58744e5453fb58ba22828054d76fc00c29042c47a8a03e172aae7e3f3102",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/end.men",
+    "bytes": 173,
+    "sha256": "b0556af90af614bfafdfd2844c25d432099f486f8ad4ad5d2dd61549b7cabda9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/EXPORT.LGC",
+    "bytes": 43591,
+    "sha256": "d2c1bbe94b9cc97adf167882d8ab0f18a482c489db21454937d2635725ae9577",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/gamebar1024.men",
+    "bytes": 1493,
+    "sha256": "425644569c010e13d047f150ed604b72a0ae07686f6cd1431c97be0d032a2b63",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/gamebar640.men",
+    "bytes": 1353,
+    "sha256": "f2af101e8d7926ff8f43eb3809094744cae008bf4a5caa894cd62f6dfe65bc24",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/gamebar800.men",
+    "bytes": 1493,
+    "sha256": "b86b3821ce0ea699eaf26668da77239efcd479d53274020d8ff295132c4004fa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/gamemenu.men",
+    "bytes": 766,
+    "sha256": "6d223954b64251c83844418a9013c94f0806754932df95c29c65634001647b17",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/highscores.men",
+    "bytes": 307,
+    "sha256": "35bafa4c28551f166a7be47e303012ee803fb3caf16b4ca7a08d8f762c635b26",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/ITEMS.LGC",
+    "bytes": 12643,
+    "sha256": "90eca99e9837c6f1825e37c19f618b7d1ff36214bd8a3c2347b88183d79f5e58",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_01.lgc",
+    "bytes": 516,
+    "sha256": "4bff0299cab0f712f844610d7f23446767615191817f56104731e9abfe36b5f3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_01.map",
+    "bytes": 128164,
+    "sha256": "b92ebb624ac585c0deac15b1b6fb0084385acf1a003651c3a01dbb6bc22bfd2e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_01demo.lgc",
+    "bytes": 1302,
+    "sha256": "7d93e9db2e653d4e1d79d52f86bb962141d10c67aa791e5590d8a1439ac0c05c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_01demo.map",
+    "bytes": 580092,
+    "sha256": "c64ec17b8a4438adb98eefd7efc8622f03e6d0cc4cb1ffe183ed937b179d2fa4",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_02.lgc",
+    "bytes": 298,
+    "sha256": "f2bced998aef3dec1d761a98b905fa536c3c017c7f52bbb03179d8f10f743195",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_02.map",
+    "bytes": 205424,
+    "sha256": "22febb2e4910ee0b061d295dd74040850a29f358c32e1a5671b70f59310076f9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_03.lgc",
+    "bytes": 296,
+    "sha256": "c21c098ae3c27c737e354a3c4454c5fc450d15a35e4ff1494cb75d7d1cbfa73b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_03.map",
+    "bytes": 413392,
+    "sha256": "de616be4534a0e2425bbf2c3ee2d72dd200827d3a96a21a2fe058052966ed73c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_04.lgc",
+    "bytes": 858,
+    "sha256": "756656a2728a542f8056c0fdc46fe4a7905697891f78e13a588c6be538943ce0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_04.map",
+    "bytes": 435568,
+    "sha256": "f173a36ed778ca9d5ade796f040b6023cd1f2ad0ba88408a165f9cef5926acfe",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_05.lgc",
+    "bytes": 471,
+    "sha256": "4a0d111099c734964093e648e58c7f4bd4ac92483d2d8a69ba37ce4d2d953e6d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_05.map",
+    "bytes": 664380,
+    "sha256": "4e9a0de4c2e06a32a8259f21e207c2326118d094991953390c38c4f6681d3654",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_06.lgc",
+    "bytes": 298,
+    "sha256": "f2bced998aef3dec1d761a98b905fa536c3c017c7f52bbb03179d8f10f743195",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_06.map",
+    "bytes": 187728,
+    "sha256": "2ebb615050b9cfc738ad8681e173eec1088ee4f41cc853d112b5550d1b1be3fd",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_07.lgc",
+    "bytes": 298,
+    "sha256": "d3447712ae59f59670375815c3f50d6ce46ed15dbddfb0c5cad32a819c5ed411",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_07.map",
+    "bytes": 353560,
+    "sha256": "9436c07026dc60af9c2e349fa4fe1c941683d67328210a941ae2ac40af8b12d0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_08.lgc",
+    "bytes": 471,
+    "sha256": "ec6c64dcdc77c6f93ca56bee4cca465f80682f971b2f85f49420ca2bc1f9260a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_08.map",
+    "bytes": 409560,
+    "sha256": "8d13c156a2283a58238aa82bc5a64490eb72e306ae54bf3b41f0b33525c39d55",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_09.lgc",
+    "bytes": 298,
+    "sha256": "d3447712ae59f59670375815c3f50d6ce46ed15dbddfb0c5cad32a819c5ed411",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_09.map",
+    "bytes": 468652,
+    "sha256": "c4ed96ef054b4806b546f146e6f76dcf6241ba0a07287ebb48feb425537e2a26",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_10.lgc",
+    "bytes": 473,
+    "sha256": "3d61a1e8403d56e580a88f62f311fc652640251b35cf8768b01608ac88a983ed",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_10.map",
+    "bytes": 627432,
+    "sha256": "9ac0c4117921bdc3889572cc769e7a4acd310e69c9a552ec03cb7d16c79c84d1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_11.lgc",
+    "bytes": 1194,
+    "sha256": "0f30b994a9edb698281386049e6b787c62026a7e9691de216845697c6d6bc91d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/Level_11.map",
+    "bytes": 127368,
+    "sha256": "14f063c325739efaf18d0d8dd0441bf46a388cc07cafb0fe96cf7c26ae65d26c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/load.men",
+    "bytes": 609,
+    "sha256": "b9703da0acaff54f1de88e8d9ff8e1f799f09777031c6d876d760ed03c05cbf7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/LOGO.LGC",
+    "bytes": 3027,
+    "sha256": "94b95944aa7c7f5dfa762e49d0efb914944ade28538b3b4d217155cc2e8765ca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/logo.map",
+    "bytes": 9852,
+    "sha256": "ef31fff6b3af2e656605f74060763fdc31c902f9ef0ddee1e198f7c8db7dc2cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/MAINMENU.LGC",
+    "bytes": 10228,
+    "sha256": "8a71310af59b6f71eb0a5402f19846bb005084b8bda31a0f5cea19d9e61edaec",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/mainmenu.map",
+    "bytes": 9852,
+    "sha256": "ef31fff6b3af2e656605f74060763fdc31c902f9ef0ddee1e198f7c8db7dc2cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/mainmenu.men",
+    "bytes": 764,
+    "sha256": "e55baef94601c8a6da4eed2ca2fe8c6208ce115732c3f7ed03d89dd56004a12d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/mainmenu640.men",
+    "bytes": 798,
+    "sha256": "011cf2b851b180b1a8f51ed5f9ecc818d3afeac92ea8fdda972afc7aafffb009",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/mainmenu800.men",
+    "bytes": 252,
+    "sha256": "8375e0736c7591731aa45266164f8cc9b228927e087733ea18fb5e2cfab23bcd",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/MONSTERS.LGC",
+    "bytes": 9358,
+    "sha256": "d8c90b4f18003eff3483add8d2e651d2841fa48dc694f5e591379c6b0b43abc8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/options.men",
+    "bytes": 645,
+    "sha256": "fcb10070ac648cc9875688e15ed03d923ae1e437a04aa35d3c8c1c2332b1746c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/play.men",
+    "bytes": 1209,
+    "sha256": "29ffd9ca10fda8153074e4c9551b903d3ebf9c2175a8fcf7e64896de384b9ef6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/SHOP.LGC",
+    "bytes": 16867,
+    "sha256": "1ea0289c6a833cc3e2497c1773665b375ea4659056725ff815d7532be678970a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/shop.map",
+    "bytes": 9852,
+    "sha256": "ef31fff6b3af2e656605f74060763fdc31c902f9ef0ddee1e198f7c8db7dc2cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/shop.men",
+    "bytes": 6735,
+    "sha256": "9856d396e84c41d82ed552b38b875f6bc3d7cf5ebcba18e1464fda4c844ce3c7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/slide.lgc",
+    "bytes": 2611,
+    "sha256": "4e96bbcc6e64bd8bfeb9d49868ed22d42e710574a311755b6db8e827e400c64a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/slide.map",
+    "bytes": 9852,
+    "sha256": "ef31fff6b3af2e656605f74060763fdc31c902f9ef0ddee1e198f7c8db7dc2cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/slide.men",
+    "bytes": 391,
+    "sha256": "da39e1f2cf51e7872b31f5e9cbec26cbd344874dc5ee8149fa08ad5dd8e45375",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/survive_01.lgc",
+    "bytes": 682,
+    "sha256": "93246bfa789dbf627a55cac1f28969be639548b022ebd28b6d0828e281ab2549",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/survive_01.map",
+    "bytes": 148432,
+    "sha256": "c08ed61d998197937f8c9a78123cf5494fb580019625929b9bf512bed08eecd3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/survive_birth.lgc",
+    "bytes": 8188,
+    "sha256": "144179b4fd689e49b1b67a6bcffcb6c68c8ffdc258229c7256669046a48e550c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Maps/tmp.map",
+    "bytes": 16812,
+    "sha256": "782309654fed799db7248381833c6e17d7b1ffb15e2789f1bb0c6d31c961817c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/end.ogg",
+    "bytes": 122748,
+    "sha256": "896c9b978bd73aac6b667f2d2d5580e2d0720288a60e4ccd3af67b31c7625e23",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/menu_mus.ogg",
+    "bytes": 1528363,
+    "sha256": "b7d3a00a15b6c56b12545fe4181da202c87068ac092a15b9066ec9af3e8f9636",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/mus00.ogg",
+    "bytes": 1081180,
+    "sha256": "54bb444b610ca943e8f6a22aa7dfb78dbbb62c54de8cee40c8e20adffa337291",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/mus01.ogg",
+    "bytes": 2863412,
+    "sha256": "48911f393a33593d76cb60b06f67144f28fdb8e3f7fc5ae7fa7be0870943fc93",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/mus02.ogg",
+    "bytes": 2412134,
+    "sha256": "b3ded6e95c8cb7525416383d6ae5287fd9e0ed9bcb2a0c8f785f3bdc17818025",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Music/wind.ogg",
+    "bytes": 199057,
+    "sha256": "8e8c5d28c3daa702ca6dadb6757cdca04f020e17bbd6a50d086375d0fee8a986",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/objects.res",
+    "bytes": 373514,
+    "sha256": "c5f4cbe5b4acacc6383cadc5b00289dc335339117d3a1ca5b2f1b45cdd6ce7cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/readme.txt",
+    "bytes": 2934,
+    "sha256": "cac21e268fa1b31c77f7d33246eaf55f77a3d2db36216a9d104bb47dbc799e7d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Screens/1.bin",
+    "bytes": 1,
+    "sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/strings.ini",
+    "bytes": 2439,
+    "sha256": "e02bba59b8e6d8476397ac27c626cf7bfd9fee2835e30361c29d57e4e79f83dd",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_01.txt",
+    "bytes": 110,
+    "sha256": "300686c37f28e9ac6641d727f4c493ffea35e8cc2446f860ef43442f4bf2afae",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_02.txt",
+    "bytes": 111,
+    "sha256": "dcfeb365a1795f0c30910bbe66f111d119eaeb08333f941c6ba8ce37f6f5a19d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_03.txt",
+    "bytes": 99,
+    "sha256": "e934d2aa297cfd810f9126eefc4c4763d3fc7abb93d6426a827777e5029d4dae",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_04.txt",
+    "bytes": 118,
+    "sha256": "eba945501778ec45837dcb21b9af719794afe599215d0fbeef0aa5728806acea",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_05.txt",
+    "bytes": 98,
+    "sha256": "5110f8055dc9fa0f961eb8dacc6f93ee1977f2c60b16a2e440ba5c72c8d74055",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_06.txt",
+    "bytes": 111,
+    "sha256": "d4ef113a398ab559ba0937805de7f3fe0a0a628070564cfe4414432706271a77",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_07.txt",
+    "bytes": 112,
+    "sha256": "02ec0f44b3de5a0d2f0c2a2be1dde053cd98c437f3c923645497906711280f5e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_08.txt",
+    "bytes": 98,
+    "sha256": "34675988c221363d2bb930ac8dad2108f7f1127dd334e87118a3a3751c248b0b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/ammo_09.txt",
+    "bytes": 110,
+    "sha256": "598825c3764941d89a0a1bb5156c0c5bc8f94917231aea8ff72ab586e3fa9d03",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/credits.txt",
+    "bytes": 196,
+    "sha256": "25de8bc8f77b30149d763b33d9586aa023365f3e0d867d636008179d7dd01481",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/end.txt",
+    "bytes": 180,
+    "sha256": "c4aa574140d68560f7cf17ee8b36cfb12e62141e8f244a4e8b0f271a067db8eb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/enough.txt",
+    "bytes": 16,
+    "sha256": "8a89370d45ca57752b2298b7e732e62b87f42e8f76659825860ec5a20a3ed8ca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_720.txt",
+    "bytes": 167,
+    "sha256": "d177a7efb52b9ae82c2af43bfd6c836173f204265df82af0f126205988b9d570",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_721.txt",
+    "bytes": 104,
+    "sha256": "ad54fdbb84b66ee729529159ada5db29e85f545dff3f095105797d0c6ccd322d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_722.txt",
+    "bytes": 197,
+    "sha256": "38183bc5e0a1a97b54356e641393e5ef7c95b2353e9040a9bf14716f371b28b7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_723.txt",
+    "bytes": 213,
+    "sha256": "020ca5bfd8ee5ba3a8bbde0be2ffb0b59cf70f978a165d0bf2e2472e84d26a7e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_724.txt",
+    "bytes": 184,
+    "sha256": "bec6ff99321dd99fb96de2e174bffbc877a54b8f1815f7b34f46001727f0cdd1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_725.txt",
+    "bytes": 232,
+    "sha256": "d542c80181abcaa3a74c4239c1dd4d7e27a29f97e65342890e761b9920aa39b5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_726.txt",
+    "bytes": 291,
+    "sha256": "ac5dd41b238566c555747a5be4fd5f56a39e1432fed78ba42adcf348f1593845",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_727.txt",
+    "bytes": 278,
+    "sha256": "946f75ca85f28a068d617284606bf60f2e2e2bfcad1b26f1d3580bd1486e32e9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_728.txt",
+    "bytes": 132,
+    "sha256": "11885ad730866c0dea316ea029becd892ab29115bb36acaf6bf809f968b62730",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_729.txt",
+    "bytes": 105,
+    "sha256": "6f6af65e5be2c8a878ea5021e65fb99d45c6235c96c62c101bed4b892b6c23e6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_730.txt",
+    "bytes": 113,
+    "sha256": "756d99e4a99b7b0a20b0c80d985502ad8ef5bb95c4a6f60ea5a4acbef7dee5cf",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/item_731.txt",
+    "bytes": 130,
+    "sha256": "825ef96547be034049822dd9216f0cf3bee7dce7a353e02e5c5b8440d38dbd75",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_01.txt",
+    "bytes": 273,
+    "sha256": "09e0ec1000608e062ac3fd8b1d5881d92384ba6d344a1eb4c973f936f8bc7eb0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_02.txt",
+    "bytes": 331,
+    "sha256": "44c657769434813492773411e582c103d6c979c67750c91888d6b0001ed310c1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_03.txt",
+    "bytes": 572,
+    "sha256": "f470a66dea7126dbb8dce4eb23b393db3788490017c474bbbff4302b2e8d5d37",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_04.txt",
+    "bytes": 409,
+    "sha256": "02ece74c2c1029e9ee42b329ccccd1d70191b1a4fe47a34dfe66638a321e3136",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_05.txt",
+    "bytes": 389,
+    "sha256": "6bee5728c10573629de88a39a205ee88134cce4c5ead77a5f11201b926219be8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_06.txt",
+    "bytes": 290,
+    "sha256": "5cc47570e447a1adfde31854913a4ddeca4bcc72030c33370f085f38d652f18d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_07.txt",
+    "bytes": 368,
+    "sha256": "a9e2bc5b9cc934b5a584ef4364905cef5175a4eac7868d8afd9826f486cda1c5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_08.txt",
+    "bytes": 453,
+    "sha256": "b2118b532b918c683993883c7cff3b62776fbd70f8b85b1a61ef45ee7310222f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_09.txt",
+    "bytes": 544,
+    "sha256": "88fce8e03b2b3a0005916b1893d2fbb68b5da04dcacdbc3a630a6131cc7d1be8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/level_10.txt",
+    "bytes": 357,
+    "sha256": "2344c5b99c4a96e8dccbe25bab4838fcfceab5a583d112f101b1446ae9f2d128",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_01.txt",
+    "bytes": 403,
+    "sha256": "75622ca329e68fa061130077c14ebe376141b48373088895db40667fc5bf4211",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_02.txt",
+    "bytes": 297,
+    "sha256": "805f945709a672ff1844d802a180f722db299eec5e8f6a04c993b1d811123c37",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_03.txt",
+    "bytes": 451,
+    "sha256": "8bb8fbc59389cae29ca09069a588674a7c1fcb2be3809068e31c99586fa0eecc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_04.txt",
+    "bytes": 317,
+    "sha256": "9a62ac26d2ae20a416afcab91dba83d49b00fd3c7e09ac5ebdddd38740a0fa59",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_05.txt",
+    "bytes": 285,
+    "sha256": "572ea97f5ee6cfa04b77780ff15184088743bcd6fe67d972e48778587c429f7f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_06.txt",
+    "bytes": 401,
+    "sha256": "6cc9f153fe8b85f515dbcbdffab4ece9c139ae6b4c13fe1fa64b990690e4c311",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_07.txt",
+    "bytes": 315,
+    "sha256": "ad02bf9bc8b6cef698036fc19e9b90eb58d5fec356b7457953210d4e6d871066",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_08.txt",
+    "bytes": 293,
+    "sha256": "f0ddd0dc9bf86e1e7d9c58d2297ae80655d099c644a17c9bf76834ca194a1281",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Text/weapon_09.txt",
+    "bytes": 405,
+    "sha256": "cff411d5f4a5626a07f1a3ac8daf80c5597d00e91eec7f5a60a96fdf07e00ecf",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/000load.vid",
+    "bytes": 43219,
+    "sha256": "54facabc688f9d009934dc1991416f74b2ee565cf94b7a4c704dc76a4aebe3e2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/001curs.vid",
+    "bytes": 36960,
+    "sha256": "a4cd7f6c9662d96ff05ef2570e7eb762752d1b0b7303c3dbd9464a4829ea8072",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/002fnt78.vid",
+    "bytes": 11835,
+    "sha256": "516bc626ddb8e9d363341c686ab0a28fc6e2b6c93efaa0fd682294b42d4b0e77",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/009.vid",
+    "bytes": 520564,
+    "sha256": "e21d48cbf0d38528e98acd34442e4a5c8f620ed21d4504053cc14e08aa7c2d90",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/011.vid",
+    "bytes": 169968,
+    "sha256": "b20e877a03c5d82e2564239417d606c28582563ff3a6936545193195cbe1c61b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/012.vid",
+    "bytes": 28168,
+    "sha256": "468be2119dc8540035fc382e39dd40227c24318f0307d7d8c1d5272fa034b6aa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/020.vid",
+    "bytes": 11031,
+    "sha256": "2c7846a6c0df841c167b28f5891bc331600f3b62fd79c9a7a3590abcac32b741",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/040.vid",
+    "bytes": 588929,
+    "sha256": "fdd8dcca04df77d130c84c286090c7ffeecf6a1757ebb0f0c3b05c64b179f0a1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/041.vid",
+    "bytes": 313892,
+    "sha256": "cf3dbada0dfd3991916e8a6ec41079e92955cd8dc1ad485f35bfe6863a4f7d2a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/042.vid",
+    "bytes": 10469,
+    "sha256": "77cdee4e8f104f66acb1953df370f782a52826e21cdd4a898ebf5201a0177704",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/049.vid",
+    "bytes": 54687,
+    "sha256": "565c6cb0d6ce686df207c12bd2c3ce97341f1a1cc342ab15585a75705306d1bf",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/050.vid",
+    "bytes": 552827,
+    "sha256": "456d357129c8bca13e6d453d0a4f7dc470974a14c51c9363d1694069ab7cbc05",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/051.vid",
+    "bytes": 179477,
+    "sha256": "2b8f07433051c341e63e915b6fe9b0b0456e3c584594d25148eb5b1afb1318e3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/052.vid",
+    "bytes": 10079,
+    "sha256": "6ae3eaebda3a2229def26354728088b0978b3b77df468c0c33153715777f82ca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/059.vid",
+    "bytes": 39297,
+    "sha256": "7497ea1cb61e8170587c987e7626c5a2fbf4fe72e3fcef1153da464b4765a1ae",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/060.vid",
+    "bytes": 1695550,
+    "sha256": "e263c4444f98ca18ca6fb584634e05f7b854f414b76fa15f5216d22abe2a91a6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/061.vid",
+    "bytes": 413448,
+    "sha256": "b8a24937aa91af07e8f8729bd8acb05df57ea369f25935520d0d55a7d0430ff6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/062.vid",
+    "bytes": 21838,
+    "sha256": "7bf20b40620ccb23208649453c4a48451f3b8c4d793dc0002565fca1cc6cfb56",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/069.vid",
+    "bytes": 93930,
+    "sha256": "c68856a29973aaf0d77311c89f485ccafba757fcc8f26a61d7b637824c96633a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/070.vid",
+    "bytes": 1781408,
+    "sha256": "5662625484e9bf73a65118222fd82bb2fb7363eeeee257a01516a15b2477501c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/079.vid",
+    "bytes": 115584,
+    "sha256": "87843e944110441c16c13bc17ea7dca97dfc9d4d6b8bb8a12e17ae9b30123910",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/080.vid",
+    "bytes": 3800842,
+    "sha256": "6cd07ff0bd7fbd856181e733ae91cf6d8a8a38ab0c389670a598179099a782bf",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/081.vid",
+    "bytes": 996611,
+    "sha256": "ba6afcdd677c2213878c1f9a5987a412873ca22a143b263dcde8426e094d3923",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/082.vid",
+    "bytes": 36723,
+    "sha256": "712e728f435e31f431c484bea0ea120e0299ec255502830e4fc2ea79f6f0ae4f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/089.vid",
+    "bytes": 193049,
+    "sha256": "ab9b4964c76df064484e96cce3395025a7d1aa7e918cca8406a4197b32fe6e65",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/101.vid",
+    "bytes": 197224,
+    "sha256": "97db00939e5f87651f78cf2ef5172b31eb185ef1344b4c2a0b500c43eab5f7aa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/102.vid",
+    "bytes": 1295,
+    "sha256": "4a12428d0f0641adf987e0061f457c1d646e418e36528f49e3b032c76088929b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/104.vid",
+    "bytes": 132328,
+    "sha256": "6698c0ff4e989990610ff6a5b0865c6903a0e97d542d0385de0a56d3fa16fe7b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/105.vid",
+    "bytes": 8728,
+    "sha256": "820ac48a11288a08c7e6ad2fa4f3a367ebe3f08dcb82259a2586d7a944b2fd05",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/106.vid",
+    "bytes": 1266,
+    "sha256": "fc5719ad2fe95e37d4bb5385cf075063d72e1d5858968164548809db493fa696",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/107.vid",
+    "bytes": 2661,
+    "sha256": "8ccc1ebae83bc5049a7e9fdc9778a471766eb874d663e2ab056b4951da760a66",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/108.vid",
+    "bytes": 4236,
+    "sha256": "8609a90ee705b89982d8fd1272333099142056a545847385f8ae5a01a9f368c3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/110.vid",
+    "bytes": 8132,
+    "sha256": "fd74da3af0ad912a33277ebdb0b55013c5b549a962a1598d6f266dadc954f1a3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/112.vid",
+    "bytes": 17064,
+    "sha256": "40c934f59afe66ac0f1e438b462500720b04d9c17bf86d3e0c85fd19c55265c0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/113.vid",
+    "bytes": 5558,
+    "sha256": "bcd80cdcd6fcff1216c95e7b233263e63012d4b7e80ea68dda3be6f27a89c27c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/114.vid",
+    "bytes": 4272,
+    "sha256": "90e373fe29799b6ada1462a673416dc296a761aab376c1a9afe43c32c2a6f9a5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/115.vid",
+    "bytes": 33052,
+    "sha256": "49406e26de9e9a62de393beed0ec9724c8407a98337915bdb4b045f9984c6873",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/116.vid",
+    "bytes": 98,
+    "sha256": "f403adffea836219d2ef0d5acd425fa804ff9bf467ae375245626627c5b385d6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/117.vid",
+    "bytes": 4272,
+    "sha256": "90e373fe29799b6ada1462a673416dc296a761aab376c1a9afe43c32c2a6f9a5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/118.vid",
+    "bytes": 33448,
+    "sha256": "9536feecaa83f2590b03c77edcb4a127fdbca9cd138c7f1b98764dac227afc26",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/119.vid",
+    "bytes": 9412,
+    "sha256": "ad599e23e50a436415231d4fa968c1d7bccd35330cf02cae5270eaf0d8295bbb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/120.vid",
+    "bytes": 3333,
+    "sha256": "c054109f18c23a820466b3538b339b87f5f38cdad44f632ebc1e4bc5decf1bfa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/121.vid",
+    "bytes": 74,
+    "sha256": "261ae4b0610c0ccff371495fef643b738645f90a0f4c4adecff30b7fd54b17f3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/123.vid",
+    "bytes": 16230,
+    "sha256": "6f6e3d166d25ad13d6ebc3f7b0260b583f00f58e49bc9f02b133af96e265a409",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/124.vid",
+    "bytes": 33124,
+    "sha256": "1ac8f371252ad97da3befd4eefe776c02f5408699638ef529444291277c48b72",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/125.vid",
+    "bytes": 66216,
+    "sha256": "077a3bc787c89f78592718426c37c13f0f1a2682a06fe83ab8606d678664e4ea",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/127.vid",
+    "bytes": 1353,
+    "sha256": "c4b20e810aacbe1fac225172266550f5f3de2c76035ab377db283b0687ba6a23",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/129.vid",
+    "bytes": 132328,
+    "sha256": "6a980be9df6d844302395e4c71645a0d148375c8837c68d388f33379235b6f3f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/130.vid",
+    "bytes": 3723,
+    "sha256": "5fa76ed0ce03e29b03286e9e61ab50136c3202833d610e306e07e34106aad780",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/131.vid",
+    "bytes": 5950,
+    "sha256": "58f6863c7775ba9a801ebde87839b5f1a1bd128dda8a1c84c85feec21a76ea26",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/132.vid",
+    "bytes": 8440,
+    "sha256": "24b21c23ee8878ce4167342f1a6ed757e8591d96a2beb16f974464f513709cfa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/133.vid",
+    "bytes": 3636,
+    "sha256": "9968f230f169e61983c95b89f209ab735a10301bbf7772ac07f013eae3228144",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/134.vid",
+    "bytes": 2845,
+    "sha256": "1d9a28128a8deadf62eb1741fbaebe6466e824646ccc05dd0346bd19d9eb848a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/135.vid",
+    "bytes": 108010,
+    "sha256": "c3422907bb90d1e4d7f5029e2e04261e1a63f67324342a9eb5f1c069b58fbce3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/136.vid",
+    "bytes": 3163,
+    "sha256": "b187c851e0714626701f7ac3a89f117f945015d094bd5afe02708eb98ad19dc3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/137.vid",
+    "bytes": 197872,
+    "sha256": "299413d2c1711d5e191b4e6f2f838a7c6798376dc430c68210f29cb7b905dc08",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/140.vid",
+    "bytes": 74,
+    "sha256": "8f19d3d0ad70152307ab34ab28f23b0398206ebc5c43cd553ecee497d9a9622e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/141.vid",
+    "bytes": 42866,
+    "sha256": "8c8e38e264f0067f6d9426fcc26682d0dcd93a35227f60c23b8050ad5df6c0cf",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/143.vid",
+    "bytes": 16126,
+    "sha256": "f0e9703efc1f731aba629cd5b54f009b0f0ab4b4007c7639e45d4af522a292c8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/144.vid",
+    "bytes": 2081,
+    "sha256": "979e083a0866babb968eeb4d7e2cac2f37ecedfc6c397cbb53000da511321572",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/145.vid",
+    "bytes": 2188,
+    "sha256": "a6d0d5e3db03be60a6e291fa734e96ddc38433dd49785b201f49a809d14eb090",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/146.vid",
+    "bytes": 33448,
+    "sha256": "03d242161b891433d36f19b22a8ad302a1056e87faf8b84448a649d0911b3cda",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/147.vid",
+    "bytes": 2514,
+    "sha256": "191d00e9dbc724e968fa16313707f3b2ab7a97f9d857bdeb4a0438ff91b60c02",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/149.vid",
+    "bytes": 53626,
+    "sha256": "fc45fec75bfab2eba3f5a3e646ddc035ac7d47687c1aa792adb4c30d60d5ecca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/151.vid",
+    "bytes": 8724,
+    "sha256": "f9826528c3730e3cef3911dc8b97ee776dfb6f0fe38e1e4fd03250da6237c16b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/154.vid",
+    "bytes": 1386,
+    "sha256": "5bedcf2cb65b01e81296352b822b3466e2a93e2b53e29b575a96e72349585f11",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/158.vid",
+    "bytes": 1499,
+    "sha256": "95d9583855402e5e5304647d6a5172bdd463833f3d4c22c1464a761eadfb1b69",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/159.vid",
+    "bytes": 133480,
+    "sha256": "ec530eefbd87b9cca9263938fda50c6f3a6177d88a8019c34a6b9a957b0596f7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/160.vid",
+    "bytes": 6104,
+    "sha256": "f2540b25dac70c8cbb02aa3205017dca9f98e19f443adea64ea2fac150ef6cf2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/164.vid",
+    "bytes": 131296,
+    "sha256": "100e6dbc561c26b32b6964b81c6200556a9eea45d057dc27318e18d9dc816085",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/166.vid",
+    "bytes": 8160,
+    "sha256": "5b8208164d0ec76f4de4ad7e199a0bd5863e75480bd63bec41c4b53b752e2d21",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/167.vid",
+    "bytes": 3333,
+    "sha256": "6ae8bde38ea497f9b8daf48c06fd440631b642f76edc77ac684d1ca2fe0735b0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/170.vid",
+    "bytes": 4776,
+    "sha256": "770786c204007493d9248a89948e084a786971015d00e6d193141767e8d16a0d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/174.vid",
+    "bytes": 2188,
+    "sha256": "f4bcfaf8f773d0bbc1c8032ae6f15dc661c4bc9f5a5545b47bf877ac1adda165",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/176.vid",
+    "bytes": 8784,
+    "sha256": "f56b3243a15c31905302e0033b3144282c88cd98638633bf763744b40d3cd54f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/177.vid",
+    "bytes": 110,
+    "sha256": "f8a7ac8381ff4b9e252bbc014ee2808cc3de87bfd361e0e07b7d792f14294910",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/179.vid",
+    "bytes": 19700,
+    "sha256": "f97989b33c32005ed9d679988333f8fb4375b696e188b8fc788252b074f522a7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/180.vid",
+    "bytes": 12356,
+    "sha256": "98416ede65548103ee2af28dc3008fe2c64b33b0e1d2ede5998b37c49a8388a5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/181.vid",
+    "bytes": 78206,
+    "sha256": "cf651106790c357b66f0cd209f4b1a902d189dd0a2906b70b4058640154e5d96",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/182.vid",
+    "bytes": 5776,
+    "sha256": "fbbff08b09683ee574095da666b29a3865913e961d6ccbc5a09a06b9d470ddf9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/183.vid",
+    "bytes": 2000,
+    "sha256": "7fff694ea0734a11e20fba2227ce0bf4d11230f81f41a02b96516eb758807b0d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/185.vid",
+    "bytes": 110,
+    "sha256": "674b240ac279138e56db2aa801f10a6447ba28893574295b41e9e71cf133499c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/186.vid",
+    "bytes": 32980,
+    "sha256": "23bb3827943efb33ea8dc63579cfac08146ee7d1a552a2dcf8a0db8c6b0655f8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/187.vid",
+    "bytes": 12064,
+    "sha256": "adf477a89a3d65a326d0b2fdf81e37f38a7f8f96ef89c36708c6e050e095ff15",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/200.vid",
+    "bytes": 15446,
+    "sha256": "74042d19b07d739efd87856c6a9e7f322f272559529ee1397713c39ca1b6974c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/201.vid",
+    "bytes": 18437,
+    "sha256": "5bb205fd3f4ad7ac1516935944681e317c0bc2fb69e9b53f1f6ad1ae5b352367",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/202.vid",
+    "bytes": 23372,
+    "sha256": "b8b5326b4a1a214d69942af6ae61c4a945276061632809955a8ce739c5c38ce3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/207.vid",
+    "bytes": 12024,
+    "sha256": "6e1a4cf3591dd46346b4f4dc197b8c5c0d9103e99e8e48fcbf548843483d7e24",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/210.vid",
+    "bytes": 4345,
+    "sha256": "e5d0c69c83de1b12ce23b055fb5932f41b1852d85f188a7dd12013ef222361ad",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/211.vid",
+    "bytes": 8121,
+    "sha256": "c2bc94bc2a762558dafaef14f739d5e85ec5d4859c95c6cbdad259650f6ac019",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/212.vid",
+    "bytes": 30451,
+    "sha256": "144e583929b0704121930185e63ef8e05431a419701ea10ac4e85ccb648748b5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/220.vid",
+    "bytes": 190512,
+    "sha256": "bcc58c77a0de8710b2f5d4de2ce5f4aaaa548a05e62564f173d0b116b44046a5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/230.vid",
+    "bytes": 14590,
+    "sha256": "46fd05dc9edaeb422d1caf43ca7fac918106084724fc187346c4c483ea84279c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/232.vid",
+    "bytes": 8520,
+    "sha256": "80a16eade02beddec416f87f069c0c60a4aa14ad75649c28c628e479ba8c2f5a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/233.vid",
+    "bytes": 8824,
+    "sha256": "648caf99554a80f4083934c949ba429e7721df493f2472c32e97f1bd2b1768de",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/234.vid",
+    "bytes": 12345,
+    "sha256": "a59aa2e02cb6d098627985be03a67853466f299e06701fc66f56a5d75034acc3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/235.vid",
+    "bytes": 22084,
+    "sha256": "0c44eb7c7dd3725b3fd98281be2ec0f1192def5431b53f328af16818c2a03598",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/236.vid",
+    "bytes": 18183,
+    "sha256": "55a8d6aad9769cdd118005b2b73fd4c1a844cd66492b59312a8cb123a4f2f68c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/238.vid",
+    "bytes": 13362,
+    "sha256": "c50b479e9634039f69045bfe0b77e7311414836a5702d62ec424b7bbfaed4ac5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/241.vid",
+    "bytes": 11295,
+    "sha256": "7b0cfa7c3179b2e1345f2dcbf97d791f2d5b0542e9c3ec7a38854df34d2ddb96",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/242.vid",
+    "bytes": 13455,
+    "sha256": "3ec20844be7a47ab49f423d915358d03b988dc6022f1e82505a78cf9c60ebc64",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/243.vid",
+    "bytes": 12723,
+    "sha256": "1e9e669630fa9ae04f53cdb0551e2ecd9915041cfa3f5c2c4d4f4741eb853e3a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/244.vid",
+    "bytes": 12723,
+    "sha256": "2e8a5daf926b88f18ec09239bf238bc2e070570f02fa9245906e999d428adccc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/245.vid",
+    "bytes": 12723,
+    "sha256": "85f72b257778cf50744ca11350bc0e56608617f7d310aa181367f8820df7f3aa",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/246.vid",
+    "bytes": 15187,
+    "sha256": "87209c6b70c50d081479e7f8b423840ccc84cecde6d28f13bc3e6b31370c2ce6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/247.vid",
+    "bytes": 18644,
+    "sha256": "ab04f55c16ad9d75311e518bcac89ede834956dc080229aed961e1926391ff4a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/252.vid",
+    "bytes": 12265,
+    "sha256": "1f28566cdd837d89f82170de2ab00ffb78e35aab5f20c652a7f2931e3fa79198",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/253.vid",
+    "bytes": 19443,
+    "sha256": "fab4e23d32bdb46f524f757e58fbc48b90d820fe6c95725a267ed591f0b55681",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/254.vid",
+    "bytes": 28260,
+    "sha256": "291b6f8cb3a46a28910f82db6a0a2e1c9cb06f5b92bad47d7e06ea6c18eeec57",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/255.vid",
+    "bytes": 30198,
+    "sha256": "46a2daf220680dce8e375f42a2e28057cc7705001515adcef6c273c295623c72",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/256.vid",
+    "bytes": 22976,
+    "sha256": "3eaa668549b66fe1c3e5cd52dc66f1ae8502118fe3ab6f4eff793f6113677599",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/257.vid",
+    "bytes": 20001,
+    "sha256": "3a3be680f944c9df5e08d13da01ba42aa52a076b9268da1ba580fc60473e633a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/258.vid",
+    "bytes": 33656,
+    "sha256": "daae8922740e154a42aeaaa67e2dd48b6af956a8e3a67d86c500790ea74ad769",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/259.vid",
+    "bytes": 40520,
+    "sha256": "d65127e7dc3c0b8e5d8be80cb05ccd396f7308864c65a196f60cbabd09c55333",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/290.vid",
+    "bytes": 11031,
+    "sha256": "2c7846a6c0df841c167b28f5891bc331600f3b62fd79c9a7a3590abcac32b741",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/301.vid",
+    "bytes": 15516,
+    "sha256": "238485783a2d2c0f8d093eb8fbe466e0e69b878f489bcc8155ae4a3667126d0d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/302.vid",
+    "bytes": 9881,
+    "sha256": "e8a05c222a6c0147b76e65adf03039aec3899041eba70380785bd4e7a90ff640",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/303.vid",
+    "bytes": 8980,
+    "sha256": "d8834f9484b221b846eeb7f291c55c8f16a8acecec659ad26ea509391e548abc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/304.vid",
+    "bytes": 15193,
+    "sha256": "4681ddeea8d94f3948b4e4d1943f5eb144527424acd6eced93004377f6fd18a3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/305.vid",
+    "bytes": 13532,
+    "sha256": "bfdae2b4cbd1c188a2847f471be6c71c888aaa1c9495f568e666e13ada1a9513",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/306.vid",
+    "bytes": 17805,
+    "sha256": "d1dccceec6fef04e8bd90dcfa0f344a8b0f8ef505410ef2bde531ba2d04ea211",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/307.vid",
+    "bytes": 18070,
+    "sha256": "596346717c5e23189b478c95cfe4fa4ddf17aec98a0dd420d8d972588294cd3a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/308.vid",
+    "bytes": 11908,
+    "sha256": "c5269e9607764f85831c4d2e708d7a807508da7b2394f9478630eef0e058f42e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/309.vid",
+    "bytes": 25245,
+    "sha256": "ef320491b1ab431bfb2a937d5291ad89c1b6443443373ac6a44ae6a7513784ac",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/332.vid",
+    "bytes": 43389,
+    "sha256": "65c91698d4e5c4875c5bbffa1d6e53556d3e0a97c6e38a56605fc46472e5b93b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/333.vid",
+    "bytes": 141490,
+    "sha256": "c630930191182cb0c811cde16c1d9650dd8fae4684a2b0db84954c1bfc7b4a0f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/334.vid",
+    "bytes": 79617,
+    "sha256": "743fa1711f39486f45c69badf2f0c46f28fd87e9bb8304b60a7d6d524193dc1b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/350.vid",
+    "bytes": 9688,
+    "sha256": "34c96e347d25c278ea8b426116472018b2583ed50433c255be826048bd6d033e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/351.vid",
+    "bytes": 61444,
+    "sha256": "9821f9ea15d393d7d72f089c50c74dd13846cee4007f64d7d89bd4c73c0236f6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/352.vid",
+    "bytes": 243666,
+    "sha256": "346596e2d977fa8fb581539f3a12feb1ab8c855eaff6b7ddfe97004d6130b6c2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/353.vid",
+    "bytes": 1571,
+    "sha256": "c184ec9cff55afc3a4d5c5c62face4ddf15a689c42feb337fe86eac14b08222f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/358.vid",
+    "bytes": 208469,
+    "sha256": "115251fd71053ebf7ae236616b29370f58f04e218ff85b949e6bf6ed6f9fc65d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/400.vid",
+    "bytes": 93835,
+    "sha256": "201cededa24a289271349f8ec806cfb4c14f1f54bc33632148be335834e2a813",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/401.vid",
+    "bytes": 17044,
+    "sha256": "68d95df4bbc2e70b79e84edc7d6c780a63e6abfa8097eb9996793824f5254831",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/402.vid",
+    "bytes": 16501,
+    "sha256": "dc4056fbf76fa74a06eb3be68382e66096ad035fdd7a5d5c18914a8d4d6623b5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/403.vid",
+    "bytes": 80430,
+    "sha256": "de95ba62f5c0603bcbb247c1387e754b7bc7cb1bcef6a8e04c74461e88d3d0b0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/404.vid",
+    "bytes": 118965,
+    "sha256": "d3c36cfd1db238ba3b1b8c47bf82212bf2f15dd103b27242d8db1aea0be0b61a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/405.vid",
+    "bytes": 14227,
+    "sha256": "8ccb664268f7bf7df268d2f0e12f4baf945d3f69b33b99b4d324771403ff1e5e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/406.vid",
+    "bytes": 5485,
+    "sha256": "141bd5afb3cc5eb192aed60ab8824b84512825e096a917560e5d8feb6a72a910",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/407.vid",
+    "bytes": 13198,
+    "sha256": "6f25c906eaee6167326d1724a65d17aa008f80b75be5156a543af09bb2578fba",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/408.vid",
+    "bytes": 5644,
+    "sha256": "a87200b6d18180ed961650e441f233daa87a176e0a74b4786fa41e81e70c8bcc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/409.vid",
+    "bytes": 7802,
+    "sha256": "2da411e42793b6b3228d0513d0d61e54dcc482f3fa0e4f4ad9ca05e1ce603746",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/410.vid",
+    "bytes": 29526,
+    "sha256": "51476eea237c4ad86b4364774b41238042a2b9ed817da580d3b5e2995d5d4686",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/411.vid",
+    "bytes": 29526,
+    "sha256": "43e6233e6ad8bead27fa31c7f0feadfcabe4c126540c08ca88226ef7acbd0e47",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/412.vid",
+    "bytes": 8961,
+    "sha256": "999e533471be6c0999770257731e3e647e5de9a73216d7c072e42d47d6e3ca4e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/413.vid",
+    "bytes": 78672,
+    "sha256": "e3f360fa8d81b460cc925b6d9377b16f9b91e4800a0c9b98e98f1c0f7950359d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/414.vid",
+    "bytes": 41835,
+    "sha256": "7839eea95daffe379f53a8068fe90cf718cc47c12733e64f97c0292a6733b3de",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/415.vid",
+    "bytes": 7587,
+    "sha256": "753c5027239845cc176864345b9527b4fcd608b2ac969470b032528174f7dd43",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/417.vid",
+    "bytes": 13755,
+    "sha256": "7960202a923820bf0852d4ea0f82bbd2aec217da1b3d73eb71b2f1e438f98fe4",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/418.vid",
+    "bytes": 13755,
+    "sha256": "672b3c1be6d14f60dea5b714d2724424bc275a3456b092da563d9884be0782d8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/419.vid",
+    "bytes": 39483,
+    "sha256": "b124d6c98ef8cd47f1749d4776b9b7741f524321175101f7b996d6465c482d92",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/423.vid",
+    "bytes": 1681,
+    "sha256": "2045f7e056c6a5c71b0865cfcdef1405886f7468529fe7090d80c43b1b7de76e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/424.vid",
+    "bytes": 1681,
+    "sha256": "28af64511baf02793c94f87e338c8c0c9e8a232b0cb8f0d6b895acd9e81efa83",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/425.vid",
+    "bytes": 2087,
+    "sha256": "ef61d393b96a863977256aa2d2b47df96943e3ab1174bb2f422a5b4ec4abc7b2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/426.vid",
+    "bytes": 3183,
+    "sha256": "a32024b1bf82f83e218f9a0cf15a03bd632081a30443810248c58e2e9ec4355f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/427.vid",
+    "bytes": 13990,
+    "sha256": "edbc67fbb78329291c0e76243b832ee353ac2504bd477cac0092500289cf8b47",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/428.vid",
+    "bytes": 14096,
+    "sha256": "c0f2a2f58e1a90b9c06f2215a175fce8d8d3d07e6d67b632a4512f97deca1ef2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/429.vid",
+    "bytes": 21191,
+    "sha256": "8dc066f1f410db942f0a403aae8a3c0c422e076b4f93a1de5e74df7aaccf1dbc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/430.vid",
+    "bytes": 20088,
+    "sha256": "647f9e5c2d9998235abf50fc0282818988c32670321206afe073e502435bd7e1",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/431.vid",
+    "bytes": 19165,
+    "sha256": "107db3aef1208c4127c9bfb627fdd3e8d4f3601a6b537310cab386fed14e1ad6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/435.vid",
+    "bytes": 34587,
+    "sha256": "d48fda870af5e95850d16dab739d9f705e298ef64599946c4a56b4ed6ad28616",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/436.vid",
+    "bytes": 7559,
+    "sha256": "a3248fefae78ddda0580305cc774fbd4ebd39d42c676c63aa8a3a61acda29ad0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/437.vid",
+    "bytes": 16371,
+    "sha256": "5de2e49ff25bbfaa61cd7f7ac07a5c2e6ea5251307d8dff19c2c6a56b3495585",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/440.vid",
+    "bytes": 113672,
+    "sha256": "68e4636352c3eeb4ed3c0c1a34e3aac3254bcae658609368e27391d8e9aa3ed9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/443.vid",
+    "bytes": 44517,
+    "sha256": "68441fbd2b4874a36f29e606910eda8af62b6fa291d0f6cf1b42a752959e8be9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/450.vid",
+    "bytes": 13570,
+    "sha256": "6b90c058444d9d6dfb53ebdc0dc8d9ecd3d8663ad2ac7ad6d9ddd1c721d59655",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/452.vid",
+    "bytes": 28132,
+    "sha256": "9f5762f2b4f63b6df31b56df2c631cb321db235c4d874b79ab75a843ba0c6f9a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/500.vid",
+    "bytes": 21582,
+    "sha256": "320aa827648f8f9cbe7946a444aa4278a517ddb1e2dfe3e8f2dd95b500b92dac",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/501.vid",
+    "bytes": 21354,
+    "sha256": "70ebb72b07c541f7768db2c1ff6f8f49635f7f84c66ba99f9836308c0131ac80",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/502.vid",
+    "bytes": 21562,
+    "sha256": "b379912b14bac7ad02c6c04ad42a86c18dfbb89f0ebef91361b56b8a09e26b31",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/503.vid",
+    "bytes": 78946,
+    "sha256": "906895ede5e2e43ba880f5ca4a0c3000376ffb7294a59656f055a6fe33b2bc7a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/505.vid",
+    "bytes": 55722,
+    "sha256": "9d98f0935f9f53ae25e2dbdec1b09e9ce58f3ab5b6fc7718a002e09ce1287ce6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/506.vid",
+    "bytes": 36205,
+    "sha256": "8e5862132c2d1d479a6f1c83c432cff136ee64fb1f36d5d4c02dff7046518379",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/507.vid",
+    "bytes": 13556,
+    "sha256": "dddebe27282f07b2477b005a4a9eb3f4213466ae124be04452c663dc4bacaf57",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/549.vid",
+    "bytes": 316357,
+    "sha256": "4af984aede6d19ee34a1dd1aa2b07af3b6517405dcffbf9c8846b2b708993411",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/550.vid",
+    "bytes": 32065,
+    "sha256": "91e8a70244d0a50c7a068a2c4a3f150d15091ec5dad04b11cfc2eeacd07a514d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/551.vid",
+    "bytes": 145979,
+    "sha256": "9dfe003d872d3a5949371c08962ae391f042d9a472d31440ff2efb920ce2fd11",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/552.vid",
+    "bytes": 25186,
+    "sha256": "4cc5faf9cc903c324d11cce67ea13002c0f5d11cfbbbef650bd83dc6b69ede56",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/601.vid",
+    "bytes": 64198,
+    "sha256": "45cea4734766db390df0c574edab3b23d35966ae79b133eb357956343d5b22e9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/602.vid",
+    "bytes": 65344,
+    "sha256": "89c750b153071ac5fc158a8869c9cd6246bdbd1102d4747722525d55fea3fb50",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/604.vid",
+    "bytes": 18534,
+    "sha256": "98c4a26daa4aaed2ac978fb440c492cfd9c35d52b05107fc555dd63b75b1ab76",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/605.vid",
+    "bytes": 18798,
+    "sha256": "2adad157d4c4dded244bdcf33545aab8b8a50c9b697b98b9398357c515aad92e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/606.vid",
+    "bytes": 27202,
+    "sha256": "9c80becaa08ea17da107d20f5c1b8d60f866be6261ccf21ab8cf3ed9c68697ca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/607.vid",
+    "bytes": 41862,
+    "sha256": "7e68cb6f49494031cfcdf4e59b8035861377216b43402dfa58334385a5ec2b5f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/608.vid",
+    "bytes": 37890,
+    "sha256": "d5c922686f315e06877ce80eb781a0eb0e83712554183ac14f9cc27616982ba4",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/609.vid",
+    "bytes": 34440,
+    "sha256": "bb95b9aa60d6aec49297cac8b8eadc68f588894e4e180ce08ca9bf5c9f6ca53c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/610.vid",
+    "bytes": 22920,
+    "sha256": "acbd89962787a73696df016dfab7ddcfbe1ce3b637db70704c7623107c546f5f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/612.vid",
+    "bytes": 29791,
+    "sha256": "d4df686871306bba3668f0a2277d515aa38714a6be8ead7e94903210d1fca417",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/615.vid",
+    "bytes": 42688,
+    "sha256": "314c5e3f64d74bf540a3097b0e836b478a471cf31057dac57c96fdd8539871de",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/631.vid",
+    "bytes": 116792,
+    "sha256": "352c052b36405f487800534a5df2e43f23cd75b4d27ec7c32e4a91577599e3f7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/650.vid",
+    "bytes": 113350,
+    "sha256": "cec2a6d624fc7fd75dac8c1d2b84cd80adaa9b360c7edf8e6073f82507d7cd1d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/651.vid",
+    "bytes": 113338,
+    "sha256": "cbb4d905be1881ebc5b9662de8c35395d0c879af300b008b82d40c2d7ab2f47d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/652.vid",
+    "bytes": 10138,
+    "sha256": "da8461024fd7fe6d9f056c1c6730643aec9e3664f1befa6699b46ddd5751574d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/653.vid",
+    "bytes": 43243,
+    "sha256": "c15609bf3dc02848c4badc72b48b8f16a9ae4a24ce785d8ccf658653eec51b9a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/654.vid",
+    "bytes": 84836,
+    "sha256": "4389063489d2ec50c7af262ec317c929fd1e27c2d18c5e041f85537766e8a169",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/660.vid",
+    "bytes": 79789,
+    "sha256": "2d9545d4d5e033b709914716e94c8701e6f7f0cd59780fbbea75fe21e56b15a2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/661.vid",
+    "bytes": 42437,
+    "sha256": "558d9dd8135d3f54a871bba6af5548215ad7fa420e7ed4575fd1a0ca4ea906cd",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/662.vid",
+    "bytes": 14097,
+    "sha256": "9620ca364ff023fbf48d14b94bb4f505ac0c121fd106758cd71294e068b92592",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/663.vid",
+    "bytes": 16147,
+    "sha256": "12b85dad6feeb721c93a5727bd86c76414e51b9e020055ec75176b3ce20042cb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/714.vid",
+    "bytes": 12288,
+    "sha256": "63df60e0e5cab343b0ab1656ad9829928fd5b3ef45cd7a324bcb6b28c53eb737",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/716.vid",
+    "bytes": 1432,
+    "sha256": "fc0f529ae36d6e4a69514b0ba6ddcc7088a118ee41bc2b8585054e8e78f3c686",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/718.vid",
+    "bytes": 12078,
+    "sha256": "b7babd5ac008fa9fbd32659900561fef0f5f425f8547292b173e0bb0a8b72eee",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/719.vid",
+    "bytes": 1054,
+    "sha256": "5ca663c61976acde266351a335c535e07e6d40b1e659edf93ae9722214639d1d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/720.vid",
+    "bytes": 1471,
+    "sha256": "e7184b59fd82982721e0566eb5978663f9c58bc25c79738d1b0252e702060431",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/721.vid",
+    "bytes": 1471,
+    "sha256": "8930ef84fbe30abaa26fb44ad17e6c3fde472a0f7ed1ccf662fbe39eec5379e7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/722.vid",
+    "bytes": 1472,
+    "sha256": "571e5b134c07634f0d024055e486ea04a8f5072c6f920e2e0f631357689ec127",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/723.vid",
+    "bytes": 1471,
+    "sha256": "a00ecabec4236a3b08917e892796ce237cab847fe71c53e449c08a4abcbb3267",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/727.vid",
+    "bytes": 4279,
+    "sha256": "b65078361386e33554d39e79dc9d4e96e6b9706aa701c012dab41254aa4c57c6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/741.vid",
+    "bytes": 16264,
+    "sha256": "06de6f8ba025d90503537504d36182c4bb214100782b04981d59795d036d2fc5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/742.vid",
+    "bytes": 29476,
+    "sha256": "d052be9958a524f2b0d5e441932a652ac38c4d5d8ab66ab4cea40c0b6de00540",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/743.vid",
+    "bytes": 3498,
+    "sha256": "d7d88f300cb5d7d4d3c45757671c460217e205b22d1efcf534746e107d8f8a0f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/745.vid",
+    "bytes": 2712,
+    "sha256": "c8aab1068e5d26568a5bd6446756a2155929f42143813e8bd056659d9c2710c8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/746.vid",
+    "bytes": 1582160,
+    "sha256": "4a128c452321fb2191aa2b4c7c93e8651d316d4941f780b6f895d4dd9a970d75",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/749.vid",
+    "bytes": 3366,
+    "sha256": "a94ca9016aeaed1b0aabf8b55894f58cb797043ff74087f35502c4acd10f37b2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/751.vid",
+    "bytes": 13030,
+    "sha256": "61bd95b3fc660ead76cbb5ddb0b0470878145648be4dafb6eaddb5d1b44935ae",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/752.vid",
+    "bytes": 24644,
+    "sha256": "49f656791e56e17b0db998534ad955f9867865360cc6e77d2d8beb15cc9e5165",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/755.vid",
+    "bytes": 4846,
+    "sha256": "f15fb909cce0d9fc57f2b880ac62358588a38f0bc44c599a08799e13cdc6a55e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/760.vid",
+    "bytes": 4490,
+    "sha256": "40b942f2e423e00888b5893f6123a67f42ef05beea00565252ecfc17ae0199f8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/763.vid",
+    "bytes": 13287,
+    "sha256": "54bcf677b0af70e6d7ab65d5cfbf9f62fb373a7fa387a1631a0b81fee479ae6e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/765.vid",
+    "bytes": 6593,
+    "sha256": "833741189734e1a82dc6492a7e323199b5f77408bd63c4bb36579d216b94bd9b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/782.vid",
+    "bytes": 4903,
+    "sha256": "abed4f9c6cb8193f211b21be620eca93cfc5f90ff91d6484deb16b9c37deae15",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/785.vid",
+    "bytes": 64882,
+    "sha256": "5b401888ffa0557afec26665fd96639892e3848c367067ae0ca862a4013dd3f4",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/786.vid",
+    "bytes": 14035,
+    "sha256": "6b5ebf7c91f4dfc763e0fb15c1241c6dd99b3cca48f63facb5799b10c84d7f9c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/912.bmp",
+    "bytes": 19254,
+    "sha256": "c0dfe3b74327bfc480b69c1634badac1fba4e6b1e8070eab3222d7abfc738268",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/912.vid",
+    "bytes": 3347,
+    "sha256": "aba9da877cb5548bfcd60048e4565684144a58eb2c703aa78bfc4e00b4f78032",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/914.bmp",
+    "bytes": 19254,
+    "sha256": "e99a34dab13950fe92d41739661255c4a33c46830e6292515ac88e78cf2bce9b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/914.vid",
+    "bytes": 3766,
+    "sha256": "7c2b38231e0eaa21c4df527cacbf4ed47d9993396f2708a9e4889694faba5d92",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/916.vid",
+    "bytes": 58722,
+    "sha256": "4b0565d7d1cb07d4273bef5a1ade467b44f7e1b5aa8194b4f4e7ebf0e28e6137",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/918.vid",
+    "bytes": 58722,
+    "sha256": "0277d9c9415b3304d7f680aa4f4e62b841f42db758f0e72c3a522fde5235d6d2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/950.vid",
+    "bytes": 35134,
+    "sha256": "a63befd9eaf98fc33ad12180379b1d1f0d9781ab23864789462849b742a9cc4b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/956.vid",
+    "bytes": 65784,
+    "sha256": "53f20d4584d3dbdf76e803b467ae54b35310d25da4ef966febc7d3a5e6dafbca",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/961.vid",
+    "bytes": 32944,
+    "sha256": "1e7713bb623fb2995a06c07557c9e7ae695fb037ba86b30a874cdd687c704759",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/966.vid",
+    "bytes": 8656,
+    "sha256": "ea08c3dcee084db59729bad006bf43e2296823e57ec3340e8123473e63e6df6c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/alien_logo.vid",
+    "bytes": 15648,
+    "sha256": "8d50bfeef23802d4ba224a9b647df2096acdd9cb506bcb009dbb51828f047732",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/back_butt00.vid",
+    "bytes": 10040,
+    "sha256": "7e7b869e7c1e03e85508ee446f1da9fb781402570c01210b07f2ef1e4338ab10",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/back_eqp00.vid",
+    "bytes": 3130,
+    "sha256": "601e1de3cdd7f0f43435db3e5b204c16a3342222f3add55371145516b62aec55",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/emptfast.vid",
+    "bytes": 4704,
+    "sha256": "2b7bd041a3bbd6fcfabfc8975ad41c9d6571fec0dfe7bf5d25d63613bf6c234a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/emptslow.vid",
+    "bytes": 2400,
+    "sha256": "c8d19e241405c33f16c2b855c2bc9ee185eac2130d0cdd7d71da9bb5a6faf4bc",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/empty_fastest.vid",
+    "bytes": 36960,
+    "sha256": "bbcd832486ac6e13747c502127088a8a7217607feadbfb5a8fb4db41c2dd41c2",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/empty.vid",
+    "bytes": 36960,
+    "sha256": "a4cd7f6c9662d96ff05ef2570e7eb762752d1b0b7303c3dbd9464a4829ea8072",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/eteam_logo.vid",
+    "bytes": 22342,
+    "sha256": "e4050ae8ae6369b72b27ab7d1ea5076d550bda2f67cbae78d43fcd37a4f74e1e",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/game_logo.bmp",
+    "bytes": 62056,
+    "sha256": "9afda1d6455ec7d7721f252ef4c3776541cdaff2db2f491001dd8baee601a20a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/help.bmp",
+    "bytes": 921656,
+    "sha256": "f918c8ad0c026febc069b669e8878f7c9ea3940bff10e1850f5514d4999da8f0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/loading.bmp",
+    "bytes": 22856,
+    "sha256": "a6ae4b17ed96e6e274fac1093d257cbea8d1a13179b18c6f977b761b9538a2e8",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/main_back.vid",
+    "bytes": 172402,
+    "sha256": "05a30d6d7eb1d4e701440c75512207315b7e1728be7f4001fc593f341c7b716c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/menu_butt00.vid",
+    "bytes": 2858,
+    "sha256": "a3a3f8e1963509462eb3eea01801633afd446474e866697e250b6b28c2803042",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/pistol_ammo.vid",
+    "bytes": 1937,
+    "sha256": "82752f5a167ae05569c7608e9f6f714ccd9ca290ac541001a7f3f9a8438743b7",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/preview_female00.vid",
+    "bytes": 86618,
+    "sha256": "0f9b6bfacd23c04cd7241f66a2979e24e896c2ebd386ec51580410a06cc1103b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/preview_male00.vid",
+    "bytes": 86420,
+    "sha256": "a844fc2df9164e75ac3bc40b600fa6aa60a35b7e3d9f4580649520b9c1dc204d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/shop_back.vid",
+    "bytes": 79276,
+    "sha256": "f2918e96df033bec6d4e747ea1fcf72458b8a9060bfc723ec2517b87a8be6142",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Vid/weapon00.vid",
+    "bytes": 226718,
+    "sha256": "258c58622cf35feb012e96fccff3391229114a5fca23e2edddb5a3c619643e6a",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/ammo_pickup.wav",
+    "bytes": 15204,
+    "sha256": "0c178c006b528736d8a0c7559644c0a20005a45330b86ac30bea6fb80a631c53",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/armor_hit1.wav",
+    "bytes": 11068,
+    "sha256": "cf351877e5c18aa43173b90f8f2b947e1756c8e850d0e551fe43dbdb4bc7bd18",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/armor_hit2.wav",
+    "bytes": 11068,
+    "sha256": "4c95e887697f38d2e89abf3cb457f9ef508123c79c536193bb68ebe94299f281",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/barrel_death.wav",
+    "bytes": 26988,
+    "sha256": "241fac372b7684a4e46eaff71dbc23dc8e1d2eac36e13d61c9cf106b5c5e0af5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/big_door.wav",
+    "bytes": 31740,
+    "sha256": "452eac1f0cd783bab1380444b6aaaa2939cbdf692a979ba473d155279a92c5f5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/big_explosion.WAV",
+    "bytes": 132344,
+    "sha256": "17cf3bad67dd2ba6119f223917385278aa6f0d7a1016aac6e0687dd8bc394b43",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/bomb_activate.wav",
+    "bytes": 135844,
+    "sha256": "aecef5addd05a1598f1d409a1c065a52adbabd780d477d9c40a9ec397c1264a5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/broke_armor.wav",
+    "bytes": 111212,
+    "sha256": "d2641cbc32033eb93300720f56acf27776ae67286c0732e3e525b95ea7604236",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/buy.wav",
+    "bytes": 22094,
+    "sha256": "0a445fa2dfd10f46bdd876e1d426bc20ee92754acc18d452352858beac4be25c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/drop_item.wav",
+    "bytes": 18612,
+    "sha256": "6414519eb0aa711d2e60ad11ad9786375e07b84e189e66fdc5146f4e9a146ffe",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/drop_shell.wav",
+    "bytes": 5690,
+    "sha256": "4e3a417b694d74429697da1cb34dbd2389ed8e3198a9f18ea9b488b3deb828ad",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/drop_shell2.wav",
+    "bytes": 7836,
+    "sha256": "91ff83a4b7a5979c4cb4f3eb8480662969908dbd58575d71f1182f861cab10a0",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/drop_shotgunshell.wav",
+    "bytes": 1771,
+    "sha256": "10b6f0af394bbb07d13a40cf91cc005feeb220a4f9854e94313c7d073cc61221",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/energy_off.wav",
+    "bytes": 159612,
+    "sha256": "469ffda0848be7be108d08ba59340f6409bf060040813ec6c1665ac592f6c44f",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/energy_on.wav",
+    "bytes": 87930,
+    "sha256": "fc8820c609395237c6445c55a728d8230abd330c5725c38c99a8fe453fdfe71b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/explosion.wav",
+    "bytes": 51744,
+    "sha256": "0a1dcd76dd15a75958ecc968ad2d4fe79034f0370ca70503792f68df92b872bb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/female_death.wav",
+    "bytes": 29482,
+    "sha256": "4fa5c8d877449cd29720d7cffa2e9db4f86501dfd810735d1980a01c633572ab",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/flame_thrower.wav",
+    "bytes": 21902,
+    "sha256": "87468643e40a585356e847d63d05c8729aacee12f449005923283b6971f4a943",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/footsteps.wav",
+    "bytes": 27212,
+    "sha256": "a175dd4d7e05cfd3664bb53cac9308206b4c5dfdace969025f7ddb72fb8d9260",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/generator.wav",
+    "bytes": 42092,
+    "sha256": "fda87e057593325e10976b5ad514e8c0ea26b42c84aceaa78effdeffdce66e22",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/gib_drop.WAV",
+    "bytes": 4004,
+    "sha256": "e0fac4d921612a2eeea90c1f2c1d0d2f3d8d6d3ea1843334e7afa470c3c18427",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/granade_luncher.wav",
+    "bytes": 28944,
+    "sha256": "0fda1ac26377f91c1053afe38bd856f462368272c7637e4e0d6a66b7f3c8f651",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/machine_gun.wav",
+    "bytes": 4982,
+    "sha256": "de539df23d1454e62e09ecd43b6d682638633e802edbaab4cd260c7065731237",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/magma_shot.wav",
+    "bytes": 20996,
+    "sha256": "feb1990ff226e0b7450e9d79c5545efe826058f2114df16ac4eb2593194b20e5",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/male_death.wav",
+    "bytes": 57962,
+    "sha256": "a9bf138d4cd54545875758f106d57c611d039fc5b1a4ddcfc0ab2b3c70c47143",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/miss_hit.wav",
+    "bytes": 14022,
+    "sha256": "495628c4fdba6a5f2afe6f57efe843f4f1d47bf2ed971c32d1f345773cfd5b40",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/miss_hit2.wav",
+    "bytes": 21096,
+    "sha256": "2c8260932d29fb2a24c2aebdc342308f595b8cde84ca50ebbae1703d3cfc6e8d",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster_death.wav",
+    "bytes": 10199,
+    "sha256": "b37dc6c68c32e7e225c23543c69f66498307df8d6013df00a4e3f210aa8ff7e6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster_death2.wav",
+    "bytes": 15214,
+    "sha256": "4166f126e57f2a2f6ee58c23d4e90b50aee8b3b54881b0f2a80b2dfc4d5ab953",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster_hit.wav",
+    "bytes": 9500,
+    "sha256": "a82fd65754830e5c354db5255a7d19bf24db174d32a72e4ca55c3e53ad2dbf81",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster_hit2.wav",
+    "bytes": 10034,
+    "sha256": "419d6158046e02cf3206e50ae7140b7e16f90acb83ba1b3bea692589e519ca40",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster_minigun.wav",
+    "bytes": 18924,
+    "sha256": "bee76da08659806b2aa078ee3ed48db4f0603611f92158f446a07edb5aa8ccbb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster1_attack.wav",
+    "bytes": 29672,
+    "sha256": "5a7ec6993c5df9b4b44576038ba59d5e3f786bb3d0a1fced16c4849fc50a83e6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster2_ambient.WAV",
+    "bytes": 17501,
+    "sha256": "a31f81d193b690ef4cbf4ebd037524b93edffdf753997dfe569f0a04e10c16d9",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster2_attack.wav",
+    "bytes": 24494,
+    "sha256": "7f30293485ab1348dc392a97f539f57a407219019b8ca8ef407042814593659c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster4_death.wav",
+    "bytes": 20526,
+    "sha256": "3c27254cba011d17d14f727492a809d321b4c52897dbaecb7d101f50cd401866",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster5_attack.wav",
+    "bytes": 3732,
+    "sha256": "96fcc6dfe3ca207bbc638fca7c9848a979f2ae4f343a23aeb8e2fafcaf6a6eda",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/monster5_death.wav",
+    "bytes": 19710,
+    "sha256": "89fb2ae429621e3cb0b5e84bcb0d5afa862ad07af657363d623ecc028857bbcb",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/mouse_click.wav",
+    "bytes": 9340,
+    "sha256": "f5dd8710212e67713fb85b4a32615397b9680b75e3c68b9b503f7d2ac9422589",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/mouse_error.wav",
+    "bytes": 3160,
+    "sha256": "0a8061de28886e0ad0dfc223341b3a1a2107a8bff3ae7de2884f6bc54f10853c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/mouse_over.wav",
+    "bytes": 7532,
+    "sha256": "71efb62ebaf3e3aeccef7ea289dd1b2a5cdfdf2272a4f2a1274e7ebe875b00ed",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/null.wav",
+    "bytes": 14732,
+    "sha256": "cf551981fe1cd45055cc258887276e68f9a0650ec895cb48030c0b39d917429c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/pick_armor.wav",
+    "bytes": 29294,
+    "sha256": "8887da91850c586b190c05291631a95f1823435ad3ebe2129f990f1f68e82bd6",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/pistol_shot.wav",
+    "bytes": 22188,
+    "sha256": "3dac320f9dcd3a6746264083bd23414fc2729e234de9b41ab6f7f0cb743b3462",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/plasma_shot.wav",
+    "bytes": 33324,
+    "sha256": "82020ca2f15e7975fdc76dfc230fe9d924f267a24b8ac210a99abf7d6934458b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/rocket_launch.wav",
+    "bytes": 61096,
+    "sha256": "6e51da81889d1dbdb5a125ee7c74b37d8b2f134cab8a4df0ea904caa79473c1c",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/shotgun.wav",
+    "bytes": 34256,
+    "sha256": "4403c6d109b0070f0f5d03c4a76c01930c1d9e55aa2b921a3accabb112a0734b",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/take_healh.wav",
+    "bytes": 87596,
+    "sha256": "2085d510026c693970deb14b2b6d538913b67b93c5c0d41db274bf98794717f4",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/wall_destroy.wav",
+    "bytes": 165418,
+    "sha256": "5236d49cb6e8047ab6fa69f48ac8a470edb525ee0e9b6cd99ef489233cd4d859",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/game/Wav/weapon_pickup.wav",
+    "bytes": 12204,
+    "sha256": "decb02385ea7ae8f84d1bfe8fd6b201b56e63bfcd8997b3a37b2dad2132d0a31",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/candidates/reflexive-alien-shooter/.wine-assembly-browser.json",
+    "bytes": 37885,
+    "sha256": "5f4142f3fdb805df97058559ab1f37289c6a394266113d0a69c2d772a09b99ab",
+    "mode": 420
+  },
+  {
+    "path": "fonts/Courier.fon",
+    "bytes": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+    "mode": 420
+  },
+  {
+    "path": "fonts/Fixedsys.fon",
+    "bytes": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+    "mode": 420
+  },
+  {
+    "path": "fonts/MSSansSerif.fon",
+    "bytes": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+    "mode": 420
+  },
+  {
+    "path": "fonts/System.fon",
+    "bytes": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+    "mode": 420
+  },
+  {
+    "path": "fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Bold.ttf",
+    "bytes": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Regular.ttf",
+    "bytes": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Bold.ttf",
+    "bytes": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "bytes": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Italic.ttf",
+    "bytes": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Regular.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Bold.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Italic.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Regular.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Bold.ttf",
+    "bytes": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "bytes": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Italic.ttf",
+    "bytes": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Regular.ttf",
+    "bytes": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/tahoma.ttf",
+    "bytes": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/tahomabd.ttf",
+    "bytes": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+    "mode": 420
+  },
+  {
+    "path": "fonts/subset/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+    "mode": 420
+  },
+  {
+    "path": "fonts/substitutions.json",
+    "bytes": 10654,
+    "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3",
+    "mode": 420
+  },
+  {
+    "path": "test/binaries/tlbs/stdole2.tlb",
+    "bytes": 15088,
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+    "mode": 420
+  },
+  {
+    "path": "node_modules/pngjs/package.json",
+    "bytes": 1812,
+    "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/LICENSE",
+    "bytes": 1150,
+    "sha256": "be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/CHANGELOG.md",
+    "bytes": 3001,
+    "sha256": "c9ca37f02fb7e978034759113d4ee7500932aaa3a02ff19acbca7bf9694ef7c6",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/README.md",
+    "bytes": 9375,
+    "sha256": "1d90045508b00719a3f9415f8a57cddfba05f9ea51746c48ffed8122ad68bf85",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/browser.js",
+    "bytes": 572711,
+    "sha256": "e21b88288e3df098f476bb3c4d1e8900d3780572e1802c8e301e38674d527f51",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/sync-inflate.js",
+    "bytes": 3751,
+    "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/constants.js",
+    "bytes": 662,
+    "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse-async.js",
+    "bytes": 558,
+    "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/bitmapper.js",
+    "bytes": 6477,
+    "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-pack.js",
+    "bytes": 4279,
+    "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer-sync.js",
+    "bytes": 1193,
+    "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/paeth-predictor.js",
+    "bytes": 372,
+    "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/png-sync.js",
+    "bytes": 252,
+    "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/png.js",
+    "bytes": 4418,
+    "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer-async.js",
+    "bytes": 1162,
+    "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser-async.js",
+    "bytes": 4368,
+    "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/chunkstream.js",
+    "bytes": 4249,
+    "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/bitpacker.js",
+    "bytes": 4670,
+    "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser-sync.js",
+    "bytes": 2580,
+    "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/interlace.js",
+    "bytes": 2004,
+    "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/sync-reader.js",
+    "bytes": 1114,
+    "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse-sync.js",
+    "bytes": 483,
+    "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/parser.js",
+    "bytes": 7720,
+    "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/filter-parse.js",
+    "bytes": 4798,
+    "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/crc.js",
+    "bytes": 853,
+    "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/format-normaliser.js",
+    "bytes": 2366,
+    "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0",
+    "mode": 436
+  },
+  {
+    "path": "node_modules/pngjs/lib/packer.js",
+    "bytes": 3723,
+    "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03",
+    "mode": 436
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "at": 1793048710.4966266,
+  "charges": {
+    "remotePeak": 51826688,
+    "localOwned": 245760,
+    "session": 724992,
+    "launcher": 491520,
+    "positiveWAL": 585728,
+    "publicationGit": 1048576,
+    "futureSessionEventsWAL": 2097152,
+    "reserve": 8388608
+  },
+  "total": 65409024,
+  "cap": 67108864,
+  "localFree": 3750756352,
+  "projectedLocalFree": 3746562048,
+  "localFloor": 2982150144,
+  "remoteCompile": 29716480,
+  "remoteRuntime": 51826688,
+  "passGate": true
+}

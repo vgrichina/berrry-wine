@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_db1bists22xd",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:09:28.282Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 23,
+  "startedAt": "2026-10-26T21:09:28.035Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 594, \"verified\": true, \"allocated\": 49635328}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
