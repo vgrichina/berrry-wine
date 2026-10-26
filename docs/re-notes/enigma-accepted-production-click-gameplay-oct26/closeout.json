@@ -1,0 +1,251 @@
+{
+  "outcome": "BLOCKED_BEFORE_CONTROLLER_INVOCATION",
+  "blocker": "The first frozen control step {action:step,n:100000} was submitted once at20:35:55.946Z; its urllib response timed out after45seconds at20:36:41.373Z. Step completion and zero outstanding credits were never acknowledged. Stopped at the first runtime rejection, without retrying step or invoking the one-shot Start Game controller.",
+  "controllerRejected": false,
+  "clickControllerInvocations": 0,
+  "clickDispatches": 0,
+  "actualInputDelivery": false,
+  "pngManifest": [],
+  "screenshotsInspected": false,
+  "gameplayObserved": false,
+  "levelSelectionObserved": false,
+  "menuEvidence": "guest trace only: [SetWindowText] \"Enigma - Main Menu\"; no framebuffer inspected",
+  "source": {
+    "main": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "runnerBlob": "4b8461338f4bcddde6b5d5504991523b28d3ac35",
+    "runnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+    "controllerSHA256": "c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6",
+    "derivativeSHA256": "a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da",
+    "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "moduleQualification": "historical static-unpack diagnostic, not untouched original or current-main binary qualification",
+    "originalManifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+    "stagedManifestSHA256": "a03a947624cf14094cd9614dafc6b7b95ab5b929095eb396b1a0e98fcbc380a9",
+    "stagingHelperSHA256": "d3b2a9c152de0a7cfbe61facf1d847d6192e4bd399e1638091417070ffdb1f3b",
+    "standingCaptureSHA256": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079"
+  },
+  "replacements": "replacements.json inventories all98 exact accepted-donor dependency files;2661 destination entries37503235logical bytes verified",
+  "command": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/enigma-accepted-production-click-gameplay-oct26/capture-wrapper.cjs",
+      "/tmp/enigma-accepted-production-click-gameplay-oct26/runner/test/run-presented.cjs",
+      "--no-build",
+      "--wasm=/tmp/enigma-accepted-production-click-gameplay-oct26/runtime/build/wine-assembly.wasm",
+      "--exe=/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/enigma.exe",
+      "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+      "--cwd=C:\\Enigma-1.01",
+      "--dlls=/tmp/enigma-accepted-production-click-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-accepted-production-click-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=84",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/enigma-accepted-production-click-gameplay-oct26/vfs",
+      "--max-batches=10000000",
+      "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+      "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+      "--quiet-fs",
+      "--control=18127",
+      "--trace-input",
+      "--frozen"
+    ],
+    "pid": 24525,
+    "pgid": 24525,
+    "at": 1793046954.786104,
+    "memAvailable": 7258722304,
+    "limits": {
+      "cpu": 90,
+      "wall": 89,
+      "file": 25165824,
+      "output": 2097152,
+      "arena": 536870912,
+      "oldSpaceMiB": 2048
+    }
+  },
+  "traceManifest": [
+    {
+      "path": "guest/output.log",
+      "bytes": 64282,
+      "sha256": "fefba6771349d7f2217bb8132df17b4da3a5ade9f8d0beac622ebf6af06d54a9"
+    },
+    {
+      "path": "guest/terminal.json",
+      "bytes": 202,
+      "sha256": "25c2afc8fb903b0acd380eda824d971c538e90d0b524d1808af69009de7ade7f"
+    },
+    {
+      "path": "guest/stop",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "guest/command.json",
+      "bytes": 1775,
+      "sha256": "d0fc203bb3d4a51a7092884378074a85be554ff2815a9d0a69efcffe669a9510"
+    },
+    {
+      "path": "wire-receipt.json",
+      "bytes": 361,
+      "sha256": "90995de8100f2ba42c4fa8cdeed3c21f5153cd3b326aba8737ddd0d0ea4530a3"
+    },
+    {
+      "path": "node-startup.json",
+      "bytes": 2590,
+      "sha256": "618293e830204968634c5935bdceac099401f9e62f7182cc0e8c76b883b4fabc"
+    },
+    {
+      "path": "guest-args.json",
+      "bytes": 1570,
+      "sha256": "053a4e1d043bddc1ec25cbf6db9a78d7c2f96f26cd7b22c3d4cfcbf57990921a"
+    }
+  ],
+  "startup": "retained/node-startup.json; actualNode24.22.1 heap2048, CPU90/file24MiB; DATA/AS unlimited, no GitDATA inherited",
+  "resource": {
+    "cap": 67108864,
+    "reserve": 8388608,
+    "remoteMeasuredPreGuest": 43933696,
+    "remotePhysicalRequired": 3758096384,
+    "localPhysicalRequired": 1879048192,
+    "actualGuest": {
+      "reason": "guard-or-owned-stop",
+      "returncode": 0,
+      "elapsed": 56.402586269999915,
+      "peakRSS": 294002688,
+      "outputBytes": 64282,
+      "box": "bx_27q8zz3v",
+      "boxState": "RUNNING",
+      "shutdownOwner": "coordinator"
+    },
+    "receipts": [
+      "admission-prestage.json",
+      "first-storage-gate.json",
+      "storage-reduction.json",
+      "admission-preguest.json",
+      "admission-prepublication.json"
+    ]
+  },
+  "incidents": [
+    "Owned scanner initially misclassified .generated suffix and a commented require; fixed before staging; no accepted source changes.",
+    "Initial screenshot/publication storage projection rejected; no guest started. Removed own unnecessary1.75MiB Git index and compressed1.09MiB manifest; actual capacity changed, same64MiB cap/reserve passed.",
+    "Runtime control step timed out; first rejection retained verbatim; no replay or controller invocation.",
+    "Initial messageboard timestamp estimate corrected append-only."
+  ],
+  "reusedEvidence": "coordinator accepted29 independent and prior passing offline groups;0 offline test replay; fresh actual environment/parser/transform/startup only",
+  "lifecycle": {
+    "box": "bx_27q8zz3v",
+    "state": "RUNNING verified by API exec",
+    "createdAt": "2026-10-26T20:27:42.639Z",
+    "guestStartedAt": "2026-10-26T20:35:54.740Z",
+    "guestCutoff": "2026-10-26T20:55:00Z",
+    "handback": "2026-10-26T21:00:00Z",
+    "coordinatorShutdown": "2026-10-26T21:05:00Z",
+    "expiry": "2026-10-26T21:57:42.639Z",
+    "shutdownOwner": "coordinator",
+    "ownGroupsRemaining": []
+  },
+  "remaining": "A future coordinator decision is required; this worker stops. No source repair/build/acquisition/MAIN publication/workers or F1 replay.",
+  "publication": {
+    "commit": "d199af9bd48ddde2af4318528d4a3001f87364ab",
+    "remote": "d199af9bd48ddde2af4318528d4a3001f87364ab\trefs/heads/task/enigma-accepted-production-click-gameplay-oct26",
+    "branch": "task/enigma-accepted-production-click-gameplay-oct26",
+    "tree": "d5ad8fefdeebc49c3d7ee39e201382c7cdd61bf3",
+    "changed": [
+      "docs/re-notes/enigma-accepted-production-click-gameplay-oct26/README.md",
+      "docs/re-notes/enigma-accepted-production-click-gameplay-oct26/evidence-manifest.json",
+      "docs/re-notes/enigma-accepted-production-click-gameplay-oct26/ops.tar.gz",
+      "docs/re-notes/enigma-accepted-production-click-gameplay-oct26/receipt.json"
+    ],
+    "manifestSHA256": "bbf74d606f726ea5ced4d0c343c4b3a1dd389ea0796e919942d465f549d801d5"
+  },
+  "finalAccounting": {
+    "local": {
+      "stage": "final",
+      "charges": {
+        "localOwned": 3964928,
+        "remoteOwned": 44011520,
+        "launcher": 1638400,
+        "positiveWAL": 679936,
+        "futureSessionAndDB": 1048576,
+        "futurePublication": 1048576,
+        "reserve": 8388608
+      },
+      "total": 60780544,
+      "cap": 67108864,
+      "memAvailable": 4046921728,
+      "liveClients": [
+        {
+          "pid": 752162,
+          "rss": 391909376
+        },
+        {
+          "pid": 3071013,
+          "rss": 112099328
+        }
+      ],
+      "prospectiveGitAndHelper": 570425344,
+      "remainingMemory": 3476496384,
+      "memoryFloor": 805306368,
+      "diskFree": 3864387584,
+      "projectedFree": 3803607040,
+      "diskFloor": 2982150144,
+      "pass": true
+    },
+    "remote": {
+      "pins": {
+        "runner/test/run.js": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+        "runner/test/run-presented.cjs": "a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da",
+        "controller.cjs": "c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6",
+        "runtime/build/wine-assembly.wasm": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+        "bounded-staging.py": "d3b2a9c152de0a7cfbe61facf1d847d6192e4bd399e1638091417070ffdb1f3b",
+        "capture.cjs": "6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079",
+        "capture-wrapper.cjs": "702fe3025775f6bf5643a17910df5a9f619477f52e18d1766ff682c15c56009d",
+        "lossless-capture-png.cjs": "9dae92170fbf4ef5acf0a2b0be43b93d3b3a7c8ec86f227df708d3b65d67cb4b",
+        "manifest.json.gz": "6ec7b65465a0691a118f85ebc24c422c6f8342964f043ae250cbdacc3e6640d9"
+      },
+      "inventory": {
+        "logicalBytes": 38470998,
+        "physicalOwnedBytes": 44007424,
+        "pathSummedAllocatedBytes": 44793856,
+        "files": 2682,
+        "uniqueInodes": 2741
+      },
+      "externalProcessLogs": [
+        {
+          "path": "/home/user/.ascii/processes/20124.log",
+          "allocated": 4096,
+          "bytes": 134
+        },
+        {
+          "path": "/home/user/.ascii/processes/20124.err.log",
+          "allocated": 0,
+          "bytes": 0
+        },
+        {
+          "path": "/home/user/.ascii/processes/24521.log",
+          "allocated": 0,
+          "bytes": 0
+        },
+        {
+          "path": "/home/user/.ascii/processes/24521.err.log",
+          "allocated": 0,
+          "bytes": 0
+        }
+      ],
+      "box": "bx_27q8zz3v",
+      "state": "RUNNING",
+      "terminal": {
+        "reason": "guard-or-owned-stop",
+        "returncode": 0,
+        "elapsed": 56.402586269999915,
+        "peakRSS": 294002688,
+        "outputBytes": 64282,
+        "box": "bx_27q8zz3v",
+        "boxState": "RUNNING",
+        "shutdownOwner": "coordinator"
+      }
+    }
+  },
+  "publicationIncident": "Evidence-only sparse donor lacks unrelated parent blobs; initial write-tree rejected unchanged README blob; first failure retained; write-tree --missing-ok used with own added blobs SHA verified and exact only-four-evidence-path diff, no fetch/source repair."
+}
