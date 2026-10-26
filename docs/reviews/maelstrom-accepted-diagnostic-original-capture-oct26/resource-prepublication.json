@@ -1,24 +1,24 @@
 {
-  "at": 1792992123.3634715,
+  "at": 1792992175.7222505,
   "charges": {
-    "localOwned": 5873664,
+    "localOwned": 5971968,
     "remoteOwned": 17907712,
     "remoteHelpersAndEvidenceFuture": 1048576,
     "transferOverlap": 1048576,
     "publicationFuture": 3145728,
-    "session": 1032192,
+    "session": 1069056,
     "launcher": 245760,
-    "positiveDBWAL": 659456,
+    "positiveDBWAL": 667648,
     "sessionEventsDBFuture": 8388608,
     "reserve": 8388608,
     "conservativeAPIRequestResponseEvents": 10222650,
     "APIEventsFuture": 1048576
   },
-  "peak": 59010106,
+  "peak": 59153466,
   "cap": 67108864,
-  "free": 4600729600,
-  "projectedFree": 4541719494,
-  "memAvailable": 2266767360,
-  "projectedMem": 1729896448,
+  "free": 3938451456,
+  "projectedFree": 3879297990,
+  "memAvailable": 2280017920,
+  "projectedMem": 1743147008,
   "passed": true
 }

@@ -1,0 +1,24 @@
+{
+  "flatLeaves": [
+    "/home/user/wine-assembly/.git/objects",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main1",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/1",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/0",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main0",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/2",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/4",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/5",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/6",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/8",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/7",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/10"
+  ],
+  "noRecursiveAlternates": true,
+  "newObjectCount": 38,
+  "newObjectBytes": 56722,
+  "roundedIncrement": 176128,
+  "standingBlobsNotCopied": 2555,
+  "noFetch": true,
+  "noRepack": true,
+  "noLinks": true
+}
