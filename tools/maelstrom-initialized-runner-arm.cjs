@@ -1,12 +1,11 @@
 'use strict';
-// Recover the exact captured observer runner with post-loader arming moved past
-// ordinary main initialization. This does not move earlier DLL initialization.
+// Recover the captured observer runner using the staged archived-loader API.
 const crypto = require('node:crypto');
 const fs = require('node:fs');
 const INPUT_SHA256 = '5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58';
 const START = '    nativeAdapter.start();\n';
 const BOUNDARY = '  for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {\n';
-const ARM = '  // Arm once after ordinary main setup, before batch inputs, timers or run.\n' +
+const ARM = '  // Arm after mapping/validation/setup, before DLL or main guest execution.\n' +
   '  try {\n    nativeAdapter.start();\n' +
   "  } catch (error) { nativeRaw('first-loader-or-start-rejection', error); throw error; }\n";
 const sha256 = b => crypto.createHash('sha256').update(b).digest('hex');
@@ -21,18 +20,46 @@ function transform(input) {
   const start = unique(source, START), boundary = unique(source, BOUNDARY);
   const initialization = unique(source, '  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });\n');
   if (!(start < initialization && initialization < boundary)) throw new Error('runner setup order mismatch');
-  // Exactly one contiguous replacement: its interior retains every setup byte.
+  // Move arming in one contiguous replacement, retaining every setup byte.
   const before = source.slice(start, boundary);
   const after = before.slice(START.length) + ARM;
-  const output = Buffer.from(source.slice(0, start) + after + source.slice(boundary));
-  return {output, receipt: {schema: 'maelstrom-initialized-runner-arm/v1', inputSHA256: INPUT_SHA256,
+  let staged = source.slice(0, start) + after + source.slice(boundary);
+  const additionalReplacements = [];
+  function replace(before, after) {
+    const at = unique(staged, before);
+    additionalReplacements.push({offset:Buffer.byteLength(staged.slice(0,at)), before, after,
+      beforeSHA256:sha256(before),afterSHA256:sha256(after)});
+    staged = staged.slice(0, at) + after + staged.slice(at + before.length);
+  }
+  replace('const { loadDlls, callDllMain,', 'const { stageDlls, callDllMain,');
+  replace('  if (dlls.length > 0) {\n    mountLoadedDllFiles(ctx.vfs, dlls);',
+    '  let startupDllStage;\n' +
+    '  onFailure(() => startupDllStage?.abort());\n' +
+    '  if (dlls.length > 0) {\n    mountLoadedDllFiles(ctx.vfs, dlls);');
+  replace('    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {',
+    '    startupDllStage = stageDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {');
+  replace('    });\n    if (dllResults) {\n      threadManager.setLoadedDlls',
+    '    });\n    const dllResults = startupDllStage.results;\n    if (dllResults) {\n      threadManager.setLoadedDlls');
+  replace(BOUNDARY, '  if (startupDllStage) {\n' +
+    '    startupDllStage.initialize();\n' +
+    '    stopped = false;\n    hostExitRequested = false;\n  }\n' + BOUNDARY);
+  const output = Buffer.from(staged);
+  return {output, receipt: {schema: 'maelstrom-initialized-runner-arm/v2', inputSHA256: INPUT_SHA256,
     outputSHA256: sha256(output), inputBytes: input.length, outputBytes: output.length,
     replacement: {offset: Buffer.byteLength(source.slice(0, start)), beforeBytes: Buffer.byteLength(before),
       beforeSHA256: sha256(before), afterBytes: Buffer.byteLength(after), afterSHA256: sha256(after)},
     armCount: output.toString('utf8').split(START).length - 1,
-    scope: 'post-loader setup to main execution; earlier DLL initialization unchanged'}};
+    scope: 'mapping/imports/resources, validation, complete main setup, arm, preserved DLL initialization, main',
+    requiredLoaderTransform: 'tools/maelstrom-loader-boundary.cjs',
+    additionalReplacements}};
 }
-module.exports = {transform, INPUT_SHA256};
+function transformPair(runnerInput, loaderInput) {
+  const runner = transform(runnerInput);
+  const loader = require('./maelstrom-loader-boundary.cjs').transformLoader(loaderInput);
+  return {runner,loader,receipt:{runner:runner.receipt,loader:loader.receipt,
+    placement:'runner at test/run.js and loader at lib/dll-loader.js in the same task-owned derivative tree'}};
+}
+module.exports = {transform, transformPair, INPUT_SHA256};
 if (require.main === module) {
   try {
     const args = process.argv.slice(2);

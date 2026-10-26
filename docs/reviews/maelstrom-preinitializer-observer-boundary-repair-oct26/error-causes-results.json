@@ -1,0 +1,84 @@
+{
+  "pass": true,
+  "results": [
+    {
+      "name": "initializer initializer failure propagates with callback gate release",
+      "pass": true
+    },
+    {
+      "name": "async-lookup initializer failure propagates with callback gate release",
+      "pass": true
+    },
+    {
+      "name": "sync-lookup initializer failure propagates with callback gate release",
+      "pass": true
+    }
+  ],
+  "runner": {
+    "schema": "maelstrom-initialized-runner-arm/v2",
+    "inputSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+    "outputSHA256": "866e109831907dbf13e1dffb2d017e0fca16fdfa00a611f31393f175f7e465ea",
+    "inputBytes": 688799,
+    "outputBytes": 689204,
+    "replacement": {
+      "offset": 319330,
+      "beforeBytes": 87073,
+      "beforeSHA256": "ee96f4f2c56aaa8c8b3fba376548cc794c3922782dd191c63e59ce0a1f534c47",
+      "afterBytes": 87246,
+      "afterSHA256": "6a8207d026c5e8db008b6b602a0e87ca038120c36a421add58f40924fee44a78"
+    },
+    "armCount": 1,
+    "scope": "mapping/imports/resources, validation, complete main setup, arm, preserved DLL initialization, main",
+    "requiredLoaderTransform": "tools/maelstrom-loader-boundary.cjs",
+    "additionalReplacements": [
+      {
+        "offset": 296,
+        "before": "const { loadDlls, callDllMain,",
+        "after": "const { stageDlls, callDllMain,",
+        "beforeSHA256": "ad36a824d99c71a00fc06fe3110f6ec8440e6b3cc621172c80ae8ee1e68a7ae2",
+        "afterSHA256": "0a770cfbdc6c90fb87b1b05bf5657bc03b786a9ad3256047afedd9b856032ac6"
+      },
+      {
+        "offset": 315847,
+        "before": "  if (dlls.length > 0) {\n    mountLoadedDllFiles(ctx.vfs, dlls);",
+        "after": "  let startupDllStage;\n  onFailure(() => startupDllStage?.abort());\n  if (dlls.length > 0) {\n    mountLoadedDllFiles(ctx.vfs, dlls);",
+        "beforeSHA256": "2581c8f7d5850202ec405f9bbcc265a55374d23bb49eb2a63ef05142da8c0011",
+        "afterSHA256": "9ae85a9b60e461ff577770a1e35ec8ca26cfb92bfc1cd4b8f3e432cf7eb166d1"
+      },
+      {
+        "offset": 315980,
+        "before": "    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {",
+        "after": "    startupDllStage = stageDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {",
+        "beforeSHA256": "e0560b6c25deba3eb6d538a13e754090cafd60116c8743a6e2e525f28767610e",
+        "afterSHA256": "cd8fa759eda1cc2907369af0153b78023fca81914051516e1a7ca041e07f00c9"
+      },
+      {
+        "offset": 316815,
+        "before": "    });\n    if (dllResults) {\n      threadManager.setLoadedDlls",
+        "after": "    });\n    const dllResults = startupDllStage.results;\n    if (dllResults) {\n      threadManager.setLoadedDlls",
+        "beforeSHA256": "b96a8c7223648499ebe7d1149dd829b2ff211e5d554ebb19db9c3a6575fdf115",
+        "afterSHA256": "2a411cc437e5f493f7bbc28b854f99b816c0d3de0395ffaa2606d829115d97a2"
+      },
+      {
+        "offset": 406693,
+        "before": "  for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {\n",
+        "after": "  if (startupDllStage) {\n    startupDllStage.initialize();\n    stopped = false;\n    hostExitRequested = false;\n  }\n  for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {\n",
+        "beforeSHA256": "274b596b6dc4d1e256e1f2347a9e412b61bad81b84de7433ecf5f92b3b978826",
+        "afterSHA256": "cdc2895cbd5cc5e4a8d5a8f19fc552ff9678827cf2f3e5f121175fa1ef637cf3"
+      }
+    ]
+  },
+  "loader": {
+    "schema": "maelstrom-loader-boundary/v1",
+    "inputSHA256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "outputSHA256": "ff99a2415061259e633fc198d7df40adec42c6f5daa77af6021822773c05b0e7",
+    "inputBytes": 98961,
+    "outputBytes": 101180,
+    "qualification": "archived loader-derived mapping and initialization; native execution not tested"
+  },
+  "fixtureSHA256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+  "sourceSHA256": "8e9eec50434406f4c6b9168f77f342d5332d8437716aeebe3d224fd1b834ee68",
+  "hostFixtureSHA256": "17b0d8ab7dd2511fc0c2fb4d61908b79cd0f6a0e638171248d25747493e651b6",
+  "qualification": "Full archived JS loader-derived startup and complete pinned runner setup. Real pinned PE sections/relocations/import resolution and genuine verifyLoaded; WASM load_dll and guest run are explicit offline JS mocks. Small existing guard fixture only; no native guest execution.",
+  "rss": 105197568
+}

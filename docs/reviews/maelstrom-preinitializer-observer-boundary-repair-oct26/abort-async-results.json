@@ -1,0 +1,14 @@
+{
+  "pass": true,
+  "results": [
+    {
+      "name": "preinitialize abort is consumed once, rolls back metadata, runs no guest, and releases gate",
+      "pass": true
+    },
+    {
+      "name": "genuine awaited overlay rejection releases mapped transaction without guest execution",
+      "pass": true
+    }
+  ],
+  "rss": 101953536
+}

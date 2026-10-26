@@ -1,0 +1,98 @@
+{
+  "schema": "maelstrom-initialized-runner-wiring-tests/v1",
+  "pass": true,
+  "count": 6,
+  "results": [
+    {
+      "name": "deterministic staged replacements preserve all other bytes",
+      "pass": true
+    },
+    {
+      "name": "generated runner parses with its authentic top-level context",
+      "pass": true
+    },
+    {
+      "name": "sole arm follows all setup setters and precedes all three main run sites",
+      "pass": true
+    },
+    {
+      "name": "default: actual complete generated setup arms exactly once after real applyMain",
+      "pass": true
+    },
+    {
+      "name": "explicit no-uop: actual complete generated setup arms exactly once after real applyMain",
+      "pass": true
+    },
+    {
+      "name": "enabled later setup setters all finish before sole arming",
+      "pass": true
+    }
+  ],
+  "captureSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+  "generatedSHA256": "866e109831907dbf13e1dffb2d017e0fca16fdfa00a611f31393f175f7e465ea",
+  "toolSHA256": "155d1670e119a109642f3fd96469c8f03f5927ec7193019f6540b9fb408d3f52",
+  "fixtureSHA256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+  "moduleSHA256": "566534846b01385cb45ce1bd75d6e7ed72228ced8671480d07fa6a49296b673f",
+  "watSHA256": "1b995cd8f8c888e8a11fa4f30d46dc4b4da14ac077b9f1a5104f3eeb5ff3a0c6",
+  "pins": [
+    {
+      "path": "test/runner-experiments.js",
+      "blob": "ec5954be8cb0990c3e610e614be90ec7721a0858",
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    {
+      "path": "test/runner-experiment-report.js",
+      "blob": "f1320850df147c508d982e4b3aedf55596e0ac32",
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+      "bytes": 164570,
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+    },
+    {
+      "path": "tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "sha256": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+      "blob": "71ba5ed8023b81fdce393634c3374a2b92f87f42"
+    }
+  ],
+  "prior29CasesReplayed": false,
+  "prior29SourceCommit": "5a80f7c43ed4a44bec559f5f1e9f9eb9f7d5e8d6",
+  "peakRSS": 100556800,
+  "guestInstructionsExecuted": 0,
+  "qualification": "offline complete main-setup wiring; separate preinitializer tests cover staged archived loader"
+}

@@ -1,0 +1,34 @@
+{
+  "pass": true,
+  "results": [
+    {
+      "name": "actual archived import graph overrides reversed manifest order",
+      "pass": true
+    },
+    {
+      "name": "nested synchronous dependency lookup runs under the same armed owner and restores both frames",
+      "pass": true
+    },
+    {
+      "name": "preinitialize abort is consumed once, rolls back metadata, runs no guest, and releases gate",
+      "pass": true
+    },
+    {
+      "name": "busy callback owner cannot consume stage and a later valid owner initializes once",
+      "pass": true
+    },
+    {
+      "name": "unmodified synchronous loader API still initializes within call",
+      "pass": true
+    },
+    {
+      "name": "asynchronous setup rejection unwinds mapped stage without guest execution",
+      "pass": true
+    },
+    {
+      "name": "suspended main retains no run and no observation",
+      "pass": true
+    }
+  ],
+  "rss": 105869312
+}

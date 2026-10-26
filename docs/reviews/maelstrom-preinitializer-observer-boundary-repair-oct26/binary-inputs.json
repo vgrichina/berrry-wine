@@ -1,0 +1,26 @@
+[
+  {
+    "member": "vfs/maelstrom/Maelstrom.exe",
+    "path": "/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/ops/Maelstrom.exe",
+    "bytes": 135168,
+    "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+  },
+  {
+    "member": "vfs/maelstrom/SDL.dll",
+    "path": "/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/ops/SDL.dll",
+    "bytes": 225280,
+    "sha256": "02433232425e68009843bd3ecec20ad67453a48487f7b5828c595b76e2f9d373"
+  },
+  {
+    "member": "vfs/maelstrom/SDL_net.dll",
+    "path": "/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/ops/SDL_net.dll",
+    "bytes": 24576,
+    "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+  },
+  {
+    "member": "runtime/system/msvcrt.dll",
+    "path": "/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/ops/msvcrt.dll",
+    "bytes": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+  }
+]

@@ -1,0 +1,206 @@
+{
+  "base": "81b00df8b2b0fa0b54127f2da5742e960f52acd1",
+  "testedSourceTree": "067500678941bd3f2dcd9c9374a448ac0a9718b5",
+  "payloads": [
+    {
+      "path": "tools/maelstrom-initialized-runner-arm.cjs",
+      "bytes": 4712,
+      "sha256": "155d1670e119a109642f3fd96469c8f03f5927ec7193019f6540b9fb408d3f52"
+    },
+    {
+      "path": "tools/maelstrom-loader-boundary.cjs",
+      "bytes": 4113,
+      "sha256": "985ebcd61bcba4443ce5363dafea55974d5f15241a00c6eba48866f9c4446760"
+    },
+    {
+      "path": "test/test-maelstrom-initialized-runner-arm.cjs",
+      "bytes": 14416,
+      "sha256": "2e86f079fa3cf7e5f148814dd710fa6ffe19f7ec33893f61e87c2f514fa54cfc"
+    },
+    {
+      "path": "test/test-maelstrom-preinitializer-boundary.cjs",
+      "bytes": 12063,
+      "sha256": "8e9eec50434406f4c6b9168f77f342d5332d8437716aeebe3d224fd1b834ee68"
+    },
+    {
+      "path": "test/test-maelstrom-preinitializer-supplement.cjs",
+      "bytes": 5893,
+      "sha256": "e7eef19236ddce9f7812f9b811ba4f83efcd7c01d0c02c8030777c8474702a20"
+    },
+    {
+      "path": "test/maelstrom-loader-host-fixture.cjs",
+      "bytes": 5175,
+      "sha256": "17b0d8ab7dd2511fc0c2fb4d61908b79cd0f6a0e638171248d25747493e651b6"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/README.md",
+      "bytes": 6382,
+      "sha256": "b21a199f807242ed8dab3a6a7b6787076cf5e2c58a28409f8190f721b78bc2eb"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/abort-async-results.json",
+      "bytes": 334,
+      "sha256": "025a9d43ed34f4358e47f3606a9eb9a6cbfc32087480612df17629db4976f4f5"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/affected-wiring-node-startup.json",
+      "bytes": 1800,
+      "sha256": "99e55aa5a741f018d0aef098691ef559e2b70bea6a126eb17e7b3ccd9dcc9800"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/affected-wiring-results.json",
+      "bytes": 3642,
+      "sha256": "96c6a83553db4e7db9157dcc6b5534d04e8fa58dc5355b8704bcc6e6992599ec"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/binary-inputs.json",
+      "bytes": 981,
+      "sha256": "b54d4210d59401c7d9f0f36c1ee5fde68554c046609e0bbf7118d024888f2a6b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/checkout.json",
+      "bytes": 446,
+      "sha256": "ef74b9960c79eae739518e9408bdbaf843cbfced3a91ea07b03a97e4c7b3342d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/checkpoint.json",
+      "bytes": 6277,
+      "sha256": "0b4854f1dcb88f3d68a3394c7054c5d6e8853549e5fdbbefc10a9a2e369bf0d7"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/command-stderr.log",
+      "bytes": 2109,
+      "sha256": "d18e3a12445938840f8d3537a9ef556cf8636f239d71d51b29d82d626b0975d9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/derivative-identities.json",
+      "bytes": 3557,
+      "sha256": "f833292be6424791c4ec3dabc6dc8ca6bb0f803c507f9d126a9a3af6d6de4a6d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/error-causes-results.json",
+      "bytes": 4420,
+      "sha256": "4244b80748c67d49b9439b9fd063867ae1a781f24b2e0e179f3746d19dcc1ec5"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/first-focused-failure.json",
+      "bytes": 1463,
+      "sha256": "dfcd8f6fc332a26c3cec2bc8b8ad99d90777eee2f2dfcfc8a16afec88a772406"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/focused-results.json",
+      "bytes": 3872,
+      "sha256": "f96ca7a7bc2ed548fa87b3ac9ef3f33e102d7df7e67944bfdd8a7d7f96648d64"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/incidents.json",
+      "bytes": 1965,
+      "sha256": "d89d037a05af99972d3f1987fc9fd21d3e9ea7d78cb20ec79a13b4e99ffd575e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/launch-configuration.json",
+      "bytes": 651,
+      "sha256": "1922d0f55de21ba2b0830060cb8d876a0bb15db78174d3311759792703b914a3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/node-exact-configuration.json",
+      "bytes": 1327,
+      "sha256": "b5a94ea327d3c7171e963b6783ef2e73cf6b76f5dd9c580ba67d44e3cb19afac"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/node-startup.json",
+      "bytes": 1907,
+      "sha256": "8d115cb9accfaf117757e01f4b9b5cb3d5ed5b4205e56dea3cae3d4a9bf63427"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/prearm-affected-results.json",
+      "bytes": 4683,
+      "sha256": "5cd177f1bf64fc27ea55e05a5c288f3d2b56ed41d5ad74e602c5e34d50c5ed75"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/recipe-common.py",
+      "bytes": 3917,
+      "sha256": "6b348c8d4d4cb68a0f49d5bb88778d9f4966eb162a4b00b9a8abae188402a9df"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/recipe-generate.cjs",
+      "bytes": 1047,
+      "sha256": "8291b88e6f3394e69b1be2b89bce462c7b099fb62ab3ba4e973f793828e8b353"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/recipe-package.py",
+      "bytes": 6961,
+      "sha256": "0f754ff3d4d622c09a6fd2b87aa9e83ba177ce913410c19900443e959a28275d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/recipe-prepare.py",
+      "bytes": 1103,
+      "sha256": "a5e9b8bbfd0563696e4808c4653411b0ff15bcb6208bd91633c67321ac9af0aa"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/recipe-test.py",
+      "bytes": 935,
+      "sha256": "b8af7b1e766c656ae683df5fb44b42e7c97ca622090c2276b2001ed4ccd04604"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-abort-affected.json",
+      "bytes": 3774,
+      "sha256": "91222f999d739d969462bc125eaa214ee4d690e09881d3923a63297eddafacf9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-affected-wiring.json",
+      "bytes": 3518,
+      "sha256": "5a392d5d157e29ccb4cd2afe93386a7c01b40efa66c689f3689cf18166898402"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-error-causes.json",
+      "bytes": 3964,
+      "sha256": "359d1958dc9f027dfa26dfc2497e5e1976aa18f1bc98a8d0a0fd39df1a2f91f2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-focused.json",
+      "bytes": 3962,
+      "sha256": "b2ab96ab2b1fa8824b7ef96fb8633b6599bbc0deb83e5265d8c1064898b8ffa4"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-package.json",
+      "bytes": 3964,
+      "sha256": "3dabfd8adc3f46cb3326506715fbc6e2253a09bb4f6acc4dbc104b2ea584774b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-precheckout.json",
+      "bytes": 3248,
+      "sha256": "2ec8ff5d94c0913f7c49c28f4ef557ee10de091879e461ae9a1b1709291d949e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/resources-supplement.json",
+      "bytes": 3255,
+      "sha256": "090bd5d8b7a339594718522a891e8cec647d6c73230243e8900d751a8ac43ecc"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/reused-evidence.json",
+      "bytes": 345,
+      "sha256": "cb23c57b2c8611682ffca0093b9966f24d65486f8cec80be0a33972726ce3517"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/source-audit.json",
+      "bytes": 2123,
+      "sha256": "1249740b6fb1890f094528f1b31152c1c2540c6c6d3ba4839b9709af9cc31840"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/standing-inputs.json",
+      "bytes": 4205,
+      "sha256": "21504d7b77f2ee1f6a5fba3b1f665b6f3bf4dc1f5d7c5d617e7d15a77b2a8272"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/supplement-results.json",
+      "bytes": 919,
+      "sha256": "f8bc7fd4eca77ddcb00bbd1d321fb16996ac48c4252752f9d9af1e32be855e73"
+    },
+    {
+      "path": "docs/reviews/maelstrom-preinitializer-observer-boundary-repair-oct26/tree-relationship.json",
+      "bytes": 637,
+      "sha256": "45056cd122f7f926012af74f3eaecb97b2b3252d6e813f231284d40ea027f350"
+    }
+  ]
+}

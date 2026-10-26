@@ -1,0 +1,15 @@
+{
+  "base": "81b00df8b2b0fa0b54127f2da5742e960f52acd1",
+  "baseTree": "44dabe71a5eedac4db0fd141bcfead5df2a7d406",
+  "testedSourceTree": "067500678941bd3f2dcd9c9374a448ac0a9718b5",
+  "sourcePaths": [
+    "tools/maelstrom-initialized-runner-arm.cjs",
+    "tools/maelstrom-loader-boundary.cjs",
+    "test/test-maelstrom-initialized-runner-arm.cjs",
+    "test/test-maelstrom-preinitializer-boundary.cjs",
+    "test/test-maelstrom-preinitializer-supplement.cjs",
+    "test/maelstrom-loader-host-fixture.cjs"
+  ],
+  "publicationAddsOnly": "assigned new review evidence path; all six tested source files unchanged",
+  "noMainOwnership": true
+}

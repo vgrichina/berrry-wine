@@ -1,0 +1,12 @@
+{
+  "base": "81b00df8b2b0fa0b54127f2da5742e960f52acd1",
+  "branch": "task/maelstrom-preinitializer-observer-boundary-repair-oct26",
+  "objects": 553,
+  "flatNoAlternates": true,
+  "shallowBoundary": "81b00df8b2b0fa0b54127f2da5742e960f52acd1",
+  "readOnlyDonor": "/tmp/maelstrom-runner-arm-independent-accept-oct26/repo",
+  "selected": [
+    "tools/maelstrom-initialized-runner-arm.cjs",
+    "test/test-maelstrom-initialized-runner-arm.cjs"
+  ]
+}

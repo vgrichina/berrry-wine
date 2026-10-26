@@ -1,0 +1,43 @@
+{
+  "base": "81b00df8b2b0fa0b54127f2da5742e960f52acd1",
+  "testedSourceTree": "067500678941bd3f2dcd9c9374a448ac0a9718b5",
+  "sourceHashes": {
+    "tools/maelstrom-initialized-runner-arm.cjs": "155d1670e119a109642f3fd96469c8f03f5927ec7193019f6540b9fb408d3f52",
+    "tools/maelstrom-loader-boundary.cjs": "985ebcd61bcba4443ce5363dafea55974d5f15241a00c6eba48866f9c4446760",
+    "test/test-maelstrom-initialized-runner-arm.cjs": "2e86f079fa3cf7e5f148814dd710fa6ffe19f7ec33893f61e87c2f514fa54cfc",
+    "test/test-maelstrom-preinitializer-boundary.cjs": "8e9eec50434406f4c6b9168f77f342d5332d8437716aeebe3d224fd1b834ee68",
+    "test/test-maelstrom-preinitializer-supplement.cjs": "e7eef19236ddce9f7812f9b811ba4f83efcd7c01d0c02c8030777c8474702a20",
+    "test/maelstrom-loader-host-fixture.cjs": "17b0d8ab7dd2511fc0c2fb4d61908b79cd0f6a0e638171248d25747493e651b6"
+  },
+  "loaderInputSHA256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+  "loaderOutputSHA256": "ff99a2415061259e633fc198d7df40adec42c6f5daa77af6021822773c05b0e7",
+  "runnerOutputSHA256": "866e109831907dbf13e1dffb2d017e0fca16fdfa00a611f31393f175f7e465ea",
+  "unchangedSourceChecks": {
+    "ownedDllMain": {
+      "bytes": 665,
+      "sha256": "a130b9a1966c74449e8b65a3fec8f02a2332939be7b4d115f00f39e7c47ce01d",
+      "unchanged": true
+    },
+    "asyncDllMain": {
+      "bytes": 535,
+      "sha256": "2608ab746b1c2e9dee0adbe2d8931e7164c14eca945a5b4f6f6a8a0f218222fb",
+      "unchanged": true
+    },
+    "entireDllMainGenerator": {
+      "bytes": 9585,
+      "sha256": "43fdd0cea0b5a2193a99e03c297a9add790d1c7d98570343e6f937967c98ab38",
+      "unchanged": true
+    },
+    "dependencyOrder": {
+      "bytes": 993,
+      "sha256": "e5a5d925911334f66621f5160d32458d1b800537568fc1aca4f8179c67a75686",
+      "unchanged": true
+    },
+    "entireMainLoopAndFollowingRuntime": {
+      "sha256": "99376e0f6aa5cecd2942f0c92a640bef9a31a16110ceb9f72319d3a42185dc38",
+      "unchanged": true
+    }
+  },
+  "productionRuntimeFilesChanged": false,
+  "qualification": "deterministic archived loader/runner derivative plus offline JS tests; no native execution"
+}

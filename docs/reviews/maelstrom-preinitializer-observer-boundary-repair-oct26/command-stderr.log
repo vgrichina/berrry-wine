@@ -1,0 +1,26 @@
+Error: unexpected require:../lib/dib
+    at require (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:51:13)
+    at Object.registerDllResources (evalmachine.<anonymous>:10:40)
+    at loadDllsStagesOwned (evalmachine.<anonymous>:948:13)
+    at loadDllsStagesOwned.next (<anonymous>)
+    at stageDlls (evalmachine.<anonymous>:2092:24)
+    at evalmachine.<anonymous>:5:23
+    at evalmachine.<anonymous>:1812:64
+    at Script.runInContext (node:vm:149:12)
+    at Object.runInContext (node:vm:301:6)
+    at Object.execute (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:60:41)
+evalmachine.<anonymous>:53
+    const row={schema:'original-native-raw/v1',stage,batch,crtGetptdTarget,error:error?String(error):null,moduleBases:JSON.parse(JSON.stringify(moduleBases)),imageBase:e.get_image_base(),scalars,anchors,
+                                                                                                                                                                          ^
+
+TypeError: e.get_image_base is not a function
+    at nativeRaw (evalmachine.<anonymous>:53:171)
+    at Object.originalNativeObserve [as observe] (evalmachine.<anonymous>:68:18)
+    at originalNativeObserve (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:116:106)
+    at evalmachine.<anonymous>:1:98
+    at Script.runInContext (node:vm:149:12)
+    at Object.runInContext (node:vm:301:6)
+    at execute (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:117:27)
+    at /tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:118:136
+    at async test (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:65:30)
+    at async main (/tmp/maelstrom-preinitializer-observer-boundary-repair-oct26/repo/test/test-maelstrom-preinitializer-boundary.cjs:111:22)

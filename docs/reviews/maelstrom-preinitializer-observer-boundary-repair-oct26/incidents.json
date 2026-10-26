@@ -1,0 +1,30 @@
+[
+  {
+    "kind": "initial-read-excerpt",
+    "detail": "Initial combined policy/receipt reads exceeded 8192B excerpt and were tool-truncated. Narrow reads completed policy and source inspection; no source/test evidence inferred from truncation."
+  },
+  {
+    "kind": "fixture-resource-seam",
+    "detail": "First focused run failed unexpected require ../lib/dib. Original stderr is the first entry in command-stderr.log. Added explicit empty resource decoder seam; production resource registration unchanged."
+  },
+  {
+    "kind": "fixture-observation-seam",
+    "detail": "Second focused run replaced instance exports with run only; authentic nativeRaw could not read get_image_base. Kept all original fixture exports while overriding run; subsequent affected group passed."
+  },
+  {
+    "kind": "fixture-error-receipt",
+    "detail": "Common wrapper first-command-failure/first-focused-failure filenames were overwritten by second internal failure; append-only command-stderr.log retains BOTH original failures in order."
+  },
+  {
+    "kind": "readonly-diff-wrapper",
+    "detail": "Two manual read-only Git diff commands used inherited limits instead of child Git DATA wrapper. They completed with small outputs; all checkout, staging, object operations, commit and publication use child-only Git DATA512MiB. No enforced limit was raised."
+  },
+  {
+    "kind": "cleanup-refinement",
+    "detail": "Successful cancellation previously rethrew its own cancellation and would produce a cleanup warning. Consume the identical injected error while propagating rollback errors. Reran six affected prearm failures and abort case; added genuine awaited overlay rejection."
+  },
+  {
+    "kind": "acceptance-environment",
+    "detail": "Six affected legacy wiring cases used MAELSTROM_TEST_FILTER; separate exact startup/limits receipt retained. Normal acceptance and derivation use original unchanged environment. No application/native/guest/build tests executed."
+  }
+]

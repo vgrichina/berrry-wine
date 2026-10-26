@@ -1,0 +1,11 @@
+{
+  "independentManifestSHA256": "a19979847bda02cad750d2ad2241f6f7101a22da27d304bb3669d63274884b83",
+  "groups": [
+    "9 independent",
+    "30 wiring",
+    "4 CLI",
+    "29 guards"
+  ],
+  "replayed": 0,
+  "qualification": "unchanged helper/mode/completion checks retained; affected runner boundary checks superseded by current focused tests"
+}

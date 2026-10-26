@@ -27,8 +27,11 @@ vm.runInNewContext(prefix + '\nmodule.exports={fresh,finish,createAdapter,create
   fixtureContext, {filename: fixturePath, timeout: 30000});
 const fixture = fixtureContext.module.exports;
 const results = [];
-async function test(name, fn) { await fn(); results.push({name, pass: true}); }
-const ARM = '  // Arm once after ordinary main setup, before batch inputs, timers or run.\n' +
+async function test(name, fn) {
+  if (process.env.MAELSTROM_TEST_FILTER && !new RegExp(process.env.MAELSTROM_TEST_FILTER).test(name)) return;
+  await fn(); results.push({name, pass: true});
+}
+const ARM = '  // Arm after mapping/validation/setup, before DLL or main guest execution.\n' +
   '  try {\n    nativeAdapter.start();\n' +
   "  } catch (error) { nativeRaw('first-loader-or-start-rejection', error); throw error; }\n";
 const boundary = '  for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {\n';
@@ -55,6 +58,7 @@ function makeHarness({flags = [], fail = null, enabledSetup = false, text = gene
   Object.assign(host, {instance, memory: real.exports.memory, moduleBases: {},
     console: {log() {}}, Buffer, JSON, WATCH_VALUE: null, WATCH_START_BATCH: 0,
     HANDLER_HIST_THREADS: [], hasFlag: () => false, signalExitWake: null,
+    startupDllStage: null,
     onFailure: () => { events.push('failure-hook'); failAt('failure-hook'); },
     performance: {now: () => { events.push('execution-clock'); failAt('execution-clock'); return 1; }},
     nativeFile: 'fixture-record', fs: {appendFileSync: (file, data) => {
@@ -89,19 +93,23 @@ function makeHarness({flags = [], fail = null, enabledSetup = false, text = gene
       '\nreturn {nativeAdapter, originalNativeObserve};})()', context, {timeout: 3000})};
 }
 async function main() {
-  await test('deterministic one contiguous replacement preserves all other bytes', () => {
+  await test('deterministic staged replacements preserve all other bytes', () => {
     assert(output.equals(transform(captured).output));
     const {offset, beforeBytes, afterBytes, beforeSHA256, afterSHA256} = receipt.replacement;
     assert.equal(sha(captured.subarray(offset, offset + beforeBytes)), beforeSHA256);
-    assert.equal(sha(output.subarray(offset, offset + afterBytes)), afterSHA256);
-    assert(output.subarray(0, offset).equals(captured.subarray(0, offset)));
-    assert(output.subarray(offset + afterBytes).equals(captured.subarray(offset + beforeBytes)));
-    const back = generated.replace(ARM, '').replace(
+    let restored = generated;
+    for (const edit of [...receipt.additionalReplacements].reverse()) {
+      assert.equal(sha(edit.before), edit.beforeSHA256); assert.equal(sha(edit.after), edit.afterSHA256);
+      assert.equal(restored.indexOf(edit.after), restored.lastIndexOf(edit.after));
+      restored = restored.replace(edit.after, edit.before);
+    }
+    assert.equal(sha(Buffer.from(restored).subarray(offset, offset + afterBytes)), afterSHA256);
+    const back = restored.replace(ARM, '').replace(
       "  }catch(error){nativeRaw('first-loader-or-start-rejection',error);throw error;}",
       "    nativeAdapter.start();\n  }catch(error){nativeRaw('first-loader-or-start-rejection',error);throw error;}");
     assert.equal(back, source);
     assert.equal(receipt.armCount, 1);
-    assert.equal(receipt.outputSHA256, '2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a');
+    assert.equal(receipt.outputSHA256, sha(output));
   });
   for (const [name, mutate] of [
     ['empty', () => Buffer.alloc(0)], ['truncated', b => b.subarray(0, -1)],
@@ -195,6 +203,6 @@ async function main() {
     fixtureSHA256: sha(fixtureText), moduleSHA256: fixture.moduleSHA256, watSHA256: fixture.watSHA256,
     pins: fixture.pins, prior29CasesReplayed: false, prior29SourceCommit: '5a80f7c43ed4a44bec559f5f1e9f9eb9f7d5e8d6',
     peakRSS: process.resourceUsage().maxRSS * 1024, guestInstructionsExecuted: 0,
-    qualification: 'offline post-loader wiring only; DLL initializers precede observer validation in the unchanged loader'}));
+    qualification: 'offline complete main-setup wiring; separate preinitializer tests cover staged archived loader'}));
 }
 main().catch(error => { console.error(error.stack); process.exitCode = 1; });
