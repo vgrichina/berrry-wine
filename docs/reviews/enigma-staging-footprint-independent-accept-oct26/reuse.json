@@ -1,0 +1,271 @@
+{
+  "suppliedTests": {
+    "command": [
+      "python3",
+      "-B",
+      "/tmp/enigma-staging-footprint-repair-oct26/repo/test/test-enigma-bounded-staging.py"
+    ],
+    "status": 0,
+    "heapDataLimit": 16777216,
+    "fileLimit": 25165824,
+    "cpuLimit": 60,
+    "stdoutSHA256": "311c8c6ce000987e0d8a54ededb9754b71e91338fec24fdb97d1b00ab285caa1",
+    "stderrSHA256": "a9afbba2c530b0c5608838aca069b9007c41f78ab492ed6643029deb2b9e256b",
+    "sourceSHA256": "ed587d488cd8276191db3b7191132546943209e5bff05b67ca66dcc2b90b1652",
+    "testSHA256": "b5170742281848d3e2d47d5b2694b7d614626973d30fec7cf9045f7dfc0088be"
+  },
+  "sourceVerification": {
+    "actualFullStaging": false,
+    "aliases": [
+      {
+        "bytes": 13456,
+        "canonical": "runner/fonts/System.fon",
+        "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+        "target": "runtime/fonts/System.fon"
+      },
+      {
+        "bytes": 20128,
+        "canonical": "runner/fonts/MSSansSerif.fon",
+        "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+        "target": "runtime/fonts/MSSansSerif.fon"
+      },
+      {
+        "bytes": 5264,
+        "canonical": "runner/fonts/Fixedsys.fon",
+        "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+        "target": "runtime/fonts/Fixedsys.fon"
+      },
+      {
+        "bytes": 4816,
+        "canonical": "runner/fonts/Courier.fon",
+        "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+        "target": "runtime/fonts/Courier.fon"
+      },
+      {
+        "bytes": 5168,
+        "canonical": "runner/fonts/Terminal.fon",
+        "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+        "target": "runtime/fonts/Terminal.fon"
+      },
+      {
+        "bytes": 4300,
+        "canonical": "runner/fonts/wine/webdings.ttf",
+        "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+        "target": "runtime/fonts/subset/webdings.ttf"
+      },
+      {
+        "bytes": 9524,
+        "canonical": "runner/fonts/wine/wingding.ttf",
+        "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+        "target": "runtime/fonts/subset/wingding.ttf"
+      },
+      {
+        "bytes": 26028,
+        "canonical": "runner/fonts/wine/symbol.ttf",
+        "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+        "target": "runtime/fonts/subset/symbol.ttf"
+      },
+      {
+        "bytes": 6136,
+        "canonical": "runner/fonts/wine/marlett.ttf",
+        "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+        "target": "runtime/fonts/subset/marlett.ttf"
+      },
+      {
+        "bytes": 27616,
+        "canonical": "runtime/fonts/subset/ComicRelief-Bold.ttf",
+        "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+        "target": "runner/fonts/subset/ComicRelief-Bold.ttf"
+      },
+      {
+        "bytes": 22776,
+        "canonical": "runtime/fonts/subset/ComicRelief-Regular.ttf",
+        "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+        "target": "runner/fonts/subset/ComicRelief-Regular.ttf"
+      },
+      {
+        "bytes": 34148,
+        "canonical": "runtime/fonts/subset/LiberationMono-Bold.ttf",
+        "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+        "target": "runner/fonts/subset/LiberationMono-Bold.ttf"
+      },
+      {
+        "bytes": 30408,
+        "canonical": "runtime/fonts/subset/LiberationMono-BoldItalic.ttf",
+        "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+        "target": "runner/fonts/subset/LiberationMono-BoldItalic.ttf"
+      },
+      {
+        "bytes": 30056,
+        "canonical": "runtime/fonts/subset/LiberationMono-Italic.ttf",
+        "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+        "target": "runner/fonts/subset/LiberationMono-Italic.ttf"
+      },
+      {
+        "bytes": 34044,
+        "canonical": "runtime/fonts/subset/LiberationMono-Regular.ttf",
+        "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+        "target": "runner/fonts/subset/LiberationMono-Regular.ttf"
+      },
+      {
+        "bytes": 40984,
+        "canonical": "runtime/fonts/subset/LiberationSans-Bold.ttf",
+        "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+        "target": "runner/fonts/subset/LiberationSans-Bold.ttf"
+      },
+      {
+        "bytes": 41104,
+        "canonical": "runtime/fonts/subset/LiberationSans-BoldItalic.ttf",
+        "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+        "target": "runner/fonts/subset/LiberationSans-BoldItalic.ttf"
+      },
+      {
+        "bytes": 40848,
+        "canonical": "runtime/fonts/subset/LiberationSans-Italic.ttf",
+        "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+        "target": "runner/fonts/subset/LiberationSans-Italic.ttf"
+      },
+      {
+        "bytes": 42460,
+        "canonical": "runtime/fonts/subset/LiberationSans-Regular.ttf",
+        "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+        "target": "runner/fonts/subset/LiberationSans-Regular.ttf"
+      },
+      {
+        "bytes": 45140,
+        "canonical": "runtime/fonts/subset/LiberationSerif-Bold.ttf",
+        "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+        "target": "runner/fonts/subset/LiberationSerif-Bold.ttf"
+      },
+      {
+        "bytes": 45144,
+        "canonical": "runtime/fonts/subset/LiberationSerif-BoldItalic.ttf",
+        "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+        "target": "runner/fonts/subset/LiberationSerif-BoldItalic.ttf"
+      },
+      {
+        "bytes": 46840,
+        "canonical": "runtime/fonts/subset/LiberationSerif-Italic.ttf",
+        "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+        "target": "runner/fonts/subset/LiberationSerif-Italic.ttf"
+      },
+      {
+        "bytes": 52440,
+        "canonical": "runtime/fonts/subset/LiberationSerif-Regular.ttf",
+        "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+        "target": "runner/fonts/subset/LiberationSerif-Regular.ttf"
+      },
+      {
+        "bytes": 6136,
+        "canonical": "runner/fonts/wine/marlett.ttf",
+        "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+        "target": "runner/fonts/subset/marlett.ttf"
+      },
+      {
+        "bytes": 26028,
+        "canonical": "runner/fonts/wine/symbol.ttf",
+        "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+        "target": "runner/fonts/subset/symbol.ttf"
+      },
+      {
+        "bytes": 18712,
+        "canonical": "runtime/fonts/subset/tahoma.ttf",
+        "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+        "target": "runner/fonts/subset/tahoma.ttf"
+      },
+      {
+        "bytes": 19216,
+        "canonical": "runtime/fonts/subset/tahomabd.ttf",
+        "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+        "target": "runner/fonts/subset/tahomabd.ttf"
+      },
+      {
+        "bytes": 4300,
+        "canonical": "runner/fonts/wine/webdings.ttf",
+        "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+        "target": "runner/fonts/subset/webdings.ttf"
+      },
+      {
+        "bytes": 9524,
+        "canonical": "runner/fonts/wine/wingding.ttf",
+        "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+        "target": "runner/fonts/subset/wingding.ttf"
+      }
+    ],
+    "allSourcesRehashed": true,
+    "files": 2659,
+    "guestExecuted": false,
+    "logicalBytes": 37476538,
+    "manifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+    "projected4KiBBlockSavings": 786432,
+    "savedLogicalBytes": 712744
+  },
+  "projection": {
+    "comparisons": [
+      {
+        "identity": "original-resource-ready",
+        "oldCharges": {
+          "localOwned": 3559424,
+          "remoteOwned": 45228032,
+          "sessionLauncherFull": 905216,
+          "positiveSQLiteHighwater": 909312,
+          "sqliteAndSessionFuture": 2097152,
+          "checkoutGitAndHelpersFuture": 1216512,
+          "captureAndPublicationFuture": 4194304,
+          "transferOverlap": 1048576,
+          "reserve": 8388608
+        },
+        "newCharges": {
+          "localOwned": 3559424,
+          "remoteOwned": 44441600,
+          "sessionLauncherFull": 905216,
+          "positiveSQLiteHighwater": 909312,
+          "sqliteAndSessionFuture": 2097152,
+          "checkoutGitAndHelpersFuture": 1216512,
+          "captureAndPublicationFuture": 4194304,
+          "transferOverlap": 1048576,
+          "reserve": 8388608
+        },
+        "oldPeak": 67547136,
+        "newPeak": 66760704,
+        "savings": 786432,
+        "headroom": 348160,
+        "cap": 67108864
+      },
+      {
+        "identity": "later-coordinator-retained",
+        "oldCharges": {
+          "retainedLocalOwned": 3584000,
+          "retainedRemoteOwned": 45228032,
+          "priorSessionLauncher": 1363968,
+          "priorPositiveDBHighwater": 1683456,
+          "freshWorkerSessionDBAndHelpersFuture": 2097152,
+          "futureCapturePublication": 4194304,
+          "transferOverlap": 1048576,
+          "reserve": 8388608
+        },
+        "newCharges": {
+          "retainedLocalOwned": 3584000,
+          "retainedRemoteOwned": 44441600,
+          "priorSessionLauncher": 1363968,
+          "priorPositiveDBHighwater": 1683456,
+          "freshWorkerSessionDBAndHelpersFuture": 2097152,
+          "futureCapturePublication": 4194304,
+          "transferOverlap": 1048576,
+          "reserve": 8388608
+        },
+        "oldPeak": 67588096,
+        "newPeak": 66801664,
+        "savings": 786432,
+        "headroom": 307200,
+        "cap": 67108864
+      }
+    ],
+    "semantics": "Only owned font physical allocation changes; every other charge and reserve identical. 4KiB-block synthetic measurement, not actual remote qualification.",
+    "logicalFontSavings": 712744,
+    "physical4KiBBlockSavings": 786432,
+    "guestAttempts": 0
+  },
+  "closureSHA256": "1ea3495b90bd6659afd0f77db681a470ee0e8754ae99c439fd37f32cb3cb8bee",
+  "sourceRehashReusedNotRepeated": true
+}

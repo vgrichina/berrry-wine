@@ -1,0 +1,22 @@
+{
+  "phase": "prereport",
+  "time": 1793000202.0975437,
+  "charges": {
+    "task": 2633728,
+    "launcherSession": 1036288,
+    "positiveDBOnce": 495616,
+    "futureSessionDB": 12582912,
+    "futureFixtureGitEvidence": 16777216,
+    "reserve": 8388608
+  },
+  "peak": 41914368,
+  "cap": 67108864,
+  "growth": 58720256,
+  "memAvailable": 2098577408,
+  "client": 536870912,
+  "heap": 16777216,
+  "memFloor": 805306368,
+  "freeDisk": 4311252992,
+  "diskFloor": 2982150144,
+  "pass": true
+}

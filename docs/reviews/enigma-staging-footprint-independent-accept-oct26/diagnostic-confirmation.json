@@ -1,0 +1,29 @@
+{
+  "wrapper": "import runpy,sys,json\nsys.argv=sys.argv[1:]\ntry: runpy.run_path(sys.argv[0],run_name='__main__')\nexcept BaseException as e:\n print(json.dumps({'error':type(e).__name__,'message':str(e)}),file=sys.stderr);sys.exit(1)",
+  "receipts": [
+    {
+      "name": "modes-confirmed",
+      "returncode": 1,
+      "assertionConfirmed": true,
+      "fixtureSHA256": "5fc9ef217c961ac0303801fa7f479e1b86ed3fba1a8e87caee4cde91f1cd40a8",
+      "stdoutSHA256": "c0ffed6cb4848edd1feb2270625b0708f780ed53374de246ec81fcf1524995c7",
+      "stderrSHA256": "f0f7528469fbbfab5284b4bb9d7986f93ae0cae8c3cb3a92d4c27d068103ceda"
+    },
+    {
+      "name": "identity-skip-duplicate-confirmed",
+      "returncode": 1,
+      "assertionConfirmed": true,
+      "fixtureSHA256": "5fc9ef217c961ac0303801fa7f479e1b86ed3fba1a8e87caee4cde91f1cd40a8",
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "cd4282994fb945597e922ce0149eefbcda907e29f434449af8c76ce7e10e2f5f"
+    },
+    {
+      "name": "identity-double-charge-confirmed",
+      "returncode": 1,
+      "assertionConfirmed": true,
+      "fixtureSHA256": "5fc9ef217c961ac0303801fa7f479e1b86ed3fba1a8e87caee4cde91f1cd40a8",
+      "stdoutSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "e6695b400cc07c657102176573672ed134cc6cc2f4bf240067ced205bd085c75"
+    }
+  ]
+}

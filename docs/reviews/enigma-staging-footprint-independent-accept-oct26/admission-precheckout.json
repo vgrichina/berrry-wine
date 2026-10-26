@@ -1,0 +1,22 @@
+{
+  "phase": "precheckout",
+  "time": 1792999952.25381,
+  "charges": {
+    "task": 28672,
+    "launcherSession": 761856,
+    "positiveDBOnce": 0,
+    "futureSessionDB": 12582912,
+    "futureFixtureGitEvidence": 16777216,
+    "reserve": 8388608
+  },
+  "peak": 38539264,
+  "cap": 67108864,
+  "growth": 58720256,
+  "memAvailable": 2233315328,
+  "client": 536870912,
+  "heap": 16777216,
+  "memFloor": 805306368,
+  "freeDisk": 3391447040,
+  "diskFloor": 2982150144,
+  "pass": true
+}

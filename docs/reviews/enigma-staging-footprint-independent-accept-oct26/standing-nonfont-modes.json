@@ -1,0 +1,10 @@
+{
+  "counts": {
+    "0o644": 2,
+    "0o664": 2484
+  },
+  "examples": {
+    "0o644": "runtime/test/binaries/tlbs/stdole2.tlb",
+    "0o664": "runtime/build/wine-assembly.wasm"
+  }
+}

@@ -1,0 +1,36 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-staging-footprint-independent-accept-oct26/ops/accept.py", line 110, in <module>
+    result=globals()['group_'+group](Path(d))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-staging-footprint-independent-accept-oct26/ops/accept.py", line 86, in group_modes
+    assert all(x['source']==x['destination'] for x in observed),'required nonfont permissions are not preserved'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: required nonfont permissions are not preserved
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 228, in partial_apport_excepthook
+    return apport_excepthook(binary, exc_type, exc_obj, exc_tb)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 66, in apport_excepthook
+    import apport.report
+  File "/usr/lib/python3/dist-packages/apport/__init__.py", line 8, in <module>
+    from apport.report import Report
+  File "/usr/lib/python3/dist-packages/apport/report.py", line 50, in <module>
+  File "/usr/lib/python3/dist-packages/apport/ui.py", line 43, in <module>
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 991, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1087, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1187, in get_data
+MemoryError
+
+Original exception was:
+Traceback (most recent call last):
+  File "/tmp/enigma-staging-footprint-independent-accept-oct26/ops/accept.py", line 110, in <module>
+    result=globals()['group_'+group](Path(d))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-staging-footprint-independent-accept-oct26/ops/accept.py", line 86, in group_modes
+    assert all(x['source']==x['destination'] for x in observed),'required nonfont permissions are not preserved'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: required nonfont permissions are not preserved

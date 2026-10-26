@@ -1,0 +1,33 @@
+{
+  "candidate": "f1aac7b9ba83e2bbc763cb58d38646653d626468",
+  "results": [
+    {
+      "name": "identity",
+      "returncode": 0,
+      "expected": 0,
+      "stdoutSHA256": "5fe3439fb69930e90233d9c718305e34a381c4adac75e8bec64daa85f30b3892",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fixtureSHA256": "5fc9ef217c961ac0303801fa7f479e1b86ed3fba1a8e87caee4cde91f1cd40a8",
+      "helperSHA256": "ed587d488cd8276191db3b7191132546943209e5bff05b67ca66dcc2b90b1652",
+      "matchedExpected": true
+    },
+    {
+      "name": "cleanup",
+      "returncode": 0,
+      "expected": 0,
+      "stdoutSHA256": "d73d3863e6513c2604f6e7664f6ea426dfd83cf4105849c78d9901a64e50c725",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fixtureSHA256": "5fc9ef217c961ac0303801fa7f479e1b86ed3fba1a8e87caee4cde91f1cd40a8",
+      "helperSHA256": "ed587d488cd8276191db3b7191132546943209e5bff05b67ca66dcc2b90b1652",
+      "matchedExpected": true
+    }
+  ],
+  "remaining": [
+    "modes",
+    "recipe",
+    "identity-skip-duplicate",
+    "identity-double-charge"
+  ],
+  "blockers": [],
+  "time": 1793000076.375322
+}

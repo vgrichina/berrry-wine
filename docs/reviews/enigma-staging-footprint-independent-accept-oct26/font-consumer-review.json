@@ -1,0 +1,293 @@
+[
+  {
+    "row": {
+      "path": "test/run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "target": "runner/test/run.js",
+      "kind": "git",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "donor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23"
+    },
+    "excerpt": [
+      {
+        "start": 2845,
+        "lines": [
+          "    })));",
+          "    for (const name of BUNDLED_BITMAP_FONTS) {",
+          "      const bundledFon = path.join(ROOT, 'fonts', name);",
+          "      if (!fs.existsSync(bundledFon)) {",
+          "        throw new Error(`missing bundled bitmap font: ${bundledFon}`);",
+          "      }",
+          "      ctx.vfs.files.set(`c:\\\\windows\\\\fonts\\\\${name.toLowerCase()}`, {",
+          "        data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,",
+          "      });"
+        ]
+      },
+      {
+        "start": 2846,
+        "lines": [
+          "    for (const name of BUNDLED_BITMAP_FONTS) {",
+          "      const bundledFon = path.join(ROOT, 'fonts', name);",
+          "      if (!fs.existsSync(bundledFon)) {",
+          "        throw new Error(`missing bundled bitmap font: ${bundledFon}`);",
+          "      }",
+          "      ctx.vfs.files.set(`c:\\\\windows\\\\fonts\\\\${name.toLowerCase()}`, {",
+          "        data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,",
+          "      });",
+          "    }"
+        ]
+      },
+      {
+        "start": 2847,
+        "lines": [
+          "      const bundledFon = path.join(ROOT, 'fonts', name);",
+          "      if (!fs.existsSync(bundledFon)) {",
+          "        throw new Error(`missing bundled bitmap font: ${bundledFon}`);",
+          "      }",
+          "      ctx.vfs.files.set(`c:\\\\windows\\\\fonts\\\\${name.toLowerCase()}`, {",
+          "        data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,",
+          "      });",
+          "    }",
+          "    // Scalable faces mount under their Win98 filenames so the WAT TrueType"
+        ]
+      },
+      {
+        "start": 2850,
+        "lines": [
+          "      }",
+          "      ctx.vfs.files.set(`c:\\\\windows\\\\fonts\\\\${name.toLowerCase()}`, {",
+          "        data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,",
+          "      });",
+          "    }",
+          "    // Scalable faces mount under their Win98 filenames so the WAT TrueType",
+          "    // rasterizer resolves ARIAL.TTF the way real GDI did, without knowing",
+          "    // Liberation Sans is what it opens.",
+          "    const substitutions = JSON.parse(fs.readFileSync("
+        ]
+      },
+      {
+        "start": 2857,
+        "lines": [
+          "    // Liberation Sans is what it opens.",
+          "    const substitutions = JSON.parse(fs.readFileSync(",
+          "      path.join(ROOT, 'fonts', 'substitutions.json'), 'utf8'));",
+          "    for (const mount of fontMounts(substitutions, { subset: true })) {",
+          "      const file = path.join(ROOT, 'fonts', mount.file);",
+          "      if (!fs.existsSync(file)) {",
+          "        throw new Error(`missing substitute for ${mount.face} ${mount.style}: ${file}`);",
+          "      }",
+          "      ctx.vfs.files.set(mount.vfsPath, {"
+        ]
+      },
+      {
+        "start": 2858,
+        "lines": [
+          "    const substitutions = JSON.parse(fs.readFileSync(",
+          "      path.join(ROOT, 'fonts', 'substitutions.json'), 'utf8'));",
+          "    for (const mount of fontMounts(substitutions, { subset: true })) {",
+          "      const file = path.join(ROOT, 'fonts', mount.file);",
+          "      if (!fs.existsSync(file)) {",
+          "        throw new Error(`missing substitute for ${mount.face} ${mount.style}: ${file}`);",
+          "      }",
+          "      ctx.vfs.files.set(mount.vfsPath, {",
+          "        data: new Uint8Array(fs.readFileSync(file)), attrs: 0x20,"
+        ]
+      },
+      {
+        "start": 2859,
+        "lines": [
+          "      path.join(ROOT, 'fonts', 'substitutions.json'), 'utf8'));",
+          "    for (const mount of fontMounts(substitutions, { subset: true })) {",
+          "      const file = path.join(ROOT, 'fonts', mount.file);",
+          "      if (!fs.existsSync(file)) {",
+          "        throw new Error(`missing substitute for ${mount.face} ${mount.style}: ${file}`);",
+          "      }",
+          "      ctx.vfs.files.set(mount.vfsPath, {",
+          "        data: new Uint8Array(fs.readFileSync(file)), attrs: 0x20,",
+          "      });"
+        ]
+      },
+      {
+        "start": 5752,
+        "lines": [
+          "      });",
+          "    };",
+          "    const addFontAlias = (name, hostPath, size) => {",
+          "      const base = String(name).replace(/^.*[\\\\/]/, '').toLowerCase();",
+          "      if (/\\.(ttf|ttc|fon)$/.test(base)) {",
+          "        addFile('c:\\\\windows\\\\fonts\\\\' + base, hostPath, size);",
+          "      }",
+          "    };",
+          ""
+        ]
+      },
+      {
+        "start": 5755,
+        "lines": [
+          "      const base = String(name).replace(/^.*[\\\\/]/, '').toLowerCase();",
+          "      if (/\\.(ttf|ttc|fon)$/.test(base)) {",
+          "        addFile('c:\\\\windows\\\\fonts\\\\' + base, hostPath, size);",
+          "      }",
+          "    };",
+          "",
+          "    // An arbitrary bare --exe mounts only the executable. A registered EXE",
+          "    // gets that app's explicit file manifest; an ad-hoc run can add one or more",
+          "    // --vfs-include globs rooted at the EXE directory. In particular, placing"
+        ]
+      },
+      {
+        "start": 5769,
+        "lines": [
+          "    }",
+          "    for (const file of includedFiles) {",
+          "      const size = fs.statSync(file.hostPath).size;",
+          "      addFile(file.guestPath, file.hostPath, size);",
+          "      addFontAlias(file.guestPath, file.hostPath, size);",
+          "    }",
+          "    for (const spec of VFS_MOUNT) {",
+          "      const eq = spec.lastIndexOf('=');",
+          "      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);"
+        ]
+      },
+      {
+        "start": 5770,
+        "lines": [
+          "    for (const file of includedFiles) {",
+          "      const size = fs.statSync(file.hostPath).size;",
+          "      addFile(file.guestPath, file.hostPath, size);",
+          "      addFontAlias(file.guestPath, file.hostPath, size);",
+          "    }",
+          "    for (const spec of VFS_MOUNT) {",
+          "      const eq = spec.lastIndexOf('=');",
+          "      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);",
+          "      const hostPath = appAsset(spec.slice(0, eq).trim());"
+        ]
+      },
+      {
+        "start": 5771,
+        "lines": [
+          "      const size = fs.statSync(file.hostPath).size;",
+          "      addFile(file.guestPath, file.hostPath, size);",
+          "      addFontAlias(file.guestPath, file.hostPath, size);",
+          "    }",
+          "    for (const spec of VFS_MOUNT) {",
+          "      const eq = spec.lastIndexOf('=');",
+          "      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);",
+          "      const hostPath = appAsset(spec.slice(0, eq).trim());",
+          "      const guestPath = spec.slice(eq + 1).trim();"
+        ]
+      },
+      {
+        "start": 5779,
+        "lines": [
+          "      const guestPath = spec.slice(eq + 1).trim();",
+          "      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);",
+          "      const size = fs.statSync(hostPath).size;",
+          "      addFile(guestPath, hostPath, size);",
+          "      addFontAlias(guestPath, hostPath, size);",
+          "    }",
+          "    for (const lib of WIN16_LIBS) {",
+          "      const guestPath = `c:\\\\windows\\\\system\\\\${path.basename(lib).toLowerCase()}`;",
+          "      addFile(guestPath, lib, fs.statSync(lib).size);"
+        ]
+      },
+      {
+        "start": 5780,
+        "lines": [
+          "      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);",
+          "      const size = fs.statSync(hostPath).size;",
+          "      addFile(guestPath, hostPath, size);",
+          "      addFontAlias(guestPath, hostPath, size);",
+          "    }",
+          "    for (const lib of WIN16_LIBS) {",
+          "      const guestPath = `c:\\\\windows\\\\system\\\\${path.basename(lib).toLowerCase()}`;",
+          "      addFile(guestPath, lib, fs.statSync(lib).size);",
+          "    }"
+        ]
+      },
+      {
+        "start": 5781,
+        "lines": [
+          "      const size = fs.statSync(hostPath).size;",
+          "      addFile(guestPath, hostPath, size);",
+          "      addFontAlias(guestPath, hostPath, size);",
+          "    }",
+          "    for (const lib of WIN16_LIBS) {",
+          "      const guestPath = `c:\\\\windows\\\\system\\\\${path.basename(lib).toLowerCase()}`;",
+          "      addFile(guestPath, lib, fs.statSync(lib).size);",
+          "    }",
+          "    // Mount a matched registry app's data files at the same VFS paths the page"
+        ]
+      },
+      {
+        "start": 5942,
+        "lines": [
+          "        // installer had put in the font directory, so mount it there too,",
+          "        // over the vendored substitute if one is already sitting there.",
+          "        addFontAlias(url, hostPath, size);",
+          "      }",
+          "      if (missing.length) {",
+          "        const msg = `${APP_ENTRY ? `--app=${APP_ID}` : `--exe=${EXE_PATH} (${ASSET_ENTRY_ID})`}: ` +",
+          "          `${missing.length} file(s) not found: ${missing.slice(0, 5).join(', ')}` +",
+          "          (missing.length > 5 ? ` (+${missing.length - 5} more)` : '');",
+          "        if (ASSET_ENTRY.requiredFiles) throw new Error(msg);"
+        ]
+      }
+    ]
+  },
+  {
+    "row": {
+      "path": "host.js",
+      "bytes": 368727,
+      "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+      "target": "runner/host.js",
+      "kind": "git",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "donor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23"
+    },
+    "excerpt": [
+      {
+        "start": 4015,
+        "lines": [
+          "      return;",
+          "    }",
+          "    await this.loadFiles(fontMounts(manifest, { subset: true }).map(mount => ({",
+          "      url: 'fonts/' + mount.file,",
+          "      vfsPath: mount.vfsPath,",
+          "    })), { required: false });",
+          "  }",
+          "",
+          "  async _decodeMountedImage(data, url) {"
+        ]
+      }
+    ]
+  },
+  {
+    "row": {
+      "path": "lib/font-substitutions.js",
+      "bytes": 2966,
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+      "target": "runner/lib/font-substitutions.js",
+      "kind": "git",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "donor": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23"
+    },
+    "excerpt": [
+      {
+        "start": 35,
+        "lines": [
+          "// full TTFs: 278 KB rather than 4.7 MB, which matters because the browser",
+          "// fetches all of them before a guest can draw its first character.",
+          "function fontMounts(manifest, options) {",
+          "  const useSubset = !!(options && options.subset);",
+          "  const mounts = [];",
+          "  for (const face of manifest.faces || []) {",
+          "    if (!face.win98Files) continue;",
+          "    for (const style of Object.keys(face.win98Files)) {",
+          "      const file = face.styles && face.styles[style];"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,1213 @@
+{
+  "readOnly": true,
+  "newOwnedBytes": 0,
+  "physicalBytes": 2899968,
+  "inodes": 541,
+  "flatDirectories": [
+    {
+      "path": "/tmp/enigma-staging-footprint-repair-oct26/repo/.git/objects",
+      "dev": 64769,
+      "inode": 2004169
+    },
+    {
+      "path": "/tmp/enigma-api-single-frame-startup-oct26/repo/.git/objects",
+      "dev": 64769,
+      "inode": 1098726
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/repo/.git/objects",
+      "dev": 64769,
+      "inode": 839541
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/108",
+      "dev": 64769,
+      "inode": 2073661
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/121",
+      "dev": 64769,
+      "inode": 2074954
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/4",
+      "dev": 64769,
+      "inode": 1097944
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/1",
+      "dev": 64769,
+      "inode": 1097870
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/76",
+      "dev": 64769,
+      "inode": 2072394
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/28",
+      "dev": 64769,
+      "inode": 1356607
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/98",
+      "dev": 64769,
+      "inode": 2073081
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/176",
+      "dev": 64769,
+      "inode": 2076496
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/145",
+      "dev": 64769,
+      "inode": 2075552
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/55",
+      "dev": 64769,
+      "inode": 2071829
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/88",
+      "dev": 64769,
+      "inode": 2072689
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/158",
+      "dev": 64769,
+      "inode": 2075884
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/79",
+      "dev": 64769,
+      "inode": 2072490
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/39",
+      "dev": 64769,
+      "inode": 2003018
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/226",
+      "dev": 64769,
+      "inode": 2077908
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/213",
+      "dev": 64769,
+      "inode": 2077624
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/206",
+      "dev": 64769,
+      "inode": 2077411
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/85",
+      "dev": 64769,
+      "inode": 2072627
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/103",
+      "dev": 64769,
+      "inode": 2073346
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/171",
+      "dev": 64769,
+      "inode": 2076312
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/185",
+      "dev": 64769,
+      "inode": 2076815
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/106",
+      "dev": 64769,
+      "inode": 2073427
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/195",
+      "dev": 64769,
+      "inode": 2077128
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/211",
+      "dev": 64769,
+      "inode": 2077613
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/234",
+      "dev": 64769,
+      "inode": 2078584
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/61",
+      "dev": 64769,
+      "inode": 2071930
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/129",
+      "dev": 64769,
+      "inode": 2075073
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/132",
+      "dev": 64769,
+      "inode": 2075228
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/104",
+      "dev": 64769,
+      "inode": 2073388
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/57",
+      "dev": 64769,
+      "inode": 2071849
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/94",
+      "dev": 64769,
+      "inode": 2072848
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/160",
+      "dev": 64769,
+      "inode": 2075936
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/166",
+      "dev": 64769,
+      "inode": 2076169
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/52",
+      "dev": 64769,
+      "inode": 2071760
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/102",
+      "dev": 64769,
+      "inode": 2073329
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/201",
+      "dev": 64769,
+      "inode": 2077247
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/24",
+      "dev": 64769,
+      "inode": 1173073
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/131",
+      "dev": 64769,
+      "inode": 2075216
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/191",
+      "dev": 64769,
+      "inode": 2077030
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/43",
+      "dev": 64769,
+      "inode": 2070855
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/120",
+      "dev": 64769,
+      "inode": 2074903
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/223",
+      "dev": 64769,
+      "inode": 2077819
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/232",
+      "dev": 64769,
+      "inode": 2078533
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/18",
+      "dev": 64769,
+      "inode": 1172949
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/175",
+      "dev": 64769,
+      "inode": 2076437
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/46",
+      "dev": 64769,
+      "inode": 2070938
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/68",
+      "dev": 64769,
+      "inode": 2072151
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/30",
+      "dev": 64769,
+      "inode": 1744335
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/193",
+      "dev": 64769,
+      "inode": 2077090
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/165",
+      "dev": 64769,
+      "inode": 2076153
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/89",
+      "dev": 64769,
+      "inode": 2072726
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/197",
+      "dev": 64769,
+      "inode": 2077159
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/51",
+      "dev": 64769,
+      "inode": 2071740
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/180",
+      "dev": 64769,
+      "inode": 2076613
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/90",
+      "dev": 64769,
+      "inode": 2072750
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/190",
+      "dev": 64769,
+      "inode": 2076996
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/36",
+      "dev": 64769,
+      "inode": 1873734
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/105",
+      "dev": 64769,
+      "inode": 2073404
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/0",
+      "dev": 64769,
+      "inode": 839547
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/149",
+      "dev": 64769,
+      "inode": 2075664
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/150",
+      "dev": 64769,
+      "inode": 2075687
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/112",
+      "dev": 64769,
+      "inode": 2074027
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/215",
+      "dev": 64769,
+      "inode": 2077661
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/199",
+      "dev": 64769,
+      "inode": 2077209
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/204",
+      "dev": 64769,
+      "inode": 2077293
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/91",
+      "dev": 64769,
+      "inode": 2072778
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/13",
+      "dev": 64769,
+      "inode": 1172852
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/41",
+      "dev": 64769,
+      "inode": 2003077
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/54",
+      "dev": 64769,
+      "inode": 2071822
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/203",
+      "dev": 64769,
+      "inode": 2077283
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/124",
+      "dev": 64769,
+      "inode": 2074985
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/81",
+      "dev": 64769,
+      "inode": 2072529
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/218",
+      "dev": 64769,
+      "inode": 2077711
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/75",
+      "dev": 64769,
+      "inode": 2072377
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/173",
+      "dev": 64769,
+      "inode": 2076364
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/86",
+      "dev": 64769,
+      "inode": 2072640
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/77",
+      "dev": 64769,
+      "inode": 2072426
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/110",
+      "dev": 64769,
+      "inode": 2073720
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/183",
+      "dev": 64769,
+      "inode": 2076688
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/147",
+      "dev": 64769,
+      "inode": 2075598
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/152",
+      "dev": 64769,
+      "inode": 2075736
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/156",
+      "dev": 64769,
+      "inode": 2075823
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/5",
+      "dev": 64769,
+      "inode": 1097970
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/33",
+      "dev": 64769,
+      "inode": 1744506
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/136",
+      "dev": 64769,
+      "inode": 2075294
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/153",
+      "dev": 64769,
+      "inode": 2075746
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/178",
+      "dev": 64769,
+      "inode": 2076568
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/38",
+      "dev": 64769,
+      "inode": 1873770
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/60",
+      "dev": 64769,
+      "inode": 2071912
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/167",
+      "dev": 64769,
+      "inode": 2076190
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/164",
+      "dev": 64769,
+      "inode": 2076043
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/50",
+      "dev": 64769,
+      "inode": 2071491
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/69",
+      "dev": 64769,
+      "inode": 2072154
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/8",
+      "dev": 64769,
+      "inode": 1098018
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/16",
+      "dev": 64769,
+      "inode": 1172912
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/228",
+      "dev": 64769,
+      "inode": 2077990
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/107",
+      "dev": 64769,
+      "inode": 2073440
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/133",
+      "dev": 64769,
+      "inode": 2075236
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/210",
+      "dev": 64769,
+      "inode": 2077597
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/66",
+      "dev": 64769,
+      "inode": 2072108
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/224",
+      "dev": 64769,
+      "inode": 2077844
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/27",
+      "dev": 64769,
+      "inode": 1356586
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/151",
+      "dev": 64769,
+      "inode": 2075713
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/222",
+      "dev": 64769,
+      "inode": 2077798
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/202",
+      "dev": 64769,
+      "inode": 2077267
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/15",
+      "dev": 64769,
+      "inode": 1172911
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/130",
+      "dev": 64769,
+      "inode": 2075125
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/95",
+      "dev": 64769,
+      "inode": 2072873
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/97",
+      "dev": 64769,
+      "inode": 2073011
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/40",
+      "dev": 64769,
+      "inode": 2003041
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/22",
+      "dev": 64769,
+      "inode": 1172995
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/67",
+      "dev": 64769,
+      "inode": 2072140
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/177",
+      "dev": 64769,
+      "inode": 2076537
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/140",
+      "dev": 64769,
+      "inode": 2075433
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/187",
+      "dev": 64769,
+      "inode": 2076860
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/34",
+      "dev": 64769,
+      "inode": 1744523
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/78",
+      "dev": 64769,
+      "inode": 2072440
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/37",
+      "dev": 64769,
+      "inode": 1873757
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/181",
+      "dev": 64769,
+      "inode": 2076644
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/114",
+      "dev": 64769,
+      "inode": 2074081
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/139",
+      "dev": 64769,
+      "inode": 2075422
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/170",
+      "dev": 64769,
+      "inode": 2076278
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/169",
+      "dev": 64769,
+      "inode": 2076237
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/125",
+      "dev": 64769,
+      "inode": 2074992
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/174",
+      "dev": 64769,
+      "inode": 2076408
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/157",
+      "dev": 64769,
+      "inode": 2075847
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/182",
+      "dev": 64769,
+      "inode": 2076664
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/12",
+      "dev": 64769,
+      "inode": 1172806
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/71",
+      "dev": 64769,
+      "inode": 2072279
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/225",
+      "dev": 64769,
+      "inode": 2077866
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/119",
+      "dev": 64769,
+      "inode": 2074883
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/141",
+      "dev": 64769,
+      "inode": 2075489
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/62",
+      "dev": 64769,
+      "inode": 2071982
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/230",
+      "dev": 64769,
+      "inode": 2078425
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/207",
+      "dev": 64769,
+      "inode": 2077473
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/70",
+      "dev": 64769,
+      "inode": 2072253
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/101",
+      "dev": 64769,
+      "inode": 2073290
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/21",
+      "dev": 64769,
+      "inode": 1172980
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/118",
+      "dev": 64769,
+      "inode": 2074634
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/135",
+      "dev": 64769,
+      "inode": 2075283
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/189",
+      "dev": 64769,
+      "inode": 2076950
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/155",
+      "dev": 64769,
+      "inode": 2075798
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/128",
+      "dev": 64769,
+      "inode": 2075055
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/144",
+      "dev": 64769,
+      "inode": 2075535
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/186",
+      "dev": 64769,
+      "inode": 2076835
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/127",
+      "dev": 64769,
+      "inode": 2075027
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/221",
+      "dev": 64769,
+      "inode": 2077777
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/32",
+      "dev": 64769,
+      "inode": 1744467
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/209",
+      "dev": 64769,
+      "inode": 2077556
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/9",
+      "dev": 64769,
+      "inode": 1098037
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/65",
+      "dev": 64769,
+      "inode": 2072093
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/196",
+      "dev": 64769,
+      "inode": 2077141
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/217",
+      "dev": 64769,
+      "inode": 2077690
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/192",
+      "dev": 64769,
+      "inode": 2077081
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/137",
+      "dev": 64769,
+      "inode": 2075297
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/25",
+      "dev": 64769,
+      "inode": 1356527
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/93",
+      "dev": 64769,
+      "inode": 2072831
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/56",
+      "dev": 64769,
+      "inode": 2071842
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/48",
+      "dev": 64769,
+      "inode": 2071000
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/63",
+      "dev": 64769,
+      "inode": 2072073
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/161",
+      "dev": 64769,
+      "inode": 2075962
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/231",
+      "dev": 64769,
+      "inode": 2078502
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/216",
+      "dev": 64769,
+      "inode": 2077669
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/83",
+      "dev": 64769,
+      "inode": 2072578
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/19",
+      "dev": 64769,
+      "inode": 1172957
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/115",
+      "dev": 64769,
+      "inode": 2074115
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/168",
+      "dev": 64769,
+      "inode": 2076219
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/7",
+      "dev": 64769,
+      "inode": 1098002
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/14",
+      "dev": 64769,
+      "inode": 1172880
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/35",
+      "dev": 64769,
+      "inode": 1744565
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/142",
+      "dev": 64769,
+      "inode": 2075504
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/23",
+      "dev": 64769,
+      "inode": 1173024
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/146",
+      "dev": 64769,
+      "inode": 2075584
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/29",
+      "dev": 64769,
+      "inode": 1356623
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/99",
+      "dev": 64769,
+      "inode": 2073170
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/82",
+      "dev": 64769,
+      "inode": 2072555
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/20",
+      "dev": 64769,
+      "inode": 1172971
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/138",
+      "dev": 64769,
+      "inode": 2075396
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/227",
+      "dev": 64769,
+      "inode": 2077941
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/143",
+      "dev": 64769,
+      "inode": 2075513
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/229",
+      "dev": 64769,
+      "inode": 2078208
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/53",
+      "dev": 64769,
+      "inode": 2071811
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/205",
+      "dev": 64769,
+      "inode": 2077314
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/47",
+      "dev": 64769,
+      "inode": 2070972
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/49",
+      "dev": 64769,
+      "inode": 2071246
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/80",
+      "dev": 64769,
+      "inode": 2072506
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/188",
+      "dev": 64769,
+      "inode": 2076889
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/73",
+      "dev": 64769,
+      "inode": 2072346
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/100",
+      "dev": 64769,
+      "inode": 2073195
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/194",
+      "dev": 64769,
+      "inode": 2077119
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/208",
+      "dev": 64769,
+      "inode": 2077535
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/148",
+      "dev": 64769,
+      "inode": 2075648
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/11",
+      "dev": 64769,
+      "inode": 1098123
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/233",
+      "dev": 64769,
+      "inode": 2078548
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/3",
+      "dev": 64769,
+      "inode": 1097942
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/116",
+      "dev": 64769,
+      "inode": 2074143
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/109",
+      "dev": 64769,
+      "inode": 2073684
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/117",
+      "dev": 64769,
+      "inode": 2074389
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/154",
+      "dev": 64769,
+      "inode": 2075785
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/111",
+      "dev": 64769,
+      "inode": 2073978
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/220",
+      "dev": 64769,
+      "inode": 2077770
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/58",
+      "dev": 64769,
+      "inode": 2071862
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/184",
+      "dev": 64769,
+      "inode": 2076757
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/122",
+      "dev": 64769,
+      "inode": 2074965
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/159",
+      "dev": 64769,
+      "inode": 2075908
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/113",
+      "dev": 64769,
+      "inode": 2074047
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/198",
+      "dev": 64769,
+      "inode": 2077164
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/163",
+      "dev": 64769,
+      "inode": 2076006
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/59",
+      "dev": 64769,
+      "inode": 2071884
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/134",
+      "dev": 64769,
+      "inode": 2075251
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/219",
+      "dev": 64769,
+      "inode": 2077743
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/87",
+      "dev": 64769,
+      "inode": 2072665
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/84",
+      "dev": 64769,
+      "inode": 2072588
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/214",
+      "dev": 64769,
+      "inode": 2077645
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/64",
+      "dev": 64769,
+      "inode": 2072085
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/2",
+      "dev": 64769,
+      "inode": 1097920
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/212",
+      "dev": 64769,
+      "inode": 2077616
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/42",
+      "dev": 64769,
+      "inode": 2070806
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/172",
+      "dev": 64769,
+      "inode": 2076342
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/162",
+      "dev": 64769,
+      "inode": 2075979
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/6",
+      "dev": 64769,
+      "inode": 1097982
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/26",
+      "dev": 64769,
+      "inode": 1356557
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/31",
+      "dev": 64769,
+      "inode": 1744372
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/96",
+      "dev": 64769,
+      "inode": 2072962
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/10",
+      "dev": 64769,
+      "inode": 1098072
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/74",
+      "dev": 64769,
+      "inode": 2072355
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/123",
+      "dev": 64769,
+      "inode": 2074972
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/200",
+      "dev": 64769,
+      "inode": 2077241
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/72",
+      "dev": 64769,
+      "inode": 2072290
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/45",
+      "dev": 64769,
+      "inode": 2070904
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/126",
+      "dev": 64769,
+      "inode": 2075005
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/44",
+      "dev": 64769,
+      "inode": 2070875
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/17",
+      "dev": 64769,
+      "inode": 1172940
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/179",
+      "dev": 64769,
+      "inode": 2076595
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/92",
+      "dev": 64769,
+      "inode": 2072804
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/root",
+      "dev": 64769,
+      "inode": 2078603
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main0",
+      "dev": 64769,
+      "inode": 2078861
+    },
+    {
+      "path": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main1",
+      "dev": 64769,
+      "inode": 2078892
+    }
+  ]
+}
