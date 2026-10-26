@@ -46,5 +46,9 @@
   {
     "kind": "resource-accounting-conservative-doublecharge",
     "resolution": "Initial receipts added already-live worker reserve to prospective demand. Subsequent receipts count actual live RSS once; all initial stricter checks passed."
+  },
+  {
+    "kind": "evidence-manifest-self-reference",
+    "resolution": "Resumed publication included preexisting manifest as payload. Exclude self, independently rehash every committed payload, publish ordinary child commit."
   }
 ]
