@@ -1,0 +1,70 @@
+{
+  "initialPublication": {
+    "commit": "10c82139d05f3e22198eda24f5128b0268a9a3fd",
+    "branch": "task/ricochet-current-gameplay-api-oct26",
+    "remoteRef": "10c82139d05f3e22198eda24f5128b0268a9a3fd\trefs/heads/task/ricochet-current-gameplay-api-oct26",
+    "changed": [
+      "docs/re-notes/ricochet-current-gameplay-api-oct26/README.md",
+      "docs/re-notes/ricochet-current-gameplay-api-oct26/evidence-manifest.json",
+      "docs/re-notes/ricochet-current-gameplay-api-oct26/operations.tar.gz",
+      "docs/re-notes/ricochet-current-gameplay-api-oct26/receipt.json"
+    ],
+    "evidence": "/tmp/ricochet-current-gameplay-api-oct26/repo/docs/re-notes/ricochet-current-gameplay-api-oct26",
+    "dashboard": "/home/user/wine-assembly/scratch/runs/20261026T210132Z-reflexive-ricochet-xtreme-api-oct26",
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "gitDataLimit": 536870912
+  },
+  "finalAdmission": {
+    "stage": "afterpush",
+    "charges": {
+      "localActual": 696320,
+      "remoteActual": 50524160,
+      "launcherActual": 663552,
+      "sessionActual": 1568768,
+      "positiveWALOnceConservativePeak": 4616192,
+      "futureGit": 0,
+      "futureSessionEventsAndPublication": 262144,
+      "reserve": 8388608
+    },
+    "total": 66719744,
+    "cap": 67108864,
+    "hostFree": 3718103040,
+    "projectedHostFree": 3717840896,
+    "hostFloor": 2982150144,
+    "changedProjection": "No guest, images or guest growth; completed receipts compressed. Evidence archive moved into isolated repo without duplicate; futureGit192KiB bounds compact selected evidence archive plus metadata/object/index. Future session/events262144B; positive WAL peak retained even if checkpoint shrinks current file.",
+    "pass": true
+  },
+  "evidenceCheck": {
+    "exit": 0,
+    "result": {
+      "runs": 1,
+      "errors": [],
+      "missing": [],
+      "invalid": []
+    }
+  },
+  "metadataIncident": "First containment check exit0 included invalid outcome blocked; corrected ignored dashboard outcome to harness-error and explicitly required empty invalid/errors/missing before handoff.",
+  "archiveQualification": "Compact operations archive retains every file except compressed transport histories and jsonl; original transfer chunk histories were discarded after source/destination full-file SHA/mode verification. Exact source/asset hashes and recipes plus first failures remain committed. No binaries.",
+  "optionalDependencyCleanup": {
+    "commandId": "cmd_z9vww3k073jo",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:19:51.576Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-26T21:19:51.508Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"removedOptionalPngjsBrowserBundle\": 572711, \"remoteAllocated\": 50524160, \"requiredNodePNGEntrypoint\": true, \"allGameAssetsUnchanged\": true, \"box\": \"bx_ex22dvm8\", \"state\": \"RUNNING API exec verified\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "runnerUnchanged": true,
+  "noGuestRun": true,
+  "boxState": "RUNNING API confirmed at final footprint cleanup, no later lifecycle action",
+  "shutdownOwner": "coordinator"
+}
