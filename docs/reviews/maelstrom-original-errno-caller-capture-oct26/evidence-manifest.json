@@ -36,8 +36,8 @@
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/supervise.py",
-    "bytes": 4962,
-    "sha256": "ce205699baa9bcfa3e8a898324ccaa0209bbd3562f2872d56401bde87e35478e"
+    "bytes": 4961,
+    "sha256": "1fc9d40c7b98048074358c1a093214e596be14aa5dceaaa30aa6df805453d418"
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/remote-prestage.json",
@@ -126,8 +126,8 @@
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/result.json",
-    "bytes": 6098,
-    "sha256": "625c5f9674a2d41743a66eefe6c6ef41c063c126c0cee10ebde4e8eaa56813bb"
+    "bytes": 6420,
+    "sha256": "df38581bbd6d1a436fc561864292bc57d09f6db9730395b154b32b5667f8a990"
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/root-ref-final.json",
@@ -141,8 +141,8 @@
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/stage.py",
-    "bytes": 2759,
-    "sha256": "67c17c42c40d7d0ff3eab51f6d2c85579a065ecfc33b3862a13b5d6a728bd06e"
+    "bytes": 2739,
+    "sha256": "1345e12f6685b07bebaebdffc55553fb598179faa6cfa8fc46a04dc05f4d5e35"
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/prepare.json",
@@ -171,8 +171,8 @@
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/incidents.json",
-    "bytes": 1257,
-    "sha256": "fd9c506898e3a0c458535bbb9189468d1c65feff64b9390be537bb959b6184a1"
+    "bytes": 1577,
+    "sha256": "7c2eb03c4fa7447ef4be9ea9ab686dedadd86b50903789d8c7290424dcbe7dab"
   },
   {
     "path": "docs/reviews/maelstrom-original-errno-caller-capture-oct26/command.json",

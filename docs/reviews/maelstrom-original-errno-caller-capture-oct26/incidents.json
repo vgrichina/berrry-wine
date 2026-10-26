@@ -5,5 +5,6 @@
   "CLI --status first used commandId and rejected it; corrected to actual positive process ID, no runtime access denial/retry.",
   "First supervisor exited before Node launch because stage precreated an empty guest directory; failure retained, empty owned directory removed. One actual Node guest process followed.",
   "Owned loaded-byte verifier incorrectly compared preferred-base absolute IAT operand at relocated SDL_net RVA12f2. Actual raw mismatching bytes were not captured. Authentic PE HIGHLOW relocation at RVA12f4 independently proves required expected operand. No claim of incompatible production loader.",
-  "First and only Node guest exited before mne_start. Corrected verifier tested offline only; no second guest or latch invocation authorized/performed."
+  "First and only Node guest exited before mne_start. Corrected verifier tested offline only; no second guest or latch invocation authorized/performed.",
+  "Prepublication diff --check found one trailing space in copied supervisor recipe; publication script erroneously continued because it did not depend on the check result. Initial ea399ffd push retained; whitespace corrected in normal forward followup with enforced passing check. No runtime/source behavior changed."
 ]

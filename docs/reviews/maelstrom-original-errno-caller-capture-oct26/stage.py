@@ -23,5 +23,5 @@ for x in M:
    continue
  rows.append(row)
 if rows:putrows(rows);batches+=1
-r=py('import pathlib,json,hashlib;h=pathlib.Path('+repr(str(H))+');m=json.loads((h/"manifest.json").read_text());[(None if hashlib.sha256((h/x["target"]).read_bytes()).hexdigest()==x["sha256"] else (_ for _ in ()).throw(Exception(x["target"]))) for x in m];(h/"guest").mkdir();print(json.dumps(dict(files=len(m),allHashesVerified=True,ownedBytes=sum(max(p.stat().st_size,p.stat().st_blocks*512) for p in h.rglob("*") if p.is_file()))))');save('remote-staged.json',r)
+r=py('import pathlib,json,hashlib;h=pathlib.Path('+repr(str(H))+');m=json.loads((h/"manifest.json").read_text());[(None if hashlib.sha256((h/x["target"]).read_bytes()).hexdigest()==x["sha256"] else (_ for _ in ()).throw(Exception(x["target"]))) for x in m];print(json.dumps(dict(files=len(m),allHashesVerified=True,ownedBytes=sum(max(p.stat().st_size,p.stat().st_blocks*512) for p in h.rglob("*") if p.is_file()))))');save('remote-staged.json',r)
 print(json.dumps(dict(staged=True,batches=batches)))

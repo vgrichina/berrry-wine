@@ -46,7 +46,7 @@ if sys.argv[1]=='output-control':
   assert (E/'output.log').stat().st_size==131072
   receipt=stop(p);receipt.update(reason='output-guard',bytes=(E/'output.log').stat().st_size,failedOutputRetained=True)
  (E/'receipt.json').write_text(json.dumps(receipt,indent=2));print(json.dumps(receipt));sys.exit(0)
-assert sys.argv[1]=='guest' 
+assert sys.argv[1]=='guest'
 assert time.time()+65<1792976700.0,'insufficient time before01:05UTC'
 import fcntl
 lock=open('/tmp/wine-ops-heavy-runtime.lock','a+')
