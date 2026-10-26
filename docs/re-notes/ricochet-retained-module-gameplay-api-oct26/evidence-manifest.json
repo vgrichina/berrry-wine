@@ -1,0 +1,22 @@
+[
+  {
+    "path": "operations.tar.gz",
+    "bytes": 124768,
+    "sha256": "e9c9f8b2dd0169c259a4607c973df9f9fcd09ad9135b4c2d216dedcbbddd26ad"
+  },
+  {
+    "path": "transport.tar.gz",
+    "bytes": 6784,
+    "sha256": "1cb388219ac3069d633e3017a36c292771170ff40dceb56f86828f32169416cd"
+  },
+  {
+    "path": "receipt.json",
+    "bytes": 8818,
+    "sha256": "1275a9dac2cca40b3b8a0ed9c6260f3a5d38f1d08bd71925b5006823e3fba6b6"
+  },
+  {
+    "path": "README.md",
+    "bytes": 1705,
+    "sha256": "0e85fcac5df3629f137bb5b5842a6ec638c2eda7432b88320f4408a3dfb1a953"
+  }
+]
