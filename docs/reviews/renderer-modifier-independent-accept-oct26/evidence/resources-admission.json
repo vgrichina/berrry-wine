@@ -1,0 +1,63 @@
+{
+  "phase": "admission",
+  "focusedManifest": [
+    {
+      "path": "/tmp/renderer-modifier-independent-accept-oct26/ops/resources.py",
+      "bytes": 2047
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-modifier-independent-accept-oct26/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-modifier-independent-accept-oct26/root-ref-digest.json",
+      "bytes": 196
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-modifier-independent-accept-oct26/events.jsonl",
+      "bytes": 104163
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T06-01-52-01a176cd-0f35-70c0-8556-08129466268e.jsonl",
+      "bytes": 368861
+    }
+  ],
+  "focusedBytes": 475267,
+  "sharedWALSingleConservativeUpperBound": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 1417312
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4194192
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4247752
+    }
+  ],
+  "sharedWALBytes": 26256920,
+  "futureBytes": 12582912,
+  "reserveBytes": 8388608,
+  "projectedPeak": 47703707,
+  "limit": 67108864,
+  "freeBytes": 4543131648,
+  "freeAfterFuture": 4530548736,
+  "memAvailable": 3537911808,
+  "fleetCodexAndMainThreadRSS": 2650263552,
+  "memoryAfterClientAllowance": 3001040896,
+  "pass": true
+}

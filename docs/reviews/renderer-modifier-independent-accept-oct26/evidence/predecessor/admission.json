@@ -1,0 +1,18 @@
+{
+  "phase": "before-checkout",
+  "taskBytes": 0,
+  "launcherBytes": 120580,
+  "projectionPeak": 58720256,
+  "reserveIncluded": 8388608,
+  "futureSessionAndPositiveSharedWALAllowance": 16777216,
+  "freeBytes": 4575715328,
+  "memAvailable": 2550509568,
+  "clientAllowance": 536870912,
+  "nodeRealpath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "nodeStandingBytes": 123656816,
+  "donorObjects": "read-only existing flat leaves; no copy",
+  "mountArgv": [],
+  "mountValidation": "N/A no mounts/guest execution",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pass": true
+}

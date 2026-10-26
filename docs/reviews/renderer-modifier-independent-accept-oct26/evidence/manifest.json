@@ -1,0 +1,182 @@
+{
+  "independent-baseline-final.tap": {
+    "bytes": 33566,
+    "sha256": "30dcaeb791eb12807a4dfad1185e18dda4bf54280a032c0497ad19cf9cba1cea"
+  },
+  "independent-baseline.tap": {
+    "bytes": 27634,
+    "sha256": "0aa48c8827185cc5d8e29538f893833cf88f5f7a011f53c5e8ef65154a4106a4"
+  },
+  "pins.json": {
+    "bytes": 203,
+    "sha256": "e16851e8537ee26d99da646a0b4767895f118482b5cdf251ab830d758b65c23e"
+  },
+  "legacy.txt": {
+    "bytes": 93,
+    "sha256": "cd567b2912266931c3b6efebced13c74e9a907af6376f943490edb836d075d65"
+  },
+  "checkpoint.json": {
+    "bytes": 1000,
+    "sha256": "275313f186ace9c4ccab10d4c325ed68318ca1a0ff49866f7c724a063da6faf4"
+  },
+  "browser-boundary-excerpt.txt": {
+    "bytes": 834,
+    "sha256": "1ff2fdf107c09345da1b8fb2911405dca1f5790282f95f7079dd67e200727170"
+  },
+  "run-legacy.cjs": {
+    "bytes": 416,
+    "sha256": "1c54246ea2ea448a6a3861e425274df7739a9e759c85f7efa2d5da5ce880b687"
+  },
+  "browser-boundary-pin.json": {
+    "bytes": 389,
+    "sha256": "aac87e200cd1c28e308b671477d7a51417581fe7080fcbe18f027e6b8c29af18"
+  },
+  "configuration.json": {
+    "bytes": 431,
+    "sha256": "0dc7f41d47349fd2626ccd0a5ddeb6c3a2bce7257394a69a3346d6532f00edbd"
+  },
+  "resources-publication.json": {
+    "bytes": 16962,
+    "sha256": "312bf3d99609270817bb1de4de1801f30dfe8421cfd4100de539624e96bf8548"
+  },
+  "predecessor-verification.json": {
+    "bytes": 679,
+    "sha256": "ce696d291cb135eb42d028f4a0e02ebf046a501fcc2c7ce17188b3dee7060280"
+  },
+  "baseline-renderer-input.js": {
+    "bytes": 177069,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+  },
+  "independent.tap": {
+    "bytes": 10482,
+    "sha256": "788d731b10d1aee0f307c3bd53099811db493c7a7fe99be2bf41d92c2116d563"
+  },
+  "resources-admission.json": {
+    "bytes": 1736,
+    "sha256": "65a423a1ca74dea0898953b2d88c3a52ae8e12cea460be333cb222cd02158931"
+  },
+  "baseline-loader.cjs": {
+    "bytes": 422,
+    "sha256": "60dbbe6c1b6f6971fe84ebaa609a4ba7284a51bf45416a2ac6c70f80d5047937"
+  },
+  "supplied.tap": {
+    "bytes": 6630,
+    "sha256": "0b56ba4e755621ab2232261b5e812bd7533450067493b4b81a3c1d3c91e14bf1"
+  },
+  "independent-final.tap": {
+    "bytes": 15134,
+    "sha256": "d3c59d44cabdc73ed334beed65681793bbc747bd1b09bbc522696d00e90f40cf"
+  },
+  "checkout.txt": {
+    "bytes": 75,
+    "sha256": "33687fa726bca771f687e745ed9f219a6ad8543d28a11c86a2a9a52a621b3a41"
+  },
+  "legacy-keyboard-message-lparam.cjs": {
+    "bytes": 4342,
+    "sha256": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+  },
+  "resources-before-tests.json": {
+    "bytes": 13735,
+    "sha256": "a7266eade1ea2f7875ecbfc3764de2d1a61a0e32668398c217bf70c9827aa0be"
+  },
+  "predecessor/baseline.tap": {
+    "bytes": 34151,
+    "sha256": "dd2d12fc8b10257d20da779eb19c2e60ff7025251d5de855822d240173b9c42f"
+  },
+  "predecessor/resources-final.json": {
+    "bytes": 14097,
+    "sha256": "e3075511b8c725d50f4008bcd28b30276f1321d6621696866193a78216963ce5"
+  },
+  "predecessor/legacy-result.txt": {
+    "bytes": 93,
+    "sha256": "cd567b2912266931c3b6efebced13c74e9a907af6376f943490edb836d075d65"
+  },
+  "predecessor/checkpoint.json": {
+    "bytes": 1356,
+    "sha256": "52868a421be91a6f625315fc66d2af05de55c577b1fe79bec0112d08921c1f6d"
+  },
+  "predecessor/run-legacy.cjs": {
+    "bytes": 416,
+    "sha256": "1c54246ea2ea448a6a3861e425274df7739a9e759c85f7efa2d5da5ce880b687"
+  },
+  "predecessor/recovered-blobs.json": {
+    "bytes": 1749,
+    "sha256": "e60ddd5827fc8c24c9fc32a264a16105d59ecb47e8f0d86e4d8e6761102cf68c"
+  },
+  "predecessor/ls-remote.txt": {
+    "bytes": 103,
+    "sha256": "15c81e3b1b3b43e6bea023a92ccd482512007901b6564ee62a25f1edab20995a"
+  },
+  "predecessor/recovered-objects.json": {
+    "bytes": 352,
+    "sha256": "ae90f55ada357488ec4428157a737462f31a143d39f949d61fa0d0a733226507"
+  },
+  "predecessor/resources-publication.json": {
+    "bytes": 12045,
+    "sha256": "dec0ff05e09b3675c4f331576f394b5649f07c99be50e0e839123d7595173fde"
+  },
+  "predecessor/RECOVERY.md": {
+    "bytes": 3613,
+    "sha256": "bbff387b7bf892748e0d556f94b1bba37f9353e47a33dae32cf8d9b157cffe7b"
+  },
+  "predecessor/ls-remote.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "predecessor/baseline-renderer-input.js": {
+    "bytes": 177069,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+  },
+  "predecessor/admission.json": {
+    "bytes": 730,
+    "sha256": "15bb5009ec60ead19d366f69a3e59ef4a22c36c17593fa48cc0d0a027def7d7a"
+  },
+  "predecessor/repair-final.tap": {
+    "bytes": 6625,
+    "sha256": "e49ddbe0d19ef3b81c0c333ecc59d4e5cd115e76652f74fdf49c971d6210ed88"
+  },
+  "predecessor/baseline-loader.cjs": {
+    "bytes": 422,
+    "sha256": "60dbbe6c1b6f6971fe84ebaa609a4ba7284a51bf45416a2ac6c70f80d5047937"
+  },
+  "predecessor/baseline-final.tap": {
+    "bytes": 37460,
+    "sha256": "14470ecdca70f65c0aa132ed160aad63b79d94e7ca8f6efab98709b5758f9b43"
+  },
+  "predecessor/push.log": {
+    "bytes": 648,
+    "sha256": "fcad9663ed7b11bbc289bb9ced48b37a76247e1f975d49ef806b05330e3ebb71"
+  },
+  "predecessor/result.json": {
+    "bytes": 1864,
+    "sha256": "6ddc0f99c00982d4431088ee8e0db09ecad3901a4ec0db80a1bae3301af0cb85"
+  },
+  "predecessor/root-ref-final.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "predecessor/hashes.json": {
+    "bytes": 2987,
+    "sha256": "8062ae301cde98189f171d665c4bfeb8f26a0ba27cd15857019ce73c80c69a30"
+  },
+  "predecessor/repair.patch": {
+    "bytes": 14015,
+    "sha256": "37ece77636dcf6c22cb199f956b7b8dd85d031eef2b12f1b8e7c61c4f39f0923"
+  },
+  "predecessor/resources.py": {
+    "bytes": 2055,
+    "sha256": "9837c96228f4ce33ce684385a01f0ba6828d3f315ce7cd37ddaf80ed4057a4cc"
+  },
+  "predecessor/legacy-keyboard-message-lparam.cjs": {
+    "bytes": 4342,
+    "sha256": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+  },
+  "predecessor/repair.tap": {
+    "bytes": 7082,
+    "sha256": "3f99ea6b4034ce577ff256e83b56945511f6645652db5921dbb0054930315558"
+  },
+  "predecessor/before-tests.json": {
+    "bytes": 112,
+    "sha256": "1bbd6446e3767f01d2c22cbad5e029785e21531842d8649b995e03ff8f05f365"
+  }
+}

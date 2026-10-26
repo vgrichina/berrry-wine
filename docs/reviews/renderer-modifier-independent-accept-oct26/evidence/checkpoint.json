@@ -1,0 +1,23 @@
+{
+  "candidate": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "base": "9148ceb18768955f647130c2e936228429892477",
+  "fixtureHashes": {
+    "lib/renderer-input.js": "f76dc7ed21d93bd54ca032882a9e3e816e93f1860fd113c8986372cc82e25957",
+    "test/renderer-physical-modifiers.test.cjs": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+    "test/renderer-modifier-independent-accept.test.cjs": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf"
+  },
+  "groups": {
+    "supplied": "37 pass 0 fail supplied.tap",
+    "independent": "23 pass 6 fail independent-final.tap",
+    "independentBaseline": "2 pass 27 fail independent-baseline-final.tap",
+    "legacy": "PASS legacy.txt"
+  },
+  "decision": "REJECT",
+  "remaining": [
+    "publication",
+    "current-main integration and runtime gates remain coordinator-owned"
+  ],
+  "blockers": [
+    "public side-specific physical and async state returns zero for actual DOM-side modifier presses; preexisting on baseline"
+  ]
+}

@@ -1,0 +1,690 @@
+TAP version 13
+# Subtest: Shift public aggregate both press/release orders Left/Left
+not ok 1 - Shift public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 4.041584
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: Shift public aggregate both press/release orders Left/Right
+not ok 2 - Shift public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.351859
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Left
+not ok 3 - Shift public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.204132
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Right
+not ok 4 - Shift public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.160401
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift side-specific public physical and async polling
+not ok 5 - Shift side-specific public physical and async polling
+  ---
+  duration_ms: 0.471984
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    left physical VK must report actual left press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:41:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift side-specific async alone through public input
+not ok 6 - Shift side-specific async alone through public input
+  ---
+  duration_ms: 0.254617
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:49:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:52:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift repeat, unmatched release, contradictory location and reset
+not ok 7 - Shift repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.246602
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:54:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    code identity wins conflicting location
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:58:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift CLI numeric ownership mixed with physical and focus release
+not ok 8 - Shift CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.353564
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:68:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    numeric owner survives physical releases
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:71:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Left
+not ok 9 - Control public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.164219
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Right
+not ok 10 - Control public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.227716
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Left
+not ok 11 - Control public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.194475
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Right
+not ok 12 - Control public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.153938
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side-specific public physical and async polling
+not ok 13 - Control side-specific public physical and async polling
+  ---
+  duration_ms: 0.14427
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    left physical VK must report actual left press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:41:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side-specific async alone through public input
+not ok 14 - Control side-specific async alone through public input
+  ---
+  duration_ms: 0.12754
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:49:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:52:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control repeat, unmatched release, contradictory location and reset
+not ok 15 - Control repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.107582
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:54:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    code identity wins conflicting location
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:58:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control CLI numeric ownership mixed with physical and focus release
+not ok 16 - Control CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.142517
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:68:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    numeric owner survives physical releases
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:71:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Left
+not ok 17 - Alt public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.113902
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Right
+not ok 18 - Alt public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.163085
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Left
+not ok 19 - Alt public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.103114
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Right
+not ok 20 - Alt public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.055443
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:16:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:19:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side-specific public physical and async polling
+not ok 21 - Alt side-specific public physical and async polling
+  ---
+  duration_ms: 0.177664
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    left physical VK must report actual left press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:41:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side-specific async alone through public input
+not ok 22 - Alt side-specific async alone through public input
+  ---
+  duration_ms: 0.107642
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:49:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:52:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt repeat, unmatched release, contradictory location and reset
+not ok 23 - Alt repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.06941
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:54:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    code identity wins conflicting location
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:58:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt CLI numeric ownership mixed with physical and focus release
+not ok 24 - Alt CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.151184
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:68:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    numeric owner survives physical releases
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:71:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: numeric browser key codes and nonmodifier message bits remain unchanged
+ok 25 - numeric browser key codes and nonmodifier message bits remain unchanged
+  ---
+  duration_ms: 1.334761
+  type: 'test'
+  ...
+# Subtest: Alt chord context survives opposite-side release; Ctrl suppresses system family
+not ok 26 - Alt chord context survives opposite-side release; Ctrl suppresses system family
+  ---
+  duration_ms: 0.194304
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:93:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    256 !== 260
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 260
+  actual: 256
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:95:36)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt tap final release and F10 system messages
+not ok 27 - Alt tap final release and F10 system messages
+  ---
+  duration_ms: 0.144761
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:100:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:102:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 1
+# fail 26
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 79.366158

@@ -1,0 +1,25 @@
+    const handleKeyDown = (e) => {
+      if (shouldIgnorePageKey(e)) return;
+      if (e.keyCode === 13 && e.altKey && activeAltEnterFullscreen()) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!e.repeat) toggleBrowserFullscreen(e);
+        altEnterSwallowed = true;
+        return;
+      }
+      const vk = e.keyCode;
+      unlockRunningAudio();
+      renderer.handleKeyDown(vk, {
+        code: e.code || '', location: e.location | 0, repeat: !!e.repeat,
+      });
+    const handleKeyUp = (e) => {
+      if (shouldIgnorePageKey(e)) return;
+      if (e.keyCode === 13 && altEnterSwallowed) {
+        altEnterSwallowed = false;
+        e.preventDefault();
+        return;
+      }
+      renderer.handleKeyUp(e.keyCode, {
+        code: e.code || '', location: e.location | 0, repeat: !!e.repeat,
+      });
+    };

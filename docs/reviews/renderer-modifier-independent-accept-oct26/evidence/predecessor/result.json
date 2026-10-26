@@ -1,0 +1,55 @@
+{
+  "task": "renderer-physical-modifier-state-repair-oct26",
+  "sessionId": "01a176c2-9175-72e3-8e88-b0228e719446",
+  "status": "complete",
+  "base": "9148ceb18768955f647130c2e936228429892477",
+  "commit": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "branch": "task/renderer-physical-modifier-state-repair-oct26",
+  "remoteVerified": true,
+  "remoteEvidence": "ls-remote.txt",
+  "ownedPaths": [
+    "lib/renderer-input.js",
+    "test/renderer-physical-modifiers.test.cjs"
+  ],
+  "tests": {
+    "baselineFinal": {
+      "exit": 1,
+      "pass": 1,
+      "fail": 36,
+      "log": "baseline-final.tap"
+    },
+    "repairFinal": {
+      "exit": 0,
+      "pass": 37,
+      "fail": 0,
+      "log": "repair-final.tap"
+    },
+    "existingKeyboardMessageLParam": {
+      "exit": 0,
+      "log": "legacy-result.txt"
+    },
+    "diffCheck": "PASS"
+  },
+  "sourceSha256": "f76dc7ed21d93bd54ca032882a9e3e816e93f1860fd113c8986372cc82e25957",
+  "testSha256": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+  "rootRefsUnchanged": true,
+  "rootTrackedIndexAndDonors": "read-only",
+  "resources": "resources-final.json",
+  "hashManifest": "hashes.json",
+  "recovery": "RECOVERY.md",
+  "incidents": [
+    "Initial combined instruction/search output exceeded 8192-byte excerpt target, later reads narrowed; no secret captured.",
+    "Sparse checkout reported 20 missing unrelated parent blobs; recovered 16352 bytes from immutable donor loose objects before commit.",
+    "First repaired run passed 34/35; menu-state test expected undefined rather than inactive boolean. Corrected assertion and retained first log."
+  ],
+  "runtime": {
+    "attempted": false,
+    "assignedBox": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "remainingGates": [
+    "coordinator review",
+    "current-main reconciliation; no merge performed"
+  ],
+  "gameplayClaim": false
+}

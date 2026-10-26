@@ -1,0 +1,17 @@
+{
+  "revision": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "path": "lib/browser-input.js",
+  "sha256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+  "ranges1basedInclusive": [
+    [
+      1094,
+      1107
+    ],
+    [
+      1122,
+      1132
+    ]
+  ],
+  "excerptBytes": 834,
+  "excerptSha256": "1ff2fdf107c09345da1b8fb2911405dca1f5790282f95f7079dd67e200727170"
+}

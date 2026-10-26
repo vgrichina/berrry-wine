@@ -1,0 +1,619 @@
+TAP version 13
+# Subtest: Shift public aggregate both press/release orders Left/Left
+ok 1 - Shift public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 2.294409
+  type: 'test'
+  ...
+# Subtest: Shift public aggregate both press/release orders Left/Right
+ok 2 - Shift public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.18645
+  type: 'test'
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Left
+ok 3 - Shift public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.132057
+  type: 'test'
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Right
+ok 4 - Shift public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.11738
+  type: 'test'
+  ...
+# Subtest: Shift side-specific public physical and async polling
+not ok 5 - Shift side-specific public physical and async polling
+  ---
+  duration_ms: 1.155675
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    physical and async aggregate/left/right sequence
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        [
+          [
+            32768,
+            32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+            0,
+            0
+          ]
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            32768,
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            0,
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1: <Circular>
+      2:
+        0: 0
+        1: 0
+    1:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    2:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    3:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+  actual:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    1:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    2:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    3:
+      0:
+        0: 0
+        1: 0
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:46:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift side-specific async alone through public input
+not ok 6 - Shift side-specific async alone through public input
+  ---
+  duration_ms: 0.186419
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:48:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:51:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift repeat, unmatched release, contradictory location and reset
+ok 7 - Shift repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.199243
+  type: 'test'
+  ...
+# Subtest: Shift CLI numeric ownership mixed with physical and focus release
+ok 8 - Shift CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.103515
+  type: 'test'
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Left
+ok 9 - Control public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.120357
+  type: 'test'
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Right
+ok 10 - Control public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.136766
+  type: 'test'
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Left
+ok 11 - Control public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.0801
+  type: 'test'
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Right
+ok 12 - Control public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.047168
+  type: 'test'
+  ...
+# Subtest: Control side-specific public physical and async polling
+not ok 13 - Control side-specific public physical and async polling
+  ---
+  duration_ms: 0.263114
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    physical and async aggregate/left/right sequence
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        [
+          [
+            32768,
+            32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+            0,
+            0
+          ]
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            32768,
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            0,
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1: <Circular>
+      2:
+        0: 0
+        1: 0
+    1:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    2:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    3:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+  actual:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    1:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    2:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    3:
+      0:
+        0: 0
+        1: 0
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:46:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side-specific async alone through public input
+not ok 14 - Control side-specific async alone through public input
+  ---
+  duration_ms: 0.077334
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:48:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:51:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control repeat, unmatched release, contradictory location and reset
+ok 15 - Control repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.091752
+  type: 'test'
+  ...
+# Subtest: Control CLI numeric ownership mixed with physical and focus release
+ok 16 - Control CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.073818
+  type: 'test'
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Left
+ok 17 - Alt public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.096492
+  type: 'test'
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Right
+ok 18 - Alt public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.037971
+  type: 'test'
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Left
+ok 19 - Alt public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.043371
+  type: 'test'
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Right
+ok 20 - Alt public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.040746
+  type: 'test'
+  ...
+# Subtest: Alt side-specific public physical and async polling
+not ok 21 - Alt side-specific public physical and async polling
+  ---
+  duration_ms: 0.250309
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:37:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    physical and async aggregate/left/right sequence
+    + actual - expected
+    ... Skipped lines
+    
+      [
+        [
+          [
+            32768,
+            32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+            0,
+            0
+          ]
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ],
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            32768,
+    ...
+          [
+    +       0,
+    +       0
+    -       32768,
+    -       32768
+          ]
+        ],
+        [
+          [
+            0,
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1: <Circular>
+      2:
+        0: 0
+        1: 0
+    1:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    2:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+    3:
+      0: <Circular>
+      1: <Circular>
+      2: <Circular>
+  actual:
+    0:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    1:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    2:
+      0:
+        0: 32768
+        1: 32768
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+    3:
+      0:
+        0: 0
+        1: 0
+      1:
+        0: 0
+        1: 0
+      2:
+        0: 0
+        1: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:46:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side-specific async alone through public input
+not ok 22 - Alt side-specific async alone through public input
+  ---
+  duration_ms: 0.071964
+  type: 'test'
+  location: '/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:48:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    right async VK must reflect right press
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-modifier-independent-accept-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:51:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt repeat, unmatched release, contradictory location and reset
+ok 23 - Alt repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.096331
+  type: 'test'
+  ...
+# Subtest: Alt CLI numeric ownership mixed with physical and focus release
+ok 24 - Alt CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.058318
+  type: 'test'
+  ...
+# Subtest: numeric browser key codes and nonmodifier message bits remain unchanged
+ok 25 - numeric browser key codes and nonmodifier message bits remain unchanged
+  ---
+  duration_ms: 0.247765
+  type: 'test'
+  ...
+# Subtest: Alt chord context survives opposite-side release; Ctrl suppresses system family
+ok 26 - Alt chord context survives opposite-side release; Ctrl suppresses system family
+  ---
+  duration_ms: 0.100629
+  type: 'test'
+  ...
+# Subtest: Alt tap final release and F10 system messages
+ok 27 - Alt tap final release and F10 system messages
+  ---
+  duration_ms: 0.111159
+  type: 'test'
+  ...
+# Subtest: Alt+Space and Alt+F4 system menu/close hotkeys retain context after side release
+ok 28 - Alt+Space and Alt+F4 system menu/close hotkeys retain context after side release
+  ---
+  duration_ms: 0.119924
+  type: 'test'
+  ...
+# Subtest: Shift+F10 context menu survives first-side release
+ok 29 - Shift+F10 context menu survives first-side release
+  ---
+  duration_ms: 0.124273
+  type: 'test'
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 23
+# fail 6
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 48.619576

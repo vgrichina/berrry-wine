@@ -1,0 +1,29 @@
+{
+  "candidate": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "verifiedPayloads": [
+    "RECOVERY.md",
+    "admission.json",
+    "baseline-final.tap",
+    "baseline-loader.cjs",
+    "baseline-renderer-input.js",
+    "baseline.tap",
+    "before-tests.json",
+    "checkpoint.json",
+    "legacy-keyboard-message-lparam.cjs",
+    "legacy-result.txt",
+    "ls-remote.stderr",
+    "ls-remote.txt",
+    "push.log",
+    "recovered-blobs.json",
+    "recovered-objects.json",
+    "repair-final.tap",
+    "repair.patch",
+    "repair.tap",
+    "resources-final.json",
+    "resources-publication.json",
+    "resources.py",
+    "root-ref-final.json",
+    "run-legacy.cjs"
+  ],
+  "count": 23
+}
