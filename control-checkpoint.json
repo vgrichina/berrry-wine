@@ -1,0 +1,711 @@
+{
+  "requestCount": 22,
+  "everyRequestAcknowledged": true,
+  "totalBatches": 1650,
+  "steps": [
+    {
+      "request": {
+        "action": "step",
+        "n": 500,
+        "id": "1793049199034170892"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049199034170892",
+        "value": {
+          "batch": 500,
+          "ran": 500,
+          "steps": 500,
+          "frozen": true
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "step",
+        "n": 150,
+        "id": "1793049213349515153"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049213349515153",
+        "value": {
+          "batch": 650,
+          "ran": 150,
+          "steps": 150,
+          "frozen": true
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "step",
+        "n": 200,
+        "id": "1793049223788347330"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049223788347330",
+        "value": {
+          "batch": 850,
+          "ran": 200,
+          "steps": 200,
+          "frozen": true
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "step",
+        "n": 200,
+        "id": "1793049231437366542"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049231437366542",
+        "value": {
+          "batch": 1050,
+          "ran": 200,
+          "steps": 200,
+          "frozen": true
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "step",
+        "n": 300,
+        "id": "1793049244555151264"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049244555151264",
+        "value": {
+          "batch": 1350,
+          "ran": 300,
+          "steps": 300,
+          "frozen": true
+        }
+      }
+    },
+    {
+      "request": {
+        "action": "step",
+        "n": 300,
+        "id": "1793049248975171822"
+      },
+      "response": {
+        "ok": true,
+        "id": "1793049248975171822",
+        "value": {
+          "batch": 1650,
+          "ran": 300,
+          "steps": 300,
+          "frozen": true
+        }
+      }
+    }
+  ],
+  "snapshots": [
+    {
+      "batch": 500,
+      "eip": "0x4c18ac",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10003",
+      "mainHwnd": "0x10002",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10002",
+          "x": 90,
+          "y": 187,
+          "w": 462,
+          "h": 108,
+          "visible": true,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10003",
+          "x": 10,
+          "y": 28,
+          "w": 440,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10004",
+          "x": 10,
+          "y": 50,
+          "w": 440,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10005",
+          "x": 6,
+          "y": 77,
+          "w": 223,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10006",
+          "x": 231,
+          "y": 77,
+          "w": 223,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "batch": 650,
+      "eip": "0x511501",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10008",
+      "mainHwnd": "0x10007",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10007",
+          "x": 90,
+          "y": 140,
+          "w": 462,
+          "h": 202,
+          "visible": true,
+          "isChild": false,
+          "title": "Civ2 Diplomatic Heralds"
+        },
+        {
+          "hwnd": "0x10008",
+          "x": 10,
+          "y": 122,
+          "w": 440,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10009",
+          "x": 10,
+          "y": 144,
+          "w": 440,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000a",
+          "x": 6,
+          "y": 171,
+          "w": 448,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "batch": 850,
+      "eip": "0x104d80",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x1000e",
+      "mainHwnd": "0x1000b",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000b",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 480,
+          "visible": true,
+          "isChild": false,
+          "title": "Sid Meier's Civilization II"
+        },
+        {
+          "hwnd": "0x1000d",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 484,
+          "visible": true,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000e",
+          "x": 0,
+          "y": 120,
+          "w": 640,
+          "h": 240,
+          "visible": true,
+          "isChild": false,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "batch": 1050,
+      "eip": "0x104d75",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x1000e",
+      "mainHwnd": "0x1000b",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000b",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 480,
+          "visible": true,
+          "isChild": false,
+          "title": "Sid Meier's Civilization II"
+        },
+        {
+          "hwnd": "0x1000d",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 484,
+          "visible": true,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000e",
+          "x": 0,
+          "y": 120,
+          "w": 640,
+          "h": 240,
+          "visible": true,
+          "isChild": false,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "batch": 1350,
+      "eip": "0x4b1e3d",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10011",
+      "mainHwnd": "0x1000b",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000b",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 480,
+          "visible": true,
+          "isChild": false,
+          "title": "Sid Meier's Civilization II"
+        },
+        {
+          "hwnd": "0x1000f",
+          "x": 1,
+          "y": 1,
+          "w": 394,
+          "h": 244,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10010",
+          "x": 418,
+          "y": 261,
+          "w": 222,
+          "h": 218,
+          "visible": true,
+          "isChild": false,
+          "title": "Civilization II"
+        },
+        {
+          "hwnd": "0x10011",
+          "x": 10,
+          "y": 28,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10012",
+          "x": 10,
+          "y": 50,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10013",
+          "x": 10,
+          "y": 72,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10014",
+          "x": 10,
+          "y": 94,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10015",
+          "x": 10,
+          "y": 116,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10016",
+          "x": 10,
+          "y": 138,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10017",
+          "x": 10,
+          "y": 160,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10018",
+          "x": 6,
+          "y": 187,
+          "w": 103,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10019",
+          "x": 111,
+          "y": 187,
+          "w": 103,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        }
+      ]
+    },
+    {
+      "batch": 1650,
+      "eip": "0x5114e5",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10011",
+      "mainHwnd": "0x1000b",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 20,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 480,
+          "h": 321,
+          "visible": false,
+          "isChild": false,
+          "title": ""
+        },
+        {
+          "hwnd": "0x1000b",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 480,
+          "visible": true,
+          "isChild": false,
+          "title": "Sid Meier's Civilization II"
+        },
+        {
+          "hwnd": "0x1000f",
+          "x": 1,
+          "y": 1,
+          "w": 394,
+          "h": 244,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10010",
+          "x": 418,
+          "y": 261,
+          "w": 222,
+          "h": 218,
+          "visible": true,
+          "isChild": false,
+          "title": "Civilization II"
+        },
+        {
+          "hwnd": "0x10011",
+          "x": 10,
+          "y": 28,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10012",
+          "x": 10,
+          "y": 50,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10013",
+          "x": 10,
+          "y": 72,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10014",
+          "x": 10,
+          "y": 94,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10015",
+          "x": 10,
+          "y": 116,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10016",
+          "x": 10,
+          "y": 138,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10017",
+          "x": 10,
+          "y": 160,
+          "w": 200,
+          "h": 20,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10018",
+          "x": 6,
+          "y": 187,
+          "w": 103,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        },
+        {
+          "hwnd": "0x10019",
+          "x": 111,
+          "y": 187,
+          "w": 103,
+          "h": 26,
+          "visible": true,
+          "isChild": true,
+          "title": ""
+        }
+      ]
+    }
+  ],
+  "zeroCreditsAll": true,
+  "overlap": false,
+  "timeouts": false,
+  "ordinaryInputs": [
+    {
+      "cmd": "click:210:280",
+      "id": "1793049213260339796"
+    },
+    {
+      "cmd": "click:320:327",
+      "id": "1793049223711459969"
+    },
+    {
+      "cmd": "keypress:Escape",
+      "id": "1793049231358576591"
+    },
+    {
+      "cmd": "keydown:27",
+      "id": "1793049244402775561"
+    },
+    {
+      "cmd": "keyup:27",
+      "id": "1793049244474306489"
+    },
+    {
+      "cmd": "keypress:27",
+      "id": "1793049248894637299"
+    }
+  ],
+  "incident": "Symbolic keypress:Escape parsed NaN; numeric keydown/keyup27 removed intro; additional keypress27 queued after new dialog snapshot (unnecessary input, no identified navigation)."
+}

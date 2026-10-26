@@ -1,0 +1,33 @@
+{
+  "images": [
+    {
+      "file": "heralds.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171",
+      "personallyInspected": true
+    },
+    {
+      "file": "language.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da",
+      "personallyInspected": true
+    },
+    {
+      "file": "intro.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 53424,
+      "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567",
+      "personallyInspected": true
+    }
+  ],
+  "language": "English selected; OK210,280",
+  "heralds": "Turn OFF heralds selected; OK320,327",
+  "intro": "Visible MicroProse yellow logo on dark animated background",
+  "newDialogAfterNumericEscape": "Window snapshot only, not visually inspected; no menu/map/city/unit acceptance",
+  "capturePlanningIncident": "All3PNG consumed before new dialog. Failed priority to preserve actual menu/map capture; administrative limitation, not authentic game failure. No permission inferred to exceed cap or launch second guest."
+}

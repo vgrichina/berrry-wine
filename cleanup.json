@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-26T21:15:34.871674+00:00",
+  "remainingOwnedIdentities": [],
+  "normalQuitAcknowledged": true,
+  "guestExitCode": 0,
+  "retainedModuleUnchanged": true,
+  "box": null,
+  "boxState": null,
+  "boxExpiry": null,
+  "lifecycleOwner": "coordinator",
+  "hostStopped": false,
+  "otherTasksTouched": false
+}

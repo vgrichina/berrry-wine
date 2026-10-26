@@ -1,0 +1,215 @@
+{
+  "files": [
+    {
+      "path": ".gitignore",
+      "bytes": 96,
+      "sha256": "9445745dbbd7750b56ddf1ad42ae2a85ee29d1a4e37b7ddd64a30e3686bb6eb4"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3954,
+      "sha256": "645686162021b08c08a5e16502273c783a96e3d324924c514804c6a83a72f884"
+    },
+    {
+      "path": "accounting-inputs.json",
+      "bytes": 314,
+      "sha256": "5101d0ef823c08630b423e7a9dfabe466f51434ddb1a12e6806c5a7628f0969d"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 317,
+      "sha256": "28572eab6ab8308acf9d823b881b7cef676c208cd2225022ead5c283f3dba628"
+    },
+    {
+      "path": "configuration-reuse.json",
+      "bytes": 757,
+      "sha256": "31626ba0a5d63e92a6c5b7afced81e6d61f5b4f5d7f9ee92a102ef34f80d873c"
+    },
+    {
+      "path": "control-checkpoint.json",
+      "bytes": 14389,
+      "sha256": "32f87628405dec53991bf5a96b9584e0273ead94ab964f1cff5412e9dd454043"
+    },
+    {
+      "path": "control-in.jsonl",
+      "bytes": 1470,
+      "sha256": "bcbde51586ae00b14b2de2ce886e013f9d0b7595ae9578c7f3c77b4114fdab6e"
+    },
+    {
+      "path": "durable-checkpoint.json",
+      "bytes": 1337,
+      "sha256": "cfbcd6a46ab5ee1a8912852cf6919df311b940624ab080cacf5b7db61c2a4804"
+    },
+    {
+      "path": "evidence-check-admission.json",
+      "bytes": 4742,
+      "sha256": "e948c285a43965a83bdcb12d3fa837bf9a4e707e13c9657c04f2f42ddd7a5011"
+    },
+    {
+      "path": "evidence-check-launch.json",
+      "bytes": 590,
+      "sha256": "9d6ea452852521bf1c7c168b52217f4972f561ff8517f3bc7f6a414eea277289"
+    },
+    {
+      "path": "evidence-check-receipt.json",
+      "bytes": 889,
+      "sha256": "904a0ac8b47fd07316f99917da5174659e7d252685c3afc4985b9e1c9259a6a2"
+    },
+    {
+      "path": "evidence-check.log",
+      "bytes": 143,
+      "sha256": "37de0d85c741764ea61932f23517001f032d4222917cc69a84a40197c69d06fc"
+    },
+    {
+      "path": "guest-admission.json",
+      "bytes": 4735,
+      "sha256": "c9a9d36b38a9b098102af0fcb513248772ee73e50bac9b4adb4ec9c0c6322168"
+    },
+    {
+      "path": "guest-launch.json",
+      "bytes": 824,
+      "sha256": "a3c009b532d2dcae8ffc36bdefb4519254685ad11086b8f73b13f91b47cae670"
+    },
+    {
+      "path": "guest-receipt.json",
+      "bytes": 1123,
+      "sha256": "edfea1384e9af6cdb8852b06422d8a1dce62c0ae9a51e5637834b07fde60be66"
+    },
+    {
+      "path": "guest.log",
+      "bytes": 13156,
+      "sha256": "c5be1dbc80f78a9d9c302dea925df0756234b21dedcf41fc3c690c8156e01556"
+    },
+    {
+      "path": "helpers/account.py",
+      "bytes": 895,
+      "sha256": "2d6878cf22798fffda3caf3e0203d3d4098d44540e5f14e411c0dfa242d5a425"
+    },
+    {
+      "path": "helpers/admit.py",
+      "bytes": 1727,
+      "sha256": "1b01c2706f3000a203c07f225151dfdfb6d8824a2c75b04730f976fe29d91db6"
+    },
+    {
+      "path": "helpers/check-evidence.js",
+      "bytes": 807,
+      "sha256": "a3c586e92f66d8eb395705f13f823c168854ec7c84eda19774f4be06191c2030"
+    },
+    {
+      "path": "helpers/close.py",
+      "bytes": 5574,
+      "sha256": "f908c322997e5af868075a54a2a5f3e909b66675cb2fd16fd929ff5206c3ecca"
+    },
+    {
+      "path": "helpers/control.py",
+      "bytes": 754,
+      "sha256": "5eb31a715803b6a97b4d20f8c5fad927a7f8e826ec912143f30447f4e468f9d7"
+    },
+    {
+      "path": "helpers/git-op.py",
+      "bytes": 3213,
+      "sha256": "8fbb59e386b7f677fca5203be2fc6c920cab440161bc856c9b2f51f5bf2513c4"
+    },
+    {
+      "path": "helpers/setup.py",
+      "bytes": 3599,
+      "sha256": "a2d1c27bf099c71be8dddea66cde8496fe3567434f6fa6a4c73d1dc6dcde4222"
+    },
+    {
+      "path": "helpers/supervise.py",
+      "bytes": 3970,
+      "sha256": "3313f3997b1c80b38805fe5203c2177a71c4f9b9926a78477ab411f77d9f7630"
+    },
+    {
+      "path": "heralds.png",
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 136936,
+      "sha256": "46d4f9c7ff003c2c6585765940e68f6df0e1b5348e4f4a9db474c87f0d647aef"
+    },
+    {
+      "path": "image-inspection.json",
+      "bytes": 1213,
+      "sha256": "b8e69e6a9904db081924f3808f640d01d90751824a62261aa189b8dbb558c309"
+    },
+    {
+      "path": "initial-root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "intro.png",
+      "bytes": 53424,
+      "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567"
+    },
+    {
+      "path": "language.png",
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da"
+    },
+    {
+      "path": "module.json",
+      "bytes": 250,
+      "sha256": "59c333d8aad5749c7ed75147a7e02a02c5fca24d00d267a81bb32752cc45eb7b"
+    },
+    {
+      "path": "prepublication-accounting.json",
+      "bytes": 1086,
+      "sha256": "31071db24823b1d8696bae5e234d56d1c4d8cf24d1a227c30185364a4b7aa345"
+    },
+    {
+      "path": "prior-configuration-reuse.json",
+      "bytes": 6882,
+      "sha256": "93b6d330cd2ac4765c8c009f4b5d0fa39fafef51ce1efc152fd15c7e01a34303"
+    },
+    {
+      "path": "prior-reused-mount-check-receipt.json",
+      "bytes": 754,
+      "sha256": "4b7fe0c5ca33ec5d2bfcbbe4fe70f51d89062538754c42a0926efb82736686c4"
+    },
+    {
+      "path": "prior-reused-mount-validation.json",
+      "bytes": 173937,
+      "sha256": "54def8fabc262fe5264a1ad49196b4824756dfa5d90b2372d2eaed2c31e184fc"
+    },
+    {
+      "path": "prior-reused-standing-system-assets.json",
+      "bytes": 17111,
+      "sha256": "1257f782ebea09ba6c230647fdc77bea087e8a80e0eac42079536190f5bea47d"
+    },
+    {
+      "path": "result.json",
+      "bytes": 1372,
+      "sha256": "4cba69737d3a8be1a0d16bc443d7cf01925bc9ab697d6a4ee147291bce0cd488"
+    },
+    {
+      "path": "startup-admission.json",
+      "bytes": 4732,
+      "sha256": "87b5d6be691172cc4aac6162ea40dce65efb8a22bf1df79f4d594ea6db2d2594"
+    },
+    {
+      "path": "startup-launch.json",
+      "bytes": 807,
+      "sha256": "fe00823ff54747234f5613bd2a2ac84fd013340ea13d41cecf798df4d71e88a2"
+    },
+    {
+      "path": "startup-receipt.json",
+      "bytes": 1107,
+      "sha256": "720990dbf71a8b9b2fd4b698b435cc735fea699bcb8d57b2fd97cedb6d943e0c"
+    },
+    {
+      "path": "startup.log",
+      "bytes": 2031,
+      "sha256": "c9bc2db0bd41a884bcf18f14f66b07bbd1693fd774308ba7c10617264387899b"
+    }
+  ],
+  "excludedMutableCloseout": [
+    "git-operations.jsonl",
+    "publication-receipt.json",
+    "final-accounting.json",
+    "wal-peaks.json"
+  ]
+}

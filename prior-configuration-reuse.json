@@ -1,0 +1,190 @@
+{
+  "startupUnchanged": true,
+  "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "flags": [
+    "--max-old-space-size=768"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "supervisorLimitsUnchanged": true,
+  "mountConfigurationUnchanged": true,
+  "actualMountArgv": [
+    "--app=civ2_win16"
+  ],
+  "mountResolution": "registered readonly local manifest tree; no filename-bearing comma-split --files argument",
+  "priorManifestSHA256": "be401b35c47dc654e1cc1f6cf1ffab857950c10880681b0ccd1db7769f519f76",
+  "sourceUnchanged": true,
+  "wasmArgumentOnlyChanged": true,
+  "diagnosticAppendPreflight": true,
+  "pngjsStandingReadonly": [
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/package.json",
+      "bytes": 1812,
+      "allocated": 4096,
+      "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/LICENSE",
+      "bytes": 1150,
+      "allocated": 4096,
+      "sha256": "be75ef59c5cf59715588a17a82dff7dd3e83c4dba3c458676bb9311e05fbedc5"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/CHANGELOG.md",
+      "bytes": 3001,
+      "allocated": 4096,
+      "sha256": "c9ca37f02fb7e978034759113d4ee7500932aaa3a02ff19acbca7bf9694ef7c6"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/README.md",
+      "bytes": 9375,
+      "allocated": 12288,
+      "sha256": "1d90045508b00719a3f9415f8a57cddfba05f9ea51746c48ffed8122ad68bf85"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/browser.js",
+      "bytes": 572711,
+      "allocated": 573440,
+      "sha256": "e21b88288e3df098f476bb3c4d1e8900d3780572e1802c8e301e38674d527f51"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/sync-inflate.js",
+      "bytes": 3751,
+      "allocated": 4096,
+      "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/constants.js",
+      "bytes": 662,
+      "allocated": 4096,
+      "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/filter-parse-async.js",
+      "bytes": 558,
+      "allocated": 4096,
+      "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/bitmapper.js",
+      "bytes": 6477,
+      "allocated": 8192,
+      "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/filter-pack.js",
+      "bytes": 4279,
+      "allocated": 8192,
+      "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/packer-sync.js",
+      "bytes": 1193,
+      "allocated": 4096,
+      "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/paeth-predictor.js",
+      "bytes": 372,
+      "allocated": 4096,
+      "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/png-sync.js",
+      "bytes": 252,
+      "allocated": 4096,
+      "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/png.js",
+      "bytes": 4418,
+      "allocated": 8192,
+      "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/packer-async.js",
+      "bytes": 1162,
+      "allocated": 4096,
+      "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/parser-async.js",
+      "bytes": 4368,
+      "allocated": 8192,
+      "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/chunkstream.js",
+      "bytes": 4249,
+      "allocated": 8192,
+      "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/bitpacker.js",
+      "bytes": 4670,
+      "allocated": 8192,
+      "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/parser-sync.js",
+      "bytes": 2580,
+      "allocated": 4096,
+      "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/interlace.js",
+      "bytes": 2004,
+      "allocated": 4096,
+      "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/sync-reader.js",
+      "bytes": 1114,
+      "allocated": 4096,
+      "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/filter-parse-sync.js",
+      "bytes": 483,
+      "allocated": 4096,
+      "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/parser.js",
+      "bytes": 7720,
+      "allocated": 8192,
+      "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/filter-parse.js",
+      "bytes": 4798,
+      "allocated": 8192,
+      "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/crc.js",
+      "bytes": 853,
+      "allocated": 4096,
+      "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/format-normaliser.js",
+      "bytes": 2366,
+      "allocated": 4096,
+      "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0"
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/pngjs/lib/packer.js",
+      "bytes": 3723,
+      "allocated": 4096,
+      "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03"
+    }
+  ],
+  "pureCanvas": "pinned source lib/raster-canvas.js",
+  "sourceModification": false
+}

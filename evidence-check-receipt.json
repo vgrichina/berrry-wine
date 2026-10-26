@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-26T21:15:34.980792+00:00",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "/home/user/wine-assembly/scratch/runs/civ2-win16-retained-intro-gameplay-oct26/helpers/check-evidence.js"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "pid": 3146079,
+  "wallLimit": 120,
+  "cpuLimit": 90,
+  "rssLimit": 805306368,
+  "fileLimit": 25165824,
+  "outputLimit": 2097152,
+  "exitCode": 0,
+  "stopReason": null,
+  "wallSeconds": 0.034025931963697076,
+  "peakAggregateRSS": 62341120,
+  "peakAggregateCPUSeconds": 0.06,
+  "outputBytes": 143,
+  "identities": {
+    "3146078": 109654418,
+    "3146079": 109654422
+  },
+  "peakTaskAllocationIncludingConservativeWAL": 30543872
+}

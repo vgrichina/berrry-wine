@@ -1,0 +1,22 @@
+{"action": "step", "n": 500, "id": "1793049199034170892"}
+{"action": "snapshot", "id": "1793049204190749153"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-retained-intro-gameplay-oct26/language.png", "id": "1793049209053183704"}
+{"cmd": "click:210:280", "id": "1793049213260339796"}
+{"action": "step", "n": 150, "id": "1793049213349515153"}
+{"action": "snapshot", "id": "1793049215135607699"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-retained-intro-gameplay-oct26/heralds.png", "id": "1793049215241447559"}
+{"cmd": "click:320:327", "id": "1793049223711459969"}
+{"action": "step", "n": 200, "id": "1793049223788347330"}
+{"action": "snapshot", "id": "1793049225631492053"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-retained-intro-gameplay-oct26/intro.png", "id": "1793049225708805475"}
+{"cmd": "keypress:Escape", "id": "1793049231358576591"}
+{"action": "step", "n": 200, "id": "1793049231437366542"}
+{"action": "snapshot", "id": "1793049232841019093"}
+{"cmd": "keydown:27", "id": "1793049244402775561"}
+{"cmd": "keyup:27", "id": "1793049244474306489"}
+{"action": "step", "n": 300, "id": "1793049244555151264"}
+{"action": "snapshot", "id": "1793049247365208599"}
+{"cmd": "keypress:27", "id": "1793049248894637299"}
+{"action": "step", "n": 300, "id": "1793049248975171822"}
+{"action": "snapshot", "id": "1793049251787075382"}
+{"action": "quit", "id": "1793049259344448986"}

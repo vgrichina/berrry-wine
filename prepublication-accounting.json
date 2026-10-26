@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-26T21:15:34.873867+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-retained-intro-gameplay-oct26": 16384,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-retained-intro-gameplay-oct26": 761856,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-retained-intro-gameplay-oct26": 172032,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-21-01a17a0d-b562-7c10-945d-0fbbd8611abc.jsonl": 958464
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3440640,
+      "/home/user/.codex/state_5.sqlite-wal": 4399104,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "total": 30511104
+  },
+  "futureIncludingReserve": 33554432,
+  "projected": 64065536,
+  "allocation": 134217728,
+  "allRemoteBytes": 0,
+  "standingInputsReadonlyExcluded": true,
+  "positiveWALChargedConservativelyOnce": true
+}

@@ -1,0 +1,20 @@
+{
+  "actualArgv": [
+    "test/run.js",
+    "--app=civ2_win16",
+    "--no-build",
+    "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm"
+  ],
+  "canonicalParserReceipt": "prior-reused-mount-validation.json",
+  "manifestSHA256": "be401b35c47dc654e1cc1f6cf1ffab857950c10880681b0ccd1db7769f519f76",
+  "cueSHA256": "1fec92d6dcc6fc33a80c78494ddbe0ff446cb43fa8a00ff8a328e442eaa9ec71",
+  "files": 338,
+  "commaCases": 10,
+  "sameReadonlySource": true,
+  "sourcePin": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "fontsAndDependenciesReceipt": "prior-reused-standing-system-assets.json",
+  "pngjsUnchanged": true,
+  "changedPhysicalRSSCap": 805306368,
+  "startupMustRun": true,
+  "priorIncidentsPreserved": true
+}

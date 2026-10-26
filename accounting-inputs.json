@@ -1,0 +1,5 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-21-01a17a0d-b562-7c10-945d-0fbbd8611abc.jsonl",
+  "walPolicy": "No pre-session baseline: charge whole observed allocated WAL once conservatively, preserve peak plus future growth; not attributable growth.",
+  "allocation": 134217728
+}

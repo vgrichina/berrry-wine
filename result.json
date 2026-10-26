@@ -1,0 +1,41 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T21:13:18.607443Z",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "route": "ordinary-ui-intro-skip",
+  "summary": "Inspected animated MicroProse intro; ordinary numeric Escape removed intro windows and opened new Civilization II dialog identified only by frozen window snapshot. All3PNG consumed on setup/intro due worker capture planning mistake; no visually verified menu or map/city/unit gameplay. Normal quit at60.78s, no authentic guest failure.",
+  "build": {
+    "originalmain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "screenshots": [
+    "heralds.png",
+    "language.png",
+    "intro.png"
+  ],
+  "gameplayScreenshots": [],
+  "artifacts": [
+    "README.md",
+    "module.json",
+    "identity.json",
+    "configuration-reuse.json",
+    "guest-admission.json",
+    "guest-launch.json",
+    "guest-receipt.json",
+    "guest.log",
+    "control-in.jsonl",
+    "control-checkpoint.json",
+    "image-inspection.json",
+    "durable-checkpoint.json",
+    "cleanup.json"
+  ],
+  "box": null,
+  "remainingGates": [
+    "Visually inspect new dialog",
+    "Ordinary UI actual map/city/unit gameplay",
+    "Inspect gameplay capture"
+  ],
+  "authenticStartupBlocker": null
+}

@@ -1,0 +1,36 @@
+{
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "module": {
+    "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+    "bytes": 1880280,
+    "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "compiled": false,
+    "readonly": true
+  },
+  "passed": [
+    "source239 fixture337 identities",
+    "unchanged mount337files10comma canonical parser receipt reused",
+    "startup sameNodeFlagsEnv corrected physicalcap limits",
+    "production guest launch with initializers unchanged",
+    "ordinary presented language/heralds input",
+    "visible intro and ordinary numericEscape removal of intro windows",
+    "all1650batches ACK and zero credits",
+    "normal quit and cleanup"
+  ],
+  "remaining": [
+    "Visually inspect new Civilization II dialog",
+    "Reach map/city/unit via ordinary UI",
+    "Inspect actual gameplay capture"
+  ],
+  "gameplay": false,
+  "authenticGuestFailure": null,
+  "incidentsPreserved": [
+    "prior598016B reserve shortfall",
+    "prior initial session/WAL accounting omissions",
+    "prior90sec startup cutoff not authentic failure",
+    "current symbolicEscape parsedNaN",
+    "current unnecessary subsequent keypress27",
+    "current capture budget misallocation"
+  ],
+  "runtimeAttemptConsumed": true
+}
