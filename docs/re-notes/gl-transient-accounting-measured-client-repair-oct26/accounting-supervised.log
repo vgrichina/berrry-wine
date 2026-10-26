@@ -1,0 +1,27 @@
+test_bounds_and_ceiling (__main__.Accounting.test_bounds_and_ceiling) ... ok
+test_directory_replaced_with_escape_cannot_be_followed (__main__.Accounting.test_directory_replaced_with_escape_cannot_be_followed) ... ok
+test_endless_churn_is_unknown (__main__.Accounting.test_endless_churn_is_unknown) ... ok
+test_filesystem_escape_is_unknown (__main__.Accounting.test_filesystem_escape_is_unknown) ... ok
+test_io_faults_preserved (__main__.Accounting.test_io_faults_preserved) ... ok
+test_missing_required_root_and_transient_root (__main__.Accounting.test_missing_required_root_and_transient_root) ... ok
+test_omitted_transient_wiring_rejects_same_reproducer (__main__.Accounting.test_omitted_transient_wiring_rejects_same_reproducer) ... ok
+test_open_disappearance_retries (__main__.Accounting.test_open_disappearance_retries) ... ok
+test_partial_retry_cannot_lose_required_inventory (__main__.Accounting.test_partial_retry_cannot_lose_required_inventory) ... ok
+test_production_cap_and_headroom (__main__.Accounting.test_production_cap_and_headroom) ... ok
+test_production_discovery_races (__main__.Accounting.test_production_discovery_races) ... ok
+test_production_omitted_accounting_hook_is_detected (__main__.Accounting.test_production_omitted_accounting_hook_is_detected) ... ok
+test_required_data_mutation_is_unknown (__main__.Accounting.test_required_data_mutation_is_unknown) ... ok
+test_required_deletion_between_samples_is_unknown (__main__.Accounting.test_required_deletion_between_samples_is_unknown) ... ok
+test_required_disappearance_does_not_retry_or_zero (__main__.Accounting.test_required_disappearance_does_not_retry_or_zero) ... ok
+test_required_replacement_between_samples_is_unknown (__main__.Accounting.test_required_replacement_between_samples_is_unknown) ... ok
+test_root_replacement_and_symlink_ancestors (__main__.Accounting.test_root_replacement_and_symlink_ancestors) ... ok
+test_shared_cap_headroom_memory (__main__.Accounting.test_shared_cap_headroom_memory) ... ok
+test_shared_check_and_positive_wal_once (__main__.Accounting.test_shared_check_and_positive_wal_once) ... ok
+test_symlinks_are_charged_without_following (__main__.Accounting.test_symlinks_are_charged_without_following) ... ok
+test_transient_root_symlink_replacement_is_rejected (__main__.Accounting.test_transient_root_symlink_replacement_is_rejected) ... ok
+test_unverified_enoent_is_unknown (__main__.Accounting.test_unverified_enoent_is_unknown) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 0.035s
+
+OK

@@ -1,0 +1,40 @@
+{
+  "negativeOmissions": [
+    {
+      "omission": "accounting callback omitted",
+      "rejected": true,
+      "failures": 1,
+      "errors": 2
+    },
+    {
+      "omission": "transient root omitted",
+      "rejected": true,
+      "failures": 0,
+      "errors": 3
+    },
+    {
+      "omission": "disk cap omitted",
+      "rejected": true,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "omission": "headroom omitted",
+      "rejected": true,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "omission": "root validation omitted",
+      "rejected": true,
+      "failures": 1,
+      "errors": 0
+    },
+    {
+      "omission": "required inventory omitted",
+      "rejected": true,
+      "failures": 1,
+      "errors": 0
+    }
+  ]
+}

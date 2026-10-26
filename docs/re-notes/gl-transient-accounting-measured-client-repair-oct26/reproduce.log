@@ -1,0 +1,23 @@
+{
+  "productionWrapper": "/tmp/gl-published-webgl-api-qualification-oct26/ops/remote-run.py",
+  "results": [
+    {
+      "kind": "file",
+      "callback": "ENOENT rejects",
+      "shared": "whole mandatory root incorrectly charged zero",
+      "raceFired": true
+    },
+    {
+      "kind": "symlink",
+      "callback": "ENOENT rejects",
+      "shared": "whole mandatory root incorrectly charged zero",
+      "raceFired": true
+    },
+    {
+      "kind": "dir",
+      "callback": "ENOENT rejects",
+      "shared": "whole mandatory root incorrectly charged zero",
+      "raceFired": true
+    }
+  ]
+}

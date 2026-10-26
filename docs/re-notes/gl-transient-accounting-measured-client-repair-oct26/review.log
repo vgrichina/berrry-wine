@@ -1,0 +1,12 @@
+{
+  "unchangedSupervisorFunctions": [
+    "snapshot",
+    "key",
+    "signal_owned",
+    "lower_limit",
+    "supervise"
+  ],
+  "wrapperChangesOnly": "alloc delegates to shared pinned bounded disk; one ledger initializer with explicit tmp subtree and unchanged1024MiB ceiling",
+  "acceptedDetachedAdoptedReceipts": "1e19d8c01e5d7e40f1e8ad60df5079ee9d9d4d4e reused, not rerun",
+  "fixtureSHA256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c"
+}

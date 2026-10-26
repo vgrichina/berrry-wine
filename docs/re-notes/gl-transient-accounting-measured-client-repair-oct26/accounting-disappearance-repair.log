@@ -1,0 +1,20 @@
+test_production_discovery_races (__main__.Accounting.test_production_discovery_races) ... ok
+test_shared_check_and_positive_wal_once (__main__.Accounting.test_shared_check_and_positive_wal_once) ... ok
+test_open_disappearance_retries (__main__.Accounting.test_open_disappearance_retries) ... ok
+test_unverified_enoent_is_unknown (__main__.Accounting.test_unverified_enoent_is_unknown) ... FAIL
+test_required_disappearance_does_not_retry_or_zero (__main__.Accounting.test_required_disappearance_does_not_retry_or_zero) ... ok
+test_required_data_mutation_is_unknown (__main__.Accounting.test_required_data_mutation_is_unknown) ... ok
+test_omitted_transient_wiring_rejects_same_reproducer (__main__.Accounting.test_omitted_transient_wiring_rejects_same_reproducer) ... ok
+
+======================================================================
+FAIL: test_unverified_enoent_is_unknown (__main__.Accounting.test_unverified_enoent_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 154, in test_unverified_enoent_is_unknown
+    with patch, self.assertRaisesRegex(sup.AccountingUnknown, 'unverified'):
+AssertionError: AccountingUnknown not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.010s
+
+FAILED (failures=1)

@@ -20,6 +20,7 @@ import pathlib
 import resource
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import time
@@ -211,24 +212,226 @@ def supervise(argv, *, rss_limit=1792*MIB, cpu_limit=90, wall_limit=120,
                 output=bytes(output[:output_limit]), cleanupComplete=not selected)
 
 
+class AccountingUnknown(RuntimeError):
+    """No consistent bounded allocated-byte sample could be established."""
+
+
+class _TransientMutation(Exception):
+    pass
+
+
+class AllocatedDisk:
+    """Bounded, fd-relative, non-following allocated-byte observations.
+
+    Roots are mandatory and identity-pinned. Only explicitly named transient
+    subtrees may invalidate/retry a sample. A retry discards the ENTIRE sample,
+    never a required subtree's charge. This is a bounded consistency check, not
+    a filesystem snapshot or a quota: mutations after validation remain subject
+    to the next sample and the independent free-space gate.
+    """
+    def __init__(self, roots, *, transient_roots=(), max_entries=100000,
+                 max_depth=64, max_seconds=1.0, attempts=3, ceiling=None):
+        def absolute(p):
+            p = pathlib.Path(p)
+            if not p.is_absolute() or '..' in p.parts:
+                raise ValueError('accounting paths must be absolute without ..')
+            return p
+        self.roots = tuple(absolute(p) for p in roots)
+        self.transient = tuple(absolute(p) for p in transient_roots)
+        if not self.roots or any(a == b or a in b.parents or b in a.parents
+                                for i, a in enumerate(self.roots) for b in self.roots[i+1:]):
+            raise ValueError('accounting roots must not overlap')
+        if any(not any(r in p.parents for r in self.roots) for p in self.transient):
+            raise ValueError('transient roots must be strict descendants')
+        if not (1 <= attempts <= 3 and 1 <= max_entries <= 100000 and
+                1 <= max_depth <= 64 and 0 < max_seconds <= 1):
+            raise ValueError('unbounded accounting traversal')
+        self.max_entries, self.max_depth = max_entries, max_depth
+        self.max_seconds, self.attempts, self.ceiling = max_seconds, attempts, ceiling
+        if len(self.roots) + len(self.transient) > max_entries:
+            raise ValueError('accounting root inventory bound')
+        self.identities = {}
+        self.required_seen = {}
+        self.receipt = dict(samples=0, retries=0, unknown=0, lastBytes=None)
+        for p in self.roots + self.transient:
+            fd = self._open_path(p)
+            try:
+                s = os.fstat(fd)
+                if p in self.transient and not stat.S_ISDIR(s.st_mode):
+                    raise AccountingUnknown('transient root is not a directory')
+                self.identities[p] = self._identity(s)
+            finally:
+                os.close(fd)
+
+    @staticmethod
+    def _identity(s):
+        return s.st_dev, s.st_ino, stat.S_IFMT(s.st_mode)
+
+    @classmethod
+    def _version(cls, s):
+        return cls._identity(s) + (s.st_size, s.st_blocks, s.st_mtime_ns, s.st_ctime_ns)
+
+    @staticmethod
+    def _open_path(p):
+        # Reject symlinks in EVERY path component, including mandatory roots.
+        fd = os.open('/', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            for i, part in enumerate(p.parts[1:]):
+                flags = os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK
+                if i < len(p.parts)-2:
+                    flags |= os.O_DIRECTORY
+                child = os.open(part, flags, dir_fd=fd)
+                os.close(fd)
+                fd = child
+            return fd
+        except BaseException:
+            os.close(fd)
+            raise
+
+    def _validate_roots(self):
+        for p, identity in self.identities.items():
+            if time.monotonic() > self.deadline:
+                raise AccountingUnknown('accounting root validation time bound')
+            fd = self._open_path(p)
+            try:
+                if self._identity(os.fstat(fd)) != identity:
+                    raise AccountingUnknown('mandatory accounting root changed: '+str(p))
+            finally:
+                os.close(fd)
+
+    def _churn(self, p):
+        if any(p == r or r in p.parents for r in self.transient):
+            raise _TransientMutation(str(p))
+        raise AccountingUnknown('required accounting data changed: '+str(p))
+
+    def _charge(self, s, depth, p):
+        self.entries += 1
+        if (self.entries > self.max_entries or depth > self.max_depth or
+                time.monotonic() > self.deadline):
+            raise AccountingUnknown('accounting traversal bound')
+        self.total += s.st_blocks * 512
+        if self.ceiling is not None and self.total > self.ceiling:
+            raise AccountingUnknown('allocated-byte ceiling')
+        if not any(p == r or r in p.parents for r in self.transient):
+            identity = self._identity(s)
+            if self.required_seen.get(p, identity) != identity:
+                raise AccountingUnknown('required accounting entry replaced: '+str(p))
+            self.required_seen[p] = identity
+            self.present.add(p)
+            if len(self.required_seen) > self.max_entries:
+                raise AccountingUnknown('required accounting inventory bound')
+
+    def _walk(self, fd, p, before, depth):
+        self._charge(before, depth, p)
+        if stat.S_ISDIR(before.st_mode):
+            with os.scandir(fd) as entries:
+                for entry in entries:
+                    if time.monotonic() > self.deadline:
+                        raise AccountingUnknown('accounting traversal time bound')
+                    q = p / entry.name
+                    try:
+                        s = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                    except FileNotFoundError:
+                        self._disappeared(fd, before, q)
+                    if s.st_dev != before.st_dev:
+                        raise AccountingUnknown('accounting traversal crossed filesystem: '+str(q))
+                    if stat.S_ISDIR(s.st_mode):
+                        try:
+                            child = os.open(entry.name, os.O_RDONLY | os.O_DIRECTORY |
+                                            os.O_NOFOLLOW, dir_fd=fd)
+                        except FileNotFoundError:
+                            self._disappeared(fd, before, q)
+                        try:
+                            if self._identity(os.fstat(child)) != self._identity(s):
+                                raise AccountingUnknown('directory replaced: '+str(q))
+                            self._walk(child, q, s, depth+1)
+                        finally:
+                            os.close(child)
+                    else:
+                        # Symlink blocks count, but the target is never opened.
+                        self._charge(s, depth+1, q)
+                    try:
+                        after = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+                    except FileNotFoundError:
+                        self._disappeared(fd, before, q)
+                    if self._version(s) != self._version(after):
+                        self._churn(q)
+        if self._version(before) != self._version(os.fstat(fd)):
+            self._churn(p)
+
+    def _disappeared(self, fd, before, p):
+        now = os.fstat(fd)
+        if self._identity(now) != self._identity(before):
+            raise AccountingUnknown('unverified disappearance: '+str(p))
+        # Timestamps may be coarser than a create/unlink pair. Verify the
+        # previously discovered name is actually gone from the same pinned
+        # directory; ENOENT alone is insufficient. Bound this second traversal.
+        verification = os.open('.', os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fd)
+        try:
+            with os.scandir(verification) as entries:
+                for entry in entries:
+                    self.entries += 1
+                    if self.entries > self.max_entries or time.monotonic() > self.deadline:
+                        raise AccountingUnknown('disappearance verification bound')
+                    if entry.name == p.name:
+                        raise AccountingUnknown('unverified disappearance: '+str(p))
+        finally:
+            os.close(verification)
+        self._churn(p)
+
+    def allocated(self):
+        self.deadline = time.monotonic() + self.max_seconds
+        try:
+            for attempt in range(self.attempts):
+                self.total = self.entries = 0
+                self.present = set()
+                self._validate_roots()
+                try:
+                    for p in self.roots:
+                        fd = self._open_path(p)
+                        try:
+                            s = os.fstat(fd)
+                            if self._identity(s) != self.identities[p]:
+                                raise AccountingUnknown('mandatory root changed')
+                            self._walk(fd, p, s, 0)
+                        finally:
+                            os.close(fd)
+                    self._validate_roots()
+                    if self.required_seen.keys() - self.present:
+                        raise AccountingUnknown('required accounting entry disappeared between samples')
+                    if time.monotonic() > self.deadline:
+                        raise AccountingUnknown('accounting final validation time bound')
+                except _TransientMutation:
+                    self._validate_roots()
+                    self.receipt['retries'] += 1
+                    if attempt+1 == self.attempts:
+                        raise AccountingUnknown('transient accounting consistency unknown')
+                    continue
+                self.receipt.update(samples=self.receipt['samples']+1, lastBytes=self.total)
+                return self.total
+        except BaseException:
+            self.receipt['unknown'] += 1
+            self.receipt['lastBytes'] = None
+            raise
+
+
 def accounting_check(config):
     """Explicit task ledger; do not infer untracked external wrapper writes."""
-    roots = [pathlib.Path(p).resolve() for p in config['roots']]
+    roots = [pathlib.Path(p) for p in config['roots']]
     if any(a == b or a in b.parents or b in a.parents
            for i, a in enumerate(roots) for b in roots[i+1:]):
         raise ValueError('accounting roots must not overlap')
     if config['reserve'] < 8*MIB or config['future'] < 0:
         raise ValueError('invalid reserve/future charge')
     receipt = dict(peakBytes=0, minProjectedFree=None, minMemAvailable=None, samples=0)
-    def allocated(p):
-        try:
-            entries = [p, *p.rglob('*')] if p.is_dir() and not p.is_symlink() else [p]
-            return sum(q.lstat().st_blocks*512 for q in entries if not q.is_symlink())
-        except FileNotFoundError:
-            return 0
+    ledger = AllocatedDisk(roots, transient_roots=config.get('transientRoots', ()), ceiling=64*MIB)
+    wal = {p: AllocatedDisk([p], ceiling=64*MIB) for p in config['walBaseline']}
+    if any(pathlib.Path(p) == r or r in pathlib.Path(p).parents
+           for p in wal for r in roots):
+        raise ValueError('WAL must be charged once outside roots')
     def check():
-        used = sum(allocated(p) for p in roots) + config['reserve'] + config['future']
-        used += sum(max(0, allocated(pathlib.Path(p))-n) for p,n in config['walBaseline'].items())
+        used = ledger.allocated() + config['reserve'] + config['future']
+        used += sum(max(0, wal[p].allocated()-n) for p,n in config['walBaseline'].items())
         projected = shutil.disk_usage(roots[0]).free - config['reserve'] - config['future']
         mem = int(pathlib.Path('/proc/meminfo').read_text().split('MemAvailable:')[1].split()[0])*1024
         receipt['peakBytes'] = max(receipt['peakBytes'], used)

@@ -1,0 +1,86 @@
+test_bounds_and_ceiling (__main__.Accounting.test_bounds_and_ceiling) ... ok
+test_directory_replaced_with_escape_cannot_be_followed (__main__.Accounting.test_directory_replaced_with_escape_cannot_be_followed) ... ok
+test_endless_churn_is_unknown (__main__.Accounting.test_endless_churn_is_unknown) ... ok
+test_io_faults_preserved (__main__.Accounting.test_io_faults_preserved) ... ok
+test_missing_required_root_and_transient_root (__main__.Accounting.test_missing_required_root_and_transient_root) ... ok
+test_omitted_transient_wiring_rejects_same_reproducer (__main__.Accounting.test_omitted_transient_wiring_rejects_same_reproducer) ... ok
+test_open_disappearance_retries (__main__.Accounting.test_open_disappearance_retries) ... ERROR
+test_production_cap_and_headroom (__main__.Accounting.test_production_cap_and_headroom) ... ok
+test_production_discovery_races (__main__.Accounting.test_production_discovery_races) ... ok
+test_production_omitted_accounting_hook_is_detected (__main__.Accounting.test_production_omitted_accounting_hook_is_detected) ... ok
+test_required_data_mutation_is_unknown (__main__.Accounting.test_required_data_mutation_is_unknown) ... FAIL
+test_required_disappearance_does_not_retry_or_zero (__main__.Accounting.test_required_disappearance_does_not_retry_or_zero) ... ok
+test_root_replacement_and_symlink_ancestors (__main__.Accounting.test_root_replacement_and_symlink_ancestors) ... ok
+test_shared_check_and_positive_wal_once (__main__.Accounting.test_shared_check_and_positive_wal_once) ... ERROR
+test_symlinks_are_charged_without_following (__main__.Accounting.test_symlinks_are_charged_without_following) ... ok
+test_unverified_enoent_is_unknown (__main__.Accounting.test_unverified_enoent_is_unknown) ... ok
+
+======================================================================
+ERROR: test_open_disappearance_retries (__main__.Accounting.test_open_disappearance_retries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 331, in _walk
+    child = os.open(entry.name, os.O_RDONLY | os.O_DIRECTORY |
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 226, in opening
+    return original(name,*a,**kw)
+           ^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'SingletonSocket'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 228, in test_open_disappearance_retries
+    self.assertGreaterEqual(ledger.allocated(),self.required.stat().st_blocks*512)
+                            ^^^^^^^^^^^^^^^^^^
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 373, in allocated
+    self._walk(fd, p, s, 0)
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 338, in _walk
+    self._walk(child, q, s, depth+1)
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 334, in _walk
+    self._disappeared(fd, before, q)
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 357, in _disappeared
+    raise AccountingUnknown('unverified disappearance: '+str(p))
+supervisor.AccountingUnknown: unverified disappearance: /tmp/tmp63opwh0b/tmp/SingletonSocket
+
+======================================================================
+ERROR: test_shared_check_and_positive_wal_once (__main__.Accounting.test_shared_check_and_positive_wal_once)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 320, in _walk
+    s = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 71, in stat
+    return original(name, *a, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'SingletonSocket'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 124, in test_shared_check_and_positive_wal_once
+    self.assertIsNone(check())
+                      ^^^^^^^
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 406, in check
+    used = ledger.allocated() + config['reserve'] + config['future']
+           ^^^^^^^^^^^^^^^^^^
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 373, in allocated
+    self._walk(fd, p, s, 0)
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 338, in _walk
+    self._walk(child, q, s, depth+1)
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/helpers/palette-browser-supervisor.py", line 327, in _walk
+    raise AccountingUnknown('unverified disappearance: '+str(q))
+supervisor.AccountingUnknown: unverified disappearance: /tmp/tmphxbtxami/tmp/SingletonSocket
+
+======================================================================
+FAIL: test_required_data_mutation_is_unknown (__main__.Accounting.test_required_data_mutation_is_unknown)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-measured-client-repair-oct26/repo/test/test-palette-disk-accounting.py", line 259, in test_required_data_mutation_is_unknown
+    with patch, self.assertRaises(sup.AccountingUnknown):
+AssertionError: AccountingUnknown not raised
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.682s
+
+FAILED (failures=1, errors=2)

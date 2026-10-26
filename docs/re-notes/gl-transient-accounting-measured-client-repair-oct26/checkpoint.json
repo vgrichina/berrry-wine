@@ -1,0 +1,51 @@
+{
+  "at": 1793053760.7653565,
+  "completed": [
+    "exact donor helper/wrapper pins",
+    "full corrected admission",
+    "isolated Git parent identity",
+    "production alloc/check file+symlink+dir deterministic race reproduced; old shared whole-root-zero also reproduced",
+    "first accounting group13/16 passing,3 failures preserved",
+    "disappearance repair7/7 passing after timestamp-granularity and directory-offset corrections",
+    "required inventory across samples and retries",
+    "accounting-final22/22 passing",
+    "accounting-supervised22/22 with pool parent included",
+    "six independent production-boundary omissions rejected",
+    "exact AST equality of all five pre-existing process supervisor functions",
+    "exact two-site wrapper repair reviewed",
+    "parent helper blob recovered ONLY from supplied hash-verified local file; oid85ea5f285611a2108cda3219f7cbd160a15271e7 equals pinned parent path",
+    "staged diff whitespace check passed",
+    "final root-count/deadline hardening:22/23 final-bound group passing plus corrected bounds fixture1/1; combined23/23",
+    "six omitted controls reused: new root-count/deadline checks do not alter omitted boundaries",
+    "unchanged process-function and wrapper receipts reused: only ledger class changed"
+  ],
+  "remaining": [
+    "commit push exact ref board release"
+  ],
+  "evidence": [
+    "reproduce.log",
+    "accounting.log",
+    "accounting-disappearance-repair.log",
+    "accounting-disappearance-final.log",
+    "accounting-final.log",
+    "accounting-supervised.json",
+    "accounting-supervised.log",
+    "omissions.json",
+    "omissions.log"
+  ],
+  "hashes": {
+    "test/helpers/palette-browser-supervisor.py": "43f0d49ca5eb389174d5f8f9a9710b70e590a0447d567eb6c2dd929052c5ff7b",
+    "test/test-palette-disk-accounting.py": "57702e19953f934092a17572728ca00bd98402900028d92dbf39179f17525ff7",
+    "test/test-palette-disk-accounting-omissions.py": "6fb3384b07a4d479a408dbfdcae3a4a025da297a96b0f3061ddc31e51e14b8dc",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c"
+  },
+  "incidents": [
+    "initial directory mtime/ctime cannot prove create-unlink when timestamps coarse",
+    "fresh fd required for independent disappearance readdir; duplicated scan descriptor shares directory offset",
+    "required mutation fixture initially changed file before first stat, corrected to mutate after captured stat",
+    "local focused supervision initially omitted lightweight pool parent from physical accounting; correcting bootstrap inclusion before publication; early receipts retain gap",
+    "final root-count tightening changed one max_entries=1 fixture from traversal rejection to constructor ValueError; fixture uses2 so traversal-specific assertion remains meaningful; final1/1 passes"
+  ],
+  "parent": "5145a673eddc6e1db969d7b323a45598f13b6db3",
+  "candidate": "working tree; exact source hashes below; final commit receipt follows"
+}
