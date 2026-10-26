@@ -13,7 +13,6 @@
     "test/independent-wat-fixture.js": "fe2478a2640a7ac3fcb2f947864cf58e5dedc25b46c364f38ab3928f30111ac1"
   },
   "remaining": [
-    "own branch publication and exact remote verification",
     "future separate reconciled production build/import/module qualification",
     "future separately authorized real initializers/thunk/decoded CALL/JMP/park/hooks/nested-continuation runtime qualification",
     "Enigma step-completion gate before any future input; original-game/input/gameplay unaccepted"
@@ -36,5 +35,10 @@
     "test/wat-completion-function-fixture.js": "5941a8ea9e1297745138a07c54814095d3714a43f0b940cb3f35c219afc5d1a3",
     "test/test-message-completion.js": "c29e290dd0ac280997470840657ebb12907c23675a6426cb40a29d727af93ceb",
     "test/fixtures/enigma-message-original-functions.json": "599f6818b039b6d44a9c3172dcb92c67d7dcc0fef5c71d0c8630fde13290b4cd"
+  },
+  "publication": {
+    "commit": "259fd2b6eaaa94e4900dac6f463c966f6ba51aae",
+    "branch": "task/enigma-canonical-msg-independent-source-accept-oct26",
+    "remoteVerified": true
   }
 }

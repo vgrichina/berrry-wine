@@ -1,0 +1,19 @@
+{
+  "firstPublishedCommit": "259fd2b6eaaa94e4900dac6f463c966f6ba51aae",
+  "passingGitPeak": 71225344,
+  "passingTestPeak": 127348736,
+  "historicalPhysicalStop": 134443008,
+  "allCandidateFilesUnchanged": true,
+  "sourceAccepted": true,
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "noAssignedBox": true,
+  "boxState": "N/A",
+  "expiry": "N/A",
+  "shutdownOwner": "coordinator",
+  "model": "gpt-6.1-sol",
+  "reasoning": "medium",
+  "totalAutoCompaction": 200000,
+  "actualSession": "01a17a75-d7e4-7090-ac91-c344d37bf5b8",
+  "liveFlagsEvidence": "live-clients.json"
+}

@@ -110,3 +110,13 @@ diagnostics-off equivalence and step-completion gate on exact production runner
 before any Enigma input. No timed-out100000-batch replay, overlapping step,
 second click, menu-title inference or timeout inference. This source acceptance
 is not runtime admission and grants none of those operations to this worker.
+
+The first evidence commit 259fd2b6eaaa94e4900dac6f463c966f6ba51aae was pushed and its exact remote
+ref verified. External ops/publication.json records final closeout commit/ref.
+Passing sampled peaks: tests127348736B/Git71225344B including supervisors.
+Final pre-closeout projection43278336B/100663296B, projectedfree3223318528B;
+newest external admission supersedes this timestamped sample. Sparse commit
+Error building trees for an intentionally absent historical README was retained;
+supported write-tree --missing-ok plus exact-parent commit-tree preserved all
+historical entries without acquiring/retrying absent blobs. Only owned new paths
+were reviewed/staged; no deletion/source/main change.
