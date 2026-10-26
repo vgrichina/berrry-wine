@@ -1,0 +1,17 @@
+[
+  {
+    "path": "operations.tar.gz",
+    "bytes": 105984,
+    "sha256": "8402bb5b1a2f0b05545ac2a21ccfa25042870721f15b797aab83693abd04bdbe"
+  },
+  {
+    "path": "receipt.json",
+    "bytes": 30199,
+    "sha256": "c444e5af26eaae9448f642170834f3365996af538c7f28ea9ad2cad193f939f4"
+  },
+  {
+    "path": "README.md",
+    "bytes": 1599,
+    "sha256": "aab926686669afa949c65a2894236b91a4de6c1784c4a39a0e42f9276567b193"
+  }
+]
