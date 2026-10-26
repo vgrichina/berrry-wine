@@ -21,6 +21,12 @@ const BINARY_PINS = Object.freeze({
 const FIELDS = Object.freeze(['status', 'event', 'token', 'thread', 'regs', 'pre', 'post',
   'selectRet', 'parks', 'result', 'nativeEntry', 'callBlock', 'sourceBlock', 'pc',
   'esp', 'eax', 'ebp', 'errno', 'caller', 'socketSet', 'timeout']);
+// Separate from captured errno/caller fields. Zero means no completion diagnostic.
+// Stable ABI: first failing predicate in the existing mne_complete guard order.
+const REJECTION_REASONS = Object.freeze({ 1: 'code16', 2: 'block-exec', 3: 'uop',
+  4: 'select-return', 5: 'phase', 6: 'completions', 7: 'fault', 8: 'active', 9: 'capped' });
+const DIAGNOSTIC_FIELDS = Object.freeze(['rejectReason', 'rejectModes', 'rejectExpectedRet',
+  'rejectObservedRet', 'rejectPhase', 'rejectCompletions', 'rejectFault', 'rejectActive', 'rejectCapped']);
 // These VAs are hypotheses until verifyBinaries binds every consumed byte.
 const NET_ANCHORS = Object.freeze({
   0x100012b0: '81ec1401000033c9538b9c241c0100005556', // locals + EBX/EBP/ESI
@@ -97,6 +103,15 @@ const any = xs => xs.reduce((a, b) => `(i32.or ${a} ${b})`, c(0));
 const reject = `${set('status', c(5))} (return)`;
 const check = x => `(if ${x} (then ${reject}))`;
 function storage(a, crtBase) {
+  const modeFlags = ['code16', 'block_exec_enabled', 'uop_enabled'].map(n => ne(`(global.get $${n})`, c(0)));
+  const modeBits = any(modeFlags.map((flag, i) => `(i32.shl ${flag} ${c(i)})`));
+  const completionChecks = [...modeFlags,
+    ne(m('ret'), c(a.selectRet)), ne(m('phase'), c(3)), ne(m('completions'), c(1)),
+    ne(m('fault'), c(0)), ne(m('active'), c(0)), ne(m('capped'), c(0))];
+  const completionReject = reason => [set('rejectReason', c(reason)), set('rejectModes', modeBits),
+    set('rejectExpectedRet', c(a.selectRet)), set('rejectObservedRet', m('ret')),
+    ...['phase', 'completions', 'fault', 'active', 'capped'].map(n =>
+      set('reject' + n[0].toUpperCase() + n.slice(1), m(n))), reject].join('\n  ');
   const modes = any(['code16', 'block_exec_enabled', 'uop_enabled'].map(n => `(i32.ne (global.get $${n}) ${c(0)})`));
   const owner = any([ne('(global.get $current_thread_id)', g('thread')), ne('(global.get $reg_base)', g('regs'))]);
   const stale = any([ne(m('token'), g('token')), ne(m('phase'), c(3)), ne(m('completions'), c(1)),
@@ -104,8 +119,8 @@ function storage(a, crtBase) {
     ne(m('pre'), g('pre')), ne(m('post'), g('post')), ne(m('ret'), g('selectRet')),
     ne(m('result'), g('result')), ne(m('thread'), g('thread')), ne(m('regs'), g('regs'))]);
   const wa = ga => `(call $mne_wa ${ga} ${c(4)})`;
-  return FIELDS.map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
-    FIELDS.map(n => `(func (export "mne_${n}") (result i32) ${g(n)})`).join('\n') + `
+  return [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
+    [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(func (export "mne_${n}") (result i32) ${g(n)})`).join('\n') + `
 ;; Status: 0 inert, 1 awaiting select, 2 completed, 3 native call, 4 captured,
 ;; 5 rejected. No reset. Event 3 means completion -> authentic CALL -> RET.
 (func (export "mne_start")
@@ -130,9 +145,8 @@ function storage(a, crtBase) {
   (local.get $wa))
 (func $mne_complete
   (if ${ne(g('status'), c(1))} (then (return)))
-  ${check(modes)}
-  ${check(any([ne(m('ret'), c(a.selectRet)), ne(m('phase'), c(3)), ne(m('completions'), c(1)),
-    ne(m('fault'), c(0)), ne(m('active'), c(0)), ne(m('capped'), c(0))]))}
+  ;; Scalar-only first rejection; status guard makes this immutable after status 5.
+  ${completionChecks.map((predicate, i) => `(if ${predicate} (then ${completionReject(i + 1)}))`).join('\n  ')}
   ${['token', 'thread', 'regs', 'pre', 'post', 'parks', 'result'].map(n => set(n, m(n))).join('\n  ')}
   ${set('selectRet', m('ret'))} ${set('event', c(1))} ${set('status', c(2))})
 (func $mne_call (param $ret i32) (param $target i32) (param $reg i32)
@@ -205,7 +219,7 @@ function transform(sources, options = {}) {
   out['src/05-alu.wat'] = alu.slice(0, start) + ret + alu.slice(end);
   return out;
 }
-module.exports = { transform, verifyBinaries, PINS, BINARY_PINS, FIELDS, NET_ANCHORS, pe, once, storage };
+module.exports = { transform, verifyBinaries, PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, NET_ANCHORS, pe, once, storage };
 
 if (require.main === module) {
   const fs = require('node:fs'), path = require('node:path');

@@ -1,6 +1,27 @@
 'use strict';
-const { FIELDS, NET_ANCHORS } = require('./maelstrom-native-errno-latch.cjs');
+const { FIELDS, NET_ANCHORS, DIAGNOSTIC_FIELDS, REJECTION_REASONS } = require('./maelstrom-native-errno-latch.cjs');
 const owners = new WeakSet();
+// Decode only immutable scalar rejection exports, never guest memory or errno.
+function decodeRejection(native, diagnostic) {
+  for (const k of DIAGNOSTIC_FIELDS)
+    if (!Number.isInteger(diagnostic[k]) || diagnostic[k] < 0 || diagnostic[k] > 0xffffffff)
+      throw Error('invalid native rejection diagnostic: ' + k);
+  const d = diagnostic, reason = d.rejectReason;
+  if (reason === 0) {
+    if (DIAGNOSTIC_FIELDS.some(k => d[k] !== 0)) throw Error('invalid native rejection diagnostic: nonzero without reason');
+    return null; // Legacy/non-completion rejection, not errno/caller zero.
+  }
+  if (!Object.hasOwn(REJECTION_REASONS, reason) || native.status !== 5 || native.event !== 0 ||
+      FIELDS.some(k => k !== 'status' && native[k] !== 0) || d.rejectModes > 7 || d.rejectExpectedRet === 0)
+    throw Error('invalid native rejection diagnostic: context');
+  const failures = [d.rejectModes & 1, d.rejectModes & 2, d.rejectModes & 4,
+    d.rejectObservedRet !== d.rejectExpectedRet, d.rejectPhase !== 3, d.rejectCompletions !== 1,
+    d.rejectFault !== 0, d.rejectActive !== 0, d.rejectCapped !== 0];
+  if (failures.findIndex(Boolean) + 1 !== reason) throw Error('invalid native rejection diagnostic: precedence');
+  return {schema:'maelstrom-native-completion-rejection/v1', reason, predicate:REJECTION_REASONS[reason],
+    modeBits:d.rejectModes, expectedReturn:d.rejectExpectedRet, observedReturn:d.rejectObservedRet,
+    phase:d.rejectPhase, completions:d.rejectCompletions, fault:d.rejectFault, active:d.rejectActive, capped:d.rejectCapped};
+}
 function verifyLoaded(e, buffer, bases) {
   if (bases.msvcrt?.loadAddr !== 0x522000 || bases.sdl_net?.loadAddr !== 0x7a2000)
     throw Error('incompatible original loaded bases: '+JSON.stringify(bases));
@@ -25,18 +46,35 @@ function createAdapter(instance, {persist, readLive}) {
   if (owners.has(instance)) throw Error('duplicate native latch owner');
   const e=instance.exports;
   for (const k of ['start',...FIELDS]) if(typeof e['mne_'+k]!=='function') throw Error('missing mne_'+k);
+  const hasDiagnostic=DIAGNOSTIC_FIELDS.some(k=>Object.hasOwn(e,'mne_'+k));
+  if(hasDiagnostic)for(const k of DIAGNOSTIC_FIELDS)
+    if(typeof e['mne_'+k]!=='function')throw Error('missing mne_'+k);
   owners.add(instance);let started=false,closed=false,last='';
   const snap=()=>Object.fromEntries(FIELDS.map(k=>[k,e['mne_'+k]()>>>0]));
+  function diagnostic(native) {
+    if(!hasDiagnostic)return null; // Unchanged accepted modules remain readable.
+    try {
+      const d=Object.fromEntries(DIAGNOSTIC_FIELDS.map(k=>{
+        const v=e['mne_'+k]();
+        if(!Number.isInteger(v)||v < -0x80000000||v > 0xffffffff)throw Error('invalid native rejection diagnostic: '+k);
+        return [k,v>>>0];
+      }));
+      return decodeRejection(native,d);
+    } catch(error){closed=true;throw error;}
+  }
   function record(kind,batch) {
     const native=snap();
+    const rejection=diagnostic(native);
     const msc=Object.fromEntries(['started','phase','token','entries','parks','completions','fault','capped','active','thread','regs','pre','post','ret','result'].map(k=>[k,e['msc_'+k]()>>>0]));
     const row={schema:'maelstrom-original-native-errno/v1',kind,batch,historicalNativeLatch:native,historicalSelectLatch:msc,liveHostObservation:readLive()};
+    if(hasDiagnostic)row.historicalNativeRejection=rejection;
     persist(row);return row;
   }
   return {
     start(){
       if(started||closed)throw Error('one invocation only');started=true;
-      if(FIELDS.some(k=>snap()[k]!==0))throw Error('nonpristine native latch');
+      const initial=snap();
+      if(FIELDS.some(k=>initial[k]!==0)||diagnostic(initial)!==null)throw Error('nonpristine native latch');
       e.mne_start();const row=record('started',null);
       if(row.historicalNativeLatch.status!==1){closed=true;throw Error('native latch start rejected');}
     },
@@ -49,4 +87,4 @@ function createAdapter(instance, {persist, readLive}) {
     }
   };
 }
-module.exports={verifyLoaded,createAdapter};
+module.exports={verifyLoaded,createAdapter,decodeRejection};
