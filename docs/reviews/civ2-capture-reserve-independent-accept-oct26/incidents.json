@@ -1,0 +1,10 @@
+[
+  "Historical erroneous individual128MiB client admission rejection retained, superseded by corrected root aggregate receipt; no prior acceptance repeated. No individual320MiB enforced cap.",
+  "All real historical denials/incidents remain standing; reused donor acceptance retains its fixture/mutation/sampling incidents and prior reserve598016B shortfall remains in canonical receipt. This task does not reinterpret them as passing runtime gates.",
+  "Initial own session discovery accidentally selected donor UUID from later event payload; corrected to first thread.started before any Git/test; both accounting states retained in events.",
+  "Initial raw readonly policy/config excerpts exceeded8192B; later focused tests/Git use enforced8192B excerpt and2MiB full capture. No broader compliance claim for initial excerpts.",
+  "First stream fixture used case-1 across separate processes and got EEXIST before controller/test execution. Original failure-stream.json and operation retained; corrected unique mkdtemp, unchanged production.",
+  "Atomicity failure is a production defect; unchanged reproducer retained, no source repair, no further behavioral challenges after rejection.",
+  "Initial own fleet disk projection conservatively used four96MiB peers including an outdated Ricochet name; all operations still admitted. Corrected to exact current64/64/48/96/96 before publication; prior stronger estimates retained.",
+  "First local Git commit rejected missing author identity before creating a commit. Existing donor author Wine Ops CivII worker/wine-ops@localhost verified read-only; own commit uses task-specific Wine Ops CivII acceptance worker/wine-ops@localhost via Git-only -c flags, without global/root/donor config mutation. Trusted remote query passed with target ref absent; no access denial/retry."
+]

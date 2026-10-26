@@ -1,0 +1,69 @@
+{
+  "status": "BLOCKED controller atomic start repair and fresh affected acceptance required; no runtime permission",
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "controllerSHA256": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+  "plannerSHA256": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+  "runner": {
+    "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+  },
+  "retainedCanonicalModuleReceipt": {
+    "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/receipt.json",
+    "sha256": "a4d32f11f52449363802c45135461ad929db204fa470d08473b9a57dae184db0",
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "bytes": 1880280,
+    "sourceMain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2"
+  },
+  "closureAndMounts": "configuration.json unchanged 338 merged files and 10 comma-bearing media filenames; reuse canonical parser receipt; future task revalidates staged availability, API/import signatures, libraries/workers/registered fixture closure",
+  "minimumPlan": {
+    "stages": 22,
+    "setup": 16,
+    "acceptance": [
+      "orders-menu",
+      "city-name",
+      "city-founded-ui",
+      "first-city-tutorial",
+      "production-screen"
+    ],
+    "cleanup": [
+      "quit-confirmation"
+    ],
+    "perImageCeiling": 2097152,
+    "imageBytesAlone": 46137344,
+    "dimensions": [
+      640,
+      480
+    ],
+    "planningBoundOnly": true
+  },
+  "currentPermittedFootprint": {
+    "allocationBytes": 50331648,
+    "futureBytes": 16777216,
+    "reserveBytes": 8388608,
+    "publicationIncrementBudget": 8388608,
+    "measuredComponents": "admission-final.json at closeout; includes own selective source/.git/output/launcher/session/events and positive WAL once",
+    "guestReservationBytes": 0,
+    "standingReadonlyExcluded": true,
+    "linksConcealingBytes": false
+  },
+  "futureRuntimeFootprint": "NOT admitted by offline48MiB. Must measure captures+source/Git+local/remote staging+outputs+publication+launcher/events/session+positiveWALonce+future+reserve, retaining real host/platform floors. 44MiB images +16MiB future +8MiB reserve alone=68MiB; includes no other costs. No new time/capture/runtime credit.",
+  "remainingGate": [
+    "repair invocation ownership before launch; same task allowance cannot gain restart credit",
+    "fresh affected independent acceptance on repair",
+    "separately assigned runtime allocation/lifecycle and complete closure availability, no repeat compile while retained module exact",
+    "serial exact-ID complete step ACK then frozen0; capture/inspect current production UI using ordinary presented-dialog decisions",
+    "capture/inspect actually presented quit confirmation, choose ordinary observed action and verify normal guest Exit0; stop flag is not guest quit"
+  ],
+  "launchRecipeAfterRepair": [
+    "verify exact repaired controller/planner hashes; retain runner/module/fixture hashes",
+    "explicit TASK.json output/reference paths, unique serial ID, allocationId, counts/lifetime bytes/retained bytes/dimensions, phase times/cutoff/ACK timeout; enough extra inspected dialogs before launch",
+    "node --max-old-space-size=64 tools/civ2-serial-controller.js TASK.json --preflight (read-only, no ledger)",
+    "use repaired launchController(TASK,{launch:AUTHORIZED_SERIAL_GUEST_LAUNCH}); then controller.run(); never run launcher separately before admission",
+    "reserve all stage images/bytes/time before any input; personally inspect every unknown/tutorial/confirmation and allocate new known route entry before launch",
+    "on uncertain ACK/failed step/capture/deadline stop without replay/reset; hand box back RUNNING to coordinator unless specifically delegated shutdown"
+  ],
+  "noAssignedBox": true,
+  "boxState": "not queried; no runtime API authorized",
+  "coordinatorOwnsShutdown": true
+}

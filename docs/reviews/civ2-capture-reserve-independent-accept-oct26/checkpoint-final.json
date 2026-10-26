@@ -1,0 +1,27 @@
+{
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "testSHA256": "8414d425c73c5475ac3d6039acdc65077b0e27a3aaa968b61a91d62314331128",
+  "sourcePins": "pins.json",
+  "verdict": "REJECT",
+  "completed": [
+    "10 unchanged donor groups and exact production planningguard omission reused",
+    "own unchanged20image actual production launch/start/input guard PASS",
+    "3 actual appendstream controller groups PASS"
+  ],
+  "failure": "actual launchController allows two launch callbacks in deterministic legal start interleaving for same output directory/allocation",
+  "reproducer": "test/independent-civ2-controller.js atomicity",
+  "evidence": [
+    "atomicity-observation.json",
+    "failure-atomicity.json",
+    "operations.json"
+  ],
+  "remaining": [
+    "repair invocation ownership before launch; same task allowance cannot gain restart credit",
+    "fresh affected independent acceptance on repair",
+    "separately assigned runtime allocation/lifecycle and complete closure availability, no repeat compile while retained module exact",
+    "serial exact-ID complete step ACK then frozen0; capture/inspect current production UI using ordinary presented-dialog decisions",
+    "capture/inspect actually presented quit confirmation, choose ordinary observed action and verify normal guest Exit0; stop flag is not guest quit"
+  ],
+  "publication": "evidence-only task branch, no main; pending verified push",
+  "noGuestExecution": true
+}

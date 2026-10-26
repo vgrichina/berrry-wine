@@ -1,0 +1,7 @@
+{
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "testSHA256": "9497df3e8161501657322785c0325430fdbcd694c685e1d78d194b8ed04d5f17",
+  "error": "Error: EEXIST: file already exists, mkdir '/tmp/civ2-capture-reserve-independent-accept-oct26/repo/test-output/case-1'\n    at Object.mkdirSync (node:fs:1350:26)\n    at config (/tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:13:61)\n    at /tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:51:14\n    at check (/tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:33:21)\n    at /tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:50:9\n    at Object.<anonymous> (/tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:103:3)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)",
+  "completed": [],
+  "remaining": "STOP source adoption; coordinator repair and fresh affected acceptance; production UI/normal quit unverified"
+}

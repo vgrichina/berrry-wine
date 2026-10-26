@@ -1,0 +1,7 @@
+{
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "testSHA256": "8414d425c73c5475ac3d6039acdc65077b0e27a3aaa968b61a91d62314331128",
+  "error": "AssertionError [ERR_ASSERTION]: one task ledger must atomically prevent second controller/launcher ownership\n\n2 !== 1\n\n    at /tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:102:10\n    at async check (/tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:33:15)\n    at async /tmp/civ2-capture-reserve-independent-accept-oct26/repo/test/independent-civ2-controller.js:86:24",
+  "completed": [],
+  "remaining": "STOP source adoption; coordinator repair and fresh affected acceptance; production UI/normal quit unverified"
+}
