@@ -1,0 +1,9 @@
+{
+  "mode": "no-subreaper",
+  "testCase": "doublefork",
+  "sourceSHA256": "b4fe820ca51edab45ace65371a4561442f5ee6ecf165920b426ce5206d155336",
+  "mutatedSHA256": "e0e66d15bf2063b8d754c024a8a0948343da1b8315e969306034ada79be1cbb7",
+  "rejected": true,
+  "failure": "AssertionError: [{'role': 'transport', 'pid': 3261323, 'start': '110208307'}, {'role': 'spawned', 'pid': 3261324, 'start': '110208308'}, {'role': 'grandchild', 'pid': 3261325, 'start': '110208308'}, {'role': 'detached', 'pid': 3261325, 'start': '110208308'}]",
+  "restored": true
+}

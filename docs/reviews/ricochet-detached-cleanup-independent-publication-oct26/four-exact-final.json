@@ -1,0 +1,55 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-detached-cleanup-independent-publication-oct26/repo/test/test-boat-capture-readback-four.py"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.5801323589403182,
+  "peakPhysicalAggregate": 132513792,
+  "physicalCap": 134217728,
+  "cpu": 0.45,
+  "outputBytes": 120,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3262587": "110215647",
+    "3262599": "110215655",
+    "3262600": "110215659",
+    "3262601": "110215660",
+    "3262604": "110215662",
+    "3262605": "110215662",
+    "3262603": "110215662",
+    "3262606": "110215662",
+    "3262607": "110215664",
+    "3262608": "110215664",
+    "3262609": "110215664",
+    "3262610": "110215664"
+  }
+}

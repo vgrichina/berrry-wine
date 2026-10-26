@@ -1,0 +1,173 @@
+{
+  "label": "initial-corrected",
+  "at": 1793054676.5476284,
+  "charges": {
+    "local": 28672,
+    "session": 610304,
+    "events": 221184,
+    "dispatch": 8192,
+    "positiveWALOnce": 0,
+    "future": 25165824,
+    "reserve": 8388608,
+    "publication": 8388608
+  },
+  "total": 42811392,
+  "allocation": 100663296,
+  "memAvailable": 3691458560,
+  "requiredMemory": 1476395008,
+  "clients": [
+    {
+      "pid": 3254639,
+      "rss": 191635456,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-opt-in-repair-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3254701,
+      "rss": 198082560,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-transient-accounting-independent-publication-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3254968,
+      "rss": 195571712,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-capture-reserve-independent-accept-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3255109,
+      "rss": 196186112,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-canonical-msg-completion-hook-repair-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3255270,
+      "rss": 200077312,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-detached-cleanup-independent-publication-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    }
+  ],
+  "unlaunchedClients": 0,
+  "fleet": [
+    {
+      "task": "alien-render-wait-opt-in-repair-oct26",
+      "allocation": 67108864,
+      "materialized": 3043328,
+      "remaining": 64065536
+    },
+    {
+      "task": "gl-transient-accounting-independent-publication-oct26",
+      "allocation": 67108864,
+      "materialized": 3698688,
+      "remaining": 63410176
+    },
+    {
+      "task": "civ2-capture-reserve-independent-accept-oct26",
+      "allocation": 50331648,
+      "materialized": 1069056,
+      "remaining": 49262592
+    },
+    {
+      "task": "enigma-canonical-msg-completion-hook-repair-oct26",
+      "allocation": 100663296,
+      "materialized": 864256,
+      "remaining": 99799040
+    },
+    {
+      "task": "ricochet-detached-cleanup-independent-publication-oct26",
+      "allocation": 100663296,
+      "materialized": 860160,
+      "remaining": 99803136
+    }
+  ],
+  "hostFree": 3450445824,
+  "remainingPermittedGrowth": 376340480,
+  "projectedFree": 3074105344,
+  "diskFloor": 2982150144,
+  "pass": true
+}

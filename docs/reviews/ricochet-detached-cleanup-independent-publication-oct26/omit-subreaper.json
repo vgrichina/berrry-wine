@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-detached-cleanup-independent-publication-oct26/ops/omission.py",
+    "no-subreaper"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 2.0797098779585212,
+  "peakPhysicalAggregate": 89993216,
+  "physicalCap": 134217728,
+  "cpu": 1.1600000000000001,
+  "outputBytes": 239,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3261320": "110208302",
+    "3261316": "110208290",
+    "3261321": "110208306",
+    "3261322": "110208306",
+    "3261323": "110208307",
+    "3261324": "110208308",
+    "3261325": "110208308"
+  }
+}

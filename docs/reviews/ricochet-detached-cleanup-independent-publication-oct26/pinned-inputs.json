@@ -1,0 +1,58 @@
+{
+  "candidate": "4ffa995ba8a8bda59399960182ace17e8c4e3c01",
+  "pins": {
+    "tools/boat-capture-readback.py": {
+      "bytes": 13590,
+      "sha256": "b4fe820ca51edab45ace65371a4561442f5ee6ecf165920b426ce5206d155336"
+    },
+    "test/test-boat-capture-readback.py": {
+      "bytes": 22381,
+      "sha256": "94a633e39ae90662c2034755e487aa650ff8c9021f6772380f7639f61733ae97"
+    },
+    "test/fixtures/ricochet-serial-controller/work.py": {
+      "bytes": 1282,
+      "sha256": "d4729c96cb6e5451070e128f78cea9368833386ac47d60be1e44c36e37a3afce"
+    },
+    "test/fixtures/ricochet-serial-controller/read.py": {
+      "bytes": 1080,
+      "sha256": "1979202afd4833abf0a3f00db9692a9b597620fb5bef17941bda96395083b2ae"
+    },
+    "test/fixtures/ricochet-serial-controller/later.png": {
+      "bytes": 401056,
+      "sha256": "9e6b81e080cfa6476fdd76ef4093217b43567e37f9d9f7fcd69cc021d1541d88"
+    },
+    "test/fixtures/ricochet-serial-controller/serial.py": {
+      "bytes": 2781,
+      "sha256": "c499348b02f0fe5997d472628675f8630f5f1a49a22395808b9e3ffe7a855a34"
+    },
+    "test/test-boat-capture-readback-four.py": {
+      "bytes": 3018,
+      "sha256": "e970f2f3bc025511f6d248eab0426a2bec145c0d86889be80bb6d5b4512807aa"
+    }
+  },
+  "gitBlobs": {
+    "test/fixtures/ricochet-serial-controller/later.png": "6e6aba7b47f4779b2c28a70a89fde2a8d02cb7a4",
+    "test/fixtures/ricochet-serial-controller/read.py": "db696953e8b2700f391816803239b5318da03a00",
+    "test/fixtures/ricochet-serial-controller/serial.py": "f32b61a438c519fda1aa5513510547670ce4325d",
+    "test/fixtures/ricochet-serial-controller/work.py": "fb8e4388e39e3a20689e982e1bc33e6a7058c84d",
+    "test/test-boat-capture-readback-four.py": "5839c4661d49b4f6bbbb7d95e7d23c985ee5eef0",
+    "test/test-boat-capture-readback.py": "1e6cdbebfe6cec8ef4037bfa85482ad264d9699d",
+    "tools/boat-capture-readback.py": "e233755d46b4bb2b651f5cc5a5428db4ecc148e0"
+  },
+  "unchangedFixtures": {
+    "accept.py": "2bd8ed046c74fc91e84c3511c8d8c3b76428ed75690280a93f10c885e96b9154",
+    "local_transport.py": "4503dbf10ad42d6435604d8ec0de28ec01ba02b61a0f4b473fa7541dd22e1a2b"
+  },
+  "standingDonor": "/tmp/ricochet-detached-transport-cleanup-repair-oct26",
+  "standingTools": {
+    "git": {
+      "executable": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "python3": {
+      "executable": "/usr/bin/python3.12",
+      "bytes": 8020928
+    }
+  },
+  "sourceCopiedWithoutLinks": true
+}

@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-detached-cleanup-independent-publication-oct26/ops/production-first.py"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.39808645006269217,
+  "peakPhysicalAggregate": 83046400,
+  "physicalCap": 134217728,
+  "cpu": 0.42000000000000004,
+  "outputBytes": 949,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3258872": "110196678",
+    "3258891": "110196691",
+    "3258892": "110196696",
+    "3258894": "110196698",
+    "3258896": "110196701",
+    "3258907": "110196713",
+    "3258908": "110196715",
+    "3258909": "110196717"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "mode": "no-signal",
+  "testCase": "deadline",
+  "sourceSHA256": "b4fe820ca51edab45ace65371a4561442f5ee6ecf165920b426ce5206d155336",
+  "mutatedSHA256": "ee266e0f81a99a3ed3783c93d9d05858998b7d9cdece598ae5d645d125e6e811",
+  "rejected": true,
+  "failure": "AssertionError: ",
+  "restored": true
+}

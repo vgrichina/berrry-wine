@@ -1,0 +1,9 @@
+{
+  "mode": "no-cancel-eof",
+  "testCase": "callerexit",
+  "sourceSHA256": "b4fe820ca51edab45ace65371a4561442f5ee6ecf165920b426ce5206d155336",
+  "mutatedSHA256": "4940cf5c5d46da240b95b855da1a88a50de8d6b274bfaf3ab1eb3e805b917954",
+  "rejected": true,
+  "failure": "AssertionError: bounded condition did not become true",
+  "restored": true
+}

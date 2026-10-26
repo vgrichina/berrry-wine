@@ -1,0 +1,220 @@
+{
+  "helperSHA256": "b4fe820ca51edab45ace65371a4561442f5ee6ecf165920b426ce5206d155336",
+  "observations": [
+    {
+      "mode": "detached",
+      "elapsed": 0.0739982018712908,
+      "requests": 1,
+      "error": "ReadbackError: API process error/denial",
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260442,
+          "start": "110205373"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260443,
+          "start": "110205374"
+        },
+        {
+          "role": "detached",
+          "pid": 3260443,
+          "start": "110205374"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260441
+      ]
+    },
+    {
+      "mode": "doublefork",
+      "elapsed": 0.07712776912376285,
+      "requests": 1,
+      "error": "ReadbackError: API process error/denial",
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260446,
+          "start": "110205380"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260447,
+          "start": "110205382"
+        },
+        {
+          "role": "grandchild",
+          "pid": 3260448,
+          "start": "110205382"
+        },
+        {
+          "role": "detached",
+          "pid": 3260448,
+          "start": "110205382"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260445
+      ]
+    },
+    {
+      "mode": "early",
+      "elapsed": 0.03841263707727194,
+      "requests": 1,
+      "error": "ReadbackError: API process error/denial",
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260451,
+          "start": "110205389"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260452,
+          "start": "110205390"
+        },
+        {
+          "role": "detached",
+          "pid": 3260452,
+          "start": "110205390"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260450
+      ]
+    },
+    {
+      "mode": "deadline",
+      "elapsed": 0.30777972703799605,
+      "requests": 1,
+      "error": "ReadbackError: readback deadline",
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260455,
+          "start": "110205393"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260456,
+          "start": "110205394"
+        },
+        {
+          "role": "detached",
+          "pid": 3260456,
+          "start": "110205394"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260454
+      ]
+    },
+    {
+      "mode": "success",
+      "elapsed": 0.1625275299884379,
+      "requests": 2,
+      "error": null,
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260463,
+          "start": "110205423"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260466,
+          "start": "110205425"
+        },
+        {
+          "role": "detached",
+          "pid": 3260466,
+          "start": "110205425"
+        },
+        {
+          "role": "transport",
+          "pid": 3260477,
+          "start": "110205431"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260478,
+          "start": "110205432"
+        },
+        {
+          "role": "detached",
+          "pid": 3260478,
+          "start": "110205432"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260461,
+        3260476
+      ]
+    },
+    {
+      "mode": "cancel",
+      "elapsed": 0.030276632169261575,
+      "requests": 1,
+      "error": "KeyboardInterrupt: fixture caller cancellation",
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260482,
+          "start": "110205440"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260483,
+          "start": "110205441"
+        },
+        {
+          "role": "detached",
+          "pid": 3260483,
+          "start": "110205441"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": [
+        3260481
+      ]
+    },
+    {
+      "mode": "callerexit",
+      "elapsed": 0.06458552205003798,
+      "requests": 0,
+      "error": null,
+      "records": [
+        {
+          "role": "transport",
+          "pid": 3260487,
+          "start": "110205445"
+        },
+        {
+          "role": "spawned",
+          "pid": 3260488,
+          "start": "110205447"
+        },
+        {
+          "role": "detached",
+          "pid": 3260488,
+          "start": "110205447"
+        }
+      ],
+      "allTransportsAbsent": true,
+      "unrelatedSurvived": true,
+      "owners": []
+    }
+  ]
+}

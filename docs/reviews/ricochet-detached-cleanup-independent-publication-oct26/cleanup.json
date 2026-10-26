@@ -1,0 +1,729 @@
+{
+  "at": 1793054982.156409,
+  "identities": [
+    {
+      "pid": 3258872,
+      "start": "110196678",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258891,
+      "start": "110196691",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258892,
+      "start": "110196696",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258894,
+      "start": "110196698",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258896,
+      "start": "110196701",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258907,
+      "start": "110196713",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258908,
+      "start": "110196715",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3258909,
+      "start": "110196717",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "production-first.json"
+    },
+    {
+      "pid": 3261636,
+      "start": "110211191",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261639,
+      "start": "110211197",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261640,
+      "start": "110211200",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261641,
+      "start": "110211200",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261642,
+      "start": "110211200",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261643,
+      "start": "110211201",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261644,
+      "start": "110211206",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261645,
+      "start": "110211207",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3261646,
+      "start": "110211208",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-exit-cleanup.json"
+    },
+    {
+      "pid": 3258786,
+      "start": "110196276",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "skip-unmaterialized-evidence.json"
+    },
+    {
+      "pid": 3258783,
+      "start": "110196251",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "skip-unmaterialized-evidence.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-identity.json"
+    },
+    {
+      "pid": 3258022,
+      "start": "110193674",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-identity.json"
+    },
+    {
+      "pid": 3260437,
+      "start": "110205361",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260439,
+      "start": "110205368",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260440,
+      "start": "110205372",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260441,
+      "start": "110205372",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260442,
+      "start": "110205373",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260443,
+      "start": "110205374",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260444,
+      "start": "110205379",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260445,
+      "start": "110205379",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260446,
+      "start": "110205380",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260448,
+      "start": "110205382",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260447,
+      "start": "110205382",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260449,
+      "start": "110205387",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260450,
+      "start": "110205387",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260451,
+      "start": "110205389",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260453,
+      "start": "110205391",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260454,
+      "start": "110205391",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260455,
+      "start": "110205393",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260456,
+      "start": "110205394",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260460,
+      "start": "110205422",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260461,
+      "start": "110205422",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260463,
+      "start": "110205423",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260466,
+      "start": "110205425",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260476,
+      "start": "110205430",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260477,
+      "start": "110205431",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260478,
+      "start": "110205432",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260480,
+      "start": "110205439",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260481,
+      "start": "110205439",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260482,
+      "start": "110205440",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260484,
+      "start": "110205442",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260485,
+      "start": "110205442",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260486,
+      "start": "110205444",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260487,
+      "start": "110205445",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3260488,
+      "start": "110205447",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "independent-ownership.json"
+    },
+    {
+      "pid": 3261513,
+      "start": "110209785",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261519,
+      "start": "110209793",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261520,
+      "start": "110209796",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261521,
+      "start": "110209796",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261522,
+      "start": "110209799",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261523,
+      "start": "110209800",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3261524,
+      "start": "110209801",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-eof.json"
+    },
+    {
+      "pid": 3258009,
+      "start": "110193653",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258010,
+      "start": "110193654",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258011,
+      "start": "110193654",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258013,
+      "start": "110193659",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258019,
+      "start": "110193665",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258020,
+      "start": "110193669",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "fetch-candidate.json"
+    },
+    {
+      "pid": 3258024,
+      "start": "110193682",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-parent.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-parent.json"
+    },
+    {
+      "pid": 3261460,
+      "start": "110209279",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261462,
+      "start": "110209486",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261463,
+      "start": "110209489",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261464,
+      "start": "110209489",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261465,
+      "start": "110209490",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261466,
+      "start": "110209492",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-signal.json"
+    },
+    {
+      "pid": 3261320,
+      "start": "110208302",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261316,
+      "start": "110208290",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261321,
+      "start": "110208306",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261322,
+      "start": "110208306",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261323,
+      "start": "110208307",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261324,
+      "start": "110208308",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3261325,
+      "start": "110208308",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "omit-subreaper.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-source-blobs.json"
+    },
+    {
+      "pid": 3258023,
+      "start": "110193678",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "candidate-source-blobs.json"
+    },
+    {
+      "pid": 3262587,
+      "start": "110215647",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262599,
+      "start": "110215655",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262600,
+      "start": "110215659",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262601,
+      "start": "110215660",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262604,
+      "start": "110215662",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262605,
+      "start": "110215662",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262603,
+      "start": "110215662",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262606,
+      "start": "110215662",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262607,
+      "start": "110215664",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262608,
+      "start": "110215664",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262609,
+      "start": "110215664",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3262610,
+      "start": "110215664",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "four-exact-final.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "identity-name.json"
+    },
+    {
+      "pid": 3258007,
+      "start": "110193645",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "identity-name.json"
+    },
+    {
+      "pid": 3258008,
+      "start": "110193649",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "identity-email.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "identity-email.json"
+    },
+    {
+      "pid": 3258003,
+      "start": "110193627",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "init.json"
+    },
+    {
+      "pid": 3258006,
+      "start": "110193639",
+      "sameIdentityPresent": false,
+      "state": null,
+      "receipt": "init.json"
+    }
+  ],
+  "allRecordedIdentitiesAbsent": true,
+  "fixtureCleanup": "Independent outer subreaper reaped caller-exit owner and safely cleaned deliberately broken omissions; passing transport absence checked before outer cleanup",
+  "assignedBoxes": []
+}
