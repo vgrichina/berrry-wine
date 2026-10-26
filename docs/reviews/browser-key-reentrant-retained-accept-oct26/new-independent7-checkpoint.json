@@ -1,0 +1,37 @@
+{
+  "candidate": "be746ec811b98365c378609ca936502783bb106d",
+  "sourceSHA256": "5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0",
+  "rendererSHA256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+  "fixtureSHA256": "dfabdf5adc8b66a479d00483684ce1719eb398263fa84b2101bc732b7f8963d4",
+  "results": [
+    {
+      "name": "wake hides twice and nested blur during DOWN owns exactly one release",
+      "pass": true
+    },
+    {
+      "name": "wake detaches focused canvas then body-target keyup preserves captured ownership",
+      "pass": true
+    },
+    {
+      "name": "wake detachment plus visibility loss releases both simultaneous physical modifier sides",
+      "pass": true
+    },
+    {
+      "name": "throwing actual wake hook is swallowed by renderer and later cancellation remains owned",
+      "pass": true
+    },
+    {
+      "name": "wake on first UP reenters duplicate cancellation while another key is held",
+      "pass": true
+    },
+    {
+      "name": "throwing queue publisher after DOWN preserves ownership for physical keyup",
+      "pass": true
+    },
+    {
+      "name": "throwing queue publisher on cancellation drains two keys and propagates first error",
+      "pass": true
+    }
+  ],
+  "remaining": []
+}

@@ -1,0 +1,8 @@
+PASS wake hides twice and nested blur during DOWN owns exactly one release
+PASS wake detaches focused canvas then body-target keyup preserves captured ownership
+PASS wake detachment plus visibility loss releases both simultaneous physical modifier sides
+PASS throwing actual wake hook is swallowed by renderer and later cancellation remains owned
+PASS wake on first UP reenters duplicate cancellation while another key is held
+PASS throwing queue publisher after DOWN preserves ownership for physical keyup
+PASS throwing queue publisher on cancellation drains two keys and propagates first error
+{"pass":7,"fail":0}

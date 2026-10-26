@@ -1,0 +1,103 @@
+{
+  "status": "complete",
+  "outcome": "production repair tested and task branch pushed; no independent acceptance decision",
+  "commit": "be746ec811b98365c378609ca936502783bb106d",
+  "branch": "task/browser-key-reentrant-focus-ownership-repair-oct26",
+  "remoteVerified": true,
+  "baseCandidate": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "rejectionReview": "372eb7de549492021520db38c3c51459ab4d982d",
+  "tests": [
+    {
+      "name": "supplied19",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-focus-release-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "supplied19.log"
+    },
+    {
+      "name": "independent7",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-focus-independent-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "independent7.log"
+    },
+    {
+      "name": "scoped6",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-reentrant-focus-ownership-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "scoped6.log"
+    }
+  ],
+  "counts": {
+    "supplied": 19,
+    "independentUnchanged": 7,
+    "scoped": 6,
+    "failures": 0
+  },
+  "evidenceDirectory": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/repo/docs/reviews/browser-key-reentrant-focus-ownership-oct26",
+  "evidenceManifest": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/repo/docs/reviews/browser-key-reentrant-focus-ownership-oct26/evidence-manifest.json",
+  "payloadsVerified": 14,
+  "sourcePins": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/repo/docs/reviews/browser-key-reentrant-focus-ownership-oct26/pins.json",
+  "originalFailureRetained": true,
+  "publication": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/ops/publication.json",
+  "resources": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/ops/resource-final.json",
+  "rootRefInitialReceipt": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/ops/root-ref-initial.json",
+  "limits": [
+    "No main publication/integration",
+    "No independent acceptance claim",
+    "No build/browser/runtime/gameplay qualification",
+    "Controlled synchronous callback seam; no current-host hiding frequency claim",
+    "Arbitrary renderer throwing before state transition is not transactionally recoverable"
+  ],
+  "box": {
+    "id": null,
+    "state": "N/A no box used; old boxes untouched",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "workersSpawned": 0,
+  "modelSession": "01a17703-29b5-7121-bd6d-1b997158d534",
+  "rootAndDonors": "readonly; shared messageboard append-only",
+  "standingTools": "identified in committed admission.json; no installs/copies",
+  "changedPaths": [
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/README.md",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/admission.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/checkpoint.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/evidence-manifest.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/independent7.log",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/original-candidate-narrow.log",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/original-parent-narrow.log",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/original-pins.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/original-supplied-baseline-final.log",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/pins.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/resource-prepublication.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/resource-pretest.json",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/review.txt",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/scoped6.log",
+    "docs/reviews/browser-key-reentrant-focus-ownership-oct26/supplied19.log",
+    "lib/browser-input.js",
+    "test/browser-key-reentrant-focus-ownership-oct26.test.cjs"
+  ],
+  "remainingGates": [
+    "coordinator review",
+    "separate independent acceptance",
+    "authorized current-main integration/regressions",
+    "real browser/runtime qualification"
+  ]
+}

@@ -1,0 +1,11 @@
+--- published-cd3ce6e-fixture
++++ repaired-browser-pin-fixture
+@@ -13,7 +13,7 @@
+ const rendererSource = fs.readFileSync(rendererPath);
+ const hash = b => crypto.createHash('sha256').update(b).digest('hex');
+ // Immutable production inputs and actual require closure, checked before cases.
+-assert.equal(hash(source), '9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05');
++assert.equal(hash(source), '5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0');
+ assert.equal(hash(rendererSource), '209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304');
+ const { installInputHandlers } = require(rendererPath);
+ class Input {

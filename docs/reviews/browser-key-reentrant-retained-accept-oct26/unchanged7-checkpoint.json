@@ -1,0 +1,44 @@
+{
+  "candidate": "be746ec811b98365c378609ca936502783bb106d",
+  "sourceSHA256": "5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0",
+  "rendererSHA256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+  "fixtureSHA256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8",
+  "results": [
+    {
+      "name": "capture routing, repeated downs and cancellation are balanced exactly once",
+      "pass": true
+    },
+    {
+      "name": "both modifier sides preserve first metadata across shifted layout keyup",
+      "pass": true
+    },
+    {
+      "name": "real focus transition to page input preserves ownership until captured up",
+      "pass": true
+    },
+    {
+      "name": "proxy focus and composition retain independent physical ownership",
+      "pass": true
+    },
+    {
+      "name": "swallowed Alt Enter stays unowned across cancellation and next plain Enter",
+      "pass": true
+    },
+    {
+      "name": "actual production renderer queue receives ordinary cancellation release",
+      "pass": true
+    },
+    {
+      "name": "actual renderer wake callback hiding document during down cannot leak ownership",
+      "pass": true
+    }
+  ],
+  "remaining": [],
+  "gates": [
+    "publication",
+    "current-main integration/regressions",
+    "real browser/runtime qualification"
+  ],
+  "evidence": "unchanged7.log",
+  "at": "2026-10-26T07:13:06.924Z"
+}

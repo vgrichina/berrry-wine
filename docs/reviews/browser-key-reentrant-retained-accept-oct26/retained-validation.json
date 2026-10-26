@@ -1,0 +1,69 @@
+{
+  "checkpointSHA256": "81a219cfd63f6c3228cb8450adbbe61e8b5cedeed0555444173433fe83024d11",
+  "candidate": "be746ec811b98365c378609ca936502783bb106d",
+  "pins": [
+    {
+      "donor": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/repo",
+      "revision": "be746ec811b98365c378609ca936502783bb106d",
+      "path": "lib/browser-input.js",
+      "blob": "af4bffdf413e1973ad540db30d78e36962278435",
+      "sha256": "5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0",
+      "bytes": 63151
+    },
+    {
+      "donor": "/tmp/browser-key-focus-independent-accept-oct26/repo",
+      "revision": "372eb7de549492021520db38c3c51459ab4d982d",
+      "path": "test/browser-key-focus-independent-oct26.test.cjs",
+      "blob": "63e68998227343d4c2a8016ebc17ff5909134ae8",
+      "sha256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8",
+      "bytes": 12124
+    },
+    {
+      "donor": "/tmp/keyboard-focus-renderer-interoperability-oct26/repo",
+      "revision": "cd3ce6e221c50d34df92dcad0c2b14b6ef99b2d0",
+      "path": "test/keyboard-focus-renderer-interoperability-oct26.test.cjs",
+      "blob": "3177c61d753e31a7ed8f86dfb74560a90ddbf887",
+      "sha256": "3258b65b0225746c2d3e05df9e391826196fc8818a114682f0a8fab6cf98ca16",
+      "bytes": 15037
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/renderer-input.js",
+      "blob": "3d675a36eea398f0cb827a9c6d36235c228c81f2",
+      "sha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+      "bytes": 181033
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/mem-utils.js",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "bytes": 13470
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089
+    }
+  ],
+  "groupsValidated": 10,
+  "pinOnlyDiff": true,
+  "rendererReceipt": {
+    "rendererRevision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+    "manifest": "/tmp/renderer-side-polling-merged-branch-oct26/repo/docs/reviews/renderer-side-polling-merged-branch-oct26/evidence-manifest.json",
+    "manifestSHA256": "0c63a8591188907d8650be218c44d7f74a7eb024ddd44faa1a99a7f75d1a3c35",
+    "verifiedPayloads": 46,
+    "sourceClosureIdentical": true,
+    "reused": "119 cases plus legacy; three known aggregate failures retained; no rerun"
+  },
+  "remaining": [
+    "semantic review",
+    "publication"
+  ],
+  "retainedWorkerDecision": "not adopted; worker ended before final; final decision belongs to this task"
+}
