@@ -1,0 +1,99 @@
+{
+  "label": "precheckout",
+  "at": 1793043886.6353223,
+  "MemAvailable": 3139076096,
+  "processes": [
+    {
+      "pid": 265414,
+      "exe": "node",
+      "rss": 11956224
+    },
+    {
+      "pid": 265422,
+      "exe": "node",
+      "rss": 294653952
+    },
+    {
+      "pid": 265632,
+      "exe": "codex",
+      "rss": 14594048
+    },
+    {
+      "pid": 271075,
+      "exe": "node",
+      "rss": 250621952
+    },
+    {
+      "pid": 752162,
+      "exe": "codex (deleted)",
+      "rss": 403148800
+    },
+    {
+      "pid": 857107,
+      "exe": "codex-code-mode-host (deleted)",
+      "rss": 12197888
+    },
+    {
+      "pid": 1789179,
+      "exe": "codex",
+      "rss": 53669888
+    },
+    {
+      "pid": 2896015,
+      "exe": "node",
+      "rss": 506966016
+    },
+    {
+      "pid": 2955986,
+      "exe": "node",
+      "rss": 17846272
+    },
+    {
+      "pid": 3006714,
+      "exe": "codex",
+      "rss": 194269184
+    },
+    {
+      "pid": 3006908,
+      "exe": "codex-code-mode-host",
+      "rss": 21819392
+    },
+    {
+      "pid": 3008289,
+      "exe": "codex",
+      "rss": 190615552
+    },
+    {
+      "pid": 3009389,
+      "exe": "codex-code-mode-host",
+      "rss": 21876736
+    },
+    {
+      "pid": 3011663,
+      "exe": "codex",
+      "rss": 257355776
+    },
+    {
+      "pid": 3011933,
+      "exe": "codex-code-mode-host",
+      "rss": 23142400
+    }
+  ],
+  "existingRSSAlreadyInMemAvailable": true,
+  "newClientsReserved": 1,
+  "newClientBytesEach": 268435456,
+  "lightAllowances": 4,
+  "lightAllowanceEach": 335544320,
+  "browserAggregateAllowance": null,
+  "browserPriorMeasuredAggregateRSS": 1228795904,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 2415919104,
+  "ownedBytes": 651264,
+  "positiveWALGrowthCountedOnce": 0,
+  "sessionBytes": 466944,
+  "projectedBytesIncluding8MiBReserveAnd8MiBGrowth": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 3938721792,
+  "hostRemainingProjected": 3897430016,
+  "pass": true
+}

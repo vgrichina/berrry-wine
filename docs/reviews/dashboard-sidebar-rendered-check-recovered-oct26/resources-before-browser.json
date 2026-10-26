@@ -1,0 +1,109 @@
+{
+  "label": "before-browser",
+  "at": 1793043964.9366088,
+  "MemAvailable": 3871096832,
+  "processes": [
+    {
+      "pid": 265414,
+      "exe": "node",
+      "rss": 11972608
+    },
+    {
+      "pid": 265422,
+      "exe": "node",
+      "rss": 278147072
+    },
+    {
+      "pid": 265632,
+      "exe": "codex",
+      "rss": 14594048
+    },
+    {
+      "pid": 271075,
+      "exe": "node",
+      "rss": 255021056
+    },
+    {
+      "pid": 752162,
+      "exe": "codex (deleted)",
+      "rss": 392077312
+    },
+    {
+      "pid": 857107,
+      "exe": "codex-code-mode-host (deleted)",
+      "rss": 11079680
+    },
+    {
+      "pid": 1789179,
+      "exe": "codex",
+      "rss": 53395456
+    },
+    {
+      "pid": 2896015,
+      "exe": "node",
+      "rss": 468230144
+    },
+    {
+      "pid": 2955986,
+      "exe": "node",
+      "rss": 17846272
+    },
+    {
+      "pid": 3006714,
+      "exe": "codex",
+      "rss": 193699840
+    },
+    {
+      "pid": 3006908,
+      "exe": "codex-code-mode-host",
+      "rss": 21671936
+    },
+    {
+      "pid": 3008289,
+      "exe": "codex",
+      "rss": 194072576
+    },
+    {
+      "pid": 3009389,
+      "exe": "codex-code-mode-host",
+      "rss": 21856256
+    },
+    {
+      "pid": 3011663,
+      "exe": "codex",
+      "rss": 197783552
+    },
+    {
+      "pid": 3011933,
+      "exe": "codex-code-mode-host",
+      "rss": 23265280
+    },
+    {
+      "pid": 3013625,
+      "exe": "codex",
+      "rss": 245911552
+    },
+    {
+      "pid": 3014102,
+      "exe": "codex-code-mode-host",
+      "rss": 22052864
+    }
+  ],
+  "existingRSSAlreadyInMemAvailable": true,
+  "newClientsReserved": 1,
+  "newClientBytesEach": 268435456,
+  "lightAllowances": 3,
+  "lightAllowanceEach": 335544320,
+  "browserAggregateAllowance": 1342177280,
+  "browserPriorMeasuredAggregateRSS": 1228795904,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 3422552064,
+  "ownedBytes": 20611072,
+  "positiveWALGrowthCountedOnce": 28672,
+  "sessionBytes": 634880,
+  "projectedBytesIncluding8MiBReserveAnd8MiBGrowth": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 3916734464,
+  "hostRemainingProjected": 3895402496,
+  "pass": true
+}

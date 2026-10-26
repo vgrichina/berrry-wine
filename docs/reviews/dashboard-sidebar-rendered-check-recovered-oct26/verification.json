@@ -1,0 +1,48 @@
+{
+  "passResult": true,
+  "actualBrowser": true,
+  "sourceCandidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "activationEvidence": "ed36948b6b395ef338d592289dbb0a2a232b0830",
+  "sourceHashes": {
+    "app.js": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+    "readers.js": "079da22e440c6a3eb6efb28a994b222fe827290ccfb0874ae48f1802ef08c78c"
+  },
+  "servedFinal": {
+    "status": 200,
+    "bytes": 80175,
+    "sha256": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "cacheControl": "no-store"
+  },
+  "servicePID": 2896015,
+  "serviceStartTicks": "108624751",
+  "serviceIdentityUnchanged": true,
+  "serviceRSSBefore": 468230144,
+  "serviceRSSAfter": 463060992,
+  "observationSeconds": 5.823352068895474,
+  "shortObservationOnly": true,
+  "longTermStabilityClaim": false,
+  "ownedBrowserProcessesRemaining": [],
+  "noSourceModification": true,
+  "noDeploy": true,
+  "noRestart": true,
+  "other1358FilesVerificationReusedFrom": "ed36948b6b395ef338d592289dbb0a2a232b0830",
+  "priorManifestSHA256": "0231aaa416d855ec188e9687739f7b0c761c48901fdf79be9377bbd2bdd03168",
+  "rollbackUnchanged": {
+    "path": "/tmp/dashboard-sidebar-private-browser-activation-oct26/rollback.py",
+    "sha256": "3d0719640b41cae50de7a50a81d7fdd9b455adec92e29b77c075c186957243d0",
+    "backup": "/tmp/dashboard-sidebar-private-browser-activation-oct26/backups/app.js",
+    "backupSHA256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132"
+  },
+  "privateRetentionPaths": [
+    "/tmp/dashboard-sidebar-rendered-check-recovered-oct26/browser-profile",
+    "/tmp/dashboard-sidebar-rendered-check-recovered-oct26/browser-profile-monitored",
+    "/tmp/dashboard-sidebar-rendered-check-recovered-oct26/detail-counts-redacted.png",
+    "/tmp/dashboard-sidebar-rendered-check-recovered-oct26/sidebar-count-redacted.png",
+    "/tmp/dashboard-sidebar-rendered-check-recovered-oct26/first-browser-attempt"
+  ],
+  "privateContentCommitted": false,
+  "box": null,
+  "boxContacted": false,
+  "lifecycleOwner": "coordinator"
+}

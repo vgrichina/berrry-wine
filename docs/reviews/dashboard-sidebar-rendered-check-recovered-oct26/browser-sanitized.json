@@ -1,0 +1,72 @@
+{
+  "counts": {
+    "distinctBlockedTaskIds": 77,
+    "rawBlockedRows": 91,
+    "duplicateBlockedRows": 14,
+    "anonymousBlockedRows": 0
+  },
+  "label": "77 distinct blocked task IDs \u00b7 91 blocked rows \u00b7 14 duplicate-ID blocked rows \u00b7 0 anonymous blocked rows (counted separately)",
+  "classifications": "0 live approvals \u00b7 4 need your input \u00b7 85 agent-resolvable \u00b7 2 dependent rows (filtered row classifications; not current eligibility).",
+  "sidebar": "77 distinct IDs",
+  "sidebarTitle": "77 distinct blocked task IDs \u00b7 91 blocked rows \u00b7 14 duplicate-ID blocked rows \u00b7 0 anonymous blocked rows (counted separately)",
+  "sidebarMatchesIndependent": true,
+  "sidebarTitleMatches": true,
+  "detailMatchesIndependent": true,
+  "rowClassificationsPreserved": true,
+  "renderedClassifiedRows": 89,
+  "expectedRootRows": 89,
+  "duplicateRowsNotExtraTasks": true,
+  "repeatedHeading": true,
+  "apiCacheControl": "no-store",
+  "apiHTTP": 200,
+  "apiBytes": 7081388,
+  "htmlHTTP": 200,
+  "htmlCacheControl": "no-store",
+  "appLoaded": {
+    "status": 200,
+    "bytes": 80175,
+    "sha256": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "fromCache": false,
+    "cacheControl": "no-store"
+  },
+  "overview": {
+    "stats": [
+      {
+        "label": "Running",
+        "value": 3
+      },
+      {
+        "label": "Up next",
+        "value": 16
+      },
+      {
+        "label": "Blocked",
+        "value": 91
+      },
+      {
+        "label": "Needs review",
+        "value": 17
+      }
+    ],
+    "expected": [
+      3,
+      16,
+      91,
+      17
+    ],
+    "sidebar": "77 distinct IDs"
+  },
+  "overviewRawRowStatsPreserved": true,
+  "routeReturnConsistent": true,
+  "stateRequests": 1,
+  "blockedRequests": 0,
+  "pageErrors": 0,
+  "elapsedSeconds": 5.01,
+  "screenshotBytes": {
+    "detail": 43031,
+    "sidebar": 9257
+  },
+  "pass": true,
+  "scope": "Actual private loopback rendered check; one fresh real API snapshot per attempt. Only sanitized aggregate counts and assertions exported. Periodic refresh disabled for bounded capture. No API data retained.",
+  "screenshots": "Inspected locally: aggregate-only crops. Kept private with profiles; not in task commit."
+}

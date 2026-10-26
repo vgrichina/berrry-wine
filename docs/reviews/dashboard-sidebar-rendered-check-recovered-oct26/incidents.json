@@ -1,0 +1,13 @@
+[
+  {
+    "kind": "internal capture path error",
+    "operation": "GET /readers.js",
+    "firstFailure": "HTTP 404 Not Found before browser launch",
+    "resolution": "readers.js is an internal server module; verify its exact deployed local hash. app.js/blocker-model.js remain checked over HTTP. No service change or denied-operation retry."
+  },
+  {
+    "kind": "browser resource monitor defect",
+    "firstFailure": "Puppeteer launches Chrome in detached process group; initial group-only sampler measured Node 83791872B, not browser aggregate. First assertion group passed but resource supervision receipt is incomplete.",
+    "resolution": "Count recursive PPID descendants including detached Chrome group, preserve first attempt and rerun only affected real-browser group under fresh admission. No cap/floor reduction."
+  }
+]

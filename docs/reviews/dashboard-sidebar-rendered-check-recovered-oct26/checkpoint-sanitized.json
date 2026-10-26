@@ -1,0 +1,39 @@
+{
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "activationEvidenceCommit": "ed36948b6b395ef338d592289dbb0a2a232b0830",
+  "sourceHashes": {
+    "app.js": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+    "readers.js": "079da22e440c6a3eb6efb28a994b222fe827290ccfb0874ae48f1802ef08c78c"
+  },
+  "recipeSHA256": "a99342e4829e47d2133bd0febe17ce62b30fd40652f8f60777d2210bb1108f53",
+  "fixture": "one fresh actual private API state snapshot; no synthetic fixture",
+  "fixturePrivateHashRetainedOnlyLocally": true,
+  "completed": [
+    "real rendered sidebar independent distinct-ID count with duplicate and anonymous row accounting",
+    "detail aggregate and row classification semantics",
+    "overview raw row stats",
+    "overview/blockers route return",
+    "served HTML/API/app cache no-store",
+    "service PID/start identity unchanged"
+  ],
+  "results": {
+    "passResult": true,
+    "counts": {
+      "distinctBlockedTaskIds": 77,
+      "rawBlockedRows": 91,
+      "duplicateBlockedRows": 14,
+      "anonymousBlockedRows": 0
+    }
+  },
+  "reused": "All completed source/independent/merged acceptance and 1358 unchanged deployed file verification; not replayed",
+  "remaining": [
+    "task branch publication and exact remote verify"
+  ],
+  "evidence": [
+    "browser-sanitized.json",
+    "real-browser.json",
+    "served-before.json",
+    "verification.json"
+  ]
+}

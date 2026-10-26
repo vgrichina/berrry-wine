@@ -1,0 +1,11 @@
+{
+  "nodeExecutable": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "chromeExecutable": "/opt/google/chrome/chrome",
+  "chromeSHA256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97",
+  "chromeStandingApproxBytes": 706998272,
+  "puppeteer": "/tmp/wa-local-runtime-deps/node_modules/puppeteer-core",
+  "donor": "/tmp/dashboard-sidebar-private-browser-activation-oct26/repo",
+  "donorReceiptSHA256": "a43d247e7fd70d8c5ed90e273ecca6a5fc080be0bb581ed4eb43531ef062bab0",
+  "installedToolsExecutedInPlace": true
+}
