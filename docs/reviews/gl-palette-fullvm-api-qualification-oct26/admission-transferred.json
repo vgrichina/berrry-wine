@@ -1,0 +1,19 @@
+{
+  "stage": "transferred",
+  "charges": {
+    "hostOwned": 10731520,
+    "remoteOwned": 34000896,
+    "launcher": 176128,
+    "sessions": 614400,
+    "positiveWAL": 1028096,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "projection": 62914560,
+  "cap": 67108864,
+  "hostFree": 3837894656,
+  "hostProjectedRemaining": 3774980096,
+  "memAvailable": 4050448384,
+  "requiredMem": 2415919104,
+  "pass": true
+}

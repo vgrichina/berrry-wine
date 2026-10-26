@@ -1,0 +1,10 @@
+{
+  "moduleSHA256": "7a363e01a49bd761dc6cbc1eddbea2707111927f04587dddf49e25d64e3050d6",
+  "moduleBytes": 1880644,
+  "allocated": 30691328,
+  "apiProcessLogs": 8192,
+  "memAvailable": 7263801344,
+  "diskFree": 48495419392,
+  "box": "bx_7tjybtxp",
+  "apiAlive": true
+}

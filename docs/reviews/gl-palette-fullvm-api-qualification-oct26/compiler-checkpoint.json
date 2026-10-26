@@ -1,0 +1,76 @@
+{
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "compilerPath": "tools/watx.js -> tools/watx-src/{compiler-parser,compiler-stages,compiler-codegen,compiler}.js",
+  "excerpts": [
+    {
+      "path": "tools/watx-closure.js",
+      "blob": "91c8d4b3a2dcf93d35fb37a313df98259c33b1ba",
+      "fullSHA256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+      "recipe": "bytes.splitlines(keepends=True)[72:102] then join",
+      "firstLine": 73,
+      "lastLine": 102,
+      "bytes": 1540,
+      "sha256": "60487769b6e3cd7d841343f21f4a1d088f423a8ad1821f77a23c2e53cc935c78",
+      "excerpt": "    runtimeBuiltins: false,\n    tailCalls: !!tailCalls,\n    // A duplicate `(func $name \u2026)` is a SILENT miscompile, not a redefinition.\n    // The compiler builds two maps from the declarations: `funcDeclByName`, used\n    // to type-check a call, is first-wins, and `funcIndexMap`, used to emit the\n    // call's target index, is last-wins. So a second body under the same name\n    // with a different signature type-checks against the FIRST one and then\n    // calls the SECOND \u2014 no error anywhere, and a wrong function at runtime.\n    // The compiler has guarded this since it was written, behind\n    // `strictDeclarations`, and until now nothing but tools/watx-rejection-\n    // pairs.js ever passed it: every shipped build had the guard switched off.\n    // It is set here rather than in the compiler because this is the contract\n    // for OUR closure, and turning it on inside tools/watx-src/ would be a\n    // vendored-compiler change requiring a re-seal to say \"the tree has no\n    // duplicates today\" \u2014 which is a property of the tree, not of the compiler.\n    strictDeclarations: true,\n  };\n  if (regionShake) options.regionShake = regionShake;\n  // Only ever set when explicitly asked for. A name section changes the emitted\n  // bytes, and byte-identity against the canonical artifact is the instrument\n  // every compiler change here is proved with.\n  if (nameSection) options.nameSection = nameSection;\n  return compile(closure.source, closure.vfs, options);\n}\n\nmodule.exports = { watxSourceClosure, compileClosure };\n"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "fullSHA256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+      "recipe": "bytes.splitlines(keepends=True)[0:51] then join",
+      "firstLine": 1,
+      "lastLine": 51,
+      "bytes": 2445,
+      "sha256": "4a6ae4ce544a42fefa65f359f425b25cca7f9c23d47421cd79d9a67a7d25dfcc",
+      "excerpt": "// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n// WATX compiler loader (Node).\n// Loads the vendored browser-global compiler stages into a vm\n// context and re-exports compile() + helpers as CommonJS.\n// Source: watx.berrry.app (canvas runtime intentionally not vendored).\n// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nconst fs = require('fs');\nconst path = require('path');\nconst vm = require('vm');\n\nconst SRC = path.join(__dirname, 'watx-src');\nconst FILES = [\n  'compiler-parser.js',   // tokenize, parseSexpr, ParseError\n  'compiler-stages.js',   // resolveIncludes, expandMacros, checkTypes\n  'compiler-codegen.js',  // lowerIR, generateWasm, disassembleWasm\n  'compiler.js',          // compile(), formatSexpr, formatLowered\n];\n\n// Route the compiler's chatty [WATX] logs to stderr so stdout stays clean\n// for test output.\nconst quietConsole = {\n  log: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\\n'),\n  warn: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\\n'),\n  error: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\\n'),\n};\nconst ctx = {\n  console: quietConsole,\n  TextEncoder, TextDecoder,\n  Float32Array, Float64Array, Uint8Array, ArrayBuffer,\n  Map, Set, RegExp, Array, Object, String, Number, Math,\n  Promise, Date, setTimeout, clearTimeout, setImmediate,\n  parseInt, parseFloat, isNaN,\n};\nvm.createContext(ctx);\nfor (const f of FILES) {\n  vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), ctx, { filename: f });\n}\n\nmodule.exports = {\n  compile: ctx.compile,\n  compileAsync: ctx.compileAsync,\n  tokenize: ctx.tokenize,\n  parseSexpr: ctx.parseSexpr,\n  parseSource: ctx.parseSource,\n  // The byte\u2192text boundary. A host that reads sources as bytes (every host that\n  // matters: tools/watx-closure.js, lib/watx-compile-worker.js) must decode\n  // through this rather than TextDecoder, or it pays two bytes of heap per\n  // source character. See the comment on the function itself.\n  sourceTextFromBytes: ctx.watxSourceTextFromBytes,\n  // Reading a node's position back out. The location is one packed integer, so\n  // these are the only supported way to ask which file and line a form came\n"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "fullSHA256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+      "recipe": "bytes.splitlines(keepends=True)[0:40] then join",
+      "firstLine": 1,
+      "lastLine": 40,
+      "bytes": 1908,
+      "sha256": "0aba1470e7292158c5453e8af77f3f2dd068cadc98f5b4b6767cc8843e8aa8c0",
+      "excerpt": "// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n// WATX COMPILER \u2014 Pipeline Orchestrator\n// Compiles WATX \u2192 Real WebAssembly Binary\n// \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n//\n// DESIGN: Zero implicit coercion.\n// All type conversions must be explicit in WATX source.\n// The compiler never inserts i32.trunc_f32_s or f32.convert_i32_s\n// on behalf of the programmer. If types don't match, the Wasm\n// validator will reject the binary \u2014 which is correct behavior.\n//\n// Modules:\n//   compiler-parser.js   \u2014 Stage 1: tokenize, parseSexpr, ParseError\n//   compiler-stages.js   \u2014 Stages 2-4: resolveIncludes, expandMacros, checkTypes\n//   compiler-codegen.js  \u2014 Stages 5-6: lowerIR, generateWasm, disassembleWasm\n//   compiler.js (this)   \u2014 Pipeline glue: compile(), formatSexpr(), formatLowered()\n//\n\nfunction parseStreamingDescriptor(descriptor, parseContext = null) {\n  const forms = parseSource(\n    descriptor.source, descriptor.filename, parseContext,\n    descriptor.start, descriptor.end);\n  if (forms.length !== 1) throw new Error(`Expected one top-level form in ${descriptor.filename}`);\n  return forms[0];\n}\n\nfunction watxFunctionHeader(form) {\n  const header = [form[0], 'func'];\n  let i = 2;\n  if (typeof form[i] === 'string' && form[i].startsWith('$')) header.push(form[i++]);\n  for (; i < form.length; i++) {\n    const part = form[i];\n    const head = Array.isArray(part) ? watxValue(part[1]) : null;\n    if (head === 'param' || head === 'result' || head === 'effects' || head === 'export') header.push(part);\n  }\n  return header;\n}\n\nfunction watxFunctionBody(form) {\n  const body = [];\n"
+    },
+    {
+      "path": "test/compile-src.js",
+      "blob": "963f5a588aa81c439264680d9561506433007b6e",
+      "fullSHA256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+      "recipe": "bytes.splitlines(keepends=True)[34:60] then join",
+      "firstLine": 35,
+      "lastLine": 60,
+      "bytes": 718,
+      "sha256": "4d8f4b052b40de728fc26b2dda264b8975afcaa944f56f261a6d64b69f8b473a",
+      "excerpt": "    }\n    for (const base of bases) {\n      const out = transform(base, closure.vfs.get(base));\n      if (out === undefined || out === closure.vfs.get(base)) continue;\n      for (const key of [base, `src/${base}`, `./${base}`]) {\n        if (closure.vfs.has(key)) closure.vfs.set(key, out);\n      }\n    }\n  }\n  const r = compileClosure(closure, { tailCalls });\n  if (!r || !r.success || !r.wasmBinary) {\n    const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';\n    throw new Error(`compile-src: WATX compile failed${where}: ` +\n      String((r && (r.error || r.message)) || 'compile() returned no binary'));\n  }\n  return Buffer.from(r.wasmBinary);\n}\n\nmodule.exports = { compileSrcWasm };\n"
+    },
+    {
+      "path": "test/render-helper.js",
+      "blob": "55366dcd5359b205cc4fdcd217e841e281af5847",
+      "fullSHA256": "009fb2e799bac606b6c3e66b0a3552a6a724d51dcdf67bdd5ec48af5c39ca4f6",
+      "recipe": "bytes.splitlines(keepends=True)[57:89] then join",
+      "firstLine": 58,
+      "lastLine": 89,
+      "bytes": 1881,
+      "sha256": "69c0cedd96e3ef7e8b9c3aec13bf67bc4a323b3b1c56dce1697c2d2fcf5b6cf8",
+      "excerpt": "// The old form spliced it in front of a trailing `)` that no longer exists,\n// which matched nothing and silently dropped every extraWat export.\nconst harnessWasmCache = new Map();\nfunction compileHarnessWasm(extraWat, tailCalls) {\n  const { identity, compileHarness } = require('./render-artifact');\n  const options = { extraWat: extraWat ? String(extraWat) : '', tailCalls: !!tailCalls };\n  const key = JSON.stringify(identity(options, evaluatedSource));\n  if (harnessWasmCache.has(key)) return harnessWasmCache.get(key);\n  const { bytes, identity: compiledIdentity } = compileHarness(options, evaluatedSource);\n  if (JSON.stringify(compiledIdentity) !== key)\n    throw new Error('render artifact inputs changed before compilation');\n  // Retain only the current module; changing inputs must not accumulate Wasm.\n  harnessWasmCache.clear();\n  harnessWasmCache.set(key, bytes);\n  return bytes;\n}\n\nasync function bootRenderHarness({\n  extraHostOverrides = {}, extraWat = '', width = 640, height = 480,\n  fonts = 'all', memory: suppliedMemory = null, tailCalls = true,\n  prebuiltModule = null,\n} = {}) {\n  // Explicit commands can run the real test entrypoint to capture its unchanged\n  // extraWat. Preparation exits before host dependencies, memory or assertions.\n  const prepare = process.env.WINE_RENDER_ARTIFACT_PREPARE;\n  const artifact = process.env.WINE_RENDER_ARTIFACT;\n  if (prepare !== undefined && artifact !== undefined)\n    throw new Error('render artifact prepare and consume modes are mutually exclusive');\n  if ((prepare !== undefined || artifact !== undefined) && prebuiltModule !== null)\n    throw new Error('render artifact mode cannot be combined with prebuiltModule');\n  if (prebuiltModule !== null && (!(prebuiltModule instanceof WebAssembly.Module) || extraWat))\n    throw new Error('prebuiltModule requires a compiled WebAssembly.Module and no extraWat');\n"
+    }
+  ],
+  "options": {
+    "mode": "production",
+    "standardWat": true,
+    "runtimeBuiltins": false,
+    "strictDeclarations": true,
+    "tailCalls": true
+  },
+  "srcBytes": 21526695,
+  "test": {
+    "path": "test/test-d3dim-palette-alpha-page-watch.js",
+    "retained": true,
+    "sha256": "c06d10e8d419302a82eab03bd68e0c788df84323a0c1ed484b28bfd19246aebe",
+    "bytes": 9192
+  },
+  "verdict": "PASS canonical bytes/options; actual compile pending"
+}

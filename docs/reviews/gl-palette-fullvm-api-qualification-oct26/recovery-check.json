@@ -1,0 +1,21 @@
+{
+  "verdict": "PASS",
+  "checks": [
+    {
+      "archive": "source.tar.gz",
+      "bytes": 5113881,
+      "sha256": "9206b42b4cdf44e8dd0e51b2176ad79655ffde699a4992751118e23334f1140c",
+      "verifiedMembers": 290
+    },
+    {
+      "archive": "pngjs.tar.gz",
+      "bytes": 160207,
+      "sha256": "cbf595eeedbdf3ba340c06c640aca8135ee45cf4648a348f871356ddb7697f91",
+      "verifiedMembers": 27
+    }
+  ],
+  "sourceCheckoutCreated": false,
+  "newArchiveCopiesRemovedAfterVerification": true,
+  "gitLimits": "DATA512MiB CPU90 file24MiB child-only",
+  "note": "Read-only alternate stores supplied in GIT_ALTERNATE_OBJECT_DIRECTORIES; no donor writes/fetch/ref enumeration."
+}

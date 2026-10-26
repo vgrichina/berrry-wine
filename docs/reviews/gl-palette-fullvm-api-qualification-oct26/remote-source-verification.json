@@ -1,0 +1,14 @@
+{
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "verified": 290,
+  "sourceBytes": 27376192,
+  "allocated": 28758016,
+  "archive": {
+    "bytes": 5215946,
+    "sha256": "8ecf9d0f35d566d54b40fd8ed7a3c35566c6e07686a1252ab52f36baf54e0975"
+  },
+  "pngjs": {
+    "bytes": 160197,
+    "sha256": "e17d14be7f69bef84763ef26480f86b85bc14813323ddc7adab7aa7646ec9de9"
+  }
+}

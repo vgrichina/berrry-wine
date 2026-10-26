@@ -1,0 +1,6 @@
+{
+  "archiveSHA256": "8ecf9d0f35d566d54b40fd8ed7a3c35566c6e07686a1252ab52f36baf54e0975",
+  "bytes": 5215946,
+  "transferVerified": true,
+  "reason": "remove redundant host archive after verified remote unpack to preserve hard allocation; immutable source manifest and recovery recipe retained"
+}

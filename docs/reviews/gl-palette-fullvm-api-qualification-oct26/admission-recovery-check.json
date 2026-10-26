@@ -1,0 +1,19 @@
+{
+  "stage": "recovery-check",
+  "charges": {
+    "hostOwned": 6418432,
+    "remoteOwned": 38797312,
+    "launcher": 258048,
+    "sessions": 946176,
+    "positiveWAL": 1929216,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "projection": 62914560,
+  "cap": 67108864,
+  "hostFree": 3823792128,
+  "hostProjectedRemaining": 3760877568,
+  "memAvailable": 3557707776,
+  "requiredMem": 2415919104,
+  "pass": true
+}

@@ -1,0 +1,7 @@
+{
+  "firstTest": "PASS unchanged fullVM assertions",
+  "missing": "module capture",
+  "cause": "exact-main render-artifact privately evaluates compile-src/closure/compiler, bypassing shared require-cache hook",
+  "fix": "observe public render-artifact.compileHarness result and actual WebAssembly.instantiate bytes; no production/test/oracle edits",
+  "repeatScope": "module capture and assertions rerun needed for exact accepted module hash"
+}

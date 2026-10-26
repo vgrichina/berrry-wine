@@ -1,0 +1,21 @@
+{
+  "command": "cd /tmp/palette-fullvm-oct26 && python3 remote-run.py",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/23231.err.log",
+  "exitCode": null,
+  "finishedAt": null,
+  "known": true,
+  "logPath": "/home/user/.ascii/processes/23231.log",
+  "oomKilled": false,
+  "pid": 23231,
+  "processId": 23231,
+  "running": true,
+  "signal": null,
+  "startedAt": "2026-10-26T20:14:39.183Z",
+  "status": "running",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true
+}

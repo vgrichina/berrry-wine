@@ -1,0 +1,10 @@
+{
+  "memAvailable": 7203622912,
+  "diskFree": 48497336320,
+  "heap": 2147483648,
+  "moduleArena": 536870912,
+  "client": 268435456,
+  "compileOverhead": 536870912,
+  "floor": 1073741824,
+  "required": 4563402752
+}

@@ -1,0 +1,65 @@
+{
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "testSHA256": "c06d10e8d419302a82eab03bd68e0c788df84323a0c1ed484b28bfd19246aebe",
+  "sourceManifestSHA256": "560d39e632fcb1fe69da494caf9ca3a532fcf644b2ef1dd92fbf2de0e1b61202",
+  "compile": {
+    "options": {
+      "tailCalls": true
+    },
+    "success": true,
+    "elapsedMs": 3957.216162,
+    "memory": {
+      "rss": 366399488,
+      "heapTotal": 209547264,
+      "heapUsed": 121236704,
+      "external": 61044812,
+      "arrayBuffers": 55396641
+    },
+    "bytes": 1880644,
+    "sha256": "7a363e01a49bd761dc6cbc1eddbea2707111927f04587dddf49e25d64e3050d6"
+  },
+  "test": {
+    "command": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require",
+      "./capture.cjs",
+      "test/test-d3dim-palette-alpha-page-watch.js"
+    ],
+    "env": {
+      "NODE_OPTIONS": "",
+      "TMPDIR": "/tmp/palette-fullvm-oct26",
+      "PATH": "/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools"
+    },
+    "exit": 0,
+    "elapsedSeconds": 4.475026559000071,
+    "peakRSS": 374665216,
+    "minMemAvailable": 6839595008,
+    "outputBytes": 88,
+    "logSHA256": "671e1a1dfdac5144d9ae84bfef8894a1bb80578a5a83058756e71dfe880779a4",
+    "limitFailure": null,
+    "pass_": true
+  },
+  "native": {
+    "sha256": "7a363e01a49bd761dc6cbc1eddbea2707111927f04587dddf49e25d64e3050d6",
+    "instantiated": true,
+    "exportCount": 2238
+  },
+  "module": {
+    "moduleSHA256": "7a363e01a49bd761dc6cbc1eddbea2707111927f04587dddf49e25d64e3050d6",
+    "moduleBytes": 1880644,
+    "allocated": 30691328,
+    "apiProcessLogs": 8192,
+    "memAvailable": 7263801344,
+    "diskFree": 48495419392,
+    "box": "bx_7tjybtxp",
+    "apiAlive": true
+  },
+  "remaining": [
+    "actual WebGL/GPU/backend",
+    "native palette policy",
+    "gameplay/27-app compatibility"
+  ],
+  "oracleChanged": false,
+  "productionChanged": false
+}

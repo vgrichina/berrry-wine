@@ -1,0 +1,10 @@
+{
+  "capture.cjs": {
+    "bytes": 1549,
+    "sha256": "05111a365b2822fdf06d7e1b8cc3acd5d691ee680c2d02da22d0a923ff7749aa"
+  },
+  "remote-run.py": {
+    "bytes": 2927,
+    "sha256": "17fda5428f9119993966b739e16823e0eaefe5da74406710fa0197f7b51e801a"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "command": "cd /tmp/palette-fullvm-oct26 && python3 remote-run.py",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/23231.err.log",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T20:14:52.959Z",
+  "known": true,
+  "logPath": "/home/user/.ascii/processes/23231.log",
+  "oomKilled": false,
+  "pid": 23231,
+  "processId": 23231,
+  "running": false,
+  "signal": null,
+  "startedAt": "2026-10-26T20:14:39.183Z",
+  "status": "exited",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"command\": [\"/home/user/.nvm/versions/node/v24.22.1/bin/node\", \"--max-old-space-size=2048\", \"--require\", \"./capture.cjs\", \"test/test-d3dim-palette-alpha-page-watch.js\"], \"env\": {\"NODE_OPTIONS\": \"\", \"TMPDIR\": \"/tmp/palette-fullvm-oct26\", \"PATH\": \"/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/snap/bin:/home/user/.dotnet/tools\"}, \"exit\": 0, \"elapsedSeconds\": 13.717025107999916, \"peakRSS\": 399372288, \"minMemAvailable\": 6889775104, \"outputBytes\": 88, \"logSHA256\": \"671e1a1dfdac5144d9ae84bfef8894a1bb80578a5a83058756e71dfe880779a4\", \"limitFailure\": null, \"pass_\": true}\nPASS full-VM palette-alpha upload cache: real API, descriptor, decoder and page watches\n\n",
+  "stdoutTruncated": false,
+  "success": true
+}
