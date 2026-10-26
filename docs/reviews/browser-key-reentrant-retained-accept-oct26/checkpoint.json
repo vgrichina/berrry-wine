@@ -1,0 +1,273 @@
+{
+  "candidate": "be746ec811b98365c378609ca936502783bb106d",
+  "pins": [
+    {
+      "donor": "/tmp/browser-key-reentrant-focus-ownership-repair-oct26/repo",
+      "revision": "be746ec811b98365c378609ca936502783bb106d",
+      "path": "lib/browser-input.js",
+      "blob": "af4bffdf413e1973ad540db30d78e36962278435",
+      "sha256": "5b2c47fa0b901f0323bc04df34ff27d8c50e47a001d77e9dcae3f2986a3477f0",
+      "bytes": 63151
+    },
+    {
+      "donor": "/tmp/browser-key-focus-independent-accept-oct26/repo",
+      "revision": "372eb7de549492021520db38c3c51459ab4d982d",
+      "path": "test/browser-key-focus-independent-oct26.test.cjs",
+      "blob": "63e68998227343d4c2a8016ebc17ff5909134ae8",
+      "sha256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8",
+      "bytes": 12124
+    },
+    {
+      "donor": "/tmp/keyboard-focus-renderer-interoperability-oct26/repo",
+      "revision": "cd3ce6e221c50d34df92dcad0c2b14b6ef99b2d0",
+      "path": "test/keyboard-focus-renderer-interoperability-oct26.test.cjs",
+      "blob": "3177c61d753e31a7ed8f86dfb74560a90ddbf887",
+      "sha256": "3258b65b0225746c2d3e05df9e391826196fc8818a114682f0a8fab6cf98ca16",
+      "bytes": 15037
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/renderer-input.js",
+      "blob": "3d675a36eea398f0cb827a9c6d36235c228c81f2",
+      "sha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+      "bytes": 181033
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/mem-utils.js",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "bytes": 13470
+    },
+    {
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/region-map.generated.js",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "bytes": 36089
+    }
+  ],
+  "groups": [
+    {
+      "label": "unchanged7",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/browser-key-focus-independent-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8",
+      "log": "unchanged7.log",
+      "logSHA256": "9f4e2e98c224cc972b272b8fa108bb3a340f8cf4de54fb254fdd8da9497ed83c",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "new-independent7",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/browser-key-reentrant-independent-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "dfabdf5adc8b66a479d00483684ce1719eb398263fa84b2101bc732b7f8963d4",
+      "log": "new-independent7.log",
+      "logSHA256": "554e8db484ef52f69aa434f32478de521512f71d6c811f8f160bbb6559692318",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "crosslayer-unmodified",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/keyboard-focus-renderer-interoperability-oct26/repo/test/keyboard-focus-renderer-interoperability-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "cancellation"
+      },
+      "exit": 1,
+      "accepted": true,
+      "fixtureSHA256": "3258b65b0225746c2d3e05df9e391826196fc8818a114682f0a8fab6cf98ca16",
+      "log": "crosslayer-unmodified.log",
+      "logSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stderrSHA256": "58bda20a32ddad772c311190afb2366b9e91c44cbb07ed752c9ddb948feeefa1"
+    },
+    {
+      "label": "crosslayer-cancellation",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "cancellation"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "crosslayer-cancellation.log",
+      "logSHA256": "85d5824e6806a4a00ade6271382c790de240bbb82f47286c651e1b6b0a98704a",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "crosslayer-ownership",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "ownership"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "crosslayer-ownership.log",
+      "logSHA256": "b65e71567059f9d4120239ee94a656bd08c966128e8585a028ff50e62b96d7f4",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "crosslayer-timeline",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "timeline"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "crosslayer-timeline.log",
+      "logSHA256": "f9aab38044357b9031660f3ce8a73e9b7d714112be22a356e0d725ed50c12f34",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "crosslayer-focus-transfer",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "focus-transfer"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "crosslayer-focus-transfer.log",
+      "logSHA256": "4f487be53a73c3a56ea9933508c5cb5a95091e86b4680d95bd26792daf182ff6",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "crosslayer-legacy-contract",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "legacy-contract"
+      },
+      "exit": 0,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "crosslayer-legacy-contract.log",
+      "logSHA256": "b31e381ba7ed1e4fc756d7da99f7633fb659e0c920585be341a1b523d1502cb2",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "negative-bridge-release",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "negative-control",
+        "FOCUS_INTEROP_NEGATIVE": "bridge-release"
+      },
+      "exit": 1,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "negative-bridge-release.log",
+      "logSHA256": "dd56580914de06c88db6f0b322f12f51095522b6bed8d314f9cb43ff27b9a7bf",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "label": "negative-renderer-keyup",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "/tmp/browser-key-reentrant-independent-accept-oct26/repo/test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/browser-key-reentrant-independent-accept-oct26/repo/lib/browser-input.js",
+        "RENDERER_INPUT_SOURCE": "/tmp/renderer-side-polling-merged-branch-oct26/repo/lib/renderer-input.js",
+        "FOCUS_INTEROP_GROUP": "negative-control",
+        "FOCUS_INTEROP_NEGATIVE": "renderer-keyup"
+      },
+      "exit": 1,
+      "accepted": true,
+      "fixtureSHA256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2",
+      "log": "negative-renderer-keyup.log",
+      "logSHA256": "dd56580914de06c88db6f0b322f12f51095522b6bed8d314f9cb43ff27b9a7bf",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "reuse": "All retained group and source/test/log hashes validated; no repeated groups",
+  "remaining": [
+    "task-branch publication",
+    "coordinator review",
+    "current-main integration/regression",
+    "real browser/guest qualification"
+  ],
+  "decision": "ACCEPT bounded reentrant release ownership repair"
+}

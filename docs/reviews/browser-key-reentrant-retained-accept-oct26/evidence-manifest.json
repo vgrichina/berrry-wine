@@ -1,0 +1,246 @@
+{
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/DECISION.md": {
+    "bytes": 7563,
+    "sha256": "2745b4c76e7b5299c9887555e224613ace4c4816a744a7a0a0bc33ff10344f71"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/checkpoint.json": {
+    "bytes": 11991,
+    "sha256": "796eacc6adc985cd1003e3b345add93e25e84b8378e361dff3bf7a6defcca6cc"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-cancellation.log": {
+    "bytes": 828,
+    "sha256": "85d5824e6806a4a00ade6271382c790de240bbb82f47286c651e1b6b0a98704a"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-cancellation.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-focus-transfer.log": {
+    "bytes": 421,
+    "sha256": "4f487be53a73c3a56ea9933508c5cb5a95091e86b4680d95bd26792daf182ff6"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-focus-transfer.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-legacy-contract.log": {
+    "bytes": 269,
+    "sha256": "b31e381ba7ed1e4fc756d7da99f7633fb659e0c920585be341a1b523d1502cb2"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-legacy-contract.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-original.test.cjs": {
+    "bytes": 15037,
+    "sha256": "3258b65b0225746c2d3e05df9e391826196fc8818a114682f0a8fab6cf98ca16"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-ownership.log": {
+    "bytes": 485,
+    "sha256": "b65e71567059f9d4120239ee94a656bd08c966128e8585a028ff50e62b96d7f4"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-ownership.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-pin-only.patch": {
+    "bytes": 661,
+    "sha256": "13edf868f771197b74b071bd53ad6107011b4bfee8e4de16898c6be37b49fb31"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-timeline.log": {
+    "bytes": 418,
+    "sha256": "f9aab38044357b9031660f3ce8a73e9b7d714112be22a356e0d725ed50c12f34"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-timeline.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-unmodified.log": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/crosslayer-unmodified.stderr": {
+    "bytes": 1162,
+    "sha256": "58bda20a32ddad772c311190afb2366b9e91c44cbb07ed752c9ddb948feeefa1"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/incidents.txt": {
+    "bytes": 171,
+    "sha256": "4227897c9b766ebf78ec09f9804e0f785ee593ca83643869d687fd1a8bfa44b0"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/launch-verified.json": {
+    "bytes": 564,
+    "sha256": "975f83a46b44ec432619bcf20a3145f17ac42e8ff8e8f89d2a942817f83629b0"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/negative-bridge-release.log": {
+    "bytes": 1249,
+    "sha256": "dd56580914de06c88db6f0b322f12f51095522b6bed8d314f9cb43ff27b9a7bf"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/negative-bridge-release.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/negative-renderer-keyup.log": {
+    "bytes": 1249,
+    "sha256": "dd56580914de06c88db6f0b322f12f51095522b6bed8d314f9cb43ff27b9a7bf"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/negative-renderer-keyup.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/new-independent7-checkpoint.json": {
+    "bytes": 1264,
+    "sha256": "953ad10f38a03d612238bfea4e9bdd0093ae76ea3fb4858603dabcd319af51ef"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/new-independent7.log": {
+    "bytes": 616,
+    "sha256": "554e8db484ef52f69aa434f32478de521512f71d6c811f8f160bbb6559692318"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/new-independent7.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/original-candidate-narrow.log": {
+    "bytes": 314,
+    "sha256": "8afef151b0041291d65421afa0e4fd78975d51fb1f3255d1c53dc4620d230fd3"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/original-parent-narrow.log": {
+    "bytes": 314,
+    "sha256": "8afef151b0041291d65421afa0e4fd78975d51fb1f3255d1c53dc4620d230fd3"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/original-pins.json": {
+    "bytes": 757,
+    "sha256": "9cf8e055734e908f3165d9cbd04e3860d6914332137d062e5ba72440ae690d05"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/original-supplied-baseline-final.log": {
+    "bytes": 2504,
+    "sha256": "76d80cca3714b5044068624e7545100f965d5768ce136ae171b4ff75fcedd70a"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/pins.json": {
+    "bytes": 2072,
+    "sha256": "ff7b4b0c695556ea916f3e3a4c9b7723646fd96ef883e919ff334f74df88ba33"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-accepted-DECISION.md": {
+    "bytes": 3991,
+    "sha256": "45e074bea111d67ddef2918c72b1747ac7df6893cfd92df27689761184d1578a"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-accepted-result.json": {
+    "bytes": 17182,
+    "sha256": "532a8c40d8d45d77ef7436ac5fdead9387efcbe30ea2be585da414e345f7e15f"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-accepted-sourcepins.json": {
+    "bytes": 4651,
+    "sha256": "a5ec0975ad4aa8166fa8d54bc28690ada8c2c880d5038917b0a2cfa01aac4718"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-aggregate-known-limitation.log": {
+    "bytes": 3130,
+    "sha256": "4c4b546b916761aef3f51a256b93b78e649fee1947b5e268d9f67f7e1e8eaf14"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-challenges25.log": {
+    "bytes": 2817,
+    "sha256": "e1cdc61f0bc507919183eb8ff70783d411eed60879c35e2b9209ddb6b928c0a7"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-independent29.log": {
+    "bytes": 2372,
+    "sha256": "29fe07a5f9948fff7e2c1d453f06eeb61a4e865cfed1514a1c8a0a535110a4b7"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-legacy.log": {
+    "bytes": 93,
+    "sha256": "cd567b2912266931c3b6efebced13c74e9a907af6376f943490edb836d075d65"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-receipt-verified.json": {
+    "bytes": 452,
+    "sha256": "127e958dedf69d02e669cbf96e60772b29d18d0001be5833ca29628b0fec6145"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-reuse.json": {
+    "bytes": 399,
+    "sha256": "fe95232958f875eaea0b3678572f7ba5b80d611dd326d0c8011963794702e382"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-review-reuse.json": {
+    "bytes": 535,
+    "sha256": "8877151f90b09bd8756788205b7d626f6540f5fa9cd5ff43c52f3df7189c8dcb"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-side28.log": {
+    "bytes": 2322,
+    "sha256": "96a3f6642a598d9927a45e5a3d3e42db60e65bd1428b0cbe4583bae4e5f56e75"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/renderer-supplied37.log": {
+    "bytes": 2702,
+    "sha256": "7a8259cd10717f3c206435011a16ea063f6fb1fcebc7fd1203c84601e36debba"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/repair-result.json": {
+    "bytes": 4394,
+    "sha256": "8a1a6767fc0c33824cbc540b248e3a391e7186a1ca485b0240e2bde160f3c158"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/resource-precheckout.json": {
+    "bytes": 705,
+    "sha256": "5dcbe48be0588604ccc8cc686903d675048b27f1670ccfefe066453f8bc69ed6"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/resource-prepublication.json": {
+    "bytes": 1371,
+    "sha256": "4d65021560f2a77bd8a76f7e59c7be6fca1993ababda057632a613caa5a48783"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/resource-prereview.json": {
+    "bytes": 1366,
+    "sha256": "870a3c258eb16f31007c96a345ef679cab89e4c2f22a6b7a9ebef965528f6634"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/resource-validated-precheckout.json": {
+    "bytes": 898,
+    "sha256": "8fb3c274830d73a481a383338eddb2886c97f6abed33167ba24a8aa9f4243a4a"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/retained-checkpoint.json": {
+    "bytes": 11810,
+    "sha256": "81a219cfd63f6c3228cb8450adbbe61e8b5cedeed0555444173433fe83024d11"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/retained-recovery-validation.py": {
+    "bytes": 7014,
+    "sha256": "2e593368d6c63173cc2a6222e178574857d3d562c1bde2783feda1668d405a97"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/retained-validation.json": {
+    "bytes": 3039,
+    "sha256": "630fe7e66e5da00ae51e4772435423ac712da9fc9384ba99cd8b4233ae7ad59b"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/reuse-validation.json": {
+    "bytes": 1310,
+    "sha256": "c79ae9dea36de8e94361eee879b397965afd98a487d3c3bf89208fcb59b23d35"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/root-ref-initial.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/standing-donors.json": {
+    "bytes": 2945,
+    "sha256": "3104ab91ee6da7789f0d997889488605e64e9f46134f8805663c5f8a82e1e52b"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/standing-inputs.json": {
+    "bytes": 1020,
+    "sha256": "1608bb8d1fbf134ffbd688c8aeaec374818304f88fe654833c11d3ebdea3c54b"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/unchanged7-checkpoint.json": {
+    "bytes": 1408,
+    "sha256": "29f0faabd1a337511a608ca153f077bf8309f8ea84345868a9e2e7970ebb86cb"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/unchanged7.log": {
+    "bytes": 746,
+    "sha256": "9f4e2e98c224cc972b272b8fa108bb3a340f8cf4de54fb254fdd8da9497ed83c"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/unchanged7.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/browser-key-reentrant-retained-accept-oct26/wal-initial.json": {
+    "bytes": 23,
+    "sha256": "dfe3b0abfe64090811ee863d29ba2fa5f807f0505ca6eb665d6e1c00c3f95d59"
+  },
+  "test/browser-key-focus-independent-oct26.test.cjs": {
+    "bytes": 12124,
+    "sha256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8"
+  },
+  "test/keyboard-focus-renderer-repaired-pin-oct26.test.cjs": {
+    "bytes": 15037,
+    "sha256": "91132848d7319f827312266ecbca2c6908d5c2c7690b5b0f2e1162f5024bf5f2"
+  },
+  "test/browser-key-reentrant-independent-oct26.test.cjs": {
+    "bytes": 9983,
+    "sha256": "dfabdf5adc8b66a479d00483684ce1719eb398263fa84b2101bc732b7f8963d4"
+  }
+}

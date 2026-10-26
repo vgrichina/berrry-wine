@@ -1,0 +1,6 @@
+OBSERVED callback-hidden=true physical=32768 queue=[{"type":"key","hwnd":0,"wParam":65,"msg":256,"lParam":1966081}]
+FAIL actual renderer wake callback hiding document during down cannot leak ownership: hidden cancellation must release down already delivered by production renderer
+
+32768 !== 0
+
+0 passed; 1 failed

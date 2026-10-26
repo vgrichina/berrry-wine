@@ -1,0 +1,19 @@
+{
+  "renderer": {
+    "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+    "groups": [
+      29,
+      37,
+      28,
+      25,
+      "legacy"
+    ],
+    "strictAggregateKnownFailure": 3
+  },
+  "browser": {
+    "revision": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+    "suppliedPass": 19
+  },
+  "rerun": false,
+  "independentBrowserAcceptance": "separate worker owns; no duplicate groups"
+}

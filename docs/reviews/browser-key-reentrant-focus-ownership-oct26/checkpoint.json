@@ -1,0 +1,46 @@
+{
+  "candidateBase": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "pins": "pins.json",
+  "results": [
+    {
+      "name": "supplied19",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-focus-release-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "supplied19.log"
+    },
+    {
+      "name": "independent7",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-focus-independent-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "independent7.log"
+    },
+    {
+      "name": "scoped6",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "test/browser-key-reentrant-focus-ownership-oct26.test.cjs"
+      ],
+      "exit": 0,
+      "log": "scoped6.log"
+    }
+  ],
+  "remaining": [
+    "review",
+    "publication"
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "at": 1792998243.839774,
+  "phase": "prepublication",
+  "taskTreeGitOpsBytes": 1889810,
+  "launcherBytes": 143886,
+  "sessionBytes": 475639,
+  "positiveWALConservativeFullCurrentOnce": 27122120,
+  "WALDetail": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2163032,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "futureLauncherSessionWALOnce": 12582912,
+  "gitPublicationTempAllowance": 8388608,
+  "reserve": 8388608,
+  "projectedPeak": 58991583,
+  "allocation": 67108864,
+  "freeDisk": 4386553856,
+  "memAvailable": 2377736192,
+  "hostFreeAfterConservativePeak": 4327562273,
+  "pass": true
+}

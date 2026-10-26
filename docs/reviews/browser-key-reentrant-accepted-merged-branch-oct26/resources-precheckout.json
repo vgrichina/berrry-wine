@@ -1,0 +1,70 @@
+{
+  "stage": "precheckout",
+  "files": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T07-28-59-01a1771c-cf56-7a43-9922-3ab75335215f.jsonl",
+      "bytes": 424522,
+      "allocated": 425984
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/browser-key-reentrant-accepted-merged-branch-oct26/events.jsonl",
+      "bytes": 121251,
+      "allocated": 122880
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/browser-key-reentrant-accepted-merged-branch-oct26/root-ref-digest.json",
+      "bytes": 196,
+      "allocated": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/browser-key-reentrant-accepted-merged-branch-oct26/stderr.log",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/browser-key-reentrant-accepted-merged-branch-oct26/ops/integrate.py",
+      "bytes": 10894,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/browser-key-reentrant-accepted-merged-branch-oct26/ops/resources-precheckout.json",
+      "bytes": 2177,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/browser-key-reentrant-accepted-merged-branch-oct26/ops/wal-initial.json",
+      "bytes": 315,
+      "allocated": 4096
+    }
+  ],
+  "walInitial": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2579152,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "walCurrent": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2579152,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "positiveWalDeltaOnce": 0,
+  "measured": 573440,
+  "futureGrowthOnce": 12582912,
+  "materializationAllowance": 8388608,
+  "reserve": 8388608,
+  "projected": 29933568,
+  "allocation": 67108864,
+  "memAvailable": 2178367488,
+  "clientHeap": 553648128,
+  "afterClientHeap": 1624719360,
+  "freeDisk": 4141666304,
+  "diskAdmissionGrowth": 58720256,
+  "freeAfterGrowth": 4082946048,
+  "pass": true
+}

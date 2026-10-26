@@ -1,0 +1,37 @@
+{
+  "at": 1792999355.2579799,
+  "memAvailable": 2101293056,
+  "freeDisk": 3680645120,
+  "client": 536870912,
+  "heap": 16777216,
+  "growth": 58720256,
+  "reserve": 8388608,
+  "allocation": 67108864,
+  "projectedTask": 58720256,
+  "passGate": true,
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountFiles": [],
+  "mountValidation": "N/A offline source acceptance; no mounts/guest execution",
+  "budget": {
+    "checkoutGit": 8388608,
+    "opsEvidence": 4194304,
+    "launcherSessionPositiveWALFutureOnce": 37748736,
+    "reserve": 8388608
+  },
+  "phase": "prepublication",
+  "taskOwnedBytes": 1948413,
+  "launcherSessionBytes": 154031,
+  "positiveSharedWALConservativeChargeOnce": 27422880,
+  "sharedWALFiles": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2463792,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "futureBytes": 12582912,
+  "walAccounting": "entire current shared WAL charged once; no initial-baseline or negative-growth credit",
+  "measuredProjected": 50496844
+}

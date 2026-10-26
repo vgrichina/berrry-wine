@@ -1,0 +1,37 @@
+✔ Shift public aggregate both press/release orders Left/Left (4.05459ms)
+✔ Shift public aggregate both press/release orders Left/Right (0.340428ms)
+✔ Shift public aggregate both press/release orders Right/Left (0.262471ms)
+✔ Shift public aggregate both press/release orders Right/Right (0.214391ms)
+✔ Shift side-specific public physical and async polling (0.706874ms)
+✔ Shift side-specific async alone through public input (0.120797ms)
+✔ Shift repeat, unmatched release, contradictory location and reset (0.22429ms)
+✔ Shift CLI numeric ownership mixed with physical and focus release (0.161363ms)
+✔ Control public aggregate both press/release orders Left/Left (0.243546ms)
+✔ Control public aggregate both press/release orders Left/Right (0.235692ms)
+✔ Control public aggregate both press/release orders Right/Left (0.205054ms)
+✔ Control public aggregate both press/release orders Right/Right (0.114996ms)
+✔ Control side-specific public physical and async polling (0.164578ms)
+✔ Control side-specific async alone through public input (0.082304ms)
+✔ Control repeat, unmatched release, contradictory location and reset (0.113432ms)
+✔ Control CLI numeric ownership mixed with physical and focus release (0.118693ms)
+✔ Alt public aggregate both press/release orders Left/Left (0.16543ms)
+✔ Alt public aggregate both press/release orders Left/Right (0.066273ms)
+✔ Alt public aggregate both press/release orders Right/Left (0.041178ms)
+✔ Alt public aggregate both press/release orders Right/Right (0.046407ms)
+✔ Alt side-specific public physical and async polling (0.126186ms)
+✔ Alt side-specific async alone through public input (0.062959ms)
+✔ Alt repeat, unmatched release, contradictory location and reset (0.171401ms)
+✔ Alt CLI numeric ownership mixed with physical and focus release (0.115517ms)
+✔ numeric browser key codes and nonmodifier message bits remain unchanged (0.376417ms)
+✔ Alt chord context survives opposite-side release; Ctrl suppresses system family (0.138879ms)
+✔ Alt tap final release and F10 system messages (0.16559ms)
+✔ Alt+Space and Alt+F4 system menu/close hotkeys retain context after side release (0.199203ms)
+✔ Shift+F10 context menu survives first-side release (0.173194ms)
+ℹ tests 29
+ℹ suites 0
+ℹ pass 29
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64.990783

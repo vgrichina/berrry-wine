@@ -1,0 +1,85 @@
+diff --git a/lib/browser-input.js b/lib/browser-input.js
+index 23d698026be..af4bffdf413 100644
+--- a/lib/browser-input.js
++++ b/lib/browser-input.js
+@@ -1091,6 +1091,36 @@
+         window.approveBrowserFullscreen(e);
+       }
+     };
++    // Own only downs actually forwarded by this bridge. Repeated downs still
++    // reach the renderer, but each physical key needs just one eventual up.
++    // Keep the original VK/side metadata: modifiers can share a VK and the
++    // browser may report a different VK after a layout/modifier change.
++    const deliveredKeys = new Map();
++    const physicalKey = e => e.code || `${e.keyCode}:${e.location | 0}`;
++    const releaseDeliveredKeys = () => {
++      const keys = Array.from(deliveredKeys.entries());
++      altEnterSwallowed = false;
++      let failed = false, failure;
++      for (const [key, owned] of keys) {
++        // A nested cancellation may already have released this ownership.
++        // Delete before calling out, so reentrant ups cannot release it twice.
++        if (deliveredKeys.get(key) !== owned) continue;
++        deliveredKeys.delete(key);
++        try {
++          renderer.handleKeyUp(owned.vk, { ...owned.info, repeat: false });
++        } catch (error) {
++          // A throwing wake callback must not strand the other held keys.
++          if (!failed) { failed = true; failure = error; }
++        }
++      }
++      if (failed) throw failure;
++    };
++    // Element focus changes (including the iOS proxy) are ordinary routing,
++    // not a loss of browser focus. Do not capture their non-bubbling blur.
++    window.addEventListener('blur', releaseDeliveredKeys);
++    document.addEventListener('visibilitychange', () => {
++      if (document.hidden) releaseDeliveredKeys();
++    });
+     const handleKeyDown = (e) => {
+       if (shouldIgnorePageKey(e)) return;
+       if (e.keyCode === 13 && e.altKey && activeAltEnterFullscreen()) {
+@@ -1102,9 +1132,17 @@
+       }
+       const vk = e.keyCode;
+       unlockRunningAudio();
+-      renderer.handleKeyDown(vk, {
++      const info = {
+         code: e.code || '', location: e.location | 0, repeat: !!e.repeat,
+-      });
++      };
++      const key = physicalKey(e);
++      if (!deliveredKeys.has(key)) deliveredKeys.set(key, { vk, info });
++      const owned = deliveredKeys.get(key);
++      // Renderer delivery can synchronously wake callbacks that blur/hide the
++      // page or dispatch another key. Publish ownership before calling out;
++      // retain it on exceptions because the down may already have been queued.
++      renderer.handleKeyDown(vk, info);
++      if (deliveredKeys.get(key) !== owned) return;
+       suppressTextInputEvents = 0;
+       if (!keepForBrowser(e)) {
+         const charCode = charCodeFromKeyEvent(e);
+@@ -1120,14 +1158,20 @@
+       }
+     };
+     const handleKeyUp = (e) => {
+-      if (shouldIgnorePageKey(e)) return;
+       if (e.keyCode === 13 && altEnterSwallowed) {
+         altEnterSwallowed = false;
+         e.preventDefault();
+         return;
+       }
+-      renderer.handleKeyUp(e.keyCode, {
+-        code: e.code || '', location: e.location | 0, repeat: !!e.repeat,
++      const key = physicalKey(e);
++      const owned = deliveredKeys.get(key);
++      if (!owned) return;
++      // A down delivered before focus moved into a page control still owns
++      // its up. Conversely, a stale/unowned up cannot release another input
++      // producer's key after our blur/hidden cancellation.
++      deliveredKeys.delete(key);
++      renderer.handleKeyUp(owned.vk, {
++        ...owned.info, repeat: !!e.repeat,
+       });
+     };
+     const handleKeyPress = (e) => {
