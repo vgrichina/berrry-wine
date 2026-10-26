@@ -1,0 +1,63 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/corpus-complete-extraction-contract-repair-oct26/repo/test/reviews/corpus-complete-extraction-contract-repair-oct26/after-challenge.js"
+  ],
+  "cwd": "/tmp/corpus-complete-extraction-contract-repair-oct26/repo",
+  "exitCode": 0,
+  "seconds": 1.0268303521443158,
+  "outputBytes": 16172,
+  "sha256": "9e2d0aac150c487db74b0e90fe342cd6301996aa8456b581b44a06afb4354447",
+  "admission": {
+    "memAvailable": 3922604032,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 30253056
+      },
+      {
+        "pid": 1789179,
+        "rss": 64663552
+      },
+      {
+        "pid": 2903914,
+        "rss": 185298944
+      },
+      {
+        "pid": 2904238,
+        "rss": 190066688
+      },
+      {
+        "pid": 2935359,
+        "rss": 204701696
+      }
+    ],
+    "combinedWorkerRSS": 674983936,
+    "nodePhysicalAllowance": 268435456,
+    "physicalFloor": 805306368,
+    "prospectiveReservations": 0,
+    "accounting": "materialized clients measured once at initial admission; current MemAvailable already excludes RSS; no prospective workers",
+    "ownedBytes": 1250310,
+    "positiveSharedWALGrowthOnce": 49440,
+    "futureGrowth": 25165824,
+    "reserve": 8388608,
+    "projected": 34804742,
+    "allocation": 67108864,
+    "hostFree": 4142186496,
+    "hostAfterGrowth": 4117020672,
+    "hostFloor": 2982150144
+  },
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=192",
+    "TMPDIR": "/tmp/corpus-complete-extraction-contract-repair-oct26/tmp",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  }
+}

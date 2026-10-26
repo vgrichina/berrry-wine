@@ -1,0 +1,29 @@
+{
+  "originalImplementationCommit": "1bc85c5d8e7513cb30ddd796cef6d93de0a0415b",
+  "independentReviewCommit": "40df713a6cf6c2270c46e3307246dcfb1b9abd04",
+  "priorVerifiedPayloads": 15,
+  "rootVerification": "scratch/usage-watch/corpus-suffix-root-review-oct26.json",
+  "reused": "Original22checks/18rejections and actual selectedTHPS2 dry-run1local0fail historical receipts retained; affected source contract rerun here in33checks. Eleven passing independent groups and three counterexamples all replayed as the14casechallenge because source contract changed. No acquisition/extraction/runtime was rerun.",
+  "fixtures": {
+    "immutableCommittedSHA256": "25d9dc55241ad3e80b42d71986c4cf147e4e09c2c1370190d14fd0402b4cf4eb",
+    "readonlySuppliedSHA256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd"
+  },
+  "readonlyStandingInputs": {
+    "node": {
+      "path": "/usr/bin/node",
+      "bytes": 98932688,
+      "sha256": "6295488653f0d93b0a157841746fef7e72cc4328cfb60c4bbe0ca2668a836ffd"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "python": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928
+    },
+    "donorGitObjects": "/tmp/corpus-source-pin-contract-repair-oct26/repo/.git/objects; immutable alternate for candidate1bc85c5d, no broad refs/history copy"
+  },
+  "mountValidation": "NA actual mount argv empty; no mount/guest/runtime operation permitted",
+  "rootFixture": "Read only, never copied/staged/modified"
+}

@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "internal evidence output path",
+    "detail": "Unchanged challenge default wrote before-results into prior donor ops path; saved own result and restored prior evidence byte-for-byte from independently pinned committed payload d2f28fda. No production or fixture modification; no tests rerun. Set CORPUS_REVIEW_OUTPUT explicitly for remaining runs."
+  },
+  {
+    "kind": "initial read excerpt overrun",
+    "detail": "Initial policy/input inspections exceeded the prescribed 8192-byte excerpt; original tool records retained in launcher/session logs. Subsequent execution uses bounded 4096-byte supervisor excerpts, 2MiB capture, 24MiB files. No test or access denial."
+  },
+  {
+    "kind": "staged evidence whitespace gate",
+    "detail": "git diff --cached --check rejected blank context lines in raw review-diff.log (not source). Preserved exact first failure and diff as lossless deterministic gzip, then restaged. No source/test changes or reruns required."
+  }
+]

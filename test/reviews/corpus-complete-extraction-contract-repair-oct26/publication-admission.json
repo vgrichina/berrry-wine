@@ -1,0 +1,39 @@
+{
+  "memAvailable": 3859165184,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 30253056
+    },
+    {
+      "pid": 1789179,
+      "rss": 64663552
+    },
+    {
+      "pid": 2903914,
+      "rss": 185298944
+    },
+    {
+      "pid": 2904238,
+      "rss": 190066688
+    },
+    {
+      "pid": 2935359,
+      "rss": 204701696
+    }
+  ],
+  "combinedWorkerRSS": 674983936,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "prospectiveReservations": 0,
+  "accounting": "materialized clients measured once at initial admission; current MemAvailable already excludes RSS; no prospective workers",
+  "ownedBytes": 2320913,
+  "positiveSharedWALGrowthOnce": 74160,
+  "futureGrowth": 25165824,
+  "reserve": 8388608,
+  "projected": 35875345,
+  "allocation": 67108864,
+  "hostFree": 4137316352,
+  "hostAfterGrowth": 4103761920,
+  "hostFloor": 2982150144
+}

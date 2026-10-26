@@ -1,0 +1,46 @@
+{
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 30253056
+    },
+    {
+      "pid": 1789179,
+      "rss": 64663552
+    },
+    {
+      "pid": 2903914,
+      "rss": 185298944
+    },
+    {
+      "pid": 2904238,
+      "rss": 190066688
+    },
+    {
+      "pid": 2935359,
+      "rss": 204701696
+    }
+  ],
+  "combinedWorkerRSS": 674983936,
+  "memAvailable": 3525902336,
+  "hostFree": 4146274304,
+  "projectedPeak": 52428800,
+  "reserveIncluded": 8388608,
+  "allocation": 67108864,
+  "hostAfterProjection": 4093845504,
+  "hostFloor": 2982150144,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "prospectiveClientReservation": 0,
+  "accounting": "Current materialized clients already reflected in MemAvailable; RSS measured once, not doublecharged. New task client materialized.",
+  "mountArgv": [],
+  "mountValidation": "NA no guest/mount/runtime invocation authorized",
+  "wal": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 663352,
+    "/home/user/.codex/state_5.sqlite-wal": 4387832,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4235392
+  }
+}

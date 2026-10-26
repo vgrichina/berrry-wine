@@ -2,7 +2,7 @@
 'use strict';
 
 // Pure CLI source-pin checks: no acquisition, compiler or guest process is allowed.
-// --manifest supplies an authorized current fixture when testing an older source base.
+// Defaults to the immutable committed manifest; no dirty fixture is required.
 const assert = require('assert');
 const fs = require('fs');
 const os = require('os');
@@ -69,7 +69,8 @@ if (process.argv[2] === '--probe') {
     assert.ifError(result.error);
     assert.strictEqual(result.signal, null);
     const output = `${result.stdout}${result.stderr}`;
-    assert.doesNotMatch(output, /FORBIDDEN/, 'pure checks must never invoke compiler or guest');
+    assert.doesNotMatch(output, /FORBIDDEN|Cannot find module|SyntaxError|TypeError|ENOENT/,
+      'contract assertion exits must be distinct from forbidden calls or fixture/loader errors');
     return { code: result.status, output };
   }
 
@@ -127,6 +128,25 @@ if (process.argv[2] === '--probe') {
       ['reordered extraction', c => { [c.postExtract[0], c.postExtract[1]] = [c.postExtract[1], c.postExtract[0]]; }],
       ['local-only removed', c => { c.localOnly = false; }, /ignored local-only fixture/],
       ['companion tree narrowed', c => { c.cli.vfsInclude = ['*.exe']; }, /complete extracted companion-file tree/],
+      ['appended executable overwrite', c => {
+        c.postExtract.push({ type: 'copyFile', from: 'cd/DATA1.CAB', into: c.executables[0] });
+      }],
+      ['redirected suffix copy over executable', c => {
+        c.postExtract[3] = { type: 'copyFile', from: 'cd/DATA1.CAB', into: c.executables[0] };
+      }],
+      ['appended configuration overwrite', c => {
+        c.postExtract.push({ type: 'replaceText', file: c.executables[0], replacements: [] });
+      }],
+      ['missing companion copy', c => { c.postExtract.splice(3, 1); }],
+      ['reordered suffix copies', c => {
+        [c.postExtract[3], c.postExtract[4]] = [c.postExtract[4], c.postExtract[3]];
+      }],
+      ['changed suffix copy source', c => { c.postExtract[17].from = 'cd/DATA1.CAB'; }],
+      ['extra suffix copy property', c => { c.postExtract[3].optional = true; }],
+      ['redirected configuration write', c => { c.postExtract[18].file = c.executables[0]; }],
+      ['changed configuration replacement', c => { c.postExtract[18].replacements[0].to = 'HD0:=D:\\'; }],
+      ['reordered configuration replacements', c => { c.postExtract[18].replacements.reverse(); }],
+      ['truncated extraction suffix', c => { c.postExtract.length = 3; }],
     ];
     for (const [name, mutate, diagnostic = /data-track, cabinet and executable identity/] of changes) {
       await check(`reject ${name} even when only THPS2 is selected`, async () => {
