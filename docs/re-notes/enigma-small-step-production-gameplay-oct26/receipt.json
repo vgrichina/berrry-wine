@@ -1,0 +1,473 @@
+{
+  "status": "BOUNDED_PROGRESS_INCOMPLETE_NO_MENU_GATE",
+  "result": "Exact production small-step completion boundary passed. The helper ended its declared finite sequence after20565 acknowledged batches; final snapshot still Enigma v1.01 while assets initialized. No production error, timeout, lost acknowledgement or authentic guest trap was observed. This is a bounded-progress limitation, not an established runtime defect or exhausted90second hard limit. The target menu/presented-frame gate was not reached, so the controller was never invoked and no input/PNG/gameplay acceptance is claimed.",
+  "exactBoundary": {
+    "firstRequest": {
+      "action": "step",
+      "n": 1
+    },
+    "firstGate": {
+      "passGate": true,
+      "snapshot": {
+        "batch": 1,
+        "eip": "0xb0de5c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      },
+      "noPendingEstablishedBy": "original acknowledgement and production waiter-clear-before-resolve contract; exclusive sequential client",
+      "requests": [
+        {
+          "submittedAt": 1793048355.5051007,
+          "receivedAt": 1793048355.6697571,
+          "request": {
+            "action": "snapshot"
+          },
+          "originalRequest": "{\"action\":\"snapshot\"}",
+          "startingBatch": null,
+          "pendingBefore": false,
+          "api": {
+            "commandId": "cmd_a9khu3h0rzdu",
+            "cwd": ".",
+            "exitCode": 0,
+            "finishedAt": "2026-10-26T20:59:15.626Z",
+            "launcherFailed": false,
+            "noticedMs": 11,
+            "oomKilled": false,
+            "signal": null,
+            "startMs": 12,
+            "startedAt": "2026-10-26T20:59:15.560Z",
+            "stderr": "",
+            "stderrTruncated": false,
+            "stdout": "{\"at\": 1793048355.6034274, \"ended\": 1793048355.6197147, \"body\": \"{\\\"ok\\\":true,\\\"value\\\":{\\\"batch\\\":0,\\\"eip\\\":\\\"0x4012a0\\\",\\\"quit\\\":false,\\\"yieldReason\\\":0,\\\"focus\\\":\\\"0x0\\\",\\\"mainHwnd\\\":\\\"0x0\\\",\\\"screen\\\":{\\\"w\\\":640,\\\"h\\\":480},\\\"frozen\\\":{\\\"frozen\\\":true,\\\"tickMs\\\":200,\\\"credits\\\":0,\\\"recording\\\":false},\\\"windows\\\":[]}}\"}\n",
+            "stdoutTruncated": false,
+            "success": true,
+            "timedOut": false
+          }
+        },
+        {
+          "submittedAt": 1793048355.670254,
+          "receivedAt": 1793048355.829172,
+          "request": {
+            "action": "step",
+            "n": 1
+          },
+          "originalRequest": "{\"action\":\"step\",\"n\":1}",
+          "startingBatch": 0,
+          "pendingBefore": true,
+          "api": {
+            "commandId": "cmd_ha3v0kzyyeyk",
+            "cwd": ".",
+            "exitCode": 0,
+            "finishedAt": "2026-10-26T20:59:15.787Z",
+            "launcherFailed": false,
+            "noticedMs": 13,
+            "oomKilled": false,
+            "signal": null,
+            "startMs": 14,
+            "startedAt": "2026-10-26T20:59:15.725Z",
+            "stderr": "",
+            "stderrTruncated": false,
+            "stdout": "{\"at\": 1793048355.767051, \"ended\": 1793048355.7814047, \"body\": \"{\\\"ok\\\":true,\\\"value\\\":{\\\"batch\\\":1,\\\"ran\\\":1,\\\"steps\\\":1,\\\"frozen\\\":true}}\"}\n",
+            "stdoutTruncated": false,
+            "success": true,
+            "timedOut": false
+          }
+        },
+        {
+          "submittedAt": 1793048355.829479,
+          "receivedAt": 1793048356.0037284,
+          "request": {
+            "action": "snapshot"
+          },
+          "originalRequest": "{\"action\":\"snapshot\"}",
+          "startingBatch": 0,
+          "pendingBefore": false,
+          "api": {
+            "commandId": "cmd_4mxpvcr16lfk",
+            "cwd": ".",
+            "exitCode": 0,
+            "finishedAt": "2026-10-26T20:59:15.949Z",
+            "launcherFailed": false,
+            "noticedMs": 17,
+            "oomKilled": false,
+            "signal": null,
+            "startMs": 17,
+            "startedAt": "2026-10-26T20:59:15.882Z",
+            "stderr": "",
+            "stderrTruncated": false,
+            "stdout": "{\"at\": 1793048355.9310625, \"ended\": 1793048355.9435415, \"body\": \"{\\\"ok\\\":true,\\\"value\\\":{\\\"batch\\\":1,\\\"eip\\\":\\\"0xb0de5c\\\",\\\"quit\\\":false,\\\"yieldReason\\\":0,\\\"focus\\\":\\\"0x0\\\",\\\"mainHwnd\\\":\\\"0x0\\\",\\\"screen\\\":{\\\"w\\\":640,\\\"h\\\":480},\\\"frozen\\\":{\\\"frozen\\\":true,\\\"tickMs\\\":200,\\\"credits\\\":0,\\\"recording\\\":false},\\\"windows\\\":[]}}\"}\n",
+            "stdoutTruncated": false,
+            "success": true,
+            "timedOut": false
+          }
+        }
+      ]
+    },
+    "stepRequests": 84,
+    "zeroCreditSnapshots": 85,
+    "totalAcknowledgedBatches": 20565,
+    "lastSnapshot": {
+      "batch": 20565,
+      "eip": "0xec9bd0",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 646,
+          "h": 507,
+          "visible": true,
+          "isChild": false,
+          "title": "Enigma v1.01"
+        }
+      ]
+    },
+    "maxIncrement": 256,
+    "noOutstandingCredits": true,
+    "noReplay": true
+  },
+  "controllerInvocations": 0,
+  "clickDispatches": 0,
+  "gameplayObserved": false,
+  "pngs": [],
+  "screenshotsInspected": false,
+  "identity": {
+    "productionCommit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "runnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+    "controllerSHA256": "c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6",
+    "wiredDerivativeSHA256": "a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da",
+    "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "moduleQualification": "historical static-unpack diagnostic; not untouched original/current-main build",
+    "inputs": {
+      "rows": 2661,
+      "logicalBytes": 37503235,
+      "verifiedAll": true,
+      "productionFilesFromReadonlyRecoveredClosure": 98,
+      "originalCompressedManifestSHA256": "d5538651a5bfaa9293ee80da79d77d4bcc2cb1172ecab89d9f1f2a9e65a9976e",
+      "resolvedCompressedManifestSHA256": "a4506bdc1486ea873043dc6c561b73a7ef22349d24d14bb7a48a48621a41ed7b"
+    },
+    "sourceModes": "original pinned source modes validated; recovered production-file bytes used readonly",
+    "route": "production headless runner, accepted presented-menu derivative, frozen HTTP control, full tree VFS; no emulator transform/state patch"
+  },
+  "actualCommand": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-wrapper.cjs",
+      "/tmp/enigma-small-step-production-gameplay-oct26/runner/test/run-presented.cjs",
+      "--no-build",
+      "--wasm=/tmp/enigma-small-step-production-gameplay-oct26/runtime/build/wine-assembly.wasm",
+      "--exe=/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/enigma.exe",
+      "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+      "--cwd=C:\\Enigma-1.01",
+      "--dlls=/tmp/enigma-small-step-production-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=84",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/enigma-small-step-production-gameplay-oct26/vfs",
+      "--max-batches=10000000",
+      "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+      "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+      "--quiet-fs",
+      "--control=18127",
+      "--trace-input",
+      "--frozen"
+    ],
+    "pid": 24949,
+    "pgid": 24949,
+    "at": 1793048355.1073735,
+    "memAvailable": 7263977472,
+    "limits": {
+      "cpuTree": 90,
+      "wallGuest": 89,
+      "file": 25165824,
+      "output": 2097152,
+      "rssTree": 2684354560,
+      "heapOldSpaceMiB": 2048
+    },
+    "environment": {}
+  },
+  "startup": {
+    "args": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-wrapper.cjs",
+      "-e",
+      "console.log(JSON.stringify({executable:process.execPath,version:process.version,argv:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8'),environment:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|ENIGMA|WINE|MAELSTROM)/.test(k))),memory:process.memoryUsage()}))"
+    ],
+    "exit": 0,
+    "stdout": "{\"executable\":\"/home/user/.nvm/versions/node/v24.22.1/bin/node\",\"version\":\"v24.22.1\",\"argv\":[\"--max-old-space-size=2048\",\"--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-wrapper.cjs\",\"-e\",\"console.log(JSON.stringify({executable:process.execPath,version:process.version,argv:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8'),environment:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|ENIGMA|WINE|MAELSTROM)/.test(k))),memory:process.memoryUsage()}))\"],\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              90                   90                   seconds   \\nMax file size             25165824             25165824             bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             31546                31546                processes \\nMax open files            524288               524288               files     \\nMax locked memory         8388608              8388608              bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       31546                31546                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\",\"environment\":{},\"memory\":{\"rss\":51576832,\"heapTotal\":7131136,\"heapUsed\":5644896,\"external\":2036171,\"arrayBuffers\":139539}}\n",
+    "stderr": ""
+  },
+  "wire": {
+    "args": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "/tmp/enigma-small-step-production-gameplay-oct26/wire.cjs"
+    ],
+    "exit": 0,
+    "stdout": "{\"source\":\"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\",\"derivative\":\"a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da\"}\n",
+    "stderr": ""
+  },
+  "runtime": {
+    "reason": "owned-stop",
+    "returncode": 0,
+    "elapsed": 41.57526169199997,
+    "peakTreeRSS": 301293568,
+    "peakTreeCPU": 7.08,
+    "outputBytes": 42512,
+    "identities": {
+      "24949": {
+        "ppid": 24948,
+        "state": "S",
+        "start": "49181",
+        "cpu": 7.08,
+        "rss": 301293568
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_eugbptb7",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "resources": {
+    "cap": 67108864,
+    "reserve": 8388608,
+    "remotePhysicalRequired": 3758096384,
+    "localCivIIReserve": 1879048192,
+    "localGLReserve": 268435456,
+    "hostRemainder": 805306368,
+    "prestage": {
+      "stage": "prestage",
+      "charges": {
+        "localOwned": 561152,
+        "remoteOwned": 45973504,
+        "launcher": 729088,
+        "positiveWAL": 0,
+        "futureSessionAndDB": 1048576,
+        "futurePublication": 1048576,
+        "reserve": 8388608
+      },
+      "total": 57749504,
+      "cap": 67108864,
+      "memAvailable": 3987922944,
+      "liveClients": [
+        {
+          "pid": 752162,
+          "rss": 393920512
+        },
+        {
+          "pid": 3095296,
+          "rss": 192937984
+        },
+        {
+          "pid": 3100536,
+          "rss": 196255744
+        },
+        {
+          "pid": 3101879,
+          "rss": 197443584
+        }
+      ],
+      "prospectiveGitAndHelper": 570425344,
+      "remainingMemory": 1270013952,
+      "memoryFloor": 805306368,
+      "localCivIIReserve": 1879048192,
+      "localGLReserve": 268435456,
+      "diskFree": 3762802688,
+      "projectedFree": 3705053184,
+      "diskFloor": 2982150144,
+      "pass": true
+    },
+    "preguest": {
+      "stage": "preguest",
+      "charges": {
+        "localOwned": 1241088,
+        "remoteOwned": 48128000,
+        "launcher": 1105920,
+        "positiveWAL": 774144,
+        "futureSessionAndDB": 1048576,
+        "futurePublication": 1048576,
+        "reserve": 8388608
+      },
+      "total": 61734912,
+      "cap": 67108864,
+      "memAvailable": 4056117248,
+      "liveClients": [
+        {
+          "pid": 752162,
+          "rss": 402014208
+        },
+        {
+          "pid": 3100536,
+          "rss": 190832640
+        },
+        {
+          "pid": 3101879,
+          "rss": 196075520
+        }
+      ],
+      "prospectiveGitAndHelper": 570425344,
+      "remainingMemory": 1338208256,
+      "memoryFloor": 805306368,
+      "localCivIIReserve": 1879048192,
+      "localGLReserve": 268435456,
+      "diskFree": 3761733632,
+      "projectedFree": 3699998720,
+      "diskFloor": 2982150144,
+      "pass": true
+    },
+    "prepublication": {
+      "stage": "prepublication",
+      "charges": {
+        "localOwned": 1683456,
+        "remoteOwned": 45043712,
+        "launcher": 1253376,
+        "positiveWAL": 1077248,
+        "futureSessionAndDB": 1048576,
+        "futurePublication": 1048576,
+        "reserve": 8388608
+      },
+      "total": 59543552,
+      "cap": 67108864,
+      "memAvailable": 3980898304,
+      "liveClients": [
+        {
+          "pid": 752162,
+          "rss": 401514496
+        },
+        {
+          "pid": 3101879,
+          "rss": 193290240
+        }
+      ],
+      "prospectiveGitAndHelper": 570425344,
+      "remainingMemory": 1262989312,
+      "memoryFloor": 805306368,
+      "localCivIIReserve": 1879048192,
+      "localGLReserve": 268435456,
+      "diskFree": 3758944256,
+      "projectedFree": 3699400704,
+      "diskFloor": 2982150144,
+      "pass": true
+    },
+    "remoteAccounting": {
+      "inventory": {
+        "logicalBytes": 38451349,
+        "physicalOwnedBytes": 43991040,
+        "pathSummedAllocatedBytes": 44777472,
+        "files": 2682,
+        "uniqueInodes": 2741
+      },
+      "detachedLogs": [
+        {
+          "path": "/home/user/.ascii/processes/17751.log",
+          "bytes": 134,
+          "allocated": 4096,
+          "sha256": "442a8a7fbd880b1012551c99f81de0e257ec1c224f9ea346e03b5022f428159e"
+        },
+        {
+          "path": "/home/user/.ascii/processes/17751.err.log",
+          "bytes": 0,
+          "allocated": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "/home/user/.ascii/processes/24943.log",
+          "bytes": 0,
+          "allocated": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "/home/user/.ascii/processes/24943.err.log",
+          "bytes": 0,
+          "allocated": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "remainingOwnedLive": [],
+      "terminal": {
+        "reason": "owned-stop",
+        "returncode": 0,
+        "elapsed": 41.57526169199997,
+        "peakTreeRSS": 301293568,
+        "peakTreeCPU": 7.08,
+        "outputBytes": 42512,
+        "identities": {
+          "24949": {
+            "ppid": 24948,
+            "state": "S",
+            "start": "49181",
+            "cpu": 7.08,
+            "rss": 301293568
+          }
+        },
+        "remainingOwnedLive": [],
+        "box": "bx_eugbptb7",
+        "boxState": "RUNNING",
+        "shutdownOwner": "coordinator"
+      },
+      "box": "bx_eugbptb7",
+      "boxState": "RUNNING evidenced by successful APIexec",
+      "expiryUserSupplied": "2026-10-26T22:23:00Z",
+      "diskFree": 48983638016
+    },
+    "GitDATA": "512MiB Git subprocess only",
+    "NodeHeap": "2048MiB old space; physical RSS independently monitored, not a cap"
+  },
+  "incidents": [
+    "First local preflight compared recovered-file permission bits to original Git modes and rejected runner/test/run.js. No transfer/guest yet; corrected metadata comparison to exact original pinned Git modes while retaining recovered byte source. All2661 hashes/modes subsequently passed.",
+    "Transfer used original bounded30k raw-chunk API recipe. Explicit remote CPU90/file24MiB/wall120 wrapper was added after transfer and before startup/guest. Earlier transfer commands were API-wall-bounded30s and hash/readback verified; no retrospective claim that their inheritedCPU limit was90.",
+    "Finite helper sequence1,4,16,64,80x256 ended before menu. Helper assertion is retained as first-runtime-blocker.json; this is not an authentic production rejection. Session stopped once; no new guest/retry/timeout extension.",
+    "Postguest conservative hostRAM admission rejected while independent local work still held RAM. No publication Git operation ran after that rejection. Once independent compile completed and measured MemAvailable increased, unchanged cap/reserves passed prepublication gate; original rejection retained."
+  ],
+  "reusedGroups": "29 independent and prior13transform/9protocol/7ambiguity groups reused; no replay, build or source repair",
+  "lifecycle": {
+    "box": "bx_eugbptb7",
+    "state": "RUNNING confirmed successful APIexec after guest cleanup",
+    "expiry": "2026-10-26T22:23:15Z",
+    "expirySource": "coordinator messageboard supplied",
+    "cutoff": "2026-10-26T21:35:00Z",
+    "handback": "immediate on completion",
+    "shutdownOwner": "coordinator",
+    "scheduledShutdown": "2026-10-26T21:45:00Z",
+    "remainingOwnedGuestProcesses": [],
+    "noBoxLifecycleMutation": true
+  },
+  "remaining": [
+    "Menu/presented-frame proof and accepted one-shot atomic Start Game dispatch",
+    "ordinary input consumption and gameplay PNG inspection",
+    "production renderer qualification; historical static-unpack module limitation remains"
+  ],
+  "recovery": "ops.tar.gz contains exact compressed source manifests, source modes, argv, original batch requests/responses/times, destination and startup receipts, API commands/chunk hashes and adapted helpers. Recover binaries only from listed pinned existing sources, reverify all hashes/modes, do not execute against this/old box or replay old100000 request. New execution requires coordinator assignment. No binaries or screenshot claims included."
+}
