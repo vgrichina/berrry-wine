@@ -1,0 +1,24 @@
+{
+  "at": 1793050364.400408,
+  "request": {
+    "cmd": "dlg-click:1"
+  },
+  "api": {
+    "commandId": "cmd_jmuz00s8jgnx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:32:44.345Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:32:44.281Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":50}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

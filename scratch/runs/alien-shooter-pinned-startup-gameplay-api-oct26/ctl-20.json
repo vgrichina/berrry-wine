@@ -1,0 +1,24 @@
+{
+  "at": 1793050525.7481594,
+  "request": {
+    "action": "snapshot"
+  },
+  "api": {
+    "commandId": "cmd_axxtiqyrakqf",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:35:25.698Z",
+    "launcherFailed": false,
+    "noticedMs": 12,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T21:35:25.636Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":2150,\"eip\":\"0x7503118\",\"quit\":false,\"yieldReason\":16,\"focus\":\"0x10019\",\"mainHwnd\":\"0x10019\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":5,\"credits\":0,\"recording\":false},\"windows\":[{\"hwnd\":\"0x10019\",\"x\":0,\"y\":0,\"w\":640,\"h\":480,\"visible\":true,\"isChild\":false,\"title\":\"AlienShooter\"}]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

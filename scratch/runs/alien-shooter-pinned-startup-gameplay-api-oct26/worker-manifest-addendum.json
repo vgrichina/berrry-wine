@@ -1,0 +1,11 @@
+{
+  "target": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/lib/d3d-render-worker.js",
+  "pin": {
+    "path": "lib/d3d-render-worker.js",
+    "blob": "0b9a95c14242761ad4e429fdb92387d9ad92d622",
+    "sha256": "f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52",
+    "bytes": 27983
+  },
+  "manifest": "/tmp/gl-palette-fullvm-api-qualification-oct26/ops/source-manifest.json",
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2"
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xtjsgbn3enld",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:35:45.598Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T21:35:45.549Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"output.log\": \"] EIP=0x07504868 EAX=0x8876086c ECX=0x0061c074 EDX=0x074ffed0 EBX=0x00000000 ESP=0x074ffeb8 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2893] EIP=0x07504870 EAX=0x8876086c ECX=0x0061c074 EDX=0x074ffecc EBX=0x00000000 ESP=0x074ffed4 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2894] EIP=0x07504868 EAX=0x8876086c ECX=0x0061c074 EDX=0x074ffed0 EBX=0x00000000 ESP=0x074ffeb8 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2895] EIP=0x07504870 EAX=0x8876086c ECX=0x00612b0c EDX=0x0061c074 EBX=0x00000000 ESP=0x074ffed4 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2896] EIP=0x07504868 EAX=0x8876086c ECX=0x0061c074 EDX=0x074ffef4 EBX=0x00000000 ESP=0x074ffec8 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2897] EIP=0x07504870 EAX=0x8876086c ECX=0x00612b0c EDX=0x0061c074 EBX=0x00000000 ESP=0x074ffed4 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\n[2898] EIP=0x07503118 EAX=0x005fb2a4 ECX=0x074ffebc EDX=0x074ffecc EBX=0x00000000 ESP=0x074ffe94 EBP=0x00000280 ESI=0x08221010 EDI=0x00000000\\n[2899] EIP=0x07504868 EAX=0x8876086c ECX=0x0061c074 EDX=0x074ffed0 EBX=0x00000000 ESP=0x074ffeb8 EBP=0x00612b0c ESI=0x0061ad14 EDI=0x00000000\\nuop: installs=843 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=7 | compiled=843 declined=458 insns=48887 uops=226654 flushes=4 traces=439\\n  declines: no-backedge=393 head-unsupported=48 call-indirect=17\\nuop nobump: skips=0\\nuop hot: decays=8796331 halvings=10188\\n\\nStats: 70624 API calls, 2900 batches in 37.129s (78 batches/s)\\nrender park: main waited on 987 software D3D requests (5332ms wall), 0 batches skipped while parked\\nMMX: 264 instructions retired (cpuid mmx bit on)\\n\\n[spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 0 trips (48 serviced on the main thread); K=8\\n\", \"terminal.json\": \"{\\\"reason\\\": \\\"natural\\\", \\\"returncode\\\": 0, \\\"elapsed\\\": 37.32528655099986, \\\"peakTreeRSS\\\": 415678464, \\\"peakTreeCPU\\\": 23.86, \\\"outputBytes\\\": 420093, \\\"identities\\\": {\\\"45302\\\": {\\\"ppid\\\": 45301, \\\"state\\\": \\\"R\\\", \\\"start\\\": \\\"226580\\\", \\\"cpu\\\": 23.86, \\\"rss\\\": 0}}, \\\"remainingOwnedLive\\\": [], \\\"box\\\": \\\"bx_a9dwsx2x\\\", \\\"boxState\\\": \\\"RUNNING\\\", \\\"shutdownOwner\\\": \\\"coordinator\\\"}\", \"command.json\": \"{\\\"argv\\\": [\\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\", \\\"--max-old-space-size=2048\\\", \\\"--require=/tmp/alien-shooter-pinned-startup-gameplay-api-oct26/capture-wrapper.cjs\\\", \\\"/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js\\\", \\\"--app=alien_shooter\\\", \\\"--no-build\\\", \\\"--wasm=/tmp/alien-shooter-current-gameplay-api-oct26/current.wasm\\\", \\\"--d3d9-renderer=software\\\", \\\"--tick-ms-per-batch=5\\\", \\\"--batch-size=200000\\\", \\\"--max-seconds=54\\\", \\\"--no-close\\\", \\\"--quiet-api\\\", \\\"--frozen\\\", \\\"--control=18129\\\", \\\"--trace-at=0x416808\\\", \\\"--trace-at-mem=ebp-0x3c:8\\\"], \\\"pid\\\": 45302, \\\"pgid\\\": 45302, \\\"at\\\": 1793050503.577204, \\\"memAvailable\\\": 7394242560, \\\"limits\\\": {\\\"cpuTree\\\": 90, \\\"wallGuest\\\": 57, \\\"file\\\": 25165824, \\\"output\\\": 2097152, \\\"rssTree\\\": 2684354560, \\\"heapOldSpaceMiB\\\": 2048}, \\\"environment\\\": {}}\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

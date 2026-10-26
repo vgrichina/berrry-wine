@@ -1,0 +1,8 @@
+{
+  "helperPeak": 78467072,
+  "helperCap": 67108864,
+  "helperKilled": true,
+  "resolution": "Separate lightweight Node checker from Python collection; no cap raised.",
+  "schemaIncident": "inconclusive rejected by evidence schema; corrected to supported unknown without changing guest outcome",
+  "localParserIncident": "Remote Node executable path initially used on local host; corrected to local Node for canonical parser only"
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xqgxrlxddpk0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:36:57.242Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T21:36:57.057Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 136186, \"sha256\": \"657c26e9d577870ca0885bf312738417f4a827894ffddea299bc3f613adb8d22\", \"ownedLive\": [], \"retainedAllocated\": 50712576, \"newRemoteAllocated\": 2088960}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

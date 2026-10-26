@@ -1,0 +1,50 @@
+{
+  "charges": {
+    "retainedRemote": 49913856,
+    "newRemote": 40960,
+    "localOwned": 1150976,
+    "dashboard": 237568,
+    "launcher": 249856,
+    "session": 667648,
+    "positiveWALOnce": 393216,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "total": 69431296,
+  "cap": 134217728,
+  "projectedHostFree": 3703291904,
+  "hostFloor": 2982150144,
+  "publication": {
+    "commit": "7877442cc240c0bc1fbeabb4aec7df6b8234cb2e",
+    "remoteRef": "7877442cc240c0bc1fbeabb4aec7df6b8234cb2e\trefs/heads/task/alien-shooter-required-exe-gameplay-api-oct26",
+    "branch": "task/alien-shooter-required-exe-gameplay-api-oct26",
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "normalPush": true
+  },
+  "cleanup": {
+    "ownedLive": [],
+    "allocatedRetained": 49913856,
+    "allocatedNew": 40960,
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "exeSHA256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+    "missingPath": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/src/api_table.json",
+    "missing": true,
+    "retainedSourceCandidates": {
+      "/tmp/alien-shooter-current-gameplay-api-oct26/src/api_table.json": false,
+      "/tmp/alien-shooter-current-gameplay-api-oct26/source/src/api_table.json": false,
+      "/tmp/alien-shooter-current-gameplay-api-oct26/runner/src/api_table.json": false
+    }
+  },
+  "lifecycle": {
+    "box": "bx_a9dwsx2x",
+    "state": "RUNNING",
+    "expiry": "2026-10-26T22:31:02.925Z",
+    "guestCutoff": "2026-10-26T21:50:00Z",
+    "handback": "2026-10-26T21:55:00Z",
+    "shutdown": "2026-10-26T22:00:00Z",
+    "shutdownOwner": "coordinator",
+    "watchPID3114875": "untouched",
+    "ownedLive": []
+  },
+  "passGate": true
+}

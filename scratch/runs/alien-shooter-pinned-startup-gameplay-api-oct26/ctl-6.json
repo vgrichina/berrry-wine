@@ -1,0 +1,25 @@
+{
+  "at": 1793050383.599097,
+  "request": {
+    "action": "step",
+    "n": 2000
+  },
+  "api": {
+    "commandId": "cmd_lt64h4verldx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:33:03.546Z",
+    "launcherFailed": false,
+    "noticedMs": 18,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 19,
+    "startedAt": "2026-10-26T21:32:49.891Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":2150,\"ran\":2000,\"steps\":2000,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

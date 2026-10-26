@@ -1,0 +1,523 @@
+{
+  "runnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "reads": [
+    {
+      "line": 1,
+      "text": "const fs = require('fs');"
+    },
+    {
+      "line": 2,
+      "text": "const path = require('path');"
+    },
+    {
+      "line": 3,
+      "text": "const { execSync } = require('child_process');"
+    },
+    {
+      "line": 4,
+      "text": "const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');"
+    },
+    {
+      "line": 5,
+      "text": "const { createHostImports } = require('../lib/host-imports');"
+    },
+    {
+      "line": 6,
+      "text": "const frameIntervals = require('../lib/frame-intervals');"
+    },
+    {
+      "line": 7,
+      "text": "const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');"
+    },
+    {
+      "line": 8,
+      "text": "const { inputEventHwnd } = require('../lib/host-window');"
+    },
+    {
+      "line": 13,
+      "text": "handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');"
+    },
+    {
+      "line": 18,
+      "text": "} = require('../lib/app-profiles');"
+    },
+    {
+      "line": 22,
+      "text": "} = require('../lib/worker-imports');"
+    },
+    {
+      "line": 23,
+      "text": "const { seedExeImage, win16FileCandidates, residentWin16Module } = require('../lib/vfs-seed');"
+    },
+    {
+      "line": 24,
+      "text": "const { expandIncludePatterns, guestPathInTree } = require('../lib/vfs-host-files');"
+    },
+    {
+      "line": 25,
+      "text": "const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');"
+    },
+    {
+      "line": 34,
+      "text": "keys = storage.importStore(JSON.parse(fs.readFileSync(regOut, 'utf8')));"
+    },
+    {
+      "line": 44,
+      "text": "} = require('../lib/mem-utils');"
+    },
+    {
+      "line": 45,
+      "text": "const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require('../lib/api-format');"
+    },
+    {
+      "line": 46,
+      "text": "const { fontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');"
+    },
+    {
+      "line": 47,
+      "text": "const { APPS, resolveCopySuperops } = require('../lib/apps');"
+    },
+    {
+      "line": 48,
+      "text": "const { CliVideoRecorder } = require('../lib/cli-recorder');"
+    },
+    {
+      "line": 49,
+      "text": "const { renderTinySynthNotes } = require('../lib/tinysynth-offline');"
+    },
+    {
+      "line": 50,
+      "text": "const { createBatchClock } = require('../lib/batch-clock');"
+    },
+    {
+      "line": 51,
+      "text": "const { createGuestClockSource } = require('../lib/guest-clock');"
+    },
+    {
+      "line": 52,
+      "text": "const { createInputConsumptionTrace } = require('./input-consumption-trace');"
+    },
+    {
+      "line": 53,
+      "text": "const { createStartupClock } = require('../lib/startup-clock');"
+    },
+    {
+      "line": 54,
+      "text": "const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');"
+    },
+    {
+      "line": 56,
+      "text": "const RegionMap = require('../lib/region-map.generated.js');"
+    },
+    {
+      "line": 58,
+      "text": "try { ({ PNG } = require('pngjs')); } catch (_) {}"
+    },
+    {
+      "line": 65,
+      "text": "createCanvas = require('../lib/canvas-compat').createCanvas;"
+    },
+    {
+      "line": 66,
+      "text": "Win98Renderer = require('../lib/renderer').Win98Renderer;"
+    },
+    {
+      "line": 105,
+      "text": "try { skia = require('skia-canvas'); }"
+    },
+    {
+      "line": 347,
+      "text": "const experiments = require('./runner-experiments').createRunnerExperiments({ hasFlag, getArg,"
+    },
+    {
+      "line": 428,
+      "text": "const GLCompatTrace = require('../lib/gl-compat');"
+    },
+    {
+      "line": 1053,
+      "text": "const zipMount = require('../lib/zip-mount');"
+    },
+    {
+      "line": 1056,
+      "text": "const bytes = new Uint8Array(fs.readFileSync(zipPath));"
+    },
+    {
+      "line": 1062,
+      "text": "const dir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'wine-zip-'));"
+    },
+    {
+      "line": 1091,
+      "text": "const iso9660 = require('../lib/iso9660');"
+    },
+    {
+      "line": 1095,
+      "text": "const image = iso9660.parseIso(new Uint8Array(fs.readFileSync(isoPath)),"
+    },
+    {
+      "line": 1100,
+      "text": "const dir = fs.mkdtempSync(require('path').join(require('os').tmpdir(), 'wine-iso-'));"
+    },
+    {
+      "line": 1101,
+      "text": "const out = require('path').join(dir, hit.name);"
+    },
+    {
+      "line": 1331,
+      "text": "const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));"
+    },
+    {
+      "line": 1337,
+      "text": "const verified = require('../lib/app-files').validateLocalManifestSync(entry, manifest, {"
+    },
+    {
+      "line": 1339,
+      "text": "read: url => fs.readFileSync(appAsset(url)),"
+    },
+    {
+      "line": 1340,
+      "text": "sha256: bytes => require('crypto').createHash('sha256').update(bytes).digest('hex'),"
+    },
+    {
+      "line": 1347,
+      "text": "return require('../lib/app-files').mergeLocalManifestFiles(files, local);"
+    },
+    {
+      "line": 1371,
+      "text": "const _hgl = require('../lib/headless-gl');"
+    },
+    {
+      "line": 1470,
+      "text": "win16Ordinals = require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));"
+    },
+    {
+      "line": 1694,
+      "text": "const source = fs.readFileSync(path.join(SRC_DIR, '02-thread-table.wat'), 'utf8');"
+    },
+    {
+      "line": 1713,
+      "text": "const readAssetBytes = hostPath => verifiedBytesByPath.get(canonicalPath(hostPath)) || fs.readFileSync(hostPath);"
+    },
+    {
+      "line": 1728,
+      "text": "wasmBytes = fs.readFileSync(WASM_PATH);"
+    },
+    {
+      "line": 1735,
+      "text": "const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');"
+    },
+    {
+      "line": 1746,
+      "text": "const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');"
+    },
+    {
+      "line": 2719,
+      "text": "const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));"
+    },
+    {
+      "line": 2736,
+      "text": "const {Worker} = require('worker_threads');"
+    },
+    {
+      "line": 2737,
+      "text": "const {WorkerConsumer} = require('../lib/d3d-command-stream');"
+    },
+    {
+      "line": 2738,
+      "text": "const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;"
+    },
+    {
+      "line": 2784,
+      "text": "vlanWire: VLAN_WIRE ? new (require('../lib/vlan-wire').ProcessWire)(process) : null,"
+    },
+    {
+      "line": 2811,
+      "text": "try { return new Uint8Array(fs.readFileSync(p)); } catch (_) {}"
+    },
+    {
+      "line": 2826,
+      "text": "bytes = fs.readFileSync(p);"
+    },
+    {
+      "line": 2859,
+      "text": "bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),"
+    },
+    {
+      "line": 2867,
+      "text": "data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,"
+    },
+    {
+      "line": 2873,
+      "text": "const substitutions = JSON.parse(fs.readFileSync("
+    },
+    {
+      "line": 2881,
+      "text": "data: new Uint8Array(fs.readFileSync(file)), attrs: 0x20,"
+    },
+    {
+      "line": 2979,
+      "text": "const gameplayBench = getArg('gameplay-bench', null) ? require('../tools/diablo-gameplay-bench').createBenchmark({"
+    },
+    {
+      "line": 4139,
+      "text": "const os = require('os');"
+    },
+    {
+      "line": 4140,
+      "text": "const storage = require('../lib/storage');"
+    },
+    {
+      "line": 4175,
+      "text": "const { fork } = require('child_process');"
+    },
+    {
+      "line": 4210,
+      "text": "const { ParentHub } = require('../lib/vlan-wire');"
+    },
+    {
+      "line": 4248,
+      "text": "const { fork } = require('child_process');"
+    },
+    {
+      "line": 4263,
+      "text": "const { describeFrame } = require('../lib/vlan-wire');"
+    },
+    {
+      "line": 4666,
+      "text": "const { ThreadManager } = require('../lib/thread-manager');"
+    },
+    {
+      "line": 4869,
+      "text": "const { SECTION_NAME } = require('../tools/region-layout-hash.js');"
+    },
+    {
+      "line": 4912,
+      "text": "const {Worker} = require('worker_threads');"
+    },
+    {
+      "line": 4913,
+      "text": "const {Encoder} = require('../lib/d3d-command-stream');"
+    },
+    {
+      "line": 4914,
+      "text": "const sigs = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;"
+    },
+    {
+      "line": 4933,
+      "text": "const {D3DIMGpu} = require('../lib/d3dim-gpu');"
+    },
+    {
+      "line": 4952,
+      "text": "const { STAT_NAMES } = require('../tools/build-page-translation-stats.js');"
+    },
+    {
+      "line": 5021,
+      "text": "const presentAudit = require('../lib/present-frame-audit');"
+    },
+    {
+      "line": 5115,
+      "text": "const { describeFrame } = require('../lib/vlan-wire');"
+    },
+    {
+      "line": 5354,
+      "text": "const { GuestThreadHost } = require('../lib/guest-thread-host');"
+    },
+    {
+      "line": 5355,
+      "text": "const sigs = JSON.parse(fs.readFileSync("
+    },
+    {
+      "line": 5360,
+      "text": "require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);"
+    },
+    {
+      "line": 5420,
+      "text": "const prepared = await require('../lib/process-boot').prepareScopedLibrary("
+    },
+    {
+      "line": 5423,
+      "text": "require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);"
+    },
+    {
+      "line": 5578,
+      "text": "if (fs.existsSync(p)) return fs.readFileSync(p);"
+    },
+    {
+      "line": 5585,
+      "text": "return fs.readFileSync(lib);"
+    },
+    {
+      "line": 5724,
+      "text": "load: () => new Uint8Array(item.bytes || fs.readFileSync(hostPath)) });"
+    },
+    {
+      "line": 5745,
+      "text": "const { extractBitmapBytes } = require('../lib/dib');"
+    },
+    {
+      "line": 5831,
+      "text": "const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, verifiedAssetFiles || getAssetFiles(ASSET_ENTRY), {"
+    },
+    {
+      "line": 5896,
+      "text": "const bp = require('../lib/byte-provider');"
+    },
+    {
+      "line": 5926,
+      "text": "const bp = require('../lib/byte-provider');"
+    },
+    {
+      "line": 5961,
+      "text": "const edited = require('../lib/app-files').applyIniSet("
+    },
+    {
+      "line": 5962,
+      "text": "new Uint8Array(fs.readFileSync(hostPath)), item.iniSet);"
+    },
+    {
+      "line": 6006,
+      "text": "const { mountZipSync } = require('../lib/zip-mount');"
+    },
+    {
+      "line": 6008,
+      "text": "const bytes = new Uint8Array(fs.readFileSync(zipPath));"
+    },
+    {
+      "line": 6025,
+      "text": "const { mountIso } = require('../lib/iso9660');"
+    },
+    {
+      "line": 6028,
+      "text": "const result = mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),"
+    },
+    {
+      "line": 6042,
+      "text": "const { mountCue } = require('../lib/cdrom');"
+    },
+    {
+      "line": 6048,
+      "text": "const result = mountCue(ctx.vfs, fs.readFileSync(absoluteCue, 'utf8'), {"
+    },
+    {
+      "line": 6061,
+      "text": "const { mountCue, parseCue } = require('../lib/cdrom');"
+    },
+    {
+      "line": 6066,
+      "text": "const cueText = fs.readFileSync(absoluteCue, 'utf8');"
+    },
+    {
+      "line": 6073,
+      "text": "const { openParts } = require('../lib/media-cli');"
+    },
+    {
+      "line": 6074,
+      "text": "const { analyzeCueBundle } = require('../lib/media-import');"
+    },
+    {
+      "line": 6093,
+      "text": "const { analyzeMediaPaths } = require('../lib/media-cli');"
+    },
+    {
+      "line": 6111,
+      "text": "const { nodeDirStore } = require('../lib/overlay-store');"
+    },
+    {
+      "line": 6112,
+      "text": "const VfsOverlay = require('../lib/vfs-overlay');"
+    },
+    {
+      "line": 6145,
+      "text": "const { importStore } = require('../lib/storage');"
+    },
+    {
+      "line": 6146,
+      "text": "const snap = JSON.parse(fs.readFileSync(REG_IMPORT, 'utf8'));"
+    },
+    {
+      "line": 6159,
+      "text": "const saveBundle = require('../lib/save-bundle');"
+    },
+    {
+      "line": 6162,
+      "text": "new Uint8Array(fs.readFileSync(IMPORT_SAVES)), {"
+    },
+    {
+      "line": 6182,
+      "text": "const local = JSON.parse(fs.readFileSync(appAsset(APP_ENTRY.localFileManifest), 'utf8'));"
+    },
+    {
+      "line": 6184,
+      "text": "const n = require('../lib/storage').importStore(local.registry);"
+    },
+    {
+      "line": 6190,
+      "text": "const { setRegValue, setIniValue } = require('../lib/storage');"
+    },
+    {
+      "line": 6238,
+      "text": "const { setRegValue } = require('../lib/storage');"
+    },
+    {
+      "line": 6256,
+      "text": "const { setRegValue, setIniValue } = require('../lib/storage');"
+    },
+    {
+      "line": 6265,
+      "text": "const { setRegValue } = require('../lib/storage');"
+    },
+    {
+      "line": 6338,
+      "text": "const { disasmAt: _disasm } = require('../tools/disasm');"
+    },
+    {
+      "line": 6703,
+      "text": "const readline = require('readline');"
+    },
+    {
+      "line": 7418,
+      "text": "const server = CONTROL ? require('../lib/control-server').startControlServer({"
+    },
+    {
+      "line": 7423,
+      "text": "const rl = require('readline').createInterface({ input: process.stdin, terminal: false });"
+    },
+    {
+      "line": 7477,
+      "text": "const inspector = require('inspector');"
+    },
+    {
+      "line": 9875,
+      "text": "const data = new Uint8Array(fs.readFileSync(ev.path));"
+    },
+    {
+      "line": 11505,
+      "text": "const pcm = fs.readFileSync(ctx._audioOutPath);"
+    },
+    {
+      "line": 11542,
+      "text": "const { exportStore } = require('../lib/storage');"
+    },
+    {
+      "line": 11552,
+      "text": "const saveBundle = require('../lib/save-bundle');"
+    },
+    {
+      "line": 12077,
+      "text": "const { dumpSprites } = require('../tools/dump_sprites');"
+    },
+    {
+      "line": 12160,
+      "text": "const { gammaLut, applyGamma } = require('../lib/dib');"
+    },
+    {
+      "line": 12341,
+      "text": "const GLCompat = require('../lib/gl-compat');"
+    }
+  ],
+  "requiredTable": {
+    "path": "src/api_table.json",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  "conditionalNotes": "02-thread-table.wat diagnostic read caught; win16 ordinals NE-only; compiler no-build excluded; fonts/system data verified runtime manifest; renderer/host/runtime requires covered standing runtime manifest"
+}

@@ -1,0 +1,10 @@
+{
+  "source": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/api_table.json",
+  "target": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/src/api_table.json",
+  "path": "src/api_table.json",
+  "bytes": 723350,
+  "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+  "mode": 436,
+  "standingManifest": "scratch/usage-watch/civ2-win16-pinned-inputs-oct26.json",
+  "historicalENOENTPreserved": "/tmp/alien-shooter-required-exe-gameplay-api-oct26/ops/retained/guest/output.log"
+}

@@ -1,0 +1,25 @@
+{
+  "at": 1793050363.983101,
+  "request": {
+    "action": "step",
+    "n": 50
+  },
+  "api": {
+    "commandId": "cmd_6qjvalmwvxis",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:32:43.918Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:32:43.823Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":50,\"ran\":50,\"steps\":50,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

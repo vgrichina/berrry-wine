@@ -1,0 +1,41 @@
+{
+  "charges": {
+    "retainedRemote": 50712576,
+    "newRemote": 2088960,
+    "previousLocal": 1155072,
+    "previousRemote": 40960,
+    "localOwned": 2650112,
+    "publicationDashboardGit": 25165824,
+    "launcher": 323584,
+    "session": 966656,
+    "positiveWALOnce": 1683456,
+    "futureGrowth": 16777216,
+    "reserve": 8388608
+  },
+  "total": 109953024,
+  "cap": 201326592,
+  "memAvailable": 3824259072,
+  "required": 3178770432,
+  "clients": [
+    {
+      "pid": 3165017,
+      "rss": 198868992
+    },
+    {
+      "pid": 3166359,
+      "rss": 202768384
+    },
+    {
+      "pid": 3168026,
+      "rss": 204931072
+    },
+    {
+      "pid": 3173720,
+      "rss": 241192960
+    }
+  ],
+  "clientGrowth": 494415872,
+  "projectedHostFree": 3618828288,
+  "hostFloor": 2982150144,
+  "passGate": true
+}

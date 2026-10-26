@@ -1,0 +1,11 @@
+{
+  "command": "timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 /tmp/alien-shooter-pinned-startup-gameplay-api-oct26/supervisor-remaining.py guest'",
+  "commandId": "cmd_0lrwwx2sce4f",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/45296.err.log",
+  "logPath": "/home/user/.ascii/processes/45296.log",
+  "pid": 45296,
+  "processId": 45296,
+  "startedAt": "2026-10-26T21:35:03.541Z",
+  "success": true
+}

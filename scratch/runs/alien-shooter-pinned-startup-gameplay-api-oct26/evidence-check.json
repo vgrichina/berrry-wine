@@ -1,0 +1,15 @@
+{
+  "exit": 0,
+  "runs": 1,
+  "errors": [],
+  "missing": [],
+  "invalid": [],
+  "command": [
+    "node",
+    "--jitless",
+    "--max-old-space-size=16",
+    "ops/check-run-evidence.js",
+    "/tmp/alien-shooter-pinned-startup-gameplay-api-oct26/repo"
+  ],
+  "helperCap": 67108864
+}

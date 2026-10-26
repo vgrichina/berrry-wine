@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_sx55qjyxhpjw",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-26T21:34:10.273Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-26T21:34:10.164Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 7, in <module>\nAssertionError\n",
+  "stderrTruncated": false,
+  "stdout": "{\"exit\": 1, \"stdout\": \"\", \"stderr\": \"node:fs:244\\n  binding.access(getValidatedPath(path), mode);\\n          ^\\n\\nError: ENOENT: no such file or directory, access 'lib/d3d-render-worker.js'\\n    at Object.accessSync (node:fs:244:11)\\n    at [eval]:1:136\\n    at runScriptInThisContext (node:internal/vm:219:10)\\n    at node:internal/process/execution:451:12\\n    at [eval]-wrapper:6:24\\n    at runScriptInContext (node:internal/process/execution:449:60)\\n    at evalFunction (node:internal/process/execution:283:30)\\n    at evalTypeScript (node:internal/process/execution:295:3)\\n    at node:internal/main/eval_string:71:3 {\\n  errno: -2,\\n  code: 'ENOENT',\\n  syscall: 'access',\\n  path: 'lib/d3d-render-worker.js'\\n}\\n\\nNode.js v24.22.1\\n\"}\n",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

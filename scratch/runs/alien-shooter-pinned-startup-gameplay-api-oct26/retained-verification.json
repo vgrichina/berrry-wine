@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ak3bxdcrtofn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:32:03.931Z",
+  "launcherFailed": false,
+  "noticedMs": 21,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 21,
+  "startedAt": "2026-10-26T21:32:03.129Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"missing\": [\"test/compile-src.js\", \"test/helpers/palette-gpu-browser.js\", \"test/helpers/palette-gpu-wat.js\", \"test/test-d3dim-palette-gpu-web.js\", \"tools/watx-closure.js\", \"tools/watx-src/CHANGELOG.md\", \"tools/watx-src/PROVENANCE.md\", \"tools/watx-src/compiler-codegen.js\", \"tools/watx-src/compiler-parser.js\", \"tools/watx-src/compiler-stages.js\", \"tools/watx-src/compiler.js\", \"tools/watx.js\"], \"bad\": [], \"verified\": 582, \"allocated\": 49913856, \"memAvailable\": 7381327872, \"free\": 48926265344, \"wasm\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"exe\": \"aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446\", \"runner\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

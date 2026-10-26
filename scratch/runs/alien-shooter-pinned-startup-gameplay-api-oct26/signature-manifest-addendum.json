@@ -1,0 +1,18 @@
+{
+  "target": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/lib/host-import-sigs.generated.json",
+  "pin": {
+    "path": "lib/host-import-sigs.generated.json",
+    "blob": "892088faefb217dae872669d1d919e6ab3b89fd8",
+    "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+    "bytes": 39713
+  },
+  "manifest": "/tmp/gl-palette-fullvm-api-qualification-oct26/ops/source-manifest.json",
+  "exactSourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo",
+  "bytes": 39713,
+  "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+  "firstInvocationPreserved": true,
+  "remainingGuestWallCap": 57,
+  "previousGuestElapsed": 30.328334728999835,
+  "aggregateMaxWall": 87.32833472899983
+}

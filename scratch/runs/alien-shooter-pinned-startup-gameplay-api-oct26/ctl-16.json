@@ -1,0 +1,25 @@
+{
+  "at": 1793050521.0152183,
+  "request": {
+    "action": "step",
+    "n": 1500
+  },
+  "api": {
+    "commandId": "cmd_quulvalw0zwn",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:35:20.933Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:35:09.331Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":1650,\"ran\":1500,\"steps\":1500,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

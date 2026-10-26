@@ -1,0 +1,24 @@
+{
+  "at": 1793050392.7994564,
+  "request": {
+    "cmd": "keypress:13"
+  },
+  "api": {
+    "commandId": "cmd_kacgvkuhctdx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:33:12.732Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:33:12.664Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":2150}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

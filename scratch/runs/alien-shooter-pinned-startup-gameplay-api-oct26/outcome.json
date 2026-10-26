@@ -1,0 +1,58 @@
+{
+  "first": {
+    "reason": "natural",
+    "returncode": 0,
+    "elapsed": 30.328334728999835,
+    "peakTreeRSS": 328642560,
+    "peakTreeCPU": 15.52,
+    "outputBytes": 1193027,
+    "identities": {
+      "43714": {
+        "ppid": 43713,
+        "state": "S",
+        "start": "212531",
+        "cpu": 15.52,
+        "rss": 327839744
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_a9dwsx2x",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "corrected": {
+    "reason": "natural",
+    "returncode": 0,
+    "elapsed": 37.32528655099986,
+    "peakTreeRSS": 415678464,
+    "peakTreeCPU": 23.86,
+    "outputBytes": 420093,
+    "identities": {
+      "45302": {
+        "ppid": 45301,
+        "state": "R",
+        "start": "226580",
+        "cpu": 23.86,
+        "rss": 0
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_a9dwsx2x",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "aggregateGuestWall": 67.6536212799997,
+  "remainingGuestWall": 22.346378720000303,
+  "correctedENOENTCount": 0,
+  "firstSignatureENOENTCount": 7223,
+  "correctedAuthenticTrapLines": [],
+  "gameplay": false,
+  "menu": false,
+  "visuallyInspected": [
+    "frame1.png black",
+    "frame2.png SIGMA TEAM splash",
+    "frame3.png ALIEN SHOOTER title"
+  ],
+  "stop": "Worker queued explicit quit after third capture. This premature planning stop is preserved; no authentic current game crash and no gameplay acceptance.",
+  "remainingBlocker": "22.346s remaining aggregate allowance is less than observed37.325s cold corrected startup to title. No repeat cold launch or extra capture; further gameplay needs coordinator-assigned runtime allowance."
+}
