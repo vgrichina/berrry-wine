@@ -1,0 +1,75 @@
+PE loaded. Entry: 0x000f0000
+[win16] loaded SMEDSNET as module 13
+[win16] registered WING as module 17 for LoadLibrary
+[win16] registered CIV2ART as module 18 for LoadLibrary
+[win16] registered CV as module 19 for LoadLibrary
+[win16] registered INTRO as module 20 for LoadLibrary
+[win16] registered MK as module 21 for LoadLibrary
+[win16] registered PV as module 22 for LoadLibrary
+[win16] registered SS as module 23 for LoadLibrary
+[win16] registered TILES as module 24 for LoadLibrary
+[win16] registered TIMERDLL as module 25 for LoadLibrary
+[win16] registered WONDER as module 26 for LoadLibrary
+[files] policy eager: Win16 image: 338 eager (371068631 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[cue] mounted test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De).cue -> D:\ label="" (419 data entries, 9 audio tracks, lazy)
+[MCI] open cdaudio id=1 drive=D: tracks=1-10
+[CreateWindow] hwnd=0x10001 title="" style=0x0 pos=0,0 size=480x321 menu=0
+[ctl] {"ok":true,"id":"1793048775191029779","value":{"batch":1,"ran":1,"steps":1,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048778061711335","value":{"batch":1,"eip":"0x54016e","quit":false,"yieldReason":0,"focus":"0x0","mainHwnd":"0x10001","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""}]}}
+[ctl] {"ok":true,"id":"1793048778248174489","value":{"batch":101,"ran":100,"steps":100,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048781970642585","value":{"batch":101,"eip":"0x5401c2","quit":false,"yieldReason":0,"focus":"0x0","mainHwnd":"0x10001","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""}]}}
+[CreateWindow] hwnd=0x10002 title="" style=0x-7d800000 pos=90,187 size=462x108 menu=0
+[CreateWindow] hwnd=0x10003 title="" style=0x50010000 pos=10,28 size=440x20 menu=0
+[CreateWindow] hwnd=0x10004 title="" style=0x50010000 pos=10,50 size=440x20 menu=0
+[CreateWindow] hwnd=0x10005 title="" style=0x50810000 pos=6,77 size=223x26 menu=0
+[CreateWindow] hwnd=0x10006 title="" style=0x50810000 pos=231,77 size=223x26 menu=0
+[ShowWindow] hwnd=0x10002 cmd=5
+[ctl] {"ok":true,"id":"1793048785655174152","value":{"batch":5101,"ran":5000,"steps":5000,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048798998241790","value":{"batch":5101,"eip":"0x511501","quit":false,"yieldReason":0,"focus":"0x10003","mainHwnd":"0x10002","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x10002","x":90,"y":187,"w":462,"h":108,"visible":true,"isChild":false,"title":""},{"hwnd":"0x10003","x":10,"y":28,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10004","x":10,"y":50,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10005","x":6,"y":77,"w":223,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10006","x":231,"y":77,"w":223,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793048816001736952","value":{"batch":5101,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/startup.png","bytes":58309}}
+[ctl] {"ok":true,"id":"1793048823320069474","value":{"queued":true,"batch":5101}}
+[input] click 210,280 at batch 5101
+[check_input] msg=0x84 wParam=0x0 lParam=0x11800d2 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10005
+[check_input] msg=0x201 wParam=0x1 lParam=0xb006e packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10005
+[check_input] msg=0x202 wParam=0x0 lParam=0xb006e packed=0x202
+[check_input_hwnd] explicit hwnd=0x10005
+[ShowWindow] hwnd=0x10002 cmd=0
+[SetMenu] hwnd=0x10002 menu=0
+[SetMenu] hwnd=0x10002 menu=0
+[CreateWindow] hwnd=0x10007 title="Civ2 Diplomatic Heralds" style=0x-7d800000 pos=90,140 size=462x202 menu=0
+[CreateWindow] hwnd=0x10008 title="" style=0x50010000 pos=10,122 size=440x20 menu=0
+[CreateWindow] hwnd=0x10009 title="" style=0x50010000 pos=10,144 size=440x20 menu=0
+[CreateWindow] hwnd=0x1000a title="" style=0x50810000 pos=6,171 size=448x26 menu=0
+[ShowWindow] hwnd=0x10007 cmd=5
+[ShowWindow] hwnd=0x10008 cmd=5
+[ShowWindow] hwnd=0x10009 cmd=5
+[ShowWindow] hwnd=0x1000a cmd=5
+[ctl] {"ok":true,"id":"1793048823393153209","value":{"batch":5301,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048831739269642","value":{"batch":5301,"eip":"0x5112b5","quit":false,"yieldReason":0,"focus":"0x10008","mainHwnd":"0x10007","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x10007","x":90,"y":140,"w":462,"h":202,"visible":true,"isChild":false,"title":"Civ2 Diplomatic Heralds"},{"hwnd":"0x10008","x":10,"y":122,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10009","x":10,"y":144,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1000a","x":6,"y":171,"w":448,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793048831809521787","value":{"batch":5301,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/heralds.png","bytes":135028}}
+[ctl] {"ok":true,"id":"1793048839488097616","value":{"queued":true,"batch":5301}}
+[input] click 320,327 at batch 5301
+[waveOut] open: 22050Hz 2ch 8bit -> voice#720897
+[check_input] msg=0x84 wParam=0x0 lParam=0x1470140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x1000a
+[check_input] msg=0x201 wParam=0x1 lParam=0xb00dc packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1000a
+[check_input] msg=0x202 wParam=0x0 lParam=0xb00dc packed=0x202
+[check_input_hwnd] explicit hwnd=0x1000a
+[ShowWindow] hwnd=0x10007 cmd=0
+[SetMenu] hwnd=0x10007 menu=0
+[SetMenu] hwnd=0x10007 menu=0
+[CreateWindow] hwnd=0x1000b title="Sid Meier's Civilization II" style=0x2cf0000 pos=0,0 size=608x426 menu=0
+[CreateWindow] hwnd=0x1000c title="" style=0x40a00003 pos=0,0 size=0x0 menu=100
+[SetMenu] hwnd=0x1000b menu=67063660
+[ShowWindow] hwnd=0x1000b cmd=3
+[CreateWindow] hwnd=0x1000d title="" style=0x-7e000000 pos=0,0 size=640x484 menu=0
+[CreateWindow] hwnd=0x1000e title="" style=0x-7e000000 pos=0,0 size=320x239 menu=0
+[ShowWindow] hwnd=0x1000d cmd=5
+[ShowWindow] hwnd=0x1000e cmd=5
+[ctl] {"ok":true,"id":"1793048839560064747","value":{"batch":5701,"ran":400,"steps":400,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048850948486205","value":{"batch":5701,"eip":"0x5152cf","quit":false,"yieldReason":0,"focus":"0x1000e","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1000d","x":0,"y":0,"w":640,"h":484,"visible":true,"isChild":false,"title":""},{"hwnd":"0x1000e","x":0,"y":120,"w":640,"h":240,"visible":true,"isChild":false,"title":""}]}}
+[ctl] {"ok":true,"id":"1793048851026900126","value":{"batch":6001,"ran":300,"steps":300,"frozen":true}}
+[ctl] {"ok":true,"id":"1793048856184327685","value":{"batch":6001,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/final-startup.png","bytes":10207}}

@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-26T21:08:29.387947+00:00",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "/tmp/civ2-win16-footprint-recovered-gameplay-oct26/check-evidence.js"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "pid": 3128611,
+  "wallLimit": 120,
+  "cpuLimit": 90,
+  "rssLimit": 1879048192,
+  "fileLimit": 25165824,
+  "outputLimit": 2097152
+}

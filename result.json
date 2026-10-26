@@ -1,0 +1,41 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T21:06:10.248566Z",
+  "outcome": "timeout",
+  "verification": "reviewed",
+  "route": "ordinary-ui-startup-intro",
+  "summary": "Two ordinary UI setup clicks advanced to main Civilization II window and intro; 90-second wall cutoff before menu/map/city/unit gameplay. No authentic guest error identified.",
+  "build": {
+    "originalmain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "artifacts": [
+    "README.md",
+    "module.json",
+    "identity.json",
+    "configuration-reuse.json",
+    "compile-admission.json",
+    "compile-launch.json",
+    "compile-receipt.json",
+    "guest-admission.json",
+    "guest-launch.json",
+    "guest-receipt.json",
+    "guest.log",
+    "control-in.jsonl",
+    "cleanup.json"
+  ],
+  "screenshots": [
+    "startup.png",
+    "heralds.png",
+    "final-startup.png"
+  ],
+  "gameplayScreenshots": [],
+  "box": null,
+  "remainingGates": [
+    "Complete intro and reach menu",
+    "Ordinary UI to real map/city/unit gameplay",
+    "Inspect gameplay PNG"
+  ],
+  "authenticStartupBlocker": null
+}

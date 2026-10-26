@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-26T21:08:57.849867+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-footprint-recovered-gameplay-oct26": 1925120,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26": 557056,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-footprint-recovered-gameplay-oct26": 286720,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-04-04-01a17a07-0ae5-7f81-905a-a8c40e10189b.jsonl": 1097728
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3325952,
+      "/home/user/.codex/state_5.sqlite-wal": 4399104,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4243456
+    },
+    "total": 32243712
+  },
+  "futurePublicationSessionAndWAL": 4194304,
+  "reserve": 8388608,
+  "total": 44826624,
+  "cap": 67108864,
+  "projectedHostFree": 3734036480,
+  "requiredHostFree": 2982150144
+}

@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-26T21:08:29.343920+00:00",
+  "ownedLiveIdentities": [],
+  "source239AndFixture337RehashedUnchanged": true,
+  "box": null,
+  "hostStopped": false,
+  "wasmRetained": "/tmp/civ2-win16-footprint-recovered-gameplay-oct26/canonical.wasm",
+  "screenshots": [
+    {
+      "path": "startup.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da",
+      "inspected": true,
+      "gameplay": false
+    },
+    {
+      "path": "final-startup.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 10207,
+      "sha256": "a670ca34e1ab9efb344341cbd3fe25f65c49bb57abda784b017c1452b1bdaa1f",
+      "inspected": true,
+      "gameplay": false
+    },
+    {
+      "path": "heralds.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171",
+      "inspected": true,
+      "gameplay": false
+    }
+  ]
+}

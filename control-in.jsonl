@@ -1,0 +1,17 @@
+{"action": "step", "n": 1, "id": "1793048775191029779"}
+{"action": "snapshot", "id": "1793048778061711335"}
+{"action": "step", "n": 100, "id": "1793048778248174489"}
+{"action": "snapshot", "id": "1793048781970642585"}
+{"action": "step", "n": 5000, "id": "1793048785655174152"}
+{"action": "snapshot", "id": "1793048798998241790"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/startup.png", "id": "1793048816001736952"}
+{"cmd": "click:210:280", "id": "1793048823320069474"}
+{"action": "step", "n": 200, "id": "1793048823393153209"}
+{"action": "snapshot", "id": "1793048831739269642"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/heralds.png", "id": "1793048831809521787"}
+{"cmd": "click:320:327", "id": "1793048839488097616"}
+{"action": "step", "n": 400, "id": "1793048839560064747"}
+{"action": "snapshot", "id": "1793048850948486205"}
+{"action": "step", "n": 300, "id": "1793048851026900126"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-footprint-recovered-gameplay-oct26/final-startup.png", "id": "1793048856184327685"}
+{"action": "quit", "id": "1793048863066102765"}

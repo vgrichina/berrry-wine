@@ -1,0 +1,10 @@
+{
+  "at": "2026-10-26T21:05:15.602740+00:00",
+  "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "counts": {
+    "files": 239,
+    "fixtureManifestFiles": 337
+  },
+  "pinManifestSHA256": "6f252e95c3e6e207eb0fa0e96b533a2ae809d6650c5aa60749b278267d013e5f",
+  "allMatched": true
+}
