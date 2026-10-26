@@ -1,0 +1,16 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto');
+const root='/tmp/civ2-win16-ordinary-gameplay-oct26/source';
+const {APPS}=require(root+'/lib/apps');
+const entry=APPS.civ2_win16;
+const resolve=p=>path.resolve(root,p);
+const manifest=JSON.parse(fs.readFileSync(resolve(entry.localFileManifest)));
+if(manifest.schemaVersion!==1||!Array.isArray(manifest.files))throw Error('invalid manifest');
+const local=manifest.files.filter(f=>f&&f.url).map(f=>({...f,url:path.join(path.dirname(entry.localFileManifest),f.url)}));
+const merged=require(root+'/lib/app-files').mergeLocalManifestFiles(entry.files||[],local);
+const enumerated=merged.map(f=>{const p=resolve(f.url);const st=fs.statSync(p);if(f.size!==undefined&&st.size!==f.size)throw Error('size '+p);return {...f,host:p,realpath:fs.realpathSync(p),actualBytes:st.size};});
+const cue=resolve(entry.cdAudio.cue),text=fs.readFileSync(cue,'utf8');
+const parsed=require(root+'/lib/cdrom').parseCue(text);
+const tracks=parsed.files.map(f=>{const p=path.resolve(path.dirname(cue),...f.name.split('/'));return {...f,host:p,actualBytes:fs.statSync(p).size};});
+const out={argv:['test/run.js','--app=civ2_win16','--no-build','--wasm=/tmp/civ2-win16-ordinary-gameplay-oct26/canonical.wasm'],registryEntry:entry,manifestSHA256:crypto.createHash('sha256').update(fs.readFileSync(resolve(entry.localFileManifest))).digest('hex'),manifestFiles:manifest.files.length,enumerated,cue,cueSHA256:crypto.createHash('sha256').update(text).digest('hex'),tracks,commaBearingNames:tracks.filter(f=>f.name.includes(',')),parser:'lib/apps APPS; lib/app-files.mergeLocalManifestFiles; lib/cdrom.parseCue; same resolution as test/run.js lines1330-1347 and6061-6068; no filename CLI comma splitting'};
+fs.writeFileSync('/home/user/wine-assembly/scratch/runs/civ2-win16-ordinary-gameplay-oct26/mount-validation.json',JSON.stringify(out,null,2)+'\n');
+console.log(JSON.stringify({manifestFiles:out.manifestFiles,mergedFiles:enumerated.length,tracks:tracks.length,commaBearingNames:out.commaBearingNames.length}));

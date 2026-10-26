@@ -1,0 +1,22 @@
+{
+  "executed": false,
+  "reason": "Failed admission before supervisor/Node launch",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "test/run.js",
+    "--app=civ2_win16",
+    "--no-build",
+    "--wasm=/tmp/civ2-win16-ordinary-gameplay-oct26/canonical.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--control-stdin",
+    "--frozen",
+    "--batch-size=100000",
+    "--tick-ms-per-batch=20",
+    "--max-seconds=85"
+  ],
+  "uiInputCommands": [],
+  "screenshots": []
+}

@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-26T20:55:03.259771+00:00",
+  "operation": "compile",
+  "memAvailable": 3999981568,
+  "requiredMemAvailable": 3355443200,
+  "memoryAdmitted": true,
+  "taskAllocated": 27992064,
+  "allocationCap": 67108864,
+  "remainingIncludingFuturePublicationAnd8MiBReserve": 39116800,
+  "diskFree": 3765915648,
+  "projectedHostFreeAfterAllRemainingGrowth": 3726798848,
+  "requiredProjectedFree": 2982150144,
+  "diskAdmitted": true,
+  "standingSourceIncluded": 27570176,
+  "standingCdFixtureExcluded": 372871168,
+  "standingCdLogical": 372035495
+}

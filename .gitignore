@@ -1,0 +1,7 @@
+.git/
+__pycache__/
+*.wasm
+publication-receipt.json
+final-accounting.json
+git-operations.jsonl
+wal-peaks-live.json

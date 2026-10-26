@@ -1,0 +1,35 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T20:52:59Z",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "route": "pre-guest-resource-admission",
+  "summary": "Canonical Win16 module compiled, pinned inputs/mounts validated; guest not launched because conservative task-allocation accounting left 7790592B below mandatory 8388608B reserve. No gameplay, screenshots or authentic guest trap.",
+  "build": {
+    "originalmain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "sparseSnapshot": true,
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "sourceManifest": "pinned-verification.json"
+  },
+  "artifacts": [
+    "README.md",
+    "module.json",
+    "compile.log",
+    "compile-launch.json",
+    "compile-receipt.json",
+    "startup.log",
+    "startup-receipt.json",
+    "mount-validation.json",
+    "guest-admission.json",
+    "guest-command.json"
+  ],
+  "screenshots": [],
+  "gameplayScreenshots": [],
+  "box": null,
+  "remainingGates": [
+    "Fresh properly baselined resource admission",
+    "Production guest execution with ordinary UI",
+    "Inspected interactive map/unit/city screenshots"
+  ]
+}

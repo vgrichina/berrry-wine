@@ -1,0 +1,480 @@
+{
+  "readonlyUse": true,
+  "allocated": 8654848,
+  "files": [
+    {
+      "path": "/home/user/wine-assembly/fonts/Terminal.fon",
+      "bytes": 5168,
+      "allocated": 8192,
+      "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/Tahoma.fon",
+      "bytes": 39840,
+      "allocated": 40960,
+      "sha256": "6ffb14378b094f763b2a86eeb9973596765c024707ae42a64ce4cd8f41dc35f4"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/Courier.fon",
+      "bytes": 4816,
+      "allocated": 8192,
+      "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/ANAKRON-OFL.txt",
+      "bytes": 4387,
+      "allocated": 8192,
+      "sha256": "02ac225bf65ec8d403111d844eeb32a34f2b08a49b0a3a1d09a63fc3f6543719"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/w95fa.woff2",
+      "bytes": 7880,
+      "allocated": 8192,
+      "sha256": "d81cbd6c15b9695e614fe1674bc1f43fa79c820afd0cd4acf49955d065e71644"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/Wine-LGPL-2.1.txt",
+      "bytes": 26434,
+      "allocated": 28672,
+      "sha256": "e237fa56668030e928551ddd60f05df5fe957f75eab874bbd017e085ed722e7c"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/Fixedsys.fon",
+      "bytes": 5264,
+      "allocated": 8192,
+      "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/W95FA.otf",
+      "bytes": 43372,
+      "allocated": 45056,
+      "sha256": "9e1ad53708307b2b68e06d43799b2267f6aec620dda972bc62753ad16ba50f2b"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/MSSansSerif.fon",
+      "bytes": 20128,
+      "allocated": 20480,
+      "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/FSEX302.ttf",
+      "bytes": 580724,
+      "allocated": 581632,
+      "sha256": "842f8fbf80f57d867aeb1d2988140d3ea8b4718e5f687035b0a3b66756df3899"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/System.fon",
+      "bytes": 13456,
+      "allocated": 16384,
+      "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/W95FA-OFL.txt",
+      "bytes": 4598,
+      "allocated": 8192,
+      "sha256": "1a7adaa2c86cedfd6c7f5c0c7c72fd6d3e02cd0c9593f21fdb53c89bb2b130ec"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/TahomaBold.fon",
+      "bytes": 39504,
+      "allocated": 40960,
+      "sha256": "549e1990dd2286456e1f79dbf5b7d5dd59bfca45bd8b3de3025df30e8f52bf7b"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/README.md",
+      "bytes": 14264,
+      "allocated": 16384,
+      "sha256": "97dd9ba6fe2e78de2cf504afa9569ffb289ca7e5526a7df1d57d24f9b98eff11"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/SmallFonts.fon",
+      "bytes": 4432,
+      "allocated": 8192,
+      "sha256": "4732123f27559b62a8047efea41ab920c9df57367be8dd6fd12a9a63bf37c705"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/substitutions.json",
+      "bytes": 10654,
+      "allocated": 12288,
+      "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSans-Italic.ttf",
+      "bytes": 415816,
+      "allocated": 417792,
+      "sha256": "e5bae5c4cde31f22142753855f4f8fb86da6ff39955ed3c0a11248b0d16948b0"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationMono-Italic.ttf",
+      "bytes": 281536,
+      "allocated": 282624,
+      "sha256": "605c01c711b44480a7508d349dfbf3264e81fa43d69e61cfa7d10b86e764c4d1"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/AUTHORS",
+      "bytes": 379,
+      "allocated": 4096,
+      "sha256": "b627404917ef824675cb24c32e2facd0b57650627955f3fc3d8a8863c5d0adfc"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSerif-BoldItalic.ttf",
+      "bytes": 376772,
+      "allocated": 376832,
+      "sha256": "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSans-BoldItalic.ttf",
+      "bytes": 408996,
+      "allocated": 409600,
+      "sha256": "698da70fc191cc5f33ad4d6d3fe830fe4624b898ea2e3169955928b7c491f1ee"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationMono-Bold.ttf",
+      "bytes": 307996,
+      "allocated": 311296,
+      "sha256": "bd62a0672d0b9b6710b01df434c80ad54fa5f0835207eb7b17b7a761463067bb"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSerif-Regular.ttf",
+      "bytes": 393576,
+      "allocated": 397312,
+      "sha256": "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LICENSE",
+      "bytes": 4414,
+      "allocated": 8192,
+      "sha256": "93fed46019c38bbe566b479d22148e2e8a1e85ada614accb0211c37b2c61c19b"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSans-Bold.ttf",
+      "bytes": 414456,
+      "allocated": 417792,
+      "sha256": "788abee4c806d660e8aee46689dd8540cd4bb98da03dcc9d171ce3efd99a9173"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSerif-Italic.ttf",
+      "bytes": 375632,
+      "allocated": 376832,
+      "sha256": "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSerif-Bold.ttf",
+      "bytes": 370096,
+      "allocated": 372736,
+      "sha256": "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationSans-Regular.ttf",
+      "bytes": 410712,
+      "allocated": 413696,
+      "sha256": "76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationMono-BoldItalic.ttf",
+      "bytes": 284068,
+      "allocated": 286720,
+      "sha256": "79451f3c09fe25116098853b7a2ca6e2436220ccc11af022979adbcf195be130"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/README.md",
+      "bytes": 2406,
+      "allocated": 4096,
+      "sha256": "625a61d7e161cde3b1e9dd1ff8b7a86c251be536c34266bf1f1a9bd1c15c19e8"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/liberation/LiberationMono-Regular.ttf",
+      "bytes": 319508,
+      "allocated": 323584,
+      "sha256": "f2b83c763e8afd21709333370bed4774337fae82267937e2b5aea7e2fbd922c1"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/anakron/ANAKRON-v0.3.3.bdf",
+      "bytes": 215557,
+      "allocated": 217088,
+      "sha256": "d792885acf2043beb7e16bd0a85fce498e3e072e2ce828c750d14b074474f119"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/marlett.sfd",
+      "bytes": 16782,
+      "allocated": 20480,
+      "sha256": "eaaf88567db49cdacac4ec9e61a4ce14648e682f48343d8b9c9056cb5a1d3970"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/webdings.ttf",
+      "bytes": 4300,
+      "allocated": 8192,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/ms_sans_serif.sfd",
+      "bytes": 126257,
+      "allocated": 126976,
+      "sha256": "d8cc5e8e93d70478e810b9aa3272006da57e819a063c2b34f5cf92a233b0f3f3"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/courier.sfd",
+      "bytes": 67248,
+      "allocated": 69632,
+      "sha256": "ab712b8cf0682a5dea331b4f518401039099c6426470763da2f8269d0dae6fa8"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/tahomabd.ttf",
+      "bytes": 137836,
+      "allocated": 139264,
+      "sha256": "508a2acc88cd6abdd399ae79c9965db43fba75a46bb115117b55d2be2272d889"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/marlett.ttf",
+      "bytes": 6136,
+      "allocated": 8192,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/small_fonts.ttf",
+      "bytes": 19068,
+      "allocated": 20480,
+      "sha256": "c8b7ec4e4db4b9de2f588094376c21306cf829ad5d90b3238f86b34070b74ef6"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/webdings.sfd",
+      "bytes": 3998,
+      "allocated": 4096,
+      "sha256": "52eea2ba6ea5bb5e5db89ce2a01e578d7bb768e8da04a0e235fa04a1c1821b09"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/tahoma.ttf",
+      "bytes": 143884,
+      "allocated": 147456,
+      "sha256": "90f1abad4da0ce03da5d2277ee75a9600ce812d37c90eab76e0838ffa7937e55"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/system.ttf",
+      "bytes": 28912,
+      "allocated": 32768,
+      "sha256": "fae4ce39aeb8d5fb93a228e43e54342cf6d3b9f8dffe40a5df9a87fefb4d5d7c"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/small_fonts.sfd",
+      "bytes": 71776,
+      "allocated": 73728,
+      "sha256": "9d31cc3988f1d7ecb6a650ff2b312722b0114bfedc86c03f95c4c15d0b680ca5"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/wingding.sfd",
+      "bytes": 36760,
+      "allocated": 36864,
+      "sha256": "6d8d42e70c405f41d9a9a3c54479cee0b022b5b0509ab8c9ada0402ac3007478"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/courier.ttf",
+      "bytes": 17892,
+      "allocated": 20480,
+      "sha256": "61c980bf21584c46cfc3d29a6dcce45ce27d7a7b50356ccc6534b2f783e4483c"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/wingding.ttf",
+      "bytes": 9524,
+      "allocated": 12288,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/tahoma.sfd",
+      "bytes": 649240,
+      "allocated": 651264,
+      "sha256": "0c1a3182a3a6b3d444113421121cbacf87322111aff245ee616109bd47479710"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/symbol.sfd",
+      "bytes": 139504,
+      "allocated": 143360,
+      "sha256": "b146fffd2713a55b7f5101f32b3199b47542c2d5234f61cb5626ce2c886193d6"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/system.sfd",
+      "bytes": 97201,
+      "allocated": 98304,
+      "sha256": "88596900ca3df8dcf6ef257793a3b52baf666cc7f72140598bd2aef4787e9a41"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/UPSTREAM.md",
+      "bytes": 3719,
+      "allocated": 4096,
+      "sha256": "6c73dd714f715a2a497602c48d4a64275150978fe31bb832acd74ee413406925"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/ms_sans_serif.ttf",
+      "bytes": 38536,
+      "allocated": 40960,
+      "sha256": "91877b45939e98d01b4c82e20c575db692c3e82a01ec3748277f3a3471d359cd"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/fixedsys.ttf",
+      "bytes": 10704,
+      "allocated": 12288,
+      "sha256": "097a42b9802617ab884bf19e36fe7f90cfec764f8d74151f82fda9f1b83261d7"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/tahomabd.sfd",
+      "bytes": 621648,
+      "allocated": 622592,
+      "sha256": "90e42b98fc092034e6485a7f8f811195ca2ca148b6704e5d2df56a4c97dfca49"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/symbol.ttf",
+      "bytes": 26028,
+      "allocated": 28672,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/wine/fixedsys.sfd",
+      "bytes": 33539,
+      "allocated": 36864,
+      "sha256": "9019eab07b9a19f994829e88556a5df4332a6cce9543c1aa83ee2433fb58c07c"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/comic-relief/OFL.txt",
+      "bytes": 4394,
+      "allocated": 8192,
+      "sha256": "1acec120d128cd0c445f6f11a94a0e1deab9c886faf47c15efc304bc025f4a0e"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/comic-relief/ComicRelief-Bold.ttf",
+      "bytes": 63808,
+      "allocated": 65536,
+      "sha256": "371fd5e24cb1f4ef5bd38940702e9a7d2caf325732e206f0eccdb49ee5345c0c"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/comic-relief/ComicRelief-Regular.ttf",
+      "bytes": 53252,
+      "allocated": 57344,
+      "sha256": "557a7ea8e01c3617267ad7bb908eed3fb95591984eca749677cb340f591ad26d"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/webdings.ttf",
+      "bytes": 4300,
+      "allocated": 8192,
+      "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/tahomabd.ttf",
+      "bytes": 19216,
+      "allocated": 20480,
+      "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSans-Italic.ttf",
+      "bytes": 40848,
+      "allocated": 40960,
+      "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationMono-Italic.ttf",
+      "bytes": 30056,
+      "allocated": 32768,
+      "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSerif-BoldItalic.ttf",
+      "bytes": 45144,
+      "allocated": 49152,
+      "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/marlett.ttf",
+      "bytes": 6136,
+      "allocated": 8192,
+      "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSans-BoldItalic.ttf",
+      "bytes": 41104,
+      "allocated": 45056,
+      "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationMono-Bold.ttf",
+      "bytes": 34148,
+      "allocated": 36864,
+      "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/ComicRelief-Bold.ttf",
+      "bytes": 27616,
+      "allocated": 28672,
+      "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/tahoma.ttf",
+      "bytes": 18712,
+      "allocated": 20480,
+      "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Regular.ttf",
+      "bytes": 52440,
+      "allocated": 53248,
+      "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSans-Bold.ttf",
+      "bytes": 40984,
+      "allocated": 45056,
+      "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Italic.ttf",
+      "bytes": 46840,
+      "allocated": 49152,
+      "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/wingding.ttf",
+      "bytes": 9524,
+      "allocated": 12288,
+      "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSerif-Bold.ttf",
+      "bytes": 45140,
+      "allocated": 49152,
+      "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationSans-Regular.ttf",
+      "bytes": 42460,
+      "allocated": 45056,
+      "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationMono-BoldItalic.ttf",
+      "bytes": 30408,
+      "allocated": 32768,
+      "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/ComicRelief-Regular.ttf",
+      "bytes": 22776,
+      "allocated": 24576,
+      "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/LiberationMono-Regular.ttf",
+      "bytes": 34044,
+      "allocated": 36864,
+      "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+    },
+    {
+      "path": "/home/user/wine-assembly/fonts/subset/symbol.ttf",
+      "bytes": 26028,
+      "allocated": 28672,
+      "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/tlbs/stdole2.tlb",
+      "bytes": 15088,
+      "allocated": 16384,
+      "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+    }
+  ]
+}

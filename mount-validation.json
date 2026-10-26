@@ -1,0 +1,3910 @@
+{
+  "argv": [
+    "test/run.js",
+    "--app=civ2_win16",
+    "--no-build",
+    "--wasm=/tmp/civ2-win16-ordinary-gameplay-oct26/canonical.wasm"
+  ],
+  "registryEntry": {
+    "exe": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2.EXE",
+    "files": [
+      {
+        "url": "test/binaries/candidates/civilization-2-win16/vfw/ir41.dll",
+        "vfsPath": "c:\\windows\\system\\ir41.dll",
+        "optional": true,
+        "size": 774960
+      }
+    ],
+    "startupIni": [
+      {
+        "fileName": "system.ini",
+        "section": "drivers",
+        "key": "VIDC.IV41",
+        "value": "ir41.dll"
+      }
+    ],
+    "localFileManifest": "test/binaries/candidates/civilization-2-win16/.wine-assembly-browser.json",
+    "requiredFiles": true,
+    "preExtractIcon": false,
+    "win16Modules": [
+      "WING",
+      "CIV2ART",
+      "CV",
+      "INTRO",
+      "MK",
+      "PV",
+      "SS",
+      "TILES",
+      "TIMERDLL",
+      "WONDER"
+    ],
+    "cdAudio": {
+      "cue": "test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De).cue",
+      "drive": "D",
+      "volumeLabel": "CIV2"
+    }
+  },
+  "manifestSHA256": "be401b35c47dc654e1cc1f6cf1ffab857950c10880681b0ccd1db7769f519f76",
+  "manifestFiles": 337,
+  "enumerated": [
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/vfw/ir41.dll",
+      "vfsPath": "c:\\windows\\system\\ir41.dll",
+      "optional": true,
+      "size": 774960,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/vfw/ir41.dll",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/vfw/ir41.dll",
+      "actualBytes": 774960
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.FRE",
+      "vfsPaths": [
+        "c:\\ADVICE.FRE",
+        "d:\\civ2\\ADVICE.FRE"
+      ],
+      "size": 6874,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.FRE",
+      "actualBytes": 6874
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.GER",
+      "vfsPaths": [
+        "c:\\ADVICE.GER",
+        "d:\\civ2\\ADVICE.GER"
+      ],
+      "size": 6731,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.GER",
+      "actualBytes": 6731
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.TXT",
+      "vfsPaths": [
+        "c:\\ADVICE.TXT",
+        "d:\\civ2\\ADVICE.TXT"
+      ],
+      "size": 5799,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.TXT",
+      "actualBytes": 5799
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CITIES.GIF",
+      "vfsPaths": [
+        "c:\\CITIES.GIF",
+        "d:\\civ2\\CITIES.GIF"
+      ],
+      "size": 46452,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITIES.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITIES.GIF",
+      "actualBytes": 46452
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.FRE",
+      "vfsPaths": [
+        "c:\\CITY.FRE",
+        "d:\\civ2\\CITY.FRE"
+      ],
+      "size": 6771,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.FRE",
+      "actualBytes": 6771
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GER",
+      "vfsPaths": [
+        "c:\\CITY.GER",
+        "d:\\civ2\\CITY.GER"
+      ],
+      "size": 6626,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GER",
+      "actualBytes": 6626
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GIF",
+      "vfsPaths": [
+        "c:\\CITY.GIF",
+        "d:\\civ2\\CITY.GIF"
+      ],
+      "size": 66152,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GIF",
+      "actualBytes": 66152
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.TXT",
+      "vfsPaths": [
+        "c:\\CITY.TXT",
+        "d:\\civ2\\CITY.TXT"
+      ],
+      "size": 6785,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.TXT",
+      "actualBytes": 6785
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2.EXE",
+      "vfsPath": "d:\\civ2\\CIV2.EXE",
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2.EXE",
+      "actualBytes": 1741824
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2ART.DLL",
+      "vfsPaths": [
+        "c:\\CIV2ART.DLL",
+        "d:\\civ2\\CIV2ART.DLL"
+      ],
+      "size": 122986,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2ART.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2ART.DLL",
+      "actualBytes": 122986
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2MAP.EXE",
+      "vfsPaths": [
+        "c:\\CIV2MAP.EXE",
+        "d:\\civ2\\CIV2MAP.EXE"
+      ],
+      "size": 1765376,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2MAP.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2MAP.EXE",
+      "actualBytes": 1765376
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.FRE",
+      "vfsPaths": [
+        "c:\\COUNCIL0.FRE",
+        "d:\\civ2\\COUNCIL0.FRE"
+      ],
+      "size": 14540,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.FRE",
+      "actualBytes": 14540
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.GER",
+      "vfsPaths": [
+        "c:\\COUNCIL0.GER",
+        "d:\\civ2\\COUNCIL0.GER"
+      ],
+      "size": 13745,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.GER",
+      "actualBytes": 13745
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.TXT",
+      "vfsPaths": [
+        "c:\\COUNCIL0.TXT",
+        "d:\\civ2\\COUNCIL0.TXT"
+      ],
+      "size": 10995,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.TXT",
+      "actualBytes": 10995
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.FRE",
+      "vfsPaths": [
+        "c:\\COUNCIL1.FRE",
+        "d:\\civ2\\COUNCIL1.FRE"
+      ],
+      "size": 14375,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.FRE",
+      "actualBytes": 14375
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.GER",
+      "vfsPaths": [
+        "c:\\COUNCIL1.GER",
+        "d:\\civ2\\COUNCIL1.GER"
+      ],
+      "size": 13485,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.GER",
+      "actualBytes": 13485
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.TXT",
+      "vfsPaths": [
+        "c:\\COUNCIL1.TXT",
+        "d:\\civ2\\COUNCIL1.TXT"
+      ],
+      "size": 11231,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.TXT",
+      "actualBytes": 11231
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.FRE",
+      "vfsPaths": [
+        "c:\\COUNCIL2.FRE",
+        "d:\\civ2\\COUNCIL2.FRE"
+      ],
+      "size": 14735,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.FRE",
+      "actualBytes": 14735
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.GER",
+      "vfsPaths": [
+        "c:\\COUNCIL2.GER",
+        "d:\\civ2\\COUNCIL2.GER"
+      ],
+      "size": 13904,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.GER",
+      "actualBytes": 13904
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.TXT",
+      "vfsPaths": [
+        "c:\\COUNCIL2.TXT",
+        "d:\\civ2\\COUNCIL2.TXT"
+      ],
+      "size": 10984,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.TXT",
+      "actualBytes": 10984
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CPUID16.DLL",
+      "vfsPaths": [
+        "c:\\CPUID16.DLL",
+        "d:\\civ2\\CPUID16.DLL"
+      ],
+      "size": 4192,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CPUID16.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CPUID16.DLL",
+      "actualBytes": 4192
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CREDITS.TXT",
+      "vfsPaths": [
+        "c:\\CREDITS.TXT",
+        "d:\\civ2\\CREDITS.TXT"
+      ],
+      "size": 2801,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CREDITS.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CREDITS.TXT",
+      "actualBytes": 2801
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/CV.DLL",
+      "vfsPaths": [
+        "c:\\CV.DLL",
+        "d:\\civ2\\CV.DLL"
+      ],
+      "size": 4047252,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/CV.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CV.DLL",
+      "actualBytes": 4047252
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.FRE",
+      "vfsPaths": [
+        "c:\\DEBUG.FRE",
+        "d:\\civ2\\DEBUG.FRE"
+      ],
+      "size": 1921,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.FRE",
+      "actualBytes": 1921
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.GER",
+      "vfsPaths": [
+        "c:\\DEBUG.GER",
+        "d:\\civ2\\DEBUG.GER"
+      ],
+      "size": 1916,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.GER",
+      "actualBytes": 1916
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.TXT",
+      "vfsPaths": [
+        "c:\\DEBUG.TXT",
+        "d:\\civ2\\DEBUG.TXT"
+      ],
+      "size": 1733,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.TXT",
+      "actualBytes": 1733
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ERRORS.DB",
+      "vfsPaths": [
+        "c:\\ERRORS.DB",
+        "d:\\civ2\\ERRORS.DB"
+      ],
+      "size": 341,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ERRORS.DB",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ERRORS.DB",
+      "actualBytes": 341
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/EUROPE.MP",
+      "vfsPaths": [
+        "c:\\EUROPE.MP",
+        "d:\\civ2\\EUROPE.MP"
+      ],
+      "size": 54098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/EUROPE.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/EUROPE.MP",
+      "actualBytes": 54098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.FRE",
+      "vfsPaths": [
+        "c:\\GAME.FRE",
+        "d:\\civ2\\GAME.FRE"
+      ],
+      "size": 107203,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.FRE",
+      "actualBytes": 107203
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.GER",
+      "vfsPaths": [
+        "c:\\GAME.GER",
+        "d:\\civ2\\GAME.GER"
+      ],
+      "size": 106323,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.GER",
+      "actualBytes": 106323
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.TXT",
+      "vfsPaths": [
+        "c:\\GAME.TXT",
+        "d:\\civ2\\GAME.TXT"
+      ],
+      "size": 93195,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.TXT",
+      "actualBytes": 93195
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/GREECE.MP",
+      "vfsPaths": [
+        "c:\\GREECE.MP",
+        "d:\\civ2\\GREECE.MP"
+      ],
+      "size": 24098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/GREECE.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GREECE.MP",
+      "actualBytes": 24098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ICONS.GIF",
+      "vfsPaths": [
+        "c:\\ICONS.GIF",
+        "d:\\civ2\\ICONS.GIF"
+      ],
+      "size": 54241,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ICONS.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ICONS.GIF",
+      "actualBytes": 54241
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALL.BIN",
+      "vfsPaths": [
+        "c:\\INSTALL.BIN",
+        "d:\\civ2\\INSTALL.BIN"
+      ],
+      "size": 53061,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALL.BIN",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALL.BIN",
+      "actualBytes": 53061
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.EXE",
+      "vfsPaths": [
+        "c:\\INSTALLE.EXE",
+        "d:\\civ2\\INSTALLE.EXE"
+      ],
+      "size": 14080,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.EXE",
+      "actualBytes": 14080
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.INF",
+      "vfsPaths": [
+        "c:\\INSTALLE.INF",
+        "d:\\civ2\\INSTALLE.INF"
+      ],
+      "size": 3986,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.INF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.INF",
+      "actualBytes": 3986
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.EXE",
+      "vfsPaths": [
+        "c:\\INSTALLF.EXE",
+        "d:\\civ2\\INSTALLF.EXE"
+      ],
+      "size": 14080,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.EXE",
+      "actualBytes": 14080
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.INF",
+      "vfsPaths": [
+        "c:\\INSTALLF.INF",
+        "d:\\civ2\\INSTALLF.INF"
+      ],
+      "size": 3995,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.INF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.INF",
+      "actualBytes": 3995
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.EXE",
+      "vfsPaths": [
+        "c:\\INSTALLG.EXE",
+        "d:\\civ2\\INSTALLG.EXE"
+      ],
+      "size": 14080,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.EXE",
+      "actualBytes": 14080
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.INF",
+      "vfsPaths": [
+        "c:\\INSTALLG.INF",
+        "d:\\civ2\\INSTALLG.INF"
+      ],
+      "size": 3991,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.INF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.INF",
+      "actualBytes": 3991
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INTER.DAT",
+      "vfsPaths": [
+        "c:\\INTER.DAT",
+        "d:\\civ2\\INTER.DAT"
+      ],
+      "size": 17,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTER.DAT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTER.DAT",
+      "actualBytes": 17
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/INTRO.DLL",
+      "vfsPaths": [
+        "c:\\INTRO.DLL",
+        "d:\\civ2\\INTRO.DLL"
+      ],
+      "size": 866921,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTRO.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTRO.DLL",
+      "actualBytes": 866921
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAME.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDAME.AVI",
+        "d:\\civ2\\KINGS\\HRLDAME.AVI"
+      ],
+      "size": 1729350,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAME.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAME.AVI",
+      "actualBytes": 1729350
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAZT.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDAZT.AVI",
+        "d:\\civ2\\KINGS\\HRLDAZT.AVI"
+      ],
+      "size": 1587780,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAZT.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAZT.AVI",
+      "actualBytes": 1587780
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDBAB.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDBAB.AVI",
+        "d:\\civ2\\KINGS\\HRLDBAB.AVI"
+      ],
+      "size": 1586140,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDBAB.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDBAB.AVI",
+      "actualBytes": 1586140
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCAR.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDCAR.AVI",
+        "d:\\civ2\\KINGS\\HRLDCAR.AVI"
+      ],
+      "size": 1589960,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCAR.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCAR.AVI",
+      "actualBytes": 1589960
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCEL.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDCEL.AVI",
+        "d:\\civ2\\KINGS\\HRLDCEL.AVI"
+      ],
+      "size": 1582540,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCEL.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCEL.AVI",
+      "actualBytes": 1582540
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCHI.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDCHI.AVI",
+        "d:\\civ2\\KINGS\\HRLDCHI.AVI"
+      ],
+      "size": 1587784,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCHI.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCHI.AVI",
+      "actualBytes": 1587784
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDEGY.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDEGY.AVI",
+        "d:\\civ2\\KINGS\\HRLDEGY.AVI"
+      ],
+      "size": 1949782,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDEGY.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDEGY.AVI",
+      "actualBytes": 1949782
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDENG.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDENG.AVI",
+        "d:\\civ2\\KINGS\\HRLDENG.AVI"
+      ],
+      "size": 1586100,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDENG.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDENG.AVI",
+      "actualBytes": 1586100
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDFRE.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDFRE.AVI",
+        "d:\\civ2\\KINGS\\HRLDFRE.AVI"
+      ],
+      "size": 1580844,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDFRE.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDFRE.AVI",
+      "actualBytes": 1580844
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGER.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDGER.AVI",
+        "d:\\civ2\\KINGS\\HRLDGER.AVI"
+      ],
+      "size": 1555152,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGER.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGER.AVI",
+      "actualBytes": 1555152
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGRE.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDGRE.AVI",
+        "d:\\civ2\\KINGS\\HRLDGRE.AVI"
+      ],
+      "size": 1587264,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGRE.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGRE.AVI",
+      "actualBytes": 1587264
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDIND.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDIND.AVI",
+        "d:\\civ2\\KINGS\\HRLDIND.AVI"
+      ],
+      "size": 1583444,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDIND.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDIND.AVI",
+      "actualBytes": 1583444
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDJAP.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDJAP.AVI",
+        "d:\\civ2\\KINGS\\HRLDJAP.AVI"
+      ],
+      "size": 1585748,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDJAP.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDJAP.AVI",
+      "actualBytes": 1585748
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDMON.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDMON.AVI",
+        "d:\\civ2\\KINGS\\HRLDMON.AVI"
+      ],
+      "size": 1585424,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDMON.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDMON.AVI",
+      "actualBytes": 1585424
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDPER.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDPER.AVI",
+        "d:\\civ2\\KINGS\\HRLDPER.AVI"
+      ],
+      "size": 1590088,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDPER.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDPER.AVI",
+      "actualBytes": 1590088
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDROM.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDROM.AVI",
+        "d:\\civ2\\KINGS\\HRLDROM.AVI"
+      ],
+      "size": 1586604,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDROM.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDROM.AVI",
+      "actualBytes": 1586604
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDRUS.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDRUS.AVI",
+        "d:\\civ2\\KINGS\\HRLDRUS.AVI"
+      ],
+      "size": 1587896,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDRUS.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDRUS.AVI",
+      "actualBytes": 1587896
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSIO.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDSIO.AVI",
+        "d:\\civ2\\KINGS\\HRLDSIO.AVI"
+      ],
+      "size": 1586804,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSIO.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSIO.AVI",
+      "actualBytes": 1586804
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSPA.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDSPA.AVI",
+        "d:\\civ2\\KINGS\\HRLDSPA.AVI"
+      ],
+      "size": 1569116,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSPA.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSPA.AVI",
+      "actualBytes": 1569116
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDVIK.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDVIK.AVI",
+        "d:\\civ2\\KINGS\\HRLDVIK.AVI"
+      ],
+      "size": 1217932,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDVIK.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDVIK.AVI",
+      "actualBytes": 1217932
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDZUL.AVI",
+      "vfsPaths": [
+        "c:\\KINGS\\HRLDZUL.AVI",
+        "d:\\civ2\\KINGS\\HRLDZUL.AVI"
+      ],
+      "size": 1557352,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDZUL.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDZUL.AVI",
+      "actualBytes": 1557352
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.FRE",
+      "vfsPaths": [
+        "c:\\LABELS.FRE",
+        "d:\\civ2\\LABELS.FRE"
+      ],
+      "size": 6902,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.FRE",
+      "actualBytes": 6902
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.GER",
+      "vfsPaths": [
+        "c:\\LABELS.GER",
+        "d:\\civ2\\LABELS.GER"
+      ],
+      "size": 7006,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.GER",
+      "actualBytes": 7006
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.TXT",
+      "vfsPaths": [
+        "c:\\LABELS.TXT",
+        "d:\\civ2\\LABELS.TXT"
+      ],
+      "size": 5789,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.TXT",
+      "actualBytes": 5789
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/LOSER.AVI",
+      "vfsPaths": [
+        "c:\\LOSER.AVI",
+        "d:\\civ2\\LOSER.AVI"
+      ],
+      "size": 1900690,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/LOSER.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LOSER.AVI",
+      "actualBytes": 1900690
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.FRE",
+      "vfsPaths": [
+        "c:\\MAPMENU.FRE",
+        "d:\\civ2\\MAPMENU.FRE"
+      ],
+      "size": 881,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.FRE",
+      "actualBytes": 881
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.GER",
+      "vfsPaths": [
+        "c:\\MAPMENU.GER",
+        "d:\\civ2\\MAPMENU.GER"
+      ],
+      "size": 895,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.GER",
+      "actualBytes": 895
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.TXT",
+      "vfsPaths": [
+        "c:\\MAPMENU.TXT",
+        "d:\\civ2\\MAPMENU.TXT"
+      ],
+      "size": 728,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.TXT",
+      "actualBytes": 728
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MEDITERR.MP",
+      "vfsPaths": [
+        "c:\\MEDITERR.MP",
+        "d:\\civ2\\MEDITERR.MP"
+      ],
+      "size": 24098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MEDITERR.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MEDITERR.MP",
+      "actualBytes": 24098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.FRE",
+      "vfsPaths": [
+        "c:\\MENU.FRE",
+        "d:\\civ2\\MENU.FRE"
+      ],
+      "size": 2394,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.FRE",
+      "actualBytes": 2394
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.GER",
+      "vfsPaths": [
+        "c:\\MENU.GER",
+        "d:\\civ2\\MENU.GER"
+      ],
+      "size": 2374,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.GER",
+      "actualBytes": 2374
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.TXT",
+      "vfsPaths": [
+        "c:\\MENU.TXT",
+        "d:\\civ2\\MENU.TXT"
+      ],
+      "size": 2032,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.TXT",
+      "actualBytes": 2032
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MK.DLL",
+      "vfsPaths": [
+        "c:\\MK.DLL",
+        "d:\\civ2\\MK.DLL"
+      ],
+      "size": 2569834,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MK.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MK.DLL",
+      "actualBytes": 2569834
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MODULES.DB",
+      "vfsPaths": [
+        "c:\\MODULES.DB",
+        "d:\\civ2\\MODULES.DB"
+      ],
+      "size": 100,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MODULES.DB",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MODULES.DB",
+      "actualBytes": 100
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/MPLOGO.BMP",
+      "vfsPaths": [
+        "c:\\MPLOGO.BMP",
+        "d:\\civ2\\MPLOGO.BMP"
+      ],
+      "size": 4718,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/MPLOGO.BMP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MPLOGO.BMP",
+      "actualBytes": 4718
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PACIFIC.MP",
+      "vfsPaths": [
+        "c:\\PACIFIC.MP",
+        "d:\\civ2\\PACIFIC.MP"
+      ],
+      "size": 54098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PACIFIC.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PACIFIC.MP",
+      "actualBytes": 54098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.FRE",
+      "vfsPaths": [
+        "c:\\PEDIA.FRE",
+        "d:\\civ2\\PEDIA.FRE"
+      ],
+      "size": 19683,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.FRE",
+      "actualBytes": 19683
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.GER",
+      "vfsPaths": [
+        "c:\\PEDIA.GER",
+        "d:\\civ2\\PEDIA.GER"
+      ],
+      "size": 16692,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.GER",
+      "actualBytes": 16692
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.TXT",
+      "vfsPaths": [
+        "c:\\PEDIA.TXT",
+        "d:\\civ2\\PEDIA.TXT"
+      ],
+      "size": 16692,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.TXT",
+      "actualBytes": 16692
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC1.PDE",
+        "d:\\civ2\\PEDIA\\ADVANC1.PDE"
+      ],
+      "size": 25552,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDE",
+      "actualBytes": 25552
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC1.PDF",
+        "d:\\civ2\\PEDIA\\ADVANC1.PDF"
+      ],
+      "size": 30001,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDF",
+      "actualBytes": 30001
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC1.PDG",
+        "d:\\civ2\\PEDIA\\ADVANC1.PDG"
+      ],
+      "size": 28681,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDG",
+      "actualBytes": 28681
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC2.PDE",
+        "d:\\civ2\\PEDIA\\ADVANC2.PDE"
+      ],
+      "size": 24788,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDE",
+      "actualBytes": 24788
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC2.PDF",
+        "d:\\civ2\\PEDIA\\ADVANC2.PDF"
+      ],
+      "size": 29507,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDF",
+      "actualBytes": 29507
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC2.PDG",
+        "d:\\civ2\\PEDIA\\ADVANC2.PDG"
+      ],
+      "size": 28028,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDG",
+      "actualBytes": 28028
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC3.PDE",
+        "d:\\civ2\\PEDIA\\ADVANC3.PDE"
+      ],
+      "size": 20609,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDE",
+      "actualBytes": 20609
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC3.PDF",
+        "d:\\civ2\\PEDIA\\ADVANC3.PDF"
+      ],
+      "size": 24488,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDF",
+      "actualBytes": 24488
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC3.PDG",
+        "d:\\civ2\\PEDIA\\ADVANC3.PDG"
+      ],
+      "size": 22968,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDG",
+      "actualBytes": 22968
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC4.PDE",
+        "d:\\civ2\\PEDIA\\ADVANC4.PDE"
+      ],
+      "size": 8804,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDE",
+      "actualBytes": 8804
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC4.PDF",
+        "d:\\civ2\\PEDIA\\ADVANC4.PDF"
+      ],
+      "size": 10253,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDF",
+      "actualBytes": 10253
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\ADVANC4.PDG",
+        "d:\\civ2\\PEDIA\\ADVANC4.PDG"
+      ],
+      "size": 9559,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDG",
+      "actualBytes": 9559
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CIVJUMP.DLL",
+      "vfsPaths": [
+        "c:\\PEDIA\\CIVJUMP.DLL",
+        "d:\\civ2\\PEDIA\\CIVJUMP.DLL"
+      ],
+      "size": 30646,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CIVJUMP.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CIVJUMP.DLL",
+      "actualBytes": 30646
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\CONCEPT.PDE",
+        "d:\\civ2\\PEDIA\\CONCEPT.PDE"
+      ],
+      "size": 18411,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDE",
+      "actualBytes": 18411
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\CONCEPT.PDF",
+        "d:\\civ2\\PEDIA\\CONCEPT.PDF"
+      ],
+      "size": 22155,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDF",
+      "actualBytes": 22155
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\CONCEPT.PDG",
+        "d:\\civ2\\PEDIA\\CONCEPT.PDG"
+      ],
+      "size": 19368,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDG",
+      "actualBytes": 19368
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\DESCRIBE.PDE",
+        "d:\\civ2\\PEDIA\\DESCRIBE.PDE"
+      ],
+      "size": 13762,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDE",
+      "actualBytes": 13762
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\DESCRIBE.PDF",
+        "d:\\civ2\\PEDIA\\DESCRIBE.PDF"
+      ],
+      "size": 15799,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDF",
+      "actualBytes": 15799
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\DESCRIBE.PDG",
+        "d:\\civ2\\PEDIA\\DESCRIBE.PDG"
+      ],
+      "size": 14993,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDG",
+      "actualBytes": 14993
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_A",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_A",
+        "d:\\civ2\\PEDIA\\FRCH_A"
+      ],
+      "size": 96,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_A",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_A",
+      "actualBytes": 96
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_B",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_B",
+        "d:\\civ2\\PEDIA\\FRCH_B"
+      ],
+      "size": 68,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_B",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_B",
+      "actualBytes": 68
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_C",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_C",
+        "d:\\civ2\\PEDIA\\FRCH_C"
+      ],
+      "size": 241,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_C",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_C",
+      "actualBytes": 241
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_D",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_D",
+        "d:\\civ2\\PEDIA\\FRCH_D"
+      ],
+      "size": 66,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_D",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_D",
+      "actualBytes": 66
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_E",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_E",
+        "d:\\civ2\\PEDIA\\FRCH_E"
+      ],
+      "size": 89,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_E",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_E",
+      "actualBytes": 89
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_F",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_F",
+        "d:\\civ2\\PEDIA\\FRCH_F"
+      ],
+      "size": 86,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_F",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_F",
+      "actualBytes": 86
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_G",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_G",
+        "d:\\civ2\\PEDIA\\FRCH_G"
+      ],
+      "size": 56,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_G",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_G",
+      "actualBytes": 56
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_H",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_H",
+        "d:\\civ2\\PEDIA\\FRCH_H"
+      ],
+      "size": 17,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_H",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_H",
+      "actualBytes": 17
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_I",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_I",
+        "d:\\civ2\\PEDIA\\FRCH_I"
+      ],
+      "size": 63,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_I",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_I",
+      "actualBytes": 63
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_J",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_J",
+        "d:\\civ2\\PEDIA\\FRCH_J"
+      ],
+      "size": 17,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_J",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_J",
+      "actualBytes": 17
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_L",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_L",
+        "d:\\civ2\\PEDIA\\FRCH_L"
+      ],
+      "size": 22,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_L",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_L",
+      "actualBytes": 22
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_M",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_M",
+        "d:\\civ2\\PEDIA\\FRCH_M"
+      ],
+      "size": 111,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_M",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_M",
+      "actualBytes": 111
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_N",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_N",
+        "d:\\civ2\\PEDIA\\FRCH_N"
+      ],
+      "size": 12,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_N",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_N",
+      "actualBytes": 12
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_O",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_O",
+        "d:\\civ2\\PEDIA\\FRCH_O"
+      ],
+      "size": 47,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_O",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_O",
+      "actualBytes": 47
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_P",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_P",
+        "d:\\civ2\\PEDIA\\FRCH_P"
+      ],
+      "size": 139,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_P",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_P",
+      "actualBytes": 139
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_R",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_R",
+        "d:\\civ2\\PEDIA\\FRCH_R"
+      ],
+      "size": 48,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_R",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_R",
+      "actualBytes": 48
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_S",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_S",
+        "d:\\civ2\\PEDIA\\FRCH_S"
+      ],
+      "size": 67,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_S",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_S",
+      "actualBytes": 67
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_T",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_T",
+        "d:\\civ2\\PEDIA\\FRCH_T"
+      ],
+      "size": 105,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_T",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_T",
+      "actualBytes": 105
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_U",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_U",
+        "d:\\civ2\\PEDIA\\FRCH_U"
+      ],
+      "size": 27,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_U",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_U",
+      "actualBytes": 27
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_V",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCH_V",
+        "d:\\civ2\\PEDIA\\FRCH_V"
+      ],
+      "size": 27,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_V",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_V",
+      "actualBytes": 27
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCHLIST",
+      "vfsPaths": [
+        "c:\\PEDIA\\FRCHLIST",
+        "d:\\civ2\\PEDIA\\FRCHLIST"
+      ],
+      "size": 4111,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCHLIST",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCHLIST",
+      "actualBytes": 4111
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FUNCTION.APR",
+      "vfsPaths": [
+        "c:\\PEDIA\\FUNCTION.APR",
+        "d:\\civ2\\PEDIA\\FUNCTION.APR"
+      ],
+      "size": 46542,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FUNCTION.APR",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FUNCTION.APR",
+      "actualBytes": 46542
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_A",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_A",
+        "d:\\civ2\\PEDIA\\GERM_A"
+      ],
+      "size": 67,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_A",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_A",
+      "actualBytes": 67
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_B",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_B",
+        "d:\\civ2\\PEDIA\\GERM_B"
+      ],
+      "size": 88,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_B",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_B",
+      "actualBytes": 88
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_C",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_C",
+        "d:\\civ2\\PEDIA\\GERM_C"
+      ],
+      "size": 12,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_C",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_C",
+      "actualBytes": 12
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_D",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_D",
+        "d:\\civ2\\PEDIA\\GERM_D"
+      ],
+      "size": 42,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_D",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_D",
+      "actualBytes": 42
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_E",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_E",
+        "d:\\civ2\\PEDIA\\GERM_E"
+      ],
+      "size": 59,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_E",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_E",
+      "actualBytes": 59
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_F",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_F",
+        "d:\\civ2\\PEDIA\\GERM_F"
+      ],
+      "size": 107,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_F",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_F",
+      "actualBytes": 107
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_G",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_G",
+        "d:\\civ2\\PEDIA\\GERM_G"
+      ],
+      "size": 62,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_G",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_G",
+      "actualBytes": 62
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_H",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_H",
+        "d:\\civ2\\PEDIA\\GERM_H"
+      ],
+      "size": 57,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_H",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_H",
+      "actualBytes": 57
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_I",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_I",
+        "d:\\civ2\\PEDIA\\GERM_I"
+      ],
+      "size": 22,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_I",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_I",
+      "actualBytes": 22
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_J",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_J",
+        "d:\\civ2\\PEDIA\\GERM_J"
+      ],
+      "size": 9,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_J",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_J",
+      "actualBytes": 9
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_K",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_K",
+        "d:\\civ2\\PEDIA\\GERM_K"
+      ],
+      "size": 182,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_K",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_K",
+      "actualBytes": 182
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_L",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_L",
+        "d:\\civ2\\PEDIA\\GERM_L"
+      ],
+      "size": 47,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_L",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_L",
+      "actualBytes": 47
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_M",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_M",
+        "d:\\civ2\\PEDIA\\GERM_M"
+      ],
+      "size": 101,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_M",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_M",
+      "actualBytes": 101
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_N",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_N",
+        "d:\\civ2\\PEDIA\\GERM_N"
+      ],
+      "size": 17,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_N",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_N",
+      "actualBytes": 17
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_O",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_O",
+        "d:\\civ2\\PEDIA\\GERM_O"
+      ],
+      "size": 37,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_O",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_O",
+      "actualBytes": 37
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_P",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_P",
+        "d:\\civ2\\PEDIA\\GERM_P"
+      ],
+      "size": 71,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_P",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_P",
+      "actualBytes": 71
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_R",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_R",
+        "d:\\civ2\\PEDIA\\GERM_R"
+      ],
+      "size": 88,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_R",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_R",
+      "actualBytes": 88
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_S",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_S",
+        "d:\\civ2\\PEDIA\\GERM_S"
+      ],
+      "size": 157,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_S",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_S",
+      "actualBytes": 157
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_T",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_T",
+        "d:\\civ2\\PEDIA\\GERM_T"
+      ],
+      "size": 49,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_T",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_T",
+      "actualBytes": 49
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_U",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_U",
+        "d:\\civ2\\PEDIA\\GERM_U"
+      ],
+      "size": 27,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_U",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_U",
+      "actualBytes": 27
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_V",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_V",
+        "d:\\civ2\\PEDIA\\GERM_V"
+      ],
+      "size": 26,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_V",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_V",
+      "actualBytes": 26
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_W",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_W",
+        "d:\\civ2\\PEDIA\\GERM_W"
+      ],
+      "size": 67,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_W",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_W",
+      "actualBytes": 67
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_Z",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERM_Z",
+        "d:\\civ2\\PEDIA\\GERM_Z"
+      ],
+      "size": 18,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_Z",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_Z",
+      "actualBytes": 18
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERMLIST",
+      "vfsPaths": [
+        "c:\\PEDIA\\GERMLIST",
+        "d:\\civ2\\PEDIA\\GERMLIST"
+      ],
+      "size": 3914,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERMLIST",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERMLIST",
+      "actualBytes": 3914
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GET_INFO.EXE",
+      "vfsPaths": [
+        "c:\\PEDIA\\GET_INFO.EXE",
+        "d:\\civ2\\PEDIA\\GET_INFO.EXE"
+      ],
+      "size": 11087239,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GET_INFO.EXE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GET_INFO.EXE",
+      "actualBytes": 11087239
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\GOVERN.PDE",
+        "d:\\civ2\\PEDIA\\GOVERN.PDE"
+      ],
+      "size": 7274,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDE",
+      "actualBytes": 7274
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\GOVERN.PDF",
+        "d:\\civ2\\PEDIA\\GOVERN.PDF"
+      ],
+      "size": 8510,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDF",
+      "actualBytes": 8510
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\GOVERN.PDG",
+        "d:\\civ2\\PEDIA\\GOVERN.PDG"
+      ],
+      "size": 8553,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDG",
+      "actualBytes": 8553
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GRAPHICS.APR",
+      "vfsPaths": [
+        "c:\\PEDIA\\GRAPHICS.APR",
+        "d:\\civ2\\PEDIA\\GRAPHICS.APR"
+      ],
+      "size": 859092,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GRAPHICS.APR",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GRAPHICS.APR",
+      "actualBytes": 859092
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\IMPROV.PDE",
+        "d:\\civ2\\PEDIA\\IMPROV.PDE"
+      ],
+      "size": 24820,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDE",
+      "actualBytes": 24820
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\IMPROV.PDF",
+        "d:\\civ2\\PEDIA\\IMPROV.PDF"
+      ],
+      "size": 29962,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDF",
+      "actualBytes": 29962
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\IMPROV.PDG",
+        "d:\\civ2\\PEDIA\\IMPROV.PDG"
+      ],
+      "size": 27169,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDG",
+      "actualBytes": 27169
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_A",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_A",
+        "d:\\civ2\\PEDIA\\PEDIA_A"
+      ],
+      "size": 92,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_A",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_A",
+      "actualBytes": 92
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_B",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_B",
+        "d:\\civ2\\PEDIA\\PEDIA_B"
+      ],
+      "size": 43,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_B",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_B",
+      "actualBytes": 43
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_C",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_C",
+        "d:\\civ2\\PEDIA\\PEDIA_C"
+      ],
+      "size": 195,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_C",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_C",
+      "actualBytes": 195
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_D",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_D",
+        "d:\\civ2\\PEDIA\\PEDIA_D"
+      ],
+      "size": 48,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_D",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_D",
+      "actualBytes": 48
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_E",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_E",
+        "d:\\civ2\\PEDIA\\PEDIA_E"
+      ],
+      "size": 55,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_E",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_E",
+      "actualBytes": 55
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_F",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_F",
+        "d:\\civ2\\PEDIA\\PEDIA_F"
+      ],
+      "size": 87,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_F",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_F",
+      "actualBytes": 87
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_G",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_G",
+        "d:\\civ2\\PEDIA\\PEDIA_G"
+      ],
+      "size": 62,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_G",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_G",
+      "actualBytes": 62
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_H",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_H",
+        "d:\\civ2\\PEDIA\\PEDIA_H"
+      ],
+      "size": 47,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_H",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_H",
+      "actualBytes": 47
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_I",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_I",
+        "d:\\civ2\\PEDIA\\PEDIA_I"
+      ],
+      "size": 42,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_I",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_I",
+      "actualBytes": 42
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_J",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_J",
+        "d:\\civ2\\PEDIA\\PEDIA_J"
+      ],
+      "size": 12,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_J",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_J",
+      "actualBytes": 12
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_K",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_K",
+        "d:\\civ2\\PEDIA\\PEDIA_K"
+      ],
+      "size": 12,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_K",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_K",
+      "actualBytes": 12
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_L",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_L",
+        "d:\\civ2\\PEDIA\\PEDIA_L"
+      ],
+      "size": 47,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_L",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_L",
+      "actualBytes": 47
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_M",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_M",
+        "d:\\civ2\\PEDIA\\PEDIA_M"
+      ],
+      "size": 136,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_M",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_M",
+      "actualBytes": 136
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_N",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_N",
+        "d:\\civ2\\PEDIA\\PEDIA_N"
+      ],
+      "size": 25,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_N",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_N",
+      "actualBytes": 25
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_O",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_O",
+        "d:\\civ2\\PEDIA\\PEDIA_O"
+      ],
+      "size": 27,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_O",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_O",
+      "actualBytes": 27
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_P",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_P",
+        "d:\\civ2\\PEDIA\\PEDIA_P"
+      ],
+      "size": 96,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_P",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_P",
+      "actualBytes": 96
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_R",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_R",
+        "d:\\civ2\\PEDIA\\PEDIA_R"
+      ],
+      "size": 77,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_R",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_R",
+      "actualBytes": 77
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_S",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_S",
+        "d:\\civ2\\PEDIA\\PEDIA_S"
+      ],
+      "size": 166,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_S",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_S",
+      "actualBytes": 166
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_T",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_T",
+        "d:\\civ2\\PEDIA\\PEDIA_T"
+      ],
+      "size": 64,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_T",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_T",
+      "actualBytes": 64
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_U",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_U",
+        "d:\\civ2\\PEDIA\\PEDIA_U"
+      ],
+      "size": 17,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_U",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_U",
+      "actualBytes": 17
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_V",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_V",
+        "d:\\civ2\\PEDIA\\PEDIA_V"
+      ],
+      "size": 11,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_V",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_V",
+      "actualBytes": 11
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_W",
+      "vfsPaths": [
+        "c:\\PEDIA\\PEDIA_W",
+        "d:\\civ2\\PEDIA\\PEDIA_W"
+      ],
+      "size": 51,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_W",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_W",
+      "actualBytes": 51
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\TERRAIN.PDE",
+        "d:\\civ2\\PEDIA\\TERRAIN.PDE"
+      ],
+      "size": 21467,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDE",
+      "actualBytes": 21467
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\TERRAIN.PDF",
+        "d:\\civ2\\PEDIA\\TERRAIN.PDF"
+      ],
+      "size": 25486,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDF",
+      "actualBytes": 25486
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\TERRAIN.PDG",
+        "d:\\civ2\\PEDIA\\TERRAIN.PDG"
+      ],
+      "size": 23357,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDG",
+      "actualBytes": 23357
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS.PDE",
+        "d:\\civ2\\PEDIA\\UNITS.PDE"
+      ],
+      "size": 24589,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDE",
+      "actualBytes": 24589
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS.PDF",
+        "d:\\civ2\\PEDIA\\UNITS.PDF"
+      ],
+      "size": 29260,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDF",
+      "actualBytes": 29260
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS.PDG",
+        "d:\\civ2\\PEDIA\\UNITS.PDG"
+      ],
+      "size": 27155,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDG",
+      "actualBytes": 27155
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS2.PDE",
+        "d:\\civ2\\PEDIA\\UNITS2.PDE"
+      ],
+      "size": 9720,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDE",
+      "actualBytes": 9720
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS2.PDF",
+        "d:\\civ2\\PEDIA\\UNITS2.PDF"
+      ],
+      "size": 11624,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDF",
+      "actualBytes": 11624
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\UNITS2.PDG",
+        "d:\\civ2\\PEDIA\\UNITS2.PDG"
+      ],
+      "size": 10918,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDG",
+      "actualBytes": 10918
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDE",
+      "vfsPaths": [
+        "c:\\PEDIA\\WONDER.PDE",
+        "d:\\civ2\\PEDIA\\WONDER.PDE"
+      ],
+      "size": 17363,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDE",
+      "actualBytes": 17363
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDF",
+      "vfsPaths": [
+        "c:\\PEDIA\\WONDER.PDF",
+        "d:\\civ2\\PEDIA\\WONDER.PDF"
+      ],
+      "size": 19875,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDF",
+      "actualBytes": 19875
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDG",
+      "vfsPaths": [
+        "c:\\PEDIA\\WONDER.PDG",
+        "d:\\civ2\\PEDIA\\WONDER.PDG"
+      ],
+      "size": 18654,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDG",
+      "actualBytes": 18654
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WORDLIST",
+      "vfsPaths": [
+        "c:\\PEDIA\\WORDLIST",
+        "d:\\civ2\\PEDIA\\WORDLIST"
+      ],
+      "size": 3656,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WORDLIST",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WORDLIST",
+      "actualBytes": 3656
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PEOPLE.GIF",
+      "vfsPaths": [
+        "c:\\PEOPLE.GIF",
+        "d:\\civ2\\PEOPLE.GIF"
+      ],
+      "size": 21227,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEOPLE.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEOPLE.GIF",
+      "actualBytes": 21227
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/PV.DLL",
+      "vfsPaths": [
+        "c:\\PV.DLL",
+        "d:\\civ2\\PV.DLL"
+      ],
+      "size": 1562730,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/PV.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PV.DLL",
+      "actualBytes": 1562730
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/README.ENG",
+      "vfsPaths": [
+        "c:\\README.ENG",
+        "d:\\civ2\\README.ENG"
+      ],
+      "size": 1852,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.ENG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.ENG",
+      "actualBytes": 1852
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/README.FRA",
+      "vfsPaths": [
+        "c:\\README.FRA",
+        "d:\\civ2\\README.FRA"
+      ],
+      "size": 1872,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.FRA",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.FRA",
+      "actualBytes": 1872
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/README.GER",
+      "vfsPaths": [
+        "c:\\README.GER",
+        "d:\\civ2\\README.GER"
+      ],
+      "size": 2211,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.GER",
+      "actualBytes": 2211
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.FRE",
+      "vfsPaths": [
+        "c:\\ROME.FRE",
+        "d:\\civ2\\ROME.FRE"
+      ],
+      "size": 1188,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.FRE",
+      "actualBytes": 1188
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.GER",
+      "vfsPaths": [
+        "c:\\ROME.GER",
+        "d:\\civ2\\ROME.GER"
+      ],
+      "size": 1239,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.GER",
+      "actualBytes": 1239
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.SCN",
+      "vfsPaths": [
+        "c:\\ROME.SCN",
+        "d:\\civ2\\ROME.SCN"
+      ],
+      "size": 77339,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.SCN",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.SCN",
+      "actualBytes": 77339
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.TXT",
+      "vfsPaths": [
+        "c:\\ROME.TXT",
+        "d:\\civ2\\ROME.TXT"
+      ],
+      "size": 1179,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.TXT",
+      "actualBytes": 1179
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.FRE",
+      "vfsPaths": [
+        "c:\\RULES.FRE",
+        "d:\\civ2\\RULES.FRE"
+      ],
+      "size": 28144,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.FRE",
+      "actualBytes": 28144
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.GER",
+      "vfsPaths": [
+        "c:\\RULES.GER",
+        "d:\\civ2\\RULES.GER"
+      ],
+      "size": 27161,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.GER",
+      "actualBytes": 27161
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.TXT",
+      "vfsPaths": [
+        "c:\\RULES.TXT",
+        "d:\\civ2\\RULES.TXT"
+      ],
+      "size": 25693,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.TXT",
+      "actualBytes": 25693
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SMEDSNET.DLL",
+      "vfsPaths": [
+        "c:\\SMEDSNET.DLL",
+        "d:\\civ2\\SMEDSNET.DLL"
+      ],
+      "size": 86294,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SMEDSNET.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SMEDSNET.DLL",
+      "actualBytes": 86294
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AIRCOMBT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\AIRCOMBT.WAV",
+        "d:\\civ2\\SOUND\\AIRCOMBT.WAV"
+      ],
+      "size": 209226,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AIRCOMBT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AIRCOMBT.WAV",
+      "actualBytes": 209226
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AQUEDUCT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\AQUEDUCT.WAV",
+        "d:\\civ2\\SOUND\\AQUEDUCT.WAV"
+      ],
+      "size": 127588,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AQUEDUCT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AQUEDUCT.WAV",
+      "actualBytes": 127588
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BARRACKS.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\BARRACKS.WAV",
+        "d:\\civ2\\SOUND\\BARRACKS.WAV"
+      ],
+      "size": 86928,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BARRACKS.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BARRACKS.WAV",
+      "actualBytes": 86928
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BIGGUN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\BIGGUN.WAV",
+        "d:\\civ2\\SOUND\\BIGGUN.WAV"
+      ],
+      "size": 44344,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BIGGUN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BIGGUN.WAV",
+      "actualBytes": 44344
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDCITY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\BLDCITY.WAV",
+        "d:\\civ2\\SOUND\\BLDCITY.WAV"
+      ],
+      "size": 115372,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDCITY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDCITY.WAV",
+      "actualBytes": 115372
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDSPCSH.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\BLDSPCSH.WAV",
+        "d:\\civ2\\SOUND\\BLDSPCSH.WAV"
+      ],
+      "size": 81182,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDSPCSH.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDSPCSH.WAV",
+      "actualBytes": 81182
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BOATSINK.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\BOATSINK.WAV",
+        "d:\\civ2\\SOUND\\BOATSINK.WAV"
+      ],
+      "size": 179702,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BOATSINK.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BOATSINK.WAV",
+      "actualBytes": 179702
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATAPULT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CATAPULT.WAV",
+        "d:\\civ2\\SOUND\\CATAPULT.WAV"
+      ],
+      "size": 64328,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATAPULT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATAPULT.WAV",
+      "actualBytes": 64328
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATHEDRL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CATHEDRL.WAV",
+        "d:\\civ2\\SOUND\\CATHEDRL.WAV"
+      ],
+      "size": 130464,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATHEDRL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATHEDRL.WAV",
+      "actualBytes": 130464
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CAVALRY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CAVALRY.WAV",
+        "d:\\civ2\\SOUND\\CAVALRY.WAV"
+      ],
+      "size": 131592,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CAVALRY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CAVALRY.WAV",
+      "actualBytes": 131592
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS1.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CHEERS1.WAV",
+        "d:\\civ2\\SOUND\\CHEERS1.WAV"
+      ],
+      "size": 88998,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS1.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS1.WAV",
+      "actualBytes": 88998
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS2.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CHEERS2.WAV",
+        "d:\\civ2\\SOUND\\CHEERS2.WAV"
+      ],
+      "size": 82724,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS2.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS2.WAV",
+      "actualBytes": 82724
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS3.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CHEERS3.WAV",
+        "d:\\civ2\\SOUND\\CHEERS3.WAV"
+      ],
+      "size": 88088,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS3.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS3.WAV",
+      "actualBytes": 88088
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CIVDISOR.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CIVDISOR.WAV",
+        "d:\\civ2\\SOUND\\CIVDISOR.WAV"
+      ],
+      "size": 85200,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CIVDISOR.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CIVDISOR.WAV",
+      "actualBytes": 85200
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CRWDBUGL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\CRWDBUGL.WAV",
+        "d:\\civ2\\SOUND\\CRWDBUGL.WAV"
+      ],
+      "size": 132188,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CRWDBUGL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CRWDBUGL.WAV",
+      "actualBytes": 132188
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIESEL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DIESEL.WAV",
+        "d:\\civ2\\SOUND\\DIESEL.WAV"
+      ],
+      "size": 129380,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIESEL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIESEL.WAV",
+      "actualBytes": 129380
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVCRASH.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DIVCRASH.WAV",
+        "d:\\civ2\\SOUND\\DIVCRASH.WAV"
+      ],
+      "size": 131498,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVCRASH.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVCRASH.WAV",
+      "actualBytes": 131498
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVEBOMB.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DIVEBOMB.WAV",
+        "d:\\civ2\\SOUND\\DIVEBOMB.WAV"
+      ],
+      "size": 203050,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVEBOMB.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVEBOMB.WAV",
+      "actualBytes": 203050
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMA0.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMA0.WAV",
+        "d:\\civ2\\SOUND\\DRUMA0.WAV"
+      ],
+      "size": 91142,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMA0.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMA0.WAV",
+      "actualBytes": 91142
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMAL.WAV",
+        "d:\\civ2\\SOUND\\DRUMAL.WAV"
+      ],
+      "size": 276630,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAL.WAV",
+      "actualBytes": 276630
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMAN.WAV",
+        "d:\\civ2\\SOUND\\DRUMAN.WAV"
+      ],
+      "size": 45976,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAN.WAV",
+      "actualBytes": 45976
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMAY.WAV",
+        "d:\\civ2\\SOUND\\DRUMAY.WAV"
+      ],
+      "size": 32028,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAY.WAV",
+      "actualBytes": 32028
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMB0.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMB0.WAV",
+        "d:\\civ2\\SOUND\\DRUMB0.WAV"
+      ],
+      "size": 85568,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMB0.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMB0.WAV",
+      "actualBytes": 85568
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMBL.WAV",
+        "d:\\civ2\\SOUND\\DRUMBL.WAV"
+      ],
+      "size": 377908,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBL.WAV",
+      "actualBytes": 377908
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMBN.WAV",
+        "d:\\civ2\\SOUND\\DRUMBN.WAV"
+      ],
+      "size": 125016,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBN.WAV",
+      "actualBytes": 125016
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMBY.WAV",
+        "d:\\civ2\\SOUND\\DRUMBY.WAV"
+      ],
+      "size": 84850,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBY.WAV",
+      "actualBytes": 84850
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMC0.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMC0.WAV",
+        "d:\\civ2\\SOUND\\DRUMC0.WAV"
+      ],
+      "size": 154158,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMC0.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMC0.WAV",
+      "actualBytes": 154158
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMCL.WAV",
+        "d:\\civ2\\SOUND\\DRUMCL.WAV"
+      ],
+      "size": 492366,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCL.WAV",
+      "actualBytes": 492366
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMCN.WAV",
+        "d:\\civ2\\SOUND\\DRUMCN.WAV"
+      ],
+      "size": 79822,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCN.WAV",
+      "actualBytes": 79822
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\DRUMCY.WAV",
+        "d:\\civ2\\SOUND\\DRUMCY.WAV"
+      ],
+      "size": 101762,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCY.WAV",
+      "actualBytes": 101762
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ELEPHANT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\ELEPHANT.WAV",
+        "d:\\civ2\\SOUND\\ELEPHANT.WAV"
+      ],
+      "size": 52682,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ELEPHANT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ELEPHANT.WAV",
+      "actualBytes": 52682
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENDOTURN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\ENDOTURN.WAV",
+        "d:\\civ2\\SOUND\\ENDOTURN.WAV"
+      ],
+      "size": 3080,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENDOTURN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENDOTURN.WAV",
+      "actualBytes": 3080
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENGNSPUT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\ENGNSPUT.WAV",
+        "d:\\civ2\\SOUND\\ENGNSPUT.WAV"
+      ],
+      "size": 246004,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENGNSPUT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENGNSPUT.WAV",
+      "actualBytes": 246004
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE1.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE1.WAV",
+        "d:\\civ2\\SOUND\\FANFARE1.WAV"
+      ],
+      "size": 140290,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE1.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE1.WAV",
+      "actualBytes": 140290
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE2.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE2.WAV",
+        "d:\\civ2\\SOUND\\FANFARE2.WAV"
+      ],
+      "size": 126760,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE2.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE2.WAV",
+      "actualBytes": 126760
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE3.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE3.WAV",
+        "d:\\civ2\\SOUND\\FANFARE3.WAV"
+      ],
+      "size": 95462,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE3.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE3.WAV",
+      "actualBytes": 95462
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE4.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE4.WAV",
+        "d:\\civ2\\SOUND\\FANFARE4.WAV"
+      ],
+      "size": 78426,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE4.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE4.WAV",
+      "actualBytes": 78426
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE5.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE5.WAV",
+        "d:\\civ2\\SOUND\\FANFARE5.WAV"
+      ],
+      "size": 73310,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE5.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE5.WAV",
+      "actualBytes": 73310
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE6.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE6.WAV",
+        "d:\\civ2\\SOUND\\FANFARE6.WAV"
+      ],
+      "size": 151028,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE6.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE6.WAV",
+      "actualBytes": 151028
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE7.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE7.WAV",
+        "d:\\civ2\\SOUND\\FANFARE7.WAV"
+      ],
+      "size": 87324,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE7.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE7.WAV",
+      "actualBytes": 87324
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE8.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FANFARE8.WAV",
+        "d:\\civ2\\SOUND\\FANFARE8.WAV"
+      ],
+      "size": 91436,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE8.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE8.WAV",
+      "actualBytes": 91436
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK03.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FEEDBK03.WAV",
+        "d:\\civ2\\SOUND\\FEEDBK03.WAV"
+      ],
+      "size": 11606,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK03.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK03.WAV",
+      "actualBytes": 11606
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK04.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FEEDBK04.WAV",
+        "d:\\civ2\\SOUND\\FEEDBK04.WAV"
+      ],
+      "size": 2574,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK04.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK04.WAV",
+      "actualBytes": 2574
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBKXX.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FEEDBKXX.WAV",
+        "d:\\civ2\\SOUND\\FEEDBKXX.WAV"
+      ],
+      "size": 3080,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBKXX.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBKXX.WAV",
+      "actualBytes": 3080
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FIRE---.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\FIRE---.WAV",
+        "d:\\civ2\\SOUND\\FIRE---.WAV"
+      ],
+      "size": 19880,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FIRE---.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FIRE---.WAV",
+      "actualBytes": 19880
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/GUILLOTN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\GUILLOTN.WAV",
+        "d:\\civ2\\SOUND\\GUILLOTN.WAV"
+      ],
+      "size": 40158,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/GUILLOTN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/GUILLOTN.WAV",
+      "actualBytes": 40158
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/HELISHOT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\HELISHOT.WAV",
+        "d:\\civ2\\SOUND\\HELISHOT.WAV"
+      ],
+      "size": 138144,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/HELISHOT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/HELISHOT.WAV",
+      "actualBytes": 138144
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/INFANTRY.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\INFANTRY.WAV",
+        "d:\\civ2\\SOUND\\INFANTRY.WAV"
+      ],
+      "size": 66674,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/INFANTRY.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/INFANTRY.WAV",
+      "actualBytes": 66674
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETBOMB.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\JETBOMB.WAV",
+        "d:\\civ2\\SOUND\\JETBOMB.WAV"
+      ],
+      "size": 149722,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETBOMB.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETBOMB.WAV",
+      "actualBytes": 149722
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCOMBT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\JETCOMBT.WAV",
+        "d:\\civ2\\SOUND\\JETCOMBT.WAV"
+      ],
+      "size": 141104,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCOMBT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCOMBT.WAV",
+      "actualBytes": 141104
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCRASH.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\JETCRASH.WAV",
+        "d:\\civ2\\SOUND\\JETCRASH.WAV"
+      ],
+      "size": 103246,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCRASH.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCRASH.WAV",
+      "actualBytes": 103246
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETSPUTR.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\JETSPUTR.WAV",
+        "d:\\civ2\\SOUND\\JETSPUTR.WAV"
+      ],
+      "size": 218708,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETSPUTR.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETSPUTR.WAV",
+      "actualBytes": 218708
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LARGEXPL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\LARGEXPL.WAV",
+        "d:\\civ2\\SOUND\\LARGEXPL.WAV"
+      ],
+      "size": 83838,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LARGEXPL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LARGEXPL.WAV",
+      "actualBytes": 83838
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LETTER.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\LETTER.WAV",
+        "d:\\civ2\\SOUND\\LETTER.WAV"
+      ],
+      "size": 3128,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LETTER.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LETTER.WAV",
+      "actualBytes": 3128
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MCHNGUNS.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MCHNGUNS.WAV",
+        "d:\\civ2\\SOUND\\MCHNGUNS.WAV"
+      ],
+      "size": 74172,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MCHNGUNS.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MCHNGUNS.WAV",
+      "actualBytes": 74172
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDEXPL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MEDEXPL.WAV",
+        "d:\\civ2\\SOUND\\MEDEXPL.WAV"
+      ],
+      "size": 57004,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDEXPL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDEXPL.WAV",
+      "actualBytes": 57004
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDGUN.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MEDGUN.WAV",
+        "d:\\civ2\\SOUND\\MEDGUN.WAV"
+      ],
+      "size": 23536,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDGUN.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDGUN.WAV",
+      "actualBytes": 23536
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUEND.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MENUEND.WAV",
+        "d:\\civ2\\SOUND\\MENUEND.WAV"
+      ],
+      "size": 609938,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUEND.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUEND.WAV",
+      "actualBytes": 609938
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENULOOP.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MENULOOP.WAV",
+        "d:\\civ2\\SOUND\\MENULOOP.WAV"
+      ],
+      "size": 318450,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENULOOP.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENULOOP.WAV",
+      "actualBytes": 318450
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUOK.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MENUOK.WAV",
+        "d:\\civ2\\SOUND\\MENUOK.WAV"
+      ],
+      "size": 79736,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUOK.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUOK.WAV",
+      "actualBytes": 79736
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MISSILE.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MISSILE.WAV",
+        "d:\\civ2\\SOUND\\MISSILE.WAV"
+      ],
+      "size": 74906,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MISSILE.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MISSILE.WAV",
+      "actualBytes": 74906
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MOVPIECE.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MOVPIECE.WAV",
+        "d:\\civ2\\SOUND\\MOVPIECE.WAV"
+      ],
+      "size": 1722,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MOVPIECE.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MOVPIECE.WAV",
+      "actualBytes": 1722
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MRKTPLCE.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\MRKTPLCE.WAV",
+        "d:\\civ2\\SOUND\\MRKTPLCE.WAV"
+      ],
+      "size": 144936,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MRKTPLCE.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MRKTPLCE.WAV",
+      "actualBytes": 144936
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NAVBTTLE.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NAVBTTLE.WAV",
+        "d:\\civ2\\SOUND\\NAVBTTLE.WAV"
+      ],
+      "size": 92258,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NAVBTTLE.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NAVBTTLE.WAV",
+      "actualBytes": 92258
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEG1.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NEG1.WAV",
+        "d:\\civ2\\SOUND\\NEG1.WAV"
+      ],
+      "size": 4642,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEG1.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEG1.WAV",
+      "actualBytes": 4642
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWBANK.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NEWBANK.WAV",
+        "d:\\civ2\\SOUND\\NEWBANK.WAV"
+      ],
+      "size": 44160,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWBANK.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWBANK.WAV",
+      "actualBytes": 44160
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWGOVT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NEWGOVT.WAV",
+        "d:\\civ2\\SOUND\\NEWGOVT.WAV"
+      ],
+      "size": 81232,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWGOVT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWGOVT.WAV",
+      "actualBytes": 81232
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWONDER.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NEWONDER.WAV",
+        "d:\\civ2\\SOUND\\NEWONDER.WAV"
+      ],
+      "size": 82036,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWONDER.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWONDER.WAV",
+      "actualBytes": 82036
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NUKEXPLO.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\NUKEXPLO.WAV",
+        "d:\\civ2\\SOUND\\NUKEXPLO.WAV"
+      ],
+      "size": 331178,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NUKEXPLO.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NUKEXPLO.WAV",
+      "actualBytes": 331178
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POMPCIRC.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\POMPCIRC.WAV",
+        "d:\\civ2\\SOUND\\POMPCIRC.WAV"
+      ],
+      "size": 120596,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POMPCIRC.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POMPCIRC.WAV",
+      "actualBytes": 120596
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POS1.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\POS1.WAV",
+        "d:\\civ2\\SOUND\\POS1.WAV"
+      ],
+      "size": 11504,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POS1.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POS1.WAV",
+      "actualBytes": 11504
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SELL.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\SELL.WAV",
+        "d:\\civ2\\SOUND\\SELL.WAV"
+      ],
+      "size": 61366,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SELL.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SELL.WAV",
+      "actualBytes": 61366
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SMALLEXP.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\SMALLEXP.WAV",
+        "d:\\civ2\\SOUND\\SMALLEXP.WAV"
+      ],
+      "size": 42328,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SMALLEXP.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SMALLEXP.WAV",
+      "actualBytes": 42328
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SPYSOUND.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\SPYSOUND.WAV",
+        "d:\\civ2\\SOUND\\SPYSOUND.WAV"
+      ],
+      "size": 79832,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SPYSOUND.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SPYSOUND.WAV",
+      "actualBytes": 79832
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/STKMARKT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\STKMARKT.WAV",
+        "d:\\civ2\\SOUND\\STKMARKT.WAV"
+      ],
+      "size": 71460,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/STKMARKT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/STKMARKT.WAV",
+      "actualBytes": 71460
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWORDFGT.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\SWORDFGT.WAV",
+        "d:\\civ2\\SOUND\\SWORDFGT.WAV"
+      ],
+      "size": 78990,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWORDFGT.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWORDFGT.WAV",
+      "actualBytes": 78990
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWRDHORS.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\SWRDHORS.WAV",
+        "d:\\civ2\\SOUND\\SWRDHORS.WAV"
+      ],
+      "size": 83248,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWRDHORS.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWRDHORS.WAV",
+      "actualBytes": 83248
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/TORPEDOS.WAV",
+      "vfsPaths": [
+        "c:\\SOUND\\TORPEDOS.WAV",
+        "d:\\civ2\\SOUND\\TORPEDOS.WAV"
+      ],
+      "size": 134378,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/TORPEDOS.WAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/TORPEDOS.WAV",
+      "actualBytes": 134378
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/SS.DLL",
+      "vfsPaths": [
+        "c:\\SS.DLL",
+        "d:\\civ2\\SS.DLL"
+      ],
+      "size": 1132138,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/SS.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SS.DLL",
+      "actualBytes": 1132138
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN1.GIF",
+      "vfsPaths": [
+        "c:\\TERRAIN1.GIF",
+        "d:\\civ2\\TERRAIN1.GIF"
+      ],
+      "size": 46491,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN1.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN1.GIF",
+      "actualBytes": 46491
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN2.GIF",
+      "vfsPaths": [
+        "c:\\TERRAIN2.GIF",
+        "d:\\civ2\\TERRAIN2.GIF"
+      ],
+      "size": 55966,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN2.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN2.GIF",
+      "actualBytes": 55966
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TILES.DLL",
+      "vfsPaths": [
+        "c:\\TILES.DLL",
+        "d:\\civ2\\TILES.DLL"
+      ],
+      "size": 1091689,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TILES.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TILES.DLL",
+      "actualBytes": 1091689
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TIMERDLL.DLL",
+      "vfsPaths": [
+        "c:\\TIMERDLL.DLL",
+        "d:\\civ2\\TIMERDLL.DLL"
+      ],
+      "size": 15314,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TIMERDLL.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TIMERDLL.DLL",
+      "actualBytes": 15314
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.FRE",
+      "vfsPaths": [
+        "c:\\TUTORIAL.FRE",
+        "d:\\civ2\\TUTORIAL.FRE"
+      ],
+      "size": 15674,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.FRE",
+      "actualBytes": 15674
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.GER",
+      "vfsPaths": [
+        "c:\\TUTORIAL.GER",
+        "d:\\civ2\\TUTORIAL.GER"
+      ],
+      "size": 15468,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.GER",
+      "actualBytes": 15468
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.SAV",
+      "vfsPaths": [
+        "c:\\TUTORIAL.SAV",
+        "d:\\civ2\\TUTORIAL.SAV"
+      ],
+      "size": 69749,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.SAV",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.SAV",
+      "actualBytes": 69749
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.TXT",
+      "vfsPaths": [
+        "c:\\TUTORIAL.TXT",
+        "d:\\civ2\\TUTORIAL.TXT"
+      ],
+      "size": 12833,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.TXT",
+      "actualBytes": 12833
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/UNITS.GIF",
+      "vfsPaths": [
+        "c:\\UNITS.GIF",
+        "d:\\civ2\\UNITS.GIF"
+      ],
+      "size": 52880,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/UNITS.GIF",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/UNITS.GIF",
+      "actualBytes": 52880
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY0.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\ANARCHY0.AVI",
+        "d:\\civ2\\VIDEO\\ANARCHY0.AVI"
+      ],
+      "size": 1351376,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY0.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY0.AVI",
+      "actualBytes": 1351376
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY1.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\ANARCHY1.AVI",
+        "d:\\civ2\\VIDEO\\ANARCHY1.AVI"
+      ],
+      "size": 1400624,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY1.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY1.AVI",
+      "actualBytes": 1400624
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY2.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\ANARCHY2.AVI",
+        "d:\\civ2\\VIDEO\\ANARCHY2.AVI"
+      ],
+      "size": 1380144,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY2.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY2.AVI",
+      "actualBytes": 1380144
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL0.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\COUNCIL0.AVI",
+        "d:\\civ2\\VIDEO\\COUNCIL0.AVI"
+      ],
+      "size": 30342416,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL0.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL0.AVI",
+      "actualBytes": 30342416
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL1.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\COUNCIL1.AVI",
+        "d:\\civ2\\VIDEO\\COUNCIL1.AVI"
+      ],
+      "size": 26901568,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL1.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL1.AVI",
+      "actualBytes": 26901568
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL2.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\COUNCIL2.AVI",
+        "d:\\civ2\\VIDEO\\COUNCIL2.AVI"
+      ],
+      "size": 29615360,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL2.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL2.AVI",
+      "actualBytes": 29615360
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/LAUNCH.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\LAUNCH.AVI",
+        "d:\\civ2\\VIDEO\\LAUNCH.AVI"
+      ],
+      "size": 1693602,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/LAUNCH.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/LAUNCH.AVI",
+      "actualBytes": 1693602
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/OPENING.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\OPENING.AVI",
+        "d:\\civ2\\VIDEO\\OPENING.AVI"
+      ],
+      "size": 13071552,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/OPENING.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/OPENING.AVI",
+      "actualBytes": 13071552
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/VFWFIX.REG",
+      "vfsPaths": [
+        "c:\\VIDEO\\VFWFIX.REG",
+        "d:\\civ2\\VIDEO\\VFWFIX.REG"
+      ],
+      "size": 996,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/VFWFIX.REG",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/VFWFIX.REG",
+      "actualBytes": 996
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WINWIN.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WINWIN.AVI",
+        "d:\\civ2\\VIDEO\\WINWIN.AVI"
+      ],
+      "size": 7470432,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WINWIN.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WINWIN.AVI",
+      "actualBytes": 7470432
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER00.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER00.AVI",
+        "d:\\civ2\\VIDEO\\WONDER00.AVI"
+      ],
+      "size": 6168304,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER00.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER00.AVI",
+      "actualBytes": 6168304
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER01.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER01.AVI",
+        "d:\\civ2\\VIDEO\\WONDER01.AVI"
+      ],
+      "size": 7034400,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER01.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER01.AVI",
+      "actualBytes": 7034400
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER02.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER02.AVI",
+        "d:\\civ2\\VIDEO\\WONDER02.AVI"
+      ],
+      "size": 6362832,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER02.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER02.AVI",
+      "actualBytes": 6362832
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER03.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER03.AVI",
+        "d:\\civ2\\VIDEO\\WONDER03.AVI"
+      ],
+      "size": 6798592,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER03.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER03.AVI",
+      "actualBytes": 6798592
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER04.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER04.AVI",
+        "d:\\civ2\\VIDEO\\WONDER04.AVI"
+      ],
+      "size": 6501376,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER04.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER04.AVI",
+      "actualBytes": 6501376
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER05.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER05.AVI",
+        "d:\\civ2\\VIDEO\\WONDER05.AVI"
+      ],
+      "size": 8748738,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER05.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER05.AVI",
+      "actualBytes": 8748738
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER06.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER06.AVI",
+        "d:\\civ2\\VIDEO\\WONDER06.AVI"
+      ],
+      "size": 6250512,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER06.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER06.AVI",
+      "actualBytes": 6250512
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER07.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER07.AVI",
+        "d:\\civ2\\VIDEO\\WONDER07.AVI"
+      ],
+      "size": 6849120,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER07.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER07.AVI",
+      "actualBytes": 6849120
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER08.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER08.AVI",
+        "d:\\civ2\\VIDEO\\WONDER08.AVI"
+      ],
+      "size": 6369728,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER08.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER08.AVI",
+      "actualBytes": 6369728
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER09.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER09.AVI",
+        "d:\\civ2\\VIDEO\\WONDER09.AVI"
+      ],
+      "size": 6219600,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER09.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER09.AVI",
+      "actualBytes": 6219600
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER10.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER10.AVI",
+        "d:\\civ2\\VIDEO\\WONDER10.AVI"
+      ],
+      "size": 6040752,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER10.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER10.AVI",
+      "actualBytes": 6040752
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER11.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER11.AVI",
+        "d:\\civ2\\VIDEO\\WONDER11.AVI"
+      ],
+      "size": 7405296,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER11.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER11.AVI",
+      "actualBytes": 7405296
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER12.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER12.AVI",
+        "d:\\civ2\\VIDEO\\WONDER12.AVI"
+      ],
+      "size": 5668192,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER12.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER12.AVI",
+      "actualBytes": 5668192
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER13.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER13.AVI",
+        "d:\\civ2\\VIDEO\\WONDER13.AVI"
+      ],
+      "size": 6318816,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER13.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER13.AVI",
+      "actualBytes": 6318816
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER14.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER14.AVI",
+        "d:\\civ2\\VIDEO\\WONDER14.AVI"
+      ],
+      "size": 4821104,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER14.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER14.AVI",
+      "actualBytes": 4821104
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER15.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER15.AVI",
+        "d:\\civ2\\VIDEO\\WONDER15.AVI"
+      ],
+      "size": 6613408,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER15.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER15.AVI",
+      "actualBytes": 6613408
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER16.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER16.AVI",
+        "d:\\civ2\\VIDEO\\WONDER16.AVI"
+      ],
+      "size": 6048848,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER16.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER16.AVI",
+      "actualBytes": 6048848
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER17.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER17.AVI",
+        "d:\\civ2\\VIDEO\\WONDER17.AVI"
+      ],
+      "size": 7231824,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER17.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER17.AVI",
+      "actualBytes": 7231824
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER18.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER18.AVI",
+        "d:\\civ2\\VIDEO\\WONDER18.AVI"
+      ],
+      "size": 6349440,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER18.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER18.AVI",
+      "actualBytes": 6349440
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER19.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER19.AVI",
+        "d:\\civ2\\VIDEO\\WONDER19.AVI"
+      ],
+      "size": 6709424,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER19.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER19.AVI",
+      "actualBytes": 6709424
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER20.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER20.AVI",
+        "d:\\civ2\\VIDEO\\WONDER20.AVI"
+      ],
+      "size": 6387344,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER20.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER20.AVI",
+      "actualBytes": 6387344
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER21.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER21.AVI",
+        "d:\\civ2\\VIDEO\\WONDER21.AVI"
+      ],
+      "size": 6343696,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER21.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER21.AVI",
+      "actualBytes": 6343696
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER22.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER22.AVI",
+        "d:\\civ2\\VIDEO\\WONDER22.AVI"
+      ],
+      "size": 7651488,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER22.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER22.AVI",
+      "actualBytes": 7651488
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER23.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER23.AVI",
+        "d:\\civ2\\VIDEO\\WONDER23.AVI"
+      ],
+      "size": 6890994,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER23.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER23.AVI",
+      "actualBytes": 6890994
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER24.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER24.AVI",
+        "d:\\civ2\\VIDEO\\WONDER24.AVI"
+      ],
+      "size": 7580240,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER24.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER24.AVI",
+      "actualBytes": 7580240
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER25.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER25.AVI",
+        "d:\\civ2\\VIDEO\\WONDER25.AVI"
+      ],
+      "size": 7042928,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER25.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER25.AVI",
+      "actualBytes": 7042928
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER26.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER26.AVI",
+        "d:\\civ2\\VIDEO\\WONDER26.AVI"
+      ],
+      "size": 7050832,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER26.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER26.AVI",
+      "actualBytes": 7050832
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER27.AVI",
+      "vfsPaths": [
+        "c:\\VIDEO\\WONDER27.AVI",
+        "d:\\civ2\\VIDEO\\WONDER27.AVI"
+      ],
+      "size": 5563728,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER27.AVI",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER27.AVI",
+      "actualBytes": 5563728
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WING.DLL",
+      "vfsPaths": [
+        "c:\\windows\\system\\WING.DLL",
+        "d:\\civ2\\WING.DLL"
+      ],
+      "size": 92208,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WING.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WING.DLL",
+      "actualBytes": 92208
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WONDER.DLL",
+      "vfsPaths": [
+        "c:\\WONDER.DLL",
+        "d:\\civ2\\WONDER.DLL"
+      ],
+      "size": 74346,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WONDER.DLL",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WONDER.DLL",
+      "actualBytes": 74346
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_M.MP",
+      "vfsPaths": [
+        "c:\\WORLD_M.MP",
+        "d:\\civ2\\WORLD_M.MP"
+      ],
+      "size": 24098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_M.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_M.MP",
+      "actualBytes": 24098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_S.MP",
+      "vfsPaths": [
+        "c:\\WORLD_S.MP",
+        "d:\\civ2\\WORLD_S.MP"
+      ],
+      "size": 12098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_S.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_S.MP",
+      "actualBytes": 12098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD.MP",
+      "vfsPaths": [
+        "c:\\WORLD.MP",
+        "d:\\civ2\\WORLD.MP"
+      ],
+      "size": 54098,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD.MP",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD.MP",
+      "actualBytes": 54098
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.FRE",
+      "vfsPaths": [
+        "c:\\WWII.FRE",
+        "d:\\civ2\\WWII.FRE"
+      ],
+      "size": 632,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.FRE",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.FRE",
+      "actualBytes": 632
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.GER",
+      "vfsPaths": [
+        "c:\\WWII.GER",
+        "d:\\civ2\\WWII.GER"
+      ],
+      "size": 674,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.GER",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.GER",
+      "actualBytes": 674
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.SCN",
+      "vfsPaths": [
+        "c:\\WWII.SCN",
+        "d:\\civ2\\WWII.SCN"
+      ],
+      "size": 154951,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.SCN",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.SCN",
+      "actualBytes": 154951
+    },
+    {
+      "url": "test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.TXT",
+      "vfsPaths": [
+        "c:\\WWII.TXT",
+        "d:\\civ2\\WWII.TXT"
+      ],
+      "size": 568,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.TXT",
+      "realpath": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.TXT",
+      "actualBytes": 568
+    }
+  ],
+  "cue": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De).cue",
+  "cueSHA256": "1fec92d6dcc6fc33a80c78494ddbe0ff446cb43fa8a00ff8a328e442eaa9ec71",
+  "tracks": [
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 01).bin",
+      "type": "BINARY",
+      "index": 0,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 01).bin",
+      "actualBytes": 430677072
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 02).bin",
+      "type": "BINARY",
+      "index": 1,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 02).bin",
+      "actualBytes": 6634992
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 03).bin",
+      "type": "BINARY",
+      "index": 2,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 03).bin",
+      "actualBytes": 8326080
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 04).bin",
+      "type": "BINARY",
+      "index": 3,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 04).bin",
+      "actualBytes": 18061008
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 05).bin",
+      "type": "BINARY",
+      "index": 4,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 05).bin",
+      "actualBytes": 22515696
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 06).bin",
+      "type": "BINARY",
+      "index": 5,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 06).bin",
+      "actualBytes": 22141728
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 07).bin",
+      "type": "BINARY",
+      "index": 6,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 07).bin",
+      "actualBytes": 29691648
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 08).bin",
+      "type": "BINARY",
+      "index": 7,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 08).bin",
+      "actualBytes": 28520352
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 09).bin",
+      "type": "BINARY",
+      "index": 8,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 09).bin",
+      "actualBytes": 19474560
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 10).bin",
+      "type": "BINARY",
+      "index": 9,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 10).bin",
+      "actualBytes": 26253024
+    }
+  ],
+  "commaBearingNames": [
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 01).bin",
+      "type": "BINARY",
+      "index": 0,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 01).bin",
+      "actualBytes": 430677072
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 02).bin",
+      "type": "BINARY",
+      "index": 1,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 02).bin",
+      "actualBytes": 6634992
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 03).bin",
+      "type": "BINARY",
+      "index": 2,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 03).bin",
+      "actualBytes": 8326080
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 04).bin",
+      "type": "BINARY",
+      "index": 3,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 04).bin",
+      "actualBytes": 18061008
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 05).bin",
+      "type": "BINARY",
+      "index": 4,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 05).bin",
+      "actualBytes": 22515696
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 06).bin",
+      "type": "BINARY",
+      "index": 5,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 06).bin",
+      "actualBytes": 22141728
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 07).bin",
+      "type": "BINARY",
+      "index": 6,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 07).bin",
+      "actualBytes": 29691648
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 08).bin",
+      "type": "BINARY",
+      "index": 7,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 08).bin",
+      "actualBytes": 28520352
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 09).bin",
+      "type": "BINARY",
+      "index": 8,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 09).bin",
+      "actualBytes": 19474560
+    },
+    {
+      "name": "Sid Meier's Civilization II (USA) (En,Fr,De) (Track 10).bin",
+      "type": "BINARY",
+      "index": 9,
+      "host": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De) (Track 10).bin",
+      "actualBytes": 26253024
+    }
+  ],
+  "parser": "lib/apps APPS; lib/app-files.mergeLocalManifestFiles; lib/cdrom.parseCue; same resolution as test/run.js lines1330-1347 and6061-6068; no filename CLI comma splitting"
+}

@@ -1,0 +1,11 @@
+{
+  "bytes": 1880280,
+  "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "compiler": "test/compile-src.js compileSrcWasm()",
+  "transform": null,
+  "root": "src/main.watx",
+  "originalmain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "artifactRetained": false,
+  "recovery": "helpers/compile.js calls unmodified pinned source/test/compile-src.js compileSrcWasm(); run only after fresh admission",
+  "cleanupReason": "Guest admission failed; remove reproducible owned module to restore publication/reserve headroom, retain hash and source."
+}
