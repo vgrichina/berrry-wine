@@ -1,0 +1,33 @@
+{
+  "captureCommit": "aebf9bbf4401bb13cbc782c9c168afdae2ac6099",
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "captureRunnerSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+  "sourceRunnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "start": {
+    "line": 5763,
+    "bytes": 539,
+    "sha256": "a7c9a4fa236449bd9a2477f623e336542717669223d610ab4f86b085b5efe43d",
+    "excerpt": "      persist:row=>fs.appendFileSync(nativeFile,JSON.stringify(row)+'\\n'),\n      readLive:()=>({eax:instance.exports.get_eax()>>>0,esp:instance.exports.get_esp()>>>0,eip:instance.exports.get_eip()>>>0})});\n    nativeAdapter.start();\n  }catch(error){nativeRaw('first-loader-or-start-rejection',error);throw error;}\n  function originalNativeObserve(batch){\n    try {const row=nativeAdapter.observe(batch);if(row&&row.kind==='captured')nativeRaw('captured');}\n    catch(error){nativeRaw('first-latch-rejection',error,batch);throw error;}\n  }\n"
+  },
+  "applyMain": {
+    "line": 6589,
+    "bytes": 356,
+    "sha256": "0c0e2e3ef9a549968c1cee25f4aa303fd8a2c58f3702bfcfc395ea7dd8880028",
+    "excerpt": "    instance.exports.set_win16_trace(1);\n  }\n  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });\n  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);\n  if (FLIP_VSYNC && instance.exports.set_flip_vsync) {\n    instance.exports.set_flip_vsync(1);\n  }\n  if (PRESENT_CAP && instance.exports.set_present_cap) {\n"
+  },
+  "firstRun": {
+    "line": 10398,
+    "bytes": 395,
+    "sha256": "f4f4365c0c320c7a730c49a0d74c11553b92f5ee83e420dafbd878598c8b4ef5",
+    "excerpt": "        threadManager.checkMainYield();\n      }\n      if (!mainExecutionSuspended()) { instance.exports.run(BATCH_SIZE); originalNativeObserve(batch); }\n      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;\n    } catch (e) {\n      nativeRaw('first-run-failure',e,batch);\n      flushLogs();\n      console.log(`\\n*** CRASH at batch ${batch}: ${e.message}`);\n"
+  },
+  "sourceApplyMain": {
+    "line": 6590,
+    "bytes": 356,
+    "sha256": "0c0e2e3ef9a549968c1cee25f4aa303fd8a2c58f3702bfcfc395ea7dd8880028",
+    "excerpt": "    instance.exports.set_win16_trace(1);\n  }\n  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });\n  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);\n  if (FLIP_VSYNC && instance.exports.set_flip_vsync) {\n    instance.exports.set_flip_vsync(1);\n  }\n  if (PRESENT_CAP && instance.exports.set_present_cap) {\n"
+  },
+  "firstRunAfterInitialize": true,
+  "noRunBetweenStartAndInitialize": true,
+  "inference": "Default applyMain set_uop(1) is the source-backed cause of reason15 after early arming; requested mode and rejecting PC remain absent from authentic diagnostic ABI."
+}

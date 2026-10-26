@@ -1,0 +1,87 @@
+{
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "outcome": "GUARD_CORRECT_RUNNER_ARM_ORDER_PREREQUISITE",
+  "files": [
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/README.md",
+      "bytes": 5837,
+      "sha256": "5a377aeb813ab6b26fb2e4435b37deb35772540fbd2860c0b3f7af35f23d0149"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/capture-runner-binding.json",
+      "bytes": 557,
+      "sha256": "15aabe07ec4aec51112f6cd4a18e79b983cb8afa750f8935acea3e7319122d04"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/causal-source.json",
+      "bytes": 2881,
+      "sha256": "9ab8412389b41ed28dfaaed72740bf8edf4ce83976d8c78157448787eed10317"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/checkpoint.json",
+      "bytes": 399,
+      "sha256": "dd7350907f00fc637e992067b5cfc8676bbeee03c3904139e224e8a587721e28"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/compiler-excerpt.json",
+      "bytes": 2866,
+      "sha256": "50fc9bc3d2a09c5ac87287337682a745830eb6467e96f08c3a9c77ef40421d5f"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/diagnostic-source.json",
+      "bytes": 891,
+      "sha256": "71af6461bb6ddacff4aac19234932217e9b5e4374f83371c68603daf97f0c2e4"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/evidence-manifest.json",
+      "bytes": 3329,
+      "sha256": "3dd6d58aae0c01a8eece2442cbced97b817a32489a03161f116a5d1274a441c2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/fixture-inputs.json",
+      "bytes": 1903,
+      "sha256": "1798f75576cd43b42982a3817a01be163cc3b9df860d2e531e9e36410e9bdaf9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/incidents.json",
+      "bytes": 2359,
+      "sha256": "447fd217b4ebf52abee8286fd5ddb9a26c3a57ae222c5c0422bce07fb6f51779"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/node-startup.json",
+      "bytes": 1797,
+      "sha256": "b0478f4fc411abbcd6afec6506093d40f281b7f6cb236554f06326ebd4e97212"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/observation.json",
+      "bytes": 6295,
+      "sha256": "f73c1789c1fa3b863c44915b008dc8c9136760f18d446dbce3aec98a0099d71d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/resources.json",
+      "bytes": 638,
+      "sha256": "585cf20fa098457f4af95e5f2365bed04bcbab5abf8c4e431fdc316af667b6c8"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/runner-diff.json",
+      "bytes": 5004,
+      "sha256": "b9b003fd2b4d1e1f64197a9f45d58348cfad8b47e69136d9355ff947e2f80f9c"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/synthetic-resource-plan.json",
+      "bytes": 584,
+      "sha256": "826f34ccae335183f433fe3c66b9a78408284d9de37505350bd6f088922bc9e2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-mode-transition-observer-repair-oct26/test-result.json",
+      "bytes": 3384,
+      "sha256": "eb49ec3e039ddcfa774d6aa603b4c699502963881640afef9c505826f87d045e"
+    },
+    {
+      "path": "test/test-maelstrom-mode-transition.cjs",
+      "bytes": 11456,
+      "sha256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491"
+    }
+  ],
+  "sourceUnchanged": true
+}

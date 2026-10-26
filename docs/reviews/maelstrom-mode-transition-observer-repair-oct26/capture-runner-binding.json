@@ -1,0 +1,11 @@
+{
+  "captureManifestSHA256": "2663bf652aebdc09f1c6f301e759113cdac77f03eff2b12876451d0b850920c8",
+  "runnerExperiments": {
+    "target": "runner/test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+    "provenance": "55f9724ef127100c3bb54aebca73e5cda5472c5f:test/runner-experiments.js"
+  },
+  "captureArchiveSHA256": "656a1569d905f49385a7e3a3e6b878f81b96aa547d275f5fcf521cfaa254dd4e",
+  "capturedRunnerSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58"
+}

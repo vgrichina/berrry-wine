@@ -1,0 +1,19 @@
+{
+  "kind": "small synthetic source-derived latch fixture only",
+  "wasmLinearMemoryBytes": 262144,
+  "maxModules": 1,
+  "maxSimultaneousInstances": 32,
+  "sourceBytesUpperBound": 131072,
+  "moduleBytesUpperBound": 30000,
+  "nodeHeapMiB": 192,
+  "prospectiveProcessPhysicalBytes": 268435456,
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "maxFileBytes": 25165824,
+  "maxOutputBytes": 2097152,
+  "compilerStandingSourceBytes": 392825,
+  "noCanonicalBuild": true,
+  "noNativeQualification": true,
+  "expectedMaterializedGrowth": 1048576,
+  "aggregateSyntheticLinearUpperBound": 8388608
+}

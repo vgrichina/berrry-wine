@@ -1,0 +1,17 @@
+{
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "testSHA256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+  "result": "PASS",
+  "count": 29,
+  "elapsed": 0.10590672492980957,
+  "remaining": [
+    "source-backed outcome review",
+    "task branch publication"
+  ],
+  "reused": {
+    "builds": 2,
+    "nativeGroups": 30,
+    "controls": 119,
+    "replayed": 0
+  }
+}

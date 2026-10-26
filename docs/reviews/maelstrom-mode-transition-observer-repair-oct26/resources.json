@@ -1,0 +1,21 @@
+{
+  "charges": {
+    "local": 7868416,
+    "launcher": 307200,
+    "session": 978944,
+    "positiveWAL": 1847296,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "projected": 23584768,
+  "memAvailable": 1996451840,
+  "aggregateRSS": 2529624064,
+  "reservedWorkerClient": 268435456,
+  "prospectiveClient": 0,
+  "prospectiveNode": 268435456,
+  "remainingFloor": 805306368,
+  "hostFree": 3235426304,
+  "passChecks": true,
+  "liveRSSAlreadyExcludedFromMemAvailable": true,
+  "accountingCorrection": "Earlier receipts conservatively added already-live client reserve to available demand; corrected without relaxing any enforced limit."
+}
