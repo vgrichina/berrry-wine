@@ -1,0 +1,7 @@
+{
+  "command": "git commit",
+  "exit": 1,
+  "diagnostic": "Error building trees: absent historical README blob6631e9f90c112462bd906d76411a3d5aa63577b0",
+  "resolution": "git write-tree --missing-ok then commit-tree with exact parent; verify only owned new paths; no missing blob lookup/fetch/retry, parent historical tree entries preserved",
+  "notAccessPolicyDenial": true
+}

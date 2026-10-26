@@ -1,0 +1,40 @@
+{
+  "candidate": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "completed": [
+    "production-boundary",
+    "continuations",
+    "ownership",
+    "source-review"
+  ],
+  "fixtures": {
+    "test/independent-message-continuations.js": "1f7fbc785dbc7c8fc7c2f0f41ad5a173ce975a18606ae0fdb1b675ca35b6b0cc",
+    "test/independent-message-ownership.js": "d12e90ab24871d8e193b6b01e150f0cb9985bac3bde8bc063295727411a7b7c5",
+    "test/independent-message-production-boundary.js": "762a68d5f67fffb0b43e3f455dbecf03f9ae6dabcf34f9a6e92f2d964e94f9ab",
+    "test/independent-wat-fixture.js": "fe2478a2640a7ac3fcb2f947864cf58e5dedc25b46c364f38ab3928f30111ac1"
+  },
+  "remaining": [
+    "own branch publication and exact remote verification",
+    "future separate reconciled production build/import/module qualification",
+    "future separately authorized real initializers/thunk/decoded CALL/JMP/park/hooks/nested-continuation runtime qualification",
+    "Enigma step-completion gate before any future input; original-game/input/gameplay unaccepted"
+  ],
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "sourceAccepted": true,
+  "candidateFiles": {
+    "src/01-header.wat": "1c66dd0415747a82d1e89a879571ec78a1f23f2086283498dac155419ebef772",
+    "src/09a5-handlers-window.wat": "f70090a80db6b1557e063742c72c0ffdc6c990c27d6bc30f953c485ea614a69e",
+    "src/09a5b-handlers-window-late.wat": "3bd8f0faae763f4829f81f14fd64f4e1e5e0f470e2af7fd9eabeeb698ad441bf",
+    "src/09a-handlers4-late.wat": "3887c9f813a91e4584d938565efc964a3b715f78a29703068143571d3336d928",
+    "src/13-exports.wat": "c1700fb6737d66792469f0170785ae63111d1da0acff9f5e9dde9fecf3375633",
+    "lib/host-imports.js": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347",
+    "test/run.js": "f9bca23e0e8f786ba66e5756132b24e2300e3a23984264f7ae0b6cb7b6b6ed97",
+    "test/message-boundary-trace.js": "0ca2cca343cf1b0c14e12c1e3c6dfa518abba78ffef41c095b681f59e4449379",
+    "test/test-message-boundary-trace.js": "78a36886dc698016a7c31a18d1b1eb6f2b7e1969ed7e48ccc9b2886beb2c9793",
+    "lib/host-import-sigs.generated.json": "b3db9da9a01e5d2378ddafdc62260c224b14858e6d75cdb64d909c6c38948ab8",
+    "test/message-completion-owner.js": "5feb6cd914a7c93e58b719107887960783883d78af6c18ce7a45e79e1f077f0c",
+    "test/wat-completion-function-fixture.js": "5941a8ea9e1297745138a07c54814095d3714a43f0b940cb3f35c219afc5d1a3",
+    "test/test-message-completion.js": "c29e290dd0ac280997470840657ebb12907c23675a6426cb40a29d727af93ceb",
+    "test/fixtures/enigma-message-original-functions.json": "599f6818b039b6d44a9c3172dcb92c67d7dcc0fef5c71d0c8630fde13290b4cd"
+  }
+}

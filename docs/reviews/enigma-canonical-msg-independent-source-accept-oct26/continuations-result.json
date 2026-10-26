@@ -1,0 +1,104 @@
+{
+  "candidate": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "pass": true,
+  "cases": 33,
+  "controls": [
+    {
+      "label": "actual-keyboard-router",
+      "rejected": true
+    },
+    {
+      "label": "actual-message-router",
+      "rejected": true
+    },
+    {
+      "label": "keyboard-token-handoff",
+      "rejected": true
+    },
+    {
+      "label": "final-message-owner",
+      "rejected": true
+    },
+    {
+      "label": "keyboard-bind",
+      "rejected": true
+    },
+    {
+      "label": "message-bind",
+      "rejected": true
+    },
+    {
+      "label": "message-final-observe",
+      "rejected": true
+    },
+    {
+      "label": "completion-before-caller-restoration",
+      "rejected": true
+    }
+  ],
+  "functions": {
+    "handle_GetMessageA": {
+      "bytes": 309,
+      "sha256": "2d68ed332e9a221fb1413bdafdaf7ab1d14dbfd940746347e5b87f828df5089d"
+    },
+    "handle_GetMessageW": {
+      "bytes": 303,
+      "sha256": "9c99b0bec67d6a78aa6681ae9f15e8a250b5c6b2057f258da196e4b2dca600e4"
+    },
+    "handle_PeekMessageA": {
+      "bytes": 311,
+      "sha256": "6dd8a8712a42c755986ea8ceb27b2a20d97ca3925f638ec19613ccfe120c79bf"
+    },
+    "handle_PeekMessageW": {
+      "bytes": 305,
+      "sha256": "87d4e8cefbc586f57f156a8128ce47b6b3464295cd6e2ba06a106b0579f0f58e"
+    },
+    "handle_GetMessage_observed": {
+      "bytes": 2336,
+      "sha256": "5481230d148485f4ce45c11a0e8fd824ab45ac9fea259da1bbb658c9650b2b28"
+    },
+    "handle_PeekMessage_observed": {
+      "bytes": 2689,
+      "sha256": "f633a26bc9289c91252c6e039c8a2669212c80e0feda24ff6bf9f879091a6900"
+    },
+    "keyboard_hook_begin": {
+      "bytes": 2468,
+      "sha256": "4cf18de441bd384b36b1d6323aab3a232d00351325f6f2657a519cf0faefe694"
+    },
+    "getmessage_hook_begin": {
+      "bytes": 2409,
+      "sha256": "483a71375707eb0b12b403242d952edb7eddfc1c2ce17dfe6727a7235d9e1f21"
+    },
+    "getmessage_hook_continue": {
+      "bytes": 1056,
+      "sha256": "e633f96c27e343e7a3919fd542239a98d77e8cf8cce6ef2a0aee9fffe9fc9f53"
+    },
+    "keyboard_hook_finish": {
+      "bytes": 1364,
+      "sha256": "53c9a881a8c94db2a72b1b8a225d0a908debc4fd89b6ad910579be7b76c8f4b7"
+    },
+    "win32_dispatch_inner": {
+      "bytes": 104671,
+      "sha256": "cae149cfe48bc5b5b37d868420e3b0db31658e36a1db135b221716f3d844a747"
+    },
+    "handle_GetMessageA_pump": {
+      "bytes": 1620,
+      "sha256": "8e86e05adda3cbff506de99a0bffbecff06fd3731e061e96094eb2ac403914a9"
+    },
+    "handle_PeekMessageA_pump": {
+      "bytes": 1623,
+      "sha256": "d635f395b4abbaf9699ae981eda4c046a3183f8b2a11457faf3247605c2f985e"
+    },
+    "handle_GetMessageA_fetch": {
+      "bytes": 18246,
+      "sha256": "fc1d50b438b4543cb48f9cbe65edbece532f25880ed633f0702a272cfa08d5f2"
+    },
+    "handle_PeekMessageA_fetch": {
+      "bytes": 23741,
+      "sha256": "5d599ad489996fafd3ba47da0a6f29ef0d75eb74aa5ffcf7f662eb22cd5f4988"
+    }
+  },
+  "qualification": "Uncompiled exact functions including full unchanged dispatcher and real WM_QUIT/pump early-park paths. Hook callback body and other pump paths supplied dependencies. No actual x86/Wasm/guest execution.",
+  "compiled": false,
+  "canonicalRuntimeQualified": false
+}

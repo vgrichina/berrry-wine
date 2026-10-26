@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/ops/source-review.py"
+  ],
+  "cwd": "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo",
+  "exit": 1,
+  "reason": "natural",
+  "peakSampledRSS": 80850944,
+  "physicalCap": 134217728,
+  "cpu": 0.06,
+  "wall": 0.07696788012981415,
+  "outputBytes": 778,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

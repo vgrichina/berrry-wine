@@ -1,0 +1,8 @@
+{
+  "incidents": [
+    "Python reserved pass keyword used as dict kwarg: corrected acceptedSource",
+    "late receipt writing reused p variable for evidence path instead of partial bytes: record partial hash before loop"
+  ],
+  "sourceChanged": false,
+  "firstAndSecondErrorsRetained": true
+}

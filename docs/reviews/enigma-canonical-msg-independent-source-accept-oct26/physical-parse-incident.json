@@ -1,0 +1,10 @@
+{
+  "incident": "third attempt physical-memory supervised stop; full113KB dispatcher was redundantly reparsed for each omitted-control harness, preceding owned null-MSG assertion TypeError also retained",
+  "correction": "reuse exact immutable parsed AST for unchanged functions, parse only mutated functions. Explicit nonnull MSG assertion lets early-completion control reject via assertion",
+  "limitsUnchanged": true,
+  "retained": [
+    "third-continuations-reproducer.js",
+    "third-continuations-execution.json",
+    "third-continuations-output.log"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "incident": "first nested continuation oracle read api argument from message_begin call as returned token. Debug proves two correct final events; mismatch was r.invocation1 versus wrongly expected api2.",
+  "correction": "read explicit bound token from message_bind argument, the actual invocation ownership wire",
+  "productionSourceChanged": false,
+  "retained": [
+    "first-continuations-reproducer.js",
+    "first-continuations-output.log",
+    "first-continuations-execution.json",
+    "debug-output.log",
+    "debug-execution.json"
+  ]
+}

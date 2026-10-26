@@ -1,0 +1,33 @@
+{
+  "pass": true,
+  "candidate": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "sourceSHA256": "5feb6cd914a7c93e58b719107887960783883d78af6c18ce7a45e79e1f077f0c",
+  "cases": 4,
+  "completedSchedule": 396,
+  "capacity": 128,
+  "controls": [
+    {
+      "name": "bound-state-guard",
+      "rejected": true
+    },
+    {
+      "name": "terminal-slot-consumption",
+      "rejected": true
+    },
+    {
+      "name": "retry-argument-identity",
+      "rejected": true
+    },
+    {
+      "name": "collision-invalidates-context",
+      "rejected": true
+    },
+    {
+      "name": "loss-suppresses-observation",
+      "rejected": true
+    }
+  ],
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "qualification": "Exact production JS owner; deterministic independent deferred schedule. No real guest threads or host event-loop continuation execution."
+}

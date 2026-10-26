@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-c",
+    "pack.windowMemory=16m",
+    "read-tree",
+    "--reset",
+    "-i",
+    "HEAD"
+  ],
+  "cwd": "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 50135040,
+  "physicalCap": 268435456,
+  "cpu": 0,
+  "wall": 0.004096237011253834,
+  "outputBytes": 0,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": 536870912,
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,159 @@
+{
+  "candidate": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "files": {
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/README.md": {
+      "bytes": 8048,
+      "sha256": "de5f7d9ee9ede767ae1b18210e2be64c952e799918daa1aab0b3d8447cf7f84a"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/actual-client-launch.json": {
+      "bytes": 760,
+      "sha256": "1d1afde2ff833f56ace84bfc3d26a9d84b3d6465956de953338515e0b451e6a1"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/allocation-correction.json": {
+      "bytes": 495,
+      "sha256": "086fa063821430dfe3939d3b75602d5e4e737817ae41a7486ff737998426c4fd"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-first-memory-execution.json": {
+      "bytes": 797,
+      "sha256": "36bc6fc5fc1f05414eb6a6cd3d247a6d92e8d8250f69c487bf68e8d17aea2545"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-semantics-execution.json": {
+      "bytes": 789,
+      "sha256": "7a50472f8b8137b74cf1f4a83c79a97d2645e90dc8815da7fd586856a236c15a"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-semantics-result.json": {
+      "bytes": 2821,
+      "sha256": "2308684d4c001d9b5d19df416c47f9c71ef549c68bbf940faa5c92851a0dfc01"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/challenges-execution.json": {
+      "bytes": 782,
+      "sha256": "15b1868d8d19c13cbc8250535b1a68d6cb22a117fac53a42213ba4cfb27a0545"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/challenges-result.json": {
+      "bytes": 2813,
+      "sha256": "42df096e01fe3dbdc184c23761bf98c4713132abba6e8ffbc6449edd350aff66"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/checkpoint.json": {
+      "bytes": 2938,
+      "sha256": "cc4bd70d33f76e82880442096b8dce409f2ca0b7baa70e93705a265b06a93d7e"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/complete-ledger.json": {
+      "bytes": 4822,
+      "sha256": "cb1479c27cd8fccdbfb62b60ba336bd5a69abb5ee06c297d01401f0c06d9e22d"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/completion.patch.gz": {
+      "bytes": 13830,
+      "sha256": "48edcb5ba45eb0ac5db9eb5d749b6a021a776eb89dc0cf8c1d1e74657d060732"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/configuration.json": {
+      "bytes": 2023,
+      "sha256": "08335254e82efd4c2766aabea6869b36dfc5673e3a05dd12eb43d8a61b0dfb96"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/continuations-execution.json": {
+      "bytes": 785,
+      "sha256": "66d51794f142d0386880a2a15d9f29e6a3d154f78607599a91d8932e23c21366"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/continuations-result.json": {
+      "bytes": 2816,
+      "sha256": "9d27f3afac5b750c97f3b03081a5454e1661fd4953b5ab12bbd87076e9ae6239"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/disk-double-charge-admission-incident.json": {
+      "bytes": 4741,
+      "sha256": "a2a4bd88eade9670b5c7bda7b4e1a55f54bde526ee9dd0618ad1b1b2fb22e50d"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/fleet-reservation-reconciliation.json": {
+      "bytes": 495,
+      "sha256": "de73733fddb2d995f7ab11ef3d5637161ac4e346c87d904042bde124e6eba998"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/historical-incidents.json": {
+      "bytes": 2463,
+      "sha256": "76cd0815657ac8afc3ca77827d33164de4b889f04d19fe88b7e1d2127b7366b9"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-first-memory-execution.json": {
+      "bytes": 682,
+      "sha256": "2d6e2f5837817ca10771be66896d7304b9b01b0c1443903791fb85a5d904f280"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-result.json": {
+      "bytes": 32759,
+      "sha256": "79b06b699ea14ecce2b875fc5c108238b70540245f43509d9c98f1431020b61d"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-streamed-execution.json": {
+      "bytes": 673,
+      "sha256": "e92d661eb39536c87d82e434cadf65d5c2662db51637b35f9204ea18c77582b2"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/limits-execution.json": {
+      "bytes": 777,
+      "sha256": "504aee29fd17238c9ed10f32c3f0915ac0826442179862b8ecd9aea7afde58f6"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/limits-result.json": {
+      "bytes": 2809,
+      "sha256": "940ff2f3f480b1e3036433ca6c3beff2a3c6d0873bd5d1c3fcd5236dd6f93ea4"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/node-startup-execution.json": {
+      "bytes": 855,
+      "sha256": "021274de0560f195b6e2c1e4fe46caaf0cc95cf06328879a7bbfb16bd71a1437"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/node-startup-output.log": {
+      "bytes": 1798,
+      "sha256": "48a5e1a00079916e51efd0ad102d00f64c49f1f436ee888015095b191eb3f232"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/noninterference-execution.json": {
+      "bytes": 786,
+      "sha256": "efab03662778f5760f7e71785b29124e74067b992b381c344f6ec8cd4abe7230"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/noninterference-result.json": {
+      "bytes": 2818,
+      "sha256": "7a92efec4a5b320420fb5ef7afe6a21730286b2fcab292afe46e692b2f330f42"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/patch-review.json": {
+      "bytes": 926,
+      "sha256": "3eadcc560a61ff945c4234e14b1e579e9de0b2c4e69e180c150e592893e437c9"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/production-execution.json": {
+      "bytes": 781,
+      "sha256": "1d0ac268582bea639dd20f5d6b7c89caf6f089a313163d605a6007793e95cbed"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/production-result.json": {
+      "bytes": 2813,
+      "sha256": "42bc0f51789e0f2c3c4cf9c218ce8e024d3dd785fbe909721e60a432aa8c71b7"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/reused-evidence.json": {
+      "bytes": 992,
+      "sha256": "b14d3dd914726e7d67749e45dd73b37dd12c8827cc005f60c39b21b96204fe41"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/source-provenance.json": {
+      "bytes": 1602,
+      "sha256": "9c6a9b1cba4821d396a27bf304c2d862149ef0954bc48402ba8d902827c10dfd"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/startup-configuration.json": {
+      "bytes": 462,
+      "sha256": "28df812ff0d8d32aa75349f23b52537a1e36609a3e8290a8d00108f3a6fdd2b5"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/structure-execution.json": {
+      "bytes": 678,
+      "sha256": "ffcd50a2d46822b778e3a7d9dff5bf84f932b144f465fc5c07ce25c524e402ec"
+    },
+    "docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/structure-result.json": {
+      "bytes": 561,
+      "sha256": "56deec0e6c3ab39b63a9b15b243f23ac054515f4ec8db6ba38c22f6e23f99638"
+    }
+  },
+  "groups": [
+    "production",
+    "continuations",
+    "challenges",
+    "noninterference",
+    "limits",
+    "baseline-semantics",
+    "imports-streamed",
+    "prior-production",
+    "prior-limits",
+    "prior-noninterference",
+    "structure"
+  ],
+  "baselineComparisons": 96,
+  "rerun": false,
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "qualification": "Exact donor receipts retained, original interpreter/resource qualifications unchanged; not new runtime evidence"
+}

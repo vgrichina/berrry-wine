@@ -1,0 +1,5 @@
+{
+  "incident": "omitted bind exposed fixture undefined property before semantic oracle; expected assertion rejected TypeError",
+  "correction": "capture actual message_begin return tokens independently of bind so omitted-bind challenges reach semantic assertions",
+  "productionSourceChanged": false
+}

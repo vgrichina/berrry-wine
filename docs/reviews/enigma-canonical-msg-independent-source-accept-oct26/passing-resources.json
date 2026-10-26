@@ -1,0 +1,42 @@
+[
+  {
+    "group": "node-startup",
+    "peakSampledRSS": 93609984,
+    "physicalCap": 134217728,
+    "cpu": 0.01,
+    "wall": 0.0688486339058727,
+    "exit": 0
+  },
+  {
+    "group": "production-boundary",
+    "peakSampledRSS": 95899648,
+    "physicalCap": 134217728,
+    "cpu": 0.03,
+    "wall": 0.04966896818950772,
+    "exit": 0
+  },
+  {
+    "group": "continuations",
+    "peakSampledRSS": 127348736,
+    "physicalCap": 134217728,
+    "cpu": 0.08,
+    "wall": 0.08182510104961693,
+    "exit": 0
+  },
+  {
+    "group": "ownership",
+    "peakSampledRSS": 106418176,
+    "physicalCap": 134217728,
+    "cpu": 0.05,
+    "wall": 0.06739648804068565,
+    "exit": 0
+  },
+  {
+    "group": "source-review",
+    "peakSampledRSS": 77131776,
+    "physicalCap": 134217728,
+    "cpu": 0.06,
+    "wall": 0.07747621205635369,
+    "exit": 0
+  }
+]

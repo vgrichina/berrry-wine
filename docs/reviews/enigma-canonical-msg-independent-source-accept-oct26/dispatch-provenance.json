@@ -1,0 +1,41 @@
+{
+  "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "files": [
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113594,
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "bytes": 103298,
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21"
+    },
+    {
+      "path": "src/04-cache.wat",
+      "bytes": 162508,
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+    },
+    {
+      "path": "src/07-decoder.wat",
+      "bytes": 321708,
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 342381,
+      "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e"
+    },
+    {
+      "path": "src/09b2-dispatch-table.generated.wat",
+      "bytes": 1375748,
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+    },
+    {
+      "path": "src/05-alu.wat",
+      "bytes": 256723,
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+    }
+  ],
+  "fixtureOnly": "09b-dispatch byte exact; other source inspected standing readonly"
+}
