@@ -1,0 +1,7 @@
+{
+  "status": "BLOCKED_CONTROL_CONFORMANCE",
+  "additionalControlGap": "Supervisor Git helper applied DATA512MiB only to its Git subprocesses. The unchanged fixture independently spawns git rev-parse/diff through execFileSync; those identity-only Git subprocesses inherited Node unlimited DATA instead of the prescribed Git-specific 512MiB. Their commands did not compile or browse, but this remains a control gap. No attempt to hide the gap or repeat acceptance.",
+  "resourceClarification": "All reported process-group RSS/CPU figures omit detached browser descendants and the supervisor; do not use them as aggregate task peaks. Disk allocation monitoring covered the owned tree, external session/events, positive WAL once and reserves; the installed wrapper also may create/touch desktop MIME bookkeeping outside that tree, which was not inventoried. Final admission is a measured-accounting receipt, not proof of complete control compliance.",
+  "result": "42 unchanged framebuffer observations per WebGL version passed; overall exact-main qualification remains blocked.",
+  "noRuntimeRetry": true
+}

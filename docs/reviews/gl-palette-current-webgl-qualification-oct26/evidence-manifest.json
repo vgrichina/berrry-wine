@@ -42,6 +42,10 @@
       "bytes": 3005,
       "sha256": "baa3152dcac606e90e1b257940c65b21fd55ffb084cece94a35c0738081518a6"
     },
+    "control-addendum.json": {
+      "bytes": 1105,
+      "sha256": "0399568087dc0fdf70a25c6a943c8134710b67e9e25389a01fcdf0afe5f78c84"
+    },
     "coordinator-admission.json": {
       "bytes": 644,
       "sha256": "bffc07ad62462af61f84279fd376e91701f911712dab2f028e783ed0639d376e"
@@ -49,6 +53,14 @@
     "execute.py": {
       "bytes": 3520,
       "sha256": "38cb1665621658abd4de1a18c3355ebb5dee778928bc979c0776b33d4b08d07a"
+    },
+    "initial-publication-admission-final.json": {
+      "bytes": 421,
+      "sha256": "989f9f1c6ef634aa4d1ed0d31c3606d1df949966765df9854828692035107fb9"
+    },
+    "initial-publication-final-receipt.json": {
+      "bytes": 856,
+      "sha256": "e14dbec675ec4369d15d562609d7fcd856e99039ac3fc2c7f333b75d7f882b1b"
     },
     "installed-module-manifest.json": {
       "bytes": 382583,

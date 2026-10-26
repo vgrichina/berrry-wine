@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED_CONTROL_CONFORMANCE_WITH_PASSING_FRAMEBUFFER_ASSERTIONS",
+  "commit": "d896ad0d515f159ef253a2d47f5f86acba3d8cda",
+  "branch": "task/gl-palette-current-webgl-qualification-oct26",
+  "verifiedRemote": "d896ad0d515f159ef253a2d47f5f86acba3d8cda\trefs/heads/task/gl-palette-current-webgl-qualification-oct26",
+  "originalMainRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "snapshotCommit": "0d65e6daf568a2b0104fcaea75801e9fcac6d1ae",
+  "manifestSHA256": "7a96a544d5ae3d07b1d04474ca3d2ccaa9af44a6d913e2af49e2bce3463efa9f",
+  "lifecycle": {
+    "box": null,
+    "state": "No assigned box; no box accessed",
+    "expiry": null,
+    "owner": "coordinator"
+  },
+  "remainingBlockers": [
+    "wrapper external network invocation",
+    "detached browser full-tree RSS/CPU accounting",
+    "physical renderer identity unverified"
+  ]
+}
