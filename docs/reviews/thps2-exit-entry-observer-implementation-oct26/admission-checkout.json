@@ -1,0 +1,66 @@
+{
+  "stage": "checkout",
+  "free": 4029743104,
+  "memAvailable": 3879301120,
+  "clients": [
+    {
+      "pid": 2986272,
+      "rss": 206897152
+    },
+    {
+      "pid": 2986327,
+      "rss": 197021696
+    },
+    {
+      "pid": 2986409,
+      "rss": 194121728
+    },
+    {
+      "pid": 2986649,
+      "rss": 200359936
+    }
+  ],
+  "standingNodes": [
+    {
+      "pid": 265414,
+      "rss": 12017664
+    },
+    {
+      "pid": 265422,
+      "rss": 270983168
+    },
+    {
+      "pid": 271075,
+      "rss": 154812416
+    },
+    {
+      "pid": 2896015,
+      "rss": 510693376
+    },
+    {
+      "pid": 2955986,
+      "rss": 17825792
+    }
+  ],
+  "clientReserve": 1073741824,
+  "nodePhysicalAllowance": 335544320,
+  "floor": 805306368,
+  "owned": 5147,
+  "launcher": 231873,
+  "projectedNewBytes": 41943040,
+  "reserve": 8388608,
+  "taskCap": 67108864,
+  "hostFreeFloor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "No runtime/mount argv exists; conditional guest execution prohibited.",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitChildData": 536870912,
+    "nodeOldspace": 192
+  }
+}

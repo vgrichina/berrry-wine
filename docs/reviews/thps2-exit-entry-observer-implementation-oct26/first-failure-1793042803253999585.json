@@ -1,0 +1,10 @@
+{
+  "args": [
+    "git",
+    "show",
+    "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e:lib/virtual-fs.js"
+  ],
+  "code": 128,
+  "stdout": "",
+  "stderr": "fatal: path 'lib/virtual-fs.js' does not exist in 'd8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e'\n"
+}

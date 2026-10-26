@@ -1,0 +1,74 @@
+{
+  "pins": [
+    {
+      "path": "lib/mem-utils.js",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "bytes": 13470
+    },
+    {
+      "path": "lib/filesystem.js",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+      "bytes": 157994
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+      "bytes": 103298
+    },
+    {
+      "path": "src/09a-handlers.wat",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7",
+      "bytes": 63111
+    },
+    {
+      "path": "src/05-alu.wat",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "bytes": 256723
+    },
+    {
+      "path": "test/run.js",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "bytes": 113843
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+      "bytes": 22458
+    },
+    {
+      "path": "src/09a0-handlers-base.wat",
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+      "bytes": 399740
+    }
+  ],
+  "runner": {
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "bytes": 685960
+  },
+  "diagnostic": {
+    "revision": "cda9672f3b513d5e19ff442795540c0384a9cee4",
+    "sha256": "8b79339cfe3128b9c42b8877d3541c3dc430b1ca0b9ec8f6de907722d5b9d8c9"
+  },
+  "exe": {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe",
+    "sha256": "fe5b66dd0a14bf5f3e5b00aceeeda9e1da165c7274a83a22fd1cb106e03d4b26",
+    "bytes": 1359930,
+    "readonly": true
+  },
+  "mountArgv": []
+}

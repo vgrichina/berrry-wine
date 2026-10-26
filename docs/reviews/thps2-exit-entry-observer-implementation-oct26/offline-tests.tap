@@ -1,0 +1,40 @@
+✔ exact entry copies all 64 raw bytes and the complete binary log before handler mutation (2.353002ms)
+✔ wrong API at selected call (0.477915ms)
+✔ wrong invocation ordinal (0.226585ms)
+✔ worker invocation (0.194756ms)
+✔ pre-CALL ESP (0.179978ms)
+✔ wrong return word (0.178324ms)
+✔ wrong status (0.162295ms)
+✔ wrong live CALL operand (0.193933ms)
+✔ short mapped stack (0.189595ms)
+✔ NULL sentinel mapping (0.214993ms)
+✔ negative mapping (0.689444ms)
+✔ invalid buffer does not allocate from a length-like value (0.214452ms)
+✔ missing log (0.244729ms)
+✔ oversized log (0.207749ms)
+✔ truncated log (0.171171ms)
+✔ provider cannot masquerade as full log (0.174737ms)
+✔ getter never read to enforce cap before materialization (0.660038ms)
+✔ VFS read error (0.245981ms)
+✔ missing register (0.125145ms)
+✔ unrelated APIs never read registers, mappings or VFS (0.119023ms)
+✔ reentrant callbacks latch failure even if the callback catches the error (0.300053ms)
+✔ second exit fails without altering the first observation (0.533781ms)
+✔ reentrant finalization cannot publish an incomplete write as success (0.249328ms)
+✔ guest page slices can have noncontiguous backing; byte 63 is retained (0.194354ms)
+✔ explicit cap accepts exactly-sized and empty resident logs (0.299171ms)
+✔ synchronous output failure latches rejection (0.166401ms)
+✔ real file writer retains exact bytes, and rejects reused invocation directory (5.466151ms)
+✔ identity transform rejects any changed runner and is not idempotent (4.950022ms)
+✔ actual runner entry prefix executes capture before fake handler changes ESP (2.76746ms)
+✔ actual runner prefix rejects wrong API and resolved ordinal alias mismatches (1.908839ms)
+✔ pinned VirtualFS create/write/append exposes the complete logical log, excluding capacity (4.363403ms)
+✔ pinned source places host entry before argument loads/handler, with CALL return already pushed (1.400546ms)
+ℹ tests 32
+ℹ suites 0
+ℹ pass 32
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 147.352159

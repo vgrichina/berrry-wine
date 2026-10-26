@@ -1,0 +1,112 @@
+[
+  {
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "startLine": 3294,
+    "endLine": 3341,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 2554,
+    "sha256": "de088894fb35eb90f66b88a61fbaba36af66f5cd464c61998aacab69b615d508",
+    "text": "  // told to skip the log / log_i32 / log_api_exit host calls outright\n  // (09b-dispatch $api_log_on) -- three host calls per Win32 API, 88M each in\n  // one Heroes III run. The count survives in WAT ($api_calls, apiTotal()).\n  // The list is every reader of an API name or exit below, plus --esp-audit,\n  // which wraps a worker's log. --quiet-api-fast is now an alias of this.\n  apiLogOff = QUIET_API &&\n    (!TRACE_API || TRACE_API_PAUSED) && !TRACE_API_COUNTS && !TRACE_CRITICAL &&\n    !TRACE_INPUT_DISPATCH && !ESP_DELTA && !ESP_AUDIT && !breakApis.length &&\n    // Memory dumps accompany a paused API trace; they must not force its\n    // dispatch logger on before the explicit trace-api control command.\n    // Without --trace-api, memory-only tracing retains its existing behavior.\n    (!TRACE_API_MEM.length || (TRACE_API && TRACE_API_PAUSED));\n  h.log = (ptr, len) => {\n    let t = apiNameCache.get(ptr);\n    if (t === undefined) {\n      const b = new Uint8Array(memory.buffer, ptr, Math.min(len, 256));\n      t = '';\n      for (let i = 0; i < b.length && b[i]; i++) t += String.fromCharCode(b[i]);\n      apiNameCache.set(ptr, t);\n    }\n    // COM ordinal dispatch: 09b-dispatch.wat emits the api_id marker via\n    // host_log_i32 IMMEDIATELY before this log of the '<ord>' placeholder.\n    // Resolve the real method name now so all downstream tracing\n    // (--trace-api filter, --trace-stack, breakpoints, decodeDx, typed\n    // formatting via api_table.json) works against the real name.\n    let comOrdRaw = false;\n    if (t === '<ord>' && pendingComApiId >= 0) {\n      // Ids are array positions (tools/check-api-table.js gates it). A\n      // linear find here was ~28% of CLI CPU in a COM-heavy D3D8 world.\n      const entry = apiTable[pendingComApiId];\n      if (entry && entry.id === pendingComApiId) t = entry.name;\n      comOrdRaw = true;\n      pendingComApiId = -1;\n    }\n    apiCount++;\n    if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);\n\n    if (TRACE_CRITICAL && (t === 'EnterCriticalSection' || t === 'LeaveCriticalSection')) {\n      try {\n        const e = instance.exports;\n        const esp = e.get_esp() >>> 0;\n        const imageBase = e.get_image_base() >>> 0;\n        const dv = new DataView(memory.buffer);\n        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);\n        const cs = dv.getUint32(g2w((esp + 4) >>> 0), true) >>> 0;\n        const state = () => ({\n          lock: dv.getInt32(g2w((cs + 4) >>> 0), true),\n          recursion: dv.getUint32(g2w((cs + 8) >>> 0), true) >>> 0,\n"
+  },
+  {
+    "path": "test/run.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "startLine": 5218,
+    "endLine": 5230,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 515,
+    "sha256": "b641b821fe6367dd40f791b2b67c90f7fbc1eaab644b42d868afe8e2034f214f",
+    "text": "        if (!entry) return null;\n        const f = workerFmtCtx();\n        return f ? fmtApiRet(entry, val, f.ctx) : null;\n      },\n      onCall: (name) => {\n        if (apiCounts) apiCounts.set(name, (apiCounts.get(name) || 0) + 1);\n      },\n      resolveComName: (id) => {\n        const entry = apiTable[id];\n        return entry && entry.id === id ? entry.name : null;\n      },\n      shouldLog: (name) => workerApiShouldLog(\n        { traceApi: TRACE_API, quietApi: QUIET_API, filter: TRACE_API_FILTER }, name),\n"
+  },
+  {
+    "path": "src/05-alu.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+    "startLine": 627,
+    "endLine": 651,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 1557,
+    "sha256": "38c764ca7c8907584ea1478f1e45a6e2ca4c493281ab7ec47bb36677246c5e31",
+    "text": "  (func $th_call_ind (param $op i32)\n    (local $mem_addr i32) (local $target i32)\n    (local.set $mem_addr (call $read_addr))\n    (local.set $target (call $gl32 (local.get $mem_addr)))\n    ;; Check thunk zone (guest-space bounds)\n    (if (thunk-contains (local.get $target))\n      (then\n        (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))\n        (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))\n        (call $win32_dispatch (i32.div_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 8)))\n        ;; If dispatch redirected (steps=0), EIP is already set (e.g. DispatchMessageA\u2192WndProc)\n        (if (global.get $steps) (then (global.set $eip (local.get $op))))\n        (return)))\n    ;; Regular indirect call\n    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))\n    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))\n    (call $cs_push (local.get $op))\n    (global.set $eip (local.get $target))\n    (return_call $branch_end))\n  ;; A 16-bit task must never reach these: a near return there pops IP and\n  ;; rebuilds the address from the CS base, which is what handlers 365 and 366\n  ;; do. Getting here means a block was decoded as 32-bit code and then run by\n  ;; a 16-bit task, and the four bytes it pops as a linear address are two\n  ;; words of somebody's stack \u2014 which reads as a wild jump thousands of\n  ;; instructions from the actual mistake.\n"
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+    "startLine": 1628,
+    "endLine": 1669,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 2688,
+    "sha256": "4487609506f820c1f3de6b83c142d3db65e3d83232a41763d182923d34fdc5ce",
+    "text": "    ;; \u2500\u2500 Normal API dispatch \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n    ;; Resolved-ordinal import: thunk+0 holds (0x80000000 | ordinal), not an\n    ;; IMAGE_IMPORT_BY_NAME RVA. host_resolve_ordinal found a real api_id, so\n    ;; we have a handler to run \u2014 just substitute a placeholder name for\n    ;; logging (and for any handler that prints name_ptr).\n    (global.set $api_calls (i32.add (global.get $api_calls) (i32.const 1)))\n    (if (i32.and (local.get $name_rva) (i32.const 0x80000000))\n      (then\n        (local.set $name_ptr (i32.const 0x2E0))\n        ;; Emit COM-marker BEFORE the name so JS can substitute the real\n        ;; method name in $lastApiName before --trace-api filtering and\n        ;; --trace-stack walking happen on the entry log.\n        (if (global.get $api_log_on)\n          (then\n            (call $host_log_i32 (i32.or (i32.const 0xC0DE0000) (local.get $api_id)))\n            (call $host_log (local.get $name_ptr) (i32.const 5)))))\n      (else\n        ;; Through $g2w: a DLL rebased into a sparse reservation keeps its\n        ;; hint/name table outside the direct window.\n        (local.set $name_ptr (call $g2w (i32.add (global.get $image_base)\n          (i32.add (local.get $name_rva) (i32.const 2)))))\n        (if (global.get $api_log_on)\n          (then (call $host_log (local.get $name_ptr) (call $strlen (local.get $name_ptr)))))))\n    ;; Load args from guest stack\n    (local.set $arg0 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))\n    (local.set $arg1 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))\n    (local.set $arg2 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))\n    (local.set $arg3 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))\n    (local.set $arg4 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))\n\n    ;; Win32 APIs use stdcall/cdecl ABIs and must preserve the x86 nonvolatile\n    ;; registers even when a handler recursively dispatches window messages.\n    (local.set $saved_ebx (i32.load offset=12 (global.get $reg_base)))\n    (local.set $saved_esi (i32.load offset=24 (global.get $reg_base)))\n    (local.set $saved_edi (i32.load offset=28 (global.get $reg_base)))\n    (local.set $saved_ebp (i32.load offset=20 (global.get $reg_base)))\n\n    ;; Hot message pumps exercise PeekMessage often enough that a direct path\n    ;; avoids large br_table edge cases and keeps idle loops from corrupting ESP.\n    (if (i32.eq (local.get $api_id) (global.get $API_ID_PeekMessageA))\n      (then\n"
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+    "startLine": 100,
+    "endLine": 137,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 2361,
+    "sha256": "71874b742d787617cd6b4f72e33cdb75a40cb9c2e3e7262bde86c5f15927c94b",
+    "text": "  (func $win32_dispatch (param $thunk_idx i32)\n    (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)\n    (local $resource_pin i32) (local $resource_base i32) (local $resource_rva i32)\n    (local $resource_size i32) (local $resource_stride i32)\n    ;; Reject an unauthenticated CACA000A return before resource scope, thunk\n    ;; hooks, diagnostics or wait bookkeeping can mutate the interrupted state.\n    (if (i32.eq (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA000A))\n      (then (drop (call $mm_callback_check)))\n      (else\n        (if (i32.eq (i32.load (call $thunk_metadata_addr (local.get $thunk_idx))) (i32.const 0xCACA003B))\n          (then (call $mm_timer_thread_check)))))\n    ;; Cached/direct calls must honor a hook installed since decoding.\n    (if (call $thunk_patch_changed (local.get $thunk_idx)) (then\n      (global.set $eip (i32.add (global.get $thunk_guest_base) (i32.shl (local.get $thunk_idx) (i32.const 3))))\n      (global.set $handler_set_eip (i32.const 1))\n      (global.set $steps (i32.const 0)) (return)))\n    (local.set $return_eip (call $gl32 (i32.load offset=16 (global.get $reg_base))))\n    (local.set $entry_eip (global.get $eip))\n    (local.set $resource_pins (global.get $rsrc_api_pins))\n    (local.set $resource_pin (global.get $rsrc_ctx_dll_pin))\n    (local.set $resource_base (global.get $rsrc_ctx_base))\n    (local.set $resource_rva (global.get $rsrc_ctx_rva))\n    (local.set $resource_size (global.get $rsrc_last_size))\n    (local.set $resource_stride (global.get $rsrc_name_char_stride))\n    (global.set $rsrc_ctx_dll_pin (i32.const 0))\n    (global.set $rsrc_ctx_base (i32.const 0))\n    (global.set $rsrc_ctx_rva (i32.const 0))\n    (global.set $rsrc_api_pins (i64.const 0))\n    (global.set $rsrc_api_scope (i32.add (global.get $rsrc_api_scope) (i32.const 1)))\n    (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))\n    (call $win32_dispatch_inner (local.get $thunk_idx))\n    (call $pop_rsrc_ctx)\n    (call $rsrc_release_api_pins)\n    (global.set $rsrc_api_pins (local.get $resource_pins))\n    (global.set $rsrc_ctx_dll_pin (local.get $resource_pin))\n    (global.set $rsrc_ctx_base (local.get $resource_base))\n    (global.set $rsrc_ctx_rva (local.get $resource_rva))\n    (global.set $rsrc_last_size (local.get $resource_size))\n"
+  },
+  {
+    "path": "src/09a0-handlers-base.wat",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d",
+    "startLine": 6,
+    "endLine": 30,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 1625,
+    "sha256": "5b8fa061522d8dfd30693809b60aefa9e7f0daa0f49afde74ad6c7e2b651be15",
+    "text": "  (func $handle_ExitProcess (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))\n    (call $host_exit (local.get $arg0)) (global.set $eip (i32.const 0)) (global.set $steps (i32.const 0)) (return)\n  )\n\n  ;; A module stem is followed either by nothing or by the conventional\n  ;; \".dll\" suffix \u2014 GetModuleHandle callers write it both ways.\n  (func $guest_name_tail_is_dll (param $p i32) (result i32)\n    (local $c i32)\n    (local.set $c (call $gl8 (local.get $p)))\n    (if (i32.eqz (local.get $c)) (then (return (i32.const 1))))\n    (if (i32.ne (local.get $c) (i32.const 0x2e)) (then (return (i32.const 0)))) ;; .\n    (if (i32.ne (call $tolower (call $gl8 (i32.add (local.get $p) (i32.const 1))))\n                (i32.const 0x64)) (then (return (i32.const 0)))) ;; d\n    (if (i32.ne (call $tolower (call $gl8 (i32.add (local.get $p) (i32.const 2))))\n                (i32.const 0x6c)) (then (return (i32.const 0)))) ;; l\n    (if (i32.ne (call $tolower (call $gl8 (i32.add (local.get $p) (i32.const 3))))\n                (i32.const 0x6c)) (then (return (i32.const 0)))) ;; l\n    (i32.eqz (call $gl8 (i32.add (local.get $p) (i32.const 4))))\n  )\n\n  ;; True when the whole name ends in \".dll\". Every module we dispatch\n  ;; statically is a .dll; a LoadLibrary of some other extension (.ax, .ocx,\n  ;; .drv, .asi) can only be satisfied by a real file, so when the VFS does not\n  ;; have one the answer is NULL rather than a synthetic handle. Warcraft III\n"
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "startLine": 136,
+    "endLine": 156,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 794,
+    "sha256": "63ab1865fc22da539bc417c3189317cb86a5bb6f83780455eddbd65d8b199e40",
+    "text": "function g2w(guestAddr, imageBase, memory) {\n  const addr = guestAddr >>> 0;\n  const wa = (addr - (imageBase >>> 0) + GUEST_BASE) >>> 0;\n  if (wa < DIRECT_GUEST_WINDOW) return wa;\n  // Same order as WAT's $g2w: the DIB arena is tested only after the direct\n  // window misses, and before the sparse packed-PTE lookup.\n  const dibOff = (addr - DIB_GUEST_BASE) >>> 0;\n  if (dibOff < DIB_GUEST_CAPACITY) return (DIB_BACKING_BASE + dibOff) >>> 0;\n  const pages = guestPageView(memoryBufferOf(memory));\n  if (pages) {\n    const pte = loadGuestPte(pages, addr);\n    if (pte & GUEST_PTE_PRESENT) {\n      return ((pte & GUEST_PTE_BACKING_MASK) | (addr & 0xFFF)) >>> 0;\n    }\n    return NULL_SENTINEL;\n  }\n  return wa;\n}\n\n/**\n * Resolve a guest pointer through an instance when possible, or through the\n"
+  },
+  {
+    "path": "lib/filesystem.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "startLine": 287,
+    "endLine": 295,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 643,
+    "sha256": "759bfb815800136f3e31b53eae77b8ae4b43b259f75215357d0c006edefc0228",
+    "text": "class VirtualFS {\n  constructor() {\n    this.files = new Map();    // normalized path \u2192 { data: Uint8Array, attrs: number }\n    this.dirs = new Set();     // normalized paths of directories\n    this.handles = new VfsHandleMap();  // handle \u2192 { path, pos, access, data (ref to files entry) }\n    this._fileIdentity = { ids: new WeakMap(), next: 1 }; // filesystem-entry IDs, not handle IDs\n    this.findHandles = new Map(); // handle \u2192 { pattern, results[], index }\n    this.changeNotifications = new Map(); // waitable handle \u2192 directory watch\n    this.readOnlyDrives = new Set(); // lower-case drive letters backed by immutable media\n"
+  },
+  {
+    "path": "lib/filesystem.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "startLine": 831,
+    "endLine": 874,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 2023,
+    "sha256": "db1d7856b47bd73b201c234ea2c780d287c17255424767c8c128ded41d9d61fa",
+    "text": "  writeFile(handle, data, nToWrite) {\n    handle = handle >>> 0;\n    const fh = this.getOpenFile(handle);\n    const accessError = fileDataAccessError(fh, true);\n    if (accessError) return { ok: false, bytesWritten: 0, error: accessError };\n    if (this._isReadOnlyPath(fh.path)) return { ok: false, bytesWritten: 0, error: 19 }; // ERROR_WRITE_PROTECT\n    if (!nToWrite) return { ok: true, bytesWritten: 0 };\n    let entry = this.fileEntry(fh);\n    if (!entry) {\n      entry = createFileEntry(new Uint8Array(0), 0x80);\n      this.files.set(fh.path, entry);\n    }\n    const oldSize = entrySize(entry);\n    // FILE_APPEND_DATA alone permits extending, not overwriting existing data.\n    const writePos = (!(fh.access & FILE_WRITE_ACCESS) || (fh.crtOpenFlags & 8)) ? oldSize : fh.pos;\n    const lockError = this.fileLockError(fh, writePos, nToWrite);\n    if (lockError) return { ok: false, bytesWritten: 0, error: lockError };\n    ensureFileTimes(entry);\n    fh.pos = writePos;\n    const newEnd = fh.pos + nToWrite;\n    let backing = entry._capacityData || entry.data;\n    if (newEnd > backing.length) {\n      // Grow geometrically. Archive decompressors write thousands of small\n      // chunks; reallocating exactly to newEnd on each call is quadratic.\n      let capacity = Math.max(1024, backing.length || 1);\n      while (capacity < newEnd) capacity = Math.max(capacity * 2, newEnd);\n      const grown = new Uint8Array(capacity);\n      grown.set(entry.data);\n      backing = grown;\n    }\n    if (fh.pos > oldSize) backing.fill(0, oldSize, fh.pos);\n    backing.set(data.subarray(0, nToWrite), fh.pos);\n    const logicalSize = Math.max(oldSize, newEnd);\n    entry._capacityData = backing;\n    entry.data = backing.subarray(0, logicalSize);\n    fh.pos += nToWrite;\n    if (nToWrite) {\n      entry.lastWriteTime = currentFileTime();\n      this._notifyChange(fh.path, FILE_NOTIFY_CHANGE_LAST_WRITE |\n        (logicalSize !== oldSize ? FILE_NOTIFY_CHANGE_SIZE : 0));\n    }\n    return { ok: true, bytesWritten: nToWrite };\n  }\n\n"
+  },
+  {
+    "path": "lib/worker-imports.js",
+    "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "sourceSHA256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+    "startLine": 369,
+    "endLine": 411,
+    "recipe": "UTF-8 splitlines(keepends=True); concatenate the inclusive line range in order",
+    "bytes": 1955,
+    "sha256": "ef71f2b136b14d60d88bc116f9ea8a3c3d20134bd782e055fdec56e0ab3e7a0a",
+    "text": "function makeWorkerApiLogger(opts) {\n  const getBuffer = opts.getBuffer;\n  const shouldLog = opts.shouldLog || (() => false);\n  const emit = opts.emit;\n  const onCall = opts.onCall || null;\n  const formatValue = opts.formatValue || ((v) => `0x${(v >>> 0).toString(16)}`);\n  const formatCall = opts.formatCall || null;\n  const formatReturn = opts.formatReturn || null;\n  const tid = opts.threadId | 0;\n  // COM methods dispatch by api id: 09b-dispatch.wat sends a 0xC0DE0000|id\n  // marker through log_i32 and then logs the placeholder name '<ord>'. The\n  // main-thread trace resolves it; without the same step here a worker's\n  // IDirectSoundBuffer_Lock is '<ord>' and no --trace-api=NAMES filter can\n  // ever match it. `resolveComName(id)` returns the api_table name or null.\n  const resolveComName = opts.resolveComName || null;\n  let visible = false;\n  let pending = '';\n  let pendingComId = -1;\n\n  return {\n    log: (ptr, len) => {\n      const bytes = new Uint8Array(getBuffer(), ptr, Math.min(len, 256));\n      let name = '';\n      for (let i = 0; i < bytes.length && bytes[i]; i++) name += String.fromCharCode(bytes[i]);\n      if (name === '<ord>' && pendingComId >= 0 && resolveComName) {\n        const resolved = resolveComName(pendingComId);\n        if (resolved) name = resolved;\n      }\n      pendingComId = -1;\n      if (onCall) onCall(name);\n      visible = !!shouldLog(name);\n      if (!visible) { pending = ''; return; }\n      pending = name;\n      let header = null;\n      if (formatCall) { try { header = formatCall(name); } catch (_) { header = null; } }\n      emit(`[API T${tid}] ${header || name}`);\n    },\n    log_i32: (val) => {\n      if (((val >>> 0) >>> 16) === 0xC0DE) { pendingComId = (val >>> 0) & 0xFFFF; return; }\n      if (!visible) return;\n      let decoded = null;\n      if (formatReturn) { try { decoded = formatReturn(pending, val); } catch (_) { decoded = null; } }\n      emit(`  => ${decoded || formatValue(val)}`);\n"
+  }
+]

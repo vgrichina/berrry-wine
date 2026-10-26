@@ -1,0 +1,74 @@
+{
+  "stage": "prepublication",
+  "free": 3957067776,
+  "memAvailable": 3875975168,
+  "clients": [
+    {
+      "pid": 2986649,
+      "rss": 120446976
+    },
+    {
+      "pid": 3001898,
+      "rss": 188723200
+    },
+    {
+      "pid": 3001904,
+      "rss": 192630784
+    }
+  ],
+  "standingNodes": [
+    {
+      "pid": 265414,
+      "rss": 12058624
+    },
+    {
+      "pid": 265422,
+      "rss": 294359040
+    },
+    {
+      "pid": 271075,
+      "rss": 268951552
+    },
+    {
+      "pid": 2896015,
+      "rss": 501968896
+    },
+    {
+      "pid": 2955986,
+      "rss": 17842176
+    }
+  ],
+  "clientReserve": 1073741824,
+  "nodePhysicalAllowance": 335544320,
+  "aggregateNodeAllowance": 1342177280,
+  "floor": 805306368,
+  "owned": 6017774,
+  "allocated": 6615040,
+  "launcher": 377483,
+  "sessionBytes": 1197486,
+  "walWholeCurrentConservativeUpperBound": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1367872,
+    "/home/user/.codex/state_5.sqlite-wal": 4387832,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4235392
+  },
+  "projectedTaskAllocation": 51355985,
+  "projectedNewBytes": 8388608,
+  "reserve": 8388608,
+  "taskCap": 67108864,
+  "hostFreeFloor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "No runtime/mount argv exists; conditional guest execution prohibited.",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitChildData": 536870912,
+    "nodeOldspace": 192
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "base": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "sourceHashes": {
+    "tools/thps2-exit-entry-observer.cjs": "79e4c4b82911a15963fc3def50f070d97779492fcb656e6544dddec17128dbc6",
+    "test/diagnostics/thps2-exit-entry-observer-implementation-oct26/observer.test.cjs": "90e8557037dff5a1c5c8fe7ef395ceb0ffe7c8be4a9bd47008552d76d81f667a"
+  },
+  "pinnedInputHashes": {
+    "pins": [
+      {
+        "path": "lib/mem-utils.js",
+        "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+        "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+        "bytes": 13470
+      },
+      {
+        "path": "lib/filesystem.js",
+        "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+        "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+        "bytes": 157994
+      },
+      {
+        "path": "src/06b-core-handlers.wat",
+        "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+        "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+        "bytes": 103298
+      },
+      {
+        "path": "src/09a-handlers.wat",
+        "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+        "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7",
+        "bytes": 63111
+      },
+      {
+        "path": "src/05-alu.wat",
+        "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+        "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+        "bytes": 256723
+      }
+    ],
+    "runner": {
+      "revision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960
+    },
+    "diagnostic": {
+      "revision": "cda9672f3b513d5e19ff442795540c0384a9cee4",
+      "sha256": "8b79339cfe3128b9c42b8877d3541c3dc430b1ca0b9ec8f6de907722d5b9d8c9"
+    },
+    "exe": {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe",
+      "sha256": "fe5b66dd0a14bf5f3e5b00aceeeda9e1da165c7274a83a22fd1cb106e03d4b26",
+      "bytes": 1359930,
+      "readonly": true
+    },
+    "mountArgv": []
+  },
+  "testedTree": "ec90068232fa0c88ccd9d7694e0e541b1f45027c",
+  "results": {
+    "nodeStartup": "PASS",
+    "transformedRunnerSyntax": "PASS",
+    "offlineTests": "\u2714 exact entry copies all 64 raw bytes and the complete binary log before handler mutation (2.353002ms)\n\u2714 wrong API at selected call (0.477915ms)\n\u2714 wrong invocation ordinal (0.226585ms)\n\u2714 worker invocation (0.194756ms)\n\u2714 pre-CALL ESP (0.179978ms)\n\u2714 wrong return word (0.178324ms)\n\u2714 wrong status (0.162295ms)\n\u2714 wrong live CALL operand (0.193933ms)\n\u2714 short mapped stack (0.189595ms)\n\u2714 NULL sentinel mapping (0.214993ms)\n\u2714 negative mapping (0.689444ms)\n\u2714 invalid buffer does not allocate from a length-like value (0.214452ms)\n\u2714 missing log (0.244729ms)\n\u2714 oversized log (0.207749ms)\n\u2714 truncated log (0.171171ms)\n\u2714 provider cannot masquerade as full log (0.174737ms)\n\u2714 getter never read to enforce cap before materialization (0.660038ms)\n\u2714 VFS read error (0.245981ms)\n\u2714 missing register (0.125145ms)\n\u2714 unrelated APIs never read registers, mappings or VFS (0.119023ms)\n\u2714 reentrant callbacks latch failure even if the callback catches the error (0.300053ms)\n\u2714 second exit fails without altering the first observation (0.533781ms)\n\u2714 reentrant finalization cannot publish an incomplete write as success (0.249328ms)\n\u2714 guest page slices can have noncontiguous backing; byte 63 is retained (0.194354ms)\n\u2714 explicit cap accepts exactly-sized and empty resident logs (0.299171ms)\n\u2714 synchronous output failure latches rejection (0.166401ms)\n\u2714 real file writer retains exact bytes, and rejects reused invocation directory (5.466151ms)\n\u2714 identity transform rejects any changed runner and is not idempotent (4.950022ms)\n\u2714 actual runner entry prefix executes capture before fake handler changes ESP (2.76746ms)\n\u2714 actual runner prefix rejects wrong API and resolved ordinal alias mismatches (1.908839ms)\n\u2714 pinned VirtualFS create/write/append exposes the complete logical log, excluding capacity (4.363403ms)\n\u2714 pinned source places host entry before argument loads/handler, with CALL return already pushed (1.400546ms)\n\u2139 tests 32\n\u2139 suites 0\n\u2139 pass 32\n\u2139 fail 0\n\u2139 cancelled 0\n\u2139 skipped 0\n\u2139 todo 0\n\u2139 duration_ms 147.352159\n"
+  },
+  "remaining": [
+    "review",
+    "documentation",
+    "task branch commit/push exact remote verification"
+  ],
+  "runtime": "NOT RUN; no box assigned",
+  "incidentsFile": "warnings.log",
+  "testedTreeMeaning": "base a18735d3 plus exact tested observer and test source; evidence/wiring recipe not yet added",
+  "recipe": {
+    "sha256": "e1a41f4265c752c7683d8cf74c07985127219b33fdfa8051cf2645482118f2f0",
+    "result": "PASS",
+    "evidence": "wiring-test.json",
+    "stagedRunnerSyntax": "PASS",
+    "runtime": false
+  }
+}

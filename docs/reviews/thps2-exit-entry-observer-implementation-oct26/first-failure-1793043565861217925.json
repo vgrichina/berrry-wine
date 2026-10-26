@@ -1,0 +1,11 @@
+{
+  "args": [
+    "git",
+    "rm",
+    "--sparse",
+    "docs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings.log"
+  ],
+  "code": 1,
+  "stdout": "",
+  "stderr": "error: the following file has changes staged in the index:\n    docs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings.log\n(use --cached to keep the file, or -f to force removal)\n"
+}

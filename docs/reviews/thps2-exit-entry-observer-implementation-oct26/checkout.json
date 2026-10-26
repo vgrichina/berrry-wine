@@ -1,0 +1,15 @@
+{
+  "revision": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "stores": [
+    "/tmp/corpus-complete-contract-independent-publication-oct26/repo/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/tmp/thps2-startup-exit-cause-fixture-oct26/repo/.git/objects",
+    "/tmp/thps2-installed-demo-gameplay-api-oct26/repo/.git/objects"
+  ],
+  "sparse": [
+    "/tools/thps2-exit-entry-observer.cjs",
+    "/test/diagnostics/thps2-exit-entry-observer-implementation-oct26/",
+    "/docs/reviews/thps2-exit-entry-observer-implementation-oct26/"
+  ],
+  "rootRefs": "reused coordinator root-ref-digest.json"
+}

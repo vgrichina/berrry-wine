@@ -1,0 +1,12 @@
+{
+  "args": [
+    "git",
+    "diff",
+    "--name-only",
+    "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+    "7681b752d7c3fe565a49e92832c3d9825bec7ed9"
+  ],
+  "code": 128,
+  "stdout": "",
+  "stderr": "fatal: bad object 7681b752d7c3fe565a49e92832c3d9825bec7ed9\n"
+}

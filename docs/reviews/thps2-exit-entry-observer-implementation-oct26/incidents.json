@@ -1,0 +1,15 @@
+{
+  "resolved": [
+    "Initial combined source/manifest inspection exceeded excerpt target; no full ref capture. Later retained bounded local files and excerpts <=8192.",
+    "Guessed lib/virtual-fs.js absent at pinned revision: preserved Git error, corrected to lib/filesystem.js.",
+    "First test group 29/30: source-order test sought th_call_ind in core instead of alu. Preserved first result, corrected pinned file. Subsequent utility guards required affected full group: 32/32 PASS.",
+    "Remote main moved to 7681b752; object absent in initial donor set. Preserved bad-object diagnostic, added immutable dashboard donor object-store alternate. Read-only diff found no owned overlap.",
+    "Resource receipts initially omitted separate session/WAL measurements. Corrected using actual session size and entire current shared WAL set charged once as a conservative upper bound; projected total including future growth and 8MiB reserve remains <64MiB.",
+    "Packaging diff-check rejected Git hint trailing whitespace in exact warning log; original bytes preserved as base64 in warnings-preserved.json, with first failure receipt. No source/test change or acceptance repeat."
+  ],
+  "denials": [],
+  "remaining": [
+    "Independent review/integration; main not owned.",
+    "Separately authorized authentic guest capture and caller/prerequisite interpretation."
+  ]
+}

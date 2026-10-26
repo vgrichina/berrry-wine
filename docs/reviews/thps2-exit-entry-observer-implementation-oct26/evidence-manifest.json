@@ -1,0 +1,159 @@
+{
+  "base": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "testedSourceTree": "ec90068232fa0c88ccd9d7694e0e541b1f45027c",
+  "sourceHashes": {
+    "tools/thps2-exit-entry-observer.cjs": "79e4c4b82911a15963fc3def50f070d97779492fcb656e6544dddec17128dbc6",
+    "test/diagnostics/thps2-exit-entry-observer-implementation-oct26/observer.test.cjs": "90e8557037dff5a1c5c8fe7ef395ceb0ffe7c8be4a9bd47008552d76d81f667a"
+  },
+  "testResult": "32/32 PASS; transformed runner syntax PASS; offline staging recipe PASS",
+  "guestExecution": false,
+  "mainPublication": false,
+  "box": {
+    "id": null,
+    "state": null,
+    "expiry": null,
+    "owner": "coordinator"
+  },
+  "payloads": [
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/README.md",
+      "bytes": 11297,
+      "sha256": "afbe18b3bf8d512249aa187077fcd4be4720e24983ddefc97c3e70529fe4d12d"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/admission-checkout.json",
+      "bytes": 1348,
+      "sha256": "c4f98967043a03cd81b26f70cb895b574ca1a12aafdd831c418f57f8c132c6f6"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/admission-node-acceptance.json",
+      "bytes": 1340,
+      "sha256": "1f311014700a6b2cf9beb60b652c77b1a71aaa51a2ec4ff8da02324d98afbdd7"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/admission-prepackage.json",
+      "bytes": 1739,
+      "sha256": "0b6a337de12f5b4bef4aca4562d943e534e42e5fca7026418ede61c0b059252c"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/admission-prepublication.json",
+      "bytes": 1801,
+      "sha256": "04f69f6dee4e4f9325280a4194d8e8200abc047c18c6f11e8fcf9f6cf6a66118"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/admission-wiring-recipe.json",
+      "bytes": 1338,
+      "sha256": "fea4d2bb4ad48f865c0221599a55844a7156c4a0defe4bb664fe6bd4b9647821"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/checkout.json",
+      "bytes": 609,
+      "sha256": "9567ec49224b79a3bd53c9c58e8bd2d2c39dd664b854e50b5fed54ea46d9f58a"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/checkpoint.json",
+      "bytes": 5104,
+      "sha256": "2b2426676017797b1fdd3dcaae4008aaab1fbe369a065e844f5aa4513863a172"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793042803253999585.json",
+      "bytes": 249,
+      "sha256": "0686d3c288a4c0ab2a9aa07c1f44996cfa4c322fc3f79797fdce8bbfffdacf1a"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793043117565051809.json",
+      "bytes": 3430,
+      "sha256": "4f83fd535238cb3035cde5440c462ebad576ba3d2401d7d2c7cab28a193b8990"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793043302601360867.json",
+      "bytes": 264,
+      "sha256": "f11fb25523c9efd896d633551fbaeb311864103deb641c9e9dd69b168bd843f6"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793043539377955926.json",
+      "bytes": 439,
+      "sha256": "6f51e1d0efb943c2844c65376d55a924d0d42f9288fa6a7b74cc5c4cfec3d77c"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793043565861217925.json",
+      "bytes": 376,
+      "sha256": "be56b236fabf4e8246dd8cf142c2a45aa5e46f2dc43ae56db8ed0f0c8643d9d6"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/first-failure-1793043565979847063.json",
+      "bytes": 439,
+      "sha256": "6f51e1d0efb943c2844c65376d55a924d0d42f9288fa6a7b74cc5c4cfec3d77c"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/incidents.json",
+      "bytes": 1372,
+      "sha256": "a90a8c5949fc00dcd47eab441695f751a921ecac6395e84b117daa86f4bdcd6a"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/initial-incidents.json",
+      "bytes": 184,
+      "sha256": "0ab9ec1a3bc71ff313ae1acfef85a9d693c451db953febe2b7da8a2da5a67567"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/initial-root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/node-startup.json",
+      "bytes": 3282,
+      "sha256": "6e65bf710313931658529ee07ad6eaa2d99ed3c63ea12b4e3e9ca529d65efaf2"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/offline-tests.tap",
+      "bytes": 2079,
+      "sha256": "cfa47f2ca1bbeb1c4e6adc80ab590ee9c2a3c97484aaed739bc262463a6bebc7"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/remote-main-reconciliation.json",
+      "bytes": 26892,
+      "sha256": "4a9df2615b5dd5a7296ab961d8c2f34c6da25a41de131651ff8c509bdf1f67b9"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/source-excerpts.json",
+      "bytes": 21614,
+      "sha256": "41432dd934ae98544ef5dd82c05f05e629f7ea01f8973dd8a646f4dbf3946142"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/source-pins.json",
+      "bytes": 2574,
+      "sha256": "d2cc2b4a80fb7790f34e2dae796f636f7132e7d8d4799a27153f59ade50f1409"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/transform.json",
+      "bytes": 371,
+      "sha256": "0a74c3a17afe18827c02e30022ed6c8ae933059b75507819c9204ba2cc2346a5"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings-preserved.json",
+      "bytes": 1361,
+      "sha256": "421f412f14b91dcd00adceaccbde8b0787c61a17e49b49c0c0fe9cb9bafccd80"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/wire-runner.cjs",
+      "bytes": 1549,
+      "sha256": "e1a41f4265c752c7683d8cf74c07985127219b33fdfa8051cf2645482118f2f0"
+    },
+    {
+      "path": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/wiring-test.json",
+      "bytes": 576,
+      "sha256": "7e892b4280ca7953f9c4515205eb39cb1e4642663a4fb79da366fcd6b11d0150"
+    },
+    {
+      "path": "test/diagnostics/thps2-exit-entry-observer-implementation-oct26/observer.test.cjs",
+      "bytes": 13034,
+      "sha256": "90e8557037dff5a1c5c8fe7ef395ceb0ffe7c8be4a9bd47008552d76d81f667a"
+    },
+    {
+      "path": "tools/thps2-exit-entry-observer.cjs",
+      "bytes": 9487,
+      "sha256": "79e4c4b82911a15963fc3def50f070d97779492fcb656e6544dddec17128dbc6"
+    }
+  ]
+}

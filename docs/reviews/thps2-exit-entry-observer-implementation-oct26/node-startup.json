@@ -1,0 +1,85 @@
+{
+  "startup": {
+    "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "execArgv": [
+      "--max-old-space-size=192",
+      "-e",
+      "const fs=require('fs'); console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,version:process.version,nodeOptions:process.env.NODE_OPTIONS??null,limits:fs.readFileSync('/proc/self/limits','utf8')}))"
+    ],
+    "version": "v24.18.1",
+    "nodeOptions": null,
+    "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+  },
+  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "nodeBytes": 123656816,
+  "environmentSHA256": "290924501ad9fdf284d75bcd5b0a2d34e5aa4e8aeebc2a8171b614ee69fff02f",
+  "environmentKeys": [
+    "AGENT_ID",
+    "ASCII_API_URL",
+    "ASCII_TOKEN",
+    "CODEX_APPLY_PATCH_PRESERVE_LINE_ENDINGS",
+    "CODEX_CI",
+    "CODEX_SESSION_ID",
+    "CODEX_THREAD_ID",
+    "CODEX_TOOL_CALL_ID",
+    "CODEX_VERSION",
+    "COLORTERM",
+    "DBUS_SESSION_BUS_ADDRESS",
+    "DISPLAY",
+    "DOTNET_BUNDLE_EXTRACT_BASE_DIR",
+    "GH_PAGER",
+    "GIT_PAGER",
+    "GIT_SSH_COMMAND",
+    "HOME",
+    "LANG",
+    "LANGUAGE",
+    "LC_ALL",
+    "LC_CTYPE",
+    "LOGNAME",
+    "NO_COLOR",
+    "NVM_DIR",
+    "OLDPWD",
+    "PAGER",
+    "PATH",
+    "PRODUCT_MODE",
+    "PWD",
+    "RUSTUP_HOME",
+    "SHELL",
+    "SHLVL",
+    "SSH_CLIENT",
+    "SSH_CONNECTION",
+    "TERM",
+    "TERM_PROGRAM",
+    "TERM_PROGRAM_VERSION",
+    "THPS2_PINNED_ALU",
+    "THPS2_PINNED_DISPATCH",
+    "THPS2_PINNED_RUNNER",
+    "THPS2_PINNED_VFS",
+    "THPS2_TEST_TMP",
+    "TMUX",
+    "TMUX_PANE",
+    "USER",
+    "XAUTHORITY",
+    "XDG_DATA_DIRS",
+    "XDG_RUNTIME_DIR",
+    "XDG_SESSION_CLASS",
+    "XDG_SESSION_ID",
+    "XDG_SESSION_TYPE",
+    "_"
+  ],
+  "supervisorLimits": {
+    "data": [
+      -1,
+      -1
+    ],
+    "asLimit": [
+      -1,
+      -1
+    ]
+  },
+  "argvCommon": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=192"
+  ],
+  "result": "PASS"
+}

@@ -1,0 +1,11 @@
+{
+  "args": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "code": 2,
+  "stdout": "docs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings.log:4: trailing whitespace.\n+hint: \ndocs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings.log:6: trailing whitespace.\n+hint: \ndocs/reviews/thps2-exit-entry-observer-implementation-oct26/warnings.log:9: trailing whitespace.\n+hint: \n",
+  "stderr": ""
+}
