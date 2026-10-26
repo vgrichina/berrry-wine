@@ -1,0 +1,141 @@
+{
+  "label": "prepublication",
+  "at": 1793053443.585969,
+  "charges": {
+    "local": 1449984,
+    "session": 811008,
+    "events": 536576,
+    "dispatch": 8192,
+    "positiveWALOnce": 0,
+    "future": 25165824,
+    "reserve": 8388608,
+    "publication": 8388608
+  },
+  "total": 44748800,
+  "allocation": 100663296,
+  "memAvailable": 3657355264,
+  "requiredMemory": 2214592512,
+  "clients": [
+    {
+      "pid": 3225613,
+      "rss": 194535424,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-readback-measured-client-accept-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3225901,
+      "rss": 192679936,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-measured-client-accept-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3226043,
+      "rss": 194547712,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-msg-boundary-measured-client-implementation-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3226183,
+      "rss": 192819200,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-transient-accounting-measured-client-repair-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3228174,
+      "rss": 192225280,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-controller-acceptance-capture-reserve-repair-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    }
+  ],
+  "unlaunchedClients": 0,
+  "hostFree": 3485995008,
+  "remainingPermittedGrowth": 466956288,
+  "projectedFree": 3019038720,
+  "diskFloor": 2982150144,
+  "pass": true
+}

@@ -1,0 +1,26 @@
+{
+  "tools/boat-capture-readback.py": {
+    "bytes": 10357,
+    "sha256": "d1402b8a3090067cdc3528fd5fb593c87b6bee7f9d6f8935f1ee90c3d6bbf0cd"
+  },
+  "test/test-boat-capture-readback.py": {
+    "bytes": 17315,
+    "sha256": "5ddc1faa5cd6fd9c7fb3a91d70a67d307a23aa6c07bb040619f01dbae0cd1197"
+  },
+  "test/fixtures/ricochet-serial-controller/work.py": {
+    "bytes": 1282,
+    "sha256": "d4729c96cb6e5451070e128f78cea9368833386ac47d60be1e44c36e37a3afce"
+  },
+  "test/fixtures/ricochet-serial-controller/read.py": {
+    "bytes": 1080,
+    "sha256": "1979202afd4833abf0a3f00db9692a9b597620fb5bef17941bda96395083b2ae"
+  },
+  "test/fixtures/ricochet-serial-controller/later.png": {
+    "bytes": 401056,
+    "sha256": "9e6b81e080cfa6476fdd76ef4093217b43567e37f9d9f7fcd69cc021d1541d88"
+  },
+  "test/fixtures/ricochet-serial-controller/serial.py": {
+    "bytes": 2781,
+    "sha256": "c499348b02f0fe5997d472628675f8630f5f1a49a22395808b9e3ffe7a855a34"
+  }
+}

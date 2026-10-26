@@ -1,0 +1,13 @@
+{
+  "at": 1793053368.2833004,
+  "localExcerptIncidents": [
+    "Initial combined policy/evidence read exceeded8192 bytes",
+    "Unbounded rg over donor events exceeded8192 bytes",
+    "Canonical parser receipt unexpectedly contained full manifest; local excerpt exceeded8192 bytes"
+  ],
+  "runtimeOutputLimitsUnchanged": true,
+  "firstProcessOracle": "Immediate post-SIGKILL liveness could sample pending delivery; original results/script retained. Corrected observation waits50ms; same-group PASS, setsid child still LIVE and rejected.",
+  "physicalMeasurementQualification": "Initial behavioral groups sampled Python supervisor and descendants. Pool ancestor was not included contemporaneously. Do not claim those numbers are complete launcher-inclusive aggregate; corrected sampler includes pool ancestor for subsequent Git. No accepted-candidate claim relies on this omission.",
+  "historicalIncidents": "All prior128MiB client-admission rejections, RAM/access denials and donor incidents retained; corrected ROOT receipt supersedes individual client estimate only.",
+  "samplerEditIncident": "IndentationError while adding pool ancestor RSS accounting; Git batch stopped before any Git subprocess. Owned indentation corrected; original behavioral groups not repeated."
+}

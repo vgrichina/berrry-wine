@@ -1,0 +1,11 @@
+{
+  "candidate": "3a332fcc5f50232fa276a350eba3ca63af9c50e9",
+  "sourceAndFixtureSHA256": "input-pins.json",
+  "gitBlobComparison": "All six computed SHA1(blob header + exact bytes) equal candidate-tree.output",
+  "trustedRemoteExact": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-readback-measured-client-accept-oct26/root-ref-digest.json",
+  "rootModified": false,
+  "mainNotIntegratedReason": "Independent acceptance REJECT: detached transport descendant survives cleanup",
+  "verdict": "REJECT",
+  "sourcePublicationToMain": false
+}
