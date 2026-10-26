@@ -1,0 +1,8 @@
+PASS state table is bound to exact generated start/complete/CALL/RET and rejection writes
+PASS status/event cross product accepts exactly reachable states after start, including legacy
+PASS all observed temporal edges allow skipped native steps and reject backwards events/states
+PASS pristine start and synchronous start output are validated before callbacks
+PASS raw status/event rejected before normalization, diagnostics, select reads or callbacks
+PASS signed i32 and unsigned endpoints still preserve unconstrained native and select scalars
+PASS capture and each legal rejection event remain immutable and close without resampling
+{"passed":7,"cases":924,"syntheticBoundaryOnly":true,"authenticBatch36170Cause":"UNKNOWN"}

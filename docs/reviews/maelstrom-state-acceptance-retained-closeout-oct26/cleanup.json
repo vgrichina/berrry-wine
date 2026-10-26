@@ -1,0 +1,6 @@
+{
+  "watcherOuterTimeout": true,
+  "matchingOwnedWatchers": [],
+  "otherProcessesSignalled": 0,
+  "qualification": "outer 60s timeout raced supervisor wall guard; exact absolute argv+cwd+UID/startticks retained, orphan TERM only"
+}

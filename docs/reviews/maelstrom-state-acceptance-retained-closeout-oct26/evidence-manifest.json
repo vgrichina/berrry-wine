@@ -1,0 +1,102 @@
+[
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/README.md",
+    "bytes": 2175,
+    "sha256": "a9058e4eded4bce4fc76874f2d812154a73dfb1280734d8baf5d84c5e677db0c"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/cleanup.json",
+    "bytes": 231,
+    "sha256": "2693bfb1492e55bca2424014012f3aa9712512903f2532929ff01b011d870e71"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/configuration.json",
+    "bytes": 386,
+    "sha256": "1c6f9e288159208507b795896013c8142bd0854ec6aa49ec79a445b72c83676f"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/corrected-scalar.log",
+    "bytes": 1286,
+    "sha256": "917763d62951c8c11ae95b9a8d335eddc3eb8d1049a0f7e6fb0236d45c772f1d"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/fixture.patch",
+    "bytes": 2193,
+    "sha256": "e91866fd95299f97eae6b400dff904c25e29cd4b2dfe96152ce1bd6df7fbc436"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/incidents.json",
+    "bytes": 676,
+    "sha256": "fbce0ebd8afc45ff60c3a3ce23d2056579cfedb9e430c4661f276b2d8b272aeb"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/maelstrom-adapter-scalar-anchor.test.cjs.original",
+    "bytes": 9959,
+    "sha256": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/original-scalar-failure.log",
+    "bytes": 1852,
+    "sha256": "37812e122a867455947aeeb2539caf32fd11de5de5b0d1be4d0646ec61ef929e"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.cjs",
+    "bytes": 4717,
+    "sha256": "10421b75e1ed40dae8e51368537eb76b1f9aba75460cfc3831bd840d556d02e5"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.log",
+    "bytes": 3110,
+    "sha256": "6929f8bdb6202811230e68fd30b92071a354068114e1c67c2fd64ad0a7379630"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-results.json",
+    "bytes": 18510,
+    "sha256": "af471f38aa481febe0d5f05248733f676f95d4a17a99dc5fea78950fc1f204d8"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/repair-historical-incidents.json",
+    "bytes": 1057,
+    "sha256": "38a8c8e7331caf9e8c7f16be13216539affc61241cb1b6017e007e41acc9531d"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/repair-historical-source-incidents.json",
+    "bytes": 1649,
+    "sha256": "0a9667841d6989d9fa9baed70ac684d4f9569f723936695b4e8ae31263a8aad3"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/repair-incidents.json",
+    "bytes": 1711,
+    "sha256": "e9100a2d27f2317befd24c919c7480afd8e139271d9a27a461443b883a646847"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/repair-preservation.json",
+    "bytes": 2219,
+    "sha256": "fd176f183c6a2f84b353f1acc4060766857704742557191951f8283eb41fc032"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/repair-semantic-regression-final.log",
+    "bytes": 727,
+    "sha256": "38ee554da00a7eede6abcf4cb760c0eb6d019140fe291e4fb16a4969d7355189"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/result.json",
+    "bytes": 2785,
+    "sha256": "e5a4a984c67adc240c60b98ba7151192c5d82283e3328b2b4592f0046e25f623"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/retained-pins.json",
+    "bytes": 1874,
+    "sha256": "630654cb824841c9d9db4c5e7733d74e44bdff387bc8b49170f73bde6f288bba"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/unchanged-nineteen.log",
+    "bytes": 1823,
+    "sha256": "b1734b76d0682a0e6fd853937709342d9ccc80b93d18170286eb77c96c40730d"
+  },
+  {
+    "path": "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/unchanged-ten.log",
+    "bytes": 1164,
+    "sha256": "27262d78cb0e68744292dfa963d7b1e0c62cd8f42de11b74fc4556ff07094c86"
+  }
+]

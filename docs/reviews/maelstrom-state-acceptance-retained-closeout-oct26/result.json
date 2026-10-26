@@ -1,0 +1,60 @@
+{
+  "verdict": "REJECT",
+  "candidate": "7508a8c20f8dd172a1a341112695ba5e4f72918d",
+  "candidateTree": "3a4b97e191296f0a92836a3acb4075f858d426bb",
+  "testedTree": "2049da4b730893c3e058e1143b360fef6bbcb11f",
+  "branch": "task/maelstrom-state-acceptance-retained-closeout-oct26",
+  "sourceUnchanged": true,
+  "fixtureSHA256": "abfb36515543b9465fdf66f0b0975f18ec10c109c9eb55ad1ffef4bbd69f2bb4",
+  "fixtureReconciliation": "Preserve endpoint representation checks on unrestricted scalars; finite status/event enums require reachable pairs, invalid combinations reject before callbacks. Original hash/failure retained.",
+  "reused": {
+    "correctedScalar": "13groups3748casesPASS",
+    "unchangedRepros": "10PASS +19PASS",
+    "existing": "41groupsPASS",
+    "semantic": "7groups924casesPASS",
+    "commands": "Retained predecessor commands.jsonl and repair semantic-regression-final.log; no repeated setup/review/test"
+  },
+  "independent": {
+    "command": "node docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.cjs",
+    "environment": "MNE_REVIEW_REPO=<isolated repo>; NODE_OPTIONS=--max-old-space-size=128",
+    "groups": 26,
+    "passed": 10,
+    "failed": 16,
+    "passingCases": 58,
+    "exit": 1
+  },
+  "defect": "observe() updates last then invokes record(); terminal closed=true is assigned only after record returns. A readLive/persist exception bypasses closure; next observe resamples terminal exports instead of returning immediately. Both captured4/3 and rejected5/0,5/1,5/2, diagnostic and legacy exports affected.",
+  "resources": {
+    "charges": {
+      "owned": 4005888,
+      "launcher": 180224,
+      "session": 557056,
+      "sharedWALSHM": 28434432,
+      "positiveDB": 2031616,
+      "future": 8388608,
+      "reserve": 8388608,
+      "board": 16384
+    },
+    "projected": 52002816,
+    "cap": 67108864,
+    "memAvailable": 2494775296,
+    "ownRAMAllowance": 201326592,
+    "free": 4765904896,
+    "projectedFree": 4713902080,
+    "passGate": true
+  },
+  "incidents": "incidents.json",
+  "cleanup": "cleanup.json",
+  "mainIntegration": false,
+  "runtime": false,
+  "authenticBatch36170Cause": "UNKNOWN",
+  "box": {
+    "assigned": null,
+    "id": "bx_k38z8byn",
+    "state": "historical coordinator-reported STOPPED; untouched/unverified",
+    "expiry": "2026-10-26T01:39:12.069Z historical",
+    "lifecycleOwner": "coordinator"
+  },
+  "preservation": "Production modules, generated transform, standing source and original binary pins unchanged; root refs/index/tracked and donor readonly; initial root-ref-digest receipt reused, no later comparison claimed.",
+  "futureQualification": "Changed-module canonical/staticABI/layout/native qualification required before future guest. No authentic errno/native fault inference."
+}
