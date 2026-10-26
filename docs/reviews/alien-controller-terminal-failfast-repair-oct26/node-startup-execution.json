@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require(\"fs\");console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),env:{TMPDIR:process.env.TMPDIR,NODE_OPTIONS:process.env.NODE_OPTIONS||null}}))"
+  ],
+  "cwd": "/tmp/alien-controller-terminal-failfast-repair-oct26",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 93913088,
+  "physicalCap": 134217728,
+  "cpu": 0.01,
+  "wall": 0.03471335303038359,
+  "outputBytes": 1796,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

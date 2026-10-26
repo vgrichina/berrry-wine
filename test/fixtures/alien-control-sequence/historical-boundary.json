@@ -1,0 +1,225 @@
+{
+  "historicalRun": "fa30c996480567c5433e237e5288ed41e9c03246",
+  "offlineOnly": true,
+  "sourceRecords": {
+    "35": {
+      "at": 1793056738.1698647,
+      "request": {
+        "cmd": "keypress:13"
+      },
+      "api": {
+        "commandId": "cmd_o74oidtoesuz",
+        "cwd": ".",
+        "exitCode": 0,
+        "finishedAt": "2026-10-26T23:18:58.112Z",
+        "launcherFailed": false,
+        "noticedMs": 21,
+        "oomKilled": false,
+        "signal": null,
+        "startMs": 21,
+        "startedAt": "2026-10-26T23:18:58.009Z",
+        "stderr": "",
+        "stderrTruncated": false,
+        "stdout": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":3150}}\n",
+        "stdoutTruncated": false,
+        "success": true,
+        "timedOut": false
+      }
+    },
+    "47": {
+      "at": 1793056766.0624402,
+      "request": {
+        "action": "step",
+        "n": 232
+      },
+      "api": {
+        "commandId": "cmd_iaeqaexoww3t",
+        "cwd": ".",
+        "exitCode": 0,
+        "finishedAt": "2026-10-26T23:19:26.003Z",
+        "launcherFailed": false,
+        "noticedMs": 23,
+        "oomKilled": false,
+        "signal": null,
+        "startMs": 24,
+        "startedAt": "2026-10-26T23:19:20.570Z",
+        "stderr": "",
+        "stderrTruncated": false,
+        "stdout": "{\"ok\":true,\"value\":{\"batch\":4650,\"ran\":232,\"steps\":232,\"frozen\":true}}\n",
+        "stdoutTruncated": false,
+        "success": true,
+        "timedOut": false
+      }
+    },
+    "48": {
+      "at": 1793056766.2544835,
+      "request": {
+        "action": "snapshot"
+      },
+      "api": {
+        "commandId": "cmd_nyhkifaczekr",
+        "cwd": ".",
+        "exitCode": 0,
+        "finishedAt": "2026-10-26T23:19:26.188Z",
+        "launcherFailed": false,
+        "noticedMs": 21,
+        "oomKilled": false,
+        "signal": null,
+        "startMs": 21,
+        "startedAt": "2026-10-26T23:19:26.106Z",
+        "stderr": "",
+        "stderrTruncated": false,
+        "stdout": "{\"ok\":true,\"value\":{\"batch\":4650,\"eip\":\"0x7504868\",\"quit\":false,\"yieldReason\":16,\"focus\":\"0x10019\",\"mainHwnd\":\"0x10019\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":5,\"credits\":0,\"recording\":false},\"windows\":[{\"hwnd\":\"0x10019\",\"x\":0,\"y\":0,\"w\":640,\"h\":480,\"visible\":true,\"isChild\":false,\"title\":\"AlienShooter\"}]}}\n",
+        "stdoutTruncated": false,
+        "success": true,
+        "timedOut": false
+      }
+    },
+    "49": {
+      "at": 1793056766.6247728,
+      "request": {
+        "action": "png",
+        "path": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/guest/frame5.png"
+      },
+      "api": {
+        "commandId": "cmd_wb8oxhykhw2a",
+        "cwd": ".",
+        "exitCode": 0,
+        "finishedAt": "2026-10-26T23:19:26.481Z",
+        "launcherFailed": false,
+        "noticedMs": 22,
+        "oomKilled": false,
+        "signal": null,
+        "startMs": 22,
+        "startedAt": "2026-10-26T23:19:26.345Z",
+        "stderr": "",
+        "stderrTruncated": false,
+        "stdout": "{\"ok\":true,\"value\":{\"batch\":4650,\"frozen\":true,\"path\":\"/tmp/alien-accepted-opt-in-menu-gameplay-oct26/guest/frame5.png\",\"bytes\":229359}}\n",
+        "stdoutTruncated": false,
+        "success": true,
+        "timedOut": false
+      }
+    }
+  },
+  "outcome": {
+    "guestInvocations": 1,
+    "guestWholeTreeCPU": 78.24000000000001,
+    "guestWholeTreeWall": 118.19962565799995,
+    "physicalPeak": 475041792,
+    "supervisorCPU": 26.15,
+    "nodeCPU": 52.09,
+    "lastAcknowledgedBatch": 4650,
+    "terminalBatch": 4754,
+    "simulatedMsAtLastACK": 23250,
+    "simulatedMsTerminal": 23770,
+    "partialFinalStep": {
+      "requested": 256,
+      "acknowledged": false,
+      "apparentAdditionalBatches": 104,
+      "replayed": false
+    },
+    "frames": [
+      {
+        "file": "frames/frame1.png",
+        "review": "Configuration dialog: Wine Assembly D3D8,640x480x32bpp,OK and Cancel",
+        "sha256": "23399c0b338b81b0cfd14d43cfde5a6f772ead69ea88bbf1f938a8f4db16981a"
+      },
+      {
+        "file": "frames/frame2.png",
+        "review": "Black frame",
+        "sha256": "8cc941f9dfaac83bcbc2ddb58618780e5892fec818d76739f6cb558fa35ce46d"
+      },
+      {
+        "file": "frames/frame3.png",
+        "review": "ALIEN SHOOTER title",
+        "sha256": "8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8"
+      },
+      {
+        "file": "frames/frame4.png",
+        "review": "Same ALIEN SHOOTER title after Enter and500batches",
+        "sha256": "8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8"
+      },
+      {
+        "file": "frames/frame5.png",
+        "review": "Rendered character/alien backdrop; no menu text or mission",
+        "sha256": "44d3b6639cd68bc6661c02f2f713446ed14b1b24970930c7b84d8053359f5292"
+      }
+    ],
+    "guestCrashObserved": false,
+    "normalGuestQuitQualified": false,
+    "cleanup": "supervisor wall cap118 issued SIGTERM; CLI orderly shutdown exit0; API transport exited0; no owned processes",
+    "renderWait": {
+      "completed": 2430,
+      "rejected": 0,
+      "pending": 0,
+      "stopped": 1,
+      "parkWaits": 1968,
+      "parkMs": 25948,
+      "bridgePendingMs": 25938,
+      "readyToResumeMs": 10,
+      "unknownMs": 0,
+      "unknownRequests": 2059
+    },
+    "qualified": [
+      "complete production CLI startup with real guest",
+      "literal opt-in actual attribution and terminal summary",
+      "configuration dialog",
+      "title",
+      "rendered backdrop",
+      "serial acknowledged steps frozen0 through4650"
+    ],
+    "unqualified": [
+      "main-menu",
+      "mission",
+      "gameplay",
+      "normal guest Quit"
+    ],
+    "blocker": "Single guest118.2s wall envelope exhausted while reaching backdrop before an inspected menu; no proven game/HRESULT bug. Final256 step lacked ACK and is not replayed.",
+    "incidents": [
+      "Supplied602 map omitted original executable; assigned immutable root executable supplemented and rehashed",
+      "First startup report counted supervisor itself; Node receipt passed, bookkeeping fixed and prior PID gone",
+      "Initial control connection refused before server startup; delivered no step; recovered only after listening and batch0 frozen0",
+      "Five PNGs fetched during guest wall; largest229359B requires46 bounded read calls and consumes wall",
+      "Final256 request hit wall shutdown; subsequent separately issued capture/eval/quit all failed; shell should have stopped control sequence at first failure, no guest actions delivered after it",
+      "API --status initially used commandId; corrected positive PID query succeeded",
+      "Supervisor allocated-footprint scan each30ms is CPU costly:26.15s in supervisor, included in78.24 aggregate; no relaxed limits or repeat guest"
+    ],
+    "lifecycle": {
+      "box": "bx_nfacjvy7",
+      "apiState": "idle",
+      "runningAvailable": true,
+      "expiry": "2026-10-27T00:10:48.669Z",
+      "shutdownOwner": "coordinator",
+      "shutdown": "2026-10-27T00:00:00Z",
+      "ownedGuestControlTransportLive": [],
+      "watcher": "untouched"
+    }
+  },
+  "commands": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "step",
+      "n": 256
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "png",
+      "path": "/tmp/offline-only/frame6.png"
+    },
+    {
+      "action": "eval",
+      "code": "ctx.renderWaitAttribution"
+    },
+    {
+      "cmd": "keypress:13"
+    },
+    {
+      "action": "quit"
+    }
+  ],
+  "qualification": "Requests after unACKed step are rejecting sentinels, never guest-delivered; historical256 must NEVER be replayed."
+}

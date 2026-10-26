@@ -1,0 +1,3 @@
+{
+  "whitespaceCheck": "Git diff --check rejected three raw historical logs ending mid-test with trailing spaces. Original external logs preserved; publication stores byte-exact UTF8 inside JSON with length/hash, no historical evidence edited."
+}

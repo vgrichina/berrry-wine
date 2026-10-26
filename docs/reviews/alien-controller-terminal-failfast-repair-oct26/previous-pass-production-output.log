@@ -1,0 +1,8 @@
+test_historical_failure_owns_entire_recipe_and_durable_latch (__main__.Production.test_historical_failure_owns_entire_recipe_and_durable_latch) ... ok
+test_historical_plan_is_never_runtime_authorized (__main__.Production.test_historical_plan_is_never_runtime_authorized) ... ok
+test_normal_real_http_recipe_once_in_order (__main__.Production.test_normal_real_http_recipe_once_in_order) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.962s
+
+OK

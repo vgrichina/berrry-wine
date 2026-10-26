@@ -1,0 +1,6 @@
+{
+  "expected": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "actual": "79add74e10d7c495e888b5f4bcb68a1981d22ff5fe51f9c12764a2f474bd4541",
+  "reused": false,
+  "incident": "Stored local donor parser does not match historical remote receipt; no checkout/runtime executed; validate current offline empty mount argv with exact pinned canonical parser instead."
+}

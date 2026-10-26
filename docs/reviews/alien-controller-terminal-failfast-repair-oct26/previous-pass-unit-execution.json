@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-controller-terminal-failfast-repair-oct26/repo/test/test-alien-control-sequence.py",
+    "--group",
+    "unit"
+  ],
+  "cwd": "/tmp/alien-controller-terminal-failfast-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 65142784,
+  "physicalCap": 134217728,
+  "cpu": 0.6,
+  "wall": 2.0477338328491896,
+  "outputBytes": 1164,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 2,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3323904": 21495808,
+    "3323905": 10616832,
+    "3323902": 13631488,
+    "3323903": 19398656
+  }
+}

@@ -1,0 +1,103 @@
+{
+  "at": 1793057034.434835,
+  "publication": {
+    "commit": "fa30c996480567c5433e237e5288ed41e9c03246",
+    "tree": "45b0ec3d980e10fb9f02bce612ab8b0618b3640a",
+    "branch": "task/alien-accepted-opt-in-menu-gameplay-oct26",
+    "remoteRef": "fa30c996480567c5433e237e5288ed41e9c03246\trefs/heads/task/alien-accepted-opt-in-menu-gameplay-oct26",
+    "exactVerified": true,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "normalPush": true,
+    "evidenceFiles": 235,
+    "clean": true,
+    "noMain": true
+  },
+  "guestTerminal": {
+    "reason": "guest-wall-or-cutoff",
+    "returncode": 0,
+    "elapsed": 118.19962565799995,
+    "peakTreeRSS": 475041792,
+    "peakTreeCPU": 78.24000000000001,
+    "outputBytes": 651642,
+    "identities": {
+      "27494": {
+        "ppid": 27493,
+        "state": "R",
+        "start": "53030",
+        "cpu": 26.15,
+        "rss": 15335424
+      },
+      "27495": {
+        "ppid": 27494,
+        "state": "S",
+        "start": "53033",
+        "cpu": 52.09,
+        "rss": 424542208
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_nfacjvy7",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "box": "bx_nfacjvy7",
+  "rawAPIState": "idle",
+  "runningAvailable": true,
+  "expiry": "2026-10-27T00:10:48.669Z",
+  "shutdownOwner": "coordinator",
+  "coordinatorWatcher": "untouched",
+  "ownedBoardWatchersStopped": [
+    3289814
+  ],
+  "ownedGuestControlTransportLive": [],
+  "remaining": [
+    "menu",
+    "mission/gameplay",
+    "normal guest Quit"
+  ],
+  "admission": {
+    "at": 1793057003.4840991,
+    "charges": {
+      "owned": 7622656,
+      "launcher": 483328,
+      "session": 1650688,
+      "positiveWALOnce": 0,
+      "future": 16777216,
+      "reserve": 8388608,
+      "publication": 4194304
+    },
+    "total": 39116800,
+    "cap": 67108864,
+    "memAvailable": 3785936896,
+    "required": 1476395008,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 17649664
+      },
+      {
+        "pid": 752162,
+        "rss": 411480064
+      },
+      {
+        "pid": 1789179,
+        "rss": 61054976
+      },
+      {
+        "pid": 3289319,
+        "rss": 195776512
+      },
+      {
+        "pid": 3295858,
+        "rss": 211992576
+      },
+      {
+        "pid": 3301987,
+        "rss": 192258048
+      }
+    ],
+    "free": 3302498304,
+    "projectedFree": 2991427584,
+    "peerRemaining": 253718528
+  }
+}

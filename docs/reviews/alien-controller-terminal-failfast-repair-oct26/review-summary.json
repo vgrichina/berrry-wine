@@ -1,0 +1,74 @@
+{
+  "base": {
+    "main": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+    "metadataObjects": 568
+  },
+  "sourcePins": {
+    "test/helpers/alien-control-sequence.py": "2683ce016f55fe071067ca331b768019cc8f480881b28f973aea2760c9d3c5fa",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/test-alien-control-sequence.py": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+    "test/fixtures/alien-control-sequence/control-server.cjs": "4656d80826a488f31f713ecc19ea24fe0684d38be0218907c4ede51a0732cd57",
+    "test/fixtures/alien-control-sequence/historical-boundary.json": "c76a5c650075579017cc577081484e549613675f5be6955e6819c0234b26d702",
+    "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+  },
+  "testedTreeBeforeFinalEvidence": "e65b7f15b3b1082ecc198e9fcacedafecb631c84",
+  "allUnrelatedMainEntriesExact": true,
+  "tests": {
+    "production": {
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 131330048,
+      "physicalCap": 134217728,
+      "cpu": 0.6,
+      "wall": 0.8168077708687633,
+      "outputBytes": 491
+    },
+    "unit": {
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 71036928,
+      "physicalCap": 134217728,
+      "cpu": 1.07,
+      "wall": 2.0676970400381833,
+      "outputBytes": 1164
+    },
+    "mutations": {
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 122683392,
+      "physicalCap": 134217728,
+      "cpu": 5.79,
+      "wall": 11.132412435952574,
+      "outputBytes": 2842
+    }
+  },
+  "gitPeakSampledRSS": 75243520,
+  "limits": {
+    "testPhysical": 134217728,
+    "gitPhysical": 268435456,
+    "gitDATAChildOnly": 536870912,
+    "nodeHeapMiB": 64,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  },
+  "independentAcceptance": "required; not claimed by author tests",
+  "guest": "not run, exhausted historical run not replayable",
+  "remaining": [
+    "independent offline controller/recipe acceptance",
+    "separate authorized future new guest invocation/admission/lifecycle/stepACK-frozen0 gate",
+    "menu/mission/gameplay/normal guest Quit unqualified"
+  ],
+  "lifecycle": {
+    "assignedBox": null,
+    "formerBox": "bx_nfacjvy7",
+    "stateFromReadonlyCoordinatorReceipt": "stopped",
+    "verifiedAt": "2026-10-26T23:29:00.905126Z",
+    "expiry": "2026-10-27T00:10:48.669Z",
+    "owner": "coordinator",
+    "workerAPIQueries": 0
+  },
+  "publication": "own task branch only; main forbidden"
+}

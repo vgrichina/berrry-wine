@@ -1,0 +1,70 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pins": [
+    {
+      "target": "runner/test/run.js",
+      "source": "/tmp/alien-opt-in-independent-integrate-oct26/repo/test/run.js",
+      "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+      "bytes": 688295,
+      "mode": 436
+    },
+    {
+      "target": "runner/lib/control-server.js",
+      "source": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/control-server.js",
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+      "bytes": 7126,
+      "mode": 436
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/ctl.py",
+      "sha256": "50b39f8f3288c3ba5f007172431b7abd0db965a0864ec44ab2e5b9a3e0a7e958",
+      "bytes": 703
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/work.py",
+      "sha256": "e93a67029facee040e066b4cc82c4d72949f19ab235346d93da37ed0c3c98f3f",
+      "bytes": 2558
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/supervisor.py",
+      "sha256": "0009f6d82c60c394da3447f576972e06c53974b8cbdf62c4dd94bb1b7ebfabc3",
+      "bytes": 4117
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/outcome.json",
+      "sha256": "cd239b9f1c3084e8b4ae640e1ff8cc98d6efb82e3fb0715f182289ca4a9eb29f",
+      "bytes": 3619
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/closeout.json",
+      "sha256": "ec5b9c37dce1a54eb705050c729063a2933e2ac33ea5397e4923c36020015037",
+      "bytes": 2535
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/live.py",
+      "sha256": "087d72a864f1c476d3edd45bcf7c0d052b6cea1da3f064016abaea49c037ea45",
+      "bytes": 1556
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/canonical-parser.json",
+      "sha256": "69fb9ac4356b30691ffd0062b480894018c103917d901cf515bb87f5fc136f8d",
+      "bytes": 1455
+    },
+    {
+      "source": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/ops/parser.cjs",
+      "sha256": "79add74e10d7c495e888b5f4bcb68a1981d22ff5fe51f9c12764a2f474bd4541",
+      "bytes": 1708
+    }
+  ],
+  "mountArgv": [],
+  "mounts": "Actual offline empty mount argv validated with exact pinned canonical parser before checkout; no intended runtime mount files. Historical local parser mismatched remote receipt and was NOT reused. See mount-configuration.json/historical-parser-mismatch.json.",
+  "rootRef": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "clientSession": "01a17a8a-2228-7780-9ece-4d0712fbcedf"
+}

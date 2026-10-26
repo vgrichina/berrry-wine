@@ -1,0 +1,15 @@
+{
+  "base": {
+    "main": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+    "metadataObjects": 568
+  },
+  "pins": {
+    "test/helpers/alien-control-sequence.py": "2683ce016f55fe071067ca331b768019cc8f480881b28f973aea2760c9d3c5fa",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/test-alien-control-sequence.py": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+    "test/fixtures/alien-control-sequence/control-server.cjs": "4656d80826a488f31f713ecc19ea24fe0684d38be0218907c4ede51a0732cd57",
+    "test/fixtures/alien-control-sequence/historical-boundary.json": "c76a5c650075579017cc577081484e549613675f5be6955e6819c0234b26d702",
+    "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+  },
+  "group": "mutations"
+}

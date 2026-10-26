@@ -1,0 +1,35 @@
+{"omitted": "durable-existing-ledger", "unchangedRegressionRejected": true, "returncode": 1, "outputBytes": 3687}
+{"omitted": "pre-dispatch-wal", "unchangedRegressionRejected": true, "returncode": 1, "outputBytes": 130752}
+{"omitted": "step-ran-ack", "unchangedRegressionRejected": true, "returncode": 1, "outputBytes": 1771}
+test_historical_failure_owns_entire_recipe_and_durable_latch (__main__.Production.test_historical_failure_owns_entire_recipe_and_durable_latch) ... FAIL
+test_historical_plan_is_never_runtime_authorized (__main__.Production.test_historical_plan_is_never_runtime_authorized) ... ok
+test_normal_real_http_recipe_once_in_order (__main__.Production.test_normal_real_http_recipe_once_in_order) ... ERROR
+
+======================================================================
+ERROR: test_normal_real_http_recipe_once_in_order (__main__.Production.test_normal_real_http_recipe_once_in_order)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/alien-controller-terminal-failfast-repair-oct26/repo/test/test-alien-control-sequence.py", line 141, in test_normal_real_http_recipe_once_in_order
+    self.assertEqual([json.loads(s) for s in sends.read_text().splitlines()], PLAN)
+                                             ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/alien-controller-terminal-failfast-repair-oct26/ops/alien-ctl-1e7zrv42/sends.jsonl'
+
+======================================================================
+FAIL: test_historical_failure_owns_entire_recipe_and_durable_latch (__main__.Production.test_historical_failure_owns_entire_recipe_and_durable_latch)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/alien-controller-terminal-failfast-repair-oct26/repo/test/test-alien-control-sequence.py", line 122, in test_historical_failure_owns_entire_recipe_and_durable_latch
+    self.assertNotEqual(result.returncode, 0, result.stdout)
+AssertionError: 0 == 0 : b'{"status": "complete", "next": 0, "lastAcknowledgedBatch": null, "lastFrozenBatch": null, "terminalObserved": null, "guestAcceptance": "unqualified"}\n'
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.121s
+
+FAILED (failures=1, errors=1)
+{"omitted": "production-recipe-wiring", "unchangedRegressionRejected": true, "failures": 1, "errors": 1}

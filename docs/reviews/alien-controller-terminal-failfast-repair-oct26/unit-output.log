@@ -1,0 +1,13 @@
+test_abrupt_exit_preserves_pre_dispatch_uncertainty (__main__.Boundaries.test_abrupt_exit_preserves_pre_dispatch_uncertainty) ... ok
+test_complete_no_quit_is_still_one_shot_and_bounded (__main__.Boundaries.test_complete_no_quit_is_still_one_shot_and_bounded) ... ok
+test_every_command_boundary_and_response_failure (__main__.Boundaries.test_every_command_boundary_and_response_failure) ... ok
+test_guest_terminal_in_response_latches (__main__.Boundaries.test_guest_terminal_in_response_latches) ... ok
+test_invalid_plan_and_corrupt_ledger_send_nothing (__main__.Boundaries.test_invalid_plan_and_corrupt_ledger_send_nothing) ... ok
+test_known_guest_terminal_before_each_send_even_exit_zero (__main__.Boundaries.test_known_guest_terminal_before_each_send_even_exit_zero) ... ok
+test_step_and_snapshot_completion_are_not_transport_acks (__main__.Boundaries.test_step_and_snapshot_completion_are_not_transport_acks) ... ok
+test_terminal_file_partial_progress_separate_from_last_ack (__main__.Boundaries.test_terminal_file_partial_progress_separate_from_last_ack) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.029s
+
+OK
