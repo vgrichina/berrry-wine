@@ -1,0 +1,1757 @@
+{
+  "base": "d9012a86a91c13dbe70dbcc4dceff2d7895c18a4",
+  "baseline": {
+    "existingOracles": 16,
+    "passed": 16,
+    "performanceFixture": "absent; missing test, not a renderer repair"
+  },
+  "candidate": {
+    "newTests": 4,
+    "passed": 20,
+    "failed": 0,
+    "productionChanged": false
+  },
+  "inputPins": [
+    {
+      "path": "lib/d3d9-render-worker.js",
+      "bytes": 4746,
+      "sha256": "5f34e09ca5b1ece8cc0b163e188004de87cccb8715004da5cdecefd3f6b26e54"
+    },
+    {
+      "path": "lib/d3d9-software-backend.js",
+      "bytes": 87802,
+      "sha256": "d73d855a6936881712c7b75e203cfc717c43dd82ca38fe67a576f4fc37da93ee"
+    },
+    {
+      "path": "lib/render-clear.js",
+      "bytes": 4377,
+      "sha256": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9"
+    },
+    {
+      "path": "lib/d3d-geometry-batches.js",
+      "bytes": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+    },
+    {
+      "path": "lib/d3d-command-stream.js",
+      "bytes": 47664,
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945"
+    },
+    {
+      "path": "lib/render-worker.js",
+      "bytes": 17410,
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa"
+    },
+    {
+      "path": "lib/d3d-shader-ir.js",
+      "bytes": 15243,
+      "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056"
+    },
+    {
+      "path": "lib/d3d9-backend.js",
+      "bytes": 65687,
+      "sha256": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773"
+    },
+    {
+      "path": "lib/d3d9-fixed.js",
+      "bytes": 29976,
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3"
+    },
+    {
+      "path": "lib/d3d9-shader.js",
+      "bytes": 47578,
+      "sha256": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440"
+    },
+    {
+      "path": "lib/gpu-backend.js",
+      "bytes": 49276,
+      "sha256": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "bytes": 87300,
+      "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c"
+    },
+    {
+      "path": "lib/d3d9-texture.js",
+      "bytes": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+    },
+    {
+      "path": "test/test-d3d9-rgba-source-identity.js",
+      "bytes": 7382,
+      "sha256": "e0341a64fd3bfb83942e2dd7a3ee3c1eb15cd0173e1ed6b12d8fa2f9b5f37fbc"
+    },
+    {
+      "path": "test/test-d3d9-immutable-rgba-snapshot.js",
+      "bytes": 10316,
+      "sha256": "885ee86948bfa7cc1e6e0a7552421ccc2ca199c530faadd662a2a88406da5e86"
+    },
+    {
+      "path": "test/test-d3d9-rgba-generation-independent.js",
+      "bytes": 5799,
+      "sha256": "49a38d941113233c3fe5d2d4259707bbe26b0dd50b84847db9f3a10762c912ca"
+    },
+    {
+      "path": "test/test-d3d9-byte-identity-acceptance.js",
+      "bytes": 5598,
+      "sha256": "552716167cb7101ddf1c84a54b8ca4493a6641769af28807c401e4a46c39fc99"
+    }
+  ],
+  "testedSourcePins": [
+    {
+      "path": "tools/d3d9-rgba-benchmark.js",
+      "sha256": "98802df274d320d25e17123f208eca46a23fe5c72c8ff14240caaebbd9f29feb",
+      "bytes": 16400
+    },
+    {
+      "path": "test/test-d3d9-rgba-performance.js",
+      "sha256": "c0ee1ceb3f79eca9cd770cf5831f2736577557648d311f49beda0f578f013ef1",
+      "bytes": 1987
+    }
+  ],
+  "report": {
+    "schema": 1,
+    "gate": "RENDER-PERF-GATE",
+    "node": "v24.18.1",
+    "limits": "synthetic BGRA8 16/32/64 squares; no game/GPU/browser/VM or speedup claim",
+    "countScope": "synchronous producer: every source reads, proxied snapshot reads; U8 allocations and logical slice/set/constructor copies; excludes decoder indexed accesses, other typed arrays and sink copies",
+    "timingScope": "uninstrumented producer submission only; warmup excluded; fence and exact pixel assertion outside timing; no timing threshold",
+    "counts": [
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "cold",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "same-source",
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "same-byte-alias",
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "equal-new-buffer",
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "sparse-interior",
+        "sourceReads": 41,
+        "snapshotReads": 41,
+        "scans": 1,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "sparse-last-byte",
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "full-change",
+        "sourceReads": 1,
+        "snapshotReads": 1,
+        "scans": 1,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "equal-relocated-pointer",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "epoch-rollover",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "churn-0",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "churn-0",
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "churn-2",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 7680,
+        "sourceCopyBytes": 1024,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 8704,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "cold",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "same-source",
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "same-byte-alias",
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "equal-new-buffer",
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "sparse-interior",
+        "sourceReads": 41,
+        "snapshotReads": 41,
+        "scans": 1,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "sparse-last-byte",
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "full-change",
+        "sourceReads": 1,
+        "snapshotReads": 1,
+        "scans": 1,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "equal-relocated-pointer",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "epoch-rollover",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "churn-0",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "churn-0",
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "churn-2",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 13824,
+        "sourceCopyBytes": 4096,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 17920,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "cold",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "same-source",
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "same-byte-alias",
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "equal-new-buffer",
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "sparse-interior",
+        "sourceReads": 41,
+        "snapshotReads": 41,
+        "scans": 1,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "sparse-last-byte",
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "full-change",
+        "sourceReads": 1,
+        "snapshotReads": 1,
+        "scans": 1,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "equal-relocated-pointer",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "epoch-rollover",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "churn-0",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "churn-0",
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "churn-2",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "churn-1",
+        "sourceReads": 0,
+        "snapshotReads": 0,
+        "scans": 0,
+        "sliceBytes": 38400,
+        "sourceCopyBytes": 16384,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 54784,
+        "allocations": 25,
+        "cacheHits": 0,
+        "decodes": 1
+      }
+    ],
+    "timings": [
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "same-source",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.10194462499999801,
+          0.4915628749999996,
+          0.25583112500000027,
+          0.37094199999999766,
+          0.17494937499999885
+        ],
+        "changed": [
+          0.10877200000000187,
+          0.07594724999999869,
+          0.19228475000000245,
+          0.13409999999999656,
+          0.21632462500000216
+        ],
+        "controlAfter": [
+          0.15588187499999862,
+          0.09791324999999773,
+          0.13617787499999778,
+          0.1287137499999993,
+          0.1348423749999963
+        ],
+        "controlMin": 0.09791324999999773,
+        "controlMax": 0.4915628749999996,
+        "controlSpread": 0.3936496250000019
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "same-byte-alias",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.12913062500000017,
+          0.10652412499999997,
+          0.17011100000000035,
+          0.1537639999999989,
+          0.25797024999999785
+        ],
+        "changed": [
+          0.10913249999999941,
+          0.2763635000000022,
+          0.13718262500000122,
+          0.21067599999999942,
+          0.1648013750000068
+        ],
+        "controlAfter": [
+          0.5534615000000009,
+          0.2231183750000003,
+          0.12374800000000086,
+          0.28919187499999843,
+          0.13399000000000427
+        ],
+        "controlMin": 0.10652412499999997,
+        "controlMax": 0.5534615000000009,
+        "controlSpread": 0.44693737500000097
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "equal-new-buffer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.1652397500000049,
+          0.155337375000002,
+          0.1134993749999964,
+          0.14459875000000721,
+          0.1597606250000041
+        ],
+        "changed": [
+          0.13761699999999877,
+          0.15220037500000316,
+          0.16981062499998956,
+          0.25494525000000223,
+          0.15513050000000916
+        ],
+        "controlAfter": [
+          0.3824371250000027,
+          0.15296037499999926,
+          0.11576337500000378,
+          0.16312937500000402,
+          0.10383337500000422
+        ],
+        "controlMin": 0.10383337500000422,
+        "controlMax": 0.3824371250000027,
+        "controlSpread": 0.2786037499999985
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "sparse-interior",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.1431911250000084,
+          0.1539753750000017,
+          0.1660388750000017,
+          0.0967160000000078,
+          0.10524100000000303
+        ],
+        "changed": [
+          0.11492400000000202,
+          0.12851337499999715,
+          0.21307712500000164,
+          0.12461099999999448,
+          0.16463274999999555
+        ],
+        "controlAfter": [
+          0.11205149999999975,
+          0.1579539999999966,
+          0.2116228749999962,
+          0.11394225000000091,
+          0.09950537500000323
+        ],
+        "controlMin": 0.0967160000000078,
+        "controlMax": 0.2116228749999962,
+        "controlSpread": 0.11490687499998842
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "sparse-last-byte",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.09092800000000167,
+          0.12684787499999572,
+          0.13930012500000188,
+          0.1635402499999934,
+          0.10428275000000298
+        ],
+        "changed": [
+          0.11659237499999264,
+          0.13652275000000103,
+          0.18111325000000278,
+          0.1287898750000025,
+          0.11927000000000376
+        ],
+        "controlAfter": [
+          0.09564562500000306,
+          0.09648324999999858,
+          0.24423550000000205,
+          0.183666125000002,
+          0.19309724999999744
+        ],
+        "controlMin": 0.09092800000000167,
+        "controlMax": 0.24423550000000205,
+        "controlSpread": 0.15330750000000037
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "full-change",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.11110562500000398,
+          0.23467387499999504,
+          0.16993874999999647,
+          0.3265396249999952,
+          0.30385350000000244
+        ],
+        "changed": [
+          0.2149662499999998,
+          0.296747749999998,
+          0.20600149999999573,
+          0.28292412500000097,
+          0.14758087500000272
+        ],
+        "controlAfter": [
+          0.14125612499999818,
+          0.1615117499999954,
+          0.21401112500000252,
+          0.18459899999999152,
+          0.5472658749999972
+        ],
+        "controlMin": 0.11110562500000398,
+        "controlMax": 0.5472658749999972,
+        "controlSpread": 0.43616024999999325
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "equal-relocated-pointer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.09937037499999946,
+          0.2608906249999947,
+          0.08802099999999058,
+          0.16137637500001034,
+          0.11802250000000925
+        ],
+        "changed": [
+          0.10848649999999083,
+          0.1747676250000083,
+          0.10383975000002721,
+          0.15846949999999538,
+          0.10613162500000328
+        ],
+        "controlAfter": [
+          0.11242987500000368,
+          0.2543246249999953,
+          0.12016025000001207,
+          0.08135250000000127,
+          0.11895537499998454
+        ],
+        "controlMin": 0.08135250000000127,
+        "controlMax": 0.2608906249999947,
+        "controlSpread": 0.17953812499999344
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "epoch-rollover",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.09887549999999834,
+          0.08790075000000996,
+          0.06884825000000205,
+          0.08014275000000026,
+          0.07606374999998877
+        ],
+        "changed": [
+          0.06945524999999009,
+          0.07820262500001007,
+          0.07157662499999873,
+          0.07679650000000038,
+          0.11417325000001455
+        ],
+        "controlAfter": [
+          0.07107550000000629,
+          0.07625924999999967,
+          0.08845937499999934,
+          0.07788237500000861,
+          0.08356199999997926
+        ],
+        "controlMin": 0.06884825000000205,
+        "controlMax": 0.09887549999999834,
+        "controlSpread": 0.030027249999996286
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "cache-churn",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.13711962500000396,
+          0.26459487500001444,
+          0.12036450000000087,
+          0.1231520000000188,
+          0.1636506250000167
+        ],
+        "changed": [
+          0.16327987500000773,
+          0.15696087500001,
+          0.12871387500000253,
+          0.14796400000000176,
+          0.1482990000000015
+        ],
+        "controlAfter": [
+          0.1388199999999955,
+          0.12957174999999665,
+          0.14796962500000888,
+          0.11627437500000326,
+          0.07968712499999953
+        ],
+        "controlMin": 0.07968712499999953,
+        "controlMax": 0.26459487500001444,
+        "controlSpread": 0.18490775000001491
+      },
+      {
+        "side": 16,
+        "bytes": 1024,
+        "scenario": "cold",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.18388137500000568,
+          0.098921500000003,
+          0.12965412500000895,
+          0.11666249999998968,
+          0.10703712500001217
+        ],
+        "changed": [
+          0.27724725000001627,
+          0.1461668749999916,
+          0.3322770000000048,
+          0.20061437500000068,
+          0.2677216250000001
+        ],
+        "controlAfter": [
+          0.17079900000000947,
+          0.10750149999999792,
+          0.1906847499999884,
+          0.12112587500000416,
+          0.11275399999999536
+        ],
+        "controlMin": 0.098921500000003,
+        "controlMax": 0.1906847499999884,
+        "controlSpread": 0.09176324999998542
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "same-source",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.19500537500000803,
+          0.22987950000000268,
+          0.15985112500000298,
+          0.20809875000000488,
+          0.12214000000000169
+        ],
+        "changed": [
+          0.21280649999999923,
+          0.22748437499999596,
+          0.16666887499999916,
+          0.20119837499998994,
+          0.1837973749999975
+        ],
+        "controlAfter": [
+          0.15831050000001312,
+          0.16166549999999802,
+          0.17060749999999558,
+          0.11462137499999159,
+          0.1320276250000063
+        ],
+        "controlMin": 0.11462137499999159,
+        "controlMax": 0.22987950000000268,
+        "controlSpread": 0.11525812500001109
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "same-byte-alias",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.12011912499999511,
+          0.11952674999999857,
+          0.13309349999999398,
+          0.1071034999999867,
+          0.11111462499999192
+        ],
+        "changed": [
+          0.15379074999999176,
+          0.14433199999999147,
+          0.1858261249999842,
+          0.14425087499999734,
+          0.15441549999999893
+        ],
+        "controlAfter": [
+          0.15304050000000302,
+          0.12156524999999618,
+          0.12280162500000813,
+          0.13642825000000158,
+          0.1223003750000018
+        ],
+        "controlMin": 0.1071034999999867,
+        "controlMax": 0.15304050000000302,
+        "controlSpread": 0.045937000000016326
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "equal-new-buffer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.27428312499999663,
+          0.20376200000001887,
+          0.37887799999999316,
+          0.10097912500000206,
+          0.12441274999999763
+        ],
+        "changed": [
+          0.13333862499999327,
+          0.12315625000000097,
+          0.24830937500000516,
+          0.1308666249999959,
+          0.15311824999999146
+        ],
+        "controlAfter": [
+          0.11096887499999752,
+          0.12530137499999938,
+          0.09510924999999304,
+          0.08723737500000084,
+          0.1473538749999932
+        ],
+        "controlMin": 0.08723737500000084,
+        "controlMax": 0.37887799999999316,
+        "controlSpread": 0.2916406249999923
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "sparse-interior",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.09940512499999699,
+          0.08971449999999948,
+          0.09871737500000677,
+          0.08720699999999937,
+          0.1140628750000019
+        ],
+        "changed": [
+          0.2066511250000076,
+          0.10159700000001948,
+          0.1494152500000041,
+          0.10374099999999942,
+          0.1577985000000055
+        ],
+        "controlAfter": [
+          0.09658350000000837,
+          0.16048500000000132,
+          0.1783057499999856,
+          0.23115837499998548,
+          0.19085037500000368
+        ],
+        "controlMin": 0.08720699999999937,
+        "controlMax": 0.23115837499998548,
+        "controlSpread": 0.14395137499998611
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "sparse-last-byte",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.1554416249999946,
+          0.09739400000001552,
+          0.08826549999999855,
+          0.12761300000001086,
+          0.10086524999998403
+        ],
+        "changed": [
+          0.17952887499998837,
+          0.16054749999999274,
+          0.2047037500000073,
+          0.1680273750000083,
+          0.19599512499998184
+        ],
+        "controlAfter": [
+          0.09123449999999877,
+          0.13330974999999512,
+          0.16256624999998337,
+          0.09708837500001266,
+          0.10336862499998745
+        ],
+        "controlMin": 0.08826549999999855,
+        "controlMax": 0.16256624999998337,
+        "controlSpread": 0.07430074999998482
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "full-change",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.10465524999999332,
+          0.11448199999996689,
+          0.1254306249999786,
+          0.16118587500000103,
+          0.1078672499999982
+        ],
+        "changed": [
+          0.11545624999999404,
+          0.15326349999998,
+          0.13078499999998883,
+          0.10841162500000223,
+          0.12459575000002587
+        ],
+        "controlAfter": [
+          0.14817637499997716,
+          0.1068642500000152,
+          0.09632900000001143,
+          0.09738000000000113,
+          0.1410531249999849
+        ],
+        "controlMin": 0.09632900000001143,
+        "controlMax": 0.16118587500000103,
+        "controlSpread": 0.0648568749999896
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "equal-relocated-pointer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.11685562500002789,
+          0.2436079999999805,
+          0.18117612499997904,
+          0.15178475000001868,
+          0.11988862499998731
+        ],
+        "changed": [
+          0.21545387499999435,
+          0.15756924999999455,
+          0.20120712499998206,
+          0.1147288750000115,
+          0.1100523749999951
+        ],
+        "controlAfter": [
+          0.12852387499999907,
+          0.5504836249999698,
+          0.2342967499999702,
+          0.16274775000003672,
+          0.12113812500001586
+        ],
+        "controlMin": 0.11685562500002789,
+        "controlMax": 0.5504836249999698,
+        "controlSpread": 0.43362799999994195
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "epoch-rollover",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.15171924999995667,
+          0.10495187499996916,
+          0.18790762499997982,
+          0.1415829999999545,
+          0.14534012500000415
+        ],
+        "changed": [
+          0.1352151250000162,
+          0.14132387499999766,
+          0.20147762499999544,
+          0.2369672500000064,
+          0.19985499999998524
+        ],
+        "controlAfter": [
+          0.12808537499999773,
+          0.08582825000000582,
+          0.15693799999996827,
+          0.1652047500000009,
+          0.15525474999998323
+        ],
+        "controlMin": 0.08582825000000582,
+        "controlMax": 0.18790762499997982,
+        "controlSpread": 0.10207937499997399
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "cache-churn",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.14105075000003353,
+          0.14002037500000597,
+          0.13298037500000248,
+          0.08910712499996976,
+          0.18048062500000128
+        ],
+        "changed": [
+          0.1809843750000084,
+          0.22311062499998968,
+          0.13735637499999598,
+          0.09916625000001034,
+          0.1444345000000169
+        ],
+        "controlAfter": [
+          0.1453285000000477,
+          0.1357353750000101,
+          0.15104574999999443,
+          0.1778621249999901,
+          0.12615075000000786
+        ],
+        "controlMin": 0.08910712499996976,
+        "controlMax": 0.18048062500000128,
+        "controlSpread": 0.09137350000003153
+      },
+      {
+        "side": 32,
+        "bytes": 4096,
+        "scenario": "cold",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.08249100000000453,
+          0.12859500000000423,
+          0.10841212500002939,
+          0.09019687500001794,
+          0.08894699999999034
+        ],
+        "changed": [
+          0.12407624999998745,
+          0.1089908750000177,
+          0.10578750000001946,
+          0.10297037499999817,
+          0.09824174999997126
+        ],
+        "controlAfter": [
+          0.08359800000002338,
+          0.11562687499998958,
+          0.11973612499997444,
+          0.09555199999998365,
+          0.09963424999997983
+        ],
+        "controlMin": 0.08249100000000453,
+        "controlMax": 0.12859500000000423,
+        "controlSpread": 0.0461039999999997
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "same-source",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.19915325000000905,
+          0.17728612499999485,
+          0.17337262499998474,
+          0.19623424999997496,
+          0.1959424999999868
+        ],
+        "changed": [
+          0.19488425000002962,
+          0.18245349999999405,
+          0.19894312499998534,
+          0.21123362499999132,
+          0.19266849999998215
+        ],
+        "controlAfter": [
+          0.1669065000000245,
+          0.2703270000000231,
+          0.1846928750000103,
+          0.16961637500003235,
+          0.17461224999998137
+        ],
+        "controlMin": 0.1669065000000245,
+        "controlMax": 0.2703270000000231,
+        "controlSpread": 0.10342049999999858
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "same-byte-alias",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.34635237499999505,
+          0.3372849999999943,
+          0.2637881250000049,
+          0.23265999999998144,
+          0.18767312500003186
+        ],
+        "changed": [
+          0.3108129999999818,
+          0.17373750000001564,
+          0.5147841249999914,
+          0.18206600000002027,
+          0.19524124999999515
+        ],
+        "controlAfter": [
+          0.2645537499999904,
+          0.1882581250000186,
+          0.3847818750000016,
+          0.2605661250000253,
+          0.2639801249999749
+        ],
+        "controlMin": 0.18767312500003186,
+        "controlMax": 0.3847818750000016,
+        "controlSpread": 0.19710874999996975
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "equal-new-buffer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.1692917499999993,
+          0.24236049999998954,
+          0.18538137500003415,
+          0.21806725000000426,
+          0.17344662500002528
+        ],
+        "changed": [
+          0.19447337499998696,
+          0.21723824999999408,
+          0.2622242499999743,
+          0.21047212499999546,
+          0.30517712499998595
+        ],
+        "controlAfter": [
+          0.18831349999997826,
+          0.18276012499998728,
+          0.1866198750000052,
+          0.16594912500001158,
+          0.2718407499999813
+        ],
+        "controlMin": 0.16594912500001158,
+        "controlMax": 0.2718407499999813,
+        "controlSpread": 0.10589162499996974
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "sparse-interior",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.1719547499999834,
+          0.20685175000001266,
+          0.16260174999999322,
+          0.17417474999999172,
+          0.16217200000002663
+        ],
+        "changed": [
+          0.07970862500000919,
+          0.08641574999998625,
+          0.07951025000001266,
+          0.08432937500002424,
+          0.07812150000000884
+        ],
+        "controlAfter": [
+          0.17199287500000082,
+          0.3078537499999925,
+          0.1852106249999963,
+          0.17365562499999498,
+          0.16505112499997665
+        ],
+        "controlMin": 0.16217200000002663,
+        "controlMax": 0.3078537499999925,
+        "controlSpread": 0.14568174999996586
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "sparse-last-byte",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.18387112500001024,
+          0.1806716249999596,
+          0.17117775000004087,
+          0.25621650000000784,
+          0.20225937499999702
+        ],
+        "changed": [
+          0.24736499999997363,
+          0.35927112500000646,
+          0.2037846250000115,
+          0.22377837499999487,
+          0.23908712500002594
+        ],
+        "controlAfter": [
+          0.21174224999998614,
+          0.20871012499999608,
+          0.18404700000000673,
+          0.2437831249999931,
+          0.2343807499999997
+        ],
+        "controlMin": 0.17117775000004087,
+        "controlMax": 0.25621650000000784,
+        "controlSpread": 0.08503874999996697
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "full-change",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.23987487499998394,
+          0.20050762499997177,
+          0.19903087500000538,
+          0.25216762499999845,
+          0.19304712500002097
+        ],
+        "changed": [
+          0.1238317500000079,
+          0.16419900000002485,
+          0.09641699999995978,
+          0.09881062499997029,
+          0.0730177499999769
+        ],
+        "controlAfter": [
+          0.21991224999999304,
+          0.2931496249999981,
+          0.23603137500002447,
+          0.17926037499998415,
+          0.16464125000000251
+        ],
+        "controlMin": 0.16464125000000251,
+        "controlMax": 0.2931496249999981,
+        "controlSpread": 0.12850837499999557
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "equal-relocated-pointer",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.23481512499999724,
+          0.24553287499998078,
+          0.17522599999998079,
+          0.16147875000000056,
+          0.17263450000001512
+        ],
+        "changed": [
+          0.08619687499998463,
+          0.08345775000000799,
+          0.07601324999997416,
+          0.07493412499998442,
+          0.07743525000000773
+        ],
+        "controlAfter": [
+          0.20248562499999423,
+          0.20865487499997926,
+          0.1754048749999697,
+          0.18635562499997604,
+          0.17167150000003062
+        ],
+        "controlMin": 0.16147875000000056,
+        "controlMax": 0.24553287499998078,
+        "controlSpread": 0.08405412499998022
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "epoch-rollover",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.27914574999996944,
+          0.18731962500000066,
+          0.19255712500000755,
+          0.2223881249999522,
+          0.21411762499994325
+        ],
+        "changed": [
+          0.16722149999999658,
+          0.11023700000001213,
+          0.08835387500003833,
+          0.09252074999999138,
+          0.08953937500004372
+        ],
+        "controlAfter": [
+          0.200463374999984,
+          0.19162525000002972,
+          0.24175712499999236,
+          0.2709892499999853,
+          0.19536012499997923
+        ],
+        "controlMin": 0.18731962500000066,
+        "controlMax": 0.27914574999996944,
+        "controlSpread": 0.09182612499996878
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "cache-churn",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.16850062499997875,
+          0.15929400000001692,
+          0.16722937500003354,
+          0.1773614999999893,
+          0.16563174999998864
+        ],
+        "changed": [
+          0.07524862500002882,
+          0.08041212499995254,
+          0.08998712499996486,
+          0.08024912499999459,
+          0.06995162500004426
+        ],
+        "controlAfter": [
+          0.16345800000001987,
+          0.1739257499999951,
+          0.19720087499999295,
+          0.1567466249999825,
+          0.16984562500002198
+        ],
+        "controlMin": 0.1567466249999825,
+        "controlMax": 0.19720087499999295,
+        "controlSpread": 0.04045425000001046
+      },
+      {
+        "side": 64,
+        "bytes": 16384,
+        "scenario": "cold",
+        "batch": 8,
+        "repeats": 5,
+        "unit": "ms/producer submission",
+        "controlBefore": [
+          0.19831062500003327,
+          0.19241462499999784,
+          0.17350837499998306,
+          0.20500250000003462,
+          0.26174087499995835
+        ],
+        "changed": [
+          0.1130785000000003,
+          0.2227016249999565,
+          0.09873262499999669,
+          0.2184368750000374,
+          0.16151299999995672
+        ],
+        "controlAfter": [
+          0.1685551250000401,
+          0.2215741249999894,
+          0.18809124999995674,
+          0.39269100000001345,
+          0.31117587500000354
+        ],
+        "controlMin": 0.1685551250000401,
+        "controlMax": 0.39269100000001345,
+        "controlSpread": 0.22413587499997334
+      }
+    ]
+  }
+}

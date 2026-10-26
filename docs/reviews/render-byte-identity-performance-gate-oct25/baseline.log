@@ -1,0 +1,24 @@
+✔ independent exact-byte interior collision, equal-byte reuse and private ownership (17.246398ms)
+✔ independent zero-cache budget retains no source aliases across replacement (4.925033ms)
+✔ replacement at the same mip address cannot inherit a sparse fingerprint collision (16.069099ms)
+✔ queued update and device release retain both original byte snapshots in order (4.763631ms)
+✔ budget rejection publishes no partial definition or retirement and retry is complete (3.875177ms)
+✔ device incarnation and mip subresources have distinct references (3.982908ms)
+✔ unchanged identity sends a reference without decoding or publishing RGBA again (2.331411ms)
+✔ reset retires consumer residency and the next draw republishes its definition (2.020148ms)
+✔ single unsigned counter rollover invalidates an observed old generation (16.961704ms)
+✔ an unbound cached mip cannot inherit bytes after a complete allocation-counter cycle (6.106129ms)
+✔ wrapped metadata rejects a change in the last source byte (7.553343ms)
+✔ wrapped replacement queued behind the old draw owns fresh immutable bytes (5.907096ms)
+✔ source copies share the bounded LRU budget; resident budget counts RGBA only (3.057883ms)
+✔ full source identity covers format 23 (2.005811ms)
+✔ full source identity covers format 50 (1.302492ms)
+✔ full source identity covers format 827611204 (2.570309ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 152.833388
