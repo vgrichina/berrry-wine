@@ -1,0 +1,8 @@
+[
+  {
+    "operation": "git commit",
+    "error": "invalid object 100644 90413573b25a8bc99486bb8bdb4c64e60b45188d docs/reviews/army-authority-startup-repair-20261021.evidence.tgz; Error building trees",
+    "cause": "unrelated immutable sparse blob absent locally",
+    "resolution": "write-tree --missing-ok and commit-tree preserve unchanged remote-owned tree entries without copying unrelated binary"
+  }
+]

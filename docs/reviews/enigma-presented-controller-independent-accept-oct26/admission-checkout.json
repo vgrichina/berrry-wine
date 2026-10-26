@@ -1,0 +1,43 @@
+{
+  "stage": "checkout",
+  "charges": {
+    "owned": 6742016,
+    "launcher": 135168,
+    "sessions": 425984,
+    "positiveWAL": 0,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "projectedBytes": 33554432,
+  "cap": 67108864,
+  "hostFree": 4020142080,
+  "hostProjectedRemaining": 3986587648,
+  "memAvailable": 3668623360,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 432054272
+    },
+    {
+      "pid": 2986272,
+      "rss": 206479360
+    },
+    {
+      "pid": 2986327,
+      "rss": 197210112
+    },
+    {
+      "pid": 2986409,
+      "rss": 193998848
+    },
+    {
+      "pid": 2986649,
+      "rss": 195489792
+    }
+  ],
+  "aggregateClientRSS": 1225232384,
+  "newClientsReserve": 1073741824,
+  "prospectiveNodeAndHeadroom": 335544320,
+  "memoryFloor": 805306368,
+  "pass": true
+}

@@ -1,0 +1,162 @@
+{
+  "candidate": "90a65119543037f17f5db17a2ef00880fc659c30",
+  "source": {
+    "candidate": "90a65119543037f17f5db17a2ef00880fc659c30",
+    "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "controllerSHA256": "b405130b6189e6a6c4115720c40464f45548be7613e11c48f0311c0c27d5bed5",
+    "fixtureSHA256": "c038866f8cc3a779ae9c8c16b57531a310872ba056f58140118b4f27c11c8037",
+    "slices": {
+      "presentForRead": {
+        "bytes": 241,
+        "sha256": "76a33ae2ed0402956fae03daf5b05590d95efe24c036b7a155e54298f16c567e",
+        "startLine": 91
+      },
+      "dxPresentHook": {
+        "bytes": 135,
+        "sha256": "c35beb4df648e0c900c5236d122fa347dbdc7903e6a29d225c19c7863c94e673",
+        "startLine": 3150
+      },
+      "controlEval": {
+        "bytes": 990,
+        "sha256": "1e5370e0bcb829fd638d655822915ec3fb14eb3bd20ae460187808589f229f6c",
+        "startLine": 7184
+      },
+      "controlPng": {
+        "bytes": 364,
+        "sha256": "0eb51db903886f0c28b8a5d0d971121a9168e3e861f86f92f9da462987e36892",
+        "startLine": 7200
+      },
+      "parseInputEntries": {
+        "bytes": 29231,
+        "sha256": "a7ba59ef1c31e29d683d2e783b94003ba91a46c537b60af21be5589045fa8a2a",
+        "startLine": 1929
+      },
+      "snapshotAndSafeValue": {
+        "bytes": 1332,
+        "sha256": "9b68514d9f03744d72fabf2a25f93a964143ea31e044647a4575c75e3d6bc594",
+        "startLine": 7152
+      },
+      "handleControlCommand": {
+        "bytes": 9166,
+        "sha256": "3e33ac33c06bcac918e3715551a2d59a842c0b5d941098e616d0682c64a8cea4",
+        "startLine": 7207
+      }
+    }
+  },
+  "testSHA256": "a04f1938afab1743fdb02a2872567542f7530ef0ff5c6720649adcfd44d6706b",
+  "slicesSHA256": "ec4ea0f309d0e05b736ab4aeb97ad6d9aaed812948aa12135b5474c997709c6f",
+  "resultSHA256": "0165e09d0b82ffcf271910e51229070a8ab0afa7ad13e685835d53aa97756904",
+  "results": {
+    "verdict": "REJECT",
+    "controls": 11,
+    "unchangedDefects": 2,
+    "guestExecutions": 0,
+    "results": [
+      {
+        "name": "lazy",
+        "error": null,
+        "queuedClicks": 1,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "eager",
+        "error": null,
+        "queuedClicks": 1,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "live",
+        "error": "runner must be frozen and idle; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 0,
+        "result": "PASS"
+      },
+      {
+        "name": "credits",
+        "error": "runner must be frozen and idle; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 0,
+        "result": "PASS"
+      },
+      {
+        "name": "recording",
+        "error": "runner must be frozen and idle; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 0,
+        "result": "PASS"
+      },
+      {
+        "name": "noHook",
+        "error": "control readback error; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 0,
+        "result": "PASS"
+      },
+      {
+        "name": "badPath",
+        "error": "invalid canonical PNG transaction; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "changedFrame",
+        "error": "before framebuffer differs from inspected menu; no click\n+ actual - expected\n\n+ '8845c7f4f7c6b5b54c88a5c17474aef1a4a5be09476f832e3c839256dc016312'\n- '8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5'\n",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "badEnvelope",
+        "error": "control readback error; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "replacedWrapper",
+        "error": "control readback error; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": false,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "cleanupError",
+        "error": "control readback error; no click",
+        "queuedClicks": 0,
+        "wrapperRestored": false,
+        "paints": 1,
+        "result": "PASS"
+      },
+      {
+        "name": "lostWitness",
+        "error": null,
+        "queuedClicks": 1,
+        "wrapperRestored": false,
+        "paints": 1,
+        "result": "DEFECT_REPRODUCED"
+      },
+      {
+        "name": "lateBatch",
+        "error": "click queue acknowledgement invalid",
+        "queuedClicks": 1,
+        "wrapperRestored": true,
+        "paints": 1,
+        "result": "DEFECT_REPRODUCED"
+      }
+    ]
+  },
+  "remaining": "Publish unchanged reproducers and exact repair scope; no production edit, main integration or guest attempt"
+}

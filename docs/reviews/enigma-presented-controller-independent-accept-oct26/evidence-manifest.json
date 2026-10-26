@@ -1,0 +1,70 @@
+{
+  "candidate": "90a65119543037f17f5db17a2ef00880fc659c30",
+  "verdict": "REJECT",
+  "files": {
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/README.md": {
+      "bytes": 6470,
+      "sha256": "d19e978875f1ef5f5a7936ff3024cd345536e6662c32c4181ec248a98f3e0b39"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/admission-checkout.json": {
+      "bytes": 795,
+      "sha256": "9fc4e5641c1f4ebe0e73575d6e914ab79e3689082d3fd0db53a9af307baef6ba"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/admission-initial.json": {
+      "bytes": 792,
+      "sha256": "d09831cfce3bae39b69f01e0787729eb3bf1b7fabf61d4798a5a923c8e3b665c"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/admission-prepublication.json": {
+      "bytes": 806,
+      "sha256": "bb23c889f335f1a1b29196129fd06f293dfffb05805f5510f869a0c890a390ae"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/admission-pretest.json": {
+      "bytes": 794,
+      "sha256": "cb53abbde014bbb6a4f832e3851017d787b9f80a57de2fd2babd6f4e864c68a5"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/admission-tested.json": {
+      "bytes": 793,
+      "sha256": "8dc5555c358e055c3aaa6aa2e83fbb84556a7e57eba903b8d413e03194f76395"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/checkout.json": {
+      "bytes": 970,
+      "sha256": "67cedfa92d9e1bb100052c411fe1d908151445ec73d4be34ec9e1b6d23dd8473"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/configuration.json": {
+      "bytes": 700,
+      "sha256": "c1fd8e5d2811a09ad48489c53403827840ee0132159fe955e296a6ea21443d91"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/incidents.json": {
+      "bytes": 410,
+      "sha256": "a2136e917a9e23f6932cd49bc7c985cea95eb6c4db1582f2f4095c19425f5a5c"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/independent-results.jsonl": {
+      "bytes": 3816,
+      "sha256": "0165e09d0b82ffcf271910e51229070a8ab0afa7ad13e685835d53aa97756904"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/independent.cjs": {
+      "bytes": 4772,
+      "sha256": "a04f1938afab1743fdb02a2872567542f7530ef0ff5c6720649adcfd44d6706b"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/node-startup.json": {
+      "bytes": 2711,
+      "sha256": "d6f75339c5fda4b7c095173ca3af272465a5a282a3a391fa234733559f651599"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/runner-slices.json": {
+      "bytes": 42517,
+      "sha256": "ec4ea0f309d0e05b736ab4aeb97ad6d9aaed812948aa12135b5474c997709c6f"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/source-checkpoint.json": {
+      "bytes": 1465,
+      "sha256": "302f863c7e63979c8504752ba328e098a750344776146d517130e0bde600418f"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/supervisor.py": {
+      "bytes": 3218,
+      "sha256": "4757e903de455c552124d37161f3cef3aa49a598f655c878eddac19623aca97c"
+    },
+    "docs/reviews/enigma-presented-controller-independent-accept-oct26/test-checkpoint.json": {
+      "bytes": 4972,
+      "sha256": "73dc9a2013ed868929febfafe505f7d6f07e0ef389058c0908305cee316f4c5f"
+    }
+  }
+}

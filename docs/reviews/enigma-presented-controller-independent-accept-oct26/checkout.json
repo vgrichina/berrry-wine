@@ -1,0 +1,19 @@
+{
+  "candidate": "90a65119543037f17f5db17a2ef00880fc659c30",
+  "paths": [
+    "tools/enigma-presented-menu-controller.cjs",
+    "test/test-enigma-presented-menu-controller.cjs",
+    "test/fixtures/enigma-presented-menu-contract.json",
+    "docs/re-notes/enigma-start-game-menu-click-api-oct26/predecessor-menu.png"
+  ],
+  "flatObjects": 555,
+  "readOnlyStores": 3,
+  "warnings": [],
+  "tree": "a9d3fa3ee04916ecf0f6151f71d96460ff1c8aa6",
+  "hashes": {
+    "tools/enigma-presented-menu-controller.cjs": "b405130b6189e6a6c4115720c40464f45548be7613e11c48f0311c0c27d5bed5",
+    "test/test-enigma-presented-menu-controller.cjs": "47f5a32cad9c408970ead76f9989a68a8c29431385ca0adbbc78cbbc956d904c",
+    "test/fixtures/enigma-presented-menu-contract.json": "c038866f8cc3a779ae9c8c16b57531a310872ba056f58140118b4f27c11c8037",
+    "docs/re-notes/enigma-start-game-menu-click-api-oct26/predecessor-menu.png": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+  }
+}
