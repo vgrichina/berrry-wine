@@ -1,0 +1,10 @@
+PASS pre-ready/pre-rejected, wrapper rejection, repeated/token-changing waits, unknown record/timestamp, disabled park
+PASS rejects omitted begin
+PASS rejects omitted start
+PASS rejects omitted end
+PASS rejects omitted settle
+PASS rejects omitted bridge-ready
+PASS rejects omitted issue-operation
+PASS rejects omitted terminal
+PASS rejects omitted reject
+PASS exact original bridge/runner/import baseline:8 schedules counters/order/100ms/yields/batches/clock/results/errors; initializer and all non-hook runner bytes identical

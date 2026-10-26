@@ -1,0 +1,1 @@
+PASS11 exact bridge schedules including sync/async results, throws, stale generation, closed, deferred, FULL-drain/FULL-no-drain; values/exceptions/finalize/consume/order identical to original

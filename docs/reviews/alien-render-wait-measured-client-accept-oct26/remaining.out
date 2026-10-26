@@ -1,0 +1,2 @@
+PASS100ms race, deadline equality/expiry, stop and terminal distinctions; late settlement cannot rewrite totals
+PASS independent nonuniform histogram edges/slowest/dropped time conservation

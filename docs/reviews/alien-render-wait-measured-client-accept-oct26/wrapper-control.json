@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/alien-render-wait-measured-client-accept-oct26/ops/additional-controls.js"
+  ],
+  "cwd": "/tmp/alien-render-wait-measured-client-accept-oct26/repo",
+  "exit": 0,
+  "wall": 0.06056226510554552,
+  "cpu": 0.047677,
+  "peakRSS": 91557888,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 89,
+  "gitDATAChildOnly": false,
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

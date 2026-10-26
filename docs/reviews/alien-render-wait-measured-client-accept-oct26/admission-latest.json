@@ -1,0 +1,150 @@
+{
+  "at": 1793053488.3518429,
+  "memAvailable": 3365527552,
+  "required": 2214592512,
+  "components": {
+    "host": 805306368,
+    "civExisting": 805306368,
+    "sharedChildPool": 268435456,
+    "residentGrowthOnce": 335544320,
+    "prospectiveUnlaunched": 0
+  },
+  "clients": [
+    {
+      "pid": 3225613,
+      "rss": 194781184,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-readback-measured-client-accept-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3225901,
+      "rss": 193007616,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-measured-client-accept-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3226043,
+      "rss": 195985408,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-msg-boundary-measured-client-implementation-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3226183,
+      "rss": 191479808,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-transient-accounting-measured-client-repair-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3228174,
+      "rss": 195641344,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-controller-acceptance-capture-reserve-repair-oct26/final.txt",
+        "-"
+      ]
+    }
+  ],
+  "charges": {
+    "owned": 3571712,
+    "launcher": 241664,
+    "session": 811008,
+    "positiveWALOnce": 0,
+    "sourceGitPublicationAllowance": 8388608,
+    "future": 25165824,
+    "reserve": 8388608
+  },
+  "total": 46567424,
+  "allocation": 100663296,
+  "free": 3484033024,
+  "projectedFree": 3014270976,
+  "floor": 2982150144,
+  "residentBasis": "RSS already deducted from MemAvailable; future64MiB each once, prospective320MiB is estimate only",
+  "limits": {
+    "gitDATAChildOnly": 536870912,
+    "gitAggregatePhysical": 268435456,
+    "testAggregatePhysical": 134217728,
+    "nodeHeapSeparate": 67108864,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}

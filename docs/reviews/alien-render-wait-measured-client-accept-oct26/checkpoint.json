@@ -1,0 +1,539 @@
+{
+  "candidate": "864733e0ca72eaac61d4de1aaad8d080362ea63e",
+  "completed": [
+    {
+      "group": "production-boundary-first",
+      "data": {
+        "requests": 1,
+        "pending": 0,
+        "completed": 1,
+        "rejected": 0,
+        "deadline": 0,
+        "stopped": 0,
+        "superseded": 0,
+        "lateSettlements": 0,
+        "unknownRequests": 0,
+        "parkWaits": 1,
+        "parkMs": 41,
+        "bridgePendingMs": 23,
+        "readyToResumeMs": 18,
+        "unknownMs": 0,
+        "bucketUpperMs": [
+          0,
+          1,
+          5,
+          20,
+          100,
+          1000,
+          null
+        ],
+        "latencyBuckets": [
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        "slowest": [
+          {
+            "operation": "DRAW",
+            "state": "completed",
+            "parkMs": 41,
+            "bridgePendingMs": 23,
+            "readyToResumeMs": 18,
+            "unknownMs": 0
+          }
+        ],
+        "dropped": 0,
+        "droppedMs": 0
+      }
+    },
+    {
+      "group": "actual-deadline-stop-late",
+      "data": {}
+    },
+    {
+      "group": "histogram-conservation",
+      "data": {
+        "requests": 13,
+        "pending": 0,
+        "completed": 13,
+        "rejected": 0,
+        "deadline": 0,
+        "stopped": 0,
+        "superseded": 0,
+        "lateSettlements": 0,
+        "unknownRequests": 0,
+        "parkWaits": 13,
+        "parkMs": 2269,
+        "bridgePendingMs": 2269,
+        "readyToResumeMs": 0,
+        "unknownMs": 0,
+        "bucketUpperMs": [
+          0,
+          1,
+          5,
+          20,
+          100,
+          1000,
+          null
+        ],
+        "latencyBuckets": [
+          1,
+          1,
+          3,
+          3,
+          2,
+          2,
+          1
+        ],
+        "slowest": [
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 1001,
+            "bridgePendingMs": 1001,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 1000,
+            "bridgePendingMs": 1000,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 101,
+            "bridgePendingMs": 101,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 100,
+            "bridgePendingMs": 100,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 21,
+            "bridgePendingMs": 21,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 20,
+            "bridgePendingMs": 20,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 9,
+            "bridgePendingMs": 9,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          },
+          {
+            "operation": "CLEAR",
+            "state": "completed",
+            "parkMs": 6,
+            "bridgePendingMs": 6,
+            "readyToResumeMs": 0,
+            "unknownMs": 0
+          }
+        ],
+        "dropped": 5,
+        "droppedMs": 11
+      }
+    },
+    {
+      "group": "promise-token-unknown-matrix",
+      "data": {}
+    },
+    {
+      "group": "negative-controls",
+      "data": [
+        "begin",
+        "start",
+        "end",
+        "settle",
+        "bridge-ready",
+        "issue-operation",
+        "terminal",
+        "reject"
+      ]
+    },
+    {
+      "group": "baseline-noninterference",
+      "data": [
+        {
+          "mode": "delayed",
+          "stats": {
+            "waits": 1,
+            "wallMs": 31,
+            "skippedBatches": 0
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush",
+            "clear",
+            "sleepCheck",
+            [
+              "run",
+              123
+            ]
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": false,
+          "thrown": null,
+          "yield": 0
+        },
+        {
+          "mode": "reject",
+          "stats": {
+            "waits": 1,
+            "wallMs": 31,
+            "skippedBatches": 0
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush",
+            "clear",
+            "sleepCheck",
+            [
+              "run",
+              123
+            ]
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": true,
+          "thrown": null,
+          "yield": 0
+        },
+        {
+          "mode": "timeout",
+          "stats": {
+            "waits": 1,
+            "wallMs": 101,
+            "skippedBatches": 1
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush"
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": false,
+          "error": false,
+          "thrown": null,
+          "yield": 16
+        },
+        {
+          "mode": "stop",
+          "stats": {
+            "waits": 1,
+            "wallMs": 101,
+            "skippedBatches": 1
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush"
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": false,
+          "error": false,
+          "thrown": null,
+          "yield": 16
+        },
+        {
+          "mode": "ready",
+          "stats": {
+            "waits": 1,
+            "wallMs": 0,
+            "skippedBatches": 0
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush",
+            "clear",
+            "sleepCheck",
+            [
+              "run",
+              123
+            ]
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": false,
+          "thrown": null,
+          "yield": 0
+        },
+        {
+          "mode": "disabled",
+          "stats": {
+            "waits": 0,
+            "wallMs": 0,
+            "skippedBatches": 1
+          },
+          "trace": [
+            "flush"
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": false,
+          "thrown": null,
+          "yield": 16
+        },
+        {
+          "mode": "token-change",
+          "stats": {
+            "waits": 1,
+            "wallMs": 31,
+            "skippedBatches": 0
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush",
+            "clear",
+            "sleepCheck",
+            [
+              "run",
+              123
+            ]
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": false,
+          "thrown": null,
+          "yield": 0
+        },
+        {
+          "mode": "run-exception",
+          "stats": {
+            "waits": 1,
+            "wallMs": 31,
+            "skippedBatches": 0
+          },
+          "trace": [
+            [
+              "timer",
+              100
+            ],
+            "flush",
+            "clear",
+            "sleepCheck",
+            "throw"
+          ],
+          "tick": {
+            "batch": 7,
+            "pausedMs": 0
+          },
+          "done": true,
+          "error": false,
+          "thrown": "guest-run-sentinel",
+          "yield": 0
+        }
+      ]
+    },
+    {
+      "group": "bridge-result-issue-poll-noninterference",
+      "data": [
+        [
+          "finalize",
+          12
+        ],
+        {
+          "mode": "value",
+          "outcome": 37,
+          "error": null,
+          "bridgeError": null,
+          "submits": 0,
+          "deferred": 0
+        },
+        {
+          "mode": "reject",
+          "outcome": -77,
+          "error": null,
+          "bridgeError": "reject-sentinel",
+          "submits": 0,
+          "deferred": 0
+        },
+        {
+          "mode": "generation",
+          "outcome": -77,
+          "error": null,
+          "bridgeError": "stale D3D9 render completion",
+          "submits": 0,
+          "deferred": 0
+        },
+        [
+          "finalize",
+          12
+        ],
+        {
+          "mode": "finalizer-throw",
+          "outcome": -77,
+          "error": null,
+          "bridgeError": "finalizer-sentinel",
+          "submits": 0,
+          "deferred": 0
+        },
+        {
+          "mode": "closed",
+          "outcome": -77,
+          "error": null,
+          "bridgeError": "stale D3D9 render completion",
+          "submits": 0,
+          "deferred": 0
+        },
+        [
+          "finalize",
+          12
+        ],
+        {
+          "mode": "sync-value",
+          "outcome": 37,
+          "error": null,
+          "bridgeError": null,
+          "submits": 0,
+          "deferred": 0
+        },
+        {
+          "mode": "sync-throw",
+          "error": "submit-sentinel",
+          "bridgeError": null,
+          "submits": 0,
+          "deferred": 0
+        },
+        [
+          "finalize",
+          1
+        ],
+        {
+          "mode": "deferred",
+          "outcome": 37,
+          "error": null,
+          "bridgeError": null,
+          "submits": 0,
+          "deferred": 0
+        },
+        [
+          "finalize",
+          12
+        ],
+        {
+          "mode": "full-drain",
+          "outcome": 37,
+          "error": null,
+          "bridgeError": null,
+          "submits": 2,
+          "deferred": 1
+        },
+        {
+          "mode": "full-no-drain",
+          "error": "queue-full",
+          "bridgeError": null,
+          "submits": 1,
+          "deferred": 0
+        },
+        {
+          "mode": "ordinary-throw",
+          "error": "plain-sentinel",
+          "bridgeError": null,
+          "submits": 0,
+          "deferred": 0
+        }
+      ]
+    },
+    {
+      "group": "wrapper-forwarding-negative-control",
+      "data": {
+        "omittedBridgeWait": "rejected"
+      }
+    }
+  ],
+  "extractions": {
+    "hooks": {
+      "bytes": 5223,
+      "sha256": "a1d9a9b5a4dcdbc0cc4513b191ca51cf167e3357a49220203c05570271c5556b"
+    },
+    "result": {
+      "bytes": 1051,
+      "sha256": "793c965c1d354c8e86e9d85323660cf4e9b0baa324b7d03e26ea215323b4a8c9"
+    },
+    "issue": {
+      "bytes": 1808,
+      "sha256": "7a567b9461312585e5be406a88ca3ce190608bb84bf2e480e629db02a0160225"
+    },
+    "wait": {
+      "bytes": 85,
+      "sha256": "b29f30395550947a18181adeacd72ea3594b5f182e093241e8eb73937dca284f"
+    },
+    "wrapper": {
+      "bytes": 148,
+      "sha256": "150c9217c6bb7b3b01b4d92028f35f08699a64e7ebd1904bb8039144b27662b2"
+    },
+    "terminal": {
+      "bytes": 185,
+      "sha256": "53892f85aaf7e48bd66eeae3ca0b5d13949ebc7841f0e0f52b11c88f2c796f14"
+    },
+    "dispatch": {
+      "bytes": 1479,
+      "sha256": "dc311df1bc6ca82171ed950aa495d343b28a9adea8a73faa42b03b2402cdb2f6"
+    }
+  },
+  "remaining": []
+}

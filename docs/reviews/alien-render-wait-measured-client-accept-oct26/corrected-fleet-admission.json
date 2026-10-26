@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-26T22:17:58Z",
+  "availableBytes": 3781603328,
+  "requiredBeforeFourClientsBytes": 3288334336,
+  "diskFreeBytes": 3506401280,
+  "projectedFreeBytes": 3036639232,
+  "diskFloorBytes": 2982150144,
+  "admitted": true,
+  "correction": "320MiB prospective accounting only, actual resident RSS deducted once; no individual128MiB client stop; shared two-permit child execution pool",
+  "tasks": [
+    "ricochet-readback-measured-client-accept-oct26",
+    "alien-render-wait-measured-client-accept-oct26",
+    "enigma-msg-boundary-measured-client-implementation-oct26",
+    "gl-transient-accounting-measured-client-repair-oct26"
+  ],
+  "verifiedPins": [
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/test-boat-capture-readback.py",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/fixtures/ricochet-serial-controller/work.py",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/fixtures/ricochet-serial-controller/read.py",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/fixtures/ricochet-serial-controller/later.png",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/fixtures/ricochet-serial-controller/serial.py",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/test/run.js",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/lib/d3d9-host.js",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/lib/host-imports.js",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/lib/render-wait-attribution.js",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/test/test-render-wait-attribution.js",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/test/fixtures/render-park-control.json",
+    "/tmp/gl-published-webgl-api-qualification-oct26/ops/remote-run.py",
+    "/tmp/gl-published-webgl-api-qualification-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "/tmp/enigma-tracked-runner-pin-repair-oct26/repo/docs/reviews/enigma-uncertainty-independent-publication-oct26/tracked-run.js"
+  ]
+}

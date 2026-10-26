@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/alien-render-wait-measured-client-accept-oct26/ops/challenge.js",
+    "--boundary-only"
+  ],
+  "cwd": "/tmp/alien-render-wait-measured-client-accept-oct26/repo",
+  "exit": 0,
+  "wall": 0.042837114073336124,
+  "cpu": 0.030946999999999995,
+  "peakRSS": 84570112,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 135,
+  "gitDATAChildOnly": false,
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

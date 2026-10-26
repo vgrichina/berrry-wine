@@ -1,0 +1,5 @@
+{
+  "name": "AssertionError",
+  "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+  "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n\n    at main (/tmp/alien-render-wait-measured-client-accept-oct26/ops/challenge.js:97:69)"
+}

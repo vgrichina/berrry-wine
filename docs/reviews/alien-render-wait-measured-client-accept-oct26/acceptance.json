@@ -1,0 +1,49 @@
+{
+  "candidate": "864733e0ca72eaac61d4de1aaad8d080362ea63e",
+  "result": "ACCEPTED_OFFLINE_SOURCE_BOUNDARIES_ONLY",
+  "productionDefectFound": false,
+  "completedGroups": [
+    "production-boundary-first",
+    "actual-deadline-stop-late",
+    "histogram-conservation",
+    "promise-token-unknown-matrix",
+    "negative-controls",
+    "baseline-noninterference",
+    "bridge-result-issue-poll-noninterference",
+    "wrapper-forwarding-negative-control"
+  ],
+  "allRemainingOfflineChecks": [],
+  "guestGameplayQualification": "MISSING; later test/test-d3d-render-park-batches.js and actual game acceptance required",
+  "sourceManifest": "git-source-identity.json",
+  "fixtureSHA256": {
+    "challenge.js": "f5b9c53ff51cac1b04647608c964d41a68d4bbf550121f4f03be1a03ef114351",
+    "bridge-challenge.js": "c40f16d3c03f80deed3ebac00b38fed7be9dfa442d7d0a0df7a02d02a0fcbb41",
+    "additional-controls.js": "d2c12dc2b5b98f592d6210c7499ac0daf3d14cbb5f074c556ccf0e68329a9aaa",
+    "challenge-first-oracle.js": "dd82f3f778471a4631a07e9f07222a52d309ba7b5e1702bf68f79b436f66d4b0"
+  },
+  "reusedDonorReceipt": "/tmp/alien-shooter-render-wait-attribution-oct26/repo/docs/re-notes/alien-shooter-render-wait-attribution-oct26/acceptance.json",
+  "reusedDonorReceiptSHA256": "4fb3a4146f7d7e021e4ba94ae5914ff1349bae83d2598e0efb888f794842dc16",
+  "peakIndependentTestRSS": 101736448,
+  "physicalTestLimit": 134217728,
+  "physicalGitLimit": 268435456,
+  "nodeHeapSeparate": 67108864,
+  "limits": "CPU90/wall120/file24MiB/output2MiB/excerpt8192; GitDATA512MiB child only",
+  "firstFailure": "owned oracle error, not candidate rejection; original reproducer/error retained",
+  "liveWorker": {
+    "session": "01a17a4b-18c0-74c1-8db4-396bcd9fa999",
+    "pid": 3225901,
+    "profile": "wine-worker",
+    "model": "gpt-6.1-sol",
+    "reasoning": "medium",
+    "totalAutoCompaction": 200000,
+    "argvEvidence": "admission-latest.json"
+  },
+  "mainForbidden": true,
+  "box": {
+    "assigned": null,
+    "historical": "bx_a9dwsx2x",
+    "state": "ROOT verified STOPPED, not queried",
+    "expiry": "historical2026-10-26T22:31:02.925Z",
+    "owner": "coordinator"
+  }
+}

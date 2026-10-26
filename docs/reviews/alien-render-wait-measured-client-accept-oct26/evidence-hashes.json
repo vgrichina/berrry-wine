@@ -1,0 +1,126 @@
+{
+  "parser.json": {
+    "bytes": 472,
+    "sha256": "116abe83650e3d27a5a5abf9d18958d391850c388840ca2dfb03981897ffcc4e"
+  },
+  "wrapper-control.out": {
+    "bytes": 89,
+    "sha256": "b1ec667dd58fd53f5e3926d0039b4daadb7df5c7f3ce5a90eb0567c7cb01be32"
+  },
+  "parser.out": {
+    "bytes": 72,
+    "sha256": "c609e2cd877abf523ed9ffc05f7e7acc8da940af0ea3097f2f0311ae9a42d676"
+  },
+  "setup.json": {
+    "bytes": 463,
+    "sha256": "f23e8f2ea549e678e52abbd5b2c5d07b50a46c83ca7efe67d813c293262ff627"
+  },
+  "checkpoint.json": {
+    "bytes": 11761,
+    "sha256": "ec2c7b01b1de99c7df91021eff87eafc3cc3373640ab2e8de0709b23f1bea8c1"
+  },
+  "admission-latest.json": {
+    "bytes": 4315,
+    "sha256": "d66225adf31e9f820d51d0d6bab5b1936b6cc08c589eda5fe20817952733121e"
+  },
+  "remaining.err": {
+    "bytes": 296,
+    "sha256": "d32e64090e7f3e7d1f2595a0792ccea7d160b7b49fcba120d2357c9735668651"
+  },
+  "initial-root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "boundary.out": {
+    "bytes": 135,
+    "sha256": "066f1ecd03e866231bb1932a6661176bab12fceb2818f9e2d8d44cdd4711fabd"
+  },
+  "wrapper-control.json": {
+    "bytes": 485,
+    "sha256": "02e61007ccb497ad94956c24d92371299fdb924ad123223397b29fe5ac1e54ff"
+  },
+  "bridge-challenges.out": {
+    "bytes": 193,
+    "sha256": "fc4ddce2fc2023173432c9afe534acd1dce3c5c38b24efa0cbc7af2937a58fdc"
+  },
+  "git-source-identity.json": {
+    "bytes": 2361,
+    "sha256": "cd888ae837b47308f9f07f6b6ee5ca2feacf6ac7899a34f0b8f8c645d76ef37b"
+  },
+  "remaining.json": {
+    "bytes": 495,
+    "sha256": "75bf94ab5e164233e8d03efd3603d50dfd41d510e1c845f5293104ae4b8e9a5f"
+  },
+  "boundary.json": {
+    "bytes": 512,
+    "sha256": "77e5b2eddb813d2928a207b65e431da5df0713bdc9afbf1275da4c6d19d797ca"
+  },
+  "corrected-fleet-admission.json": {
+    "bytes": 2150,
+    "sha256": "668c2fde288dac71fbce211b5eac37263cdb57d6f9f36cec11afce8a6cc29819"
+  },
+  "startup.out": {
+    "bytes": 1455,
+    "sha256": "fb1e5ef3ba2bca5cb6a434e44201727b821cb3adb1b692924c2af78b850cb6c8"
+  },
+  "continuation.out": {
+    "bytes": 527,
+    "sha256": "f4dbd1f01153b7d82feb4eecb00c207d757e4782b4f06ac03ad8b9118e0e0624"
+  },
+  "challenge.js": {
+    "bytes": 14624,
+    "sha256": "f5b9c53ff51cac1b04647608c964d41a68d4bbf550121f4f03be1a03ef114351"
+  },
+  "challenge-first-oracle.js": {
+    "bytes": 14011,
+    "sha256": "dd82f3f778471a4631a07e9f07222a52d309ba7b5e1702bf68f79b436f66d4b0"
+  },
+  "continuation.json": {
+    "bytes": 495,
+    "sha256": "c04c4cf1bb590aefa9d99c35a58aa7ee766e8bb0ab457b5ee2a8348cebc3757c"
+  },
+  "parser-identity.json": {
+    "bytes": 348,
+    "sha256": "9226dae387bee625b7b6bfdee97dd0a0b93b1b787253e880cadd815b81b7a982"
+  },
+  "additional-controls.js": {
+    "bytes": 499,
+    "sha256": "d2c12dc2b5b98f592d6210c7499ac0daf3d14cbb5f074c556ccf0e68329a9aaa"
+  },
+  "control.py": {
+    "bytes": 5916,
+    "sha256": "e1ee4442465684b65eeaaa7b0f4e94d49e9049e55ed9cc95eeef645f780900ca"
+  },
+  "startup.json": {
+    "bytes": 475,
+    "sha256": "52f24d8ac6b53d0e858c40d53947fb901ff45ac4c3664ec5def5dbed58735cd5"
+  },
+  "bridge-challenge.js": {
+    "bytes": 2814,
+    "sha256": "c40f16d3c03f80deed3ebac00b38fed7be9dfa442d7d0a0df7a02d02a0fcbb41"
+  },
+  "bridge-challenges.json": {
+    "bytes": 495,
+    "sha256": "a1f5cf048cd19a94cf7cc7402348868a7cf93f5130a437d5db4efb387d612656"
+  },
+  "first-oracle-failure.json": {
+    "bytes": 285,
+    "sha256": "60fe1c6c6e2fd25907100af02047943baedf86b730f43a63c35d4b3b1e4413ac"
+  },
+  "README.md": {
+    "bytes": 5884,
+    "sha256": "7a4a3cfcbd0403aaddf2a6621670c68180f9b4bfbd5fb872bc81c72a682f45ce"
+  },
+  "pinned-inputs.json": {
+    "bytes": 1635,
+    "sha256": "9e71712a5a7bf34c1873ecc0ebec1f4cc83e452735c6e85dff55494404911499"
+  },
+  "acceptance.json": {
+    "bytes": 2139,
+    "sha256": "0357e37df57dd3cc5fe733a2036609eb3d3c67994150e5d53483c520e2aa99ea"
+  },
+  "remaining.out": {
+    "bytes": 190,
+    "sha256": "7ca7d40f0ccbf5a8b05fb403b3c5bf7c64a11aa20e6ca8a6bd209f58336dab1b"
+  }
+}

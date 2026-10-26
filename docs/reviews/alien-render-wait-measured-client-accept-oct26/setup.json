@@ -1,0 +1,8 @@
+{
+  "candidate": "864733e0ca72eaac61d4de1aaad8d080362ea63e",
+  "branch": "task/alien-render-wait-measured-client-accept-oct26",
+  "sparse": "only owned review evidence; six verified source files separate under source/",
+  "sourceAllocated": 1024000,
+  "gitAllocated": 1249280,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}
