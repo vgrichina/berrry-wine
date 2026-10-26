@@ -1,0 +1,33 @@
+OBSERVED missing final before restart: after-old
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: after-old: FETCH  sample: https://fixture.invalid/local
+RETRY  1/3: https://fixture.invalid/local
+RETRY  2/3: https://fixture.invalid/local
+RETRY  3/3: https://fixture.invalid/local
+ERROR  sample: restart must reconcile before acquisition
+
+
+1 !== 0
+
+    at /tmp/corpus-crash-publication-repair-oct25/repo/test/test-candidate-publication-crash.js:127:14
+    at fixture (/tmp/corpus-crash-publication-repair-oct25/repo/test/test-candidate-publication-crash.js:110:9)
+    at main (/tmp/corpus-crash-publication-repair-oct25/repo/test/test-candidate-publication-crash.js:117:5)
+    at Object.<anonymous> (/tmp/corpus-crash-publication-repair-oct25/repo/test/test-candidate-publication-crash.js:177:6)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 1,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.18.1

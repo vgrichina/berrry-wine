@@ -1,0 +1,22 @@
+PASS  OPFS writers serialize fresh indexes and reclaim obsolete immutable blobs
+PASS  OPFS failed index publication preserves data and recovers without orphan collisions
+PASS  OPFS hydration captures one index and holds writers until snapshot reads complete
+PASS  Node failed replacement and deletion keep the old committed bytes
+PASS  store interface is validated at attach, not at eviction time
+PASS  create, modify and delete are journalled as file/whiteout records
+PASS  a whiteout survives re-mounting the base: enumeration does not resurrect it
+PASS  copy-on-write over a resident base file keeps the base mount intact
+PASS  an unresident provider file opened for write fails loudly, not silently
+PASS  a read-only drive refuses every mutation with ERROR_WRITE_PROTECT
+PASS  rename records the whiteout and the create in one batch
+PASS  paths are journalled under VirtualFS normalization, case-folded once
+PASS  the browser OPFS store survives reload byte-exactly and isolates imports
+PASS  overlay metadata keeps safe-integer sizes instead of wrapping at 2GB
+PASS  the Node store round-trips a tree byte-exactly across processes
+PASS  a short blob is reported, never mounted as a truncated file
+PASS  the Node store rejects unsafe blob names before reads or mutations
+PASS  a failing store is held in errors, not swallowed
+PASS  a queued flush snapshots bytes before later guest writes
+PASS  detach flushes and restores the original VirtualFS methods
+
+All 20 overlay cases pass

@@ -1,0 +1,28 @@
+OBSERVED missing final before restart: after-old
+PASS crash/restart after-old
+PASS crash/restart before-old
+OBSERVED missing final before restart: before-new
+PASS crash/restart before-new
+PASS crash/restart after-new
+PASS crash/restart rollback
+OBSERVED missing final before restart: rollback-fail
+PASS crash/restart rollback-fail
+PASS crash/restart normal
+PASS crash/restart prepare-restart
+PASS crash/restart initial-before-new
+PASS crash/restart initial-after-new
+PASS reject/preserve unverified
+PASS reject/preserve foreign-key
+PASS reject/preserve stale-inode
+PASS reject/preserve journal-symlink
+PASS reject/preserve stage-symlink
+PASS reject/preserve previous-symlink
+PASS reject/preserve stage-file-symlink
+PASS reject/preserve changed-save
+PASS reject/preserve ambiguous
+PASS reject/preserve unjournalled
+PASS reject/preserve changed-final
+PASS reject/preserve truncated-journal
+PASS reject/preserve foreign-entry
+PASS reject/preserve final-symlink
+{"passed":24,"sourceFile":"/tmp/corpus-crash-publication-repair-oct25/repo/tools/fetch-candidate-corpus.js","sourceSHA256":"00f0daadd66b0397dfc0e28587bb15573e2a018e83fd37475c5af81043d7fdc4"}

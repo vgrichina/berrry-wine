@@ -1,0 +1,7 @@
+PASS acquisition
+PASS hash
+PASS extraction
+PASS browser
+PASS success
+PASS publish-fail
+PASS publish-fail-rollback

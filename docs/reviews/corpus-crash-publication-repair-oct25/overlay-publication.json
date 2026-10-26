@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "test/test-overlay-memory-publication.js"
+  ],
+  "exit": 0,
+  "seconds": 0.04741239547729492,
+  "outputBytes": 996,
+  "incident": null,
+  "availableRAM": 2820964352,
+  "freeDisk": 5078106112,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

@@ -1,0 +1,9 @@
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+GET   demo http://127.0.0.1:45451
+PASS 8 DOS recovery failure/publication cases plus cached extraction/reuse (synthetic ZIP, local HTTP; no guest runtime)

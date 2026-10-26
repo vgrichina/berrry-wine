@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "test/test-candidate-force-recovery.js"
+  ],
+  "exit": 0,
+  "seconds": 0.07378625869750977,
+  "outputBytes": 114,
+  "incident": null,
+  "availableRAM": 2712051712,
+  "freeDisk": 4495589376,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

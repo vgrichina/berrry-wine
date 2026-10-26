@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "--check",
+    "tools/fetch-candidate-corpus.js"
+  ],
+  "exit": 0,
+  "seconds": 0.023370742797851562,
+  "outputBytes": 0,
+  "incident": null,
+  "availableRAM": 3165769728,
+  "freeDisk": 5108183040,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

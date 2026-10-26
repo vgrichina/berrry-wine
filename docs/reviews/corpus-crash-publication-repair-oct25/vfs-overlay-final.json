@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "test/test-vfs-overlay.js"
+  ],
+  "exit": 0,
+  "seconds": 0.0684041976928711,
+  "outputBytes": 1485,
+  "incident": null,
+  "availableRAM": 3154599936,
+  "freeDisk": 5108195328,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "node",
+    "test/test-candidate-publication-crash.js",
+    "/tmp/corpus-crash-publication-repair-oct25/ops/baseline.js"
+  ],
+  "exit": 1,
+  "seconds": 4.61395263671875,
+  "outputBytes": 1382,
+  "incident": null,
+  "availableRAM": 2865586176,
+  "freeDisk": 5108813824,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

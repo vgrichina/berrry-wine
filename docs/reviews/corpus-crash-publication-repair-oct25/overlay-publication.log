@@ -1,0 +1,18 @@
+✔ memory: invalid tail rolls back overwritten bytes and metadata (1.205441ms)
+✔ memory: failed whiteout and directory replacement preserve old saves (0.745068ms)
+✔ memory: payload conversion failure cannot publish even its metadata (0.285935ms)
+✔ memory: interrupted input iteration rolls back, then a retry commits (0.226255ms)
+✔ memory: successful duplicate paths, whiteouts and empty batches retain semantics (3.439629ms)
+✔ node-dir: invalid tail rolls back overwritten bytes and metadata (5.071459ms)
+✔ node-dir: failed whiteout and directory replacement preserve old saves (0.748845ms)
+✔ node-dir: payload conversion failure cannot publish even its metadata (0.903876ms)
+✔ node-dir: interrupted input iteration rolls back, then a retry commits (0.953217ms)
+✔ node-dir: successful duplicate paths, whiteouts and empty batches retain semantics (1.068164ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18.003327

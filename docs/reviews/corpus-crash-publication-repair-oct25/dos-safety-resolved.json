@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "test/test-dos-recovery-safety.js"
+  ],
+  "exit": 0,
+  "seconds": 6.0908472537994385,
+  "outputBytes": 393,
+  "incident": null,
+  "availableRAM": 2805096448,
+  "freeDisk": 5077266432,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}

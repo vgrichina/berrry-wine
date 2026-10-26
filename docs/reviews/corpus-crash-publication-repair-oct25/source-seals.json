@@ -1,0 +1,58 @@
+[
+  {
+    "file": "tools/fetch-candidate-corpus.js",
+    "sha256": "00f0daadd66b0397dfc0e28587bb15573e2a018e83fd37475c5af81043d7fdc4",
+    "blob": "a163c74440c3d1e0f7ebd6e05457b6815ec796bb",
+    "baseBlob": "3b9cbeddfac01cab08c167aa58b223b29e77c4c0",
+    "unchanged": false
+  },
+  {
+    "file": "test/test-candidate-publication-crash.js",
+    "sha256": "ecc8548b10aff140162cd9f9242570ded37353cf336f2298767595b497ad2354",
+    "blob": "b73997f8032ba92f43b488e16a9ee91f08bb4612",
+    "baseBlob": null,
+    "unchanged": false
+  },
+  {
+    "file": "test/test-candidate-force-recovery.js",
+    "sha256": "a7af0347da9d99b9a25064e2d9ecab480b5b3e7071530373d93e9c30602bd05f",
+    "blob": "f865e997d073b7269cc5ec946cf5dd68436c58b3",
+    "baseBlob": "f865e997d073b7269cc5ec946cf5dd68436c58b3",
+    "unchanged": true
+  },
+  {
+    "file": "test/test-dos-recovery-safety.js",
+    "sha256": "852b2ad2abe396dd1429e537eb1ff23a78a72427cf8c22473b351c553bb6ba00",
+    "blob": "6123205295839946d855f63f19b3b93c39b1b748",
+    "baseBlob": "6123205295839946d855f63f19b3b93c39b1b748",
+    "unchanged": true
+  },
+  {
+    "file": "test/test-overlay-memory-publication.js",
+    "sha256": "58e4b14231f1c63d7d263cd2f9f1f668bf4e218f73bd37132c0169b67c071985",
+    "blob": "83dbeb9726fbe0fcb6b96f56dc46ef1b0da63965",
+    "baseBlob": "83dbeb9726fbe0fcb6b96f56dc46ef1b0da63965",
+    "unchanged": true
+  },
+  {
+    "file": "test/test-vfs-overlay.js",
+    "sha256": "502228aa0a6156e5a8943a0c58c323e7468065615ea13a619b169f225dddd1e7",
+    "blob": "83cc62c0abfd67265db445aa25ae3e3e0926b5a1",
+    "baseBlob": "83cc62c0abfd67265db445aa25ae3e3e0926b5a1",
+    "unchanged": true
+  },
+  {
+    "file": "lib/overlay-store.js",
+    "sha256": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9",
+    "blob": "593008fde16e2c91aac48e5eb0ab470692fefb11",
+    "baseBlob": "593008fde16e2c91aac48e5eb0ab470692fefb11",
+    "unchanged": true
+  },
+  {
+    "file": "lib/vfs-overlay.js",
+    "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+    "blob": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+    "baseBlob": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+    "unchanged": true
+  }
+]

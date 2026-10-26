@@ -1,0 +1,7 @@
+[
+  "Early repository-policy reads exceeded 8KiB excerpt target; initial broad scratch glob generated oversized diagnostic output before the focused supervisor existed. No credentials exposed; subsequent test commands use enforced 128KiB capture and 8KiB displayed excerpts.",
+  "Donor repository did not itself resolve immutable base; assigned read-only flat leaves resolved it without changing donor or traversing alternates.",
+  "Initial flat-view absolute symlinks consumed 34MiB metadata; replaced by short relative symlinks via standing-leaf aliases, reducing entire task to about4MiB. Earlier combined session/WAL peak was not measured; do not claim retrospective all-byte compliance.",
+  "Optional regression sparse dependencies initially missing; exact pinned manifest/filesystem/region-map/browser-shell dependencies recovered in same task. One dependency resolver treated .generated as a complete suffix; corrected explicitly. Failed runs retained in task ops; no oracle edited.",
+  "Required board watcher started after first source edit, rather than before it; claim and recent ownership reads preceded edits; no overlapping ownership observed."
+]

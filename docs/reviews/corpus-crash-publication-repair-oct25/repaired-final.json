@@ -1,0 +1,15 @@
+{
+  "command": [
+    "node",
+    "test/test-candidate-publication-crash.js"
+  ],
+  "exit": 0,
+  "seconds": 2.37447452545166,
+  "outputBytes": 1149,
+  "incident": null,
+  "availableRAM": 2919534592,
+  "freeDisk": 5108801536,
+  "nodeHeap": 134217728,
+  "cpuWall": 60,
+  "fileLimit": 25165824
+}
