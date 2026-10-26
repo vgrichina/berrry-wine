@@ -1,0 +1,20 @@
+{
+  "label": "static-corrected",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/ops/static-check-corrected.js"
+  ],
+  "exit": 1,
+  "reason": "natural",
+  "peakRSS": 49373184,
+  "physicalCap": 3221225472,
+  "cpu": 0.4,
+  "wall": 0.06503977700003816,
+  "outputBytes": 861,
+  "maxDisk": 34721792,
+  "inputHashesUnchanged": true,
+  "supervisorIncluded": true,
+  "trackedProcesses": 2,
+  "ownedProcessGroup": 22088,
+  "ownedGroupCleanup": true
+}

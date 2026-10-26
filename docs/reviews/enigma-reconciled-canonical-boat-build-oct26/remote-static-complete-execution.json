@@ -1,0 +1,20 @@
+{
+  "label": "static-complete",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/ops/static-check-complete.js"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 130457600,
+  "physicalCap": 3221225472,
+  "cpu": 2.95,
+  "wall": 0.48205190299995593,
+  "outputBytes": 2037,
+  "maxDisk": 34770944,
+  "inputHashesUnchanged": true,
+  "supervisorIncluded": true,
+  "trackedProcesses": 2,
+  "ownedProcessGroup": 22715,
+  "ownedGroupCleanup": true
+}

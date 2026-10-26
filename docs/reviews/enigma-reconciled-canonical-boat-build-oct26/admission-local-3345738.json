@@ -1,0 +1,51 @@
+{
+  "at": 1793058547.4120922,
+  "stage": "local-3345738",
+  "actual": {
+    "own": 23162880,
+    "launcher": 344064,
+    "session": 1228800,
+    "positiveWAL": 0
+  },
+  "used": 24735744,
+  "allocation": 83886080,
+  "ownRemaining": 59150336,
+  "peerRemaining": {
+    "alien-terminal-failfast-independent-accept-oct26": 60149760,
+    "gl-runner-mutable-evidence-namespace-repair-oct26": 59961344
+  },
+  "free": 3201662976,
+  "projectedFree": 3022401536,
+  "floor": 2982150144,
+  "memAvailable": 3860672512,
+  "requiredMemory": 1342177280,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 395280384
+    },
+    {
+      "pid": 3328536,
+      "rss": 193691648
+    },
+    {
+      "pid": 3331326,
+      "rss": 195678208
+    },
+    {
+      "pid": 3336944,
+      "rss": 192561152
+    }
+  ],
+  "residentRSSAlreadyDeducted": true,
+  "positiveWALCountedOnce": true,
+  "allocationCategoriesMiB": {
+    "compressed": 8,
+    "git": 16,
+    "modulesReports": 16,
+    "sessionEventsWAL": 16,
+    "futurePublication": 16,
+    "reserve": 8
+  },
+  "pass": true
+}

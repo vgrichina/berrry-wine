@@ -1,0 +1,8 @@
+{
+  "name": "payload.tar.gz",
+  "bytes": 3805009,
+  "sha256": "25d259f45f97fe65675a9e4279d7a555b86e88677f85c786fd273916e8d2f8d1",
+  "chunks": 112,
+  "chunkBytes": 34000,
+  "maxConcurrent": 4
+}

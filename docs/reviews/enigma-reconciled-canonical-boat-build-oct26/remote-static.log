@@ -1,0 +1,22 @@
+node:assert:152
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: 'ce20264baa4143f5' == '9a3bc9149d58209c'
+    at Object.<anonymous> (/tmp/enigma-reconciled-canonical-boat-build-oct26/ops/static-check.js:8:8)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'ce20264baa4143f5',
+  expected: '9a3bc9149d58209c',
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.22.1

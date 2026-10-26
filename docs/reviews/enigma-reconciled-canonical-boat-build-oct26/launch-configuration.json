@@ -1,0 +1,31 @@
+{
+  "clients": [
+    {
+      "pid": 3328536,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-reconciled-canonical-boat-build-oct26/final.txt",
+        "-",
+        ""
+      ]
+    }
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mount": "N/A: no guest or filename-bearing mount invocation; selective archive paths separately enumerated and verified",
+  "thread": "01a17a94-5837-7852-bb5a-4269d4907679",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-reconciled-canonical-boat-build-oct26/root-ref-digest.json"
+}

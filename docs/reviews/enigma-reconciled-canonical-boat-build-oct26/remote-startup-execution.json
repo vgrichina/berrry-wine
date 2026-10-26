@@ -1,0 +1,21 @@
+{
+  "label": "startup",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "console.log(JSON.stringify({node:process.version,execPath:process.execPath,execArgv:process.execArgv,env:process.env,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),startup:true}))"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 56655872,
+  "physicalCap": 3221225472,
+  "cpu": 1.19,
+  "wall": 0.09646173699997007,
+  "outputBytes": 1895,
+  "maxDisk": 30683136,
+  "inputHashesUnchanged": true,
+  "supervisorIncluded": true,
+  "trackedProcesses": 2,
+  "ownedProcessGroup": 20630,
+  "ownedGroupCleanup": true
+}
