@@ -1,0 +1,7 @@
+{
+  "candidate": "1bc85c5d8e7513cb30ddd796cef6d93de0a0415b",
+  "path": "tools/fetch-candidate-corpus.js",
+  "sha256": "09616d64294241a26bf09e76675b92f6b866dc1647db748d5974d95cfeb4b37e",
+  "excerpt": "251: }\n252: \n253: function runPostExtract(candidate, destination) {\n254:   for (const [index, step] of (candidate.postExtract || []).entries()) {\n255:     if (step.type === 'extractArchive') {\n361:     } else if (step.type === 'copyFile') {\n362:       assertSafeRelative(step.from, `${candidate.id}.postExtract[${index}].from`);\n363:       assertSafeRelative(step.into, `${candidate.id}.postExtract[${index}].into`);\n364:       const from = path.join(destination, step.from);\n365:       const into = path.join(destination, step.into);\n366:       fs.mkdirSync(path.dirname(into), { recursive: true });\n367:       fs.copyFileSync(from, into);\n368:     } else if (step.type === 'extractRawMode1Cd') {\n",
+  "meaning": "postExtract is executed in array order; copyFile resolves source/destination under fixture and calls fs.copyFileSync, which overwrites an existing destination. Both cd/DATA1.CAB and the pinned executable destination are within the known authenticated extraction recipe. No acquisition or extraction executed."
+}

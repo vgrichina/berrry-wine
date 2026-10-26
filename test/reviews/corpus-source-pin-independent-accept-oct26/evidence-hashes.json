@@ -1,0 +1,72 @@
+[
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/README.md",
+    "bytes": 5567,
+    "sha256": "85e17360a9edbd9a2fd804f9e916f852e42794e20e4eac97d6fcb060cbcb667b"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/challenge.js",
+    "bytes": 8917,
+    "sha256": "87b4d8240283ac98ad87c04aa613db42d515958ea290077f2d93cb7e599fea38"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/checkpoint.json",
+    "bytes": 1407,
+    "sha256": "a638199c84613258fd195680c3a5fc06ba63e86518418cc3377209704fbc6f73"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/fetch-semantics.json",
+    "bytes": 1240,
+    "sha256": "33f3b258b9b52997b3e08da6fa0da25466f082ef0c001e59728e8b2f959985ac"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/guard.py",
+    "bytes": 3885,
+    "sha256": "c0702d9e2acb9172abfc8acd1d80e984430836a2b37bbe8670495e90ee3626d2"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/independent-challenges.json",
+    "bytes": 1906,
+    "sha256": "4fa9a63227fc03568826666df5e0b8f29a8ceecebcbbc7c31e792685848317ab"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/independent-challenges.log",
+    "bytes": 13763,
+    "sha256": "d83f0fa5a5d82854cc755aee71e85e9e645f1e1dda50bc4d6e9664fb777bc75c"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/independent-results.json",
+    "bytes": 15938,
+    "sha256": "d2f28fda7b25880d054fb47bcab44d395d4313f8b995bc32f7d17ead3c5d0526"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/initial.json",
+    "bytes": 2685,
+    "sha256": "3affd990882798ba6c68640625fe821558b52ffb464c9331501fa1b4b39e6068"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/node-startup.json",
+    "bytes": 1831,
+    "sha256": "6b4cbb354681f3aae802f52141342defddf17facf3feb152d169250b14e3d3d4"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/node-startup.log",
+    "bytes": 1708,
+    "sha256": "0e2917aa36d259832c2eae1304319445fab7a2e05fe82229468a4e7d3d91ab34"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/publication-admission.json",
+    "bytes": 1597,
+    "sha256": "f7f20aa6e09dfc72aa7d51afb286adb7882302fa45797483f9ebcf6596794d32"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/reused-evidence.json",
+    "bytes": 9776,
+    "sha256": "45a897a0e016896ea674d309e8d7defaaedb067b5d46cc28f961050dcb2f2781"
+  },
+  {
+    "path": "test/reviews/corpus-source-pin-independent-accept-oct26/startup.js",
+    "bytes": 318,
+    "sha256": "4a7b2236df66f11a668b97293bbff3624937620e49937cbedd45a9a1c3326af1"
+  }
+]

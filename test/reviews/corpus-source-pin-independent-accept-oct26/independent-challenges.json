@@ -1,0 +1,71 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=192",
+    "test/reviews/corpus-source-pin-independent-accept-oct26/challenge.js"
+  ],
+  "cwd": "/tmp/corpus-source-pin-independent-accept-oct26/repo",
+  "exitCode": 1,
+  "seconds": 0.451461996184662,
+  "outputBytes": 13763,
+  "sha256": "d83f0fa5a5d82854cc755aee71e85e9e645f1e1dda50bc4d6e9664fb777bc75c",
+  "admission": {
+    "memAvailable": 3772456960,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 17113088
+      },
+      {
+        "pid": 1789179,
+        "rss": 81428480
+      },
+      {
+        "pid": 2903914,
+        "rss": 184614912
+      },
+      {
+        "pid": 2904102,
+        "rss": 189100032
+      },
+      {
+        "pid": 2904238,
+        "rss": 184635392
+      },
+      {
+        "pid": 2920792,
+        "rss": 200716288
+      },
+      {
+        "pid": 2924485,
+        "rss": 243527680
+      }
+    ],
+    "combinedClientRSS": 1101135872,
+    "nodePhysicalAllowance": 268435456,
+    "physicalFloor": 805306368,
+    "prospectiveReservations": 0,
+    "accounting": "all materialized clients measured once; no future workers assigned to this task",
+    "ownedBytes": 1220938,
+    "positiveSharedWALGrowthOnce": 70040,
+    "futureGrowth": 25165824,
+    "reserve": 8388608,
+    "projected": 34775370,
+    "allocation": 67108864,
+    "hostFree": 4155858944,
+    "hostAfterGrowth": 4130693120,
+    "hostFloor": 2982150144
+  },
+  "env": {
+    "NODE_OPTIONS": "--max-old-space-size=192",
+    "TMPDIR": "/tmp/corpus-source-pin-independent-accept-oct26/tmp",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  }
+}

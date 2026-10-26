@@ -1,0 +1,27 @@
+{
+  "candidate": "1bc85c5d8e7513cb30ddd796cef6d93de0a0415b",
+  "sourceSHA256": "e8046f77b7fad166c81d48f43fe3b2ea5f2e3643e8dd905de364ac53081206b0",
+  "regressionSHA256": "32a9f2c1fd85dabfd5111b18afdcb6e2659552bdc6562468dfae89ad41018a7f",
+  "suppliedFixtureSHA256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd",
+  "committedManifestSHA256": "25d9dc55241ad3e80b42d71986c4cf147e4e09c2c1370190d14fd0402b4cf4eb",
+  "results": {
+    "total": 14,
+    "passed": 11,
+    "counterexamples": 3,
+    "infrastructureFailures": 0
+  },
+  "verdict": "REJECT: suffix extraction steps can overwrite preserved executable without rejection",
+  "evidence": [
+    "ops/independent-results.json",
+    "ops/independent-challenges.json",
+    "ops/node-startup.json"
+  ],
+  "reused": "26 payload/remote verification root receipt; implementation22checks including18rejections; real selectedTHPS2 dryrun1local0fail",
+  "remaining": [
+    "Publish unchanged counterexample evidence on task branch",
+    "Verify exact remote commit and release ownership"
+  ],
+  "box": null,
+  "committedManifestCompatibility": "PASS focused standalone source contract and selection; all six relevant records identical; no dirty-fixture prerequisite",
+  "productionRepairScope": "Pin complete exact ordered extraction suffix and add appended/redirected-overwrite regression; preserve existing source URL/SHA1/type/executable pins"
+}
