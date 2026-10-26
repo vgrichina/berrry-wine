@@ -1,0 +1,22 @@
+{
+  "processRSSKiB": [
+    "MainThread      1321700",
+    "codex           366096",
+    "MainThread      295780",
+    "codex           241356",
+    "MainThread      239168",
+    "codex           186424",
+    "codex           184772",
+    "ascii-agents-se 118692",
+    "codex           53676",
+    "codex-code-mode 20560",
+    "codex-code-mode 19600",
+    "codex-code-mode 18624",
+    "MainThread      18500",
+    "codex           15296",
+    "MainThread      12300",
+    "codex-code-mode 11188"
+  ],
+  "aggregateRSSBytes": 3198701568,
+  "note": "RSS summed conservatively; shared mappings may overlap. MemAvailable admission subtracts additional worker/client allowance."
+}

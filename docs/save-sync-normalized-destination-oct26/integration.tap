@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: conflicting local destinations reject push and sync before any transport or device mutation
+ok 1 - conflicting local destinations reject push and sync before any transport or device mutation
+  ---
+  duration_ms: 7.896582
+  type: 'test'
+  ...
+# Subtest: conflicting downloads reject pull and sync before application or remote overwrite in both modes
+ok 2 - conflicting downloads reject pull and sync before application or remote overwrite in both modes
+  ---
+  duration_ms: 6.166328
+  type: 'test'
+  ...
+# Subtest: upload branches carry valid writer ZIPs byte for byte and retain owned caller snapshots
+ok 3 - upload branches carry valid writer ZIPs byte for byte and retain owned caller snapshots
+  ---
+  duration_ms: 2.161281
+  type: 'test'
+  ...
+# Subtest: mixed-case accepted download applies normalized destinations, state and metadata in merge and replace
+ok 4 - mixed-case accepted download applies normalized destinations, state and metadata in merge and replace
+  ---
+  duration_ms: 2.883245
+  type: 'test'
+  ...
+# Subtest: legacy writer upload/download/application/export is byte-identical including zero-byte save and state
+ok 5 - legacy writer upload/download/application/export is byte-identical including zero-byte save and state
+  ---
+  duration_ms: 1.031154
+  type: 'test'
+  ...
+# Subtest: direct push then pull returns the real bytes for explicit application without mutating before import
+ok 6 - direct push then pull returns the real bytes for explicit application without mutating before import
+  ---
+  duration_ms: 0.905948
+  type: 'test'
+  ...
+# Subtest: empty writer bundle is uploaded and applies replace; equal timestamps and missing records do not apply
+ok 7 - empty writer bundle is uploaded and applies replace; equal timestamps and missing records do not apply
+  ---
+  duration_ms: 1.506604
+  type: 'test'
+  ...
+# Subtest: download application enforces the running app allow-list before clearing or writing
+ok 8 - download application enforces the running app allow-list before clearing or writing
+  ---
+  duration_ms: 1.056
+  type: 'test'
+  ...
+# Subtest: actual CLI text and JSON present normalized paths while extraction retains original member spelling
+ok 9 - actual CLI text and JSON present normalized paths while extraction retains original member spelling
+  ---
+  duration_ms: 57.547743
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 122.884215

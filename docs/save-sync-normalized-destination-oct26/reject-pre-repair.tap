@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: conflicting local destinations reject push and sync before any transport or device mutation
+not ok 1 - conflicting local destinations reject push and sync before any transport or device mutation
+  ---
+  duration_ms: 6.314087
+  type: 'test'
+  location: '/tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:30:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async /tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:133:5
+    async TestContext.<anonymous> (/tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:31:5)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: conflicting downloads reject pull and sync before application or remote overwrite in both modes
+not ok 2 - conflicting downloads reject pull and sync before application or remote overwrite in both modes
+  ---
+  duration_ms: 0.715429
+  type: 'test'
+  location: '/tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:30:3'
+  failureType: 'testCodeFailure'
+  error: 'Missing expected rejection.'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  operator: 'rejects'
+  stack: |-
+    async /tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:148:7
+    async TestContext.<anonymous> (/tmp/save-sync-normalized-destination-tests-oct26/repo/test/save-sync-normalized-destination.test.cjs:31:5)
+    async Test.run (node:internal/test_runner/test:1332:7)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 53.409986
