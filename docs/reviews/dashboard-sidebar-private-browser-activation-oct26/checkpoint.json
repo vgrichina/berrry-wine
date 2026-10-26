@@ -1,0 +1,27 @@
+{
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "sourceHashes": {
+    "ops/app.js": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "ops/blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+    "ops/dashboard-sidebar-count.test.js": "ab1060e661250d5147f8519f59c9dbc299562220ece509993a70d5d6c1601b3d",
+    "ops/dashboard-sidebar-independent.test.js": "7d5886edbdb57db7b6d88ff83e5e740c3f78471394aca97a8333335b5525207e"
+  },
+  "sourceTree": "c49a1dcd5ca7e55889d8c8b7042779bece88ff6c",
+  "completed": [
+    "exact input/HTML-script compatibility",
+    "private atomic app activation",
+    "HTTP200 exact served app hash",
+    "1358 other deployed files unchanged and server identity unchanged"
+  ],
+  "reused": "independent8/8incl128 snapshots28route transitions; merged8/8; candidate5/5; prior10/26/6; no replay",
+  "remaining": [
+    "actual real rendered sidebar/detail/row stats verification blocked by fresh memory admission"
+  ],
+  "evidence": [
+    "activation.json",
+    "compatibility.json",
+    "verification.json",
+    "resources-before-browser.json"
+  ],
+  "browserCandidateSHA256": "c7e4bb181e76dccb74d0ddddef38cd0de593f7494030b024c002ffeb43f7d179"
+}

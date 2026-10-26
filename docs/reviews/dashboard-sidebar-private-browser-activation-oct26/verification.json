@@ -1,0 +1,43 @@
+{
+  "activated": true,
+  "served": {
+    "status": 200,
+    "bytes": 80175,
+    "sha256": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "cacheControl": "no-store"
+  },
+  "allOtherFilesUnchanged": 1358,
+  "fileSetUnchanged": true,
+  "manifestSHA256": "0231aaa416d855ec188e9687739f7b0c761c48901fdf79be9377bbd2bdd03168",
+  "beforePID": 2896015,
+  "afterPID": 2896015,
+  "startTicksUnchanged": true,
+  "beforeRSS": 456691712,
+  "afterRSS": 461938688,
+  "sampleSeconds": 106.31771445274353,
+  "shortSampleOnly": true,
+  "longTermStabilityClaim": false,
+  "browserExecuted": false,
+  "renderedSidebarVerified": false,
+  "freshPrivateAPICounts": null,
+  "privateAPIFetches": 0,
+  "privateContentExported": false,
+  "blocker": {
+    "kind": "fresh physical memory admission denied before browser execution",
+    "availableBytes": 3561222144,
+    "requiredBytes": 3690987520,
+    "shortfallBytes": 129765376,
+    "owner": "coordinator",
+    "resumeCondition": "separately authorize/assign bounded rendered check after an actual capacity change; preserve resource reserves or serialize other work",
+    "unchangedRetry": false
+  },
+  "rollback": {
+    "path": "/tmp/dashboard-sidebar-private-browser-activation-oct26/rollback.py",
+    "sha256": "3d0719640b41cae50de7a50a81d7fdd9b455adec92e29b77c075c186957243d0",
+    "backup": "/tmp/dashboard-sidebar-private-browser-activation-oct26/backups/app.js",
+    "backupSHA256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132"
+  },
+  "box": null,
+  "boxContacted": false,
+  "lifecycleOwner": "coordinator"
+}

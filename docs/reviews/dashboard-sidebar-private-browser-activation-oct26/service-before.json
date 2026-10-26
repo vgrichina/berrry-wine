@@ -1,0 +1,13 @@
+{
+  "pid": 2896015,
+  "argv": [
+    "node",
+    "/home/user/wine-dashboard-b0b9bc090/ops/server.js",
+    "--port=8098",
+    "--root=/home/user/wine-assembly"
+  ],
+  "exe": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "cwd": "/home/user/wine-assembly",
+  "startTicks": "108624751",
+  "rss": 456691712
+}

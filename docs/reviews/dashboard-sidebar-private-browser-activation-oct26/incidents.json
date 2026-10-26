@@ -1,0 +1,13 @@
+[
+  {
+    "kind": "resource denial",
+    "evidence": "resources-before-browser.json",
+    "operation": "real browser",
+    "resolution": "stopped before spawning browser; no unchanged retry; private activation retained as authorized"
+  },
+  {
+    "kind": "standing-tool directory footprint read denied",
+    "path": "/opt/google/chrome/extensions",
+    "effect": "optional du exited nonzero; no task execution or acquisition attempted; standing tool directory lower-bound approximation only, no bypass"
+  }
+]

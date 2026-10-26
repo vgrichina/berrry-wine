@@ -1,0 +1,19 @@
+{
+  "activated": true,
+  "at": 1793043626.113726,
+  "candidate": "7681b752d7c3fe565a49e92832c3d9825bec7ed9",
+  "appSHA256": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+  "priorAppSHA256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
+  "served": {
+    "status": 200,
+    "bytes": 80175,
+    "sha256": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "cacheControl": "no-store"
+  },
+  "unchangedOtherFiles": 1358,
+  "unchangedFileSet": true,
+  "rollback": "/tmp/dashboard-sidebar-private-browser-activation-oct26/rollback.py",
+  "backup": "/tmp/dashboard-sidebar-private-browser-activation-oct26/backups/app.js",
+  "atomicReplacement": true,
+  "noRestart": true
+}

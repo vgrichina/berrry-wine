@@ -1,0 +1,81 @@
+{
+  "html": {
+    "status": 200,
+    "bytes": 6995,
+    "sha256": "5c0596f511433e056c7ce5f05b6119c17cc936ebdc0d85a906835af572a64ac6",
+    "cacheControl": "no-store"
+  },
+  "scripts": [
+    "/vendor/xterm.js",
+    "/terminal.js",
+    "/task-ui.js",
+    "/approval-ui.js",
+    "/blocker-model.js",
+    "/release-model.js",
+    "/dos-view.js",
+    "/views.js",
+    "/app.js"
+  ],
+  "served": {
+    "/vendor/xterm.js": {
+      "status": 200,
+      "bytes": 488663,
+      "sha256": "14903579ff54664cd72f8e8699e6961a6272c21863ec1c3b118cdc8af5d4a972",
+      "cacheControl": "no-store"
+    },
+    "/terminal.js": {
+      "status": 200,
+      "bytes": 4055,
+      "sha256": "2ca87d160adb12d58680b9eff71771ca1acc4fe3db114d940ba5b851abc2b251",
+      "cacheControl": "no-store"
+    },
+    "/task-ui.js": {
+      "status": 200,
+      "bytes": 12019,
+      "sha256": "ec09072a79be68b71fba552062b3f448afa6e7384e51c24c2a45f607923aa79b",
+      "cacheControl": "no-store"
+    },
+    "/approval-ui.js": {
+      "status": 200,
+      "bytes": 3937,
+      "sha256": "53bda2340163d0697e975b1667b11ef450ff4ac998b211125328dd44d91ee4f0",
+      "cacheControl": "no-store"
+    },
+    "/blocker-model.js": {
+      "status": 200,
+      "bytes": 5955,
+      "sha256": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+      "cacheControl": "no-store"
+    },
+    "/release-model.js": {
+      "status": 200,
+      "bytes": 11281,
+      "sha256": "aa584b0a838c23d049bc569a02b42565a4592d8c2aa4818a9d19ad4f29bce00d",
+      "cacheControl": "no-store"
+    },
+    "/dos-view.js": {
+      "status": 200,
+      "bytes": 10709,
+      "sha256": "b21cb512691839291c01b4da1223fdcf6aedf01327a1619a819d3b7148ea6791",
+      "cacheControl": "no-store"
+    },
+    "/views.js": {
+      "status": 200,
+      "bytes": 26905,
+      "sha256": "75f1721dd9c0807291c524f467c143e31d9c803604c6c6dd8f8feb6151aa9939",
+      "cacheControl": "no-store"
+    },
+    "/app.js": {
+      "status": 200,
+      "bytes": 79909,
+      "sha256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
+      "cacheControl": "no-store"
+    }
+  },
+  "modelExportsPresent": true,
+  "unchangedDependencies": true,
+  "diff": "--- deployed-prior-app\n+++ accepted-app\n@@ -475,7 +475,9 @@\n   renderApprovals();\n   renderChrome();\n   $('#task-count').textContent = state.tasks.filter(t=>!['done','deferred','unknown'].includes(t.status)).length; $('#task-count').title='Open tasks; completed, deferred and historical records excluded'; $('#corpus-count').textContent = state.candidates.length; $('#dos-count').textContent = state.dosCorpus?.rows?.length || '';\n-  $('#blocker-count').textContent = state.tasks.filter(t => t.status === 'blocked').length || '';\n+  const blockerCounts = BlockerModel.countSummary(state);\n+  $('#blocker-count').textContent = blockerCounts.rawBlockedRows ? `${blockerCounts.distinctBlockedTaskIds} distinct IDs${blockerCounts.anonymousBlockedRows ? ` + ${blockerCounts.anonymousBlockedRows} anonymous rows` : ''}` : '';\n+  $('#blocker-count').title = BlockerModel.countSummaryText(blockerCounts);\n   $('#updated').textContent = `Snapshot ${new Date(state.generatedAt).toLocaleTimeString()} \u00b7 refresh every 5s`;\n   const views = { home: homeView, games: gamesView, tasks: tasksBoard, agents: agentsGrouped, activity: activityView, more: moreView, overview, tasklist: tasksView, agentlist: agentsView, blockers: blockersView, corpus: corpusView, dos: dosView, release: desktopView, analytics: analyticsView };\n   const classic = ['overview', 'tasklist', 'agentlist', 'blockers', 'corpus', 'dos', 'release', 'analytics'].includes(view);\n",
+  "staticReadsOnEachRequest": true,
+  "noStore": true,
+  "reusedAcceptance": "independent8/8 including128 snapshots+28 transitions; merged8/8; candidate5/5; prior10/26/6; no replay"
+}

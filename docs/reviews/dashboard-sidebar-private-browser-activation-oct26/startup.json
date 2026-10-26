@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "-e",
+    "const fs=require(\"fs\");console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),rss:process.memoryUsage().rss,NODE_OPTIONS:process.env.NODE_OPTIONS,startup:true}))"
+  ],
+  "cwd": "None",
+  "exitCode": 0,
+  "elapsed": 0.0515016361605376,
+  "peakSampledProcessGroupRSS": 1286144,
+  "peakOwnedDirectoryBytes": 0,
+  "gitDataOnly": false,
+  "stdoutSHA256": "0d27b46411619ee9ac7692090932590517a9d2234ef87a54b1771b55c7eeccb6",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

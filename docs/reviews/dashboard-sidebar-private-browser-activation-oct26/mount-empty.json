@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "-e",
+    "const args=[];const getArg = (name, def) => {\n  const prefix = `--${name}=`;\n  const arg = args.find(value => value.startsWith(prefix));\n  return arg ? arg.slice(prefix.length) : def;\n};\nconst getArgs = name => {\n  const prefix = `--${name}=`;\n  return args.filter(value => value.startsWith(prefix))\n    .flatMap(value => value.slice(prefix.length).split(','))\n    .map(value => value.trim()).filter(Boolean);\n};\nconst hasFlag = name => args.includes(`--${name}`);\n;console.log(JSON.stringify({tree:getArgs(\"vfs-tree\"),mount:getArgs(\"vfs-mount\")}))"
+  ],
+  "cwd": "None",
+  "exitCode": 0,
+  "elapsed": 0.051681034034118056,
+  "peakSampledProcessGroupRSS": 4198400,
+  "peakOwnedDirectoryBytes": 0,
+  "gitDataOnly": false,
+  "stdoutSHA256": "60732d1715fb9b3e70eed03c63466fa7ca41569b40ee6e20fffaf000cae3717c",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

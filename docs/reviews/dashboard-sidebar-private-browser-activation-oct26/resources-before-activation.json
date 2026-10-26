@@ -1,0 +1,99 @@
+{
+  "label": "before-activation",
+  "at": 1793043625.738754,
+  "MemAvailable": 4002091008,
+  "processes": [
+    {
+      "pid": 265414,
+      "exe": "node",
+      "rss": 11845632
+    },
+    {
+      "pid": 265422,
+      "exe": "node",
+      "rss": 264716288
+    },
+    {
+      "pid": 265632,
+      "exe": "codex",
+      "rss": 14594048
+    },
+    {
+      "pid": 271075,
+      "exe": "node",
+      "rss": 269537280
+    },
+    {
+      "pid": 752162,
+      "exe": "codex (deleted)",
+      "rss": 401457152
+    },
+    {
+      "pid": 857107,
+      "exe": "codex-code-mode-host (deleted)",
+      "rss": 11689984
+    },
+    {
+      "pid": 1789179,
+      "exe": "codex",
+      "rss": 56516608
+    },
+    {
+      "pid": 2896015,
+      "exe": "node",
+      "rss": 456691712
+    },
+    {
+      "pid": 2955986,
+      "exe": "node",
+      "rss": 17846272
+    },
+    {
+      "pid": 2986649,
+      "exe": "codex",
+      "rss": 118325248
+    },
+    {
+      "pid": 2987051,
+      "exe": "codex-code-mode-host",
+      "rss": 12206080
+    },
+    {
+      "pid": 3001898,
+      "exe": "codex",
+      "rss": 189878272
+    },
+    {
+      "pid": 3001904,
+      "exe": "codex",
+      "rss": 190103552
+    },
+    {
+      "pid": 3002309,
+      "exe": "codex-code-mode-host",
+      "rss": 19894272
+    },
+    {
+      "pid": 3002320,
+      "exe": "codex-code-mode-host",
+      "rss": 23040000
+    }
+  ],
+  "existingRSSAlreadyInMemAvailable": true,
+  "newClientsReserved": 2,
+  "newClientBytesEach": 268435456,
+  "lightAllowances": 3,
+  "lightAllowanceEach": 335544320,
+  "browserAggregateAllowance": 1342177280,
+  "browserPriorMeasuredAggregateRSS": 1228795904,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 3690987520,
+  "ownedBytes": 17596416,
+  "positiveWALGrowthCountedOnce": 8192,
+  "sessionBytes": 688128,
+  "projectedBytesIncluding8MiBReserveAnd8MiBGrowth": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 3954028544,
+  "hostRemainingProjected": 3929681920,
+  "pass": true
+}
