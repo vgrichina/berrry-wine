@@ -1,0 +1,20 @@
+{
+  "at": 1792976601.5003946,
+  "parts": {
+    "ownAllocated": 6262784,
+    "launcherAllocated": 307200,
+    "session": 704512,
+    "sharedWALSHM": 28434432,
+    "positiveDBgrowth": 487424,
+    "futureOutputsSessionDB": 6291456,
+    "reserve": 8388608
+  },
+  "projectedAllNewBytes": 50876416,
+  "availableRAM": 2748907520,
+  "freeDisk": 4831625216,
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T00-59-51-01a175b8-8d36-7432-b7eb-4a05a7885129.jsonl"
+  ],
+  "projectedFreeDisk": 4816945152,
+  "pass": true
+}

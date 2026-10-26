@@ -1,0 +1,6 @@
+[
+  {
+    "kind": "inspection-output",
+    "detail": "Initial combined read exceeded the requested model excerpt size and was truncated; a later broad require search was also truncated. No test output exceeded 128KiB capture; no truncated output is acceptance evidence. Subsequent reads used targeted ranges. Historical fixture/compiler/SSH/platform denials remain unchanged; none retried."
+  }
+]

@@ -1,0 +1,128 @@
+{"probe":"compound assignment","side":16,"bytes":1024,"sum":130560,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+{"probe":"compound assignment","side":32,"bytes":4096,"sum":522240,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+{"probe":"compound assignment","side":64,"bytes":16384,"sum":2088960,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+{"probe":"computed destructuring","side":16,"bytes":1024,"sum":130560,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+{"probe":"computed destructuring","side":32,"bytes":4096,"sum":522240,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+{"probe":"computed destructuring","side":64,"bytes":16384,"sum":2088960,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0},"budgetAccepted":true}
+✖ reject complete source scan via compound assignment 16 (106.209116ms)
+✖ reject complete source scan via compound assignment 32 (75.552685ms)
+✖ reject complete source scan via compound assignment 64 (73.672598ms)
+✖ reject complete source scan via computed destructuring 16 (70.161381ms)
+✖ reject complete source scan via computed destructuring 32 (82.078474ms)
+✖ reject complete source scan via computed destructuring 64 (69.189279ms)
+✔ overlapping, nested, partial and outside aliases use address-union accounting (73.221291ms)
+✔ canonical index keys, coercion hint, OOB and throwing key restoration (66.789908ms)
+✔ computed tag retains original receiver when key/getter/substitution mutate its variable (2.531428ms)
+✔ computed tag optional references and suspending keys reject before evaluation (4.036821ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 4
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 670.158829
+
+✖ failing tests:
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via compound assignment 16 (106.209116ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 1024
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1024,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via compound assignment 32 (75.552685ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 4096
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 4096,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via compound assignment 64 (73.672598ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 16384
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 16384,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via computed destructuring 16 (70.161381ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 1024
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1024,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via computed destructuring 32 (82.078474ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 4096
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 4096,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:23:49
+✖ reject complete source scan via computed destructuring 64 (69.189279ms)
+  AssertionError [ERR_ASSERTION]: all executed indexed Gets must be observed
+  
+  0 !== 16384
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-independent-integrate-oct26/repo/docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js:36:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 16384,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "test/test-d3d9-real-operation-accounting.js",
+    "test/test-d3d9-subview-tagged-receiver.js",
+    "test/test-d3d9-rgba-performance.js",
+    "test/test-d3d9-rgba-source-identity.js",
+    "test/test-d3d9-immutable-rgba-snapshot.js",
+    "test/test-d3d9-rgba-generation-independent.js",
+    "test/test-d3d9-byte-identity-acceptance.js"
+  ],
+  "exitCode": 0,
+  "seconds": 2.5486884630518034,
+  "bytes": 4886,
+  "termination": null,
+  "limits": {
+    "cpu": 60,
+    "wall": 60,
+    "heapMiB": 128,
+    "fileMiB": 24,
+    "captureKiB": 128,
+    "killReapSeconds": 5
+  }
+}

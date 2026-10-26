@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js"
+  ],
+  "exitCode": 0,
+  "seconds": 0.9844839060679078,
+  "bytes": 5066,
+  "termination": null,
+  "limits": {
+    "cpu": 60,
+    "wall": 60,
+    "heapMiB": 128,
+    "fileMiB": 24,
+    "captureKiB": 128,
+    "killReapSeconds": 5
+  }
+}

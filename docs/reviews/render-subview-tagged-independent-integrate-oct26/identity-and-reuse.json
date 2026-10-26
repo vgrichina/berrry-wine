@@ -1,0 +1,40 @@
+{
+  "tools/d3d9-operation-observer.js": {
+    "sha256": "e29f9513aa316b9d9000c64b3352ab7fb3b8e4452f021729c10e641eac5b38e0",
+    "expected": "e29f9513aa316b9d9000c64b3352ab7fb3b8e4452f021729c10e641eac5b38e0",
+    "pass": true
+  },
+  "tools/d3d9-rgba-benchmark.js": {
+    "sha256": "14dc4da352c147b8a4af8dbdc22dbc0146a6633f68949b321474795b574a787d",
+    "expected": "14dc4da352c147b8a4af8dbdc22dbc0146a6633f68949b321474795b574a787d",
+    "pass": true
+  },
+  "test/test-d3d9-subview-tagged-receiver.js": {
+    "sha256": "b187933496e743ee385871db31527a15e8a644528ac77514bb20ed8fc28682ea",
+    "expected": "b187933496e743ee385871db31527a15e8a644528ac77514bb20ed8fc28682ea",
+    "pass": true
+  },
+  "lib/d3d9-host.js": {
+    "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "expected": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "pass": true
+  },
+  "docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js": {
+    "sha256": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5",
+    "expected": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5",
+    "pass": true
+  },
+  "candidate": {
+    "commit": "9004eca8e8f45a982f53eb24cf2c663565357f84",
+    "tree": "5ea8549f4bdc5eeb693075629d3124dded6bd332"
+  },
+  "mainBaseline": "020576f4f6b206eb7981afdcf4eadc1002b8a0b2",
+  "baselineEvidenceReuse": {
+    "path": "/tmp/render-subview-tagged-receiver-repair-oct26/ops",
+    "baseline": "10PASS4FAIL unchanged prior14 oracle",
+    "candidate": "14PASS independently repeated",
+    "originalFocusedNew": "57PASS independently repeated (20+16+21)",
+    "olderRaw": "4PASS9FAIL measured budget rejections, not green13",
+    "timingRows": "existing accepted 30 rows reused; no new benchmark/timing/seal packaging"
+  }
+}
