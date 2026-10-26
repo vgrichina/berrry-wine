@@ -1,0 +1,15 @@
+{
+  "taskBytes": 2703360,
+  "externalSessionBytes": 221184,
+  "positiveDBGrowth": 1442536,
+  "sharedWALChargedOnce": true,
+  "futureTestsPublication": 6291456,
+  "futureSessionDBGrowth": 12582912,
+  "reserve": 8388608,
+  "memAvailable": 2437935104,
+  "allowance": 536870912,
+  "floor": 805306368,
+  "free": 4556726272,
+  "projected": 31630056,
+  "pass": true
+}

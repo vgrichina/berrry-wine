@@ -6,5 +6,9 @@
   {
     "kind": "local-origin-recipe-corrected",
     "detail": "Setup initially entered wrong GitHub owner in local origin; corrected from readonly donor before any network operation. Retained setup recipe corrected. No denied attempt."
+  },
+  {
+    "kind": "missing-immutable-parent-blobs",
+    "detail": "First commit failed on missing cd2f5429d709c79f1aeb03b4bae517a887147b73; second exposed 2f8982a0e03b73b40b07b50ba217a26275fc1204. Recovered38 exact hash-verified loose blobs totaling56722 compressed bytes into own Git from readonly flat leaves; no fetch/full checkout/recursive alternates. See object-recovery.json."
   }
 ]

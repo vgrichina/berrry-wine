@@ -1,0 +1,229 @@
+[
+  {
+    "oid": "cd2f5429d709c79f1aeb03b4bae517a887147b73",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/cd/2f5429d709c79f1aeb03b4bae517a887147b73",
+    "bytes": 2547
+  },
+  {
+    "oid": "2f8982a0e03b73b40b07b50ba217a26275fc1204",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/2f/8982a0e03b73b40b07b50ba217a26275fc1204",
+    "bytes": 16043,
+    "firstFailure": "error: invalid object 100644 2f8982a0e03b73b40b07b50ba217a26275fc1204 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/accepted-evidence-manifest.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "39de9e228d8caf552b9acc0872eb6b584190f893",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/39/de9e228d8caf552b9acc0872eb6b584190f893",
+    "bytes": 275,
+    "firstFailure": "error: invalid object 100644 39de9e228d8caf552b9acc0872eb6b584190f893 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/admission-after-tests.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "0651f5e245aadd3f60acf39973531f21ea08febc",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/06/51f5e245aadd3f60acf39973531f21ea08febc",
+    "bytes": 276,
+    "firstFailure": "error: invalid object 100644 0651f5e245aadd3f60acf39973531f21ea08febc for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/admission-exact-before-checkout-main-resolved.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "98da98e42c3927d728b402f04f1acd53190bafab",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/98/da98e42c3927d728b402f04f1acd53190bafab",
+    "bytes": 277,
+    "firstFailure": "error: invalid object 100644 98da98e42c3927d728b402f04f1acd53190bafab for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/admission-merged-ready.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "00e95eafe64f18cd7a0ef0ff31614558cf3c83e8",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/00/e95eafe64f18cd7a0ef0ff31614558cf3c83e8",
+    "bytes": 120,
+    "firstFailure": "error: invalid object 100644 00e95eafe64f18cd7a0ef0ff31614558cf3c83e8 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/bootstrap-gate.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "c0516eb26c151f2d641405e949a3914417159e73",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/c0/516eb26c151f2d641405e949a3914417159e73",
+    "bytes": 80,
+    "firstFailure": "error: invalid object 100644 c0516eb26c151f2d641405e949a3914417159e73 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkout-reconciled-view.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "8bcd9d40030a5bde75412c6daf5a87692b2669b8",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/8b/cd9d40030a5bde75412c6daf5a87692b2669b8",
+    "bytes": 567,
+    "firstFailure": "error: invalid object 100644 8bcd9d40030a5bde75412c6daf5a87692b2669b8 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-adapter7.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "1b2b3be2c8b8b4cc1fc5f97096a40773b9106f12",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/1b/2b3be2c8b8b4cc1fc5f97096a40773b9106f12",
+    "bytes": 610,
+    "firstFailure": "error: invalid object 100644 1b2b3be2c8b8b4cc1fc5f97096a40773b9106f12 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-independent174.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "5bb384bca4e5b40c775694ddb4ca8a9b532705db",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/5b/b384bca4e5b40c775694ddb4ca8a9b532705db",
+    "bytes": 593,
+    "firstFailure": "error: invalid object 100644 5bb384bca4e5b40c775694ddb4ca8a9b532705db for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-nineteen.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "185db46855430c08344bf63aa05480a6e2859fa8",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/18/5db46855430c08344bf63aa05480a6e2859fa8",
+    "bytes": 624,
+    "firstFailure": "error: invalid object 100644 185db46855430c08344bf63aa05480a6e2859fa8 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-regression68.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "611dd14b2d9e2b696c666ce456fe771747815065",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/61/1dd14b2d9e2b696c666ce456fe771747815065",
+    "bytes": 587,
+    "firstFailure": "error: invalid object 100644 611dd14b2d9e2b696c666ce456fe771747815065 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-rejection14.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "102b65f589100095479361d9145daf0149bc801a",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/10/2b65f589100095479361d9145daf0149bc801a",
+    "bytes": 661,
+    "firstFailure": "error: invalid object 100644 102b65f589100095479361d9145daf0149bc801a for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-repair-26.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "e90e3490de0f64128f8867c0834f00a70348d963",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/e9/0e3490de0f64128f8867c0834f00a70348d963",
+    "bytes": 666,
+    "firstFailure": "error: invalid object 100644 e90e3490de0f64128f8867c0834f00a70348d963 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-retained-unaffected.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "852a8bdd888db430bee7c3c394f21365952d1d9f",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/85/2a8bdd888db430bee7c3c394f21365952d1d9f",
+    "bytes": 612,
+    "firstFailure": "error: invalid object 100644 852a8bdd888db430bee7c3c394f21365952d1d9f for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-scalar13.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "c290ab10d20616539170741508e34ed6188ba05d",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/c2/90ab10d20616539170741508e34ed6188ba05d",
+    "bytes": 602,
+    "firstFailure": "error: invalid object 100644 c290ab10d20616539170741508e34ed6188ba05d for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-semantic7.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "fe67c5b1cc32d9ce24b4f6eab7855d89ca62ea19",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/fe/67c5b1cc32d9ce24b4f6eab7855d89ca62ea19",
+    "bytes": 604,
+    "firstFailure": "error: invalid object 100644 fe67c5b1cc32d9ce24b4f6eab7855d89ca62ea19 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/checkpoint-ten.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "2442b1404b9390f355a645ef44b5b92baac04e1a",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/24/42b1404b9390f355a645ef44b5b92baac04e1a",
+    "bytes": 5079,
+    "firstFailure": "error: invalid object 100644 2442b1404b9390f355a645ef44b5b92baac04e1a for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/commands.jsonl'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "92a78f21375b40dce50b5cbcd0eb9419a97b7a18",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/92/a78f21375b40dce50b5cbcd0eb9419a97b7a18",
+    "bytes": 359,
+    "firstFailure": "error: invalid object 100644 92a78f21375b40dce50b5cbcd0eb9419a97b7a18 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/configuration.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "380d23fd4abd26c4785e9f3250af98a7849f7ec9",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/38/0d23fd4abd26c4785e9f3250af98a7849f7ec9",
+    "bytes": 2634,
+    "firstFailure": "error: invalid object 100644 380d23fd4abd26c4785e9f3250af98a7849f7ec9 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/control.py'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "4c4caed819f074905c827513269c57865ab5e396",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/4c/4caed819f074905c827513269c57865ab5e396",
+    "bytes": 3556,
+    "firstFailure": "error: invalid object 100644 4c4caed819f074905c827513269c57865ab5e396 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/evidence-manifest.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "f2421d49a7145ccb093997398e33633c76c6c728",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/f2/421d49a7145ccb093997398e33633c76c6c728",
+    "bytes": 1645,
+    "firstFailure": "error: invalid object 100644 f2421d49a7145ccb093997398e33633c76c6c728 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/flat-leaves.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "d4d14c027caf593daf2ad571f582111d5407c72f",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/d4/d14c027caf593daf2ad571f582111d5407c72f",
+    "bytes": 155,
+    "firstFailure": "error: invalid object 100644 d4d14c027caf593daf2ad571f582111d5407c72f for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/fresh-remote.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "4907c5f285ba4145109ca14581666202615865e3",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/49/07c5f285ba4145109ca14581666202615865e3",
+    "bytes": 538,
+    "firstFailure": "error: invalid object 100644 4907c5f285ba4145109ca14581666202615865e3 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/incidents.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "f12a3f5b60d1d2c2118d295bcf5d09b969f11064",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/f1/2a3f5b60d1d2c2118d295bcf5d09b969f11064",
+    "bytes": 1401,
+    "firstFailure": "error: invalid object 100644 f12a3f5b60d1d2c2118d295bcf5d09b969f11064 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/integrate.py'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "01f9a2aac3e315c5caa00db4019f1d934171dba0",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/01/f9a2aac3e315c5caa00db4019f1d934171dba0",
+    "bytes": 22,
+    "firstFailure": "error: invalid object 100644 01f9a2aac3e315c5caa00db4019f1d934171dba0 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/main-object-resolved.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "9e1e31f6f8bc93526e1b2202dafec87241b4c168",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/9e/1e31f6f8bc93526e1b2202dafec87241b4c168",
+    "bytes": 2054,
+    "firstFailure": "error: invalid object 100644 9e1e31f6f8bc93526e1b2202dafec87241b4c168 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/merged-inputs.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "2bc7a1277fc281f0a44edee015b4d1b134bbaf6e",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/2b/c7a1277fc281f0a44edee015b4d1b134bbaf6e",
+    "bytes": 1181,
+    "firstFailure": "error: invalid object 100644 2bc7a1277fc281f0a44edee015b4d1b134bbaf6e for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/merged-results.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "96aa8e3f6c48063a98d74950a460f2ed3a6325fe",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/96/aa8e3f6c48063a98d74950a460f2ed3a6325fe",
+    "bytes": 4346,
+    "firstFailure": "error: invalid object 100644 96aa8e3f6c48063a98d74950a460f2ed3a6325fe for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/package.py'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "f9707e88a6e386a656f39defb6721c099f569990",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/f9/707e88a6e386a656f39defb6721c099f569990",
+    "bytes": 618,
+    "firstFailure": "error: invalid object 100644 f9707e88a6e386a656f39defb6721c099f569990 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/relationship.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "316417497c131479df50ea241552a5375dee17a6",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/31/6417497c131479df50ea241552a5375dee17a6",
+    "bytes": 1019,
+    "firstFailure": "error: invalid object 100644 316417497c131479df50ea241552a5375dee17a6 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/retained-unaffected.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "a5e019628422520bc18478a88111d3deb7c4ab9f",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/a5/e019628422520bc18478a88111d3deb7c4ab9f",
+    "bytes": 63,
+    "firstFailure": "error: invalid object 100644 a5e019628422520bc18478a88111d3deb7c4ab9f for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/root-main-object.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "673a8e9fb940864bcd023e35d98c19610872d59c",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/67/3a8e9fb940864bcd023e35d98c19610872d59c",
+    "bytes": 1728,
+    "firstFailure": "error: invalid object 100644 673a8e9fb940864bcd023e35d98c19610872d59c for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/run-merged.py'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "53a1ad6ba3481577b24d5c8a4ec9fe2d1ad3e63a",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/53/a1ad6ba3481577b24d5c8a4ec9fe2d1ad3e63a",
+    "bytes": 209,
+    "firstFailure": "error: invalid object 100644 53a1ad6ba3481577b24d5c8a4ec9fe2d1ad3e63a for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/scoped-delta.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "c07cf664fad5e62d0abf6a2b85ca159aa5f66bab",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/c0/7cf664fad5e62d0abf6a2b85ca159aa5f66bab",
+    "bytes": 299,
+    "firstFailure": "error: invalid object 100644 c07cf664fad5e62d0abf6a2b85ca159aa5f66bab for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/scoped-history.log'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "9f2a948e68cd8920aba1d18a69bcb8f859ded9d0",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/9f/2a948e68cd8920aba1d18a69bcb8f859ded9d0",
+    "bytes": 3512,
+    "firstFailure": "error: invalid object 100644 9f2a948e68cd8920aba1d18a69bcb8f859ded9d0 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/standing-leaves.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "dbb0b5f58d3313067e395283ae07fa55dbbff2c1",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/db/b0b5f58d3313067e395283ae07fa55dbbff2c1",
+    "bytes": 269,
+    "firstFailure": "error: invalid object 100644 dbb0b5f58d3313067e395283ae07fa55dbbff2c1 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/standing-tools.json'\nfatal: git-write-tree: error building trees\n"
+  },
+  {
+    "oid": "954b406d237621b3a4b26af6cd94c9a08f697758",
+    "source": "/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/repo/.git/objects/95/4b406d237621b3a4b26af6cd94c9a08f697758",
+    "bytes": 291,
+    "firstFailure": "error: invalid object 100644 954b406d237621b3a4b26af6cd94c9a08f697758 for 'docs/reviews/maelstrom-terminal-closure-accepted-integrate-oct26/watch.py'\nfatal: git-write-tree: error building trees\n"
+  }
+]

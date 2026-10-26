@@ -108,7 +108,11 @@ expanded independent rerun; the initial ordering lapse remains disclosed in
 `incidents.json` and is not retroactively claimed compliant. An incorrect local
 origin URL in the setup script was corrected to the donor's actual origin before
 any network operation; the corrected recipe is retained. Neither issue changed
-the implementation or test oracle.
+the implementation or test oracle. Initial commit attempts also exposed missing
+immutable parent review blobs; 38 exact hash-verified loose objects (56,722
+compressed bytes) were recovered from read-only existing flat object leaves into
+this checkout. No full history was fetched. First failures and recovery identities
+are retained in `object-recovery.json`.
 
 The isolated branch contains only this independent test and review/evidence.
 Root worktree/index/refs and all donor repositories were read-only, with the

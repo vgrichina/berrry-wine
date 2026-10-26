@@ -1,8 +1,8 @@
 [
   {
     "path": "RECOVERY.md",
-    "bytes": 2495,
-    "sha256": "f161a7190dc77f6ee757eb43839b529ba50895e38defecc879261839ddd9daf5"
+    "bytes": 2816,
+    "sha256": "fab0aa18e3acbeee4313ec224d30e830b1ab64aa5ade85bca48ee8971cd9dc7f"
   },
   {
     "path": "acceptance.json",
@@ -96,8 +96,8 @@
   },
   {
     "path": "incidents.json",
-    "bytes": 491,
-    "sha256": "f8ac40ede93226eafab8d13d427ceff31f3265caa7f8b8fd27646fe7f288dcc4"
+    "bytes": 878,
+    "sha256": "54a6fe241d9c5ea4448eaa3608d14378b2015708e4817e866f0cc6f651bf345e"
   },
   {
     "path": "independent-expanded.log",
@@ -120,14 +120,39 @@
     "sha256": "1d9b7c0482e1c3986731728b04209b40900b34c41baf879f33f0c2211b7ced37"
   },
   {
+    "path": "object-recovery.json",
+    "bytes": 16856,
+    "sha256": "838b2c000c25533e4c80e2f902ac2cf88a6ac4fc8c9a0b042e3d69938e776905"
+  },
+  {
     "path": "pins.json",
     "bytes": 760,
     "sha256": "265cde6d8ee9f3e30bdcc4f5f3484f572a70b55ce6891b7d0d0af5542898b4cc"
   },
   {
+    "path": "publication-first.json",
+    "bytes": 230,
+    "sha256": "dc8a5ff9893c369de8d96dbdc3c47723b271a7a4533da2377010e35a2120a0da"
+  },
+  {
+    "path": "push.log",
+    "bytes": 517,
+    "sha256": "92359ca3b436c9fdc6953eae6b008e06904b8cebdcd716b8bc1e6a1c94c8b18e"
+  },
+  {
+    "path": "recover-objects.py",
+    "bytes": 1190,
+    "sha256": "7ca7d24651e052df3afdf3f397c675c816cd148dcc9d387f07b8519035db6936"
+  },
+  {
     "path": "rejection.log",
     "bytes": 1678,
     "sha256": "09be84dcfa7f7c0306d3fd3a1e3f3a9f44ca669d6550fa3d826a20340e0f01b5"
+  },
+  {
+    "path": "remote.log",
+    "bytes": 105,
+    "sha256": "1340a9b9e186b0d224a72c54c5d1679bbed4172f12f63c796d46d16572173555"
   },
   {
     "path": "resource-adapter.json",
@@ -165,14 +190,29 @@
     "sha256": "91e03ec223d37697c7e813eece9de2f38133c2be2abbf344badfe5846f4afe71"
   },
   {
+    "path": "resource-precommit.json",
+    "bytes": 361,
+    "sha256": "a2444547a10b51b820b4902c87d5acd1f198c1e0d7675f411f60d392fb681682"
+  },
+  {
     "path": "resource-prepackage.json",
     "bytes": 361,
     "sha256": "8614bcac244c325dd008b92eb0e9c5c8641218eaf93dd754b0f69b0aceecab81"
   },
   {
+    "path": "resource-push.json",
+    "bytes": 361,
+    "sha256": "a14f8d41b9b66a12830ec4b94155f57b67c01010064e48e6bebc65f6d5867a9d"
+  },
+  {
     "path": "resource-rejection.json",
     "bytes": 360,
     "sha256": "a40ea9be677de06ecc8910f51ddc68768a58bef275f6a998ef7c05b060bdaa63"
+  },
+  {
+    "path": "resource-remote.json",
+    "bytes": 361,
+    "sha256": "65f4780948103026f4ed23f3e81be7a7b8a512f710fdc75003bed6eb238ca54f"
   },
   {
     "path": "resource-scalar.json",
@@ -193,6 +233,11 @@
     "path": "resource-terminal.json",
     "bytes": 360,
     "sha256": "95e2adbe978f546202c100cf11c13e7de52c308500f359c64126e5c1542b119f"
+  },
+  {
+    "path": "root-ref-final.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
   },
   {
     "path": "run.py",
@@ -243,10 +288,5 @@
     "path": "terminal.log",
     "bytes": 99,
     "sha256": "8427e76d3a2a73458a7795cb7d545b7aa9f2f17dcd606c7c28e007b43956f927"
-  },
-  {
-    "path": "root-ref-final.json",
-    "bytes": 196,
-    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
   }
 ]

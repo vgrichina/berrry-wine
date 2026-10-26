@@ -13,3 +13,5 @@ Fixture Wasm is reconstructible; its hashes match the original supplied repair a
 The independent test loads only the factory prefix of the byte-pinned supplied fixture, cutting at the first unchanged raw-completion test, then exports the fixture functions. The supplied nine groups are separately executed unchanged. This is explicit harness reuse, not a second independent decoder.
 Evidence manifest excludes itself and binds every retained payload; later publication receipts bind the final commit via ops/result.json. Recover by exact task remote SHA reported in result.json, using trusted configuration in configuration.json. Never force push.
 No assigned box: do not query/start/stop one; lifecycle remains coordinator-owned. Remaining canonical/full-compiler/authentic-game gates are in the review. No runtime is authorized by this recipe.
+
+If Git tree creation reports missing immutable parent review blobs, use object-recovery.json exact donor loose-object paths. Verify decompressed Git SHA1 before copying into the owned object store; recover-objects.py records the finite loop and first failures. Donors are never written. No full-history fetch is needed.
