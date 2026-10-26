@@ -1,0 +1,34 @@
+{
+  "candidate": "d4f2fc687d8330db533e7336ea9a1c5585272b65",
+  "sourceTestedTree": "0a24eeed2d8dcf011e75cacbad6c28bb988e0dd8",
+  "original": {
+    "pass": 20,
+    "fail": 0,
+    "log": "original.log"
+  },
+  "focused": {
+    "pass": 16,
+    "fail": 0,
+    "log": "focused.log"
+  },
+  "unchangedReview": {
+    "pass": 4,
+    "fail": 9,
+    "exitCode": 1,
+    "correctEarlyMutantBudgetRejections": 9,
+    "priorGlobalRestoration": "PASS",
+    "log": "unchanged-review.log"
+  },
+  "baseline": {
+    "pass": 3,
+    "fail": 10,
+    "unchanged": true,
+    "path": "../render-performance-independent-oct26/rejecting-reproducer.log"
+  },
+  "operationRows": 42,
+  "timingRowsReused": 30,
+  "productionUnchanged": true,
+  "oraclesUnchanged": true,
+  "freshIndependentAcceptanceRequired": true,
+  "mainIntegration": false
+}

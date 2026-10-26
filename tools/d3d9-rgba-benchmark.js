@@ -5,12 +5,14 @@
 // final device replaced by a recording sink. No browser, GPU or Wasm is used.
 const assert = require('node:assert/strict');
 const {performance} = require('node:perf_hooks');
-const {Bridge} = require('../lib/d3d9-host');
+const {Bridge: NativeBridge} = require('../lib/d3d9-host');
+const operationObserver = require('./d3d9-operation-observer').create(require.resolve('../lib/d3d9-host'));
+const {Bridge} = operationObserver.exports;
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
 const U8 = Uint8Array;
 
-function fixture(side, options = {}) {
+function fixture(side, options = {}, observe = true) {
   const bytes = side * side * 4;
   let memory = new ArrayBuffer(524288);
   const program = 1024, desc = 64, records = [40000, 40200, 40400];
@@ -47,7 +49,7 @@ function fixture(side, options = {}) {
     if (command.opcode === OP.DRAW) wire.push(command.payload.textures[0].levels[0]);
     return endpoint.execute(command);
   }, cancel() { endpoint.destroy(); }};
-  const bridge = new Bridge({backend:'software', createSoftwareWorker:()=>consumer,
+  const bridge = new (observe ? Bridge : NativeBridge)({backend:'software', createSoftwareWorker:()=>consumer,
     getMemory:()=>memory, guestToWasm:p=>p, maxTextureSnapshotBytes:4*bytes,
     maxResidentTextureBytes:2*bytes, ...options});
   return {side, bytes, bridge, records, bits, program, wire, seen, held, set, bind,
@@ -66,14 +68,19 @@ function fixture(side, options = {}) {
 
 // Scope all hooks to the synchronous producer call, restore even on errors.
 // every invokes the ORIGINAL predicate for every counted source byte; proxies
-// observe actual indexed reads of immutable snapshots. No identity predicate,
-// decoder, cache lookup, queue copy or renderer implementation is replaced.
-// Counters exclude decoder indexed loads/stores and non-U8 allocations. Slice,
-// set and copy-constructor byte counts are logical bytes, not hardware traffic.
+// observe indexed reads of immutable snapshots. The AST observer counts real
+// indexed source loads (including decode) and lexical constructor operations.
+// Cache decisions, decoder arithmetic and queue copies retain their original
+// expressions. Copy byte counts are logical bytes, not hardware traffic.
 function measure(f, extra = () => {}) {
   const counts = {sourceReads:0, snapshotReads:0, scans:0, sliceBytes:0,
     sourceCopyBytes:0, setBytes:0, constructorCopyBytes:0, allocationBytes:0,
-    allocations:0, cacheHits:0, decodes:0};
+    allocations:0, cacheHits:0, decodes:0, indexedSourceReads:0,
+    backingAllocationBytes:0, backingAllocations:0};
+  const globalU8 = Object.getOwnPropertyDescriptor(globalThis, 'Uint8Array');
+  const entryU8 = globalThis.Uint8Array;
+  const hookDescriptors = Object.fromEntries(['every','slice','set'].map(key =>
+    [key,Object.getOwnPropertyDescriptor(U8.prototype,key)]));
   const every = U8.prototype.every, slice = U8.prototype.slice, set = U8.prototype.set;
   const resident = f.bridge._residentLevel, remember = f.bridge._rememberTexture;
   const ownResident = Object.getOwnPropertyDescriptor(f.bridge, '_residentLevel');
@@ -88,48 +95,81 @@ function measure(f, extra = () => {}) {
     }});
     restorations.push(() => { cached.source = original; });
   }
-  const allocated = n => { counts.allocationBytes += n; counts.allocations++; };
+  const seenAllocations = new WeakSet();
+  const allocated = (n, object) => {
+    if (object && seenAllocations.has(object)) return;
+    if (object) seenAllocations.add(object);
+    counts.allocationBytes += n; counts.allocations++;
+  };
+  const sourceBuffer = f.source().buffer;
+  const isSource = object => ArrayBuffer.isView(object) && object.buffer === sourceBuffer &&
+    f.bits.includes(object.byteOffset) && object.byteLength === f.bytes;
+  const leaveObserver = operationObserver.enter({counts,isSource,allocation(result,args) {
+    if (result instanceof ArrayBuffer) {
+      counts.backingAllocationBytes += result.byteLength;
+      counts.backingAllocations++;
+    }
+    else if (result instanceof U8 && !(args[0] instanceof ArrayBuffer)) {
+      // Global constructor hooks may have already observed this allocation.
+      if (!seenAllocations.has(result)) {
+        allocated(result.byteLength,result);
+        if (typeof args[0] !== 'number') {
+          counts.constructorCopyBytes += result.byteLength;
+          if (isSource(args[0])) counts.sourceCopyBytes += result.byteLength;
+        }
+      }
+    }
+  }});
   try {
-    globalThis.Uint8Array = new Proxy(U8, {construct(target, args) {
+    const observedU8 = new Proxy(entryU8, {construct(target, args) {
       const result = Reflect.construct(target, args);
       if (typeof args[0] === 'number' || ArrayBuffer.isView(args[0]) || Array.isArray(args[0])) {
-        allocated(result.byteLength);
+        allocated(result.byteLength,result);
         if (typeof args[0] !== 'number') counts.constructorCopyBytes += result.byteLength;
+        if (isSource(args[0])) counts.sourceCopyBytes += result.byteLength;
       }
       return result;
     }});
-    U8.prototype.every = function(callback, thisArg) {
+    Object.defineProperty(globalThis,'Uint8Array',{value:observedU8,writable:true,
+      configurable:globalU8.configurable,enumerable:globalU8.enumerable});
+    const hook = (object,key,value) => Object.defineProperty(object,key,
+      {value,writable:true,configurable:true,enumerable:Object.getOwnPropertyDescriptor(object,key)?.enumerable || false});
+    hook(U8.prototype,'every',function(callback, thisArg) {
       counts.scans++;
       return every.call(this, (byte, index, array) => {
         counts.sourceReads++;
         return callback.call(thisArg, byte, index, array);
       });
-    };
-    U8.prototype.slice = function(...args) {
+    });
+    hook(U8.prototype,'slice',function(...args) {
       const result = slice.apply(this, args);
-      allocated(result.byteLength);
+      allocated(result.byteLength,result);
       counts.sliceBytes += result.byteLength;
       if (this.buffer === f.source().buffer && f.bits.includes(this.byteOffset)) counts.sourceCopyBytes += result.byteLength;
       return result;
-    };
-    U8.prototype.set = function(source, ...args) {
+    });
+    hook(U8.prototype,'set',function(source, ...args) {
       counts.setBytes += source.length;
       return set.call(this, source, ...args);
-    };
-    f.bridge._rememberTexture = function(...args) {
+    });
+    hook(f.bridge,'_rememberTexture',function(...args) {
       counts.decodes++;
       return remember.apply(this, args);
-    };
-    f.bridge._residentLevel = function(entry, snap, ...args) {
+    });
+    hook(f.bridge,'_residentLevel',function(entry, snap, ...args) {
       // A null reserve marks the newly decoded branch in the actual caller.
       if (args[1] !== null) counts.cacheHits++;
       return resident.call(this, entry, snap, ...args);
-    };
+    });
     extra();
     assert.equal(f.draw(), 1, String(f.bridge.lastError));
   } finally {
-    globalThis.Uint8Array = U8;
-    U8.prototype.every = every; U8.prototype.slice = slice; U8.prototype.set = set;
+    leaveObserver();
+    Object.defineProperty(globalThis, 'Uint8Array', globalU8);
+    for (const key of ['every','slice','set']) {
+      if (hookDescriptors[key]) Object.defineProperty(U8.prototype,key,hookDescriptors[key]);
+      else delete U8.prototype[key];
+    }
     if (ownResident) Object.defineProperty(f.bridge, '_residentLevel', ownResident);
     else delete f.bridge._residentLevel;
     if (ownRemember) Object.defineProperty(f.bridge, '_rememberTexture', ownRemember);
@@ -146,6 +186,12 @@ function measure(f, extra = () => {}) {
 function budget(counts, bytes, reads, hit) {
   assert.equal(counts.sourceReads, reads, 'source scan complexity');
   assert.equal(counts.snapshotReads, reads, 'immutable snapshot read complexity');
+  assert.equal(counts.indexedSourceReads, hit ? 0 : bytes, 'indexed source read budget including decode');
+  // Cold submission grows the renderer's vertex scratch to 4096 bytes.
+  // Keep this newly observed backing store separate from the existing U8
+  // allocation ceiling; cached draws must allocate no ArrayBuffer backing.
+  assert(counts.backingAllocationBytes <= (hit ? 0 : 4096), 'ArrayBuffer backing allocation budget');
+  assert(counts.backingAllocations <= (hit ? 0 : 3), 'ArrayBuffer backing allocation count');
   assert.equal(counts.scans, reads ? 1 : 0, 'one scan per candidate');
   assert.equal(counts.cacheHits, hit ? 1 : 0, 'cache reuse');
   assert.equal(counts.decodes, hit ? 0 : 1, 'decode/insertion count');
@@ -242,7 +288,7 @@ async function timings(side, repeats = 5, batch = 8) {
     f.selected = ((f.selected || 0) + 1) % 3; f.bind(f.selected);
   }, expected:f=>f.expected(f.selected || 0)}];
   for (const scenario of timingCases) {
-    const f = fixture(side);
+    const f = fixture(side, {}, false);
     try {
       await seed(f, scenario);
       const sample = async change => {
@@ -283,7 +329,7 @@ async function timings(side, repeats = 5, batch = 8) {
   // Cold draws use a fresh producer per operation; the unchanged, separately
   // seeded control brackets them. Fixture construction and draining stay out
   // of the timed spans, exactly as for the warm scenarios above.
-  const control = fixture(side);
+  const control = fixture(side, {}, false);
   try {
     await seed(control);
     const submit = async f => {
@@ -299,7 +345,7 @@ async function timings(side, repeats = 5, batch = 8) {
       let b = 0, c = 0, a = 0;
       for (let i = 0; i < batch; i++) {
         b += await submit(control);
-        const cold = fixture(side);
+        const cold = fixture(side, {}, false);
         try { c += await submit(cold); } finally { await cold.close(); }
         a += await submit(control);
       }
@@ -318,7 +364,7 @@ module.exports = {fixture, measure, budget, runCounts, timings};
 if (require.main === module) (async () => {
   const report = {schema:1, gate:'RENDER-PERF-GATE', node:process.version,
     limits:'synthetic BGRA8 16/32/64 squares; no game/GPU/browser/VM or speedup claim',
-    countScope:'synchronous producer: every source reads, proxied snapshot reads; U8 allocations and logical slice/set/constructor copies; excludes decoder indexed accesses, other typed arrays and sink copies',
+    countScope:'synchronous producer: every source reads, proxied snapshot reads, AST-observed indexed source loads including decode and lexical U8/ArrayBuffer construction; logical slice/set/constructor copies; excludes other typed arrays and sink copies',
     timingScope:'uninstrumented producer submission only; warmup excluded; fence and exact pixel assertion outside timing; no timing threshold',
     counts:[], timings:[]};
   for (const side of [16,32,64]) {
