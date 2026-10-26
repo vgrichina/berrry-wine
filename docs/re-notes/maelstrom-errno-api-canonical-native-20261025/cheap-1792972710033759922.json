@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/make-oracle.py"
+  ],
+  "cwd": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo",
+  "pid": 1751342,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 2.384243606007658,
+  "streamBytes": {
+    "stdout": 98,
+    "stderr": 0
+  },
+  "aggregateLogMax": 131072,
+  "retained": 98,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 236429312
+}

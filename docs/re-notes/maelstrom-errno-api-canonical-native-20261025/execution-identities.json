@@ -1,0 +1,42 @@
+[
+  {
+    "path": "repo/tools/maelstrom-errno-canonical-build.cjs",
+    "bytes": 6934,
+    "sha256": "deaf3a85baa90da55e3f6cbecd85be3d243be1efb5f83cbb5a6be239a5019fd0"
+  },
+  {
+    "path": "repo/tools/maelstrom-native-errno-latch.cjs",
+    "bytes": 13441,
+    "sha256": "5c54028907a49b602fd330fc888059b26fbfb486a838db58538865470a35641c"
+  },
+  {
+    "path": "repo/tools/maelstrom-select-completion-hook.cjs",
+    "bytes": 15019,
+    "sha256": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930"
+  },
+  {
+    "path": "repo/test/maelstrom-errno-canonical-native.cjs",
+    "bytes": 12190,
+    "sha256": "eb61b30e8f9d58d589d9800ea55ef63c3ccccbd7f29c59cdc2cf979aac2de234"
+  },
+  {
+    "path": "repo/test/maelstrom-errno-canonical-static.py",
+    "bytes": 3556,
+    "sha256": "2392fead41d6b184392017f5ac277298f38ba69730daf3bc93a2408085baf9df"
+  },
+  {
+    "path": "ops/supervise.py",
+    "bytes": 4632,
+    "sha256": "1a72f4011f8c821b83211b1b0316de3aa316304db0a7badfeee9756b55e625b2"
+  },
+  {
+    "path": "ops/native-batch.py",
+    "bytes": 1377,
+    "sha256": "361a68deb430dfdeff8a06df0ba05f70a2618058d0aeaee93549b44c786aaf73"
+  },
+  {
+    "path": "ops/native-module-bound.cjs",
+    "bytes": 2462,
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197"
+  }
+]

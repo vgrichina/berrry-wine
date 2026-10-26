@@ -1,0 +1,52 @@
+{
+  "charges": {
+    "remoteClosure": 21781087,
+    "remoteAuthenticAnchors": 438325,
+    "remoteBothModules": 4194304,
+    "localSparseGit": 2097152,
+    "localScriptsEvidence": 524288,
+    "remoteScriptsEvidence": 524288,
+    "publicationGit": 524288,
+    "session": 675840,
+    "launcher": 233472,
+    "sharedWAL": 27672576,
+    "futureExternalDB": 1048576,
+    "reserve": 8388608,
+    "transferFiles": 0,
+    "localModules": 0
+  },
+  "peak": 68102804,
+  "cap": 67108864,
+  "wal": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 2695168
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4325376
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4243456
+    }
+  ],
+  "free": 5197725696,
+  "projectedLocalFloor": 5129622892,
+  "memAvailable": 3322048512,
+  "localMinimum": 1073741824,
+  "passChecks": false,
+  "projection": "no local module copies; binary static inspection in memory; in-memory compressed per-file APIexec; remote module output additionally capped 2MiB each"
+}

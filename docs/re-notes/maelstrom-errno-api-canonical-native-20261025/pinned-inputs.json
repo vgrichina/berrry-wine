@@ -1,0 +1,151 @@
+{
+  "status": "PASS",
+  "canonicalCurrentHEAD": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "historicalManifestRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "acceptedDonor": "eeb4b3372c8b18361dae83509652b67281f67d0c",
+  "dispatchPins": 28,
+  "closureFiles": 140,
+  "closureBytes": 21207647,
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/09d-winsock.wat",
+      "bytes": 262420,
+      "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/09b-dispatch.wat",
+      "bytes": 113843,
+      "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/09b2-dispatch-table.generated.wat",
+      "bytes": 1375748,
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/05-alu.wat",
+      "bytes": 256723,
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/06b-core-handlers.wat",
+      "bytes": 103298,
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/13-exports.wat",
+      "bytes": 344898,
+      "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/03-registers.wat",
+      "bytes": 61869,
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/04-cache.wat",
+      "bytes": 162508,
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/07-decoder.wat",
+      "bytes": 321708,
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/02-thread-table.wat",
+      "bytes": 33956,
+      "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/07c-block-exec.wat",
+      "bytes": 444010,
+      "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/07d-uop-engine.wat",
+      "bytes": 164570,
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+    },
+    {
+      "path": "/tmp/maelstrom-native-errno-snapshot-independent-closeout-oct25/repo/tools/maelstrom-native-errno-latch.cjs",
+      "bytes": 13441,
+      "sha256": "5c54028907a49b602fd330fc888059b26fbfb486a838db58538865470a35641c"
+    },
+    {
+      "path": "/tmp/maelstrom-native-errno-snapshot-independent-closeout-oct25/repo/tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "sha256": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930"
+    },
+    {
+      "path": "/tmp/maelstrom-native-errno-snapshot-independent-closeout-oct25/repo/test/maelstrom-native-errno-latch.test.cjs",
+      "bytes": 15952,
+      "sha256": "3272481c7d6d97d4159151df8e6317f6bf7c15364853925ea72fbe9cc2b69436"
+    },
+    {
+      "path": "/tmp/maelstrom-native-errno-snapshot-independent-closeout-oct25/repo/test/maelstrom-native-errno-source-snapshot.test.cjs",
+      "bytes": 4195,
+      "sha256": "a4e790fb83ed6f68ee68d4cd227f82c4c1ae9b18b9d2d98cc6c8ec4e7fc1ba22"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/watx-closure.js",
+      "bytes": 5027,
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/tools/build-compile-wat.js",
+      "bytes": 14826,
+      "sha256": "ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/src/main.watx",
+      "bytes": 5893,
+      "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/manifest.json",
+      "bytes": 50433,
+      "sha256": "f48264f1bb19067c308a85ab0287420dbbe551c7e37af173bf3c73d71567655c"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/recipe.py",
+      "bytes": 14140,
+      "sha256": "47fef8efbe4a04e74f67385416fdb0992ba2826967cd6681edd395491eff1d46"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/static-abi.py",
+      "bytes": 12344,
+      "sha256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/Maelstrom.exe",
+      "bytes": 135168,
+      "sha256": "0eca5703e512d33c5e5a0bc1a27f14bd3aa4ecddded6e09b4d4019c2f27a15e5"
+    },
+    {
+      "path": "/tmp/maelstrom-original-win32-closure-oct24/extracted/Maelstrom-3.0.6/SDL_net.dll",
+      "bytes": 24576,
+      "sha256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+      "bytes": 278581,
+      "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+    },
+    {
+      "path": "/tmp/maelstrom-native-recovered-closeout-oct24/repo/test/maelstrom-head-yield-native.cjs",
+      "bytes": 7813,
+      "sha256": "938458b147c43f72a0792a6fd1bf625a4fb8c67e472b3079dda00e7c3deb9a5b"
+    },
+    {
+      "path": "/tmp/maelstrom-event-observer-native-qualification-oct24/repo/test/maelstrom-event-boundary-native.cjs",
+      "bytes": 15663,
+      "sha256": "2159e84c0960679855b330adf813f94351cb59f4a5cc09fc9ef27e91b7ce303c"
+    },
+    {
+      "path": "/tmp/maelstrom-exact-select-original-capture-oct24/ops/checkout.py",
+      "bytes": 2776,
+      "sha256": "937880dfcfacef72e2fe8568d0ca3de77f655a295c8aa451a2f336f0e9d288ca"
+    }
+  ]
+}

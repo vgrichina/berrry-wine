@@ -1,0 +1,566 @@
+{
+  "at": 1792972856.5436935,
+  "charges": {
+    "owned": 8314880,
+    "launcher": 385024,
+    "session": 1507328,
+    "sharedWAL": 27955200,
+    "positiveSQLite": 2109440,
+    "remoteTotalIncludingFutures": 13094912,
+    "futureLocalEvidence": 524288,
+    "futurePublication": 2097152,
+    "futureSessionLauncherDB": 1048576,
+    "board": 4096,
+    "reserve": 8388608
+  },
+  "peak": 65429504,
+  "cap": 67108864,
+  "memAvailable": 3014209536,
+  "minimumMemory": 1073741824,
+  "free": 5078740992,
+  "afterProjection": 5066682368,
+  "passChecks": true,
+  "manifest": [
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/transfers-inputs.json",
+      "bytes": 5640,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/cheap-1792972710033759922.stderr",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-before-publication.json",
+      "bytes": 106,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/runtime.json",
+      "bytes": 195,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/setup.py",
+      "bytes": 7437,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-account.py",
+      "bytes": 1073,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/checkout.json",
+      "bytes": 16021,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/watcher.json",
+      "bytes": 21,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/api-readback.jsonl",
+      "bytes": 2192,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/sparse-projection.json",
+      "bytes": 546,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/sources.json.gz",
+      "bytes": 5058949,
+      "allocated": 5062656
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/admission-expanded-projection-rejected.json",
+      "bytes": 1348,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/api.py",
+      "bytes": 2497,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/supervise.py",
+      "bytes": 4632,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-evidence.json.gz",
+      "bytes": 216435,
+      "allocated": 217088
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/sqlite-baseline.json",
+      "bytes": 294,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/local-cheap-admission.json",
+      "bytes": 11719,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/compiler-detach.stderr",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/local-stage-admission.json",
+      "bytes": 10522,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/configuration.json",
+      "bytes": 765,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/native-batch.py",
+      "bytes": 1377,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/execution-complete.json",
+      "bytes": 171,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/account.py",
+      "bytes": 2626,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/admission-precheckout.json",
+      "bytes": 1423,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/local-cheap.py",
+      "bytes": 486,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-size.json",
+      "bytes": 351,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/execution-identities.json",
+      "bytes": 1294,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/compiler-detach.json",
+      "bytes": 601,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/qualification-summary.json",
+      "bytes": 6388,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/pre-stage.json",
+      "bytes": 8411,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/cheap-1792972710033759922.json",
+      "bytes": 547,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/manifest.json",
+      "bytes": 50433,
+      "allocated": 53248
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/compressed-projection.json",
+      "bytes": 398,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/api-commands.jsonl",
+      "bytes": 178110,
+      "allocated": 184320
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/prepare-publication.py",
+      "bytes": 2379,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-admission.json",
+      "bytes": 557,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/make-oracle.py",
+      "bytes": 2719,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/collect.py",
+      "bytes": 2277,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/cheap-1792972710033759922.stdout",
+      "bytes": 98,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/static-oracle.json",
+      "bytes": 566155,
+      "allocated": 569344
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/stage.py",
+      "bytes": 1908,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/publication-plan.json",
+      "bytes": 2760,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/remote-evidence-manifest.json",
+      "bytes": 11155,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/board-watch.log",
+      "bytes": 4545,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/pinned-inputs.json",
+      "bytes": 6730,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/run-stage.py",
+      "bytes": 1577,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/__pycache__/api.cpython-312.pyc",
+      "bytes": 5119,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/description",
+      "bytes": 73,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/config",
+      "bytes": 360,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/HEAD",
+      "bytes": 64,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/index",
+      "bytes": 1416135,
+      "allocated": 1417216
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/test/maelstrom-select-hook-model.cjs",
+      "bytes": 6859,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/test/maelstrom-native-errno-source-snapshot.test.cjs",
+      "bytes": 4195,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/test/maelstrom-errno-canonical-native.cjs",
+      "bytes": 12190,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/test/maelstrom-native-errno-latch.test.cjs",
+      "bytes": 15952,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/test/maelstrom-errno-canonical-static.py",
+      "bytes": 3556,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/tools/maelstrom-errno-canonical-build.cjs",
+      "bytes": 6934,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/tools/maelstrom-native-errno-latch.cjs",
+      "bytes": 13441,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/logs/HEAD",
+      "bytes": 144,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/applypatch-msg.sample",
+      "bytes": 478,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/post-update.sample",
+      "bytes": 189,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/commit-msg.sample",
+      "bytes": 896,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-receive.sample",
+      "bytes": 544,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/update.sample",
+      "bytes": 3650,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-rebase.sample",
+      "bytes": 4898,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-commit.sample",
+      "bytes": 1643,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-applypatch.sample",
+      "bytes": 424,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/hooks/pre-push.sample",
+      "bytes": 1374,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/info/sparse-checkout",
+      "bytes": 220,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/info/exclude",
+      "bytes": 240,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/objects/info/alternates",
+      "bytes": 14090,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/refs/heads/task/maelstrom-errno-api-canonical-native-oct25",
+      "bytes": 41,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/.git/logs/refs/heads/task/maelstrom-errno-api-canonical-native-oct25",
+      "bytes": 144,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025.md",
+      "bytes": 9100,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-before-publication.json",
+      "bytes": 106,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/runtime.json",
+      "bytes": 195,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/admission-expanded-projection-rejected.json",
+      "bytes": 1348,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-evidence.json.gz",
+      "bytes": 216435,
+      "allocated": 217088
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/configuration.json",
+      "bytes": 765,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/execution-complete.json",
+      "bytes": 171,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/admission-precheckout.json",
+      "bytes": 1423,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-size.json",
+      "bytes": 351,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/execution-identities.json",
+      "bytes": 1294,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/compiler-detach.json",
+      "bytes": 601,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/RECOVERY.md",
+      "bytes": 3362,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/qualification-summary.json",
+      "bytes": 6388,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/manifest.json",
+      "bytes": 6246,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/compressed-projection.json",
+      "bytes": 398,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-admission.json",
+      "bytes": 557,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-evidence-manifest.json",
+      "bytes": 11155,
+      "allocated": 12288
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/pinned-inputs.json",
+      "bytes": 6730,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/setup.py",
+      "bytes": 7437,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/remote-account.py",
+      "bytes": 1073,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/api.py",
+      "bytes": 2497,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/supervise.py",
+      "bytes": 4632,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/native-batch.py",
+      "bytes": 1377,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/account.py",
+      "bytes": 2626,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/local-cheap.py",
+      "bytes": 486,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/make-oracle.py",
+      "bytes": 2719,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/collect.py",
+      "bytes": 2277,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/stage.py",
+      "bytes": 1908,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/repo/docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/run-stage.py",
+      "bytes": 1577,
+      "allocated": 4096
+    }
+  ],
+  "standing": "readonly donor/installed tools reused; no object store copying; compressed remote source bytes charged once on each host"
+}

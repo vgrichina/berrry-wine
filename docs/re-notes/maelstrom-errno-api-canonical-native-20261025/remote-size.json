@@ -1,0 +1,1 @@
+{"allocated": 13029376, "files": 95, "externalLogs": [{"path": "/home/user/.ascii/processes/25883.log", "bytes": 4096}, {"path": "/home/user/.ascii/processes/25883.id", "bytes": 4096}, {"path": "/home/user/.ascii/processes/25883.err.log", "bytes": 0}], "heavyLockReleased": true, "remoteRoot": "/home/user/maelstrom-errno-api-canonical-native-oct25"}

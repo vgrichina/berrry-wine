@@ -1,0 +1,8 @@
+{
+  "sourceFiles": 128,
+  "expandedSourceBytes": 20702100,
+  "compressedSourceBytes": 5058949,
+  "bundleSHA256": "c886e89c6b4ab023df28c0555544c1985db576afd30b4516b76a36bf28e4603b",
+  "mechanism": "decode authentic bytes into canonical three-alias VFS in memory, never materialize source tree",
+  "unchangedCompilerHelperSHA256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+}

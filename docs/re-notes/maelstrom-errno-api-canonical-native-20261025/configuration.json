@@ -1,0 +1,23 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "mountReceiptReused": {
+    "pass": true,
+    "actualArgv": [],
+    "actualParsed": {
+      "tree": [],
+      "mount": []
+    },
+    "intendedFiles": [],
+    "controlTreeFiles": [
+      "ordinary.dll",
+      "comma,bearing.dll"
+    ],
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+    "scope": "native direct module; no filesystem mounts"
+  },
+  "validatedInThisTask": true,
+  "actualMountArgv": [],
+  "intendedFiles": [],
+  "box": "bx_k38z8byn"
+}

@@ -1,0 +1,197 @@
+[
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/RECOVERY.md",
+    "bytes": 3362,
+    "sha256": "d77d5146c523badfda059d9f182150cefcd925012eb2e36617d265c24929a2f3"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/admission-expanded-projection-rejected.json",
+    "bytes": 1348,
+    "sha256": "407ce108abbf290e9b7a4c8495ec9ed406961cee84cea8f5116834aef75d4b4d"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/admission-precheckout.json",
+    "bytes": 1423,
+    "sha256": "61a13df415753a1c95d143418938541dd227ebda29777baa27194e4520b92e8a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/box-final-state.json",
+    "bytes": 1185,
+    "sha256": "df383bc614c61451e1b1f403a39d0e31d2f3edbb07455b792d1e5ab823220dff"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/cheap-1792972710033759922.json",
+    "bytes": 547,
+    "sha256": "22cb7084bbb483214d89d21c0909df3e9708f41aeb04552a7a595fbabaeed4cd"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/cheap-1792972710033759922.stdout",
+    "bytes": 98,
+    "sha256": "f3fe38191aba0d508ccba43bd7c1fac481a0d402a3ae774d423cc607bb44cb67"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/compiler-detach.json",
+    "bytes": 601,
+    "sha256": "fd51236b366ae36e2617d9bb300bd074f9a2d58f92f853791c55512530080e38"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/compressed-projection.json",
+    "bytes": 398,
+    "sha256": "2e3995639616b6e4cd671700d8957cf003b940ef3c2a88f0e15a88911665994a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/configuration.json",
+    "bytes": 765,
+    "sha256": "9234fdacb0d4bfef40af7a1d44e6292b13e79839ed2434cb77d01adf0a5ee5a9"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/execution-complete.json",
+    "bytes": 171,
+    "sha256": "5832b9f23137e8f38a452aa72f87fb899c895cdf8e7b2737cff4afccc5d56a96"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/execution-identities.json",
+    "bytes": 1294,
+    "sha256": "c9f88c4d9e5f49a703fec8facf930cc1883ded3e1b58fc14c81149e1eaf25d8e"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/pinned-inputs.json",
+    "bytes": 6730,
+    "sha256": "9d8d32fdb9505176208ec314d0bd2a22a095f783f3cc10e140fca2c064c36e6b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/prepublication-admission.json",
+    "bytes": 18865,
+    "sha256": "70bfa79b606d9937a8f5a620dfed7c337804d8ba0f3b9e42534519179ab818a0"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/qualification-summary.json",
+    "bytes": 6388,
+    "sha256": "f06964237cf78cb69ccc7bae22346f84d7229ad8137fdd1a0aa31be48bec527b"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/account.py",
+    "bytes": 2797,
+    "sha256": "c3ac7067907e002883ca0e4f75a3f78b1fbf1838ea4645c8bef4104076c5c686"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/api.py",
+    "bytes": 2497,
+    "sha256": "7a696274543200472c52c64b85bc438572445427d92c4a49d8981e38d2076715"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/collect.py",
+    "bytes": 2277,
+    "sha256": "98693a90fa108a726b430bf53130ffb558e5914620ca15da4dc7005436b8087c"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/local-cheap.py",
+    "bytes": 486,
+    "sha256": "68187b02c5cfb3bcbb5829ae7529a90a564ea7fe0ded84d267103e1851ed484f"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/make-oracle.py",
+    "bytes": 2719,
+    "sha256": "bdef4fc7e642aa31999f68042881ae4cd7ec3d9421fa61d275e7572a8cbe617a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/native-batch.py",
+    "bytes": 1377,
+    "sha256": "361a68deb430dfdeff8a06df0ba05f70a2618058d0aeaee93549b44c786aaf73"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/prepare-publication.py",
+    "bytes": 2614,
+    "sha256": "266682cb6013a2965119586a0fb150084bdf86d5b671642617211a6a01fbfa1d"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/publish.py",
+    "bytes": 2740,
+    "sha256": "c2953657a12e6686a3817b7288c19491e94f18fdcf4863bb571a611ada6f8b1c"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/remote-account.py",
+    "bytes": 1073,
+    "sha256": "446d10d316bf4aa4e08cc19b37f3b7d26cbdcdd3d979ab4af073c1745f8dca58"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/run-stage.py",
+    "bytes": 1577,
+    "sha256": "40f153410d200894cd3aef680cc595d330e970b3b9d50db96577151068a5477a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/setup.py",
+    "bytes": 7437,
+    "sha256": "ffda72752be498eb858a48896d77e7b9e22f861af36588557c5a57fa1f9442d9"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/stage.py",
+    "bytes": 1908,
+    "sha256": "463068c1f5d02e6380c14bf99eb6ce995e938ac31c23d87974f0f74cd152d5ab"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/recipe/supervise.py",
+    "bytes": 4632,
+    "sha256": "1a72f4011f8c821b83211b1b0316de3aa316304db0a7badfeee9756b55e625b2"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-admission.json",
+    "bytes": 557,
+    "sha256": "85ee95706c20fbe05756f14202636b63f4090dc6a69831715c1fc9c641e7a581"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-before-publication.json",
+    "bytes": 106,
+    "sha256": "b0f61f459c4c85956018ed1ca54cb27c86a7fba4a34093634721ad6cbb9638a9"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-evidence-manifest.json",
+    "bytes": 11155,
+    "sha256": "92c33f20df826450402db920d81d1ce0bc2cab0e9f25b206ac1bfc90a4e23d31"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-evidence.json.gz",
+    "bytes": 216435,
+    "sha256": "b238081b9c087e641caa45aa9c3f9209a22ed687d0dd992d6b01f834374986b4"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/remote-size.json",
+    "bytes": 351,
+    "sha256": "82664b8360678705d67f57132c9fa82b66852f69680183bfb7eff6cc871dbf96"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/root-ref-comparison.json",
+    "bytes": 375,
+    "sha256": "0cc535941ff4c3b63d5b3943c8c2c0744fda6e17c2944696390bf42098b4b511"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/runtime.json",
+    "bytes": 195,
+    "sha256": "557c92770f12e31bef94a87530de7d0ce0de4e527c19fc7179fe067e7431626a"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025/standing-tools.json",
+    "bytes": 1136,
+    "sha256": "f57ee7a777a5e6cfe8cec8692801e020cb152de8391e56f49bca0c953233f47c"
+  },
+  {
+    "path": "tools/maelstrom-errno-canonical-build.cjs",
+    "bytes": 6934,
+    "sha256": "deaf3a85baa90da55e3f6cbecd85be3d243be1efb5f83cbb5a6be239a5019fd0"
+  },
+  {
+    "path": "test/maelstrom-errno-canonical-static.py",
+    "bytes": 3556,
+    "sha256": "2392fead41d6b184392017f5ac277298f38ba69730daf3bc93a2408085baf9df"
+  },
+  {
+    "path": "test/maelstrom-errno-canonical-native.cjs",
+    "bytes": 12190,
+    "sha256": "eb61b30e8f9d58d589d9800ea55ef63c3ccccbd7f29c59cdc2cf979aac2de234"
+  },
+  {
+    "path": "docs/re-notes/maelstrom-errno-api-canonical-native-20261025.md",
+    "bytes": 9332,
+    "sha256": "e3b2b9688e20e90703bf83c68a0838e38f16a325115f0d27dffc7f4be2541b26"
+  }
+]
