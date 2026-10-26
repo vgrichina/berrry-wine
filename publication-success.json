@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-26T21:48:29.037134+00:00",
+  "status": "Published retained evidence successfully",
+  "evidenceCommit": "1da5df6c5ba56a1d0adb861554c8d5e59e9612ee",
+  "evidenceCommitExactRemoteVerified": true,
+  "branch": "task/civ2-win16-map-movement-gameplay-oct26",
+  "publication": {
+    "at": "2026-10-26T21:48:09.165829+00:00",
+    "commit": "1da5df6c5ba56a1d0adb861554c8d5e59e9612ee",
+    "branch": "task/civ2-win16-map-movement-gameplay-oct26",
+    "remoteSHA": "1da5df6c5ba56a1d0adb861554c8d5e59e9612ee",
+    "exactVerified": true,
+    "published": true,
+    "repo": "/home/user/wine-assembly/scratch/runs/civ2-win16-map-movement-gameplay-oct26",
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "originalReceiptPreserved": true,
+    "integrityReceipt": "/home/user/wine-assembly/scratch/runs/civ2-movement-retained-evidence-publication-oct26/integrity.json",
+    "noMainMerge": true,
+    "noRuntimeRerun": true,
+    "ownedRuntime": [],
+    "box": null
+  },
+  "originalBlockedReceipt": "publication-blocker.json",
+  "originalManifest": "evidence-manifest.json",
+  "newIntegrityAndAdmission": "retained-publication.json",
+  "noReruns": true,
+  "noMainMerge": true,
+  "limitations": [
+    "No city founding acceptance claimed; ordinary movement and ordinary Quit accepted."
+  ],
+  "finalPublicationReceipt": "/home/user/wine-assembly/scratch/runs/civ2-movement-retained-evidence-publication-oct26/publication.json"
+}
