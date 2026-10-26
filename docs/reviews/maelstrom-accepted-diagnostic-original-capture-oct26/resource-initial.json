@@ -1,0 +1,22 @@
+{
+  "at": 1792991397.8803058,
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T05-09-11-01a1769c-d39c-7041-8d23-84fe0020846a.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-accepted-diagnostic-original-capture-oct26",
+  "memAvailable": 2291671040,
+  "free": 3817271296,
+  "charges": {
+    "remote": 25165824,
+    "localCheckoutHelpers": 8388608,
+    "transfer": 4194304,
+    "evidencePublication": 8388608,
+    "sessionDBfuture": 8388608,
+    "reserve": 8388608
+  },
+  "standingManifest": {
+    "path": "/tmp/maelstrom-frozen-original-recovered-capture-oct25/manifest.json",
+    "sha256": "96c9180a9b73c87b19c949dd8f74be68e6cf4a6b64ee0ae6aee89e5e09975601",
+    "bytes": 17616896
+  },
+  "peak": 62914560,
+  "pass": true
+}

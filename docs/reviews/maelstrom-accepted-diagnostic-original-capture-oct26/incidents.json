@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "bootstrap excerpt excess",
+    "detail": "Initial bundled policy/skill read and following dispatch/accepted-result read exceeded 8192-byte excerpt allowance and were tool-truncated. No guest/native output was involved. Subsequent source excerpts were narrowed. This incident is retained; no retroactive compliance is claimed."
+  },
+  {
+    "kind": "routine missing historical path",
+    "detail": "Runtime sidecar .task.runtime.json and hypothesized original-errno-runner.cjs were absent. Resolved exact sibling .runtime.json and minimal owned host wiring; no runtime attempt or source behavior change."
+  },
+  {
+    "kind": "publication whitespace check",
+    "detail": "git diff --cached --check rejected one inherited trailing space in the executed supervisor recovery copy. Preserve byte-exact executed source and SHA in recovery/executed-supervisor.json; normalize only adjacent recovery recipe whitespace. No runtime retry or supervisor behavior change."
+  },
+  {
+    "kind": "sparse publication parent objects",
+    "detail": "Initial evidence commit could not write parent tree because 2593 unchanged parent blobs were absent. Measured full copy would add 13,200,334 compressed bytes (not executed). Resolved via 11 preexisting flat readonly object leaves plus 38 exact small object copies, no recursive alternates, links, fetch or repack; receipts retained."
+  }
+]

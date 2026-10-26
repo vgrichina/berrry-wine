@@ -1,0 +1,42 @@
+[
+  {
+    "path": "tree-validation.json",
+    "bytes": 9757,
+    "sha256": "451a64f951e115fbadb85b5c7556fee7234911ea14ee9e8543edba56a03a58ac"
+  },
+  {
+    "path": "watchdog-negative-control.json",
+    "bytes": 133,
+    "sha256": "d45392883d0c906a0ca281228ace268ce1a4689bbd515492353d3933bee85e14"
+  },
+  {
+    "path": "output-control/receipt.json",
+    "bytes": 178,
+    "sha256": "1069504927d42d7222e3abe54e1a635922a0153990cc34b6ce8f9b24e4c4d03e"
+  },
+  {
+    "path": "guest/command.json",
+    "bytes": 1697,
+    "sha256": "913531dc98ff64c738591b570e19e66b9dd64710285ea47bb5ce7577234ac739"
+  },
+  {
+    "path": "guest/terminal.json",
+    "bytes": 307,
+    "sha256": "3db080a2bc8b75be6498839f7fd9d0f9761d923c716d37985853f1131186ea09"
+  },
+  {
+    "path": "guest/output.log",
+    "bytes": 3584,
+    "sha256": "dae7f601ed6906da79952277bef98dc587f0207a778b87bdda3fc3520d9fd124"
+  },
+  {
+    "path": "guest/native.jsonl",
+    "bytes": 2074,
+    "sha256": "ff5fe4c08e8f5a0dde13278b931efa25b164401770337b8878b75110867b39b8"
+  },
+  {
+    "path": "guest/native.jsonl.raw.jsonl",
+    "bytes": 3422,
+    "sha256": "8c368c9f0e997bc1f25f9dbf54d962eff6985c955a8854423e07c57b6c442698"
+  }
+]

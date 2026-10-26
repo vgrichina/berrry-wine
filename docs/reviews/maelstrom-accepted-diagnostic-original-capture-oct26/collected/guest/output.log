@@ -1,0 +1,86 @@
+PE loaded. Entry: 0x00417474
+Guest environment: MAELSTROM_LIB="."
+Guest environment: HOME="."
+DLL: msvcrt.dll at 0x522000, DllMain=0x525428, thunks=1954, origBase=0x78000000
+DLL: SDL.dll at 0x666000, DllMain=0x68f8df, thunks=2069, origBase=0x10000000
+DLL: SDL_net.dll at 0x7a2000, DllMain=0x7a3e4f, thunks=2091, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_net.dll -> DLL #2 (SDL_net.dll)
+Patching EXE imports: MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_net.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_net.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2094 thunks
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x68f8df...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7a3e4f...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x55dedc] = 0x7ae97c
+Patched __p__environ [0x55cbe4] = 0x7ae95c
+Patched __p___winitenv [0x55e0ec] = 0x7ae97c
+Patched __p___initenv [0x560c9c] = 0x7ae95c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x52e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\maelstrom
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[waveOut] open: 11025Hz 1ch 8bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0x688c40 param=0x7c9114 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x688c40 ESP=0x7efffff8
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+[ShowWindow] hwnd=0x10001 cmd=5
+[SetWindowText] "Maelstrom"
+[input] keydown vk=80 at batch 31000
+[check_input] msg=0x100 wParam=0x50 lParam=0x190001 packed=0x500100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=80 at batch 31200
+[input] keydown vk=37 at batch 35000
+[input] keydown vk=38 at batch 35200
+[input] keydown vk=32 at batch 35500
+[input] keyup vk=37 at batch 36000
+[check_input] msg=0x101 wParam=0x50 lParam=0xc0190001 packed=0x500101
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x25 lParam=0x14b0001 packed=0x250100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x26 lParam=0x1480001 packed=0x260100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100
+[check_input_hwnd] keyboard → focus 0x10001
+[check_input] msg=0x101 wParam=0x25 lParam=0xc14b0001 packed=0x250101
+[check_input_hwnd] keyboard → focus 0x10001
+Error: native latch status rejection
+    at Object.observe (/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/runner/tools/maelstrom-original-errno-adapter.cjs:113:29)
+    at originalNativeObserve (/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/runner/test/run.js:5765:34)
+    at /tmp/maelstrom-accepted-diagnostic-original-capture-oct26/runner/test/run.js:10914:38
+    at async withCliFailureCleanup (/tmp/maelstrom-accepted-diagnostic-original-capture-oct26/runner/lib/cli-failure-cleanup.js:10:12)

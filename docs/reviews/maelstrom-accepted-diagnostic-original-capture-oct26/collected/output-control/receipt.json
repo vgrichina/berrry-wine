@@ -1,0 +1,10 @@
+{
+  "TERM": true,
+  "KILL": false,
+  "returncode": -15,
+  "reaped": [],
+  "remainingGroup": false,
+  "reason": "output-guard",
+  "bytes": 131072,
+  "failedOutputRetained": true
+}

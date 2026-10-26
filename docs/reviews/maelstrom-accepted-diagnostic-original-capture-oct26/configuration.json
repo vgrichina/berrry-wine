@@ -1,0 +1,6 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "donor": "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/repo",
+  "revision": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "sourceTree": "ec7ee531e723627fd8387c0786abf35521d9fc77"
+}

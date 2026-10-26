@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kotcl2hfgrhe",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T05:17:49.469Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-26T05:17:49.415Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"ownedGuests\": [], \"box\": \"bx_7qwjxps7\", \"state\": \"RUNNING\", \"lifecycle\": \"leave running; coordinator shutdown05:50UTC\", \"expiry\": \"2026-10-26T06:06:24.385Z\", \"allocated\": 17907712}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

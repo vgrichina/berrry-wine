@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jt9q2n5f4g7t",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T05:17:26.382Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-26T05:17:26.337Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"memAvailable\": 7270010880, \"free\": 49063673856, \"allocated\": 17887232, \"inheritedFSIZE\": [-1, -1]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

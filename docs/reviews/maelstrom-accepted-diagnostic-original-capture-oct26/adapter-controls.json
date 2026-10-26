@@ -1,0 +1,109 @@
+{
+  "pass": true,
+  "syntheticHostOnly": true,
+  "noWasm": true,
+  "preservedErrno": 37,
+  "preservedCaller": 4251946,
+  "terminalRereads": 0,
+  "rows": [
+    {
+      "schema": "maelstrom-original-native-errno/v1",
+      "kind": "started",
+      "batch": null,
+      "historicalNativeLatch": {
+        "status": 1,
+        "event": 0,
+        "token": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "selectRet": 0,
+        "parks": 0,
+        "result": 0,
+        "nativeEntry": 0,
+        "callBlock": 0,
+        "sourceBlock": 0,
+        "pc": 0,
+        "esp": 0,
+        "eax": 0,
+        "ebp": 0,
+        "errno": 0,
+        "caller": 0,
+        "socketSet": 0,
+        "timeout": 0
+      },
+      "historicalSelectLatch": {
+        "started": 0,
+        "phase": 0,
+        "token": 0,
+        "entries": 0,
+        "parks": 0,
+        "completions": 0,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "ret": 0,
+        "result": 0
+      },
+      "liveHostObservation": {
+        "eax": 19
+      },
+      "historicalNativeRejection": null
+    },
+    {
+      "schema": "maelstrom-original-native-errno/v1",
+      "kind": "rejected",
+      "batch": 123,
+      "historicalNativeLatch": {
+        "status": 5,
+        "event": 2,
+        "token": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "selectRet": 0,
+        "parks": 0,
+        "result": 0,
+        "nativeEntry": 0,
+        "callBlock": 0,
+        "sourceBlock": 0,
+        "pc": 0,
+        "esp": 0,
+        "eax": 0,
+        "ebp": 0,
+        "errno": 37,
+        "caller": 4251946,
+        "socketSet": 0,
+        "timeout": 0
+      },
+      "historicalSelectLatch": {
+        "started": 0,
+        "phase": 0,
+        "token": 0,
+        "entries": 0,
+        "parks": 0,
+        "completions": 0,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "ret": 0,
+        "result": 0
+      },
+      "liveHostObservation": {
+        "eax": 19
+      },
+      "historicalNativeRejection": null
+    }
+  ],
+  "runnerSHA256": "625e0c64ca0f62f2248e5fa835c75ba636d50b61b32324abc6c8893ed4347e45"
+}

@@ -1,0 +1,435 @@
+{
+  "attempts": 1,
+  "terminal": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 1,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 5.16956615700019,
+    "box": "bx_7qwjxps7",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown05:50UTC",
+    "expires": "2026-10-26T06:06:24.385Z",
+    "outputBytes": 3584
+  },
+  "raw": [
+    {
+      "schema": "original-native-raw/v1",
+      "stage": "loaded-before-validation",
+      "error": null,
+      "moduleBases": {
+        "exe": {
+          "loadAddr": 4194304,
+          "origBase": 4194304
+        },
+        "maelstrom": {
+          "loadAddr": 4194304,
+          "origBase": 4194304
+        },
+        "msvcrt": {
+          "loadAddr": 5382144,
+          "origBase": 2013265920
+        },
+        "sdl": {
+          "loadAddr": 6709248,
+          "origBase": 268435456
+        },
+        "sdl_net": {
+          "loadAddr": 8003584,
+          "origBase": 268435456
+        }
+      },
+      "imageBase": 4194304,
+      "scalars": {
+        "mne_status": 0,
+        "mne_event": 0,
+        "mne_token": 0,
+        "mne_thread": 0,
+        "mne_regs": 0,
+        "mne_pre": 0,
+        "mne_post": 0,
+        "mne_selectRet": 0,
+        "mne_parks": 0,
+        "mne_result": 0,
+        "mne_nativeEntry": 0,
+        "mne_callBlock": 0,
+        "mne_sourceBlock": 0,
+        "mne_pc": 0,
+        "mne_esp": 0,
+        "mne_eax": 0,
+        "mne_ebp": 0,
+        "mne_errno": 0,
+        "mne_caller": 0,
+        "mne_socketSet": 0,
+        "mne_timeout": 0,
+        "mne_rejectReason": 0,
+        "mne_rejectModes": 0,
+        "mne_rejectExpectedRet": 0,
+        "mne_rejectObservedRet": 0,
+        "mne_rejectPhase": 0,
+        "mne_rejectCompletions": 0,
+        "mne_rejectFault": 0,
+        "mne_rejectActive": 0,
+        "mne_rejectCapped": 0,
+        "msc_started": 0,
+        "msc_phase": 0,
+        "msc_token": 0,
+        "msc_entries": 0,
+        "msc_parks": 0,
+        "msc_completions": 0,
+        "msc_fault": 0,
+        "msc_capped": 0,
+        "msc_active": 0,
+        "msc_api": 0,
+        "msc_thunk": 0,
+        "msc_thread": 0,
+        "msc_regs": 0,
+        "msc_pre": 0,
+        "msc_ret": 0,
+        "msc_post": 0,
+        "msc_result": 0
+      },
+      "anchors": [
+        {
+          "va": 5432368,
+          "bytes": "e82274ffff83c008c3"
+        },
+        {
+          "va": 4251941,
+          "bytes": "e8c253000083c40885c075"
+        },
+        {
+          "va": 8011792,
+          "bytes": "30e45200"
+        },
+        {
+          "va": 8008368,
+          "bytes": "81ec1401000033c9538b9c241c0100005556"
+        },
+        {
+          "va": 8008431,
+          "bytes": "57"
+        },
+        {
+          "va": 8008434,
+          "bytes": "8b3d10407a00"
+        },
+        {
+          "va": 8008546,
+          "bytes": "8be8ffd783380474a2"
+        },
+        {
+          "va": 8008604,
+          "bytes": "8bc55e5d5b81c414010000c3"
+        },
+        {
+          "va": 5432368,
+          "bytes": "e82274ffff83c008c3"
+        }
+      ],
+      "live": {
+        "eip": 4289652,
+        "eax": 1,
+        "esp": 122683388
+      }
+    },
+    {
+      "stage": "loaded-verified",
+      "verified": {
+        "crtBase": 5382144,
+        "netBase": 8003584,
+        "errnoEntry": 5432368,
+        "selectReturn": 8008546,
+        "authenticLoadedAnchors": true
+      }
+    },
+    {
+      "schema": "original-native-raw/v1",
+      "stage": "first-latch-rejection",
+      "error": "Error: native latch status rejection",
+      "moduleBases": {
+        "exe": {
+          "loadAddr": 4194304,
+          "origBase": 4194304
+        },
+        "maelstrom": {
+          "loadAddr": 4194304,
+          "origBase": 4194304
+        },
+        "msvcrt": {
+          "loadAddr": 5382144,
+          "origBase": 2013265920
+        },
+        "sdl": {
+          "loadAddr": 6709248,
+          "origBase": 268435456
+        },
+        "sdl_net": {
+          "loadAddr": 8003584,
+          "origBase": 268435456
+        }
+      },
+      "imageBase": 4194304,
+      "scalars": {
+        "mne_status": 5,
+        "mne_event": 0,
+        "mne_token": 0,
+        "mne_thread": 0,
+        "mne_regs": 0,
+        "mne_pre": 0,
+        "mne_post": 0,
+        "mne_selectRet": 0,
+        "mne_parks": 0,
+        "mne_result": 0,
+        "mne_nativeEntry": 0,
+        "mne_callBlock": 0,
+        "mne_sourceBlock": 0,
+        "mne_pc": 0,
+        "mne_esp": 0,
+        "mne_eax": 0,
+        "mne_ebp": 0,
+        "mne_errno": 0,
+        "mne_caller": 0,
+        "mne_socketSet": 0,
+        "mne_timeout": 0,
+        "mne_rejectReason": 3,
+        "mne_rejectModes": 4,
+        "mne_rejectExpectedRet": 8008546,
+        "mne_rejectObservedRet": 8008546,
+        "mne_rejectPhase": 3,
+        "mne_rejectCompletions": 1,
+        "mne_rejectFault": 0,
+        "mne_rejectActive": 0,
+        "mne_rejectCapped": 0,
+        "msc_started": 1,
+        "msc_phase": 3,
+        "msc_token": 7,
+        "msc_entries": 7,
+        "msc_parks": 6,
+        "msc_completions": 1,
+        "msc_fault": 0,
+        "msc_capped": 0,
+        "msc_active": 0,
+        "msc_api": 934,
+        "msc_thunk": 122700024,
+        "msc_thread": 1,
+        "msc_regs": 86228992,
+        "msc_pre": 122682136,
+        "msc_ret": 8008546,
+        "msc_post": 122682160,
+        "msc_result": 0
+      },
+      "anchors": [
+        {
+          "va": 5432368,
+          "bytes": "e82274ffff83c008c3"
+        },
+        {
+          "va": 4251941,
+          "bytes": "e8c253000083c40885c075"
+        },
+        {
+          "va": 8011792,
+          "bytes": "30e45200"
+        },
+        {
+          "va": 8008368,
+          "bytes": "81ec1401000033c9538b9c241c0100005556"
+        },
+        {
+          "va": 8008431,
+          "bytes": "57"
+        },
+        {
+          "va": 8008434,
+          "bytes": "8b3d10407a00"
+        },
+        {
+          "va": 8008546,
+          "bytes": "8be8ffd783380474a2"
+        },
+        {
+          "va": 8008604,
+          "bytes": "8bc55e5d5b81c414010000c3"
+        },
+        {
+          "va": 5432368,
+          "bytes": "e82274ffff83c008c3"
+        }
+      ],
+      "live": {
+        "eip": 122700024,
+        "eax": 1392508929,
+        "esp": 122682136
+      }
+    }
+  ],
+  "native": [
+    {
+      "schema": "maelstrom-original-native-errno/v1",
+      "kind": "started",
+      "batch": null,
+      "historicalNativeLatch": {
+        "status": 1,
+        "event": 0,
+        "token": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "selectRet": 0,
+        "parks": 0,
+        "result": 0,
+        "nativeEntry": 0,
+        "callBlock": 0,
+        "sourceBlock": 0,
+        "pc": 0,
+        "esp": 0,
+        "eax": 0,
+        "ebp": 0,
+        "errno": 0,
+        "caller": 0,
+        "socketSet": 0,
+        "timeout": 0
+      },
+      "historicalSelectLatch": {
+        "started": 1,
+        "phase": 0,
+        "token": 0,
+        "entries": 0,
+        "parks": 0,
+        "completions": 0,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "ret": 0,
+        "result": 0
+      },
+      "liveHostObservation": {
+        "eax": 1,
+        "esp": 122683388,
+        "eip": 4289652
+      },
+      "historicalNativeRejection": null
+    },
+    {
+      "schema": "maelstrom-original-native-errno/v1",
+      "kind": "pending",
+      "batch": 0,
+      "historicalNativeLatch": {
+        "status": 1,
+        "event": 0,
+        "token": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "selectRet": 0,
+        "parks": 0,
+        "result": 0,
+        "nativeEntry": 0,
+        "callBlock": 0,
+        "sourceBlock": 0,
+        "pc": 0,
+        "esp": 0,
+        "eax": 0,
+        "ebp": 0,
+        "errno": 0,
+        "caller": 0,
+        "socketSet": 0,
+        "timeout": 0
+      },
+      "historicalSelectLatch": {
+        "started": 1,
+        "phase": 0,
+        "token": 0,
+        "entries": 0,
+        "parks": 0,
+        "completions": 0,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "ret": 0,
+        "result": 0
+      },
+      "liveHostObservation": {
+        "eax": 8124884,
+        "esp": 122683216,
+        "eip": 4290684
+      },
+      "historicalNativeRejection": null
+    },
+    {
+      "schema": "maelstrom-original-native-errno/v1",
+      "kind": "rejected",
+      "batch": 36170,
+      "historicalNativeLatch": {
+        "status": 5,
+        "event": 0,
+        "token": 0,
+        "thread": 0,
+        "regs": 0,
+        "pre": 0,
+        "post": 0,
+        "selectRet": 0,
+        "parks": 0,
+        "result": 0,
+        "nativeEntry": 0,
+        "callBlock": 0,
+        "sourceBlock": 0,
+        "pc": 0,
+        "esp": 0,
+        "eax": 0,
+        "ebp": 0,
+        "errno": 0,
+        "caller": 0,
+        "socketSet": 0,
+        "timeout": 0
+      },
+      "historicalSelectLatch": {
+        "started": 1,
+        "phase": 3,
+        "token": 7,
+        "entries": 7,
+        "parks": 6,
+        "completions": 1,
+        "fault": 0,
+        "capped": 0,
+        "active": 0,
+        "thread": 1,
+        "regs": 86228992,
+        "pre": 122682136,
+        "post": 122682160,
+        "ret": 8008546,
+        "result": 0
+      },
+      "liveHostObservation": {
+        "eax": 1392508929,
+        "esp": 122682136,
+        "eip": 122700024
+      },
+      "historicalNativeRejection": {
+        "schema": "maelstrom-native-completion-rejection/v1",
+        "reason": 3,
+        "predicate": "uop",
+        "modeBits": 4,
+        "expectedReturn": 8008546,
+        "observedReturn": 8008546,
+        "phase": 3,
+        "completions": 1,
+        "fault": 0,
+        "active": 0,
+        "capped": 0
+      }
+    }
+  ]
+}

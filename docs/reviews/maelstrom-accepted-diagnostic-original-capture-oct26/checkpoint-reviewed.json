@@ -1,0 +1,9 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "guestAttempts": 1,
+  "firstRejection": 3,
+  "errnoCaller": "UNKNOWN",
+  "loaderAnchors": "PASS",
+  "cleanup": "PASS",
+  "remainingRuntimeWork": false
+}
