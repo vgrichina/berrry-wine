@@ -1,0 +1,68 @@
+{
+  "group": "limits",
+  "pass": true,
+  "canonicalRuntimeQualified": false,
+  "compiled": false,
+  "runnerSHA256": "f9bca23e0e8f786ba66e5756132b24e2300e3a23984264f7ae0b6cb7b6b6ed97",
+  "fixtureSHA256": "c29e290dd0ac280997470840657ebb12907c23675a6426cb40a29d727af93ceb",
+  "exactFunctions": {
+    "handle_GetMessageA": {
+      "bytes": 309,
+      "sha256": "2d68ed332e9a221fb1413bdafdaf7ab1d14dbfd940746347e5b87f828df5089d"
+    },
+    "handle_GetMessageW": {
+      "bytes": 303,
+      "sha256": "9c99b0bec67d6a78aa6681ae9f15e8a250b5c6b2057f258da196e4b2dca600e4"
+    },
+    "handle_PeekMessageA": {
+      "bytes": 311,
+      "sha256": "6dd8a8712a42c755986ea8ceb27b2a20d97ca3925f638ec19613ccfe120c79bf"
+    },
+    "handle_PeekMessageW": {
+      "bytes": 305,
+      "sha256": "87d4e8cefbc586f57f156a8128ce47b6b3464295cd6e2ba06a106b0579f0f58e"
+    },
+    "handle_GetMessage_observed": {
+      "bytes": 2336,
+      "sha256": "5481230d148485f4ce45c11a0e8fd824ab45ac9fea259da1bbb658c9650b2b28"
+    },
+    "handle_PeekMessage_observed": {
+      "bytes": 2689,
+      "sha256": "f633a26bc9289c91252c6e039c8a2669212c80e0feda24ff6bf9f879091a6900"
+    },
+    "keyboard_hook_begin": {
+      "bytes": 2468,
+      "sha256": "4cf18de441bd384b36b1d6323aab3a232d00351325f6f2657a519cf0faefe694"
+    },
+    "getmessage_hook_begin": {
+      "bytes": 2409,
+      "sha256": "483a71375707eb0b12b403242d952edb7eddfc1c2ce17dfe6727a7235d9e1f21"
+    },
+    "getmessage_hook_continue": {
+      "bytes": 1056,
+      "sha256": "e633f96c27e343e7a3919fd542239a98d77e8cf8cce6ef2a0aee9fffe9fc9f53"
+    },
+    "keyboard_hook_finish": {
+      "bytes": 1364,
+      "sha256": "53c9a881a8c94db2a72b1b8a225d0a908debc4fd89b6ad910579be7b76c8f4b7"
+    }
+  },
+  "productionInstallation": {
+    "bytes": 923,
+    "sha256": "1e9d51baafa18f7423cd635eca2248d62c4c2d5ce8a114458238be757827816d"
+  },
+  "qualification": {
+    "bytes": 360,
+    "sha256": "f56367cae6e7521edc2b5d73dd955f5fa88d1f5fd10e22e3b31b9c4e2ceec3cb"
+  },
+  "sourceFiles": {
+    "src/09a5-handlers-window.wat": "f70090a80db6b1557e063742c72c0ffdc6c990c27d6bc30f953c485ea614a69e",
+    "src/09a5b-handlers-window-late.wat": "3bd8f0faae763f4829f81f14fd64f4e1e5e0f470e2af7fd9eabeeb698ad441bf",
+    "src/09a-handlers4-late.wat": "3887c9f813a91e4584d938565efc964a3b715f78a29703068143571d3336d928",
+    "src/01-header.wat": "1c66dd0415747a82d1e89a879571ec78a1f23f2086283498dac155419ebef772",
+    "src/13-exports.wat": "c1700fb6737d66792469f0170785ae63111d1da0acff9f5e9dde9fecf3375633",
+    "lib/host-imports.js": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347",
+    "test/message-completion-owner.js": "5feb6cd914a7c93e58b719107887960783883d78af6c18ce7a45e79e1f077f0c",
+    "test/message-boundary-trace.js": "0ca2cca343cf1b0c14e12c1e3c6dfa518abba78ffef41c095b681f59e4449379"
+  }
+}

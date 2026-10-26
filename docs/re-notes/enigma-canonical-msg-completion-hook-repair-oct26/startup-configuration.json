@@ -1,0 +1,18 @@
+{
+  "executable": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "flags": [
+    "--max-old-space-size=64"
+  ],
+  "environment": {
+    "TMPDIR": "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/ops",
+    "NODE_OPTIONS": null
+  },
+  "cpu": 90,
+  "wall": 120,
+  "file": 25165824,
+  "physical": 134217728,
+  "output": 2097152,
+  "excerpt": 8192,
+  "gitDATAOnlyGit": true
+}

@@ -1,0 +1,45 @@
+{
+  "inherited": {
+    "priorMemoryAvailableDenial": 3046785024,
+    "priorFalseIndividualClientCap": {
+      "path": "/tmp/enigma-msg-boundary-recovered-implementation-oct26/ops/admission-blocker.json",
+      "bytes": 134217728,
+      "actualRSS": 241934336,
+      "correction": "Superseded by measured-client-fleet-admission-oct26.json. No individual client cap; actual resident RSS is already deducted from MemAvailable. Future64MiB growth each retained."
+    },
+    "originalGameEvidence": "Host consumed WM_NCHITTEST/down/up HWND10001, down/up client321,169, but no returned MSG/application handling proof. No semantics repair, second input, held-click or forced movement performed.",
+    "realDenials": "All prior platform denials/runtime timeouts and historical test/admission incidents remain unchanged; no guest/API/SSH/resume/creation accessed here.",
+    "ownedIncidents": [
+      "initial read-only excerpts exceeded8192",
+      "git read-tree -i syntax missing --reset corrected",
+      "test fixture reused API name pointer corrected; first reproducer retained",
+      "byte-only mutation reason assertion corrected; first reproducer retained",
+      "read-only parent ls-tree empty entry handled; exact verified local source recovered with no missing-blob retry"
+    ]
+  },
+  "owned": [
+    {
+      "incident": "Initial readonly excerpts exceeded8192",
+      "retained": "launcher events; no further oversized source excerpts"
+    },
+    {
+      "incident": "Signature preparation physical128MiB exceeded",
+      "receipt": "imports-first-memory-execution.json",
+      "reproducer": "imports-first-memory-reproducer.js",
+      "resolution": "Hash closure separately; exact production import declarations only passed through unchanged parser; no compile"
+    },
+    {
+      "incident": "Expanded baseline test physical128MiB exceeded",
+      "receipt": "baseline-first-memory-execution.json",
+      "reproducer": "baseline-first-memory-reproducer.js",
+      "resolution": "Cache immutable parsed exact functions instead of reparse per comparison; all96 comparisons retained"
+    },
+    {
+      "incident": "Task disk projection double-charged already allocated own bytes",
+      "receipt": "disk-double-charge-admission-incident.json",
+      "resolution": "Remaining growth subtracted from current filesystem free; full allocation ledger retained; threshold unchanged"
+    }
+  ],
+  "allRealDenialsRetained": true,
+  "noCompileGuestBoatMain": true
+}

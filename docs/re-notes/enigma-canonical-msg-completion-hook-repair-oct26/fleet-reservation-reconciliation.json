@@ -1,0 +1,10 @@
+{
+  "source": "Root append-only board2026-10-26T22:56:00Z",
+  "actualOtherTasks": [
+    "gl-required-file-version-inventory-repair-oct26",
+    "civ2-atomic-controller-ownership-repair-oct26",
+    "alien-opt-in-independent-integrate-oct26"
+  ],
+  "reservation": "three complete96MiB allocations conservatively reserved without deducting their materialized bytes; prior fourth initial slot completed; any additional future launch needs coordinator fresh admission",
+  "noUserLimitChanged": true
+}

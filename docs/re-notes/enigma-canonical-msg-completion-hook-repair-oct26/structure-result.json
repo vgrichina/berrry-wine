@@ -1,0 +1,11 @@
+{
+  "pass": true,
+  "compiled": false,
+  "hashes": {
+    "src/01-header.wat": "1c66dd0415747a82d1e89a879571ec78a1f23f2086283498dac155419ebef772",
+    "src/09a5-handlers-window.wat": "f70090a80db6b1557e063742c72c0ffdc6c990c27d6bc30f953c485ea614a69e",
+    "src/09a5b-handlers-window-late.wat": "3bd8f0faae763f4829f81f14fd64f4e1e5e0f470e2af7fd9eabeeb698ad441bf",
+    "src/09a-handlers4-late.wat": "3887c9f813a91e4584d938565efc964a3b715f78a29703068143571d3336d928",
+    "src/13-exports.wat": "c1700fb6737d66792469f0170785ae63111d1da0acff9f5e9dde9fecf3375633"
+  }
+}

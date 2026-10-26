@@ -1,0 +1,13 @@
+{
+  "parent": "40699f72bef9b5339c5371d9bdc0dd6e0efb8b25",
+  "source": "/tmp/enigma-msg-boundary-measured-client-implementation-oct26/repo/docs/re-notes/enigma-msg-boundary-measured-client-implementation-oct26",
+  "files": {
+    "reused-receipts.json": "244c171f9035560dc3b68d4706f8cd0e5aab89edf4890898966cda62ab729f81",
+    "unchanged-boundaries.json": "09c814450912ce68639de5c5e6a201b6e8955b725014ec401e3a7441c2981b09",
+    "historical-incidents.json": "09a7016c967d0b7a5d1378b1b4cf7d95eb3eb1a39895328d330eecb1b2ace49a",
+    "completion-hook-limitation.json": "42fae18b50e175736254373908bde9f96e5edcac4468d65a89abbd31589b8f26"
+  },
+  "unchangedEmitter": "20d8f70bccbc23b87369336e9e003eeee55006a94635d142062e8165e535f5a2",
+  "candidateEmitter": "20d8f70bccbc23b87369336e9e003eeee55006a94635d142062e8165e535f5a2",
+  "scope": "Parent real renderer/dequeue/Dispatch evidence reused; no new guest evidence. Affected installation and legacy production/limits/noninterference tests passed here."
+}

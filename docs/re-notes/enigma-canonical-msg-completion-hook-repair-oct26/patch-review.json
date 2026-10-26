@@ -1,0 +1,23 @@
+{
+  "sha256": "d0ae9dd6c669800a87e0b712d98dc6f69bef469f82eec2eaa57d80ae805bc420",
+  "bytes": 58896,
+  "files": [
+    "src/01-header.wat",
+    "src/09a5-handlers-window.wat",
+    "src/09a5b-handlers-window-late.wat",
+    "src/09a-handlers4-late.wat",
+    "src/13-exports.wat",
+    "lib/host-imports.js",
+    "test/run.js",
+    "test/message-boundary-trace.js",
+    "test/test-message-boundary-trace.js",
+    "lib/host-import-sigs.generated.json",
+    "test/message-completion-owner.js",
+    "test/wat-completion-function-fixture.js",
+    "test/test-message-completion.js",
+    "test/fixtures/enigma-message-original-functions.json"
+  ],
+  "canonicalBaseline": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "JSBaseline": "40699f72bef9b5339c5371d9bdc0dd6e0efb8b25",
+  "warning": "Do not replace main with donor whole files. Apply this delta only to reconciled baseline; prior partial runner delta remains separately required."
+}

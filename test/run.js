@@ -4487,6 +4487,13 @@ async function main() {
       translate: addr => translateGuest(addr, instance.exports.get_image_base(), memory.buffer) }),
   });
   h.log_api_exit = messageBoundaryTrace.wrapPostHandler(h.log_api_exit);
+  const { createMessageCompletionOwner } = require('./message-completion-owner.js');
+  const messageCompletionOwner = createMessageCompletionOwner({
+    enabled: () => TRACE_MESSAGE_BOUNDARY && messageBoundaryTrace.status().armed && !messageBoundaryTrace.status().saturated,
+    observe: detail => messageBoundaryTrace.completed(detail),
+    gap: () => messageBoundaryTrace.completionGap(),
+  });
+  Object.assign(h, messageCompletionOwner.imports);
   // END message-boundary installation
   // Every OTHER import table in this process is built from `ctx` — one per
   // guest thread, in makeWorkerImports — and createHostImports derives its
@@ -4898,6 +4905,12 @@ async function main() {
 
   const instance = await WebAssembly.instantiate(wasmModule, imports);
   ctx.exports = instance.exports;
+  // Install on the main instance before any guest initializer executes. An
+  // older module is explicitly unqualified, never silently called complete.
+  if (TRACE_MESSAGE_BOUNDARY && instance.exports.set_message_completion) {
+    instance.exports.set_message_completion(1);
+    messageBoundaryTrace.qualifyCompletion();
+  }
   // Quiet runs silence the per-call API log from the first instruction, DLL
   // initialization included. Applied only after DllMain ran, the early calls
   // were logged (and so counted twice, by h.log and by $api_calls) and a

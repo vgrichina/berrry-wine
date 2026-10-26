@@ -6,6 +6,7 @@
 function createMessageBoundaryTrace({ enabled, logs, snapshot, getContext }) {
   const maxRecords = 128, maxBytes = 64 * 1024, tailBytes = 1024;
   let count = 0, bytes = 0, saturated = false;
+  let completionWired = false;
   let armed = false; // Arm at the frozen menu; boot must not spend the budget.
   function append(record) {
     const line = '[message-boundary] ' + JSON.stringify(record);
@@ -51,9 +52,24 @@ function createMessageBoundaryTrace({ enabled, logs, snapshot, getContext }) {
   }
   emit('capabilities', () => ({ maxRecords, maxBytes, hostDequeue: true,
     dispatchEntry: true, successfulReturnMSG: false,
-    reason: 'canonical invocation-owned completion hook unavailable',
+    reason: 'module completion wire not yet qualified; runtime qualification separate',
     scope: 'main-instance API; shared host dequeue has unknown polling thread' }));
   return {
+    qualifyCompletion() { completionWired = true; },
+    completionGap() { emit('completion-gap', () => ({ absenceIsNotEvidence: true, successfulReturn: null })); },
+    completed(detail) {
+      if (!completionWired) return;
+      emit('message-completion', () => {
+        const { read } = context();
+        const success = detail.api <= 2 ? detail.result >= 0 : detail.result !== 0;
+        return { ...detail, api: ['GetMessageA', 'GetMessageW', 'PeekMessageA', 'PeekMessageW'][detail.api - 1],
+          removeFlags: detail.api <= 2 ? null : detail.removeFlags,
+          pmRemove: detail.api <= 2 || !!(detail.removeFlags & 1),
+          correlation: 'invocation-owned', successfulReturn: success,
+          msg: success ? msg(read, detail.msgPointer) : null,
+          scope: 'main-instance; canonical build/runtime qualification still required' };
+      });
+    },
     dequeue(evt, source) {
       emit('host-dequeue', () => ({ source: ['pending', 'cross-thread', 'button-queue', 'renderer'].includes(source) ? source : 'unknown',
         hwnd: u32(evt.hwnd), message: u32(evt.msg), wParam: u32(evt.wParam), lParam: u32(evt.lParam),
@@ -93,7 +109,7 @@ function createMessageBoundaryTrace({ enabled, logs, snapshot, getContext }) {
       };
     },
     arm(on) { armed = !!enabled && on === true; },
-    status: () => ({ records: count, bytes, saturated, armed, successfulReturnMSG: false }),
+    status: () => ({ records: count, bytes, saturated, armed, successfulReturnMSG: completionWired, canonicalRuntimeQualified: false }),
   };
 }
 

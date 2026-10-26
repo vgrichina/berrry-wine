@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/test/test-message-completion.js",
+    "baseline-semantics",
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/ops"
+  ],
+  "cwd": "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 132173824,
+  "physicalCap": 134217728,
+  "cpu": 0.08,
+  "wall": 0.07798623596318066,
+  "outputBytes": 94,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,5 @@
+{
+  "incident": "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/ops/disk-double-charge-admission-incident.json",
+  "correction": "Filesystem free already deducts currently allocated own source/.git/session/events/WAL. Retain full measured task allocation ledger, but subtract only remaining publication10MiB/future16MiB/reserve8MiB from current free, plus conservative full four other96MiB allocations. No threshold or physical/resource/user limit changed.",
+  "threshold": 2982150144
+}

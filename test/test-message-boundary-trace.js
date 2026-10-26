@@ -25,7 +25,7 @@ function harness({ enabled = true, source = runner, getContextError = false, ori
   const logs = [], h = { log_api_exit: originalExit || function () { return 'preserved'; } };
   const renderer = { checkInput: () => ({ msg: 0x201, wParam: 1, lParam: 0xa90141, hwnd: 0x10001, mouseX: 344, mouseY: 212, mouseButtons: 1 }) };
   const inputConsumptionTrace = { dequeue() {} };
-  const factory = new Function('createMessageBoundaryTrace', 'h', 'memory', 'instance', 'translateGuest', 'logs', 'TRACE_MESSAGE_BOUNDARY', 'renderer', 'inputConsumptionTrace', `
+  const factory = new Function('require', 'createMessageBoundaryTrace', 'h', 'memory', 'instance', 'translateGuest', 'logs', 'TRACE_MESSAGE_BOUNDARY', 'renderer', 'inputConsumptionTrace', `
     const tickState={batch:120833};
     const apiNameCache=new Map();let pendingComApiId=-1,apiCount=0;const apiCounts=null;
     const TRACE_CRITICAL=false,TRACE_INPUT_DISPATCH=false,TRACE_API_MEM=[],breakApis=[],ESP_DELTA=false,TRACE_API=false,QUIET_API=true;
@@ -36,7 +36,7 @@ function harness({ enabled = true, source = runner, getContextError = false, ori
     ${cut(source, '  const handleControlCommand = (cmdIn) => {', '  const control = (CONTROL || CONTROL_STDIN)')}
     return {h,trace:messageBoundaryTrace,control:handleControlCommand,count:()=>apiCount};
   `);
-  const out = factory(createTrace, h, memory, { exports }, translateGuest, logs, enabled, renderer, inputConsumptionTrace);
+  const out = factory(require, createTrace, h, memory, { exports }, translateGuest, logs, enabled, renderer, inputConsumptionTrace);
   const names = new Map();
   function api(name) { if (!names.has(name)) names.set(name, 3000 + names.size * 64); const pointer = names.get(name), data = Buffer.from(name); new Uint8Array(memory.buffer, pointer, data.length).set(data); return h.log(pointer, data.length); }
   function stack(pointer = 512) { [777, pointer, 0x10001, 0x84, 0x202, 1].forEach((v, i) => dv.setUint32(128 + i * 4, v, true)); }
