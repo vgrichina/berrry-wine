@@ -1,8 +1,13 @@
 {
-  "files": 251,
-  "expandedBytes": 17102166,
-  "archiveBytes": 6685939,
-  "archiveSHA256": "53e3f237ae6d64bb4753c1a39be5dcf1ed5c3858ba11641a373e894c40758bd4",
+  "files": 225,
+  "expandedBytes": 16402206,
+  "archiveBytes": 6273755,
+  "archiveSHA256": "656a1569d905f49385a7e3a3e6b878f81b96aa547d275f5fcf521cfaa254dd4e",
   "noBuild": true,
-  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f"
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "excludedUnused": [
+    "runtime/fonts/*",
+    "runtime/test/*",
+    "runner/package-lock.json"
+  ]
 }

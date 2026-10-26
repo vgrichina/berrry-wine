@@ -1,0 +1,6 @@
+{
+  "passChecks": true,
+  "missing": [],
+  "scope": "Runtime libs/host/native diagnostic helpers; no wasm compilation/instantiation",
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f"
+}

@@ -3,8 +3,11 @@ H=pathlib.Path('/tmp/maelstrom-qualified-original-api-capture-recovered-oct26');
 assert mode in ['startup','guest'];cutoff=1793041800.0
 ctypes.CDLL(None).prctl(36,1,0,0,0)
 wall=85;cpu=90;assert time.time()+wall+5<cutoff
-env=dict(os.environ,TMPDIR=str(O),PYTHONDONTWRITEBYTECODE='1')
+env={k:os.environ[k] for k in ['PATH','HOME','LANG','LC_ALL','TZ'] if k in os.environ}
+env.update(TMPDIR=str(O),PYTHONDONTWRITEBYTECODE='1')
 for k in ['NODE_OPTIONS','WINE_RUN_EXTRA_ARGS','WINE_REGION_MAP','MAELSTROM_CAPTURE_INSTALL','WINE_ASSEMBLY_WASM']:env.pop(k,None)
+envSHA=__import__('hashlib').sha256(json.dumps(env,sort_keys=True).encode()).hexdigest()
+if mode=='guest':assert json.load(open(O/'startup/terminal.json'))['environmentSHA256']==envSHA,'startup environment changed'
 node='/home/user/.nvm/versions/node/v24.22.1/bin/node';assert shutil.which('node')==node
 if mode=='guest':
  argv=json.load(open(H/'guest-args.json'));argv[0]=node;cwd=H/'runner'

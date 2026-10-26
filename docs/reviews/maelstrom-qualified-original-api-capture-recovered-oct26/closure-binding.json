@@ -1,0 +1,12 @@
+{
+  "passChecks": true,
+  "moduleAndHelpersExact": true,
+  "originalTreeFiles": 48,
+  "commaNames": [
+    "vfs/maelstrom/Docs/Ambrosia_Software,_Inc._FAQ.txt"
+  ],
+  "productionRuntimeRevision": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "closureFiles": 225,
+  "manifestSHA256": "2663bf652aebdc09f1c6f301e759113cdac77f03eff2b12876451d0b850920c8",
+  "noBuildOrStaticNativeReplay": true
+}

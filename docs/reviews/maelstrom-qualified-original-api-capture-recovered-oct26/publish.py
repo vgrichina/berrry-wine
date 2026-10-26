@@ -3,7 +3,7 @@ import sys
 stage=sys.argv[1]
 account('publication-'+stage,remoteProjection=28000000)
 dest=R/'docs/reviews'/H.name;dest.mkdir(parents=True,exist_ok=True)
-names=['pins-verified.json','checkout.json','schedule.json','incidents.json','closure.json','runner-diff.json','resource-closure-prepared.json']
+names=['pins-verified.json','checkout.json','schedule.json','incidents.json','closure.json','runner-diff.json','resource-closure-prepared.json','launch-config.json','closure-binding.json','import-closure-review.json','source-closure-correction.json']
 if stage=='final':
  names += ['final-receipt.json','observation.json','collected-manifest.json','checkpoint-guest-terminal.json','checkpoint-staged.json','transfer-roundtrip.json','remote-before-staging-api.json','remote-preguest-api.json','startup-api.json','mount-api.json','archive-transfer.json','resource-immediate-preguest.json']
 for n in names:

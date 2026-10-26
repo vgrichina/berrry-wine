@@ -46,6 +46,7 @@ files={};provenance={}
 tracked=set(git('ls-tree','-r','--name-only',SOURCE).decode().splitlines())
 for x in rows:
  target=x['target']
+ if target.startswith(('runtime/fonts/','runtime/test/')) or target=='runner/package-lock.json':continue
  if target=='runtime/build/wine-assembly.wasm':continue
  p=pathlib.Path(x['path']);b=p.read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],target
  rel=target.removeprefix('runner/')
@@ -54,6 +55,7 @@ for x in rows:
  else:provenance[target]='standing:'+str(p)
  files[target]=b
 donor=pathlib.Path('/tmp/maelstrom-accepted-guard-diagnostics-canonical-qualification-oct26')
+files['runner/lib/render-clear.js']=git('show',SOURCE+':lib/render-clear.js');provenance['runner/lib/render-clear.js']=SOURCE+':lib/render-clear.js'
 files['runtime/build/wine-assembly.wasm']=(donor/'ops/errno-latch.wasm').read_bytes();provenance['runtime/build/wine-assembly.wasm']='accepted retained module'
 for n in ['maelstrom-native-errno-latch.cjs','maelstrom-original-errno-adapter.cjs','maelstrom-select-completion-hook.cjs']:
  files['runner/tools/'+n]=(donor/'repo/tools'/n).read_bytes();provenance['runner/tools/'+n]='accepted pinned helper'
