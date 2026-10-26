@@ -8,7 +8,14 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const crypto = require('crypto');
-const { execFileSync } = require('child_process');
+const launchControl = require('./helpers/palette-browser-launch');
+// Reject wrapper side effects before identity Git, compilation, server or browser.
+const launchConfig = launchControl.launchConfiguration();
+if (process.argv.includes('--launch-config-check')) {
+  console.log(JSON.stringify(launchConfig));
+  process.exit(0);
+}
+launchControl.ensureSupervised();
 const puppeteer = require('puppeteer');
 const extraWat = require('./helpers/palette-gpu-wat');
 const root = path.resolve(__dirname, '..');
@@ -16,10 +23,7 @@ const root = path.resolve(__dirname, '..');
 // production JS. Only the identical test exports/browser oracle come from here.
 const sourceRoot = path.resolve(process.env.PALETTE_GPU_SOURCE_ROOT || root);
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
-const identity = dir => ({
-  head:execFileSync('git',['rev-parse','HEAD'],{cwd:dir,encoding:'utf8'}).trim(),
-  diff:execFileSync('git',['diff','--stat'],{cwd:dir,encoding:'utf8'}).trim(),
-});
+const identity = launchControl.gitIdentity;
 const saveEvidence = evidence => {
   if (process.env.PALETTE_GPU_EVIDENCE)
     fs.writeFileSync(process.env.PALETTE_GPU_EVIDENCE,JSON.stringify(evidence,null,2)+'\n');
@@ -58,9 +62,8 @@ const saveEvidence = evidence => {
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   let browser,page;
   try {
-    browser=await puppeteer.launch({headless:true,
-      executablePath:process.env.CHROME || '/usr/bin/chromium',
-      args:['--no-sandbox','--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+    evidence.launchControl=launchConfig.checked;
+    browser=await puppeteer.launch(launchConfig.options);
     evidence.browser=await browser.version();
     for (const version of [1,2]) {
       page=await browser.newPage();
