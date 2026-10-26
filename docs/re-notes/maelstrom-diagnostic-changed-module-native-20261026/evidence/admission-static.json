@@ -1,0 +1,25 @@
+{
+  "at": 1792988795.8743017,
+  "charges": {
+    "owned": 5783552,
+    "launcher": 221184,
+    "session": 638976,
+    "WALSHM": 25018368,
+    "positiveDB": 0,
+    "modulesFuture": 4194304,
+    "publicationFuture": 2097152,
+    "evidenceFuture": 1048576,
+    "sessionDBfuture": 4194304,
+    "reserve": 8388608,
+    "board": 8192
+  },
+  "peak": 51593216,
+  "cap": 67108864,
+  "free": 4004741120,
+  "projectedFree": 3953147904,
+  "diskFloor": 2982150144,
+  "memAvailable": 2735845376,
+  "minMem": 1073741824,
+  "passed": true,
+  "standing": "canonical compiler/source gzip/anchors/oracle/readonly flattened leaves and installed tools in place; zero copied standing bytes"
+}

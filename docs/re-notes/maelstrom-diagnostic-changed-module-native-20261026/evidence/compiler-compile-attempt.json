@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=2048",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo/tools/maelstrom-diagnostic-canonical-build.cjs"
+  ],
+  "at": 1792988760.2639208,
+  "lock": "/tmp/wine-ops-heavy-runtime.lock"
+}

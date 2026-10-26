@@ -1,0 +1,20 @@
+# Changed diagnostic latch: canonical compile and partial native qualification
+
+Candidate main: `44e344fdb26daab9a07210656597902ba27cb5f7`. No main integration.
+
+Both newly compiled modules pass full import/export/type/signature/noStart checks, unchanged guest storage sections,48 added private zero-initialized i32 globals, and independently computed storage+span layout `9a3bc9149d58209c` (269 entries). Eight rejecting ABI mutations pass. Compiler input closure:140 files,21207647 bytes, canonical main.watx, production/standardWat/strictDeclarations/runtimeBuiltins=false; aliases f,src/f,./f updated consistently. Source, compiler and binary anchors are read in place. Historical manifest revision b41a7c5f is distinct from current canonical HEAD d8cd8c54.
+
+| Backend | Bytes | SHA256 |
+| --- | ---: | --- |
+| tailcalls | 1883406 | aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1 |
+| compat trampoline | 1885979 | 85eaf35e803a55b18992ac6a717ba0fe937e92aa65e71d40f675a5ccec6fa3ab |
+
+One actual compiled tailcall errno4 case passed. Production dispatch observed owned select result1, CALL-register through EDI to authentic CRT `_errno` CALL/ADD/C3 bytes with controlled synthetic `_getptd`, and actual RET to SDLnet0x7a3366 before CMP (counter0). Status4/event3 captured errno4, EAX0x451008, saved EBP1, caller0x40e12a/socketset0x4103000/timeout1000 and token/thread/register-bank/frame identities. OFF/ON normalized guest registers, lazy flags, initialized memory, API/import calls, budget and yield snapshots match. Disabled lane performs zero diagnostic getter reads. Fixed512MiB arena and512MiB heap, original8MiB Module guard unchanged.
+
+The next errno0-tail case was refused before native launch: MemAvailable2397257728 <2684354560 (deficit287096832 bytes). No heavy retry. Disk projected4300152832 and task projection49184768/67108864 passed. Native errno0/37, all compat native execution, new diagnostic rejection paths and other negative native controls remain UNPROVEN. Existing source orchestration acceptance is reused from main, not substituted for compiled rejection evidence. Original loader mapping, errno/caller/gameplay remain UNKNOWN. No original guest or cloud operations occurred.
+
+`evidence/result.json` and `evidence/checkpoint-final.json` define exact observed versus pending coverage. `evidence/incidents.json` retains the corrected fixture setup syntax error before native construction. The first real stopping condition is `evidence/admission-errno0-tail.json`. Native acceptance payload is `evidence/native-result-errno4-tail.json`; full signatures/inventory/mutation controls are `evidence/static-abi.json`.
+
+Recovery: retained binaries are `/tmp/maelstrom-diagnostic-changed-module-native-oct26/ops/{errno-latch.wasm,errno-latch.compat.wasm}`. Verify the hashes above. They qualify only the accepted transformed inputs in build-inputs.json. Driver `tools/maelstrom-diagnostic-canonical-build.cjs` uses the standing canonical compiler and prior gzip source in place. `test/maelstrom-diagnostic-canonical-static.py` reuses the unchanged pinned independent ABI oracle/helper. `test/maelstrom-diagnostic-canonical-native.cjs` adapts the prior independent controls and asserts the new diagnostic export signatures; only errno4-tail was executed successfully. `recipe/native-batch.py` stops on first failed admission/test. Pending tests require coordinator reassignment and fresh resources/schedule; do not rerun passed compile/static/errno4 merely for preparation, and do not reuse a completed attempt identifier.
+
+Original execution commands are retained in supervisor receipts. Compiler: node max-old-space-size2048, CPU/wall900s, output512KiB. Native: node max-old-space-size512, CPU90/wall60s, output128KiB, one arena. Cheap:256MiB heap, CPU/wall60. All:24MiB/file, streaming TERM/KILL/reap5s, exclusive local runtime lock. No source/compiler repair. Inputs and donor roots remain unchanged. Coordinator owns lifecycle; no assigned cloud boxes, historical bx_k38z8byn untouched.

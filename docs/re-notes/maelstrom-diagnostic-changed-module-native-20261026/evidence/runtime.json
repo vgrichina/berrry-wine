@@ -1,0 +1,7 @@
+{
+  "guestCutoff": "2026-10-26T05:28:47.216900Z",
+  "handback": "2026-10-26T05:33:47.216900Z",
+  "shutdown": "2026-10-26T05:38:47.216900Z",
+  "expiry": "2026-10-26T05:43:47.216900Z",
+  "executionTarget": "local host; no cloud box; shutdown means owned process cleanup"
+}

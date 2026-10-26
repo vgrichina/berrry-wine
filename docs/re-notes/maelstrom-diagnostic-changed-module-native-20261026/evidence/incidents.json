@@ -1,0 +1,11 @@
+[
+  {
+    "kind": "fixture-setup",
+    "evidence": "cheap-1792988832363202993.stderr",
+    "detail": "Duplicate evidenceCase declaration while adapting independent recipe; syntax preflight failed before module/native construction. Removed duplicate; no production/compiler change or unchanged retry."
+  },
+  {
+    "kind": "publication-setup",
+    "detail": "git add refused new files outside focused sparse patterns; no index/commit mutation. Corrected owned publication command with --sparse. Earlier diagnostic tool output truncated; not acceptance evidence."
+  }
+]

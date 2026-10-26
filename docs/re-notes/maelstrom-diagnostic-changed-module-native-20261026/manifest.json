@@ -1,0 +1,250 @@
+{
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/README.md": {
+    "bytes": 4028,
+    "sha256": "230f3c12724201f2eb972955fd4adf328b90aaa31aaa69455d15574a29bfcfdf"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/recipe/setup.py": {
+    "bytes": 4813,
+    "sha256": "f9b296a4f215ac269dbeba15c638081887864ede549f8bb02bf5f8f54bd664eb"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/recipe/supervise.py": {
+    "bytes": 4832,
+    "sha256": "1801205e2660fdeb49aa13cf7eca29ad29b516a375db5c74ca2f1a06fab28206"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/recipe/native-batch.py": {
+    "bytes": 2269,
+    "sha256": "57afb2face95d58dc011fa15d8f5053f68c6d1ce2c95f08d34b8c787dfe77877"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/recipe/account.py": {
+    "bytes": 1756,
+    "sha256": "dcbf7e7ab5c6c3e5658583a87ec0400529e29c54902c6b7e5acaa6af4ef19851"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988832363202993.json": {
+    "bytes": 656,
+    "sha256": "3b8dca3bd04527bc07051dfd3e2b6b0207d4752bda5194b41d2133ef897a2802"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988873554118634.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988747462837340.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/compiler-1792988760264236509.stdout": {
+    "bytes": 477,
+    "sha256": "e190ae16dcea48a5e1c2ef14462194a18bad979f4637b20263214d03843fc9de"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988832363202993.stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/runtime.json": {
+    "bytes": 271,
+    "sha256": "23f555a64cd87f163f641eda0e9069124066b3035e5f800e466af52f9d283a04"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/checkout.json": {
+    "bytes": 354,
+    "sha256": "d207f446b37ab20a0fe5c386e935537906e3111740c7c1a8a5482691f0dc8262"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-native-isolation-corrected.json": {
+    "bytes": 664,
+    "sha256": "8017533199d6322457f031a86d4ca7e07e5bd058b162393b1154eac95c758bf6"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/static-abi.json": {
+    "bytes": 1503136,
+    "sha256": "66559b9365dcdd0fc89038b4830228f05f73415f18cd356a69f622a0b4d70f30"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/watcher.json": {
+    "bytes": 45,
+    "sha256": "92b09c3e461efd9574bbb2c80b07e07a7bc00e94459855b06168fde609d5f5e3"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988846174759712.json": {
+    "bytes": 655,
+    "sha256": "d85213484225110594b5e62aa1d08fbfcfd8fda18ece898f9a3ef2e3fa2c63aa"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/sqlite-baseline.json": {
+    "bytes": 294,
+    "sha256": "752e40b8b008ba2e8a8e2549d44603ecbb446970aec4aa12ed51f69693fd0ec8"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-compile.json": {
+    "bytes": 670,
+    "sha256": "9817ee23ef9a4c9bbad48bebdad13b2d863b05ecf31b8ff7034ce3b8d5ac0987"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/build-inputs.json": {
+    "bytes": 73533,
+    "sha256": "250d48c7b805eca62afd588461e5b759e4dc1a11ca84285f34fb249326e2626c"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-errno0-tail-preflight.json": {
+    "bytes": 664,
+    "sha256": "74aca1d3046b7271c0ed9cf17fd2c33efb93be3125c37327665102fc439f1cf6"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-native-isolation.json": {
+    "bytes": 664,
+    "sha256": "3e48a522b3a4c38846a23efe5ba89dc93055ff5ef7b544cb15c94ec2688b8308"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/compiler-1792988760264236509.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/configuration.json": {
+    "bytes": 793,
+    "sha256": "08bbb8ebc7045a2c94b6f1c19a11fe3226811cba1a426b0dab01828cd6b4f40f"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-attempt.json": {
+    "bytes": 388,
+    "sha256": "577a06a5fa355210f92c1f0b4f47a9a0fb1dff92ff07a63b6f72074c6b0b5dcf"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/build-outputs.json": {
+    "bytes": 113246,
+    "sha256": "9d016f773cf0957caf1246bf7ff43cd6ee7b6a658c38b34f2a1a0c39b343ff4a"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-result-errno4-tail.json": {
+    "bytes": 42896,
+    "sha256": "f3964c6456ec22681f4c77373df6d253e8e281e00f3b03ffa593c86ec1175d81"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-precheckout.json": {
+    "bytes": 602,
+    "sha256": "0dcd796423c44ba7506bd05c1bdc9c4702f77664eb98a420a3333631833dfc23"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988747462837340.stdout": {
+    "bytes": 1267,
+    "sha256": "6434073518909bd862e815b4ccbb5618a86fa55f9492883f7961c08294852481"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/checkpoint-final.json": {
+    "bytes": 1080,
+    "sha256": "d94d63d6d59e51e23b45c23c17be4efa99d9a74d6315c7b2f4fa9b0414c4cd41"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988795878323372.stdout": {
+    "bytes": 113,
+    "sha256": "ec384e100eb754414defa77f856397e6f80d04439824578c87096467791d4b4f"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/batch-first-failure.json": {
+    "bytes": 80,
+    "sha256": "8dbf09bb19f2aa1b305e874bf91580e551e009b8208959be55d9dba1ccbe6072"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/execution-identities.json": {
+    "bytes": 7006,
+    "sha256": "f2d0d9ea439c82c6fda62b36e40803c7b53c0969384e74865ed5df70b60aeffd"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-prepublication.json": {
+    "bytes": 664,
+    "sha256": "cad5a5033cddf02f397dd4752ab3092ff67d87c907075eddf7480950fd578232"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-errno4-tail-attempt.json": {
+    "bytes": 434,
+    "sha256": "780c3014e2e2d4232d6aadd0955fd38c04ea2be1899f81aebfe3dba0f6c9205b"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-1792988851542169373.stdout": {
+    "bytes": 567,
+    "sha256": "a556a2339c0ebbc06d385755cf7e04f0f75f7f9b81cc04193d6db7fb4dc05ddb"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988795878323372.json": {
+    "bytes": 594,
+    "sha256": "073ab88e827ec39d5158b8efde0365372dc891e9c143139526fe54804c45ed50"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-static.json": {
+    "bytes": 670,
+    "sha256": "83023412ec46c09e911c631f0a607593fc8bf685768f0f87f0de1a3cc1a7af27"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-progress-errno4-tail.json": {
+    "bytes": 20707,
+    "sha256": "06d99fb892292b8738d054f72d2d5c17657aee3050586cdfa4aab8985b7cabf2"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-errno4-tail.json": {
+    "bytes": 664,
+    "sha256": "fc2653c15ab509cb421021266c82322b07bc9a034b3bcab181197ff7a4b90d87"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988846174759712.stdout": {
+    "bytes": 85,
+    "sha256": "0408d5f8d0cece16c45ba21163d9a9798d6a98dce5cb8c85873e91e53c9b936b"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988846174759712.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/result.json": {
+    "bytes": 3894,
+    "sha256": "0b6d3be7a96a34e5dd8ad53aaa314551e3870ed53e6d4f6e1317c229b7eeff0b"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988832363202993.stderr": {
+    "bytes": 767,
+    "sha256": "0c156733b7777b7c030fca0b492b9a969de5d4c1d88c9dc2edb142a0da152b3e"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-1792988851542169373.json": {
+    "bytes": 807,
+    "sha256": "99d6db27b557b2514c5f4d6691f0c552a004a3ae1d861a751f4cabda12c4066e"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988795878323372.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-1792988851542169373.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-preflight-errno4-tail.json": {
+    "bytes": 2774,
+    "sha256": "0e045cc48908382690587fa7faeca62cba642c6ceb5ae06e640bf574a79af9b9"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/native-preflight-errno0-tail.json": {
+    "bytes": 2774,
+    "sha256": "911bce89ceb6bd6e59bf832e3f15712f8c4f3f962e349aae8390e0802339adc8"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/checkpoint-compile-static.json": {
+    "bytes": 839,
+    "sha256": "2724d0204d0d4e772cf8f762f93e8389ad62fb3afb9d2d9e494263a3c5a78e1a"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988873554118634.stdout": {
+    "bytes": 85,
+    "sha256": "679851c908b6f3fc789fb3fdd48b6ab84e0e8454330684522bf42259378ce1e4"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988747462837340.json": {
+    "bytes": 645,
+    "sha256": "db48b094a9767d71a7e2704f6a371395d8d858212b1e7568722561f63586ff64"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-errno0-tail.json": {
+    "bytes": 664,
+    "sha256": "af9636c811dc479d31864fa97e932eb7191f992eadf1cb66009826a3a7f6c053"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/admission-preflight.json": {
+    "bytes": 670,
+    "sha256": "9cfbb60c7450ea93fc1b6f7c9b49da4a853f18a1613be2178d4428a8ff7c3089"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/compiler-attempt.json": {
+    "bytes": 375,
+    "sha256": "946bcf573aba3525668d6175f71d9097d6fea9bf1e80471531c3420c00410a2b"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/compiler-compile-attempt.json": {
+    "bytes": 421,
+    "sha256": "ddc98b8fddaa2fe4075e6397249a25fdaeac9c3724717857698de448b162735d"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/pinned-inputs.json": {
+    "bytes": 1379,
+    "sha256": "3fc3e1672dd9ee72015804634a98a3efb46762d8a71ce85a8cfd3ed5282d9ae6"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/compiler-1792988760264236509.json": {
+    "bytes": 796,
+    "sha256": "6aa09c701c183d7f99c05d5cac6d85929b0aa0c8dc994433fec9517fe8d48d35"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/incidents.json": {
+    "bytes": 567,
+    "sha256": "c9feb88d8fd291ea01a9ce54641a82a1a8cca965609d32b5b8efcc1957f9dc93"
+  },
+  "docs/re-notes/maelstrom-diagnostic-changed-module-native-20261026/evidence/cheap-1792988873554118634.json": {
+    "bytes": 654,
+    "sha256": "02f76a1703d635f1c9d375e7a2318ebdff607711df61ec0347de6494363f13fd"
+  },
+  "tools/maelstrom-diagnostic-canonical-build.cjs": {
+    "bytes": 7793,
+    "sha256": "5e017d86566fc64d7e2f4e0357cfb4e8e54e53152995a6c0317f2a5da9d98b3f"
+  },
+  "test/maelstrom-diagnostic-canonical-native.cjs": {
+    "bytes": 15764,
+    "sha256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2"
+  },
+  "test/maelstrom-diagnostic-canonical-static.py": {
+    "bytes": 4094,
+    "sha256": "623eb8fa0afb57f0c325d835bbd86a31d829df443edcf5a1f5d6387cd7564f9e"
+  }
+}

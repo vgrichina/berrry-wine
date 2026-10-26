@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo/test/maelstrom-diagnostic-canonical-native.cjs",
+    "errno0",
+    "--preflight"
+  ],
+  "cwd": "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo",
+  "pid": 2034011,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.1406513099791482,
+  "streamBytes": {
+    "stdout": 85,
+    "stderr": 0
+  },
+  "aggregateLogMax": 131072,
+  "retained": 85,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 61177856
+}

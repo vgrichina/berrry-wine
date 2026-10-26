@@ -1,0 +1,7 @@
+{
+  "case": "errno0-tail",
+  "exit": 1,
+  "completed": [
+    "errno4-tail"
+  ]
+}

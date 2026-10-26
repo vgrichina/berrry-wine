@@ -1,0 +1,176 @@
+{
+  "status": "PASS",
+  "scenario": "errno4",
+  "signatures": {
+    "run": [
+      1,
+      0
+    ],
+    "init_thread": [
+      8,
+      0
+    ],
+    "set_count": [
+      2,
+      0
+    ],
+    "get_count": [
+      1,
+      1
+    ],
+    "set_eip": [
+      1,
+      0
+    ],
+    "set_eax": [
+      1,
+      0
+    ],
+    "set_esp": [
+      1,
+      0
+    ],
+    "set_edi": [
+      1,
+      0
+    ],
+    "set_ebp": [
+      1,
+      0
+    ],
+    "set_ecx": [
+      1,
+      0
+    ],
+    "set_edx": [
+      1,
+      0
+    ],
+    "set_ebx": [
+      1,
+      0
+    ],
+    "set_esi": [
+      1,
+      0
+    ],
+    "set_yield_state": [
+      2,
+      0
+    ],
+    "test_vsock_alloc": [
+      0,
+      1
+    ],
+    "test_vsock_reset": [
+      0,
+      0
+    ],
+    "set_api_log": [
+      1,
+      0
+    ],
+    "set_block_exec": [
+      1,
+      0
+    ],
+    "test_shift": [
+      6,
+      1
+    ]
+  },
+  "spans": [
+    {
+      "enabled": false,
+      "kind": "head",
+      "a": 8012642,
+      "n": 16
+    },
+    {
+      "enabled": false,
+      "kind": "native-entry",
+      "a": 5563440,
+      "n": 9
+    },
+    {
+      "enabled": false,
+      "kind": "synthetic-thread-provider",
+      "a": 5527639,
+      "n": 6
+    },
+    {
+      "enabled": false,
+      "kind": "fdset",
+      "a": 4800512,
+      "n": 32
+    },
+    {
+      "enabled": false,
+      "kind": "timeval",
+      "a": 4800576,
+      "n": 8
+    },
+    {
+      "enabled": false,
+      "kind": "stack",
+      "a": 121642992,
+      "n": 512
+    },
+    {
+      "enabled": false,
+      "kind": "errno",
+      "a": 4460544,
+      "n": 16
+    },
+    {
+      "enabled": true,
+      "kind": "head",
+      "a": 8008546,
+      "n": 16
+    },
+    {
+      "enabled": true,
+      "kind": "native-entry",
+      "a": 5432368,
+      "n": 9
+    },
+    {
+      "enabled": true,
+      "kind": "synthetic-thread-provider",
+      "a": 5396567,
+      "n": 6
+    },
+    {
+      "enabled": true,
+      "kind": "fdset",
+      "a": 4866048,
+      "n": 32
+    },
+    {
+      "enabled": true,
+      "kind": "timeval",
+      "a": 4866112,
+      "n": 8
+    },
+    {
+      "enabled": true,
+      "kind": "stack",
+      "a": 121708528,
+      "n": 512
+    },
+    {
+      "enabled": true,
+      "kind": "errno",
+      "a": 4526080,
+      "n": 16
+    }
+  ],
+  "moduleSHA256": "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1",
+  "nativeInstances": 0,
+  "arenaMiB": 512,
+  "heapMiB": 512,
+  "mapping": "explicit synthetic CRT base 0x522000; authentic _errno CALL/ADD/RET bytes, synthetic _getptd returns controlled thread-data pointer; no original loader mapping",
+  "actualMountArgv": [],
+  "intendedFiles": [],
+  "controls": "actual counter starting counts checked immediately before each run; code/data/stack/fdset/timeval spans disjoint"
+}

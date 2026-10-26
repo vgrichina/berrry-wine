@@ -1,0 +1,114 @@
+{
+  "status": "PARTIAL_RESOURCE_BLOCKER",
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "branch": "task/maelstrom-diagnostic-changed-module-native-oct26",
+  "session": "01a17673-51b6-7191-990e-3692c445aec6",
+  "compiler": "PASS both canonical backends",
+  "modules": [
+    {
+      "path": "/tmp/maelstrom-diagnostic-changed-module-native-oct26/ops/errno-latch.wasm",
+      "bytes": 1883406,
+      "sha256": "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1",
+      "tailCalls": true,
+      "layout": "9a3bc9149d58209c"
+    },
+    {
+      "path": "/tmp/maelstrom-diagnostic-changed-module-native-oct26/ops/errno-latch.compat.wasm",
+      "bytes": 1885979,
+      "sha256": "85eaf35e803a55b18992ac6a717ba0fe937e92aa65e71d40f675a5ccec6fa3ab",
+      "tailCalls": false,
+      "layout": "9a3bc9149d58209c"
+    }
+  ],
+  "static": {
+    "status": "PASS",
+    "imports": 291,
+    "functionExports": 2276,
+    "regions": 269,
+    "privateGlobals": 48,
+    "negativeControls": 8,
+    "noNewHostImports": true,
+    "noGuestStorageChange": true,
+    "noStart": true,
+    "fullInventoryIndependentlyDerived": true
+  },
+  "native": {
+    "status": "PASS one controlled tailcall errno4 case",
+    "moduleSHA256": "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1",
+    "capture": {
+      "status": 4,
+      "event": 3,
+      "token": 1,
+      "thread": 1,
+      "regs": 86228992,
+      "pre": 121708544,
+      "post": 121708568,
+      "selectRet": 8008546,
+      "parks": 0,
+      "result": 1,
+      "nativeEntry": 5432368,
+      "callBlock": 8008546,
+      "sourceBlock": 5432373,
+      "pc": 8008550,
+      "esp": 121708568,
+      "eax": 4526088,
+      "ebp": 1,
+      "errno": 4,
+      "caller": 4251946,
+      "socketSet": 68169728,
+      "timeout": 1000,
+      "rejectReason": 0,
+      "rejectModes": 0,
+      "rejectExpectedRet": 0,
+      "rejectObservedRet": 0,
+      "rejectPhase": 0,
+      "rejectCompletions": 0,
+      "rejectFault": 0,
+      "rejectActive": 0,
+      "rejectCapped": 0
+    },
+    "equivalent": true,
+    "nativeInstances": 1,
+    "arenaBytes": 536870912,
+    "heapMiB": 512,
+    "fixtureSHA256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2",
+    "evidence": "native-result-errno4-tail.json",
+    "mapping": "explicit synthetic CRT base 0x522000; authentic _errno CALL/ADD/RET bytes, synthetic _getptd returns controlled thread-data pointer; no original loader mapping",
+    "disabledDiagnosticGetterReads": 0
+  },
+  "firstBlocker": {
+    "stage": "errno0-tail admission before native launch",
+    "memAvailable": 2397257728,
+    "minimum": 2684354560,
+    "deficit": 287096832,
+    "evidence": "admission-errno0-tail.json",
+    "retries": 0,
+    "owner": "coordinator",
+    "resumeCondition": "fresh separately assigned remaining-check task with measured MemAvailable >=2684354560, disk/task limits and remaining schedule"
+  },
+  "remaining": [
+    "tailcall errno0/37",
+    "all compat native cases",
+    "new compiled diagnostic rejection paths",
+    "wrong/stale ownership, frame/thread/regbank, unsafe read, unsupported modes and foreign/nested return controls",
+    "unchanged terminal callback/status/scalar source controls reused from accepted main; not rerun here"
+  ],
+  "originalGame": {
+    "errno": "UNKNOWN",
+    "caller": "UNKNOWN",
+    "gameplay": "UNKNOWN",
+    "originalCRTMapping": "UNKNOWN"
+  },
+  "sourceModelReview": "accepted coordinator review reused; no duplicate source model review",
+  "driverSHA256": "5e017d86566fc64d7e2f4e0357cfb4e8e54e53152995a6c0317f2a5da9d98b3f",
+  "donorsUnchanged": true,
+  "lifecycle": {
+    "executionTarget": "local",
+    "assignedBoxes": [],
+    "historicalBox": "bx_k38z8byn remains untouched; no state query/resume/stop",
+    "heavyChildrenRemaining": 0,
+    "coordinatorOwnsShutdown": true
+  },
+  "incident": "incidents.json",
+  "at": 1792988945.3390677
+}

@@ -1,0 +1,21 @@
+{
+  "utc": 1792988691.9313257,
+  "charges": {
+    "checkoutGitViews": 4194304,
+    "driverFixtureEvidencePublication": 4194304,
+    "compiledModules": 4194304,
+    "sessionLauncherDBgrowth": 4194304,
+    "sharedWALSHM": 25010176,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "peak": 54370304,
+  "cap": 67108864,
+  "memAvailable": 2878464000,
+  "minMem": 2684354560,
+  "free": 3906793472,
+  "projectedFree": 3852423168,
+  "diskFloor": 2982150144,
+  "passed": true,
+  "standing": "canonical/compiler/source gzip/anchors/donor object leaves/install executables read in place, zero staged bytes"
+}

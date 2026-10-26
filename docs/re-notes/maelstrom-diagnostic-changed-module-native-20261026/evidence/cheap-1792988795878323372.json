@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo/test/maelstrom-diagnostic-canonical-static.py"
+  ],
+  "cwd": "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo",
+  "pid": 2032433,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.27819330198690295,
+  "streamBytes": {
+    "stdout": 113,
+    "stderr": 0
+  },
+  "aggregateLogMax": 131072,
+  "retained": 113,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 36081664
+}

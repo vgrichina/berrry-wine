@@ -1,0 +1,12 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "tree": "ec7ee531e723627fd8387c0786abf35521d9fc77",
+  "paths": [
+    "tools/maelstrom-native-errno-latch.cjs",
+    "tools/maelstrom-original-errno-adapter.cjs",
+    "tools/maelstrom-select-completion-hook.cjs"
+  ],
+  "flattenedViews": 239,
+  "recursiveAlternates": false,
+  "clone": false
+}
