@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_nuhlj1zb65o0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:16:07.557Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T21:16:07.509Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"guest/output.log\": \"Error: ENOENT: no such file or directory, open '/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe'\\n    at Object.openSync (node:fs:621:18)\\n    at Object.readFileSync (node:fs:487:35)\\n    at readAssetBytes (/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:1713:93)\\n    at /tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:1749:85\\n    at withCliFailureCleanup (/tmp/alien-shooter-current-gameplay-api-oct26/runner/lib/cli-failure-cleanup.js:10:18)\\n    at main (/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:1707:10)\\n    at Object.<anonymous> (/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:12609:1)\\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\\n    at Module.load (node:internal/modules/cjs/loader:1651:32) {\\n  errno: -2,\\n  code: 'ENOENT',\\n  syscall: 'open',\\n  path: '/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe'\\n}\\n\", \"guest/terminal.json\": \"{\\\"reason\\\": \\\"natural\\\", \\\"returncode\\\": 1, \\\"elapsed\\\": 0.1862451949998558, \\\"peakTreeRSS\\\": 81281024, \\\"peakTreeCPU\\\": 0.15, \\\"outputBytes\\\": 1116, \\\"identities\\\": {\\\"32913\\\": {\\\"ppid\\\": 32912, \\\"state\\\": \\\"R\\\", \\\"start\\\": \\\"112082\\\", \\\"cpu\\\": 0.15, \\\"rss\\\": 81281024}}, \\\"remainingOwnedLive\\\": [], \\\"box\\\": \\\"bx_a9dwsx2x\\\", \\\"boxState\\\": \\\"RUNNING\\\", \\\"shutdownOwner\\\": \\\"coordinator\\\"}\", \"guest/command.json\": \"{\\\"argv\\\": [\\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\", \\\"--max-old-space-size=2048\\\", \\\"--require=/tmp/alien-shooter-retained-gameplay-api-oct26/capture-wrapper.cjs\\\", \\\"/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js\\\", \\\"--app=alien_shooter\\\", \\\"--no-build\\\", \\\"--wasm=/tmp/alien-shooter-current-gameplay-api-oct26/current.wasm\\\", \\\"--d3d9-renderer=software\\\", \\\"--tick-ms-per-batch=5\\\", \\\"--batch-size=200000\\\", \\\"--max-seconds=85\\\", \\\"--no-close\\\", \\\"--quiet-api\\\", \\\"--frozen\\\", \\\"--control=18129\\\", \\\"--trace-at=0x416808\\\", \\\"--trace-at-mem=ebp-0x3c:8\\\"], \\\"pid\\\": 32913, \\\"pgid\\\": 32913, \\\"at\\\": 1793049358.5968046, \\\"memAvailable\\\": 7408148480, \\\"limits\\\": {\\\"cpuTree\\\": 90, \\\"wallGuest\\\": 89, \\\"file\\\": 25165824, \\\"output\\\": 2097152, \\\"rssTree\\\": 2684354560, \\\"heapOldSpaceMiB\\\": 2048}, \\\"environment\\\": {}}\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

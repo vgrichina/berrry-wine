@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--status",
+    "32907",
+    "bx_a9dwsx2x"
+  ],
+  "exit": 0,
+  "stdout": "{\"command\":\"timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 /tmp/alien-shooter-retained-gameplay-api-oct26/supervisor.py guest'\",\"cwd\":\".\",\"errLogPath\":\"/home/user/.ascii/processes/32907.err.log\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T21:15:58.790Z\",\"known\":true,\"logPath\":\"/home/user/.ascii/processes/32907.log\",\"oomKilled\":false,\"pid\":32907,\"processId\":32907,\"running\":false,\"signal\":null,\"startedAt\":\"2026-10-26T21:15:58.540Z\",\"status\":\"exited\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"\",\"stdoutTruncated\":false,\"success\":true}\n",
+  "stderr": ""
+}

@@ -1,0 +1,2 @@
+{"argv": ["python3", "/tmp/alien-shooter-retained-gameplay-api-oct26/ops/go.py"], "cap": 67108864, "peak": 29478912, "elapsed": 1.404679502127692, "exit": 1, "reason": "natural"}
+{"argv": ["python3", "/tmp/alien-shooter-retained-gameplay-api-oct26/ops/collect.py"], "cap": 67108864, "peak": 23552000, "elapsed": 0.42140982882119715, "exit": 0, "reason": "natural"}

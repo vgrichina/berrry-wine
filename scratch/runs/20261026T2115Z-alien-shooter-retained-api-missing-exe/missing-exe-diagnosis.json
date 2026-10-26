@@ -1,0 +1,12 @@
+{
+  "localPath": "/home/user/wine-assembly/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+  "localBytes": 712724,
+  "localSHA256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+  "remoteExpectedPath": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+  "remoteAbsent": true,
+  "in431FixturePins": false,
+  "in594RuntimeManifest": false,
+  "sourceRegistry": "lib/apps.js alien_shooter.exe",
+  "noTransfer": true,
+  "reason": "No restaging authorized; first pre-guest production failure preserved"
+}

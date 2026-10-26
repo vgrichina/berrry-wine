@@ -1,0 +1,53 @@
+{
+  "memAvailable": 3520536576,
+  "GitAndHelper": 603979776,
+  "CivCap": 805306368,
+  "GLCap": 268435456,
+  "otherHelpers": 201326592,
+  "hostFloor": 805306368,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 17457152,
+      "worker": false
+    },
+    {
+      "pid": 752162,
+      "rss": 412033024,
+      "worker": false
+    },
+    {
+      "pid": 1789179,
+      "rss": 74731520,
+      "worker": false
+    },
+    {
+      "pid": 3115073,
+      "rss": 196677632,
+      "worker": true
+    },
+    {
+      "pid": 3137326,
+      "rss": 202817536,
+      "worker": true
+    },
+    {
+      "pid": 3140866,
+      "rss": 196083712,
+      "worker": true
+    },
+    {
+      "pid": 3143393,
+      "rss": 195420160,
+      "worker": true
+    },
+    {
+      "pid": 3147614,
+      "rss": 216006656,
+      "worker": true
+    }
+  ],
+  "unresidentClientGrowth": 670715904,
+  "required": 3355070464,
+  "passGate": true
+}

@@ -1,0 +1,48 @@
+{
+  "charges": {
+    "retainedRemote": 49197056,
+    "newLocal": 122880,
+    "newRemoteHelpers": 131072,
+    "remoteOutput": 2097152,
+    "remotePNG": 6291456,
+    "localCollected": 8388608,
+    "publicationAndDashboard": 16777216,
+    "Git": 2097152,
+    "launcher": 430080,
+    "session": 602112,
+    "positiveWALOnce": 49152,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "total": 102961152,
+  "cap": 134217728,
+  "localMemAvailable": 2883530752,
+  "localRequiredConservativeNoResidentDeduction": 2483027968,
+  "projectedHostFree": 3692986368,
+  "hostFloor": 2982150144,
+  "remote": {
+    "verified": 582,
+    "missing": [
+      "test/compile-src.js",
+      "test/helpers/palette-gpu-browser.js",
+      "test/helpers/palette-gpu-wat.js",
+      "test/test-d3dim-palette-gpu-web.js",
+      "tools/watx-closure.js",
+      "tools/watx-src/CHANGELOG.md",
+      "tools/watx-src/PROVENANCE.md",
+      "tools/watx-src/compiler-codegen.js",
+      "tools/watx-src/compiler-parser.js",
+      "tools/watx-src/compiler-stages.js",
+      "tools/watx-src/compiler.js",
+      "tools/watx.js"
+    ],
+    "bad": [],
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "allocated": 49197056,
+    "memAvailable": 7285800960,
+    "free": 48954560512,
+    "uid": 1000,
+    "preloadSHA256": "e7c233296fd071a51b6c6393c0fd3546b8337a6b0b920fb12b88841548916878"
+  },
+  "passGate": true
+}

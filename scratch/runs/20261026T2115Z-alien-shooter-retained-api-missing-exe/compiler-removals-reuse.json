@@ -1,0 +1,17 @@
+{
+  "paths": [
+    "test/compile-src.js",
+    "test/helpers/palette-gpu-browser.js",
+    "test/helpers/palette-gpu-wat.js",
+    "test/test-d3dim-palette-gpu-web.js",
+    "tools/watx-closure.js",
+    "tools/watx-src/CHANGELOG.md",
+    "tools/watx-src/PROVENANCE.md",
+    "tools/watx-src/compiler-codegen.js",
+    "tools/watx-src/compiler-parser.js",
+    "tools/watx-src/compiler-stages.js",
+    "tools/watx-src/compiler.js",
+    "tools/watx.js"
+  ],
+  "basis": "Compile completed; no-build production runner does not execute compiler or palette conformance test. All594 files verified before removal."
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lxxnju3f9xvq",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:15:58.422Z",
+  "launcherFailed": false,
+  "noticedMs": 23,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 23,
+  "startedAt": "2026-10-26T21:15:58.372Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7409696768, \"free\": 48954490880}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

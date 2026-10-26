@@ -1,0 +1,10 @@
+{
+  "commit": "211aa6b720116bad1e2773c148a2f4c4529d4a58",
+  "branch": "task/alien-shooter-current-gameplay-api-oct26",
+  "run": "scratch/runs/20261026T2103Z-alien-shooter-current-api-resource-blocker",
+  "unchangedCompiledModule": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "runtimeFilesVerified": 582,
+  "compilerOnlyRemovals": 12,
+  "prior64MiBIncidentRemainsTrue": true
+}

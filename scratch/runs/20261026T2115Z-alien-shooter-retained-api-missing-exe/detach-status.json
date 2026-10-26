@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--status",
+    "cmd_8nvqn6lfdae5",
+    "bx_a9dwsx2x"
+  ],
+  "exit": 1,
+  "stdout": "{\"error\":\"--status expects a positive integer process id, got \\\"cmd_8nvqn6lfdae5\\\"\",\"event\":\"error\"}\n",
+  "stderr": ""
+}
