@@ -1,0 +1,153 @@
+{
+  "note": "Closeout found inter-task baseline bridge omitted by initial historical-total-plus-new-baseline formula. Original admissions retained unchanged. Earliest-baseline positive growth now counts database/WAL once including bridge; no new guest or retry.",
+  "preguestPositiveDBBridge": 7950336,
+  "preguestReconciledPositiveDB": 8077312,
+  "preguestProjectionDelta": 3321856,
+  "preguestReconciledTotal": 105369600,
+  "cap": 134217728,
+  "reservePreserved": 8388608,
+  "prospectiveGrowthPreserved": 33554432,
+  "stillPasses": true,
+  "finalAdmission": {
+    "at": 1793050159.8385282,
+    "stage": "final-complete-earliest-baseline",
+    "charges": {
+      "localOwned": 8912896,
+      "remoteOwnedAndProjected": 45600768,
+      "launchers": 1687552,
+      "sessions": 4853760,
+      "positiveWALOnce": 9371648,
+      "prospectiveGrowth": 33554432,
+      "reserve": 8388608
+    },
+    "total": 112369664,
+    "cap": 134217728,
+    "memAvailable": 3785486336,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 17453056
+      },
+      {
+        "pid": 752162,
+        "rss": 397324288
+      },
+      {
+        "pid": 857107,
+        "rss": 11587584
+      },
+      {
+        "pid": 1789179,
+        "rss": 52264960
+      },
+      {
+        "pid": 3155819,
+        "rss": 197701632
+      },
+      {
+        "pid": 3156031,
+        "rss": 24150016
+      },
+      {
+        "pid": 3157320,
+        "rss": 198127616
+      },
+      {
+        "pid": 3157784,
+        "rss": 20893696
+      },
+      {
+        "pid": 3159141,
+        "rss": 195231744
+      },
+      {
+        "pid": 3159354,
+        "rss": 21135360
+      },
+      {
+        "pid": 3161390,
+        "rss": 214331392
+      },
+      {
+        "pid": 3161581,
+        "rss": 24092672
+      }
+    ],
+    "largeResidentOwners": [
+      {
+        "pid": 16249,
+        "rss": 826621952,
+        "command": "/var/lib/ascii-lazy-bin/ascii-lazyfs --config /var/lib/ascii-lazy/config.json "
+      },
+      {
+        "pid": 265398,
+        "rss": 917024768,
+        "command": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+      },
+      {
+        "pid": 265422,
+        "rss": 306356224,
+        "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node /home/user/wine-assembly/ops/telegram.js "
+      },
+      {
+        "pid": 271075,
+        "rss": 269844480,
+        "command": "node ops/work-watchdog.js "
+      },
+      {
+        "pid": 752162,
+        "rss": 397324288,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d"
+      },
+      {
+        "pid": 2896015,
+        "rss": 472920064,
+        "command": "node /home/user/wine-dashboard-b0b9bc090/ops/server.js --port=8098 --root=/home/user/wine-assembly "
+      },
+      {
+        "pid": 3134217,
+        "rss": 84987904,
+        "command": "/opt/ascii-agent/ascii-agents-server "
+      },
+      {
+        "pid": 3134276,
+        "rss": 67665920,
+        "command": "/usr/local/bin/ascii-proclog "
+      },
+      {
+        "pid": 3155819,
+        "rss": 197701632,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      },
+      {
+        "pid": 3157320,
+        "rss": 198127616,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      },
+      {
+        "pid": 3159141,
+        "rss": 195231744,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      },
+      {
+        "pid": 3161390,
+        "rss": 214331392,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      }
+    ],
+    "reserves": {
+      "CivII": 805306368,
+      "GL": 268435456,
+      "remoteHelpers": 268435456,
+      "GitAndLocalHelper": 67108864,
+      "clientGrowth": 335544320,
+      "host": 805306368
+    },
+    "minimumMemory": 2550136832,
+    "diskFree": 3688837120,
+    "projectedFree": 3576467456,
+    "diskFloor": 2982150144,
+    "positiveWALPolicy": "Positive per-file growth from earliest retained baseline counted once, floored at historical accounted peak; shared full database never duplicated",
+    "pass": true
+  }
+}

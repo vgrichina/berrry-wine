@@ -324,5 +324,11 @@
   },
   "historicalAllocationIncidents": "Previous runtime69128192B and publication67571712B exceeded then64MiB task allocation; preserved unchanged as internal allocation incidents, not game prerequisites/failures",
   "publication": "Assigned isolated evidence branch; no main merge",
-  "remaining": "No further guest attempt authorized; coordinator owns next assignment and shutdown"
+  "remaining": "No further guest attempt authorized; coordinator owns next assignment and shutdown",
+  "accountingCloseout": {
+    "path": "accounting-closeout.json",
+    "reconciledPreguestProjection": 105369600,
+    "finalProjection": 112369664,
+    "note": "Closeout found inter-task baseline bridge omitted by initial historical-total-plus-new-baseline formula. Original admissions retained unchanged. Earliest-baseline positive growth now counts database/WAL once including bridge; no new guest or retry."
+  }
 }
