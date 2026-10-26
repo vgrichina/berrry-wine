@@ -1,0 +1,2 @@
+PASS WebGL1: 42 real palette draw/clear/alpha framebuffer checks
+PASS WebGL2: 42 real palette draw/clear/alpha framebuffer checks

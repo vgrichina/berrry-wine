@@ -1,0 +1,78 @@
+{
+  "status": "BLOCKED_CONTROL_CONFORMANCE_WITH_PASSING_FRAMEBUFFER_ASSERTIONS",
+  "originalMainRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "snapshot": {
+    "snapshotCommit": "0d65e6daf568a2b0104fcaea75801e9fcac6d1ae",
+    "originalMainRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "completeMapping": "source-manifest.json",
+    "subsetNotMain": true,
+    "gitAllocated": 6012928
+  },
+  "browser": "Chrome/151.0.7922.108",
+  "wasmSHA256": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "versions": [
+    {
+      "version": 1,
+      "actualVersion": "WebGL 1.0 (OpenGL ES 2.0 Chromium)",
+      "reportedRenderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 (KBL GT2), OpenGL 4.6 (Core Profile) Mesa 23.2.1)",
+      "observations": 42,
+      "gpuObservations": 34,
+      "softwareObservations": 8,
+      "errors": 0,
+      "fallbacks": 0
+    },
+    {
+      "version": 2,
+      "actualVersion": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+      "reportedRenderer": "ANGLE (Intel, Mesa Intel(R) UHD Graphics 620 (KBL GT2), OpenGL 4.6 (Core Profile) Mesa 23.2.1)",
+      "observations": 42,
+      "gpuObservations": 34,
+      "softwareObservations": 8,
+      "errors": 0,
+      "fallbacks": 0
+    }
+  ],
+  "resources": {
+    "argv": [
+      "/usr/local/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/gl-palette-current-webgl-qualification-oct26/source/test/test-d3dim-palette-gpu-web.js"
+    ],
+    "env": {
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "CHROME": "/usr/bin/google-chrome",
+      "TMPDIR": "/tmp/gl-palette-current-webgl-qualification-oct26/tmp",
+      "PALETTE_GPU_EVIDENCE": "/tmp/gl-palette-current-webgl-qualification-oct26/ops/test-result.json",
+      "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+    },
+    "exit": 0,
+    "stopReason": null,
+    "wallSeconds": 15.54305233899504,
+    "peakProcessGroupRSS": 365080576,
+    "peakObservedAggregateCPUSeconds": 12.77,
+    "peakAccountingBytes": 47345664,
+    "browserProcesses": [],
+    "logBytes": 130,
+    "limits": {
+      "CPU": 90,
+      "wall": 120,
+      "FSIZE": 25165824,
+      "output": 2097152,
+      "aggregateRSS": 1879048192,
+      "heapMiB": 512,
+      "DATA": "inherited unlimited; Git-only children 512MiB",
+      "AS": "inherited unlimited"
+    },
+    "monitorIntervalSeconds": 0.1
+  },
+  "firstBlockerFile": "launcher-findings.json",
+  "sourceByteIdentity": "All 149 blob/length/SHA256 pins verified before and after; unchanged helpers, fixture, production JS and canonical compiler.",
+  "scope": "Cooperative full-VM WebGL conformance observations only; not benchmark, production renderWorker queue, 27-app gameplay, or game acceptance.",
+  "lifecycle": {
+    "box": null,
+    "state": "No assigned box; no box accessed",
+    "expiry": null,
+    "owner": "coordinator"
+  },
+  "noRetry": true
+}

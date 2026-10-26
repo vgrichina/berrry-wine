@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/gl-palette-current-webgl-qualification-oct26/source/test/test-d3dim-palette-gpu-web.js"
+  ],
+  "env": {
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "CHROME": "/usr/bin/google-chrome",
+    "TMPDIR": "/tmp/gl-palette-current-webgl-qualification-oct26/tmp",
+    "PALETTE_GPU_EVIDENCE": "/tmp/gl-palette-current-webgl-qualification-oct26/ops/test-result.json",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "exit": 0,
+  "stopReason": null,
+  "wallSeconds": 15.54305233899504,
+  "peakProcessGroupRSS": 365080576,
+  "peakObservedAggregateCPUSeconds": 12.77,
+  "peakAccountingBytes": 47345664,
+  "browserProcesses": [],
+  "logBytes": 130,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "FSIZE": 25165824,
+    "output": 2097152,
+    "aggregateRSS": 1879048192,
+    "heapMiB": 512,
+    "DATA": "inherited unlimited; Git-only children 512MiB",
+    "AS": "inherited unlimited"
+  },
+  "monitorIntervalSeconds": 0.1
+}

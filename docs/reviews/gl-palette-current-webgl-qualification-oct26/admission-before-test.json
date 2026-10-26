@@ -1,0 +1,19 @@
+{
+  "charges": {
+    "taskRoot": 29208576,
+    "launcher": 184320,
+    "session": 532480,
+    "positiveWALOnce": 36864,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "total": 42545152,
+  "cap": 67108864,
+  "free": 3832520704,
+  "projectedFree": 3819937792,
+  "floor": 2982150144,
+  "MemAvailable": 3833929728,
+  "requiredMemory": 2952790016,
+  "alreadyLiveClientChargedThroughMemAvailable": true,
+  "pass": true
+}

@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-26T20:41:33.937065+00:00",
+  "candidate": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "sourceFiles": 149,
+  "sourceAllocated": 22638592,
+  "projectedTotalTaskBytes": 62914560,
+  "cap": 67108864,
+  "reserveIncluded": 8388608,
+  "remainingIncrementalBytes": 40275968,
+  "freeBytes": 3840806912,
+  "postGrowthFloor": 2982150144,
+  "MemAvailable": 3295817728,
+  "prospectiveClient": 268435456,
+  "taskPeak": 1879048192,
+  "remainingMemoryFloor": 805306368,
+  "memoryRequired": 2952790016,
+  "pass": true,
+  "standingChrome": "/usr/bin/google-chrome",
+  "standingPuppeteer": "/tmp/wa-local-runtime-deps/node_modules/puppeteer"
+}

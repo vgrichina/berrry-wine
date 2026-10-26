@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,puppeteer:require.resolve(\"puppeteer\"),env:{NODE_PATH:process.env.NODE_PATH,CHROME:process.env.CHROME,TMPDIR:process.env.TMPDIR}}))"
+  ],
+  "env": {
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "CHROME": "/usr/bin/google-chrome",
+    "TMPDIR": "/tmp/gl-palette-current-webgl-qualification-oct26/tmp",
+    "PALETTE_GPU_EVIDENCE": "/tmp/gl-palette-current-webgl-qualification-oct26/ops/test-result.json",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "exit": 0,
+  "stopReason": null,
+  "wallSeconds": 0.13928701309487224,
+  "peakProcessGroupRSS": 18350080,
+  "peakObservedAggregateCPUSeconds": 0.04,
+  "peakAccountingBytes": 42508288,
+  "browserProcesses": [],
+  "logBytes": 2143,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "FSIZE": 25165824,
+    "output": 2097152,
+    "aggregateRSS": 1879048192,
+    "heapMiB": 512,
+    "DATA": "inherited unlimited; Git-only children 512MiB",
+    "AS": "inherited unlimited"
+  },
+  "monitorIntervalSeconds": 0.1
+}

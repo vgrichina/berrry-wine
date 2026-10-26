@@ -1,0 +1,114 @@
+{
+  "originalMainRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "branch": "task/gl-palette-current-webgl-qualification-oct26",
+  "files": {
+    "README.md": {
+      "bytes": 2880,
+      "sha256": "11f1f632cbc8170b26efd417add3114d5df9d593de94d1e215fdf4186085363b"
+    },
+    "admission-after-test.json": {
+      "bytes": 421,
+      "sha256": "0e27fdc2376f35d18829e04010742b78b24fbd0accae6a1f4086b8a9cd0cc7b2"
+    },
+    "admission-before-node-startup.json": {
+      "bytes": 421,
+      "sha256": "be76a88fc11a4b6f694b517a8b5bca38ab47107062ad2131df4d2761cc232a14"
+    },
+    "admission-before-publication.json": {
+      "bytes": 421,
+      "sha256": "0539d9f2e135cd1d4835ac3db0d35750e4da29bda2c3e2daab741bbe47ac9bb9"
+    },
+    "admission-before-test.json": {
+      "bytes": 421,
+      "sha256": "efa9be642e12e0e892602640d057b304f1e55e249382e0f7959e24295475739e"
+    },
+    "admission-initial.json": {
+      "bytes": 417,
+      "sha256": "81cde6d24fe0982b554d4be529d22608d5891f159b5d0c33ce0310e8419bc431"
+    },
+    "admission-prepared.json": {
+      "bytes": 421,
+      "sha256": "dac677010066566ba6609c4815fad46f4edfbdc9df71700e27dcb1588f62ee59"
+    },
+    "closeout.py": {
+      "bytes": 8461,
+      "sha256": "eaa9adbb2f01882264e57211ba918fd57d30a7f4c14a444ead34503f3ecfe6de"
+    },
+    "common.py": {
+      "bytes": 3147,
+      "sha256": "e85d2878ed2a8f0641d4cca4a2dde430810356ccd3081ff28bd1ff2697becce6"
+    },
+    "conclusion.json": {
+      "bytes": 3005,
+      "sha256": "baa3152dcac606e90e1b257940c65b21fd55ffb084cece94a35c0738081518a6"
+    },
+    "coordinator-admission.json": {
+      "bytes": 644,
+      "sha256": "bffc07ad62462af61f84279fd376e91701f911712dab2f028e783ed0639d376e"
+    },
+    "execute.py": {
+      "bytes": 3520,
+      "sha256": "38cb1665621658abd4de1a18c3355ebb5dee778928bc979c0776b33d4b08d07a"
+    },
+    "installed-module-manifest.json": {
+      "bytes": 382583,
+      "sha256": "bc3beff1b614cb3e85d38c90bbe9dc01753950d104a56294ab9cccea49fce31b"
+    },
+    "launcher-findings.json": {
+      "bytes": 1921,
+      "sha256": "88262c0b6b004a565edad5c6987388ec25196150dcba5f2d98870fe9059e1e5d"
+    },
+    "mount-configuration.json": {
+      "bytes": 568,
+      "sha256": "f0c44c527df9435483cd4c2087bee74b906dfa092799cdafc015513ba5618310"
+    },
+    "node-startup-receipt.json": {
+      "bytes": 1475,
+      "sha256": "5b2602e24fb588ff854c108f4d7279ee8ae2d6b66532961ac36565d1b73a531b"
+    },
+    "node-startup.log": {
+      "bytes": 2143,
+      "sha256": "ae36c5f76086122dc64f1da5f3395e19b1abe030fe0fcbbd516ad8f54918c868"
+    },
+    "post-execution-source-verification.json": {
+      "bytes": 32702,
+      "sha256": "ad3b4ea88b9ea1107f32019047065abc725bc87916782624dda912e7c4e1d627"
+    },
+    "pre-execution-source-verification.json": {
+      "bytes": 32702,
+      "sha256": "ad3b4ea88b9ea1107f32019047065abc725bc87916782624dda912e7c4e1d627"
+    },
+    "prepare.py": {
+      "bytes": 2284,
+      "sha256": "095fc1ab92ab671db668cebb36aa5e2b15be84924703b929074f8bd8d34aaac6"
+    },
+    "root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "snapshot-identity.json": {
+      "bytes": 234,
+      "sha256": "bf91f25ab2b1d66efb5f6cbca39f0ee54881c5b72735a085906c9808dc9320e0"
+    },
+    "source-manifest.json": {
+      "bytes": 32702,
+      "sha256": "ad3b4ea88b9ea1107f32019047065abc725bc87916782624dda912e7c4e1d627"
+    },
+    "test-receipt.json": {
+      "bytes": 1170,
+      "sha256": "c3fa6abf79c2508a6fcfbbd66781f2b851a570b8ddc11bf545cbbd0a4effd4ae"
+    },
+    "test-result.json": {
+      "bytes": 65158,
+      "sha256": "ad188306bb113193fe5751838c005a0f482c03c7939823fbc6beae443b8400d8"
+    },
+    "test.log": {
+      "bytes": 130,
+      "sha256": "1c0fa83b397a74d59bc1178b6688f31795521434dc146db137fe30b34860e718"
+    },
+    "tool-identity.json": {
+      "bytes": 793,
+      "sha256": "2a33dc9e44ab246350842e994bb381378a59beb5b7a349efc5e0bfe85e495ec4"
+    }
+  }
+}

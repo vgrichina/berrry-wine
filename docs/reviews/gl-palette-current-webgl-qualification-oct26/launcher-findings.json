@@ -1,0 +1,29 @@
+{
+  "status": "BLOCKED_CONTROL_CONFORMANCE",
+  "firstBlocker": "Installed /usr/bin/google-chrome resolves to BetterChromium wrapper sourcing betterchromium-timezone.sh, which invokes curl https://ipwho.is/?fields=success,timezone during normal launch. This conflicts with loopback-only runtime network requirement. Invocation discovered after completed test; response and success unknown; no retry.",
+  "secondaryBlocker": "Puppeteer defaults detached=true on Linux. Process-group-only supervisor omitted detached Chrome processes; 365080576B RSS is a Node/group lower bound, not an aggregate browser/task RSS qualification. Full process-tree CPU is also unqualified. File-size and CPU rlimits inherited by children; aggregate disk and host MemAvailable were monitored.",
+  "rendererInterpretation": "Wrapper explicitly requests ANGLE SwiftShader and identifies itself as BetterChromium. WebGL debug renderer returns Intel/Mesa string. Actual physical backend cannot be established from that string in this fork. No hardware-GPU claim; no independently verified SwiftShader backend identity.",
+  "sources": [
+    {
+      "path": "/opt/google/chrome/google-chrome",
+      "sha256": "2f2e4f9a09195c8fc6d72c4ba5be81867378f5267eaf9b70bb1776d643dc3dd8",
+      "bytes": 2034
+    },
+    {
+      "path": "/opt/google/chrome/betterchromium-timezone.sh",
+      "sha256": "5208890bf5bdfd1fc9c29161341d560d0626116763e54e87e429ba3e911245fa",
+      "bytes": 930
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/@puppeteer/browsers/lib/launch.js",
+      "sha256": "610ef7822e356adc8b8cc3c3d2f0909d6b80b65c8b0054fbb24c121fbf2a6e4e",
+      "bytes": 15207
+    },
+    {
+      "path": "/tmp/wa-local-runtime-deps/node_modules/puppeteer-core/lib/puppeteer/node/ChromeLauncher.js",
+      "sha256": "8e98c5d61c1152befd6847f352c944d69ecf73706b3c5b9f9f85624d874074e4",
+      "bytes": 10703
+    }
+  ],
+  "runtimeRetry": false
+}

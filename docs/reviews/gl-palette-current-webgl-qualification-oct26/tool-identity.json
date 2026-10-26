@@ -1,0 +1,26 @@
+{
+  "files": [
+    {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    {
+      "path": "/opt/google/chrome/google-chrome",
+      "bytes": 2034,
+      "sha256": "2f2e4f9a09195c8fc6d72c4ba5be81867378f5267eaf9b70bb1776d643dc3dd8"
+    },
+    {
+      "path": "/opt/google/chrome/chrome",
+      "bytes": 508514200,
+      "sha256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97"
+    }
+  ],
+  "node": "v24.18.1",
+  "chrome": "Google Chrome 151.0.7922.108 stable",
+  "moduleManifestSHA256": "bc3beff1b614cb3e85d38c90bbe9dc01753950d104a56294ab9cccea49fce31b",
+  "standingReadonlyAllocated": {
+    "chrome": 706998272,
+    "modules": 31674368
+  }
+}
