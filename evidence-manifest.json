@@ -1,6 +1,11 @@
 {
   "files": [
     {
+      "path": ".gitignore",
+      "bytes": 96,
+      "sha256": "9445745dbbd7750b56ddf1ad42ae2a85ee29d1a4e37b7ddd64a30e3686bb6eb4"
+    },
+    {
       "path": "README.md",
       "bytes": 3214,
       "sha256": "449793fcc9bc68f0cf4939c224283fea3c41675ad9da0abb9bb72d392076d198"
@@ -101,6 +106,11 @@
       "sha256": "fa2aea3ea4749fd6c08a757d5427ee2991ac812b31f6d3d6483e3fed9457fa89"
     },
     {
+      "path": "helpers/closeout.py",
+      "bytes": 8154,
+      "sha256": "a4dbc22280f6e09031e97a666b5589741ced3f5856fa2dec55a0954f120ff8d4"
+    },
+    {
       "path": "helpers/control.py",
       "bytes": 757,
       "sha256": "894893e1cc7e612f7fb2af8d5f746cad4b699d4bf84021bd3c405f0dc6380ca8"
@@ -161,6 +171,11 @@
       "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c"
     },
     {
+      "path": "prepublication-admission.json",
+      "bytes": 1662,
+      "sha256": "fcd5a9e227c35ec4b55b9c6deafa1d4edc8b61994db37573fa76890200bce6ef"
+    },
+    {
       "path": "prior-configuration-reuse.json",
       "bytes": 757,
       "sha256": "31626ba0a5d63e92a6c5b7afced81e6d61f5b4f5d7f9ee92a102ef34f80d873c"
@@ -204,11 +219,7 @@
       "path": "startup.log",
       "bytes": 2031,
       "sha256": "c9bc2db0bd41a884bcf18f14f66b07bbd1693fd774308ba7c10617264387899b"
-    },
-    {
-      "path": "wal-peaks.json",
-      "bytes": 315,
-      "sha256": "5ae462913662987a20f4b77670bbe5d62ecd6d0bc2d18684721b322dca3b8c79"
     }
-  ]
+  ],
+  "excludesMutablePublicationAndWAL": true
 }
