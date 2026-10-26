@@ -1,0 +1,9 @@
+{
+  "current": [
+    "Initial pwd ran without per-child limits; initial bounded Python inspections had CPU/file/alarm/read controls but no output supervisor or TERM/KILL/reap wrapper. First inspection tool output truncated; re-read policy/CLAUDE relevant portions. These bootstrap operations are not retrospectively compliant. Conservative earlier DB baseline charges their growth.",
+    "Read attempt for predecessor ops/prepare.py returned ENOENT; used actual retained fixture/oracle paths instead. No oracle/resource change.",
+    "Existing rejection suite completed PASS14groups511failureCombinations; original checkpoint metadata miscounted18. Original receipt retained, atomically corrected against stdout; no test rerun.",
+    "Packaging git diff --cached --check rejected trailing whitespace in exact expected-failure Node assertion stdout. Raw log retained unchanged in ops; committed JSON encodes exact text and rawSHA256. No oracle/test/result changed and no repaired-candidate failure."
+  ],
+  "historical": "Donor ops/incidents.json, published review incidents and original failure retained unchanged; no retrospective compliance."
+}

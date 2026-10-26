@@ -1,0 +1,19 @@
+PASS actual transformed AST: each reason metadata is exact; first failure persists after changed predicates and hooks
+PASS raw even/signed/large mode values normalize individually and in simultaneous failure order
+PASS status guards: rejected/inert/accepted states execute no scalar or memory effects
+PASS all partial export sets rejected at construction before start/live/persist
+PASS all diagnostic fields malformed reject and close before any live/persist on unchanged native snapshot
+PASS all-absent legacy exports preserve callback ordering and captured zero errno
+PASS malformed native errno=NaN cannot authorize a decoded completion rejection or callbacks
+PASS malformed native errno=undefined cannot authorize a decoded completion rejection or callbacks
+PASS malformed native errno=4294967296 cannot authorize a decoded completion rejection or callbacks
+PASS malformed native caller=NaN cannot authorize a decoded completion rejection or callbacks
+PASS malformed native caller=undefined cannot authorize a decoded completion rejection or callbacks
+PASS malformed native caller=4294967296 cannot authorize a decoded completion rejection or callbacks
+PASS malformed native token=NaN cannot authorize a decoded completion rejection or callbacks
+PASS malformed native token=undefined cannot authorize a decoded completion rejection or callbacks
+PASS malformed native token=4294967296 cannot authorize a decoded completion rejection or callbacks
+PASS malformed native event=NaN cannot authorize a decoded completion rejection or callbacks
+PASS malformed native event=undefined cannot authorize a decoded completion rejection or callbacks
+PASS malformed native event=4294967296 cannot authorize a decoded completion rejection or callbacks
+PASS diagnostic expected return cannot contradict pinned production return anchor

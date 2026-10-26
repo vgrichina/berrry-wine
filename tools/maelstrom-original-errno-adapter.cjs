@@ -106,9 +106,12 @@ function createAdapter(instance, {persist, readLive}) {
       if(!started)throw Error('start required');if(closed)return null;
       const captured=snapshot(),s=captured.native; // Validate even when captured fields have not changed.
       const key=JSON.stringify(s);if(key===last)return null;last=key;
+      // Seal a terminal snapshot before host callbacks: they may throw or
+      // reenter observe(), but this invocation must never sample exports again.
+      if(s.status===4||s.status===5)closed=true;
       const row=record(s.status===4?'captured':s.status===5?'rejected':'pending',batch,captured);
-      if(s.status===5){closed=true;throw Error('native latch status rejection');}
-      if(s.status===4)closed=true;return row;
+      if(s.status===5)throw Error('native latch status rejection');
+      return row;
     }
   };
 }

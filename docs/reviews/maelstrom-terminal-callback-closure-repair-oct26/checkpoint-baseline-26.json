@@ -1,0 +1,27 @@
+{
+  "base": "581ff191ef25d526f047088257d336746962ffc2",
+  "head": "581ff191ef25d526f047088257d336746962ffc2",
+  "sourceFixtures": {
+    "tools/maelstrom-original-errno-adapter.cjs": "9229658f726e512d01942a3dad2491cf6075f0d6faef1a1f2081b0549e688fd3",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.cjs": "10421b75e1ed40dae8e51368537eb76b1f9aba75460cfc3831bd840d556d02e5"
+  },
+  "result": {
+    "passed": 10,
+    "failed": 16,
+    "cases": 58,
+    "expectedFailure": true
+  },
+  "remaining": [
+    "repair",
+    "26",
+    "regression",
+    "scalar13",
+    "10+19",
+    "semantic7",
+    "existing"
+  ],
+  "blockers": [],
+  "evidence": "/tmp/maelstrom-terminal-callback-closure-repair-oct26/ops/baseline-26.log"
+}

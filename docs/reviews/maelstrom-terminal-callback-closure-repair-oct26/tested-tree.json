@@ -1,0 +1,28 @@
+{
+  "base": "581ff191ef25d526f047088257d336746962ffc2",
+  "testedTree": "51daaa907df741d8cd77811feb1a9ef8ae3f28c5",
+  "pins": {
+    "tools/maelstrom-original-errno-adapter.cjs": "28c1c3249ef488d4b2df1ccb3d0658cc1b02803ca9163f5a2bb24f945ba00551",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-terminal-callback-closure.test.cjs": "5850bb6f19f456ee80c182344f2eeba660ac53ee2845fd4f8089e092c348bf72",
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "abfb36515543b9465fdf66f0b0975f18ec10c109c9eb55ad1ffef4bbd69f2bb4",
+    "test/maelstrom-status-event-validation.test.cjs": "e52f0cfcd1bdd745558c650b86527681994e103d8b251c027b96253b960cbdd9",
+    "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.cjs": "10421b75e1ed40dae8e51368537eb76b1f9aba75460cfc3831bd840d556d02e5"
+  },
+  "adapterGitBlob": "6459528f04dcd96ac65ce834e9bd643c533a88fd",
+  "checkpoints": {
+    "checkpoint-baseline-26.json": "b139529e4a2134ddc12fab211e90125042984b8b4fef245c391dfbe6cf4dd0d2",
+    "checkpoint-existing-adapter.json": "2e5ed75f914fcf72655b071a9c6987866e60cde7c5bd04e1706ff945ec17e3e9",
+    "checkpoint-existing-rejection-original-miscount.json": "c883c7e3b82d8ddb1e647ab659a85f6f89c7e8f2fe6176a6db468e98d9e0c4f1",
+    "checkpoint-existing-rejection.json": "e9363721544243dd17b64b33d76e2b17346130f8ece38b1021467ecbb07ef8d9",
+    "checkpoint-nineteen.json": "ae13ac37bf599764dfbd551b2d34db598b936491ddadce77b54f6f10dc74e773",
+    "checkpoint-preservation.json": "b663338882acc157b0d5188112df3f19b13cc8d2be846ae7cf6e368dd9de605c",
+    "checkpoint-regression-baseline.json": "f099f58f0861c1d83300777bff428eb51d2dcbd64bfbbf88bc4ae79619c2189c",
+    "checkpoint-regression.json": "d0c53c7b73b08d644153d57363a04bc18332945efac5fb287ba4f44ecebab00f",
+    "checkpoint-repair-26.json": "9cd218f0464271e562ab16bc52e496ecedc7f1c3e0dedfb3fe5b60c1fee5ed9e",
+    "checkpoint-scalar13.json": "9504154e8e5cd960d76c5927055bafc1a63381dfefe92a5d819ea9348b7b4232",
+    "checkpoint-semantic7.json": "42456557adc5c5b26b7536c4b75c53878c2426b03c7ab92fdf941fa9c92c3aa7",
+    "checkpoint-ten.json": "a9bfd8849a2cc5b914a0e74f47b945cae7eb3214971f6686d237b67c39bc4cca"
+  }
+}

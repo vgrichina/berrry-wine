@@ -1,0 +1,71 @@
+{
+  "passed": 10,
+  "failed": 16,
+  "cases": 58,
+  "failures": [
+    {
+      "name": "terminal callback throw closes 4,3 live legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 4,3 persist legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,0 live legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,0 persist legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,1 live legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,1 persist legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,2 live legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,2 persist legacy=false",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 4,3 live legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 4,3 persist legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,0 live legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,0 persist legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,1 live legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,1 persist legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,2 live legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    },
+    {
+      "name": "terminal callback throw closes 5,2 persist legacy=true",
+      "error": "AssertionError [ERR_ASSERTION]: terminal adapter must close before further export reads "
+    }
+  ]
+}
