@@ -1,0 +1,78 @@
+{
+  "at": "2026-10-26T21:44:31.000563+00:00",
+  "branch": "task/civ2-win16-map-movement-gameplay-oct26",
+  "commit": null,
+  "remoteSHA": null,
+  "exactVerified": false,
+  "published": false,
+  "blocker": "RAM admission below3489660928B floor",
+  "lastMemAvailable": 3216715776,
+  "denials": [
+    {
+      "admitted": false,
+      "memAvailable": 3232968704,
+      "required": 3489660928,
+      "allocationProjection": 105664512,
+      "diskFree": 3617857536,
+      "command": [
+        "config",
+        "--local",
+        "user.name",
+        "Wine Ops CivII worker"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3215777792,
+      "required": 3489660928,
+      "allocationProjection": 105664512,
+      "diskFree": 3617857536,
+      "command": [
+        "config",
+        "--local",
+        "user.email",
+        "wine-ops@localhost"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3224203264,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617853440,
+      "command": [
+        "add",
+        "preparation-incidents.json",
+        "evidence-manifest.json"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3217731584,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617849344,
+      "command": [
+        "commit",
+        "-m",
+        "Verify CivII Win16 ordinary Settlers movement and menu quit"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3216715776,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617849344,
+      "command": [
+        "push",
+        "--set-upstream",
+        "origin",
+        "task/civ2-win16-map-movement-gameplay-oct26"
+      ]
+    }
+  ],
+  "gitExecutedAfterFirstDenial": false,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "nextAction": "Only after actual capacity change/fresh admission: local author identity, add reviewed evidence, commit, push and exact ls-remote verification."
+}

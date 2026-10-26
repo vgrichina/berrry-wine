@@ -1,0 +1,38 @@
+{
+  "blackBorderPixels": 147200,
+  "centralLogoColoredPixels": 11954,
+  "visible": [
+    {
+      "hwnd": "0x1000b",
+      "x": 0,
+      "y": 0,
+      "w": 640,
+      "h": 480,
+      "visible": true,
+      "isChild": false,
+      "title": "Sid Meier's Civilization II"
+    },
+    {
+      "hwnd": "0x1000d",
+      "x": 0,
+      "y": 0,
+      "w": 640,
+      "h": 484,
+      "visible": true,
+      "isChild": false,
+      "title": ""
+    },
+    {
+      "hwnd": "0x1000e",
+      "x": 0,
+      "y": 120,
+      "w": 640,
+      "h": 240,
+      "visible": true,
+      "isChild": false,
+      "title": ""
+    }
+  ],
+  "ok": true,
+  "frameSHA256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567"
+}

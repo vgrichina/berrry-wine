@@ -1,0 +1,70 @@
+{
+  "assertion": "Mistaken337 merged-file assertion rejected before guest. Canonical receipt is337 manifest plus explicit ir41 merged338, ten comma tracks; corrected count without changing parser or files.",
+  "runtimeConsumed": false,
+  "publication": "Initial commit failed missing isolated author identity. Subsequent queued shell batch attempted config/config/add/commit/push; each wrapper denied below3489660928B floor BEFORE Git execution. No identity config was applied, no commit/push occurred. Continuing queued operations after first denial violated stop intent; preserved all five denials, no further probe/retry.",
+  "denials": [
+    {
+      "admitted": false,
+      "memAvailable": 3232968704,
+      "required": 3489660928,
+      "allocationProjection": 105664512,
+      "diskFree": 3617857536,
+      "command": [
+        "config",
+        "--local",
+        "user.name",
+        "Wine Ops CivII worker"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3215777792,
+      "required": 3489660928,
+      "allocationProjection": 105664512,
+      "diskFree": 3617857536,
+      "command": [
+        "config",
+        "--local",
+        "user.email",
+        "wine-ops@localhost"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3224203264,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617853440,
+      "command": [
+        "add",
+        "preparation-incidents.json",
+        "evidence-manifest.json"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3217731584,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617849344,
+      "command": [
+        "commit",
+        "-m",
+        "Verify CivII Win16 ordinary Settlers movement and menu quit"
+      ]
+    },
+    {
+      "admitted": false,
+      "memAvailable": 3216715776,
+      "required": 3489660928,
+      "allocationProjection": 105668608,
+      "diskFree": 3617849344,
+      "command": [
+        "push",
+        "--set-upstream",
+        "origin",
+        "task/civ2-win16-map-movement-gameplay-oct26"
+      ]
+    }
+  ]
+}

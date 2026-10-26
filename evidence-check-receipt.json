@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-26T21:43:09.834587+00:00",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "/tmp/civ2-win16-map-movement-gameplay-oct26/check-evidence.js"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "pid": 3181674,
+  "wallLimit": 120,
+  "cpuLimit": 90,
+  "rssLimit": 805306368,
+  "fileLimit": 25165824,
+  "outputLimit": 2097152,
+  "exitCode": 0,
+  "stopReason": null,
+  "wallSeconds": 0.04288508207537234,
+  "peakAggregateRSS": 56569856,
+  "peakAggregateCPUSeconds": 0.07,
+  "outputBytes": 142,
+  "identities": {
+    "3181673": 109819904,
+    "3181674": 109819907
+  },
+  "peakTaskAllocationIncludingConservativeWAL": 67870720
+}

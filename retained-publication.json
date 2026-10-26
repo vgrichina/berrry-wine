@@ -1,0 +1,938 @@
+{
+  "at": "2026-10-26T21:47:57.881604+00:00",
+  "task": "civ2-movement-retained-evidence-publication-oct26",
+  "session": "01a17a2d-3a37-7612-945d-9557e902e2f7",
+  "branch": "task/civ2-win16-map-movement-gameplay-oct26",
+  "retainedRepo": "/home/user/wine-assembly/scratch/runs/civ2-win16-map-movement-gameplay-oct26",
+  "objective": "Publish retained successful ordinary selected Settlers movement and ordinary Quit; no behavioral rerun",
+  "status": "Retained evidence integrity PASS; author repaired locally; publication commit pending",
+  "integrity": {
+    "at": "2026-10-26T21:47:19.894188+00:00",
+    "retainedManifestFiles": 72,
+    "retainedManifestSHA256": "bd00f46836bc005876702cd47e3191763aea52e0267cfc2a56d4b683e7fa2b81",
+    "sourceFixtureVerified": 576,
+    "sourceFiles": 239,
+    "fixtureFiles": 337,
+    "module": {
+      "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+      "bytes": 1880280,
+      "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+      "compiled": false,
+      "readonly": true
+    },
+    "canonicalMountReceiptReused": true,
+    "configuration": {
+      "actualArgv": [
+        "test/run.js",
+        "--app=civ2_win16",
+        "--no-build",
+        "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm"
+      ],
+      "canonicalParserReceipt": "prior-reused-mount-validation.json",
+      "manifestSHA256": "be401b35c47dc654e1cc1f6cf1ffab857950c10880681b0ccd1db7769f519f76",
+      "cueSHA256": "1fec92d6dcc6fc33a80c78494ddbe0ff446cb43fa8a00ff8a328e442eaa9ec71",
+      "files": 338,
+      "commaCases": 10,
+      "sameReadonlySource": true,
+      "sourcePin": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "fontsAndDependenciesReceipt": "prior-reused-standing-system-assets.json",
+      "pngjsUnchanged": true,
+      "changedPhysicalRSSCap": 805306368,
+      "startupMustRun": true,
+      "priorIncidentsPreserved": true,
+      "at": "2026-10-26T21:40:54.120818+00:00",
+      "actualMountArgv": [
+        "test/run.js",
+        "--app=civ2_win16",
+        "--no-build",
+        "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm"
+      ],
+      "unchangedParserSourceVerifiedBy239Manifest": true,
+      "priorReceiptSHA256": "54def8fabc262fe5264a1ad49196b4824756dfa5d90b2372d2eaed2c31e184fc",
+      "filenameEnumerationRetained": "prior-reused-mount-validation.json",
+      "actualResolvedFilesUnchanged": true,
+      "manifestFiles": 337,
+      "mergedFiles": 338,
+      "startupReceipt": "startup-receipt.json"
+    },
+    "PNGs": [
+      {
+        "path": "barbarians.png",
+        "sha256": "51dbdf2dcbd4fa7466e560bd1dc56ac2a1cfef199ad89016ef81fdad39b13268",
+        "bytes": 374726,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "civilizations.png",
+        "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7",
+        "bytes": 414300,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "difficulty.png",
+        "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48",
+        "bytes": 353624,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "gameplay-after.png",
+        "sha256": "2715fd2bdd9ccca38cca0faba0b8556366825c1e1ee0567962656765ff5cb9cb",
+        "bytes": 161331,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "gameplay-before.png",
+        "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b",
+        "bytes": 158032,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "gender.png",
+        "sha256": "aaaaf87727ed33fc82cb3b1da2a065db2276e4004c4a3d1a5574af59be8eb304",
+        "bytes": 309381,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "heralds.png",
+        "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171",
+        "bytes": 135028,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "intro.png",
+        "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567",
+        "bytes": 53424,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "language.png",
+        "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da",
+        "bytes": 58309,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "map-before.png",
+        "sha256": "a4c4158927a29d0263005021d17d89d52d25d92302a4dd5a34f3809a0aed5939",
+        "bytes": 170807,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "map-entry.png",
+        "sha256": "38327d4e6c9483fe396c86a4199d14193499f6a3deba5677f866d3baec417487",
+        "bytes": 302615,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "name.png",
+        "sha256": "3d8aa1bc34af77991ab339c6cc29da979aec21379e3be81d83e04c86d0b844d9",
+        "bytes": 306125,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "post-intro.png",
+        "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c",
+        "bytes": 342351,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "quit-confirm.png",
+        "sha256": "748320c12560bc857bc3ba2e06995f81315fa11dad740d20c945af2d08797c5c",
+        "bytes": 196465,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "quit-menu.png",
+        "sha256": "4a4d451edd4206fa746152eeace213a7561c2e5c50260879443bd516efe645b2",
+        "bytes": 160200,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "ready.png",
+        "sha256": "2acc5caaace338921e001e1ae6ff382ad39fc182f41232dfcdf08994143eaa47",
+        "bytes": 299111,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "rules.png",
+        "sha256": "df4af0c5faa754c0024d72f4c4383a056ea2638eee91d435b110de54f8753846",
+        "bytes": 276350,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "tribe.png",
+        "sha256": "c4d1d24a0e5d3829ca4d8b03e168d1d45bf4751d2836e29d304c5084d55be72a",
+        "bytes": 393903,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      },
+      {
+        "path": "world.png",
+        "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6",
+        "bytes": 373434,
+        "dimensions": [
+          640,
+          480
+        ],
+        "CRCAndZlibIntegrity": true
+      }
+    ],
+    "guestReceipt": {
+      "at": "2026-10-26T21:40:59.575339+00:00",
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=768",
+        "test/run.js",
+        "--app=civ2_win16",
+        "--no-build",
+        "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+        "--quiet-api",
+        "--quiet-blocks",
+        "--no-close",
+        "--control-stdin",
+        "--frozen",
+        "--batch-size=100000",
+        "--tick-ms-per-batch=20",
+        "--max-seconds=85"
+      ],
+      "environment": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+        "HOME": "/home/user",
+        "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+        "LANG": "C.UTF-8",
+        "TZ": "UTC"
+      },
+      "pid": 3179277,
+      "wallLimit": 90,
+      "cpuLimit": 90,
+      "rssLimit": 805306368,
+      "fileLimit": 25165824,
+      "outputLimit": 2097152,
+      "exitCode": 0,
+      "stopReason": null,
+      "wallSeconds": 47.51245529181324,
+      "peakAggregateRSS": 528625664,
+      "peakAggregateCPUSeconds": 42.96,
+      "outputBytes": 54282,
+      "identities": {
+        "3179276": 109806879,
+        "3179277": 109806881,
+        "3179278": 109806882
+      },
+      "peakTaskAllocationIncludingConservativeWAL": 67547136
+    },
+    "allOriginalPayloads": [
+      {
+        "path": ".gitignore",
+        "bytes": 113,
+        "sha256": "39dd3cb0d8ff36d97b0dfa77f229077cf48365738f3d77524e04e45319962801"
+      },
+      {
+        "path": "README.md",
+        "bytes": 4625,
+        "sha256": "4d236d06f974ece91313e8234c523b7b2112f4cedf3cfe10609ae54971f42d4c"
+      },
+      {
+        "path": "accounting-inputs.json",
+        "bytes": 238,
+        "sha256": "349b479612292544d6f914d69ae42c4f9dd2bf64b8869c25958d8be9663715fc"
+      },
+      {
+        "path": "barbarians.png",
+        "bytes": 374726,
+        "sha256": "51dbdf2dcbd4fa7466e560bd1dc56ac2a1cfef199ad89016ef81fdad39b13268"
+      },
+      {
+        "path": "civilizations.png",
+        "bytes": 414300,
+        "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7"
+      },
+      {
+        "path": "cleanup.json",
+        "bytes": 392,
+        "sha256": "b6307332455ea6b99a2938922d19e9d128e535e994e4d96b4ccaae301c19ab38"
+      },
+      {
+        "path": "configuration-reuse.json",
+        "bytes": 1343,
+        "sha256": "76bbdbb8b8199fe672804b74d1055c57eb4edb3be7cd6c2aa283fe29ac14b37a"
+      },
+      {
+        "path": "control-checkpoint.json",
+        "bytes": 2401,
+        "sha256": "a140d3b1524d3c19ed97e8201d9e391da82f6188c366280493ff60541b4488c1"
+      },
+      {
+        "path": "control-in.jsonl",
+        "bytes": 5225,
+        "sha256": "ad04bf452b4c499c7583620a925a2782181e857bf153c2e64ba07d72754a65a2"
+      },
+      {
+        "path": "controller-check-launch.json",
+        "bytes": 558,
+        "sha256": "07cdd976408b1ac7ab50625bf7189aa2057d3b501113e8d6e257dcefef6a5824"
+      },
+      {
+        "path": "controller-check-receipt.json",
+        "bytes": 869,
+        "sha256": "a3f9a498001496b3de060c52ef024e20d1d1dbbbb26f2458efdb39d7af9a0b20"
+      },
+      {
+        "path": "controller-check.log",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "controller-selfcheck.json",
+        "bytes": 92,
+        "sha256": "33611e899b34e79fd15160532aa3f9dca5fdd9e01f5a260e40e3b951f670b2bb"
+      },
+      {
+        "path": "controller.log",
+        "bytes": 306,
+        "sha256": "ea8169c4f21e1c86a7a4e2df4c25ab3a493a625f5541358d5dd3ee6a7e280a0a"
+      },
+      {
+        "path": "difficulty.png",
+        "bytes": 353624,
+        "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48"
+      },
+      {
+        "path": "durable-checkpoint.json",
+        "bytes": 3699,
+        "sha256": "7cfd30d283d1e40bff691cf6c45c30bdd2d2d287d7e2708f161caa1b71fe6ff6"
+      },
+      {
+        "path": "durable-controller.json",
+        "bytes": 170,
+        "sha256": "e7fd735f3621a65a25a5580461f1a3e3f96eb4ea6fe5d219873d9ba350f23245"
+      },
+      {
+        "path": "evidence-check-launch.json",
+        "bytes": 547,
+        "sha256": "4c52fc905623e85c205817c05c71c4a66b671c9923707734349d5de5205b1bbd"
+      },
+      {
+        "path": "evidence-check-receipt.json",
+        "bytes": 845,
+        "sha256": "6a2fbc118f9e2786718d2324efdbf2470ef9bb50c67fd35b62d8ddaa607882dc"
+      },
+      {
+        "path": "evidence-check.log",
+        "bytes": 142,
+        "sha256": "993e22c7197a697bba8bd4ee32c05af87261018b73227977296ff9fc7b82b669"
+      },
+      {
+        "path": "evidence-manifest.json",
+        "bytes": 11134,
+        "sha256": "bd00f46836bc005876702cd47e3191763aea52e0267cfc2a56d4b683e7fa2b81"
+      },
+      {
+        "path": "final-accounting.json",
+        "bytes": 2024,
+        "sha256": "0d23938ca8bb614ad02bd7af2e46e29411c4debac6c6bcebcea8b6c8881e4122"
+      },
+      {
+        "path": "gameplay-after.png",
+        "bytes": 161331,
+        "sha256": "2715fd2bdd9ccca38cca0faba0b8556366825c1e1ee0567962656765ff5cb9cb"
+      },
+      {
+        "path": "gameplay-before.png",
+        "bytes": 158032,
+        "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b"
+      },
+      {
+        "path": "gender.png",
+        "bytes": 309381,
+        "sha256": "aaaaf87727ed33fc82cb3b1da2a065db2276e4004c4a3d1a5574af59be8eb304"
+      },
+      {
+        "path": "git-operations.jsonl",
+        "bytes": 8231,
+        "sha256": "a0418eb3482a6e047793ebd16ee0cc1be05fa0d045182d32f581fcd00a0c4605"
+      },
+      {
+        "path": "guest-admission.json",
+        "bytes": 2571,
+        "sha256": "59441a6acde025e4b8969d29d63853e28724fdb8a003724bd665fe669d4d6e04"
+      },
+      {
+        "path": "guest-launch.json",
+        "bytes": 824,
+        "sha256": "a2cf965c88fc216a399227a08bcd8ace7f471793679df0ff734b0a40b7d300b2"
+      },
+      {
+        "path": "guest-receipt.json",
+        "bytes": 1150,
+        "sha256": "01de525a3fb8558f9d16a80bc8f5910216a17ff7e7e8a0d83d43aef295ff7e0a"
+      },
+      {
+        "path": "guest.log",
+        "bytes": 54282,
+        "sha256": "9442033b0ef5ca5c997e128c5b96ab6ec0eb9e525b3a0c4e65f08d56b2a9eddc"
+      },
+      {
+        "path": "handoff.json",
+        "bytes": 3815,
+        "sha256": "4afdd745b3b64ecf675f864c21380182df6728dc213da9a05e0dff65c0b2c5b5"
+      },
+      {
+        "path": "helpers/account.py",
+        "bytes": 1262,
+        "sha256": "f2ece9b0787496890c8a0a800b71e5c4781e7b8eac784e32071112aca0e1259f"
+      },
+      {
+        "path": "helpers/admit.py",
+        "bytes": 1611,
+        "sha256": "d22dd1c10006ebfedc2a7ed61de42760c0d316029184c4a4e49b778ede345dbf"
+      },
+      {
+        "path": "helpers/check-evidence.js",
+        "bytes": 804,
+        "sha256": "fe92d60c7fe3c3f640f8cf1c1fbccf5d2e1691fc2089d98c60476f8e02c6db08"
+      },
+      {
+        "path": "helpers/closeout.py",
+        "bytes": 11246,
+        "sha256": "863f8032d193d0d2dcb9ecbc65b303b4fceb3e443099cc5b72135ada9d8d623a"
+      },
+      {
+        "path": "helpers/control.py",
+        "bytes": 752,
+        "sha256": "33691b0876bd41aaeea6ecac5d2518e735035a675eefcc6d7eae4e7f82a85f14"
+      },
+      {
+        "path": "helpers/controller.js",
+        "bytes": 5992,
+        "sha256": "b12024ad2fe9bc5b267cf42cdd01988b3fc819639f5442227fb4e8fefd4b2eff"
+      },
+      {
+        "path": "helpers/git-op.py",
+        "bytes": 3211,
+        "sha256": "f5a551204337ac62782a33c99285dcaa220ac98b6b29fc774310967423807656"
+      },
+      {
+        "path": "helpers/interact.py",
+        "bytes": 823,
+        "sha256": "4b787b5c8040235a02757c554a0271198570219e136a77b58b4932a22dc3805a"
+      },
+      {
+        "path": "helpers/prepare.py",
+        "bytes": 1827,
+        "sha256": "5676ff7532faa9bd59147a48652e209606d20113d12176c6de1b0cad4845f50b"
+      },
+      {
+        "path": "helpers/setup.py",
+        "bytes": 3273,
+        "sha256": "40db98b6fb1fee71610e33769874977d4ebed5cd89c280186973c776c53df91c"
+      },
+      {
+        "path": "helpers/supervise.py",
+        "bytes": 4272,
+        "sha256": "055971e673984da6f8c5c238322197ec6c2eec597b0cc12f544fc0e3d91c35ef"
+      },
+      {
+        "path": "heralds.png",
+        "bytes": 135028,
+        "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171"
+      },
+      {
+        "path": "identity.json",
+        "bytes": 136936,
+        "sha256": "40b0810580341735d58d58c3d8ee1d02a7139070c2118a590cd199ba18c4f692"
+      },
+      {
+        "path": "image-inspection.json",
+        "bytes": 7962,
+        "sha256": "17f2e65f10adb0f1bd6fbef4f3fa0b703b7ee01789ba8822f0f17cd1904fe2ed"
+      },
+      {
+        "path": "initial-root-ref-digest.json",
+        "bytes": 196,
+        "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+      },
+      {
+        "path": "intro-checkpoint.json",
+        "bytes": 707,
+        "sha256": "42f3bc774fad06c044981650fe20ff301374a71945e1c3f763516ab9f0661903"
+      },
+      {
+        "path": "intro.png",
+        "bytes": 53424,
+        "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567"
+      },
+      {
+        "path": "language.png",
+        "bytes": 58309,
+        "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da"
+      },
+      {
+        "path": "map-before.png",
+        "bytes": 170807,
+        "sha256": "a4c4158927a29d0263005021d17d89d52d25d92302a4dd5a34f3809a0aed5939"
+      },
+      {
+        "path": "map-entry.png",
+        "bytes": 302615,
+        "sha256": "38327d4e6c9483fe396c86a4199d14193499f6a3deba5677f866d3baec417487"
+      },
+      {
+        "path": "module.json",
+        "bytes": 250,
+        "sha256": "59c333d8aad5749c7ed75147a7e02a02c5fca24d00d267a81bb32752cc45eb7b"
+      },
+      {
+        "path": "name.png",
+        "bytes": 306125,
+        "sha256": "3d8aa1bc34af77991ab339c6cc29da979aec21379e3be81d83e04c86d0b844d9"
+      },
+      {
+        "path": "pixel-checkpoints.json",
+        "bytes": 11829,
+        "sha256": "1ee11ab2cab336cf8754aa2294c220ab2d71179f60263070d172e2505f53772e"
+      },
+      {
+        "path": "post-intro.png",
+        "bytes": 342351,
+        "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c"
+      },
+      {
+        "path": "preparation-incidents.json",
+        "bytes": 2127,
+        "sha256": "1bcbfeea740a7d50c2082d8ebe07e0d4b56fdeaa0142754bd94240dc83a673cf"
+      },
+      {
+        "path": "prior-configuration-reuse.json",
+        "bytes": 757,
+        "sha256": "31626ba0a5d63e92a6c5b7afced81e6d61f5b4f5d7f9ee92a102ef34f80d873c"
+      },
+      {
+        "path": "prior-durable-checkpoint.json",
+        "bytes": 2797,
+        "sha256": "69d108b0539a6a6df0cc6c12f854be7aae03946eb957ee08c8cfa730e6422f89"
+      },
+      {
+        "path": "prior-reused-mount-check-receipt.json",
+        "bytes": 754,
+        "sha256": "4b7fe0c5ca33ec5d2bfcbbe4fe70f51d89062538754c42a0926efb82736686c4"
+      },
+      {
+        "path": "prior-reused-mount-validation.json",
+        "bytes": 173937,
+        "sha256": "54def8fabc262fe5264a1ad49196b4824756dfa5d90b2372d2eaed2c31e184fc"
+      },
+      {
+        "path": "prior-reused-standing-system-assets.json",
+        "bytes": 17111,
+        "sha256": "1257f782ebea09ba6c230647fdc77bea087e8a80e0eac42079536190f5bea47d"
+      },
+      {
+        "path": "publication-accounting.json",
+        "bytes": 2053,
+        "sha256": "37b5b9674b7d3de36d4aca43f2277f0e99f4e59f0d83d570a3c995b121b44b01"
+      },
+      {
+        "path": "publication-blocker.json",
+        "bytes": 2174,
+        "sha256": "8d9a92beee8e2bcfdd1a6e0b1fc89e5ef4f432b1ac0851bfc228ae51c2213db2"
+      },
+      {
+        "path": "publication-receipt.json",
+        "bytes": 2174,
+        "sha256": "8d9a92beee8e2bcfdd1a6e0b1fc89e5ef4f432b1ac0851bfc228ae51c2213db2"
+      },
+      {
+        "path": "quit-confirm.png",
+        "bytes": 196465,
+        "sha256": "748320c12560bc857bc3ba2e06995f81315fa11dad740d20c945af2d08797c5c"
+      },
+      {
+        "path": "quit-menu.png",
+        "bytes": 160200,
+        "sha256": "4a4d451edd4206fa746152eeace213a7561c2e5c50260879443bd516efe645b2"
+      },
+      {
+        "path": "ready.png",
+        "bytes": 299111,
+        "sha256": "2acc5caaace338921e001e1ae6ff382ad39fc182f41232dfcdf08994143eaa47"
+      },
+      {
+        "path": "result.json",
+        "bytes": 2344,
+        "sha256": "fafa4ebbd3fce6ea533a059921532a2df9467fac7ee7b44f895d5fa26f800d5b"
+      },
+      {
+        "path": "rules.png",
+        "bytes": 276350,
+        "sha256": "df4af0c5faa754c0024d72f4c4383a056ea2638eee91d435b110de54f8753846"
+      },
+      {
+        "path": "runtime.json",
+        "bytes": 156,
+        "sha256": "e3ab16c6c92fa041e158e638d72b5378da65a8970de7d04a5376ed055d2bfb06"
+      },
+      {
+        "path": "startup-admission.json",
+        "bytes": 2455,
+        "sha256": "49755d9a1d011b009603f72d99a66c698998a33a7a255684b8622431676d30c6"
+      },
+      {
+        "path": "startup-launch.json",
+        "bytes": 807,
+        "sha256": "1832b9c5c6b7e120cf7399a31487dbd736454d8906305e47dd2e2e57b971e106"
+      },
+      {
+        "path": "startup-receipt.json",
+        "bytes": 1106,
+        "sha256": "3847479679287b960ff9789af9fbae59e58ef8313e23b8985b1abe4b3895b91a"
+      },
+      {
+        "path": "startup.log",
+        "bytes": 2031,
+        "sha256": "c9bc2db0bd41a884bcf18f14f66b07bbd1693fd774308ba7c10617264387899b"
+      },
+      {
+        "path": "tribe.png",
+        "bytes": 393903,
+        "sha256": "c4d1d24a0e5d3829ca4d8b03e168d1d45bf4751d2836e29d304c5084d55be72a"
+      },
+      {
+        "path": "wal-peaks.json",
+        "bytes": 315,
+        "sha256": "df8bc30c3525ba9074ffde79c8d53e05a300780cd61fb6d2e3aaf27f3e328fc7"
+      },
+      {
+        "path": "world.png",
+        "bytes": 373434,
+        "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6"
+      }
+    ],
+    "errors": [],
+    "integrityPassed": true,
+    "behavioralReruns": 0,
+    "compileRuns": 0,
+    "visualAcceptance": "Reuse predecessor and ROOT personally inspected before/after and Quit; no new visual or behavioral acceptance claimed",
+    "initialRootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/civ2-movement-retained-evidence-publication-oct26/root-ref-digest.json"
+  },
+  "freshAdmission": {
+    "at": "2026-10-26T21:46:39.004801+00:00",
+    "entries": {
+      "/tmp/civ2-win16-complete-setup-map-gameplay-oct26": 53248,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26": 8654848,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-complete-setup-map-gameplay-oct26": 434176,
+      "/tmp/civ2-win16-post-intro-dialog-gameplay-oct26": 12288,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26": 4108288,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-post-intro-dialog-gameplay-oct26": 294912,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl": 2969600,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-27-51-01a17a1c-d0a2-7323-87df-b94816fe46ca.jsonl": 8847360,
+      "/tmp/civ2-win16-map-movement-gameplay-oct26": 131072,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-map-movement-gameplay-oct26": 9670656,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-map-movement-gameplay-oct26": 274432,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-38-22-01a17a26-70c6-73e2-a289-0a54cf0bfc3e.jsonl": 7647232,
+      "/home/user/wine-assembly/scratch/runs/civ2-movement-retained-evidence-publication-oct26": 4096,
+      "/tmp/civ2-movement-retained-evidence-publication-oct26": 8192,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-movement-retained-evidence-publication-oct26": 241664,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-45-46-01a17a2d-3a37-7612-945d-9557e902e2f7.jsonl": 454656
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 4055040,
+      "/home/user/.codex/state_5.sqlite-wal": 4403200,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "walChargedOnce": true,
+    "measured": 73027584,
+    "futureIncluding8MiBReserve": 41943040,
+    "allocation": 335544320,
+    "projected": 114970624,
+    "hostFree": 3612270592,
+    "hostProjectedFree": 3570327552,
+    "hostRequiredFree": 2982150144,
+    "memAvailable": 3583508480,
+    "mandatoryMemFloor": 3489660928,
+    "actualClients": [
+      {
+        "pid": 265632,
+        "rss": 30310400,
+        "modelFlags": []
+      },
+      {
+        "pid": 752162,
+        "rss": 429801472,
+        "modelFlags": [
+          "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise."
+        ]
+      },
+      {
+        "pid": 1789179,
+        "rss": 56627200,
+        "modelFlags": []
+      },
+      {
+        "pid": 3178760,
+        "rss": 196599808,
+        "modelFlags": [
+          "model_auto_compact_token_limit=200000",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "gpt-6.1-sol",
+          "model_reasoning_effort=\"medium\""
+        ]
+      },
+      {
+        "pid": 3178965,
+        "rss": 201351168,
+        "modelFlags": [
+          "model_auto_compact_token_limit=200000",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "gpt-6.1-sol",
+          "model_reasoning_effort=\"medium\""
+        ]
+      },
+      {
+        "pid": 3184269,
+        "rss": 195928064,
+        "modelFlags": [
+          "model_auto_compact_token_limit=200000",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "gpt-6.1-sol",
+          "model_reasoning_effort=\"medium\""
+        ]
+      },
+      {
+        "pid": 3184406,
+        "rss": 195215360,
+        "modelFlags": [
+          "model_auto_compact_token_limit=200000",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "gpt-6.1-sol",
+          "model_reasoning_effort=\"medium\""
+        ]
+      },
+      {
+        "pid": 3185109,
+        "rss": 199749632,
+        "modelFlags": [
+          "model_auto_compact_token_limit=200000",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "gpt-6.1-sol",
+          "model_reasoning_effort=\"medium\""
+        ]
+      }
+    ],
+    "actualClientRSS": 1505583104,
+    "allowances": {
+      "GLbrowser": 1073741824,
+      "hostReserve": 805306368,
+      "remoteHelpers": 201326592,
+      "GitPhysical": 536870912,
+      "prospectiveClientSessionOverhead": 33554432,
+      "completedGuest": 0
+    },
+    "outstandingPhysicalNeed": 2650800128,
+    "standingReadonlyInputsExcluded": true,
+    "remoteRuntimeBytes": 0,
+    "aggregatePhysicalNeed": 4156383232,
+    "physicalSupplyIncludingAlreadyResidentClients": 5089091584,
+    "accountingExplanation": "Resident clients already reduce MemAvailable; compare outstanding caps against MemAvailable, or equivalently total client+outstanding need against MemAvailable+resident clients. Entire GL 1024MiB allowance retained conservatively; no completed guest reservation.",
+    "admitted": true
+  },
+  "originalPublicationReceipt": {
+    "at": "2026-10-26T21:44:31.000563+00:00",
+    "branch": "task/civ2-win16-map-movement-gameplay-oct26",
+    "commit": null,
+    "remoteSHA": null,
+    "exactVerified": false,
+    "published": false,
+    "blocker": "RAM admission below3489660928B floor",
+    "lastMemAvailable": 3216715776,
+    "denials": [
+      {
+        "admitted": false,
+        "memAvailable": 3232968704,
+        "required": 3489660928,
+        "allocationProjection": 105664512,
+        "diskFree": 3617857536,
+        "command": [
+          "config",
+          "--local",
+          "user.name",
+          "Wine Ops CivII worker"
+        ]
+      },
+      {
+        "admitted": false,
+        "memAvailable": 3215777792,
+        "required": 3489660928,
+        "allocationProjection": 105664512,
+        "diskFree": 3617857536,
+        "command": [
+          "config",
+          "--local",
+          "user.email",
+          "wine-ops@localhost"
+        ]
+      },
+      {
+        "admitted": false,
+        "memAvailable": 3224203264,
+        "required": 3489660928,
+        "allocationProjection": 105668608,
+        "diskFree": 3617853440,
+        "command": [
+          "add",
+          "preparation-incidents.json",
+          "evidence-manifest.json"
+        ]
+      },
+      {
+        "admitted": false,
+        "memAvailable": 3217731584,
+        "required": 3489660928,
+        "allocationProjection": 105668608,
+        "diskFree": 3617849344,
+        "command": [
+          "commit",
+          "-m",
+          "Verify CivII Win16 ordinary Settlers movement and menu quit"
+        ]
+      },
+      {
+        "admitted": false,
+        "memAvailable": 3216715776,
+        "required": 3489660928,
+        "allocationProjection": 105668608,
+        "diskFree": 3617849344,
+        "command": [
+          "push",
+          "--set-upstream",
+          "origin",
+          "task/civ2-win16-map-movement-gameplay-oct26"
+        ]
+      }
+    ],
+    "gitExecutedAfterFirstDenial": false,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "nextAction": "Only after actual capacity change/fresh admission: local author identity, add reviewed evidence, commit, push and exact ls-remote verification."
+  },
+  "originalGitOperations": [
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"init\", \"--initial-branch=task/civ2-win16-map-movement-gameplay-oct26\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3935268864, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 101433344, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.05, \"wallSeconds\": 0.013906697975471616, \"outputBytes\": 119, \"exitCode\": 0, \"stopReason\": null, \"output\": \"Initialized empty Git repository in /home/user/wine-assembly/scratch/runs/civ2-win16-map-movement-gameplay-oct26/.git/\\n\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"remote\", \"add\", \"origin\", \"git@github.com:vgrichina/wine-assembly.git\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3926827008, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 101584896, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.02, \"wallSeconds\": 0.005817218916490674, \"outputBytes\": 0, \"exitCode\": 0, \"stopReason\": null, \"output\": \"\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"add\", \".\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3927195648, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 101601280, \"peakTreeRSS\": 22020096, \"peakTreeCPU\": 0.03, \"wallSeconds\": 0.0928189109545201, \"outputBytes\": 0, \"exitCode\": 0, \"stopReason\": null, \"output\": \"\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"diff\", \"--cached\", \"--stat\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3941449728, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 105566208, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.04, \"wallSeconds\": 0.00994989788159728, \"outputBytes\": 4026, \"exitCode\": 0, \"stopReason\": null, \"output\": \" .gitignore                               |    5 +\\n README.md                                |   15 +\\n accounting-inputs.json                   |    5 +\\n barbarians.png                           |  Bin 0 -> 374726 bytes\\n civilizations.png                        |  Bin 0 -> 414300 bytes\\n cleanup.json                             |   13 +\\n configuration-reuse.json                 |   34 +\\n control-checkpoint.json                  |  143 ++\\n control-in.jsonl                         |   83 +\\n controller-check-launch.json             |   22 +\\n controller-check-receipt.json            |   33 +\\n controller-check.log                     |    0\\n controller-selfcheck.json                |    5 +\\n controller.log                           |   17 +\\n difficulty.png                           |  Bin 0 -> 353624 bytes\\n durable-checkpoint.json                  |   66 +\\n durable-controller.json                  |    5 +\\n evidence-check-launch.json               |   21 +\\n evidence-check-receipt.json              |   32 +\\n evidence-check.log                       |    1 +\\n evidence-manifest.json                   |  349 +++\\n gameplay-after.png                       |  Bin 0 -> 161331 bytes\\n gameplay-before.png                      |  Bin 0 -> 158032 bytes\\n gender.png                               |  Bin 0 -> 309381 bytes\\n guest-admission.json                     |   66 +\\n guest-launch.json                        |   32 +\\n guest-receipt.json                       |   44 +\\n guest.log                                |  517 ++++\\n handoff.json                             |   83 +\\n helpers/account.py                       |   16 +\\n helpers/admit.py                         |   19 +\\n helpers/check-evidence.js                |   12 +\\n helpers/closeout.py                      |   62 +\\n helpers/control.py                       |   15 +\\n helpers/controller.js                    |   57 +\\n helpers/git-op.py                        |   49 +\\n helpers/interact.py                      |   15 +\\n helpers/prepare.py                       |   19 +\\n helpers/setup.py                         |   35 +\\n helpers/supervise.py                     |   73 +\\n heralds.png                              |  Bin 0 -> 135028 bytes\\n identity.json                            | 3465 ++++++++++++++++++++++++++\\n image-inspection.json                    |  200 ++\\n initial-root-ref-digest.json             |    1 +\\n intro-checkpoint.json                    |   38 +\\n intro.png                                |  Bin 0 -> 53424 bytes\\n language.png                             |  Bin 0 -> 58309 bytes\\n map-before.png                           |  Bin 0 -> 170807 bytes\\n map-entry.png                            |  Bin 0 -> 302615 bytes\\n module.json                              |    7 +\\n name.png                                 |  Bin 0 -> 306125 bytes\\n pixel-checkpoints.json                   |  377 +++\\n post-intro.png                           |  Bin 0 -> 342351 bytes\\n preparation-incidents.json               |    4 +\\n prior-configuration-reuse.json           |   20 +\\n prior-durable-checkpoint.json            |   59 +\\n prior-reused-mount-check-receipt.json    |   30 +\\n prior-reused-mount-validation.json       | 3910 ++++++++++++++++++++++++++++++\\n prior-reused-standing-system-assets.json |  480 ++++\\n quit-confirm.png                         |  Bin 0 -> 196465 bytes\\n quit-menu.png                            |  Bin 0 -> 160200 bytes\\n ready.png                                |  Bin 0 -> 299111 bytes\\n result.json                              |   84 +\\n rules.png                                |  Bin 0 -> 276350 bytes\\n runtime.json                             |    6 +\\n startup-admission.json                   |   58 +\\n startup-launch.json                      |   22 +\\n startup-receipt.json                     |   33 +\\n startup.log                              |    1 +\\n tribe.png                                |  Bin 0 -> 393903 bytes\\n world.png                                |  Bin 0 -> 373434 bytes\\n 71 files changed, 10758 insertions(+)\\n\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"add\", \".gitignore\", \"final-accounting.json\", \"evidence-manifest.json\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3548086272, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 105603072, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.02, \"wallSeconds\": 0.005813200958073139, \"outputBytes\": 0, \"exitCode\": 0, \"stopReason\": null, \"output\": \"\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"diff\", \"--cached\", \"--check\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3539443712, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 105623552, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.03, \"wallSeconds\": 0.005105813965201378, \"outputBytes\": 0, \"exitCode\": 0, \"stopReason\": null, \"output\": \"\"}",
+    "{\"command\": [\"git\", \"-c\", \"gc.auto=0\", \"commit\", \"-m\", \"Verify CivII Win16 ordinary Settlers movement and menu quit\"], \"gitDataLimit\": 536870912, \"memAvailable\": 3542441984, \"requiredMemAvailable\": 3489660928, \"allocationProjection\": 105623552, \"peakTreeRSS\": 16252928, \"peakTreeCPU\": 0.04, \"wallSeconds\": 0.013455563224852085, \"outputBytes\": 348, \"exitCode\": 128, \"stopReason\": null, \"output\": \"Author identity unknown\\n\\n*** Please tell me who you are.\\n\\nRun\\n\\n  git config --global user.email \\\"you@example.com\\\"\\n  git config --global user.name \\\"Your Name\\\"\\n\\nto set your account's default identity.\\nOmit --global to set the identity only in this repository.\\n\\nfatal: unable to auto-detect email address (got 'user@box-node-5e91798b545b57de.(none)')\\n\"}",
+    "{\"admitted\": false, \"memAvailable\": 3232968704, \"required\": 3489660928, \"allocationProjection\": 105664512, \"diskFree\": 3617857536, \"command\": [\"config\", \"--local\", \"user.name\", \"Wine Ops CivII worker\"]}",
+    "{\"admitted\": false, \"memAvailable\": 3215777792, \"required\": 3489660928, \"allocationProjection\": 105664512, \"diskFree\": 3617857536, \"command\": [\"config\", \"--local\", \"user.email\", \"wine-ops@localhost\"]}",
+    "{\"admitted\": false, \"memAvailable\": 3224203264, \"required\": 3489660928, \"allocationProjection\": 105668608, \"diskFree\": 3617853440, \"command\": [\"add\", \"preparation-incidents.json\", \"evidence-manifest.json\"]}",
+    "{\"admitted\": false, \"memAvailable\": 3217731584, \"required\": 3489660928, \"allocationProjection\": 105668608, \"diskFree\": 3617849344, \"command\": [\"commit\", \"-m\", \"Verify CivII Win16 ordinary Settlers movement and menu quit\"]}",
+    "{\"admitted\": false, \"memAvailable\": 3216715776, \"required\": 3489660928, \"allocationProjection\": 105668608, \"diskFree\": 3617849344, \"command\": [\"push\", \"--set-upstream\", \"origin\", \"task/civ2-win16-map-movement-gameplay-oct26\"]}"
+  ],
+  "authorVerifiedFrom": {
+    "commit": "f95b36cd437ca7a004b6f9b230640cc8386bbef5",
+    "name": "Wine Ops CivII worker",
+    "email": "wine-ops@localhost"
+  },
+  "retainedRuntime": {
+    "wallSeconds": 47.51245529181324,
+    "CPUSeconds": 42.96,
+    "peakRSS": 528625664,
+    "guestExit": 0,
+    "newRuntimeRuns": 0
+  },
+  "incidents": [
+    "Original missing local Git author and five queued wrappers denied BEFORE Git remain unchanged; those were publication/resource incidents, not failed tests.",
+    "This task first invoked unavailable python; corrected to installed python3 before admission, no Git executed by that failed invocation."
+  ],
+  "limits": {
+    "GitOnlyDATA": 536870912,
+    "GitPhysical": 536870912,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  },
+  "noOwnedRuntime": true,
+  "box": null,
+  "boxState": null,
+  "boxExpiry": null,
+  "remainingLimitations": [
+    "No city founding acceptance claimed.",
+    "No main merge or public deployment requested."
+  ],
+  "remoteVerificationReceipt": "/home/user/wine-assembly/scratch/runs/civ2-movement-retained-evidence-publication-oct26/publication.json"
+}

@@ -1,0 +1,200 @@
+{
+  "images": [
+    {
+      "path": "barbarians.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 374726,
+      "sha256": "51dbdf2dcbd4fa7466e560bd1dc56ac2a1cfef199ad89016ef81fdad39b13268",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "civilizations.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 414300,
+      "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "difficulty.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 353624,
+      "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "gameplay-after.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 161331,
+      "sha256": "2715fd2bdd9ccca38cca0faba0b8556366825c1e1ee0567962656765ff5cb9cb",
+      "personallyInspected": true,
+      "visible": "After acknowledged right-arrow down/up and150batches: Settlers sprite/shield at approximately269,315 on grassland, newly revealed terrain to east; panel Roman Settlers/Grassland/Moves1;3900BC. Automatic end of exhausted turn replenished Moves1; not an unchangedunit claim.",
+      "gameplay": true
+    },
+    {
+      "path": "gameplay-before.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 158032,
+      "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b",
+      "personallyInspected": true,
+      "visible": "Roman Map4000BC; Roman Settlers selected, Moves1, Plains. Map sprite in blink-off phase, so exact initial sprite pixel coordinate is not directly visible.",
+      "gameplay": true
+    },
+    {
+      "path": "gender.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 309381,
+      "sha256": "aaaaf87727ed33fc82cb3b1da2a065db2276e4004c4a3d1a5574af59be8eb304",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "heralds.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "intro.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 53424,
+      "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567",
+      "personallyInspected": true,
+      "visible": "Rendered Microprose logo; verified black letterbox borders and central logo colors plus window geometry before exactly one numericEscape27down/up.",
+      "gameplay": false
+    },
+    {
+      "path": "language.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "map-before.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 170807,
+      "sha256": "a4c4158927a29d0263005021d17d89d52d25d92302a4dd5a34f3809a0aed5939",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "map-entry.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 302615,
+      "sha256": "38327d4e6c9483fe396c86a4199d14193499f6a3deba5677f866d3baec417487",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "name.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 306125,
+      "sha256": "3d8aa1bc34af77991ab339c6cc29da979aec21379e3be81d83e04c86d0b844d9",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "post-intro.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 342351,
+      "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "quit-confirm.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 196465,
+      "sha256": "748320c12560bc857bc3ba2e06995f81315fa11dad740d20c945af2d08797c5c",
+      "personallyInspected": true,
+      "visible": "Do you really want to quit? No/Yes and OK; selected Yes215,262 then OK320,291.",
+      "gameplay": false
+    },
+    {
+      "path": "quit-menu.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 160200,
+      "sha256": "4a4d451edd4206fa746152eeace213a7561c2e5c50260879443bd516efe645b2",
+      "personallyInspected": true,
+      "visible": "Game menu visibly offers Quit Ctrl+Q at37,252.",
+      "gameplay": false
+    },
+    {
+      "path": "ready.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 299111,
+      "sha256": "2acc5caaace338921e001e1ae6ff382ad39fc182f41232dfcdf08994143eaa47",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "rules.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 276350,
+      "sha256": "df4af0c5faa754c0024d72f4c4383a056ea2638eee91d435b110de54f8753846",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "tribe.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 393903,
+      "sha256": "c4d1d24a0e5d3829ca4d8b03e168d1d45bf4751d2836e29d304c5084d55be72a",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    },
+    {
+      "path": "world.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 373434,
+      "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6",
+      "personallyInspected": false,
+      "visible": "Live dialog crop matched byte-exact retained personally inspected reference before ordinary known input; pixel-checkpoints.json.",
+      "gameplay": false
+    }
+  ],
+  "allowance": 20,
+  "lossless": true,
+  "setupValidation": "14 live dialog/frame crops exact matched retained references; intro rendered signature plus personal inspection",
+  "movementPersonallyInspected": true,
+  "absoluteMapTileCoordinates": null,
+  "beforeSpriteBlinkOff": true
+}

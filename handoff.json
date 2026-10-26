@@ -1,0 +1,83 @@
+{
+  "task": "civ2-win16-map-movement-gameplay-oct26",
+  "at": "2026-10-26T21:38:19.992168+00:00",
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+      "bytes": 1880280,
+      "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/durable-checkpoint.json",
+      "bytes": 2797,
+      "sha256": "69d108b0539a6a6df0cc6c12f854be7aae03946eb957ee08c8cfa730e6422f89"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/publication-receipt.json",
+      "bytes": 676,
+      "sha256": "a2902f0052aa58852735fcca2a0d03655d24881546374c46d3e62922434d3978"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/final-accounting.json",
+      "bytes": 2481,
+      "sha256": "d1736e23a6404d9cedf0990b99ada3d7bcdbb90bcbab3e5504623f5b9b53bd45"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/gameplay-before.png",
+      "bytes": 158032,
+      "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/helpers/setup.py",
+      "bytes": 3279,
+      "sha256": "28c5afd63c31c45f022b5fea944c890a174938f4bf22c15ba4706ba629b0fc17"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/helpers/interact.py",
+      "bytes": 823,
+      "sha256": "4b787b5c8040235a02757c554a0271198570219e136a77b58b4932a22dc3805a"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/helpers/supervise.py",
+      "bytes": 3978,
+      "sha256": "3add4bf92e656c7621e52d98da84d140e8ebd0dc7a73ad5fd928f1cee9c70f60"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/helpers/control.py",
+      "bytes": 758,
+      "sha256": "7125d72607032453de583da676bfa06de2d80ded6cfc11442a7d6c13b9777e92"
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/helpers/admit.py",
+      "bytes": 1709,
+      "sha256": "22a6c92fb8990328dd6350f5a4bed77d6eb5e29979e92dd5a985ddd9f57f2d9b"
+    }
+  ],
+  "sourceManifest": "scratch/usage-watch/civ2-win16-pinned-inputs-oct26.json",
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "priorCommit": "f95b36cd437ca7a004b6f9b230640cc8386bbef5",
+  "passed": [
+    "retained2canonicalcompiler receipts unchanged",
+    "exact source239 fixture337 mount33710comma",
+    "complete ordinary newgame setup and actual map/unit inspected",
+    "3350ACK16frozenzero snapshots",
+    "identitysafe cleanup"
+  ],
+  "remaining": [
+    "one ordinary acknowledged unit movement and before/after rendered map evidence",
+    "normalquit"
+  ],
+  "memAvailable": 4064120832,
+  "diskFree": 3646304256,
+  "allocation": 268435456,
+  "projected": 171790336,
+  "projection": "Prior complete ledger138235904B including retained stages/evidence/session and80MiB prospective growth/reserve +32MiB new session/events/WAL/publication growth; exact fresh actual fullledger required without doublecharge",
+  "aggregateMinimum": 3489660928,
+  "lifecycle": {
+    "guestCutoff": "2026-10-26T22:05:00Z",
+    "handback": "2026-10-26T22:10:00Z",
+    "shutdown": "2026-10-26T22:12:00Z",
+    "expiry": "2026-10-26T22:15:00Z"
+  },
+  "nextGate": "Acknowledge a real ordinary movement and rendered before/after selectedunit/terrain change within90sec, using known setup efficiently without repeated manual handoffs"
+}

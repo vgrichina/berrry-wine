@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-26T21:40:31.120932+00:00",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "/tmp/civ2-win16-map-movement-gameplay-oct26/controller.js",
+    "--check"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "pid": 3178529,
+  "wallLimit": 120,
+  "cpuLimit": 90,
+  "rssLimit": 805306368,
+  "fileLimit": 25165824,
+  "outputLimit": 2097152
+}

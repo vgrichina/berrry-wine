@@ -1,0 +1,7 @@
+Retained CivII evidence publication — 2026-10-26
+
+The original README, result, manifests and blocked publication receipts remain historical records. retained-publication.json records a fresh passing resource admission, verification of every retained manifest payload, all 239 source and 337 fixture hashes, the unchanged canonical module and mount receipt, and integrity of all 19 PNGs. It also preserves the original missing-author / five pre-Git RAM denial incident. No test, game, compile, browser or Boat operation was repeated.
+
+This publishes the already accepted ordinary Roman Settlers movement from Plains at 4000 BC to Grassland at 3900 BC, with eastern terrain revealed, followed by ordinary Game → Quit → Yes → OK and guest exit 0. ROOT and the predecessor inspected the before/after evidence. The original single run used 47.512455 seconds wall, 42.96 seconds sampled CPU and 528625664 bytes sampled peak RSS. The final quit batch had no ACK because the guest exited during that batch; no replay occurred. City founding was outside this acceptance.
+
+The retained task branch is task/civ2-win16-map-movement-gameplay-oct26. The exact final commit and trusted-SSH remote SHA verification are recorded in the append-only root messageboard and scratch/runs/civ2-movement-retained-evidence-publication-oct26/publication.json. No main publication is claimed. All original payload hashes are retained in retained-publication.json; this new receipt does not alter the original manifest.

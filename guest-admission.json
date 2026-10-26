@@ -1,0 +1,66 @@
+{
+  "at": "2026-10-26T21:40:54.148787+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-complete-setup-map-gameplay-oct26": 53248,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26": 8654848,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-complete-setup-map-gameplay-oct26": 434176,
+      "/tmp/civ2-win16-post-intro-dialog-gameplay-oct26": 12288,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26": 4108288,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-post-intro-dialog-gameplay-oct26": 294912,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl": 2969600,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-27-51-01a17a1c-d0a2-7323-87df-b94816fe46ca.jsonl": 8847360,
+      "/tmp/civ2-win16-map-movement-gameplay-oct26": 114688,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-map-movement-gameplay-oct26": 417792,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-map-movement-gameplay-oct26": 196608,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-38-22-01a17a26-70c6-73e2-a289-0a54cf0bfc3e.jsonl": 6402048
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3919872,
+      "/home/user/.codex/state_5.sqlite-wal": 4403200,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "total": 61591552,
+    "predecessorIncluded": true,
+    "walChargedOnce": true
+  },
+  "futureIncluding8MiBReserve": 115343360,
+  "captureProjection": 41943040,
+  "remotePublicationBound": 8388608,
+  "remoteRuntimeBytes": 0,
+  "allocation": 268435456,
+  "projected": 176934912,
+  "diskFree": 3633537024,
+  "hostProjectedFree": 3518193664,
+  "hostRequiredFree": 2982150144,
+  "memAvailable": 3725602816,
+  "required": 3489660928,
+  "residentClientsAlreadyDeducted": [
+    {
+      "pid": 3173720,
+      "rss": 194732032
+    },
+    {
+      "pid": 3175518,
+      "rss": 239910912
+    },
+    {
+      "pid": 3178760,
+      "rss": 228847616
+    },
+    {
+      "pid": 3178965,
+      "rss": 213344256
+    }
+  ],
+  "guestPhysicalCap": 805306368,
+  "hostReserve": 805306368,
+  "GLGitCap": 536870912,
+  "remoteHelperCaps": 201326592,
+  "prospectiveClientAllowance": 1140850688,
+  "completedHeavyReserved": 0,
+  "admitted": true
+}
