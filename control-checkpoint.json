@@ -1,0 +1,115 @@
+{
+  "requests": 66,
+  "responses": 65,
+  "steps": [
+    {
+      "batch": 500,
+      "ran": 500,
+      "steps": 500,
+      "frozen": true
+    },
+    {
+      "batch": 650,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 850,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1150,
+      "ran": 300,
+      "steps": 300,
+      "frozen": true
+    },
+    {
+      "batch": 1350,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1550,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1750,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1950,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 2100,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 2250,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 2400,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 2550,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 2800,
+      "ran": 250,
+      "steps": 250,
+      "frozen": true
+    },
+    {
+      "batch": 3100,
+      "ran": 300,
+      "steps": 300,
+      "frozen": true
+    },
+    {
+      "batch": 3300,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 3350,
+      "ran": 50,
+      "steps": 50,
+      "frozen": true
+    }
+  ],
+  "totalAcknowledgedBatches": 3350,
+  "zeroCreditSnapshots": 16,
+  "zeroCreditsAllSnapshots": true,
+  "overlap": false,
+  "replay": false,
+  "timeout": true,
+  "unacknowledged": [
+    {
+      "cmd": "keydown:39",
+      "id": "1793050259805820159"
+    }
+  ],
+  "explanation": "Move requested only after rendered map inspection, but supervisor had ended; no response, no move/keyup/afterPNG/quit executed. No replay."
+}

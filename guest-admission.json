@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-26T21:29:24.602205+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-complete-setup-map-gameplay-oct26": 40960,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26": 425984,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-complete-setup-map-gameplay-oct26": 294912,
+      "/tmp/civ2-win16-post-intro-dialog-gameplay-oct26": 12288,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26": 4108288,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-post-intro-dialog-gameplay-oct26": 294912,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl": 2969600,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-27-51-01a17a1c-d0a2-7323-87df-b94816fe46ca.jsonl": 2777088
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3723264,
+      "/home/user/.codex/state_5.sqlite-wal": 4403200,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "total": 39813120
+  },
+  "futureIncluding8MiBReserve": 83886080,
+  "captureProjection": 41943040,
+  "remotePublicationBound": 2097152,
+  "remoteRuntimeBytes": 0,
+  "allocation": 201326592,
+  "projected": 123699200,
+  "diskFree": 3688697856,
+  "hostProjectedFree": 3604811776,
+  "hostRequiredFree": 2982150144,
+  "memAvailable": 3756085248,
+  "required": 2617245696,
+  "residentClientsAlreadyDeducted": [
+    {
+      "pid": 3155819,
+      "rss": 200015872
+    },
+    {
+      "pid": 3157320,
+      "rss": 197890048
+    },
+    {
+      "pid": 3159141,
+      "rss": 195928064
+    },
+    {
+      "pid": 3161390,
+      "rss": 214155264
+    }
+  ],
+  "guestPhysicalCap": 805306368,
+  "hostReserve": 805306368,
+  "GLCap": 268435456,
+  "remoteHelperCaps": 402653184,
+  "prospectiveClientAllowance": 335544320,
+  "completedHeavyReserved": 0,
+  "admitted": true
+}

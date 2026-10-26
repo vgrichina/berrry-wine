@@ -1,0 +1,66 @@
+{"action": "step", "n": 500, "id": "1793050169541411401"}
+{"action": "snapshot", "id": "1793050172727400723"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/language.png", "id": "1793050172797214056"}
+{"cmd": "click:210:280", "id": "1793050175658833699"}
+{"action": "step", "n": 150, "id": "1793050175731564641"}
+{"action": "snapshot", "id": "1793050176856275978"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/heralds.png", "id": "1793050176925628096"}
+{"cmd": "click:320:327", "id": "1793050179523602330"}
+{"action": "step", "n": 200, "id": "1793050179593459204"}
+{"action": "snapshot", "id": "1793050181173097440"}
+{"cmd": "keydown:27", "id": "1793050184422565818"}
+{"cmd": "keyup:27", "id": "1793050184491088180"}
+{"action": "step", "n": 300, "id": "1793050184566537001"}
+{"action": "snapshot", "id": "1793050186902816536"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/post-intro.png", "id": "1793050186973456860"}
+{"cmd": "click:478:464", "id": "1793050191811247377"}
+{"action": "step", "n": 200, "id": "1793050191883113029"}
+{"action": "snapshot", "id": "1793050193515362433"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/world.png", "id": "1793050193584269026"}
+{"cmd": "click:180:391", "id": "1793050196756351656"}
+{"cmd": "click:320:464", "id": "1793050196825667527"}
+{"action": "step", "n": 200, "id": "1793050196893028763"}
+{"action": "snapshot", "id": "1793050198423737678"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/difficulty.png", "id": "1793050198493513231"}
+{"cmd": "click:90:465", "id": "1793050202144806397"}
+{"action": "step", "n": 200, "id": "1793050202216389569"}
+{"action": "snapshot", "id": "1793050203858099902"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/civilizations.png", "id": "1793050203928211285"}
+{"cmd": "click:327:435", "id": "1793050207399619106"}
+{"cmd": "click:468:465", "id": "1793050207467452056"}
+{"action": "step", "n": 200, "id": "1793050207536382635"}
+{"action": "snapshot", "id": "1793050209176783959"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/barbarians.png", "id": "1793050209244512784"}
+{"cmd": "click:172:465", "id": "1793050213517131192"}
+{"action": "step", "n": 150, "id": "1793050213589035226"}
+{"action": "snapshot", "id": "1793050214819270671"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/rules.png", "id": "1793050214888077647"}
+{"cmd": "click:385:465", "id": "1793050217737312094"}
+{"action": "step", "n": 150, "id": "1793050217809926000"}
+{"action": "snapshot", "id": "1793050219096410968"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/gender.png", "id": "1793050219165330226"}
+{"cmd": "click:235:465", "id": "1793050224590214446"}
+{"action": "step", "n": 150, "id": "1793050224663464586"}
+{"action": "snapshot", "id": "1793050225901642559"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/tribe.png", "id": "1793050225977260568"}
+{"cmd": "click:320:465", "id": "1793050229882570733"}
+{"action": "step", "n": 150, "id": "1793050229956268733"}
+{"action": "snapshot", "id": "1793050231277565804"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/name.png", "id": "1793050231355747400"}
+{"cmd": "click:210:465", "id": "1793050237981346804"}
+{"action": "step", "n": 250, "id": "1793050238057671819"}
+{"action": "snapshot", "id": "1793050239997427040"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/ready.png", "id": "1793050240069297121"}
+{"cmd": "click:388:465", "id": "1793050243231975085"}
+{"action": "step", "n": 300, "id": "1793050243300760662"}
+{"action": "snapshot", "id": "1793050245340905518"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/map-entry.png", "id": "1793050245410217483"}
+{"cmd": "click:320:460", "id": "1793050248415729728"}
+{"action": "step", "n": 200, "id": "1793050248487253420"}
+{"action": "snapshot", "id": "1793050250329028865"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/map-before.png", "id": "1793050250397958404"}
+{"cmd": "click:320:118", "id": "1793050255765008168"}
+{"action": "step", "n": 50, "id": "1793050255834505340"}
+{"action": "snapshot", "id": "1793050256156260517"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/gameplay-before.png", "id": "1793050256223911577"}
+{"cmd": "keydown:39", "id": "1793050259805820159"}

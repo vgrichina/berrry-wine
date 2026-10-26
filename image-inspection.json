@@ -1,0 +1,160 @@
+{
+  "images": [
+    {
+      "path": "language.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da",
+      "personallyInspected": true,
+      "visible": "English selected; clicked visible OK210,280.",
+      "gameplay": false
+    },
+    {
+      "path": "heralds.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171",
+      "personallyInspected": true,
+      "visible": "Turn OFF heralds selected; clicked visible OK320,327.",
+      "gameplay": false
+    },
+    {
+      "path": "post-intro.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 342351,
+      "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c",
+      "personallyInspected": true,
+      "visible": "Start a New Game selected; clicked visible OK478,464. Intro windows had presented in frozen snapshot; numeric27 down/up once.",
+      "gameplay": false
+    },
+    {
+      "path": "world.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 373434,
+      "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6",
+      "personallyInspected": true,
+      "visible": "Selected Small40x50 at180,391; visible OK320,464.",
+      "gameplay": false
+    },
+    {
+      "path": "difficulty.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 353624,
+      "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48",
+      "personallyInspected": true,
+      "visible": "Chieftain easiest selected; visible OK90,465.",
+      "gameplay": false
+    },
+    {
+      "path": "civilizations.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 414300,
+      "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7",
+      "personallyInspected": true,
+      "visible": "Selected3civilizations327,435 then visible OK468,465.",
+      "gameplay": false
+    },
+    {
+      "path": "barbarians.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 374726,
+      "sha256": "51dbdf2dcbd4fa7466e560bd1dc56ac2a1cfef199ad89016ef81fdad39b13268",
+      "personallyInspected": true,
+      "visible": "NEW gate: Villages Only/Roving Bands/Restless Tribes(selected)/Raging Hordes visibly inspected; accepted Restless Tribes with OK172,465.",
+      "gameplay": false
+    },
+    {
+      "path": "rules.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 276350,
+      "sha256": "df4af0c5faa754c0024d72f4c4383a056ea2638eee91d435b110de54f8753846",
+      "personallyInspected": true,
+      "visible": "Use Standard Rules selected; visible OK385,465.",
+      "gameplay": false
+    },
+    {
+      "path": "gender.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 309381,
+      "sha256": "aaaaf87727ed33fc82cb3b1da2a065db2276e4004c4a3d1a5574af59be8eb304",
+      "personallyInspected": true,
+      "visible": "Male selected; visible OK235,465.",
+      "gameplay": false
+    },
+    {
+      "path": "tribe.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 393903,
+      "sha256": "c4d1d24a0e5d3829ca4d8b03e168d1d45bf4751d2836e29d304c5084d55be72a",
+      "personallyInspected": true,
+      "visible": "Romans selected among21tribes; visible OK320,465.",
+      "gameplay": false
+    },
+    {
+      "path": "name.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 306125,
+      "sha256": "3d8aa1bc34af77991ab339c6cc29da979aec21379e3be81d83e04c86d0b844d9",
+      "personallyInspected": true,
+      "visible": "Please Enter Your Name; Caesar text visible selected; accepted unchanged with OK210,465.",
+      "gameplay": false
+    },
+    {
+      "path": "ready.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 299111,
+      "sha256": "2acc5caaace338921e001e1ae6ff382ad39fc182f41232dfcdf08994143eaa47",
+      "personallyInspected": true,
+      "visible": "Select Your City Style; Classical Forum outlined; accepted default with visible OK388,465.",
+      "gameplay": false
+    },
+    {
+      "path": "map-entry.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 302615,
+      "sha256": "38327d4e6c9483fe396c86a4199d14193499f6a3deba5677f866d3baec417487",
+      "personallyInspected": true,
+      "visible": "In the Beginning: Caesar leader of Romans; starting technologies Irrigation/Mining/BronzeWorking/CeremonialBurial/Roads. Visible OK320,460.",
+      "gameplay": false
+    },
+    {
+      "path": "map-before.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 170807,
+      "sha256": "a4c4158927a29d0263005021d17d89d52d25d92302a4dd5a34f3809a0aed5939",
+      "personallyInspected": true,
+      "visible": "Civ Tutorial overlays map; instructs find suitable capital site. Dismissed visible OK320,118.",
+      "gameplay": false
+    },
+    {
+      "path": "gameplay-before.png",
+      "width": 640,
+      "height": 480,
+      "bytes": 158032,
+      "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b",
+      "personallyInspected": true,
+      "visible": "ACTUAL Roman Map gameplay: explored green terrain/forest/hills/water surrounded by black fog; World minimap; Status10,000People/4000B.C./50Gold; MovingUnits panel Roman Settlers, Moves1, NONE, Plains. No city founded, no move verified.",
+      "gameplay": true
+    }
+  ],
+  "allowance": 20,
+  "knownSetupCaptures": 6,
+  "newStateCaptures": 9,
+  "unused": 5,
+  "maximumNewAllowanceAtStart": 14,
+  "lossless": true
+}

@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-26T21:32:20.380810+00:00",
+  "ownedLive": [],
+  "exit": "supervisorSIGKILL90secWall",
+  "normalQuit": false,
+  "moduleUnchanged": true,
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "box": null,
+  "hostStopped": false,
+  "coordinatorLifecycleUnchanged": true
+}

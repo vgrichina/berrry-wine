@@ -1,0 +1,52 @@
+{
+  "preparationError": "KeyError pngjsStandingReadonly fixed by reading original unchanged retained configuration layer before runtime; initial subsequent accounting could not run until setup completed.",
+  "runtimeFirstFailure": {
+    "at": "2026-10-26T21:29:29.104468+00:00",
+    "command": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=768",
+      "test/run.js",
+      "--app=civ2_win16",
+      "--no-build",
+      "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--control-stdin",
+      "--frozen",
+      "--batch-size=100000",
+      "--tick-ms-per-batch=20",
+      "--max-seconds=85"
+    ],
+    "environment": {
+      "PATH": "/usr/local/bin:/usr/bin:/bin",
+      "HOME": "/home/user",
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC"
+    },
+    "pid": 3163519,
+    "wallLimit": 90,
+    "cpuLimit": 90,
+    "rssLimit": 805306368,
+    "fileLimit": 25165824,
+    "outputLimit": 2097152,
+    "exitCode": -9,
+    "stopReason": "wall limit reached",
+    "wallSeconds": 90.02846764703281,
+    "peakAggregateRSS": 415301632,
+    "peakAggregateCPUSeconds": 52.3,
+    "outputBytes": 46754,
+    "identities": {
+      "3163518": 109737830,
+      "3163519": 109737834
+    },
+    "peakTaskAllocationIncludingConservativeWAL": 50114560
+  },
+  "unacknowledgedInput": [
+    {
+      "cmd": "keydown:39",
+      "id": "1793050259805820159"
+    }
+  ]
+}

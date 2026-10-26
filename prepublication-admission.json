@@ -1,0 +1,56 @@
+{
+  "at": "2026-10-26T21:32:48.291188+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-complete-setup-map-gameplay-oct26": 53248,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26": 4878336,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-complete-setup-map-gameplay-oct26": 389120,
+      "/tmp/civ2-win16-post-intro-dialog-gameplay-oct26": 12288,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26": 4108288,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-post-intro-dialog-gameplay-oct26": 294912,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl": 2969600,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-27-51-01a17a1c-d0a2-7323-87df-b94816fe46ca.jsonl": 8761344
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3809280,
+      "/home/user/.codex/state_5.sqlite-wal": 4403200,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "total": 50442240
+  },
+  "futureIncluding8MiBReserve": 83886080,
+  "captureProjection": 41943040,
+  "remotePublicationBound": 8388608,
+  "remoteRuntimeBytes": 0,
+  "allocation": 201326592,
+  "projected": 134328320,
+  "diskFree": 3672154112,
+  "hostProjectedFree": 3588268032,
+  "hostRequiredFree": 2982150144,
+  "memAvailable": 3756146688,
+  "required": 2617245696,
+  "residentClientsAlreadyDeducted": [
+    {
+      "pid": 3161390,
+      "rss": 232574976
+    },
+    {
+      "pid": 3165017,
+      "rss": 200101888
+    },
+    {
+      "pid": 3166359,
+      "rss": 246411264
+    }
+  ],
+  "guestPhysicalCap": 805306368,
+  "hostReserve": 805306368,
+  "GLCap": 268435456,
+  "remoteHelperCaps": 402653184,
+  "prospectiveClientAllowance": 335544320,
+  "completedHeavyReserved": 0,
+  "admitted": true
+}

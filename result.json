@@ -1,0 +1,80 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T21:29:29.104468+00:00",
+  "finishedAt": "2026-10-26T21:32:20.383324+00:00",
+  "outcome": "timeout",
+  "verification": "reviewed",
+  "route": "gameplay",
+  "summary": "Ordinary full newgame setup completed; inspected live Roman map4000BC and selected Settlers/Moves1/Plains. Supervisor90sec wall stop after mapPNG; move/city and normalquit unverified. No guest trap observed; no replay.",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "test/run.js",
+    "--app=civ2_win16",
+    "--no-build",
+    "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--control-stdin",
+    "--frozen",
+    "--batch-size=100000",
+    "--tick-ms-per-batch=20",
+    "--max-seconds=85"
+  ],
+  "build": {
+    "commit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "environment": {
+    "host": "local",
+    "node": "24.18.1",
+    "heapMiB": 768,
+    "renderer": "production headless raster",
+    "viewport": "640x480"
+  },
+  "screenshots": [
+    "language.png",
+    "heralds.png",
+    "post-intro.png",
+    "world.png",
+    "difficulty.png",
+    "civilizations.png",
+    "barbarians.png",
+    "rules.png",
+    "gender.png",
+    "tribe.png",
+    "name.png",
+    "ready.png",
+    "map-entry.png",
+    "map-before.png",
+    "gameplay-before.png"
+  ],
+  "gameplayScreenshots": [
+    "gameplay-before.png"
+  ],
+  "artifacts": [
+    "README.md",
+    "identity.json",
+    "configuration-reuse.json",
+    "module.json",
+    "guest-admission.json",
+    "guest-launch.json",
+    "guest-receipt.json",
+    "guest.log",
+    "control-in.jsonl",
+    "control-checkpoint.json",
+    "image-inspection.json",
+    "durable-checkpoint.json",
+    "cleanup.json",
+    "incidents.json"
+  ],
+  "box": null,
+  "remainingGates": [
+    "ordinary move/action before-after evidence",
+    "city/citywindow unverified",
+    "normalquit not achieved"
+  ],
+  "authenticGuestError": null
+}

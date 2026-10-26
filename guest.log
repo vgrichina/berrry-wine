@@ -1,0 +1,446 @@
+PE loaded. Entry: 0x000f0000
+[win16] loaded SMEDSNET as module 13
+[win16] registered WING as module 17 for LoadLibrary
+[win16] registered CIV2ART as module 18 for LoadLibrary
+[win16] registered CV as module 19 for LoadLibrary
+[win16] registered INTRO as module 20 for LoadLibrary
+[win16] registered MK as module 21 for LoadLibrary
+[win16] registered PV as module 22 for LoadLibrary
+[win16] registered SS as module 23 for LoadLibrary
+[win16] registered TILES as module 24 for LoadLibrary
+[win16] registered TIMERDLL as module 25 for LoadLibrary
+[win16] registered WONDER as module 26 for LoadLibrary
+[files] policy eager: Win16 image: 338 eager (371068631 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[cue] mounted test/binaries/candidates/civilization-2-win16/Sid Meier's Civilization II (USA) (En,Fr,De).cue -> D:\ label="" (419 data entries, 9 audio tracks, lazy)
+[MCI] open cdaudio id=1 drive=D: tracks=1-10
+[CreateWindow] hwnd=0x10001 title="" style=0x0 pos=0,0 size=480x321 menu=0
+[CreateWindow] hwnd=0x10002 title="" style=0x-7d800000 pos=90,187 size=462x108 menu=0
+[CreateWindow] hwnd=0x10003 title="" style=0x50010000 pos=10,28 size=440x20 menu=0
+[CreateWindow] hwnd=0x10004 title="" style=0x50010000 pos=10,50 size=440x20 menu=0
+[CreateWindow] hwnd=0x10005 title="" style=0x50810000 pos=6,77 size=223x26 menu=0
+[CreateWindow] hwnd=0x10006 title="" style=0x50810000 pos=231,77 size=223x26 menu=0
+[ShowWindow] hwnd=0x10002 cmd=5
+[ctl] {"ok":true,"id":"1793050169541411401","value":{"batch":500,"ran":500,"steps":500,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050172727400723","value":{"batch":500,"eip":"0x4c18ac","quit":false,"yieldReason":0,"focus":"0x10003","mainHwnd":"0x10002","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x10002","x":90,"y":187,"w":462,"h":108,"visible":true,"isChild":false,"title":""},{"hwnd":"0x10003","x":10,"y":28,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10004","x":10,"y":50,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10005","x":6,"y":77,"w":223,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10006","x":231,"y":77,"w":223,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050172797214056","value":{"batch":500,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/language.png","bytes":58309}}
+[ctl] {"ok":true,"id":"1793050175658833699","value":{"queued":true,"batch":500}}
+[input] click 210,280 at batch 500
+[check_input] msg=0x84 wParam=0x0 lParam=0x11800d2 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10005
+[check_input] msg=0x201 wParam=0x1 lParam=0xb006e packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10005
+[check_input] msg=0x202 wParam=0x0 lParam=0xb006e packed=0x202
+[check_input_hwnd] explicit hwnd=0x10005
+[ShowWindow] hwnd=0x10002 cmd=0
+[SetMenu] hwnd=0x10002 menu=0
+[SetMenu] hwnd=0x10002 menu=0
+[CreateWindow] hwnd=0x10007 title="Civ2 Diplomatic Heralds" style=0x-7d800000 pos=90,140 size=462x202 menu=0
+[CreateWindow] hwnd=0x10008 title="" style=0x50010000 pos=10,122 size=440x20 menu=0
+[CreateWindow] hwnd=0x10009 title="" style=0x50010000 pos=10,144 size=440x20 menu=0
+[CreateWindow] hwnd=0x1000a title="" style=0x50810000 pos=6,171 size=448x26 menu=0
+[ShowWindow] hwnd=0x10007 cmd=5
+[ShowWindow] hwnd=0x10008 cmd=5
+[ShowWindow] hwnd=0x10009 cmd=5
+[ShowWindow] hwnd=0x1000a cmd=5
+[ctl] {"ok":true,"id":"1793050175731564641","value":{"batch":650,"ran":150,"steps":150,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050176856275978","value":{"batch":650,"eip":"0x511501","quit":false,"yieldReason":0,"focus":"0x10008","mainHwnd":"0x10007","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x10007","x":90,"y":140,"w":462,"h":202,"visible":true,"isChild":false,"title":"Civ2 Diplomatic Heralds"},{"hwnd":"0x10008","x":10,"y":122,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10009","x":10,"y":144,"w":440,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1000a","x":6,"y":171,"w":448,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050176925628096","value":{"batch":650,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/heralds.png","bytes":135028}}
+[ctl] {"ok":true,"id":"1793050179523602330","value":{"queued":true,"batch":650}}
+[input] click 320,327 at batch 650
+[waveOut] open: 22050Hz 2ch 8bit -> voice#720897
+[check_input] msg=0x84 wParam=0x0 lParam=0x1470140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x1000a
+[check_input] msg=0x201 wParam=0x1 lParam=0xb00dc packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1000a
+[check_input] msg=0x202 wParam=0x0 lParam=0xb00dc packed=0x202
+[check_input_hwnd] explicit hwnd=0x1000a
+[ShowWindow] hwnd=0x10007 cmd=0
+[SetMenu] hwnd=0x10007 menu=0
+[SetMenu] hwnd=0x10007 menu=0
+[CreateWindow] hwnd=0x1000b title="Sid Meier's Civilization II" style=0x2cf0000 pos=0,0 size=608x426 menu=0
+[CreateWindow] hwnd=0x1000c title="" style=0x40a00003 pos=0,0 size=0x0 menu=100
+[SetMenu] hwnd=0x1000b menu=67063660
+[ShowWindow] hwnd=0x1000b cmd=3
+[CreateWindow] hwnd=0x1000d title="" style=0x-7e000000 pos=0,0 size=640x484 menu=0
+[CreateWindow] hwnd=0x1000e title="" style=0x-7e000000 pos=0,0 size=320x239 menu=0
+[ShowWindow] hwnd=0x1000d cmd=5
+[ShowWindow] hwnd=0x1000e cmd=5
+[ctl] {"ok":true,"id":"1793050179593459204","value":{"batch":850,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050181173097440","value":{"batch":850,"eip":"0x104d80","quit":false,"yieldReason":0,"focus":"0x1000e","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1000d","x":0,"y":0,"w":640,"h":484,"visible":true,"isChild":false,"title":""},{"hwnd":"0x1000e","x":0,"y":120,"w":640,"h":240,"visible":true,"isChild":false,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050184422565818","value":{"queued":true,"batch":850}}
+[ctl] {"ok":true,"id":"1793050184491088180","value":{"queued":true,"batch":850}}
+[input] keydown vk=27 at batch 850
+[input] keyup vk=27 at batch 850
+[check_input] msg=0x100 wParam=0x1b lParam=0x10001 packed=0x1b0100
+[check_input_hwnd] keyboard → focus 0x1000e
+[check_input] msg=0x101 wParam=0x1b lParam=0xc0010001 packed=0x1b0101
+[check_input_hwnd] keyboard → focus 0x1000e
+[ShowWindow] hwnd=0x1000e cmd=0
+[ShowWindow] hwnd=0x1000d cmd=0
+[ShowWindow] hwnd=0x1000d cmd=0
+[SetMenu] hwnd=0x1000d menu=0
+[SetMenu] hwnd=0x1000d menu=0
+[ShowWindow] hwnd=0x1000e cmd=0
+[SetMenu] hwnd=0x1000e menu=0
+[SetMenu] hwnd=0x1000e menu=0
+[CreateWindow] hwnd=0x1000f title="" style=0x46800000 pos=1,1 size=394x244 menu=0
+[ShowWindow] hwnd=0x1000f cmd=5
+[CreateWindow] hwnd=0x10010 title="Civilization II" style=0x-7d800000 pos=418,261 size=222x218 menu=0
+[CreateWindow] hwnd=0x10011 title="" style=0x50010000 pos=10,28 size=200x20 menu=0
+[CreateWindow] hwnd=0x10012 title="" style=0x50010000 pos=10,50 size=200x20 menu=0
+[CreateWindow] hwnd=0x10013 title="" style=0x50010000 pos=10,72 size=200x20 menu=0
+[CreateWindow] hwnd=0x10014 title="" style=0x50010000 pos=10,94 size=200x20 menu=0
+[CreateWindow] hwnd=0x10015 title="" style=0x50010000 pos=10,116 size=200x20 menu=0
+[CreateWindow] hwnd=0x10016 title="" style=0x50010000 pos=10,138 size=200x20 menu=0
+[CreateWindow] hwnd=0x10017 title="" style=0x50010000 pos=10,160 size=200x20 menu=0
+[CreateWindow] hwnd=0x10018 title="" style=0x50810000 pos=6,187 size=103x26 menu=0
+[CreateWindow] hwnd=0x10019 title="" style=0x50810000 pos=111,187 size=103x26 menu=0
+[ShowWindow] hwnd=0x10010 cmd=5
+[ctl] {"ok":true,"id":"1793050184566537001","value":{"batch":1150,"ran":300,"steps":300,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050186902816536","value":{"batch":1150,"eip":"0x51126d","quit":false,"yieldReason":0,"focus":"0x10011","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1000f","x":1,"y":1,"w":394,"h":244,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10010","x":418,"y":261,"w":222,"h":218,"visible":true,"isChild":false,"title":"Civilization II"},{"hwnd":"0x10011","x":10,"y":28,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10012","x":10,"y":50,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10013","x":10,"y":72,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10014","x":10,"y":94,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10015","x":10,"y":116,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10016","x":10,"y":138,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10017","x":10,"y":160,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10018","x":6,"y":187,"w":103,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10019","x":111,"y":187,"w":103,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050186973456860","value":{"batch":1150,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/post-intro.png","bytes":342351}}
+[ctl] {"ok":true,"id":"1793050191811247377","value":{"queued":true,"batch":1150}}
+[input] click 478,464 at batch 1150
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d001de packed=0x84
+[check_input_hwnd] explicit hwnd=0x10018
+[check_input] msg=0x201 wParam=0x1 lParam=0xb0032 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10018
+[check_input] msg=0x202 wParam=0x0 lParam=0xb0032 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10018
+[ShowWindow] hwnd=0x10010 cmd=0
+[SetMenu] hwnd=0x10010 menu=0
+[SetMenu] hwnd=0x10010 menu=0
+[ShowWindow] hwnd=0x1000f cmd=0
+[SetMenu] hwnd=0x1000f menu=0
+[SetMenu] hwnd=0x1000f menu=0
+[CreateWindow] hwnd=0x1001a title="" style=0x46800000 pos=16,1 size=601x274 menu=0
+[ShowWindow] hwnd=0x1001a cmd=5
+[CreateWindow] hwnd=0x1001b title="Select Size of World" style=0x-7d800000 pos=150,349 size=342x130 menu=0
+[CreateWindow] hwnd=0x1001c title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x1001d title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x1001e title="" style=0x50010000 pos=10,72 size=320x20 menu=0
+[CreateWindow] hwnd=0x1001f title="" style=0x50810000 pos=116,99 size=108x26 menu=0
+[CreateWindow] hwnd=0x10020 title="" style=0x50810000 pos=226,99 size=108x26 menu=0
+[CreateWindow] hwnd=0x10021 title="" style=0x50810000 pos=6,99 size=108x26 menu=0
+[ShowWindow] hwnd=0x1001b cmd=5
+[ctl] {"ok":true,"id":"1793050191883113029","value":{"batch":1350,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050193515362433","value":{"batch":1350,"eip":"0x4b1e2f","quit":false,"yieldReason":0,"focus":"0x1001d","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1001a","x":16,"y":1,"w":601,"h":274,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1001b","x":150,"y":349,"w":342,"h":130,"visible":true,"isChild":false,"title":"Select Size of World"},{"hwnd":"0x1001c","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1001d","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1001e","x":10,"y":72,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1001f","x":116,"y":99,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10020","x":226,"y":99,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10021","x":6,"y":99,"w":108,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050193584269026","value":{"batch":1350,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/world.png","bytes":373434}}
+[ctl] {"ok":true,"id":"1793050196756351656","value":{"queued":true,"batch":1350}}
+[ctl] {"ok":true,"id":"1793050196825667527","value":{"queued":true,"batch":1350}}
+[input] click 180,391 at batch 1350
+[input] click 320,464 at batch 1350
+[check_input] msg=0x84 wParam=0x0 lParam=0x18700b4 packed=0x84
+[check_input_hwnd] explicit hwnd=0x1001c
+[check_input] msg=0x201 wParam=0x1 lParam=0xa0011 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1001c
+[check_input] msg=0x202 wParam=0x0 lParam=0xa0011 packed=0x202
+[check_input_hwnd] explicit hwnd=0x1001c
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d00140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x1001f
+[check_input] msg=0x201 wParam=0x1 lParam=0xb0032 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1001f
+[check_input] msg=0x202 wParam=0x0 lParam=0xb0032 packed=0x202
+[check_input_hwnd] explicit hwnd=0x1001f
+[ShowWindow] hwnd=0x1001b cmd=0
+[SetMenu] hwnd=0x1001b menu=0
+[SetMenu] hwnd=0x1001b menu=0
+[ShowWindow] hwnd=0x1001a cmd=0
+[SetMenu] hwnd=0x1001a menu=0
+[SetMenu] hwnd=0x1001a menu=0
+[CreateWindow] hwnd=0x10022 title="" style=0x46800000 pos=32,1 size=601x274 menu=0
+[ShowWindow] hwnd=0x10022 cmd=5
+[CreateWindow] hwnd=0x10023 title="Select Difficulty Level" style=0x-7d800000 pos=1,283 size=342x196 menu=0
+[CreateWindow] hwnd=0x10024 title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x10025 title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x10026 title="" style=0x50010000 pos=10,72 size=320x20 menu=0
+[CreateWindow] hwnd=0x10027 title="" style=0x50010000 pos=10,94 size=320x20 menu=0
+[CreateWindow] hwnd=0x10028 title="" style=0x50010000 pos=10,116 size=320x20 menu=0
+[CreateWindow] hwnd=0x10029 title="" style=0x50010000 pos=10,138 size=320x20 menu=0
+[CreateWindow] hwnd=0x1002a title="" style=0x50810000 pos=6,165 size=163x26 menu=0
+[CreateWindow] hwnd=0x1002b title="" style=0x50810000 pos=171,165 size=163x26 menu=0
+[ShowWindow] hwnd=0x10023 cmd=5
+[ctl] {"ok":true,"id":"1793050196893028763","value":{"batch":1550,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050198423737678","value":{"batch":1550,"eip":"0x511509","quit":false,"yieldReason":0,"focus":"0x10024","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10022","x":32,"y":1,"w":601,"h":274,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10023","x":1,"y":283,"w":342,"h":196,"visible":true,"isChild":false,"title":"Select Difficulty Level"},{"hwnd":"0x10024","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10025","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10026","x":10,"y":72,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10027","x":10,"y":94,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10028","x":10,"y":116,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10029","x":10,"y":138,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1002a","x":6,"y":165,"w":163,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1002b","x":171,"y":165,"w":163,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050198493513231","value":{"batch":1550,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/difficulty.png","bytes":353624}}
+[ctl] {"ok":true,"id":"1793050202144806397","value":{"queued":true,"batch":1550}}
+[input] click 90,465 at batch 1550
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d1005a packed=0x84
+[check_input_hwnd] explicit hwnd=0x1002a
+[check_input] msg=0x201 wParam=0x1 lParam=0xc004f packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1002a
+[check_input] msg=0x202 wParam=0x0 lParam=0xc004f packed=0x202
+[check_input_hwnd] explicit hwnd=0x1002a
+[ShowWindow] hwnd=0x10023 cmd=0
+[SetMenu] hwnd=0x10023 menu=0
+[SetMenu] hwnd=0x10023 menu=0
+[ShowWindow] hwnd=0x10022 cmd=0
+[SetMenu] hwnd=0x10022 menu=0
+[SetMenu] hwnd=0x10022 menu=0
+[CreateWindow] hwnd=0x1002c title="" style=0x46800000 pos=1,1 size=601x274 menu=0
+[ShowWindow] hwnd=0x1002c cmd=5
+[CreateWindow] hwnd=0x1002d title="Select Level Of Competition" style=0x-7d800000 pos=298,305 size=342x174 menu=0
+[CreateWindow] hwnd=0x1002e title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x1002f title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x10030 title="" style=0x50010000 pos=10,72 size=320x20 menu=0
+[CreateWindow] hwnd=0x10031 title="" style=0x50010000 pos=10,94 size=320x20 menu=0
+[CreateWindow] hwnd=0x10032 title="" style=0x50010000 pos=10,116 size=320x20 menu=0
+[CreateWindow] hwnd=0x10033 title="" style=0x50810000 pos=116,143 size=108x26 menu=0
+[CreateWindow] hwnd=0x10034 title="" style=0x50810000 pos=226,143 size=108x26 menu=0
+[CreateWindow] hwnd=0x10035 title="" style=0x50810000 pos=6,143 size=108x26 menu=0
+[ShowWindow] hwnd=0x1002d cmd=5
+[ctl] {"ok":true,"id":"1793050202216389569","value":{"batch":1750,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050203858099902","value":{"batch":1750,"eip":"0x5112b5","quit":false,"yieldReason":0,"focus":"0x1002e","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1002c","x":1,"y":1,"w":601,"h":274,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1002d","x":298,"y":305,"w":342,"h":174,"visible":true,"isChild":false,"title":"Select Level Of Competition"},{"hwnd":"0x1002e","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1002f","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10030","x":10,"y":72,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10031","x":10,"y":94,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10032","x":10,"y":116,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10033","x":116,"y":143,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10034","x":226,"y":143,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10035","x":6,"y":143,"w":108,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050203928211285","value":{"batch":1750,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/civilizations.png","bytes":414300}}
+[ctl] {"ok":true,"id":"1793050207399619106","value":{"queued":true,"batch":1750}}
+[ctl] {"ok":true,"id":"1793050207467452056","value":{"queued":true,"batch":1750}}
+[input] click 327,435 at batch 1750
+[input] click 468,465 at batch 1750
+[check_input] msg=0x84 wParam=0x0 lParam=0x1b30147 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10032
+[check_input] msg=0x201 wParam=0x1 lParam=0xa0010 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10032
+[check_input] msg=0x202 wParam=0x0 lParam=0xa0010 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10032
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d101d4 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10033
+[check_input] msg=0x201 wParam=0x1 lParam=0xc0032 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10033
+[check_input] msg=0x202 wParam=0x0 lParam=0xc0032 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10033
+[ShowWindow] hwnd=0x1002d cmd=0
+[SetMenu] hwnd=0x1002d menu=0
+[SetMenu] hwnd=0x1002d menu=0
+[ShowWindow] hwnd=0x1002c cmd=0
+[SetMenu] hwnd=0x1002c menu=0
+[SetMenu] hwnd=0x1002c menu=0
+[CreateWindow] hwnd=0x10036 title="" style=0x46800000 pos=32,1 size=601x274 menu=0
+[ShowWindow] hwnd=0x10036 cmd=5
+[CreateWindow] hwnd=0x10037 title="Select Level Of Barbarian Activity" style=0x-7d800000 pos=1,327 size=342x152 menu=0
+[CreateWindow] hwnd=0x10038 title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x10039 title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x1003a title="" style=0x50010000 pos=10,72 size=320x20 menu=0
+[CreateWindow] hwnd=0x1003b title="" style=0x50010000 pos=10,94 size=320x20 menu=0
+[CreateWindow] hwnd=0x1003c title="" style=0x50810000 pos=116,121 size=108x26 menu=0
+[CreateWindow] hwnd=0x1003d title="" style=0x50810000 pos=226,121 size=108x26 menu=0
+[CreateWindow] hwnd=0x1003e title="" style=0x50810000 pos=6,121 size=108x26 menu=0
+[ShowWindow] hwnd=0x10037 cmd=5
+[ctl] {"ok":true,"id":"1793050207536382635","value":{"batch":1950,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050209176783959","value":{"batch":1950,"eip":"0x51128c","quit":false,"yieldReason":0,"focus":"0x1003a","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10036","x":32,"y":1,"w":601,"h":274,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10037","x":1,"y":327,"w":342,"h":152,"visible":true,"isChild":false,"title":"Select Level Of Barbarian Activity"},{"hwnd":"0x10038","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10039","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1003a","x":10,"y":72,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1003b","x":10,"y":94,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1003c","x":116,"y":121,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1003d","x":226,"y":121,"w":108,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1003e","x":6,"y":121,"w":108,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050209244512784","value":{"batch":1950,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/barbarians.png","bytes":374726}}
+[ctl] {"ok":true,"id":"1793050213517131192","value":{"queued":true,"batch":1950}}
+[input] click 172,465 at batch 1950
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d100ac packed=0x84
+[check_input_hwnd] explicit hwnd=0x1003c
+[check_input] msg=0x201 wParam=0x1 lParam=0xc0033 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1003c
+[check_input] msg=0x202 wParam=0x0 lParam=0xc0033 packed=0x202
+[check_input_hwnd] explicit hwnd=0x1003c
+[ShowWindow] hwnd=0x10037 cmd=0
+[SetMenu] hwnd=0x10037 menu=0
+[SetMenu] hwnd=0x10037 menu=0
+[ShowWindow] hwnd=0x10036 cmd=0
+[SetMenu] hwnd=0x10036 menu=0
+[SetMenu] hwnd=0x10036 menu=0
+[CreateWindow] hwnd=0x1003f title="" style=0x46800000 pos=1,1 size=602x275 menu=0
+[ShowWindow] hwnd=0x1003f cmd=5
+[CreateWindow] hwnd=0x10040 title="Select Game Rules" style=0x-7d800000 pos=298,371 size=342x108 menu=0
+[CreateWindow] hwnd=0x10041 title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x10042 title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x10043 title="" style=0x50810000 pos=6,77 size=163x26 menu=0
+[CreateWindow] hwnd=0x10044 title="" style=0x50810000 pos=171,77 size=163x26 menu=0
+[ShowWindow] hwnd=0x10040 cmd=5
+[ctl] {"ok":true,"id":"1793050213589035226","value":{"batch":2100,"ran":150,"steps":150,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050214819270671","value":{"batch":2100,"eip":"0x4c18ac","quit":false,"yieldReason":0,"focus":"0x10041","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1003f","x":1,"y":1,"w":602,"h":275,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10040","x":298,"y":371,"w":342,"h":108,"visible":true,"isChild":false,"title":"Select Game Rules"},{"hwnd":"0x10041","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10042","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10043","x":6,"y":77,"w":163,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10044","x":171,"y":77,"w":163,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050214888077647","value":{"batch":2100,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/rules.png","bytes":276350}}
+[ctl] {"ok":true,"id":"1793050217737312094","value":{"queued":true,"batch":2100}}
+[input] click 385,465 at batch 2100
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d10181 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10043
+[check_input] msg=0x201 wParam=0x1 lParam=0xc004d packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10043
+[check_input] msg=0x202 wParam=0x0 lParam=0xc004d packed=0x202
+[check_input_hwnd] explicit hwnd=0x10043
+[ShowWindow] hwnd=0x10040 cmd=0
+[SetMenu] hwnd=0x10040 menu=0
+[SetMenu] hwnd=0x10040 menu=0
+[ShowWindow] hwnd=0x1003f cmd=0
+[SetMenu] hwnd=0x1003f menu=0
+[SetMenu] hwnd=0x1003f menu=0
+[CreateWindow] hwnd=0x10045 title="" style=0x46800000 pos=16,1 size=602x275 menu=0
+[ShowWindow] hwnd=0x10045 cmd=5
+[CreateWindow] hwnd=0x10046 title="Select Gender" style=0x-7d800000 pos=150,371 size=342x108 menu=0
+[CreateWindow] hwnd=0x10047 title="" style=0x50010000 pos=10,28 size=320x20 menu=0
+[CreateWindow] hwnd=0x10048 title="" style=0x50010000 pos=10,50 size=320x20 menu=0
+[CreateWindow] hwnd=0x10049 title="" style=0x50810000 pos=6,77 size=163x26 menu=0
+[CreateWindow] hwnd=0x1004a title="" style=0x50810000 pos=171,77 size=163x26 menu=0
+[ShowWindow] hwnd=0x10046 cmd=5
+[ctl] {"ok":true,"id":"1793050217809926000","value":{"batch":2250,"ran":150,"steps":150,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050219096410968","value":{"batch":2250,"eip":"0x4b1e3d","quit":false,"yieldReason":0,"focus":"0x10047","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10045","x":16,"y":1,"w":602,"h":275,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10046","x":150,"y":371,"w":342,"h":108,"visible":true,"isChild":false,"title":"Select Gender"},{"hwnd":"0x10047","x":10,"y":28,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10048","x":10,"y":50,"w":320,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10049","x":6,"y":77,"w":163,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1004a","x":171,"y":77,"w":163,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050219165330226","value":{"batch":2250,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/gender.png","bytes":309381}}
+[ctl] {"ok":true,"id":"1793050224590214446","value":{"queued":true,"batch":2250}}
+[input] click 235,465 at batch 2250
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d100eb packed=0x84
+[check_input_hwnd] explicit hwnd=0x10049
+[check_input] msg=0x201 wParam=0x1 lParam=0xc004b packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10049
+[check_input] msg=0x202 wParam=0x0 lParam=0xc004b packed=0x202
+[check_input_hwnd] explicit hwnd=0x10049
+[ShowWindow] hwnd=0x10046 cmd=0
+[SetMenu] hwnd=0x10046 menu=0
+[SetMenu] hwnd=0x10046 menu=0
+[ShowWindow] hwnd=0x10045 cmd=0
+[SetMenu] hwnd=0x10045 menu=0
+[SetMenu] hwnd=0x10045 menu=0
+[CreateWindow] hwnd=0x1004b title="" style=0x46800000 pos=16,1 size=602x275 menu=0
+[ShowWindow] hwnd=0x1004b cmd=5
+[CreateWindow] hwnd=0x1004c title="Select Your Tribe" style=0x-7d800000 pos=10,261 size=622x218 menu=0
+[CreateWindow] hwnd=0x1004d title="" style=0x50010000 pos=10,28 size=200x20 menu=0
+[CreateWindow] hwnd=0x1004e title="" style=0x50010000 pos=10,50 size=200x20 menu=0
+[CreateWindow] hwnd=0x1004f title="" style=0x50010000 pos=10,72 size=200x20 menu=0
+[CreateWindow] hwnd=0x10050 title="" style=0x50010000 pos=10,94 size=200x20 menu=0
+[CreateWindow] hwnd=0x10051 title="" style=0x50010000 pos=10,116 size=200x20 menu=0
+[CreateWindow] hwnd=0x10052 title="" style=0x50010000 pos=10,138 size=200x20 menu=0
+[CreateWindow] hwnd=0x10053 title="" style=0x50010000 pos=10,160 size=200x20 menu=0
+[CreateWindow] hwnd=0x10054 title="" style=0x50010000 pos=210,28 size=200x20 menu=0
+[CreateWindow] hwnd=0x10055 title="" style=0x50010000 pos=210,50 size=200x20 menu=0
+[CreateWindow] hwnd=0x10056 title="" style=0x50010000 pos=210,72 size=200x20 menu=0
+[CreateWindow] hwnd=0x10057 title="" style=0x50010000 pos=210,94 size=200x20 menu=0
+[CreateWindow] hwnd=0x10058 title="" style=0x50010000 pos=210,116 size=200x20 menu=0
+[CreateWindow] hwnd=0x10059 title="" style=0x50010000 pos=210,138 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005a title="" style=0x50010000 pos=210,160 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005b title="" style=0x50010000 pos=410,28 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005c title="" style=0x50010000 pos=410,50 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005d title="" style=0x50010000 pos=410,72 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005e title="" style=0x50010000 pos=410,94 size=200x20 menu=0
+[CreateWindow] hwnd=0x1005f title="" style=0x50010000 pos=410,116 size=200x20 menu=0
+[CreateWindow] hwnd=0x10060 title="" style=0x50010000 pos=410,138 size=200x20 menu=0
+[CreateWindow] hwnd=0x10061 title="" style=0x50010000 pos=410,160 size=200x20 menu=0
+[CreateWindow] hwnd=0x10062 title="" style=0x50810000 pos=209,187 size=201x26 menu=0
+[CreateWindow] hwnd=0x10063 title="" style=0x50810000 pos=413,187 size=201x26 menu=0
+[CreateWindow] hwnd=0x10064 title="" style=0x50810000 pos=6,187 size=201x26 menu=0
+[ShowWindow] hwnd=0x1004c cmd=5
+[ctl] {"ok":true,"id":"1793050224663464586","value":{"batch":2400,"ran":150,"steps":150,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050225901642559","value":{"batch":2400,"eip":"0x5112b0","quit":false,"yieldReason":0,"focus":"0x1004d","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1004b","x":16,"y":1,"w":602,"h":275,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1004c","x":10,"y":261,"w":622,"h":218,"visible":true,"isChild":false,"title":"Select Your Tribe"},{"hwnd":"0x1004d","x":10,"y":28,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1004e","x":10,"y":50,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1004f","x":10,"y":72,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10050","x":10,"y":94,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10051","x":10,"y":116,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10052","x":10,"y":138,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10053","x":10,"y":160,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10054","x":210,"y":28,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10055","x":210,"y":50,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10056","x":210,"y":72,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10057","x":210,"y":94,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10058","x":210,"y":116,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10059","x":210,"y":138,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005a","x":210,"y":160,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005b","x":410,"y":28,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005c","x":410,"y":50,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005d","x":410,"y":72,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005e","x":410,"y":94,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1005f","x":410,"y":116,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10060","x":410,"y":138,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10061","x":410,"y":160,"w":200,"h":20,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10062","x":209,"y":187,"w":201,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10063","x":413,"y":187,"w":201,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10064","x":6,"y":187,"w":201,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050225977260568","value":{"batch":2400,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/tribe.png","bytes":393903}}
+[ctl] {"ok":true,"id":"1793050229882570733","value":{"queued":true,"batch":2400}}
+[input] click 320,465 at batch 2400
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d10140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10062
+[check_input] msg=0x201 wParam=0x1 lParam=0xc0061 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10062
+[check_input] msg=0x202 wParam=0x0 lParam=0xc0061 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10062
+[ShowWindow] hwnd=0x1004c cmd=0
+[SetMenu] hwnd=0x1004c menu=0
+[SetMenu] hwnd=0x1004c menu=0
+[ShowWindow] hwnd=0x1004b cmd=0
+[SetMenu] hwnd=0x1004b menu=0
+[SetMenu] hwnd=0x1004b menu=0
+[CreateWindow] hwnd=0x10065 title="" style=0x46800000 pos=16,1 size=602x275 menu=0
+[ShowWindow] hwnd=0x10065 cmd=5
+[CreateWindow] hwnd=0x10066 title="Please Enter Your Name" style=0x-7d800000 pos=90,387 size=462x92 menu=0
+[CreateWindow] hwnd=0x10067 title="" style=0x50800080 pos=63,27 size=345x30 menu=0
+[CreateWindow] hwnd=0x10068 title="" style=0x50800080 pos=63,27 size=345x30 menu=0
+[CreateWindow] hwnd=0x10069 title="" style=0x50810000 pos=6,61 size=223x26 menu=0
+[CreateWindow] hwnd=0x1006a title="" style=0x50810000 pos=231,61 size=223x26 menu=0
+[ShowWindow] hwnd=0x10066 cmd=5
+[ctl] {"ok":true,"id":"1793050229956268733","value":{"batch":2550,"ran":150,"steps":150,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050231277565804","value":{"batch":2550,"eip":"0x511509","quit":false,"yieldReason":0,"focus":"0x10068","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10065","x":16,"y":1,"w":602,"h":275,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10066","x":90,"y":387,"w":462,"h":92,"visible":true,"isChild":false,"title":"Please Enter Your Name"},{"hwnd":"0x10068","x":63,"y":27,"w":345,"h":30,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10069","x":6,"y":61,"w":223,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1006a","x":231,"y":61,"w":223,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050231355747400","value":{"batch":2550,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/name.png","bytes":306125}}
+[ctl] {"ok":true,"id":"1793050237981346804","value":{"queued":true,"batch":2550}}
+[input] click 210,465 at batch 2550
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d100d2 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10069
+[check_input] msg=0x201 wParam=0x1 lParam=0xc006e packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10069
+[check_input] msg=0x202 wParam=0x0 lParam=0xc006e packed=0x202
+[check_input_hwnd] explicit hwnd=0x10069
+[ShowWindow] hwnd=0x10066 cmd=0
+[SetMenu] hwnd=0x10066 menu=0
+[SetMenu] hwnd=0x10066 menu=0
+[ShowWindow] hwnd=0x10065 cmd=0
+[SetMenu] hwnd=0x10065 menu=0
+[SetMenu] hwnd=0x10065 menu=0
+[CreateWindow] hwnd=0x1006b title="" style=0x46800000 pos=1,1 size=602x275 menu=0
+[ShowWindow] hwnd=0x1006b cmd=5
+[CreateWindow] hwnd=0x1006c title="Select Your City Style" style=0x-7d800000 pos=298,211 size=342x268 menu=0
+[CreateWindow] hwnd=0x1006d title="" style=0x50000000 pos=10,27 size=211x48 menu=0
+[CreateWindow] hwnd=0x1006e title="" style=0x50000000 pos=10,79 size=211x48 menu=0
+[CreateWindow] hwnd=0x1006f title="" style=0x50000000 pos=10,131 size=211x48 menu=0
+[CreateWindow] hwnd=0x10070 title="" style=0x50000000 pos=10,183 size=211x48 menu=0
+[CreateWindow] hwnd=0x10071 title="" style=0x50810000 pos=6,237 size=163x26 menu=0
+[CreateWindow] hwnd=0x10072 title="" style=0x50810000 pos=171,237 size=163x26 menu=0
+[ShowWindow] hwnd=0x1006c cmd=5
+[ctl] {"ok":true,"id":"1793050238057671819","value":{"batch":2800,"ran":250,"steps":250,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050239997427040","value":{"batch":2800,"eip":"0x51126d","quit":false,"yieldReason":0,"focus":"0x10071","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x1006b","x":1,"y":1,"w":602,"h":275,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1006c","x":298,"y":211,"w":342,"h":268,"visible":true,"isChild":false,"title":"Select Your City Style"},{"hwnd":"0x1006d","x":10,"y":27,"w":211,"h":48,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1006e","x":10,"y":79,"w":211,"h":48,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1006f","x":10,"y":131,"w":211,"h":48,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10070","x":10,"y":183,"w":211,"h":48,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10071","x":6,"y":237,"w":163,"h":26,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10072","x":171,"y":237,"w":163,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050240069297121","value":{"batch":2800,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/ready.png","bytes":299111}}
+[ctl] {"ok":true,"id":"1793050243231975085","value":{"queued":true,"batch":2800}}
+[input] click 388,465 at batch 2800
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d10184 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10071
+[check_input] msg=0x201 wParam=0x1 lParam=0xc0050 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10071
+[check_input] msg=0x202 wParam=0x0 lParam=0xc0050 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10071
+[ShowWindow] hwnd=0x1006c cmd=0
+[SetMenu] hwnd=0x1006c menu=0
+[SetMenu] hwnd=0x1006c menu=0
+[ShowWindow] hwnd=0x1006b cmd=0
+[SetMenu] hwnd=0x1006b menu=0
+[SetMenu] hwnd=0x1006b menu=0
+[CreateWindow] hwnd=0x10073 title="Sid Meier's Civilization II" style=0x-7d800000 pos=355,380 size=278x92 menu=0
+[ShowWindow] hwnd=0x10073 cmd=5
+[ShowWindow] hwnd=0x10073 cmd=0
+[SetMenu] hwnd=0x10073 menu=0
+[SetMenu] hwnd=0x10073 menu=0
+[CreateWindow] hwnd=0x10074 title="In the Beginning . . ." style=0x-7d800000 pos=58,339 size=526x136 menu=0
+[CreateWindow] hwnd=0x10075 title="" style=0x50810000 pos=6,105 size=512x26 menu=0
+[ShowWindow] hwnd=0x10074 cmd=5
+[ctl] {"ok":true,"id":"1793050243300760662","value":{"batch":3100,"ran":300,"steps":300,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050245340905518","value":{"batch":3100,"eip":"0x511505","quit":false,"yieldReason":0,"focus":"0x10075","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10074","x":58,"y":339,"w":526,"h":136,"visible":true,"isChild":false,"title":"In the Beginning . . ."},{"hwnd":"0x10075","x":6,"y":105,"w":512,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050245410217483","value":{"batch":3100,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/map-entry.png","bytes":302615}}
+[ctl] {"ok":true,"id":"1793050248415729728","value":{"queued":true,"batch":3100}}
+[input] click 320,460 at batch 3100
+[MCI] play cdaudio id=1 sectors=197299-206872
+[check_input] msg=0x84 wParam=0x0 lParam=0x1cc0140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10075
+[check_input] msg=0x201 wParam=0x1 lParam=0xb00fc packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10075
+[check_input] msg=0x202 wParam=0x0 lParam=0xb00fc packed=0x202
+[check_input_hwnd] explicit hwnd=0x10075
+[ShowWindow] hwnd=0x10074 cmd=0
+[SetMenu] hwnd=0x10074 menu=0
+[SetMenu] hwnd=0x10074 menu=0
+[CreateWindow] hwnd=0x10076 title="" style=0x46800000 pos=454,0 size=178x134 menu=0
+[ShowWindow] hwnd=0x10076 cmd=5
+[CreateWindow] hwnd=0x10077 title="" style=0x46800000 pos=454,135 size=178x299 menu=0
+[ShowWindow] hwnd=0x10077 cmd=5
+[CreateWindow] hwnd=0x10078 title="" style=0x46800000 pos=0,0 size=454x434 menu=0
+[CreateWindow] hwnd=0x10079 title="" style=0x50000000 pos=8,4 size=16x16 menu=0
+[CreateWindow] hwnd=0x1007a title="" style=0x50000000 pos=26,4 size=16x16 menu=0
+[ShowWindow] hwnd=0x10078 cmd=5
+[CreateWindow] hwnd=0x1007b title="MrTimer" style=0xcf0000 pos=20,20 size=480x321 menu=0
+[CreateWindow] hwnd=0x1007c title="" style=0x46800000 pos=-10,-9 size=654x454 menu=0
+[CreateWindow] hwnd=0x1007d title="Civ Tutorial" style=0x-7d800000 pos=78,5 size=486x128 menu=0
+[CreateWindow] hwnd=0x1007e title="" style=0x50810000 pos=6,97 size=472x26 menu=0
+[ShowWindow] hwnd=0x1007d cmd=5
+[ctl] {"ok":true,"id":"1793050248487253420","value":{"batch":3300,"ran":200,"steps":200,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050250329028865","value":{"batch":3300,"eip":"0x5112c7","quit":false,"yieldReason":0,"focus":"0x1007e","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10076","x":454,"y":0,"w":178,"h":134,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10077","x":454,"y":135,"w":178,"h":299,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10078","x":0,"y":0,"w":454,"h":434,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10079","x":8,"y":4,"w":16,"h":16,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1007a","x":26,"y":4,"w":16,"h":16,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1007b","x":20,"y":20,"w":480,"h":321,"visible":false,"isChild":false,"title":"MrTimer"},{"hwnd":"0x1007c","x":0,"y":0,"w":654,"h":454,"visible":false,"isChild":true,"title":""},{"hwnd":"0x1007d","x":78,"y":5,"w":486,"h":128,"visible":true,"isChild":false,"title":"Civ Tutorial"},{"hwnd":"0x1007e","x":6,"y":97,"w":472,"h":26,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050250397958404","value":{"batch":3300,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/map-before.png","bytes":170807}}
+[ctl] {"ok":true,"id":"1793050255765008168","value":{"queued":true,"batch":3300}}
+[input] click 320,118 at batch 3300
+[check_input] msg=0x84 wParam=0x0 lParam=0x760140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x1007e
+[check_input] msg=0x201 wParam=0x1 lParam=0xb00e8 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x1007e
+[check_input] msg=0x202 wParam=0x0 lParam=0xb00e8 packed=0x202
+[check_input_hwnd] explicit hwnd=0x1007e
+[ShowWindow] hwnd=0x1007d cmd=0
+[SetMenu] hwnd=0x1007d menu=0
+[SetMenu] hwnd=0x1007d menu=0
+[CreateWindow] hwnd=0x1007f title="" style=0x50000000 pos=8,4 size=16x16 menu=0
+[CreateWindow] hwnd=0x10080 title="" style=0x50000000 pos=26,4 size=16x16 menu=0
+[ctl] {"ok":true,"id":"1793050255834505340","value":{"batch":3350,"ran":50,"steps":50,"frozen":true}}
+[ctl] {"ok":true,"id":"1793050256156260517","value":{"batch":3350,"eip":"0x2d1015","quit":false,"yieldReason":0,"focus":"0x1000b","mainHwnd":"0x1000b","screen":{"w":640,"h":480},"frozen":{"frozen":true,"tickMs":20,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":480,"h":321,"visible":false,"isChild":false,"title":""},{"hwnd":"0x1000b","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"Sid Meier's Civilization II"},{"hwnd":"0x10076","x":454,"y":0,"w":178,"h":134,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10077","x":454,"y":135,"w":178,"h":299,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10078","x":0,"y":0,"w":454,"h":434,"visible":true,"isChild":true,"title":""},{"hwnd":"0x1007b","x":20,"y":20,"w":480,"h":321,"visible":false,"isChild":false,"title":"MrTimer"},{"hwnd":"0x1007c","x":0,"y":0,"w":654,"h":454,"visible":false,"isChild":true,"title":""},{"hwnd":"0x1007f","x":8,"y":4,"w":16,"h":16,"visible":true,"isChild":true,"title":""},{"hwnd":"0x10080","x":26,"y":4,"w":16,"h":16,"visible":true,"isChild":true,"title":""}]}}
+[ctl] {"ok":true,"id":"1793050256223911577","value":{"batch":3350,"frozen":true,"path":"/home/user/wine-assembly/scratch/runs/civ2-win16-complete-setup-map-gameplay-oct26/gameplay-before.png","bytes":158032}}
