@@ -1,0 +1,73 @@
+{
+  "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+  "at": "2026-10-26T06:49:05.892Z",
+  "sourcePath": "/tmp/vfs-bounded-restore-independent-accept-oct26/repo/lib/vfs-persistence.js",
+  "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+  "fixtureSha256": "42406c99b32ade4b5039af4727e094c2f0470ceaaf1965c4602d4afe35897335",
+  "results": [
+    {
+      "name": "atob: boundary matrix, padded/unpadded/HTML whitespace, decoded mod3",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: empty and noncanonical pad bits retain native atob-compatible bytes",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: malformed alphabet and padding rejected before real decoder",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: early size cutoff policy and late malformed suffix never decode",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: actual option normalization including default, clamp and numeric coercion",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: mixed skips/errors preserve later restores, metadata and counters",
+      "result": "PASS"
+    },
+    {
+      "name": "atob: decoder failure, postdecode size guard and listing error stay contained",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: boundary matrix, padded/unpadded/HTML whitespace, decoded mod3",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: empty and noncanonical pad bits retain native atob-compatible bytes",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: malformed alphabet and padding rejected before real decoder",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: early size cutoff policy and late malformed suffix never decode",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: actual option normalization including default, clamp and numeric coercion",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: mixed skips/errors preserve later restores, metadata and counters",
+      "result": "PASS"
+    },
+    {
+      "name": "Buffer: decoder failure, postdecode size guard and listing error stay contained",
+      "result": "PASS"
+    }
+  ],
+  "cases": 550,
+  "supplied": "ops/supplied.log: unchanged 17 PASS",
+  "evidence": "ops/independent.log",
+  "remaining": [
+    "remaining groups in fixture until final summary",
+    "scoped review and publication"
+  ],
+  "blockers": []
+}

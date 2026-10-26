@@ -1,0 +1,35 @@
+{
+  "at": "2026-10-26T06:50:39.468179+00:00",
+  "verdict": "ACCEPT",
+  "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+  "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+  "fixtureSha256": "42406c99b32ade4b5039af4727e094c2f0470ceaaf1965c4602d4afe35897335",
+  "tests": {
+    "supplied": "17PASS0FAIL Node16MiB",
+    "independent": "14PASS0FAIL 550cases Node16MiB",
+    "reused": "baseline9PASS8FAIL; persistence/restore16MiB; Darkstone64MiB"
+  },
+  "evidence": [
+    "supplied.log",
+    "independent.log",
+    "independent-checkpoint.json",
+    "source-review.json",
+    "reused-receipts.json"
+  ],
+  "remaining": [
+    "scoped commit and trusted SSH push verification",
+    "coordinator review and separate current-main integration/merged checks",
+    "browser storage durability and gameplay qualification"
+  ],
+  "blockers": [],
+  "incidents": [
+    {
+      "at": "2026-10-26T06:51:17.746151+00:00",
+      "operation": "first local scoped commit",
+      "exitCode": 128,
+      "diagnostic": "Author identity unknown; unable to auto-detect email address",
+      "resolution": "Set isolated repository-local Wine Ops Worker <wine-ops@localhost>, matching candidate author/committer. No global/root/donor config changed. No commit was created by failed attempt.",
+      "testsAffected": false
+    }
+  ]
+}

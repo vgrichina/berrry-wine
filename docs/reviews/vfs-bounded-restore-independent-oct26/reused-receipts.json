@@ -1,0 +1,37 @@
+{
+  "baseline.log": {
+    "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+    "gitPath": "docs/reviews/vfs-persistence-bounded-restore-repair-oct26/baseline.log",
+    "bytes": 1392,
+    "sha256": "49e595e7ba9c279cb29b0076a892e039efba17f92013124ede5b98d9d45b7bfa",
+    "rerun": false
+  },
+  "closeout-test-vfs-persistence.js.log": {
+    "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+    "gitPath": "docs/reviews/vfs-persistence-bounded-restore-repair-oct26/closeout-test-vfs-persistence.js.log",
+    "bytes": 133,
+    "sha256": "e7558537e8356694e8a1d2f953409ba566412d04110d0946724d35c81720d78f",
+    "rerun": false
+  },
+  "closeout-test-vfs-persistence-restore.js.log": {
+    "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+    "gitPath": "docs/reviews/vfs-persistence-bounded-restore-repair-oct26/closeout-test-vfs-persistence-restore.js.log",
+    "bytes": 104,
+    "sha256": "b432719ae05213090673b72d52ebb3d44bc0fef3c66e4279d6ce06730b925dc2",
+    "rerun": false
+  },
+  "closeout-darkstone-64m.log": {
+    "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+    "gitPath": "docs/reviews/vfs-persistence-bounded-restore-repair-oct26/closeout-darkstone-64m.log",
+    "bytes": 72,
+    "sha256": "bcc110923af1f0fed0667a1bccf06d84f23e53f94e80bdd57dc6f6f7c8f404f7",
+    "rerun": false
+  },
+  "darkstone-heap-admission.json": {
+    "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+    "gitPath": "docs/reviews/vfs-persistence-bounded-restore-repair-oct26/darkstone-heap-admission.json",
+    "bytes": 447,
+    "sha256": "a78e6ead3dda40b743fd68435343f6ddcb868d8cb98cca30e32889fc30c4878f",
+    "rerun": false
+  }
+}

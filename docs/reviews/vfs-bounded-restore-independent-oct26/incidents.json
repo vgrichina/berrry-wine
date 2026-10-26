@@ -1,0 +1,10 @@
+[
+  {
+    "at": "2026-10-26T06:51:17.746151+00:00",
+    "operation": "first local scoped commit",
+    "exitCode": 128,
+    "diagnostic": "Author identity unknown; unable to auto-detect email address",
+    "resolution": "Set isolated repository-local Wine Ops Worker <wine-ops@localhost>, matching candidate author/committer. No global/root/donor config changed. No commit was created by failed attempt.",
+    "testsAffected": false
+  }
+]

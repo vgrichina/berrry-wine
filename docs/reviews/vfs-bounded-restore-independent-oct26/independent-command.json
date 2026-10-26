@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "timeout",
+    "30s",
+    "node",
+    "--max-old-space-size=16",
+    "test/vfs-bounded-restore-independent-oct26.test.cjs"
+  ],
+  "exitCode": 0,
+  "seconds": 0.04994797706604004,
+  "bytes": 1139
+}

@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-26T06:47:52.890351+00:00",
+  "taskBytes": 1623488,
+  "launcherBytes": 93660,
+  "projectedPeakBytes": 39465884,
+  "futureOnceBytes": 12582912,
+  "reserveBytes": 8388608,
+  "remainingCheckoutEvidenceGitAllowance": 16777216,
+  "memAvailable": 2712666112,
+  "diskFree": 4425449472,
+  "pass": true
+}

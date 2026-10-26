@@ -1,0 +1,65 @@
+{
+  "at": "2026-10-26T06:50:39.473232+00:00",
+  "taskAndLauncherMeasured": 1766918,
+  "futureLauncherWalOnce": 12582912,
+  "reserve": 8388608,
+  "publicationAllowance": 8388608,
+  "projectedPeak": 31127046,
+  "hardLimit": 67108864,
+  "diskFree": 4419080192,
+  "memAvailable": 2722492416,
+  "aggregateCodexRss": 1110241280,
+  "codexProcesses": [
+    {
+      "pid": 265632,
+      "comm": "codex",
+      "rss": 28692480
+    },
+    {
+      "pid": 752162,
+      "comm": "codex",
+      "rss": 374865920
+    },
+    {
+      "pid": 857107,
+      "comm": "codex-code-mode",
+      "rss": 11243520
+    },
+    {
+      "pid": 1789179,
+      "comm": "codex",
+      "rss": 54714368
+    },
+    {
+      "pid": 2216025,
+      "comm": "codex",
+      "rss": 190345216
+    },
+    {
+      "pid": 2216352,
+      "comm": "codex-code-mode",
+      "rss": 21037056
+    },
+    {
+      "pid": 2216636,
+      "comm": "codex",
+      "rss": 195104768
+    },
+    {
+      "pid": 2216876,
+      "comm": "codex-code-mode",
+      "rss": 19427328
+    },
+    {
+      "pid": 2219099,
+      "comm": "codex",
+      "rss": 195358720
+    },
+    {
+      "pid": 2219779,
+      "comm": "codex-code-mode",
+      "rss": 19451904
+    }
+  ],
+  "pass": true
+}

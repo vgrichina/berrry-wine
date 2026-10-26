@@ -1,0 +1,11 @@
+{
+  "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+  "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+  "fixtureSha256": "42406c99b32ade4b5039af4727e094c2f0470ceaaf1965c4602d4afe35897335",
+  "suppliedFixtureSha256": "dcf619fbe4fca841148f7da93225ad0797e34884848c4d397db9be09e9460544",
+  "productionDiff": "Only new savedDataFits scanner and restore predecode call; inspected Git parent/candidate diff. No stripped copy, regex replacement, slice, decoder or output-buffer allocation within scanner. Scalar scan bounds significant base64 characters and decoded byte length.",
+  "normalization": "Math.max(1, options.maxFileBytes || DEFAULT_MAX_BYTES). Falsy values use default2MiB, negative and positive sub-one values clamp1, numeric strings coerce and positive fractions retain fractional threshold. Existing normalization unchanged by repair. No claim of finite cap for arbitrary unsupported option values.",
+  "errorPolicy": "Overlimit is silent skip; malformed examined prefix logs per-record restore failure; early overlimit return need not inspect malformed suffix. Final decoded length check retained. Listing failure returns0; read/parse/URI/decoder failures isolated by per-record try/catch. Logger expected nonthrowing, unchanged.",
+  "runtime": "VM exported production attach; real Node WHATWG atob and real Buffer.from(base64), with decoder entry spies. Not a browser session.",
+  "parentComparison": "Existing exact baseline9PASS8FAIL reused; no new concern requiring another parent run."
+}

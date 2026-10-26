@@ -1,0 +1,18 @@
+{
+  "candidate": "69a838665969d09be78f3b6ba8f7f13ae49a7cf8",
+  "parent": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "tree": "ecbed7904c0b8d5ede6ca6a2ea1988eaa3e0a34d",
+  "pins": {
+    "lib/vfs-persistence.js": {
+      "sha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+      "bytes": 17416,
+      "blob": "f696cd2ec32e9aac0924f2b23590757497e4494a"
+    },
+    "test/vfs-persistence-bounded-restore-oct26.test.cjs": {
+      "sha256": "dcf619fbe4fca841148f7da93225ad0797e34884848c4d397db9be09e9460544",
+      "bytes": 5804,
+      "blob": "9072439b77d5444ce96cd9088f17605d07274415"
+    }
+  },
+  "donorEvidence": "20 committed payloads root rehashed; unchanged supplied receipts reused per assignment"
+}
