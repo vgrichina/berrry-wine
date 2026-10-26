@@ -1,0 +1,57 @@
+{
+  "status": "complete",
+  "commit": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "branch": "task/browser-key-focus-release-repair-oct26",
+  "base": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "remoteVerified": true,
+  "tests": [
+    {
+      "fixture": "final unchanged fixture",
+      "source": "baseline",
+      "result": "5 passed; 14 failed",
+      "exit": 1,
+      "evidence": "baseline-final.log"
+    },
+    {
+      "fixture": "final unchanged fixture",
+      "source": "repair",
+      "result": "19 passed; 0 failed",
+      "exit": 0,
+      "evidence": "repair-final.log"
+    }
+  ],
+  "sourceSHA256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05",
+  "fixtureSHA256": "9a71d7d4161c580d99d5ebb8fdbfaac484f810fe2d47f5ced113cad167acce1f",
+  "evidenceManifest": "/tmp/browser-key-focus-release-repair-oct26/repo/docs/reviews/browser-key-focus-release-oct26/evidence-manifest.json",
+  "verifiedCommittedEvidencePayloads": 11,
+  "opsManifest": "/tmp/browser-key-focus-release-repair-oct26/ops/artifact-manifest.json",
+  "rootRefsUnchanged": true,
+  "resources": {
+    "measuredFocused": {
+      "taskTree": 2158763,
+      "launcher": 218646,
+      "session": 694641,
+      "singleFutureLauncherSessionPositiveWALAllowance": 12582912,
+      "otherGrowth": 4194304,
+      "reserve": 8388608
+    },
+    "projectedBytes": 28237874,
+    "allocationBytes": 67108864,
+    "freeDiskBytes": 3679100928,
+    "pass": true
+  },
+  "remainingGates": [
+    "coordinator review",
+    "current-main integration/regression",
+    "browser/runtime qualification (not claimed)"
+  ],
+  "box": {
+    "id": null,
+    "state": "N/A; no runtime used",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "incidents": "incidents.txt",
+  "runtimeClaims": false,
+  "workersSpawned": 0
+}

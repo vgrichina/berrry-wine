@@ -1,0 +1,66 @@
+{
+  "fixture": "test/keyboard-focus-renderer-interoperability-oct26.test.cjs",
+  "fixtureSHA256": "0d00c5a1e3cd51222071308b0748b820bfa015c1d4af349a559982bdb9df7f3e",
+  "pins": [
+    {
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/renderer-input.js",
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "blob": "3d675a36eea398f0cb827a9c6d36235c228c81f2",
+      "bytes": 181033,
+      "sha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304"
+    },
+    {
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/mem-utils.js",
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "blob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    {
+      "revision": "0d2aaf964b31d4191a76cf84900d7433b4611fa4",
+      "path": "lib/region-map.generated.js",
+      "donor": "/tmp/renderer-side-polling-merged-branch-oct26/repo",
+      "blob": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    {
+      "revision": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+      "path": "lib/browser-input.js",
+      "donor": "/tmp/browser-key-focus-release-repair-oct26/repo",
+      "blob": "35348da4b45c0dbb9c43bc284ad0650f875c1f49",
+      "bytes": 62335,
+      "sha256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05"
+    }
+  ],
+  "groups": [
+    {
+      "label": "cancellation",
+      "command": [
+        "node",
+        "--max-old-space-size=16",
+        "test/keyboard-focus-renderer-interoperability-oct26.test.cjs"
+      ],
+      "environment": {
+        "BROWSER_INPUT_SOURCE": "/tmp/keyboard-focus-renderer-interoperability-oct26/ops/inputs/lib/browser-input.js",
+        "FOCUS_INTEROP_GROUP": "cancellation"
+      },
+      "exit": 1,
+      "summary": {
+        "group": "cancellation",
+        "pass": 8,
+        "fail": 4,
+        "bridgeSha256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05",
+        "rendererSha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304"
+      },
+      "expectedNegative": false,
+      "accepted": false,
+      "logSHA256": "280514e6ee6e370e417870740968d6c1b3d01ea16269dd1dc20a2437914449e9",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "fixtureSHA256": "0d00c5a1e3cd51222071308b0748b820bfa015c1d4af349a559982bdb9df7f3e",
+      "sourcePinsVerified": true
+    }
+  ]
+}

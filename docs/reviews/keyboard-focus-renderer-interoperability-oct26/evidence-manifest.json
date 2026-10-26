@@ -1,0 +1,162 @@
+{
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/RECOVERY.md": {
+    "bytes": 2631,
+    "sha256": "dbfad611709335d49f11db6a71ebc9fd9c713ca07886f9906922eaf8c768c3bc"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/REVIEW.md": {
+    "bytes": 2846,
+    "sha256": "bac19723a3fa64ae6b5cbb9aba4c0743bf81a6b04c52ff95e7899c8e3e89bcc2"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/borrowed-object-stores.json": {
+    "bytes": 1808,
+    "sha256": "1333a3f4c8b1c29e2183ee3e23e9496385862203192b6ff54410d459331ecedf"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/bridge-release.log": {
+    "bytes": 1261,
+    "sha256": "442709e52d12246e8a85670ce76064403407766d5b0dd6166da1cf3e71aa405e"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/bridge-release.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/browser-accepted-result.json": {
+    "bytes": 1794,
+    "sha256": "2ea1fbb110295778369bdc253fabbe9ec78ab1feee2ea7e9d3849d7ae277b841"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/cancellation.log": {
+    "bytes": 828,
+    "sha256": "d3d3f4a32a4e4d66a08a52485908a50059e22ea9bfac258a932c31f66dded619"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/cancellation.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/checkpoint.json": {
+    "bytes": 9054,
+    "sha256": "26f0b5ce35024940d4a1e48e58a96dabee23b0f2ae161c36467b21a137080ec3"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/common.py": {
+    "bytes": 4086,
+    "sha256": "cb1772d924f844ec96d00264fc99b80d58ff41ff0fb745209a5b82a9189dca52"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/configuration.json": {
+    "bytes": 511,
+    "sha256": "8fd2916d3cc7736fa37bcdcc411ef2128d03be8014fb27ad37ff53ca746761c8"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/dom-provenance.json": {
+    "bytes": 578,
+    "sha256": "e2eb8ded891d028be80db90693ffe8d7cc665a92bdcdc3bf39bb7557496e5c3a"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/focus-transfer.log": {
+    "bytes": 421,
+    "sha256": "c1a922f209db998c5f52f393654557f5c5565f2df0f4a5dfdc59691f7ac8f78d"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/focus-transfer.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/incidents.txt": {
+    "bytes": 592,
+    "sha256": "a033a24e028e66eb0c61bbb131e7fe434e0604e26669320e9b0e36b71c9f1811"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/initial-oracle-cancellation.log": {
+    "bytes": 5135,
+    "sha256": "280514e6ee6e370e417870740968d6c1b3d01ea16269dd1dc20a2437914449e9"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/initial-oracle-checkpoint.json": {
+    "bytes": 2638,
+    "sha256": "609b9ebff721dca8ae62fc03ff13aca5d449728eeaa3dd146d6e6ff4e24bcdf7"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/initial-oracle-fixture.cjs": {
+    "bytes": 14703,
+    "sha256": "0d00c5a1e3cd51222071308b0748b820bfa015c1d4af349a559982bdb9df7f3e"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/inputs/lib/browser-input.js": {
+    "bytes": 62335,
+    "sha256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/launch-verified.json": {
+    "bytes": 611,
+    "sha256": "0b7de97d0a96000099137429fbb47c1fac0667f7c4bfbc83fab0fc0ce3a19468"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/legacy-contract.log": {
+    "bytes": 269,
+    "sha256": "8a4cfb61153a1f21f9eaa0c9b1c53480428d45a18926e98a56a92fe0fc704c3a"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/legacy-contract.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/make-fixture.py": {
+    "bytes": 3023,
+    "sha256": "acec2b3ed1eb6b96dc0e178b0863e306f235a78c1688ee6f561e16dab4a1ecaf"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/ownership.log": {
+    "bytes": 485,
+    "sha256": "cf8d72aa48be2ece0b5b25230a85d6477350983f1df24eb347026c29e9c44bd1"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/ownership.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/package.py": {
+    "bytes": 8364,
+    "sha256": "b618732d45e0850976ff31a5bb0f00c4b21e4c47e992ca03d1a279bba970e675"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/renderer-accepted-result.json": {
+    "bytes": 17182,
+    "sha256": "532a8c40d8d45d77ef7436ac5fdead9387efcbe30ea2be585da414e345f7e15f"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/renderer-keyup.log": {
+    "bytes": 1261,
+    "sha256": "442709e52d12246e8a85670ce76064403407766d5b0dd6166da1cf3e71aa405e"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/renderer-keyup.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/resources-precheckout.json": {
+    "bytes": 3871,
+    "sha256": "fc39cbb7c58daf023b8d7f0f121b584bdac5bb1c5975f3a353a08478cc841451"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/resources-prepublication.json": {
+    "bytes": 5834,
+    "sha256": "a718ddb4eb3925623917a7856986e7169533368c666ae1e0cccb5ad7ac74dc4e"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/resources-pretests.json": {
+    "bytes": 4892,
+    "sha256": "9c0090f76f974bd56f0690adfcf1ecfb06ce08d0d94dfaa6e5a07adac0348556"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/reuse.json": {
+    "bytes": 399,
+    "sha256": "fe95232958f875eaea0b3678572f7ba5b80d611dd326d0c8011963794702e382"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/setup.py": {
+    "bytes": 3116,
+    "sha256": "dd07a1919838e945e71ab486498c8bd8fc2b5fa7e99561b2a96069fced4e0eed"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/sourcepins.json": {
+    "bytes": 1325,
+    "sha256": "de20866bdcacab18dd9535e5b1bd0064a82d1864e3ca7ecaf082fa9e3df1a1a5"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/standing-tools.json": {
+    "bytes": 631,
+    "sha256": "69dd0220fcb29765be82c2e2d3010a67dc473f4a87c94981a239abde29199101"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/test.py": {
+    "bytes": 2065,
+    "sha256": "f5008f0f480e91ea050e086e30aa390bccc4019188fd4a3c6e85856de1711187"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/timeline.log": {
+    "bytes": 418,
+    "sha256": "445e2ad0165830c1427f70a6aa7ee5dad16c93ed9d1837e2382725d4a8900592"
+  },
+  "docs/reviews/keyboard-focus-renderer-interoperability-oct26/evidence/timeline.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "test/keyboard-focus-renderer-interoperability-oct26.test.cjs": {
+    "bytes": 15037,
+    "sha256": "3258b65b0225746c2d3e05df9e391826196fc8818a114682f0a8fab6cf98ca16"
+  }
+}

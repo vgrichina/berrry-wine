@@ -1,0 +1,12 @@
+{
+  "donor": "/tmp/browser-key-focus-release-repair-oct26/repo",
+  "revision": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "fixturePath": "test/browser-key-focus-release-oct26.test.cjs",
+  "fixtureSha256": "9a71d7d4161c580d99d5ebb8fdbfaac484f810fe2d47f5ced113cad167acce1f",
+  "copiedSegments": {
+    "DOM": "fb4da63049724afc0a703452400f5931449f48397db388b8f05d016aff0f9de6",
+    "timers": "41aca12376872cd86a201644b6204188c5f7ede10941427b99a7c31b016bb1ea",
+    "actions": "57377dc48d4e373a5055daf7f9dbfe356f63ff55e4ac026a4f59fdaa47b7ce3b"
+  },
+  "mockRendererCopied": false
+}

@@ -1,0 +1,13 @@
+PASS ShiftLeft blur releases actual delivery once
+PASS ShiftLeft hidden releases actual delivery once
+PASS ShiftRight blur releases actual delivery once
+PASS ShiftRight hidden releases actual delivery once
+PASS ControlLeft blur releases actual delivery once
+PASS ControlLeft hidden releases actual delivery once
+PASS ControlRight blur releases actual delivery once
+PASS ControlRight hidden releases actual delivery once
+PASS AltLeft blur releases actual delivery once
+PASS AltLeft hidden releases actual delivery once
+PASS AltRight blur releases actual delivery once
+PASS AltRight hidden releases actual delivery once
+{"group":"cancellation","pass":12,"fail":0,"bridgeSha256":"9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05","rendererSha256":"209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304"}
