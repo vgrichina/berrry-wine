@@ -1,0 +1,14 @@
+{
+  "node": {
+    "path": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "sha256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+    "version": "v24.22.1",
+    "standingBytes": 126879696
+  },
+  "chrome": {
+    "path": "/opt/google/chrome/chrome",
+    "sha256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97",
+    "version": "Google Chrome 151.0.7922.108",
+    "standingBytes": 508514200
+  }
+}

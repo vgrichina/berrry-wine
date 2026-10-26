@@ -1,0 +1,70 @@
+{
+  "operations.tar.gz": {
+    "bytes": 1081417,
+    "sha256": "de887d48a211aa33176f35cfd4749598f5aa6a44e2efb576dc4605011e212635"
+  },
+  "pins.json": {
+    "bytes": 62738,
+    "sha256": "fca5506a267714eedf6dab157acde3870801ddf7cb6c08f99f0c38b3877d9b76"
+  },
+  "checkpoint.json": {
+    "bytes": 909,
+    "sha256": "590ea67b439619a1fbb2407bc6c1eb692a52318023bad6efd29723032c62ec9a"
+  },
+  "remote-handback.json": {
+    "bytes": 3377,
+    "sha256": "adcc3cf746c574c6723ca5a14099bc57e3fc205e75ca569c5e6cba386fbd9c3b"
+  },
+  "production-parameterization.json": {
+    "bytes": 267,
+    "sha256": "bfc849ebbbea7dc9c1fe193806266d63b01464dd413d35b87fa81610bf97cd0d"
+  },
+  "local-after-integrity.json": {
+    "bytes": 68,
+    "sha256": "b052ed24191d26170947d690a063c8c7b3da24d0ebfa5fac36831659996ccd6c"
+  },
+  "admission-publication.json": {
+    "bytes": 907,
+    "sha256": "8a3ab0013f76c6f31917500e1b8adcb05c01bb96224d2f937af11798ab4dd041"
+  },
+  "cleanup.json": {
+    "bytes": 199,
+    "sha256": "e565825f7cc1d20076638d783f9dac014cf43fec210b4ee2ac03999a10c5a259"
+  },
+  "README.md": {
+    "bytes": 7587,
+    "sha256": "37770c5c28b3e3fe48ac513ab3d30b79de52238e4f0d69fc65fd739d71c262ee"
+  },
+  "remote-evidence-manifest.json": {
+    "bytes": 780,
+    "sha256": "289e07c9bbcaf1cb43955187154ea60e6b0f2e354a818c6a29316493ab8f6bcc"
+  },
+  "launch-configuration.json": {
+    "bytes": 860,
+    "sha256": "9f78f2461f49b0932b1202c7112c40b5130a2e3abeb3caba242f9bb9a44a3368"
+  },
+  "remote/executables.json": {
+    "bytes": 443,
+    "sha256": "efdead0e97548c4a47a56f2eae84560a2bbb5c03a73f7017524b05a0f371e05f"
+  },
+  "remote/integrity-after.json": {
+    "bytes": 219,
+    "sha256": "50d3bdd58a8b1148d59cbd0d83a1fbf0a10be091cd903ea339a1fcdaa5ad2557"
+  },
+  "remote/integrity-before.json": {
+    "bytes": 219,
+    "sha256": "50d3bdd58a8b1148d59cbd0d83a1fbf0a10be091cd903ea339a1fcdaa5ad2557"
+  },
+  "remote/remote-admission.json": {
+    "bytes": 2565,
+    "sha256": "96036e6c8ca457566bd1f83131272aefa59a99e71da10ebb72108d8beef4cb0a"
+  },
+  "remote/failure.json": {
+    "bytes": 199,
+    "sha256": "deb5c202327a0d0556eabaddb5922e7fa4666188f49b2e7a9455aa70762c5c24"
+  },
+  "remote/remote-run.py": {
+    "bytes": 6814,
+    "sha256": "f736d792ce1e926df98e8ba9d8b342e4381f3efc1edae610590670412d9c7b6f"
+  }
+}

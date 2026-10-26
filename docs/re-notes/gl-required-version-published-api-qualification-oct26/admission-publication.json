@@ -1,0 +1,34 @@
+{
+  "stage": "publication",
+  "charges": {
+    "/tmp/gl-required-version-published-api-qualification-oct26": 17039360,
+    "/home/user/wine-assembly/scratch/usage-watch/gl-required-version-published-api-qualification-oct26": 638976,
+    "sessions": 933888,
+    "positiveWALOnce": 0,
+    "futureArchiveGitPublication": 33554432,
+    "futureSessionEvents": 16777216,
+    "reserve": 8388608
+  },
+  "projection": 77332480,
+  "allocation": 134217728,
+  "peerRemaining": {
+    "alien-controller-terminal-failfast-repair-oct26": 58404864,
+    "enigma-reconciled-msg-independent-source-accept-oct26": 0
+  },
+  "projectedFree": 3075993600,
+  "floor": 2982150144,
+  "clients": [
+    {
+      "pid": 3315018,
+      "rss": 193794048
+    },
+    {
+      "pid": 3321840,
+      "rss": 196939776
+    }
+  ],
+  "remainingGrowthOnce": 280354816,
+  "memAvailable": 3821801472,
+  "required": 1354096640,
+  "passAdmission": true
+}

@@ -1,0 +1,33 @@
+{
+  "memAvailable": 7247003648,
+  "required": 3087007744,
+  "measuredCompleteDisk": 67575808,
+  "prospectiveProfile": 268435456,
+  "prospectiveTemporary": 67108864,
+  "prospectiveEvidence": 8388608,
+  "prospectivePublication": 16777216,
+  "reserve": 8388608,
+  "projectedDisk": 436674560,
+  "diskCap": 1073741824,
+  "projectedFree": 48596721664,
+  "accounting": {
+    "samples": 1,
+    "peakProjected": 436674560,
+    "minFree": 48596721664,
+    "minMem": 7243137024
+  },
+  "environment": {
+    "PATH": "/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "NODE_PATH": "/tmp/gl-required-version-published-api-qualification-oct26/deps/node_modules",
+    "CHROME": "/opt/google/chrome/chrome",
+    "TMPDIR": "/tmp/gl-required-version-published-api-qualification-oct26/tmp",
+    "PALETTE_GPU_SOURCE_ROOT": "/tmp/gl-required-version-published-api-qualification-oct26/source",
+    "PALETTE_GPU_EVIDENCE": "/tmp/gl-required-version-published-api-qualification-oct26/ops/test-result.json",
+    "PALETTE_BROWSER_RESOURCE_CONFIG": "{\"explicitTaskAccounting\":\"2048MiB physical runtime;1024MiB complete remote task disk\"}",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "passAdmission": true
+}

@@ -1,0 +1,24 @@
+{
+  "success": false,
+  "outcome": "BLOCKED_REQUIRED_DIRECTORY_NAMESPACE_ACCOUNTING",
+  "candidate": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+  "tree": "fc94bfbe7ed6e499bf3d8a55bdb7d88e9dbc4bd2",
+  "WebGL1": "0/42",
+  "WebGL2": "0/42",
+  "testInvoked": false,
+  "nodeStartupInvoked": false,
+  "compileInvoked": false,
+  "moduleSHA256Required": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "moduleSHA256Observed": null,
+  "browserBackend": null,
+  "remaining": [
+    "coordinator disposition of production accounting defect",
+    "exact Node startup and sole unchanged framebuffer qualification after repair/authorization"
+  ],
+  "priorFailure": "95297d0d272eefd0cc0d5e15f9c16f30961e7d37 startup1083064320B>1073741824B preserved",
+  "box": "bx_bwf4vkqh",
+  "boxLeftRunning": true,
+  "expiry": "2026-10-27T00:32:36.350Z",
+  "shutdownOwner": "coordinator",
+  "gameplayClaim": false
+}
