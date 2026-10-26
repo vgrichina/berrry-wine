@@ -1,0 +1,51 @@
+{
+  "candidateId": "reflexive-ricochet-xtreme",
+  "agentId": "codex:01a17a20-b191-7d93-9811-bc508344d199",
+  "startedAt": "2026-10-26T21:33:16.561511+00:00",
+  "finishedAt": "2026-10-26T21:34:44.294293+00:00",
+  "outcome": "timeout",
+  "route": "production startup to bounded loading observation",
+  "appId": "ricochet_xtreme",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/ricochet-current-gameplay-api-oct26/capture-bounds.cjs",
+    "/tmp/ricochet-current-gameplay-api-oct26/runner/test/run.js",
+    "--app=ricochet_xtreme",
+    "--no-build",
+    "--wasm=/tmp/ricochet-current-gameplay-api-oct26/canonical.wasm",
+    "--dll-seed=IFC22.dll",
+    "--no-close",
+    "--stuck-after=0",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=85",
+    "--control=8128",
+    "--frozen"
+  ],
+  "build": {
+    "commit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "environment": {
+    "box": "bx_ex22dvm8",
+    "node": "24.22.1",
+    "renderer": "headless pure-JS canvas",
+    "viewport": "640x480"
+  },
+  "summary": "Pinned startup recovery succeeded.900 batches realguest; inspected splash and loading700/900. No PlayGame/AnonymousGuest/round/gameplay. First500-batch controller request timed out then completed without replay; normal quit87.73s near90s budget. Bounded observation, not proof hang/gamefailure.",
+  "verification": "reviewed",
+  "screenshots": [
+    "menu.png",
+    "frame700.png",
+    "final900.png"
+  ],
+  "artifacts": [
+    "output.log",
+    "terminal.json",
+    "command.json",
+    "first-controller-failure.json"
+  ]
+}

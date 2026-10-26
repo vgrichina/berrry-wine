@@ -1,0 +1,71 @@
+{
+  "publication": {
+    "commit": "2dff1d978c0085a7de284825c6fadac4a69a29a4",
+    "branch": "task/ricochet-pinned-startup-gameplay-api-oct26",
+    "remoteRef": "2dff1d978c0085a7de284825c6fadac4a69a29a4\trefs/heads/task/ricochet-pinned-startup-gameplay-api-oct26",
+    "evidence": "/tmp/ricochet-pinned-startup-gameplay-api-oct26/repo/docs/re-notes/ricochet-pinned-startup-gameplay-api-oct26",
+    "dashboard": "/home/user/wine-assembly/scratch/runs/20261026T213316Z-reflexive-ricochet-xtreme-pinned-startup",
+    "gitDataLimit": 536870912,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "finalAccounting": {
+    "at": 1793050573.0822773,
+    "stage": "final",
+    "charges": {
+      "remote": 54149120,
+      "priorLocal": 2510848,
+      "ownLocalGit": 1974272,
+      "launcherEvents": 217088,
+      "session": 1380352,
+      "positiveWALOnce": 737280,
+      "future": 33554432,
+      "reserve": 8388608,
+      "incremental": 0
+    },
+    "total": 102912000,
+    "cap": 201326592,
+    "memAvailable": 4001435648,
+    "aggregateRAMMinimum": 2550136832,
+    "hostFree": 3659776000,
+    "projectedFree": 3626221568,
+    "hostFloor": 2982150144,
+    "cacheCountedOnce": true,
+    "walBaseline": "/tmp/ricochet-current-gameplay-api-oct26/ops/sqlite-baseline.json",
+    "residentClientsAlreadyDeducted": true,
+    "pass": true
+  },
+  "evidenceCheck": {
+    "exit": 0,
+    "stdout": "{\n  \"runs\": 1,\n  \"errors\": [],\n  \"missing\": [],\n  \"invalid\": []\n}\n",
+    "stderr": ""
+  },
+  "handback": {
+    "commandId": "cmd_07zlgeux4ilx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:36:08.727Z",
+    "launcherFailed": false,
+    "noticedMs": 13,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T21:36:08.605Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ownedLive\": [], \"box\": \"bx_ex22dvm8\", \"state\": \"RUNNING APIexec\", \"moduleSHA256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"apiTableSHA256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\", \"shutdownOwner\": \"coordinator\", \"expiry\": \"2026-10-26T22:31:02.949Z\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "ownedBoardWatchersStopped": [],
+  "coordinatorWatch": {
+    "pid": 3114879,
+    "start": "109576975",
+    "state": "S",
+    "untouched": true
+  },
+  "publicationHelperIncidents": [
+    "Initial global substring cleanup scan falsely matched ancestor Python command text; retained first-api-rejection.json. Corrected to exact filename-bearing argv tokens plus owned PID/starttime identities; passed.",
+    "First local edit encoded a NUL in a remote-code string; local subprocess rejected before dispatch. Removed unused assertion and retained corrected recipe. No guest attempt or platform bypass."
+  ]
+}

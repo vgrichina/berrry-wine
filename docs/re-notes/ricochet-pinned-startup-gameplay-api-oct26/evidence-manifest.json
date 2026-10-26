@@ -5,6 +5,11 @@
     "sha256": "cbaa0a28291f6ef875e766348bed250df48884ddf5e683a530f6bce7b16312c0"
   },
   {
+    "path": "closeout.json",
+    "bytes": 3014,
+    "sha256": "bf319f65c6f8511795b022008ca50e3a14ac12bdefd64262d260316c9c68d8d7"
+  },
+  {
     "path": "command.json",
     "bytes": 826,
     "sha256": "5d952bfe38ca641de3e20c30e4f26c131241f76efb1851a6c49ccad39fef0fd9"
@@ -43,6 +48,11 @@
     "path": "receipt.json",
     "bytes": 10013,
     "sha256": "187aa59a587d6adb3af7cb726de37ba7c26633dbaf28a1e3419d6bf3b8c5b896"
+  },
+  {
+    "path": "run-result.json",
+    "bytes": 1766,
+    "sha256": "22c38317a414dff8e3402c42260b30b1407f675373960ca8626ef9fa135d04ce"
   },
   {
     "path": "supplementary-startup-manifest.json",
