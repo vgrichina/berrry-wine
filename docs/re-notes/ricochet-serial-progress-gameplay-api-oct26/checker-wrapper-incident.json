@@ -1,0 +1,15 @@
+{
+  "firstFailure": "Initial checker-startup wrapper killed before receipt because parentRUSAGE_SELF highwater exceeded256MiB; test itself was not shown to exceed physical allowance.",
+  "rawInheritedParentRusagePeak": 360988672,
+  "actualParentVmHWM": 18694144,
+  "actualParentVmRSS": 18694144,
+  "reason": "Linux rusage highwater inherited across exec; /proc self VmHWM resets for current exec. Parent counter was not a current Python physical peak.",
+  "fix": "Guard current process RSS+sampled child peak, retain raw inherited rusage as historical metadata. No RLIMIT_DATA/AS raised.",
+  "rawStartupReceipt": "checker-startup.json",
+  "rawCheckerReceipt": "evidence-check.json",
+  "rawParentPeakRSSKeyQualification": "Raw parentPeakRSS key contains inheritedRusageHistoricalHighwater, not observed current Python memory.",
+  "correctedTestAggregateConservative": 67121152,
+  "physicalCap": 268435456,
+  "helperPhysicalCap": 67108864,
+  "checkerPassReused": true
+}

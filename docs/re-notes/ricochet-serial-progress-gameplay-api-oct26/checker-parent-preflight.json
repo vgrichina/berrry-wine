@@ -1,0 +1,21 @@
+{
+  "status": "Name:\tpython3\nUmask:\t0002\nState:\tR (running)\nTgid:\t3186729\nNgid:\t0\nPid:\t3186729\nPPid:\t3178965\nTracerPid:\t0\nUid:\t1000\t1000\t1000\t1000\nGid:\t1000\t1000\t1000\t1000\nFDSize:\t128\nGroups:\t986 988 1000 \nNStgid:\t3186729\nNSpid:\t3186729\nNSpgid:\t3186729\nNSsid:\t3186729\nKthread:\t0\nVmPeak:\t   27220 kB\nVmSize:\t   27096 kB\nVmLck:\t       0 kB\nVmPin:\t       0 kB\nVmHWM:\t   18256 kB\nVmRSS:\t   18256 kB\nRssAnon:\t    7572 kB\nRssFile:\t   10684 kB\nRssShmem:\t       0 kB\nVmData:\t    8468 kB\nVmStk:\t     132 kB\nVmExe:\t    2956 kB\nVmLib:\t    6004 kB\nVmPTE:\t      88 kB\nVmSwap:\t       0 kB\nHugetlbPages:\t       0 kB\nCoreDumping:\t0\nTHP_enabled:\t1\nuntag_mask:\t0xffffffffffffffff\nThreads:\t1\nSigQ:\t0/31546\nSigPnd:\t0000000000000000\nShdPnd:\t0000000000000000\nSigBlk:\t0000000000000000\nSigIgn:\t0000000001301000\nSigCgt:\t0000000000000002\nCapInh:\t0000000000000000\nCapPrm:\t0000000000000000\nCapEff:\t0000000000000000\nCapBnd:\t000001ffffffffff\nCapAmb:\t0000000000000000\nNoNewPrivs:\t0\nSeccomp:\t0\nSeccomp_filters:\t0\nSpeculation_Store_Bypass:\tthread vulnerable\nSpeculationIndirectBranch:\tconditional enabled\nCpus_allowed:\tf\nCpus_allowed_list:\t0-3\nMems_allowed:\t00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000000,00000001\nMems_allowed_list:\t0\nvoluntary_ctxt_switches:\t1\nnonvoluntary_ctxt_switches:\t10\nx86_Thread_features:\t\nx86_Thread_features_locked:\t\n",
+  "rusage": [
+    0.024995999999999997,
+    0.016996999999999998,
+    352528,
+    0,
+    0,
+    0,
+    4300,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    10
+  ]
+}

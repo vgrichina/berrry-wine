@@ -1,0 +1,13 @@
+{
+  "box": "bx_ex22dvm8",
+  "state": "RUNNING APIexec confirmed",
+  "guestCutoff": "2026-10-26T21:50:00Z",
+  "handback": "2026-10-26T21:55:00Z",
+  "shutdown": "2026-10-26T22:00:00Z",
+  "expiry": "2026-10-26T22:31:02.949Z",
+  "shutdownOwner": "coordinator",
+  "watchPID": 3176727,
+  "live": false,
+  "untouched": true,
+  "qualification": "Previously live initial and21:44:53; absent final. Coordinator must verify coverage."
+}

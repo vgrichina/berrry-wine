@@ -1,0 +1,9 @@
+{
+  "commit": "54ebc4093832aae685ad075536c8407663fa558d",
+  "branch": "task/ricochet-serial-progress-gameplay-api-oct26",
+  "exactRemoteRef": "54ebc4093832aae685ad075536c8407663fa558d\trefs/heads/task/ricochet-serial-progress-gameplay-api-oct26",
+  "evidence": "/tmp/ricochet-serial-progress-gameplay-api-oct26/repo/docs/re-notes/ricochet-serial-progress-gameplay-api-oct26",
+  "dashboard": "/home/user/wine-assembly/scratch/runs/ricochet-serial-progress-gameplay-api-oct26",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "gitDATAChildOnly": 536870912
+}
