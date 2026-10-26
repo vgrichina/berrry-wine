@@ -19,7 +19,11 @@ class Scalars extends Model {
   eval(n, l) {
     if(n[0] === 'i32.shl') return (this.eval(n[1], l) << this.eval(n[2], l)) >>> 0;
     if(n[0] === 'i32.lt_u') return +((this.eval(n[1],l)>>>0) < (this.eval(n[2],l)>>>0));
-    if(n[0].includes('load') || n[0].includes('store') || n[0] === 'memory.size') throw Error('forbidden memory access');
+    if(this.captureFixture && n[0] === 'memory.size') return 8192;
+    if(this.captureFixture && n[0] === 'region.end') {assert.equal(n[1],'$DIRECT_WINDOW');return 0x8000000;}
+    if(this.captureFixture && n[0] === 'i32.shr_u') return this.eval(n[1],l) >>> this.eval(n[2],l);
+    if(n[0] === 'call' && n[1].startsWith('$mne_')) return this.run(n[1],n.slice(2).map(x=>this.eval(x,l)));
+    if(!this.captureFixture && (n[0].includes('load') || n[0].includes('store') || n[0] === 'memory.size')) throw Error('forbidden memory access');
     return super.eval(n, l);
   }
 }
@@ -147,6 +151,45 @@ test('fixture using published frozen observations stays explicitly synthetic and
       $msc_fault:0,$msc_active:0,$msc_capped:0,$msc_result:0,$msc_parks:6,
       $code16:modes&1,$block_exec_enabled:modes&2,$uop_enabled:modes&4});
     model.run('$mne_complete');assert.equal(model.g.$mne_status,modes?5:2);
+  }
+});
+test('published status5/event0 fixture cannot expose sentinel guest errno/caller as captured zeros',()=>{
+  reset(1<<3); // Explicit fabricated return mismatch, NOT a claim about the authentic cause.
+  const guestErrno=0x4102000,guestCaller=0x74ffc54;
+  model.mem.set(guestErrno,0x13579bdf);model.mem.set(guestCaller,0x2468ace1);
+  const memory=[...model.mem];model.run('$mne_complete');
+  assert.equal(model.g.$mne_status,5);assert.equal(model.g.$mne_event,0);
+  assert.equal(model.g.$mne_errno,0);assert.equal(model.g.$mne_caller,0);
+  assert.notEqual(model.g.$mne_errno,model.mem.get(guestErrno));assert.notEqual(model.g.$mne_caller,model.mem.get(guestCaller));
+  assert.deepEqual([...model.mem],memory);assert.equal(decodeRejection(native(),snapshot()).predicate,'select-return');
+  const first={...native(),...snapshot()};model.g.$msc_ret=a.selectRet;model.g.$msc_fault=1;
+  model.run('$mne_complete');assert.deepEqual({...native(),...snapshot()},first);
+  model.mem.delete(guestErrno);model.mem.delete(guestCaller);
+});
+test('source completion-to-CALL-to-RET captures zero and distinct sentinels; post-capture hooks preserve them',()=>{
+  // This evaluator exercises emitted WAT only; these are invented memory values.
+  for(const errno of [0,0x13579bdf]){
+    reset();model.captureFixture=true;
+    try{
+      const post=0x74ffb30,ptr=0x4102000,entry=0x52e430,caller=0x2468ace1;
+      Object.assign(model.g,{$image_base:0x400000,$GUEST_BASE:0x12000,$msc_pre:post-24,$msc_post:post});
+      model.run('$mne_complete');assert.equal(model.g.$mne_status,2);assert.equal(model.g.$mne_event,1);
+      model.mem.set(116,post);model.mem.set(120,0);model.mem.set(128,entry);model.g.$eip=a.selectRet;
+      model.run('$mne_call',[a.successor,entry,7]);assert.equal(model.g.$mne_status,3);assert.equal(model.g.$mne_event,2);
+      const wa=ga=>(ga-0x400000+0x12000)>>>0;
+      model.mem.set(100,ptr);model.mem.set(wa(ptr),errno);model.mem.set(wa(post+0x124),caller);
+      model.mem.set(wa(post+0x128),0x4103000);model.mem.set(wa(post+0x12c),0x76543210);model.g.$eip=a.successor;
+      model.run('$mne_return',[0x52e435]);
+      const n=native(),d=snapshot();assert.equal(n.status,4);assert.equal(n.event,3);
+      assert.equal(n.errno,errno);assert.equal(n.caller,caller);assert.equal(n.socketSet,0x4103000);assert.equal(n.timeout,0x76543210);
+      assert.equal(decodeRejection(n,d),null);assert(Object.values(d).every(v=>v===0));
+      // Rejection-after-capture is unreachable by existing status guards. Even
+      // newly failing mode/fault predicates and changed memory cannot overwrite it.
+      model.g.$msc_fault=1;model.g.$code16=1;model.mem.set(wa(ptr),0xdeadbeef);
+      for(const [name,args]of [['$mne_complete',[]],['$mne_call',[0,0,0]],['$mne_return',[0]],['$start',[]]]){
+        model.run(name,args);assert.deepEqual(native(),n);assert.deepEqual(snapshot(),d);
+      }
+    }finally{model.captureFixture=false;}
   }
 });
 console.log(JSON.stringify({passed:groups,failureCombinations:511,sourceASTOnly:true,authenticRejectionCause:'UNKNOWN',nativeQualification:false}));
