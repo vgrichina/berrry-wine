@@ -1,0 +1,232 @@
+TAP version 13
+# Subtest: Shift left first worker=false buffered=false
+ok 1 - Shift left first worker=false buffered=false
+  ---
+  duration_ms: 2.283441
+  type: 'test'
+  ...
+# Subtest: Shift left first worker=false buffered=true
+ok 2 - Shift left first worker=false buffered=true
+  ---
+  duration_ms: 0.253937
+  type: 'test'
+  ...
+# Subtest: Shift left first worker=true buffered=false
+ok 3 - Shift left first worker=true buffered=false
+  ---
+  duration_ms: 0.21841
+  type: 'test'
+  ...
+# Subtest: Shift left first worker=true buffered=true
+ok 4 - Shift left first worker=true buffered=true
+  ---
+  duration_ms: 0.122007
+  type: 'test'
+  ...
+# Subtest: Shift right first worker=false buffered=false
+ok 5 - Shift right first worker=false buffered=false
+  ---
+  duration_ms: 0.132819
+  type: 'test'
+  ...
+# Subtest: Shift right first worker=false buffered=true
+ok 6 - Shift right first worker=false buffered=true
+  ---
+  duration_ms: 0.109395
+  type: 'test'
+  ...
+# Subtest: Shift right first worker=true buffered=false
+ok 7 - Shift right first worker=true buffered=false
+  ---
+  duration_ms: 3.40375
+  type: 'test'
+  ...
+# Subtest: Shift right first worker=true buffered=true
+ok 8 - Shift right first worker=true buffered=true
+  ---
+  duration_ms: 0.117281
+  type: 'test'
+  ...
+# Subtest: Shift autorepeat is owned once and unmatched release is harmless
+ok 9 - Shift autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.236964
+  type: 'test'
+  ...
+# Subtest: Shift numeric lifecycle release clears both owners and permits fresh input
+ok 10 - Shift numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.259736
+  type: 'test'
+  ...
+# Subtest: Shift numeric-only CLI repeat/release and location-only ownership
+ok 11 - Shift numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.189294
+  type: 'test'
+  ...
+# Subtest: Control left first worker=false buffered=false
+ok 12 - Control left first worker=false buffered=false
+  ---
+  duration_ms: 0.151195
+  type: 'test'
+  ...
+# Subtest: Control left first worker=false buffered=true
+ok 13 - Control left first worker=false buffered=true
+  ---
+  duration_ms: 0.108422
+  type: 'test'
+  ...
+# Subtest: Control left first worker=true buffered=false
+ok 14 - Control left first worker=true buffered=false
+  ---
+  duration_ms: 0.100009
+  type: 'test'
+  ...
+# Subtest: Control left first worker=true buffered=true
+ok 15 - Control left first worker=true buffered=true
+  ---
+  duration_ms: 0.079088
+  type: 'test'
+  ...
+# Subtest: Control right first worker=false buffered=false
+ok 16 - Control right first worker=false buffered=false
+  ---
+  duration_ms: 0.050064
+  type: 'test'
+  ...
+# Subtest: Control right first worker=false buffered=true
+ok 17 - Control right first worker=false buffered=true
+  ---
+  duration_ms: 0.040997
+  type: 'test'
+  ...
+# Subtest: Control right first worker=true buffered=false
+ok 18 - Control right first worker=true buffered=false
+  ---
+  duration_ms: 0.035718
+  type: 'test'
+  ...
+# Subtest: Control right first worker=true buffered=true
+ok 19 - Control right first worker=true buffered=true
+  ---
+  duration_ms: 0.046087
+  type: 'test'
+  ...
+# Subtest: Control autorepeat is owned once and unmatched release is harmless
+ok 20 - Control autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.046187
+  type: 'test'
+  ...
+# Subtest: Control numeric lifecycle release clears both owners and permits fresh input
+ok 21 - Control numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.043501
+  type: 'test'
+  ...
+# Subtest: Control numeric-only CLI repeat/release and location-only ownership
+ok 22 - Control numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.066543
+  type: 'test'
+  ...
+# Subtest: Alt left first worker=false buffered=false
+ok 23 - Alt left first worker=false buffered=false
+  ---
+  duration_ms: 0.07954
+  type: 'test'
+  ...
+# Subtest: Alt left first worker=false buffered=true
+ok 24 - Alt left first worker=false buffered=true
+  ---
+  duration_ms: 0.090601
+  type: 'test'
+  ...
+# Subtest: Alt left first worker=true buffered=false
+ok 25 - Alt left first worker=true buffered=false
+  ---
+  duration_ms: 0.093655
+  type: 'test'
+  ...
+# Subtest: Alt left first worker=true buffered=true
+ok 26 - Alt left first worker=true buffered=true
+  ---
+  duration_ms: 0.065283
+  type: 'test'
+  ...
+# Subtest: Alt right first worker=false buffered=false
+ok 27 - Alt right first worker=false buffered=false
+  ---
+  duration_ms: 0.058108
+  type: 'test'
+  ...
+# Subtest: Alt right first worker=false buffered=true
+ok 28 - Alt right first worker=false buffered=true
+  ---
+  duration_ms: 0.045084
+  type: 'test'
+  ...
+# Subtest: Alt right first worker=true buffered=false
+ok 29 - Alt right first worker=true buffered=false
+  ---
+  duration_ms: 0.105808
+  type: 'test'
+  ...
+# Subtest: Alt right first worker=true buffered=true
+ok 30 - Alt right first worker=true buffered=true
+  ---
+  duration_ms: 0.075401
+  type: 'test'
+  ...
+# Subtest: Alt autorepeat is owned once and unmatched release is harmless
+ok 31 - Alt autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.10656
+  type: 'test'
+  ...
+# Subtest: Alt numeric lifecycle release clears both owners and permits fresh input
+ok 32 - Alt numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.082084
+  type: 'test'
+  ...
+# Subtest: Alt numeric-only CLI repeat/release and location-only ownership
+ok 33 - Alt numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.091601
+  type: 'test'
+  ...
+# Subtest: Alt ownership preserves system-key context and Ctrl+Alt suppression
+ok 34 - Alt ownership preserves system-key context and Ctrl+Alt suppression
+  ---
+  duration_ms: 0.283241
+  type: 'test'
+  ...
+# Subtest: Alt alone toggles menu once on last release; F10 family is unchanged
+ok 35 - Alt alone toggles menu once on last release; F10 family is unchanged
+  ---
+  duration_ms: 0.163908
+  type: 'test'
+  ...
+# Subtest: resetting the physical map retires ownership without changing SetKeyboardState
+ok 36 - resetting the physical map retires ownership without changing SetKeyboardState
+  ---
+  duration_ms: 0.178506
+  type: 'test'
+  ...
+# Subtest: press latch, ordinary repeat and release ordering remain intact
+ok 37 - press latch, ordinary repeat and release ordering remain intact
+  ---
+  duration_ms: 0.256681
+  type: 'test'
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 64.865005

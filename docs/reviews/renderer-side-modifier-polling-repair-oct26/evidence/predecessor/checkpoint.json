@@ -1,0 +1,30 @@
+{
+  "candidateBase": "9148ceb18768955f647130c2e936228429892477",
+  "sourceSha256": "f76dc7ed21d93bd54ca032882a9e3e816e93f1860fd113c8986372cc82e25957",
+  "testSha256": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+  "baselineSha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+  "groups": {
+    "physical-modifiers": {
+      "baseline": "36 fail / 1 pass",
+      "repair": "37 pass",
+      "baselineEvidence": "baseline-final.tap",
+      "repairEvidence": "repair-final.tap"
+    },
+    "existing-keyboard-message-lparam": {
+      "result": "PASS",
+      "evidence": "legacy-result.txt",
+      "fixtureSha256": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+    }
+  },
+  "remaining": [
+    "coordinator review and current-main reconciliation"
+  ],
+  "blockers": [],
+  "incidents": [
+    "Initial combined instruction/search output exceeded 8192-byte excerpt target, later reads narrowed; no secret captured.",
+    "Sparse checkout reported 20 missing unrelated parent blobs; recovered 16352 bytes from immutable donor loose objects before commit.",
+    "First repaired run passed 34/35; menu-state test expected undefined rather than inactive boolean. Corrected assertion and retained first log."
+  ],
+  "candidateSha": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "remoteVerified": true
+}

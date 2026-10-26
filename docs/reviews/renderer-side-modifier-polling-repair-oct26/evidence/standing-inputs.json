@@ -1,0 +1,13 @@
+{
+  "node": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "version": "v24.18.1"
+  },
+  "donorObjects": "readonly /tmp/renderer-modifier-independent-accept-oct26/repo/.git/objects (416872 standing bytes); copied regular loose leaves counted in isolated git",
+  "flatAlternate": "readonly /tmp/render-elision-independent-integrate-oct26/ops/flat (607909 standing bytes)",
+  "projectedPublicationIncrementBytes": 2000000,
+  "projectedTotalPeakLimitBytes": 67108864,
+  "noRuntimeMountArgv": []
+}

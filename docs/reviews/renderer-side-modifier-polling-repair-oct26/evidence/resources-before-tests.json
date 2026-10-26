@@ -1,0 +1,531 @@
+{
+  "phase": "before-tests",
+  "focusedManifest": [
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/run-legacy.cjs",
+      "bytes": 416
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/configuration.json",
+      "bytes": 431
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/baseline-renderer-input.js",
+      "bytes": 177069
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/resources-admission.json",
+      "bytes": 1739
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/baseline-loader.cjs",
+      "bytes": 422
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/resources.py",
+      "bytes": 2049
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/ops/legacy-keyboard-message-lparam.cjs",
+      "bytes": 4342
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/description",
+      "bytes": 73
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/config",
+      "bytes": 228
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/HEAD",
+      "bytes": 65
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/index",
+      "bytes": 1516318
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/lib/renderer-input.js",
+      "bytes": 178996
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-modifier-independent-accept.test.cjs",
+      "bytes": 7515
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs",
+      "bytes": 7962
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/logs/HEAD",
+      "bytes": 225
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/applypatch-msg.sample",
+      "bytes": 478
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/post-update.sample",
+      "bytes": 189
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/commit-msg.sample",
+      "bytes": 896
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-receive.sample",
+      "bytes": 544
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/update.sample",
+      "bytes": 3650
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-rebase.sample",
+      "bytes": 4898
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-commit.sample",
+      "bytes": 1643
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-applypatch.sample",
+      "bytes": 424
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/hooks/pre-push.sample",
+      "bytes": 1374
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/info/sparse-checkout",
+      "bytes": 66
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/info/exclude",
+      "bytes": 240
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/76/ee549b47cf5690057f6fe4c518a062757266cd",
+      "bytes": 548
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/28/af0806e3221a46bdd9c2514b9437e00a3792f4",
+      "bytes": 2665
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/98/3fad3c459ff851ef9ce140fb0a00fe8f2c7a48",
+      "bytes": 4564
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/55/14fd846d7534bd836b4a1b5c67b342203e05eb",
+      "bytes": 1020
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/85/4d5b71cf38569840c102ffb0897a5a93ce29c9",
+      "bytes": 4561
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/a3/9979d400b7ba3cc46b4269cb713bdac848e660",
+      "bytes": 101
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/1c/892f30656a619bed8c22c40b96c4db47d62ca2",
+      "bytes": 107
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/7e/db283cc0bde895277fd729b47470eab931882f",
+      "bytes": 283
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/57/784c065b1a48394da27ea093d7dfa212fd09f2",
+      "bytes": 729
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/bc/dda8c93a2129d853bfdcabc058feb538504e29",
+      "bytes": 261
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/7a/f4c8f328647a7e8578c2d0544aa024db4f740c",
+      "bytes": 699
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/24/4c3157e3f351502dd66626db062feb6a2ac9ce",
+      "bytes": 5131
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/24/ddc7fb22b2b02ed2950ce6c32b69b09dd2e68b",
+      "bytes": 60159
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/43/aa00e9481d200cb88ab4a8575e59e2388850f0",
+      "bytes": 1912
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/3a/435ed4b475393829d8b86efb167e1a362e8a01",
+      "bytes": 72825
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/d4/c6519327cc719aa915175dff06c6b2d6c395f8",
+      "bytes": 72784
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/9a/4aa0e2c66a95188e5d3775591e461a239e935d",
+      "bytes": 465
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/a4/d4b20e98365ff7c6eca07468cd19f1d8373682",
+      "bytes": 338
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ac/5b0224dcd78c049c555857e73178396cc5d6a7",
+      "bytes": 2175
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ac/be495adf11915089da58482f0df36e08ae273e",
+      "bytes": 234
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/3e/4b22f3330e121893d85fd1873788cdfbc6f163",
+      "bytes": 868
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/68/63034a8a488b793c492c508a1de8df185480f2",
+      "bytes": 72857
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/bd/cc7c47bce13b56aa12024baa64f429de3da4aa",
+      "bytes": 3363
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/2c/79c4e4d8af3dc51d5b8dc6baf75df869573196",
+      "bytes": 56
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f1/49e99b1d96dc01bf57a2eb508a21fb164e7c47",
+      "bytes": 1342
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/91/48ceb18768955f647130c2e936228429892477",
+      "bytes": 198
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/91/5c168d4c6f0f052b8e100fc90645eb4e83ccb7",
+      "bytes": 228
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/fb/91f021378369cdeab76a99fd82488c89e4a241",
+      "bytes": 1131
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/75/d238d443e9eb21abed87bdb61a41cc7d3e610f",
+      "bytes": 395
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/75/b78adf74a4f29e47dde356e68ba08b8c350ad0",
+      "bytes": 808
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/3b/6cf1fec98390fbb4ce03e40b1de69786e44a58",
+      "bytes": 270
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ea/de0dfaf9d62860c8c534c68dc86db94c217e99",
+      "bytes": 637
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/7b/69f4c3cc0d21b0b3112f82804a291ebb1d01cb",
+      "bytes": 1103
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f6/27f7a3313ec68839fea2b47221a97b46136aa8",
+      "bytes": 971
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/69/747314713f88a313dae0dfcad385a75d3846fc",
+      "bytes": 1178
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/69/c6043c7692dc14b11c12ac2f5a7165e85d5138",
+      "bytes": 199
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/4c/8ff12d9ea7c97b836a51d1e3ab3d7eadcc5fe8",
+      "bytes": 1606
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/9c/e8b8f25ae18d5d14eba5f0aeded872a4d44a06",
+      "bytes": 455
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/97/1c98edcf5e12e5419aef65956ef15263e71297",
+      "bytes": 2342
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/97/b0e73e8511c1c4c9b5db7ef8d4f2c9babe0903",
+      "bytes": 2518
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/40/63105be04eca84521d25e91bae25d939a4592d",
+      "bytes": 582
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/22/5ac7be99a123fe69f9057f74a7d82b8b31d262",
+      "bytes": 1916
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/67/b01162d74016f0f9f9915e1b07d7a81f942770",
+      "bytes": 195
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/cd/206fcf206b839d31df5d1dc9a0dab08b5c2967",
+      "bytes": 409
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/a0/c0f2004217223b270924a1e3033b2f9baa4e90",
+      "bytes": 311
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/34/f6bcea4b351da2181a1ab1e9329e7e4b574a7c",
+      "bytes": 2350
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f3/0fd35b64511ab53a869400af952923a29a6fff",
+      "bytes": 268
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f3/467c3bf52e8d952c0a1c69625f316c0efc8901",
+      "bytes": 1074
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/fc/cf1b7ae67e6e06e5f1e77d151d6ac8e861da67",
+      "bytes": 1897
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/8b/4fcef6e429149ba75ac1f2d0f0f09b5f0b1f7a",
+      "bytes": 89
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/8e/7e9c85ff9aeefcdc9427fe15882044eec510ed",
+      "bytes": 2970
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f0/4656e0ee8c195842c92c2ef1cc1795049c9146",
+      "bytes": 233
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f0/45bca50b0d8048d9b85604ef7249ac51ab1bf0",
+      "bytes": 165
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/3f/045bb423ee2e59bb1e4ffdd03e8b2b35d7f8bf",
+      "bytes": 1425
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ca/d458557a2feaf8bf8823cbbe3c93407c3cb3bd",
+      "bytes": 2016
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/info/alternates",
+      "bytes": 57
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/56/588019c65ed04fc36450fab889da882a23e3ea",
+      "bytes": 19667
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/4f/805542713909dd780e2243889efc9276c96d67",
+      "bytes": 2544
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/35/e2e35c140c4f493f95705c59fc37a1649bc3af",
+      "bytes": 336
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/23/564f9d50dc6e7412efd2e798edba6761d5092a",
+      "bytes": 2624
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ed/93b7e044a9cd24c0895dae48c3fc9d7917e1e1",
+      "bytes": 1779
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/99/c23f926ecc14e87f448cae32245c7722be37b2",
+      "bytes": 629
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/53/9147d7aa4a4946bdec0f1f0d087bac25cd49ae",
+      "bytes": 1604
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/ba/11a43becd949ee5cb7b9c5330511efc93f5852",
+      "bytes": 1361
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/d5/0325b67044eff4faaccae414a79f983c6bee2a",
+      "bytes": 225
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/80/8fa82d5e0d9bd402c4a084e64c8e8ebbcc1af9",
+      "bytes": 11592
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/b4/989358f1f400f92b27cec35f348fe81881d95e",
+      "bytes": 11593
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/a5/e09df2c3362555cf35a092056b64696253df5b",
+      "bytes": 645
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/5c/e2bbba6a80d387c8e90b94a438ffd1634c5799",
+      "bytes": 879
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/5c/0ad801162105c348b401ea39be31aadfec3f4d",
+      "bytes": 1607
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/11/151d9a805baf504ef5507d1b4deff48cbea972",
+      "bytes": 1109
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/b6/e75008b103f80ced318cd4ca7dafd632e8ab42",
+      "bytes": 3219
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/87/826534647601a87b98c924a565386e356dad1f",
+      "bytes": 105
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/87/6d5dfc2530ee1275541c69f607b598c10fee00",
+      "bytes": 166
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/64/4d22ca413971a4b23f9205915d26bf054abcee",
+      "bytes": 400
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/26/8697bde1e965064d77117754775b17f0647ca3",
+      "bytes": 288
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/26/647c1612c312d42311ea68267597cc59c612bd",
+      "bytes": 997
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/31/c36b96ae08245e38c60ba991a7d641e9007ccc",
+      "bytes": 794
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/96/a3f71f706e2668dde495a325c3a2aaa8227736",
+      "bytes": 1922
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/f4/d028ea1f4d869c1d5a7bb2a54f373cd85265db",
+      "bytes": 57
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/c5/809bbd62b557d4b958c842251c8cbde0453056",
+      "bytes": 5096
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/04/b8ab913c960742627334ea40fcc205b3386e04",
+      "bytes": 1646
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/5b/e7057a4349c9f5ef8f310205a4766b5b4de57d",
+      "bytes": 84
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/17/13b6dd6f5fe37324a911a3ab5f23d9760509c5",
+      "bytes": 2530
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/objects/92/4cafa25712fdd14be6a51042f754873b3541d8",
+      "bytes": 1331
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/refs/heads/task/renderer-side-modifier-polling-repair-oct26",
+      "bytes": 41
+    },
+    {
+      "path": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/.git/logs/refs/heads/task/renderer-side-modifier-polling-repair-oct26",
+      "bytes": 206
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-side-modifier-polling-repair-oct26/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-side-modifier-polling-repair-oct26/root-ref-digest.json",
+      "bytes": 196
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-side-modifier-polling-repair-oct26/events.jsonl",
+      "bytes": 92643
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T06-13-31-01a176d7-b847-7670-8b85-3363f884d8dc.jsonl",
+      "bytes": 344945
+    }
+  ],
+  "focusedBytes": 2778880,
+  "sharedWALSingleConservativeUpperBound": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 1602712
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4194192
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4247752
+    }
+  ],
+  "sharedWALBytes": 26442320,
+  "futureBytes": 12582912,
+  "reserveBytes": 8388608,
+  "projectedPeak": 50192720,
+  "limit": 67108864,
+  "freeBytes": 4502298624,
+  "freeAfterFuture": 4489715712,
+  "memAvailable": 2972528640,
+  "fleetCodexAndMainThreadRSS": 2853666816,
+  "memoryAfterClientAllowance": 2435657728,
+  "pass": true
+}

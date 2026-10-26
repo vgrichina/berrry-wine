@@ -1,0 +1,407 @@
+{
+  "phase": "final",
+  "focusedManifest": [
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/baseline.tap",
+      "bytes": 34151
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/legacy-result.txt",
+      "bytes": 93
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/checkpoint.json",
+      "bytes": 1255
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/run-legacy.cjs",
+      "bytes": 416
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/recovered-blobs.json",
+      "bytes": 1749
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/ls-remote.txt",
+      "bytes": 103
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/recovered-objects.json",
+      "bytes": 352
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/resources-publication.json",
+      "bytes": 12045
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/ls-remote.stderr",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/baseline-renderer-input.js",
+      "bytes": 177069
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/admission.json",
+      "bytes": 730
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/repair-final.tap",
+      "bytes": 6625
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/baseline-loader.cjs",
+      "bytes": 422
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/baseline-final.tap",
+      "bytes": 37460
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/push.log",
+      "bytes": 648
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/resources.py",
+      "bytes": 2055
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/board-watch.log",
+      "bytes": 6363
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/legacy-keyboard-message-lparam.cjs",
+      "bytes": 4342
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/repair.tap",
+      "bytes": 7082
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/ops/before-tests.json",
+      "bytes": 112
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/description",
+      "bytes": 73
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/config",
+      "bytes": 451
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/HEAD",
+      "bytes": 67
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/shallow",
+      "bytes": 41
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/index",
+      "bytes": 984713
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/COMMIT_EDITMSG",
+      "bytes": 63
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/lib/mem-utils.js",
+      "bytes": 13470
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/lib/region-map.generated.js",
+      "bytes": 36089
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/lib/renderer-input.js",
+      "bytes": 178996
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs",
+      "bytes": 7962
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/logs/HEAD",
+      "bytes": 427
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/applypatch-msg.sample",
+      "bytes": 478
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/post-update.sample",
+      "bytes": 189
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/commit-msg.sample",
+      "bytes": 896
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-receive.sample",
+      "bytes": 544
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/update.sample",
+      "bytes": 3650
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-rebase.sample",
+      "bytes": 4898
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-commit.sample",
+      "bytes": 1643
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-applypatch.sample",
+      "bytes": 424
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/hooks/pre-push.sample",
+      "bytes": 1374
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/info/sparse-checkout",
+      "bytes": 113
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/info/exclude",
+      "bytes": 240
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/76/ee549b47cf5690057f6fe4c518a062757266cd",
+      "bytes": 548
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/85/4d5b71cf38569840c102ffb0897a5a93ce29c9",
+      "bytes": 4561
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/57/784c065b1a48394da27ea093d7dfa212fd09f2",
+      "bytes": 729
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/bc/dda8c93a2129d853bfdcabc058feb538504e29",
+      "bytes": 261
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/7a/f4c8f328647a7e8578c2d0544aa024db4f740c",
+      "bytes": 699
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/24/ddc7fb22b2b02ed2950ce6c32b69b09dd2e68b",
+      "bytes": 60159
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/43/aa00e9481d200cb88ab4a8575e59e2388850f0",
+      "bytes": 1912
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/3a/435ed4b475393829d8b86efb167e1a362e8a01",
+      "bytes": 72825
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/d4/c6519327cc719aa915175dff06c6b2d6c395f8",
+      "bytes": 72784
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/2c/79c4e4d8af3dc51d5b8dc6baf75df869573196",
+      "bytes": 56
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/91/48ceb18768955f647130c2e936228429892477",
+      "bytes": 198
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/75/d238d443e9eb21abed87bdb61a41cc7d3e610f",
+      "bytes": 395
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/f6/27f7a3313ec68839fea2b47221a97b46136aa8",
+      "bytes": 971
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/69/747314713f88a313dae0dfcad385a75d3846fc",
+      "bytes": 1178
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/4c/8ff12d9ea7c97b836a51d1e3ab3d7eadcc5fe8",
+      "bytes": 1606
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/9c/e8b8f25ae18d5d14eba5f0aeded872a4d44a06",
+      "bytes": 455
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/97/b0e73e8511c1c4c9b5db7ef8d4f2c9babe0903",
+      "bytes": 2518
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/67/b01162d74016f0f9f9915e1b07d7a81f942770",
+      "bytes": 195
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/cd/206fcf206b839d31df5d1dc9a0dab08b5c2967",
+      "bytes": 409
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/f3/0fd35b64511ab53a869400af952923a29a6fff",
+      "bytes": 268
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/f3/467c3bf52e8d952c0a1c69625f316c0efc8901",
+      "bytes": 1074
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/f0/4656e0ee8c195842c92c2ef1cc1795049c9146",
+      "bytes": 233
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/info/alternates",
+      "bytes": 57
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/56/588019c65ed04fc36450fab889da882a23e3ea",
+      "bytes": 19667
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/ed/93b7e044a9cd24c0895dae48c3fc9d7917e1e1",
+      "bytes": 1779
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/99/c23f926ecc14e87f448cae32245c7722be37b2",
+      "bytes": 629
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/b4/989358f1f400f92b27cec35f348fe81881d95e",
+      "bytes": 11593
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/5c/e2bbba6a80d387c8e90b94a438ffd1634c5799",
+      "bytes": 879
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/5c/0ad801162105c348b401ea39be31aadfec3f4d",
+      "bytes": 1607
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/64/4d22ca413971a4b23f9205915d26bf054abcee",
+      "bytes": 400
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/26/8697bde1e965064d77117754775b17f0647ca3",
+      "bytes": 288
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/26/647c1612c312d42311ea68267597cc59c612bd",
+      "bytes": 997
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/f4/d028ea1f4d869c1d5a7bb2a54f373cd85265db",
+      "bytes": 57
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/c5/809bbd62b557d4b958c842251c8cbde0453056",
+      "bytes": 5096
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/04/b8ab913c960742627334ea40fcc205b3386e04",
+      "bytes": 1646
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/objects/92/4cafa25712fdd14be6a51042f754873b3541d8",
+      "bytes": 1331
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/refs/heads/task/renderer-physical-modifier-state-repair-oct26",
+      "bytes": 41
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/refs/remotes/origin/task/renderer-physical-modifier-state-repair-oct26",
+      "bytes": 41
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/logs/refs/heads/task/renderer-physical-modifier-state-repair-oct26",
+      "bytes": 406
+    },
+    {
+      "path": "/tmp/renderer-physical-modifier-state-repair-oct26/repo/.git/logs/refs/remotes/origin/task/renderer-physical-modifier-state-repair-oct26",
+      "bytes": 144
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-physical-modifier-state-repair-oct26/stderr.log",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-physical-modifier-state-repair-oct26/root-ref-digest.json",
+      "bytes": 196
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/renderer-physical-modifier-state-repair-oct26/events.jsonl",
+      "bytes": 268064
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T05-50-25-01a176c2-9175-72e3-8e88-b0228e719446.jsonl",
+      "bytes": 795661
+    }
+  ],
+  "focusedBytes": 2876211,
+  "sharedWALSingleConservativeUpperBound": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 1347272
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4194192
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4247752
+    }
+  ],
+  "sharedWALBytes": 26186880,
+  "futureBytes": 12582912,
+  "reserveBytes": 8388608,
+  "projectedPeak": 50034611,
+  "limit": 67108864,
+  "freeBytes": 4556111872,
+  "freeAfterFuture": 4543528960,
+  "memAvailable": 3265126400,
+  "fleetCodexAndMainThreadRSS": 3140526080,
+  "memoryAfterClientAllowance": 2728255488,
+  "pass": true
+}

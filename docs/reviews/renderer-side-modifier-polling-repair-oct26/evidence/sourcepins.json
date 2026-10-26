@@ -1,0 +1,18 @@
+{
+  "candidate": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "review": "69c6043c7692dc14b11c12ac2f5a7165e85d5138",
+  "baseline": "9148ceb18768955f647130c2e936228429892477",
+  "unchanged": {
+    "test/renderer-modifier-independent-accept.test.cjs": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf",
+    "test/renderer-physical-modifiers.test.cjs": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+    "lib/mem-utils.js": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "lib/region-map.generated.js": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+    "baseline-renderer-input.js": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "legacy-keyboard-message-lparam.cjs": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+  },
+  "testedSourceSha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+  "newTestSha256": "98ab85c8859f8ada4efd222f08abf4164f2b3b240f37837c3179607bd15db222",
+  "candidateSourceSha256": "f76dc7ed21d93bd54ca032882a9e3e816e93f1860fd113c8986372cc82e25957",
+  "baselineGitBlob": "7da1e2f5cf7e1e79959ca93134d84ea639c75073",
+  "legacyGitBlob": "a559ed1b60727d9227f341f0dd9a898f3d77bfdf"
+}

@@ -1,0 +1,1 @@
+Initial test attempts could not load sparse-excluded region-map.generated.js. Recovered two pinned dependency files from readonly donor after blob verification; original logs retained as setup-*. No behavior assertion ran in those attempts.

@@ -1,0 +1,950 @@
+TAP version 13
+# Subtest: Shift left first worker=false buffered=false
+not ok 1 - Shift left first worker=false buffered=false
+  ---
+  duration_ms: 5.466537
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: Shift left first worker=false buffered=true
+not ok 2 - Shift left first worker=false buffered=true
+  ---
+  duration_ms: 0.183563
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: Shift left first worker=true buffered=false
+not ok 3 - Shift left first worker=true buffered=false
+  ---
+  duration_ms: 0.133641
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift left first worker=true buffered=true
+not ok 4 - Shift left first worker=true buffered=true
+  ---
+  duration_ms: 0.097323
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift right first worker=false buffered=false
+not ok 5 - Shift right first worker=false buffered=false
+  ---
+  duration_ms: 0.12809
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift right first worker=false buffered=true
+not ok 6 - Shift right first worker=false buffered=true
+  ---
+  duration_ms: 0.086743
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift right first worker=true buffered=false
+not ok 7 - Shift right first worker=true buffered=false
+  ---
+  duration_ms: 0.08535
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift right first worker=true buffered=true
+not ok 8 - Shift right first worker=true buffered=true
+  ---
+  duration_ms: 0.057289
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift autorepeat is owned once and unmatched release is harmless
+not ok 9 - Shift autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.186019
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:65:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:72:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift numeric lifecycle release clears both owners and permits fresh input
+not ok 10 - Shift numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.342232
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:81:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    reset retires physical ownership
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:93:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift numeric-only CLI repeat/release and location-only ownership
+not ok 11 - Shift numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.530785
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:95:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:103:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control left first worker=false buffered=false
+not ok 12 - Control left first worker=false buffered=false
+  ---
+  duration_ms: 0.136726
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control left first worker=false buffered=true
+not ok 13 - Control left first worker=false buffered=true
+  ---
+  duration_ms: 0.10133
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control left first worker=true buffered=false
+not ok 14 - Control left first worker=true buffered=false
+  ---
+  duration_ms: 0.083726
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control left first worker=true buffered=true
+not ok 15 - Control left first worker=true buffered=true
+  ---
+  duration_ms: 0.061996
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control right first worker=false buffered=false
+not ok 16 - Control right first worker=false buffered=false
+  ---
+  duration_ms: 0.052558
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control right first worker=false buffered=true
+not ok 17 - Control right first worker=false buffered=true
+  ---
+  duration_ms: 0.052969
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control right first worker=true buffered=false
+not ok 18 - Control right first worker=true buffered=false
+  ---
+  duration_ms: 0.052287
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control right first worker=true buffered=true
+not ok 19 - Control right first worker=true buffered=true
+  ---
+  duration_ms: 0.0532
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control autorepeat is owned once and unmatched release is harmless
+not ok 20 - Control autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.077706
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:65:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:72:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control numeric lifecycle release clears both owners and permits fresh input
+not ok 21 - Control numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.082373
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:81:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    reset retires physical ownership
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:93:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control numeric-only CLI repeat/release and location-only ownership
+not ok 22 - Control numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.105598
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:95:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:103:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt left first worker=false buffered=false
+not ok 23 - Alt left first worker=false buffered=false
+  ---
+  duration_ms: 0.098405
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt left first worker=false buffered=true
+not ok 24 - Alt left first worker=false buffered=true
+  ---
+  duration_ms: 0.067377
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt left first worker=true buffered=false
+not ok 25 - Alt left first worker=true buffered=false
+  ---
+  duration_ms: 0.055063
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt left first worker=true buffered=true
+not ok 26 - Alt left first worker=true buffered=true
+  ---
+  duration_ms: 0.049153
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt right first worker=false buffered=false
+not ok 27 - Alt right first worker=false buffered=false
+  ---
+  duration_ms: 0.055224
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt right first worker=false buffered=true
+not ok 28 - Alt right first worker=false buffered=true
+  ---
+  duration_ms: 0.050955
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt right first worker=true buffered=false
+not ok 29 - Alt right first worker=true buffered=false
+  ---
+  duration_ms: 0.044182
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt right first worker=true buffered=true
+not ok 30 - Alt right first worker=true buffered=true
+  ---
+  duration_ms: 0.037991
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:34:9'
+  failureType: 'testCodeFailure'
+  error: |-
+    other physical side survives first release
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:46:18)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt autorepeat is owned once and unmatched release is harmless
+not ok 31 - Alt autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.084167
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:65:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:72:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt numeric lifecycle release clears both owners and permits fresh input
+not ok 32 - Alt numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.085951
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:81:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    reset retires physical ownership
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:93:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt numeric-only CLI repeat/release and location-only ownership
+not ok 33 - Alt numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.094889
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:95:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:103:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt ownership preserves system-key context and Ctrl+Alt suppression
+not ok 34 - Alt ownership preserves system-key context and Ctrl+Alt suppression
+  ---
+  duration_ms: 0.200927
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:114:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    256 !== 260
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 260
+  actual: 256
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:120:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt alone toggles menu once on last release; F10 family is unchanged
+not ok 35 - Alt alone toggles menu once on last release; F10 family is unchanged
+  ---
+  duration_ms: 0.102953
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:130:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    true !== false
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: false
+  actual: true
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:134:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: resetting the physical map retires ownership without changing SetKeyboardState
+ok 36 - resetting the physical map retires ownership without changing SetKeyboardState
+  ---
+  duration_ms: 0.227175
+  type: 'test'
+  ...
+# Subtest: press latch, ordinary repeat and release ordering remain intact
+not ok 37 - press latch, ordinary repeat and release ordering remain intact
+  ---
+  duration_ms: 0.17119
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:159:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    false !== true
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-physical-modifiers.test.cjs:168:10)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 1
+# fail 36
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66.912163

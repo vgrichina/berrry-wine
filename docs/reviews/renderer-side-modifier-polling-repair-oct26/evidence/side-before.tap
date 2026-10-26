@@ -1,0 +1,860 @@
+TAP version 13
+# Subtest: Shift side ownership public Left down / Left up first
+not ok 1 - Shift side ownership public Left down / Left up first
+  ---
+  duration_ms: 3.134787
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.start (node:internal/test_runner/test:1191:17)
+    startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17)
+  ...
+# Subtest: Shift side ownership public Left down / Right up first
+not ok 2 - Shift side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.216587
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3)
+  ...
+# Subtest: Shift side ownership public Right down / Left up first
+not ok 3 - Shift side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.136686
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift side ownership public Right down / Right up first
+not ok 4 - Shift side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.111889
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift peek, repeated query, repeat and fresh repress latches
+not ok 5 - Shift peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.200265
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:45:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:48:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift buffered side release follows message timeline, physical is immediate
+not ok 6 - Shift buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.267071
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:67:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    queued release must not retract earlier chord
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:75:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift generic numeric owner never invents side identity
+not ok 7 - Shift generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.404669
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:87:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:97:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift public numeric focus release resets queued sides and allows fresh press
+not ok 8 - Shift public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.202789
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:101:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:108:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Shift device reset and async override retain separate ownership
+not ok 9 - Shift device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.157125
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:116:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:121:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side ownership public Left down / Left up first
+not ok 10 - Control side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.219492
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side ownership public Left down / Right up first
+not ok 11 - Control side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.120867
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side ownership public Right down / Left up first
+not ok 12 - Control side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.091662
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control side ownership public Right down / Right up first
+not ok 13 - Control side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.066665
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control peek, repeated query, repeat and fresh repress latches
+not ok 14 - Control peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.066303
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:45:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:48:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control buffered side release follows message timeline, physical is immediate
+not ok 15 - Control buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.109206
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:67:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    queued release must not retract earlier chord
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:75:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control generic numeric owner never invents side identity
+not ok 16 - Control generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.134371
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:87:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:97:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control public numeric focus release resets queued sides and allows fresh press
+not ok 17 - Control public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.080372
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:101:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:108:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Control device reset and async override retain separate ownership
+not ok 18 - Control device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.05846
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:116:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:121:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side ownership public Left down / Left up first
+not ok 19 - Alt side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.106469
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side ownership public Left down / Right up first
+not ok 20 - Alt side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.083056
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side ownership public Right down / Left up first
+not ok 21 - Alt side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.066394
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt side ownership public Right down / Right up first
+not ok 22 - Alt side ownership public Right down / Right up first
+  ---
+  duration_ms: 3.247358
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:18:5'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+      [
+        32768,
+    -   32768,
+        0,
+    +   0
+      ]
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+    0: 32768
+    1: 32768
+    2: 0
+  actual:
+    0: 32768
+    1: 0
+    2: 0
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:26:14)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt peek, repeated query, repeat and fresh repress latches
+not ok 23 - Alt peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.157626
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:45:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:48:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt buffered side release follows message timeline, physical is immediate
+not ok 24 - Alt buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.189254
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:67:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    queued release must not retract earlier chord
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:75:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt generic numeric owner never invents side identity
+not ok 25 - Alt generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.160711
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:87:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:97:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt public numeric focus release resets queued sides and allows fresh press
+not ok 26 - Alt public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.108623
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:101:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 1
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 1
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:108:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: Alt device reset and async override retain separate ownership
+not ok 27 - Alt device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.05317
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:116:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    
+    0 !== 32768
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 32768
+  actual: 0
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-side-modifier-polling.test.cjs:121:12)
+    Test.runInAsyncScope (node:async_hooks:227:14)
+    Test.run (node:internal/test_runner/test:1325:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+    Test.postRun (node:internal/test_runner/test:1465:19)
+    Test.run (node:internal/test_runner/test:1390:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+  ...
+# Subtest: nonmodifier physical and async polling retain numeric key and latch
+ok 28 - nonmodifier physical and async polling retain numeric key and latch
+  ---
+  duration_ms: 0.289834
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 1
+# fail 27
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 58.910313

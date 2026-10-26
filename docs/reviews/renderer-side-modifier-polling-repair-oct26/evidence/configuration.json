@@ -1,0 +1,8 @@
+{
+  "copiedRegularObjectBytes": 270003,
+  "mountArgv": [],
+  "mountValidation": "not applicable: no mounts or guest command",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "candidate": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "base": "9148ceb18768955f647130c2e936228429892477"
+}

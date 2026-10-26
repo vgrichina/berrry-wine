@@ -1,0 +1,46 @@
+TAP version 13
+# node:internal/modules/cjs/loader:1520
+#   throw err;
+#   ^
+# Error: Cannot find module './region-map.generated'
+# Require stack:
+# - /tmp/renderer-side-modifier-polling-repair-oct26/repo/lib/renderer-input.js
+# - /tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-modifier-independent-accept.test.cjs
+#     at Module._resolveFilename (node:internal/modules/cjs/loader:1517:15)
+#     at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)
+#     at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)
+#     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)
+#     at Module._load (node:internal/modules/cjs/loader:1294:5)
+#     at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+#     at Module.require (node:internal/modules/cjs/loader:1617:12)
+#     at require (node:internal/modules/helpers:153:16)
+#     at Object.<anonymous> (/tmp/renderer-side-modifier-polling-repair-oct26/repo/lib/renderer-input.js:9:56)
+#     at Module._compile (node:internal/modules/cjs/loader:1871:14) {
+#   code: 'MODULE_NOT_FOUND',
+#   requireStack: [
+#     '/tmp/renderer-side-modifier-polling-repair-oct26/repo/lib/renderer-input.js',
+#     '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-modifier-independent-accept.test.cjs'
+#   ]
+# }
+# Node.js v24.18.1
+# Subtest: test/renderer-modifier-independent-accept.test.cjs
+not ok 1 - test/renderer-modifier-independent-accept.test.cjs
+  ---
+  duration_ms: 23.162909
+  type: 'test'
+  location: '/tmp/renderer-side-modifier-polling-repair-oct26/repo/test/renderer-modifier-independent-accept.test.cjs:1:1'
+  failureType: 'testCodeFailure'
+  exitCode: 1
+  signal: ~
+  error: 'test failed'
+  code: 'ERR_TEST_FAILURE'
+  ...
+1..1
+# tests 1
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27.237357

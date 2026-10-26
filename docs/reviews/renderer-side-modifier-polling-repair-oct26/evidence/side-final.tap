@@ -1,0 +1,178 @@
+TAP version 13
+# Subtest: Shift side ownership public Left down / Left up first
+ok 1 - Shift side ownership public Left down / Left up first
+  ---
+  duration_ms: 2.933469
+  type: 'test'
+  ...
+# Subtest: Shift side ownership public Left down / Right up first
+ok 2 - Shift side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.194535
+  type: 'test'
+  ...
+# Subtest: Shift side ownership public Right down / Left up first
+ok 3 - Shift side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.158537
+  type: 'test'
+  ...
+# Subtest: Shift side ownership public Right down / Right up first
+ok 4 - Shift side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.14945
+  type: 'test'
+  ...
+# Subtest: Shift peek, repeated query, repeat and fresh repress latches
+ok 5 - Shift peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.203532
+  type: 'test'
+  ...
+# Subtest: Shift buffered side release follows message timeline, physical is immediate
+ok 6 - Shift buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.208501
+  type: 'test'
+  ...
+# Subtest: Shift generic numeric owner never invents side identity
+ok 7 - Shift generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.17078
+  type: 'test'
+  ...
+# Subtest: Shift public numeric focus release resets queued sides and allows fresh press
+ok 8 - Shift public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.134723
+  type: 'test'
+  ...
+# Subtest: Shift device reset and async override retain separate ownership
+ok 9 - Shift device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.737232
+  type: 'test'
+  ...
+# Subtest: Control side ownership public Left down / Left up first
+ok 10 - Control side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.259917
+  type: 'test'
+  ...
+# Subtest: Control side ownership public Left down / Right up first
+ok 11 - Control side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.152316
+  type: 'test'
+  ...
+# Subtest: Control side ownership public Right down / Left up first
+ok 12 - Control side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.083597
+  type: 'test'
+  ...
+# Subtest: Control side ownership public Right down / Right up first
+ok 13 - Control side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.137668
+  type: 'test'
+  ...
+# Subtest: Control peek, repeated query, repeat and fresh repress latches
+ok 14 - Control peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.356668
+  type: 'test'
+  ...
+# Subtest: Control buffered side release follows message timeline, physical is immediate
+ok 15 - Control buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.120686
+  type: 'test'
+  ...
+# Subtest: Control generic numeric owner never invents side identity
+ok 16 - Control generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.054913
+  type: 'test'
+  ...
+# Subtest: Control public numeric focus release resets queued sides and allows fresh press
+ok 17 - Control public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.071354
+  type: 'test'
+  ...
+# Subtest: Control device reset and async override retain separate ownership
+ok 18 - Control device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.047809
+  type: 'test'
+  ...
+# Subtest: Alt side ownership public Left down / Left up first
+ok 19 - Alt side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.171342
+  type: 'test'
+  ...
+# Subtest: Alt side ownership public Left down / Right up first
+ok 20 - Alt side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.061075
+  type: 'test'
+  ...
+# Subtest: Alt side ownership public Right down / Left up first
+ok 21 - Alt side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.046716
+  type: 'test'
+  ...
+# Subtest: Alt side ownership public Right down / Right up first
+ok 22 - Alt side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.03718
+  type: 'test'
+  ...
+# Subtest: Alt peek, repeated query, repeat and fresh repress latches
+ok 23 - Alt peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.05339
+  type: 'test'
+  ...
+# Subtest: Alt buffered side release follows message timeline, physical is immediate
+ok 24 - Alt buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.071814
+  type: 'test'
+  ...
+# Subtest: Alt generic numeric owner never invents side identity
+ok 25 - Alt generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.042208
+  type: 'test'
+  ...
+# Subtest: Alt public numeric focus release resets queued sides and allows fresh press
+ok 26 - Alt public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.054872
+  type: 'test'
+  ...
+# Subtest: Alt device reset and async override retain separate ownership
+ok 27 - Alt device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.043101
+  type: 'test'
+  ...
+# Subtest: nonmodifier physical and async polling retain numeric key and latch
+ok 28 - nonmodifier physical and async polling retain numeric key and latch
+  ---
+  duration_ms: 0.139802
+  type: 'test'
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 66.973779

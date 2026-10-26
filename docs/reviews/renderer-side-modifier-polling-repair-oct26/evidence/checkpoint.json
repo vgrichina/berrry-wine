@@ -1,0 +1,55 @@
+{
+  "phase": "all-behavior-groups-complete",
+  "candidateParent": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "testedSourceSha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+  "fixtureHashes": {
+    "test/renderer-modifier-independent-accept.test.cjs": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf",
+    "test/renderer-physical-modifiers.test.cjs": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+    "lib/mem-utils.js": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "lib/region-map.generated.js": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+    "baseline-renderer-input.js": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "legacy-keyboard-message-lparam.cjs": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+  },
+  "newTestSha256": "98ab85c8859f8ada4efd222f08abf4164f2b3b240f37837c3179607bd15db222",
+  "completed": {
+    "independent-before.tap": [
+      23,
+      6
+    ],
+    "independent-baseline.tap": [
+      2,
+      27
+    ],
+    "supplied-before.tap": [
+      37,
+      0
+    ],
+    "supplied-baseline.tap": [
+      1,
+      36
+    ],
+    "side-before.tap": [
+      1,
+      27
+    ],
+    "independent-final.tap": [
+      29,
+      0
+    ],
+    "supplied-final.tap": [
+      37,
+      0
+    ],
+    "side-final.tap": [
+      28,
+      0
+    ]
+  },
+  "legacy": "before/final PASS",
+  "predecessorVerified": 23,
+  "remaining": [
+    "commit and exact remote verification",
+    "independent acceptance",
+    "separate current-main integration/runtime gates"
+  ]
+}
