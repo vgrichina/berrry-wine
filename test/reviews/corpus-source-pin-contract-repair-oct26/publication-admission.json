@@ -1,0 +1,35 @@
+{
+  "taskBytes": 1191916,
+  "launcherBytes": 209644,
+  "initialSharedWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 255472,
+    "/home/user/.codex/state_5.sqlite-wal": 4387832,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4128272
+  },
+  "currentSharedWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 354352,
+    "/home/user/.codex/state_5.sqlite-wal": 4387832,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4128272
+  },
+  "positiveSharedWALGrowthChargedOnce": 98880,
+  "measured": 1500440,
+  "publicationAndFutureGrowth": 8388608,
+  "reserve": 8388608,
+  "launcherFutureGrowth": 4194304,
+  "sharedWALFutureGrowth": 4194304,
+  "projected": 26666264,
+  "allocation": 67108864,
+  "initialCeiling": 62914560,
+  "hostFree": 4168400896,
+  "hostFloor": 2982150144,
+  "standingDonorObjects": 448522723,
+  "standingNodeBytes": 98932688,
+  "standingTHPS2Bytes": 39850365,
+  "verdict": "PASS"
+}

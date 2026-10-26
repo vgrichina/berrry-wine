@@ -1,0 +1,85 @@
+{
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly/test/test-cli-candidate-corpus.js",
+      "bytes": 11496,
+      "sha256": "afc23a12ce69edc1f84c83b5f6d9af99047fc984a040571549741facf42b5445"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/candidate-corpus/manifest.json",
+      "bytes": 180139,
+      "sha256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd"
+    },
+    {
+      "path": "/home/user/wine-assembly/tools/install-thps2-demo.js",
+      "bytes": 3995,
+      "sha256": "2a7cb13b1a75bbce36bb4322bab74d48fb3236f9f8748f848232f4ca2d722821"
+    },
+    {
+      "path": "/home/user/wine-assembly/docs/re-notes/thps2-demo.md",
+      "bytes": 4726,
+      "sha256": "f6d93b53e77b591a83e399d5ec9c3976c881e8a9f33ecc8ee299b8d2addec12b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/run.js",
+      "bytes": 676687,
+      "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+    }
+  ],
+  "immutableBase": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+  "fixtureIsDirtyUserData": true,
+  "memAvailable": 3025559552,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 401936384
+    },
+    {
+      "pid": 2901813,
+      "rss": 213839872
+    },
+    {
+      "pid": 2902821,
+      "rss": 3821568
+    }
+  ],
+  "prospectiveClientsAllowance": 1073741824,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "free": 4193456128,
+  "projected": 62914560,
+  "allocation": 67108864,
+  "reserveIncluded": 8388608,
+  "projectedComponents": {
+    "sparseGitAndCheckout": 8388608,
+    "fixture": 262144,
+    "evidenceAndPublication": 4194304,
+    "launcherLogsGrowth": 16777216,
+    "sharedWALPositiveGrowth": 8388608,
+    "futureGrowth": 14680064,
+    "reserve": 8388608
+  },
+  "standingDonorObjectsBytes": 4096,
+  "standingNode": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "initialWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 255472,
+    "/home/user/.codex/state_5.sqlite-wal": 4387832,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4128272
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mount": {
+    "argv": [],
+    "files": [],
+    "verdict": "not applicable: no guest or mounts in this task"
+  },
+  "incidents": [
+    "Initial read excerpts exceeded 8192 bytes; subsequent excerpts bounded. No ref listing captured."
+  ]
+}

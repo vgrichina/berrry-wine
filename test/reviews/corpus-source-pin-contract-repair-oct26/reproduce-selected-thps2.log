@@ -1,0 +1,19 @@
+AssertionError [ERR_ASSERTION]: baldurs-gate-interactive-demo keeps its exact Archive.org artifact and SHA-1
++ actual - expected
+
+  [
+    [
++     'https://archive.org/download/20230723_20230723_0858/Forgotten%20Realms%20Archives%20-%20Silver%20Edition%20%28USA%29%20%28Baldur%27s%20Gate%20Demo%29.zip',
++     'df6c2f77e4879bd25955a63d40e9b3a5bbc4c1b7'
+-     'https://archive.org/download/bg-demo/BG%20Demo.iso',
+-     '3796defce51a3e867aa216bc27f0be0689fdadf0'
+    ]
+  ]
+    at main (/tmp/corpus-source-pin-contract-repair-oct26/repo/test/test-cli-candidate-corpus.js:166:12)
+    at Object.<anonymous> (/tmp/corpus-source-pin-contract-repair-oct26/repo/test/test-cli-candidate-corpus.js:255:1)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49

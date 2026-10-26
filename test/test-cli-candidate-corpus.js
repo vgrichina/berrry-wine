@@ -152,8 +152,8 @@ async function main() {
       'e7caae4255e8ed570cef3a29642432c8d28ecdb9',
     ]],
     ['baldurs-gate-interactive-demo', [
-      'https://archive.org/download/bg-demo/BG%20Demo.iso',
-      '3796defce51a3e867aa216bc27f0be0689fdadf0',
+      'https://archive.org/download/20230723_20230723_0858/Forgotten%20Realms%20Archives%20-%20Silver%20Edition%20%28USA%29%20%28Baldur%27s%20Gate%20Demo%29.zip',
+      'df6c2f77e4879bd25955a63d40e9b3a5bbc4c1b7',
     ]],
     ['baldurs-gate-chapters-1-2-demo', [
       'https://archive.org/download/20230723_20230723_0858/Baldur%27s%20Gate%20-%20Chapters%20I%20%26%20II%20%28USA%29%20%28Demo%29.zip',
@@ -168,6 +168,23 @@ async function main() {
     assert.deepStrictEqual(candidate.cli.vfsInclude, ['**/*'],
       `${id} mounts the complete extracted companion-file tree`);
   }
+  const interactive = manifest.candidates.find(candidate =>
+    candidate.id === 'baldurs-gate-interactive-demo');
+  assert.strictEqual(fixtureId(interactive), 'baldurs-gate-interactive-demo',
+    'Baldur\'s Gate interactive demo keeps its isolated local fixture identity');
+  assert.strictEqual(interactive.packages[0].type, 'archive',
+    'Baldur\'s Gate interactive demo extracts its pinned Silver Edition ZIP');
+  assert.deepStrictEqual(interactive.executables, ['installed-extracted/MinimumData/BGDemo.exe'],
+    'Baldur\'s Gate interactive demo launches the preserved CD executable in the MinimumData tree');
+  assert.deepStrictEqual(interactive.postExtract.slice(0, 3), [
+    {
+      type: 'extractRawMode1Cd',
+      image: 'Forgotten Realms Archives - Silver Edition (USA) (Baldur\'s Gate Demo).bin',
+      into: 'cd',
+    },
+    { type: 'unshield', cab: 'cd/DATA1.CAB', into: 'installed-extracted', group: 'MinimumData' },
+    { type: 'copyFile', from: 'cd/BGDEMO.EXE', into: 'installed-extracted/MinimumData/BGDemo.exe' },
+  ], 'Baldur\'s Gate interactive demo keeps its Silver Edition data-track, cabinet and executable identity');
   const chapters = manifest.candidates.find(candidate =>
     candidate.id === 'baldurs-gate-chapters-1-2-demo');
   assert(chapters.postExtract.some(step => step.type === 'extractRawMode1Cd'),

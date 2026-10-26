@@ -1,0 +1,67 @@
+[
+  {
+    "path": "/home/user/wine-assembly/test/test-cli-candidate-corpus.js",
+    "bytes": 11496,
+    "sha256": "afc23a12ce69edc1f84c83b5f6d9af99047fc984a040571549741facf42b5445"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/candidate-corpus/manifest.json",
+    "bytes": 180139,
+    "sha256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd"
+  },
+  {
+    "path": "/home/user/wine-assembly/tools/install-thps2-demo.js",
+    "bytes": 3995,
+    "sha256": "2a7cb13b1a75bbce36bb4322bab74d48fb3236f9f8748f848232f4ca2d722821"
+  },
+  {
+    "path": "/home/user/wine-assembly/docs/re-notes/thps2-demo.md",
+    "bytes": 4726,
+    "sha256": "f6d93b53e77b591a83e399d5ec9c3976c881e8a9f33ecc8ee299b8d2addec12b"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/run.js",
+    "bytes": 676687,
+    "sha256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/anet.inf",
+    "bytes": 271,
+    "sha256": "6be953d053748a5e258f11160f6518671bc5a9289bb208e18974c9e840ced4b4"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/binkw32.dll",
+    "bytes": 286208,
+    "sha256": "1fd7ef7873c8a3be7e2f127b306d0d24d7d88e20cf9188894eff87b5af0d495f"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/demo readme.rtf",
+    "bytes": 21608,
+    "sha256": "ab128d620fa698df3426fc2850a1b3f334c248f9fed0bd18d85492eb29b70711"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/demo.pkr",
+    "bytes": 34272358,
+    "sha256": "a68e9f3c2ee9a4e783185712561743c2a1325a007677d2d388cf646948f7b566"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/ltix30.dat",
+    "bytes": 3758864,
+    "sha256": "a246aa248185faec1d71dcc751629c41e1d082284a21b490300fa71d794b86f2"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe",
+    "bytes": 1359930,
+    "sha256": "fe5b66dd0a14bf5f3e5b00aceeeda9e1da165c7274a83a22fd1cb106e03d4b26"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/unwise.exe",
+    "bytes": 149504,
+    "sha256": "49ef36bd01b8ebf38c7b807a5fb44cbaf47c9d4efa883b01c41494c61ae4a2e2"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/unwise.ini",
+    "bytes": 29,
+    "sha256": "251b86129f00020616f194f13c3094a67b7412320c857b115e16189c1184134f"
+  }
+]

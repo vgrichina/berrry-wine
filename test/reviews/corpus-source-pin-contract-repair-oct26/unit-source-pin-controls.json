@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=192",
+    "test/cli-corpus-source-pin.test.js"
+  ],
+  "cwd": "/tmp/corpus-source-pin-contract-repair-oct26/repo",
+  "exitCode": 0,
+  "seconds": 1.2637537671253085,
+  "outputBytes": 1529,
+  "sha256": "7bd35f6332322c2645ff7f89d45b76d9bda6b5e0c19ed733804be132ce73ad03",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  },
+  "nodeOptions": "--max-old-space-size=192",
+  "memAvailable": 2869129216,
+  "measuredClients": [
+    {
+      "pid": 265632,
+      "rss": 17158144
+    },
+    {
+      "pid": 1789179,
+      "rss": 47841280
+    },
+    {
+      "pid": 2901813,
+      "rss": 207683584
+    },
+    {
+      "pid": 2903914,
+      "rss": 205062144
+    },
+    {
+      "pid": 2904102,
+      "rss": 204636160
+    },
+    {
+      "pid": 2904238,
+      "rss": 207527936
+    },
+    {
+      "pid": 2905670,
+      "rss": 206397440
+    }
+  ],
+  "prospectiveAllowance": 0,
+  "materializedReservedWorkers": [
+    2903914,
+    2904102,
+    2904238,
+    2905670
+  ],
+  "nodePhysicalAllowance": 268435456
+}

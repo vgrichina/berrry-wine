@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=192",
+    "-e",
+    "const fs=require(\"fs\"); console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,nodeOptions:process.env.NODE_OPTIONS,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),startup:\"PASS\"}));"
+  ],
+  "cwd": "/tmp/corpus-source-pin-contract-repair-oct26/repo",
+  "exitCode": 0,
+  "seconds": 0.255437227897346,
+  "outputBytes": 1705,
+  "sha256": "68955e442a6e2c5a2019aca93d0aa344f6cddbf589acc47bd6d84b7fe1c5b53a",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  },
+  "nodeOptions": "--max-old-space-size=192"
+}

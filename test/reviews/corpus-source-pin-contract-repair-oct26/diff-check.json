@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--check"
+  ],
+  "cwd": "/tmp/corpus-source-pin-contract-repair-oct26/repo",
+  "exitCode": 0,
+  "seconds": 0.017566773807629943,
+  "outputBytes": 0,
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  },
+  "nodeOptions": "--max-old-space-size=192",
+  "memAvailable": 3773702144,
+  "measuredClients": [
+    {
+      "pid": 265632,
+      "rss": 18432000
+    },
+    {
+      "pid": 1789179,
+      "rss": 57901056
+    },
+    {
+      "pid": 2901813,
+      "rss": 206778368
+    },
+    {
+      "pid": 2903914,
+      "rss": 207671296
+    },
+    {
+      "pid": 2904102,
+      "rss": 203059200
+    },
+    {
+      "pid": 2904238,
+      "rss": 208457728
+    },
+    {
+      "pid": 2905670,
+      "rss": 202530816
+    }
+  ],
+  "prospectiveAllowance": 0,
+  "materializedReservedWorkers": [
+    2903914,
+    2904102,
+    2904238,
+    2905670
+  ],
+  "nodePhysicalAllowance": 268435456
+}

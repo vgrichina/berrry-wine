@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=192",
+    "test/test-cli-candidate-corpus.js",
+    "--id=thps2-demo",
+    "--dry-run"
+  ],
+  "cwd": "/tmp/corpus-source-pin-contract-repair-oct26/repo",
+  "exitCode": 1,
+  "seconds": 0.03607623791322112,
+  "outputBytes": 1097,
+  "sha256": "b2ebee21c1cc9d32657b233605d78169546546d46bc3742dfcded5d544904d89",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  },
+  "nodeOptions": "--max-old-space-size=192"
+}

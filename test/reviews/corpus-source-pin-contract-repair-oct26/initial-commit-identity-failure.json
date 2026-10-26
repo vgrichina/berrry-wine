@@ -1,0 +1,60 @@
+{
+  "argv": [
+    "git",
+    "commit",
+    "-m",
+    "test: align corpus source pin with authorized Silver Edition demo"
+  ],
+  "cwd": "/tmp/corpus-source-pin-contract-repair-oct26/repo",
+  "exitCode": 128,
+  "seconds": 0.01386445201933384,
+  "outputBytes": 348,
+  "sha256": "a94cb3bb64d4cd7cf40053b4e5da610a9ea0221329b5a2202df5cfa8599e2a79",
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "capture": 2097152,
+    "gitOnlyData": 536870912
+  },
+  "nodeOptions": "--max-old-space-size=192",
+  "memAvailable": 2769186816,
+  "measuredClients": [
+    {
+      "pid": 265632,
+      "rss": 17158144
+    },
+    {
+      "pid": 1789179,
+      "rss": 47845376
+    },
+    {
+      "pid": 2901813,
+      "rss": 207921152
+    },
+    {
+      "pid": 2903914,
+      "rss": 204840960
+    },
+    {
+      "pid": 2904102,
+      "rss": 204095488
+    },
+    {
+      "pid": 2904238,
+      "rss": 205455360
+    },
+    {
+      "pid": 2905670,
+      "rss": 203972608
+    }
+  ],
+  "prospectiveAllowance": 0,
+  "materializedReservedWorkers": [
+    2903914,
+    2904102,
+    2904238,
+    2905670
+  ],
+  "nodePhysicalAllowance": 268435456
+}

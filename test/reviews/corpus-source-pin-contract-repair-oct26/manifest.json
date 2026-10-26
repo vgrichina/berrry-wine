@@ -1,0 +1,147 @@
+{
+  "base": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+  "branch": "task/corpus-source-pin-contract-repair-oct26",
+  "scope": [
+    "test/test-cli-candidate-corpus.js",
+    "test/cli-corpus-source-pin.test.js",
+    "test/reviews/corpus-source-pin-contract-repair-oct26/"
+  ],
+  "sourceSHA256": "e8046f77b7fad166c81d48f43fe3b2ea5f2e3643e8dd905de364ac53081206b0",
+  "testSHA256": "32a9f2c1fd85dabfd5111b18afdcb6e2659552bdc6562468dfae89ad41018a7f",
+  "immutableManifest": {
+    "revision": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+    "path": "test/candidate-corpus/manifest.json",
+    "bytes": 161178,
+    "sha256": "25d9dc55241ad3e80b42d71986c4cf147e4e09c2c1370190d14fd0402b4cf4eb",
+    "testedAsCurrentFixture": false
+  },
+  "suppliedManifest": {
+    "path": "/home/user/wine-assembly/test/candidate-corpus/manifest.json",
+    "bytes": 180139,
+    "sha256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd",
+    "dirtyUserData": true,
+    "readonlyOriginal": true,
+    "committed": false
+  },
+  "result": "PASS pure source-pin repair only",
+  "controls": {
+    "positiveSelection": 4,
+    "rejectingMutations": 18,
+    "total": 22,
+    "receipt": "unit-source-pin-controls.json"
+  },
+  "actualSelectedTHPS2": "PASS final-selected-thps2.json: 1 ready/local, 0 blocked, 0 skipped, 0 harness failures",
+  "firstFailure": "reproduce-selected-thps2.json: exit1 exact old ISO assertion before selection",
+  "incidents": [
+    "Initial inspection excerpts exceeded 8192 bytes; subsequent excerpts bounded. No full ref listing captured.",
+    "Final selected-THPS2 preflight stopped before execution when four future client reservations had materialized and were counted twice. Exact PIDs reconciled against initial receipt; dynamic live RSS plus remaining reservations restored without changing limits. See resource-reconciliation.json.",
+    "Focused controls rerun only after source/fixture identity strengthening, real-exit probe correction, corrected admission, and final unit-test naming. Earlier passing receipts preserved outside checkout.",
+    "Initial commit failed before creating a commit because fresh isolated Git repository had no author identity. Donor configured identity read-only verified as Codex/codex@users.noreply.github.com and applied only to intended commit with Git -c; no global/donor config edited."
+  ],
+  "accessDenials": [],
+  "remaining": [
+    "independent acceptance and any coordinator-owned integration against current supplied fixture",
+    "gameplay/runtime acceptance is outside this pure source test task"
+  ],
+  "box": {
+    "id": null,
+    "state": "not assigned; no box contacted",
+    "expiry": null,
+    "lifecycleOwner": "coordinator"
+  },
+  "runtimeActions": [],
+  "payloads": {
+    "README.md": {
+      "bytes": 3847,
+      "sha256": "d0997af0a88abc7bce1722a0f6b4cb33dfbc58b367b1c4926c653c5717542f9f"
+    },
+    "admission.json": {
+      "bytes": 2751,
+      "sha256": "000359d7539c49ac085231c9c627e745a6b2405454790716234c3390efc8dfde"
+    },
+    "checkpoint.json": {
+      "bytes": 1430,
+      "sha256": "1f2e17d5eb96d17218519ff5d05babd384798da2eeaf9af0ac4367a18e186d3b"
+    },
+    "diff-check.json": {
+      "bytes": 1060,
+      "sha256": "b09c8f5d9d824b776e94df6c98ddfa0a785f4198fe9f90cb0a512859e5629d8d"
+    },
+    "diff-check.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "final-input-pins.json": {
+      "bytes": 2513,
+      "sha256": "183b3362aebd94a3fb51a654d323e644d398d88cc109e592135f5d8a405badd2"
+    },
+    "final-selected-thps2.json": {
+      "bytes": 1156,
+      "sha256": "06134831bfb750e2a0782263ec9a01f93a676167f6d6a4746441027b3ecc8fc7"
+    },
+    "final-selected-thps2.log": {
+      "bytes": 150,
+      "sha256": "e9fbdb1918ad86503b047fa021dac17fa4ab557e16801767971e83cbc9063e81"
+    },
+    "fixture.json": {
+      "bytes": 344,
+      "sha256": "3d73114cd0f949dfeab1767704c585af8638a5ca8f3bc21817808ec154d54ff6"
+    },
+    "initial-commit-identity-failure.json": {
+      "bytes": 1133,
+      "sha256": "3a5501521fc4ca3929c3c76a75a31b1b17e9199217035ca585c3385a542d536b"
+    },
+    "initial-commit-identity-failure.log": {
+      "bytes": 348,
+      "sha256": "a94cb3bb64d4cd7cf40053b4e5da610a9ea0221329b5a2202df5cfa8599e2a79"
+    },
+    "node-startup.json": {
+      "bytes": 693,
+      "sha256": "fd56ef6bcc5883da2699944065390c87645806d3e96362c4770cf3d32eaab182"
+    },
+    "node-startup.log": {
+      "bytes": 1705,
+      "sha256": "68955e442a6e2c5a2019aca93d0aa344f6cddbf589acc47bd6d84b7fe1c5b53a"
+    },
+    "publication-admission.json": {
+      "bytes": 1219,
+      "sha256": "ea01e3b749ac807226eb695923c8f27f2250890ac701e30198882018afab1278"
+    },
+    "reproduce-selected-thps2.json": {
+      "bytes": 540,
+      "sha256": "6b290680849149d8d1eefaa71925131ff03fd6cc29a9e9222e4c2ffefeced962"
+    },
+    "reproduce-selected-thps2.log": {
+      "bytes": 1097,
+      "sha256": "b2ebee21c1cc9d32657b233605d78169546546d46bc3742dfcded5d544904d89"
+    },
+    "resource-reconciliation.json": {
+      "bytes": 580,
+      "sha256": "b58904e156668af17ddf4a7e1817e668f1faa9bf83ccf796d8485e4a664b7629"
+    },
+    "root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "supervise.py": {
+      "bytes": 3102,
+      "sha256": "d0a96ce1a0a5f446711ea2f32bed9e696c3c87f824c5f418c80c3bc9ab1e88b6"
+    },
+    "syntax-cli.json": {
+      "bytes": 1131,
+      "sha256": "506b18a9060fd6cbfad04d1267575177757b5b24d7355c4f1ecb099a252a70b2"
+    },
+    "syntax-cli.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "unit-source-pin-controls.json": {
+      "bytes": 1118,
+      "sha256": "251aadebeaf06469eb4a2f3bab5f866bc22cae729ee991e10e2a74c1941238e2"
+    },
+    "unit-source-pin-controls.log": {
+      "bytes": 1529,
+      "sha256": "7bd35f6332322c2645ff7f89d45b76d9bda6b5e0c19ed733804be132ce73ad03"
+    }
+  }
+}

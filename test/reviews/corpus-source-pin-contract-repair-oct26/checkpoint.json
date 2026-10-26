@@ -1,0 +1,26 @@
+{
+  "base": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+  "candidateSourceSHA256": "e8046f77b7fad166c81d48f43fe3b2ea5f2e3643e8dd905de364ac53081206b0",
+  "fixtureSHA256": "212be4a27b33cbd8f675fdef80d13bbea45d3d81aa8e3e643a26edbde6e924bd",
+  "completed": {
+    "nodeStartup": "PASS node-startup.json",
+    "originalSelectedTHPS2": "EXPECTED FAIL reproduce-selected-thps2.json: exact stale URL/SHA1 assertion",
+    "contractControls": "PASS 22 checks unit-source-pin-controls.json",
+    "selectedTHPS2": "PASS final-selected-thps2.json: 1 local, 0 blocked/skipped/harness",
+    "focusedSyntax": "PASS syntax-cli.json and syntax-controls.json",
+    "diffWhitespace": "PASS diff-check.json",
+    "inputPins": "PASS 13 relevant original root inputs final-input-pins.json",
+    "review": "PASS staged scope, source/test/fixture identities and 21 payload seals; staged-check.json"
+  },
+  "remaining": [
+    "commit/push/exact remote verification"
+  ],
+  "blockers": [],
+  "regressionSHA256": "32a9f2c1fd85dabfd5111b18afdcb6e2659552bdc6562468dfae89ad41018a7f",
+  "regressionPath": "test/cli-corpus-source-pin.test.js",
+  "incidents": [
+    "Initial inspection excerpt over8192 bytes",
+    "Pre-execution memory-accounting stop reconciled four materialized clients",
+    "Initial commit failed before creating commit: isolated repository lacked author identity; use configured donor Codex identity via process-local Git -c arguments"
+  ]
+}

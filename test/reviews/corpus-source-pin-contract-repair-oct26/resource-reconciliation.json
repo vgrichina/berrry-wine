@@ -1,0 +1,11 @@
+{
+  "incident": "Final selected THPS2 preflight stopped before Node execution: reserved clients double-counted after materialization",
+  "memAvailableAtStop": 2846425088,
+  "actualNewWineWorkerPIDs": [
+    2903914,
+    2904102,
+    2904238,
+    2905670
+  ],
+  "resolution": "All four initially reserved workers are now measured live. Charge measured RSS once, consume the matching prospective reservations. Remaining prospective count is zero while these clients remain live; recompute every operation. Physical floor/Node allowance unchanged. No failed test or access denial."
+}
