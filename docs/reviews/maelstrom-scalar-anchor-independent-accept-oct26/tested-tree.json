@@ -1,0 +1,19 @@
+{
+  "candidate": "ecd805602e7204f7dcc1b94edbf018dadae85a73",
+  "tree": "b2ef73a84dbd72acf1aef73a0a111dfdbedad2cd",
+  "sourcePins": {
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-original-errno-adapter.cjs": "07561f8f4eeb44534fc193f18913aca635cbd662226bf44992598b800e775c2d"
+  },
+  "historicalSourceRoot": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source",
+  "historicalManifest": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/source-inputs.json",
+  "completeGeneratedWATByteIdentical": "Reused exact candidate preservation.json and coordinator manifest verification; no generator/code changes in review",
+  "acceptedPreservationPath": "/tmp/maelstrom-adapter-scalar-anchor-repair-oct26/ops/preservation.json",
+  "acceptedPreservationSHA256": "fd176f183c6a2f84b353f1acc4060766857704742557191951f8283eb41fc032",
+  "originalOraclesUnchanged": true,
+  "independent19Passed": 19,
+  "existingGroupsPassed": 41,
+  "newRegressionGroupsPassed": 13,
+  "newRegressionCases": 3474
+}
