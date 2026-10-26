@@ -1,0 +1,40 @@
+{
+  "source": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "runnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "productionInvocations": 1,
+  "stepCount": 7,
+  "snapshotCount": 9,
+  "ACKbatches": 1537,
+  "zeroCreditsAll": true,
+  "noTimeout": true,
+  "inspectedMenu": true,
+  "PlayGameLabelObserved": true,
+  "PlayGameClickAcknowledged": false,
+  "AnonymousGuest": false,
+  "round": false,
+  "paddleBallGameplay": false,
+  "remaining": "Coordinator may assign new bounded guest with earlier menu capture, more efficient readback, production cmd input syntax; no worker refill",
+  "predecessorCommit": "1c18ba58b998ba1ee569dc267dae5d4c36afadb6",
+  "terminal": {
+    "reason": "natural",
+    "returncode": 0,
+    "elapsed": 82.26794653700017,
+    "peakTreeRSS": 320278528,
+    "peakTreeCPU": 60.04,
+    "outputBytes": 2617,
+    "identities": {
+      "60372": {
+        "ppid": 60371,
+        "state": "R",
+        "start": "260906",
+        "cpu": 60.04,
+        "rss": 103223296
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_ex22dvm8",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  }
+}

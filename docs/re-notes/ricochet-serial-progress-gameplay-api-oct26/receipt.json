@@ -1,0 +1,256 @@
+{
+  "source": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "runnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "productionInvocations": 1,
+  "stepCount": 7,
+  "snapshotCount": 9,
+  "ACKbatches": 1537,
+  "zeroCreditsAll": true,
+  "noTimeout": true,
+  "inspectedMenu": true,
+  "PlayGameLabelObserved": true,
+  "PlayGameClickAcknowledged": false,
+  "AnonymousGuest": false,
+  "round": false,
+  "paddleBallGameplay": false,
+  "remaining": "Coordinator may assign new bounded guest with earlier menu capture, more efficient readback, production cmd input syntax; no worker refill",
+  "predecessorCommit": "1c18ba58b998ba1ee569dc267dae5d4c36afadb6",
+  "terminal": {
+    "reason": "natural",
+    "returncode": 0,
+    "elapsed": 82.26794653700017,
+    "peakTreeRSS": 320278528,
+    "peakTreeCPU": 60.04,
+    "outputBytes": 2617,
+    "identities": {
+      "60372": {
+        "ppid": 60371,
+        "state": "R",
+        "start": "260906",
+        "cpu": 60.04,
+        "rss": 103223296
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_ex22dvm8",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "status": "ACTUAL_MAIN_MENU_GAMEPLAY_UNVERIFIED",
+  "APIcalls": 827031,
+  "sourceManifest": "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-pinned-inputs-oct26.json",
+  "sourceManifestSHA256": "6f252e95c3e6e207eb0fa0e96b533a2ae809d6650c5aa60749b278267d013e5f",
+  "runtimeVerified": 509,
+  "configuration": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/ricochet-current-gameplay-api-oct26/capture-bounds.cjs",
+      "/tmp/ricochet-current-gameplay-api-oct26/runner/test/run.js",
+      "--app=ricochet_xtreme",
+      "--no-build",
+      "--wasm=/tmp/ricochet-current-gameplay-api-oct26/canonical.wasm",
+      "--dll-seed=IFC22.dll",
+      "--no-close",
+      "--stuck-after=0",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--batch-size=200000",
+      "--max-batches=10000000",
+      "--max-seconds=85",
+      "--control=8128",
+      "--frozen"
+    ],
+    "canonicalParserReceipt": "/tmp/ricochet-retained-module-gameplay-api-oct26/ops/canonical-parser.json",
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+    "enumeratedFiles": 358,
+    "commaFiles": [],
+    "startupReceipt": "/tmp/ricochet-current-gameplay-api-oct26/ops/guest-preflight-api.json",
+    "unchanged": true,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "pins": {
+    "commandId": "cmd_iskdcwkuda0g",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:42:20.297Z",
+    "launcherFailed": false,
+    "noticedMs": 13,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T21:42:20.260Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"capture-bounds.cjs\": {\"bytes\": 372, \"sha256\": \"751726c99144d9d21364718821a0410bce4ce622f9811c026327b743e8032f09\"}, \"runner/test/run.js\": {\"bytes\": 687226, \"sha256\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\"}, \"canonical.wasm\": {\"bytes\": 1880280, \"sha256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\"}, \"runner/src/api_table.json\": {\"bytes\": 723350, \"sha256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\"}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "admission": {
+    "at": 1793050940.9323852,
+    "charges": {
+      "remote": 54165504,
+      "localRetained": 4579328,
+      "ownLocalGit": 98304,
+      "session": 622592,
+      "events": 434176,
+      "WALpositiveOnce": 811008,
+      "futurePublicationAndSessions": 33554432,
+      "reserve": 8388608
+    },
+    "total": 102653952,
+    "cap": 268435456,
+    "memAvailable": 3819352064,
+    "minimum": 3489660928,
+    "clients": [
+      {
+        "pid": 265398,
+        "rss": 920985600,
+        "command": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+      },
+      {
+        "pid": 265632,
+        "rss": 17412096,
+        "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop "
+      },
+      {
+        "pid": 752162,
+        "rss": 391929856,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-auth"
+      },
+      {
+        "pid": 857107,
+        "rss": 11321344,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+      },
+      {
+        "pid": 1789179,
+        "rss": 55074816,
+        "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon "
+      },
+      {
+        "pid": 3175518,
+        "rss": 240545792,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_s"
+      },
+      {
+        "pid": 3176137,
+        "rss": 23187456,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+      },
+      {
+        "pid": 3178760,
+        "rss": 202022912,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_s"
+      },
+      {
+        "pid": 3178965,
+        "rss": 197947392,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_s"
+      },
+      {
+        "pid": 3179129,
+        "rss": 21188608,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+      },
+      {
+        "pid": 3179162,
+        "rss": 23740416,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+      }
+    ],
+    "actualClientRSS": 2105356288,
+    "hostFree": 3625345024,
+    "projectedFree": 3591790592,
+    "hostFloor": 2982150144,
+    "pass": true
+  },
+  "incident": {
+    "menuVerified": true,
+    "menuBatch": 1537,
+    "captureBytes": 401056,
+    "serialDeadline": 1793051023.3876965,
+    "decisionWasConsumed": false,
+    "decisionQueuedAfterDone": true,
+    "inputCommandsUsedWrongKey": "input should be cmd in production protocol; never delivered to guest",
+    "reason": "401056B lossless capture required90 bounded4500B API readbacks; frozen inspection used remaining controller window",
+    "noReplay": true,
+    "productionInvocations": 1,
+    "remainingNominalGuestSeconds": 7.732053462999829,
+    "noSecondGuest": true
+  },
+  "helperRepair": {
+    "cases": [
+      {
+        "name": "propercmd",
+        "accepted": true,
+        "pass_": true
+      },
+      {
+        "name": "wrongkey",
+        "accepted": false,
+        "pass_": true
+      },
+      {
+        "name": "actualExpiredDecision",
+        "accepted": false,
+        "pass_": true
+      },
+      {
+        "name": "late",
+        "accepted": false,
+        "pass_": true
+      },
+      {
+        "name": "over256",
+        "accepted": false,
+        "pass_": true
+      }
+    ],
+    "peakRSS": 12976128,
+    "guestRun": false
+  },
+  "cleanup": {
+    "commandId": "cmd_9ymgwheh85eu",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:45:02.699Z",
+    "launcherFailed": false,
+    "noticedMs": 15,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:45:02.644Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ownedLive\": [], \"box\": \"bx_ex22dvm8\", \"state\": \"RUNNING APIexec\", \"expiry\": \"2026-10-26T22:31:02.949Z\", \"shutdownOwner\": \"coordinator\", \"cleanup\": \"none; keep retained runner/assets/module and task evidence\", \"moduleSHA256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"at\": 1793051102.695911}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "lifecycle": {
+    "box": "bx_ex22dvm8",
+    "state": "RUNNING APIexec confirmed",
+    "guestCutoff": "2026-10-26T21:50:00Z",
+    "handback": "2026-10-26T21:55:00Z",
+    "shutdown": "2026-10-26T22:00:00Z",
+    "expiry": "2026-10-26T22:31:02.949Z",
+    "shutdownOwner": "coordinator",
+    "watchPID": 3176727,
+    "live": false,
+    "untouched": true,
+    "qualification": "Previously live initial and21:44:53; absent final. Coordinator must verify coverage."
+  },
+  "capture": {
+    "path": "later.png",
+    "width": 640,
+    "height": 480,
+    "bytes": 401056,
+    "sha256": "9e6b81e080cfa6476fdd76ef4093217b43567e37f9d9f7fcd69cc021d1541d88",
+    "inspected": true,
+    "scene": "Actual main menu with Play Game, Statistics, Options, Exit Game"
+  },
+  "historicalFailures": "Original500-batch10sec timeout completedunreplayed in predecessor; older64MiB/allocation/startup incidents retained, not reclassified"
+}

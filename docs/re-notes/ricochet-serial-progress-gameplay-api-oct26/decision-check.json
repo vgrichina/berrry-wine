@@ -1,0 +1,31 @@
+{
+  "cases": [
+    {
+      "name": "propercmd",
+      "accepted": true,
+      "pass_": true
+    },
+    {
+      "name": "wrongkey",
+      "accepted": false,
+      "pass_": true
+    },
+    {
+      "name": "actualExpiredDecision",
+      "accepted": false,
+      "pass_": true
+    },
+    {
+      "name": "late",
+      "accepted": false,
+      "pass_": true
+    },
+    {
+      "name": "over256",
+      "accepted": false,
+      "pass_": true
+    }
+  ],
+  "peakRSS": 12976128,
+  "guestRun": false
+}

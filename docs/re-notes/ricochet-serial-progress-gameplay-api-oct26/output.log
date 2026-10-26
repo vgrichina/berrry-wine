@@ -1,0 +1,56 @@
+PE loaded. Entry: 0x00509d24
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+DLL: IFC22.dll at 0x6fd000, DllMain=0x71663c, thunks=1986, origBase=0x10000000
+Patching EXE imports: IFC22.dll -> DLL #0 (IFC22.dll)
+After patching: 1986 thunks
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+[files] policy lazy: 358 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[control] listening on http://127.0.0.1:8128/ctl
+[CreateWindow] hwnd=0x10001 title="Ricochet" style=0x-6ff80000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=5
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[ThreadManager] CreateThread handle=0xe1000 start=0x7504cc0 param=0x0 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x7504cc0 ESP=0x7ef5fff8
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+uop: installs=1008 kills=55 retired-poor=55 enters=46581275 blocks=812498045 head-exits=7 reguards=18799896 rg-pages=293567005 rg-nonadj=280671 win-kept=46579672 win-reset=1603 gen=7 | compiled=1008 declined=528 insns=57779 uops=255308 flushes=4 traces=520
+  declines: no-backedge=441 head-unsupported=135 call-indirect=62
+uop nobump: skips=350314157
+uop hot: decays=7563729 halvings=2016
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=332 kills=10 enters=26976405 blocks=136351531
+
+Stats: 827031 API calls, 1537 batches in 81.850s (19 batches/s)
+MMX: 1433327 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x4eceef esp=0x7ef5fddc ebp=0x13 yield=0 waitH=0x0 sleepCount=0 csPark/steal=0/0

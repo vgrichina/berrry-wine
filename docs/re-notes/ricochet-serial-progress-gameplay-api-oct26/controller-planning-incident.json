@@ -1,0 +1,14 @@
+{
+  "menuVerified": true,
+  "menuBatch": 1537,
+  "captureBytes": 401056,
+  "serialDeadline": 1793051023.3876965,
+  "decisionWasConsumed": false,
+  "decisionQueuedAfterDone": true,
+  "inputCommandsUsedWrongKey": "input should be cmd in production protocol; never delivered to guest",
+  "reason": "401056B lossless capture required90 bounded4500B API readbacks; frozen inspection used remaining controller window",
+  "noReplay": true,
+  "productionInvocations": 1,
+  "remainingNominalGuestSeconds": 7.732053462999829,
+  "noSecondGuest": true
+}
