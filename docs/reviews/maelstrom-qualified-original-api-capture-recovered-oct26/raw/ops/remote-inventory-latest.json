@@ -1,0 +1,1020 @@
+{
+  "at": 1793041045.6586952,
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "uid": 1000,
+  "memAvailable": 7229341696,
+  "nativePhysicalFloor": 2684354560,
+  "prospectiveHelperTransient": 134217728,
+  "remainingHeadroom": 805306368,
+  "required": 3623878656,
+  "liveRSSNotDoubleSubtracted": true,
+  "processes": [
+    {
+      "pid": 1,
+      "rss": 15282176,
+      "comm": "systemd",
+      "commandSHA256": "7443c782bf75dce4ba40dae8a2e51568261ed7064275bfeee108c67b4d7f7078",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 311,
+      "rss": 112414720,
+      "comm": "systemd-journal",
+      "commandSHA256": "7bcdc10c2fd0ea8fd074713ca2e16a14f828000c3d35c64e50618a0a090411f8",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 378,
+      "rss": 27947008,
+      "comm": "multipathd",
+      "commandSHA256": "3a5641ebcb5f88c158b60b26c1884fdfc1e1a227e5e31105e6cd6408587adae3",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 395,
+      "rss": 8843264,
+      "comm": "systemd-udevd",
+      "commandSHA256": "41781455a142a9b5e6f63bb5f92ca48a7cce275dc88bdc5214ded62eb529d81e",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 554,
+      "rss": 8384512,
+      "comm": "systemd-timesyn",
+      "commandSHA256": "1aa22111b3bb71228bc1126092a318545407b7282d3db1e767676179188ac2cb",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 756,
+      "rss": 9842688,
+      "comm": "systemd-network",
+      "commandSHA256": "ab0784edb4c9ab632ff0bab90818b538e64863860c4508b8eafdfdb44dadeb3a",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 861,
+      "rss": 8359936,
+      "comm": "accounts-daemon",
+      "commandSHA256": "4c809b06411e18e8ef628593fbeef27342983f0f94b07b02cfcd27bbb74da5e8",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 864,
+      "rss": 4808704,
+      "comm": "avahi-daemon",
+      "commandSHA256": "04ce29542c5eb424ad786daea2207f4b6392a47a32f01ee40e6216f8eae6e90f",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 865,
+      "rss": 7544832,
+      "comm": "dbus-daemon",
+      "commandSHA256": "f8aba2b02ce7e6e2e64ae4b7a06777c040e60c552fedd5b44f8224729c8a70e0",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 873,
+      "rss": 17104896,
+      "comm": "gnome-remote-de",
+      "commandSHA256": "81755f9473855fabfcb24de73ec916744a27a6f0cf4ca92e47df7eb30e2b0ac7",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 913,
+      "rss": 11239424,
+      "comm": "polkitd",
+      "commandSHA256": "afcf285184472644b6a63ae055c6602cfda5b6b5b0f915807c7cffaceda2360b",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 915,
+      "rss": 7798784,
+      "comm": "power-profiles-",
+      "commandSHA256": "a5a9973c27efa249b2288419c6f1c66b065fdade4569de7b4d525b85d1b2b2a8",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 934,
+      "rss": 6770688,
+      "comm": "switcheroo-cont",
+      "commandSHA256": "6ae89ee6dfb5f5525615e7a10faba5ac661e3bf24b2d45fc038875449566e1ca",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 943,
+      "rss": 12013568,
+      "comm": "systemd-logind",
+      "commandSHA256": "8698af83f508eff5ea2d9ddb313d650b1053cb2e4ae538cbdc6a398bd5cf00eb",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 949,
+      "rss": 14340096,
+      "comm": "udisksd",
+      "commandSHA256": "b36666317ac3e2327f8a1bc742d3e7a03ad58433d5c0c8aef939512057d396c4",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 979,
+      "rss": 1605632,
+      "comm": "avahi-daemon",
+      "commandSHA256": "60c602818d59c0fc5369218f620d61d32472f1951d4931469689338d6a656166",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 983,
+      "rss": 19292160,
+      "comm": "NetworkManager",
+      "commandSHA256": "ec88100903b5edfd60e255bda5e88d2429ac33922fcca1f891fba0ff06beeb04",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 986,
+      "rss": 6598656,
+      "comm": "wpa_supplicant",
+      "commandSHA256": "3fd10583903c4539bbd570d3d3cb50b02736a24dc4cd93fb4f9d97139bf3d1e9",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1042,
+      "rss": 6758400,
+      "comm": "rsyslogd",
+      "commandSHA256": "d89902669767d0544a48f39ea582c1af2a6c386a1e2415770d36638b7e181bdd",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1064,
+      "rss": 13275136,
+      "comm": "ModemManager",
+      "commandSHA256": "cc7b6e0c63d5574c802d652282ba65247f9b0126e8b03204a597c3978e7e0022",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1218,
+      "rss": 12615680,
+      "comm": "cupsd",
+      "commandSHA256": "38ff0fdc17c6f83f941a7a7b8d700325550d966bd787447d05656cdbc89c78ad",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1219,
+      "rss": 3387392,
+      "comm": "epmd",
+      "commandSHA256": "7afab47bc103b53f89f2e9290e3d22c3e96c8b4ac06b96d00a7e1d251a9258a4",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1226,
+      "rss": 53669888,
+      "comm": "containerd",
+      "commandSHA256": "351a3ff3d25f54dca5d75d9b9ed56c80df7eaff83485c8bb8f1735bc693f8f87",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1233,
+      "rss": 3108864,
+      "comm": "cron",
+      "commandSHA256": "70c1888592197de8c143ae65125e691255f7779a45a42f7f19b35e605c35c435",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1239,
+      "rss": 2633728,
+      "comm": "atd",
+      "commandSHA256": "999a9921d169b59ad1386200e570b105acf0f8e3c5c0109a222f5ec8c4afc522",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1242,
+      "rss": 20656128,
+      "comm": "cups-browsed",
+      "commandSHA256": "65a94a9d31d3e497c7061f884722a795781643a21e6e4504fb8ef646de7a6114",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1250,
+      "rss": 2404352,
+      "comm": "agetty",
+      "commandSHA256": "74659d931e57d9d8b79f49f833560e5178f068d5416d23c295d03edfb802065a",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1255,
+      "rss": 2154496,
+      "comm": "agetty",
+      "commandSHA256": "c3baacf733757d255c9101921267dd61da00713c87f2df847330f6d145abb2a3",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1278,
+      "rss": 91049984,
+      "comm": "dockerd",
+      "commandSHA256": "4a1d60f9c5baf5ba42a26968648c7ae576359deece8bd1f5667a4df3b6b76dda",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1334,
+      "rss": 13058048,
+      "comm": "systemd",
+      "commandSHA256": "8c08ef0576b68198a43125d37d7d7a29a1e827eeed7e3d94163bb7c4b5e61484",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1336,
+      "rss": 3756032,
+      "comm": "(sd-pam)",
+      "commandSHA256": "77eb412931ac522a0881325aa2e1c8622f39f88cd2cdc91fee18c9530e4ea9f0",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1415,
+      "rss": 14716928,
+      "comm": "pipewire",
+      "commandSHA256": "6d1e068400c73b4c626a198eead96726b370eb73693459589f9dec91103b1ec5",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1417,
+      "rss": 6361088,
+      "comm": "pipewire",
+      "commandSHA256": "10866d1b1b27dc0eaac70e7ca8bd29567343bd4debe3fc6fffdb8a87f7c6e632",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1422,
+      "rss": 16560128,
+      "comm": "wireplumber",
+      "commandSHA256": "cafb7e7a64dea8fdf889ff57fa4aafe195a33033add207ff17c63aa60f81ad1c",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1425,
+      "rss": 12206080,
+      "comm": "pipewire-pulse",
+      "commandSHA256": "4f48543634d643f90c6bbf752e60d644e4619932ab377f4cc7da89a67097bfeb",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1452,
+      "rss": 6447104,
+      "comm": "dbus-daemon",
+      "commandSHA256": "04c5ece8c32dd53a9b1eabaa3683c6f48c0a150b974da8055918cd4d7b095d8b",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 1546,
+      "rss": 3788800,
+      "comm": "rtkit-daemon",
+      "commandSHA256": "554be68f2df35099aefd7fd01076f4957b655d32efd3c9fa44aff16d37760273",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2032,
+      "rss": 8478720,
+      "comm": "gvfsd",
+      "commandSHA256": "dd3313b3fd14e75bd9102501a3ae449a5811bb17e4f5cef5ddfbaee9fc1010de",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2038,
+      "rss": 7548928,
+      "comm": "gvfsd-fuse",
+      "commandSHA256": "bc47ed31f7b61713e7346a5728af86c90000acf2caffb94983dfbad65c017ddf",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2046,
+      "rss": 8757248,
+      "comm": "at-spi-bus-laun",
+      "commandSHA256": "8191f2d117d82ce07aa564da88b756f98c05a3c07ce3be135fd6fdf89b5aabdc",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2053,
+      "rss": 5419008,
+      "comm": "dbus-daemon",
+      "commandSHA256": "168de66f102bc0079d87844fb37e184669ec03148aa033ef3c64ffb65730e862",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2087,
+      "rss": 10285056,
+      "comm": "gnome-keyring-d",
+      "commandSHA256": "83d2d3895eef3ae524cfae6a218296d0a479d50a56e9ca92ae8446e8ecd09501",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2251,
+      "rss": 9330688,
+      "comm": "upowerd",
+      "commandSHA256": "fc0c21a62c12d6ddd1b4fb6d60cf59e2fc2433288f73aef7827723ebaa2ca250",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2281,
+      "rss": 8417280,
+      "comm": "sshd",
+      "commandSHA256": "46355ad64b316b36798d824d7eb56e520bc82738a25749b8f22f8a7580c58438",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2282,
+      "rss": 6144000,
+      "comm": "dconf-service",
+      "commandSHA256": "28a7e4153003d1953b1d8c138762a81987d3a01fee26fa80d12b28dfa78d5162",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2401,
+      "rss": 15142912,
+      "comm": "colord",
+      "commandSHA256": "40fffc429610b7daaf592f4775ef4b0ab85815d6e027e13090af149060f83885",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2742,
+      "rss": 3506176,
+      "comm": "uuidd",
+      "commandSHA256": "697f726dad4fcf32ff1377b835f55f5670162a77cf08d03748c6cf9a8a1da2a7",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2800,
+      "rss": 8781824,
+      "comm": "obexd",
+      "commandSHA256": "deae6c4e6afbaeee788563fe49e2fadac93ba920b910cbeb2c3a95a290538100",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2934,
+      "rss": 10776576,
+      "comm": "gvfs-udisks2-vo",
+      "commandSHA256": "c1f91b64e9def2304796060f7900bb5fa2a55e5a91a8f2d290cb3b47fd7e402d",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2949,
+      "rss": 7360512,
+      "comm": "gvfs-gphoto2-vo",
+      "commandSHA256": "939d9ce5b0333a32f4fed98b175c34d48bbf191de30f3e6fdce07b0484e1f3ff",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2976,
+      "rss": 8503296,
+      "comm": "gvfs-afc-volume",
+      "commandSHA256": "6c42ef86c21560b2f1f20d9fb90745a4fadb70040c1a789f9c2f4883524e65fc",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 2999,
+      "rss": 7032832,
+      "comm": "gvfs-goa-volume",
+      "commandSHA256": "da6a7d522bdfea02c693784810fb029ff0932b69fe59a8fbc05dded3d1bdea08",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3045,
+      "rss": 24997888,
+      "comm": "goa-daemon",
+      "commandSHA256": "c3b7d642a6b2a5b99cb49de39662b427eb1408afa3f912d801bcc97bd3299c56",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3122,
+      "rss": 9805824,
+      "comm": "goa-identity-se",
+      "commandSHA256": "c0e777e135839d991dfedbe1421768a229ed81a90b3459857ea5d0428f9fdb6c",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3131,
+      "rss": 6840320,
+      "comm": "gvfs-mtp-volume",
+      "commandSHA256": "c91b8758075e23d8bfb360e87ea0f961d9c82b4f98de348af70855c252e62409",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3139,
+      "rss": 44183552,
+      "comm": "evolution-sourc",
+      "commandSHA256": "a0f6323d6c9f4f5d874aeacc5e0f56dd5223a7dd2267628af244954a7b02aa38",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3140,
+      "rss": 9211904,
+      "comm": "gvfsd-trash",
+      "commandSHA256": "3174687660ef2f093cec5cbefa0954067bfb0621367cf24744d419ea4545d311",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3156,
+      "rss": 7081984,
+      "comm": "gvfsd-metadata",
+      "commandSHA256": "6c4616a397ca3e080bacce2e69e6f5779776e790bb222f3d3a370d7e1045b89b",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3166,
+      "rss": 25403392,
+      "comm": "evolution-calen",
+      "commandSHA256": "01ce54c3b5c68545c17c56c45364ec57f7b1121dadbcc25b4235bd50c60031e8",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 3183,
+      "rss": 31207424,
+      "comm": "evolution-addre",
+      "commandSHA256": "e9eed738b794a315c4814f63086767718c1f68934c89853ce945c80a5aa7e969",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 11951,
+      "rss": 13549568,
+      "comm": "systemd-resolve",
+      "commandSHA256": "c86d8e5a1a9e1e9258bf1bccf033eb944c11fe229888b981dc4bbc635df6aa2e",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 12865,
+      "rss": 13930496,
+      "comm": "pulseaudio",
+      "commandSHA256": "467b46c32c3dade4484afafee4b3503c476b9a9ead3892f43fc2cfcf130782db",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 12995,
+      "rss": 7806976,
+      "comm": "lightdm",
+      "commandSHA256": "3283237e0a229ffd38783da8c8be9f60a135da961c711a68d9d5bdeb9fb31e31",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13005,
+      "rss": 85815296,
+      "comm": "Xorg",
+      "commandSHA256": "6ce36e379eabe27a1fea50c6bd9b3c44695385fcfd9fb06c76949972c13eaecd",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13018,
+      "rss": 8708096,
+      "comm": "lightdm",
+      "commandSHA256": "a2aa1af554f512866f63aebd3a087ee83af72468f8548d4b685db8954f354a4b",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13025,
+      "rss": 2813952,
+      "comm": "dbus-run-sessio",
+      "commandSHA256": "1ed0db25be1d6ffc6895aafec24bbc067aeb51b168b300dacd59c19e572c1dbb",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 13454,
+      "rss": 8175616,
+      "comm": "ibus-daemon",
+      "commandSHA256": "510e24d755800948a1398e730f867c98a26100240603c5f87b79844656f20362",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13455,
+      "rss": 5136384,
+      "comm": "dbus-daemon",
+      "commandSHA256": "d14bd0dd8cb6236910c8ef9d126b04f03cc629899ad29b55a001a87ef226f56b",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13456,
+      "rss": 9764864,
+      "comm": "ascii-desktop",
+      "commandSHA256": "694069c4e96a218049ade961a40743eb725c8380479071c7f7f2d43a88191ab2",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 13457,
+      "rss": 21557248,
+      "comm": "openbox",
+      "commandSHA256": "91358a184b6717c81359f813468f144bd50541abfe1bcf742bf8a96b69b111d8",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 13462,
+      "rss": 7577600,
+      "comm": "ibus-memconf",
+      "commandSHA256": "51a3a86967dbbef716055e44c1fa1d8bdd89d917abaf3330bd3c561d3f7f4577",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13463,
+      "rss": 89186304,
+      "comm": "ibus-ui-gtk3",
+      "commandSHA256": "05f11f27425c33cdc42d184cbd9c132259f5d8d8863a09c6ef87eea7f8b6d06e",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13464,
+      "rss": 86753280,
+      "comm": "ibus-extension-",
+      "commandSHA256": "cacfceb4d9438ab3287f346f61145aa2de18067e60273bc04e24f99c1f1b0509",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13468,
+      "rss": 76312576,
+      "comm": "ibus-x11",
+      "commandSHA256": "e0d400423a9f833b2b4d19ef68662b3a67fd2bdbe5a685b9aff7bc69bd4e1e6d",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13470,
+      "rss": 7671808,
+      "comm": "ibus-portal",
+      "commandSHA256": "16682101f48748b263a40e3eeb368d105693cd6a9f6813115e9970fa060eb224",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13490,
+      "rss": 8654848,
+      "comm": "at-spi2-registr",
+      "commandSHA256": "1d564fd33c706f6155488da21d39e9d1b1a73aa59ddef9e19c3234af80eb9460",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13492,
+      "rss": 18411520,
+      "comm": "xdg-desktop-por",
+      "commandSHA256": "e81730492c2916a88f3527b8ad24652770bd675155ac6bdaa799fb0a6a9efeb6",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13501,
+      "rss": 7917568,
+      "comm": "xdg-document-po",
+      "commandSHA256": "a28be37d513755aaea3d6d3f78011409817d684996928d4ce5994c9691b0ceb0",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13506,
+      "rss": 7659520,
+      "comm": "ibus-engine-sim",
+      "commandSHA256": "efe314cac44019cd90793544fa5e71b058684305d07b74a6364a8ef61a9b7fc7",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13507,
+      "rss": 6549504,
+      "comm": "xdg-permission-",
+      "commandSHA256": "1f83379164226405f43b5b72fe4715273cfa3dc0eb820d42102417095782d7a5",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13518,
+      "rss": 2220032,
+      "comm": "fusermount3",
+      "commandSHA256": "5f895daa794593c6313ec6a1a834330576caa06e7b554b430db5b9a5060b76f9",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 13522,
+      "rss": 22581248,
+      "comm": "xdg-desktop-por",
+      "commandSHA256": "7cb391b30b5f984e356d386c1f3e9925afaa8dddbf3fadc4c4a8552d2975a7ee",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 13960,
+      "rss": 140279808,
+      "comm": "sunshine",
+      "commandSHA256": "0d8d2a118b823414c900289a5f042b1fb8c321a031e960a7634a0340725d3cfb",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14031,
+      "rss": 2670592,
+      "comm": "dbus-launch",
+      "commandSHA256": "8ddd0f6053bd1d4889465cfa6f6bd7231dc2e5c322a8efbc5d8e98c1c3c65753",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14032,
+      "rss": 2998272,
+      "comm": "dbus-daemon",
+      "commandSHA256": "0cc5509254fe4f3e03592e3aca7fbd7344e68a0caa69d5e81c2994250b47a660",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14034,
+      "rss": 8724480,
+      "comm": "at-spi-bus-laun",
+      "commandSHA256": "8191f2d117d82ce07aa564da88b756f98c05a3c07ce3be135fd6fdf89b5aabdc",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14040,
+      "rss": 5320704,
+      "comm": "dbus-daemon",
+      "commandSHA256": "f28f8cef7c122fb26bea1b848ac26dca0e3ccced2b086eaae90577cfcb059cb6",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 14044,
+      "rss": 8556544,
+      "comm": "at-spi2-registr",
+      "commandSHA256": "1d564fd33c706f6155488da21d39e9d1b1a73aa59ddef9e19c3234af80eb9460",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14492,
+      "rss": 4030464,
+      "comm": "socat",
+      "commandSHA256": "a38bc4a42a64cf146abb3f1a8eab3b5b0dbc836ae8301c20c72ca0e7e0589f14",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 14720,
+      "rss": 901120,
+      "comm": "ariana-fswatch",
+      "commandSHA256": "8daf4fdfae7dcd9f9e082c9bc8d4b5339830688344a34220e3203d24222704ec",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 15406,
+      "rss": 11735040,
+      "comm": "web-server",
+      "commandSHA256": "cddf3ffeaff566f1d594e0dca5141f02e3fc0703ab5f2cd5a936a23d476553df",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 15534,
+      "rss": 108888064,
+      "comm": "ascii-agents-se",
+      "commandSHA256": "a118eaa24c335fdc72bd328dbc270225d0ae408f23bdae088dccf0ad849ac713",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 15571,
+      "rss": 7450624,
+      "comm": "sudo",
+      "commandSHA256": "fbe8a19cf7348a4a9583d1af3d3d14ac4dc78bc4b1ad26eeeacf35823f0a629c",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 15575,
+      "rss": 83079168,
+      "comm": "ascii-proclog",
+      "commandSHA256": "ee94cadc8563857a3ecc3a20832c939992b3c5083433c64854e084d3724c68a3",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 16237,
+      "rss": 794624,
+      "comm": "ariana-fswatch",
+      "commandSHA256": "8daf4fdfae7dcd9f9e082c9bc8d4b5339830688344a34220e3203d24222704ec",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 17026,
+      "rss": 897024,
+      "comm": "ariana-fswatch",
+      "commandSHA256": "8daf4fdfae7dcd9f9e082c9bc8d4b5339830688344a34220e3203d24222704ec",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": false
+    },
+    {
+      "pid": 17498,
+      "rss": 29696000,
+      "comm": "cua-driver",
+      "commandSHA256": "5d8b04a454acd9dd6965f75aa6f3e7ff85760ffa0e3e2f1f7529e5fde6449686",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    },
+    {
+      "pid": 46384,
+      "rss": 17190912,
+      "comm": "python3",
+      "commandSHA256": "d7a9d51265b0957fad91fbd50a38d8c3d21af776f658eada7631424dba6433d4",
+      "runner": false,
+      "arena512": false,
+      "heap512": false,
+      "helper": true
+    }
+  ],
+  "aggregateLiveArenasBytes": 0,
+  "aggregateLiveNodeHeapCeilingsBytes": 0,
+  "helperRSS": 306720768,
+  "ownedAllocated": 17211392,
+  "diskFree": 48848998400,
+  "limits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "passChecks": true,
+  "externalPositiveGrowthUpperBound": 16384,
+  "externalBaselineBytes": 16384,
+  "standingExternalNotCharged": true
+}

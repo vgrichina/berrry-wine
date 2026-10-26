@@ -1,0 +1,12 @@
+{
+  "helperSHA256": "52d044f14d6ee129b2b6f5b81335f7d2c00b70a9f7513b7bd179203936150da8",
+  "reason": 15,
+  "predicate": "uop-mode-switch",
+  "sourceExcerpt": "${uopNativeBoundaries ? `(func $mne_uop_switch (param $on i32)\n  (if (i32.and (i32.and (i32.ge_u ${g('status')} ${c(1)})\n                        (i32.le_u ${g('status')} ${c(3)}))\n                ${ne('(local.get $on)', g('uopMode'))})\n    (then ${completionReject(15)})))` : ''}\n",
+  "observedModeBits": 0,
+  "selectPhase": 0,
+  "selectEntries": 0,
+  "selectToken": 0,
+  "selectCompletions": 0,
+  "interpretation": "mne_uop_switch rejected a requested mode value different from the native invocation mode while status was1..3. This first guard rejection occurred awaiting select; no original select result/errno/caller was acquired. Requested mode and exact rejecting instruction PC are not exported by this diagnostic ABI."
+}

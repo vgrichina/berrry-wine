@@ -1,0 +1,52 @@
+{
+  "mode": "startup",
+  "supervisorPID": 44716,
+  "childPID": 44720,
+  "pgid": 44720,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "console.log(JSON.stringify({node:process.execPath,version:process.version,argv:process.execArgv,env:Object.fromEntries(Object.entries(process.env).filter(([k])=>k===\"TMPDIR\"||k===\"PYTHONDONTWRITEBYTECODE\"||k===\"NODE_OPTIONS\"||k.startsWith(\"MNE_\"))),limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "cwd": "/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/runner",
+  "at": 1793040925.3956087,
+  "wall": 85,
+  "cpu": 90,
+  "fileMax": 25165824,
+  "outputMax": 131072,
+  "capturesTotalMax": 2097152,
+  "heapMiB": 512,
+  "arenaMiB": 0,
+  "limits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ]
+  },
+  "box": "bx_xfbwmcty",
+  "environmentSHA256": "6a614d5ad075a72c718b8f30414daa440e4b78b5e7df5ee6e63c77bc15f59ba9",
+  "envOverrides": {
+    "TMPDIR": "/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/ops",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "clearedEnvironment": [
+    "NODE_OPTIONS",
+    "WINE_RUN_EXTRA_ARGS",
+    "WINE_REGION_MAP",
+    "MAELSTROM_CAPTURE_INSTALL",
+    "WINE_ASSEMBLY_WASM"
+  ]
+}

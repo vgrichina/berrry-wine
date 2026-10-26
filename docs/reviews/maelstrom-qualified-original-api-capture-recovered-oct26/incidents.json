@@ -10,5 +10,9 @@
   {
     "kind": "source-read-location",
     "detail": "Source ls-tree against root lacked pinned object; corrected same-task reads to isolated task alternate object store. No guest consumed."
+  },
+  {
+    "kind": "append-method-correction",
+    "detail": "Initial checkpoint publisher used Python append mode for messageboard, preserving existing bytes. Final publisher uses prescribed echo append and immediate tail verification. No rewrite/truncation occurred."
   }
 ]

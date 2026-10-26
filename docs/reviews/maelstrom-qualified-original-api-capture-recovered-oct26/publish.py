@@ -7,6 +7,7 @@ names=['pins-verified.json','checkout.json','schedule.json','incidents.json','cl
 names += ['qualification-reuse.json']
 if stage=='final':
  names += ['final-receipt.json','observation.json','collected-manifest.json','checkpoint-guest-terminal.json','checkpoint-staged.json','transfer-roundtrip.json','remote-before-staging-api.json','remote-preguest-api.json','startup-api.json','mount-api.json','archive-transfer.json','resource-immediate-preguest.json']
+ names += ['diagnostic-source.json','box-handback.json']
 if stage=='staged':names += ['checkpoint-staged.json','transfer-roundtrip.json','remote-before-staging-api.json','startup-api.json','mount-api.json','archive-transfer.json','resource-archive-transfer.json']
 for n in names:
  if (O/n).exists():shutil.copyfile(O/n,dest/n)
@@ -31,5 +32,7 @@ commit=git('rev-parse','HEAD').decode().strip();branch='task/'+H.name
 git('push','origin','HEAD:refs/heads/'+branch)
 remoteSHA=git('ls-remote','origin','refs/heads/'+branch).decode().split()[0];assert remoteSHA==commit
 save('publication-'+stage+'.json',dict(commit=commit,branch=branch,remoteSHA=remoteSHA,verified=True,at=time.time()))
-with (ROOT/'messageboard.txt').open('a') as f:f.write(time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())+' '+H.name+' CHECKPOINT '+stage+' commit '+commit+' exact remote refs/heads/'+branch+' VERIFIED; owned evidence only, originalGameAcceptancefalse. '+report+'\n')
+line=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime())+' '+H.name+' CHECKPOINT '+stage+' commit '+commit+' exact remote refs/heads/'+branch+' VERIFIED; owned evidence only, originalGameAcceptancefalse. '+report
+subprocess.run(['bash','-c','echo '+shlex.quote(line)+' >> '+shlex.quote(str(ROOT/'messageboard.txt'))],check=True)
+assert line in subprocess.check_output(['tail','-n','4',str(ROOT/'messageboard.txt')],text=True)
 print(json.dumps(dict(commit=commit,branch=branch,remoteSHA=remoteSHA,verified=True)))

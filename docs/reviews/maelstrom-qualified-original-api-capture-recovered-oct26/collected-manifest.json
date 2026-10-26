@@ -1,0 +1,57 @@
+[
+  {
+    "path": "guest/native.jsonl",
+    "bytes": 1425,
+    "sha256": "f0a0512c6e62f487ad81f960677345a92914f3c8ea1316c877cca02bbea5506e"
+  },
+  {
+    "path": "guest/native.jsonl.raw.jsonl",
+    "bytes": 5775,
+    "sha256": "7ef960d30ef7c7d9717141fe7b93faa5a2e05a9865e5c012706ca9543becf068"
+  },
+  {
+    "path": "ops/mount-enumeration.json",
+    "bytes": 9949,
+    "sha256": "b45af08ec68f73f6fb2eacc24b69dd201fa33f331cd0c204a08f08b75e66376d"
+  },
+  {
+    "path": "ops/remote-inventory-latest.json",
+    "bytes": 27152,
+    "sha256": "427163c781f99ea6f2b1b1bbae1105dcde24ff74bd0e60e646db791b415b0fb3"
+  },
+  {
+    "path": "ops/guest-invoked.json",
+    "bytes": 64,
+    "sha256": "b0f95c91bc7047705b2156d0c8a406f7b827d87d4aa137465ed9072531d0d9bc"
+  },
+  {
+    "path": "ops/startup/output.log",
+    "bytes": 1918,
+    "sha256": "9050127016a270a1d13e74132f32ee7a0e5aa017e0c2cd7f45f09d5cbface1ce"
+  },
+  {
+    "path": "ops/startup/command.json",
+    "bytes": 1416,
+    "sha256": "a34944539ced87d5357c6383dea503cbe50f6b63357f79c30109d7aba9cad639"
+  },
+  {
+    "path": "ops/startup/terminal.json",
+    "bytes": 1641,
+    "sha256": "0bae9fbbc37a63e5b32a9b13cdd066598099848189be6077462fe5c9f5ce7688"
+  },
+  {
+    "path": "ops/guest/output.log",
+    "bytes": 5360,
+    "sha256": "4e7c5a0396e42053b40ffae9a1b471eb89860d6da731ed0dfe17241a654b5b94"
+  },
+  {
+    "path": "ops/guest/command.json",
+    "bytes": 2320,
+    "sha256": "bcfe65d24c92fa8b2f98c6f60d41a1ae5c27b11aff5937e8a1239a7603429576"
+  },
+  {
+    "path": "ops/guest/terminal.json",
+    "bytes": 2546,
+    "sha256": "1f3d173df930b888753db638a1f25a82ddf3deb9c7e6934bd8941174bf356092"
+  }
+]

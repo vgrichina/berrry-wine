@@ -1,0 +1,12 @@
+{
+  "id": "bx_xfbwmcty",
+  "state": "RUNNING (Boat API idle)",
+  "observedState": "idle",
+  "expiry": "2026-10-26T19:29:32.853Z",
+  "shutdownOwner": "coordinator",
+  "notStoppedByWorker": true,
+  "health": "ok",
+  "stop": null,
+  "observedBy": "boat --no-update info --json bx_xfbwmcty after guest cleanup",
+  "snapshotCompletedAt": "2026-10-26T18:57:28.309Z"
+}

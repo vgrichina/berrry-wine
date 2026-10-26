@@ -1,0 +1,103 @@
+PE loaded. Entry: 0x00417474
+Guest environment: MAELSTROM_LIB="."
+Guest environment: HOME="."
+DLL: msvcrt.dll at 0x522000, DllMain=0x525428, thunks=1954, origBase=0x78000000
+DLL: SDL.dll at 0x666000, DllMain=0x68f8df, thunks=2069, origBase=0x10000000
+DLL: SDL_net.dll at 0x7a2000, DllMain=0x7a3e4f, thunks=2091, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_net.dll -> DLL #2 (SDL_net.dll)
+Patching EXE imports: MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_net.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_net.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2094 thunks
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x68f8df...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7a3e4f...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x55dedc] = 0x7ae97c
+Patched __p__environ [0x55cbe4] = 0x7ae95c
+Patched __p___winitenv [0x55e0ec] = 0x7ae97c
+Patched __p___initenv [0x560c9c] = 0x7ae95c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x52e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\maelstrom
+
+*** CRASH at batch 0: native latch status rejection
+  Full stack: Error: native latch status rejection
+        at Object.observe (/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/runner/tools/maelstrom-original-errno-adapter.cjs:128:29)
+        at originalNativeObserve (/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/runner/test/run.js:5766:34)
+        at /tmp/maelstrom-qualified-original-api-capture-recovered-oct26/runner/test/run.js:10398:74
+        at async withCliFailureCleanup (/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/runner/lib/cli-failure-cleanup.js:10:12)
+  EIP before batch: 0x00417474 (maelstrom+0x00417474)
+  prev_eip:  0x00417875 (maelstrom+0x00417875)
+  prev2_eip: 0x00417871 (maelstrom+0x00417871)
+  thread_alloc: 0x1a01542c
+  EIP=0x0041787c EAX=0x007bf9d4 ECX=0x0040a720 EDX=0x083f0ef0 EBX=0x00000000 ESP=0x074fff50 EBP=0x074fff5c ESI=0x0042201e EDI=0x00000000
+  00417474  55                           push ebp
+  00417475  8b ec                        mov ebp, esp
+  00417477  6a ff                        push 0xff
+  00417479  68 60 9b 41 00               push 0x419b60
+  0041747e  68 fa 75 41 00               push 0x4175fa
+  00417483  64 a1 00 00 00 00            fs: mov eax, [0x0]
+  00417489  50                           push eax
+  0041748a  64 89 25 00 00 00 00         fs: mov [0x0], esp
+  00417491  83 ec 68                     sub dword esp, 0x68
+  00417494  53                           push ebx
+  00417495  56                           push esi
+  00417496  57                           push edi
+  00417497  89 65 e8                     mov [ebp-0x18], esp
+  0041749a  33 db                        xor ebx, ebx
+  0041749c  89 5d fc                     mov [ebp-0x4], ebx
+  0041749f  6a 02                        push 0x2
+  00417871  85 c0                        test eax, eax
+  00417873  74 07                        jz short 0x41787c
+  00417875  50                           push eax
+  00417876  ff 15 04 90 41 00            call [0x419004]
+  0041787c  a1 f8 90 41 00               mov eax, [0x4190f8]
+  00417881  83 c0 20                     add dword eax, 0x20
+  00417884  50                           push eax
+  00417885  68 c8 b2 41 00               push 0x41b2c8
+  0041788a  68 08 f0 41 00               push 0x41f008
+  0041788f  ff 15 70 90 41 00            call [0x419070]
+  00417895  8b 1d c4 90 41 00            mov ebx, [0x4190c4]
+  0041789b  83 c4 0c                     add dword esp, 0xc
+  0041789e  85 c0                        test eax, eax
+  004178a0  75 25                        jnz short 0x4178c7
+  004178a2  68 c8 b2 41 00               push 0x41b2c8
+  004178a7  68 08 f0 41 00               push 0x41f008
+  0041787c  a1 f8 90 41 00               mov eax, [0x4190f8]
+  00417881  83 c0 20                     add dword eax, 0x20
+  00417884  50                           push eax
+  00417885  68 c8 b2 41 00               push 0x41b2c8
+  0041788a  68 08 f0 41 00               push 0x41f008
+  0041788f  ff 15 70 90 41 00            call [0x419070]
+  00417895  8b 1d c4 90 41 00            mov ebx, [0x4190c4]
+  0041789b  83 c4 0c                     add dword esp, 0xc
+  0041789e  85 c0                        test eax, eax
+  004178a0  75 25                        jnz short 0x4178c7
+  004178a2  68 c8 b2 41 00               push 0x41b2c8
+  004178a7  68 08 f0 41 00               push 0x41f008
+  004178ac  ff d3                        call ebx
+  004178ae  83 c4 08                     add dword esp, 0x8
+  004178b1  85 c0                        test eax, eax
+  004178b3  74 12                        jz short 0x4178c7
+  Stack around ESP=0x074fff50:
+    [0x074fff48] = 0x0041787c
+    [0x074fff4c] = 0x007bf9d4
+    [0x074fff50] = 0x00000000 <-- ESP
+    [0x074fff54] = 0x0042201e
+    [0x074fff58] = 0x00000000
+    [0x074fff5c] = 0x074ffff8
+    [0x074fff60] = 0x004175a8
+    [0x074fff64] = 0x00400000
+    [0x074fff68] = 0x00000000
+    [0x074fff6c] = 0x0042201e
+    [0x074fff70] = 0x00000001
+    [0x074fff74] = 0x00000000
+    [0x074fff78] = 0x00000000
+    [0x074fff7c] = 0x00000000
+    [0x074fff80] = 0x0052e73d
+    [0x074fff84] = 0x0042201e
