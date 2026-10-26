@@ -1,0 +1,2416 @@
+  ;; ============================================================
+  ;; NE (New Executable) LOADER — 16-bit Windows images
+  ;; ============================================================
+  ;;
+  ;; An NE image is a list of segments rather than a flat mapping. Each one is
+  ;; loaded somewhere and referred to by a selector, and every cross-segment or
+  ;; imported reference is patched afterwards from the segment's own relocation
+  ;; table. There is no image base to slide: the fixups ARE the linking step.
+  ;;
+  ;; Address space. Selector N is laid out at WIN16_ARENA + (N-1) * 64KB, so a
+  ;; selector is just an index and its base is arithmetic rather than a lookup
+  ;; when that helps. The selector value written into guest memory follows the
+  ;; protected-mode convention — (index << 3) | 7 — because guest code compares
+  ;; and increments selectors and expects the low three bits to be the RPL and
+  ;; table bit. WIN16_SEG_TABLE keeps base/limit/flags per index.
+  ;;
+  ;; Imports. A far reference to USER.#113 cannot be resolved to real code, so
+  ;; it is patched to point into one synthetic segment of thunks:
+  ;; WIN16_THUNK_SEL:(slot * 4). WIN16_THUNK_TABLE records the module and
+  ;; ordinal behind each slot. This is the same shape as the 32-bit loader's
+  ;; THUNK_BASE, which lets the existing "EIP landed in the thunk zone" check
+  ;; stay the single place that recognises an API call.
+
+  ;; Win32-owned NE address space. Pure NE tasks retain their historical arena.
+  ;; The shared base is published only after all bytes exist and are zeroed.
+  ;; This first bridge stage commits 59 MiB contiguously: existing NE metadata
+  ;; and multi-segment copies require an affine span. No Win32 API activates it
+  ;; until module initialization and caller-context preservation are implemented.
+  (func $win16_arena_base (result i32)
+    (local $base i32)
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (select (local.get $base) (global.get $WIN16_ARENA) (local.get $base)))
+
+  (func $win16_process_arena_ensure (export "win16_process_arena_ensure") (result i32)
+    (local $base i32) (local $size i32) (local $wa i32)
+    (if (global.get $is_win16) (then (return (global.get $WIN16_ARENA))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (if (local.get $base)
+      (then
+        (call $lock_release (global.get $DLL_LOAD_LOCK))
+        (return (local.get $base))))
+    ;; A failed cleanup retains ownership at offset 4, never as a usable
+    ;; published arena. Retry cleanup before attempting another reservation.
+    (local.set $base (i32.load (region.addr $WIN16_PROCESS_ARENA 4)))
+    (if (local.get $base)
+      (then
+        (if (i32.eqz (call $virtual_map_release (local.get $base)))
+          (then
+            (call $lock_release (global.get $DLL_LOAD_LOCK))
+            (return (i32.const 0))))
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+    (local.set $size (i32.shl (i32.add (global.get $WIN16_SEG_MAX) (i32.const 1)) (i32.const 16)))
+    (local.set $base (call $virtual_reserve_place (local.get $size) (i32.const 0) (i32.const 4)))
+    (if (local.get $base)
+      (then
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (local.get $base))
+        (if (call $virtual_map_commit_protect (local.get $base) (local.get $size) (i32.const 4))
+          (then (local.set $wa (call $g2w_affine_span (local.get $base) (local.get $size)))))
+        (if (i32.and (i32.ne (local.get $wa) (i32.const 0))
+                     (i32.ne (local.get $wa) (global.get $NULL_SENTINEL)))
+          (then
+            (call $zero_memory (local.get $wa) (local.get $size))
+            (call $zero_memory (region.addr $WIN16_PROCESS_ARENA 8) (i32.const 200))
+            (i32.atomic.store (region.addr $WIN16_PROCESS_ARENA 0) (local.get $base))
+            (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0)))
+          (else
+            ;; Commit may have made only part of the mapping before failing.
+            ;; Release the entire reservation; no base has been published.
+            (if (call $virtual_map_release (local.get $base))
+              (then (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+            (local.set $base (i32.const 0))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (local.get $base))
+
+  ;; Whole-process replacement only, with guest execution already stopped.
+  ;; Release while the old virtual map still exists, before load_pe resets it.
+  (func $win16_process_arena_release (export "win16_process_arena_release") (result i32)
+    (local $base i32)
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $base (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0)))
+    (if (local.get $base)
+      (then
+        (if (i32.load (call $win16_task_shared (i32.const 36)))
+          (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))))
+    (if (i32.eqz (local.get $base))
+      (then (local.set $base (i32.load (region.addr $WIN16_PROCESS_ARENA 4)))))
+    (if (local.get $base)
+      (then
+        (if (i32.eqz (call $virtual_map_release (local.get $base)))
+          (then
+            (call $lock_release (global.get $DLL_LOAD_LOCK))
+            (return (i32.const 0))))
+        (i32.atomic.store (region.addr $WIN16_PROCESS_ARENA 0) (i32.const 0))
+        (i32.store (region.addr $WIN16_PROCESS_ARENA 4) (i32.const 0))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (i32.const 1))
+
+  ;; Selector <-> index. Index 0 is the null selector and is never allocated.
+  (func $win16_sel_to_index (param $sel i32) (result i32)
+    (i32.shr_u (local.get $sel) (i32.const 3)))
+
+  (func $win16_index_to_sel (param $index i32) (result i32)
+    (i32.or (i32.shl (local.get $index) (i32.const 3)) (i32.const 7)))
+
+  ;; Guest base address of a selector index, from the table so a future
+  ;; loader can place a segment somewhere other than its arena slot.
+  ;; Index WIN16_SEG_MAX is loader scratch, not a selector; indices past it and
+  ;; below WIN16_SEL_MAX are either unused (zero base) or pooled blocks.
+  (func $win16_seg_base (export "win16_seg_base") (param $index i32) (result i32)
+    (if (i32.or (i32.or (i32.eqz (local.get $index))
+                        (i32.eq (local.get $index) (global.get $WIN16_SEG_MAX)))
+                (i32.ge_u (local.get $index) (global.get $WIN16_SEL_MAX)))
+      (then (return (i32.const 0))))
+    (i32.load (i32.add (global.get $WIN16_SEG_TABLE)
+                       (i32.mul (local.get $index) (i32.const 16)))))
+
+  (func $win16_seg_limit (export "win16_seg_limit") (param $index i32) (result i32)
+    (if (i32.or (i32.eq (local.get $index) (global.get $WIN16_SEG_MAX))
+                (i32.ge_u (local.get $index) (global.get $WIN16_SEL_MAX)))
+      (then (return (i32.const 0))))
+    (i32.load offset=4 (i32.add (global.get $WIN16_SEG_TABLE)
+                                (i32.mul (local.get $index) (i32.const 16)))))
+
+  (func $win16_seg_set (param $index i32) (param $base i32) (param $limit i32)
+        (param $flags i32) (param $ne_seg i32)
+    (local $e i32)
+    (local.set $e (i32.add (global.get $WIN16_SEG_TABLE)
+                           (i32.mul (local.get $index) (i32.const 16))))
+    (i32.store          (local.get $e) (local.get $base))
+    (i32.store offset=4 (local.get $e) (local.get $limit))
+    (i32.store offset=8 (local.get $e) (local.get $flags))
+    (i32.store offset=12 (local.get $e) (local.get $ne_seg)))
+
+  ;; Translate a far pointer (selector:offset) to a guest linear address.
+  (func $win16_far_to_guest (export "win16_far_to_guest") (param $sel i32) (param $off i32) (result i32)
+    (i32.add (call $win16_seg_base (call $win16_sel_to_index (local.get $sel)))
+             (i32.and (local.get $off) (i32.const 0xFFFF))))
+
+  ;; ---- Module names ----
+  ;;
+  ;; The imported-name table stores Pascal strings. Compare one against a
+  ;; NUL-terminated ASCII constant, case-sensitively: NE name tables are
+  ;; always upper case.
+  ;; A mismatch has to `return 0`, not branch out of the compare loop: falling
+  ;; out of the block lands on the same "the literal ends here" expression the
+  ;; success path uses, which makes every equal-length pair compare equal.
+  ;; DDEML matched SOUND that way.
+  (func $win16_pstr_eq (param $p i32) (param $lit i32) (result i32)
+    (local $n i32) (local $i i32)
+    (local.set $n (i32.load8_u (local.get $p)))
+    ;; No module name is this long; refuse rather than read past the table.
+    (if (i32.gt_u (local.get $n) (i32.const 16)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.load8_u (i32.add (local.get $lit) (local.get $n))) (i32.const 0))
+      (then (return (i32.const 0))))
+    ;; Case-insensitively: a module name in a reference table is upper case,
+    ;; but the same name reaching LoadLibrary is whatever the app typed, and
+    ;; FreeCell types "cards.dll". Comparing those byte for byte made it decide
+    ;; the card deck was missing and stop before its first deal.
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (if (i32.ne (call $ascii_upper
+                    (i32.load8_u (i32.add (i32.add (local.get $p) (i32.const 1))
+                                          (local.get $i))))
+                  (call $ascii_upper
+                    (i32.load8_u (i32.add (local.get $lit) (local.get $i)))))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 1))
+
+  (func $ascii_upper (param $c i32) (result i32)
+    (select (i32.sub (local.get $c) (i32.const 0x20)) (local.get $c)
+      (i32.and (i32.ge_u (local.get $c) (i32.const 0x61))
+               (i32.le_u (local.get $c) (i32.const 0x7A)))))
+
+  ;; Address of module reference `index`'s name, as a Pascal string. $ne_off is
+  ;; the absolute address of the NE header in the staged file.
+  (func $win16_module_name (param $ne_off i32) (param $index i32) (result i32)
+    (i32.add
+      (i32.add (local.get $ne_off) (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x2A))))
+      (i32.load16_u
+        (i32.add
+          (i32.add (local.get $ne_off) (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x28))))
+          (i32.shl (i32.sub (local.get $index) (i32.const 1)) (i32.const 1))))))
+
+  ;; Map a module name to the small id the API dispatcher uses. Unknown
+  ;; modules get 0, which makes every call through them fail loudly rather
+  ;; than silently returning into nothing.
+  (func $win16_system_module_id (param $pstr i32) (result i32)
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_KERNEL))   (then (return (i32.const 1))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_USER))     (then (return (i32.const 2))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_GDI))      (then (return (i32.const 3))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_KEYBOARD)) (then (return (i32.const 4))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_SOUND))    (then (return (i32.const 5))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_SHELL))    (then (return (i32.const 6))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_MMSYSTEM)) (then (return (i32.const 7))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_COMMDLG))  (then (return (i32.const 8))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_CARDS))    (then (return (i32.const 9))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_DDEML))    (then (return (i32.const 10))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_NDDEAPI))  (then (return (i32.const 11))))
+    (if (call $win16_pstr_eq (local.get $pstr) (global.get $WIN16_NAME_WIN87EM))  (then (return (i32.const 12))))
+    (i32.const 0))
+
+  (func $win16_module_id (param $pstr i32) (result i32)
+    (local $system i32)
+    (local.set $system (call $win16_system_module_id (local.get $pstr)))
+    (if (local.get $system) (then (return (local.get $system))))
+    ;; Then the ones this task brought with it. A Win16 game is routinely three
+    ;; several NE files -- Tetris alone imports ABOUTTET for its about box, and
+    ;; the Entertainment Pack ships IWLIB and WEPUTIL beside the games -- and
+    ;; none of those can be a name in this list, because the list is compiled
+    ;; and they are whatever the app happens to be made of. The host stages
+    ;; them and writes their names here; ids run from 13.
+    (call $win16_dynamic_module_id (local.get $pstr)))
+
+  ;; App-local module names are cheap records, not staging allocations. The
+  ;; six-megabyte staging image is reused after each NE has copied its segments
+  ;; and metadata into the selector arena, so keep enough names for games such
+  ;; as Civilization II whose artwork is split across ten resource DLLs.
+  (global $WIN16_DYNAMIC_MODULES i32 (i32.const 24))
+  ;; The first id an app-local module can take. Everything below it is a module
+  ;; this emulator answers for itself, so the host neither stages nor loads it.
+  (global $WIN16_DYNAMIC_BASE i32 (i32.const 13))
+
+  (func $win16_dynamic_module_slot (export "win16_dynamic_module_slot")
+        (param $i i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+             (i32.add (i32.const 0x8400) (i32.mul (local.get $i) (i32.const 16)))))
+
+  ;; Resolved VFS filenames belong to the loaded module, not to the shared
+  ;; Win32 scratch stack. This selector table occupies 0x8B00..0x8B94 of the
+  ;; hidden page, after DLL run/ref/image-size tables and before HRSRCs.
+  (func $win16_dll_path_sel_ptr (param $id i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+      (i32.add (i32.const 0x8B00) (i32.shl (local.get $id) (i32.const 2)))))
+
+  (func $win16_dll_path_id_valid (param $id i32) (result i32)
+    (i32.and (i32.ge_u (local.get $id) (global.get $WIN16_DYNAMIC_BASE))
+      (i32.lt_u (local.get $id)
+        (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES)))))
+
+  ;; Host staging writes an ANSI MAX_PATH into this private pooled block.
+  ;; Allocation changes shared allocator metadata only, never CPU registers.
+  (func $win16_dll_path_alloc (export "win16_dll_path_alloc")
+        (param $id i32) (result i32)
+    (local $ptr i32) (local $sel i32)
+    (if (i32.eqz (call $win16_dll_path_id_valid (local.get $id)))
+      (then (return (i32.const 0))))
+    (local.set $ptr (call $win16_dll_path_sel_ptr (local.get $id)))
+    (local.set $sel (i32.load (local.get $ptr)))
+    (if (i32.eqz (local.get $sel))
+      (then
+        (local.set $sel (call $win16_pool_alloc (i32.const 260)))
+        (if (i32.eqz (local.get $sel)) (then (return (i32.const 0))))
+        (i32.store (local.get $ptr) (local.get $sel))))
+    (call $g2w (call $win16_seg_base (call $win16_sel_to_index (local.get $sel)))))
+
+  (func $win16_dll_path_guest (param $id i32) (result i32)
+    (local $sel i32) (local $path i32)
+    (if (i32.eqz (call $win16_dll_path_id_valid (local.get $id)))
+      (then (return (i32.const 0))))
+    (local.set $sel (i32.load (call $win16_dll_path_sel_ptr (local.get $id))))
+    (if (i32.eqz (local.get $sel)) (then (return (i32.const 0))))
+    (local.set $path (call $win16_seg_base (call $win16_sel_to_index (local.get $sel))))
+    (if (i32.eqz (call $gl8 (local.get $path))) (then (return (i32.const 0))))
+    (local.get $path))
+
+  (func $win16_dll_path_forget (param $id i32)
+    (local $ptr i32) (local $sel i32)
+    (if (call $win16_dll_path_id_valid (local.get $id))
+      (then
+        (local.set $ptr (call $win16_dll_path_sel_ptr (local.get $id)))
+        (local.set $sel (i32.load (local.get $ptr)))
+        (i32.store (local.get $ptr) (i32.const 0))
+        (if (local.get $sel) (then (call $win16_global_free (local.get $sel)))))))
+
+  ;; TOOLHELP is a documented Windows 3.1 service DLL, but it is imported like
+  ;; any other app-local NE module and therefore receives a dynamic id. Match
+  ;; the Pascal module name in its slot so the API dispatcher can provide the
+  ;; small documented subset an app needs without bundling Microsoft's DLL.
+  (func $win16_dynamic_module_is_toolhelp (param $module_id i32) (result i32)
+    (local $slot i32)
+    (if (i32.or (i32.lt_u (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))
+                (i32.ge_u (local.get $module_id)
+                  (i32.add (global.get $WIN16_DYNAMIC_BASE)
+                           (global.get $WIN16_DYNAMIC_MODULES))))
+      (then (return (i32.const 0))))
+    (local.set $slot (call $win16_dynamic_module_slot
+      (i32.sub (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))))
+    (i32.and (i32.eq (i32.load8_u (local.get $slot)) (i32.const 8))
+      (i64.eq (i64.load offset=1 (local.get $slot))
+              (i64.const 0x504C45484C4F4F54))))
+
+  ;; True only for Visual Basic 1 programs whose runtime is currently loaded.
+  ;; That lets USER/GDI keep VB PictureBox compatibility paths away from other
+  ;; Win16 games that also use custom child windows and same-sized work bitmaps.
+  (func $win16_vbrun100_loaded (result i32)
+    (local $i i32) (local $slot i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $WIN16_DYNAMIC_MODULES)))
+      (local.set $slot (call $win16_dynamic_module_slot (local.get $i)))
+      (if (i32.and
+            (i32.eq (i32.load8_u (local.get $slot)) (i32.const 8))
+            (i32.and
+              (i64.eq (i64.load offset=1 (local.get $slot))
+                      (i64.const 0x3030314E55524256))
+              (i32.ne (call $win16_dll_loaded
+                (i32.add (global.get $WIN16_DYNAMIC_BASE) (local.get $i)))
+                (i32.const 0))))
+        (then (return (i32.const 1))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; An app-local name gets its id the first time anything asks about it, which
+  ;; is while the task's own fixups are being applied — long before the host
+  ;; has had a chance to stage the file. Assigning it here rather than waiting
+  ;; is what makes the two orders agree: the thunk records the id it will still
+  ;; have when the DLL is finally loaded, instead of the zero it used to record
+  ;; and never revisit. Tetris imports win87em that way, and every call into it
+  ;; arrived at the dispatcher as module 0 with no name left to identify it.
+  (func $win16_dynamic_module_id (param $pstr i32) (result i32)
+    (local $i i32) (local $slot i32) (local $n i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $WIN16_DYNAMIC_MODULES)))
+      (local.set $slot (call $win16_dynamic_module_slot (local.get $i)))
+      (if (i32.eqz (i32.load8_u (local.get $slot)))
+        (then
+          ;; First free slot: claim it for this name.
+          (local.set $n (i32.load8_u (local.get $pstr)))
+          (if (i32.eqz (local.get $n)) (then (return (i32.const 0))))
+          ;; Pascal string: the length byte plus its $n characters, so $n+1
+          ;; bytes, and the slot is a separate record from the source.
+          (memory.copy (local.get $slot) (local.get $pstr)
+            (i32.add (local.get $n) (i32.const 1)))
+          (return (i32.add (local.get $i) (global.get $WIN16_DYNAMIC_BASE)))))
+      (if (call $win16_pstr_eq_pstr (local.get $pstr) (local.get $slot))
+        (then (return (i32.add (local.get $i) (global.get $WIN16_DYNAMIC_BASE)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; Give a slot back. A name claimed for a module that turned out to have no
+  ;; file must not keep its id, or four failed LoadLibrary calls would leave no
+  ;; room for a real one.
+  (func $win16_dynamic_module_release (param $id i32)
+    (call $win16_dll_path_forget (local.get $id))
+    (if (i32.and (i32.ge_u (local.get $id) (global.get $WIN16_DYNAMIC_BASE))
+                 (i32.lt_u (local.get $id)
+                           (i32.add (global.get $WIN16_DYNAMIC_BASE)
+                                    (global.get $WIN16_DYNAMIC_MODULES))))
+      (then (i32.store8 (call $win16_dynamic_module_slot
+                          (i32.sub (local.get $id) (global.get $WIN16_DYNAMIC_BASE)))
+                        (i32.const 0)))))
+
+  ;; Clear the app-local names. Called when a task is loaded, so one run's
+  ;; modules cannot answer for the next one's.
+  (func $win16_dynamic_modules_reset (export "win16_dynamic_modules_reset")
+    (local $i i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $WIN16_DYNAMIC_MODULES)))
+      (call $win16_dll_path_forget (i32.add (global.get $WIN16_DYNAMIC_BASE) (local.get $i)))
+      (i32.store8 (call $win16_dynamic_module_slot (local.get $i)) (i32.const 0))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan))))
+
+  ;; ---- Import thunks ----
+  ;;
+  ;; One slot per distinct (module, ordinal). Reusing a slot keeps the thunk
+  ;; segment small enough to stay inside one selector and makes a trace of
+  ;; thunk hits readable.
+  ;; `is_name` distinguishes the two ways an import can be written down. Most
+  ;; are IMPORTORDINAL and `value` is the ordinal; an IMPORTNAME says the name
+  ;; instead, and `value` is its offset in the imported-name table. FREECELL
+  ;; imports CARDS.CDTINIT and SHELL.SHELLABOUT that way and MSHEARTS one more,
+  ;; so this is not a corner worth deferring: without the flag they all land on
+  ;; module 0 and the trap cannot say what was wanted.
+  (func $win16_thunk_for (param $module_id i32) (param $value i32) (param $is_name i32) (result i32)
+    (local $i i32) (local $key i32) (local $e i32)
+    (local.set $key (i32.or
+      (i32.or (i32.shl (local.get $module_id) (i32.const 16))
+              (i32.and (local.get $value) (i32.const 0xFFFF)))
+      (i32.shl (i32.ne (local.get $is_name) (i32.const 0)) (i32.const 31))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (call $win16_thunk_count_get)))
+      (if (i32.eq (i32.load (i32.add (global.get $WIN16_THUNK_TABLE)
+                                     (i32.shl (local.get $i) (i32.const 2))))
+                  (local.get $key))
+        (then (return (i32.mul (local.get $i) (i32.const 4)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (if (i32.ge_u (call $win16_thunk_count_get) (global.get $WIN16_THUNK_MAX))
+      (then
+        (call $host_log_i32 (i32.const 0xCA16F017))  ;; thunk table full
+        (unreachable)))
+    (local.set $i (call $win16_thunk_count_get))
+    (i32.store (i32.add (global.get $WIN16_THUNK_TABLE) (i32.shl (local.get $i) (i32.const 2)))
+               (local.get $key))
+    (call $win16_thunk_count_set (i32.add (local.get $i) (i32.const 1)))
+    (i32.mul (local.get $i) (i32.const 4)))
+
+  ;; Module id, ordinal and import kind behind a thunk offset, for the
+  ;; dispatcher. The module id masks off the name flag in bit 31.
+  (func $win16_thunk_module (export "win16_thunk_module") (param $off i32) (result i32)
+    (i32.and
+      (i32.shr_u (i32.load (i32.add (global.get $WIN16_THUNK_TABLE)
+                                    (i32.and (local.get $off) (i32.const 0xFFFC))))
+                 (i32.const 16))
+      (i32.const 0x7FFF)))
+
+  (func $win16_thunk_is_name (export "win16_thunk_is_name") (param $off i32) (result i32)
+    (i32.shr_u (i32.load (i32.add (global.get $WIN16_THUNK_TABLE)
+                                  (i32.and (local.get $off) (i32.const 0xFFFC))))
+               (i32.const 31)))
+
+  ;; Where the imported name behind a name-import thunk lives, as a linear
+  ;; memory address in the staged file: a Pascal string the host can read.
+  (func $win16_thunk_name_addr (export "win16_thunk_name_addr") (param $off i32) (result i32)
+    (i32.add
+      (i32.add (global.get $win16_ne_off)
+               (i32.load16_u (i32.add (global.get $win16_ne_off) (i32.const 0x2A))))
+      (call $win16_thunk_ordinal (local.get $off))))
+
+  (func $win16_thunk_ordinal (export "win16_thunk_ordinal") (param $off i32) (result i32)
+    (i32.and (i32.load (i32.add (global.get $WIN16_THUNK_TABLE)
+                                (i32.and (local.get $off) (i32.const 0xFFFC))))
+             (i32.const 0xFFFF)))
+
+  ;; ---- Entry table ----
+  ;;
+  ;; Ordinal -> (segment, offset). Bundles are runs of entries that share a
+  ;; segment; a bundle with segment indicator 0 is a gap that consumes
+  ;; ordinals without defining any. 0xFF marks a moveable bundle, whose
+  ;; entries carry an INT 3Fh thunk ahead of the real segment/offset.
+  (func $win16_entry_lookup (param $ne_off i32) (param $ordinal i32)
+        (param $out_seg i32) (result i32)
+    (local $p i32) (local $end i32) (local $count i32) (local $ind i32)
+    (local $cur i32) (local $i i32)
+    (local.set $p (i32.add (local.get $ne_off)
+                    (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x04)))))
+    (local.set $end (i32.add (local.get $p)
+                      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x06)))))
+    (local.set $cur (i32.const 1))
+    (block $done (loop $bundles
+      (br_if $done (i32.ge_u (local.get $p) (local.get $end)))
+      (local.set $count (i32.load8_u (local.get $p)))
+      (local.set $ind (i32.load8_u (i32.add (local.get $p) (i32.const 1))))
+      (br_if $done (i32.eqz (local.get $count)))
+      (local.set $p (i32.add (local.get $p) (i32.const 2)))
+      (if (i32.eqz (local.get $ind))
+        (then
+          (local.set $cur (i32.add (local.get $cur) (local.get $count)))
+          (br $bundles)))
+      (local.set $i (i32.const 0))
+      (block $bd (loop $bl
+        (br_if $bd (i32.ge_u (local.get $i) (local.get $count)))
+        (if (i32.eq (local.get $ind) (i32.const 0xFF))
+          (then
+            (if (i32.eq (local.get $cur) (local.get $ordinal))
+              (then
+                (i32.store (local.get $out_seg) (i32.load8_u (i32.add (local.get $p) (i32.const 3))))
+                (return (i32.load16_u (i32.add (local.get $p) (i32.const 4))))))
+            (local.set $p (i32.add (local.get $p) (i32.const 6))))
+          (else
+            (if (i32.eq (local.get $cur) (local.get $ordinal))
+              (then
+                (i32.store (local.get $out_seg) (local.get $ind))
+                (return (i32.load16_u (i32.add (local.get $p) (i32.const 1))))))
+            (local.set $p (i32.add (local.get $p) (i32.const 3)))))
+        (local.set $cur (i32.add (local.get $cur) (i32.const 1)))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $bl)))
+      (br $bundles)))
+    (i32.store (local.get $out_seg) (i32.const 0))
+    (i32.const 0))
+
+  ;; ---- Relocations ----
+  ;;
+  ;; Every record names one target and the head of a chain of places to write
+  ;; it. For a non-additive record the word already sitting at each site is
+  ;; the offset of the next site, 0xFFFF ending the chain; for an additive one
+  ;; there is no chain and the target is added to what is there.
+  ;; $seg_wa is where the segment was placed and is written; $rec_wa is where
+  ;; its relocation records live in the staged file. They are not the same
+  ;; place: the records sit past the segment's own length, and only `seg_len`
+  ;; bytes were copied out.
+  ;; $seg_index_base offsets every INTERNALREF: an image's segment N lives at
+  ;; arena index base+N. It is zero for the task's own image, whose segment N
+  ;; is index N, and non-zero for a DLL placed after it.
+  (func $win16_apply_relocs (param $seg_wa i32) (param $seg_len i32) (param $rec_wa i32)
+        (param $ne_off i32) (param $seg_index_base i32) (param $thunk_sel i32)
+    (local $p i32) (local $count i32) (local $i i32)
+    (local $addr_type i32) (local $rel_type i32) (local $additive i32)
+    (local $site i32) (local $a i32) (local $c i32)
+    (local $tgt_sel i32) (local $tgt_off i32) (local $next i32) (local $seg_out i32)
+    (local $module i32) (local $constant i32)
+    (local.set $p (local.get $rec_wa))
+    (local.set $count (i32.load16_u (local.get $p)))
+    (local.set $p (i32.add (local.get $p) (i32.const 2)))
+    (local.set $seg_out (i32.add (global.get $WIN16_SEG_TABLE)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 16))))
+    (block $done (loop $records
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $addr_type (i32.and (i32.load8_u (local.get $p)) (i32.const 0x0F)))
+      (local.set $rel_type  (i32.and (i32.load8_u (i32.add (local.get $p) (i32.const 1))) (i32.const 0x03)))
+      (local.set $additive  (i32.ne (i32.and (i32.load8_u (i32.add (local.get $p) (i32.const 1)))
+                                             (i32.const 0x04)) (i32.const 0)))
+      (local.set $site (i32.load16_u (i32.add (local.get $p) (i32.const 2))))
+      (local.set $a    (i32.load16_u (i32.add (local.get $p) (i32.const 4))))
+      (local.set $c    (i32.load16_u (i32.add (local.get $p) (i32.const 6))))
+
+      ;; OSFIXUP (type 3) is not a fixup to apply. It marks a floating-point
+      ;; instruction so that the emulator library can rewrite it into a call
+      ;; when the machine has no coprocessor — the bytes already hold the real
+      ;; FP instruction, padded with the WAIT and NOP that make room for the
+      ;; rewrite, and a machine with a 387 leaves them exactly as they are.
+      ;; This emulator has an x87, so it does too. Writing a thunk address
+      ;; over them, which is what treating this as an import did, replaced
+      ;; every floating-point instruction in the module with nonsense —
+      ;; Visual Basic's p-code interpreter walked off its own instruction
+      ;; stream a few opcodes into any form that used a number.
+      (if (i32.eq (local.get $rel_type) (i32.const 3))
+        (then
+          (local.set $p (i32.add (local.get $p) (i32.const 8)))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $records)))
+
+      ;; Resolve the target to selector:offset.
+      (if (i32.eqz (local.get $rel_type))
+        (then
+          ;; INTERNALREF. Segment 0xFF means "look the ordinal up in the entry
+          ;; table" — the linker did not know the segment at link time.
+          (if (i32.eq (local.get $a) (i32.const 0xFF))
+            (then
+              (local.set $tgt_off (call $win16_entry_lookup (local.get $ne_off) (local.get $c) (local.get $seg_out)))
+              (local.set $tgt_sel (call $win16_index_to_sel
+                (i32.add (local.get $seg_index_base) (i32.load (local.get $seg_out))))))
+            (else
+              (local.set $tgt_sel (call $win16_index_to_sel
+                (i32.add (local.get $seg_index_base) (local.get $a))))
+              (local.set $tgt_off (local.get $c)))))
+        (else
+          (if (i32.eq (local.get $rel_type) (i32.const 1))
+            (then
+              ;; IMPORTORDINAL. `a` indexes the module-reference table, whose
+              ;; entries are offsets into the imported-name table, where the
+              ;; module's Pascal-string name lives.
+              (local.set $module
+                (call $win16_module_id
+                  (call $win16_module_name (local.get $ne_off) (local.get $a))))
+              (local.set $constant
+                (call $win16_import_constant (local.get $module) (local.get $c)))
+              (if (i32.and
+                    (i32.ge_s (local.get $constant) (i32.const 0))
+                    (i32.or (i32.eqz (local.get $addr_type))
+                            (i32.eq (local.get $addr_type) (i32.const 5))))
+                (then
+                  (local.set $tgt_sel (i32.const 0))
+                  (local.set $tgt_off (local.get $constant)))
+                (else
+                  (local.set $tgt_sel (local.get $thunk_sel))
+                  (local.set $tgt_off (call $win16_thunk_for
+                    (local.get $module) (local.get $c) (i32.const 0))))))
+            (else
+              ;; IMPORTNAME (2) names the entry point instead of numbering it,
+              ;; with `c` relative to THIS importing image. Resolve already
+              ;; loaded DLL exports now, while that image's name table is
+              ;; available. The resulting ordinal thunk also remains valid
+              ;; when another importer uses the same offset for another name.
+              ;; Legacy unresolved/builtin imports retain named dispatch.
+              (local.set $module (call $win16_module_id
+                (call $win16_module_name (local.get $ne_off) (local.get $a))))
+              (local.set $constant (i32.const 0))
+              (if (call $win16_dll_loaded (local.get $module))
+                (then
+                  (local.set $constant (call $win16_dll_ordinal (local.get $module)
+                    (i32.add (i32.add (local.get $ne_off)
+                      (i32.load16_u offset=0x2A (local.get $ne_off))) (local.get $c))))))
+              (local.set $tgt_sel (local.get $thunk_sel))
+              (local.set $tgt_off (call $win16_thunk_for
+                (local.get $module)
+                (select (local.get $constant) (local.get $c) (local.get $constant))
+                (i32.eqz (local.get $constant))))))))
+
+      ;; Walk the chain and write every site.
+      (block $chain_done (loop $chain
+        (br_if $chain_done (i32.ge_u (local.get $site) (i32.const 0xFFFF)))
+        (br_if $chain_done (i32.ge_u (local.get $site) (local.get $seg_len)))
+        (local.set $next (i32.load16_u (i32.add (local.get $seg_wa) (local.get $site))))
+        (if (i32.eq (local.get $addr_type) (i32.const 2))
+          (then
+            ;; SEGMENT: selector only
+            (i32.store16 (i32.add (local.get $seg_wa) (local.get $site)) (local.get $tgt_sel)))
+          (else
+            (if (i32.eq (local.get $addr_type) (i32.const 5))
+              (then
+                ;; OFFSET: 16-bit offset only
+                (i32.store16 (i32.add (local.get $seg_wa) (local.get $site))
+                  (i32.add (local.get $tgt_off)
+                           (select (local.get $next) (i32.const 0) (local.get $additive)))))
+              (else
+                (if (i32.eqz (local.get $addr_type))
+                  (then
+                    ;; LOBYTE
+                    (i32.store8 (i32.add (local.get $seg_wa) (local.get $site)) (local.get $tgt_off)))
+                  (else
+                    ;; FAR_ADDR additive relocations add the existing offset,
+                    ;; but replace the selector (there is no carry into it).
+                    ;; Preserve the legacy fallback for other pointer types.
+                    (i32.store16 (i32.add (local.get $seg_wa) (local.get $site))
+                      (i32.add (local.get $tgt_off)
+                        (select (local.get $next) (i32.const 0)
+                          (i32.and (local.get $additive)
+                            (i32.eq (local.get $addr_type) (i32.const 3))))))
+                    (i32.store16 (i32.add (i32.add (local.get $seg_wa) (local.get $site)) (i32.const 2))
+                                 (local.get $tgt_sel))))))))
+        ;; Additive records patch one site and stop; chained ones follow the
+        ;; link that was sitting in the low word before the write.
+        (br_if $chain_done (local.get $additive))
+        (local.set $site (local.get $next))
+        (br $chain)))
+
+      (local.set $p (i32.add (local.get $p) (i32.const 8)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $records))))
+
+  ;; ---- Loader ----
+  ;;
+  ;; Returns the entry point as a far address (selector << 16) | offset, or a
+  ;; negative error: -1 not MZ, -2 not NE, -3 too many segments.
+  (func $load_ne (export "load_ne") (param $size i32) (result i32)
+    (local $ne_off i32) (local $seg_tab i32) (local $seg_count i32)
+    (local $shift i32) (local $i i32) (local $e i32)
+    (local $file_pos i32) (local $len i32) (local $flags i32) (local $alloc i32)
+    (local $base i32) (local $dst i32) (local $auto_data i32)
+
+    (if (i32.ne (i32.load16_u (global.get $PE_STAGING)) (i32.const 0x5A4D))
+      (then (return (i32.const -1))))
+    (local.set $ne_off (i32.load (region.addr $PE_STAGING 0x3C)))
+    (if (i32.ne (i32.load16_u (i32.add (global.get $PE_STAGING) (local.get $ne_off)))
+                (i32.const 0x454E))
+      (then (return (i32.const -2))))
+    (if (i32.eqz (call $win16_process_arena_release)) (then (return (i32.const -4))))
+    (local.set $ne_off (i32.add (global.get $PE_STAGING) (local.get $ne_off)))
+    ;; Kept so a thunk can find the imported-name table again at dispatch time,
+    ;; and the resource walk knows where the staged file ends.
+    (global.set $win16_ne_off (local.get $ne_off))
+    (global.set $win16_file_size (local.get $size))
+
+    (local.set $seg_count (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x1C))))
+    (if (i32.ge_u (i32.add (local.get $seg_count) (i32.const 2)) (global.get $WIN16_SEG_MAX))
+      (then (return (i32.const -3))))
+    (call $invocation_process_begin)
+    (local.set $shift (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x32))))
+    (if (i32.eqz (local.get $shift)) (then (local.set $shift (i32.const 9))))
+    (local.set $seg_tab (i32.add (local.get $ne_off)
+                          (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x22)))))
+
+    ;; A 16-bit image has no base to relocate to, so guest linear addresses
+    ;; start at zero and every segment lives in its own 64KB arena slot.
+    (global.set $image_base (i32.const 0))
+    (call $win16_thunk_count_set (i32.const 0))
+    (call $zero_memory (global.get $WIN16_SEG_TABLE) (global.get $WIN16_SEG_TABLE_SIZE))
+    (call $win16_sub_next_set (global.get $WIN16_SUB_FIRST))
+    (call $win16_pool_base_set (i32.const 0))
+    (call $win16_pool_used_set (i32.const 0))
+    (call $zero_memory (global.get $WIN16_THUNK_TABLE)
+      (i32.mul (global.get $WIN16_THUNK_MAX) (i32.const 4)))
+
+    ;; Pass 1: place and copy every segment. Relocations come after, because a
+    ;; fixup in segment 1 can name segment 3.
+    (local.set $i (i32.const 0))
+    (block $place_done (loop $place
+      (br_if $place_done (i32.ge_u (local.get $i) (local.get $seg_count)))
+      (local.set $e (i32.add (local.get $seg_tab) (i32.mul (local.get $i) (i32.const 8))))
+      (local.set $file_pos (i32.shl (i32.load16_u (local.get $e)) (local.get $shift)))
+      (local.set $len   (i32.load16_u (i32.add (local.get $e) (i32.const 2))))
+      (local.set $flags (i32.load16_u (i32.add (local.get $e) (i32.const 4))))
+      (local.set $alloc (i32.load16_u (i32.add (local.get $e) (i32.const 6))))
+      ;; A zero length or allocation means the full 64KB, not an empty segment.
+      (if (i32.and (i32.eqz (local.get $len)) (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then (local.set $len (i32.const 0x10000))))
+      (if (i32.eqz (local.get $alloc)) (then (local.set $alloc (i32.const 0x10000))))
+      (if (i32.lt_u (local.get $alloc) (local.get $len)) (then (local.set $alloc (local.get $len))))
+      (local.set $base (i32.add (call $win16_arena_base)
+                                (i32.mul (local.get $i) (i32.const 0x10000))))
+      (call $win16_seg_set (i32.add (local.get $i) (i32.const 1))
+        (local.get $base) (local.get $alloc) (local.get $flags) (i32.add (local.get $i) (i32.const 1)))
+      (local.set $dst (call $g2w (local.get $base)))
+      (call $zero_memory (local.get $dst) (i32.const 0x10000))
+      (if (i32.and (i32.ne (local.get $file_pos) (i32.const 0))
+                   (i32.le_u (i32.add (local.get $file_pos) (local.get $len)) (local.get $size)))
+        (then
+          (call $memcpy (local.get $dst)
+            (i32.add (global.get $PE_STAGING) (local.get $file_pos))
+            (local.get $len))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $place)))
+
+    ;; The thunk segment sits one slot past the last real segment. Nothing is
+    ;; ever executed from it: EIP landing inside is the signal to dispatch.
+    (global.set $win16_thunk_index (i32.add (local.get $seg_count) (i32.const 1)))
+    (global.set $WIN16_THUNK_SEL (call $win16_index_to_sel (global.get $win16_thunk_index)))
+    (call $win16_seg_set (global.get $win16_thunk_index)
+      (i32.add (call $win16_arena_base) (i32.mul (local.get $seg_count) (i32.const 0x10000)))
+      (i32.const 0x10000) (i32.const 0) (i32.const 0))
+    ;; Anything allocated from here on takes the slot after the thunks.
+    (call $win16_next_seg_set (i32.add (global.get $win16_thunk_index) (i32.const 1)))
+    (global.set $win16_psp_sel (i32.const 0))
+    (global.set $win16_env_seg (i32.const 0))
+    (global.set $win16_dta (i32.const 0))
+    ;; Before the fixups, because they are what fills these in.
+    (call $win16_dynamic_modules_reset)
+
+    ;; Pass 2: relocations.
+    (local.set $i (i32.const 0))
+    (block $fix_done (loop $fix
+      (br_if $fix_done (i32.ge_u (local.get $i) (local.get $seg_count)))
+      (local.set $e (i32.add (local.get $seg_tab) (i32.mul (local.get $i) (i32.const 8))))
+      (local.set $flags (i32.load16_u (i32.add (local.get $e) (i32.const 4))))
+      (local.set $file_pos (i32.shl (i32.load16_u (local.get $e)) (local.get $shift)))
+      (local.set $len (i32.load16_u (i32.add (local.get $e) (i32.const 2))))
+      (if (i32.and (i32.eqz (local.get $len)) (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then (local.set $len (i32.const 0x10000))))
+      ;; RELOCINFO is bit 8, so it must be reduced to 0/1 before being combined
+      ;; with another predicate: 0x100 AND 1 is 0.
+      (if (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x0100)) (i32.const 0))
+                   (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then
+          (call $win16_apply_relocs
+            (call $g2w (call $win16_seg_base (i32.add (local.get $i) (i32.const 1))))
+            (local.get $len)
+            (i32.add (i32.add (global.get $PE_STAGING) (local.get $file_pos)) (local.get $len))
+            (local.get $ne_off) (i32.const 0) (global.get $WIN16_THUNK_SEL))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $fix)))
+
+    ;; Exported EXE callbacks can be reached through guest-generated instance
+    ;; thunks, so USER entry handling alone cannot fix their DS prologues.
+    (call $win16_patch_dll_prologues (local.get $ne_off) (i32.const 0))
+
+    ;; Auto-data segment: DS for the whole task, and where the local heap and
+    ;; stack live. SS = DS is the small/medium model every one of these images
+    ;; is built with.
+    (local.set $auto_data (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x0E))))
+    (global.set $win16_auto_data (local.get $auto_data))
+    (global.set $win16_seg_count (local.get $seg_count))
+    (global.set $win16_entry_cs
+      (call $win16_index_to_sel (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x16)))))
+    (global.set $win16_entry_ip (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x14))))
+    (global.set $win16_stack_size (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x12))))
+    (global.set $win16_heap_size (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x10))))
+    (global.set $is_win16 (i32.const 1))
+
+    (call $win16_start_task (local.get $ne_off))
+
+    (i32.or (i32.shl (global.get $win16_entry_cs) (i32.const 16))
+            (global.get $win16_entry_ip)))
+
+  ;; ---- Resources ----
+  ;;
+  ;; An NE resource table is a flat list of types, each with a run of records
+  ;; naming one resource. Nothing about it resembles the PE resource tree, so
+  ;; none of the 32-bit resource walker applies.
+  ;;
+  ;;   u16 align shift           — offsets and lengths below are in these units
+  ;;   TYPEINFO, repeating until a type id of 0:
+  ;;     u16 type id             — bit 15 set means an integer id, else a name
+  ;;     u16 count
+  ;;     u32 reserved
+  ;;     NAMEINFO x count, 12 bytes each:
+  ;;       u16 offset  u16 length  u16 flags  u16 id  u16 handle  u16 usage
+  ;;
+  ;; Offsets are from the start of the file, not from the NE header. Returns a
+  ;; linear address into the staged image, or 0, and leaves the byte length in
+  ;; $win16_res_len.
+  ;; A NAMEINFO id with bit 15 CLEAR is not an id at all: it is an offset from
+  ;; the start of the resource table to a Pascal string, and the resource is
+  ;; addressed by that name. Solitaire's icon is `RT_GROUP_ICON id="SOL"`, and
+  ;; every Load* here used to refuse a name outright, so it had no icon.
+  ;;
+  ;; Names are compared without case, the way USER does it — modules are
+  ;; inconsistent about which case they store and which they ask with.
+  (func $win16_res_name_eq (param $entry i32) (param $want i32) (result i32)
+    (local $n i32) (local $i i32) (local $a i32) (local $b i32)
+    (if (i32.eqz (local.get $want)) (then (return (i32.const 0))))
+    (local.set $n (i32.load8_u (local.get $entry)))
+    (block $done (loop $cmp
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $a (i32.load8_u
+        (i32.add (i32.add (local.get $entry) (i32.const 1)) (local.get $i))))
+      (local.set $b (i32.load8_u (i32.add (local.get $want) (local.get $i))))
+      (if (i32.eqz (local.get $b)) (then (return (i32.const 0))))
+      (if (i32.and (i32.ge_u (local.get $a) (i32.const 0x61))
+                   (i32.le_u (local.get $a) (i32.const 0x7A)))
+        (then (local.set $a (i32.sub (local.get $a) (i32.const 0x20)))))
+      (if (i32.and (i32.ge_u (local.get $b) (i32.const 0x61))
+                   (i32.le_u (local.get $b) (i32.const 0x7A)))
+        (then (local.set $b (i32.sub (local.get $b) (i32.const 0x20)))))
+      (if (i32.ne (local.get $a) (local.get $b)) (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $cmp)))
+    ;; Both ended together, or the caller's string runs on past the stored one.
+    (i32.eqz (i32.load8_u (i32.add (local.get $want) (local.get $n)))))
+
+  ;; Resolve a named TYPEINFO to a token that can travel in a resource handle.
+  ;; NE either stores a named type as an offset from the resource-table base,
+  ;; with bit 15 clear, or compiles it to an integer id and records the original
+  ;; name in RT_NAMETABLE. The former gets bit 15 set in our token so
+  ;; $win16_find_resource_ex can distinguish it from an integer type id; the
+  ;; latter is already an ordinary integer id.
+  (func $win16_find_resource_type_name (export "win16_find_resource_type_name")
+        (param $name_wa i32) (result i32)
+    (local $p i32) (local $type i32) (local $count i32) (local $cb i32)
+    (local $end i32) (local $ne_off i32) (local $img i32) (local $rt i32)
+    (local.set $ne_off (call $win16_res_ne_off (global.get $win16_res_module_id)))
+    (local.set $img (call $win16_res_base_addr (global.get $win16_res_module_id)))
+    (local.set $p (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x24))))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $p (i32.add (local.get $ne_off) (local.get $p)))
+    (local.set $rt (local.get $p))
+    (local.set $p (i32.add (local.get $p) (i32.const 2)))
+    (local.set $end (i32.add (local.get $img)
+      (call $win16_res_image_size (global.get $win16_res_module_id) (local.get $img))))
+    (block $done (loop $types
+      (br_if $done (i32.ge_u (i32.add (local.get $p) (i32.const 8)) (local.get $end)))
+      (local.set $type (i32.load16_u (local.get $p)))
+      (br_if $done (i32.eqz (local.get $type)))
+      (local.set $count (i32.load16_u (i32.add (local.get $p) (i32.const 2))))
+      (if (i32.and
+            (i32.eqz (i32.and (local.get $type) (i32.const 0x8000)))
+            (i32.and (i32.lt_u (i32.add (local.get $rt) (local.get $type)) (local.get $end))
+                     (call $win16_res_name_eq
+                       (i32.add (local.get $rt) (local.get $type))
+                       (local.get $name_wa))))
+        (then (return (i32.or (local.get $type) (i32.const 0x8000)))))
+      (local.set $p (i32.add (i32.add (local.get $p) (i32.const 8))
+                             (i32.mul (local.get $count) (i32.const 12))))
+      (br $types)))
+    ;; Resource Compiler 3.0 commonly turns a named type into a numeric one.
+    ;; Taipei's seven LAYOUT resources are TYPEINFO 0xF009, while these table
+    ;; entries retain "LAYOUT" beside type 0xF009 and ids 200..206.
+    (local.set $p (call $win16_find_resource_ex
+      (i32.const 15) (i32.const 1) (i32.const 0)))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $end (i32.add (local.get $p) (global.get $win16_res_len)))
+    (block $names_done (loop $names
+      (br_if $names_done (i32.gt_u (i32.add (local.get $p) (i32.const 6)) (local.get $end)))
+      (local.set $cb (i32.load16_u (local.get $p)))
+      (br_if $names_done (i32.lt_u (local.get $cb) (i32.const 7)))
+      (if (i32.and
+            (i32.ne (i32.load8_u (i32.add (local.get $p) (i32.const 6))) (i32.const 0))
+            (call $win16_res_name_eq_z
+              (i32.add (local.get $p) (i32.const 6)) (local.get $name_wa)))
+        (then (return (i32.and
+          (i32.load16_u (i32.add (local.get $p) (i32.const 2)))
+          (i32.const 0x7FFF)))))
+      (local.set $p (i32.add (local.get $p) (local.get $cb)))
+      (br $names)))
+    (i32.const 0))
+
+  (func $win16_find_resource (export "win16_find_resource")
+        (param $type_id i32) (param $res_id i32) (result i32)
+    (call $win16_find_resource_ex
+      (local.get $type_id) (local.get $res_id) (i32.const 0)))
+
+  ;; `name_wa` is the WASM address of a NUL-terminated name to match instead of
+  ;; `res_id`; zero means match by id as before.
+  ;;
+  ;; --trace-win16 reports every lookup and what it found, because a resource
+  ;; that misses is silent at every layer above: $menu_load returns without
+  ;; installing a bar, the window simply has no menu, and the app looks like
+  ;; one that never had one. Moraff's Jiggler hangs its whole game menu off a
+  ;; named RT_MENU and paints an empty strip when the lookup fails, with
+  ;; nothing anywhere to say the name was the thing that missed.
+  (func $win16_find_resource_ex (export "win16_find_resource_ex")
+        (param $type_id i32) (param $res_id i32) (param $name_wa i32) (result i32)
+    (call $win16_find_resource_trace
+      (local.get $type_id) (local.get $res_id) (local.get $name_wa) (i32.const 0)))
+
+  ;; Re-find the entry a by-name lookup matched, by its stored NAMEINFO id
+  ;; word. A named entry's id word is a resource-table offset, so it names the
+  ;; entry exactly and cannot be confused with an integer id, which always has
+  ;; bit 15 set.
+  (func $win16_find_resource_rid (export "win16_find_resource_rid")
+        (param $type_id i32) (param $rid i32) (result i32)
+    (call $win16_find_resource_trace
+      (local.get $type_id) (i32.const 0) (i32.const 0) (local.get $rid)))
+
+  (func $win16_find_resource_trace
+        (param $type_id i32) (param $res_id i32) (param $name_wa i32)
+        (param $rid_want i32) (result i32)
+    (local $found i32)
+    (local.set $found (call $win16_find_resource_scan
+      (local.get $type_id) (local.get $res_id) (local.get $name_wa)
+      (local.get $rid_want)))
+    (if (global.get $win16_trace)
+      (then
+        (call $host_log_i32 (i32.const 0xCA16A9E4))
+        (call $host_log_i32 (local.get $type_id))
+        (call $host_log_i32 (local.get $res_id))
+        (call $host_log_i32 (local.get $name_wa))
+        (call $host_log_i32 (local.get $found))))
+    (local.get $found))
+
+  ;; The table walk itself. Separated only so the wrapper above can trace it;
+  ;; the nametable fallback below deliberately re-enters through the wrapper,
+  ;; so a trace shows the second lookup the miss turned into.
+  (func $win16_find_resource_scan
+        (param $type_id i32) (param $res_id i32) (param $name_wa i32)
+        (param $rid_want i32) (result i32)
+    (local $p i32) (local $shift i32) (local $type i32) (local $count i32)
+    (local $q i32) (local $i i32) (local $end i32) (local $ne_off i32) (local $img i32)
+    (local $rt i32) (local $rid i32)
+    (global.set $win16_res_len (i32.const 0))
+    (global.set $win16_res_found_id (i32.const 0))
+    ;; Which image: what the caller's hInstance named, or CS when it named
+    ;; nothing — see $win16_res_module.
+    (local.set $ne_off (call $win16_res_ne_off (global.get $win16_res_module_id)))
+    (local.set $img (call $win16_res_base_addr (global.get $win16_res_module_id)))
+    (local.set $p (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x24))))
+    ;; A resource table offset of zero means the module has no resources at all.
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $p (i32.add (local.get $ne_off) (local.get $p)))
+    ;; Name offsets below are measured from here, the table's own start.
+    (local.set $rt (local.get $p))
+    (local.set $shift (i32.load16_u (local.get $p)))
+    (local.set $p (i32.add (local.get $p) (i32.const 2)))
+    ;; The table lives inside the staged file; refuse to walk past it rather
+    ;; than read whatever follows as if it were another TYPEINFO.
+    (local.set $end (i32.add (local.get $img)
+      (call $win16_res_image_size (global.get $win16_res_module_id) (local.get $img))))
+
+    (block $done (loop $types
+      (br_if $done (i32.ge_u (i32.add (local.get $p) (i32.const 8)) (local.get $end)))
+      (local.set $type (i32.load16_u (local.get $p)))
+      (br_if $done (i32.eqz (local.get $type)))
+      (local.set $count (i32.load16_u (i32.add (local.get $p) (i32.const 2))))
+      (local.set $q (i32.add (local.get $p) (i32.const 8)))
+      ;; Integer types are stored with bit 15 set. A named type token also has
+      ;; bit 15 set, but represents the resource-table name offset with that
+      ;; bit cleared; $win16_find_resource_type_name creates those tokens.
+      (if (select
+            (i32.eq (local.get $type)
+                    (i32.and (local.get $type_id) (i32.const 0x7FFF)))
+            (i32.eq (local.get $type)
+                    (i32.or (local.get $type_id) (i32.const 0x8000)))
+            (i32.ne (i32.and (local.get $type_id) (i32.const 0x8000)) (i32.const 0)))
+        (then
+          (local.set $i (i32.const 0))
+          (block $scanned (loop $names
+            (br_if $scanned (i32.ge_u (local.get $i) (local.get $count)))
+            (local.set $rid (i32.load16_u (i32.add (local.get $q) (i32.const 6))))
+            (if (select
+                  ;; Asking for one exact NAMEINFO id word: what FindResource
+                  ;; recorded when it matched this entry by name.
+                  (i32.eq (local.get $rid) (local.get $rid_want))
+                  (select
+                    ;; Asking by name: only the named entries can match, and
+                    ;; the id field is the offset to the stored string.
+                    (i32.and (i32.eqz (i32.and (local.get $rid) (i32.const 0x8000)))
+                             (call $win16_res_name_eq
+                               (i32.add (local.get $rt) (local.get $rid))
+                               (local.get $name_wa)))
+                    (i32.eq (local.get $rid)
+                            (i32.or (local.get $res_id) (i32.const 0x8000)))
+                    (local.get $name_wa))
+                  (local.get $rid_want))
+              (then
+                (global.set $win16_res_found_id (local.get $rid))
+                (global.set $win16_res_len
+                  (i32.shl (i32.load16_u (i32.add (local.get $q) (i32.const 2))) (local.get $shift)))
+                ;; Where it sits in the file, for AccessResource — which hands
+                ;; the caller a file handle seeked to exactly here.
+                (global.set $win16_res_file_off
+                  (i32.shl (i32.load16_u (local.get $q)) (local.get $shift)))
+                (return (i32.add (local.get $img)
+                  (i32.shl (i32.load16_u (local.get $q)) (local.get $shift))))))
+            (local.set $q (i32.add (local.get $q) (i32.const 12)))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br $names)))))
+      (local.set $p (i32.add (i32.add (local.get $p) (i32.const 8))
+                             (i32.mul (local.get $count) (i32.const 12))))
+      (br $types)))
+    ;; A name that matched no entry may still be in the module's name table:
+    ;; the 3.0 resource compiler moved named resources to numeric ids and left
+    ;; RT_NAMETABLE behind to say which name became which number. Cruel's whole
+    ;; resource set is reached that way — it asks for the accelerators as
+    ;; "CRUEL" and they are stored as id 1 — so a straight miss here is not
+    ;; the answer until the table has been consulted.
+    (if (local.get $name_wa)
+      (then
+        (local.set $rid (call $win16_nametable_id (local.get $type_id) (local.get $name_wa)))
+        (if (local.get $rid)
+          (then (return (call $win16_find_resource_ex
+                  (local.get $type_id) (local.get $rid) (i32.const 0)))))))
+    (i32.const 0))
+
+  ;; RT_NAMETABLE is a run of {WORD cbEntry, WORD type, WORD id, char name[]}
+  ;; ending at a zero length. The ids carry the 0x8000 integer flag exactly as
+  ;; the resource table's do.
+  (func $win16_nametable_id (param $type_id i32) (param $name_wa i32) (result i32)
+    (local $p i32) (local $end i32) (local $cb i32)
+    (local.set $p (call $win16_find_resource_ex (i32.const 15) (i32.const 1) (i32.const 0)))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $end (i32.add (local.get $p) (global.get $win16_res_len)))
+    (block $done (loop $entries
+      (br_if $done (i32.gt_u (i32.add (local.get $p) (i32.const 6)) (local.get $end)))
+      (local.set $cb (i32.load16_u (local.get $p)))
+      (br_if $done (i32.lt_u (local.get $cb) (i32.const 7)))
+      (if (i32.eq (i32.and (i32.load16_u (i32.add (local.get $p) (i32.const 2)))
+                           (i32.const 0x7FFF))
+                  (local.get $type_id))
+        (then
+          ;; Two NUL-terminated strings can follow the three words: a type name,
+          ;; used when the type ordinal is really an offset, and then the
+          ;; resource's own name. The compiler that built these files writes the
+          ;; type as a plain ordinal and still leaves an empty type name behind
+          ;; it, so an empty first string means the name is the second one.
+          (if (call $win16_res_name_eq_z
+                (i32.add (local.get $p)
+                  (select (i32.const 7) (i32.const 6)
+                    (i32.eqz (i32.load8_u (i32.add (local.get $p) (i32.const 6))))))
+                (local.get $name_wa))
+            (then (return (i32.and (i32.load16_u (i32.add (local.get $p) (i32.const 4)))
+                                   (i32.const 0x7FFF)))))))
+      (local.set $p (i32.add (local.get $p) (local.get $cb)))
+      (br $entries)))
+    (i32.const 0))
+
+  ;; Case-insensitive compare of two NUL-terminated names. Bounded: neither
+  ;; string is trusted to end — one comes from the app and the other from a
+  ;; resource — and no resource name is anywhere near this long.
+  (func $win16_res_name_eq_z (param $a i32) (param $b i32) (result i32)
+    (local $x i32) (local $y i32) (local $n i32)
+    (if (i32.eqz (local.get $b)) (then (return (i32.const 0))))
+    (block $done (loop $cmp
+      (if (i32.ge_u (local.get $n) (i32.const 64)) (then (return (i32.const 0))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (local.set $x (i32.load8_u (local.get $a)))
+      (local.set $y (i32.load8_u (local.get $b)))
+      (if (i32.and (i32.ge_u (local.get $x) (i32.const 0x61))
+                   (i32.le_u (local.get $x) (i32.const 0x7A)))
+        (then (local.set $x (i32.sub (local.get $x) (i32.const 0x20)))))
+      (if (i32.and (i32.ge_u (local.get $y) (i32.const 0x61))
+                   (i32.le_u (local.get $y) (i32.const 0x7A)))
+        (then (local.set $y (i32.sub (local.get $y) (i32.const 0x20)))))
+      (if (i32.ne (local.get $x) (local.get $y)) (then (return (i32.const 0))))
+      (br_if $done (i32.eqz (local.get $x)))
+      (local.set $a (i32.add (local.get $a) (i32.const 1)))
+      (local.set $b (i32.add (local.get $b) (i32.const 1)))
+      (br $cmp)))
+    (i32.const 1))
+
+  ;; ---- Segment allocation ----
+  ;;
+  ;; Everything a running task creates that needs a selector — the PSP, and
+  ;; later every GlobalAlloc block — takes the next free arena slot. One slot
+  ;; is one selector and one 64KB span, which keeps the "every base is 64KB
+  ;; aligned" invariant the whole 16-bit execution core rests on.
+  (func $win16_alloc_segment (result i32)
+    (local $index i32) (local $base i32)
+    (local.set $index (call $win16_next_seg_get))
+    (if (i32.ge_u (local.get $index) (global.get $WIN16_SEG_MAX))
+      (then
+        (call $host_log_i32 (i32.const 0xCA165E5A))  ;; selector arena exhausted
+        (call $host_log_i32 (local.get $index))
+        (unreachable)))
+    (call $win16_next_seg_set (i32.add (local.get $index) (i32.const 1)))
+    (local.set $base (call $win16_arena_slot_base (local.get $index)))
+    (call $win16_seg_set (local.get $index) (local.get $base) (i32.const 0x10000)
+      (i32.const 0) (i32.const 0))
+    (call $zero_memory (call $g2w (local.get $base)) (i32.const 0x10000))
+    (local.get $index))
+
+  ;; The guest address arena slot `index` always covers, whoever holds it.
+  (func $win16_arena_slot_base (param $index i32) (result i32)
+    (i32.add (call $win16_arena_base)
+             (i32.mul (i32.sub (local.get $index) (i32.const 1)) (i32.const 0x10000))))
+
+  ;; ---- Task startup ----
+  ;;
+  ;; The auto-data segment is DGROUP: static data at the bottom, then the local
+  ;; heap, then the stack growing down from the top. Only the static part is in
+  ;; the file, so the segment has to be grown by the heap and stack sizes the
+  ;; header asks for before SP can point above them.
+  ;;
+  ;; SS:SP in the header names the initial stack. An SP of zero means "the top
+  ;; of the segment", which after the growth above is the whole DGROUP.
+  (func $win16_start_task (param $ne_off i32)
+    ;; The 16-bit handle map belongs to the process, not to the image: a fresh
+    ;; load in the same instance must not inherit the last run's indices. A
+    ;; second task started by WinExec shares them, so it enters below instead.
+    (call $win16_handle_reset)
+    (call $win16_task_setup (local.get $ne_off) (i32.const 0)))
+
+  ;; Everything about starting a task that belongs to that task: DGROUP growth,
+  ;; the instance header, the stack, and the entry registers. `seg_base` is the
+  ;; arena index the image's segment 1 sits one past -- 0 for the first task,
+  ;; its module record's seg_index_base for one loaded beside it -- and applies
+  ;; to the header's SS segment number. The other inputs are the per-instance
+  ;; globals the loader fills in: $win16_auto_data (already absolute), entry
+  ;; CS:IP, stack and heap sizes.
+  (func $win16_task_setup (param $ne_off i32) (param $seg_base i32)
+    (local $ss_index i32) (local $sp i32) (local $ds_index i32) (local $limit i32)
+    (local $reserved_start i32)
+    (global.set $win16_scratch_seg (i32.const 0))
+
+    (local.set $ds_index (global.get $win16_auto_data))
+    (local.set $ss_index (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x1A))))
+    (local.set $sp       (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x18))))
+    (if (local.get $ss_index)
+      (then (local.set $ss_index (i32.add (local.get $ss_index) (local.get $seg_base)))))
+    (if (i32.eqz (local.get $ss_index)) (then (local.set $ss_index (local.get $ds_index))))
+
+    ;; Grow DGROUP for heap + stack. A 64KB segment is the ceiling; asking for
+    ;; more than that is what the real loader clamps too.
+    (if (local.get $ds_index)
+      (then
+        ;; The heap goes immediately above the static data and below the stack,
+        ;; which is what makes a local handle a near pointer — see
+        ;; $win16_LocalAlloc. Two bytes of slack keep a zero handle out of it.
+        ;; Retain the historical heap/stack spacing, but do not write USER
+        ;; scratch here. VB declares an empty DGROUP and its runtime lays out
+        ;; private data over this space. Message/font copies use a separate
+        ;; lazy selector instead (win16_scratch_segment).
+        (local.set $reserved_start
+          (i32.add
+            (select (call $win16_seg_limit (local.get $ds_index)) (i32.const 16)
+              (i32.gt_u (call $win16_seg_limit (local.get $ds_index)) (i32.const 16)))
+            (i32.const 2)))
+        (global.set $win16_msg_slot (i32.const 0))
+        (global.set $win16_lheap_ptr
+          (i32.add (local.get $reserved_start)
+            (i32.add (global.get $WIN16_MSG_SCRATCH_SIZE) (global.get $WIN16_FONT_SCRATCH_SIZE))))
+        (global.set $win16_lheap_base (global.get $win16_lheap_ptr))
+        (global.set $win16_lheap_end
+          (i32.add (global.get $win16_lheap_ptr) (global.get $win16_heap_size)))
+        (local.set $limit (i32.add
+          (i32.add
+            (i32.add (call $win16_seg_limit (local.get $ds_index)) (global.get $win16_heap_size))
+            (global.get $win16_stack_size))
+          (i32.add (global.get $WIN16_MSG_SCRATCH_SIZE)
+                   (global.get $WIN16_FONT_SCRATCH_SIZE))))
+        (if (i32.gt_u (local.get $limit) (i32.const 0x10000))
+          (then (local.set $limit (i32.const 0x10000))))
+        (if (i32.gt_u (global.get $win16_lheap_end) (local.get $limit))
+          (then (global.set $win16_lheap_end (local.get $limit))))
+        (i32.store offset=4
+          (i32.add (global.get $WIN16_SEG_TABLE) (i32.mul (local.get $ds_index) (i32.const 16)))
+          (local.get $limit))))
+
+    (if (i32.eqz (local.get $sp))
+      (then (local.set $sp (call $win16_seg_limit (local.get $ss_index)))))
+    ;; SP addresses the last usable word, and the arena slot is exactly 64KB,
+    ;; so a limit of 0x10000 has to come back inside it.
+    (if (i32.gt_u (local.get $sp) (i32.const 0xFFFE)) (then (local.set $sp (i32.const 0xFFFE))))
+
+    ;; $esp is a linear address; because every segment base is 64KB aligned its
+    ;; low word stays SP for as long as the task runs.
+    (i32.store offset=16 (global.get $reg_base) (i32.add (call $win16_seg_base (local.get $ss_index)) (local.get $sp)))
+
+    ;; The first sixteen bytes of DGROUP are the task's instance data, and they
+    ;; belong to the loader, not to the image: the linker leaves them empty and
+    ;; Windows fills them in. Nothing here did, so whatever the file happened
+    ;; to hold there was read as the task's own description of its stack.
+    ;;
+    ;;   +0x00 a null word, so a NULL near pointer reads zero
+    ;;   +0x02 the SS:SP a DOS task came from, which there isn't one of here
+    ;;   +0x06 the local heap, +0x08 the atom table
+    ;;   +0x0A stacktop, +0x0C stackmin, +0x0E stackbottom
+    ;;
+    ;; The last three are named the way Windows names them, which is upside
+    ;; down: stacktop is the *low* end the stack may not grow past, and
+    ;; stackbottom is the high end it starts at. Visual Basic reads stacktop
+    ;; on the way in, keeps it as its own floor, and checks SP against it
+    ;; before every statement — with the garbage that was there it decided it
+    ;; had run out of stack on the first one and raised error 28, which is how
+    ;; all five VB games died.
+    (if (local.get $ds_index)
+      (then
+        (local.set $limit (call $win16_seg_base (local.get $ds_index)))
+        (call $gs16 (local.get $limit) (i32.const 0))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 2)) (i32.const 0))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 4)) (i32.const 0))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 6))
+          (global.get $win16_lheap_base))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 8)) (i32.const 0))
+        ;; The stack is the top of the segment the header asked for. Where the
+        ;; header asked for none, the floor is the local heap's ceiling — the
+        ;; task still has a stack, it is just whatever room is left.
+        (call $gs16 (i32.add (local.get $limit) (i32.const 10))
+          (select
+            (i32.sub (local.get $sp) (global.get $win16_stack_size))
+            (global.get $win16_lheap_end)
+            (i32.and (i32.ne (global.get $win16_stack_size) (i32.const 0))
+                     (i32.gt_u (local.get $sp) (global.get $win16_stack_size)))))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 12)) (local.get $sp))
+        (call $gs16 (i32.add (local.get $limit) (i32.const 14)) (local.get $sp))))
+
+    ;; ES starts equal to DS. Real Windows hands the task its PSP selector in
+    ;; ES, which nothing here reads yet, and a DS-equal ES is the safer of the
+    ;; two wrong answers: it addresses real memory.
+    (call $win16_set_sreg (i32.const 3) (call $win16_index_to_sel (local.get $ds_index)))
+    (call $win16_set_sreg (i32.const 0) (call $win16_index_to_sel (local.get $ds_index)))
+    (call $win16_set_sreg (i32.const 2) (call $win16_index_to_sel (local.get $ss_index)))
+    (call $win16_set_sreg (i32.const 1) (global.get $win16_entry_cs))
+
+    (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $win16_entry_ip)))
+    ;; Win16 hands the entry point CX = heap size, DI = hInstance, SI = previous
+    ;; hInstance (0 for the first copy), ES = PSP, DS = DGROUP. The startup code
+    ;; in every one of these images reads DI to store its own instance handle.
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=4 (global.get $reg_base) (global.get $win16_heap_size))
+    (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+    ;; BX is the stack size, and it is not decoration: Visual Basic's runtime
+    ;; is handed the task on the first instruction — RATTLER.EXE is fifteen
+    ;; bytes of `jmp far VBRUN100.100` — and lays the DGROUP out from these
+    ;; two registers, its own data first, then BX of stack, then CX of heap.
+    ;; With BX zero it gave itself no stack at all: SP came down on top of its
+    ;; own variables and the first statement raised "out of stack space".
+    (i32.store offset=12 (global.get $reg_base) (global.get $win16_stack_size))
+    (i32.store offset=20 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=24 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=28 (global.get $reg_base) (global.get $sreg_ds))
+    (global.set $df (i32.const 0))
+    (global.set $code16 (i32.const 1)))
+
+  ;; Become the Win16 task WinExec loaded as module `id` (09e
+  ;; $win16_winexec_task). Runs on the new thread's own instance, whose
+  ;; globals are all fresh: nothing of the parent task is here except what the
+  ;; start record carries. The image itself was loaded by the parent through
+  ;; the DLL path, so its segments already sit in the shared arena and its
+  ;; module record says where; this only derives the per-task globals $load_ne
+  ;; would have set, builds the PSP, and enters through $win16_task_setup.
+  ;; The thread parameter -- the start slot -- is at [ESP+4] of the 32-bit
+  ;; stack the scheduler gave the thread, which the task never returns to.
+  (func $win16_task_boot
+    (local $slot i32) (local $start i32) (local $id i32) (local $rec i32)
+    (local $ne i32) (local $base i32) (local $auto i32)
+    (local $psp i32) (local $len i32)
+    (local.set $slot (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base))
+                                          (i32.const 4))))
+    (if (i32.ge_u (local.get $slot) (global.get $WIN16_TASK_SLOTS))
+      (then (call $host_log_i32 (i32.const 0xB0071600)) (unreachable)))
+    (local.set $start (call $win16_task_start_slot (local.get $slot)))
+    (local.set $id (i32.load (local.get $start)))
+    (if (i32.eqz (call $win16_dll_loaded (local.get $id)))
+      (then (call $host_log_i32 (i32.const 0xB0071601)) (unreachable)))
+    (global.set $win16_task_module (local.get $id))
+    (global.set $win16_task_slot (local.get $slot))
+    (global.set $win16_cmd_show (i32.load offset=4 (local.get $start)))
+    (global.set $win16_trace (i32.load offset=16 (local.get $start)))
+    (global.set $WIN16_THUNK_SEL (i32.load offset=8 (local.get $start)))
+    (global.set $win16_thunk_index (i32.load offset=12 (local.get $start)))
+    (global.set $image_base (i32.const 0))
+    (global.set $is_win16 (i32.const 1))
+
+    (local.set $rec (call $win16_dll_rec (local.get $id)))
+    (local.set $ne (i32.load (local.get $rec)))
+    (local.set $base (i32.load offset=4 (local.get $rec)))
+    (global.set $win16_ne_off (local.get $ne))
+    (global.set $win16_file_size (i32.load (call $win16_dll_image_size_ptr (local.get $id))))
+    (global.set $win16_seg_count (i32.load offset=12 (local.get $rec)))
+    (local.set $auto (i32.load16_u (i32.add (local.get $ne) (i32.const 0x0E))))
+    (if (local.get $auto)
+      (then (local.set $auto (i32.add (local.get $auto) (local.get $base)))))
+    (global.set $win16_auto_data (local.get $auto))
+    (global.set $win16_entry_cs (call $win16_index_to_sel
+      (i32.add (local.get $base) (i32.load16_u (i32.add (local.get $ne) (i32.const 0x16))))))
+    (global.set $win16_entry_ip (i32.load16_u (i32.add (local.get $ne) (i32.const 0x14))))
+    (global.set $win16_stack_size (i32.load16_u (i32.add (local.get $ne) (i32.const 0x12))))
+    (global.set $win16_heap_size (i32.load16_u (i32.add (local.get $ne) (i32.const 0x10))))
+    (global.set $win16_env_seg (i32.const 0))
+    (global.set $win16_dta (i32.const 0))
+
+    ;; The PSP, with this task's own command tail, so InitTask finds it built.
+    (local.set $psp (call $win16_alloc_segment))
+    (global.set $win16_psp_sel (call $win16_index_to_sel (local.get $psp)))
+    (local.set $psp (call $g2w (call $win16_seg_base (local.get $psp))))
+    (local.set $len (i32.load offset=20 (local.get $start)))
+    (if (i32.gt_u (local.get $len) (i32.const 126)) (then (local.set $len (i32.const 126))))
+    (i32.store8 offset=0x80 (local.get $psp) (local.get $len))
+    (memory.copy (i32.add (local.get $psp) (i32.const 0x81))
+      (i32.add (local.get $start) (i32.const 0x18)) (local.get $len))
+    ;; NUL then CR, as $win16_InitTask writes it for the first task.
+    (i32.store8 (i32.add (i32.add (local.get $psp) (i32.const 0x81)) (local.get $len)) (i32.const 0))
+    (i32.store8 (i32.add (i32.add (local.get $psp) (i32.const 0x82)) (local.get $len)) (i32.const 0x0D))
+
+    (call $win16_task_setup (local.get $ne) (local.get $base)))
+
+  ;; ---- NE DLLs ----
+  ;;
+  ;; A Win16 DLL is the same file format as the task, so it loads the same way:
+  ;; its segments go into arena slots after the task's and its own relocations
+  ;; run against the same thunk table. Two things differ. Its segment N is not
+  ;; arena index N, which is what `seg_index_base` is for. And the task reaches
+  ;; it by name rather than by ordinal, so its name tables have to be searched.
+  ;;
+  ;; The record per module id: ne_off, seg_index_base, staging base, loaded.
+  ;; It lives in the arena slot past the last usable selector, above the handle
+  ;; table, for the same reason that one does — no far pointer can name it.
+  (func $win16_dll_rec (param $module_id i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+             (i32.add (i32.const 0x8000) (i32.mul (local.get $module_id) (i32.const 16)))))
+
+  ;; The private image length is parallel to the fixed 16-byte module record.
+  ;; Keeping it separate preserves that record's long-standing layout while
+  ;; allowing dynamically staged DLL resources beyond the first 64KB.
+  (func $win16_dll_image_size_ptr (param $module_id i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+             (i32.add (i32.const 0x8800) (i32.shl (local.get $module_id) (i32.const 2)))))
+
+  ;; A record's segment count doubles as its loaded flag: an NE with no
+  ;; segments is not something that can be loaded.
+  (func $win16_dll_loaded (param $module_id i32) (result i32)
+    (i32.load offset=12 (call $win16_dll_rec (local.get $module_id))))
+
+  ;; How many arena slots the module's load took (its segments plus, for an
+  ;; app-local module, its private metadata pages), and how many LoadLibrary
+  ;; references it holds. Both parallel the 16-byte record, like the image size.
+  (func $win16_dll_run_ptr (param $module_id i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+             (i32.add (i32.const 0x8900) (i32.shl (local.get $module_id) (i32.const 2)))))
+  (func $win16_dll_refs_ptr (param $module_id i32) (result i32)
+    (i32.add (call $g2w (i32.add (call $win16_arena_base)
+                                 (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 0x10000))))
+             (i32.add (i32.const 0x8A00) (i32.shl (local.get $module_id) (i32.const 2)))))
+
+  ;; Forget a module: FreeLibrary's half of the above. The id stops naming a
+  ;; loaded module, so the slot can describe a different one, and the module's
+  ;; arena slots go back to the allocator. They used to stay where they were
+  ;; placed, and Civilization II loads and frees a resource DLL for every
+  ;; wonder video, throne room, advisor portrait and city view: a few hundred
+  ;; turns in, the next LoadLibrary found the selector arena exhausted.
+  (func $win16_dll_unload (param $module_id i32)
+    (local $rec i32)
+    (call $win16_dll_path_forget (local.get $module_id))
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (if (i32.load offset=12 (local.get $rec))
+      (then
+        (call $win16_arena_give
+          (i32.add (i32.load offset=4 (local.get $rec)) (i32.const 1))
+          (i32.load (call $win16_dll_run_ptr (local.get $module_id))))))
+    (i32.store (call $win16_dll_run_ptr (local.get $module_id)) (i32.const 0))
+    (i32.store (call $win16_dll_refs_ptr (local.get $module_id)) (i32.const 0))
+    (i32.store offset=12 (local.get $rec) (i32.const 0))
+    (i32.store (call $win16_dll_image_size_ptr (local.get $module_id)) (i32.const 0)))
+
+  ;; Which image owns the code currently running, as (ne_off, staging base).
+  ;; Resource lookups follow this rather than the hInstance the caller passed:
+  ;; a DLL asking for its own resources passes an instance handle this emulator
+  ;; never issued -- CARDS passes 0xFFFF -- while its CS is unambiguous.
+  ;; Which image a resource call is about.
+  ;;
+  ;; CS is the right answer when a DLL asks for its own resources with an
+  ;; instance handle this emulator never issued — CARDS passes 0xFFFF. It is
+  ;; the wrong answer when a DLL asks for the *task's* resources, which is what
+  ;; a runtime library does: Visual Basic's VBRUN100 looks up the form data as
+  ;; RT_RCDATA #1 with the task's hInstance while running on its own code
+  ;; segment, and searching VBRUN100's resources found nothing. So a handle
+  ;; that names something is believed, and only a meaningless one falls back.
+  ;;
+  ;; Answers the module id, or 0 for "use CS".
+  (func $win16_res_module (param $hinst i32) (result i32)
+    (local $h i32)
+    (if (i32.eqz (local.get $hinst)) (then (return (i32.const 0))))
+    (if (i32.eq (i32.and (local.get $hinst) (i32.const 0xFFFF)) (i32.const 0xFFFF))
+      (then (return (i32.const 0))))
+    ;; The task's own instance handle is its DGROUP selector.
+    ;; A task started by WinExec was loaded as a module, so its own image is
+    ;; that module's record rather than the PE staging buffer.
+    (if (i32.eq (i32.and (local.get $hinst) (i32.const 0xFFFF))
+                (call $win16_index_to_sel (global.get $win16_auto_data)))
+      (then (return (select
+        (i32.or (global.get $win16_task_module) (i32.const 0x10000))
+        (i32.const 1)
+        (global.get $win16_task_module)))))
+    ;; A module handle from LoadLibrary or GetModuleHandle.
+    (local.set $h (call $win16_h32 (i32.and (local.get $hinst) (i32.const 0xFFFF))))
+    (if (i32.eq (i32.and (local.get $h) (i32.const 0xFFFF0000)) (i32.const 0x00D10000))
+      (then (return (i32.or (i32.and (local.get $h) (i32.const 0xFFFF))
+                            (i32.const 0x10000)))))
+    (i32.const 0))
+
+  ;; The staged NE header of the module a resource call named: 1 means the
+  ;; task's own image, 0x10000|id one of its DLLs, 0 means follow CS.
+  (func $win16_res_ne_off (param $module i32) (result i32)
+    (if (i32.eq (local.get $module) (i32.const 1))
+      (then (return (global.get $win16_ne_off))))
+    (if (i32.and (local.get $module) (i32.const 0x10000))
+      (then (return (i32.load (call $win16_dll_rec
+                                (i32.and (local.get $module) (i32.const 0xFFFF)))))))
+    (call $win16_image_ne_off))
+
+  (func $win16_res_base_addr (param $module i32) (result i32)
+    (if (i32.eq (local.get $module) (i32.const 1))
+      (then (return (global.get $PE_STAGING))))
+    (if (i32.and (local.get $module) (i32.const 0x10000))
+      (then (return (i32.load offset=8 (call $win16_dll_rec
+                                         (i32.and (local.get $module) (i32.const 0xFFFF)))))))
+    (call $win16_image_base_addr))
+
+  ;; Bytes of retained metadata the resource-table walkers may inspect.
+  ;; Dynamic DLLs keep a private 64KB header/table image after their shared
+  ;; staging buffer is reused; fixed system DLLs keep their 256KB slot, and
+  ;; the task itself keeps its complete PE staging image.
+  (func $win16_res_image_size (param $module i32) (param $img i32) (result i32)
+    (if (i32.eq (local.get $img) (global.get $PE_STAGING))
+      (then (return (global.get $win16_file_size))))
+    (if (i32.and (local.get $module) (i32.const 0x10000))
+      (then
+        (if (i32.ge_u (i32.and (local.get $module) (i32.const 0xFFFF))
+                      (global.get $WIN16_DYNAMIC_BASE))
+          (then (return (i32.load (call $win16_dll_image_size_ptr
+            (i32.and (local.get $module) (i32.const 0xFFFF)))))))))
+    (global.get $WIN16_DLL_STAGING_STRIDE))
+
+  ;; Resolve the current code selector once per lookup. Both image metadata
+  ;; accessors must use the same module bounds, loaded flag and scan order.
+  ;; Zero means the task image, whose metadata lives outside the DLL records.
+  (func $win16_current_image_record (result i32)
+    (local $index i32) (local $id i32) (local $rec i32) (local $n i32) (local $base i32)
+    (local.set $index (call $win16_sel_to_index (global.get $sreg_cs)))
+    (local.set $id (i32.const 1))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $id)
+        (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES))))
+      (local.set $rec (call $win16_dll_rec (local.get $id)))
+      (local.set $n (i32.load offset=12 (local.get $rec)))
+      (local.set $base (i32.load offset=4 (local.get $rec)))
+      (if (i32.and (i32.ne (local.get $n) (i32.const 0))
+            (i32.and (i32.gt_u (local.get $index) (local.get $base))
+                     (i32.le_u (local.get $index)
+                               (i32.add (local.get $base) (local.get $n)))))
+        (then (return (local.get $rec))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  (func $win16_image_ne_off (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_current_image_record))
+    (if (result i32) (local.get $rec)
+      (then (i32.load (local.get $rec)))
+      (else (global.get $win16_ne_off))))
+
+  (func $win16_image_base_addr (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_current_image_record))
+    (if (result i32) (local.get $rec)
+      (then (i32.load offset=8 (local.get $rec)))
+      (else (global.get $PE_STAGING))))
+
+  ;; Data selector Windows supplies when it calls a procedure in an NE image.
+  ;;
+  ;; An application's callback entry starts with the linker's three-byte
+  ;; placeholder `push ds; pop ax; nop`, then later does `mov ds,ax`. Exported
+  ;; DLL entries with their own data are patched to `mov ax,sel` below, but an
+  ;; EXE entry deliberately is not: USER is responsible for entering it with
+  ;; AX naming the task's instance/DGROUP. A modal DLL can leave its own DS in
+  ;; the registers, so merely jumping to the application's far procedure makes
+  ;; its prologue adopt the DLL's globals. Find the image which owns PROC's
+  ;; code selector and return that image's automatic-data selector. Zero means
+  ;; the image has no automatic data and the caller should leave AX alone.
+  (func $win16_proc_data_sel (param $proc i32) (result i32)
+    (local $index i32) (local $id i32) (local $rec i32) (local $n i32)
+    (local $base i32) (local $auto_data i32)
+    (local.set $index
+      (call $win16_sel_to_index (i32.shr_u (local.get $proc) (i32.const 16))))
+    (local.set $id (i32.const 1))
+    (block $task (loop $scan
+      (br_if $task (i32.ge_u (local.get $id)
+        (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES))))
+      (local.set $rec (call $win16_dll_rec (local.get $id)))
+      (local.set $n (i32.load offset=12 (local.get $rec)))
+      (local.set $base (i32.load offset=4 (local.get $rec)))
+      (if (i32.and (i32.ne (local.get $n) (i32.const 0))
+            (i32.and (i32.gt_u (local.get $index) (local.get $base))
+                     (i32.le_u (local.get $index)
+                               (i32.add (local.get $base) (local.get $n)))))
+        (then
+          (local.set $auto_data
+            (i32.load16_u (i32.add (i32.load (local.get $rec)) (i32.const 0x0E))))
+          (if (i32.eqz (local.get $auto_data))
+            (then (return (i32.const 0))))
+          (return (call $win16_index_to_sel
+            (i32.add (local.get $base) (local.get $auto_data))))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br $scan)))
+    (if (i32.eqz (global.get $win16_auto_data))
+      (then (return (i32.const 0))))
+    (call $win16_index_to_sel (global.get $win16_auto_data)))
+
+  ;; The staging area for module `id`, which is where JS puts the file bytes.
+  ;;
+  ;; App-local modules share one six-megabyte image. load_ne_dll copies their
+  ;; executable segments and a private metadata page before this is reused.
+  ;; A system module is small and there are twelve id slots in front of them,
+  ;; but what an application brings with it can be anything: the Visual Basic 1
+  ;; runtime is 265KB and five Entertainment Pack games are written in it, so
+  ;; app-local staging slots must remain larger than 256KB.
+  (func $win16_dll_staging (export "win16_dll_staging") (param $module_id i32) (result i32)
+    (if (i32.ge_u (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))
+      (then (return (global.get $WIN16_APP_DLL_STAGING))))
+    (i32.add (global.get $WIN16_DLL_STAGING)
+             (i32.mul (local.get $module_id) (global.get $WIN16_DLL_STAGING_STRIDE))))
+
+  (func (export "win16_app_dll_staging_size") (result i32)
+    (global.get $WIN16_APP_DLL_STAGING_SIZE))
+
+  ;; Load the NE already staged for `module_id`. Returns 1 on success.
+  (func $load_ne_dll_sized (export "load_ne_dll_sized")
+        (param $module_id i32) (param $staged_size i32) (result i32)
+    (local $base i32) (local $ne_off i32) (local $seg_tab i32) (local $seg_count i32)
+    (local $shift i32) (local $i i32) (local $e i32) (local $index i32)
+    (local $file_pos i32) (local $len i32) (local $flags i32) (local $alloc i32)
+    (local $seg_index_base i32) (local $rec i32) (local $seg_base i32) (local $seg_wa i32)
+    (local $stage i32) (local $meta i32) (local $meta_size i32)
+    (local $meta_pages i32) (local $meta_i i32) (local $ne_delta i32)
+    (local $nonres_off i32) (local $nonres_len i32)
+
+    (if (i32.eqz (call $win16_bridge_module_load_allowed (local.get $module_id)))
+      (then (return (i32.const 0))))
+    (local.set $base (call $win16_dll_staging (local.get $module_id)))
+    (local.set $stage (local.get $base))
+    (if (i32.ne (i32.load16_u (local.get $base)) (i32.const 0x5A4D))
+      (then (return (i32.const 0))))
+    (local.set $ne_off (i32.add (local.get $base)
+      (i32.load (i32.add (local.get $base) (i32.const 0x3C)))))
+    (if (i32.ne (i32.load16_u (local.get $ne_off)) (i32.const 0x454E))
+      (then (return (i32.const 0))))
+
+    (local.set $seg_count (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x1C))))
+    (local.set $shift (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x32))))
+    (if (i32.eqz (local.get $shift)) (then (local.set $shift (i32.const 9))))
+    (local.set $seg_tab (i32.add (local.get $ne_off)
+      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x22)))))
+
+    ;; An app-local module also keeps its header and tables in private
+    ;; metadata pages placed right after its segments (below), so the whole
+    ;; load is one run of arena slots, handed back as one when it is freed.
+    (if (i32.ge_u (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))
+      (then
+        (local.set $meta_size (local.get $staged_size))
+        (if (i32.eqz (local.get $meta_size))
+          (then (local.set $meta_size (i32.const 0x10000))))
+        (if (i32.gt_u (local.get $meta_size) (global.get $WIN16_APP_DLL_STAGING_SIZE))
+          (then (return (i32.const 0))))
+        (local.set $meta_pages (i32.shr_u
+          (i32.add (local.get $meta_size) (i32.const 0xFFFF)) (i32.const 16)))))
+    (local.set $index (call $win16_arena_take
+      (i32.add (local.get $seg_count) (local.get $meta_pages))))
+    (if (i32.eqz (local.get $index))
+      (then
+        (call $host_log_i32 (i32.const 0xCA165E5A))  ;; selector arena exhausted
+        (call $host_log_i32 (i32.add (local.get $seg_count) (local.get $meta_pages)))
+        (return (i32.const 0))))
+    (call $win16_bridge_module_provisional (local.get $module_id) (local.get $index)
+      (i32.add (local.get $seg_count) (local.get $meta_pages)))
+    ;; Segment 1 lands at the run's first index, so the base is one less.
+    (local.set $seg_index_base (i32.sub (local.get $index) (i32.const 1)))
+
+    (local.set $i (i32.const 0))
+    (block $place_done (loop $place
+      (br_if $place_done (i32.ge_u (local.get $i) (local.get $seg_count)))
+      (local.set $e (i32.add (local.get $seg_tab) (i32.mul (local.get $i) (i32.const 8))))
+      (local.set $file_pos (i32.shl (i32.load16_u (local.get $e)) (local.get $shift)))
+      (local.set $len   (i32.load16_u (i32.add (local.get $e) (i32.const 2))))
+      (local.set $flags (i32.load16_u (i32.add (local.get $e) (i32.const 4))))
+      (local.set $alloc (i32.load16_u (i32.add (local.get $e) (i32.const 6))))
+      (if (i32.and (i32.eqz (local.get $len)) (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then (local.set $len (i32.const 0x10000))))
+      (if (i32.eqz (local.get $alloc)) (then (local.set $alloc (i32.const 0x10000))))
+      (local.set $index (i32.add (local.get $seg_index_base) (i32.add (local.get $i) (i32.const 1))))
+      (local.set $seg_base (call $win16_arena_slot_base (local.get $index)))
+      (call $win16_seg_set (local.get $index)
+        (local.get $seg_base) (local.get $alloc)
+        (local.get $flags) (i32.add (local.get $i) (i32.const 1)))
+      ;; Clear the slot first, exactly as the task's own segments are cleared.
+      ;; A segment's allocation is usually larger than what the file holds and
+      ;; the difference is uninitialised data, which is *zero* — not whatever
+      ;; the last module to use that arena slot left there. VBRUN100 keeps its
+      ;; control tables in that gap: 0xdd1 bytes of them in the data image it
+      ;; copies into the task's DGROUP, so the list of a custom control's
+      ;; properties had no terminator and Visual Basic walked it off the end
+      ;; into a far pointer whose selector named no segment.
+      (local.set $seg_wa (call $g2w (local.get $seg_base)))
+      (call $zero_memory (local.get $seg_wa) (i32.const 0x10000))
+      (if (local.get $file_pos)
+        (then (call $memcpy (local.get $seg_wa)
+                (i32.add (local.get $base) (local.get $file_pos)) (local.get $len))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $place)))
+
+    ;; Relocations, after every segment is placed: a fixup in one can name
+    ;; another, exactly as in the task's own image.
+    (local.set $i (i32.const 0))
+    (block $fix_done (loop $fix
+      (br_if $fix_done (i32.ge_u (local.get $i) (local.get $seg_count)))
+      (local.set $e (i32.add (local.get $seg_tab) (i32.mul (local.get $i) (i32.const 8))))
+      (local.set $file_pos (i32.shl (i32.load16_u (local.get $e)) (local.get $shift)))
+      (local.set $len   (i32.load16_u (i32.add (local.get $e) (i32.const 2))))
+      (local.set $flags (i32.load16_u (i32.add (local.get $e) (i32.const 4))))
+      (if (i32.and (i32.eqz (local.get $len)) (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then (local.set $len (i32.const 0x10000))))
+      (if (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x0100)) (i32.const 0))
+                   (i32.ne (local.get $file_pos) (i32.const 0)))
+        (then
+          (call $win16_apply_relocs
+            (call $g2w (call $win16_seg_base
+              (i32.add (local.get $seg_index_base) (i32.add (local.get $i) (i32.const 1)))))
+            (local.get $len)
+            (i32.add (i32.add (local.get $base) (local.get $file_pos)) (local.get $len))
+            (local.get $ne_off) (local.get $seg_index_base)
+            ;; PE staging precedes stack entry: its caller's saved thunk
+            ;; global can be zero or belong to a suspended context. The owned
+            ;; bridge arena reserves selector index 1 at bootstrap. Derive
+            ;; that process identity without changing the caller's registers
+            ;; or globals. The loader's ownership guard already pins the arena.
+            (if (result i32) (global.get $is_win16)
+              (then (global.get $WIN16_THUNK_SEL))
+              (else (call $win16_index_to_sel (i32.const 1)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $fix)))
+
+    (call $win16_patch_dll_prologues (local.get $ne_off) (local.get $seg_index_base))
+
+    ;; The app-local staging image is shared. Keep the header, entry/import and
+    ;; resource tables in a private selector before a later LoadLibrary
+    ;; overwrites it. The non-resident name table is normally at EOF, so copy
+    ;; its small contents into the metadata page and retarget the NE header.
+    (if (i32.ge_u (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))
+      (then
+        (local.set $ne_delta (i32.sub (local.get $ne_off) (local.get $stage)))
+        (local.set $index (i32.add (local.get $seg_index_base)
+                                   (i32.add (local.get $seg_count) (i32.const 1))))
+        (local.set $meta (call $g2w (call $win16_arena_slot_base (local.get $index))))
+        (block $meta_done (loop $meta_alloc
+          (br_if $meta_done (i32.ge_u (local.get $meta_i) (local.get $meta_pages)))
+          (call $win16_seg_set (i32.add (local.get $index) (local.get $meta_i))
+            (call $win16_arena_slot_base (i32.add (local.get $index) (local.get $meta_i)))
+            (i32.const 0x10000) (i32.const 0) (i32.const 0))
+          (local.set $meta_i (i32.add (local.get $meta_i) (i32.const 1)))
+          (br $meta_alloc)))
+        (call $zero_memory (local.get $meta)
+          (i32.mul (local.get $meta_pages) (i32.const 0x10000)))
+        (call $memcpy (local.get $meta) (local.get $stage) (local.get $meta_size))
+        (local.set $ne_off (i32.add (local.get $meta) (local.get $ne_delta)))
+        (local.set $nonres_off (i32.load (i32.add (local.get $ne_off) (i32.const 0x2C))))
+        (local.set $nonres_len (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x20))))
+        (if (i32.and (i32.ne (local.get $nonres_len) (i32.const 0))
+              (i32.and (i32.le_u (local.get $nonres_len) (i32.const 0x2000))
+                       (i32.le_u (i32.add (local.get $nonres_off) (local.get $nonres_len))
+                                 (global.get $WIN16_APP_DLL_STAGING_SIZE))))
+          (then
+            (call $memcpy (i32.add (local.get $meta) (i32.const 0xE000))
+              (i32.add (local.get $stage) (local.get $nonres_off)) (local.get $nonres_len))
+            (i32.store (i32.add (local.get $ne_off) (i32.const 0x2C)) (i32.const 0xE000))))
+        (local.set $base (local.get $meta))))
+
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (i32.store          (local.get $rec) (local.get $ne_off))
+    (i32.store offset=4 (local.get $rec) (local.get $seg_index_base))
+    (i32.store offset=8 (local.get $rec) (local.get $base))
+    (i32.store offset=12 (local.get $rec) (local.get $seg_count))
+    (i32.store (call $win16_dll_run_ptr (local.get $module_id))
+      (i32.add (local.get $seg_count) (local.get $meta_pages)))
+    (i32.store (call $win16_dll_refs_ptr (local.get $module_id)) (i32.const 0))
+    (i32.store (call $win16_dll_image_size_ptr (local.get $module_id))
+      (select (local.get $meta_size) (global.get $WIN16_DLL_STAGING_STRIDE)
+        (i32.ge_u (local.get $module_id) (global.get $WIN16_DYNAMIC_BASE))))
+    (i32.const 1))
+
+  ;; Pre-staged modules retain the historical one-argument ABI. Runtime
+  ;; LoadLibrary knows the exact VFS byte length and uses the sized entry.
+  (func $load_ne_dll (export "load_ne_dll") (param $module_id i32) (result i32)
+    (call $load_ne_dll_sized (local.get $module_id) (i32.const 0)))
+
+  ;; Point every exported entry at the DLL's OWN data segment.
+  ;;
+  ;; A Win16 exported function starts
+  ;;
+  ;;   1E        push ds          \ three bytes the linker leaves as "AX = the
+  ;;   58        pop ax            / caller's DS"
+  ;;   90        nop
+  ;;   45 55 8B EC  inc bp; push bp; mov bp,sp
+  ;;   1E        push ds
+  ;;   8E D8     mov ds,ax        <- and this is what actually sets DS
+  ;;
+  ;; and the loader is expected to overwrite those three bytes with
+  ;; `B8 sel` (mov ax, DGROUP) for a module that has its own data segment.
+  ;; Skipping it does not fault: the DLL simply runs on whatever DS its caller
+  ;; had and reads the caller's variables as its own. CARDS.DLL keeps a
+  ;; card-number → bitmap cache in its data segment; through FreeCell's DS the
+  ;; slot for the card being drawn held 0x7355, which went to SelectObject as a
+  ;; bitmap handle and stopped the task.
+  ;;
+  ;; Entry table: bundles of `u8 count; u8 seg`, then per entry either
+  ;; `u8 flags; u16 int3F; u8 seg; u16 off` (seg==0xFF, moveable) or
+  ;; `u8 flags; u16 off` (fixed). count==0 ends the table. Flags bit 1 marks an
+  ;; entry that uses the shared data segment, which is exactly the set to
+  ;; patch; bit 0 is EXPORTED. This pass also runs for EXEs: MULTIPLEDATA
+  ;; exported entries without public data keep AX from their instance thunk,
+  ;; so their placeholder becomes NOPs instead of adopting the caller's DS.
+  (func $win16_patch_dll_prologues (param $ne_off i32) (param $seg_index_base i32)
+    (local $p i32) (local $end i32) (local $count i32) (local $seg i32)
+    (local $flags i32) (local $off i32) (local $eseg i32)
+    (local $auto_data i32) (local $sel i32) (local $wa i32)
+    (local.set $auto_data (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x0E))))
+    (if (i32.eqz (local.get $auto_data)) (then (return)))
+    (local.set $sel (call $win16_index_to_sel
+      (i32.add (local.get $seg_index_base) (local.get $auto_data))))
+    (local.set $p (i32.add (local.get $ne_off)
+      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x04)))))
+    (local.set $end (i32.add (local.get $p)
+      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x06)))))
+    (block $done (loop $bundles
+      (br_if $done (i32.ge_u (i32.add (local.get $p) (i32.const 2)) (local.get $end)))
+      (local.set $count (i32.load8_u (local.get $p)))
+      (local.set $seg (i32.load8_u (i32.add (local.get $p) (i32.const 1))))
+      (br_if $done (i32.eqz (local.get $count)))
+      (local.set $p (i32.add (local.get $p) (i32.const 2)))
+      ;; A bundle with segment 0 is a run of unused ordinals and carries no
+      ;; entry bytes at all.
+      (if (i32.eqz (local.get $seg))
+        (then (br $bundles)))
+      (block $bundle_done (loop $entries
+        (br_if $bundle_done (i32.eqz (local.get $count)))
+        (local.set $flags (i32.load8_u (local.get $p)))
+        (if (i32.eq (local.get $seg) (i32.const 0xFF))
+          (then
+            (local.set $eseg (i32.load8_u (i32.add (local.get $p) (i32.const 3))))
+            (local.set $off (i32.load16_u (i32.add (local.get $p) (i32.const 4))))
+            (local.set $p (i32.add (local.get $p) (i32.const 6))))
+          (else
+            (local.set $eseg (local.get $seg))
+            (local.set $off (i32.load16_u (i32.add (local.get $p) (i32.const 1))))
+            (local.set $p (i32.add (local.get $p) (i32.const 3)))))
+        (if (i32.or
+              (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0))
+              (i32.and
+                (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))
+                (i32.ne (i32.and (i32.load16_u offset=12 (local.get $ne_off))
+                                (i32.const 2)) (i32.const 0))))
+          (then
+            (local.set $wa (call $g2w (i32.add
+              (call $win16_seg_base (i32.add (local.get $seg_index_base) (local.get $eseg)))
+              (local.get $off))))
+            ;; Only the untouched prologue is rewritten. Anything else at an
+            ;; entry point is not the pattern this is allowed to assume.
+            ;;
+            ;; There are two spellings of "load the caller's DS into AX so the
+            ;; loader can overwrite it", and Windows patches both: Microsoft C
+            ;; emits PUSH DS / POP AX / NOP, Borland emits MOV AX,DS / NOP.
+            ;; Recognising only the first left every Borland-built DLL running
+            ;; against the *caller's* data segment, which reads as a wild far
+            ;; pointer the moment the function loads one: LEAD Technologies'
+            ;; LEAD50.DLL far-calls through its own table three instructions
+            ;; in, and all three Moraff games died there with a null selector.
+            (if (i32.and
+                  (i32.eq (i32.load8_u offset=2 (local.get $wa)) (i32.const 0x90))
+                  (i32.or
+                    (i32.and
+                      (i32.eq (i32.load8_u (local.get $wa)) (i32.const 0x1E))
+                      (i32.eq (i32.load8_u offset=1 (local.get $wa)) (i32.const 0x58)))
+                    (i32.and
+                      (i32.eq (i32.load8_u (local.get $wa)) (i32.const 0x8C))
+                      (i32.eq (i32.load8_u offset=1 (local.get $wa)) (i32.const 0xD8)))))
+              (then
+                (if (i32.and (local.get $flags) (i32.const 2))
+                  (then
+                    (i32.store8 (local.get $wa) (i32.const 0xB8))
+                    (i32.store16 offset=1 (local.get $wa) (local.get $sel)))
+                  (else
+                    ;; MULTIPLEDATA exports take AX from their instance thunk.
+                    ;; Preserve it even when a modal DLL owns the caller's DS.
+                    (i32.store16 (local.get $wa) (i32.const 0x9090))))))))
+        (local.set $count (i32.sub (local.get $count) (i32.const 1)))
+        (br $entries)))
+      (br $bundles))))
+
+  ;; Compare a Pascal string against another Pascal string, case-sensitively.
+  ;; NE name tables are upper case and so is the imported-name table, so this
+  ;; needs no folding.
+  (func $win16_pstr_eq_pstr (param $a i32) (param $b i32) (result i32)
+    (local $n i32) (local $i i32)
+    (local.set $n (i32.load8_u (local.get $a)))
+    (if (i32.ne (local.get $n) (i32.load8_u (local.get $b))) (then (return (i32.const 0))))
+    (block $done (loop $cmp
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (if (i32.ne (call $ascii_upper
+                    (i32.load8_u (i32.add (i32.add (local.get $a) (i32.const 1))
+                                          (local.get $i))))
+                  (call $ascii_upper
+                    (i32.load8_u (i32.add (i32.add (local.get $b) (i32.const 1))
+                                          (local.get $i)))))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $cmp)))
+    (i32.const 1))
+
+  ;; Walk one name table looking for `name`, a Pascal string. Entries are a
+  ;; length byte, the characters, and a WORD ordinal; a zero length ends it.
+  (func $win16_name_table_find (param $p i32) (param $end i32) (param $name i32) (result i32)
+    (local $n i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $p) (local.get $end)))
+      (local.set $n (i32.load8_u (local.get $p)))
+      (br_if $done (i32.eqz (local.get $n)))
+      (if (call $win16_pstr_eq_pstr (local.get $p) (local.get $name))
+        (then (return (i32.load16_u (i32.add (i32.add (local.get $p) (i32.const 1))
+                                             (local.get $n))))))
+      (local.set $p (i32.add (i32.add (local.get $p) (i32.const 3)) (local.get $n)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; The exported ordinal for `name` in a loaded DLL, or 0. Both tables have to
+  ;; be searched: the resident one holds what the linker thought would be
+  ;; called often, the non-resident one everything else, and CARDS puts all
+  ;; five of its entry points in the second.
+  (func $win16_dll_ordinal (param $module_id i32) (param $name i32) (result i32)
+    (local $rec i32) (local $ne_off i32) (local $base i32) (local $p i32) (local $ord i32)
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (local.set $ne_off (i32.load (local.get $rec)))
+    (local.set $base (i32.load offset=8 (local.get $rec)))
+    ;; Resident: at ne_off + the offset at 0x26, running to the module-reference
+    ;; table. Its first entry is the module's own name with ordinal 0.
+    (local.set $p (i32.add (local.get $ne_off)
+      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x26)))))
+    (local.set $ord (call $win16_name_table_find (local.get $p)
+      (i32.add (local.get $ne_off)
+        (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x28))))
+      (local.get $name)))
+    (if (local.get $ord) (then (return (local.get $ord))))
+    ;; Non-resident: the offset at 0x2C is from the start of the file, not from
+    ;; the NE header, and its length is at 0x20 — 0x30 is the moveable entry
+    ;; count, which is a plausible-looking small number and truncates the table
+    ;; to its first entry. That entry is the module description, so the search
+    ;; finds nothing and every by-name import looks unexported.
+    (local.set $p (i32.add (local.get $base)
+      (i32.load (i32.add (local.get $ne_off) (i32.const 0x2C)))))
+    (call $win16_name_table_find (local.get $p)
+      (i32.add (local.get $p) (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x20))))
+      (local.get $name)))
+
+  ;; Where an ordinal exported by a loaded DLL actually is, packed selector:off.
+  (func $win16_dll_entry (param $module_id i32) (param $ordinal i32) (result i32)
+    (local $rec i32) (local $off i32) (local $seg i32)
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (local.set $seg (i32.add (global.get $WIN16_SEG_TABLE)
+                             (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 16))))
+    (local.set $off (call $win16_entry_lookup
+      (i32.load (local.get $rec)) (local.get $ordinal) (local.get $seg)))
+    ;; Under --trace-win16: which module, which ordinal, and the segment and
+    ;; offset its entry table gave — the three numbers that decide where a
+    ;; call into a DLL actually lands.
+    (if (global.get $win16_trace)
+      (then
+        (call $host_log_i32 (i32.const 0xCA16E17E))
+        (call $host_log_i32 (local.get $module_id))
+        (call $host_log_i32 (local.get $ordinal))
+        (call $host_log_i32 (i32.add (i32.load offset=4 (local.get $rec))
+                                     (i32.load (local.get $seg))))
+        (call $host_log_i32 (local.get $off))))
+    (if (i32.eqz (i32.load (local.get $seg))) (then (return (i32.const 0))))
+    (i32.or (i32.shl (call $win16_index_to_sel
+              (i32.add (i32.load offset=4 (local.get $rec)) (i32.load (local.get $seg))))
+            (i32.const 16))
+            (local.get $off)))
+
+  ;; The loader entry described by the NE header, plus the two values Windows
+  ;; supplies in registers when it calls that entry.  This is deliberately
+  ;; separate from the exported-entry table above: LibEntry is not an export,
+  ;; and its CS:IP and automatic data/heap sizes live directly in the header.
+  (func $win16_dll_init_entry (param $module_id i32) (result i32)
+    (local $rec i32) (local $ne_off i32) (local $seg i32)
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (local.set $ne_off (i32.load (local.get $rec)))
+    (if (i32.eqz (local.get $ne_off)) (then (return (i32.const 0))))
+    (local.set $seg (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x16))))
+    (if (i32.eqz (local.get $seg)) (then (return (i32.const 0))))
+    (i32.or
+      (i32.shl (call $win16_index_to_sel
+        (i32.add (i32.load offset=4 (local.get $rec)) (local.get $seg)))
+        (i32.const 16))
+      (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x14)))))
+
+  (func $win16_dll_data_sel (param $module_id i32) (result i32)
+    (local $rec i32) (local $ne_off i32) (local $seg i32)
+    (local.set $rec (call $win16_dll_rec (local.get $module_id)))
+    (local.set $ne_off (i32.load (local.get $rec)))
+    (if (i32.eqz (local.get $ne_off)) (then (return (i32.const 0))))
+    (local.set $seg (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x0E))))
+    (if (i32.eqz (local.get $seg)) (then (return (i32.const 0))))
+    (call $win16_index_to_sel
+      (i32.add (i32.load offset=4 (local.get $rec)) (local.get $seg))))
+
+  (func $win16_dll_heap_size (param $module_id i32) (result i32)
+    (local $ne_off i32)
+    (local.set $ne_off (i32.load (call $win16_dll_rec (local.get $module_id))))
+    (if (result i32) (local.get $ne_off)
+      (then (i32.load16_u (i32.add (local.get $ne_off) (i32.const 0x10))))
+      (else (i32.const 0))))
+
+  ;; KERNEL's __AHSHIFT and __AHINCR exports are absolute constants, not
+  ;; callable entry points. 16-bit compilers import them through OFFSET
+  ;; fixups to normalize huge pointers: selector += carry << __AHSHIFT.
+  ;; Sending those fixups through the thunk allocator substitutes the thunk
+  ;; offsets (currently 0x20/0x28) for 3/8 and sends every access after the
+  ;; first 64KB into the wrong selector.
+  (func $win16_import_constant (export "win16_import_constant")
+        (param $module i32) (param $ordinal i32) (result i32)
+    (if (i32.eq (local.get $module) (i32.const 1)) ;; KERNEL
+      (then
+        (if (i32.eq (local.get $ordinal) (i32.const 113))
+          (then (return (i32.const 3))))  ;; __AHSHIFT
+        (if (i32.eq (local.get $ordinal) (i32.const 114))
+          (then (return (i32.const 8)))))) ;; __AHINCR
+    (i32.const -1))
+
+  ;; ---- Inspection exports (used by test/test-ne-loader.js) ----
+  (func (export "win16_seg_count") (result i32) (global.get $win16_seg_count))
+  (func (export "win16_entry_cs") (result i32) (global.get $win16_entry_cs))
+  (func (export "win16_entry_ip") (result i32) (global.get $win16_entry_ip))
+  (func (export "win16_auto_data") (result i32) (global.get $win16_auto_data))
+  (func (export "win16_thunk_count") (result i32) (call $win16_thunk_count_get))
+  (func (export "win16_thunk_sel") (result i32) (global.get $WIN16_THUNK_SEL))
+  (func (export "is_win16") (result i32) (global.get $is_win16))
+
+  ;; BEGIN WIN32 NE MODULE TRANSACTIONS
+  ;; Fixed fileless identities: WIN16_PROCESS_ARENA +8..+208, after the two
+  ;; arena pointers. 24 importer masks, then 13 {imports,explicit} pairs.
+  ;; Arena creation zeroes this process-owned state; replacement releases it.
+  ;; CARDS (9) is file-backed and must never enter this lifecycle.
+  (func $win16_bridge_fixed_id (param $id i32) (result i32)
+    (i32.and (i32.and (i32.ge_u (local.get $id) (i32.const 1))
+      (i32.le_u (local.get $id) (i32.const 12))) (i32.ne (local.get $id) (i32.const 9))))
+  (func $win16_bridge_fixed_refs (param $id i32) (result i32)
+    (i32.add (region.addr $WIN16_PROCESS_ARENA 104) (i32.shl (local.get $id) (i32.const 3))))
+  (func $win16_bridge_fixed_mask (param $id i32) (result i32)
+    (i32.add (region.addr $WIN16_PROCESS_ARENA 8)
+      (i32.shl (i32.sub (local.get $id) (global.get $WIN16_DYNAMIC_BASE)) (i32.const 2))))
+  (func $win16_bridge_fixed_owner (result i32)
+    (if (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))) (then (return (i32.const 0))))
+    (i32.eq (i32.load (call $win16_task_shared (i32.const 40))) (call $lock_owner_id)))
+  (func $win16_bridge_fixed_usage (export "win16_bridge_fixed_usage") (param $id i32) (result i32)
+    (local $ptr i32)
+    (if (i32.eqz (call $win16_bridge_fixed_id (local.get $id))) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0))) (then (return (i32.const 0))))
+    (local.set $ptr (call $win16_bridge_fixed_refs (local.get $id)))
+    (i32.add (i32.load (local.get $ptr)) (i32.load offset=4 (local.get $ptr))))
+  ;; Acquire one import reference directly into an unpublished parent's mask.
+  ;; Duplicate linking rejects without incrementing. Native teardown owns it.
+  (func (export "win16_bridge_fixed_link") (param $parent i32) (param $id i32) (result i32)
+    (local $rec i32) (local $mask i32) (local $bit i32) (local $ptr i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_fixed_id (local.get $id))) (then (return (i32.const 0))))
+    (local.set $rec (call $win16_bridge_module_record (local.get $parent)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (local.set $mask (call $win16_bridge_fixed_mask (local.get $parent)))
+    (local.set $bit (i32.shl (i32.const 1) (local.get $id)))
+    (local.set $ptr (call $win16_bridge_fixed_refs (local.get $id)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 1)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.and (i32.load (local.get $mask)) (local.get $bit)))
+      (br_if $reject (i32.ge_u (call $win16_bridge_fixed_usage (local.get $id)) (i32.const 65535)))
+      (i32.store (local.get $ptr) (i32.add (i32.load (local.get $ptr)) (i32.const 1)))
+      (i32.store (local.get $mask) (i32.or (i32.load (local.get $mask)) (local.get $bit)))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+  ;; Caller holds DLL mutex; cannot trap or run a WEP. A fixed dispatcher has
+  ;; no guest segments. Keep aliases while any import/explicit reference lives.
+  (func $win16_bridge_fixed_unlink (param $parent i32)
+    (local $mask i32) (local $id i32) (local $ptr i32)
+    (local.set $mask (i32.load (call $win16_bridge_fixed_mask (local.get $parent))))
+    (local.set $id (i32.const 1))
+    (loop $scan
+      (if (i32.and (local.get $mask) (i32.shl (i32.const 1) (local.get $id)))
+        (then
+          (local.set $ptr (call $win16_bridge_fixed_refs (local.get $id)))
+          (i32.store (local.get $ptr) (i32.sub (i32.load (local.get $ptr)) (i32.const 1)))
+          (if (i32.eqz (call $win16_bridge_fixed_usage (local.get $id)))
+            (then (call $win16_h16_forget (i32.or (i32.const 0x00D10000) (local.get $id)))))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br_if $scan (i32.le_u (local.get $id) (i32.const 12))))
+    (i32.store (call $win16_bridge_fixed_mask (local.get $parent)) (i32.const 0)))
+  (func $win16_bridge_fixed_acquire (export "win16_bridge_fixed_acquire") (param $id i32) (result i32)
+    (local $ptr i32) (local $handle i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_fixed_id (local.get $id))) (then (return (i32.const 0))))
+    (if (i32.ge_u (call $win16_bridge_fixed_usage (local.get $id)) (i32.const 65535)) (then (return (i32.const 0))))
+    ;; The execution lease excludes competing guest mutation. h16 may trap on
+    ;; exhaustion: allocate before changing refs and without holding a mutex.
+    (local.set $handle (call $win16_h16 (i32.or (i32.const 0x00D10000) (local.get $id))))
+    (local.set $ptr (call $win16_bridge_fixed_refs (local.get $id)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (i32.store offset=4 (local.get $ptr) (i32.add (i32.load offset=4 (local.get $ptr)) (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (local.get $handle))
+  (func $win16_bridge_fixed_resolve (param $handle i32) (result i32)
+    (local $slot i32) (local $mapped i32) (local $id i32)
+    (if (i32.le_u (local.get $handle) (global.get $WIN16_HANDLE_BASE)) (then (return (i32.const 0))))
+    (local.set $slot (i32.sub (local.get $handle) (global.get $WIN16_HANDLE_BASE)))
+    (if (i32.gt_u (local.get $slot) (call $win16_handle_next_get)) (then (return (i32.const 0))))
+    (local.set $mapped (i32.load (i32.add (call $win16_handle_table) (i32.shl (local.get $slot) (i32.const 2)))))
+    (if (i32.ne (i32.and (local.get $mapped) (i32.const 0xFFFF0000)) (i32.const 0x00D10000)) (then (return (i32.const 0))))
+    (local.set $id (i32.and (local.get $mapped) (i32.const 65535)))
+    (select (local.get $id) (i32.const 0) (i32.ne (call $win16_bridge_fixed_usage (local.get $id)) (i32.const 0))))
+  (func $win16_bridge_fixed_release (export "win16_bridge_fixed_release") (param $handle i32) (result i32)
+    (local $id i32) (local $ptr i32)
+    (if (i32.eqz (call $win16_bridge_fixed_owner)) (then (return (i32.const 0))))
+    (local.set $id (call $win16_bridge_fixed_resolve (local.get $handle)))
+    (if (i32.eqz (local.get $id)) (then (return (i32.const 0))))
+    (local.set $ptr (call $win16_bridge_fixed_refs (local.get $id)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    ;; A FreeLibrary cannot consume an import edge owned by another module.
+    (if (i32.eqz (i32.load offset=4 (local.get $ptr)))
+      (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (i32.store offset=4 (local.get $ptr) (i32.sub (i32.load offset=4 (local.get $ptr)) (i32.const 1)))
+    (if (i32.eqz (call $win16_bridge_fixed_usage (local.get $id)))
+      (then (call $win16_h16_forget (i32.or (i32.const 0x00D10000) (local.get $id)))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 1))
+  ;; 24 process-owned records in the unused hidden-page gap 0x8C00..0x8F00.
+  ;; state(0 absent,1 loading,2 initializing,3 ready,4 terminating), owner, refs, dependencies,
+  ;; provisional first/count, active calls, staging-lease flag. Never published
+  ;; to a guest API until real initialization and lifetime semantics are ready.
+  (func $win16_bridge_module_record (param $id i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_dll_path_id_valid (local.get $id))) (then (return (i32.const 0))))
+    (i32.add (call $win16_handle_table) (i32.add (i32.const 0x8C00)
+      (i32.shl (i32.sub (local.get $id) (global.get $WIN16_DYNAMIC_BASE)) (i32.const 5)))))
+
+  (func $win16_bridge_name_matches (param $slot i32) (param $lo i64) (param $hi i64) (result i32)
+    (local $i i32) (local $n i32) (local $v i64)
+    (local.set $n (i32.and (i32.wrap_i64 (local.get $lo)) (i32.const 255)))
+    (loop $scan
+      (local.set $v (select (local.get $lo) (local.get $hi) (i32.lt_u (local.get $i) (i32.const 8))))
+      (if (i32.ne (i32.load8_u (i32.add (local.get $slot) (local.get $i)))
+        (i32.and (i32.wrap_i64 (i64.shr_u (local.get $v)
+          (i64.extend_i32_u (i32.shl (i32.and (local.get $i) (i32.const 7)) (i32.const 3))))) (i32.const 255)))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.le_u (local.get $i) (local.get $n))))
+    (i32.const 1))
+
+  ;; Positive id is a new owned transaction; negative id is a ready reference.
+  ;; Zero means invalid input, full table, recursive load or another owner busy.
+  (func $win16_bridge_module_claim (export "win16_bridge_module_claim")
+    (param $lo i64) (param $hi i64) (result i32)
+    (local $i i32) (local $slot i32) (local $free i32) (local $id i32) (local $rec i32) (local $n i32)
+    (if (global.get $is_win16) (then (return (i32.const 0))))
+    (if (i32.eqz (call $win16_bridge_frame_valid (global.get $win16_bridge_frame))) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0))) (then (return (i32.const 0))))
+    (local.set $n (i32.and (i32.wrap_i64 (local.get $lo)) (i32.const 255)))
+    (if (i32.or (i32.eqz (local.get $n)) (i32.gt_u (local.get $n) (i32.const 15))) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (if (i32.load (call $win16_task_shared (i32.const 40)))
+        (then (br_if $reject (i32.ne (i32.load (call $win16_task_shared (i32.const 40))) (call $lock_owner_id)))))
+      (block $found (loop $scan
+        (br_if $found (i32.ge_u (local.get $i) (global.get $WIN16_DYNAMIC_MODULES)))
+        (local.set $slot (call $win16_dynamic_module_slot (local.get $i)))
+        (if (i32.eqz (i32.load8_u (local.get $slot)))
+          (then (if (i32.eqz (local.get $free)) (then (local.set $free (i32.add (local.get $i) (global.get $WIN16_DYNAMIC_BASE))))))
+          (else (if (call $win16_bridge_name_matches (local.get $slot) (local.get $lo) (local.get $hi))
+            (then (local.set $id (i32.add (local.get $i) (global.get $WIN16_DYNAMIC_BASE))) (br $found)))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+      (if (i32.eqz (local.get $id)) (then (local.set $id (local.get $free))))
+      (br_if $reject (i32.eqz (local.get $id)))
+      (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+      (if (i32.eq (i32.load (local.get $rec)) (i32.const 3))
+        (then
+          (br_if $reject (i32.eq (i32.load offset=8 (local.get $rec)) (i32.const -1)))
+          (i32.store offset=8 (local.get $rec) (i32.add (i32.load offset=8 (local.get $rec)) (i32.const 1)))
+          (call $lock_release (global.get $DLL_LOAD_LOCK))
+          (return (i32.sub (i32.const 0) (local.get $id)))))
+      (br_if $reject (i32.load (local.get $rec)))
+      (br_if $reject (call $win16_dll_loaded (local.get $id)))
+      (local.set $slot (call $win16_dynamic_module_slot (i32.sub (local.get $id) (global.get $WIN16_DYNAMIC_BASE))))
+      (i64.store (local.get $slot) (local.get $lo)) (i64.store offset=8 (local.get $slot) (local.get $hi))
+      (i32.store (local.get $rec) (i32.const 1))
+      (i32.store offset=4 (local.get $rec) (call $lock_owner_id))
+      (i32.store offset=8 (local.get $rec) (i32.const 1))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (local.get $id)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  ;; No lock may remain held across the trap-capable existing NE parser. The
+  ;; staging lease excludes other bridge allocations/execution until finish or
+  ;; rollback; the host must call one of them in finally, even after a trap.
+  (func $win16_bridge_module_stage_begin (export "win16_bridge_module_stage_begin") (param $id i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 1)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.load offset=28 (local.get $rec)))
+      (if (i32.load (call $win16_task_shared (i32.const 40)))
+        (then (br_if $reject (i32.ne (i32.load (call $win16_task_shared (i32.const 40))) (call $lock_owner_id)))))
+      (i32.store (call $win16_task_shared (i32.const 40)) (call $lock_owner_id))
+      (i32.store (call $win16_task_shared (i32.const 44))
+        (i32.add (i32.load (call $win16_task_shared (i32.const 44))) (i32.const 1)))
+      (i32.store offset=28 (local.get $rec) (i32.const 1))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  (func $win16_bridge_module_load_allowed (param $id i32) (result i32)
+    (local $rec i32)
+    (if (global.get $is_win16) (then (return (i32.const 1))))
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (i32.and (i32.eq (i32.load (local.get $rec)) (i32.const 1))
+      (i32.and (i32.eq (i32.load offset=4 (local.get $rec)) (call $lock_owner_id))
+        (i32.ne (i32.load offset=28 (local.get $rec)) (i32.const 0)))))
+
+  (func $win16_bridge_module_provisional (param $id i32) (param $first i32) (param $count i32)
+    (local $rec i32)
+    (if (global.get $is_win16) (then (return)))
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return)))
+    (if (i32.eq (i32.load (local.get $rec)) (i32.const 1))
+      (then
+        (if (i32.or (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id))
+          (i32.eqz (i32.load offset=28 (local.get $rec)))) (then (unreachable)))
+        (i32.store offset=16 (local.get $rec) (local.get $first))
+        (i32.store offset=20 (local.get $rec) (local.get $count)))))
+
+  (func $win16_bridge_module_stage_release (param $rec i32)
+    (if (i32.load offset=28 (local.get $rec))
+      (then
+        (i32.store offset=28 (local.get $rec) (i32.const 0))
+        (i32.store (call $win16_task_shared (i32.const 44))
+          (i32.sub (i32.load (call $win16_task_shared (i32.const 44))) (i32.const 1)))
+        (if (i32.eqz (i32.load (call $win16_task_shared (i32.const 44))))
+          (then (i32.store (call $win16_task_shared (i32.const 40)) (i32.const 0)))))))
+
+  (func $win16_bridge_module_stage_end (export "win16_bridge_module_stage_end") (param $id i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 1)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.eqz (i32.load offset=28 (local.get $rec))))
+      (br_if $reject (i32.eqz (call $win16_dll_loaded (local.get $id))))
+      (call $win16_bridge_module_stage_release (local.get $rec))
+      (i32.store (local.get $rec) (i32.const 2))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  (func $win16_bridge_module_publish (export "win16_bridge_module_publish") (param $id i32) (param $result i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.and (local.get $result) (i32.const 0xFFFF))) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 2)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (i32.store (local.get $rec) (i32.const 3)) (i32.store offset=4 (local.get $rec) (i32.const 0))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  ;; Fileless dependencies still own their dynamic name: relocation thunks
+  ;; refer to this slot until the last importing image releases its reference.
+  ;; They have no loaded image, guest alias, initializer or export table. The
+  ;; normal dependency links/refcounts/rollback/final release own their life.
+  ;; Match neBuiltinDependency's dynamic names; unknown names cannot publish.
+  (func $win16_bridge_module_publish_emulated (export "win16_bridge_module_publish_emulated")
+    (param $id i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 1)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.load offset=28 (local.get $rec)))
+      (br_if $reject (call $win16_dll_loaded (local.get $id)))
+      (br_if $reject (i32.eqz
+        (i32.or (call $win16_dynamic_module_is_toolhelp (local.get $id))
+        (i32.or (call $win16_module_is_ver (local.get $id))
+        (i32.or (call $win16_module_is_lzexpand (local.get $id))
+        (i32.or (call $win16_dynamic_module_is7 (local.get $id) (i64.const 0x00454C4946495641)) ;; AVIFILE
+        (i32.or (call $win16_dynamic_module_is7 (local.get $id) (i64.const 0x004F45444956534D)) ;; MSVIDEO
+                (call $win16_dynamic_module_is7 (local.get $id) (i64.const 0x0059414C50534944))))))))) ;; DISPLAY
+      (i32.store (local.get $rec) (i32.const 3))
+      (i32.store offset=4 (local.get $rec) (i32.const 0))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  (func $win16_bridge_module_rollback (export "win16_bridge_module_rollback") (param $id i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.load offset=24 (local.get $rec)))
+      (br_if $reject (i32.eqz (i32.load (local.get $rec))))
+      (br_if $reject (i32.gt_u (i32.load (local.get $rec)) (i32.const 2)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (if (call $win16_dll_loaded (local.get $id))
+        (then (call $win16_dll_unload (local.get $id)))
+        (else (if (i32.load offset=20 (local.get $rec))
+          (then (call $win16_arena_give (i32.load offset=16 (local.get $rec)) (i32.load offset=20 (local.get $rec)))))))
+      (call $win16_bridge_module_stage_release (local.get $rec))
+      (call $win16_bridge_fixed_unlink (local.get $id))
+      (call $win16_dynamic_module_release (local.get $id))
+      (call $zero_memory (local.get $rec) (i32.const 32))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+  ;; Transfer one already-acquired dependency reference to an unpublished
+  ;; parent. The caller retains it on rejection; duplicate links never consume
+  ;; another reference. Cycles are rejected by claim's unpublished-state rule.
+  (func $win16_bridge_module_link (export "win16_bridge_module_link")
+    (param $id i32) (param $dependency i32) (result i32)
+    (local $rec i32) (local $dep i32) (local $bit i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (local.set $dep (call $win16_bridge_module_record (local.get $dependency)))
+    (if (i32.or (i32.eqz (local.get $rec)) (i32.eqz (local.get $dep))) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $id) (local.get $dependency)) (then (return (i32.const 0))))
+    (local.set $bit (i32.shl (i32.const 1) (i32.sub (local.get $dependency) (global.get $WIN16_DYNAMIC_BASE))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.eqz (i32.load (local.get $rec))))
+      (br_if $reject (i32.gt_u (i32.load (local.get $rec)) (i32.const 2)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.ne (i32.load (local.get $dep)) (i32.const 3)))
+      (br_if $reject (i32.and (i32.load offset=12 (local.get $rec)) (local.get $bit)))
+      (i32.store offset=12 (local.get $rec) (i32.or (i32.load offset=12 (local.get $rec)) (local.get $bit)))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  ;; Owned dependency snapshot for rollback/final unload. The host must retain
+  ;; this mask before destroying the parent and release each transferred ref.
+  (func $win16_bridge_module_dependencies (export "win16_bridge_module_dependencies")
+    (param $id i32) (result i32)
+    (local $rec i32) (local $mask i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const -1))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $mask (i32.const -1))
+    (if (i32.eq (i32.load offset=4 (local.get $rec)) (call $lock_owner_id))
+      (then (local.set $mask (i32.load offset=12 (local.get $rec)))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (local.get $mask))
+
+  ;; -1 rejected, 0 reference dropped, 1 final owner must terminate then finish.
+  ;; The lease spans guest termination but no mutex does. It prevents another
+  ;; instance executing or allocating while the last reference is retired.
+  (func $win16_bridge_module_release_begin (export "win16_bridge_module_release_begin")
+    (param $id i32) (result i32)
+    (local $rec i32) (local $refs i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const -1))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 3)))
+      (if (i32.load (call $win16_task_shared (i32.const 40)))
+        (then (br_if $reject (i32.ne (i32.load (call $win16_task_shared (i32.const 40))) (call $lock_owner_id)))))
+      (local.set $refs (i32.load offset=8 (local.get $rec)))
+      (br_if $reject (i32.eqz (local.get $refs)))
+      (if (i32.gt_u (local.get $refs) (i32.const 1))
+        (then
+          (i32.store offset=8 (local.get $rec) (i32.sub (local.get $refs) (i32.const 1)))
+          (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+      (br_if $reject (i32.load offset=24 (local.get $rec)))
+      (i32.store (call $win16_task_shared (i32.const 40)) (call $lock_owner_id))
+      (i32.store (call $win16_task_shared (i32.const 44))
+        (i32.add (i32.load (call $win16_task_shared (i32.const 44))) (i32.const 1)))
+      (i32.store offset=28 (local.get $rec) (i32.const 1))
+      (i32.store offset=4 (local.get $rec) (call $lock_owner_id))
+      (i32.store (local.get $rec) (i32.const 4))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const -1))
+
+  (func $win16_bridge_module_release_finish (export "win16_bridge_module_release_finish")
+    (param $id i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (br_if $reject (i32.load offset=24 (local.get $rec)))
+      (br_if $reject (i32.ne (i32.load (local.get $rec)) (i32.const 4)))
+      (br_if $reject (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id)))
+      (br_if $reject (i32.eqz (i32.load offset=28 (local.get $rec))))
+      (call $win16_dll_unload (local.get $id))
+      (call $win16_bridge_module_stage_release (local.get $rec))
+      (call $win16_bridge_fixed_unlink (local.get $id))
+      (call $win16_dynamic_module_release (local.get $id))
+      (call $zero_memory (local.get $rec) (i32.const 32))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+  ;; The caller owns a frame and the process execution lease. Parsing export
+  ;; tables can trap, so it must never run under DLL_LOAD_LOCK; the lease keeps
+  ;; the image alive while the host's finally block remains able to unwind.
+  (func $win16_bridge_module_readable (param $id i32) (param $state i32) (result i32)
+    (local $rec i32)
+    (local.set $rec (call $win16_bridge_module_record (local.get $id)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.load (call $win16_task_shared (i32.const 40))) (call $lock_owner_id))
+      (then (return (i32.const 0))))
+    (if (i32.ne (i32.load (local.get $rec)) (local.get $state)) (then (return (i32.const 0))))
+    (if (i32.ne (local.get $state) (i32.const 3))
+      (then (if (i32.ne (i32.load offset=4 (local.get $rec)) (call $lock_owner_id))
+        (then (return (i32.const 0))))))
+    (call $win16_dll_loaded (local.get $id)))
+
+  (func $win16_bridge_module_entry (export "win16_bridge_module_entry")
+    (param $id i32) (param $ordinal i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $ordinal)) (i32.gt_u (local.get $ordinal) (i32.const 0xFFFF)))
+      (then (return (i32.const 0))))
+    (call $win16_dll_entry (local.get $id) (local.get $ordinal)))
+
+  (func $win16_bridge_module_ordinal (export "win16_bridge_module_ordinal")
+    (param $id i32) (param $name i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3)))
+      (then (return (i32.const 0))))
+    (call $win16_dll_ordinal (local.get $id) (local.get $name)))
+
+  ;; Only the unpublished initializer's owner can inspect its header ABI.
+  ;; field 0 CS:IP, 1 DS/instance selector, 2 initial local heap size.
+  (func $win16_bridge_module_init (export "win16_bridge_module_init")
+    (param $id i32) (param $field i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 2)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $field)) (then (return (call $win16_dll_init_entry (local.get $id)))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $win16_dll_data_sel (local.get $id)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $win16_dll_heap_size (local.get $id)))))
+    (i32.const 0))
+  (func $win16_bridge_module_data (export "win16_bridge_module_data") (param $id i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3)))
+      (then (return (i32.const 0))))
+    (call $win16_dll_data_sel (local.get $id)))
+
+  ;; WEP is resolved by its export name, not by a presumed ordinal. The four
+  ;; byte Pascal name lives in the owning frame, clear of arguments and CPU files.
+  (func $win16_bridge_module_termination (export "win16_bridge_module_termination")
+    (param $id i32) (param $field i32) (result i32)
+    (local $name i32) (local $ordinal i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 4)))
+      (then (return (i32.const 0))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $win16_dll_data_sel (local.get $id)))))
+    (if (local.get $field) (then (return (i32.const 0))))
+    (local.set $name (i32.add (i32.wrap_i64 (global.get $win16_bridge_frame)) (i32.const 304)))
+    (i32.store (local.get $name) (i32.const 0x50455703))
+    (local.set $ordinal (call $win16_dll_ordinal (local.get $id) (local.get $name)))
+    (if (i32.eqz (local.get $ordinal)) (then (return (i32.const 0))))
+    (call $win16_dll_entry (local.get $id) (local.get $ordinal)))
+
+  ;; Explicit owner retry after a failed WEP. A normal FreeLibrary cannot
+  ;; consume a second reference from a module already awaiting termination.
+  (func $win16_bridge_module_release_retry (export "win16_bridge_module_release_retry")
+    (param $id i32) (result i32)
+    (call $win16_bridge_module_readable (local.get $id) (i32.const 4)))
+  ;; END WIN32 NE MODULE TRANSACTIONS
+
+  ;; Guest-facing aliases use the existing selector-disjoint handle map.
+  ;; Like Win16 handles generally, an alias may be reused after final unload;
+  ;; generation tokens protect host requests, not stale guest HMODULE values.
+  (func (export "win16_bridge_module_alias") (param $id i32) (result i32)
+    (if (i32.eqz (call $win16_bridge_module_readable (local.get $id) (i32.const 3)))
+      (then (return (i32.const 0))))
+    (call $win16_h16 (i32.or (i32.const 0x00D10000) (local.get $id))))
+
+  (func (export "win16_bridge_module_resolve") (param $handle i32) (result i32)
+    (local $id i32) (local $mapped i32) (local $slot i32)
+    (local.set $handle (i32.and (local.get $handle) (i32.const 0xFFFF)))
+    (if (i32.or (i32.eqz (local.get $handle)) (i32.eq (local.get $handle) (i32.const 0xFFFF)))
+      (then (return (i32.const 0))))
+    (if (i32.gt_u (local.get $handle) (global.get $WIN16_HANDLE_BASE))
+      (then
+        (local.set $slot (i32.sub (local.get $handle) (global.get $WIN16_HANDLE_BASE)))
+        (if (i32.le_u (local.get $slot) (call $win16_handle_next_get))
+          (then (local.set $mapped (i32.load (i32.add (call $win16_handle_table)
+            (i32.shl (local.get $slot) (i32.const 2)))))))))
+    (local.set $id (global.get $WIN16_DYNAMIC_BASE))
+    (block $missing (loop $scan
+      (br_if $missing (i32.ge_u (local.get $id)
+        (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES))))
+      (if (i32.or (call $win16_bridge_module_readable (local.get $id) (i32.const 3))
+                  (call $win16_bridge_module_readable (local.get $id) (i32.const 4)))
+        (then
+          (if (i32.or
+                (i32.eq (local.get $mapped) (i32.or (i32.const 0x00D10000) (local.get $id)))
+                (i32.and (i32.eq (i32.and (local.get $handle) (i32.const 7)) (i32.const 7))
+                  (i32.eq (local.get $handle) (call $win16_dll_data_sel (local.get $id)))))
+            (then (return (local.get $id))))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1))) (br $scan)))
+    (i32.const 0))
+
+  (func (export "win16_bridge_module_retain_name") (param $lo i64) (param $hi i64) (result i32)
+    (local $id i32)
+    (local.set $id (global.get $WIN16_DYNAMIC_BASE))
+    (block $missing (loop $scan
+      (br_if $missing (i32.ge_u (local.get $id)
+        (i32.add (global.get $WIN16_DYNAMIC_BASE) (global.get $WIN16_DYNAMIC_MODULES))))
+      (if (call $win16_bridge_module_readable (local.get $id) (i32.const 3))
+        (then (if (call $win16_bridge_name_matches
+          (call $win16_dynamic_module_slot (i32.sub (local.get $id) (global.get $WIN16_DYNAMIC_BASE)))
+          (local.get $lo) (local.get $hi))
+          (then (return (i32.sub (i32.const 0) (call $win16_bridge_module_claim (local.get $lo) (local.get $hi))))))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1))) (br $scan)))
+    (i32.const 0))

@@ -1,0 +1,1297 @@
+  ;; ============================================================
+  ;; Win16 dialogs
+  ;; ============================================================
+  ;;
+  ;; Two things stand between a 16-bit DialogBox and the dialog machinery the
+  ;; 32-bit side already has, and this file is those two things.
+  ;;
+  ;; The first is the template. A 16-bit RT_DIALOG is not a narrowed 32-bit one,
+  ;; it is a different structure: the item count is a byte, the strings are
+  ;; ANSI, there is no extended style anywhere, nothing is aligned, and a
+  ;; predefined control class is a single byte with no terminator rather than
+  ;; 0xFFFF followed by a word. Rather than teach $dlg_load a second grammar,
+  ;; $win16_dlg_to32 rewrites the template into the 32-bit form and hands that
+  ;; over through $dlg_indirect_template_ptr — so every control, every style bit
+  ;; and every dialog-unit conversion stays in one place.
+  ;;
+  ;; The second is the modal loop. DialogBoxParamA runs one by pointing EIP at
+  ;; the guest procedure with a 32-bit frame beneath it and parking the return
+  ;; on the CACA0004 thunk, which is the one shape a 16-bit task cannot survive
+  ;; (see $win16_call32_begin). So DialogBox parks on a thunk-segment slot of
+  ;; its own instead, and $win16_dlg_pump does the same work in Pascal: each
+  ;; pass either hands one message to the dialog procedure and comes back when
+  ;; it returns, or finds nothing to do and yields to the host.
+
+  ;; ---- Rewriting the template ----
+  ;;
+  ;; A cursor over the destination, so the emitters below read as a sequence of
+  ;; fields rather than as arithmetic.
+  (global $win16_dlg_w (mut i32) (i32.const 0))
+  ;; HWND whose WM_INITDIALOG return must finish CreateDialogParam rather than
+  ;; enter the modal DialogBox pump. Naming the expected window (instead of a
+  ;; boolean) keeps a nested modal dialog created by the init procedure from
+  ;; consuming the outer modeless return.
+  (global $win16_dlg_modeless_pending (mut i32) (i32.const 0))
+  (global $WIN16_DLG_INIT_RET i32 (i32.const 0xFF44))
+
+  (func $win16_dlg_emit16 (param $v i32)
+    (call $gs16 (global.get $win16_dlg_w) (local.get $v))
+    (global.set $win16_dlg_w (i32.add (global.get $win16_dlg_w) (i32.const 2))))
+
+  (func $win16_dlg_emit32 (param $v i32)
+    (call $gs32 (global.get $win16_dlg_w) (local.get $v))
+    (global.set $win16_dlg_w (i32.add (global.get $win16_dlg_w) (i32.const 4))))
+
+  ;; Widen a NUL-terminated ANSI string at `src` (a linear address in the staged
+  ;; image) into a UTF-16 one, terminator included, and answer where the source
+  ;; ended.
+  (func $win16_dlg_emit_sz (param $src i32) (result i32)
+    (local $c i32)
+    (block $done (loop $copy
+      (local.set $c (i32.load8_u (local.get $src)))
+      (call $win16_dlg_emit16 (local.get $c))
+      (local.set $src (i32.add (local.get $src) (i32.const 1)))
+      (br_if $done (i32.eqz (local.get $c)))
+      (br $copy)))
+    (local.get $src))
+
+  ;; The header's menu and class fields, and an item's text: absent (a lone
+  ;; zero), an ordinal (0xFF then a word), or a string.
+  (func $win16_dlg_emit_ord_or_sz (param $src i32) (result i32)
+    (if (i32.eq (i32.load8_u (local.get $src)) (i32.const 0xFF))
+      (then
+        (call $win16_dlg_emit16 (i32.const 0xFFFF))
+        (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 1))))
+        (return (i32.add (local.get $src) (i32.const 3)))))
+    (call $win16_dlg_emit_sz (local.get $src)))
+
+  ;; $win16_dlg_to32(src) -> guest pointer to a 32-bit DLGTEMPLATE, or 0.
+  ;;
+  ;; `src` is a linear address of the 16-bit template. The rewritten one is four
+  ;; times the source at the very worst — every byte of ANSI becomes a word of
+  ;; UTF-16, and each item grows by its extended style and its alignment — so
+  ;; the destination is sized from the resource length with room to spare.
+  (func $win16_dlg_to32 (param $src i32) (param $src_len i32) (result i32)
+    (local $dst i32) (local $style i32) (local $count i32) (local $i i32)
+    (local $ctrl_style i32) (local $class i32)
+    (local.set $dst (call $heap_alloc
+      (i32.add (i32.mul (local.get $src_len) (i32.const 6)) (i32.const 256))))
+    (if (i32.eqz (local.get $dst)) (then (return (i32.const 0))))
+    (global.set $win16_dlg_w (local.get $dst))
+
+    (local.set $style (i32.load (local.get $src)))
+    (local.set $count (i32.load8_u (i32.add (local.get $src) (i32.const 4))))
+    (call $win16_dlg_emit32 (local.get $style))
+    (call $win16_dlg_emit32 (i32.const 0))                        ;; no exStyle in Win16
+    (call $win16_dlg_emit16 (local.get $count))
+    (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 5))))   ;; x
+    (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 7))))   ;; y
+    (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 9))))   ;; cx
+    (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 11))))  ;; cy
+    (local.set $src (i32.add (local.get $src) (i32.const 13)))
+    (local.set $src (call $win16_dlg_emit_ord_or_sz (local.get $src)))   ;; menu
+    (local.set $src (call $win16_dlg_emit_ord_or_sz (local.get $src)))   ;; class
+    (local.set $src (call $win16_dlg_emit_sz (local.get $src)))          ;; caption
+    ;; DS_SETFONT: point size then typeface. $dlg_load reads both back.
+    (if (i32.and (local.get $style) (i32.const 0x40))
+      (then
+        (call $win16_dlg_emit16 (i32.load16_u (local.get $src)))
+        (local.set $src (i32.add (local.get $src) (i32.const 2)))
+        (local.set $src (call $win16_dlg_emit_sz (local.get $src)))))
+
+    (local.set $i (i32.const 0))
+    (block $done (loop $items
+      (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+      ;; Every 32-bit DLGITEMTEMPLATE starts on a DWORD boundary. Nothing in the
+      ;; 16-bit one does.
+      (block $aligned (loop $pad
+        (br_if $aligned (i32.eqz (i32.and (global.get $win16_dlg_w) (i32.const 3))))
+        (call $gs8 (global.get $win16_dlg_w) (i32.const 0))
+        (global.set $win16_dlg_w (i32.add (global.get $win16_dlg_w) (i32.const 1)))
+        (br $pad)))
+      ;; x, y, cx, cy, id come before the style in a 16-bit item and after it in
+      ;; a 32-bit one, so the style is read ahead rather than copied in place.
+      (local.set $ctrl_style (i32.load (i32.add (local.get $src) (i32.const 10))))
+      (call $win16_dlg_emit32 (local.get $ctrl_style))
+      (call $win16_dlg_emit32 (i32.const 0))                      ;; exStyle
+      (call $win16_dlg_emit16 (i32.load16_u (local.get $src)))                          ;; x
+      (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 2))))   ;; y
+      (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 4))))   ;; cx
+      (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 6))))   ;; cy
+      (call $win16_dlg_emit16 (i32.load16_u (i32.add (local.get $src) (i32.const 8))))   ;; id
+      (local.set $src (i32.add (local.get $src) (i32.const 14)))
+      ;; The class. One byte in the 0x80..0x85 range names a predefined class and
+      ;; carries no terminator — the 32-bit spelling of the same thing is 0xFFFF
+      ;; followed by that byte as a word.
+      (local.set $class (i32.load8_u (local.get $src)))
+      (if (i32.ge_u (local.get $class) (i32.const 0x80))
+        (then
+          (call $win16_dlg_emit16 (i32.const 0xFFFF))
+          (call $win16_dlg_emit16 (local.get $class))
+          (local.set $src (i32.add (local.get $src) (i32.const 1))))
+        (else
+          (local.set $src (call $win16_dlg_emit_sz (local.get $src)))))
+      (local.set $src (call $win16_dlg_emit_ord_or_sz (local.get $src)))  ;; text
+      ;; Creation data: one byte of count in Win16, a word in Win32. Neither
+      ;; world's $dlg_load reads the bytes themselves, but both must skip them.
+      (call $win16_dlg_emit16 (i32.const 0))
+      (local.set $src (i32.add (i32.add (local.get $src) (i32.const 1))
+                               (i32.load8_u (local.get $src))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $items)))
+    (local.get $dst))
+
+  ;; ---- DialogBox ----
+  ;;
+  ;; The state the pump needs sits on the task's stack under the parked EIP, so
+  ;; that a dialog put up from inside another dialog's procedure keeps its own:
+  ;;   [sp+0] dialog hwnd, 16-bit    [sp+2] return offset    [sp+4] return sel
+  ;;   [sp+6] owner to re-enable, 32-bit (zero if already disabled/modeless)
+  ;; A 16-bit window procedure RETFs its own arguments off, so this record is
+  ;; exactly what the stack holds again each time one returns here.
+  (func $win16_dlg_run (param $template i32) (param $parent i32) (param $proc i32)
+        (param $init_param i32) (param $ret i32)
+    (local $hwnd i32) (local $i i32) (local $ctrl i32) (local $restore_owner i32)
+    (local.set $hwnd (global.get $next_hwnd))
+    (global.set $next_hwnd (i32.add (global.get $next_hwnd) (i32.const 1)))
+    (call $wnd_table_set (local.get $hwnd) (global.get $WNDPROC_DIALOG))
+    (drop (call $dialog_proc_set (local.get $hwnd) (local.get $proc)))
+    (global.set $dlg_indirect_template_ptr (local.get $template))
+    (drop (call $dlg_load (local.get $hwnd) (i32.const 0)))
+    (call $heap_free (local.get $template))
+    (call $wnd_set_parent (local.get $hwnd) (i32.const 0))
+    (call $wnd_set_owner (local.get $hwnd) (local.get $parent))
+    ;; A modal owner's exposed client area must not activate or accept input.
+    ;; Remember only a disable performed by this invocation: a nested dialog
+    ;; must not enable the outer dialog's owner when it returns.
+    (if (i32.and (i32.ne (local.get $hwnd) (global.get $win16_dlg_modeless_pending))
+          (i32.and (i32.ne (local.get $parent) (i32.const 0))
+            (i32.and (i32.ge_s (call $wnd_table_find (local.get $parent)) (i32.const 0))
+              (i32.eqz (call $ctrl_style_disabled (call $wnd_get_style (local.get $parent)))))))
+      (then
+        (local.set $restore_owner (local.get $parent))
+        (call $win16_dlg_enable_owner (local.get $parent) (i32.const 0))))
+    (drop (call $wnd_set_style (local.get $hwnd)
+      (i32.or (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))))
+    (call $host_dialog_loaded (local.get $hwnd) (local.get $parent))
+    ;; Template coordinates are owner-client relative unless DS_ABSALIGN.
+    ;; Use the same placement as Win32 before WM_INITDIALOG can move it.
+    (call $dlg_place_owner_relative (local.get $hwnd))
+    (call $defwndproc_do_nccalcsize (local.get $hwnd))
+    (call $dlg_fill_bkgnd (local.get $hwnd))
+    ;; Chrome and background both owed, and owed *before* the window is shown:
+    ;; the visible-region pass that ShowWindow runs defers a native child's
+    ;; paint while an ancestor still owes an erase, which is the only thing
+    ;; keeping the controls from being drawn and then wiped by it.
+    (call $nc_flags_set (local.get $hwnd) (i32.const 3))
+    ;; The dialog's own client area is owed a WM_PAINT too, and seeding only
+    ;; the controls hid that for a long time: a dialog whose entire content is
+    ;; controls looks perfectly correct without it. Hearts' Score Sheet is the
+    ;; one that does not — its template holds an OK button and nothing else,
+    ;; and the whole score grid is drawn by the task from WM_PAINT. Never
+    ;; marking the dialog dirty meant the message was never queued for it, so
+    ;; the sheet came up as an empty grey box.
+    (call $paint_flag_set_inv (local.get $hwnd))
+    ;; Every control wants its first WM_PAINT; the pump delivers them once the
+    ;; dialog is up. Walk the child slots rather than assuming the hwnds are
+    ;; contiguous — a combobox allocates auxiliary windows of its own.
+    (local.set $i (i32.const 0))
+    (block $done (loop $seed
+      (local.set $i (call $wnd_next_child_slot (local.get $hwnd) (local.get $i)))
+      (br_if $done (i32.eq (local.get $i) (i32.const -1)))
+      (local.set $ctrl (call $wnd_slot_hwnd (local.get $i)))
+      (if (i32.and (call $wnd_get_style (local.get $ctrl)) (i32.const 0x10000000))
+        (then (call $paint_flag_set_inv (local.get $ctrl))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $seed)))
+    (drop (call $host_show_window (local.get $hwnd) (i32.const 1)))
+    ;; A modal dialog is the foreground window while it runs. Since the
+    ;; renderer stopped inferring foreground from z-order (aba07804c), showing
+    ;; it was not enough: the owner stayed foreground and kept an active
+    ;; caption behind the dialog (Tetris' About). The owner is reactivated by
+    ;; $win16_focus_start when the dialog ends.
+    (drop (call $host_activate_window (local.get $hwnd)))
+    (global.set $win16_dlg_ended (i32.const 0))
+    (call $win16_push16 (i32.shr_u (local.get $restore_owner) (i32.const 16)))
+    (call $win16_push16 (local.get $restore_owner))
+    (call $win16_push16 (i32.shr_u (local.get $ret) (i32.const 16)))
+    (call $win16_push16 (local.get $ret))
+    (call $win16_push16 (call $win16_h16 (local.get $hwnd)))
+
+    ;; A dialog is a window, and a window's creation is something the task's
+    ;; WH_CALLWNDPROC filter is entitled to see. It matters for exactly the
+    ;; reason it matters in CreateWindow: an MFC task attaches its C++ object
+    ;; to the HWND from inside that call, and its dialog procedure's very first
+    ;; act is to look the object back up. Hearts' does, on WM_INITDIALOG, and
+    ;; called a virtual through the null it got back.
+    ;;
+    ;; The procedure and the init parameter go under the filter's frame because
+    ;; the filter is guest code and this one has to survive it.
+    (if (i32.ne (global.get $win16_hook_cwp) (i32.const 0))
+      (then
+        (call $win16_push16 (i32.shr_u (local.get $init_param) (i32.const 16)))
+        (call $win16_push16 (local.get $init_param))
+        (call $win16_push16 (i32.shr_u (local.get $proc) (i32.const 16)))
+        (call $win16_push16 (local.get $proc))
+        (call $win16_hook_cwp_fire (call $win16_h16 (local.get $hwnd))
+          (i32.const 0x0081) (i32.const 0)
+          (call $win16_createstruct
+            (local.get $init_param) (global.get $sreg_ds) (i32.const 0)
+            (call $win16_h16 (local.get $parent)) (i32.const 0) (i32.const 0)
+            (i32.const 0) (i32.const 0) (call $wnd_get_style (local.get $hwnd))
+            (i32.const 0) (i32.const 0) (i32.const 0))
+          (global.get $WIN16_DLG_CWP))
+        (return)))
+    (call $win16_dlg_init (local.get $proc) (call $win16_h16 (local.get $hwnd))
+      (local.get $init_param)))
+
+  ;; WM_INITDIALOG. wParam is the control that would take focus; a Win16 dialog
+  ;; procedure returning TRUE means "leave it where USER put it". Reached both
+  ;; directly and from the filter's continuation, so the two cannot drift.
+  (func $win16_dlg_init (param $proc i32) (param $hwnd16 i32) (param $init_param i32)
+    ;; A null lpDialogFunc is legal: DefDlgProc then has no procedure to hand
+    ;; WM_INITDIALOG to and answers FALSE itself. InstallShield's 16-bit
+    ;; self-extractor opens its "extracting" box as CreateDialog(..., NULL).
+    ;; Land on the continuation exactly as a procedure's RETF would.
+    (if (i32.eqz (local.get $proc))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+        (call $win16_set_sreg (i32.const 1) (global.get $WIN16_THUNK_SEL))
+        (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $WIN16_DLG_INIT_RET)))
+        (return)))
+    (call $win16_enter_wndproc (local.get $proc) (local.get $hwnd16)
+      (i32.const 0x0110) (i32.const 0) (local.get $init_param)
+      (global.get $WIN16_THUNK_SEL) (global.get $WIN16_DLG_INIT_RET)))
+
+  ;; Showing host chrome alone does not activate the guest dialog. Finish
+  ;; WM_INITDIALOG through USER's far activation/focus transaction before
+  ;; pumping timers; otherwise JezzBall keeps playing beneath score entry and
+  ;; recursively opens another score dialog on every game-over timer tick.
+  (func $win16_dlg_init_complete
+    (local $dlg i32) (local $target i32)
+    (local.set $dlg (call $win16_h32 (call $gl16 (i32.load offset=16 (global.get $reg_base)))))
+    (if (i32.or (global.get $win16_dlg_ended)
+                (i32.eq (local.get $dlg) (global.get $win16_dlg_modeless_pending)))
+      (then (call $win16_dlg_pump) (return)))
+    (local.set $target (local.get $dlg))
+    (if (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF))
+      (then (local.set $target (call $dialog_first_init_tabstop (local.get $dlg))))
+      (else
+        (if (i32.eq (call $wnd_top_level (global.get $focus_hwnd)) (local.get $dlg))
+          (then (local.set $target (global.get $focus_hwnd))))))
+    (if (i32.eqz (local.get $target)) (then (local.set $target (local.get $dlg))))
+    (call $win16_cont_push
+      (i32.or (i32.shl (global.get $WIN16_THUNK_SEL) (i32.const 16))
+              (global.get $WIN16_DLG_PUMP)) (i32.const 0))
+    (if (i32.eq (local.get $target) (global.get $focus_hwnd))
+      (then (call $win16_activate_start (local.get $dlg)))
+      (else (call $win16_focus_start (local.get $target) (i32.const 0)))))
+
+  ;; The filter has returned. It took its own arguments off; the CWPSTRUCT and
+  ;; CREATESTRUCT built underneath them are this side's to drop, and under those
+  ;; is the four-word record pushed above.
+  (func $win16_dlg_cwp_resume
+    (local $proc i32) (local $init i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (global.get $WIN16_CWP_SCRATCH)))
+    (local.set $proc (i32.or (call $gl16 (i32.load offset=16 (global.get $reg_base)))
+      (i32.shl (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2))) (i32.const 16))))
+    (local.set $init (i32.or (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+      (i32.shl (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 6))) (i32.const 16))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    (call $win16_dlg_init (local.get $proc) (call $gl16 (i32.load offset=16 (global.get $reg_base)))
+      (local.get $init)))
+
+  ;; USER.87 DialogBox(hInstance, lpTemplateName, hWndParent, lpDialogFunc) and
+  ;; USER.239 DialogBoxParam, which is the same with a dwInitParam under it.
+  (func $win16_DialogBox (param $with_param i32) (param $modeless i32)
+    (local $id i32) (local $parent i32) (local $proc i32) (local $init i32)
+    (local $res i32) (local $template i32) (local $base i32) (local $module i32)
+    (local.set $base (select (i32.const 2) (i32.const 0) (local.get $with_param)))
+    (local.set $init (select
+      (i32.or (call $win16_arg16 (i32.const 0))
+              (i32.shl (call $win16_arg16 (i32.const 1)) (i32.const 16)))
+      (i32.const 0) (local.get $with_param)))
+    (local.set $proc (i32.or (call $win16_arg16 (local.get $base))
+      (i32.shl (call $win16_arg16 (i32.add (local.get $base) (i32.const 1)))
+               (i32.const 16))))
+    (local.set $parent (call $win16_h32
+      (call $win16_arg16 (i32.add (local.get $base) (i32.const 2)))))
+    ;; lpTemplateName is a far pointer, and MAKEINTRESOURCE puts the id in the
+    ;; offset with a null selector; a non-null selector means the template is
+    ;; named by string, which for these files means the name table decides
+    ;; which numbered template it is. Blackjack asks for all four of its
+    ;; dialogs that way.
+    (local.set $id (call $win16_arg16 (i32.add (local.get $base) (i32.const 3))))
+    ;; Resources belong to the hInstance supplied by the caller, not
+    ;; necessarily the task's main NE image. WISE keeps its install-progress
+    ;; dialogs in a loaded helper module; searching the main executable finds
+    ;; an unrelated id 0x72 payload and feeds arbitrary bytes to the template
+    ;; converter. Keep this scoped to the lookup, like FindResource does.
+    (local.set $module (call $win16_res_module
+      (call $win16_arg16 (i32.add (local.get $base) (i32.const 5)))))
+    (global.set $win16_res_module_id (local.get $module))
+    (if (call $win16_arg16 (i32.add (local.get $base) (i32.const 4)))
+      (then (local.set $res (call $win16_find_resource_ex (i32.const 5) (i32.const 0)
+              (call $g2w (call $win16_far_to_guest
+                (call $win16_arg16 (i32.add (local.get $base) (i32.const 4)))
+                (local.get $id))))))
+      (else (local.set $res (call $win16_find_resource (i32.const 5) (local.get $id)))))
+    (global.set $win16_res_module_id (i32.const 0))
+    (if (i32.eqz (local.get $res))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const -1))
+        (call $win16_api_return (select (i32.const 16) (i32.const 12)
+          (local.get $with_param)))
+        (return)))
+    (local.set $template
+      (call $win16_dlg_to32 (local.get $res) (global.get $win16_res_len)))
+    (if (local.get $modeless)
+      (then (global.set $win16_dlg_modeless_pending (global.get $next_hwnd))))
+    (call $win16_dlg_run (local.get $template) (local.get $parent) (local.get $proc)
+      (local.get $init)
+      (call $win16_take_return (select (i32.const 16) (i32.const 12)
+        (local.get $with_param)))))
+
+  ;; USER.218 DialogBoxIndirect(hInstance, hDialogTemplate, hWndParent,
+  ;; lpDialogFunc). Unlike DialogBox, the caller has already loaded or built
+  ;; the Win16 template in a global block. Global handles are selectors in this
+  ;; runtime, so offset zero is both GlobalLock's result and the byte stream the
+  ;; converter needs. WISE's installer builds its language chooser this way.
+  (func $win16_DialogBoxIndirect (param $modeless i32)
+    (local $proc i32) (local $parent i32) (local $handle i32)
+    (local $offset i32) (local $index i32) (local $flags i32)
+    (local $len i32) (local $template i32) (local $frame i32)
+    (local.set $proc
+      (i32.or (call $win16_arg16 (i32.const 0))
+        (i32.shl (call $win16_arg16 (i32.const 1)) (i32.const 16))))
+    (local.set $parent (call $win16_h32 (call $win16_arg16 (i32.const 2))))
+    ;; DialogBoxIndirect takes an HGLOBAL template handle. CreateDialogIndirect
+    ;; instead takes an LPCDLGTEMPLATE far pointer and therefore has one more
+    ;; word in its Pascal frame. WISE passes 00ef:0008 here; treating 0008 as
+    ;; the selector rejects a valid template, returns -1, and leaves its
+    ;; installer loop polling forever with no dialog.
+    (local.set $offset (select
+      (call $win16_arg16 (i32.const 3)) (i32.const 0) (local.get $modeless)))
+    (local.set $handle (call $win16_arg16
+      (select (i32.const 4) (i32.const 3) (local.get $modeless))))
+    (local.set $frame (select (i32.const 12) (i32.const 10) (local.get $modeless)))
+    (local.set $index (call $win16_sel_to_index (local.get $handle)))
+    (if (i32.ne (call $win16_seg_base (local.get $index)) (i32.const 0))
+      (then
+        (local.set $flags (call $win16_gseg_field (local.get $index) (i32.const 8)))
+        (if (i32.and
+              (i32.ne (i32.and (local.get $flags) (global.get $WIN16_SEG_GLOBAL))
+                      (i32.const 0))
+              (i32.eqz (i32.and (local.get $flags) (global.get $WIN16_SEG_GFREE))))
+          (then
+            (local.set $len (call $win16_gseg_field (local.get $index) (i32.const 12)))
+            (if (i32.lt_u (local.get $offset) (local.get $len))
+              (then
+                (local.set $template (call $win16_dlg_to32
+                  (call $g2w (call $win16_far_to_guest
+                    (local.get $handle) (local.get $offset)))
+                  (i32.sub (local.get $len) (local.get $offset))))))))))
+    (if (i32.eqz (local.get $template))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const -1))
+        (call $win16_api_return (local.get $frame))
+        (return)))
+    (if (local.get $modeless)
+      (then (global.set $win16_dlg_modeless_pending (global.get $next_hwnd))))
+    (call $win16_dlg_run (local.get $template) (local.get $parent) (local.get $proc)
+      (i32.const 0) (call $win16_take_return (local.get $frame))))
+
+  ;; USER.88 EndDialog(hDlg, nResult). The dialog procedure calls it and then
+  ;; returns; the pump acts on it at that return, which is where Windows ends
+  ;; the loop too.
+  (func $win16_EndDialog
+    (global.set $win16_dlg_result (call $win16_arg16 (i32.const 0)))
+    (global.set $win16_dlg_ended (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (call $win16_api_return (i32.const 4)))
+
+  ;; ---- The pump ----
+  ;;
+  ;; Hand one message to `proc` and come back here when it returns. The record
+  ;; below SP is untouched: a window procedure RETFs its own arguments off.
+  (func $win16_dlg_send (param $proc i32) (param $hwnd i32) (param $msg i32)
+        (param $wparam i32) (param $lparam i32)
+    (call $win16_enter_wndproc (local.get $proc) (call $win16_h16 (local.get $hwnd))
+      (local.get $msg) (local.get $wparam) (local.get $lparam)
+      (global.get $WIN16_THUNK_SEL) (global.get $WIN16_DLG_PUMP)))
+
+  ;; Route one message the way DispatchMessage would: a control built by
+  ;; $dlg_load has a WAT window procedure and is handled here and now, the
+  ;; dialog itself belongs to the task's DLGPROC, and any other window keeps its
+  ;; own — a modal loop pumps the whole queue, not just the dialog's share.
+  ;; Returns 1 if guest code was entered — the caller must not touch EIP again.
+  (func $win16_dlg_route (param $dlg i32) (param $proc i32) (param $hwnd i32)
+        (param $msg i32) (param $wparam i32) (param $lparam i32) (result i32)
+    (local $target i32)
+    ;; A modal pump drains the whole queue, not just the dialog's share, so
+    ;; "which message did the pump hand to the task, and to which window" is
+    ;; the question every modal-loop bug turns into. --trace-win16 answers it
+    ;; here; the API lines alone cannot, because the pump reaches GetMessage
+    ;; through the bridge rather than through USER.108.
+    (if (global.get $win16_trace)
+      (then
+        (call $host_log_i32 (i32.const 0xCA16A9EB))
+        (call $host_log_i32 (local.get $hwnd))
+        (call $host_log_i32 (local.get $msg))
+        (call $host_log_i32 (local.get $wparam))
+        (call $host_log_i32 (local.get $lparam))
+        (call $host_log_i32 (local.get $dlg))
+        ;; How much is still queued behind this one — a modal loop that keeps
+        ;; being handed the same message shows up here as a count that never
+        ;; falls.
+        (call $host_log_i32 (global.get $post_queue_count))))
+    (if (i32.eq (local.get $hwnd) (local.get $dlg))
+      (then
+        ;; A DLGPROC is not a window procedure: USER's DefDlgProc is, and it
+        ;; keeps the non-client messages to itself. Handing WM_NCPAINT to the
+        ;; task would mean nobody drew the caption, since a DLGPROC answers
+        ;; "not mine" by returning FALSE and there is no default behind it here.
+        (if (i32.eq (local.get $msg) (i32.const 0x0085))
+          (then (call $defwndproc_do_ncpaint (local.get $hwnd)) (return (i32.const 0))))
+        (if (i32.eq (local.get $msg) (i32.const 0x0083))
+          (then (call $defwndproc_do_nccalcsize (local.get $hwnd)) (return (i32.const 0))))
+        (if (i32.eq (local.get $msg) (i32.const 0x0014))
+          (then
+            (drop (call $host_erase_background (local.get $hwnd) (i32.const 16)))
+            ;; The background has just been laid down over every control that
+            ;; had already drawn on it, so this is the moment USER re-exposes
+            ;; them. Going through the visible-region pass rather than the
+            ;; update-region queue matters: the queue drops a control whose
+            ;; update rect it cannot work out, which is how the OK and Cancel
+            ;; buttons came out blank while the eleven above them did not.
+            (drop (call $paint_flush_visible_native_children (local.get $hwnd)))
+            (return (i32.const 0))))
+        ;; A DLGPROC that does not handle WM_PAINT answers FALSE, and DefDlgProc
+        ;; then validates the window through BeginPaint/EndPaint. Nothing does
+        ;; that for us, and a dialog left dirty blocks every native child under
+        ;; it — which is exactly how the OK and Cancel buttons went missing.
+        (if (i32.eq (local.get $msg) (i32.const 0x000F))
+          (then
+            (call $paint_flag_clear_hwnd (local.get $hwnd))
+            (call $update_clear_hwnd (local.get $hwnd))))
+        ;; A DLGPROC is only half the story once the task has subclassed the
+        ;; dialog window. MFC does exactly that from inside the WH_CALLWNDPROC
+        ;; filter — SetWindowLong(GWL_WNDPROC, AfxWndProc) — and from then on
+        ;; the window procedure is where the work happens: its message map is
+        ;; what turns WM_COMMAND(IDOK) into CDialog::OnOK and EndDialog. The
+        ;; DLGPROC MFC installs answers WM_INITDIALOG and WM_SETFONT and
+        ;; declines everything else, so routing everything to it left Hearts'
+        ;; OK button doing nothing at all.
+        (local.set $target (call $wnd_table_get (local.get $hwnd)))
+        (if (i32.and
+              (i32.ne (i32.shr_u (local.get $target) (i32.const 16)) (i32.const 0))
+              (i32.lt_u (local.get $target) (i32.const 0xFFFF0000)))
+          (then (local.set $proc (local.get $target))))
+        ;; The title-bar close: if the DLGPROC declines it, DefDlgProc's
+        ;; default follows when the pump resumes ($win16_dlg_close_default).
+        (global.set $win16_dlg_close_pending
+          (select (local.get $msg) (i32.const 0)
+            (i32.or
+              (i32.and (i32.eq (local.get $msg) (i32.const 0x0112))
+                       (i32.eq (i32.and (local.get $wparam) (i32.const 0xFFF0)) (i32.const 0xF060)))
+              (i32.eq (local.get $msg) (i32.const 0x0010)))))
+        (call $win16_dlg_send (local.get $proc) (local.get $hwnd) (local.get $msg)
+          (local.get $wparam) (local.get $lparam))
+        (return (i32.const 1))))
+    (local.set $target (call $wnd_table_get (local.get $hwnd)))
+    ;; Nested modal loops still pump messages for the outer dialog. Its table
+    ;; entry is USER's marker, not its callable far DLGPROC. Sending the marker
+    ;; through native dispatch would requeue this already-narrowed WM_COMMAND
+    ;; forever (JezzBall score entry exhausts the handle map that way).
+    (if (i32.eq (local.get $target) (global.get $WNDPROC_DIALOG))
+      (then
+        (local.set $target (call $dialog_proc_get (local.get $hwnd)))
+        (if (i32.and (i32.ne (i32.shr_u (local.get $target) (i32.const 16)) (i32.const 0))
+                     (i32.lt_u (local.get $target) (i32.const 0xFFFE0000)))
+          (then
+            (return (call $win16_dlg_route (local.get $hwnd) (local.get $target)
+              (local.get $hwnd) (local.get $msg) (local.get $wparam) (local.get $lparam)))))
+        (local.set $target (global.get $WNDPROC_DIALOG))))
+    ;; No window procedure, or one of ours: nothing for the task to run.
+    (if (i32.eqz (i32.shr_u (local.get $target) (i32.const 16)))
+      (then (return (i32.const 0))))
+    (if (i32.ge_u (local.get $target) (i32.const 0xFFFF0000))
+      (then
+        (drop (call $wat_wndproc_dispatch (local.get $hwnd) (local.get $msg)
+          (local.get $wparam) (local.get $lparam)))
+        (return (i32.const 0))))
+    (call $win16_dlg_send (local.get $target) (local.get $hwnd) (local.get $msg)
+      (local.get $wparam) (local.get $lparam))
+    (i32.const 1))
+
+  ;; One pass. The message comes from the same $handle_GetMessageA the task's
+  ;; own loop is bridged to, so a modal dialog sees the delivery order USER
+  ;; defines — pending creates, the post queue, non-client work, painting,
+  ;; input, timers — rather than a second opinion about it maintained here.
+  ;; DefDlgProc's share of the title-bar close, which a DLGPROC usually leaves
+  ;; to it: WM_SYSCOMMAND(SC_CLOSE) becomes WM_CLOSE, and WM_CLOSE becomes the
+  ;; IDCANCEL click -- unless the dialog's Cancel button is disabled, when USER
+  ;; only beeps. The DLGPROC's FALSE is in AX when the pump resumes. Without
+  ;; this a Win16 dialog ignored its X: JezzBall's high-score dialog in the
+  ;; browser Threads route, where the page no longer force-closes a frame
+  ;; (USER-JEZZBALL-SYSCOMMAND-TRAP-20261011).
+  (global $win16_dlg_close_pending (mut i32) (i32.const 0))
+  (func $win16_dlg_close_default (param $dlg i32)
+    (local $msg i32) (local $cancel i32)
+    (local.set $msg (global.get $win16_dlg_close_pending))
+    (global.set $win16_dlg_close_pending (i32.const 0))
+    (if (i32.or (i32.eqz (local.get $msg)) (global.get $win16_dlg_ended)) (then (return)))
+    (if (i32.ne (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)) (i32.const 0))
+      (then (return)))
+    (if (i32.eq (local.get $msg) (i32.const 0x0112))
+      (then
+        (drop (call $post_queue_push (local.get $dlg) (i32.const 0x0010) (i32.const 0) (i32.const 0)))
+        (return)))
+    (local.set $cancel (call $ctrl_find_by_id (local.get $dlg) (i32.const 2)))
+    (if (i32.and (i32.ne (local.get $cancel) (i32.const 0))
+          (i32.ne (call $ctrl_style_disabled (call $wnd_get_style (local.get $cancel))) (i32.const 0)))
+      (then (return)))
+    ;; Exactly what clicking the Cancel button posts (BN_CLICKED).
+    (drop (call $post_queue_push (local.get $dlg) (i32.const 0x0111) (i32.const 2) (local.get $cancel))))
+
+  (func $win16_dlg_enable_owner (param $owner i32) (param $enable i32)
+    (call $win16_call32_begin (i32.const 2))
+    (call $handle_EnableWindow (local.get $owner) (local.get $enable)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end))
+
+  (func $win16_dlg_pump
+    (local $dlg i32) (local $proc i32) (local $scratch i32) (local $packed i32)
+    (local $hwnd i32) (local $msg i32) (local $owner i32) (local $restore_owner i32)
+    (local $dlg_x i32) (local $dlg_y i32) (local $dlg_w i32) (local $dlg_h i32)
+    (local.set $dlg (call $win16_h32 (call $gl16 (i32.load offset=16 (global.get $reg_base)))))
+    (local.set $proc (call $dialog_proc_get (local.get $dlg)))
+
+    ;; CreateDialogParam shares all creation and WM_INITDIALOG behavior with
+    ;; DialogBoxParam but is modeless: once the init procedure returns, leave
+    ;; the live dialog in the window table and return its HWND to the caller.
+    (if (i32.eq (local.get $dlg) (global.get $win16_dlg_modeless_pending))
+      (then
+        (global.set $win16_dlg_modeless_pending (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
+        (local.set $packed (i32.or (call $gl16 (i32.load offset=16 (global.get $reg_base)))
+          (i32.shl (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
+                   (i32.const 16))))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (i32.store offset=0 (global.get $reg_base) (call $win16_h16 (local.get $dlg)))
+        (i32.store offset=8 (global.get $reg_base) (i32.const 0))
+        (global.set $yield_reason (i32.const 0))
+        (call $win16_set_sreg (i32.const 1)
+          (i32.shr_u (local.get $packed) (i32.const 16)))
+        (global.set $eip (i32.add (global.get $seg_base_cs)
+          (i32.and (local.get $packed) (i32.const 0xFFFF))))
+        (global.set $steps (i32.const 0))
+        (return)))
+
+    (call $win16_dlg_close_default (local.get $dlg))
+    ;; EndDialog, and the procedure that called it has returned.
+    (if (global.get $win16_dlg_ended)
+      (then
+        (global.set $win16_dlg_ended (i32.const 0))
+        ;; Retire the invocation's owner DWORD, leaving the standard far
+        ;; continuation {result, offset, selector}. Snapshot before callbacks.
+        (local.set $scratch (i32.load offset=16 (global.get $reg_base)))
+        (local.set $restore_owner (call $gl32 (i32.add (local.get $scratch) (i32.const 6))))
+        (local.set $packed (call $gl32 (i32.add (local.get $scratch) (i32.const 2))))
+        (call $gs16 (i32.add (local.get $scratch) (i32.const 4)) (global.get $win16_dlg_result))
+        (call $gs32 (i32.add (local.get $scratch) (i32.const 6)) (local.get $packed))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $scratch) (i32.const 4)))
+        (local.set $owner (call $wnd_get_owner (local.get $dlg)))
+        ;; Preserve the popup's screen bounds while its host/window-table
+        ;; records still exist. ABOUTTET draws directly through GetDC(NULL),
+        ;; so the region below the owner must be restored after it disappears.
+        (local.set $dlg_x (call $wnd_window_screen_x (local.get $dlg)))
+        (local.set $dlg_y (call $wnd_window_screen_y (local.get $dlg)))
+        (local.set $dlg_w (call $wnd_screen_w (local.get $dlg)))
+        (local.set $dlg_h (call $wnd_screen_h (local.get $dlg)))
+        (call $wnd_destroy_children (local.get $dlg))
+        (call $wnd_table_remove (local.get $dlg))
+        (call $host_destroy_window (local.get $dlg))
+        ;; A destroyed owner is never recreated by restoration. Keep its full
+        ;; HWND here rather than a narrow handle that can be recycled.
+        (if (i32.and (i32.ne (local.get $restore_owner) (i32.const 0))
+              (i32.ge_s (call $wnd_table_find (local.get $restore_owner)) (i32.const 0)))
+          (then (call $win16_dlg_enable_owner (local.get $restore_owner) (i32.const 1))))
+        (call $gdi_screen_surface_clear_rect
+          (local.get $dlg_x) (local.get $dlg_y)
+          (local.get $dlg_w) (local.get $dlg_h))
+        ;; Destroying the popup exposes its owner and every visible child
+        ;; region, not just the owner's client background. Queue that complete
+        ;; exposed subtree before returning to the task.
+        (if (i32.eqz (local.get $owner))
+          (then (local.set $owner (global.get $main_hwnd))))
+        (if (local.get $owner)
+          (then
+            (call $invalidate_hwnd (local.get $owner))
+            (drop (call $paint_seed_child_paints (local.get $owner)))
+            ;; $win16_dlg_run published the dialog as foreground; hand the
+            ;; foreground back to the owner it was modal over. USER's active
+            ;; window never left the owner, so the focus transaction below
+            ;; sees no transition and would not republish it.
+            (if (i32.and (call $wnd_is_effectively_visible (local.get $owner))
+                         (i32.eqz (call $wnd_get_parent (local.get $owner))))
+              (then (drop (call $host_activate_window (local.get $owner)))))))
+        (global.set $yield_reason (i32.const 0))
+        (global.set $steps (i32.const 0))
+        ;; Removal clears focus only when its HWND dies. Preserve a surviving
+        ;; callback-selected window; otherwise finish the owner's far focus
+        ;; transaction before returning DialogBox's invocation-owned result.
+        (if (i32.and (i32.ne (global.get $focus_hwnd) (i32.const 0))
+              (i32.ge_s (call $wnd_table_find (global.get $focus_hwnd)) (i32.const 0)))
+          (then (call $win16_cont_resume))
+          (else (call $win16_focus_start (local.get $owner) (i32.const 0))))
+        (return)))
+
+    ;; The MSG buffer is the same scratch $win16_GetMessage uses, so it still
+    ;; holds whatever the task's own loop last received — and that message has
+    ;; already been dispatched. Clearing it first means a GetMessage that
+    ;; returns without filling it reads as "nothing to do" instead of as the
+    ;; previous message a second time. Hearts posts itself one WM_COMMAND at
+    ;; startup and got it twice, so it put its startup dialog up twice, the
+    ;; second one on top of a modal loop that was still waiting for the first.
+    (local.set $scratch (global.get $GUEST_STACK))
+    (call $zero_memory (call $g2w (local.get $scratch)) (i32.const 28))
+    (call $win16_call32_begin (i32.const 4))
+    (call $handle_GetMessageA (local.get $scratch) (i32.const 0) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    ;; A GetMessage with nothing to give blocks by yielding rather than
+    ;; returning, which this loop cannot do: park and let the host have its turn.
+    (if (call $win16_call32_waited)
+      (then
+        (call $win16_call32_end)
+        (call $win16_dlg_park)
+        (global.set $yield_flag (i32.const 1))
+        (return)))
+    (call $win16_call32_end)
+    (if (call $win16_mouse_input_start (i32.const 0) (local.get $scratch) (i32.const 2))
+      (then (return)))
+    (call $win16_dlg_deliver_message (local.get $scratch)))
+
+  (func $win16_dlg_deliver_message (param $scratch i32)
+    (local $dlg i32) (local $proc i32) (local $hwnd i32) (local $msg i32)
+    ;; The activation query may have called EndDialog. Retire the modal frame
+    ;; through its normal cleanup rather than dispatching the removed click.
+    (if (global.get $win16_dlg_ended) (then (call $win16_dlg_pump) (return)))
+    (local.set $dlg (call $win16_h32 (call $gl16 (i32.load offset=16 (global.get $reg_base)))))
+    (local.set $proc (call $dialog_proc_get (local.get $dlg)))
+    (local.set $hwnd (call $gl32 (local.get $scratch)))
+    (local.set $msg  (call $gl32 (i32.add (local.get $scratch) (i32.const 4))))
+    (if (i32.eqz (local.get $msg))
+      (then
+        (call $win16_dlg_park)
+        (global.set $yield_flag (i32.const 1))
+        (return)))
+    (if (call $win16_dlg_route (local.get $dlg) (local.get $proc) (local.get $hwnd)
+          (local.get $msg)
+          (call $win16_msg_wparam16
+            (local.get $msg) (call $gl32 (i32.add (local.get $scratch) (i32.const 8))))
+          (call $win16_msg_lparam16_cmd (local.get $msg)
+            (call $gl32 (i32.add (local.get $scratch) (i32.const 8)))
+            (call $gl32 (i32.add (local.get $scratch) (i32.const 12)))))
+      (then (return)))
+    (call $win16_dlg_park))
+
+  (func $win16_dlg_park
+    (call $win16_set_sreg (i32.const 1) (global.get $WIN16_THUNK_SEL))
+    (global.set $eip (i32.add (global.get $seg_base_cs) (global.get $WIN16_DLG_PUMP)))
+    (global.set $yield_reason (i32.const 6))
+    (global.set $steps (i32.const 0)))
+
+  ;; ---- Reaching a control by id ----
+  ;;
+  ;; These are the 32-bit handlers with narrower arguments, so they go over the
+  ;; bridge. Only the handles need translating; a control id is a word in both
+  ;; worlds.
+
+  ;; Every argument is read into a local *before* $win16_call32_begin, and this
+  ;; is not a style preference. $win16_arg16 is ESP-relative and the bridge
+  ;; moves ESP onto the 32-bit scratch stack, so an argument read after it is
+  ;; not the caller's — it is whatever the scratch frame holds at that offset,
+  ;; which for index 0 is the zero written there as a return address. Every
+  ;; function below used to read at least one that way, so GetDlgItem asked for
+  ;; control 0 whatever it was passed and answered NULL. Hearts' startup dialog
+  ;; called a virtual on the NULL it got back.
+
+  ;; USER.91 GetDlgItem(hDlg, nIDDlgItem) -> HWND.
+  (func $win16_GetDlgItem
+    (local $dlg i32) (local $id i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 1))))
+    (local.set $id (call $win16_arg16 (i32.const 0)))
+    (call $win16_call32_begin (i32.const 2))
+    (call $handle_GetDlgItem (local.get $dlg) (local.get $id)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (call $win16_h16 (i32.load offset=0 (global.get $reg_base))))
+    (call $win16_api_return (i32.const 4)))
+
+  ;; USER.96 CheckRadioButton(hDlg, nIDFirst, nIDLast, nIDCheck).
+  (func $win16_CheckRadioButton
+    (local $dlg i32) (local $first i32) (local $last i32) (local $check i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 3))))
+    (local.set $first (call $win16_arg16 (i32.const 2)))
+    (local.set $last (call $win16_arg16 (i32.const 1)))
+    (local.set $check (call $win16_arg16 (i32.const 0)))
+    (call $win16_call32_begin (i32.const 4))
+    (call $handle_CheckRadioButton (local.get $dlg)
+      (local.get $first) (local.get $last) (local.get $check)
+      (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 8)))
+
+  ;; USER.97 CheckDlgButton(hDlg, nIDButton, uCheck).
+  (func $win16_CheckDlgButton
+    (local $dlg i32) (local $id i32) (local $check i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 2))))
+    (local.set $id (call $win16_arg16 (i32.const 1)))
+    (local.set $check (call $win16_arg16 (i32.const 0)))
+    (call $win16_call32_begin (i32.const 3))
+    (call $handle_CheckDlgButton (local.get $dlg)
+      (local.get $id) (local.get $check)
+      (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 6)))
+
+  ;; USER.98 IsDlgButtonChecked(hDlg, nIDButton).
+  (func $win16_IsDlgButtonChecked
+    (local $dlg i32) (local $id i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 1))))
+    (local.set $id (call $win16_arg16 (i32.const 0)))
+    (call $win16_call32_begin (i32.const 2))
+    (call $handle_IsDlgButtonChecked (local.get $dlg) (local.get $id)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 4)))
+
+  ;; One selector keeps DlgDirList strings stable until the task consumes the
+  ;; posted LB_ADDSTRING messages. Reusing it avoids leaking a selector every
+  ;; time an application reopens its file picker.
+  (global $win16_dlgdir_seg (mut i32) (i32.const 0))
+
+  ;; VB1 registers command buttons as ThunderCommandButton rather than using
+  ;; USER's Button class.  Preserve Thunder's Win16 wndproc, but attach the
+  ;; same renderer-facing state as a native push button.  Mouse input for this
+  ;; deliberately shadowed class is routed to $button_wndproc by the renderer;
+  ;; WM_COMMAND then goes through the ordinary Win16 post queue to the form.
+  (func $win16_shadow_command_button
+    (param $hwnd i32) (param $id i32) (param $title i32)
+    (local $slot i32) (local $class_w i32) (local $cs i32) (local $state i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+    (if (i32.ne
+          (call $host_get_window_class
+            (local.get $hwnd) (local.get $class_w) (i32.const 32))
+          (i32.const 20))
+      (then (return)))
+    (if (i32.or
+          (i32.or
+            (i32.ne (i32.load (local.get $class_w))
+                    (i32.const 0x6E756854))                              ;; Thun
+            (i32.ne (i32.load offset=4 (local.get $class_w))
+                    (i32.const 0x43726564)))                             ;; derC
+          (i32.or
+            (i32.ne (i32.load offset=8 (local.get $class_w))
+                    (i32.const 0x616D6D6F))                             ;; omma
+            (i32.or
+              (i32.ne (i32.load offset=12 (local.get $class_w))
+                      (i32.const 0x7542646E))                           ;; ndBu
+              (i32.ne (i32.load offset=16 (local.get $class_w))
+                      (i32.const 0x6E6F7474)))))                        ;; tton
+      (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (i32.const 1) (local.get $id))
+    (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+    (if (i32.eqz (local.get $state))
+      (then
+        (local.set $cs (call $heap_alloc (i32.const 48)))
+        (memory.fill (call $g2w (local.get $cs)) (i32.const 0) (i32.const 48))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 8)) (local.get $id))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 12))
+          (call $wnd_get_parent (local.get $hwnd)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 36)) (local.get $title))
+        (drop (call $button_wndproc (local.get $hwnd)
+          (i32.const 0x0001) (i32.const 0) (local.get $cs)))
+        (call $heap_free (local.get $cs)))))
+
+  ;; ThunderLabel has the same problem as ThunderCommandButton: its registered
+  ;; VB wndproc prevents USER from recognizing the standard control beneath
+  ;; it.  Without a native STATIC shadow, VB1's file picker paints an internal
+  ;; property name ("ListCount") over every caption.  Keep the VB procedure,
+  ;; but let STATIC own the caption supplied through SetWindowText.
+  (func $win16_shadow_label
+    (param $hwnd i32) (param $id i32) (param $title i32)
+    (local $slot i32) (local $class_w i32) (local $cs i32) (local $font i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+    (if (i32.ne
+          (call $host_get_window_class
+            (local.get $hwnd) (local.get $class_w) (i32.const 32))
+          (i32.const 12))
+      (then (return)))
+    (if (i32.or
+          (i32.ne (i32.load (local.get $class_w))
+                  (i32.const 0x6E756854))                                ;; Thun
+          (i32.or
+            (i32.ne (i32.load offset=4 (local.get $class_w))
+                    (i32.const 0x4C726564))                              ;; derL
+            (i32.ne (i32.load offset=8 (local.get $class_w))
+                    (i32.const 0x6C656261))))                            ;; abel
+      (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (i32.const 3) (local.get $id))
+    (if (i32.eqz (call $wnd_get_state_ptr (local.get $hwnd)))
+      (then
+        (local.set $cs (call $heap_alloc (i32.const 48)))
+        (memory.fill (call $g2w (local.get $cs)) (i32.const 0) (i32.const 48))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 8)) (local.get $id))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 12))
+          (call $wnd_get_parent (local.get $hwnd)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 32))
+          (call $wnd_get_style (local.get $hwnd)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 36)) (local.get $title))
+        (drop (call $static_wndproc (local.get $hwnd)
+          (i32.const 0x0001) (i32.const 0) (local.get $cs)))
+        (call $heap_free (local.get $cs))
+        ;; RattlerRace's six-digit score is a VB1 ThunderLabel whose Font
+        ;; property is consumed by VB's own painter instead of being sent to
+        ;; USER as WM_SETFONT. The native shadow therefore needs to recover
+        ;; that one bold display font from the control shape. Requiring a
+        ;; top-level parent and ID 3 keeps ordinary VB captions (including Go
+        ;; Figure's nested ID 3 label) on DEFAULT_GUI_FONT. Geometry and border
+        ;; style are deliberately not part of this test: VB creates every
+        ;; control at 0x0 without WS_BORDER and applies both properties later.
+        (if (i32.and
+              (i32.eq (local.get $id) (i32.const 3))
+              (i32.eqz (call $wnd_get_parent
+                (call $wnd_get_parent (local.get $hwnd)))))
+          (then
+            (local.set $font (call $gdi_font_create
+              (i32.const -18) (i32.const 700) (i32.const 0)
+              (i32.const 0x27E))) ;; "Arial"
+            (if (local.get $font)
+              (then (call $static_set_font
+                (call $g2w (call $wnd_get_state_ptr (local.get $hwnd)))
+                (local.get $font)))))))))
+
+  ;; ThunderComboBox wraps USER's built-in COMBOBOX in the same way the
+  ;; Thunder label/button classes wrap STATIC and BUTTON. VB keeps the saved
+  ;; USER procedure and forwards CB_* messages to it with CallWindowProc, so
+  ;; attach class-5 state while leaving the registered far wndproc installed.
+  ;; Without that state CallWindowProc sends CB_ADDSTRING/CB_SETCURSEL to
+  ;; DefWindowProc, leaving a correctly positioned but permanently empty field.
+  (func $win16_shadow_combobox
+    (param $hwnd i32) (param $id i32) (param $title i32)
+    (local $slot i32) (local $class_w i32) (local $cs i32) (local $sz i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+    (if (i32.ne
+          (call $host_get_window_class
+            (local.get $hwnd) (local.get $class_w) (i32.const 32))
+          (i32.const 15))
+      (then (return)))
+    (if (i32.or
+          (i32.or
+            (i32.ne (i32.load (local.get $class_w))
+                    (i32.const 0x6E756854))                              ;; Thun
+            (i32.ne (i32.load offset=4 (local.get $class_w))
+                    (i32.const 0x43726564)))                             ;; derC
+          (i32.or
+            (i32.ne (i32.load offset=8 (local.get $class_w))
+                    (i32.const 0x6F626D6F))                             ;; ombo
+            (i32.or
+              (i32.ne (i32.load16_u offset=12 (local.get $class_w))
+                      (i32.const 0x6F42))                               ;; Bo
+              (i32.ne (i32.load8_u offset=14 (local.get $class_w))
+                      (i32.const 0x78)))))                              ;; x
+      (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (i32.const 5) (local.get $id))
+    (if (i32.eqz (call $wnd_get_state_ptr (local.get $hwnd)))
+      (then
+        (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
+        (local.set $cs (call $heap_alloc (i32.const 48)))
+        (memory.fill (call $g2w (local.get $cs)) (i32.const 0) (i32.const 48))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 8)) (local.get $id))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 12))
+          (call $wnd_get_parent (local.get $hwnd)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 16))
+          (i32.shr_u (local.get $sz) (i32.const 16)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 20))
+          (i32.and (local.get $sz) (i32.const 0xFFFF)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 32))
+          (call $wnd_get_style (local.get $hwnd)))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 36)) (local.get $title))
+        (drop (call $combobox_wndproc (local.get $hwnd)
+          (i32.const 0x0001) (i32.const 0) (local.get $cs)))
+        (call $heap_free (local.get $cs)))))
+
+  ;; VB1's horizontal and vertical scrollbars are registered Thunder classes,
+  ;; not USER's built-in SCROLLBAR class.  Keep the guest wndproc installed so
+  ;; VB continues to own Value/Change events, but classify the shared child as
+  ;; a native scrollbar for WM_PAINT.  Otherwise the window is present, sized,
+  ;; visible, and interactive yet contributes no pixels to its parent's
+  ;; surface (JigSawed exposed both missing strips).
+  (func $win16_shadow_scrollbar
+    (param $hwnd i32) (param $id i32)
+    (local $slot i32) (local $class_w i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+    (if (i32.ne
+          (call $host_get_window_class
+            (local.get $hwnd) (local.get $class_w) (i32.const 32))
+          (i32.const 17))
+      (then (return)))
+    (if (i32.or
+          (i32.ne (i32.load (local.get $class_w))
+                  (i32.const 0x6E756854))                                ;; Thun
+          (i32.or
+            (i32.and
+              (i32.ne (i32.load offset=4 (local.get $class_w))
+                      (i32.const 0x48726564))                            ;; derH
+              (i32.ne (i32.load offset=4 (local.get $class_w))
+                      (i32.const 0x56726564)))                           ;; derV
+            (i32.or
+              (i32.ne (i32.load offset=8 (local.get $class_w))
+                      (i32.const 0x6F726353))                            ;; Scro
+              (i32.or
+                (i32.ne (i32.load offset=12 (local.get $class_w))
+                        (i32.const 0x61426C6C))                          ;; llBa
+                (i32.ne (i32.load8_u offset=16 (local.get $class_w))
+                        (i32.const 0x72))))))                            ;; r
+      (then (return)))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (i32.const 7) (local.get $id)))
+
+  ;; Attach native listbox state to a subclassed Thunder control while keeping
+  ;; its Win16 window procedure installed. The guest procedure continues to
+  ;; maintain VB's object properties, then CallWindowProc reaches this shadow
+  ;; state for the standard listbox behavior and renderer-facing pixels.
+  (func $win16_shadow_listbox (param $hwnd i32) (param $id i32)
+    (local $slot i32) (local $cs i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (call $ctrl_table_set (local.get $slot) (i32.const 4) (local.get $id))
+    (if (i32.eqz (call $wnd_get_state_ptr (local.get $hwnd)))
+      (then
+        (local.set $cs (call $heap_alloc (i32.const 48)))
+        (memory.fill (call $g2w (local.get $cs)) (i32.const 0) (i32.const 48))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 8)) (local.get $id))
+        (call $gs32 (i32.add (local.get $cs) (i32.const 12))
+          (call $wnd_get_parent (local.get $hwnd)))
+        (drop (call $listbox_wndproc (local.get $hwnd)
+          (i32.const 0x0001) (i32.const 0) (local.get $cs)))
+        (call $heap_free (local.get $cs)))))
+
+  ;; Is this one of VB1's Thunder* windows? Their procedures are Win16 code,
+  ;; which the API bridge cannot call synchronously.
+  (func $win16_is_thunder_window (param $hwnd i32) (result i32)
+    (local $class_w i32)
+    (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+    (i32.and
+      (i32.ge_u (call $host_get_window_class
+        (local.get $hwnd) (local.get $class_w) (i32.const 32)) (i32.const 4))
+      (i32.eq (i32.load (local.get $class_w)) (i32.const 0x6E756854)))) ;; Thun
+
+  ;; DlgDirList into our own listbox control, synchronously, the way USER
+  ;; does it: the caller reads the list back on the very next line. Civ2 finds
+  ;; its CD by listing DDL_DRIVES into a hidden listbox and walking "[-x-]".
+  ;; Files are listed unless DDL_EXCLUSIVE (8000h); DDL_DIRECTORY (10h) adds
+  ;; "[name]" subdirectories and DDL_DRIVES (4000h) adds "[-x-]" drives.
+  (func $win16_dlgdir_fill_native (param $list i32) (param $spec_g i32) (param $attrs i32)
+    (local $fd_g i32) (local $fd_w i32) (local $str_g i32) (local $str_w i32)
+    (local $find i32) (local $name_w i32) (local $is_dir i32) (local $len i32)
+    (local $drive i32)
+    (drop (call $wnd_send_message (local.get $list) (i32.const 0x0184) (i32.const 0) (i32.const 0)))
+    (local.set $fd_g (call $heap_alloc (i32.const 320)))
+    (local.set $fd_w (call $g2w (local.get $fd_g)))
+    (local.set $str_g (call $heap_alloc (i32.const 280)))
+    (local.set $str_w (call $g2w (local.get $str_g)))
+    (if (i32.and
+          (i32.ne (local.get $spec_g) (i32.const 0))
+          (i32.ne (i32.and (local.get $attrs) (i32.const 0x8010)) (i32.const 0x8000)))
+      (then
+        (local.set $find (call $host_fs_find_first_file
+          (call $g2w (local.get $spec_g)) (local.get $fd_g) (i32.const 0)))
+        (if (i32.ne (local.get $find) (i32.const -1))
+          (then
+            (block $done (loop $files
+              (local.set $name_w (i32.add (local.get $fd_w) (i32.const 44)))
+              (local.set $is_dir (i32.ne
+                (i32.and (i32.load (local.get $fd_w)) (i32.const 0x10)) (i32.const 0)))
+              (local.set $len (call $strlen (local.get $name_w)))
+              ;; "." is never listed; directories only for DDL_DIRECTORY and
+              ;; ordinary files only without DDL_EXCLUSIVE.
+              (if (i32.and
+                    (i32.ne (i32.load16_u (local.get $name_w)) (i32.const 0x002E)) ;; "."
+                    (i32.and
+                      (i32.lt_u (local.get $len) (i32.const 260))
+                      (select
+                        (i32.ne (i32.and (local.get $attrs) (i32.const 0x10)) (i32.const 0))
+                        (i32.eqz (i32.and (local.get $attrs) (i32.const 0x8000)))
+                        (local.get $is_dir))))
+                (then
+                  (if (local.get $is_dir)
+                    (then
+                      (i32.store8 (local.get $str_w) (i32.const 0x5B)) ;; [
+                      (call $memcpy (i32.add (local.get $str_w) (i32.const 1))
+                        (local.get $name_w) (local.get $len))
+                      (i32.store16 (i32.add (local.get $str_w)
+                        (i32.add (local.get $len) (i32.const 1))) (i32.const 0x5D))) ;; ]\0
+                    (else
+                      (call $memcpy (local.get $str_w) (local.get $name_w)
+                        (i32.add (local.get $len) (i32.const 1)))))
+                  (drop (call $wnd_send_message (local.get $list)
+                    (i32.const 0x0180) (i32.const 0) (local.get $str_g)))))
+              (br_if $done (i32.eqz (call $host_fs_find_next_file
+                (local.get $find) (local.get $fd_g) (i32.const 0))))
+              (br $files)))
+            (drop (call $host_fs_find_close (local.get $find)))))))
+    (if (i32.and (local.get $attrs) (i32.const 0x4000))
+      (then
+        (block $drives_done (loop $drives
+          (br_if $drives_done (i32.ge_u (local.get $drive) (i32.const 26)))
+          (if (call $win16_win_drive_type (local.get $drive))
+            (then
+              ;; "[-x-]\0"
+              (i32.store (local.get $str_w)
+                (i32.or (i32.const 0x2D002D5B)
+                  (i32.shl (i32.add (local.get $drive) (i32.const 0x61)) (i32.const 16))))
+              (i32.store16 offset=4 (local.get $str_w) (i32.const 0x005D))
+              (drop (call $wnd_send_message (local.get $list)
+                (i32.const 0x0180) (i32.const 0) (local.get $str_g)))))
+          (local.set $drive (i32.add (local.get $drive) (i32.const 1)))
+          (br $drives)))))
+    (call $heap_free (local.get $str_g))
+    (call $heap_free (local.get $fd_g)))
+
+  ;; USER.100 DlgDirList(hDlg, lpPathSpec, nIDListBox, nIDStaticPath,
+  ;;                     uFileType) -> int.
+  ;;
+  ;; VB1's ThunderFileListBox owns its own Win16 window procedure rather than
+  ;; using our native listbox control. A nested synchronous call into that
+  ;; procedure is not possible from the API bridge, so enumerate through the
+  ;; VFS here and post the equivalent Win16 listbox messages. VB1 pairs
+  ;; ThunderDirListBox with the immediately preceding ThunderFileListBox and
+  ;; otherwise never starts a second DOS scan in this runtime, so that exact
+  ;; verified pair receives ordinary files while the requested list receives
+  ;; directories. The strings live in the stable selector above because the
+  ;; form consumes the queue after the original wildcard pointer may be dead.
+  (func $win16_DlgDirList
+    (local $dlg i32) (local $spec i32) (local $id i32) (local $attrs i32)
+    (local $list i32) (local $fd_g i32) (local $fd_w i32)
+    (local $find i32)
+    (local $out_g i32) (local $out_w i32) (local $out_sel i32) (local $off i32)
+    (local $found_attrs i32) (local $len i32) (local $file_list i32)
+    (local $class_w i32) (local $target i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 5))))
+    (local.set $spec (i32.or
+      (call $win16_arg16 (i32.const 3))
+      (i32.shl (call $win16_arg16 (i32.const 4)) (i32.const 16))))
+    (local.set $id (call $win16_arg16 (i32.const 2)))
+    (local.set $attrs (call $win16_arg16 (i32.const 0)))
+    (local.set $list (call $ctrl_find_by_id (local.get $dlg) (local.get $id)))
+    (if (i32.and
+          (i32.ne (local.get $list) (i32.const 0))
+          (i32.eqz (call $win16_is_thunder_window (local.get $list))))
+      (then
+        (call $win16_dlgdir_fill_native (local.get $list)
+          (call $win16_far_to_guest
+            (i32.shr_u (local.get $spec) (i32.const 16))
+            (i32.and (local.get $spec) (i32.const 0xFFFF)))
+          (local.get $attrs))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (call $win16_api_return (i32.const 12))
+        (return)))
+    (if (i32.and
+          (i32.ne (local.get $list) (i32.const 0))
+          (i32.ne (i32.and (local.get $attrs) (i32.const 0x10)) (i32.const 0)))
+      (then
+        (local.set $file_list
+          (call $ctrl_find_by_id (local.get $dlg) (i32.sub (local.get $id) (i32.const 1))))
+        (local.set $class_w (call $g2w (global.get $GUEST_STACK)))
+        (if (i32.or (i32.eqz (local.get $file_list))
+              (i32.or
+                (i32.ne (call $host_get_window_class
+                  (local.get $file_list) (local.get $class_w) (i32.const 32))
+                  (i32.const 18))
+                (i32.or
+                  (i32.ne (i32.load (local.get $class_w)) (i32.const 0x6E756854)) ;; Thun
+                  (i32.ne (i32.load offset=12 (local.get $class_w))
+                          (i32.const 0x42747369)))))                              ;; istB
+          (then (local.set $file_list (i32.const 0))))))
+    (if (local.get $list)
+      (then
+        (call $win16_shadow_listbox (local.get $list) (local.get $id))
+        (if (local.get $file_list)
+          (then (call $win16_shadow_listbox
+            (local.get $file_list) (i32.sub (local.get $id) (i32.const 1)))))
+        ;; Win16 listbox messages start at WM_USER: LB_RESETCONTENT is 0405h
+        ;; and LB_ADDSTRING is 0401h. Keeping the original Thunder procedures
+        ;; in place lets them update VB's FileName property as well as paint.
+        (drop (call $post_queue_push (local.get $list)
+          (i32.const 0x0405) (i32.const 0) (i32.const 0)))
+        (if (local.get $file_list)
+          (then
+            (drop (call $post_queue_push (local.get $file_list)
+              (i32.const 0x0405) (i32.const 0) (i32.const 0)))))
+        (local.set $fd_g (call $heap_alloc (i32.const 320)))
+        (local.set $fd_w (call $g2w (local.get $fd_g)))
+        (local.set $find (call $host_fs_find_first_file
+          (call $g2w (call $win16_far_to_guest
+            (i32.shr_u (local.get $spec) (i32.const 16))
+            (i32.and (local.get $spec) (i32.const 0xFFFF))))
+          (local.get $fd_g) (i32.const 0)))
+        (if (i32.ne (local.get $find) (i32.const -1))
+          (then
+            (if (i32.eqz (global.get $win16_dlgdir_seg))
+              (then (global.set $win16_dlgdir_seg (call $win16_alloc_segment))))
+            (local.set $out_sel
+              (call $win16_index_to_sel (global.get $win16_dlgdir_seg)))
+            (local.set $out_g
+              (call $win16_seg_base (global.get $win16_dlgdir_seg)))
+            (local.set $out_w (call $g2w (local.get $out_g)))
+            (block $done (loop $files
+              (local.set $found_attrs (i32.load (local.get $fd_w)))
+              (local.set $target (local.get $list))
+              (if (i32.and
+                    (i32.eqz (i32.and (local.get $found_attrs) (i32.const 0x10)))
+                    (i32.ne (local.get $file_list) (i32.const 0)))
+                (then (local.set $target (local.get $file_list))))
+              ;; DDL_DIRECTORY list calls receive only directories unless the
+              ;; verified companion above receives the ordinary-file entries.
+              (if (i32.or
+                    (i32.eq
+                      (i32.ne (i32.and (local.get $found_attrs) (i32.const 0x10))
+                              (i32.const 0))
+                      (i32.ne (i32.and (local.get $attrs) (i32.const 0x10))
+                              (i32.const 0)))
+                    (i32.and (i32.ne (local.get $file_list) (i32.const 0))
+                             (i32.eqz (i32.and (local.get $found_attrs)
+                                               (i32.const 0x10)))))
+                (then
+                  (local.set $len (call $strlen
+                    (i32.add (local.get $fd_w) (i32.const 44))))
+                  (call $memcpy (i32.add (local.get $out_w) (local.get $off))
+                    (i32.add (local.get $fd_w) (i32.const 44))
+                    (i32.add (local.get $len) (i32.const 1)))
+                  (drop (call $post_queue_push (local.get $target)
+                    (i32.const 0x0401) (i32.const 0)
+                    (i32.or (i32.shl (local.get $out_sel) (i32.const 16))
+                            (local.get $off))))
+                  (local.set $off (i32.add (local.get $off)
+                    (i32.add (local.get $len) (i32.const 1))))))
+              (br_if $done (i32.eqz (call $host_fs_find_next_file
+                (local.get $find) (local.get $fd_g) (i32.const 0))))
+              (br $files)))
+            (drop (call $host_fs_find_close (local.get $find)))))
+        (call $heap_free (local.get $fd_g))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (call $win16_api_return (i32.const 12)))
+
+  ;; USER.93 GetDlgItemText(hDlg, nIDDlgItem, lpString, nMaxCount) -> length.
+  (func $win16_GetDlgItemText
+    (local $dlg i32) (local $buf i32) (local $id i32) (local $max i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 4))))
+    (local.set $id (call $win16_arg16 (i32.const 3)))
+    (local.set $buf (call $win16_far_to_guest
+      (call $win16_arg16 (i32.const 2)) (call $win16_arg16 (i32.const 1))))
+    (local.set $max (call $win16_arg16 (i32.const 0)))
+    (call $win16_call32_begin (i32.const 4))
+    (call $handle_GetDlgItemTextA (local.get $dlg) (local.get $id)
+      (local.get $buf) (local.get $max) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 10)))
+
+  ;; USER.92 SetDlgItemText(hDlg, nIDDlgItem, lpString).
+  (func $win16_SetDlgItemText
+    (local $dlg i32) (local $str i32) (local $id i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 3))))
+    (local.set $id (call $win16_arg16 (i32.const 2)))
+    (local.set $str (call $win16_far_to_guest
+      (call $win16_arg16 (i32.const 1)) (call $win16_arg16 (i32.const 0))))
+    (call $win16_call32_begin (i32.const 3))
+    (call $handle_SetDlgItemTextA (local.get $dlg) (local.get $id)
+      (local.get $str) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (call $win16_api_return (i32.const 8)))
+
+  ;; USER.94 SetDlgItemInt(hDlg, nIDDlgItem, wValue, bSigned) — how a dialog
+  ;; puts a number in an edit control. FreeCell's Restart Game fills the game
+  ;; number in with it before showing the box.
+  (func $win16_SetDlgItemInt
+    (local $dlg i32) (local $value i32) (local $id i32) (local $signed i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 3))))
+    (local.set $id (call $win16_arg16 (i32.const 2)))
+    (local.set $signed (call $win16_arg16 (i32.const 0)))
+    ;; A signed value arrives as a word and has to be widened before the
+    ;; 32-bit handler formats it, or -1 prints as 65535.
+    (local.set $value (call $win16_arg16 (i32.const 1)))
+    (if (local.get $signed)
+      (then (local.set $value (call $win16_coord (local.get $value)))))
+    (call $win16_call32_begin (i32.const 4))
+    (call $handle_SetDlgItemInt (local.get $dlg) (local.get $id)
+      (local.get $value) (local.get $signed) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (call $win16_api_return (i32.const 8)))
+
+  ;; USER.95 GetDlgItemInt(hDlg, nIDDlgItem, lpTranslated, bSigned) -> UINT.
+  ;; lpTranslated is optional and is a BOOL word here, not the 32-bit dword.
+  (func $win16_GetDlgItemInt
+    (local $dlg i32) (local $ok i32) (local $tmp i32)
+    (local $id i32) (local $signed i32) (local $ok_sel i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 4))))
+    (local.set $id (call $win16_arg16 (i32.const 3)))
+    (local.set $ok_sel (call $win16_arg16 (i32.const 2)))
+    (local.set $ok (call $win16_far_to_guest
+      (local.get $ok_sel) (call $win16_arg16 (i32.const 1))))
+    (local.set $signed (call $win16_arg16 (i32.const 0)))
+    (local.set $tmp (global.get $GUEST_STACK))
+    (call $gs32 (local.get $tmp) (i32.const 0))
+    (call $win16_call32_begin (i32.const 4))
+    (call $handle_GetDlgItemInt (local.get $dlg) (local.get $id)
+      (local.get $tmp) (local.get $signed) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (if (local.get $ok_sel)
+      (then (call $gs16 (local.get $ok) (call $gl32 (local.get $tmp)))))
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 10)))
+
+  ;; USER.101 SendDlgItemMessage(hDlg, nIDDlgItem, wMsg, wParam, lParam) -> LONG.
+  ;; lParam is the only DWORD, so it is the two words nearest the top.
+  (func $win16_SendDlgItemMessage
+    (local $dlg i32) (local $id i32) (local $msg i32)
+    (local $wp i32) (local $lp i32)
+    (local.set $dlg (call $win16_h32 (call $win16_arg16 (i32.const 5))))
+    (local.set $id (call $win16_arg16 (i32.const 4)))
+    (local.set $msg (call $win16_arg16 (i32.const 3)))
+    (local.set $wp (call $win16_arg16 (i32.const 2)))
+    (local.set $lp (i32.or (call $win16_arg16 (i32.const 0))
+              (i32.shl (call $win16_arg16 (i32.const 1)) (i32.const 16))))
+    ;; The control is one of ours, so its message needs the Win16-to-Win32
+    ;; renumbering — see $win16_ctrl_msg32. Resolving the child here rather
+    ;; than inside the handler is the only way to know its class.
+    (local.set $msg (call $win16_ctrl_msg32
+      (call $ctrl_find_by_id (local.get $dlg) (local.get $id)) (local.get $msg)))
+    (call $win16_call32_begin (i32.const 5))
+    (call $handle_SendDlgItemMessageA (local.get $dlg)
+      (local.get $id) (local.get $msg) (local.get $wp) (local.get $lp)
+      (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=8 (global.get $reg_base) (i32.shr_u (i32.load offset=0 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 12)))

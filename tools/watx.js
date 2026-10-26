@@ -1,0 +1,57 @@
+// ═══════════════════════════════════════════════════════════════
+// WATX compiler loader (Node).
+// Loads the vendored browser-global compiler stages into a vm
+// context and re-exports compile() + helpers as CommonJS.
+// Source: watx.berrry.app (canvas runtime intentionally not vendored).
+// ═══════════════════════════════════════════════════════════════
+const fs = require('fs');
+const path = require('path');
+const vm = require('vm');
+
+const SRC = path.join(__dirname, 'watx-src');
+const FILES = [
+  'compiler-parser.js',   // tokenize, parseSexpr, ParseError
+  'compiler-stages.js',   // resolveIncludes, expandMacros, checkTypes
+  'compiler-codegen.js',  // lowerIR, generateWasm, disassembleWasm
+  'compiler.js',          // compile(), formatSexpr, formatLowered
+];
+
+// Route the compiler's chatty [WATX] logs to stderr so stdout stays clean
+// for test output.
+const quietConsole = {
+  log: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\n'),
+  warn: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\n'),
+  error: (...a) => process.stderr.write('[watx] ' + a.join(' ') + '\n'),
+};
+const ctx = {
+  console: quietConsole,
+  TextEncoder, TextDecoder,
+  Float32Array, Float64Array, Uint8Array, ArrayBuffer,
+  Map, Set, RegExp, Array, Object, String, Number, Math,
+  Promise, Date, setTimeout, clearTimeout, setImmediate,
+  parseInt, parseFloat, isNaN,
+};
+vm.createContext(ctx);
+for (const f of FILES) {
+  vm.runInContext(fs.readFileSync(path.join(SRC, f), 'utf8'), ctx, { filename: f });
+}
+
+module.exports = {
+  compile: ctx.compile,
+  compileAsync: ctx.compileAsync,
+  tokenize: ctx.tokenize,
+  parseSexpr: ctx.parseSexpr,
+  parseSource: ctx.parseSource,
+  // The byte→text boundary. A host that reads sources as bytes (every host that
+  // matters: tools/watx-closure.js, lib/watx-compile-worker.js) must decode
+  // through this rather than TextDecoder, or it pays two bytes of heap per
+  // source character. See the comment on the function itself.
+  sourceTextFromBytes: ctx.watxSourceTextFromBytes,
+  // Reading a node's position back out. The location is one packed integer, so
+  // these are the only supported way to ask which file and line a form came
+  // from — a caller that decodes the integer itself is depending on the
+  // file-id/offset split, which moves.
+  watxNodeFile: ctx.watxNodeFile,
+  watxNodeLine: ctx.watxNodeLine,
+  watxNodeCol: ctx.watxNodeCol,
+};
