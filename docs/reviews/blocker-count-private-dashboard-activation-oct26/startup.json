@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/tmp/blocker-count-private-dashboard-activation-oct26/control.py"
+  ],
+  "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "browser": "/opt/google/chrome/google-chrome",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A: local files only; no mount or guest invocation; no filename-bearing mount argv exists",
+  "cpuSeconds": 90,
+  "commandWallSeconds": 120,
+  "fileMaxBytes": 25165824,
+  "browserWallSeconds": 60,
+  "singleExcerptBytes": 8192,
+  "nodeHeapFlag": "--max-old-space-size=192",
+  "gitDataOnlyBytes": 536870912,
+  "readOnlyDonor": "/tmp/blocker-count-telegram-regression-publication-oct26/repo",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/blocker-count-private-dashboard-activation-oct26/root-ref-digest.json"
+}

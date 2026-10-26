@@ -1,0 +1,84 @@
+{
+  "at": 1793041424.8180242,
+  "label": "pre-checkout",
+  "ownedBytes": 596919,
+  "projectedTotalIncluding8MiBReserve": 55574528,
+  "hardBytes": 67108864,
+  "free": 4124356608,
+  "freeAfterProjectedIncrement": 4069378999,
+  "MemAvailable": 3641712640,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 18702336,
+      "flags": []
+    },
+    {
+      "pid": 752162,
+      "rss": 385146880,
+      "flags": []
+    },
+    {
+      "pid": 857107,
+      "rss": 10772480,
+      "flags": []
+    },
+    {
+      "pid": 1789179,
+      "rss": 76623872,
+      "flags": []
+    },
+    {
+      "pid": 2904238,
+      "rss": 190365696,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2904436,
+      "rss": 19742720,
+      "flags": []
+    },
+    {
+      "pid": 2947646,
+      "rss": 204222464,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2947883,
+      "rss": 25337856,
+      "flags": []
+    },
+    {
+      "pid": 2949359,
+      "rss": 199950336,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2949552,
+      "rss": 23683072,
+      "flags": []
+    }
+  ],
+  "aggregateClientRSS": 1154547712,
+  "alreadyMaterializedClientsCountedOnceInMemAvailable": true,
+  "prospectiveClient": 268435456,
+  "physicalFloor": 805306368,
+  "browserDemandAllowance": 0,
+  "requiredAvailable": 1073741824,
+  "pass": true
+}

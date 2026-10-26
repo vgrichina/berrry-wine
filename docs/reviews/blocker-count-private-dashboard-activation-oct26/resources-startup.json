@@ -1,0 +1,99 @@
+{
+  "at": 1793041201.4481304,
+  "label": "startup",
+  "ownedBytes": 99088,
+  "projectedTotalIncluding8MiBReserve": 55574528,
+  "hardBytes": 67108864,
+  "free": 4132057088,
+  "freeAfterProjectedIncrement": 4076581648,
+  "MemAvailable": 3825856512,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 20549632,
+      "flags": []
+    },
+    {
+      "pid": 752162,
+      "rss": 382701568,
+      "flags": []
+    },
+    {
+      "pid": 857107,
+      "rss": 10764288,
+      "flags": []
+    },
+    {
+      "pid": 1789179,
+      "rss": 75087872,
+      "flags": []
+    },
+    {
+      "pid": 2903914,
+      "rss": 186179584,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2904238,
+      "rss": 189267968,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2904414,
+      "rss": 19386368,
+      "flags": []
+    },
+    {
+      "pid": 2904436,
+      "rss": 19779584,
+      "flags": []
+    },
+    {
+      "pid": 2937591,
+      "rss": 205529088,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2937801,
+      "rss": 23707648,
+      "flags": []
+    },
+    {
+      "pid": 2947646,
+      "rss": 202964992,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2947883,
+      "rss": 25194496,
+      "flags": []
+    }
+  ],
+  "aggregateClientRSS": 1361113088,
+  "alreadyMaterializedClientsCountedOnceInMemAvailable": true,
+  "prospectiveClient": 268435456,
+  "physicalFloor": 805306368,
+  "browserDemandAllowance": 536870912,
+  "requiredAvailable": 1610612736,
+  "pass": true
+}

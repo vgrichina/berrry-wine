@@ -1,0 +1,82 @@
+[
+  {
+    "argv": [
+      "git",
+      "update-ref",
+      "refs/heads/task/blocker-count-private-dashboard-activation-oct26",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7"
+    ],
+    "stderr": "error: /tmp/maelstrom-guard-diagnostics-independent-publication-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\nerror: /tmp/maelstrom-current-main-uop-build-native-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7:ops/blocker-model.js"
+    ],
+    "stderr": "error: /tmp/maelstrom-reasonless-uop-diagnostic-repair-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "-b",
+      "task/blocker-count-private-dashboard-activation-oct26",
+      "/tmp/blocker-count-private-dashboard-activation-oct26/repo"
+    ],
+    "stderr": "warning: re-init: ignored --initial-branch=task/blocker-count-private-dashboard-activation-oct26\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "init",
+      "-b",
+      "task/blocker-count-private-dashboard-activation-oct26",
+      "/tmp/blocker-count-private-dashboard-activation-oct26/repo"
+    ],
+    "stderr": "warning: re-init: ignored --initial-branch=task/blocker-count-private-dashboard-activation-oct26\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "read-tree",
+      "-mu",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7"
+    ],
+    "stderr": "error: /tmp/maelstrom-guard-diagnostics-independent-publication-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\nerror: /tmp/maelstrom-current-main-uop-build-native-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\nfatal: unable to read tree 72586eb6ef4d73dace228b3b0ce048b638adbd63\n",
+    "exitCode": 128
+  },
+  {
+    "argv": [
+      "git",
+      "cat-file",
+      "-t",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7"
+    ],
+    "stderr": "error: /tmp/maelstrom-guard-diagnostics-independent-publication-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\nerror: /tmp/maelstrom-current-main-uop-build-native-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "rev-parse",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7:ops/app.js"
+    ],
+    "stderr": "error: /tmp/maelstrom-reasonless-uop-diagnostic-repair-oct26/repo/.git/objects: ignoring alternate object stores, nesting too deep\n",
+    "exitCode": 0
+  },
+  {
+    "argv": [
+      "git",
+      "cat-file",
+      "-t",
+      "938ea5bb01a25c51a9d70db756be3873fefe68f7"
+    ],
+    "stderr": "fatal: git cat-file: could not get object info\n",
+    "exitCode": 128
+  }
+]

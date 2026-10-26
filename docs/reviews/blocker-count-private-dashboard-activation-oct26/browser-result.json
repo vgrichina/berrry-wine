@@ -1,0 +1,32 @@
+{
+  "counts": {
+    "distinctBlockedTaskIds": 77,
+    "rawBlockedRows": 91,
+    "duplicateBlockedRows": 14,
+    "anonymousBlockedRows": 0
+  },
+  "label": "77 distinct blocked task IDs · 91 blocked rows · 14 duplicate-ID blocked rows · 0 anonymous blocked rows (counted separately)",
+  "classifications": "0 live approvals · 4 need your input · 85 agent-resolvable · 2 dependent rows (filtered row classifications; not current eligibility).",
+  "repeatedHeading": "Repeated task IDs / recorded ambiguity",
+  "sidebarRawRowCount": 91,
+  "apiHTTP": 200,
+  "apiBytes": 7072688,
+  "displayMatchesIndependentCounts": true,
+  "duplicatesDoNotIncreaseDistinctCount": true,
+  "rowsLabeled": true,
+  "clip": {
+    "x": 268,
+    "y": 95,
+    "width": 1100,
+    "height": 80
+  },
+  "htmlHTTP": 200,
+  "stateRequests": 1,
+  "blockedRequests": 0,
+  "pageErrors": 0,
+  "elapsedSeconds": 4.492,
+  "scope": "Unmodified deployed page, real current private API state; no task contents exported; fresh owned profile, cache disabled, refresh disabled for one bounded snapshot",
+  "screenshotBytes": 43031,
+  "screenshotRedaction": "Only aggregate summary and row classification labels captured by crop; all private task/detail/agent/sidebar content outside clip",
+  "pass": true
+}

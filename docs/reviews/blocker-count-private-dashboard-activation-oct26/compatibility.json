@@ -1,0 +1,29 @@
+{
+  "compatible": true,
+  "htmlScriptOrder": [
+    "terminal.js",
+    "task-ui.js",
+    "approval-ui.js",
+    "blocker-model.js",
+    "release-model.js",
+    "dos-view.js",
+    "views.js",
+    "app.js"
+  ],
+  "newAppDependencies": [
+    "BlockerModel.countSummaryText",
+    "blockerSummary.counts",
+    "blockerSummary.repeatedIds",
+    "BlockerModel.repeatedIdNotes"
+  ],
+  "allProvidedByAcceptedModel": true,
+  "newModelExternalDependencies": [],
+  "staticServing": "fs.createReadStream on each request, Cache-Control no-store",
+  "unchangedReaders": "079da22e440c6a3eb6efb28a994b222fe827290ccfb0874ae48f1802ef08c78c",
+  "acceptedDiff": "two-file delta reviewed; extra duplicate task status group and overview exclusion compatible with existing string status handling",
+  "limitations": [
+    "sidebar blocker-count remains raw blocked rows in accepted app",
+    "overview blocked stat remains raw blocked rows in accepted app"
+  ],
+  "acceptanceReused": "10 implementation,26 independent,6 merged status,2 mocked Telegram; not repeated"
+}

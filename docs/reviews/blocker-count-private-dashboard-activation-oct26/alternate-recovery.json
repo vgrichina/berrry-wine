@@ -1,0 +1,6 @@
+{
+  "cause": "pinned donor commit exists but nested Git alternate depth prevented full accepted tree lookup; initial diagnostics retained",
+  "method": "read-only bounded traversal of existing alternate paths; leaf-first direct object stores in isolated task repo, no refs listing or object copying",
+  "stores": 367,
+  "cycles": []
+}

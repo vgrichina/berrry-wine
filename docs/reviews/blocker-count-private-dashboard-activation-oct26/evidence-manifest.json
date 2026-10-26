@@ -1,0 +1,114 @@
+{
+  "git-warnings.json": {
+    "bytes": 2888,
+    "sha256": "e88a1fb6740d9c631883023e50d5ed8962b3e8c4af9f24820d9d4a4546d7d6bf"
+  },
+  "service-after-browser.json": {
+    "bytes": 74,
+    "sha256": "687d0db1254d3e3b9c8a1b2189f14e8c5a22ae15f831ccf3617056bfffb9b830"
+  },
+  "resources-pre-activation.json": {
+    "bytes": 2423,
+    "sha256": "e0b59468c6591d7cbf6f6c570600f57071cbbfca81162b7ea76cb1ca92a83791"
+  },
+  "service-after-activation.json": {
+    "bytes": 74,
+    "sha256": "05d3ee12fdf4735185fcef7293bd17b39ebff38bf258a89110f72f8a835bc41f"
+  },
+  "activation.json": {
+    "bytes": 1009,
+    "sha256": "0dc12bd38bd386ee567dbc5c7635f86ac4215c35692d49c892bcfefe22aa44df"
+  },
+  "resources-startup.json": {
+    "bytes": 2158,
+    "sha256": "857c437f7f5aaa0fef9a976b1af321d54d7350b8ab5d69a984fb71b3d5235b29"
+  },
+  "root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "browser-result.json": {
+    "bytes": 1266,
+    "sha256": "c692b1525c75dbbddb740fa5f119bc31bba0644b11cb35cd4f282b92670bdaa2"
+  },
+  "resources-pre-browser.json": {
+    "bytes": 2163,
+    "sha256": "2225f0c114d0b8ad7abd4fc6ff065f15ba9fa211aa1e2021443e082205ecec0f"
+  },
+  "rollback.py": {
+    "bytes": 417,
+    "sha256": "fc857087fa18243985d16b89ed0d347e3fc5dcbfc9b29ee8f72a9f67ca2efbd8"
+  },
+  "control.py": {
+    "bytes": 5122,
+    "sha256": "4258c8f298432135c138229bef844f265f6a199bc1b27ff13852874b944250c4"
+  },
+  "receipt.json": {
+    "bytes": 5962,
+    "sha256": "f23481f1b77b462334b315dd2372b2399858d46f69451a861c83f3a9f21b17dd"
+  },
+  "browser.cjs": {
+    "bytes": 5614,
+    "sha256": "57d8e98a7122724475044752b46f6ef752401f5bf1aa5a52bc62e83d981b6936"
+  },
+  "run-browser.py": {
+    "bytes": 1622,
+    "sha256": "4eedb574af00dcc9787d38895c8fc6d487b79f6ac75579bd3e7e683ff12fb747"
+  },
+  "publish.py": {
+    "bytes": 9350,
+    "sha256": "8f2476f26cb25b0c63932b38163b7060aa20b3b2852a61db3abebe00e93d2133"
+  },
+  "counts-focused-redacted.png": {
+    "bytes": 43031,
+    "sha256": "6d5f0c3b09592628efbc45ff669ec86ecc40fe0e6274c83d800600c3e0c417e3"
+  },
+  "resources-pre-checkout.json": {
+    "bytes": 1822,
+    "sha256": "e058f51a96ede6484e00b3fed8dc345ca63009dca9928f882610a5dbd5e86cd4"
+  },
+  "alternate-recovery.json": {
+    "bytes": 335,
+    "sha256": "6a9e96df69df3bc9801084eb34fe7fa718215b0bed8a3b7fb9b807c68c35cf67"
+  },
+  "flatten-alternates.py": {
+    "bytes": 1198,
+    "sha256": "4c151ced4a100dc5785c2bd77719110426117361b873b782f2db4064cf463a88"
+  },
+  "compatibility.json": {
+    "bytes": 1042,
+    "sha256": "666e44414b71fdaf390ac66173a41f9c71068ffb6f89786115f566c96ece135f"
+  },
+  "startup.json": {
+    "bytes": 956,
+    "sha256": "9d078d4e381410a9fef757caa360fd6da237e49732c32b543ae0fd3800fafd81"
+  },
+  "service-before.json": {
+    "bytes": 73,
+    "sha256": "4bd04b4581659ece98b3f7bd36faa6bfd1a8661e830ad2415122cb03e902b97e"
+  },
+  "resources-after-browser.json": {
+    "bytes": 1832,
+    "sha256": "22545af105acbc44159ff36df7d89cc43d28f7026a148e1b363959648c94dd96"
+  },
+  "activate.py": {
+    "bytes": 3595,
+    "sha256": "985daf3c9abf2e984edda498d76a9b345289e603068cb27374998f5f8f0de975"
+  },
+  "pinned-inputs.json": {
+    "bytes": 513,
+    "sha256": "e7c39a7a4b1ca46049e568212cffb351d637cad68eae1879833b7c5943152bd7"
+  },
+  "browser-startup.json": {
+    "bytes": 3305,
+    "sha256": "0b29d633e95901ab979409a34c8652f384edf9548387b70f5719f7519e115151"
+  },
+  "notes.json": {
+    "bytes": 1827,
+    "sha256": "1c4033a692494ce6d50a1c9772d820c62176a96ec66f7ae548dddae5f561814e"
+  },
+  "browser-monitor.json": {
+    "bytes": 405,
+    "sha256": "318e766221d06be798b8a01d9ecf8cf87be01554be2e76d7cf77f898e0fee21b"
+  }
+}

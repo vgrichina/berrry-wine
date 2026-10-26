@@ -1,0 +1,30 @@
+{
+  "at": 1793041228.7276728,
+  "activated": true,
+  "atomicity": "per-file atomic replace; both staged+validated before rename; rollback on exception",
+  "served": {
+    "app.js": {
+      "status": 200,
+      "bytes": 79909,
+      "sha256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132"
+    },
+    "blocker-model.js": {
+      "status": 200,
+      "bytes": 5955,
+      "sha256": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b"
+    },
+    "html": {
+      "status": 200,
+      "bytes": 6995,
+      "sha256": "5c0596f511433e056c7ce5f05b6119c17cc936ebdc0d85a906835af572a64ac6"
+    }
+  },
+  "allOtherRuntimeFilesUnchanged": true,
+  "unchangedRuntimeFiles": 1357,
+  "serviceRestarted": false,
+  "rollback": "/tmp/blocker-count-private-dashboard-activation-oct26/rollback.py",
+  "backupHashes": {
+    "app.js": "171c865fd1ed12c752abed78651c86d2e278b475060ecc3b935e986ded387b9f",
+    "blocker-model.js": "d776bdc8de503b04cd1e322d9d2ee30b8e94c679011d87b8393c148bcb3495b0"
+  }
+}

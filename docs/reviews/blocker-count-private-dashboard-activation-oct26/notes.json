@@ -1,0 +1,20 @@
+{
+  "incidents": [
+    "python alias absent; used installed python3, no install",
+    "early combined exploratory command exceeded excerpt budget; output truncated by tool; subsequent excerpts bounded",
+    "Git nested-alternates diagnostic preserved in git-warnings.json; no full ref listing captured",
+    "browser provisional RSS estimate512MiB was lower than measured aggregate Node+browser peak1228795904B; pre-run available3825856512B and after-run physical admission using actual peak passed; no hard memory cap was changed",
+    "Shared root object store lacked the pinned commit; isolated repo switched to exact donor stores. Nested donor alternates then prevented full tree lookup; bounded read-only leaf-first traversal of367 existing stores recovered lookup in isolated repo only. No object/ref listing copied, original warnings retained.",
+    "Alternate traversal wrapper initially used a whole-file8192 cap and256-store guard; changed to8192-byte line reads and2048-store bounded traversal (actual367). No user/enforced resource limits changed.",
+    "One unexecuted patch anchor mismatch corrected within task."
+  ],
+  "browserMemoryInterpretation": "aggregate RSS includes shared pages across browser processes and Node; old-space192MiB is heap only, not total RSS limit",
+  "runtimeSnapshot": "1357 other runtime files hashed before and verified after activation; private runtime filename inventory kept only in owned temporary evidence",
+  "remainingGate": "Accepted Blockers summary activation/browser gate complete. Sidebar remains raw91 rows and overview raw count by accepted source; any wider count-label change needs a separate coordinator assignment. No source changes in this task.",
+  "lifecycle": {
+    "boxId": null,
+    "state": "unassigned",
+    "expiry": null,
+    "owner": "coordinator"
+  }
+}

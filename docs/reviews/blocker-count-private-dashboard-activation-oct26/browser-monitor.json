@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/blocker-count-private-dashboard-activation-oct26/browser.cjs"
+  ],
+  "exitCode": 0,
+  "wallSeconds": 6.985654694028199,
+  "peakAggregateBrowserNodeRSS": 1228795904,
+  "peakOwnedBytesIncludingProfileAndLauncher": 3076351,
+  "browserAllowanceBytes": 536870912,
+  "profileCleanup": "only owned profile after browser close"
+}
