@@ -1,0 +1,48 @@
+{
+  "sourcePins": {
+    "host.js": "2acc67a77dcf381a740abaf84fcfb1e2c277cd64487564256a0d38e26fc28249",
+    "lib/file-bundle.js": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c",
+    "test/file-bundle-parser-independent-accept.test.cjs": "406f6079b983baa41ba05620e73e603bd339adb139bc66b8f65f82b6abb736d5",
+    "test/file-bundle-parser-framing.test.cjs": "cb5a90daa9b6a9816c742ba3a1d64eceb5cc6fb04991dc09a1a57c74b327ea3a",
+    "test/file-bundle-own-descriptor.test.cjs": "ea2e0c4de84c2322fe8bab7e930c71f1f3d36982cd0b93ae3089ebd18b0133a4"
+  },
+  "results": {
+    "independent": {
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-parser-independent-accept.test.cjs"
+      ],
+      "exitCode": 1,
+      "evidence": "baseline-independent.tap"
+    },
+    "framing": {
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-parser-framing.test.cjs"
+      ],
+      "exitCode": 0,
+      "evidence": "baseline-framing.tap"
+    },
+    "own": {
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-own-descriptor.test.cjs"
+      ],
+      "exitCode": 1,
+      "evidence": "baseline-own.tap"
+    }
+  },
+  "remaining": "repair then all checks"
+}

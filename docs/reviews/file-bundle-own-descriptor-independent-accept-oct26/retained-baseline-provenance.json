@@ -1,0 +1,30 @@
+{
+  "rejectedCandidate": "d0cda4dbe6d788694b98009f9897faf5c12c837e",
+  "reuse": "Existing exact-revision retained baseline failures; coordinator already verified all12 repair evidence payloads. No baseline rerun needed. Copied logs unchanged and hashed.",
+  "payloads": {
+    "baseline-independent.tap": {
+      "sourceCandidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+      "sourcePath": "docs/reviews/file-bundle-own-descriptor-repair-oct26/baseline-independent.tap",
+      "sha256": "3ace896e75fd0f995ad1ad640d01e54ebcfd3b69630fec2db1adc185da4cf36d",
+      "bytes": 3143
+    },
+    "baseline-framing.tap": {
+      "sourceCandidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+      "sourcePath": "docs/reviews/file-bundle-own-descriptor-repair-oct26/baseline-framing.tap",
+      "sha256": "2b14ed69715806cf15626be27c24f81265bc72de9d5bab251c410834c3f9d8dc",
+      "bytes": 784
+    },
+    "baseline-own.tap": {
+      "sourceCandidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+      "sourcePath": "docs/reviews/file-bundle-own-descriptor-repair-oct26/baseline-own.tap",
+      "sha256": "079e7b5e98dfa0f0f8ced94584bdf05699322044056d692af144514c34c4121d",
+      "bytes": 1473
+    },
+    "checkpoint-baseline.json": {
+      "sourceCandidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+      "sourcePath": "docs/reviews/file-bundle-own-descriptor-repair-oct26/checkpoint-baseline.json",
+      "sha256": "9a8964bc8e89e4075e8114efe2aff8076a01acd3db075e8635d9fe8602468848",
+      "bytes": 1438
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "base": "docs/reviews/file-bundle-own-descriptor-independent-accept-oct26",
+  "payloads": {
+    "RECOVERY.md": {
+      "bytes": 1594,
+      "sha256": "88b8798904c08fcaf2f8bcd6f80f8ef3774a9da21cf303c4461927268a65b78d"
+    },
+    "REVIEW.md": {
+      "bytes": 3805,
+      "sha256": "42246f072cb1a420194846fab1c4c10e14a3b699b819cf3b5407234e74a50829"
+    },
+    "admission-publication.json": {
+      "bytes": 2460,
+      "sha256": "026bd093539a5beb130654f532fd97d699322739fc070b628c27562002328fd9"
+    },
+    "admission.json": {
+      "bytes": 2149,
+      "sha256": "db755a3af7517d4170cf14f3b8ea324b91725eb02d3c911e9466f9dba98c4d9c"
+    },
+    "checkpoint-independent.json": {
+      "bytes": 2495,
+      "sha256": "404a682d6b574c923c63ef14d4942d368fdd23278a800338454acdc96c127d8d"
+    },
+    "checkpoint-unchanged.json": {
+      "bytes": 1630,
+      "sha256": "8b34d58e8cb1cd8ff7f63793562ed7d5a09869f68364d77b46344dc9b4ff9fb7"
+    },
+    "independent-challenges.log": {
+      "bytes": 896,
+      "sha256": "8133f76647d07ec0ba5b1d67e6a3d43c2558635450d6c7ea1496517a24991514"
+    },
+    "result.json": {
+      "bytes": 1185,
+      "sha256": "3f5001c10186942df9dc5b9063eb96823d3957655c9de8ac4ba70b12819f6b83"
+    },
+    "retained-baseline-framing.tap": {
+      "bytes": 784,
+      "sha256": "2b14ed69715806cf15626be27c24f81265bc72de9d5bab251c410834c3f9d8dc"
+    },
+    "retained-baseline-independent.tap": {
+      "bytes": 3143,
+      "sha256": "3ace896e75fd0f995ad1ad640d01e54ebcfd3b69630fec2db1adc185da4cf36d"
+    },
+    "retained-baseline-own.tap": {
+      "bytes": 1473,
+      "sha256": "079e7b5e98dfa0f0f8ced94584bdf05699322044056d692af144514c34c4121d"
+    },
+    "retained-baseline-provenance.json": {
+      "bytes": 1512,
+      "sha256": "c0ebf83ce5282511294313f6f4f698a04dc88ce7af34942b0a8967b1b1e3468c"
+    },
+    "retained-checkpoint-baseline.json": {
+      "bytes": 1438,
+      "sha256": "9a8964bc8e89e4075e8114efe2aff8076a01acd3db075e8635d9fe8602468848"
+    },
+    "root-ref-comparison.json": {
+      "bytes": 629,
+      "sha256": "e0434af459d18ec09db3e21d2e4af26d4c16c8bbe5e1bdfdcb074d19865b7130"
+    },
+    "source-pins.json": {
+      "bytes": 1895,
+      "sha256": "71d2f0105db109d9a5dd6a5fbc99242b5fe945c2e15566ab63f92e47631e9a76"
+    },
+    "supplied-framing.log": {
+      "bytes": 785,
+      "sha256": "afc895ddaf966950c3fdfc407046b0410df673cd23bdb7d96fa009b7b3a80aa2"
+    },
+    "supplied-own.log": {
+      "bytes": 481,
+      "sha256": "17fbe53185ca12d9fc2c15c700e4d3b097fb0af4c372ea4a7fe2da9c9ea127eb"
+    },
+    "unchanged-reproducer.log": {
+      "bytes": 1032,
+      "sha256": "3938078227c176f8a20de34ccb0ff32348ffc94264cef3883a4e577b023f1fd7"
+    },
+    "../../../test/file-bundle-own-descriptor-independent.test.cjs": {
+      "bytes": 8251,
+      "sha256": "fd06b0e4f14e36c5e264c367a924ab4edc066bd713a1dbceed9b15971d1db67c"
+    }
+  }
+}

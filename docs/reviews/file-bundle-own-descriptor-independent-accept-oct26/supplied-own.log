@@ -1,0 +1,12 @@
+✔ missing own f rejects success and both errors despite inherited name (6.415636ms)
+✔ all required fields must be own; inherited size/status never complete a descriptor (0.957024ms)
+✔ own f validation rejects nonstrings and extra keys under contamination (1.113486ms)
+✔ own names, zero sizes, offset views and error ordering survive polluted realm (2.99241ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 42.89974

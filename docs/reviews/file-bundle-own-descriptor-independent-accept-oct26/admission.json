@@ -1,0 +1,57 @@
+{
+  "candidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+  "focusedInputs": [
+    {
+      "path": "host.js",
+      "bytes": 369423,
+      "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+    },
+    {
+      "path": "lib/file-bundle.js",
+      "bytes": 2461,
+      "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c"
+    },
+    {
+      "path": "test/file-bundle-parser-framing.test.cjs",
+      "bytes": 5446,
+      "sha256": "cb5a90daa9b6a9816c742ba3a1d64eceb5cc6fb04991dc09a1a57c74b327ea3a"
+    },
+    {
+      "path": "test/file-bundle-own-descriptor.test.cjs",
+      "bytes": 3644,
+      "sha256": "ea2e0c4de84c2322fe8bab7e930c71f1f3d36982cd0b93ae3089ebd18b0133a4"
+    }
+  ],
+  "ownCurrentBytes": 0,
+  "launcherBytes": 87641,
+  "sessionFiles": {
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T06-17-14-01a176db-1e13-7af1-a25d-041b73eb4834.jsonl": 348226
+  },
+  "standingSharedWalBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1660392,
+    "/home/user/.codex/state_5.sqlite-wal": 4194192,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "standingDonorGitBytes": 1806915,
+  "standingNode": {
+    "path": "/usr/local/bin/node",
+    "realpath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816
+  },
+  "projectedEnvelopeIncludingRepoGitTestsEvidenceLauncherSessionPositiveWalGrowth": 58720256,
+  "reserve": 8388608,
+  "hardLimit": 67108864,
+  "hostFree": 4498444288,
+  "hostFreeAfterGrowth": 4431335424,
+  "requiredHostFree": 2982150144,
+  "memAvailable": 3188826112,
+  "workerClientAllowance": 536870912,
+  "requiredAfterAllowance": 805306368,
+  "mountArgv": [],
+  "mountValidation": "not applicable: offline local Node and Git only; no mount/guest argv",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "verdict": "PASS"
+}

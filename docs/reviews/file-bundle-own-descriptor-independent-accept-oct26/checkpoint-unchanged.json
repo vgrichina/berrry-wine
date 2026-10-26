@@ -1,0 +1,56 @@
+{
+  "candidate": "3f5956fffd23ed03cdd22975b474e348c8b966ca",
+  "pins": "source-pins.json",
+  "groups": [
+    {
+      "group": "unchanged-reproducer",
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-parser-independent-accept.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.08,
+      "log": "/tmp/file-bundle-own-descriptor-independent-accept-oct26/ops/unchanged-reproducer.log",
+      "sha256": "3938078227c176f8a20de34ccb0ff32348ffc94264cef3883a4e577b023f1fd7"
+    },
+    {
+      "group": "supplied-framing",
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-parser-framing.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.067,
+      "log": "/tmp/file-bundle-own-descriptor-independent-accept-oct26/ops/supplied-framing.log",
+      "sha256": "afc895ddaf966950c3fdfc407046b0410df673cd23bdb7d96fa009b7b3a80aa2"
+    },
+    {
+      "group": "supplied-own",
+      "command": [
+        "timeout",
+        "30s",
+        "node",
+        "--max-old-space-size=192",
+        "--test",
+        "test/file-bundle-own-descriptor.test.cjs"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.063,
+      "log": "/tmp/file-bundle-own-descriptor-independent-accept-oct26/ops/supplied-own.log",
+      "sha256": "17fbe53185ca12d9fc2c15c700e4d3b097fb0af4c372ea4a7fe2da9c9ea127eb"
+    }
+  ],
+  "remaining": [
+    "independent descriptor/framing challenges",
+    "review and publication"
+  ],
+  "blockers": []
+}
