@@ -1,0 +1,22 @@
+[
+  {
+    "path": "/tmp/enigma-tracked-runner-pin-repair-oct26/repo/docs/reviews/enigma-uncertainty-independent-publication-oct26/tracked-run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+  },
+  {
+    "path": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo/tools/enigma-presented-menu-controller.cjs",
+    "bytes": 10285,
+    "sha256": "c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6"
+  },
+  {
+    "path": "/tmp/enigma-small-step-production-gameplay-oct26/ops/click.cjs",
+    "bytes": 1245,
+    "sha256": "8574aa3a46e9b969083cca5d85e2ace502d8e7dc4241ed352bf594e097c2e7d9"
+  },
+  {
+    "path": "/tmp/enigma-capture-budget-gameplay-oct26/ops/operate.py",
+    "bytes": 4824,
+    "sha256": "8af6a9318255bcea2777010c33c967976e4479b651369824b7f2501c51c4d74b"
+  }
+]

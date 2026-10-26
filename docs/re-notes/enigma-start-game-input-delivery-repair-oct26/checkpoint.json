@@ -1,0 +1,46 @@
+{
+  "stage": "production-boundary-passed",
+  "base": "50e60eae2987c826bb72de02398cac04cc6533f7",
+  "runner": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "controller": "c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6",
+  "passed": [
+    "exact retained related-source hash/manifest validation",
+    "original atomic request/ACK and host-input consumption trace analysis",
+    "three original identical PNG SHA and cumulative bytes verified",
+    "Node24.18.1 heap64 startup DATA/ASunlimited CPU90 file24MiB",
+    "exact transformed production handler/parser/click/imports and real renderer->poll fixture PASS",
+    "split press state discriminant PASS",
+    "stale batch/outstanding credits/replay rejection PASS"
+  ],
+  "remaining": [
+    "commit trustedpush/exactref"
+  ],
+  "blocker": null,
+  "files": {
+    "pins.json": "52c119d81f4adfd96a3fb886acf8f28fc6196814a233dc013f94d61d9dadcad2",
+    "exact-related-source.json": "393fdbceed460baf5c4a26880caa844bce2e50c0f9c3c6ed642fb73279802405",
+    "input-boundary.cjs": "d55cf82eb128458e5a76cb746167a351738f3626fc51d7797cf3c74f70341b5c",
+    "saved-trace-finding.json": "57fca36ef8ea555c3ece2a41c2a7a756e7a8faea4ede11691f93a98bbdf9491c",
+    "runtime-probe.json": "d5c274ba91e1c8dfce6217c4f348648ec85863fa6a4905c4603fb6ee1e89c15f",
+    "boundary-results.json": "41eb7109a93fb9c53bde1b756c48f040d8338cf1f1a99ed790ed034c7a165ad3"
+  },
+  "firstFailure": "first-extraction-failure-fixture-output.log: marker matched traced overload too; made unique full production expression, unchanged pinned runner; corrected fixture PASS",
+  "execution": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=64",
+      "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/input-boundary.cjs"
+    ],
+    "exit": 0,
+    "reason": "natural",
+    "peakRSS": 78692352,
+    "childCPU": 0.06,
+    "wall": 0.07412106893025339,
+    "outputBytes": 623,
+    "physicalCap": 268435456,
+    "remainingOwned": [],
+    "dataAS": "inherited unlimited; Git DATA only on Git",
+    "physicalScope": "Node plus enclosing supervisor; fixture spawns no subprocesses"
+  },
+  "publicationAdmissionIncident": "Historical RAM3637256192<3832414208 preserved; CivII/ricochet completion and clients exit are actual capacity change. Fresh mandatory gate required before publication."
+}

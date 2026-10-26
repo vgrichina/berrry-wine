@@ -1,0 +1,20 @@
+{
+  "node": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "git": "git version 2.43.0",
+  "limits": {
+    "gitDATA": 536870912,
+    "nodeDATA": "unlimited",
+    "nodeAS": "unlimited",
+    "nodeHeapOldSpace": 67108864,
+    "physicalTree": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}

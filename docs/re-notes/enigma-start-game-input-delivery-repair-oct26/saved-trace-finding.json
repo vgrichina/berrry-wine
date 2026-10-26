@@ -1,0 +1,224 @@
+{
+  "events": [
+    {
+      "line": 833,
+      "text": "[input] click 344,212 at batch 120833"
+    },
+    {
+      "line": 834,
+      "text": "[check_input] msg=0x84 wParam=0x0 lParam=0xd40158 packed=0x84"
+    },
+    {
+      "line": 835,
+      "text": "[check_input_hwnd] explicit hwnd=0x10001"
+    },
+    {
+      "line": 836,
+      "text": "[check_input] msg=0x201 wParam=0x1 lParam=0xa90141 packed=0x10201"
+    },
+    {
+      "line": 837,
+      "text": "[check_input_hwnd] explicit hwnd=0x10001"
+    },
+    {
+      "line": 838,
+      "text": "[check_input] msg=0x202 wParam=0x0 lParam=0xa90141 packed=0x202"
+    },
+    {
+      "line": 839,
+      "text": "[check_input_hwnd] explicit hwnd=0x10001"
+    }
+  ],
+  "atomic": [
+    {
+      "at": 1793050543446,
+      "ended": 1793050543451,
+      "command": {
+        "action": "enigma-presented-click-v1",
+        "key": "wine.enigma.presented-menu.f47a2389-e695-488f-a52a-037b53410fec",
+        "batch": 120833
+      },
+      "originalResponse": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":120833}}",
+      "response": {
+        "ok": true,
+        "value": {
+          "queued": true,
+          "batch": 120833
+        }
+      }
+    }
+  ],
+  "frames": [
+    {
+      "file": "qualification.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "file": "before.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    },
+    {
+      "file": "after-gameplay.png",
+      "bytes": 389913,
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5"
+    }
+  ],
+  "totalPNGBytes": 1169739,
+  "snapshots": {
+    "initial-snapshot.json": {
+      "batch": 0,
+      "eip": "0x4012a0",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x0",
+      "mainHwnd": "0x0",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": []
+    },
+    "pre-controller-snapshot.json": {
+      "batch": 120833,
+      "eip": "0x641afc",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 646,
+          "h": 507,
+          "visible": true,
+          "isChild": false,
+          "title": "Enigma - Main Menu"
+        }
+      ]
+    },
+    "after-click-n1.json": {
+      "batch": 120834,
+      "eip": "0xecc7a1",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 646,
+          "h": 507,
+          "visible": true,
+          "isChild": false,
+          "title": "Enigma - Main Menu"
+        }
+      ]
+    },
+    "after-gameplay-snapshot.json": {
+      "batch": 126978,
+      "eip": "0xecc7a1",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 646,
+          "h": 507,
+          "visible": true,
+          "isChild": false,
+          "title": "Enigma - Main Menu"
+        }
+      ]
+    }
+  },
+  "originalCommand": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-budget/capture-wrapper.cjs",
+      "/tmp/enigma-small-step-production-gameplay-oct26/runner/test/run-presented.cjs",
+      "--no-build",
+      "--wasm=/tmp/enigma-small-step-production-gameplay-oct26/runtime/build/wine-assembly.wasm",
+      "--exe=/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/enigma.exe",
+      "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+      "--cwd=C:\\Enigma-1.01",
+      "--dlls=/tmp/enigma-small-step-production-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=84",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/enigma-small-step-production-gameplay-oct26/vfs",
+      "--max-batches=10000000",
+      "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+      "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+      "--quiet-fs",
+      "--control=18127",
+      "--trace-input",
+      "--frozen"
+    ],
+    "pid": 49311,
+    "pgid": 49311,
+    "at": 1793050477.8833783,
+    "memAvailable": 7397605376,
+    "limits": {
+      "cpuTree": 90,
+      "wallGuest": 89,
+      "file": 25165824,
+      "output": 2097152,
+      "rssTree": 2684354560,
+      "heapOldSpaceMiB": 2048
+    },
+    "environment": {}
+  },
+  "proven": "Guest host input poll imports returned84/201/202, explicit HWND10001. HTTP/scheduler acceptance is weaker than this actual consumption evidence.",
+  "unobserved": "WAT MSG removal/filter/activation result; DispatchMessage arguments; SDL event translation and Enigma menu state reaction; exact point/button getter timing and exclusive presentation transforms.",
+  "noBugProven": true
+}

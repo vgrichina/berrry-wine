@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/input-boundary.cjs"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 78692352,
+  "childCPU": 0.06,
+  "wall": 0.07412106893025339,
+  "outputBytes": 623,
+  "physicalCap": 268435456,
+  "remainingOwned": [],
+  "dataAS": "inherited unlimited; Git DATA only on Git",
+  "physicalScope": "Node plus enclosing supervisor; fixture spawns no subprocesses"
+}

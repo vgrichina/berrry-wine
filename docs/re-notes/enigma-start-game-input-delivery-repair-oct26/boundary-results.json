@@ -1,0 +1,122 @@
+{
+  "source": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "transformed": "a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da",
+  "fixtureSHA256": "d55cf82eb128458e5a76cb746167a351738f3626fc51d7797cf3c74f70341b5c",
+  "excerpts": [
+    {
+      "label": "canonical input parser",
+      "startLine": 1946,
+      "endLine": 2470,
+      "bytes": 29232,
+      "sha256": "d670c8a2336edad260f51e9336103d4b16be1625f6f6ddc82a2bf9012340b5b0"
+    },
+    {
+      "label": "whole transformed handleControlCommand",
+      "startLine": 7243,
+      "endLine": 7443,
+      "bytes": 10540,
+      "sha256": "1cd6556f90989dd141c702ce6c0f4cd728e48cef0505fb9aa7a5b9814a9d0fcb"
+    },
+    {
+      "label": "ordinary click dispatch",
+      "startLine": 10215,
+      "endLine": 10219,
+      "bytes": 276,
+      "sha256": "6791fc73a1faca36b7d65ff628d6830a344b07dd2830d18fdc8413d8763bb29e"
+    },
+    {
+      "label": "runner input poll/routing imports",
+      "startLine": 4522,
+      "endLine": 4573,
+      "bytes": 2494,
+      "sha256": "954cf2408c6f4dc3f06652e65bbb5aa159f88ff3f4b6fc80da5ab7d72a1d98c3"
+    },
+    {
+      "label": "runner mouse imports",
+      "startLine": 4592,
+      "endLine": 4604,
+      "bytes": 620,
+      "sha256": "58025d19ebbfec2447ade2879d060c6f0c0f25c40f349fea84129f3d54c6d1e3"
+    },
+    {
+      "label": "runner hold configuration",
+      "startLine": 4510,
+      "endLine": 4511,
+      "bytes": 50,
+      "sha256": "e2208775984bc3346ce0a3bc842f2471fb57a3dfa4654c7074a89aca96b53c77"
+    }
+  ],
+  "queued": [
+    {
+      "type": "mouse",
+      "hwnd": 65537,
+      "msg": 132,
+      "wParam": 0,
+      "lParam": 13893976,
+      "mouseX": 344,
+      "mouseY": 212,
+      "mouseButtons": 1
+    },
+    {
+      "type": "mouse",
+      "hwnd": 65537,
+      "msg": 513,
+      "wParam": 1,
+      "lParam": 11075905,
+      "mouseX": 344,
+      "mouseY": 212,
+      "mouseButtons": 1
+    },
+    {
+      "type": "mouse",
+      "hwnd": 65537,
+      "msg": 514,
+      "wParam": 0,
+      "lParam": 11075905,
+      "mouseX": 344,
+      "mouseY": 212,
+      "mouseButtons": 0
+    }
+  ],
+  "polled": [
+    {
+      "packed": 132,
+      "hwnd": 65537,
+      "lParam": 13893976,
+      "wParam": 0,
+      "position": 13893976,
+      "buttons": 1
+    },
+    {
+      "packed": 66049,
+      "hwnd": 65537,
+      "lParam": 11075905,
+      "wParam": 1,
+      "position": 13893976,
+      "buttons": 1
+    },
+    {
+      "packed": 514,
+      "hwnd": 65537,
+      "lParam": 11075905,
+      "wParam": 0,
+      "position": 13893976,
+      "buttons": 0
+    }
+  ],
+  "actualTrace": [
+    "[input] click 344,212 at batch 120833",
+    "[check_input] msg=0x84 wParam=0x0 lParam=0xd40158 packed=0x84",
+    "[check_input_hwnd] explicit hwnd=0x10001",
+    "[check_input] msg=0x201 wParam=0x1 lParam=0xa90141 packed=0x10201",
+    "[check_input_hwnd] explicit hwnd=0x10001",
+    "[check_input] msg=0x202 wParam=0x0 lParam=0xa90141 packed=0x202",
+    "[check_input_hwnd] explicit hwnd=0x10001"
+  ],
+  "rejected": [
+    "stale-batch",
+    "credits"
+  ],
+  "verdict": "host imports consumed matching mouse sequence; no deterministic Enigma defect proven; guest MSG/SDL handling and frame-state sampling unobserved",
+  "limits": "no guest executed; window from snapshot, style from original CreateWindow log; empty guest export surface uses production geometry fallback"
+}

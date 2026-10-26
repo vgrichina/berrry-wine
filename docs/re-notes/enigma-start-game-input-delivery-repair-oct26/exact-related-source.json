@@ -1,0 +1,79 @@
+{
+  "manifest": "/tmp/enigma-small-step-production-gameplay-oct26/ops/resolved-inputs.json.gz",
+  "manifestSHA256": "a4506bdc1486ea873043dc6c561b73a7ef22349d24d14bb7a48a48621a41ed7b",
+  "files": [
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/mem-utils.js",
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "target": "runner/lib/mem-utils.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/region-map.generated.js",
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "target": "runner/lib/region-map.generated.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/renderer.js",
+      "bytes": 214846,
+      "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03",
+      "target": "runner/lib/renderer.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/renderer-input.js",
+      "bytes": 181810,
+      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78",
+      "target": "runner/lib/renderer-input.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/presentation-filter.js",
+      "bytes": 53087,
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+      "target": "runner/lib/presentation-filter.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/surface.js",
+      "bytes": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+      "target": "runner/lib/surface.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/host-window.js",
+      "bytes": 63752,
+      "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d",
+      "target": "runner/lib/host-window.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/input-consumption-trace.js",
+      "bytes": 2508,
+      "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be",
+      "target": "runner/test/input-consumption-trace.js",
+      "kind": "file",
+      "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "donor": "/tmp/enigma-tracked-pin-independent-publication-oct26/repo"
+    }
+  ],
+  "readOnly": true
+}

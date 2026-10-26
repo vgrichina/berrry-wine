@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "console.log(JSON.stringify({execPath:process.execPath,version:process.version,flags:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),environment:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|WINE|TMPDIR|GIT_SSH_COMMAND)/.test(k))),rss:process.memoryUsage().rss}))"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 59453440,
+  "childCPU": 0.02,
+  "wall": 0.03162723011337221,
+  "outputBytes": 2092,
+  "physicalCap": 268435456,
+  "remainingOwned": [],
+  "dataAS": "inherited unlimited; Git DATA only on Git",
+  "physicalScope": "Node plus enclosing supervisor; fixture spawns no subprocesses"
+}

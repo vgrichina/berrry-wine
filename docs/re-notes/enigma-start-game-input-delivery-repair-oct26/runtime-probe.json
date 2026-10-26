@@ -1,0 +1,23 @@
+{
+  "authorizedNow": false,
+  "boxOwner": "coordinator",
+  "objective": "Locate first lost/transformed mouse boundary with one unchanged atomicclick, not another gameplay acceptance guess.",
+  "productionRunnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "transformedSHA256": "a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da",
+  "sameInputs": true,
+  "extraFlags": [
+    "--trace-input-dispatch",
+    "--trace-mouse-state"
+  ],
+  "atVerifiedFrozenMenu": "Bound one observational wrapper around renderer._dispatchMouseEvent, renderer.takeInput, and host-call/API logger; retain original calls/returns, cap128records/64KiB. Record batch/sequence, message/target/lParam, mouseX/Y/buttons and exclusiveTransform/viewport; snapshot wnd_mouse_msg_origin_x/y and client/window origins for10001. Retain exact production hash before wrapping.",
+  "dispatch": "Existing --trace-input-dispatch records guest MSG pointer contents at DispatchMessageA/W. Observe PeekMessageA/W successful-return MSG (API return hook or verified instruction observer) only for84/200/201/202, including PM_REMOVE, target and coordinates; do not infer successful-return payload from entry-only logging.",
+  "gate": "Preflight observer only on exactproductionfixture; freshauthorizedruntime/budget/lifecycle, first1batchACK/zero credits then existing serial step rule and canonical framehash transaction. ONE atomicclick unchanged; stepn1 then bounded serialsteps at most256batches each for <=1second wall, stop if timeout, no replay.",
+  "discrimination": [
+    "Queued but no takeInput: renderer consumption problem.",
+    "takeInput but no returned MSG: guest filtering/activation problem.",
+    "Returned MSG but no DispatchMessage: SDL message-pump filtering.",
+    "Dispatch preserved but application stays menu: investigate SDL/Enigma handling; only then design separately assigned held-click/hover comparison."
+  ],
+  "doNot": "No fake click/UIstate/gamebinary edit, no second atomic request/retry, no forced mousemove/hold repair based solely on this evidence.",
+  "traceAdmission": "Reject trace-limit saturation before click; retain cap and original defaults, do not infer absent dispatch from suppressed trace. Verify exact event/MSG getter wrappers call original once, preserve return and identity, and never execute guest through a host callback."
+}

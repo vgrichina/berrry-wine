@@ -1,0 +1,43 @@
+{
+  "stage": "prepublication",
+  "charges": {
+    "owned": 548864,
+    "launcher": 487424,
+    "sessions": 1306624,
+    "positiveWAL": 2269184,
+    "future": 4194304,
+    "reserve": 8388608
+  },
+  "projectedBytes": 67108864,
+  "cap": 100663296,
+  "hostFree": 3602632704,
+  "hostProjectedRemaining": 3535523840,
+  "memAvailable": 3948855296,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 413224960
+    },
+    {
+      "pid": 3178760,
+      "rss": 199442432
+    },
+    {
+      "pid": 3184269,
+      "rss": 196997120
+    }
+  ],
+  "aggregateClientRSS": 809664512,
+  "newClientsReserve": 268435456,
+  "lightExecutionAllowances": 1342177280,
+  "browserAggregate": 0,
+  "memoryFloor": 805306368,
+  "pass": true,
+  "requiredMemory": 3489660928,
+  "allocation": 100663296,
+  "prospectiveClientSessionEvents": 33554432,
+  "prospectiveLocalRemoteGit": 8388608,
+  "reserve": 8388608,
+  "positiveWALCountedOnce": true,
+  "standingInputsExcluded": true
+}
