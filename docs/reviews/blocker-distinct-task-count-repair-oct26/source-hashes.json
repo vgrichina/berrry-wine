@@ -1,0 +1,56 @@
+{
+  "ops/app.js": {
+    "bytes": 79785,
+    "sha256": "823f46634556a0cb5f0c2e389055eb0529e320ae5e0824e29428e0270e63cd2d"
+  },
+  "ops/approval-ui.js": {
+    "bytes": 3937,
+    "sha256": "53bda2340163d0697e975b1667b11ef450ff4ac998b211125328dd44d91ee4f0"
+  },
+  "ops/blocker-model.js": {
+    "bytes": 5955,
+    "sha256": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b"
+  },
+  "ops/blocker-model.test.js": {
+    "bytes": 12110,
+    "sha256": "81ea8d77d64c9c8fd4a7fbc5bbe2926b20b8da28a6f61e351d884c61d8f91674"
+  },
+  "ops/dos-view.js": {
+    "bytes": 10709,
+    "sha256": "b21cb512691839291c01b4da1223fdcf6aedf01327a1619a819d3b7148ea6791"
+  },
+  "ops/release-model.js": {
+    "bytes": 11281,
+    "sha256": "aa584b0a838c23d049bc569a02b42565a4592d8c2aa4818a9d19ad4f29bce00d"
+  },
+  "ops/task-ui.js": {
+    "bytes": 12019,
+    "sha256": "ec09072a79be68b71fba552062b3f448afa6e7384e51c24c2a45f607923aa79b"
+  },
+  "ops/telegram-blockers.js": {
+    "bytes": 2465,
+    "sha256": "82e8f4e3d63cb0adcc3f78831432fe75bf23ece4343559937ee9251b6d68ce0a"
+  },
+  "ops/test-app-vm.js": {
+    "bytes": 1348,
+    "sha256": "ce4a2fa889472a8e10a75301e344ca671258ab5cf3030ce277aeec1a5d88a512"
+  },
+  "ops/views.js": {
+    "bytes": 26905,
+    "sha256": "75f1721dd9c0807291c524f467c143e31d9c803604c6c6dd8f8feb6151aa9939"
+  },
+  "ops/index.html": {
+    "bytes": 6995,
+    "sha256": "5c0596f511433e056c7ce5f05b6119c17cc936ebdc0d85a906835af572a64ac6"
+  },
+  "standingNode": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "immutableDonor": {
+    "revision": "6aaf65235f367beb610931be83b4b1268ef35ad7",
+    "requiredBlobBytes": 173509,
+    "access": "read-only alternate object store; no donor changes"
+  }
+}

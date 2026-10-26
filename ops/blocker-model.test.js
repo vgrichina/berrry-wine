@@ -48,9 +48,109 @@ test('browser and CommonJS expose identical model and HTML loads it first', () =
   vm.runInContext(fs.readFileSync(require.resolve('./blocker-model'),'utf8'),ctx);
   const snapshot = {tasks:[task('R',1),task('D',2,{waitingOn:'R'})]};
   assert.equal(JSON.stringify(ctx.BlockerModel.blockerSummary(snapshot)),JSON.stringify(model.blockerSummary(snapshot)));
-  assert.deepEqual(model.blockerSummary({}),{blocked:[],roots:[],dependentCount:0,approvals:[],needsUser:[],agentResolvable:[]});
+  assert.deepEqual(model.blockerSummary({}),{blocked:[],roots:[],dependentCount:0,approvals:[],needsUser:[],agentResolvable:[],
+    counts:{distinctBlockedTaskIds:0,rawBlockedRows:0,duplicateBlockedRows:0,anonymousBlockedRows:0},repeatedIds:[]});
   const html = fs.readFileSync(require.resolve('./index.html'),'utf8');
   assert(html.indexOf('/blocker-model.js') < html.indexOf('/app.js'));
+});
+
+test('exact duplicate records count once by ID; anonymous records stay separate without mutation', () => {
+  const original = task('SAME', 1, {blocker:'recorded blocker'});
+  const snapshot = {tasks:[original, {...original}, task(undefined, 3), task('',4), task(null,5), task('  ',6), task('same',7)]};
+  const before = JSON.stringify(snapshot);
+  const summary = model.blockerSummary(snapshot);
+  assert.deepEqual(summary.counts, {distinctBlockedTaskIds:2,rawBlockedRows:7,duplicateBlockedRows:1,anonymousBlockedRows:4});
+  assert.equal(summary.blocked.length,7);
+  assert.equal(summary.roots.length,7);
+  assert.equal(summary.repeatedIds.length,1);
+  assert.deepEqual(summary.repeatedIds[0].conflictingFields,[]);
+  assert.equal(summary.repeatedIds[0].rows[0],original);
+  assert.match(model.repeatedIdNotes(summary.repeatedIds)[0],/repeated records/);
+  assert.equal(JSON.stringify(snapshot),before);
+});
+
+test('conflicting blocked and nonblocked rows expose statuses, reasons and ownership without selecting a winner', () => {
+  const a = task('CONFLICT',1,{blocker:'denied automated review',waitingOn:'automated review resolution',owner:'first'});
+  const b = task('CONFLICT',2,{blocker:'host unavailable',needs:'CPU capacity',owner:'second'});
+  const done = task('CONFLICT',3,{status:'done',blocker:'owner reports fixed',next:'verify evidence'});
+  const snapshot = {tasks:[a,b,done,task('DONE',4,{status:'done'})]};
+  const summary = model.blockerSummary(snapshot);
+  assert.deepEqual(summary.counts,{distinctBlockedTaskIds:1,rawBlockedRows:2,duplicateBlockedRows:1,anonymousBlockedRows:0});
+  assert.deepEqual(summary.repeatedIds[0].rows,[a,b,done]);
+  assert(summary.repeatedIds[0].conflictingFields.includes('status'));
+  assert(summary.repeatedIds[0].conflictingFields.includes('blocker'));
+  assert(summary.repeatedIds[0].conflictingFields.includes('owner'));
+  assert.deepEqual(summary.needsUser,[b,a]);
+  assert.equal(model.actor(snapshot,a)[0],'user');
+  const note = model.repeatedIdNotes(summary.repeatedIds).join('\n');
+  for (const text of ['AMBIGUOUS','denied automated review','host unavailable','owner reports fixed','status: "done"','verify evidence']) assert(note.includes(text),text);
+});
+
+test('dependency duplicates and status conflicts do not change blocked graph or all-cycle fallback', () => {
+  const root=task('ROOT',1), child=task('CHILD',2,{dependencies:['ROOT']});
+  const summary=model.blockerSummary({tasks:[root,{...root,line:3},child,{...child,line:4},{...root,status:'done',line:5}]});
+  assert.deepEqual(summary.counts,{distinctBlockedTaskIds:2,rawBlockedRows:4,duplicateBlockedRows:2,anonymousBlockedRows:0});
+  assert.equal(summary.roots.length,2);
+  assert.equal(summary.dependentCount,2);
+  assert.equal(summary.repeatedIds.length,2);
+  assert.deepEqual(model.dependencies({tasks:[root,child]},child),[root]);
+  const cycle={tasks:[task('A',1,{dependencies:['B']}),task('B',2,{dependencies:['A']}),task('A',3,{dependencies:['B']})]};
+  assert.equal(model.blockerSummary(cycle).roots.length,3);
+  assert.equal(model.blockerSummary(cycle).counts.distinctBlockedTaskIds,2);
+});
+
+test('a blocked/done ID remains blocked evidence and classification never grants editing or retry permission', () => {
+  const denied=task('REVIEW',1,{waitingOn:'automated review resolution',blocker:'automated review denied',editable:false,replyAllowed:false});
+  const agent=task('REVIEW',2,{waitingOn:'coordinator evidence review; no user decision',editable:false,replyAllowed:false});
+  const done=task('REVIEW',3,{status:'done',editable:false,replyAllowed:false});
+  const snapshot={tasks:[denied,agent,done],agents:[],terminals:[]};
+  const summary=model.blockerSummary(snapshot);
+  assert.deepEqual(summary.needsUser,[denied]);
+  assert.deepEqual(summary.agentResolvable,[agent]);
+  const onlyOneBlocked=model.blockerSummary({tasks:[denied,done]});
+  assert.deepEqual(onlyOneBlocked.counts,{distinctBlockedTaskIds:1,rawBlockedRows:1,duplicateBlockedRows:0,anonymousBlockedRows:0});
+  assert.deepEqual(onlyOneBlocked.repeatedIds[0].conflictingFields,['status','blocker','waitingOn']);
+  const ctx=require('./test-app-vm').browserApp(snapshot);
+  assert.equal(vm.runInContext('taskControls(state.tasks[0])',ctx),'');
+  assert.equal(vm.runInContext('taskControls(state.tasks[1])',ctx),'');
+  for(const row of snapshot.tasks) {
+    assert.equal(row.editable,false);
+    assert.equal(row.replyAllowed,false);
+  }
+  assert.match(model.repeatedIdNotes(summary.repeatedIds)[0],/automated review denied/);
+});
+
+test('browser, CommonJS, dashboard heading and Telegram share counts and conflict evidence', () => {
+  const snapshot={tasks:[task('DUP',1,{title:'<script>bad</script>',blocker:'automated review denied'}),
+    task('DUP',2,{status:'done',blocker:'different reason'}),task('DUP',3,{blocker:'third reason'}),
+    task(undefined,4),task('',5),task('DEPENDENT',6,{dependencies:['DUP']})],agents:[],terminals:[],approvals:{items:[]}};
+  const before=JSON.stringify(snapshot);
+  const {browserApp}=require('./test-app-vm');
+  const ctx=browserApp(snapshot);
+  const summary=model.blockerSummary(snapshot);
+  assert.equal(JSON.stringify(ctx.BlockerModel.blockerSummary(snapshot)),JSON.stringify(summary));
+  const heading='2 distinct blocked task IDs · 5 blocked rows · 1 duplicate-ID blocked rows · 2 anonymous blocked rows (counted separately)';
+  assert.equal(model.countSummaryText(summary.counts),heading);
+  const html=vm.runInContext('blockersView()',ctx);
+  const text=require('./telegram-blockers').blockersText(snapshot);
+  for(const output of [html,text]) {
+    assert(output.includes(heading));
+    assert(output.includes('AMBIGUOUS'));
+    assert(output.includes('different reason'));
+    assert(output.includes('third reason'));
+    assert(output.includes('No dashboard override.'));
+    assert(output.includes('not current eligibility'));
+  }
+  assert(!html.includes('<script>bad</script>'));
+  assert(html.includes('&lt;script&gt;bad&lt;/script&gt;'));
+  assert(text.includes('status: "done"'));
+  // Even a filtered dashboard heading describes the whole snapshot; rows are
+  // explicitly labelled filtered. Conflicts never disappear behind a search.
+  vm.runInContext('query = "no-fixture-matches-this-query"',ctx);
+  const filtered=vm.runInContext('blockersView()',ctx);
+  assert(filtered.includes(heading));
+  assert(filtered.includes('different reason'));
+  assert.equal(JSON.stringify(snapshot),before);
 });
 
 test('user vs agent split uses recorded fields only and is shared by web and Telegram', () => {

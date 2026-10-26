@@ -1,0 +1,10 @@
+'use strict';
+const fs=require('node:fs'),crypto=require('node:crypto'),assert=require('node:assert/strict'),vm=require('node:vm');
+const path=require('node:path').resolve(process.argv[2]);
+const repo=require('node:path').resolve(__dirname,'../../..');
+const model=require(repo+'/ops/blocker-model'),{blockersText}=require(repo+'/ops/telegram-blockers'),{browserApp}=require(repo+'/ops/test-app-vm');
+const bytes=fs.readFileSync(path),snapshot=JSON.parse(bytes),summary=model.blockerSummary(snapshot),heading=model.countSummaryText(summary.counts);
+assert.equal(summary.counts.distinctBlockedTaskIds,77);assert.equal(summary.counts.rawBlockedRows,91);assert.equal(summary.counts.duplicateBlockedRows,14);assert.equal(summary.counts.anonymousBlockedRows,0);
+const before=JSON.stringify(snapshot),ctx=browserApp(snapshot),html=vm.runInContext('blockersView()',ctx),text=blockersText(snapshot);
+assert(html.includes(heading));assert(text.startsWith(heading));assert.equal(JSON.stringify(ctx.BlockerModel.blockerSummary(snapshot)),JSON.stringify(summary));assert.equal(JSON.stringify(snapshot),before);assert(bytes.equals(fs.readFileSync(path)));
+console.log(JSON.stringify({snapshotSha256:crypto.createHash('sha256').update(bytes).digest('hex'),counts:summary.counts,heading,primaryBlockerRows:summary.roots.length,dependentRows:summary.dependentCount,repeatedIds:summary.repeatedIds.length,ambiguousIds:summary.repeatedIds.filter(g=>g.conflictingFields.length).length,statusConflictIds:summary.repeatedIds.filter(g=>g.conflictingFields.includes('status')).length,dashboardTelegramParity:'PASS',snapshotUnchanged:true,privateSnapshotOrTaskTextRetained:false},null,2));

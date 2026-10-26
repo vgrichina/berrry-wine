@@ -1,0 +1,41 @@
+{
+  "label": "publication",
+  "owned": 1117331,
+  "sessionWalGrowth": 82400,
+  "projected": 62914560,
+  "reserve": 8388608,
+  "hostFree": 4196573184,
+  "hostAfterGrowth": 4134775955,
+  "memoryAvailable": 4285956096,
+  "memoryRequired": 1538134016,
+  "aggregateClientBytes": 732827648,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 19468288
+    },
+    {
+      "pid": 752162,
+      "rss": 412221440
+    },
+    {
+      "pid": 857107,
+      "rss": 17313792
+    },
+    {
+      "pid": 1789179,
+      "rss": 51798016
+    },
+    {
+      "pid": 2893103,
+      "rss": 207192064
+    },
+    {
+      "pid": 2893287,
+      "rss": 24834048
+    }
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mount": "Not applicable: no guest/runtime/mount invocation authorized",
+  "passGate": true
+}

@@ -1,0 +1,18 @@
+✔ dependency identities are exact, blocked-only, and self excluded (1.704115ms)
+✔ review blockers sort last, capacity classification and unsent approval order match web (0.299001ms)
+✔ all-cycle fallback and filtered roots preserve dashboard behavior (3.858234ms)
+✔ browser and CommonJS expose identical model and HTML loads it first (1.654622ms)
+✔ exact duplicate records count once by ID; anonymous records stay separate without mutation (0.42686ms)
+✔ conflicting blocked and nonblocked rows expose statuses, reasons and ownership without selecting a winner (0.225573ms)
+✔ dependency duplicates and status conflicts do not change blocked graph or all-cycle fallback (0.278933ms)
+✔ a blocked/done ID remains blocked evidence and classification never grants editing or retry permission (4.079579ms)
+✔ browser, CommonJS, dashboard heading and Telegram share counts and conflict evidence (2.876242ms)
+✔ user vs agent split uses recorded fields only and is shared by web and Telegram (2.287368ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 64.362731

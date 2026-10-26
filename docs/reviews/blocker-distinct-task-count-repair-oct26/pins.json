@@ -1,0 +1,8 @@
+{
+  "ops/blocker-model.js": "d776bdc8de503b04cd1e322d9d2ee30b8e94c679011d87b8393c148bcb3495b0",
+  "ops/blocker-model.test.js": "a1c7d248e6aa325b2e74de3a131c0658886bad05f53d296901023b4967a3e72c",
+  "ops/telegram-blockers.js": "d95518d621615c6bb8a670be263f272a9bc606994ea8ad800b0a586d2aef9494",
+  "ops/app.js": "171c865fd1ed12c752abed78651c86d2e278b475060ecc3b935e986ded387b9f",
+  "ops/index.html": "5c0596f511433e056c7ce5f05b6119c17cc936ebdc0d85a906835af572a64ac6",
+  "ops/test-app-vm.js": "ce4a2fa889472a8e10a75301e344ca671258ab5cf3030ce277aeec1a5d88a512"
+}

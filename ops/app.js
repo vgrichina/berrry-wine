@@ -253,10 +253,12 @@ function blockerRows(tasks) {
   }).join('') || empty('No matching blockers.');
 }
 function blockersView() {
-  const {blocked,approvals}=BlockerModel.blockerSummary(state);
+  const {blocked,approvals,counts,repeatedIds}=BlockerModel.blockerSummary(state);
   const relevant=blocked.filter(t=>matches(t)||blocked.some(c=>matches(c)&&blockerDependencies(c).some(d=>d.id===t.id)));
   const roots=BlockerModel.primaryRoots(state,relevant),{user,agent}=BlockerModel.split(state,roots);
-  return title('Blockers',`${approvals.length} live approval${approvals.length===1?'':'s'} · ${user.length} need${user.length===1?'s':''} your input · ${agent.length} agent-resolvable · ${relevant.length-roots.length} dependent task${relevant.length-roots.length===1?'':'s'}`) +
+  return title('Blockers',BlockerModel.countSummaryText(counts)) +
+    `<p class="source-note">${approvals.length} live approvals · ${user.length} need your input · ${agent.length} agent-resolvable · ${relevant.length-roots.length} dependent rows (filtered row classifications; not current eligibility).</p>`+
+    (repeatedIds.length?section('Repeated task IDs / recorded ambiguity')+BlockerModel.repeatedIdNotes(repeatedIds).map(note=>`<pre class="source-note">${escape(note)}</pre>`).join(''):'')+
     section('Needs your input')+(approvals.length?`<div class="blocker-list">${approvals.map(p=>`<article class="blocker panel blocker-action"><div class="blocker-heading"><strong>${escape(p.reason||'Command approval needed')}</strong>${badge('Live approval','warn')}</div><p class="sub">${escape(p.label)} · waiting ${age(p.firstSeenAt)} · checked against the live terminal</p><button data-approval="${escape(p.id)}">Review command →</button></article>`).join('')}</div>`:'<p class="sub">No live command approvals.</p>')+
     (user.length?`<div class="blocker-list">${blockerRows(user)}</div>`:'<p class="sub">No blocked task records a request for your input.</p>')+
     section('Agent-resolvable')+`<p class="source-note">Classified from recorded waitingOn, needs and dependencies (shared with Telegram /blockers); a task that records nothing stays with its owner.</p><div class="blocker-list">${blockerRows(agent)}</div>`;

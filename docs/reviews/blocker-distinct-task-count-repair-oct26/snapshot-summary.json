@@ -1,0 +1,18 @@
+{
+  "snapshotSha256": "2956d87a3e730bb3c94dce672fff4846f230b1d2a4524ee3baf1eb5619709ac2",
+  "counts": {
+    "distinctBlockedTaskIds": 77,
+    "rawBlockedRows": 91,
+    "duplicateBlockedRows": 14,
+    "anonymousBlockedRows": 0
+  },
+  "heading": "77 distinct blocked task IDs · 91 blocked rows · 14 duplicate-ID blocked rows · 0 anonymous blocked rows (counted separately)",
+  "primaryBlockerRows": 89,
+  "dependentRows": 2,
+  "repeatedIds": 15,
+  "ambiguousIds": 2,
+  "statusConflictIds": 1,
+  "dashboardTelegramParity": "PASS",
+  "snapshotUnchanged": true,
+  "privateSnapshotOrTaskTextRetained": false
+}
