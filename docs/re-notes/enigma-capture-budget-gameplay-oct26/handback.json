@@ -1,0 +1,29 @@
+{
+  "publication": {
+    "commit": "4f12a9c60c74d641dd97dd0c3f6a56268ac42161",
+    "branch": "task/enigma-capture-budget-gameplay-oct26",
+    "remoteRef": "4f12a9c60c74d641dd97dd0c3f6a56268ac42161\trefs/heads/task/enigma-capture-budget-gameplay-oct26",
+    "normalTrustedPush": true,
+    "gitPeakRSS": 21716992,
+    "parentDATA": [
+      -1,
+      -1
+    ],
+    "parentAS": [
+      -1,
+      -1
+    ],
+    "gitChildDATA": 536870912
+  },
+  "archiveOriginalBytesVerified": true,
+  "priorReceiptUnchanged": true,
+  "ownedGuestLive": [],
+  "ownedWatchersStopped": [],
+  "shutdownWatchArmed": false,
+  "box": "bx_eugbptb7",
+  "state": "RUNNING last API verified",
+  "expiry": "2026-10-26T22:23:15.028Z",
+  "shutdownOwner": "coordinator",
+  "noFurtherAttempt": true,
+  "watchCorrection": "PID3103171 existed at guest launch and ownership capture, absent at21:37:40 final check. Worker never signaled/cancelled/replaced watch; coordinator must verify shutdown coverage21:45UTC."
+}
