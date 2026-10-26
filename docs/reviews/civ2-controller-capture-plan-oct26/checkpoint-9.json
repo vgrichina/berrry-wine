@@ -1,0 +1,13 @@
+{
+  "group": 9,
+  "name": "no input without current matching pixels or frozen zero; no serial overlap",
+  "hashes": {
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+    "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+    "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+    "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+  },
+  "passed": true,
+  "syntheticOnly": true,
+  "remaining": "unexecuted subsequent groups and publication; gameplay productionUI/quit unverified"
+}

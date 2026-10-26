@@ -1,0 +1,241 @@
+{
+  "immutablePredecessor": "9c0e73f7e0c79c75e87e610c9f8f91fdd4704373",
+  "pinnedControllerSHA256": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea",
+  "unchangedGuestRunner": {
+    "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+  },
+  "startup": {
+    "command": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=64",
+      "-e",
+      "console.log(JSON.stringify({node:process.execPath,version:process.version,flags:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),env:process.env}))"
+    ],
+    "environment": {
+      "PATH": "/usr/local/bin:/usr/bin:/bin",
+      "HOME": "/home/user",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC",
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+    },
+    "gitDataLimit": null,
+    "physicalLimit": 134217728,
+    "cpuLimit": 90,
+    "wallLimit": 120,
+    "fileLimit": 25165824,
+    "outputLimit": 2097152,
+    "excerptLimit": 8192,
+    "peakAggregateRSS": 61943808,
+    "peakAggregateCPU": 0.07,
+    "wallSeconds": 0.07842020294629037,
+    "outputBytes": 2000,
+    "exitCode": 0,
+    "stopReason": null,
+    "output": "{\"node\":\"/home/user/.nvm/versions/node/v24.18.1/bin/node\",\"version\":\"v24.18.1\",\"flags\":[\"--max-old-space-size=64\",\"-e\",\"console.log(JSON.stringify({node:process.execPath,version:process.version,flags:process.execArgv,limits:require(\\\"fs\\\").readFileSync(\\\"/proc/self/limits\\\",\\\"utf8\\\"),env:process.env}))\"],\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              90                   90                   seconds   \\nMax file size             25165824             25165824             bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             31546                31546                processes \\nMax open files            1048576              1048576              files     \\nMax locked memory         1040887808           1040887808           bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       31546                31546                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\",\"env\":{\"PATH\":\"/usr/local/bin:/usr/bin:/bin\",\"HOME\":\"/home/user\",\"LANG\":\"C.UTF-8\",\"TZ\":\"UTC\",\"NODE_PATH\":\"/tmp/wa-local-runtime-deps/node_modules\",\"GIT_SSH_COMMAND\":\"ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes\"}}\n"
+  },
+  "behavioralAcceptance": {
+    "command": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=64",
+      "test/test-civ2-capture-plan.js"
+    ],
+    "environment": {
+      "PATH": "/usr/local/bin:/usr/bin:/bin",
+      "HOME": "/home/user",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC",
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+    },
+    "outerPoolPid": 3242169,
+    "outerPoolIncluded": true,
+    "gitDataLimit": null,
+    "physicalLimit": 134217728,
+    "cpuLimit": 90,
+    "wallLimit": 120,
+    "fileLimit": 25165824,
+    "outputLimit": 2097152,
+    "excerptLimit": 8192,
+    "peakAggregateRSS": 100368384,
+    "peakAggregateCPU": 0.16999999999999998,
+    "wallSeconds": 0.26824421086348593,
+    "outputBytes": 1894,
+    "exitCode": 0,
+    "stopReason": null,
+    "output": "PASS production guard rejects unchanged 20-image allocation before launch or first step\n{\"captures\":20,\"lastCapture\":\"rome-city-screen.png\",\"error\":\"capture cap\"}\nPASS byte-exact original main reproduces twentieth tutorial capture exhaustion\nPASS actual predecessor setup wiring retains all sixteen pixel checks and serial zero ownership\nPASS explicit sufficient plan preserves acceptance/tutorial/production/confirmation and counters\nPASS extra tutorial needs explicit additional route/count/byte allocation; unknown dialog cannot confirm\nPASS failed capture and uncertain/failed ACK retain charges and prohibit replay\nPASS deadline reserve refuses setup overrun and impossible cutoff before any request\nPASS count/byte saturation rejects preflight; failed output keeps conservative allocation\nPASS no input without current matching pixels or frozen zero; no serial overlap\nPASS a fresh controller cannot reset an existing task ledger or replay its control stream\n{\"passed\":10,\"checks\":[\"production guard rejects unchanged 20-image allocation before launch or first step\",\"byte-exact original main reproduces twentieth tutorial capture exhaustion\",\"actual predecessor setup wiring retains all sixteen pixel checks and serial zero ownership\",\"explicit sufficient plan preserves acceptance/tutorial/production/confirmation and counters\",\"extra tutorial needs explicit additional route/count/byte allocation; unknown dialog cannot confirm\",\"failed capture and uncertain/failed ACK retain charges and prohibit replay\",\"deadline reserve refuses setup overrun and impossible cutoff before any request\",\"count/byte saturation rejects preflight; failed output keeps conservative allocation\",\"no input without current matching pixels or frozen zero; no serial overlap\",\"a fresh controller cannot reset an existing task ledger or replay its control stream\"],\"syntheticOnly\":true,\"guestExecution\":false}\n"
+  },
+  "guardOmissionControl": {
+    "command": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=64",
+      "test/test-civ2-capture-plan.js",
+      "--through=1",
+      "--omit-planning-guard"
+    ],
+    "environment": {
+      "PATH": "/usr/local/bin:/usr/bin:/bin",
+      "HOME": "/home/user",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC",
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+    },
+    "gitDataLimit": null,
+    "physicalLimit": 134217728,
+    "cpuLimit": 90,
+    "wallLimit": 120,
+    "fileLimit": 25165824,
+    "outputLimit": 2097152,
+    "excerptLimit": 8192,
+    "peakAggregateRSS": 44302336,
+    "peakAggregateCPU": 0.05,
+    "wallSeconds": 0.037700308952480555,
+    "outputBytes": 412,
+    "exitCode": 1,
+    "stopReason": null,
+    "output": "AssertionError [ERR_ASSERTION]: Missing expected rejection.\n    at async /tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/test/test-civ2-capture-plan.js:80:5\n    at async test (/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/test/test-civ2-capture-plan.js:44:3)\n    at async /tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/test/test-civ2-capture-plan.js:78:3\n"
+  },
+  "guardOmissionExpectedFailure": true,
+  "guestExecuted": false,
+  "noAssignedBox": true,
+  "remainingGameplayGates": [
+    "personally inspected production city screen",
+    "normal guest quit/Exit0"
+  ],
+  "incidents": [
+    "initial Git init supervisor accounting raced an ephemeral config.lock; owned measurement corrected to tolerate disappearance; no persistent board watcher left",
+    "initial sufficient-plan fixture incorrectly matched the common synthetic image for intro; corrected fixture identity",
+    "capture retained-byte accounting corrected to include rejected oversized output; all nine affected behavioral groups passed afterward",
+    "After adding CLI preflight, mutation-selector uniqueness found two admit calls and rejected before behavioral control; selector corrected to exact production start, then intended Missing expected rejection observed. Original failed selector receipt retained task-locally.",
+    "Initial physical sampling included Python supervisor/children but omitted outer pool process. Final unchanged ten-group suite sampled outer pool too: peak100368384B within128MiB. Limits/inherited Node configuration unchanged."
+  ],
+  "resourceAdmission": {
+    "at": "2026-10-26T22:27:11.781060+00:00",
+    "accounting": {
+      "entries": {
+        "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26": 4550656,
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-controller-acceptance-capture-reserve-repair-oct26": 184320,
+        "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T22-19-45-01a17a4c-5674-7081-97e7-40d3eef7b42e.jsonl": 733184
+      },
+      "positiveWALGrowthOnce": {
+        "/home/user/.codex/memories_1.sqlite-wal": 0,
+        "/home/user/.codex/logs_2.sqlite-wal": 0,
+        "/home/user/.codex/queue_1.sqlite-wal": 0,
+        "/home/user/.codex/goals_1.sqlite-wal": 0,
+        "/home/user/.codex/state_5.sqlite-wal": 0,
+        "/home/user/.codex/thread_history_1.sqlite-wal": 0
+      },
+      "measuredBytes": 5468160,
+      "futureBytes": 25165824,
+      "reserveBytes": 8388608,
+      "sourceGitOutputPublicationBudgetBytes": 8388608,
+      "projectedBytes": 47411200,
+      "allocationBytes": 50331648
+    },
+    "memAvailable": 3467038720,
+    "requiredMemAvailable": 1610612736,
+    "residentClients": [
+      {
+        "pid": 265632,
+        "rss": 18067456,
+        "argv": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop "
+      },
+      {
+        "pid": 752162,
+        "rss": 412327936,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise. "
+      },
+      {
+        "pid": 1789179,
+        "rss": 50302976,
+        "argv": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon "
+      },
+      {
+        "pid": 3225901,
+        "rss": 193490944,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/alien-render-wait-measured-client-accept-oct26/final.txt - "
+      },
+      {
+        "pid": 3226043,
+        "rss": 194510848,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/enigma-msg-boundary-measured-client-implementation-oct26/final.txt - "
+      },
+      {
+        "pid": 3226183,
+        "rss": 191971328,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/gl-transient-accounting-measured-client-repair-oct26/final.txt - "
+      },
+      {
+        "pid": 3228174,
+        "rss": 193126400,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/civ2-controller-acceptance-capture-reserve-repair-oct26/final.txt - "
+      },
+      {
+        "pid": 3236011,
+        "rss": 199450624,
+        "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/ricochet-detached-transport-cleanup-repair-oct26/final.txt - "
+      }
+    ],
+    "unlaunchedClients": 0,
+    "residentRSSAlreadyDeducted": true,
+    "guestReservationReleased": true,
+    "diskFree": 3480203264,
+    "remainingFleetGrowth": 447516672,
+    "projectedFree": 3032686592,
+    "diskFloor": 2982150144,
+    "admitted": true
+  },
+  "finalBoundaryAcceptance": {
+    "command": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "--max-old-space-size=64",
+      "test/test-civ2-capture-plan.js",
+      "--through=1"
+    ],
+    "environment": {
+      "PATH": "/usr/local/bin:/usr/bin:/bin",
+      "HOME": "/home/user",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC",
+      "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+      "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+    },
+    "gitDataLimit": null,
+    "physicalLimit": 134217728,
+    "cpuLimit": 90,
+    "wallLimit": 120,
+    "fileLimit": 25165824,
+    "outputLimit": 2097152,
+    "excerptLimit": 8192,
+    "peakAggregateRSS": 51904512,
+    "peakAggregateCPU": 0.06,
+    "wallSeconds": 0.03559235786087811,
+    "outputBytes": 241,
+    "exitCode": 0,
+    "stopReason": null,
+    "output": "PASS production guard rejects unchanged 20-image allocation before launch or first step\n{\"passed\":1,\"checks\":[\"production guard rejects unchanged 20-image allocation before launch or first step\"],\"syntheticOnly\":true,\"guestExecution\":false}\n"
+  },
+  "currentSourceHashes": {
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+    "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+    "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44"
+  },
+  "groupReuse": "Final ten-group suite passed exact current production and test source under complete physical supervision, including outer pool process. Earlier same-task accepted receipts and incidents retained.",
+  "standingInputs": {
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node": {
+      "bytes": 123656816,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "/tmp/wa-local-runtime-deps/node_modules/pngjs/package.json": {
+      "bytes": 1812,
+      "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+    },
+    "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/helpers/controller.js": {
+      "bytes": 6134,
+      "sha256": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  }
+}
