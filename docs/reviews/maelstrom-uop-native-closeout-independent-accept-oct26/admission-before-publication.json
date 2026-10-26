@@ -1,0 +1,29 @@
+{
+  "at": 1793003036.5888898,
+  "charges": {
+    "owned": 1863680,
+    "launcher": 233472,
+    "session": 802816,
+    "positiveDB": 483328,
+    "WALSHM": 28246016,
+    "futureCheckoutGitEvidencePublication": 8388608,
+    "futureSessionLauncherDB": 8388608,
+    "reserve": 8388608
+  },
+  "peak": 56795136,
+  "cap": 67108864,
+  "memAvailable": 3583397888,
+  "allocatedRAM": 1090519040,
+  "remainingFloor": 805306368,
+  "diskFree": 4242743296,
+  "growth": 58720256,
+  "diskFloor": 2982150144,
+  "passChecks": true,
+  "standingReadonlyDonorObjects": "excluded, links resolve to donor object bytes; never written",
+  "tools": {
+    "git": "/usr/bin/git",
+    "python3": "/usr/bin/python3",
+    "node": "/usr/local/bin/node",
+    "ssh": "/usr/bin/ssh"
+  }
+}

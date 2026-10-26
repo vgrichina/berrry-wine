@@ -1,0 +1,18 @@
+{
+  "candidate": "2531492fd4c99033e50fb36a0fd0d2df1292ee77",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+  "decision": "ACCEPT",
+  "completed": [
+    "oracle/source review",
+    "768 predicate controls",
+    "10 scalar mutants",
+    "exact 29+7 dependency receipts",
+    "original failure unchanged",
+    "report"
+  ],
+  "remaining": [
+    "task branch commit/push/exactremote"
+  ],
+  "remainingQualificationGate": "current-main closure qualification; authentic loader/_getptd/original invocation before original game, then gameplay separately"
+}

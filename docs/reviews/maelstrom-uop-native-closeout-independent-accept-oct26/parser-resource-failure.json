@@ -1,0 +1,9 @@
+{
+  "command": "node --max-old-space-size=16 exact canonical parser, RLIMIT_DATA=536870912",
+  "exit": -5,
+  "diagnostic": "Fatal process out of memory: Failed to reserve virtual memory for CodeRange",
+  "unchangedRetry": false,
+  "resolution": "Reuse unchanged exact configuration receipt expressly permitted by task; parser bytes and empty actual argv independently verified; no conditional runtime or mounts",
+  "receipt": "/tmp/maelstrom-uop-retained-native-closeout-oct26/repo/docs/reviews/maelstrom-uop-retained-native-closeout-oct26/configuration.json",
+  "receiptSHA256": "8dd47dcd62fb5fe11f4f2dd96bafe936978c1a0fbdc1e718380bcc3725343f26"
+}

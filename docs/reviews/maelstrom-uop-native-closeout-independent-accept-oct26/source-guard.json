@@ -1,0 +1,7 @@
+{
+  "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "path": "src/07d-uop-engine.wat",
+  "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+  "sourceContainsTierGuard": true,
+  "helperRequiresPin": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+}

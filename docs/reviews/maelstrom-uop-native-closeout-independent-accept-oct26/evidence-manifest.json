@@ -1,0 +1,108 @@
+{
+  "decision": "ACCEPT",
+  "candidate": "2531492fd4c99033e50fb36a0fd0d2df1292ee77",
+  "files": [
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/REPORT.md",
+      "bytes": 8302,
+      "sha256": "d9ecbdfd4d592444d3283fa3b510e7e09177419432ab770cc1f7cc27862262ea"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/admission-before-publication.json",
+      "bytes": 752,
+      "sha256": "a13e44ad9290ec54a024c1fd3851f5e1db3b6d19230229a332f305bd3f025c22"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/admission-precheckout.json",
+      "bytes": 744,
+      "sha256": "66fae8d8e4ce013454f64cb8ee5f5c1ce412ddfa3ca664c70e73e70a2a95d4e9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/admission-reuse.json",
+      "bytes": 752,
+      "sha256": "e12beeab802c24ad8daf8a134c85a3b23f381154ce9aef0b044e0556c8b3de56"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/admission-review.json",
+      "bytes": 749,
+      "sha256": "875581584925694d2e6273ed8864bdb6aec9b24b76828aabda391ee3c13e9a21"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/checkpoint.json",
+      "bytes": 676,
+      "sha256": "1bb2ddfab463f3400073bf549705dcec59566acafb61e102d9603dfcb9f7cee8"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/common.py",
+      "bytes": 2926,
+      "sha256": "f9fc2e4a0855a5dff48cbb239e585d42ffe2a43adb86349033d7505edd0886eb"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/configuration.json",
+      "bytes": 560,
+      "sha256": "669db4003ad59bfe65bfd8910c68edb709408da3937d214858c650584ce4bedb"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/fixture.diff",
+      "bytes": 2393,
+      "sha256": "0d5d6663b2b91a8377c712d0ac2a1e9efabf5208071ea69f7c8e31109835a1f1"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/launch.json",
+      "bytes": 650,
+      "sha256": "b7df469aec06b75006617c562c7481cda3f15630ffa8ffda7c6e6e55ec59df38"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/oracle-review.json",
+      "bytes": 1303,
+      "sha256": "3cb42d7309cfc4f7df9afa6b30b1818903966d261bf8148637f3f91c6d615cd6"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/parser-resource-failure.json",
+      "bytes": 649,
+      "sha256": "77f751a4bd3ba7ad3eacfa46e2bd1701e0b1ca99384c9c2c20d912b864677d37"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/publish.py",
+      "bytes": 4657,
+      "sha256": "de2434dfc57db76450f1438cb7d6b7dc7687efe6660d155b1e55421e74c93550"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/reuse-review.json",
+      "bytes": 26696,
+      "sha256": "d4b69d7a154f98cca4274ac1f43768f69ad247e105ebddc9fbf0184956bb9510"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/reuse.py",
+      "bytes": 657,
+      "sha256": "e455b070a0ca9d7ea562ac4c52b4e41952eb811a51fdf86587bc63dcc88384ec"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/review-harness-adjustments.json",
+      "bytes": 548,
+      "sha256": "447f6a41406e673f51d3a9ed00663a66322b341f981c6546ede69e38496d0879"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/review.py",
+      "bytes": 10518,
+      "sha256": "30c6e333b445c3b8f9be3d068efd6be29ef31d33b206c814f1776e7ed2835b79"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/setup.py",
+      "bytes": 3028,
+      "sha256": "c5ba2f91ddb516553b4cc5f12fb46d1066214e193013bdb6cceb7ba1a460df2e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-native-closeout-independent-accept-oct26/source-guard.json",
+      "bytes": 303,
+      "sha256": "b1e278ed46339bd73745237ce3c978eb3c33dba18d5f2503529b5bb5228aa8d9"
+    }
+  ],
+  "donorManifest": "/tmp/maelstrom-uop-retained-native-closeout-oct26/repo/docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-manifest.json",
+  "donorPackagingAudit": "prior root72 verified reused"
+}

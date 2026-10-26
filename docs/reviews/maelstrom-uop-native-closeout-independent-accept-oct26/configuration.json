@@ -1,0 +1,12 @@
+{
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "actualMountArgv": [],
+  "intendedFiles": [],
+  "parsed": {
+    "tree": [],
+    "mount": []
+  },
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "noRuntime": true,
+  "reusedExactReceipt": "/tmp/maelstrom-uop-retained-native-closeout-oct26/repo/docs/reviews/maelstrom-uop-retained-native-closeout-oct26/configuration.json"
+}

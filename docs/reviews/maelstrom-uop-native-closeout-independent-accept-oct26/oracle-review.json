@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "candidate": "2531492fd4c99033e50fb36a0fd0d2df1292ee77",
+  "integration": "e745cc29a1a3b859625aa0cd335abee0b185da71",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+  "retainedFixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+  "sourceOnlyChanges": [
+    "standing input path selection",
+    "wrong-select-return assertion reason/modes/comment"
+  ],
+  "orderedPredicateCases": 768,
+  "wrongReturnUOP1Reason": 3,
+  "wrongReturnUOP0Reason": 4,
+  "modeBitUOP1": 4,
+  "scalarAssertions": {
+    "status": 5,
+    "rejectReason": 3,
+    "rejectModes": 4,
+    "rejectExpectedRet": 8008546,
+    "rejectObservedRet": 8008610,
+    "rejectPhase": 3,
+    "rejectCompletions": 1,
+    "rejectFault": 0,
+    "rejectActive": 0,
+    "rejectCapped": 0
+  },
+  "rejectingSingleFieldControls": [
+    "status",
+    "rejectReason",
+    "rejectModes",
+    "rejectExpectedRet",
+    "rejectObservedRet",
+    "rejectPhase",
+    "rejectCompletions",
+    "rejectFault",
+    "rejectActive",
+    "rejectCapped"
+  ],
+  "terminalGuardAndImmutabilityReviewed": true,
+  "limitations": "offline source/model/assertion controls only, no native execution"
+}

@@ -1,0 +1,507 @@
+{
+  "status": "PASS",
+  "candidate": "2531492fd4c99033e50fb36a0fd0d2df1292ee77",
+  "integration": "e745cc29a1a3b859625aa0cd335abee0b185da71",
+  "sourceClosure": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceFiles": 140,
+  "overlays": [
+    {
+      "path": "src/09d-winsock.wat",
+      "originalSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+      "transformedSHA256": "bf86fc0933a73431a730c312fe03469259553b89e44209cf95cb8b2eb649dcea",
+      "compilerTextSHA256": "f20f40f3ce539508a4541ef55a07d6a9010f38421c3c7f55aa4c1169d32f5c44",
+      "bytes": 289141
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "originalSHA256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "transformedSHA256": "c4e008a70c51bdc3eedfbc0603ba13d2a43864c41f654143b0f05c684ffeca25",
+      "compilerTextSHA256": "055432dbab2d5a0034a0f6e373c83be7c2671a04bcf23f611baa4f8fe1d791ef",
+      "bytes": 114490
+    },
+    {
+      "path": "src/05-alu.wat",
+      "originalSHA256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "transformedSHA256": "817ee26a7dc9e2aa31c1e9fd39d0be551f1d994b6f69350166123717abc0eb16",
+      "compilerTextSHA256": "7aae276b8a240b883fea8d927478aefd0beb38d5e5e380669d327335860bafd0",
+      "bytes": 256844
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "originalSHA256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+      "transformedSHA256": "d723b875ddf3c42a670ddca5c9e78199c0b8aceced8ef739fee3e521cfd25db1",
+      "compilerTextSHA256": "332a2f3ed56cd8d316f115e750311c438625bae0c3c4ea6b204253bf6f2e4f9c",
+      "bytes": 103372
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "originalSHA256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+      "transformedSHA256": "eac412fabd0bf675db6c540fa03c7f3b1843b2ae31b932e2b1bdd2c2c6ad3ed5",
+      "compilerTextSHA256": "8ca0c10ec16538127f1b14f00c89cebeaf46cf47e47b4f753409b709ba14f751",
+      "bytes": 164636
+    },
+    {
+      "path": "src/07e-uop-compiler.wat",
+      "originalSHA256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+      "transformedSHA256": "a25bf4e68bf38faa5b425e33724f23d6e9747d585d03edb7006d7a746dc3dc62",
+      "compilerTextSHA256": "0b6800e1eb6122febbdf420d8d630ac73db601a566c6478a69e87c9b8a1b7cf4",
+      "bytes": 316165
+    }
+  ],
+  "modules": [
+    "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+    "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b"
+  ],
+  "rows": [
+    {
+      "case": "errno4-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 4,
+      "evidence": "retained-native-result-errno4-tail.json.gz",
+      "evidenceSHA256": "287284de427c8faf1dfa452e7262e3cb8d9332dd2a600c92f3df4eebd9b3275a"
+    },
+    {
+      "case": "errno0-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 4,
+      "evidence": "retained-native-result-errno0-tail.json.gz",
+      "evidenceSHA256": "da6be2679c04d33d334cbfa7d32556a4d16a4d614245bc4ff4233ccd8a4a6f4d"
+    },
+    {
+      "case": "errno37-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 4,
+      "evidence": "retained-native-result-errno37-tail.json.gz",
+      "evidenceSHA256": "345065a5754abbb57d54ac7a44ea4b30b0ef8be3ab437bc2fa2d4191487cd5fe"
+    },
+    {
+      "case": "switch-pending-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "retained-native-result-switch-pending-tail.json.gz",
+      "evidenceSHA256": "774c62b86062a24087208c5d24e27c0ea06fd7df8496ca4d4b61ed93d40b6012"
+    },
+    {
+      "case": "switch-complete-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "retained-native-result-switch-complete-tail.json.gz",
+      "evidenceSHA256": "3ff1dc21a164a73225c023db8bef9cace939ebf1a5cdb5e3205dbfd37d24c5ea"
+    },
+    {
+      "case": "switch-call-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "retained-native-result-switch-call-tail.json.gz",
+      "evidenceSHA256": "aa60508a1ef029c646f208fece04af7465728181184e37fb1cb3590687d8dd0c"
+    },
+    {
+      "case": "stale-start-tail",
+      "reused": true,
+      "fixtureSHA256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "retained-native-result-stale-start-tail.json.gz",
+      "evidenceSHA256": "0687914d7e50e656a9dfd69072e9221e2f3e1ef81456dd8a11e295eddad2fa30"
+    },
+    {
+      "case": "wrong-select-return-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-select-return-tail.json.gz",
+      "evidenceSHA256": "dbf4866fc9df42b3ecbb1d512a5cd9b34de6e6f018b8c25fa1e3b32f87176d3b"
+    },
+    {
+      "case": "wrong-native-target-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-native-target-tail.json.gz",
+      "evidenceSHA256": "4d21596449c4c95e14b38adae9324768d4be3448d67a753992db40703a951b5c"
+    },
+    {
+      "case": "wrong-ebp-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-ebp-tail.json.gz",
+      "evidenceSHA256": "08bb1a725ebaa34148548d5f4b9c3991f69ccb172879ea59e3bfee2cf13d21a0"
+    },
+    {
+      "case": "return-without-call-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-return-without-call-tail.json.gz",
+      "evidenceSHA256": "087870e3407b5c77c54e789f0d1e1959adfafb220d344e5c92230f06638acad8"
+    },
+    {
+      "case": "nested-call-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-nested-call-tail.json.gz",
+      "evidenceSHA256": "079202f8d7834aa7fb1a82de9f5adaa74dd95783e6c61c6638e627af803da000"
+    },
+    {
+      "case": "foreign-thread-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 2,
+      "evidence": "evidence-foreign-thread-tail.json.gz",
+      "evidenceSHA256": "eee39be61c8fc85decf494105f799e003d1ff23e738835d77e69d800cb1f03d0"
+    },
+    {
+      "case": "foreign-thread-ret-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 3,
+      "evidence": "evidence-foreign-thread-ret-tail.json.gz",
+      "evidenceSHA256": "9880d310f15403ee1bc95f2be591c5fa05440616e7693ae2728d934ce606b18a"
+    },
+    {
+      "case": "postframe-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-postframe-tail.json.gz",
+      "evidenceSHA256": "5a0108fe7929899da276acdf87d90a861a9a943e20c5d1b8f5507cf203c5a17d"
+    },
+    {
+      "case": "unsafe-errno-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-unsafe-errno-tail.json.gz",
+      "evidenceSHA256": "9d4b8ea60c2c7915d79bc67fef99b82395eccc124d28740a8b70851f4cec697d"
+    },
+    {
+      "case": "block-mode-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-block-mode-tail.json.gz",
+      "evidenceSHA256": "d77a256aee9ccede214b6665729bcb71cd56a4429261b9ed491b80e13478e444"
+    },
+    {
+      "case": "code16-mode-tail",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "captureStatus": 5,
+      "evidence": "evidence-code16-mode-tail.json.gz",
+      "evidenceSHA256": "f05fb2218a0a41593da45b2a719400b3891daea0cb34f3bf4c322a7532dde554"
+    },
+    {
+      "case": "errno4-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 4,
+      "evidence": "evidence-errno4-compat.json.gz",
+      "evidenceSHA256": "2cc6cfbc24cd03636c86bb7549643d4fb809714723dbf544329090610d8a0930"
+    },
+    {
+      "case": "errno0-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 4,
+      "evidence": "evidence-errno0-compat.json.gz",
+      "evidenceSHA256": "74c11f8539ea7dbebdcab26f214d3c79ee7be167a8b622247c5fa1166192e70a"
+    },
+    {
+      "case": "errno37-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 4,
+      "evidence": "evidence-errno37-compat.json.gz",
+      "evidenceSHA256": "473ad36afaff2d0d130bd57ec2e7f9373eae64081f467cae10539734a76c0c15"
+    },
+    {
+      "case": "switch-pending-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-switch-pending-compat.json.gz",
+      "evidenceSHA256": "22fa2f2b960bc666065085a2e15e52e44b34697c27b84c8e4fb9df01d73dd2f1"
+    },
+    {
+      "case": "switch-complete-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-switch-complete-compat.json.gz",
+      "evidenceSHA256": "94628217126c778fcb782fa0598c310c499d5d325cda56649190e01e89938b85"
+    },
+    {
+      "case": "switch-call-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-switch-call-compat.json.gz",
+      "evidenceSHA256": "2b23bf741499e3eb37cc05361720266d3353c9a34bb019582086e04f26349ea2"
+    },
+    {
+      "case": "stale-start-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-stale-start-compat.json.gz",
+      "evidenceSHA256": "123e53f4cb201930822ce9b5e846fef865d13bd83f38d4909f5cfe0f2ea5b9c9"
+    },
+    {
+      "case": "wrong-select-return-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-select-return-compat.json.gz",
+      "evidenceSHA256": "a9e451a00643352912e860214a3035f3819a346a5d3e26df87e2579d3437ea7d"
+    },
+    {
+      "case": "wrong-native-target-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-native-target-compat.json.gz",
+      "evidenceSHA256": "49bcebbfc807238fa8809bf325f2ada4e96cbdb04bb238f788d75cc1abd7fc0e"
+    },
+    {
+      "case": "wrong-ebp-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-wrong-ebp-compat.json.gz",
+      "evidenceSHA256": "a25792b84b7aaa0da0201ec1333e71c62b7e29b603074fcf9d9309bbc8fabb14"
+    },
+    {
+      "case": "return-without-call-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-return-without-call-compat.json.gz",
+      "evidenceSHA256": "54ad47ce6c9775e2e35c3bc5e3635bf1a410ac03d4df67cd746c76a515f1e722"
+    },
+    {
+      "case": "nested-call-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-nested-call-compat.json.gz",
+      "evidenceSHA256": "e20397ee2b64de2e70498abe01c6742368bf532262b8b2b07bd5bc86a8bab6e3"
+    },
+    {
+      "case": "foreign-thread-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 2,
+      "evidence": "evidence-foreign-thread-compat.json.gz",
+      "evidenceSHA256": "c2ff150f8fe1683050b954c6ef16af649f6636d98f19635f576d7e8fecc423b4"
+    },
+    {
+      "case": "foreign-thread-ret-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 3,
+      "evidence": "evidence-foreign-thread-ret-compat.json.gz",
+      "evidenceSHA256": "b0c8946bebd104db00582d007901a82ff64054a56af4c9c38be5029d838c847f"
+    },
+    {
+      "case": "postframe-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-postframe-compat.json.gz",
+      "evidenceSHA256": "1fbd06663d0fd327a9779e0343a6afeca82b568d76253d5cfdea796965f9d597"
+    },
+    {
+      "case": "unsafe-errno-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-unsafe-errno-compat.json.gz",
+      "evidenceSHA256": "11751ad8d2d58655482850a8767cd7c084d3d59b541d8e1ceae34a42fc57d89b"
+    },
+    {
+      "case": "block-mode-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-block-mode-compat.json.gz",
+      "evidenceSHA256": "04a58f76d344ff476e1ed212a35fc2730b71d5afc83f76c5163cbefd925cc2c6"
+    },
+    {
+      "case": "code16-mode-compat",
+      "reused": false,
+      "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+      "moduleSHA256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "captureStatus": 5,
+      "evidence": "evidence-code16-mode-compat.json.gz",
+      "evidenceSHA256": "a672c3f0f0adf96ae7cc12545403c572a108d4d5a8aa0de3786ead240c0c6ebf"
+    }
+  ],
+  "reusedCases": [
+    "errno0",
+    "errno37",
+    "errno4",
+    "stale-start",
+    "switch-call",
+    "switch-complete",
+    "switch-pending"
+  ],
+  "new": 29,
+  "reused": 7,
+  "exactReuseDependencies": [
+    "helper/integration",
+    "both module output seals",
+    "same standing static-abi/module paths",
+    "verified authentic anchor bytes",
+    "identical shared fixture code outside unreachable wrong-return branch",
+    "seven retained payloads match manifest and all original checkpoint fields"
+  ],
+  "originalFailures": [
+    {
+      "path": "original-failure-wrong-select-return-tail.stdout",
+      "sha256": "430d78769262a5c82afcc4a91412ed8dab880bb1bf74cfa20c5c0811bc0a755f",
+      "bytes": 151,
+      "unchangedOriginal": true
+    },
+    {
+      "path": "original-failure-wrong-select-return-tail.stderr",
+      "sha256": "5e29b7d2f7f4db6a9b19a49153e40993bb6f95ed4e98cb9b4de5c5b81a98ffa3",
+      "bytes": 1016,
+      "unchangedOriginal": true
+    },
+    {
+      "path": "original-incident-first-native.txt",
+      "sha256": "b8fee438ab4ebfc2d641718d00042b3270611dc492ec2d3059fda2a352a1b191",
+      "bytes": 992
+    },
+    {
+      "path": "original-incident-prefix.txt",
+      "sha256": "b52714b990a8b578c5533bbd820ef5c46295c6cfcbe218f004d3787f9a313ea0",
+      "bytes": 1007
+    },
+    {
+      "path": "original-incident-no-debug.txt",
+      "sha256": "6429e7a4cabcad066b7e29d0501763447c56fab67e8ed04772dc1437b494d819",
+      "bytes": 719
+    }
+  ],
+  "changedPaths": [
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/REPORT.md",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/account.py",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/admission-precheckout.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/box-state.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/checkpoint-native.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/configuration.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/diff-check-raw-evidence.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-block-mode-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-block-mode-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-code16-mode-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-code16-mode-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno0-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno37-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno4-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-ret-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-ret-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-manifest.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-nested-call-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-nested-call-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-postframe-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-postframe-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-return-without-call-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-return-without-call-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-stale-start-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-call-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-complete-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-pending-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-unsafe-errno-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-unsafe-errno-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-ebp-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-ebp-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-native-target-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-native-target-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-select-return-compat.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-select-return-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/initial-root-ref-digest.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/local-group-resources.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-build-inputs.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-build-outputs.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-canonical-build.stdout",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-checkpoint-build.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-checkpoint-native.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-execution-canonical-build.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-failure-wrong-select-return-tail.stderr",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-failure-wrong-select-return-tail.stdout",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-first-native.txt",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-no-debug.txt",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-prefix.txt",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-pinned-inputs.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-provenance.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-source-preflight.stdout",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/pins.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/reconcile.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/recovery.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remaining.py",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remote-final.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remote-run.py",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/resource-before-publication.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-fixture.cjs",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno0-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno37-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno4-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-stale-start-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-call-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-complete-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-pending-tail.json.gz",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/runtime.json",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/stage.py",
+    "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/validation.json",
+    "test/maelstrom-diagnostic-canonical-native.cjs",
+    "tools/maelstrom-diagnostic-canonical-build.cjs"
+  ],
+  "rootPackagingVerificationReused": true,
+  "claims": "historical synthetic fixture only; OFF/ON is observer OFF/ON, UOP remains enabled in both",
+  "noRuntime": true
+}

@@ -1,0 +1,14 @@
+{
+  "incidents": [
+    {
+      "finding": "Extra guessed local native-result .gz path absent",
+      "resolution": "Use supplied committed compressed payload seals and equality of every original checkpoint field; do not acquire/repeat runtime"
+    },
+    {
+      "finding": "Candidate versus integration also adds offline canonical build driver",
+      "resolution": "Explicit tools/maelstrom-diagnostic-canonical-build.cjs allowance; production src and helper unchanged"
+    }
+  ],
+  "finishedOracleGroupReused": true,
+  "noNativeRetries": true
+}

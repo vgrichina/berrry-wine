@@ -1,0 +1,23 @@
+--- retained fixture
++++ candidate fixture
+@@ -1,7 +1,7 @@
+ 'use strict';
+ // Real production dispatch and x86 CALL/RET. Controlled fixtures, never original-game proof.
+ const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
+-const O=path.resolve(__dirname,'../../ops'),H=O,hook=require('../tools/maelstrom-native-errno-latch.cjs');
++const O=path.resolve(__dirname,'../../ops'),H=process.env.MNE_STANDING||O,hook=require('../tools/maelstrom-native-errno-latch.cjs');
+ const select=require('../tools/maelstrom-select-completion-hook.cjs');
+ const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+ const scenario=process.argv[2]||'errno4',compat=process.argv.includes('--compat');
+@@ -146,7 +146,10 @@
+   e.set_eip(f.tail);e.set_eax(f.errnoPtr-8);e.set_ebp(1);e.set_esp(post-4);words(post-4,[f.pc+4]);
+   run('unowned-return');assert.equal(e.mne_status(),5);return {states,starting};
+  }
+- if(enabled&&scenario==='wrong-select-return'){const d=diag();assert.equal(d.status,5);assert.equal(d.rejectReason,4);assert.equal(d.rejectModes,0);assert.equal(d.rejectExpectedRet,HEAD);assert.equal(d.rejectObservedRet,ret);assert.equal(d.rejectPhase,3);assert.equal(d.rejectCompletions,1);assert.equal(d.rejectFault,0);assert.equal(d.rejectActive,0);assert.equal(d.rejectCapped,0);const frozen=diag();e.mne_start();assert.deepEqual(diag(),frozen,'rejection diagnostics immutable');return {states,starting};}
++ // storage().completionChecks[2] preserves predicate-3 ABI for every
++ // ineligible UOP completion, including a wrong select return. UOP=1
++ // contributes bit 4; only an otherwise-valid completion passes this gate.
++ if(enabled&&scenario==='wrong-select-return'){const d=diag();assert.equal(d.status,5);assert.equal(d.rejectReason,3);assert.equal(d.rejectModes,4);assert.equal(d.rejectExpectedRet,HEAD);assert.equal(d.rejectObservedRet,ret);assert.equal(d.rejectPhase,3);assert.equal(d.rejectCompletions,1);assert.equal(d.rejectFault,0);assert.equal(d.rejectActive,0);assert.equal(d.rejectCapped,0);const frozen=diag();e.mne_start();assert.deepEqual(diag(),frozen,'rejection diagnostics immutable');return {states,starting};}
+  if(enabled&&['foreign-thread','foreign-regbank'].includes(scenario)){
+   const before=diag();assert.equal(before.status,2);
+   if(scenario==='foreign-thread')e.set_current_thread_id(2);
