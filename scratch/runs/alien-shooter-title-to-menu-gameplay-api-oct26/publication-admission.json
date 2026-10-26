@@ -1,0 +1,10 @@
+{
+  "memAvailable": 3499909120,
+  "required": 3221225472,
+  "memBasis": "resident clients already reflected by MemAvailable; no prospective new client; host768MiB Civ768 GL1024 otherhelpers3x64 reservations retained",
+  "footprintReceipt": "fresh-full-accounting.json",
+  "projectedFree": 3551469568,
+  "hostFloor": 2982150144,
+  "gitDataChildOnly": 536870912,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

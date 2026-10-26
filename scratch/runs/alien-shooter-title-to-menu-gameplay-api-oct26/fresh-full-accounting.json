@@ -1,0 +1,15 @@
+{
+  "charges": {
+    "remote": 54063104,
+    "local": 8450048,
+    "evidence": 2248704,
+    "launcher": 290816,
+    "session": 856064,
+    "positiveWALOnce": 5394432,
+    "futureGitPublicationSessionEvents": 41943040,
+    "reserve": 8388608
+  },
+  "total": 121634816,
+  "allocation": 268435456,
+  "projectedHostFree": 3552624640
+}

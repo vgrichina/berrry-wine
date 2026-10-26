@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xel3guow0vpn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:48:27.490Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-26T21:48:27.416Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 91123, \"sha256\": \"49de8fa18c90165c13e1e40caee5356347854853f9b65555b9f0621f2cdbaf25\", \"terminal\": {\"reason\": \"guest-wall-or-cutoff\", \"returncode\": 0, \"elapsed\": 90.08860248499968, \"peakTreeRSS\": 548212736, \"peakTreeCPU\": 68.21, \"outputBytes\": 1002905, \"identities\": {\"52184\": {\"ppid\": 52183, \"state\": \"S\", \"start\": \"297354\", \"cpu\": 68.21, \"rss\": 536895488}}, \"remainingOwnedLive\": [], \"box\": \"bx_a9dwsx2x\", \"boxState\": \"RUNNING\", \"shutdownOwner\": \"coordinator\"}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

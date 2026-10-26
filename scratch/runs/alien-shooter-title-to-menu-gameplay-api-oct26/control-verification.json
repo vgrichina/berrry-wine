@@ -1,0 +1,47 @@
+{
+  "acknowledgedRequests": 29,
+  "acknowledgedBatches": 7060,
+  "lastACK": {
+    "batch": 7060,
+    "ran": 256,
+    "steps": 256,
+    "frozen": true
+  },
+  "zeroCreditSnapshots": 32,
+  "unacknowledgedFinalRequest": {
+    "action": "step",
+    "n": 256
+  },
+  "unacknowledgedNeverReplayed": true,
+  "initialRefusedSnapshotWasNotStep": true,
+  "lastFrozenSnapshot": {
+    "batch": 7060,
+    "eip": "0x7504870",
+    "quit": false,
+    "yieldReason": 16,
+    "focus": "0x10019",
+    "mainHwnd": "0x10019",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 5,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10019",
+        "x": 0,
+        "y": 0,
+        "w": 640,
+        "h": 480,
+        "visible": true,
+        "isChild": false,
+        "title": "AlienShooter"
+      }
+    ]
+  }
+}

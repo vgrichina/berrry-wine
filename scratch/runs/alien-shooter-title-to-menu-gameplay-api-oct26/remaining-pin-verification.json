@@ -1,0 +1,35 @@
+{
+  "expected": {
+    "runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+    "runner/src/api_table.json": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "runner/lib/host-import-sigs.generated.json": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+    "runner/lib/d3d-render-worker.js": "f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52"
+  },
+  "actual": {
+    "current.wasm": {
+      "bytes": 1880280,
+      "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+    },
+    "runner/test/run.js": {
+      "bytes": 687226,
+      "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+    },
+    "runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe": {
+      "bytes": 712724,
+      "sha256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446"
+    },
+    "runner/src/api_table.json": {
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    },
+    "runner/lib/host-import-sigs.generated.json": {
+      "bytes": 39713,
+      "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069"
+    },
+    "runner/lib/d3d-render-worker.js": {
+      "bytes": 27983,
+      "sha256": "f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52"
+    }
+  },
+  "passGate": true
+}

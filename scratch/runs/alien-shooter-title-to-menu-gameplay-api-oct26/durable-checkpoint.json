@@ -1,0 +1,52 @@
+{
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "wasmSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "historicalTask": "alien-shooter-pinned-startup-gameplay-api-oct26",
+  "historicalGuestSeconds": 67.65362128,
+  "historicalUnusedSeconds": 22.34637872,
+  "newAttemptCount": 1,
+  "terminal": {
+    "reason": "guest-wall-or-cutoff",
+    "returncode": 0,
+    "elapsed": 90.08860248499968,
+    "peakTreeRSS": 548212736,
+    "peakTreeCPU": 68.21,
+    "outputBytes": 1002905,
+    "identities": {
+      "52184": {
+        "ppid": 52183,
+        "state": "S",
+        "start": "297354",
+        "cpu": 68.21,
+        "rss": 536895488
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_a9dwsx2x",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "acknowledgedBatches": 7060,
+  "lastVisualBatch": 4500,
+  "menuVerified": false,
+  "gameplayVerified": false,
+  "authenticCrashObserved": false,
+  "capturesInspected": [
+    "frame1.png configuration dialog",
+    "frame2.png title"
+  ],
+  "thirdCaptureNotReached": true,
+  "remainingGate": "One-attempt authorization exhausted. Coordinator must decide any further runtime or investigation; this worker stops.",
+  "incidents": [
+    "Initial local RAM wrapper double-reserved resident clients; rejected before runtime, corrected within task without changing limits.",
+    "Snapshot connected before server readiness: connection refused, no step submitted. Actual listening log observed before next snapshot.",
+    "Final 256-batch request disconnected at guest wall stop, never replayed.",
+    "Supervisor elapsed90.0886s includes sampling/cleanup overshoot of nominal90s; guest log89.795s. No strict sub90 supervisor pass claimed.",
+    "Donor failure filename overwritten by final disconnect; authentic initial receipt recovered from local session.",
+    "Initial combined local documentation/helper reads exceeded8192-byte excerpt ceiling and were tool-truncated. Original session retains these overlong reads; subsequent runtime API responses stayed<=8192.",
+    "Imported donor Git helper retained a default prior-repo path. Initial init/config commands targeted prior repository, then remote-add refused existing remote before staging. Prior HEAD689dd905 and clean status verified unchanged. Resolved by explicit own repo argument.",
+    "Git diff check rejected authentic raw log trailing spaces. Original complete log preserved byte-exact in diagnostics.tar.gz; removed redundant plaintext publication copy instead of editing original evidence.",
+    "One Git diagnostic read also exceeded excerpt ceiling; preserved with other local output incidents."
+  ],
+  "errorLines": []
+}

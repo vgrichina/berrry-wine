@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_vyjcgmsxi3kx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:47:02.648Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-26T21:47:02.613Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "PE loaded. Entry: 0x0046dc85\n[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as \"<ord>\". test/binaries/dlls is gitignored: copy it into a fresh worktree.\n[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as \"<ord>\". test/binaries/dlls is gitignored: copy it into a fresh worktree.\n[files] policy lazy: 431 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges\n[control] listening on http://127.0.0.1:18129/ctl\n\nTERMINAL False\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_v18ibebrefnl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:46:18.919Z",
+  "launcherFailed": false,
+  "noticedMs": 19,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 19,
+  "startedAt": "2026-10-26T21:46:18.718Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"exec\\\":\\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\",\\\"args\\\":[\\\"--max-old-space-size=2048\\\",\\\"--require=/tmp/alien-shooter-title-to-menu-gameplay-api-oct26/capture-wrapper.cjs\\\",\\\"-e\\\",\\\"console.log(JSON.stringify({exec:process.execPath,args:process.execArgv,limits:require('fs').readFileSync('/proc/self/limits','utf8')}))\\\"],\\\"limits\\\":\\\"Limit                     Soft Limit           Hard Limit           Units     \\\\nMax cpu time              90                   90                   seconds   \\\\nMax file size             25165824             25165824             bytes     \\\\nMax data size             unlimited            unlimited            bytes     \\\\nMax stack size            8388608              unlimited            bytes     \\\\nMax core file size        0                    unlimited            bytes     \\\\nMax resident set          unlimited            unlimited            bytes     \\\\nMax processes             31546                31546                processes \\\\nMax open files            524288               524288               files     \\\\nMax locked memory         8388608              8388608              bytes     \\\\nMax address space         unlimited            unlimited            bytes     \\\\nMax file locks            unlimited            unlimited            locks     \\\\nMax pending signals       31546                31546                signals   \\\\nMax msgqueue size         819200               819200               bytes     \\\\nMax nice priority         0                    0                    \\\\nMax realtime priority     0                    0                    \\\\nMax realtime timeout      unlimited            unlimited            us        \\\\n\\\"}\\n\", \"stderr\": \"\", \"memAvailable\": 7411048448, \"free\": 48922640384, \"identities\": {\"current.wasm\": {\"bytes\": 1880280, \"sha256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\"}, \"runner/test/run.js\": {\"bytes\": 687226, \"sha256\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\"}, \"runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe\": {\"bytes\": 712724, \"sha256\": \"aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446\"}, \"runner/src/api_table.json\": {\"bytes\": 723350, \"sha256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\"}, \"runner/lib/host-import-sigs.generated.json\": {\"bytes\": 39713, \"sha256\": \"7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069\"}, \"runner/lib/d3d-render-worker.js\": {\"bytes\": 27983, \"sha256\": \"f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52\"}}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_g42jggb7tt59",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:46:40.417Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T21:46:40.380Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"roots\": {\"/tmp/alien-shooter-current-gameplay-api-oct26\": 50712576, \"/tmp/alien-shooter-retained-gameplay-api-oct26\": 40960, \"/tmp/alien-shooter-pinned-startup-gameplay-api-oct26\": 2088960, \"/tmp/alien-shooter-required-exe-gameplay-api-oct26\": 40960, \"/tmp/alien-shooter-title-to-menu-gameplay-api-oct26\": 20480}, \"memAvailable\": 7416205312, \"free\": 48922640384}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,1 @@
+{"reason": "guest-wall-or-cutoff", "returncode": 0, "elapsed": 90.08860248499968, "peakTreeRSS": 548212736, "peakTreeCPU": 68.21, "outputBytes": 1002905, "identities": {"52184": {"ppid": 52183, "state": "S", "start": "297354", "cpu": 68.21, "rss": 536895488}}, "remainingOwnedLive": [], "box": "bx_a9dwsx2x", "boxState": "RUNNING", "shutdownOwner": "coordinator"}

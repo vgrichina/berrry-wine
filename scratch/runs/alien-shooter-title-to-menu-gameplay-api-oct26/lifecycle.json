@@ -1,0 +1,13 @@
+{
+  "box": "bx_a9dwsx2x",
+  "state": "RUNNING",
+  "apiState": "idle",
+  "expiry": "2026-10-26T22:31:02.925Z",
+  "guestCutoff": "2026-10-26T21:50:00Z",
+  "handback": "2026-10-26T21:55:00Z",
+  "coordinatorShutdown": "2026-10-26T22:00:00Z",
+  "watchPID": 3114875,
+  "watchLive": true,
+  "shutdownOwner": "coordinator",
+  "ownedLive": []
+}

@@ -1,0 +1,128 @@
+{"at": 1793051211.4970493, "request": {"action": "snapshot"}}
+{"at": 1793051222.841493, "request": {"action": "snapshot"}}
+{"at": 1793051222.8677528, "response": {"ok": true, "value": {"batch": 0, "eip": "0x46dc85", "quit": false, "yieldReason": 0, "focus": "0x0", "mainHwnd": "0x0", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": []}}}
+{"at": 1793051222.867831, "request": {"action": "step", "n": 50}}
+{"at": 1793051222.9016955, "response": {"ok": true, "value": {"batch": 50, "ran": 50, "steps": 50, "frozen": true}}}
+{"at": 1793051222.9017894, "request": {"action": "snapshot"}}
+{"at": 1793051222.902847, "response": {"ok": true, "value": {"batch": 50, "eip": "0x7500490", "quit": false, "yieldReason": 0, "focus": "0x10002", "mainHwnd": "0x0", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10001", "x": 0, "y": 0, "w": 383, "h": 293, "visible": true, "isChild": false, "title": "AlienShooter"}, {"hwnd": "0x10006", "x": 40, "y": 40, "w": 277, "h": 86, "visible": false, "isChild": false, "title": ""}, {"hwnd": "0x10009", "x": 40, "y": 40, "w": 277, "h": 99, "visible": false, "isChild": false, "title": ""}, {"hwnd": "0x10018", "x": 40, "y": 40, "w": 93, "h": 47, "visible": false, "isChild": false, "title": ""}]}}}
+{"at": 1793051222.9029388, "request": {"action": "png", "path": "/tmp/alien-shooter-title-to-menu-gameplay-api-oct26/frame1.png"}}
+{"at": 1793051222.9514308, "response": {"ok": true, "value": {"batch": 50, "frozen": true, "path": "/tmp/alien-shooter-title-to-menu-gameplay-api-oct26/frame1.png", "bytes": 7436}}}
+{"at": 1793051229.5206082, "request": {"action": "snapshot"}}
+{"at": 1793051229.5324566, "response": {"ok": true, "value": {"batch": 50, "eip": "0x7500490", "quit": false, "yieldReason": 0, "focus": "0x10002", "mainHwnd": "0x0", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10001", "x": 0, "y": 0, "w": 383, "h": 293, "visible": true, "isChild": false, "title": "AlienShooter"}, {"hwnd": "0x10006", "x": 40, "y": 40, "w": 277, "h": 86, "visible": false, "isChild": false, "title": ""}, {"hwnd": "0x10009", "x": 40, "y": 40, "w": 277, "h": 99, "visible": false, "isChild": false, "title": ""}, {"hwnd": "0x10018", "x": 40, "y": 40, "w": 93, "h": 47, "visible": false, "isChild": false, "title": ""}]}}}
+{"at": 1793051229.532507, "request": {"action": "step", "n": 256}}
+{"at": 1793051231.8927743, "response": {"ok": true, "value": {"batch": 306, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051231.8928401, "request": {"action": "snapshot"}}
+{"at": 1793051231.897467, "response": {"ok": true, "value": {"batch": 306, "eip": "0x4255db", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051231.897539, "request": {"action": "step", "n": 256}}
+{"at": 1793051233.8768206, "response": {"ok": true, "value": {"batch": 562, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051233.8770041, "request": {"action": "snapshot"}}
+{"at": 1793051233.8824687, "response": {"ok": true, "value": {"batch": 562, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051233.882665, "request": {"action": "step", "n": 256}}
+{"at": 1793051235.795724, "response": {"ok": true, "value": {"batch": 818, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051235.7958627, "request": {"action": "snapshot"}}
+{"at": 1793051235.7970302, "response": {"ok": true, "value": {"batch": 818, "eip": "0x425412", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051235.7970998, "request": {"action": "step", "n": 256}}
+{"at": 1793051237.7545886, "response": {"ok": true, "value": {"batch": 1074, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051237.7546568, "request": {"action": "snapshot"}}
+{"at": 1793051237.7556775, "response": {"ok": true, "value": {"batch": 1074, "eip": "0x42c570", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051237.7557263, "request": {"action": "step", "n": 256}}
+{"at": 1793051239.563336, "response": {"ok": true, "value": {"batch": 1330, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051239.5633907, "request": {"action": "snapshot"}}
+{"at": 1793051239.564262, "response": {"ok": true, "value": {"batch": 1330, "eip": "0x428db0", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051239.5643046, "request": {"action": "step", "n": 256}}
+{"at": 1793051241.3651175, "response": {"ok": true, "value": {"batch": 1586, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051241.3652275, "request": {"action": "snapshot"}}
+{"at": 1793051241.366401, "response": {"ok": true, "value": {"batch": 1586, "eip": "0x42bd0c", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051241.3664916, "request": {"action": "step", "n": 256}}
+{"at": 1793051243.1850977, "response": {"ok": true, "value": {"batch": 1842, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051243.1882496, "request": {"action": "snapshot"}}
+{"at": 1793051243.1898322, "response": {"ok": true, "value": {"batch": 1842, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051243.1899266, "request": {"action": "step", "n": 256}}
+{"at": 1793051245.3920615, "response": {"ok": true, "value": {"batch": 2098, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051245.3921447, "request": {"action": "snapshot"}}
+{"at": 1793051245.3942065, "response": {"ok": true, "value": {"batch": 2098, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051245.3942835, "request": {"action": "step", "n": 256}}
+{"at": 1793051246.6958745, "response": {"ok": true, "value": {"batch": 2354, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051246.6959884, "request": {"action": "snapshot"}}
+{"at": 1793051246.6971822, "response": {"ok": true, "value": {"batch": 2354, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051246.697231, "request": {"action": "step", "n": 256}}
+{"at": 1793051247.8840723, "response": {"ok": true, "value": {"batch": 2610, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051247.8841374, "request": {"action": "snapshot"}}
+{"at": 1793051247.8871346, "response": {"ok": true, "value": {"batch": 2610, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051247.8872402, "request": {"action": "step", "n": 256}}
+{"at": 1793051249.1567285, "response": {"ok": true, "value": {"batch": 2866, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051249.1568136, "request": {"action": "snapshot"}}
+{"at": 1793051249.1604605, "response": {"ok": true, "value": {"batch": 2866, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051249.1605496, "request": {"action": "step", "n": 256}}
+{"at": 1793051251.1707494, "response": {"ok": true, "value": {"batch": 3122, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051251.1710553, "request": {"action": "snapshot"}}
+{"at": 1793051251.1727376, "response": {"ok": true, "value": {"batch": 3122, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051251.1736615, "request": {"action": "step", "n": 256}}
+{"at": 1793051252.3707006, "response": {"ok": true, "value": {"batch": 3378, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051252.3707666, "request": {"action": "snapshot"}}
+{"at": 1793051252.37194, "response": {"ok": true, "value": {"batch": 3378, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051252.3719895, "request": {"action": "step", "n": 256}}
+{"at": 1793051253.2318373, "response": {"ok": true, "value": {"batch": 3634, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051253.2318964, "request": {"action": "snapshot"}}
+{"at": 1793051253.2334137, "response": {"ok": true, "value": {"batch": 3634, "eip": "0x7503118", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051253.2335184, "request": {"action": "step", "n": 256}}
+{"at": 1793051254.10886, "response": {"ok": true, "value": {"batch": 3890, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051254.109, "request": {"action": "snapshot"}}
+{"at": 1793051254.1105752, "response": {"ok": true, "value": {"batch": 3890, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051254.1106715, "request": {"action": "step", "n": 256}}
+{"at": 1793051254.9757159, "response": {"ok": true, "value": {"batch": 4146, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051254.9757783, "request": {"action": "snapshot"}}
+{"at": 1793051254.9781547, "response": {"ok": true, "value": {"batch": 4146, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051254.9782197, "request": {"action": "step", "n": 256}}
+{"at": 1793051255.869379, "response": {"ok": true, "value": {"batch": 4402, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051255.869446, "request": {"action": "snapshot"}}
+{"at": 1793051255.8719547, "response": {"ok": true, "value": {"batch": 4402, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051255.8720164, "request": {"action": "step", "n": 98}}
+{"at": 1793051256.2103927, "response": {"ok": true, "value": {"batch": 4500, "ran": 98, "steps": 98, "frozen": true}}}
+{"at": 1793051256.2104614, "request": {"action": "snapshot"}}
+{"at": 1793051256.2143805, "response": {"ok": true, "value": {"batch": 4500, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051256.2144866, "request": {"action": "png", "path": "/tmp/alien-shooter-title-to-menu-gameplay-api-oct26/frame2.png"}}
+{"at": 1793051256.2591176, "response": {"ok": true, "value": {"batch": 4500, "frozen": true, "path": "/tmp/alien-shooter-title-to-menu-gameplay-api-oct26/frame2.png", "bytes": 20036}}}
+{"at": 1793051267.6936283, "request": {"action": "snapshot"}}
+{"at": 1793051267.705375, "response": {"ok": true, "value": {"batch": 4500, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051267.7054212, "request": {"action": "step", "n": 256}}
+{"at": 1793051269.1670866, "response": {"ok": true, "value": {"batch": 4756, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051269.1671407, "request": {"action": "snapshot"}}
+{"at": 1793051269.1683054, "response": {"ok": true, "value": {"batch": 4756, "eip": "0x41fbdc", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051269.168345, "request": {"action": "step", "n": 256}}
+{"at": 1793051270.5067236, "response": {"ok": true, "value": {"batch": 5012, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051270.5067787, "request": {"action": "snapshot"}}
+{"at": 1793051270.5075862, "response": {"ok": true, "value": {"batch": 5012, "eip": "0x41fbcf", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051270.5076406, "request": {"action": "step", "n": 256}}
+{"at": 1793051271.8449426, "response": {"ok": true, "value": {"batch": 5268, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051271.8449924, "request": {"action": "snapshot"}}
+{"at": 1793051271.845884, "response": {"ok": true, "value": {"batch": 5268, "eip": "0x41fba2", "quit": false, "yieldReason": 0, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051271.8459373, "request": {"action": "step", "n": 256}}
+{"at": 1793051273.9062579, "response": {"ok": true, "value": {"batch": 5524, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051273.9063466, "request": {"action": "snapshot"}}
+{"at": 1793051273.910606, "response": {"ok": true, "value": {"batch": 5524, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051273.910735, "request": {"action": "step", "n": 256}}
+{"at": 1793051278.6644533, "response": {"ok": true, "value": {"batch": 5780, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051278.6645272, "request": {"action": "snapshot"}}
+{"at": 1793051278.6691825, "response": {"ok": true, "value": {"batch": 5780, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051278.6692932, "request": {"action": "step", "n": 256}}
+{"at": 1793051283.0061457, "response": {"ok": true, "value": {"batch": 6036, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051283.006232, "request": {"action": "snapshot"}}
+{"at": 1793051283.0076492, "response": {"ok": true, "value": {"batch": 6036, "eip": "0x7503118", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051283.0077002, "request": {"action": "step", "n": 256}}
+{"at": 1793051287.3131425, "response": {"ok": true, "value": {"batch": 6292, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051287.3132205, "request": {"action": "snapshot"}}
+{"at": 1793051287.3145096, "response": {"ok": true, "value": {"batch": 6292, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051287.3145523, "request": {"action": "step", "n": 256}}
+{"at": 1793051291.602711, "response": {"ok": true, "value": {"batch": 6548, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051291.602775, "request": {"action": "snapshot"}}
+{"at": 1793051291.605101, "response": {"ok": true, "value": {"batch": 6548, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051291.608086, "request": {"action": "step", "n": 256}}
+{"at": 1793051296.1715791, "response": {"ok": true, "value": {"batch": 6804, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051296.171669, "request": {"action": "snapshot"}}
+{"at": 1793051296.1730015, "response": {"ok": true, "value": {"batch": 6804, "eip": "0x7504868", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051296.1730573, "request": {"action": "step", "n": 256}}
+{"at": 1793051300.6644192, "response": {"ok": true, "value": {"batch": 7060, "ran": 256, "steps": 256, "frozen": true}}}
+{"at": 1793051300.6644855, "request": {"action": "snapshot"}}
+{"at": 1793051300.6657922, "response": {"ok": true, "value": {"batch": 7060, "eip": "0x7504870", "quit": false, "yieldReason": 16, "focus": "0x10019", "mainHwnd": "0x10019", "screen": {"w": 640, "h": 480}, "frozen": {"frozen": true, "tickMs": 5, "credits": 0, "recording": false}, "windows": [{"hwnd": "0x10019", "x": 0, "y": 0, "w": 640, "h": 480, "visible": true, "isChild": false, "title": "AlienShooter"}]}}}
+{"at": 1793051300.6658459, "request": {"action": "step", "n": 256}}
