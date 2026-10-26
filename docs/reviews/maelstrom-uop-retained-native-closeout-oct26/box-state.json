@@ -1,0 +1,10 @@
+{
+  "id": "bx_h44cmz3t",
+  "state": "idle",
+  "health": "ok",
+  "running": true,
+  "expiry": "2026-10-26T09:48:43.654Z",
+  "source": "boat --json info bx_h44cmz3t",
+  "shutdownOwner": "coordinator",
+  "shutdown": "2026-10-26T09:20:00Z"
+}

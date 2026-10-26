@@ -1,0 +1,73 @@
+{
+  "status": "PASS",
+  "integration": "e745cc29a1a3b859625aa0cd335abee0b185da71",
+  "sourceClosure": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "hookSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "fixtureSHA256": "5def610968956407357ca367146bf3e0bdb4e05a8c93a51e4d9332f1e8d9710f",
+  "overlays": [
+    {
+      "path": "src/09d-winsock.wat",
+      "originalSHA256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab",
+      "transformedSHA256": "bf86fc0933a73431a730c312fe03469259553b89e44209cf95cb8b2eb649dcea",
+      "compilerTextSHA256": "f20f40f3ce539508a4541ef55a07d6a9010f38421c3c7f55aa4c1169d32f5c44",
+      "bytes": 289141
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "originalSHA256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00",
+      "transformedSHA256": "c4e008a70c51bdc3eedfbc0603ba13d2a43864c41f654143b0f05c684ffeca25",
+      "compilerTextSHA256": "055432dbab2d5a0034a0f6e373c83be7c2671a04bcf23f611baa4f8fe1d791ef",
+      "bytes": 114490
+    },
+    {
+      "path": "src/05-alu.wat",
+      "originalSHA256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6",
+      "transformedSHA256": "817ee26a7dc9e2aa31c1e9fd39d0be551f1d994b6f69350166123717abc0eb16",
+      "compilerTextSHA256": "7aae276b8a240b883fea8d927478aefd0beb38d5e5e380669d327335860bafd0",
+      "bytes": 256844
+    },
+    {
+      "path": "src/06b-core-handlers.wat",
+      "originalSHA256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+      "transformedSHA256": "d723b875ddf3c42a670ddca5c9e78199c0b8aceced8ef739fee3e521cfd25db1",
+      "compilerTextSHA256": "332a2f3ed56cd8d316f115e750311c438625bae0c3c4ea6b204253bf6f2e4f9c",
+      "bytes": 103372
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "originalSHA256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+      "transformedSHA256": "eac412fabd0bf675db6c540fa03c7f3b1843b2ae31b932e2b1bdd2c2c6ad3ed5",
+      "compilerTextSHA256": "8ca0c10ec16538127f1b14f00c89cebeaf46cf47e47b4f753409b709ba14f751",
+      "bytes": 164636
+    },
+    {
+      "path": "src/07e-uop-compiler.wat",
+      "originalSHA256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+      "transformedSHA256": "a25bf4e68bf38faa5b425e33724f23d6e9747d585d03edb7006d7a746dc3dc62",
+      "compilerTextSHA256": "0b6800e1eb6122febbdf420d8d630ac73db601a566c6478a69e87c9b8a1b7cf4",
+      "bytes": 316165
+    }
+  ],
+  "modules": [
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.wasm",
+      "bytes": 1883609,
+      "sha256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "tailCalls": true,
+      "layout": "9a3bc9149d58209c"
+    },
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.compat.wasm",
+      "bytes": 1886182,
+      "sha256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "tailCalls": false,
+      "layout": "9a3bc9149d58209c"
+    }
+  ],
+  "remaining": [
+    "native errno4 beforeCMP",
+    "OFF/ON equivalence",
+    "warmup compiler exclusion and switching/stale/unrelated/repeated controls"
+  ],
+  "scope": "exact sealed historical closure; not current production"
+}

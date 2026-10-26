@@ -1,0 +1,5 @@
+{"beginCompile":{"tailCalls":true,"entry":"src/main.watx"}}
+{"compiled":{"bytes":1883609,"sha256":"026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441","layout":"9a3bc9149d58209c","tailCalls":true}}
+{"beginCompile":{"tailCalls":false,"entry":"src/main.watx"}}
+{"compiled":{"bytes":1886182,"sha256":"d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b","layout":"9a3bc9149d58209c","tailCalls":false}}
+{"status":"PASS","compiled":2,"nativeInstances":0}

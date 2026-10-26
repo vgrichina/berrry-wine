@@ -1,0 +1,24 @@
+{
+  "at": 1793002258.639019,
+  "charges": {
+    "owned": 2347008,
+    "launcher": 557056,
+    "session": 749568,
+    "positiveDB": 0,
+    "WALSHM": 28246016,
+    "remoteIncrementalBudget": 2097152,
+    "futurePublication": 3145728,
+    "futureSessionLauncherDB": 6291456,
+    "reserve": 8388608
+  },
+  "peak": 51822592,
+  "cap": 67108864,
+  "memAvailable": 3492204544,
+  "client": 536870912,
+  "heap": 16777216,
+  "remainingFloor": 805306368,
+  "diskFree": 4263591936,
+  "diskFloor": 2982150144,
+  "standing": "old local repo/ops and retained remote canonical source/binaries used in place, not copied; identities in reconcile and pinned checkpoints",
+  "passChecks": true
+}

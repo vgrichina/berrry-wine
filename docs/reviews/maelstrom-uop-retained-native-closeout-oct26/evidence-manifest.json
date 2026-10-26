@@ -1,0 +1,365 @@
+{
+  "status": "PASS",
+  "files": [
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/account.py",
+      "bytes": 1637,
+      "sha256": "c8e97756156961968bd6692f710a67e3dfd21c4b7ce81fe9ab17868397153045"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/admission-precheckout.json",
+      "bytes": 298,
+      "sha256": "81a09744045e41977beb565e690113fb5d20763c001a5b890af5a5281d8f1c2d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/checkpoint-native.json",
+      "bytes": 65852,
+      "sha256": "a83e981df4d3b84350e47f147356a6a2073e6a5c4f4d3e1ddc51d0164a307883"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/configuration.json",
+      "bytes": 808,
+      "sha256": "8dd47dcd62fb5fe11f4f2dd96bafe936978c1a0fbdc1e718380bcc3725343f26"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-block-mode-compat.json.gz",
+      "bytes": 3068,
+      "sha256": "04a58f76d344ff476e1ed212a35fc2730b71d5afc83f76c5163cbefd925cc2c6"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-block-mode-tail.json.gz",
+      "bytes": 3064,
+      "sha256": "d77a256aee9ccede214b6665729bcb71cd56a4429261b9ed491b80e13478e444"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-code16-mode-compat.json.gz",
+      "bytes": 3069,
+      "sha256": "a672c3f0f0adf96ae7cc12545403c572a108d4d5a8aa0de3786ead240c0c6ebf"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-code16-mode-tail.json.gz",
+      "bytes": 3065,
+      "sha256": "f05fb2218a0a41593da45b2a719400b3891daea0cb34f3bf4c322a7532dde554"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno0-compat.json.gz",
+      "bytes": 3692,
+      "sha256": "74c11f8539ea7dbebdcab26f214d3c79ee7be167a8b622247c5fa1166192e70a"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno37-compat.json.gz",
+      "bytes": 3705,
+      "sha256": "473ad36afaff2d0d130bd57ec2e7f9373eae64081f467cae10539734a76c0c15"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-errno4-compat.json.gz",
+      "bytes": 3695,
+      "sha256": "2cc6cfbc24cd03636c86bb7549643d4fb809714723dbf544329090610d8a0930"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-compat.json.gz",
+      "bytes": 3419,
+      "sha256": "c2ff150f8fe1683050b954c6ef16af649f6636d98f19635f576d7e8fecc423b4"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-ret-compat.json.gz",
+      "bytes": 3640,
+      "sha256": "b0c8946bebd104db00582d007901a82ff64054a56af4c9c38be5029d838c847f"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-ret-tail.json.gz",
+      "bytes": 3633,
+      "sha256": "9880d310f15403ee1bc95f2be591c5fa05440616e7693ae2728d934ce606b18a"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-foreign-thread-tail.json.gz",
+      "bytes": 3418,
+      "sha256": "eee39be61c8fc85decf494105f799e003d1ff23e738835d77e69d800cb1f03d0"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-nested-call-compat.json.gz",
+      "bytes": 3537,
+      "sha256": "e20397ee2b64de2e70498abe01c6742368bf532262b8b2b07bd5bc86a8bab6e3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-nested-call-tail.json.gz",
+      "bytes": 3534,
+      "sha256": "079202f8d7834aa7fb1a82de9f5adaa74dd95783e6c61c6638e627af803da000"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-postframe-compat.json.gz",
+      "bytes": 3632,
+      "sha256": "1fbd06663d0fd327a9779e0343a6afeca82b568d76253d5cfdea796965f9d597"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-postframe-tail.json.gz",
+      "bytes": 3633,
+      "sha256": "5a0108fe7929899da276acdf87d90a861a9a943e20c5d1b8f5507cf203c5a17d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-return-without-call-compat.json.gz",
+      "bytes": 3417,
+      "sha256": "54ad47ce6c9775e2e35c3bc5e3635bf1a410ac03d4df67cd746c76a515f1e722"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-return-without-call-tail.json.gz",
+      "bytes": 3420,
+      "sha256": "087870e3407b5c77c54e789f0d1e1959adfafb220d344e5c92230f06638acad8"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-stale-start-compat.json.gz",
+      "bytes": 3070,
+      "sha256": "123e53f4cb201930822ce9b5e846fef865d13bd83f38d4909f5cfe0f2ea5b9c9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-call-compat.json.gz",
+      "bytes": 3450,
+      "sha256": "2b23bf741499e3eb37cc05361720266d3353c9a34bb019582086e04f26349ea2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-complete-compat.json.gz",
+      "bytes": 3293,
+      "sha256": "94628217126c778fcb782fa0598c310c499d5d325cda56649190e01e89938b85"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-switch-pending-compat.json.gz",
+      "bytes": 3073,
+      "sha256": "22fa2f2b960bc666065085a2e15e52e44b34697c27b84c8e4fb9df01d73dd2f1"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-unsafe-errno-compat.json.gz",
+      "bytes": 3652,
+      "sha256": "11751ad8d2d58655482850a8767cd7c084d3d59b541d8e1ceae34a42fc57d89b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-unsafe-errno-tail.json.gz",
+      "bytes": 3650,
+      "sha256": "9d4b8ea60c2c7915d79bc67fef99b82395eccc124d28740a8b70851f4cec697d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-ebp-compat.json.gz",
+      "bytes": 3422,
+      "sha256": "a25792b84b7aaa0da0201ec1333e71c62b7e29b603074fcf9d9309bbc8fabb14"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-ebp-tail.json.gz",
+      "bytes": 3418,
+      "sha256": "08bb1a725ebaa34148548d5f4b9c3991f69ccb172879ea59e3bfee2cf13d21a0"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-native-target-compat.json.gz",
+      "bytes": 3422,
+      "sha256": "49bcebbfc807238fa8809bf325f2ada4e96cbdb04bb238f788d75cc1abd7fc0e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-native-target-tail.json.gz",
+      "bytes": 3416,
+      "sha256": "4d21596449c4c95e14b38adae9324768d4be3448d67a753992db40703a951b5c"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-select-return-compat.json.gz",
+      "bytes": 3317,
+      "sha256": "a9e451a00643352912e860214a3035f3819a346a5d3e26df87e2579d3437ea7d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/evidence-wrong-select-return-tail.json.gz",
+      "bytes": 3315,
+      "sha256": "dbf4866fc9df42b3ecbb1d512a5cd9b34de6e6f018b8c25fa1e3b32f87176d3b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/initial-root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-build-inputs.json",
+      "bytes": 74369,
+      "sha256": "61d6041c329e0ae6ff6e9e020db1e014aee7adc5d6b60dbbe953de8ffebb93be"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-build-outputs.json",
+      "bytes": 113263,
+      "sha256": "00bf0a25e477bb4b5c7bbfeceb15b0d3d4e39a6916c59db13bf0f121f6b70743"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-canonical-build.stdout",
+      "bytes": 477,
+      "sha256": "20842da613dae651e4ea966f8d6fcf30eb81419112ebc2628afed81d092769f5"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-checkpoint-build.json",
+      "bytes": 3295,
+      "sha256": "dee5cc7fdc05d4764d0c7681f84d0625d1c85874d5028181fe3a81251dae921e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-checkpoint-native.json",
+      "bytes": 13551,
+      "sha256": "ea6eee6703b7953927e71cf678ba9c4c95649116628b81d54766f03b4ce9ce2d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-execution-canonical-build.json",
+      "bytes": 745,
+      "sha256": "915784ab7a84a4f1c3859357646490ef0d07ccfe7dfd3ff9c2780f34206f1c0e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-failure-wrong-select-return-tail.stderr",
+      "bytes": 1016,
+      "sha256": "5e29b7d2f7f4db6a9b19a49153e40993bb6f95ed4e98cb9b4de5c5b81a98ffa3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-failure-wrong-select-return-tail.stdout",
+      "bytes": 151,
+      "sha256": "430d78769262a5c82afcc4a91412ed8dab880bb1bf74cfa20c5c0811bc0a755f"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-first-native.txt",
+      "bytes": 992,
+      "sha256": "b8fee438ab4ebfc2d641718d00042b3270611dc492ec2d3059fda2a352a1b191"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-no-debug.txt",
+      "bytes": 719,
+      "sha256": "6429e7a4cabcad066b7e29d0501763447c56fab67e8ed04772dc1437b494d819"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-incident-prefix.txt",
+      "bytes": 1007,
+      "sha256": "b52714b990a8b578c5533bbd820ef5c46295c6cfcbe218f004d3787f9a313ea0"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-pinned-inputs.json",
+      "bytes": 905,
+      "sha256": "5f4f70aec00c869932aff9279e7dd42128f0b04f7c157e7d8c74e46ae9f8baf1"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-provenance.json",
+      "bytes": 447,
+      "sha256": "582524676d33544e11247455585316088d59bf611754e19bbfbc5da029aadc92"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/original-source-preflight.stdout",
+      "bytes": 1885,
+      "sha256": "42953b73dacc5ee898f12a27fa3f2dd891155fb41b6e0f38e5dd70d1fb8865c2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/pins.json",
+      "bytes": 357,
+      "sha256": "953e716b68e9171f2fea34b920a9dbe3eb0c610fff83854ea527a7ea46a8cc54"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/reconcile.json",
+      "bytes": 517,
+      "sha256": "db5a2f21fe945b0f58e331813a2951fb7720adc0b57f06836b790a6f22e114c4"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/recovery.json",
+      "bytes": 1734,
+      "sha256": "187763291657d7934b8557d012e3891a2056dfa55486b4b484d0b28d5891a45b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remaining.py",
+      "bytes": 2836,
+      "sha256": "3a6be3a2d44d18a537b83cdc6392e250883141e8a5f26ab43f7cebf2f043a046"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remote-final.json",
+      "bytes": 108,
+      "sha256": "d72450bc1a56c8006641f8ed608aea575ed55d96ac89bb391baae5232b533c2e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/remote-run.py",
+      "bytes": 2860,
+      "sha256": "5aba2bf7837546fbce3814c3ce5403376e2c6347edf697689a5cc68005e79139"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/resource-before-publication.json",
+      "bytes": 674,
+      "sha256": "741e3e9cebbdd77ddc2f3eff7f4d1035d5cac1781675acd24e3aba9668ddae5b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-fixture.cjs",
+      "bytes": 18271,
+      "sha256": "81898dfe6d9405aa459e837fdc53f9d4fbb5ee9af6bf7560a7f2e156b60ac9c5"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno0-tail.json.gz",
+      "bytes": 2610,
+      "sha256": "da6be2679c04d33d334cbfa7d32556a4d16a4d614245bc4ff4233ccd8a4a6f4d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno37-tail.json.gz",
+      "bytes": 2617,
+      "sha256": "345065a5754abbb57d54ac7a44ea4b30b0ef8be3ab437bc2fa2d4191487cd5fe"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-errno4-tail.json.gz",
+      "bytes": 2614,
+      "sha256": "287284de427c8faf1dfa452e7262e3cb8d9332dd2a600c92f3df4eebd9b3275a"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-stale-start-tail.json.gz",
+      "bytes": 2123,
+      "sha256": "0687914d7e50e656a9dfd69072e9221e2f3e1ef81456dd8a11e295eddad2fa30"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-call-tail.json.gz",
+      "bytes": 2404,
+      "sha256": "aa60508a1ef029c646f208fece04af7465728181184e37fb1cb3590687d8dd0c"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-complete-tail.json.gz",
+      "bytes": 2326,
+      "sha256": "3ff1dc21a164a73225c023db8bef9cace939ebf1a5cdb5e3205dbfd37d24c5ea"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/retained-native-result-switch-pending-tail.json.gz",
+      "bytes": 2127,
+      "sha256": "774c62b86062a24087208c5d24e27c0ea06fd7df8496ca4d4b61ed93d40b6012"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/runtime.json",
+      "bytes": 232,
+      "sha256": "7594531b4f4520193a81746bba994420cf42828116996f1532239b336f895a0b"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/stage.py",
+      "bytes": 3486,
+      "sha256": "5887f885fc28d5a7ae1b2d116e19c19348a7e33bacb93c8f40012e498431808e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/validation.json",
+      "bytes": 311,
+      "sha256": "52e1a1b7eccfa5086e1ea7bfd457a5ec064ffa3da53172739d8c68bbd9e9d6e8"
+    },
+    {
+      "path": "test/maelstrom-diagnostic-canonical-native.cjs",
+      "bytes": 18513,
+      "sha256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf"
+    },
+    {
+      "path": "tools/maelstrom-diagnostic-canonical-build.cjs",
+      "bytes": 8392,
+      "sha256": "fd5c22559d0e80aa631217c80d7cea395257815f5c0fc445f96b906c16d6a56c"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/local-group-resources.json.gz",
+      "bytes": 1714,
+      "sha256": "481a82a4cc17bed40d3faa1b186e550f2268ee7d1a4a3c0ae43e976d0655a977"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/box-state.json",
+      "bytes": 237,
+      "sha256": "92bf5de4e7ae35a25bd48667a733cab33b6be6a0e0d7c206cec49224e7eabaec"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/REPORT.md",
+      "bytes": 5241,
+      "sha256": "1d198e7758e38c9bdc297d556620829eeb615bca1fb943d3575223df1c97faf7"
+    },
+    {
+      "path": "docs/reviews/maelstrom-uop-retained-native-closeout-oct26/diff-check-raw-evidence.json",
+      "bytes": 435,
+      "sha256": "e5273119befa3af1b8ed478e091bfaa5f1497c5ce23b2dade8f8ed8bab1b37c4"
+    }
+  ]
+}

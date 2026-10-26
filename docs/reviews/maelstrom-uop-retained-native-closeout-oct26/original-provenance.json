@@ -1,0 +1,7 @@
+{
+  "integration": "e745cc29a1a3b859625aa0cd335abee0b185da71",
+  "oldDriver": "5e017d86566fc64d7e2f4e0357cfb4e8e54e53152995a6c0317f2a5da9d98b3f",
+  "oldFixture": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2",
+  "helper": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "scope": "historical canonical 140-file closure with accepted UOP overlay; synthetic CRT base 0x522000, not loader or gameplay proof"
+}

@@ -1,0 +1,35 @@
+{
+  "integration": "e745cc29a1a3b859625aa0cd335abee0b185da71",
+  "helper": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "historicalClosure": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "remoteStanding": "/home/user/maelstrom-uop-canonical-native-qualification-oct26",
+  "recipe": "Use committed build driver and original-build-inputs.json 140-file closure/overlays; original-build-outputs.json seals both modules and ABI. Original canonical source manifest and compressed source donor are standing inputs, never recopied here. Reconstruct only in a separately authorized build allocation. This task did not rebuild.",
+  "modules": [
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.wasm",
+      "bytes": 1883609,
+      "sha256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441",
+      "tailCalls": true,
+      "layout": "9a3bc9149d58209c"
+    },
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.compat.wasm",
+      "bytes": 1886182,
+      "sha256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b",
+      "tailCalls": false,
+      "layout": "9a3bc9149d58209c"
+    }
+  ],
+  "standingInputs": [
+    {
+      "path": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/sources.json.gz",
+      "bytes": 5058949,
+      "sha256": "c886e89c6b4ab023df28c0555544c1985db576afd30b4516b76a36bf28e4603b"
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/manifest.json",
+      "bytes": 50433,
+      "sha256": "f48264f1bb19067c308a85ab0287420dbbe551c7e37af173bf3c73d71567655c"
+    }
+  ]
+}

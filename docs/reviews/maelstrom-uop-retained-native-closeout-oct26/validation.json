@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "newCases": 29,
+  "reusedCases": 7,
+  "remaining": [],
+  "nativeRecompiles": 0,
+  "fixtureSHA256": "00ed04880cdd55b5fa716d2ba66889ab3591f541518cd65c71671dddd1127caf",
+  "qualification": "retained canonical synthetic runtime only; not current-main closure, authentic loader or gameplay"
+}

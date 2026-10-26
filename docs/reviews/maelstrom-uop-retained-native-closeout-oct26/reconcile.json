@@ -1,0 +1,16 @@
+{
+  "processes": [],
+  "modules": [
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.wasm",
+      "bytes": 1883609,
+      "sha256": "026ec19da49aeb63c14f4db1ee83c991b5cccc0b69c46b01994814e7f123b441"
+    },
+    {
+      "path": "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/errno-latch.compat.wasm",
+      "bytes": 1886182,
+      "sha256": "d49d90fb153d322a8ddcb832812f4e8b0b3129576a2c4db7ba3462d8eb8eab5b"
+    }
+  ],
+  "memAvailable": 7437447168
+}

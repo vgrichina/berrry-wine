@@ -1,0 +1,10 @@
+{
+  "result": "five expected blank-at-EOF findings in preserved original stdout/stderr/incident files; exact bytes retained. Scoped source and all other payload whitespace check required.",
+  "paths": [
+    "original-failure-wrong-select-return-tail.stderr",
+    "original-failure-wrong-select-return-tail.stdout",
+    "original-incident-first-native.txt",
+    "original-incident-no-debug.txt",
+    "original-incident-prefix.txt"
+  ]
+}

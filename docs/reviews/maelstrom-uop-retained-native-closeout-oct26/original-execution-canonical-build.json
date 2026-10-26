@@ -1,0 +1,27 @@
+{
+  "stage": "compiler",
+  "case": "canonical-build",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "--require",
+    "/home/user/maelstrom-uop-canonical-native-qualification-oct26/ops/native-module-bound.cjs",
+    "/home/user/maelstrom-uop-canonical-native-qualification-oct26/repo/tools/maelstrom-diagnostic-canonical-build.cjs"
+  ],
+  "at": 1793001323.437629,
+  "memAvailable": 7251218432,
+  "minMemory": 2684354560,
+  "allocated": 6250496,
+  "remoteBudget": 12582912,
+  "heapMiB": 512,
+  "arenaMiB": 0,
+  "cpu": 600,
+  "wall": 600,
+  "outputMax": 131072,
+  "fileMax": 2097152,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 8.39767108000001,
+  "outputBytes": 477,
+  "maxRSS": 550977536
+}
