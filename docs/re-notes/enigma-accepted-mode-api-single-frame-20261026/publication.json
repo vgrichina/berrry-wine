@@ -1,0 +1,7 @@
+{
+  "commit": "676b8b78999ff138e15154e8e483f61ee05d6f75",
+  "branch": "task/enigma-retained-api-single-frame-closeout-oct26",
+  "remote": "676b8b78999ff138e15154e8e483f61ee05d6f75\trefs/heads/task/enigma-retained-api-single-frame-closeout-oct26",
+  "verified": true,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

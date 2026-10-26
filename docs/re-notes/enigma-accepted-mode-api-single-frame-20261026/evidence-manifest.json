@@ -111,6 +111,10 @@
     "bytes": 31053,
     "sha256": "40693fcd09c2183ad0f002d88ceb029b2b4812aede1f1c89d90b780e81b5153e"
   },
+  "resource-publication-packaged.json": {
+    "bytes": 795,
+    "sha256": "dfab3042ac31b58c96f4cc32052cc67abe44a70a3a99febd187ff88169cf5fee"
+  },
   "stream-transfer-receipts.json.gz": {
     "bytes": 65318,
     "sha256": "cb4dd6de2563cd7150787cbb70acc9a8129bcf560c1ff6ef0400a0fece0efbbd"
@@ -183,6 +187,10 @@
     "bytes": 1018,
     "sha256": "27aa0218ac46fc67dddf7572bf8557f85a55df4a525a9febe441d1c8557fc206"
   },
+  "publication.json": {
+    "bytes": 460,
+    "sha256": "a83f90540da808858e5afd4e006227c53f42aaf191ef85283fbce35d8a93ef0d"
+  },
   "resource-retained-fresh-prestage.json": {
     "bytes": 790,
     "sha256": "0317678e2a3a97fe1f83e68f6fc733b24ce63b5cd7363e507721f5ec5aace3bd"
@@ -198,6 +206,10 @@
   "sqlite-highwater.json": {
     "bytes": 8,
     "sha256": "0e3429fc61616f27ab43339b2103e8a335409094d518d6f4f0b302c6b30fe2f1"
+  },
+  "png-true-blob-verification.json": {
+    "bytes": 198,
+    "sha256": "f1ae5f595c4e12725a257ea328d81e171cc026ab8a3f7a318a5b32afd745b760"
   },
   "historical-first-failure.json": {
     "bytes": 244,
