@@ -1,0 +1,48 @@
+{
+  "at": 1792997623.3038495,
+  "taskActualBytes": 3312780,
+  "launcherActualBytes": 151775,
+  "futureLauncherOnce": 12582912,
+  "publicationGrowth": 4194304,
+  "reserve": 8388608,
+  "projectedPeak": 28630379,
+  "limit": 67108864,
+  "memAvailable": 2600345600,
+  "heapBytes": 16777216,
+  "lightFloor": 805306368,
+  "fleetActualRss": [
+    {
+      "pid": 265632,
+      "rssBytes": 24231936
+    },
+    {
+      "pid": 752162,
+      "rssBytes": 387805184
+    },
+    {
+      "pid": 1789179,
+      "rssBytes": 53440512
+    },
+    {
+      "pid": 2216636,
+      "rssBytes": 193347584
+    },
+    {
+      "pid": 2219099,
+      "rssBytes": 194895872
+    },
+    {
+      "pid": 2223574,
+      "rssBytes": 189485056
+    }
+  ],
+  "fleetTotalRss": 1043206144,
+  "freeDisk": 4415180800,
+  "hostFreeAfterGrowth": 4410986496,
+  "standingInstalledTools": {
+    "/usr/local/bin/node": 123656816,
+    "/usr/bin/git": 4066232
+  },
+  "largestTaskFile": 1569010,
+  "pass": true
+}

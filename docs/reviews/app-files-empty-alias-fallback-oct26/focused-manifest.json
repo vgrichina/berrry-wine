@@ -1,0 +1,8 @@
+{
+  "lib/app-files.js": 16326,
+  "host.js": 368727,
+  "lib/filesystem.js": 158109,
+  "lib/browser-shell.js": 211893,
+  "test/app-files-persist-url-policy-oct26.test.cjs": 7201,
+  "test/test-app-files-policy.js": 8206
+}

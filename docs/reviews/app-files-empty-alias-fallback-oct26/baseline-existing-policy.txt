@@ -1,0 +1,22 @@
+node:fs:441
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/tmp/app-files-empty-alias-fallback-repair-oct26/repo/test/run.js'
+    at Object.readFileSync (node:fs:441:20)
+    at read (/tmp/app-files-empty-alias-fallback-repair-oct26/repo/test/test-app-files-policy.js:128:25)
+    at Object.<anonymous> (/tmp/app-files-empty-alias-fallback-repair-oct26/repo/test/test-app-files-policy.js:130:69)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/tmp/app-files-empty-alias-fallback-repair-oct26/repo/test/run.js'
+}
+
+Node.js v24.18.1
