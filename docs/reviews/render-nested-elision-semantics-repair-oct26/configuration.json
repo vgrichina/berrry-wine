@@ -1,0 +1,14 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "mountValidation": "No guest/mount commands assigned or executed; canonical mount parser conditional checkpoint inapplicable. Exact dedicated Git config unchanged.",
+  "pins": {
+    "tools/d3d9-operation-observer.js": "5a09d2fd73b714ec9407f8190d044b35e6e2798d422fd8fbb7b79737bdbefca8",
+    "lib/d3d9-host.js": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js": "7a78c3ff1821f4424c97527aacc6448627b94a18443a61b07ae5aac95af87019"
+  },
+  "reusedExactSSHConfiguration": true,
+  "mounts": "No runtime or mount argv in this offline task",
+  "sameTaskSSHValidated": true
+}

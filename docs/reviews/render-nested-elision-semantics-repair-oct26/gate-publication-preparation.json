@@ -1,0 +1,20 @@
+{
+  "at": 1792979233.2071981,
+  "label": "publication-preparation",
+  "parts": {
+    "owned": 10985472,
+    "launcher": 204800,
+    "session": 643072,
+    "sharedWALSHM": 28434432,
+    "positiveDBgrowth": 2097152,
+    "future": 6291456,
+    "reserve": 8388608,
+    "operationGrowth": 2097152
+  },
+  "projected": 59142144,
+  "memoryAvailable": 2511253504,
+  "memoryRequired": 1275068416,
+  "free": 4791939072,
+  "projectedFree": 4775161856,
+  "pass": true
+}

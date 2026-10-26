@@ -1,0 +1,8 @@
+{
+  "inspection": "Initial inspection excerpts exceeded8KiB and display truncated; no retrospective compliance. Bootstrap commands CPU/wall60 file24MiB capture128KiB; initial timeout fallback killed without TERM first; corrected supervisor used subsequently.",
+  "coordinatorPreparation": "Prior task generation resolved manifest paths against ops incorrectly and aborted before writing prompt; launcher then produced only root-ref-digest and no Codex session. Retained failed output, corrected committed-docs base; fresh run1 output.",
+  "setupInternalError": "Bootstrap gate exec lacked __file__; failed before checkout. Corrected import in same task; fresh passing precheckout gate. No gate overridden.",
+  "historicalIncidents": "Prior reviewer inspection/excerpt, late DB baseline, predecessor admission tree and raw failure log whitespace qualifications remain in unchanged committed prior review; this repair does not recast them.",
+  "currentLimitations": "Bootstrap captured stdout before checking128KiB cap, bounded child source reads; no streaming output stop on initial inspection. Persistent supervisor subsequently monitors output/wall and TERM/KILL/reaps. DB baseline began after initial inspection; conservative2MiB positive-growth floor used, no earlier exact attribution claim. Own watcher bounded55s and self-reaped; gaps between bounded watchers retained.",
+  "tests": "Expected unchanged baseline1PASS3FAIL; repaired targeted43PASS and combined167PASS. No other failing tests."
+}

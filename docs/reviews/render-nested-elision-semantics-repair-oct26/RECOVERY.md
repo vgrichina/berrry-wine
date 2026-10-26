@@ -1,0 +1,7 @@
+Use the committed task branch and unchanged donor leaves in place. No full clone, recursive alternates, repack, tool copy or runtime is needed. The flat view uses short relative symlinks and excludes donor info/alternates. Restore only after fresh resource admission, including lstat blocks, launcher/session growth, shared WAL/SHM, positive DB growth, publication allowance and 8 MiB reserve within 64 MiB.
+
+Run from the isolated repository with the retained ../ops/run.py per-child supervisor. The combined command is recoverable from the original all-final.json argv at /tmp/render-indexed-get-coverage-repair-oct26/ops, adding docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js and test/test-d3d9-nested-elision-semantics.js. Set NODE_OPTIONS=--max-old-space-size=128 and use --test-concurrency=1. Expected: 167 PASS / 0 FAIL. The original reproducer alone must now give 4 PASS; its pinned base gave 1 PASS / 3 FAIL.
+
+Keep CPU/wall 60 seconds per child, file 24 MiB, output 128 KiB, capture 2 MiB, reads 64 KiB, excerpts 8 KiB and TERM/KILL/reap 5 seconds. Require MemAvailable >= 1 GiB + 201326592 bytes and projected disk free >= 2982150144 bytes. A failed gate stops its operation.
+
+Publish only the task branch with the exact dedicated GIT_SSH_COMMAND retained in configuration.json; verify the exact remote commit. No main integration, service, browser, native/guest/Wasm/compiler/build, benchmark or trust changes are part of this task. The coordinator owns runtime lifecycle; no box is assigned here.

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "/tmp/render-nested-elision-semantics-repair-oct26/repo/test/test-d3d9-nested-elision-semantics.js",
+    "/tmp/render-nested-elision-semantics-repair-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js"
+  ],
+  "exitCode": 0,
+  "seconds": 0.9844872951507568,
+  "outputBytes": 4692,
+  "incident": null
+}

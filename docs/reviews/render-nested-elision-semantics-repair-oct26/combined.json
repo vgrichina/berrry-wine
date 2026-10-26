@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import os,json\nos.chdir('/tmp/render-nested-elision-semantics-repair-oct26/repo')\na=json.load(open('/tmp/render-indexed-get-coverage-repair-oct26/ops/all-final.json'))['argv']\na+=['docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js','test/test-d3d9-nested-elision-semantics.js']\nos.execvp(a[0],a)\n"
+  ],
+  "exitCode": 0,
+  "seconds": 8.28991961479187,
+  "outputBytes": 20959,
+  "incident": null
+}

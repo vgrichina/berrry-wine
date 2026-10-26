@@ -72,7 +72,10 @@ function instrument(source) {
     }
     if (node.type === 'ArrayPattern') {
       if (sensitive(node)) outside();
-      return '[' + node.elements.map(p=>p ? pattern(p) : '').join(',') + ']';
+      // A final null element is an elision, not an optional trailing comma.
+      // Joining alone turns [,] into [] and skips a native iterator step.
+      const elements = node.elements.map(p=>p ? pattern(p) : '').join(',');
+      return '[' + elements + (node.elements.at(-1) === null ? ',' : '') + ']';
     }
     if (node.type === 'RestElement') return '...' + pattern(node.argument);
     return render(node,{type:'AssignmentExpression'},'left');

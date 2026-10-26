@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "/tmp/render-nested-elision-semantics-repair-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js"
+  ],
+  "exitCode": 1,
+  "seconds": 0.3357388973236084,
+  "outputBytes": 5996,
+  "incident": null
+}

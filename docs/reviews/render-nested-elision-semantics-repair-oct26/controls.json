@@ -1,0 +1,15 @@
+{
+  "baseline": {
+    "pass": 1,
+    "fail": 3,
+    "observerSHA256": "5a09d2fd73b714ec9407f8190d044b35e6e2798d422fd8fbb7b79737bdbefca8"
+  },
+  "repaired": {
+    "reviewerRepro": 4,
+    "newDifferential": 39,
+    "priorCombinedRerun": 124,
+    "total": 167,
+    "fail": 0
+  },
+  "qualifications": "Actual create loaded-source measured scopes; native event/result differential. Original fixtures/oracles/budgets unchanged; full-scan controls still reject. No timing/gameplay/runtime acceptance. Unsupported indexed/rest array grammar still fails closed. Historical failures and qualifications retained."
+}

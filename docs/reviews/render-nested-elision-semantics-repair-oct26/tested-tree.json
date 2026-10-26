@@ -1,0 +1,9 @@
+{
+  "base": "e16c92acffce26b82de904d5270ba95041e16a66",
+  "observerSHA256": "ebfb8ddb95841c34f5a38751188353b65914b334c33b627fced93749acde4dfe",
+  "fixtureSHA256": "665634afdd5406e5927ecd29a9f77462716f27fbfab61473e0482f3a2e3d9a16",
+  "combinedPass": 167,
+  "prior124Rerun": true,
+  "reviewerReproPass": 4,
+  "newDifferentialPass": 39
+}
