@@ -1,0 +1,222 @@
+{
+  "status": "BLOCKED_EXACT_AGGREGATE_ALLOCATION_BEFORE_GUEST",
+  "guestAttempts": 0,
+  "acknowledgedBatches": 0,
+  "newFrames": 0,
+  "controllerInvocations": 0,
+  "atomicDispatches": 0,
+  "gameplay": false,
+  "productionFailureEstablished": false,
+  "blocker": {
+    "at": 1793049380.261064,
+    "stage": "exact-runtime-projection",
+    "charges": {
+      "newLocal": 131072,
+      "retainedLocal": 4587520,
+      "remoteRetainedAndProjected": 46116864,
+      "launchers": 1179648,
+      "sessions": 3362816,
+      "positiveWALOnce": 4313088,
+      "future": 1048576,
+      "reserve": 8388608
+    },
+    "total": 69128192,
+    "cap": 67108864,
+    "memAvailable": 3797897216,
+    "clients": [
+      {
+        "pid": 752162,
+        "rss": 419995648
+      },
+      {
+        "pid": 3115073,
+        "rss": 198426624
+      },
+      {
+        "pid": 3137326,
+        "rss": 202063872
+      },
+      {
+        "pid": 3140866,
+        "rss": 197107712
+      },
+      {
+        "pid": 3143393,
+        "rss": 199438336
+      }
+    ],
+    "reserves": {
+      "CivII": 805306368,
+      "GL": 268435456,
+      "remoteHelpers": 268435456,
+      "GitAndLocalHelper": 67108864,
+      "clientGrowth": 335544320,
+      "host": 805306368
+    },
+    "minimumMemory": 2550136832,
+    "projectedFree": 3653693440,
+    "diskFloor": 2982150144,
+    "positiveWALPolicy": "prior final accounted growth plus only positive new-baseline growth, counted once; no duplicated full shared database",
+    "allocationPass": false,
+    "memoryPass": true,
+    "diskPass": true,
+    "pass": false,
+    "projectionExplanation": {
+      "measuredRemote": 44609536,
+      "remoteFuture": {
+        "cumulativePNGs": 1048576,
+        "compressedACKTrace": 262144,
+        "guestOutput": 131072,
+        "diagnosticsAndDirectoryGrowth": 65536
+      },
+      "localFutureSessionEvidenceGit": 1048576,
+      "basis": "Exact standing inventory replaces conservative48MB estimate; no retained assets removed, full8MiB reserve unchanged. Changed footprint projection, not unchanged retry."
+    }
+  },
+  "readback": {
+    "commandId": "cmd_ac1cx6dr9tjx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:14:56.284Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-26T21:14:55.709Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"pins\": {\"runner/test/run.js\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\", \"runner/test/run-presented.cjs\": \"a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da\", \"controller.cjs\": \"c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6\", \"click.cjs\": \"8574aa3a46e9b969083cca5d85e2ace502d8e7dc4241ed352bf594e097c2e7d9\", \"runtime/build/wine-assembly.wasm\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\"}, \"argvUnchanged\": true, \"loggerAppend\": true, \"oldGuestClean\": true, \"inventory\": {\"logicalBytes\": 38967394, \"physicalOwnedBytes\": 44576768, \"pathSummedAllocatedBytes\": 45363200, \"files\": 2702, \"uniqueInodes\": 2765}, \"memAvailable\": 7367761920, \"diskFree\": 48982351872, \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_CPU\": [90, 90], \"RLIMIT_FSIZE\": [25165824, 25165824]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "cleanup": {
+    "commandId": "cmd_f3hhjphuhkon",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:15:55.683Z",
+    "launcherFailed": false,
+    "noticedMs": 15,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T21:15:55.622Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"inventory\": {\"logicalBytes\": 38977248, \"physicalOwnedBytes\": 44593152, \"pathSummedAllocatedBytes\": 45379584, \"files\": 2705, \"uniqueInodes\": 2768}, \"logs\": [{\"path\": \"/home/user/.ascii/processes/24943.id\", \"allocated\": 4096, \"bytes\": 169}, {\"path\": \"/home/user/.ascii/processes/24943.log\", \"allocated\": 0, \"bytes\": 0}, {\"path\": \"/home/user/.ascii/processes/30893.log\", \"allocated\": 0, \"bytes\": 0}, {\"path\": \"/home/user/.ascii/processes/17751.err.log\", \"allocated\": 0, \"bytes\": 0}, {\"path\": \"/home/user/.ascii/processes/17751.id\", \"allocated\": 4096, \"bytes\": 169}, {\"path\": \"/home/user/.ascii/processes/30893.id\", \"allocated\": 4096, \"bytes\": 169}, {\"path\": \"/home/user/.ascii/processes/24943.err.log\", \"allocated\": 0, \"bytes\": 0}, {\"path\": \"/home/user/.ascii/processes/17751.log\", \"allocated\": 4096, \"bytes\": 134}, {\"path\": \"/home/user/.ascii/processes/30893.err.log\", \"allocated\": 0, \"bytes\": 0}], \"ownedGuestLive\": [], \"memAvailable\": 7387017216, \"diskFree\": 48982306816, \"box\": \"bx_eugbptb7\", \"state\": \"RUNNING confirmed APIexec\", \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_CPU\": [90, 90], \"RLIMIT_FSIZE\": [25165824, 25165824]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "previousReceipt": {
+    "path": "/tmp/enigma-retained-bounded-progress-gameplay-oct26/repo/docs/re-notes/enigma-retained-bounded-progress-gameplay-oct26/receipt.json",
+    "sha256": "dd1672eac1b9bdb3432ec574bab37694bf2e15cd85adcef6b18a8bb9c323df31",
+    "exactBytesRetainedInArchive": true,
+    "publicationIncident": {
+      "status": "BLOCKED_BEFORE_ANY_GIT",
+      "commit": null,
+      "branch": "task/enigma-retained-bounded-progress-gameplay-oct26",
+      "reason": "Mandatory fresh aggregate memory admission failed twice. Second attempt followed actual independentGL client exit, not an unchanged retry; competing local allocations then reduced MemAvailable again. Second measurement3141877760B minus570425344B Git/helper and1879048192B CivII+268435456B GL reserves leaves423968768B below805306368B floor. No Git operation ran. No unchanged retries.",
+      "resumeCondition": "Coordinator-authorized publication after measured available capacity supports unchanged aggregate memory/disk/allocation gates; no new guest authorized.",
+      "resourceEvidence": [
+        "first-prepublication-admission-rejection.json",
+        "second-prepublication-admission-rejection.json"
+      ]
+    },
+    "outcome": "Prior227 serial requests57857 batches228zero-credit snapshots19.348s; loading PNG correctly rejected by atomic controller, input0; helper title trigger friction, not game failure."
+  },
+  "reused": {
+    "stagedFiles": 2661,
+    "hashesModesFreshlyVerified": true,
+    "canonicalParserReceipt": {
+      "path": "/tmp/enigma-retained-bounded-progress-gameplay-oct26/ops/reused-canonical-parser.json",
+      "sha256": "386960c523e65b19a3fc2bc17d1157f1ce84310e413e4c4480749cf6674c47ef"
+    },
+    "argvByteForByteEqual": true,
+    "offlineGroups": "29/13/9/7 unchanged passing receipts reused; none replayed",
+    "n1": "Prior proof retained; new fresh-instance n1 gate would precede any input but no new guest admitted.",
+    "node": "Unchanged v24.22.1 argv/env/CPU90/file24MiB/DATA-ASunlimited receipt reused; no new Node startup needed for rejected guest."
+  },
+  "adaptation": "New-owned operate.py removes title early break and uses bounded elapsed progression, then readonly canonical screenshot exact640x480/menuPNGsha qualification before unchanged atomiccontroller ONCE; expected loading never invokes controller. Not executed, acceptance remains pending.",
+  "git": "Independent compact evidence root on assigned branch; prior repo unchanged; no main merge or compilation/restaging/installer/worker spawn.",
+  "lifecycle": {
+    "box": "bx_eugbptb7",
+    "state": "RUNNING API confirmed",
+    "cutoff": "2026-10-26T21:35:00Z",
+    "handbackDeadline": "2026-10-26T21:40:00Z",
+    "shutdown": "2026-10-26T21:45:00Z",
+    "expiry": "2026-10-26T22:23:15.028Z",
+    "shutdownOwner": "coordinator",
+    "shutdownWatch": "untouched",
+    "ownedGuestLive": []
+  },
+  "remaining": "Fresh coordinator assignment with truthful sufficient allocation required. Do not replay this helper merely to back up evidence. No further guest is authorized by this receipt.",
+  "publication": {
+    "status": "BLOCKED_BEFORE_ANY_GIT",
+    "commit": null,
+    "branch": "task/enigma-presented-menu-progress-gameplay-oct26",
+    "admission": {
+      "at": 1793049445.1917734,
+      "stage": "prepublication",
+      "charges": {
+        "newLocal": 233472,
+        "retainedLocal": 4587520,
+        "remoteRetainedAndProjected": 44609536,
+        "launchers": 1196032,
+        "sessions": 3403776,
+        "positiveWALOnce": 4628480,
+        "future": 524288,
+        "reserve": 8388608
+      },
+      "total": 67571712,
+      "cap": 67108864,
+      "memAvailable": 3512209408,
+      "clients": [
+        {
+          "pid": 752162,
+          "rss": 412033024
+        },
+        {
+          "pid": 3115073,
+          "rss": 196677632
+        },
+        {
+          "pid": 3137326,
+          "rss": 202817536
+        },
+        {
+          "pid": 3140866,
+          "rss": 196931584
+        },
+        {
+          "pid": 3143393,
+          "rss": 194990080
+        },
+        {
+          "pid": 3147614,
+          "rss": 216432640
+        }
+      ],
+      "reserves": {
+        "CivII": 805306368,
+        "GL": 268435456,
+        "remoteHelpers": 268435456,
+        "GitAndLocalHelper": 67108864,
+        "clientGrowth": 335544320,
+        "host": 805306368
+      },
+      "minimumMemory": 2550136832,
+      "projectedFree": 3653406720,
+      "diskFloor": 2982150144,
+      "positiveWALPolicy": "prior final accounted growth plus only positive new-baseline growth, counted once; no duplicated full shared database",
+      "allocationPass": false,
+      "memoryPass": true,
+      "diskPass": true,
+      "pass": false
+    },
+    "reason": "Exact compact closeout projection67571712B exceeds67108864B by462848B; RAM/disk pass. No Git command, local commit or push occurred. No unchanged retry.",
+    "resumeCondition": "Coordinator may authorize evidence-only publication with sufficient truthful allocation. No new guest or old test replay is authorized."
+  },
+  "inputReadbackDetail": "Fresh command cmd_ac1cx6dr9tjx streamed every2661 stagedfile hash/mode against unchanged manifest; byte-for-byte argv match establishes same canonical parser enumeration, including filename-bearing mounts and comma path handling. READONLY paths only; prior repo unchanged."
+}

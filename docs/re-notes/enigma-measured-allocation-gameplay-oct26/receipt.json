@@ -1,0 +1,328 @@
+{
+  "task": "enigma-measured-allocation-gameplay-oct26",
+  "status": "FIRST_RUNTIME_REJECTION",
+  "outcome": {
+    "status": "FIRST_RUNTIME_REJECTION",
+    "stepRequests": 541,
+    "acknowledgedBatches": 137986,
+    "snapshots": 542,
+    "requests": 1086,
+    "pending": false,
+    "lastBatch": 137986,
+    "controllerAcknowledged": true,
+    "elapsed": 70.59865379333496
+  },
+  "terminal": {
+    "reason": "owned-stop",
+    "returncode": 0,
+    "elapsed": 70.63439176300017,
+    "peakTreeRSS": 404537344,
+    "peakTreeCPU": 71.09,
+    "outputBytes": 64998,
+    "identities": {
+      "42211": {
+        "ppid": 42210,
+        "state": "S",
+        "start": "207906",
+        "cpu": 71.09,
+        "rss": 403214336
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_eugbptb7",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "images": [
+    {
+      "name": "before.png",
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+      "bytes": 389913,
+      "width": 640,
+      "height": 480
+    },
+    {
+      "name": "qualification.png",
+      "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+      "bytes": 389913,
+      "width": 640,
+      "height": 480
+    }
+  ],
+  "pixelInspection": {
+    "inspected": true,
+    "image": "qualification.png",
+    "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "width": 640,
+    "height": 480,
+    "visible": "Enigma Main Menu with clearly presented Start Game, Level Pack, Options, Credits and Quit buttons; center344,212 lies within Start Game.",
+    "classification": "Presented Start Game menu verified; gameplay not established.",
+    "beforePNG": "Byte-identical controller safety frame, same hash/bytes; separate additional inspection unnecessary.",
+    "dispatch": "Accepted unchanged atomiccontroller acknowledged one enqueue at batch130305; after-click n1 and further serial acknowledged progression retained.",
+    "endBudgetBlocker": "Third PNG request rejected by unchanged capture-wrapper cumulative1048576B limit after two389913B menu PNGs. No third file saved, no further runtime/input/capture attempt. Historical 64MiB task allocation was superseded and did not block this admitted128MiB attempt.",
+    "gameFailure": false
+  },
+  "traceVerification": {
+    "allStepsAcknowledged": true,
+    "noOverlap": true,
+    "noStepTimeout": true,
+    "firstRejection": {
+      "at": 1793050012.887732,
+      "request": "{\"action\":\"png\",\"path\":\"/tmp/enigma-small-step-production-gameplay-oct26/measured-allocation/guest/after-gameplay.png\"}",
+      "startingBatch": 137986,
+      "pending": false,
+      "originalResponse": "{\"ok\":false,\"error\":\"task cumulative capture allocation\",\"timedOut\":false}",
+      "error": "AssertionError({'ok': False, 'error': 'task cumulative capture allocation', 'timedOut': False})",
+      "ended": 1793050012.955984
+    },
+    "steps": 541,
+    "batches": 137986,
+    "zeroCreditSnapshots": 542,
+    "firstN1": 1,
+    "firstOriginal": [
+      {
+        "at": 1793049942.7683282,
+        "request": "{\"action\":\"snapshot\"}",
+        "startingBatch": null,
+        "pending": false,
+        "originalResponse": "{\"ok\":true,\"value\":{\"batch\":0,\"eip\":\"0x4012a0\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x0\",\"mainHwnd\":\"0x0\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[]}}",
+        "ended": 1793049942.791016
+      },
+      {
+        "at": 1793049942.7912316,
+        "request": "{\"action\":\"step\",\"n\":1}",
+        "startingBatch": 0,
+        "pending": true,
+        "originalResponse": "{\"ok\":true,\"value\":{\"batch\":1,\"ran\":1,\"steps\":1,\"frozen\":true}}",
+        "ended": 1793049942.794303
+      },
+      {
+        "at": 1793049942.7943606,
+        "request": "{\"action\":\"snapshot\"}",
+        "startingBatch": 0,
+        "pending": false,
+        "originalResponse": "{\"ok\":true,\"value\":{\"batch\":1,\"eip\":\"0xb0de5c\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x0\",\"mainHwnd\":\"0x0\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[]}}",
+        "ended": 1793049942.7950659
+      }
+    ],
+    "lastSnapshot": {
+      "batch": 137986,
+      "eip": "0xecc7a1",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 640,
+        "h": 480
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 200,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 646,
+          "h": 507,
+          "visible": true,
+          "isChild": false,
+          "title": "Enigma - Main Menu"
+        }
+      ]
+    }
+  },
+  "priorReceipts": [
+    {
+      "path": "/tmp/enigma-retained-bounded-progress-gameplay-oct26/repo/docs/re-notes/enigma-retained-bounded-progress-gameplay-oct26/receipt.json",
+      "publishedCopy": "enigma-retained-bounded-progress-gameplay-oct26-receipt.json",
+      "sha256": "dd1672eac1b9bdb3432ec574bab37694bf2e15cd85adcef6b18a8bb9c323df31",
+      "bytes": 22764
+    },
+    {
+      "path": "/tmp/enigma-presented-menu-progress-gameplay-oct26/repo/docs/re-notes/enigma-presented-menu-progress-gameplay-oct26/receipt.json",
+      "publishedCopy": "enigma-presented-menu-progress-gameplay-oct26-receipt.json",
+      "sha256": "51a4299344121fed93c59a42485c20338ee535082af745d2667d72e47b95e388",
+      "bytes": 10476
+    }
+  ],
+  "admission": {
+    "at": 1793049942.1838226,
+    "stage": "immediate-preguest",
+    "charges": {
+      "localOwned": 4972544,
+      "remoteOwnedAndProjected": 44634112,
+      "launchers": 1638400,
+      "sessions": 4104192,
+      "positiveWALOnce": 4755456,
+      "prospectiveGrowth": 33554432,
+      "reserve": 8388608
+    },
+    "total": 102047744,
+    "cap": 134217728,
+    "memAvailable": 3818299392,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 17453056
+      },
+      {
+        "pid": 752162,
+        "rss": 394276864
+      },
+      {
+        "pid": 857107,
+        "rss": 11485184
+      },
+      {
+        "pid": 1789179,
+        "rss": 50470912
+      },
+      {
+        "pid": 3155819,
+        "rss": 200568832
+      },
+      {
+        "pid": 3156031,
+        "rss": 23642112
+      },
+      {
+        "pid": 3157320,
+        "rss": 244297728
+      },
+      {
+        "pid": 3157784,
+        "rss": 23089152
+      }
+    ],
+    "largeResidentOwners": [
+      {
+        "pid": 16249,
+        "rss": 826621952,
+        "command": "/var/lib/ascii-lazy-bin/ascii-lazyfs --config /var/lib/ascii-lazy/config.json "
+      },
+      {
+        "pid": 265398,
+        "rss": 915705856,
+        "command": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+      },
+      {
+        "pid": 265422,
+        "rss": 262524928,
+        "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node /home/user/wine-assembly/ops/telegram.js "
+      },
+      {
+        "pid": 271075,
+        "rss": 253403136,
+        "command": "node ops/work-watchdog.js "
+      },
+      {
+        "pid": 752162,
+        "rss": 394276864,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d"
+      },
+      {
+        "pid": 2896015,
+        "rss": 509382656,
+        "command": "node /home/user/wine-dashboard-b0b9bc090/ops/server.js --port=8098 --root=/home/user/wine-assembly "
+      },
+      {
+        "pid": 3134217,
+        "rss": 84852736,
+        "command": "/opt/ascii-agent/ascii-agents-server "
+      },
+      {
+        "pid": 3155819,
+        "rss": 200568832,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      },
+      {
+        "pid": 3157320,
+        "rss": 244297728,
+        "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=20"
+      }
+    ],
+    "reserves": {
+      "CivII": 805306368,
+      "GL": 268435456,
+      "remoteHelpers": 268435456,
+      "GitAndLocalHelper": 67108864,
+      "clientGrowth": 335544320,
+      "host": 805306368
+    },
+    "minimumMemory": 2550136832,
+    "diskFree": 3702865920,
+    "projectedFree": 3600818176,
+    "diskFloor": 2982150144,
+    "positiveWALPolicy": "Historical positive WAL once plus positive growth from this task baseline; shared full database never duplicated",
+    "pass": true
+  },
+  "readback": {
+    "commandId": "cmd_ptqhtzxl1x0f",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:25:12.132Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-26T21:25:11.649Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"pins\": {\"runner/test/run.js\": \"87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7\", \"runner/test/run-presented.cjs\": \"a9625e1d102883c27b1bd2de0bab560a44ab3bc7eb589b18e7a736100eb2a0da\", \"controller.cjs\": \"c4d6c24cc8c0d321b8e6dd17e299116ef4b94fb71899e0f4801e4330cf1adac6\", \"click.cjs\": \"8574aa3a46e9b969083cca5d85e2ace502d8e7dc4241ed352bf594e097c2e7d9\", \"runtime/build/wine-assembly.wasm\": \"8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686\"}, \"argvUnchanged\": true, \"loggerAppend\": true, \"oldGuestClean\": true, \"inventory\": {\"logicalBytes\": 38977248, \"physicalOwnedBytes\": 44601344, \"pathSummedAllocatedBytes\": 45387776, \"files\": 2705, \"uniqueInodes\": 2770}, \"memAvailable\": 7364939776, \"diskFree\": 48973500416, \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_CPU\": [90, 90], \"RLIMIT_FSIZE\": [25165824, 25165824]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "cleanup": {
+    "commandId": "cmd_n7z1u2jhz9fe",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:27:08.479Z",
+    "launcherFailed": false,
+    "noticedMs": 12,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T21:27:08.420Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"rows\": [{\"path\": \"guest/pre-qualification-snapshot.json\", \"bytes\": 317, \"sha256\": \"340e8486826022b5de53bdace539ff15828214ad91ffaf1b106b8b77fc2ddc16\"}, {\"path\": \"guest/output.log\", \"bytes\": 64998, \"sha256\": \"3efb118450b10629a2af575a0ed7c5bbcf26a9d598d875e6074ad3cd88cfbd4e\"}, {\"path\": \"guest/first-n1-completion-gate.json\", \"bytes\": 257, \"sha256\": \"06ea7b763fd39857439c330e5c28cbc2bee311732d7247411877be545d97a6c6\"}, {\"path\": \"guest/read-only-frame-qualification.json\", \"bytes\": 712, \"sha256\": \"35d184bd2e4f801201233b71f709808ac72bec5142647b9b367f51cad2e5b934\"}, {\"path\": \"guest/pre-controller-snapshot.json\", \"bytes\": 317, \"sha256\": \"340e8486826022b5de53bdace539ff15828214ad91ffaf1b106b8b77fc2ddc16\"}, {\"path\": \"guest/initial-snapshot.json\", \"bytes\": 196, \"sha256\": \"c9b5d653d65c1818164476803e36a725dc361de21951ed7888ad28b1a8fb8f67\"}, {\"path\": \"guest/click-result.json\", \"bytes\": 270, \"sha256\": \"99810d0e2042a71c91d533771598c7a47bf5a8ca467406179492f9015ace4d59\"}, {\"path\": \"guest/after-click-n1.json\", \"bytes\": 317, \"sha256\": \"8df817d5c65c5aaaf4e52552611d171aa4ad6111848e1e42059e984cf517cff4\"}, {\"path\": \"guest/before.png\", \"bytes\": 389913, \"sha256\": \"8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5\"}, {\"path\": \"guest/outcome.json\", \"bytes\": 209, \"sha256\": \"7f8712c9df6a7c2bba14f57357bfdf593377d608afce799c369bc13deddeaefe\"}, {\"path\": \"guest/controller-process-result.json\", \"bytes\": 338, \"sha256\": \"452cf869f53c16602e9563dbf9ca5e0f01edb6ae1ed9905a8d828558a273c25e\"}, {\"path\": \"guest/first-runtime-rejection.json\", \"bytes\": 161, \"sha256\": \"4d7457d34ae09fadfe3e42d9513ecaea593ad3041a28b1f8973960909bf57251\"}, {\"path\": \"guest/controller-process.json\", \"bytes\": 1577, \"sha256\": \"307ed066b85a52e458bc5db04f93d3c7e8e0286231e43534cc510350f7d6d29e\"}, {\"path\": \"guest/control-trace.json\", \"bytes\": 5333, \"sha256\": \"970431d8c02b7ae2803e3ebcf6949e5c1cb6cc65addd774472aa89c3c62f4506\"}, {\"path\": \"guest/terminal.json\", \"bytes\": 351, \"sha256\": \"1b097c29a82d75643dc7af9d3563b0ba7deccfc787c133bb78ed06c002463b34\"}, {\"path\": \"guest/qualification.png\", \"bytes\": 389913, \"sha256\": \"8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5\"}, {\"path\": \"guest/stop\", \"bytes\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}, {\"path\": \"guest/supervisor-error.log\", \"bytes\": 0, \"sha256\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"}, {\"path\": \"guest/after-gameplay-snapshot.json\", \"bytes\": 317, \"sha256\": \"59d9df3c023d2afeb58d9157a1b4af29f401bf9b00931d0cf85bdfd4029ced43\"}, {\"path\": \"guest/command.json\", \"bytes\": 1759, \"sha256\": \"24c8d708794112080c9b9db9b63649a88c2478d70c4a3991bb141f1aa4ed3ca2\"}, {\"path\": \"guest/requests.jsonl.gz\", \"bytes\": 40490, \"sha256\": \"cde38cda7cf3c0b8973b80d4d6bad89a34fe2fa10e0af8203c6c1f25a15b7be8\"}], \"terminal\": {\"reason\": \"owned-stop\", \"returncode\": 0, \"elapsed\": 70.63439176300017, \"peakTreeRSS\": 404537344, \"peakTreeCPU\": 71.09, \"outputBytes\": 64998, \"identities\": {\"42211\": {\"ppid\": 42210, \"state\": \"S\", \"start\": \"207906\", \"cpu\": 71.09, \"rss\": 403214336}}, \"remainingOwnedLive\": [], \"box\": \"bx_eugbptb7\", \"boxState\": \"RUNNING\", \"shutdownOwner\": \"coordinator\"}, \"remainingOwnedLive\": [], \"inventory\": {\"logicalBytes\": 39884848, \"physicalOwnedBytes\": 45580288, \"pathSummedAllocatedBytes\": 46366720, \"files\": 2729, \"uniqueInodes\": 2794}, \"detachedLogs\": [{\"path\": \"/home/user/.ascii/processes/24943.id\", \"bytes\": 169, \"allocated\": 4096}, {\"path\": \"/home/user/.ascii/processes/42204.err.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/24943.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/30893.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/17751.err.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/42204.id\", \"bytes\": 169, \"allocated\": 4096}, {\"path\": \"/home/user/.ascii/processes/17751.id\", \"bytes\": 169, \"allocated\": 4096}, {\"path\": \"/home/user/.ascii/processes/42204.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/30893.id\", \"bytes\": 169, \"allocated\": 4096}, {\"path\": \"/home/user/.ascii/processes/24943.err.log\", \"bytes\": 0, \"allocated\": 0}, {\"path\": \"/home/user/.ascii/processes/17751.log\", \"bytes\": 134, \"allocated\": 4096}, {\"path\": \"/home/user/.ascii/processes/30893.err.log\", \"bytes\": 0, \"allocated\": 0}], \"diskFree\": 48972414976, \"boxState\": \"RUNNING confirmed API execution\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "pins": "Exact2661 files/hash/mode and argv unchanged; original full manifest retained remotely in place, no compilation/restaging",
+  "reused": {
+    "offlineGroups": "29/13/9/7 unchanged passing groups, none replayed",
+    "parser": {
+      "path": "/tmp/enigma-small-step-production-gameplay-oct26/ops/canonical-parser.json",
+      "sha256": "386960c523e65b19a3fc2bc17d1157f1ce84310e413e4c4480749cf6674c47ef",
+      "unchangedReceipt": true
+    },
+    "startup": {
+      "path": "/tmp/enigma-retained-bounded-progress-gameplay-oct26/ops/fresh-node-startup.json",
+      "sha256": "1d9a9ae44cd0323c7c87201e216a1980267225d069a2bc2929f5b22bd7c4550b",
+      "reason": "Exact executable flags capture wrapper env CPU90/file24MiB/DATA-ASunlimited unchanged; guest args byte-identical"
+    }
+  },
+  "lifecycle": {
+    "box": "bx_eugbptb7",
+    "state": "RUNNING API confirmed",
+    "guestCutoff": "2026-10-26T21:38:00Z",
+    "handback": "2026-10-26T21:42:00Z",
+    "shutdown": "2026-10-26T21:45:00Z",
+    "expiry": "2026-10-26T22:23:15.028Z",
+    "shutdownOwner": "coordinator",
+    "watchPID": 3103171,
+    "watchUntouched": true
+  },
+  "historicalAllocationIncidents": "Previous runtime69128192B and publication67571712B exceeded then64MiB task allocation; preserved unchanged as internal allocation incidents, not game prerequisites/failures",
+  "publication": "Assigned isolated evidence branch; no main merge",
+  "remaining": "No further guest attempt authorized; coordinator owns next assignment and shutdown"
+}
