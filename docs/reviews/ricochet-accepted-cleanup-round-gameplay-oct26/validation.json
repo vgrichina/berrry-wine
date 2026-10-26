@@ -1,0 +1,69 @@
+{
+  "controlRequests": 44,
+  "steps": [
+    {
+      "n": 1,
+      "batch": 1
+    },
+    {
+      "n": 256,
+      "batch": 257
+    },
+    {
+      "n": 256,
+      "batch": 513
+    },
+    {
+      "n": 256,
+      "batch": 769
+    },
+    {
+      "n": 256,
+      "batch": 1025
+    },
+    {
+      "n": 256,
+      "batch": 1281
+    },
+    {
+      "n": 256,
+      "batch": 1537
+    },
+    {
+      "n": 256,
+      "batch": 1793
+    },
+    {
+      "n": 4,
+      "batch": 1797
+    },
+    {
+      "n": 20,
+      "batch": 1817
+    },
+    {
+      "n": 4,
+      "batch": 1821
+    },
+    {
+      "n": 20,
+      "batch": 1841
+    }
+  ],
+  "lastAcknowledgedBatch": 1841,
+  "allActualInputAndCapturesFrozenZeroCredit": true,
+  "controllerQuit": true,
+  "checker": {
+    "runs": 1,
+    "errors": [],
+    "missing": [],
+    "invalid": []
+  },
+  "imagesInspected": [
+    "later.png",
+    "frame-2.png",
+    "select-player.png",
+    "new-game.png"
+  ],
+  "gameplay": false
+}

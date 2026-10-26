@@ -1,0 +1,29 @@
+{
+  "at": 1793057174.5935237,
+  "charges": {
+    "own": 4853760,
+    "logs": 557056,
+    "sessions": 3575808,
+    "sidecars": 237568,
+    "walPositive": 0,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "total": 34390016,
+  "allocation": 41943040,
+  "mem": 3852341248,
+  "required": 1744830464,
+  "free": 3297001472,
+  "projected": 3201867776,
+  "floor": 2982150144,
+  "peers": [
+    {
+      "task": "enigma-accepted-msg-current-tree-reconcile-oct26",
+      "pid": 3301987,
+      "allocation": 100663296,
+      "used": 38248448,
+      "remaining": 62414848
+    }
+  ],
+  "pass": true
+}

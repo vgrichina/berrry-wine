@@ -1,0 +1,78 @@
+PE loaded. Entry: 0x00509d24
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+DLL: IFC22.dll at 0x6fd000, DllMain=0x71663c, thunks=1986, origBase=0x10000000
+Patching EXE imports: IFC22.dll -> DLL #0 (IFC22.dll)
+After patching: 1986 thunks
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+[files] policy lazy: 358 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[control] listening on http://127.0.0.1:8128/ctl
+[CreateWindow] hwnd=0x10001 title="Ricochet" style=0x-6ff80000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=5
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[ThreadManager] CreateThread handle=0xe1000 start=0x7504cc0 param=0x0 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x7504cc0 ESP=0x7ed9fff8
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+[input] mousemove 445,55 at batch 1793
+[input] mousedown 445,55 at batch 1793
+[check_input] msg=0x200 wParam=0x0 lParam=0x3701bd packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x84 wParam=0x0 lParam=0x3701bd packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x201 wParam=0x1 lParam=0x3701bd packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mouseup 445,55 at batch 1797
+[check_input] msg=0x202 wParam=0x0 lParam=0x3701bd packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mousemove 320,234 at batch 1817
+[input] mousedown 320,234 at batch 1817
+[check_input] msg=0x200 wParam=0x0 lParam=0xea0140 packed=0x200
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x84 wParam=0x0 lParam=0xea0140 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[check_input] msg=0x201 wParam=0x1 lParam=0xea0140 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input] mouseup 320,234 at batch 1821
+[check_input] msg=0x202 wParam=0x0 lParam=0xea0140 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+uop: installs=990 kills=48 retired-poor=48 enters=53099755 blocks=941504261 head-exits=45 reguards=21011937 rg-pages=328634519 rg-nonadj=293885 win-kept=53097883 win-reset=1872 gen=7 | compiled=990 declined=557 insns=54619 uops=242277 flushes=4 traces=516
+  declines: no-backedge=464 head-unsupported=134 call-indirect=71
+uop nobump: skips=393202462
+uop hot: decays=12149781 halvings=2875
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=412 kills=12 enters=28980840 blocks=152213932
+
+Stats: 867349 API calls, 1841 batches in 116.730s (16 batches/s)
+MMX: 22976263 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x7504cc0 esp=0x7ed9fff8 ebp=0x0 yield=0 waitH=0x0 sleepCount=2 csPark/steal=0/0

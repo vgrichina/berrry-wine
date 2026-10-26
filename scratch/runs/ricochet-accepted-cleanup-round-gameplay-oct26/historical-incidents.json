@@ -1,0 +1,23 @@
+{
+  "resourceAccounting": {
+    "at": 1793056833.3236623,
+    "operation": "startup-and-launch",
+    "guestNotStarted": true,
+    "projectedFree": 2972700672,
+    "floor": 2982150144,
+    "error": "counted completed peer allocations and omitted existing peer sessions from used bytes",
+    "resolution": "remeasured live clients only, including own/session/event/sidecar materialization, retained new live Enigma96MiB allocation; no limit changed"
+  },
+  "statusArgument": {
+    "first": "commandId cmd_uelx9p7gqdt2 rejected by CLI before transport",
+    "correct": "actual detached positive PID27766 from unchanged launch response",
+    "denial": false
+  },
+  "deadline": {
+    "request": "Round 1-1 at75,170",
+    "response": "cmd_twwrejwxhc8y exit1 AssertionError",
+    "enqueued": false,
+    "reason": "done.json already present; no replay/relaunch",
+    "guestWall": 117.08763920399997
+  }
+}

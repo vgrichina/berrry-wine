@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-accepted-cleanup-round-gameplay-oct26/ops/launch.py"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 1.0916720838285983,
+  "peakPhysicalAggregate": 60407808,
+  "physicalCap": 134217728,
+  "cpu": 0.69,
+  "outputBytes": 18,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3307402": "110407597",
+    "3307397": "110407588",
+    "3307405": "110407602",
+    "3307418": "110407625",
+    "3307427": "110407649",
+    "3307447": "110407673",
+    "3307455": "110407692"
+  }
+}

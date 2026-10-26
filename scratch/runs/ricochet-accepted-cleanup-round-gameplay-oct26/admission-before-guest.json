@@ -1,0 +1,36 @@
+{
+  "at": 1793056867.488965,
+  "charges": {
+    "own": 1511424,
+    "logs": 516096,
+    "sessions": 1601536,
+    "sidecars": 237568,
+    "walPositive": 0,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "total": 29032448,
+  "allocation": 41943040,
+  "mem": 3731763200,
+  "required": 1744830464,
+  "free": 3311632384,
+  "projected": 3112030208,
+  "floor": 2982150144,
+  "peers": [
+    {
+      "task": "alien-accepted-opt-in-menu-gameplay-oct26",
+      "pid": 3289319,
+      "allocation": 100663296,
+      "used": 4804608,
+      "remaining": 95858688
+    },
+    {
+      "task": "enigma-accepted-msg-current-tree-reconcile-oct26",
+      "pid": 3301987,
+      "allocation": 100663296,
+      "used": 34996224,
+      "remaining": 65667072
+    }
+  ],
+  "pass": true
+}

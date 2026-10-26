@@ -1,0 +1,46 @@
+[
+  {
+    "path": "later.png",
+    "stage": "loading",
+    "batch": 1537,
+    "bytes": 215527,
+    "sha256": "5d0198804541209c4afc633ca76ab7e0628993ae649c6b398a149756144d39c6",
+    "width": 640,
+    "height": 480,
+    "reviewed": true,
+    "review": "personally inspected using view_image before subsequent menu input"
+  },
+  {
+    "path": "frame-2.png",
+    "stage": "main-menu",
+    "batch": 1793,
+    "bytes": 398280,
+    "sha256": "cbbaff3f90c86791277656be746aefd282f661337a5346b87393eecde6ebe968",
+    "width": 640,
+    "height": 480,
+    "reviewed": true,
+    "review": "personally inspected using view_image before subsequent menu input"
+  },
+  {
+    "path": "select-player.png",
+    "stage": "Anonymous Guest selection dialog",
+    "batch": 1817,
+    "bytes": 374020,
+    "sha256": "0d45778369f88d99f951e1778b1d2380d75a4191da13cb2ffcb4b6a2fbd28338",
+    "width": 640,
+    "height": 480,
+    "reviewed": true,
+    "review": "personally inspected using view_image before subsequent menu input"
+  },
+  {
+    "path": "new-game.png",
+    "stage": "New Game Options; Round1-1 thumbnail visible",
+    "batch": 1841,
+    "bytes": 281329,
+    "sha256": "6c1dfd8040ca49d059ad0850da4be2adcf73431ba09f67ac4881af5cd8138566",
+    "width": 640,
+    "height": 480,
+    "reviewed": true,
+    "review": "personally inspected using view_image before subsequent menu input"
+  }
+]

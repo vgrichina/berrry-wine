@@ -1,0 +1,11 @@
+{
+  "command": "timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 -S /tmp/ricochet-accepted-cleanup-round-gameplay-oct26/supervisor.py guest'",
+  "commandId": "cmd_uelx9p7gqdt2",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/27766.err.log",
+  "logPath": "/home/user/.ascii/processes/27766.log",
+  "pid": 27766,
+  "processId": 27766,
+  "startedAt": "2026-10-26T23:21:07.739Z",
+  "success": true
+}

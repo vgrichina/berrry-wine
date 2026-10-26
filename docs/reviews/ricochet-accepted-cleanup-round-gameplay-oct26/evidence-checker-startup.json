@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "console.log(JSON.stringify({exec:process.execPath,flags:process.execArgv.slice(0,1),limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),node:process.version}))"
+  ],
+  "executable": "/usr/local/bin/node",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.03290442191064358,
+  "peakPhysicalAggregate": 70074368,
+  "physicalCap": 134217728,
+  "cpu": 0.08,
+  "outputBytes": 1465,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3314075": "110439849",
+    "3314078": "110439856"
+  }
+}

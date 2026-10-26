@@ -1,0 +1,11 @@
+[
+  {
+    "pid": 3295858,
+    "session": "01a17a7f-4eed-7da0-a8d7-0a73b1bf286a",
+    "configs": [
+      "model_auto_compact_token_limit=200000",
+      "model_auto_compact_token_limit_scope=\"total\"",
+      "model_reasoning_effort=\"medium\""
+    ]
+  }
+]

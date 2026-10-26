@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_twwrejwxhc8y",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-26T23:23:06.586Z",
+  "launcherFailed": false,
+  "noticedMs": 397,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 397,
+  "startedAt": "2026-10-26T23:23:06.031Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\nAssertionError\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

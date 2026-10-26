@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_un6wswpkbclj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:20:20.860Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T23:20:20.750Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"verified\": 537, \"bad\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

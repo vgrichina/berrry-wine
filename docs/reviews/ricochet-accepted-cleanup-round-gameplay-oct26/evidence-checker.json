@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/home/user/wine-assembly/ops/check-run-evidence.js",
+    "/tmp/ricochet-accepted-cleanup-round-gameplay-oct26/repo"
+  ],
+  "executable": "/usr/local/bin/node",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.09911162406206131,
+  "peakPhysicalAggregate": 86573056,
+  "physicalCap": 134217728,
+  "cpu": 0.15,
+  "outputBytes": 66,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3314642": "110441439",
+    "3314645": "110441448"
+  }
+}

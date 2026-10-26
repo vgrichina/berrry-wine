@@ -1,0 +1,11 @@
+{
+  "at": 1793057033.1077251,
+  "phase": "runtime complete; four frames personally inspected; helper readbacks verified; no round gameplay",
+  "box": "bx_9jybcw7h",
+  "remaining": [
+    "round selection",
+    "round paddle/ball before-after",
+    "normal in-game Quit"
+  ],
+  "guestInvocations": 1
+}
