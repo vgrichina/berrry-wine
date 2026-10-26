@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_naisjqkxiffz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:36:41.459Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 20,
+  "startedAt": "2026-10-26T08:36:41.402Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"sibling\":\"/home/user/enigma-accepted-mode-api-single-frame-oct26/accepted/tools/lossless-capture-png.cjs\",\"adapter\":\"/home/user/enigma-accepted-mode-api-single-frame-oct26/accepted/tools/enigma-terminal-capture-guard.cjs\",\"originalCaptureSHA256\":\"6d64a146f2daf8b598dbf13e3c13f890dbc783d8f5286aacba6d343758d22079\",\"absoluteSiblingBound\":true,\"ordinaryUserWrite\":true,\"actualCompleteSupervisor\":true,\"kernelArtifactLimit\":2097152,\"outputLimit\":131072,\"profile\":\"single-frame\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

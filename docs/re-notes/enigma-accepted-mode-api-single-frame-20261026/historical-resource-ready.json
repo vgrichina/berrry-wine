@@ -1,0 +1,27 @@
+{
+  "at": 1792990485.394619,
+  "stage": "ready",
+  "charges": {
+    "localOwned": 3559424,
+    "remoteOwned": 45228032,
+    "sessionLauncherFull": 905216,
+    "positiveSQLiteHighwater": 909312,
+    "sqliteAndSessionFuture": 2097152,
+    "checkoutGitAndHelpersFuture": 1216512,
+    "captureAndPublicationFuture": 4194304,
+    "transferOverlap": 1048576,
+    "reserve": 8388608
+  },
+  "peak": 67547136,
+  "cap": 67108864,
+  "free": 4275994624,
+  "remoteFree": 49187008512,
+  "projectedLocalAfter": 4208447488,
+  "projectedRemoteAfter": 49119461376,
+  "memAvailable": 2282020864,
+  "clientRSS": 25145344,
+  "projectedExtraClient": 536870912,
+  "localMemoryFloor": 805306368,
+  "largestLocal": 1547270,
+  "passAdmission": false
+}

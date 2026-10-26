@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_6kqdxvqfjl9u",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:36:50.342Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 20,
+  "startedAt": "2026-10-26T08:36:50.220Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48959279104, \"memAvailable\": 7356260352, \"materialized\": 43536384, \"nativeProcesses\": [], \"largest\": 6287872}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

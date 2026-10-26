@@ -1,0 +1,22 @@
+{
+  "pngBytes": 413407,
+  "sha256": "b876992c5035e22563a9a2c9ed87bda8d3ab381bc7b55974050d6205b8933be9",
+  "decoded": {
+    "width": 640,
+    "height": 480,
+    "rgbaBytes": 1228800,
+    "rgbaSHA256": "2a4a583c2ff7c0ce045cd2d809e62fbf997da1e0f0f47bed6412bdfe7faf528d"
+  },
+  "reviewed": true,
+  "observation": "Enigma v1.01 title bar, Enigma logo and Loading Enigma levels over marble background; no menu or gameplay visible.",
+  "lua": "No Lua error diagnostic in retained output. Startup/compat/models Lua files found; execution correctness not established.",
+  "hitCounts": {
+    "0x005ab8f0": 0,
+    "0x005ab957": 0,
+    "0x005ab965": 0,
+    "0x005ab98e": 0
+  },
+  "maxSeconds": 55,
+  "batches": 97160,
+  "apiCalls": 4185821
+}

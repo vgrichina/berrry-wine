@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lprnzdoxnw6s",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:36:40.189Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 19,
+  "startedAt": "2026-10-26T08:36:40.006Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"passHash\": true, \"files\": 2659, \"bytes\": 37476538, \"ordinaryUnique\": 2587, \"immutableFontPaths\": 72, \"immutableFontBlobs\": 43, \"allModesMatch\": true, \"specialBitsAbsent\": true, \"noMutableAliases\": true, \"ordinaryUserWrite\": true, \"inventory\": {\"logicalBytes\": 37873869, \"physicalOwnedBytes\": 43397120, \"pathSummedAllocatedBytes\": 44183552, \"files\": 2679, \"uniqueInodes\": 2740}}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

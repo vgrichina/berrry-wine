@@ -1,0 +1,29 @@
+{
+  "original": "73be15954cedc19340779ff6bda2397cb94927ca702d2baebdccd5e763cf7b73",
+  "acceptedTransformed": "1b1266e5151ccbb35bff0f2809e4f241bdeeee369f0d8000a0ebe165436aa06d",
+  "deployed": "6666b83a0a658d4c601dd8b5e01ef5106fa583a7850f9e907ac32ead04f5d2cb",
+  "configurationOnly": [
+    "cutoff",
+    "box",
+    "shutdown",
+    "expiry"
+  ],
+  "schedule": {
+    "guestCutoff": "2026-10-26T09:00:00Z",
+    "handback": "2026-10-26T09:10:00Z",
+    "shutdown": "2026-10-26T09:20:00Z",
+    "expiry": "2026-10-26T09:48:43.654Z"
+  },
+  "environment": {
+    "MAELSTROM_CAPTURE_INSTALL": "1",
+    "ENIGMA_RUNNER_ROOT": "/home/user/enigma-accepted-mode-api-single-frame-oct26/runner",
+    "ENIGMA_FINDFIRST_RUNNER_ROOT": "/home/user/enigma-accepted-mode-api-single-frame-oct26/runner",
+    "ENIGMA_TERMINAL_CAPTURE_INSTALL": "1",
+    "ENIGMA_CAPTURE_PATH": "/home/user/enigma-accepted-mode-api-single-frame-oct26/capture.cjs",
+    "ENIGMA_TERMINAL_RECEIPT": "/home/user/enigma-accepted-mode-api-single-frame-oct26/guest/capture-terminal.json",
+    "ENIGMA_LOSSLESS_CAPTURE": "1",
+    "ENIGMA_CAPTURE_PROFILE": "single-frame"
+  },
+  "selectedKernelArtifactLimit": 2097152,
+  "combinedOutputLimit": 131072
+}

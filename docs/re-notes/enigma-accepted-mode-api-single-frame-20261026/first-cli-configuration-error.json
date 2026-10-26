@@ -1,0 +1,5 @@
+{
+  "status": 2,
+  "stdout": "",
+  "stderr": "error: the argument '--timeout <SECS>' cannot be used with '--detach'\n\nUsage: boat exec --timeout <SECS> <ID> <COMMAND>...\n\nFor more information, try '--help'.\n"
+}

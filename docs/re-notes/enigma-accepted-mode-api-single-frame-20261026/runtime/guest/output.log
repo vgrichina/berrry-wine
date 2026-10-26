@@ -1,0 +1,780 @@
+PE loaded. Entry: 0x004012a0
+DLL: msvcrt.dll at 0xb0b000, DllMain=0xb0e428, thunks=2187, origBase=0x78000000
+DLL: zlib1.dll at 0xc4f000, DllMain=0xc50060, thunks=2190, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xd68000, DllMain=0xd69060, thunks=2193, origBase=0x69c80000
+DLL: SDL.dll at 0xe8e000, DllMain=0xe8f000, thunks=2341, origBase=0x68100000
+DLL: SDL_image.dll at 0xfe9000, DllMain=0xfea060, thunks=2344, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0x110a000, DllMain=0x110b060, thunks=2356, origBase=0x61700000
+DLL: libfreetype-6.dll at 0x1255000, DllMain=0x1256060, thunks=2359, origBase=0x6fbc0000
+DLL: SDL_ttf.dll at 0x13c7000, DllMain=0x13c8060, thunks=2362, origBase=0x6f4c0000
+Patching EXE imports: libpng12-0.dll -> DLL #2 (libpng12-0.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #3 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #4 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #5 (SDL_mixer.dll)
+Patching EXE imports: SDL_ttf.dll -> DLL #7 (SDL_ttf.dll)
+Patching EXE imports: zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: libfreetype-6.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libfreetype-6.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL_ttf.dll→libfreetype-6.dll -> DLL #6 (libfreetype-6.dll)
+Patching DLL imports: SDL_ttf.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_ttf.dll→SDL.dll -> DLL #3 (SDL.dll)
+After patching: 2382 thunks
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xb46edc] = 0x13d557c
+Patched __p__environ [0xb45be4] = 0x13d555c
+Patched __p___winitenv [0xb470ec] = 0x13d557c
+Patched __p___initenv [0xb49c9c] = 0x13d555c
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb1799d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\enigma-1.01
+[count] slot 0 armed at 0x005ab8f0
+[count] slot 1 armed at 0x005ab957
+[count] slot 2 armed at 0x005ab965
+[count] slot 3 armed at 0x005ab98e
+[API #81] GetProcAddress(mod=h:0x013d5e54, name="IsProcessorFeaturePresent") [esp=0x074fffcc ret=0x00b0f5c0]
+  => h:0x013d7634
+[API #192] LoadLibraryA(name="DDRAW.DLL") [esp=0x074ffdfc ret=0x005de288]
+  => h:0x013ebc4c
+[API #373] LoadLibraryA(name="shfolder.dll") [esp=0x074ff6bc ret=0x00581b13]
+  => h:0x00400000
+[API #374] GetProcAddress(mod=h:0x00400000, name="SHGetFolderPathA") [esp=0x074ff6bc ret=0x00581b36]
+  => h:0x07505920
+[FF] FindFirst("C:\WINDOWS\Application Data") => "application data" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\compat.lua") => "compat.lua" size=4075
+[FF] FindFirst("C:\Enigma-1.01/data\startup.lua") => "startup.lua" size=9436
+[FF] FindFirst("C:\Enigma-1.01/data\enigma_conf.lua") => "enigma_conf.lua" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/enigmarc.xml") => "enigmarc.xml" size=878
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/preferences.xsd") => "preferences.xsd" size=1707
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma") => "enigma" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels") => "levels" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels") => "levels" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma") => "enigma" size=0
+[API #22114] GetProcAddress(mod=h:0x014d6004, name="TrackMouseEvent") [esp=0x074ff13c ret=0x00ebeb35]
+  => 0
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+[API #22364] LoadLibraryA(name="jpeg.dll") [esp=0x074ff79c ret=0x00ecc8dd]
+  => 0
+[API #22373] GetProcAddress(mod=h:0x015d3000, name="jpeg_calc_output_dimensions") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015de080
+[API #22374] GetProcAddress(mod=h:0x015d3000, name="jpeg_CreateDecompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd1b0
+[API #22375] GetProcAddress(mod=h:0x015d3000, name="jpeg_destroy_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd2b0
+[API #22376] GetProcAddress(mod=h:0x015d3000, name="jpeg_finish_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd6b0
+[API #22377] GetProcAddress(mod=h:0x015d3000, name="jpeg_read_header") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd580
+[API #22378] GetProcAddress(mod=h:0x015d3000, name="jpeg_read_scanlines") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd9a0
+[API #22379] GetProcAddress(mod=h:0x015d3000, name="jpeg_resync_to_restart") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015e0eb0
+[API #22380] GetProcAddress(mod=h:0x015d3000, name="jpeg_start_decompress") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015dd880
+[API #22381] GetProcAddress(mod=h:0x015d3000, name="jpeg_std_error") [esp=0x074ff79c ret=0x00ecc974]
+  => h:0x015ea990
+[API #22382] LoadLibraryA(name="libpng12-0.dll") [esp=0x074ff79c ret=0x00ecc8dd]
+  => h:0x00d68000
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[SetWindowText] ""
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_marble.png") => "enigma_marble.png" size=16723
+[SetWindowText] "Enigma v1.01"
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/cur-magic.png") => "cur-magic.png" size=446
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xb0e7c5 param=0x14c1b1c flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb0e7c5 ESP=0x7efffff8
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[FF] FindFirst("C:\Enigma-1.01/data\sound-defaults.lua") => "sound-defaults.lua" size=14673
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets") => "soundsets" size=0
+[FF] FindFirst("C:\enigma-1.01\data\soundsets\*") => "." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/.") => "soundsets" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/..") => "data" size=0
+[FF] FindNext => "enigma" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\soundsets/enigma") => "enigma" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\compat.lua") => "compat.lua" size=4075
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[FF] FindFirst("C:\Enigma-1.01/data\models-32.lua") => "models-32.lua" size=458
+[FF] FindFirst("C:\Enigma-1.01/data\models-2d.lua") => "models-2d.lua" size=50928
+[FF] FindFirst("C:\Enigma-1.01/data\models.lua") => "models.lua" size=9752
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/dummy.png") => "dummy.png" size=295
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/invisible.png") => "invisible.png" size=126
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/DejaVuSansCondensed.ttf") => "DejaVuSansCondensed.ttf" size=408940
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-top.png") => "fg-top.png" size=7151
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-top.png") => "sh-top.png" size=158
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-rotor.png") => "fg-rotor.png" size=6334
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-rotor.png") => "sh-rotor.png" size=6850
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-horse.png") => "fg-horse.png" size=2114
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-horse.png") => "sh-horse.png" size=194
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-whiteball-small.png") => "sh-whiteball-small.png" size=232
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball-small.png") => "fg-whiteball-small.png" size=423
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-fall.png") => "ac-whiteball-small-fall.png" size=1558
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-shatter.png") => "ac-whiteball-small-shatter.png" size=1607
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-shattered.png") => "ac-whiteball-small-shattered.png" size=602
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-small-jump.png") => "ac-whiteball-small-jump.png" size=5009
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-whiteball-small-jump.png") => "sh-whiteball-small-jump.png" size=432
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-shatter.png") => "ac-blackball-shatter.png" size=3756
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-shatter.png") => "ac-whiteball-shatter.png" size=1886
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball-sink.png") => "sh-blackball-sink.png" size=556
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-blackball-sink.png") => "fg-blackball-sink.png" size=1283
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball-sink.png") => "fg-whiteball-sink.png" size=2131
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball.png") => "sh-blackball.png" size=171
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-blackball.png") => "fg-blackball.png" size=735
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-fall.png") => "ac-blackball-fall.png" size=2050
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-whiteball.png") => "fg-whiteball.png" size=857
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-fall.png") => "ac-whiteball-fall.png" size=1408
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-blackball-jump.png") => "ac-blackball-jump.png" size=2421
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-blackball-jump.png") => "sh-blackball-jump.png" size=760
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-whiteball-jump.png") => "ac-whiteball-jump.png" size=6788
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fg-bug.png") => "fg-bug.png" size=561
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/inv-blackball.png") => "inv-blackball.png" size=418
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/inv-whiteball.png") => "inv-whiteball.png" size=606
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-gradient2.png") => "fl-gradient2.png" size=40907
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-leaves.png") => "fl-leaves.png" size=22918
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-wood.png") => "fl-wood.png" size=7428
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rock1.png") => "fl-rock1.png" size=2616
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rock2.png") => "fl-rock2.png" size=2548
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-abyss.png") => "fl-abyss.png" size=140
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-dunes.png") => "fl-dunes.png" size=2741
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-sand.png") => "fl-sand.png" size=2540
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bluegreen.png") => "fl-bluegreen.png" size=2169
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bluegreenx.png") => "fl-bluegreenx.png" size=1310
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-inverse.png") => "fl-inverse.png" size=1538
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-inverse2.png") => "fl-inverse2.png" size=840
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-white.png") => "fl-white.png" size=716
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-black.png") => "fl-black.png" size=732
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-acwhite.png") => "fl-acwhite.png" size=833
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-acblack.png") => "fl-acblack.png" size=958
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-springboard.png") => "fl-springboard.png" size=115
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-normal.png") => "fl-normal.png" size=2288
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-hay.png") => "fl-hay.png" size=3117
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-floor_001.png") => "fl-floor_001.png" size=2425
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-ice.png") => "fl-ice.png" size=2210
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-stone.png") => "fl-stone.png" size=1550
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-dummy.png") => "fl-dummy.png" size=501
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-light.png") => "fl-light.png" size=1949
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-lightgray.png") => "fl-lightgray.png" size=1839
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-darkgray.png") => "fl-darkgray.png" size=1634
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-trigger.png") => "fl-trigger.png" size=1759
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-concrete.png") => "fl-concrete.png" size=10755
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-gravel.png") => "fl-gravel.png" size=11088
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bumps.png") => "fl-bumps.png" size=10752
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-mortar.png") => "fl-mortar.png" size=11458
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-brick.png") => "fl-brick.png" size=4852
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-space.png") => "fl-space.png" size=1285
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rough.png") => "fl-rough.png" size=6667
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-gray.png") => "fl-gray.png" size=7654
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-metal.png") => "fl-metal.png" size=5287
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-plank.png") => "fl-plank.png" size=1137
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-water.png") => "fl-water.png" size=8945
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-swamp.png") => "fl-swamp.png" size=10087
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-woven.png") => "fl-woven.png" size=1023
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-marble.png") => "fl-marble.png" size=5049
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-stwood.png") => "fl-stwood.png" size=3971
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bluegray.png") => "fl-bluegray.png" size=4296
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-red.png") => "fl-red.png" size=6255
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rough-blue.png") => "fl-rough-blue.png" size=8635
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-rough-red.png") => "fl-rough-red.png" size=9754
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-sahara.png") => "fl-sahara.png" size=8373
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-tigris.png") => "fl-tigris.png" size=8128
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-samba.png") => "fl-samba.png" size=4819
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-himalaya.png") => "fl-himalaya.png" size=10767
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-woven_orange.png") => "fl-woven_orange.png" size=2757
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgea-open.png") => "fl-bridgea-open.png" size=82
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgea-closed.png") => "fl-bridgea-closed.png" size=148
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgea.png") => "fl-bridgea.png" size=675
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgex-open.png") => "fl-bridgex-open.png" size=82
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgex-closed.png") => "fl-bridgex-closed.png" size=2146
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgex.png") => "fl-bridgex.png" size=3568
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgey-open.png") => "fl-bridgey-open.png" size=82
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgey-closed.png") => "fl-bridgey-closed.png" size=2146
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-bridgey.png") => "fl-bridgey.png" size=2470
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-ice-heating.png") => "fl-ice-heating.png" size=19105
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-water-heating.png") => "fl-water-heating.png" size=17675
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/fl-swamp-heating.png") => "fl-swamp-heating.png" size=18860
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/items.png") => "items.png" size=22956
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-coffee.png") => "it-coffee.png" size=1044
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-blackbomb.png") => "it-blackbomb.png" size=309
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-whitebomb.png") => "it-whitebomb.png" size=713
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-dynamite.png") => "it-dynamite.png" size=372
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-dummy.png") => "it-dummy.png" size=365
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-blocker.png") => "it-blocker.png" size=309
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-wrench.png") => "it-wrench.png" size=1386
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-cherry.png") => "it-cherry.png" size=359
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-glasses.png") => "it-glasses.png" size=1235
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-glasses-broken.png") => "it-glasses-broken.png" size=2134
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-weight.png") => "it-weight.png" size=884
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-landmine.png") => "it-landmine.png" size=1330
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-hstrip.png") => "it-hstrip.png" size=514
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-vstrip.png") => "it-vstrip.png" size=544
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-booze.png") => "it-booze.png" size=624
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-banana.png") => "it-banana.png" size=287
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-spoon.png") => "it-spoon.png" size=362
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-cross.png") => "it-cross.png" size=197
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-pencil.png") => "it-pencil.png" size=230
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-squashed.png") => "it-squashed.png" size=362
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-booze-broken.png") => "it-booze-broken.png" size=1585
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-seed.png") => "it-seed.png" size=489
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-crack.png") => "it-crack.png" size=2009
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-burnable_ignite.png") => "it-burnable_ignite.png" size=7276
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-burnable_burning.png") => "it-burnable_burning.png" size=4214
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-burnable_ash.png") => "it-burnable_ash.png" size=3335
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-burnable_fireproof.png") => "it-burnable_fireproof.png" size=2995
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-extinguisher.png") => "it-extinguisher.png" size=1821
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-burnable_oil.png") => "it-burnable_oil.png" size=7987
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-magnet-off.png") => "it-magnet-off.png" size=251
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-magnet-on.png") => "it-magnet-on.png" size=434
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-wormhole.png") => "it-wormhole.png" size=730
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-vortex.png") => "it-vortex.png" size=409
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-coin1.png") => "it-coin1.png" size=914
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-coin2.png") => "it-coin2.png" size=1115
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-coin4.png") => "it-coin4.png" size=1096
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-dynamite-burning.png") => "it-dynamite-burning.png" size=916
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-blackbomb-burning.png") => "it-blackbomb-burning.png" size=623
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-whitebomb-burning.png") => "it-whitebomb-burning.png" size=1243
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/expl.png") => "expl.png" size=1019
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-pipe.png") => "it-pipe.png" size=2304
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-shogun-small.png") => "it-shogun-small.png" size=677
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-shogun-med.png") => "it-shogun-med.png" size=903
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-shogun-big.png") => "it-shogun-big.png" size=1142
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-springboard.png") => "it-springboard.png" size=229
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/it-death.png") => "it-death.png" size=5050
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-solid.png") => "sh-solid.png" size=226
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-round.png") => "sh-round.png" size=244
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-round2.png") => "sh-round2.png" size=238
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-grate1.png") => "sh-grate1.png" size=369
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-grate2.png") => "sh-grate2.png" size=175
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-grate3.png") => "sh-grate3.png" size=269
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-glass.png") => "sh-glass.png" size=283
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-white4.png") => "sh-white4.png" size=161
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-puzzle1.png") => "sh-puzzle1.png" size=151
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-brake.png") => "sh-brake.png" size=264
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-floating.png") => "sh-floating.png" size=198
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-glass.png") => "st-glass.png" size=2314
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bug.png") => "st-bug.png" size=2214
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-scissors.png") => "st-scissors.png" size=1181
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-scissors-snip.png") => "st-scissors-snip.png" size=1178
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rubberband.png") => "st-rubberband.png" size=3061
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-disco.png") => "st-disco.png" size=153
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/stones.png") => "stones.png" size=7192
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-glass1.png") => "st-glass1.png" size=334
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-glass2.png") => "st-glass2.png" size=329
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-glass3.png") => "st-glass3.png" size=316
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock1.png") => "st-rock1.png" size=2636
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock2.png") => "st-rock2.png" size=2754
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock3.png") => "st-rock3.png" size=2190
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock4.png") => "st-rock4.png" size=2542
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock5.png") => "st-rock5.png" size=2340
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock6.png") => "st-rock6.png" size=2494
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock7.png") => "st-rock7.png" size=2409
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock8.png") => "st-rock8.png" size=1219
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock9.png") => "st-rock9.png" size=3047
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock10.png") => "st-rock10.png" size=2537
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-redrock.png") => "st-redrock.png" size=2452
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-brownie.png") => "st-brownie.png" size=2128
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-stone1.png") => "st-stone1.png" size=1030
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-stone2.png") => "st-stone2.png" size=3056
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bumps.png") => "st-bumps.png" size=2886
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-camouflage.png") => "st-camouflage.png" size=1432
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-marble.png") => "st-marble.png" size=2834
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-metal.png") => "st-metal.png" size=2132
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-blue-sand.png") => "st-blue-sand.png" size=1450
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-flrock.png") => "st-flrock.png" size=2286
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-flhay.png") => "st-flhay.png" size=2932
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-firebreak.png") => "st-firebreak.png" size=2092
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-round2-growing.png") => "sh-round2-growing.png" size=344
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-wood.png") => "st-wood.png" size=1892
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-wood-growing.png") => "st-wood-growing.png" size=1430
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-blocker.png") => "st-blocker.png" size=4280
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rotator-left.png") => "st-rotator-left.png" size=6416
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rotator-right.png") => "st-rotator-right.png" size=6381
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-grate1.png") => "st-grate1.png" size=2395
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-grate2.png") => "st-grate2.png" size=1685
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-grate3.png") => "st-grate3.png" size=727
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-brake.png") => "st-brake.png" size=1311
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-greenbrown.png") => "st-greenbrown.png" size=1196
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-brick.png") => "st-brick.png" size=2665
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-woven.png") => "st-woven.png" size=1554
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-switch.png") => "st-switch.png" size=2808
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-switch_black.png") => "st-switch_black.png" size=2827
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-switch_white.png") => "st-switch_white.png" size=2830
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fourswitch.png") => "st-fourswitch.png" size=4374
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-floppy1.png") => "st-floppy1.png" size=1276
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-floppy2.png") => "st-floppy2.png" size=1381
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-easymode.png") => "st-easymode.png" size=176
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydb.png") => "st-oxydb.png" size=1007
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fakeoxyd-blink_0001.png") => "st-fakeoxyd-blink_0001.png" size=1755
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fakeoxyd-blink_0002.png") => "st-fakeoxyd-blink_0002.png" size=1773
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fakeoxyd-blink_0003.png") => "st-fakeoxyd-blink_0003.png" size=1777
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fakeoxyd-blink_0004.png") => "st-fakeoxyd-blink_0004.png" size=1881
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-wood_001.png") => "st-wood_001.png" size=2165
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-key1.png") => "st-key1.png" size=1259
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-key2.png") => "st-key2.png" size=1287
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-white1.png") => "st-white1.png" size=2024
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-white2.png") => "st-white2.png" size=412
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-white3.png") => "st-white3.png" size=459
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-white4.png") => "st-white4.png" size=776
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-yinyang1.png") => "st-yinyang1.png" size=1276
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-yinyang2.png") => "st-yinyang2.png" size=1612
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bluegray.png") => "st-bluegray.png" size=1853
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-yellow.png") => "st-yellow.png" size=2412
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-dummy.png") => "st-dummy.png" size=601
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-blackballs.png") => "st-blackballs.png" size=470
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-whiteballs.png") => "st-whiteballs.png" size=768
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock3_cracked.png") => "st-rock3_cracked.png" size=2214
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-pull.png") => "st-pull.png" size=522
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-swap.png") => "st-swap.png" size=2187
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-pull.png") => "sh-pull.png" size=306
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxyda-opening.png") => "st-oxyda-opening.png" size=4083
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydb-opening.png") => "st-oxydb-opening.png" size=1481
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydc-opening.png") => "st-oxydc-opening.png" size=3940
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydd-opening.png") => "st-oxydd-opening.png" size=2109
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxyda.png") => "st-oxyda.png" size=2430
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxyda-open.png") => "st-oxyda-open.png" size=1305
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0002.png") => "st-oxydbtempl_0002.png" size=457
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxyd-questmark.png") => "st-oxyd-questmark.png" size=969
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0010.png") => "st-oxydbtempl_0010.png" size=1036
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0011.png") => "st-oxydbtempl_0011.png" size=1015
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0012.png") => "st-oxydbtempl_0012.png" size=141
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0013.png") => "st-oxydbtempl_0013.png" size=1021
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0014.png") => "st-oxydbtempl_0014.png" size=1101
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0003.png") => "st-oxydbtempl_0003.png" size=426
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0004.png") => "st-oxydbtempl_0004.png" size=647
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0005.png") => "st-oxydbtempl_0005.png" size=433
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0006.png") => "st-oxydbtempl_0006.png" size=501
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0007.png") => "st-oxydbtempl_0007.png" size=583
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0008.png") => "st-oxydbtempl_0008.png" size=573
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydbtempl_0009.png") => "st-oxydbtempl_0009.png" size=828
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydb-open.png") => "st-oxydb-open.png" size=1233
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydd.png") => "st-oxydd.png" size=1826
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydd-open.png") => "st-oxydd-open.png" size=2595
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydc.png") => "st-oxydc.png" size=977
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oxydc-open.png") => "st-oxydc-open.png" size=851
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-base.png") => "st-laser-base.png" size=2437
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0001.png") => "st-laser-e_0001.png" size=887
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0002.png") => "st-laser-e_0002.png" size=1012
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0003.png") => "st-laser-e_0003.png" size=1094
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0004.png") => "st-laser-e_0004.png" size=1019
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0005.png") => "st-laser-e_0005.png" size=1031
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0006.png") => "st-laser-e_0006.png" size=1078
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0007.png") => "st-laser-e_0007.png" size=1077
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0008.png") => "st-laser-e_0008.png" size=960
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-e_0009.png") => "st-laser-e_0009.png" size=923
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0001.png") => "st-laser-s_0001.png" size=917
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0002.png") => "st-laser-s_0002.png" size=1043
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0003.png") => "st-laser-s_0003.png" size=1132
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0004.png") => "st-laser-s_0004.png" size=1068
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0005.png") => "st-laser-s_0005.png" size=1070
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0006.png") => "st-laser-s_0006.png" size=1131
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0007.png") => "st-laser-s_0007.png" size=1132
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0008.png") => "st-laser-s_0008.png" size=998
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-s_0009.png") => "st-laser-s_0009.png" size=954
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0001.png") => "st-laser-w_0001.png" size=906
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0002.png") => "st-laser-w_0002.png" size=1032
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0003.png") => "st-laser-w_0003.png" size=1110
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0004.png") => "st-laser-w_0004.png" size=1043
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0005.png") => "st-laser-w_0005.png" size=1057
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0006.png") => "st-laser-w_0006.png" size=1102
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0007.png") => "st-laser-w_0007.png" size=1104
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0008.png") => "st-laser-w_0008.png" size=979
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-w_0009.png") => "st-laser-w_0009.png" size=953
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0001.png") => "st-laser-n_0001.png" size=907
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0002.png") => "st-laser-n_0002.png" size=1034
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0003.png") => "st-laser-n_0003.png" size=1127
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0004.png") => "st-laser-n_0004.png" size=1063
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0005.png") => "st-laser-n_0005.png" size=1069
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0006.png") => "st-laser-n_0006.png" size=1116
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0007.png") => "st-laser-n_0007.png" size=1112
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0008.png") => "st-laser-n_0008.png" size=986
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-laser-n_0009.png") => "st-laser-n_0009.png" size=944
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-fart-break.png") => "st-fart-break.png" size=3794
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock3-break.png") => "st-rock3-break.png" size=5113
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-rock3-falling.png") => "st-rock3-falling.png" size=4595
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-actorimpulse.png") => "st-actorimpulse.png" size=1880
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-actorimpulse.png") => "sh-actorimpulse.png" size=515
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-stoneimpulse.png") => "st-stoneimpulse.png" size=3859
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-stoneimpulse-hollow.png") => "st-stoneimpulse-hollow.png" size=9017
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/thief-template.png") => "thief-template.png" size=16810
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/thief-captured-template.png") => "thief-captured-template.png" size=20570
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-thief-captured.png") => "st-thief-captured.png" size=22033
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-chess_black.png") => "st-chess_black.png" size=5698
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-chess_white.png") => "st-chess_white.png" size=5737
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-timer.png") => "st-timer.png" size=2546
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bombs.png") => "st-bombs.png" size=5205
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-dynamite.png") => "st-dynamite.png" size=10099
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-whitebombs.png") => "st-whitebombs.png" size=11958
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mail.png") => "st-mail.png" size=4668
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-window.png") => "st-window.png" size=613
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-stone_break.png") => "st-stone_break.png" size=5257
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-break_bolder.png") => "st-break_bolder.png" size=4693
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-break_acwhite.png") => "st-break_acwhite.png" size=5954
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-break_acblack.png") => "st-break_acblack.png" size=6316
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-break_gray.png") => "st-break_gray.png" size=6997
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-death.png") => "st-death.png" size=1316
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-flash.png") => "st-flash.png" size=1922
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-surprise.png") => "st-surprise.png" size=1287
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-chargeplus.png") => "st-chargeplus.png" size=3502
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-chargeminus.png") => "st-chargeminus.png" size=3203
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-chargezero.png") => "st-chargezero.png" size=3451
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-turnstile.png") => "st-turnstile.png" size=3961
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-turnstile-green.png") => "st-turnstile-green.png" size=4054
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-timeswitch.png") => "st-timeswitch.png" size=2635
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-time1switch.png") => "st-time1switch.png" size=3133
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirror-movable.png") => "st-mirror-movable.png" size=2804
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0001.png") => "st-mirrortempl_0001.png" size=653
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0002.png") => "st-mirrortempl_0002.png" size=651
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0003.png") => "st-mirrortempl_0003.png" size=577
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0004.png") => "st-mirrortempl_0004.png" size=672
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirror-static.png") => "st-mirror-static.png" size=2731
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0005.png") => "st-mirrortempl_0005.png" size=660
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0006.png") => "st-mirrortempl_0006.png" size=678
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0007.png") => "st-mirrortempl_0007.png" size=657
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0008.png") => "st-mirrortempl_0008.png" size=686
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0009.png") => "st-mirrortempl_0009.png" size=585
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0010.png") => "st-mirrortempl_0010.png" size=990
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0011.png") => "st-mirrortempl_0011.png" size=601
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0012.png") => "st-mirrortempl_0012.png" size=945
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0013.png") => "st-mirrortempl_0013.png" size=631
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0014.png") => "st-mirrortempl_0014.png" size=1084
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0015.png") => "st-mirrortempl_0015.png" size=654
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-mirrortempl_0016.png") => "st-mirrortempl_0016.png" size=1068
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-oneway.png") => "st-oneway.png" size=9282
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-coinslot.png") => "st-coinslot.png" size=2341
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-coin2slot.png") => "st-coin2slot.png" size=18048
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-puzzle.png") => "st-puzzle.png" size=54640
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bigbrick.png") => "st-bigbrick.png" size=8093
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bigbluesand.png") => "st-bigbluesand.png" size=18178
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-doorh.png") => "st-doorh.png" size=2014
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-doorh.png") => "sh-doorh.png" size=873
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-doorv.png") => "st-doorv.png" size=1888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-doorv.png") => "sh-doorv.png" size=643
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-doorb.png") => "st-doorb.png" size=6660
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-knight.png") => "st-knight.png" size=1819
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-shogun1.png") => "sh-shogun1.png" size=278
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-shogun2.png") => "sh-shogun2.png" size=294
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/sh-shogun4.png") => "sh-shogun4.png" size=320
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-shogun.png") => "st-shogun.png" size=4069
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bolder.png") => "st-bolder.png" size=4588
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-bolder-fall.png") => "st-bolder-fall.png" size=4036
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-magic.png") => "st-magic.png" size=554
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-lightpassenger.png") => "st-lightpassenger.png" size=4379
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-lightpassenger-break-v.png") => "st-lightpassenger-break-v.png" size=11334
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-lightpassenger-break-h.png") => "st-lightpassenger-break-h.png" size=10617
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/st-lightpassenger-break-hv.png") => "st-lightpassenger-break-hv.png" size=12943
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ring-anim.png") => "ring-anim.png" size=826
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/ac-drowned.png") => "ac-drowned.png" size=784
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/halo.png") => "halo.png" size=236
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/halo-blink.png") => "halo-blink.png" size=235
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/halo-small.png") => "halo-small.png" size=434
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/halo-small-blink.png") => "halo-small-blink.png" size=467
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/DejaVuSansCondensed.ttf") => "DejaVuSansCondensed.ttf" size=408940
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/state.xml") => "state.xml" size=1004
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/state.xsd") => "state.xsd" size=4849
+[FF] FindFirst("C:\enigma-1.01\data\levels\*") => "." size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/.") => "levels" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/..") => "data" size=0
+[FF] FindNext => "ant.lua" size=47040
+[FF] FindFirst("C:\Enigma-1.01/data/levels/ant.lua") => "ant.lua" size=47040
+[FF] FindNext => "enigma_cross" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross") => "enigma_cross" size=0
+[FF] FindNext => "enigma_esprit" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_esprit") => "enigma_esprit" size=0
+[FF] FindNext => "enigma_experimental" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_experimental") => "enigma_experimental" size=0
+[FF] FindNext => "enigma_i" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_i") => "enigma_i" size=0
+[FF] FindNext => "enigma_ii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_ii") => "enigma_ii" size=0
+[FF] FindNext => "enigma_iii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_iii") => "enigma_iii" size=0
+[FF] FindNext => "enigma_iv" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_iv") => "enigma_iv" size=0
+[FF] FindNext => "enigma_mas_microban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_mas_microban") => "enigma_mas_microban" size=0
+[FF] FindNext => "enigma_microban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_microban") => "enigma_microban" size=0
+[FF] FindNext => "enigma_oxyd" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_oxyd") => "enigma_oxyd" size=0
+[FF] FindNext => "enigma_oxydextra" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_oxydextra") => "enigma_oxydextra" size=0
+[FF] FindNext => "enigma_oxydmagnum" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_oxydmagnum") => "enigma_oxydmagnum" size=0
+[FF] FindNext => "enigma_peroxyd" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_peroxyd") => "enigma_peroxyd" size=0
+[FF] FindNext => "enigma_sokoban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_sokoban") => "enigma_sokoban" size=0
+[FF] FindNext => "enigma_tutorial" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_tutorial") => "enigma_tutorial" size=0
+[FF] FindNext => "enigma_v" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_v") => "enigma_v" size=0
+[FF] FindNext => "enigma_vi" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_vi") => "enigma_vi" size=0
+[FF] FindNext => "enigma_vii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_vii") => "enigma_vii" size=0
+[FF] FindNext => "index.lua" size=400
+[FF] FindFirst("C:\Enigma-1.01/data/levels/index.lua") => "index.lua" size=400
+[FF] FindNext => "lib" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/lib") => "lib" size=0
+[FF] FindNext => "patches" size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/patches") => "patches" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_esprit/index.xml") => "index.xml" size=17147
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_experimental/index.xml") => "index.xml" size=3149
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_i/index.xml") => "index.xml" size=18837
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_ii/index.xml") => "index.xml" size=18830
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_iii/index.xml") => "index.xml" size=18643
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[capture] pixel-preserving png 1 413407 bytes
+[input] png /home/user/enigma-accepted-mode-api-single-frame-oct26/guest/startup.png (413407 bytes) at batch 30000 guest-ms=6000000
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_iv/index.xml") => "index.xml" size=18672
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_mas_microban/index.xml") => "index.xml" size=12883
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_microban/index.xml") => "index.xml" size=9503
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxyd/index.xml") => "index.xml" size=10481
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxydextra/index.xml") => "index.xml" size=4325
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxydmagnum/index.xml") => "index.xml" size=5742
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_peroxyd/index.xml") => "index.xml" size=11049
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_sokoban/index.xml") => "index.xml" size=7346
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_tutorial/index.xml") => "index.xml" size=12772
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_v/index.xml") => "index.xml" size=18699
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_vi/index.xml") => "index.xml" size=19058
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_vii/index.xml") => "index.xml" size=4823
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\enigma-1.01\data\levels\enigma_cross\*") => "." size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/.") => "enigma_cross" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/..") => "levels" size=0
+[FF] FindNext => "enigma0_92_1.xml" size=27416
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/enigma0_92_1.xml") => "enigma0_92_1.xml" size=27416
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross/enigma0_92_1.xml") => "enigma0_92_1.xml" size=27416
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindNext => "enigma0_92_2.xml" size=31610
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/enigma0_92_2.xml") => "enigma0_92_2.xml" size=31610
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross/enigma0_92_2.xml") => "enigma0_92_2.xml" size=31610
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindNext => "enigma0_92_3.xml" size=12795
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/enigma0_92_3.xml") => "enigma0_92_3.xml" size=12795
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross/enigma0_92_3.xml") => "enigma0_92_3.xml" size=12795
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindNext => "newlevels_1.0.1.xml" size=12117
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/newlevels_1.0.1.xml") => "newlevels_1.0.1.xml" size=12117
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross/newlevels_1.0.1.xml") => "newlevels_1.0.1.xml" size=12117
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindNext => "newlevels.xml" size=38886
+[FF] FindFirst("C:\Enigma-1.01/data/levels/enigma_cross/newlevels.xml") => "newlevels.xml" size=38886
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross/newlevels.xml") => "newlevels.xml" size=38886
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/index.xsd") => "index.xsd" size=8206
+[FF] FindFirst("C:\windows\application data\enigma\levels\*") => "." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/.") => "levels" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/..") => "enigma" size=0
+[FF] FindNext => "auto" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/auto") => "auto" size=0
+[FF] FindNext => "cross" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/cross") => "cross" size=0
+[FF] FindNext => "legacy_dat" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/legacy_dat") => "legacy_dat" size=0
+[FF] FindFirst("C:\windows\application data\enigma\levels\cross\*") => "." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/cross/.") => "cross" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/cross/..") => "levels" size=0
+[FF] FindFirst("C:\windows\application data\enigma\levels\auto\*") => "." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/auto/.") => "auto" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma/levels/auto/..") => "levels" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/index.lua") => "index.lua" size=400
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels") => "levels" size=0
+[FF] FindFirst("C:\windows\application data\enigma\levels\*") => "." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels/.") => "levels" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels/..") => "enigma" size=0
+[FF] FindNext => "auto" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels/auto") => "auto" size=0
+[FF] FindNext => "cross" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels/cross") => "cross" size=0
+[FF] FindNext => "legacy_dat" size=0
+[FF] FindFirst("C:\WINDOWS\Application Data/Enigma\levels/legacy_dat") => "legacy_dat" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels") => "levels" size=0
+[FF] FindFirst("C:\enigma-1.01\data\levels\*") => "." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/.") => "levels" size=0
+[FF] FindNext => ".." size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/..") => "data" size=0
+[FF] FindNext => "ant.lua" size=47040
+[FF] FindFirst("C:\Enigma-1.01/data\levels/ant.lua") => "ant.lua" size=47040
+[FF] FindNext => "enigma_cross" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_cross") => "enigma_cross" size=0
+[FF] FindNext => "enigma_esprit" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_esprit") => "enigma_esprit" size=0
+[FF] FindNext => "enigma_experimental" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_experimental") => "enigma_experimental" size=0
+[FF] FindNext => "enigma_i" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_i") => "enigma_i" size=0
+[FF] FindNext => "enigma_ii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_ii") => "enigma_ii" size=0
+[FF] FindNext => "enigma_iii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_iii") => "enigma_iii" size=0
+[FF] FindNext => "enigma_iv" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_iv") => "enigma_iv" size=0
+[FF] FindNext => "enigma_mas_microban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_mas_microban") => "enigma_mas_microban" size=0
+[FF] FindNext => "enigma_microban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_microban") => "enigma_microban" size=0
+[FF] FindNext => "enigma_oxyd" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxyd") => "enigma_oxyd" size=0
+[FF] FindNext => "enigma_oxydextra" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxydextra") => "enigma_oxydextra" size=0
+[FF] FindNext => "enigma_oxydmagnum" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_oxydmagnum") => "enigma_oxydmagnum" size=0
+[FF] FindNext => "enigma_peroxyd" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_peroxyd") => "enigma_peroxyd" size=0
+[FF] FindNext => "enigma_sokoban" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_sokoban") => "enigma_sokoban" size=0
+[FF] FindNext => "enigma_tutorial" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_tutorial") => "enigma_tutorial" size=0
+[FF] FindNext => "enigma_v" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_v") => "enigma_v" size=0
+[FF] FindNext => "enigma_vi" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_vi") => "enigma_vi" size=0
+[FF] FindNext => "enigma_vii" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/enigma_vii") => "enigma_vii" size=0
+[FF] FindNext => "index.lua" size=400
+[FF] FindFirst("C:\Enigma-1.01/data\levels/index.lua") => "index.lua" size=400
+[FF] FindNext => "lib" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/lib") => "lib" size=0
+[FF] FindNext => "patches" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\levels/patches") => "patches" size=0
+[FF] FindFirst("C:\Enigma-1.01/data\ratings.xml") => "ratings.xml" size=224444
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/ratings.xsd") => "ratings.xsd" size=5020
+[FF] FindFirst("C:\Enigma-1.01/data\ratings.xml") => "ratings.xml" size=224444
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/score.xml") => "score.xml" size=364
+[FF] FindFirst("C:\Enigma-1.01/data\schemas/score.xsd") => "score.xsd" size=4442
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/DejaVuSansCondensed.ttf") => "DejaVuSansCondensed.ttf" size=408940
+[SetWindowText] "Enigma - Main Menu"
+[FF] FindFirst("C:\Enigma-1.01/data\sound/menu.s3m") => "menu.s3m" size=117746
+[FF] FindFirst("C:\Enigma-1.01/data\gfx32/menu_bg.jpg") => "menu_bg.jpg" size=25888
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/levelmenu.png") => "levelmenu.png" size=3106
+[FF] FindFirst("C:\Enigma-1.01/data\fonts/levelmenu.bmf") => "levelmenu.bmf" size=1095
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/enigma_logo3.png") => "enigma_logo3.png" size=20925
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/button.png") => "button.png" size=2557
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/button.png") => "button.png" size=2557
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/button.png") => "button.png" size=2557
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/button.png") => "button.png" size=2557
+[FF] FindFirst("C:\Enigma-1.01/data\gfx/button.png") => "button.png" size=2557
+[max-seconds] stopping after 55s at batch 97160
+
+--- Final state ---
+EIP=0x00ecc7a1 EAX=0x00000000 ECX=0xffffffff EDX=0x00000000 EBX=0x013ecc7b ESP=0x074ffa84 EBP=0x074ffa88 ESI=0x00000007 EDI=0x013eccac
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505970 num_thunks: 2862
+heap_ptr: 0x0349d090
+free_list: 0x032b4848
+heap stats: allocs=1856830 frees=1763228 steps=874959 (0.5/alloc) misses=9371 missSteps=757065 freeList=17207 [16:11930 32:1220 64:4 128:4 256:1136 512:799 1024:532 2048:597 4096:261 8192:629 16384:59 32768:18 65536:18]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7e910000
+heap_base: 0x01735000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 115173 evicted-live 4487 | pages compiled 4504 index-arena-full 2969 | invalidations 0 dropped 9155 last 0x01712000
+cache: block decodes 81019 of which evicted a live block 1314
+cache: page evictions by cause: index arena full 1270 | directory slot collision 44
+pages: compiled 1871 | index hits 354679360 misses 65665 (100.0% hit) | desk trips skipped 4174
+runs:  extended 9019 | blocks chained 15896 | free fall-throughs 1542
+       fall-through branches 40723742 | free 1542 | paid 40722200 (100.0% of fall-throughs are the defrag headroom)
+chunks: samples 1359 | used mean 2442 max 16384 | <=4K 1104 <=8K 1298 <=12K 1332 <=16K 1359 | grows 456 reuses 1707 unpublished 19
+cache: page invalidations 70509 that dropped a block 7197 last 0x00641000
+       blocks retired one at a time 7197 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 5 / 512   dc_mark 3
+gdi: dib arena pages used 785 free 15343 largest free run 15342 of 16128
+uop: installs=4032 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=34 | compiled=4032 declined=452 insns=372188 uops=1642163 flushes=31 traces=1470
+  declines: no-backedge=325 head-unsupported=53 call-indirect=42 loop-too-big=34
+uop nobump: skips=0
+uop hot: decays=59641565 halvings=10219
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=369 kills=0 enters=0 blocks=0
+
+Stats: 4185821 API calls, 97160 batches in 54.998s (1767 batches/s)
+MMX: 2237168 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x171f667 esp=0x7efffb98 ebp=0x7efffe90 yield=0 waitH=0xe0004 sleepCount=0 csPark/steal=0/0
+Hit counts:
+  0x005ab8f0 = 0
+  0x005ab957 = 0
+  0x005ab965 = 0
+  0x005ab98e = 0

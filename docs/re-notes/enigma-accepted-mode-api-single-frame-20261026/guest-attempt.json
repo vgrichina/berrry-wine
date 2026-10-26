@@ -1,0 +1,45 @@
+{
+  "at": 1793003810.601162,
+  "guestAttempts": 1,
+  "command": "flock -n -E 73 /tmp/wine-qualification-heavy.lock env MAELSTROM_CAPTURE_INSTALL=1 ENIGMA_RUNNER_ROOT=/home/user/enigma-accepted-mode-api-single-frame-oct26/runner ENIGMA_FINDFIRST_RUNNER_ROOT=/home/user/enigma-accepted-mode-api-single-frame-oct26/runner ENIGMA_TERMINAL_CAPTURE_INSTALL=1 ENIGMA_CAPTURE_PATH=/home/user/enigma-accepted-mode-api-single-frame-oct26/capture.cjs ENIGMA_TERMINAL_RECEIPT=/home/user/enigma-accepted-mode-api-single-frame-oct26/guest/capture-terminal.json ENIGMA_LOSSLESS_CAPTURE=1 ENIGMA_CAPTURE_PROFILE=single-frame python3 /home/user/enigma-accepted-mode-api-single-frame-oct26/launch-locked.py",
+  "box": "bx_h44cmz3t",
+  "configuration": "actual FTQ/TFQ then unchanged original capture; accepted single-frame",
+  "limits": "original max10000000/55s; first/only PNG30000 fixed640x480",
+  "localGate": {
+    "stage": "immediate-before-guest",
+    "at": 1793003810.4214358,
+    "charges": {
+      "localOwned": 3031040,
+      "remoteOwned": 45846528,
+      "launcherSessionFull": 1892352,
+      "positiveDBWALHighwaterOnce": 892928,
+      "futureSessionDBOnce": 2097152,
+      "futureCheckoutGitHelpers": 0,
+      "captureAndPublicationFuture": 4194304,
+      "transportBuffer": 131072,
+      "reserve": 8388608
+    },
+    "peak": 66473984,
+    "cap": 67108864,
+    "localMemAvailable": 3698089984,
+    "aggregateClientOverhead": 536870912,
+    "helper": 16777216,
+    "gitData": 0,
+    "remainingLocalMemory": 3144441856,
+    "localMemoryFloor": 805306368,
+    "localFree": 4228489216,
+    "remoteFree": 48959279104,
+    "projectedLocalAfter": 4162015232,
+    "projectedRemoteAfter": 48892805120,
+    "diskFloor": 2982150144,
+    "pass": true
+  },
+  "remoteGate": {
+    "uid": 1000,
+    "free": 48959279104,
+    "memAvailable": 7356260352,
+    "materialized": 43536384,
+    "nativeProcesses": [],
+    "largest": 6287872
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "command": "python3 /home/user/enigma-accepted-mode-api-single-frame-oct26/stream-stage.py",
+  "commandId": "cmd_pdghscp403vt",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/44321.err.log",
+  "logPath": "/home/user/.ascii/processes/44321.log",
+  "pid": 44321,
+  "processId": 44321,
+  "startedAt": "2026-10-26T08:31:26.436Z",
+  "success": true
+}

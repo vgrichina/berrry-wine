@@ -1,0 +1,11 @@
+{
+  "type": "resource-admission",
+  "receipt": "resource-ready.json",
+  "observedPeak": 67547136,
+  "cap": 67108864,
+  "excess": 438272,
+  "guestAttempts": 0,
+  "operationStopped": true,
+  "unchangedRetry": false,
+  "rawFailure": "stage.log"
+}

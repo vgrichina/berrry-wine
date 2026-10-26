@@ -1,0 +1,13 @@
+{
+  "phase": "PREPARED",
+  "sourceManifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "remaining": [
+    "actual bounded helper staging",
+    "destination hash/mode/alias verification",
+    "preguest memory/disk/lock admission",
+    "one startup",
+    "PNG inspect or first blocker",
+    "commit and exact remote task verification"
+  ]
+}

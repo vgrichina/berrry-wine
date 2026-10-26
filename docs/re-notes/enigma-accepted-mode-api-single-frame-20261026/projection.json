@@ -1,0 +1,16 @@
+{
+  "manifestSHA256": "4ccbdd4e9bab80a88bf9565f813681c5369e4b16ef5dcd34291b87c361a793fe",
+  "entries": 2659,
+  "logicalBytes": 37476538,
+  "uniqueFontBlobs": 43,
+  "pathFileAllocation": 43327488,
+  "uniqueFileAllocation": 42541056,
+  "directories": 86,
+  "targetAllocation": 42893312,
+  "directorySlack": 131072,
+  "remoteMetadataAndHelpers": 524288,
+  "remoteGuestPNGAndOutput": 2293760,
+  "remotePeak": 45842432,
+  "transport": "bounded in-memory API segments -> FIFO -> accepted helper; zero full transport tree; actual source bytes all verified",
+  "standingSourcesReadOnly": true
+}

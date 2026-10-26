@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-accepted-mode-api-single-frame-oct26/ops/stage.py", line 40, in <module>
+    save('stream-stage-detach.json',remote('python3 '+shlex.quote(R+'/stream-stage.py'),300,detach=True))
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-accepted-mode-api-single-frame-oct26/ops/work.py", line 25, in remote
+    try:j=json.loads(p.stdout)
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 337, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/json/decoder.py", line 355, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)

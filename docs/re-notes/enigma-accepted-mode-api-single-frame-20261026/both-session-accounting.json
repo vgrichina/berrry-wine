@@ -1,0 +1,12 @@
+[
+  {
+    "launcher": "/home/user/wine-assembly/scratch/usage-watch/enigma-accepted-mode-api-single-frame-oct26",
+    "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T08-19-12-01a1774a-c888-7d40-a854-272d790541ac.jsonl",
+    "allocated": 958464
+  },
+  {
+    "launcher": "/home/user/wine-assembly/scratch/usage-watch/enigma-retained-api-single-frame-closeout-oct26",
+    "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T08-30-01-01a17754-b0ef-73b3-9ea2-5c61cc802093.jsonl",
+    "allocated": 1589248
+  }
+]

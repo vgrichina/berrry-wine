@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_q2ekgh77smku",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:36:11.238Z",
+  "launcherFailed": false,
+  "noticedMs": 19,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 19,
+  "startedAt": "2026-10-26T08:36:11.193Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"logicalBytes\": 37476538, \"physicalOwnedBytes\": 42942464, \"pathSummedAllocatedBytes\": 43728896, \"files\": 2659, \"uniqueInodes\": 2716}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

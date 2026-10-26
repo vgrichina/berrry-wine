@@ -1,0 +1,1 @@
+{"at": 1793003810.74588, "host": "bx_h44cmz3t", "memAvailable": 7358595072, "threshold": 2684354560, "free": 48959270912, "projectedPeak": 66473984, "lock": "/tmp/wine-qualification-heavy.lock", "uid": 1000, "kernelArtifactLimit": 2097152, "combinedOutputLimit": 131072, "inheritedFileLimit": [-1, -1], "inheritedDataLimit": [-1, -1], "nativeProcesses": []}

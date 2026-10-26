@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lxgdb7ex9xc2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:38:31.765Z",
+  "launcherFailed": false,
+  "noticedMs": 23,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 23,
+  "startedAt": "2026-10-26T08:38:31.683Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"uid\": 1000, \"free\": 48959066112, \"memAvailable\": 7399604224, \"materialized\": 43618304}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

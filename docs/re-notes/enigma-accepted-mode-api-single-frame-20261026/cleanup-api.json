@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_swho6qqqcxxv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T08:37:58.814Z",
+  "launcherFailed": false,
+  "noticedMs": 21,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-26T08:37:58.733Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"nativeProcesses\": [], \"heavyLockReleased\": true, \"guestDirectory\": \"/home/user/enigma-accepted-mode-api-single-frame-oct26/guest\", \"terminalExists\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

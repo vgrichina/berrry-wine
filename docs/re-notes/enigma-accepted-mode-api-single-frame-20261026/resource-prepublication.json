@@ -1,0 +1,29 @@
+{
+  "stage": "prepublication",
+  "at": 1793003912.0159304,
+  "charges": {
+    "localOwned": 3735552,
+    "remoteOwned": 43634688,
+    "launcherSessionFull": 2547712,
+    "positiveDBWALHighwaterOnce": 1064960,
+    "futureSessionDBOnce": 2097152,
+    "futureCheckoutGitHelpers": 0,
+    "captureAndPublicationFuture": 937984,
+    "transportBuffer": 131072,
+    "reserve": 8388608
+  },
+  "peak": 62537728,
+  "cap": 67108864,
+  "localMemAvailable": 3588259840,
+  "aggregateClientOverhead": 536870912,
+  "helper": 16777216,
+  "gitData": 536870912,
+  "remainingLocalMemory": 2497740800,
+  "localMemoryFloor": 805306368,
+  "localFree": 4225617920,
+  "remoteFree": 48959066112,
+  "projectedLocalAfter": 4163080192,
+  "projectedRemoteAfter": 48896528384,
+  "diskFloor": 2982150144,
+  "pass": true
+}
