@@ -1,0 +1,80 @@
+{
+  "implementation": {
+    "commit": "0c1ecb9f94b96f64422e289c293ea9aa2ad6bd30",
+    "branch": "task/ricochet-bounded-capture-readback-repair-oct26",
+    "remoteRef": "0c1ecb9f94b96f64422e289c293ea9aa2ad6bd30\trefs/heads/task/ricochet-bounded-capture-readback-repair-oct26",
+    "verified": true,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "parent": "283eb307e139b9deacd6c9921706e4b8427c8f0a"
+  },
+  "accounting": {
+    "at": 1793052335.7900395,
+    "stage": "closeout-publication",
+    "charges": {
+      "ownLocal": 1458176,
+      "session": 868352,
+      "events": 204800,
+      "taskDispatch": 16384,
+      "WALpositiveOnce": 0,
+      "publicationAndFuture": 33554432,
+      "reserve": 8388608
+    },
+    "total": 44490752,
+    "cap": 134217728,
+    "memAvailable": 4013215744,
+    "required": 3489660928,
+    "clients": [
+      {
+        "pid": 3195039,
+        "rss": 195903488,
+        "growth": 139640832
+      },
+      {
+        "pid": 3198357,
+        "rss": 195792896,
+        "growth": 139751424
+      },
+      {
+        "pid": 3204494,
+        "rss": 198377472,
+        "growth": 137166848
+      }
+    ],
+    "standingGLReservation": 1073741824,
+    "hostFree": 3561091072,
+    "projectedFree": 3519148032,
+    "hostFloor": 2982150144,
+    "pass": true
+  },
+  "resourceUsage": {
+    "maxTestTreeRSS": 80216064,
+    "maxGitRSS": 21577728,
+    "sumSampledCPU": 2.08,
+    "sumCommandWall": 9.297817594604567,
+    "cpuNote": "sampled process-tree CPU lower bound; identical copied incident records deduplicated; rapid Git operations may fall between samples",
+    "limits": {
+      "gitDATA": 536870912,
+      "gitPhysical": 536870912,
+      "testsPhysical": 134217728,
+      "pythonChildDATA": 100663296,
+      "cpuSeconds": 90,
+      "wallSeconds": 120,
+      "fileBytes": 25165824,
+      "outputBytes": 2097152,
+      "excerptBytes": 8192
+    },
+    "actualRemoteOperations": "Git push/ls-remote only; zero Boat/guest/API calls"
+  },
+  "testResults": "final-test-results.json",
+  "sourceManifest": "source-manifest.json",
+  "noWorkersSpawned": true,
+  "noRuntime": true,
+  "currentBoxState": "not queried",
+  "lastParentBox": {
+    "id": "bx_ex22dvm8",
+    "state": "RUNNING historical21:45:02Z",
+    "expiry": "2026-10-26T22:31:02.949Z",
+    "shutdownOwner": "coordinator"
+  },
+  "remainingGate": "separate coordinator-assigned admitted gameplay with early inspected menu and acknowledged timely cmd; no gameplay acceptance in this task"
+}

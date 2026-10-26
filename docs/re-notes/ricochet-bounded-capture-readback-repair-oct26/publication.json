@@ -1,0 +1,8 @@
+{
+  "commit": "0c1ecb9f94b96f64422e289c293ea9aa2ad6bd30",
+  "branch": "task/ricochet-bounded-capture-readback-repair-oct26",
+  "remoteRef": "0c1ecb9f94b96f64422e289c293ea9aa2ad6bd30\trefs/heads/task/ricochet-bounded-capture-readback-repair-oct26",
+  "verified": true,
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "parent": "283eb307e139b9deacd6c9921706e4b8427c8f0a"
+}

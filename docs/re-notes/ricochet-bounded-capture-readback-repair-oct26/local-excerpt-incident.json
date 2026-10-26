@@ -1,0 +1,8 @@
+{
+  "issue": "Initial combined local policy/source reads exceeded8192-byte excerpt control",
+  "policyCombinedBytes": 45231,
+  "sourceCombinedBytes": 14599,
+  "remoteAPIRequests": 0,
+  "action": "Preserve incident; later outputs bounded; no output limit change",
+  "effect": "local read excerpt only, not API or artifact acceptance"
+}

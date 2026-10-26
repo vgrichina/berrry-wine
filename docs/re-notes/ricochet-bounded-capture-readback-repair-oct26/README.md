@@ -101,6 +101,18 @@ the launch receipt's conservative 3489660928-byte minimum; all measured
 executions already exceeded that minimum. No denial or user limit was relaxed.
 Final accounting and exact remote publication receipts accompany closeout.
 
+Publication retained two ordinary setup incidents: the isolated Git repository
+initially lacked author identity, corrected using the trusted pinned donor's
+local `Wine Ops <wine-ops@local>` settings, and a fresh RAM gate rejected
+3242651648 < 3489660928 bytes before Git execution. A later measured capacity
+increase permitted a new admission; no unchanged denial was retried. Initial
+combined local policy/source reads also exceeded the 8192-byte excerpt control;
+`local-excerpt-incident.json` preserves this local-output deviation. No runtime
+API output gate was changed or bypassed. The implementation commit and its
+exact verified remote ref are in `publication.json`; closeout records the full
+measured footprint plus reserved growth. `resource-wrapper.py` retains the
+actual subprocess-only resource wrapper used by this task.
+
 No box was created or queried. The parent's last measured state was
 `bx_ex22dvm8 RUNNING`, expiry `2026-10-26T22:31:02.949Z`; the coordinator owns
 its cutoff/shutdown. That historical state is not a current-state claim.
