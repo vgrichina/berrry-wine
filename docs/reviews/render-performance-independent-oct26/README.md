@@ -40,7 +40,7 @@ The semantic oracle therefore remains useful despite improved broken-cache count
 Run the unchanged candidate tests:
 
 ```sh
-NODE_OPTIONS=--max-old-space-size=128 node --test test/test-d3d9-rgba-performance.js test/test-d3d9-immutable-rgba-snapshot.js test/test-d3d9-rgba-generation-independent.js test/test-d3d9-rgba-source-identity.js test/test-d3d9-byte-identity-acceptance.js
+NODE_OPTIONS=--max-old-space-size=128 node --test --test-concurrency=1 test/test-d3d9-rgba-performance.js test/test-d3d9-immutable-rgba-snapshot.js test/test-d3d9-rgba-generation-independent.js test/test-d3d9-rgba-source-identity.js test/test-d3d9-byte-identity-acceptance.js
 ```
 
 Run the review reproducer (expected exit 1, 13 tests: 3 pass, 10 fail):
@@ -63,6 +63,13 @@ warmup, input mutation, pixel assertions and fences are outside timing; timing
 has no CI threshold. This review repeats no timing run and claims no game speedup.
 The counters' documented exclusions for other typed arrays and hardware traffic
 do not explain the three missed source/U8 operations above.
+
+Final original tests use one test worker plus its parent, each with a 128 MiB
+heap cap. The initial original run left Node test concurrency unspecified;
+it is historical evidence, not claimed to meet the four-heap concurrency limit.
+The serial rerun passes all 20 tests. Initial diagnostic/read-bound incidents,
+a resolved missing candidate object leaf, and an externally interrupted watcher
+are retained in the incident receipt rather than relabeled compliant.
 
 External evidence: `/tmp/render-performance-independent-oct26/ops/result.json`,
 `original.log`, `rejecting-reproducer.log`, `reuse-and-identity.json`, publication,
