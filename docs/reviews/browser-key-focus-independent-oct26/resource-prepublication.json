@@ -1,0 +1,38 @@
+{
+  "at": 1792997587.8382576,
+  "taskOwned": 1952693,
+  "launcher": 509912,
+  "sessions": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T06-46-41-01a176f6-17b2-7071-9b6c-92ad8cc994da.jsonl",
+      "bytes": 677967
+    }
+  ],
+  "publicationTempAllowance": 8388608,
+  "otherGrowthAllowance": 8388608,
+  "futureLauncherSessionPositiveWALOnce": 12582912,
+  "reserve": 8388608,
+  "allocation": 67108864,
+  "standingInstalledTools": {
+    "node": {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "bytes": 123656816
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232
+    },
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928
+    }
+  },
+  "readOnlyDonorLocalGitBytes": 1748171,
+  "standingDonorFocusedSourceFixtureBytes": 75082,
+  "mountArgv": [],
+  "mountGate": "N/A: no guest/mount conditional execution; no intended files",
+  "projectedPeak": 40889308,
+  "hostFree": 4196392960,
+  "memAvailable": 2297131008,
+  "pass": true
+}

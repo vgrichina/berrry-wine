@@ -1,0 +1,56 @@
+    }
+    return null;
+  }
+
+  P.handleKeyDown = function(vkCode, keyInfo) {
+    if (this._exited) return;
+    this._restoreKeyboardInputOwner();
+    // A key is the first thing an on-screen dpad ever sends, so this is where
+    // an app that was never clicked gets the focus USER would have given it.
+    this._seedKeyboardFocus();
+    // Update async key state up-front so handlers that read it (edit's
+    // Shift/Ctrl+arrow, Ctrl+A, etc.) see the right modifier state for
+    // *this* keystroke. Otherwise the _asyncKeys bump that checkInput
+    // does later only lands after the next modifier press, which loses
+    // chords issued in the same batch.
+    if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+    if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+    this.pokeKeyDownState(vkCode, true);
+    const wasDown = !!this._asyncKeys[vkCode & 0xFF];
+    const keyLParam = keyboardMessageLParam(vkCode, keyInfo, false, wasDown);
+    // TranslateMessage gives the WM_CHAR its keystroke's lParam; the char the
+    // browser reports for this key next takes it from here (handleKeyPress).
+    this._charLParam = keyLParam;
+    this._asyncKeys[vkCode & 0xFF] = true;
+    this._asyncPressedKeys[vkCode & 0xFF] = true;
+    this._signalDirectInputDevice(1);
+    // The browser-side instance is only an ownership token when slot 0 runs
+    // in a Worker. Calling its edit/dialog exports would update a different
+    // set of WebAssembly globals and consume the key before the live guest can
+    // see it. Native GetMessage routing in slot 0 owns all keyboard handling.
+    if (this._keyboardOwnerRunsInGuestWorker()) {
+      // ...except the answer to a common modal (MessageBox, file dialogs).
+      // Its API call is parked in the Worker's CACA0006 pump, which never
+      // reads this queue: it only waits for the shared completion that the
+      // shadow's WAT dialog publishes, exactly as a click on its buttons
+      // does (dialog_route_mouse). Queued, Enter/Esc could never dismiss
+      // the box -- Drakan's "Beta Demo Warning" with Threads on, in every
+      // browser (USER-DRAKAN-WEBKIT-20261011).
+      if (vkCode === 13 || vkCode === 27) {
+        const sw = this.wasm && this.wasm.exports;
+        const modalHwnd = sw && sw.dialog_handle_key ? this._modalDialogHwnd() : 0;
+        if (modalHwnd) {
+          sw.dialog_handle_key(modalHwnd, vkCode, 0);
+          this.scheduleRepaint();
+          this._suppressNextKeyPress = vkCode;
+          return;
+        }
+      }
+      this.inputQueue.push({
+        type: 'key', hwnd: 0, wParam: vkCode, ...this._keyMessage(vkCode, false, keyLParam),
+      });
+      this._wakeMessageWait(true);
+      return;
+    }
+    const we = this.wasm && this.wasm.exports;
+    const menu = this._openMenuContext();

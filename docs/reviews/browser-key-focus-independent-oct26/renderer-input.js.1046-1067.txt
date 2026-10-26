@@ -1,0 +1,22 @@
+  P._wakeMessageWait = function(sliceWake) {
+    if (typeof performance !== 'undefined' && performance.now) {
+      this._recentMessageWakeAt = performance.now();
+    } else {
+      this._recentMessageWakeAt = Date.now();
+    }
+    const publishers = this._inputPendingPublishers;
+    if (publishers) {
+      for (const publish of publishers) publish(this.inputQueue.length, !!sliceWake);
+    }
+    // A parked guest's drive loop may be asleep on a timer (host.js
+    // _parkedSleepMs). This is the event it was waiting for, so cut the sleep
+    // short here rather than letting the click sit for up to 50ms. Hosts
+    // register themselves in run(); with none registered this is a no-op, so
+    // the CLI and the unit harnesses are unaffected.
+    const wakeHooks = this._stepWakeHooks;
+    if (wakeHooks) {
+      for (const wake of wakeHooks) {
+        try { wake(); } catch (_) {}
+      }
+    }
+  };

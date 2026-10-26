@@ -1,0 +1,22 @@
+{
+  "candidate": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "sourceSHA256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+  "rendererSHA256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+  "fixtureSHA256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8",
+  "results": [
+    {
+      "name": "actual renderer wake callback hiding document during down cannot leak ownership",
+      "pass": false,
+      "error": "hidden cancellation must release down already delivered by production renderer\n\n32768 !== 0\n",
+      "stack": "AssertionError [ERR_ASSERTION]: hidden cancellation must release down already delivered by production renderer\n\n32768 !== 0\n\n    at /tmp/browser-key-focus-independent-accept-oct26/repo/test/browser-key-focus-independent-oct26.test.cjs:197:10\n    at Object.<anonymous> (/tmp/browser-key-focus-independent-accept-oct26/repo/test/browser-key-focus-independent-oct26.test.cjs:204:9)\n    at Module._compile (node:internal/modules/cjs/loader:1871:14)\n    at Object..js (node:internal/modules/cjs/loader:2002:10)\n    at Module.load (node:internal/modules/cjs/loader:1594:32)\n    at Module._load (node:internal/modules/cjs/loader:1396:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    }
+  ],
+  "remaining": [],
+  "gates": [
+    "publication",
+    "current-main integration/regressions",
+    "real browser/runtime qualification"
+  ],
+  "evidence": "parent-narrow.log",
+  "at": "2026-10-26T06:51:59.466Z"
+}

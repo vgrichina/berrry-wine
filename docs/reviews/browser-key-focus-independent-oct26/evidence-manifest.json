@@ -1,0 +1,103 @@
+{
+  "candidate": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "decision": "REJECT",
+  "algorithm": "SHA-256",
+  "pathsRelativeTo": "repository root",
+  "payloads": {
+    "test/browser-key-focus-independent-oct26.test.cjs": {
+      "bytes": 12124,
+      "sha256": "4b8af7be5528eda4d19949ee5bd5bc537879b10fdc46261e6967f9af3a0232e8"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/README.md": {
+      "bytes": 5088,
+      "sha256": "ea1899eea04dffbb99b5db16b8ade2302843d8cc7f7126839e7cc12c364ce464"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/admission.json": {
+      "bytes": 1045,
+      "sha256": "85780911ef145d5c6f2b82a8bceb6980f05f1e8934b5a77d884712e4c7a9e17a"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/browser-input.js.1093-1161.txt": {
+      "bytes": 2766,
+      "sha256": "ebee2ec74e856e250785b791bc6243b9b8384f5b496e2d764060e7ed85cf97bc"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/candidate-incidents.txt": {
+      "bytes": 1027,
+      "sha256": "cf4eff73ba6082cec94d9a87b117567cfe961fb0e2d5a2e3f4a2fc6b4a248a86"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/candidate-narrow-checkpoint.json": {
+      "bytes": 1662,
+      "sha256": "e44cc143b51c66d4250a9980a3198a272aeb78a6881c6fffe985805d3120df1b"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/candidate-narrow.log": {
+      "bytes": 314,
+      "sha256": "8afef151b0041291d65421afa0e4fd78975d51fb1f3255d1c53dc4620d230fd3"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/candidate-remote.txt": {
+      "bytes": 96,
+      "sha256": "e3f39520285efcb18c62162834fd7673d68f8aa48f1aa180342b4ae959b45459"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/checkpoint.json": {
+      "bytes": 1768,
+      "sha256": "8b61b3e05e9a4a5f7d79222fe47feb83d9c4d3bd9659acd182faccf1c9a7f27a"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/incidents.txt": {
+      "bytes": 820,
+      "sha256": "e546b37098554a18dcdeacbfdb14573dbdfc960054360e3bfcb741b1b3c38695"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/independent-checkpoint.json": {
+      "bytes": 2391,
+      "sha256": "f8a3a253abf4f7a5d789649ea868683c51de5d2093889b1541a14f924dfd5344"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/independent-first.log": {
+      "bytes": 778,
+      "sha256": "7d38ccce57192aff9cdf7cdc127609bd6ad4c80c2e8dce97d0c2459f653ce5c9"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/narrow-comparison.json": {
+      "bytes": 943,
+      "sha256": "b154b60d8fe74f7e11cb0d34d27a284a9d81f1f0beaff0efcd02bb86b870b827"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/parent-narrow-checkpoint.json": {
+      "bytes": 1659,
+      "sha256": "a03ba8fda7451023596c90fa16fd0d6b6ab8903ed44c337d064894c74a26b467"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/parent-narrow.log": {
+      "bytes": 314,
+      "sha256": "8afef151b0041291d65421afa0e4fd78975d51fb1f3255d1c53dc4620d230fd3"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/pins.json": {
+      "bytes": 757,
+      "sha256": "9cf8e055734e908f3165d9cbd04e3860d6914332137d062e5ba72440ae690d05"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/renderer-input.js.1046-1067.txt": {
+      "bytes": 907,
+      "sha256": "56d5be9ca8d5d37f1b6d9b7872457d5583dee1522864d586080662b538a6c5eb"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/renderer-input.js.3280-3335.txt": {
+      "bytes": 2811,
+      "sha256": "f9b58b77f524c6c93eac5f75a7a5a1a0ac6aff26c56596a8be6e4dc148ac8c45"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/renderer-parent-identity.json": {
+      "bytes": 127,
+      "sha256": "6b65e986db68c1d93a1654ba2ef76b6a848891bc2a0893e055eb338b72df70bc"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/resource-prepublication.json": {
+      "bytes": 1025,
+      "sha256": "9f63a0367781224f8393ac0b75ae325c2e68e3952241c14d4fd40e66c80b124e"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/source-excerpts.json": {
+      "bytes": 702,
+      "sha256": "0afff75ce1ad74bd3488b84486ed22cfab473866dba9b58edc7a262978b95f44"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/supplied-baseline-final.log": {
+      "bytes": 2504,
+      "sha256": "76d80cca3714b5044068624e7545100f965d5768ce136ae171b4ff75fcedd70a"
+    },
+    "docs/reviews/browser-key-focus-independent-oct26/unchanged19.log": {
+      "bytes": 1348,
+      "sha256": "c13181da63326aac5b58b774c18f337fb9eee9a48e6c4532fe19d7ea0198faeb"
+    }
+  },
+  "excluded": [
+    "docs/reviews/browser-key-focus-independent-oct26/evidence-manifest.json (self)"
+  ]
+}

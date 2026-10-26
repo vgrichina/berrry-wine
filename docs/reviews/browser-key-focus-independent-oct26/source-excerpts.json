@@ -1,0 +1,26 @@
+[
+  {
+    "path": "lib/browser-input.js",
+    "first": 1093,
+    "last": 1161,
+    "bytes": 2766,
+    "sha256": "ebee2ec74e856e250785b791bc6243b9b8384f5b496e2d764060e7ed85cf97bc",
+    "evidence": "browser-input.js.1093-1161.txt"
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "first": 1046,
+    "last": 1067,
+    "bytes": 907,
+    "sha256": "56d5be9ca8d5d37f1b6d9b7872457d5583dee1522864d586080662b538a6c5eb",
+    "evidence": "renderer-input.js.1046-1067.txt"
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "first": 3280,
+    "last": 3335,
+    "bytes": 2811,
+    "sha256": "f9b58b77f524c6c93eac5f75a7a5a1a0ac6aff26c56596a8be6e4dc148ac8c45",
+    "evidence": "renderer-input.js.3280-3335.txt"
+  }
+]

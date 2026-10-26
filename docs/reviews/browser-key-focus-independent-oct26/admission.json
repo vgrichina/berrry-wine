@@ -1,0 +1,29 @@
+{
+  "at": 1792997311.0800931,
+  "memAvailable": 2796490752,
+  "free": 4424798208,
+  "projectedTaskPeak": 58720256,
+  "allocation": 67108864,
+  "reserveIncluded": 8388608,
+  "futureSessionLauncherPositiveWALOnceIncluded": 12582912,
+  "client": 536870912,
+  "heap": 16777216,
+  "memFloorAfterClientHeap": 805306368,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A: offline Node only; no guest or mount invocation authorized/planned",
+  "rootRefInitial": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "tools": {
+    "node": "/usr/local/bin/node",
+    "git": "/usr/bin/git",
+    "python": "/usr/bin/python3"
+  },
+  "donor": "readonly /tmp/browser-key-focus-release-repair-oct26/repo"
+}

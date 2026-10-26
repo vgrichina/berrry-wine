@@ -1,0 +1,51 @@
+{
+  "candidate": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+  "groups": [
+    {
+      "name": "unchanged regression",
+      "exit": 0,
+      "result": "19 passed; 0 failed",
+      "evidence": "unchanged19.log"
+    }
+  ],
+  "pins": {
+    "candidate": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+    "base": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+    "files": {
+      "lib/browser-input.js": {
+        "sha256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05",
+        "bytes": 62335
+      },
+      "test/browser-key-focus-release-oct26.test.cjs": {
+        "sha256": "9a71d7d4161c580d99d5ebb8fdbfaac484f810fe2d47f5ced113cad167acce1f",
+        "bytes": 12747
+      }
+    }
+  },
+  "remaining": [
+    "reviewer/coordinator decision on incomplete callback reentrancy case",
+    "future repair outside this acceptance scope",
+    "current-main integration/regressions after accepted repair",
+    "real browser/runtime qualification"
+  ],
+  "at": 1792997519.4749668,
+  "decision": "REJECT",
+  "independent": "6 PASS, 1 FAIL; independent-first.log; each group checkpoint independent-checkpoint.json",
+  "narrowComparison": [
+    {
+      "name": "candidate-narrow",
+      "revision": "2b5eaa0b0db6ef12882a38b6cd143291144d4150",
+      "sourceSHA256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05",
+      "exit": 1,
+      "log": "candidate-narrow.log"
+    },
+    {
+      "name": "parent-narrow",
+      "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+      "sourceSHA256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+      "exit": 1,
+      "log": "parent-narrow.log"
+    }
+  ],
+  "blocker": "Repair does not cancel down when synchronous actual renderer wake hook hides document before down returns."
+}
