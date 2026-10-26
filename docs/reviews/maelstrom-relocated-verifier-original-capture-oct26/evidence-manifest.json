@@ -1,0 +1,132 @@
+[
+  {
+    "path": "identities.json",
+    "bytes": 1742,
+    "sha256": "c2966e7adb3daf2fed9e0dafcb56d79e85b01315a00c2213a42557b7a29e8067"
+  },
+  {
+    "path": "frozen.jsonl",
+    "bytes": 2908,
+    "sha256": "29f0ea631a83a30526e7c9e741b5b61db78c0de5470b8839f4783f8f38cf2bb6"
+  },
+  {
+    "path": "cleanup-api.json",
+    "bytes": 686,
+    "sha256": "e073a9cedf2079b45a5759e142856a5b2284af57c93d44e4c2b792f5426ffb86"
+  },
+  {
+    "path": "mount-local-control.json",
+    "bytes": 721,
+    "sha256": "969dded6624f6d643bf8fb517fbb46c465f637d8d2f90669dc522aa0144fecbc"
+  },
+  {
+    "path": "output.log",
+    "bytes": 3599,
+    "sha256": "dfad1e0148ed1100b0d6b4eed51a3091255f12b4d3c051248f81ffaf7e7c3d83"
+  },
+  {
+    "path": "remote-platform-overlap.json",
+    "bytes": 471,
+    "sha256": "8e3082590cd721ba9041bc99ac238f4ec05c0e6c8c7ed8961500503bb51063a3"
+  },
+  {
+    "path": "delta-manifest.json",
+    "bytes": 755,
+    "sha256": "e63da7a8c0fcf2496ea5e1afdbbe8d663fca96ffe663ba20b2b133089ca2bdc0"
+  },
+  {
+    "path": "admission-precheckout.json",
+    "bytes": 481,
+    "sha256": "3dd90afb67634d0bfa1289facb6f0ee1e7f41093e19d8431ff882a96538f7b6c"
+  },
+  {
+    "path": "admission-actual-execution.json",
+    "bytes": 487,
+    "sha256": "a7f9bdcc8d9f3905c2a1e97db48d30a266b4101e7f9cdb07b48dc385d17f6bf9"
+  },
+  {
+    "path": "guest-status.json",
+    "bytes": 820,
+    "sha256": "e28e231bb9f4791b271a32bcc9d819a369e9e6de92bd4f57daaf900e84f26499"
+  },
+  {
+    "path": "adapter-controls.json",
+    "bytes": 440,
+    "sha256": "f58b5b93599fcae5943a338a9b5bf90902dbeb403f09b15208b8ff9cecc43710"
+  },
+  {
+    "path": "terminal.json",
+    "bytes": 305,
+    "sha256": "6fe28bd2e7ee415d88f9f08b12d7cfd3943f89f31b9a8973b8eaca8875eb2a02"
+  },
+  {
+    "path": "result.json",
+    "bytes": 9303,
+    "sha256": "c8f9fcb7e6069e7f4c8e1483674527e4ec962f033cd1a23a12079392ef8da8b5"
+  },
+  {
+    "path": "root-ref-final.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  {
+    "path": "remote-ready.json",
+    "bytes": 2189,
+    "sha256": "6054f01ad4ba2cd33583e02f01a2983ce1a2f0f9c282446f8502351e2e2d45bb"
+  },
+  {
+    "path": "box-final-state.json",
+    "bytes": 1185,
+    "sha256": "f771c1fc0fc5c80fedf3e1c14876892174bb38195951a463a30fcc0d577ee8c7"
+  },
+  {
+    "path": "README.md",
+    "bytes": 1600,
+    "sha256": "63799a955555ec0f16d53b6d180d84c5556db3029c5d59411cd915f7047fdc41"
+  },
+  {
+    "path": "admission-before-publication.json",
+    "bytes": 487,
+    "sha256": "1519e6acfb54d3edd23b3dbcb8866bc0ce4d5fc18dc22b294d907e4a94c01c5a"
+  },
+  {
+    "path": "incidents.json",
+    "bytes": 944,
+    "sha256": "14056c873e5dc481d8f0f79a56dbee7c52c146c2bd4b97ea043720165d4e43b8"
+  },
+  {
+    "path": "command.json",
+    "bytes": 1725,
+    "sha256": "3042f076ab82e636f280a808deb814519115d75bf3937010f61cb2891a34e5a3"
+  },
+  {
+    "path": "recipes/executed-run.js",
+    "bytes": 688199,
+    "sha256": "9272889b78111ae016d92275a69eac8f8788c65cefc96a7a739fccfd8ff630fd"
+  },
+  {
+    "path": "recipes/api.py",
+    "bytes": 1484,
+    "sha256": "d6a710516acef51c0f514f6391aa5dd7c3e10d7d9897b060e88f116a8ab13386"
+  },
+  {
+    "path": "recipes/supervise.py",
+    "bytes": 4961,
+    "sha256": "1fc9d40c7b98048074358c1a093214e596be14aa5dceaaa30aa6df805453d418"
+  },
+  {
+    "path": "recipes/account.py",
+    "bytes": 1539,
+    "sha256": "1887427ebe3615eafe17ff6636acbc1bf54780bca7f50ead06d6a1671aea1982"
+  },
+  {
+    "path": "recipes/executed-adapter.cjs",
+    "bytes": 2970,
+    "sha256": "120bf51358048ea88a508d1f9a34a79c789b63bc096c3e9f1d02c167e93f2a9a"
+  },
+  {
+    "path": "recipes/stage-delta.py",
+    "bytes": 4780,
+    "sha256": "7e7f08e00eedf06377fe62c31dd85fed9ef9129be46d56e1255e570a590cd41f"
+  }
+]

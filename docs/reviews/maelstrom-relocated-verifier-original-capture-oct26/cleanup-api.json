@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_2zo9kuruzs1k",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T00:49:26.175Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T00:49:26.142Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"heavyLockAvailable\": true, \"guestAbsent\": true, \"supervisorAbsent\": true, \"box\": \"bx_k38z8byn\", \"leaveRunning\": true, \"remoteNewBytes\": 1654784, \"moduleSHA256\": \"a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69\", \"remoteRAM\": 7358992384, \"free\": 48733306880}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

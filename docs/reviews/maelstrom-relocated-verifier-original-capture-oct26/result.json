@@ -1,0 +1,246 @@
+{
+  "task": "maelstrom-relocated-verifier-original-capture-oct26",
+  "status": "BLOCKED_AUTHENTIC_NATIVE_LATCH_STATUS_5",
+  "candidate": "35c5a0e68a36eb38ffdfe4dc61bb99268d80ddf6",
+  "candidateTree": "1755becb269925925222e2d0b2fa47eb5d188f1f",
+  "at": 1792975924.4774313,
+  "guestProcesses": 1,
+  "moduleInstances": 1,
+  "latchInvocations": 1,
+  "loaderVerified": true,
+  "firstBlocker": {
+    "batch": 36170,
+    "native": {
+      "status": 5,
+      "event": 0,
+      "token": 0,
+      "thread": 0,
+      "regs": 0,
+      "pre": 0,
+      "post": 0,
+      "selectRet": 0,
+      "parks": 0,
+      "result": 0,
+      "nativeEntry": 0,
+      "callBlock": 0,
+      "sourceBlock": 0,
+      "pc": 0,
+      "esp": 0,
+      "eax": 0,
+      "ebp": 0,
+      "errno": 0,
+      "caller": 0,
+      "socketSet": 0,
+      "timeout": 0
+    },
+    "select": {
+      "started": 1,
+      "phase": 3,
+      "token": 7,
+      "entries": 7,
+      "parks": 6,
+      "completions": 1,
+      "fault": 0,
+      "capped": 0,
+      "active": 0,
+      "thread": 1,
+      "regs": 86228992,
+      "pre": 122682136,
+      "post": 122682160,
+      "ret": 8008546,
+      "result": 0
+    },
+    "live": {
+      "eax": 1392508929,
+      "esp": 122682136,
+      "eip": 122700024,
+      "yield": 8
+    },
+    "meaning": "Unchanged native latch rejected before event1/completion acceptance; no authentic errno-before-CMP or caller observation. Zero errno/caller fields remain uninitialized, not captured values.",
+    "causeBoundary": "mne_complete rejected before copying select fields. Exported evidence cannot distinguish its internal mode/acceptance predicates; do not infer a production loader defect or alter the oracle."
+  },
+  "originalErrno": null,
+  "originalCaller": null,
+  "gameplayAccepted": false,
+  "rawLoadedBytes": {
+    "kind": "authentic-loader-raw",
+    "moduleBases": {
+      "exe": {
+        "loadAddr": 4194304,
+        "origBase": 4194304
+      },
+      "maelstrom": {
+        "loadAddr": 4194304,
+        "origBase": 4194304
+      },
+      "msvcrt": {
+        "loadAddr": 5382144,
+        "origBase": 2013265920
+      },
+      "sdl": {
+        "loadAddr": 6709248,
+        "origBase": 268435456
+      },
+      "sdl_net": {
+        "loadAddr": 8003584,
+        "origBase": 268435456
+      }
+    },
+    "imageBase": 4194304,
+    "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69",
+    "anchors": [
+      {
+        "va": 5432368,
+        "expected": "e82274ffff83c008c3",
+        "actual": "e82274ffff83c008c3"
+      },
+      {
+        "va": 8008434,
+        "expected": "8b3d10407a00",
+        "actual": "8b3d10407a00"
+      },
+      {
+        "va": 4251941,
+        "expected": "e8c253000083c40885c0756e",
+        "actual": "e8c253000083c40885c0756e"
+      },
+      {
+        "va": 8011792,
+        "expected": "30e45200",
+        "actual": "30e45200"
+      }
+    ]
+  },
+  "identities": {
+    "adapterSHA256": "120bf51358048ea88a508d1f9a34a79c789b63bc096c3e9f1d02c167e93f2a9a",
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/maelstrom-relocated-verifier-original-capture-oct26/runner/test/run.js",
+      "--no-build",
+      "--wasm=/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+      "--exe=/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/Maelstrom.exe",
+      "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+      "--cwd=C:\\maelstrom",
+      "--env=MAELSTROM_LIB=.",
+      "--env=HOME=.",
+      "--dlls=/tmp/maelstrom-relocated-verifier-original-capture-oct26/runtime/system/msvcrt.dll,/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/SDL.dll,/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/SDL_net.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=60",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs",
+      "--tick-ms-per-batch=200",
+      "--max-batches=42000",
+      "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32",
+      "--maelstrom-select-frozen-record=/tmp/maelstrom-relocated-verifier-original-capture-oct26/guest/frozen.jsonl"
+    ],
+    "standingManifest": "/tmp/maelstrom-original-errno-caller-capture-oct26/manifest.json",
+    "standingRemoteBytes": 16027648,
+    "standingRemoteReused": true,
+    "baseRunnerSHA256BeforeRawProbe": "81cb95e2a20d92e17a052c88c04cae2bb966da038eff8310a6d9f62896880bef",
+    "runnerSHA256": "9272889b78111ae016d92275a69eac8f8788c65cefc96a7a739fccfd8ff630fd"
+  },
+  "sourceOraclesUnchanged": {
+    "tools/maelstrom-native-errno-latch.cjs": "5c54028907a49b602fd330fc888059b26fbfb486a838db58538865470a35641c",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-errno-canonical-native.cjs": "eb61b30e8f9d58d589d9800ea55ef63c3ccccbd7f29c59cdc2cf979aac2de234",
+    "test/maelstrom-errno-independent-native.cjs": "3f2092cf4cf581801781ecf1ae7d2de5718fec0eb2c07f3257528181a0b77f15",
+    "test/maelstrom-errno-independent-foreign-ret.cjs": "be708ae7f291bc9faa14f1b974b7ae0182f8d5c88be4e3770382f27a7d211c4d",
+    "tools/maelstrom-original-errno-adapter.cjs": "120bf51358048ea88a508d1f9a34a79c789b63bc096c3e9f1d02c167e93f2a9a"
+  },
+  "nativeQualificationReused": {
+    "cases": 26,
+    "modules": 2,
+    "imports": 291,
+    "functionExports": 2267,
+    "layout": "9a3bc9149d58209c",
+    "receipt": "/tmp/maelstrom-errno-native-independent-oct26/ops/result.json",
+    "rerun": false
+  },
+  "module": {
+    "path": "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+    "sha256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69",
+    "bytes": 1882300,
+    "unchanged": true
+  },
+  "controls": {
+    "offlineAdapterPassed": 7,
+    "canonicalMountFiles": 48,
+    "remoteMountAndSyntaxPassed": true,
+    "supervisorGuardEvidence": "unchanged predecessor accepted TERM/KILL/reap and output controls reused; inherited limits rechecked",
+    "noNativeQualificationRebuild": true
+  },
+  "runtime": {
+    "box": "bx_k38z8byn",
+    "state": "RUNNING (API hydrated idle)",
+    "expiry": "2026-10-26T01:39:12.069Z",
+    "coordinatorShutdown": "2026-10-26T01:20:00Z",
+    "guestCutoff": "2026-10-26T01:05:00Z",
+    "handbackBefore": "2026-10-26T01:10:00Z",
+    "shutdownOwner": "coordinator",
+    "guestPID": 64234,
+    "supervisorPID": 64222
+  },
+  "cleanup": {
+    "heavyLockAvailable": true,
+    "guestAbsent": true,
+    "supervisorAbsent": true,
+    "box": "bx_k38z8byn",
+    "leaveRunning": true,
+    "remoteNewBytes": 1654784,
+    "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69",
+    "remoteRAM": 7358992384,
+    "free": 48733306880
+  },
+  "terminal": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 3,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 3.5314750369998364,
+    "box": "bx_k38z8byn",
+    "lifecycle": "leave RUNNING; coordinator owns shutdown01:20UTC",
+    "expires": "2026-10-26T01:39:12Z",
+    "outputBytes": 3599
+  },
+  "mainIntegration": false,
+  "workersLaunched": 0,
+  "incidents": [
+    "Initial combined instruction/source reads were truncated and exceeded the 8KiB excerpt target. Retained as inspection deviations, not acceptance evidence.",
+    "Historical manifest references the old adapter digest. Initial setup refused it; corrected helper independently checked against authoritative pin, with all other historical entries unchanged. No guest had started.",
+    "Initial local per-file symlink VFS view was rejected by canonical include enumeration. Resolved by standing directory tree mount; all48 original files and comma paths passed before checkout and execution.",
+    "First Boat status command placed the PID after the box and was rejected locally as no sandbox given. Correct documented --status PID BOX succeeded; no runtime denial retry.",
+    "Earlier predecessor task incidents remain in its immutable result, including prior incorrect preferred-base verifier. This task does not retroactively qualify that run."
+  ],
+  "remainingScope": "Original errno/caller observation unavailable because the unchanged accepted native latch rejected. No second guest, forced scheduling, yield clearing, guest-state injection or production/oracle change authorized. Stop after evidence publication.",
+  "publication": {
+    "branch": "task/maelstrom-relocated-verifier-original-capture-oct26",
+    "remoteVerification": "final exact commit recorded separately in ops/publication.json"
+  },
+  "resource": {
+    "at": 1792975924.5364408,
+    "charges": {
+      "localOwned": 2650112,
+      "remoteOwnedProjection": 2000000,
+      "session": 843776,
+      "launcher": 319488,
+      "sharedWALSHM": 28434432,
+      "positiveDBgrowth": 864256,
+      "future": 6000000,
+      "reserve": 8388608,
+      "transferOverlap": 262144,
+      "publicationFuture": 750000
+    },
+    "peak": 50512816,
+    "cap": 67108864,
+    "memAvailable": 2995392512,
+    "localFree": 4886372352,
+    "projectedFree": 4877360208,
+    "passAdmission": true
+  }
+}

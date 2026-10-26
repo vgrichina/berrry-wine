@@ -1,0 +1,21 @@
+{
+  "at": 1792975723.8528178,
+  "charges": {
+    "localOwned": 2564096,
+    "remoteOwnedProjection": 2000000,
+    "session": 667648,
+    "launcher": 270336,
+    "sharedWALSHM": 28434432,
+    "positiveDBgrowth": 413696,
+    "future": 6000000,
+    "reserve": 8388608,
+    "transferOverlap": 262144,
+    "publicationFuture": 750000
+  },
+  "peak": 49750960,
+  "cap": 67108864,
+  "memAvailable": 3126714368,
+  "localFree": 4885856256,
+  "projectedFree": 4876844112,
+  "passAdmission": true
+}

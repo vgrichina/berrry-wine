@@ -1,0 +1,7 @@
+[
+  "Initial combined instruction/source reads were truncated and exceeded the 8KiB excerpt target. Retained as inspection deviations, not acceptance evidence.",
+  "Historical manifest references the old adapter digest. Initial setup refused it; corrected helper independently checked against authoritative pin, with all other historical entries unchanged. No guest had started.",
+  "Initial local per-file symlink VFS view was rejected by canonical include enumeration. Resolved by standing directory tree mount; all48 original files and comma paths passed before checkout and execution.",
+  "First Boat status command placed the PID after the box and was rejected locally as no sandbox given. Correct documented --status PID BOX succeeded; no runtime denial retry.",
+  "Earlier predecessor task incidents remain in its immutable result, including prior incorrect preferred-base verifier. This task does not retroactively qualify that run."
+]

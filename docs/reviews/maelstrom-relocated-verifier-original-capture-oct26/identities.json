@@ -1,0 +1,32 @@
+{
+  "adapterSHA256": "120bf51358048ea88a508d1f9a34a79c789b63bc096c3e9f1d02c167e93f2a9a",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/maelstrom-relocated-verifier-original-capture-oct26/runner/test/run.js",
+    "--no-build",
+    "--wasm=/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+    "--exe=/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/Maelstrom.exe",
+    "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+    "--cwd=C:\\maelstrom",
+    "--env=MAELSTROM_LIB=.",
+    "--env=HOME=.",
+    "--dlls=/tmp/maelstrom-relocated-verifier-original-capture-oct26/runtime/system/msvcrt.dll,/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/SDL.dll,/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs/maelstrom/SDL_net.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/maelstrom-relocated-verifier-original-capture-oct26/vfs",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32",
+    "--maelstrom-select-frozen-record=/tmp/maelstrom-relocated-verifier-original-capture-oct26/guest/frozen.jsonl"
+  ],
+  "standingManifest": "/tmp/maelstrom-original-errno-caller-capture-oct26/manifest.json",
+  "standingRemoteBytes": 16027648,
+  "standingRemoteReused": true,
+  "baseRunnerSHA256BeforeRawProbe": "81cb95e2a20d92e17a052c88c04cae2bb966da038eff8310a6d9f62896880bef",
+  "runnerSHA256": "9272889b78111ae016d92275a69eac8f8788c65cefc96a7a739fccfd8ff630fd"
+}

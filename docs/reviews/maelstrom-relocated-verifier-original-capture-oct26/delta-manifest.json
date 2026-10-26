@@ -1,0 +1,27 @@
+[
+  {
+    "target": "runner/test/run.js",
+    "sha256": "9272889b78111ae016d92275a69eac8f8788c65cefc96a7a739fccfd8ff630fd",
+    "bytes": 688199
+  },
+  {
+    "target": "runner/tools/maelstrom-original-errno-adapter.cjs",
+    "sha256": "120bf51358048ea88a508d1f9a34a79c789b63bc096c3e9f1d02c167e93f2a9a",
+    "bytes": 2970
+  },
+  {
+    "target": "guest-args.json",
+    "sha256": "6fba56ba8bbabdca05f5861b0d4b6a772d285cc28b4d13077a12f36f8eab1a29",
+    "bytes": 1248
+  },
+  {
+    "target": "validate-tree.cjs",
+    "sha256": "f7da414ba58437c5a0fdd3580df974cc4619abaeb6caf0e73c3a43a2543e72a8",
+    "bytes": 3129
+  },
+  {
+    "target": "ops/supervise.py",
+    "sha256": "1fc9d40c7b98048074358c1a093214e596be14aa5dceaaa30aa6df805453d418",
+    "bytes": 4961
+  }
+]

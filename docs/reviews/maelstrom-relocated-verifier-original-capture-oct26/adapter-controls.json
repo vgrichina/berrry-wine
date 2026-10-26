@@ -1,0 +1,5 @@
+{
+  "exit": 0,
+  "stdout": "PASS missing export rejects\nPASS start exactly once; duplicate owner rejects\nPASS nonpristine refuses before invocation\nPASS observation requires start\nPASS rejection persists first state and closes\nPASS native capture remains historical and once, preserves errno zero\nPASS loaded mappings and authentic byte controls\n{\"passed\":7,\"offlineAdapterOnly\":true,\"guestInvoked\":false}\n",
+  "stderr": ""
+}
