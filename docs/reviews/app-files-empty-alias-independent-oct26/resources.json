@@ -29,6 +29,6 @@
     "files": 12020,
     "policy": "Read-only borrowed objects; no fetch/copy, inode deduplicated. Installed tools separately pinned in admission."
   },
-  "compatibility": "Serial finite timeout30s Node16MiB; no compiler, runtime, instantiation or arenas. Each file<=24MiB; each test-group output<=128KiB; projected all captures<=2MiB; source excerpts displayed<=8192bytes, host method inspected in 6000/6000/4464byte pieces.",
+  "compatibility": "Serial finite timeout30s Node16MiB; no compiler, runtime, instantiation or arenas. Each file<=24MiB; each test-group output<=128KiB; projected all captures<=2MiB; host method inspected in 6000/6000/4464byte pieces. Initial combined fixture/policy read exceeded the 8192-byte excerpt gate; see incidents.",
   "pass": true
 }

@@ -6,5 +6,9 @@
   {
     "incident": "Original independent review commit not in candidate donor object closure.",
     "resolution": "Read its immutable blob directly from existing read-only original-review repository. Exact bytes/hash verified; no fetch or checkout expansion."
+  },
+  {
+    "incident": "Initial combined supplied-fixture and policy source read exceeded the 8192-byte read-excerpt gate. A later broad rg search of JSON event lines also returned a truncated tool response.",
+    "qualification": "These are task evidence-inspection deviations, not passing gate receipts. The host method itself was inspected in three pieces <=6000 bytes, all test output files are <=1550 bytes, and all final source/fixture/log hashes remain independently verified. No source or test assertions changed."
   }
 ]
