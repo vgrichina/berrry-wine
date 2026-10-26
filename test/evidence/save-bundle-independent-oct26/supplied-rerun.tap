@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: hashed ZIP with distinct raw names refuses normalized guest aliases before mutation
+ok 1 - hashed ZIP with distinct raw names refuses normalized guest aliases before mutation
+  ---
+  duration_ms: 22.766577
+  type: 'test'
+  ...
+# Subtest: repeated manifest specs also refuse the same normalized destination
+ok 2 - repeated manifest specs also refuse the same normalized destination
+  ---
+  duration_ms: 0.258114
+  type: 'test'
+  ...
+# Subtest: legal uppercase member and manifest paths normalize to the same destination
+ok 3 - legal uppercase member and manifest paths normalize to the same destination
+  ---
+  duration_ms: 0.785163
+  type: 'test'
+  ...
+# Subtest: distinct normalized paths, empty files, all metadata and deterministic round trip
+ok 4 - distinct normalized paths, empty files, all metadata and deterministic round trip
+  ---
+  duration_ms: 2.346309
+  type: 'test'
+  ...
+# Subtest: normalized names still obey the running app persistence globs
+ok 5 - normalized names still obey the running app persistence globs
+  ---
+  duration_ms: 0.57059
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 75.424322

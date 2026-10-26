@@ -1,0 +1,61 @@
+✖ hashed ZIP with distinct raw names refuses normalized guest aliases before mutation (16.720321ms)
+✖ repeated manifest specs also refuse the same normalized destination (0.61855ms)
+✖ legal uppercase member and manifest paths normalize to the same destination (1.708053ms)
+✔ distinct normalized paths, empty files, all metadata and deterministic round trip (3.963522ms)
+✔ normalized names still obey the running app persistence globs (0.857738ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 2
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 70.491745
+
+✖ failing tests:
+
+test at test/save-bundle-normalized-collision.test.cjs:54:1
+✖ hashed ZIP with distinct raw names refuses normalized guest aliases before mutation (16.720321ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/tmp/save-bundle-normalized-collision-repair-oct26/repo/test/save-bundle-normalized-collision.test.cjs:71:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /duplicate normalized guest path/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at test/save-bundle-normalized-collision.test.cjs:86:1
+✖ repeated manifest specs also refuse the same normalized destination (0.61855ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception.
+      at TestContext.<anonymous> (/tmp/save-bundle-normalized-collision-repair-oct26/repo/test/save-bundle-normalized-collision.test.cjs:87:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /duplicate normalized guest path/i,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at test/save-bundle-normalized-collision.test.cjs:91:1
+✖ legal uppercase member and manifest paths normalize to the same destination (1.708053ms)
+  Error: save bundle: c:\Save\A.sav is outside the app's persistFiles globs and was refused
+      at Object.importBundle (/tmp/save-bundle-normalized-collision-repair-oct26/repo/lib/save-bundle.js:595:15)
+      at TestContext.<anonymous> (/tmp/save-bundle-normalized-collision-repair-oct26/repo/test/save-bundle-normalized-collision.test.cjs:95:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)

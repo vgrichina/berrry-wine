@@ -1,0 +1,34 @@
+{
+  "at": 1792994271.6616368,
+  "projectedPeak": 58720256,
+  "hard": 67108864,
+  "reserve": 8388608,
+  "currentTaskBytes": 0,
+  "launcherBytes": 84327,
+  "free": 4552450048,
+  "MemAvailable": 3206295552,
+  "afterClientAllowance": 2669424640,
+  "fleet": [
+    " 752162 365328 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest m",
+    "2134403 13916 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/renderer-physical-modifier-state-repair-oct26.task.txt scratch/usage-watch/renderer-physical-modifier-state-repair-oct26",
+    "2134405 13312 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/maelstrom-uop-observer-independent-accept-oct26.task.txt scratch/usage-watch/maelstrom-uop-observer-independent-accept-oct26",
+    "2134418 188272 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-m",
+    "2141696 13272 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/file-bundle-parser-independent-accept-oct26.task.txt scratch/usage-watch/file-bundle-parser-independent-accept-oct26",
+    "2141699 190080 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-m",
+    "2143043 13268 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/file-bundle-bounded-read-independent-accept-oct26.task.txt scratch/usage-watch/file-bundle-bounded-read-independent-accept-oct26",
+    "2143046 189408 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-m",
+    "2144280 13272 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/save-bundle-collision-independent-accept-oct26.task.txt scratch/usage-watch/save-bundle-collision-independent-accept-oct26",
+    "2144284 192092 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-m"
+  ],
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A no guest/mount execution",
+  "standingNode": "/usr/bin/node",
+  "standingInputs": "readonly regular object leaves donor objects and ops/v; no symlink dereference",
+  "budget": {
+    "checkoutGit": 8388608,
+    "testsEvidence": 8388608,
+    "launcherSessionPositiveWALFuture": 33554432,
+    "reserve": 8388608
+  }
+}

@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: distinct raw ZIP names collide under guest case folding before all mutations
+ok 1 - distinct raw ZIP names collide under guest case folding before all mutations
+  ---
+  duration_ms: 10.021217
+  type: 'test'
+  ...
+# Subtest: slash and path aliases are rejected as unsafe before normalization can merge them
+ok 2 - slash and path aliases are rejected as unsafe before normalization can merge them
+  ---
+  duration_ms: 3.852187
+  type: 'test'
+  ...
+# Subtest: raw duplicate members and repeated specs have separate rejection coverage
+ok 3 - raw duplicate members and repeated specs have separate rejection coverage
+  ---
+  duration_ms: 0.998
+  type: 'test'
+  ...
+# Subtest: unsafe guest members cannot reach VFS or either storage mode
+ok 4 - unsafe guest members cannot reach VFS or either storage mode
+  ---
+  duration_ms: 3.293932
+  type: 'test'
+  ...
+# Subtest: manifest path agreement accepts case/slash spelling but refuses different destinations
+ok 5 - manifest path agreement accepts case/slash spelling but refuses different destinations
+  ---
+  duration_ms: 3.133692
+  type: 'test'
+  ...
+# Subtest: late hash/size/state failures still reject before replace deletes or store clears
+ok 6 - late hash/size/state failures still reject before replace deletes or store clears
+  ---
+  duration_ms: 1.118426
+  type: 'test'
+  ...
+# Subtest: supported distinct paths, empty files, metadata and deterministic export/import
+ok 7 - supported distinct paths, empty files, metadata and deterministic export/import
+  ---
+  duration_ms: 6.885691
+  type: 'test'
+  ...
+# Subtest: legacy glob behavior and actual VFS case-insensitive lookup remain compatible
+ok 8 - legacy glob behavior and actual VFS case-insensitive lookup remain compatible
+  ---
+  duration_ms: 1.261494
+  type: 'test'
+  ...
+# Subtest: explicit public API case-preservation challenge against unchanged ancestor source
+ok 9 - explicit public API case-preservation challenge against unchanged ancestor source
+  ---
+  duration_ms: 2.396139
+  type: 'test'
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 72.533795

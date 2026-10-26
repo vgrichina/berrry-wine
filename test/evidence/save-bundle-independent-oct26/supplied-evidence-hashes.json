@@ -1,0 +1,54 @@
+{
+  "baseline.tap": {
+    "bytes": 3219,
+    "sha256": "dafce81e52575da87aa0fcf1dd7448cad0a0be9be5cab76f3a7261425a8fea9e"
+  },
+  "remote-ref.txt": {
+    "bytes": 103,
+    "sha256": "7a2dd1ce6ffd4a4d1ecf5b2e2495a212f7b4d2a4d9a50dbda204f94606586a48"
+  },
+  "collision.zip": {
+    "bytes": 1220,
+    "sha256": "88ef3599b8359260ee34c96c8f2a43a5ec25e39aa8f8fcc0749862346f3c3cf5"
+  },
+  "checkpoint.json": {
+    "bytes": 1208,
+    "sha256": "0848ec28bf5624d088961cfbf012f7a0c17caeacb184356ddd9bf3675754d72e"
+  },
+  "save-bundle.baseline.js": {
+    "bytes": 28589,
+    "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848"
+  },
+  "pretest-admission.json": {
+    "bytes": 1699,
+    "sha256": "867097ee9707c3125bc87aa0ea72f618598748cd8813a264192661fc1d875773"
+  },
+  "prepublication-admission.json": {
+    "bytes": 506,
+    "sha256": "5bd569df8439c62f57b46c17ea8ca69f51a7f2fc20d85854a6fd3257f8e6f090"
+  },
+  "RECOVERY.md": {
+    "bytes": 2442,
+    "sha256": "e38178177a626bd79ea56d76317d127ebec6a21a44488639661de2a9b3cd2f37"
+  },
+  "admission.json": {
+    "bytes": 1117,
+    "sha256": "8f72f7ab638778000d9d723bb7f6cc9742e88f55549836086a3020edcb5dd060"
+  },
+  "push.log": {
+    "bytes": 511,
+    "sha256": "e21b4cbe5abc55fd2647e1efbb0735ef359fee6447df16d8cee3f7068c8d02ff"
+  },
+  "root-ref-final.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "repair.patch": {
+    "bytes": 8821,
+    "sha256": "701ba1e304cbbcd808601aa01e4407de5848bc3db6dfe806a119dbb6cf458bf8"
+  },
+  "repair.tap": {
+    "bytes": 1208,
+    "sha256": "ef2a808507e401504166a7a1b27ad146a7746dbdf009a71929af6e8e64497ca2"
+  }
+}
