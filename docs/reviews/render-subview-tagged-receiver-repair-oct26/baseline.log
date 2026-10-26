@@ -1,0 +1,95 @@
+{"name":"scan","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":1024,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":1024,"setBytes":4096,"constructorCopyBytes":1024,"allocationBytes":6656,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":1024,"backingAllocations":1}}
+{"name":"scan","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":4096,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":4096,"setBytes":4096,"constructorCopyBytes":4096,"allocationBytes":9728,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":4096,"backingAllocations":1}}
+{"name":"scan","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":16384,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":16384,"setBytes":4096,"constructorCopyBytes":16384,"allocationBytes":22016,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":16384,"backingAllocations":1}}
+{"name":"subview-scan","side":16,"actualBytes":1024,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"subview-scan","side":32,"actualBytes":4096,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"subview-scan","side":64,"actualBytes":16384,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+✔ AST preserves ordinary constructor, receiver, key and argument evaluation order and exceptions (18.428866ms)
+✔ independent execution and measured rejection scan 16 (134.699544ms)
+✔ independent execution and measured rejection lexical-copy 16 (89.854095ms)
+✔ independent execution and measured rejection backing 16 (81.731995ms)
+✔ independent execution and measured rejection scan 32 (83.544975ms)
+✔ independent execution and measured rejection lexical-copy 32 (77.613273ms)
+✔ independent execution and measured rejection backing 32 (76.373076ms)
+✔ independent execution and measured rejection scan 64 (90.589193ms)
+✔ independent execution and measured rejection lexical-copy 64 (85.181143ms)
+✔ independent execution and measured rejection backing 64 (82.564095ms)
+✖ reject real full-source indexed scan through two subviews 16 (88.834773ms)
+✖ reject real full-source indexed scan through two subviews 32 (70.389596ms)
+✖ reject real full-source indexed scan through two subviews 64 (81.594117ms)
+✖ computed tagged-template receiver preserves actual native renderer behavior (71.390474ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 10
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1209.921793
+
+✖ failing tests:
+
+test at docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:41:29
+✖ reject real full-source indexed scan through two subviews 16 (88.834773ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: real extra indexed scan must be rejected
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:47:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /indexed source read/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:41:29
+✖ reject real full-source indexed scan through two subviews 32 (70.389596ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: real extra indexed scan must be rejected
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:47:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /indexed source read/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:41:29
+✖ reject real full-source indexed scan through two subviews 64 (81.594117ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: real extra indexed scan must be rejected
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:47:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: /indexed source read/,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:50:1
+✖ computed tagged-template receiver preserves actual native renderer behavior (71.390474ms)
+  AssertionError [ERR_ASSERTION]: TypeError: Cannot read properties of undefined (reading 'value')
+  
+  -1 !== 1
+  
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js:53:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: -1,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

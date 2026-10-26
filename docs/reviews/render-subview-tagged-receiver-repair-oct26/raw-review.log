@@ -1,0 +1,219 @@
+✖ gate must reject real producer regression: indexed full-source scan 16x16 (132.589729ms)
+✖ gate must reject real producer regression: indexed full-source scan 32x32 (121.151291ms)
+✖ gate must reject real producer regression: indexed full-source scan 64x64 (114.866967ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 16x16 (116.083979ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 32x32 (100.654156ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 64x64 (85.729562ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 16x16 (65.835509ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 32x32 (69.894649ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 64x64 (84.50747ms)
+✔ suppressed scan instrumentation is rejected (81.834748ms)
+✔ improved counts cannot accept a broken identity cache (101.726698ms)
+✔ throwing producer restores own methods, snapshots and native globals (86.648044ms)
+✔ measure restores the global constructor present on entry, including throw (71.647234ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 4
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1294.765883
+
+✖ failing tests:
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 16x16 (132.589729ms)
+  AssertionError [ERR_ASSERTION]: indexed source read budget including decode
+  
+  2048 !== 1024
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:224:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2048,
+    expected: 1024,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 32x32 (121.151291ms)
+  AssertionError [ERR_ASSERTION]: indexed source read budget including decode
+  
+  8192 !== 4096
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:224:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 8192,
+    expected: 4096,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 64x64 (114.866967ms)
+  AssertionError [ERR_ASSERTION]: indexed source read budget including decode
+  
+  32768 !== 16384
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:224:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 32768,
+    expected: 16384,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 16x16 (116.083979ms)
+  AssertionError [ERR_ASSERTION]: private source copy
+  
+  2048 !== 1024
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:233:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 2048,
+    expected: 1024,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 32x32 (100.654156ms)
+  AssertionError [ERR_ASSERTION]: private source copy
+  
+  8192 !== 4096
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:233:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 8192,
+    expected: 4096,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 64x64 (85.729562ms)
+  AssertionError [ERR_ASSERTION]: private source copy
+  
+  32768 !== 16384
+  
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:233:10)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 32768,
+    expected: 16384,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 16x16 (65.835509ms)
+  AssertionError [ERR_ASSERTION]: ArrayBuffer backing allocation budget
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:228:3)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 32x32 (69.894649ms)
+  AssertionError [ERR_ASSERTION]: ArrayBuffer backing allocation budget
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:228:3)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 64x64 (84.50747ms)
+  AssertionError [ERR_ASSERTION]: ArrayBuffer backing allocation budget
+      at budget (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:228:3)
+      at Object.runCounts (/tmp/render-subview-tagged-receiver-repair-oct26/repo/tools/d3d9-rgba-benchmark.js:274:7)
+      at TestContext.<anonymous> (/tmp/render-subview-tagged-receiver-repair-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:61:24)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

@@ -1,0 +1,34 @@
+{"name":"scan","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":1024,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":1024,"setBytes":4096,"constructorCopyBytes":1024,"allocationBytes":6656,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":16,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":1024,"backingAllocations":1}}
+{"name":"scan","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":4096,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":4096,"setBytes":4096,"constructorCopyBytes":4096,"allocationBytes":9728,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":32,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":4096,"backingAllocations":1}}
+{"name":"scan","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":16384,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"lexical-copy","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":16384,"setBytes":4096,"constructorCopyBytes":16384,"allocationBytes":22016,"allocations":23,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"backing","side":64,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":0,"backingAllocationBytes":16384,"backingAllocations":1}}
+{"name":"subview-scan","side":16,"actualBytes":1024,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":1024,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"subview-scan","side":32,"actualBytes":4096,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":4096,"backingAllocationBytes":0,"backingAllocations":0}}
+{"name":"subview-scan","side":64,"actualBytes":16384,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0,"indexedSourceReads":16384,"backingAllocationBytes":0,"backingAllocations":0}}
+✔ AST preserves ordinary constructor, receiver, key and argument evaluation order and exceptions (10.883749ms)
+✔ independent execution and measured rejection scan 16 (91.610589ms)
+✔ independent execution and measured rejection lexical-copy 16 (64.455329ms)
+✔ independent execution and measured rejection backing 16 (61.4845ms)
+✔ independent execution and measured rejection scan 32 (70.94506ms)
+✔ independent execution and measured rejection lexical-copy 32 (67.011653ms)
+✔ independent execution and measured rejection backing 32 (60.018981ms)
+✔ independent execution and measured rejection scan 64 (82.157633ms)
+✔ independent execution and measured rejection lexical-copy 64 (66.437967ms)
+✔ independent execution and measured rejection backing 64 (68.889895ms)
+✔ reject real full-source indexed scan through two subviews 16 (63.25545ms)
+✔ reject real full-source indexed scan through two subviews 32 (71.376929ms)
+✔ reject real full-source indexed scan through two subviews 64 (72.964717ms)
+✔ computed tagged-template receiver preserves actual native renderer behavior (56.308193ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 949.693038

@@ -1,0 +1,29 @@
+✔ indexed accounting: nested subarray and ordinary alias (115.574224ms)
+✔ indexed accounting: captured constructor at interior offset (87.469494ms)
+✔ indexed accounting: surrounding view counts only source intersection (60.315529ms)
+✔ indexed accounting: view straddling source start (64.490646ms)
+✔ indexed accounting: view straddling source end (68.566639ms)
+✔ indexed accounting: disjoint view in same backing store (65.636976ms)
+✔ indexed accounting: empty nested view (67.733297ms)
+✔ source key coercion, valid bounds and outside-range indices are counted exactly (66.069036ms)
+✔ constructor copies through nested source aliases count the copied range (63.638389ms)
+✔ slice source intersection: outside; native coercion order (72.83317ms)
+✔ slice source intersection: left overlap; native coercion order (67.405832ms)
+✔ slice source intersection: right overlap with negative offset; native coercion order (65.866826ms)
+✔ computed template tag preserves receiver, getter/key/substitution order and template object identity (2.323287ms)
+✔ computed template tag preserves object throw and preceding side effects (1.727549ms)
+✔ computed template tag preserves key throw and preceding side effects (1.749139ms)
+✔ computed template tag preserves get throw and preceding side effects (1.89312ms)
+✔ computed template tag preserves sub throw and preceding side effects (1.926712ms)
+✔ computed template tag preserves tag throw and preceding side effects (1.773355ms)
+✔ nested tags, sequence tags and super tag references retain native receivers (1.743249ms)
+✔ actual producer tag throw restores descriptors, snapshot source and observer scope (68.537164ms)
+✔ unsupported optional references, suspended keys and computed super reads fail explicitly (6.683782ms)
+ℹ tests 21
+ℹ suites 0
+ℹ pass 21
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1008.17084

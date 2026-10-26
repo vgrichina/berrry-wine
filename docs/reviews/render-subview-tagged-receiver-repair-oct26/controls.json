@@ -1,0 +1,44 @@
+{
+  "baseline": {
+    "pass": 10,
+    "fail": 4,
+    "exitCode": 1,
+    "log": "baseline.log",
+    "commandReceipt": "baseline.json"
+  },
+  "repaired-review-complete": {
+    "pass": 14,
+    "fail": 0,
+    "exitCode": 0,
+    "log": "repaired-review-complete.log",
+    "commandReceipt": "repaired-review-complete.json"
+  },
+  "focused-complete": {
+    "pass": 16,
+    "fail": 0,
+    "exitCode": 0,
+    "log": "focused-complete.log",
+    "commandReceipt": "focused-complete.json"
+  },
+  "new-regressions-accepted": {
+    "pass": 21,
+    "fail": 0,
+    "exitCode": 0,
+    "log": "new-regressions-accepted.log",
+    "commandReceipt": "new-regressions-accepted.json"
+  },
+  "original": {
+    "pass": 20,
+    "fail": 0,
+    "exitCode": 0,
+    "log": "original.log",
+    "commandReceipt": "original.json"
+  },
+  "raw-review": {
+    "pass": 4,
+    "fail": 9,
+    "exitCode": 1,
+    "log": "raw-review.log",
+    "commandReceipt": "raw-review.json"
+  }
+}

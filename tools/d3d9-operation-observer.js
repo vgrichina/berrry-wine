@@ -37,6 +37,12 @@ function loadedSource(filename) {
 function instrument(source) {
   if (source.includes('__renderOperationObserver')) throw Error('observer binding collision');
   const ast = parser().parse(source, {ecmaVersion:'latest', sourceType:'script'});
+  function contains(node, predicate) {
+    if (!node || typeof node !== 'object') return false;
+    if (predicate(node)) return true;
+    return Object.values(node).some(value => Array.isArray(value)
+      ? value.some(child => contains(child,predicate)) : contains(value,predicate));
+  }
   function render(node, parent, key) {
     const children = [];
     for (const [name, value] of Object.entries(node)) {
@@ -45,10 +51,25 @@ function instrument(source) {
       } else if (value && typeof value.type === 'string') children.push([value,name]);
     }
     const part = child => render(child, node, Object.keys(node).find(k=>node[k]===child));
+    if (node.type === 'ChainExpression' && contains(node, n => n.type === 'MemberExpression' && n.computed) &&
+        parent && ((parent.type === 'CallExpression' && key === 'callee') ||
+        (parent.type === 'TaggedTemplateExpression' && key === 'tag') ||
+        (parent.type === 'UnaryExpression' && parent.operator === 'delete'))) {
+      throw Error('optional computed reference is outside the observer grammar');
+    }
     if (node.type === 'ChainExpression' && node.expression.type === 'MemberExpression' &&
         node.expression.computed && node.expression.optional) {
+      // The lazy key thunk cannot contain suspension: moving it across a
+      // function boundary changes its meaning.
+      if (contains(node.expression.property, n => ['AwaitExpression','YieldExpression'].includes(n.type) ||
+          n.type === 'CallExpression' && n.callee.type === 'Identifier' && n.callee.name === 'eval')) {
+        throw Error('suspending or direct-eval optional computed access is outside the observer grammar');
+      }
       return '__renderOperationObserver.readOptional(' + render(node.expression.object,node.expression,'object')+
         ',()=>(' + render(node.expression.property,node.expression,'property')+'))';
+    }
+    if (node.type === 'ChainExpression' && contains(node, n => n.type === 'MemberExpression' && n.computed)) {
+      throw Error('nonterminal optional computed access is outside the observer grammar');
     }
     if (node.type === 'NewExpression') {
       return '__renderOperationObserver.construct(' + part(node.callee) + ',[' +
@@ -57,12 +78,14 @@ function instrument(source) {
     // Leave lvalues and method receivers intact. Ordinary computed reads are
     // evaluated exactly once, in their original object/key order.
     const receiver = parent && ((parent.type === 'CallExpression' && key === 'callee') ||
+      (parent.type === 'TaggedTemplateExpression' && key === 'tag') ||
       (parent.type === 'AssignmentExpression' && key === 'left') ||
       parent.type === 'UpdateExpression' || parent.type === 'UnaryExpression' && parent.operator === 'delete');
     if (node.type === 'MemberExpression' && node.computed && node.optional) {
       throw Error('nonterminal optional computed access is outside the observer grammar');
     }
     if (node.type === 'MemberExpression' && node.computed && !node.optional && !receiver) {
+      if (node.object.type === 'Super') throw Error('computed super read is outside the observer grammar');
       return '__renderOperationObserver.read(' + part(node.object) + ',' + part(node.property) + ')';
     }
     children.sort((a,b)=>a[0].start-b[0].start);
@@ -87,7 +110,8 @@ function create(filename) {
         // Convert once with native ToPropertyKey (including symbol and object
         // keys); reuse the converted key for the actual indexed access.
         const property = Reflect.ownKeys({[key]:0})[0];
-        if (typeof property === 'string' && /^(0|[1-9][0-9]*)$/.test(property)) active.counts.indexedSourceReads++;
+        if (typeof property === 'string' && /^(0|[1-9][0-9]*)$/.test(property) &&
+            active.isSource(object,Number(property))) active.counts.indexedSourceReads++;
         return object[property];
       }
       return object[key];

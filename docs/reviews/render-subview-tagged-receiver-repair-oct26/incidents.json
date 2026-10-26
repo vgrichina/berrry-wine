@@ -1,0 +1,13 @@
+{
+  "resourceAndInspectionQualifications": [
+    "Initial combined CLAUDE/board/admission and inherited identity metadata inspections exceeded the 8KiB excerpt bound and were tool-truncated; raw full ref listing was never captured. Later output is focused. No retrospective compliance claim.",
+    "Inherited setup script read one 87300-byte renderer pin using read_bytes in a single call, exceeding 64KiB read limit. Subsequent evidence/source capture uses <=65536-byte chunks and <=2MiB total.",
+    "Precheckout setup projected 48MiB using inherited categories; first measured all-new gate was 54747136 bytes within64MiB. This category underestimate is retained; subsequent current gates include full WAL/SHM/session/DB growth/reserve. No64MiB overrun observed."
+  ],
+  "developmentFindings": [
+    "First optional-grammar guard rejected a supported renderer optional chain; narrowed that guard before passing review.",
+    "First intrinsic range predicate needed ArrayBuffer.isView to exclude immutable snapshot proxies; fixed without changing snapshot observation.",
+    "New tag-throw recovery fixture initially assumed a warm zero-backing-allocation draw. Actual renderer clears scratch after a failed draw: corrected fixture explicitly observes4096-byte recovery allocation and demands budget rejection before the next normal warm pass."
+  ],
+  "platformDenials": "No new runtime/SSH access attempts. Prior actual platform denials remain in inherited evidence; no retry or trust/credential edit."
+}

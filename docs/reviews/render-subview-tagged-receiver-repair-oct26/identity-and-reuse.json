@@ -1,0 +1,47 @@
+{
+  "productionRendererUnchanged": true,
+  "pins": {
+    "tools/d3d9-rgba-benchmark.js": {
+      "pinned": "c0c47499a31143d613413c6d4e1257189b05d209ce0124dfab91cfc4ce7c9133",
+      "actual": "14dc4da352c147b8a4af8dbdc22dbc0146a6633f68949b321474795b574a787d",
+      "changedAuthorized": true
+    },
+    "tools/d3d9-operation-observer.js": {
+      "pinned": "c51908d9f1db74231737aa93f91c9e50e864ef1344515281ae436300c8e36be6",
+      "actual": "e29f9513aa316b9d9000c64b3352ab7fb3b8e4452f021729c10e641eac5b38e0",
+      "changedAuthorized": true
+    },
+    "test/test-d3d9-real-operation-accounting.js": {
+      "pinned": "2b44723ec99f8faf765bbf2322f175bdc7ec6941a6193ffe940e08d25d4c7306",
+      "actual": "2b44723ec99f8faf765bbf2322f175bdc7ec6941a6193ffe940e08d25d4c7306",
+      "changedAuthorized": false
+    },
+    "docs/reviews/render-performance-independent-oct26/reproduce.js": {
+      "pinned": "5eb9a226e4d29a93db46b73fe44fe83122ba1e1df25d0ab4b138617481ea4714",
+      "actual": "5eb9a226e4d29a93db46b73fe44fe83122ba1e1df25d0ab4b138617481ea4714",
+      "changedAuthorized": false
+    },
+    "lib/d3d9-host.js": {
+      "pinned": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+      "actual": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+      "changedAuthorized": false
+    },
+    "docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js": {
+      "pinned": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5",
+      "actual": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5",
+      "changedAuthorized": false
+    }
+  },
+  "sourceFixtureTree": "45226508cbd7d9182deb4fdea90e97c280748938",
+  "baselineCandidate": "6ad4cfed7d6c6904f96658fe01c89af9c626d514",
+  "timingRows": 30,
+  "newTimings": false,
+  "timingAndSealSource": "docs/reviews/render-byte-identity-performance-gate-oct25/results.json",
+  "timingAndSealSHA256": "353dd263df5abdecf19587f58ba7c57c9d9cbbf0d08f68cf7baab27189460b93",
+  "acceptedReceipts": [
+    "/tmp/render-performance-independent-oct26/ops/result.json",
+    "/tmp/render-real-operation-accounting-repair-oct26/ops/identity-and-reuse.json"
+  ],
+  "noGameSpeedupClaim": true,
+  "scope": "Only observer/helper and new focused fixture change production-test source; no renderer, oracle or budget change."
+}

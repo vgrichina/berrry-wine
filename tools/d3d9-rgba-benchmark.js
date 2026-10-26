@@ -11,6 +11,9 @@ const {Bridge} = operationObserver.exports;
 const Worker = require('../lib/d3d9-render-worker');
 const {OPCODES: OP} = require('../lib/d3d-command-stream');
 const U8 = Uint8Array;
+const typedArrayPrototype = Object.getPrototypeOf(U8.prototype);
+const viewField = Object.fromEntries(['buffer','byteOffset','byteLength'].map(key =>
+  [key,Object.getOwnPropertyDescriptor(typedArrayPrototype,key).get]));
 
 function fixture(side, options = {}, observe = true) {
   const bytes = side * side * 4;
@@ -102,8 +105,25 @@ function measure(f, extra = () => {}) {
     counts.allocationBytes += n; counts.allocations++;
   };
   const sourceBuffer = f.source().buffer;
-  const isSource = object => ArrayBuffer.isView(object) && object.buffer === sourceBuffer &&
-    f.bits.includes(object.byteOffset) && object.byteLength === f.bytes;
+  // Scope by byte ranges, not view identity/shape. subarray(), nested views,
+  // captured constructors and aliases can all name the same source bytes.
+  // Merge ranges so overlapping fixture sources never double count a copy.
+  const sourceRanges = [];
+  for (const start of [...f.bits].sort((a,b)=>a-b)) {
+    const last = sourceRanges.at(-1), end = start+f.bytes;
+    if (last && start <= last[1]) last[1] = Math.max(last[1],end);
+    else sourceRanges.push([start,end]);
+  }
+  const sourceBytes = (object, offset = 0, length) => {
+    if (!ArrayBuffer.isView(object) || !(object instanceof U8) ||
+        viewField.buffer.call(object) !== sourceBuffer) return 0;
+    const base = viewField.byteOffset.call(object), size = viewField.byteLength.call(object);
+    const start = base+Math.max(0,offset);
+    const end = Math.min(base+size,start+(length === undefined ? size : length));
+    return sourceRanges.reduce((n,[lo,hi]) => n+Math.max(0,Math.min(end,hi)-Math.max(start,lo)),0);
+  };
+  const isSource = (object,index) => index === undefined ? sourceBytes(object)>0
+    : sourceBytes(object,index,1)>0;
   const leaveObserver = operationObserver.enter({counts,isSource,allocation(result,args) {
     if (result instanceof ArrayBuffer) {
       counts.backingAllocationBytes += result.byteLength;
@@ -115,7 +135,7 @@ function measure(f, extra = () => {}) {
         allocated(result.byteLength,result);
         if (typeof args[0] !== 'number') {
           counts.constructorCopyBytes += result.byteLength;
-          if (isSource(args[0])) counts.sourceCopyBytes += result.byteLength;
+          counts.sourceCopyBytes += sourceBytes(args[0]);
         }
       }
     }
@@ -126,7 +146,7 @@ function measure(f, extra = () => {}) {
       if (typeof args[0] === 'number' || ArrayBuffer.isView(args[0]) || Array.isArray(args[0])) {
         allocated(result.byteLength,result);
         if (typeof args[0] !== 'number') counts.constructorCopyBytes += result.byteLength;
-        if (isSource(args[0])) counts.sourceCopyBytes += result.byteLength;
+        counts.sourceCopyBytes += sourceBytes(args[0]);
       }
       return result;
     }});
@@ -142,10 +162,25 @@ function measure(f, extra = () => {}) {
       });
     });
     hook(U8.prototype,'slice',function(...args) {
+      // Let the native slice perform validation and coerce start exactly once,
+      // in its original order. Retain its numeric value to locate the copied
+      // interval even when the receiver extends beyond a source range.
+      const tracked = isSource(this);
+      const length = tracked ? viewField.byteLength.call(this) : 0;
+      let start = 0;
+      if (tracked && args.length) {
+        const original = args[0];
+        args[0] = {[Symbol.toPrimitive]() {
+          const number = +original;
+          const integer = Number.isNaN(number) ? 0 : Math.trunc(number);
+          start = integer < 0 ? Math.max(length+integer,0) : Math.min(integer,length);
+          return number;
+        }};
+      }
       const result = slice.apply(this, args);
       allocated(result.byteLength,result);
       counts.sliceBytes += result.byteLength;
-      if (this.buffer === f.source().buffer && f.bits.includes(this.byteOffset)) counts.sourceCopyBytes += result.byteLength;
+      counts.sourceCopyBytes += sourceBytes(this,start,result.byteLength);
       return result;
     });
     hook(U8.prototype,'set',function(source, ...args) {
