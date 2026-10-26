@@ -1,0 +1,10 @@
+[
+  {
+    "stage": "independent first fixture",
+    "result": "2 pass 5 fail",
+    "cause": "fixture assumed loadFiles returns {failed}; actual method returns undefined and throws on required failure",
+    "correction": "Removed invented return-value assertion; await actual host method, then inspect real VFS keys. No source edits or relaxed naming assertions.",
+    "firstEvidence": "independent-first.txt",
+    "finalEvidence": "independent-final.txt"
+  }
+]

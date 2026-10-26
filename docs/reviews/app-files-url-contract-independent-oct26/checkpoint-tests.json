@@ -1,0 +1,59 @@
+{
+  "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+  "decision": "ACCEPT",
+  "scope": "Exact added default-literal URL regression and comment only; no production repair claimed; no general manifest parity certification",
+  "inputs": [
+    {
+      "path": "lib/app-files.js",
+      "bytes": 16326,
+      "sha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+    },
+    {
+      "path": "host.js",
+      "bytes": 368727,
+      "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4"
+    },
+    {
+      "path": "test/app-files-persist-url-policy-oct26.test.cjs",
+      "bytes": 7201,
+      "sha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    {
+      "path": "lib/browser-shell.js",
+      "bytes": 211893,
+      "sha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890"
+    }
+  ],
+  "fixture": {
+    "path": "test/app-files-url-contract-independent-oct26.test.cjs",
+    "sha256": "9109256868d2eb66ff936072b897220ca42f99577f25a885ff0dc51b554b9677"
+  },
+  "hostExcerpt": {
+    "recipe": "host.slice(host.indexOf('  async loadFiles(urls, options = {}) {'), host.indexOf('\\n  async loadDlls(', start))",
+    "bytes": 16464,
+    "sha256": "5fbb544b0f29130c90f2c14685e979bdfa40caaf43dfeb4d6181a26e62933659"
+  },
+  "completed": [
+    {
+      "group": "supplied",
+      "pass": 7,
+      "fail": 0,
+      "log": "supplied.txt"
+    },
+    {
+      "group": "independent",
+      "pass": 7,
+      "fail": 0,
+      "log": "independent-final.txt",
+      "mutant": "object-default suffix-stripping mutant fails actual-key preservation and plain-name exclusion checks for query and fragment; asserted rejected in group6"
+    }
+  ],
+  "productionCommentOnlyVerified": true,
+  "existingBoundary": "vfsPaths: [] causes host fallback but policy uses no paths. With matching default key or vfsPath fallback host mounts persisted identity while policy streams. Unchanged from parent, outside supplied assertions and this comment-only acceptance; do not claim universal alias parity.",
+  "remainingGate": "Coordinator review and current-main reconciliation/integration; any empty-alias repair or host naming redesign requires a separate assignment. No runtime/gameplay acceptance."
+}

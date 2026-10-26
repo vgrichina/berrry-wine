@@ -1,0 +1,19 @@
+{
+  "focusedTaskBytes": 2393289,
+  "launcherBytes": 112454,
+  "futureAllowanceIncludingOneSharedPositiveWALCharge": 12582912,
+  "reserve": 8388608,
+  "projectedPeak": 23477263,
+  "hardLimit": 67108864,
+  "freeDisk": 3799617536,
+  "projectedFreeDisk": 3778646016,
+  "diskFloor": 2982150144,
+  "nodeStanding": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816
+  },
+  "readOnlyBlobsStandingBytes": 762256,
+  "standingGitObjects": "Read directly via donor alternates; no object copies charged or materialized",
+  "maxSingleFile": 1569010,
+  "verdict": "PASS"
+}

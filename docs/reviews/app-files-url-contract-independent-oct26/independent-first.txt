@@ -1,0 +1,58 @@
+{"excerptBytes":16464,"excerptSha256":"5fbb544b0f29130c90f2c14685e979bdfa40caaf43dfeb4d6181a26e62933659"}
+✔ exact pinned host and policy; executable excerpt has finite unique boundaries (1.329251ms)
+✖ string and object URLs: persistence follows real host keys across suffixes/separators/case (0.810559ms)
+✖ explicit nonempty aliases and precedence use actual mount identities (0.228969ms)
+✖ anchored persistence glob boundaries do not become URL parsing (0.146775ms)
+✔ classification boundaries: extension suffix handling, total threshold and unknown sizes (0.372278ms)
+✖ suffix stripping mutant disagrees with actual mounted identity and is rejected (1.128164ms)
+✖ pre-existing boundary: empty vfsPaths host fallback differs from policy (outside new assertions) (0.148199ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 2
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 37.871962
+
+✖ failing tests:
+
+test at test/app-files-url-contract-independent-oct26.test.cjs:58:1
+✖ string and object URLs: persistence follows real host keys across suffixes/separators/case (0.810559ms)
+  TypeError: Cannot read properties of undefined (reading 'failed')
+      at mounted (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:31:23)
+      at async TestContext.<anonymous> (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:60:19)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+
+test at test/app-files-url-contract-independent-oct26.test.cjs:71:1
+✖ explicit nonempty aliases and precedence use actual mount identities (0.228969ms)
+  TypeError: Cannot read properties of undefined (reading 'failed')
+      at mounted (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:31:23)
+      at async TestContext.<anonymous> (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:79:19)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+
+test at test/app-files-url-contract-independent-oct26.test.cjs:87:1
+✖ anchored persistence glob boundaries do not become URL parsing (0.146775ms)
+  TypeError: Cannot read properties of undefined (reading 'failed')
+      at mounted (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:31:23)
+      at async TestContext.<anonymous> (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:89:20)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+
+test at test/app-files-url-contract-independent-oct26.test.cjs:109:1
+✖ suffix stripping mutant disagrees with actual mounted identity and is rejected (1.128164ms)
+  TypeError: Cannot read properties of undefined (reading 'failed')
+      at mounted (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:31:23)
+      at async TestContext.<anonymous> (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:118:19)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)
+
+test at test/app-files-url-contract-independent-oct26.test.cjs:128:1
+✖ pre-existing boundary: empty vfsPaths host fallback differs from policy (outside new assertions) (0.148199ms)
+  TypeError: Cannot read properties of undefined (reading 'failed')
+      at mounted (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:31:23)
+      at async TestContext.<anonymous> (/tmp/app-files-url-contract-independent-accept-oct26/repo/test/app-files-url-contract-independent-oct26.test.cjs:131:19)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7)

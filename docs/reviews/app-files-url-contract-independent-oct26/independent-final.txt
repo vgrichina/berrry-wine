@@ -1,0 +1,16 @@
+{"excerptBytes":16464,"excerptSha256":"5fbb544b0f29130c90f2c14685e979bdfa40caaf43dfeb4d6181a26e62933659"}
+✔ exact pinned host and policy; executable excerpt has finite unique boundaries (1.352514ms)
+✔ string and object URLs: persistence follows real host keys across suffixes/separators/case (2.367057ms)
+✔ explicit nonempty aliases and precedence use actual mount identities (0.469519ms)
+✔ anchored persistence glob boundaries do not become URL parsing (0.559931ms)
+✔ classification boundaries: extension suffix handling, total threshold and unknown sizes (0.155452ms)
+✔ suffix stripping mutant disagrees with actual mounted identity and is rejected (1.121983ms)
+✔ pre-existing boundary: empty vfsPaths host fallback differs from policy (outside new assertions) (0.191169ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 38.896002

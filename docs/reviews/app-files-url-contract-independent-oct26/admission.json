@@ -1,0 +1,47 @@
+{
+  "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+  "inputs": [
+    {
+      "path": "lib/app-files.js",
+      "bytes": 16326,
+      "sha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+    },
+    {
+      "path": "host.js",
+      "bytes": 368727,
+      "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4"
+    },
+    {
+      "path": "test/app-files-persist-url-policy-oct26.test.cjs",
+      "bytes": 7201,
+      "sha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54"
+    },
+    {
+      "path": "lib/filesystem.js",
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    {
+      "path": "lib/browser-shell.js",
+      "bytes": 211893,
+      "sha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890"
+    }
+  ],
+  "plannedFocusedCheckoutBytes": 762256,
+  "projectedPeakIncludingReserve": 58720256,
+  "hardAllocation": 67108864,
+  "reserve": 8388608,
+  "memAvailable": 2958352384,
+  "clientAllowance": 536870912,
+  "nodeHeap": 16777216,
+  "ramFloor": 805306368,
+  "diskFree": 4452192256,
+  "freeAfterProjection": 4393472000,
+  "diskFloor": 2982150144,
+  "node": "/usr/local/bin/node",
+  "standingReadOnlyDonor": "/tmp/app-files-persist-url-policy-repair-oct26/repo",
+  "mountArgv": null,
+  "mountParser": "N/A: no guest, mount argv, Boat or runtime invocation; only local immutable Git blob extraction",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "verdict": "PASS"
+}

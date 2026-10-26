@@ -1,0 +1,37 @@
+[
+  {
+    "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+    "path": "docs/reviews/app-files-persist-url-policy-oct26/baseline-contract-final.txt",
+    "sha256": "52f2c37640283692406ec6f0d47084a718786bdbbb6e0f6976e3565253595162",
+    "bytes": 735,
+    "reuse": "unchanged historical receipt; no suite rerun"
+  },
+  {
+    "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+    "path": "docs/reviews/app-files-persist-url-policy-oct26/baseline-proposed-expectation.txt",
+    "sha256": "cdd785aa0e72b2d1310828e101a68ede8853c91813ef45103460246b829a9f48",
+    "bytes": 1949,
+    "reuse": "unchanged historical receipt; no suite rerun"
+  },
+  {
+    "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+    "path": "docs/reviews/app-files-persist-url-policy-oct26/reject-strip-suffix.txt",
+    "sha256": "7c25b7800d26a4b37576c51378297a129497c33621564dfbcbfdbc88456a6050",
+    "bytes": 2653,
+    "reuse": "unchanged historical receipt; no suite rerun"
+  },
+  {
+    "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+    "path": "docs/reviews/app-files-persist-url-policy-oct26/test-app-files-policy.js.txt",
+    "sha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac",
+    "bytes": 118,
+    "reuse": "unchanged historical receipt; no suite rerun"
+  },
+  {
+    "candidate": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+    "path": "docs/reviews/app-files-persist-url-policy-oct26/test-app-files-ini-set-recovered.txt",
+    "sha256": "67b614c1d1380b96dc2d23c2ab096fa0dbdd8d7c073613b07474e92b951df5ed",
+    "bytes": 144,
+    "reuse": "unchanged historical receipt; no suite rerun"
+  }
+]
