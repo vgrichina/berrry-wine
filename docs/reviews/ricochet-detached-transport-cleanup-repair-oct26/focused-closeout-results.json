@@ -1,0 +1,71 @@
+{
+  "success": true,
+  "testsRun": 3,
+  "sourceSHA256": {
+    "tools/boat-capture-readback.py": "0254d892012f2a5b602e3ac7977afab823b897ff62e9d1d34423a4b11d93b215",
+    "test/fixtures/ricochet-serial-controller/read.py": "1979202afd4833abf0a3f00db9692a9b597620fb5bef17941bda96395083b2ae",
+    "test/fixtures/ricochet-serial-controller/work.py": "d4729c96cb6e5451070e128f78cea9368833386ac47d60be1e44c36e37a3afce",
+    "test/fixtures/ricochet-serial-controller/serial.py": "c499348b02f0fe5997d472628675f8630f5f1a49a22395808b9e3ffe7a855a34",
+    "test/fixtures/ricochet-serial-controller/later.png": "9e6b81e080cfa6476fdd76ef4093217b43567e37f9d9f7fcd69cc021d1541d88"
+  },
+  "results": {
+    "blockingChild": {
+      "elapsedSeconds": 0.3086232610512525,
+      "pids": [
+        3248549,
+        3248550
+      ],
+      "remainingOwnedLive": [],
+      "directChildReaped": true,
+      "descendantGroupKilled": true
+    },
+    "detachedOwnership": [
+      {
+        "mode": "detached",
+        "elapsed": 0.07837774092331529,
+        "pids": [
+          3248562
+        ],
+        "descendantsAbsent": true,
+        "unrelatedAlive": true
+      },
+      {
+        "mode": "double-fork",
+        "elapsed": 0.07033018302172422,
+        "pids": [
+          3248566
+        ],
+        "descendantsAbsent": true,
+        "unrelatedAlive": true
+      },
+      {
+        "mode": "early-parent",
+        "elapsed": 0.04159123403951526,
+        "pids": [
+          3248569
+        ],
+        "descendantsAbsent": true,
+        "unrelatedAlive": true
+      },
+      {
+        "mode": "deadline",
+        "elapsed": 0.2574119509663433,
+        "pids": [
+          3248572
+        ],
+        "descendantsAbsent": true,
+        "unrelatedAlive": true
+      },
+      {
+        "mode": "success",
+        "elapsed": 0.17961113108322024,
+        "pids": [
+          3248575,
+          3248581
+        ],
+        "descendantsAbsent": true,
+        "unrelatedAlive": true
+      }
+    ]
+  }
+}

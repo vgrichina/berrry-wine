@@ -1,0 +1,7 @@
+{
+  "mode": "no-subreaper",
+  "sourceSHA256": "2ad358f0dac22f37c67070b45b79e14965f84ce8bdcb2303844f60f68e2f60ea",
+  "originalSHA256": "384050e190b5fabeb9fbd2cb36bcd39bbb090f89ec21d40928785393ef1b4c6f",
+  "expectedRejection": true,
+  "returncode": 1
+}

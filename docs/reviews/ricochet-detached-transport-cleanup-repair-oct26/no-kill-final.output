@@ -1,0 +1,14 @@
+F
+======================================================================
+FAIL: test_09_detached_transport_ownership (__main__.ReadbackTests.test_09_detached_transport_ownership) (mode='detached')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/ricochet-detached-transport-cleanup-repair-oct26/repo/test/test-boat-capture-readback.py", line 296, in test_09_detached_transport_ownership
+    for pid in pids: self.assertFalse(pathlib.Path('/proc', str(pid)).exists())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 1 test in 0.303s
+
+FAILED (failures=1)

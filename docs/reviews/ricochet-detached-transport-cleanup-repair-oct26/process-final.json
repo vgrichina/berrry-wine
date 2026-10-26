@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/ricochet-detached-transport-cleanup-repair-oct26/ops/accept.py",
+    "process"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.3544309348799288,
+  "peakPhysicalAggregate": 86982656,
+  "physicalCap": 134217728,
+  "cpu": 0.27,
+  "outputBytes": 859,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3243498": "110114813",
+    "3243494": "110114804",
+    "3243499": "110114817",
+    "3243500": "110114818",
+    "3243501": "110114819",
+    "3243502": "110114830",
+    "3243503": "110114831",
+    "3243504": "110114833"
+  }
+}

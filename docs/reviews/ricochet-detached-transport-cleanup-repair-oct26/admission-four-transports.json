@@ -1,0 +1,72 @@
+{
+  "label": "four-transports",
+  "at": 1793053984.2691715,
+  "charges": {
+    "local": 933888,
+    "session": 823296,
+    "events": 446464,
+    "dispatch": 12288,
+    "positiveWALOnce": 0,
+    "future": 25165824,
+    "reserve": 8388608,
+    "publication": 8388608
+  },
+  "total": 44158976,
+  "allocation": 100663296,
+  "memAvailable": 4043067392,
+  "requiredMemory": 1207959552,
+  "clients": [
+    {
+      "pid": 3236011,
+      "rss": 194146304,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-detached-transport-cleanup-repair-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    },
+    {
+      "pid": 3239455,
+      "rss": 197124096,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-accepted-main-integration-oct26/final.txt",
+        "-"
+      ],
+      "futureGrowth": 67108864
+    }
+  ],
+  "unlaunchedClients": 0,
+  "hostFree": 3466739712,
+  "remainingPermittedGrowth": 484610048,
+  "projectedFree": 2982129664,
+  "diskFloor": 2982150144,
+  "pass": false
+}

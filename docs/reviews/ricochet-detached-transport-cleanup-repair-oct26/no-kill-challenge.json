@@ -1,0 +1,7 @@
+{
+  "mode": "no-kill",
+  "sourceSHA256": "cbec09cc7745d4583063f6f0db62e698e8507679392fedea9dca0be0121f2337",
+  "originalSHA256": "384050e190b5fabeb9fbd2cb36bcd39bbb090f89ec21d40928785393ef1b4c6f",
+  "expectedRejection": true,
+  "returncode": 1
+}

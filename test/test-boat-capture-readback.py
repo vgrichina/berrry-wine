@@ -12,6 +12,8 @@ import pathlib
 import re
 import shlex
 import struct
+import subprocess
+import signal
 import sys
 import tempfile
 import time
@@ -228,6 +230,84 @@ class ReadbackTests(unittest.TestCase):
         self.assertFalse(list(self.dest.parent.glob('.*.readback-*')))
         RESULTS['blockingChild']=dict(elapsedSeconds=elapsed,pids=pids,remainingOwnedLive=[],
                                       directChildReaped=True,descendantGroupKilled=True)
+
+    def test_09_detached_transport_ownership(self):
+        # Exercise read.readfile -> work.read_executor -> default executor. Only
+        # the final argv factory is offline; no replacement executor or runner.
+        original = work.python_argv
+        unrelated = subprocess.Popen([sys.executable, '-c', 'import time;time.sleep(30)'])
+        observations = []
+        try:
+            modes = ('detached', 'double-fork', 'early-parent', 'deadline', 'success')
+            # Negative hook challenges select one boundary to fail independently.
+            selected = os.environ.get('READBACK_OWNERSHIP_MODE')
+            if selected:
+                self.assertIn(selected, modes)
+                modes = (selected,)
+            for mode in modes:
+                with self.subTest(mode=mode):
+                    log = pathlib.Path(self.tmp.name) / (mode + '.pids')
+                    def argv(code, remaining):
+                        intended = original(code, remaining)
+                        self.assertEqual(intended[:5], ['boat', '--no-update', '--json', 'exec', '--timeout'])
+                        program = (
+                            'import os,time,pathlib,sys,json,contextlib,io\n'
+                            'child=os.fork()\n'
+                            'if child==0:\n'
+                            ' os.setsid()\n'
+                            + (' if os.fork(): os._exit(0)\n' if mode == 'double-fork' else '') +
+                            f' with open({str(log)!r},"a") as f:f.write(str(os.getpid())+"\\n")\n'
+                            + (' os.close(1);os.close(2)\n' if mode == 'success' else '') +
+                            ' time.sleep(30);os._exit(0)\n'
+                            + ('time.sleep(30)\n' if mode == 'deadline' else '') +
+                            # early-parent exits without waiting for the orphan
+                            # to record its PID, testing subreaper adoption race.
+                            ('' if mode == 'early-parent' else 'time.sleep(.03)\n') +
+                            (('s=io.StringIO()\n'
+                              f'with contextlib.redirect_stdout(s):exec({code!r},{{}})\n'
+                              f'j={envelope("")!r}\nj["stdout"]=s.getvalue()\n'
+                              'print(json.dumps(j))\n') if mode == 'success' else 'sys.exit(7)\n'))
+                        return [sys.executable, '-c', program]
+                    work.python_argv = argv
+                    self.dest.write_bytes(b'old')
+                    # Empty real file makes success two genuine metadata reads.
+                    source = pathlib.Path(self.tmp.name) / 'empty'
+                    source.write_bytes(b''); adapter.R = str(source.parent)
+                    started = time.monotonic()
+                    try:
+                        if mode == 'success':
+                            receipt = adapter.readfile('empty', self.dest, deadline=started + 2)
+                            self.assertEqual(receipt['bytes'], 0)
+                            self.assertEqual(self.dest.read_bytes(), b'')
+                        else:
+                            with self.assertRaises(capture.ReadbackError) as caught:
+                                adapter.readfile('empty', self.dest, deadline=started + .25)
+                            if mode == 'deadline':
+                                self.assertIn('deadline', str(caught.exception))
+                            self.assertEqual(self.dest.read_bytes(), b'old')
+                        elapsed = time.monotonic() - started
+                        self.assertLess(elapsed, 2 if mode == 'success' else .5)
+                        if mode == 'deadline': self.assertGreaterEqual(elapsed, .25)
+                        time.sleep(.05)
+                        pids = list(map(int, log.read_text().split())) if log.exists() else []
+                        if mode != 'early-parent': self.assertTrue(pids)
+                        # Dedicated owner reaps, so require absence, not zombies.
+                        for pid in pids: self.assertFalse(pathlib.Path('/proc', str(pid)).exists())
+                        self.assertIsNone(unrelated.poll())
+                        self.assertFalse(list(self.dest.parent.glob('.*.readback-*')))
+                        observations.append(dict(mode=mode, elapsed=elapsed, pids=pids,
+                                                 descendantsAbsent=True, unrelatedAlive=True))
+                    finally:
+                        # A deliberately broken ownership hook must reject and
+                        # still leave no fixture-owned live descendant at handoff.
+                        if log.exists():
+                            for pid in map(int, log.read_text().split()):
+                                try: os.kill(pid, signal.SIGKILL)
+                                except ProcessLookupError: pass
+        finally:
+            work.python_argv = original
+            unrelated.kill(); unrelated.wait()
+        RESULTS['detachedOwnership'] = observations
 
     def test_05_transport_subprocess_and_quoting(self):
         def argv(code,remaining):

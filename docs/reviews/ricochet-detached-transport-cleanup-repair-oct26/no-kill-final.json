@@ -1,0 +1,50 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-detached-transport-cleanup-repair-oct26/ops/challenge.py",
+    "no-kill"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 0.3593102900777012,
+  "peakPhysicalAggregate": 95805440,
+  "physicalCap": 134217728,
+  "cpu": 0.22,
+  "outputBytes": 764,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3247537": "110136976",
+    "3247533": "110136963",
+    "3247538": "110136980",
+    "3247539": "110136980",
+    "3247540": "110136981",
+    "3247541": "110136982"
+  }
+}

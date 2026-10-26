@@ -7,6 +7,7 @@ pending. Each job owns one stateless read-only request; no retries are allowed.
 SubprocessExecutor implements this contract without unkillable worker threads.
 """
 import base64
+import sys
 import hashlib
 import json
 import math
@@ -123,7 +124,7 @@ def readback(executor, source, destination, *, deadline, concurrency=MAX_ACTIVE)
         raw = job.poll()
         remaining()
         if raw is not None:
-            # Also close process-group descendants after a successful response.
+            # Also clean up owned descendants after a successful response.
             job.cancel()
             del active[job]
         return raw
@@ -192,11 +193,90 @@ def readback(executor, source, destination, *, deadline, concurrency=MAX_ACTIVE)
             raise ReadbackError('owned reader cleanup failed') from errors[0]
 
 
+# Run the exact embedded owner with only its required standard-library imports.
+# -S avoids site initialization for each of up to four concurrent owners.
+_TRANSPORT_SUPERVISOR = r'''
+import ctypes,os,select,signal,sys,time
+
+def _supervise_transport(control_fd, argv):
+    """Linux per-request subreaper; session changes cannot transfer ownership.
+
+    Never set subreaper state in the importing application. Only this dedicated
+    process adopts orphaned descendants, so waitpid/children never name another
+    request's children. A private control pipe also closes when the caller dies.
+    """
+    libc = ctypes.CDLL(None, use_errno=True)
+    if libc.prctl(36, 1, 0, 0, 0) != 0:  # PR_SET_CHILD_SUBREAPER
+        raise OSError(ctypes.get_errno(), 'transport subreaper unavailable')
+    child = None; status = None
+    try:
+        if select.select([control_fd], [], [], 0)[0]:
+            return 1  # Caller canceled during supervisor startup.
+        child = os.fork()
+        if child == 0:
+            os.close(control_fd)
+            try: os.execvp(argv[0], argv)
+            finally: os._exit(127)
+        while True:
+            pid, raw_status = os.waitpid(child, os.WNOHANG)
+            if pid:
+                status = os.waitstatus_to_exitcode(raw_status)
+                break
+            if select.select([control_fd], [], [], .002)[0]:
+                break
+    finally:
+        # Kill only direct children. Killing a parent reparents even double-fork
+        # descendants here; repeat until waitpid confirms no owned child exists.
+        # pidfds bind signals to an identity rather than a reusable numeric PID.
+        children = f'/proc/self/task/{os.getpid()}/children'
+        def owned():
+            with open(children) as f: return f.read().split()
+        while True:
+            try:
+                pid, _ = os.waitpid(-1, os.WNOHANG)
+            except ChildProcessError:
+                break
+            if pid:
+                continue
+            for pid in map(int, owned()):
+                try:
+                    fd = os.pidfd_open(pid)
+                except ProcessLookupError:
+                    continue
+                try:
+                    if str(pid) in owned():
+                        signal.pidfd_send_signal(fd, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                finally:
+                    os.close(fd)
+            time.sleep(.001)
+        os.close(control_fd)
+    return status if status is not None and status >= 0 else 1
+
+
+raise SystemExit(_supervise_transport(int(sys.argv[1]), sys.argv[2:]))
+'''
+
+
 class _ProcessJob:
     def __init__(self, argv):
-        self.process = subprocess.Popen(argv, stdin=subprocess.DEVNULL,
-                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                        start_new_session=True)
+        # Fail closed where identity-safe Linux ownership is unavailable.
+        _check(sys.platform == 'linux' and hasattr(os, 'pidfd_open') and
+               hasattr(signal, 'pidfd_send_signal'), 'transport ownership unavailable')
+        control_read, self.control_write = os.pipe()
+        try:
+            self.process = subprocess.Popen(
+                [sys.executable, '-S', '-c', _TRANSPORT_SUPERVISOR,
+                 str(control_read), *argv],
+                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, start_new_session=True,
+                pass_fds=(control_read,))
+        except BaseException:
+            os.close(self.control_write)
+            raise
+        finally:
+            os.close(control_read)
         self.buffers = [bytearray(), bytearray()]
         self.streams = [self.process.stdout, self.process.stderr]
         self.eof = set(); self.closed = False
@@ -226,10 +306,9 @@ class _ProcessJob:
     def cancel(self):
         if self.closed:
             return
-        try:
-            os.killpg(self.process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
+        # EOF asks the dedicated owner to kill/reap every descendant. Do not
+        # kill that owner first: it retains children across setsid/double-fork.
+        os.close(self.control_write)
         try:
             self.process.wait(timeout=.25)
         finally:

@@ -1,0 +1,56 @@
+{
+  "argv": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-detached-transport-cleanup-repair-oct26/repo/test/test-boat-capture-readback.py",
+    "ReadbackTests.test_10_four_owned_transports_deadline"
+  ],
+  "executable": "/usr/bin/python3",
+  "returncode": -9,
+  "reason": "physicalRSS",
+  "wall": 0.09028725698590279,
+  "peakPhysicalAggregate": 136052736,
+  "physicalCap": 134217728,
+  "cpu": 0.1,
+  "outputBytes": 0,
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDataChildOnly": null
+  },
+  "inheritedSupervisorLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ownedIdentities": {
+    "3245890": "110127989",
+    "3245893": "110127997",
+    "3245894": "110128000",
+    "3245895": "110128001",
+    "3245896": "110128003",
+    "3245897": "110128003",
+    "3245898": "110128003",
+    "3245899": "110128003",
+    "3245900": "110128004",
+    "3245901": "110128004",
+    "3245902": "110128004",
+    "3245903": "110128005"
+  }
+}
