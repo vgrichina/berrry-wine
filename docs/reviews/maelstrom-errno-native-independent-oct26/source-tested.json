@@ -1,0 +1,27 @@
+{
+  "candidate": "792025867aa3cf190f76ee5199a3bee608f4b948",
+  "candidateTree": "71ef6dbff77d714e6b36aec86792598fc1461ab2",
+  "originalSourceAndOraclesUnchanged": [
+    "tools/maelstrom-native-errno-latch.cjs",
+    "tools/maelstrom-select-completion-hook.cjs",
+    "test/maelstrom-errno-canonical-native.cjs",
+    "test/maelstrom-errno-canonical-static.py",
+    "tools/maelstrom-errno-canonical-build.cjs"
+  ],
+  "fixtures": [
+    {
+      "path": "test/maelstrom-errno-independent-native.cjs",
+      "bytes": 14351,
+      "sha256": "3f2092cf4cf581801781ecf1ae7d2de5718fec0eb2c07f3257528181a0b77f15"
+    },
+    {
+      "path": "test/maelstrom-errno-independent-foreign-ret.cjs",
+      "bytes": 15175,
+      "sha256": "be708ae7f291bc9faa14f1b974b7ae0182f8d5c88be4e3770382f27a7d211c4d"
+    }
+  ],
+  "coverageAssertionsPassed": true,
+  "acceptedExactEvidenceReused": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/result.json",
+  "nativeHooks": "th_call_r injects mne_call with decoder return PC,target,register before CALL side effects; th_ret records source and invokes mne_return after pop/ESP update before branch_end. Authentic errno bytes e82274ffff83c008c3 (CALL rel32,ADD EAX,8,RET), authentic head 8be8ffd783380474a2 (MOV EBP,EAX;CALL EDI;CMP [EAX],4;JZ). Synthetic CRT mapping and thread-data provider retained.",
+  "privateStateLimit": "msc completion/token/private fields have read-only getters; source rejects further arm/enter after one completion. No sanctioned exported post-completion stale-token mutation; exact retained binaries were not rewritten for injection."
+}

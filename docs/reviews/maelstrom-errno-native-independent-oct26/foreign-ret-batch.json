@@ -1,0 +1,96 @@
+[
+  {
+    "case": "foreign-thread-ret",
+    "compat": false,
+    "exit": 0,
+    "reason": null,
+    "elapsed": 0.08079010800020114,
+    "memAvailable": 7353815040,
+    "streamBytes": 376,
+    "reaped": true,
+    "cpu": 90,
+    "wall": 60,
+    "fileLimit": 25165824,
+    "heapMiB": 512,
+    "arenaMiB": 512,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/native-module-bound.cjs",
+      "/home/user/maelstrom-errno-native-independent-oct26-v2/repo/test/maelstrom-errno-independent-foreign-ret.cjs",
+      "foreign-thread-ret"
+    ]
+  },
+  {
+    "case": "foreign-regbank-ret",
+    "compat": false,
+    "exit": 0,
+    "reason": null,
+    "elapsed": 0.05418139699986568,
+    "memAvailable": 7351779328,
+    "streamBytes": 377,
+    "reaped": true,
+    "cpu": 90,
+    "wall": 60,
+    "fileLimit": 25165824,
+    "heapMiB": 512,
+    "arenaMiB": 512,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/native-module-bound.cjs",
+      "/home/user/maelstrom-errno-native-independent-oct26-v2/repo/test/maelstrom-errno-independent-foreign-ret.cjs",
+      "foreign-regbank-ret"
+    ]
+  },
+  {
+    "case": "foreign-thread-ret",
+    "compat": true,
+    "exit": 0,
+    "reason": null,
+    "elapsed": 0.0563319819998469,
+    "memAvailable": 7333150720,
+    "streamBytes": 376,
+    "reaped": true,
+    "cpu": 90,
+    "wall": 60,
+    "fileLimit": 25165824,
+    "heapMiB": 512,
+    "arenaMiB": 512,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/native-module-bound.cjs",
+      "/home/user/maelstrom-errno-native-independent-oct26-v2/repo/test/maelstrom-errno-independent-foreign-ret.cjs",
+      "foreign-thread-ret",
+      "--compat"
+    ]
+  },
+  {
+    "case": "foreign-regbank-ret",
+    "compat": true,
+    "exit": 0,
+    "reason": null,
+    "elapsed": 0.06888748699975622,
+    "memAvailable": 7332892672,
+    "streamBytes": 377,
+    "reaped": true,
+    "cpu": 90,
+    "wall": 60,
+    "fileLimit": 25165824,
+    "heapMiB": 512,
+    "arenaMiB": 512,
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/native-module-bound.cjs",
+      "/home/user/maelstrom-errno-native-independent-oct26-v2/repo/test/maelstrom-errno-independent-foreign-ret.cjs",
+      "foreign-regbank-ret",
+      "--compat"
+    ]
+  }
+]

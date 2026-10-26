@@ -1,0 +1,23 @@
+{
+  "at": 1792973941.3751304,
+  "charges": {
+    "owned": 1859584,
+    "launcher": 573440,
+    "session": 974848,
+    "WALSHM": 28422144,
+    "positiveDB": 815104,
+    "remoteNewProjected": 2097152,
+    "publicationFuture": 2097152,
+    "evidenceFuture": 1048576,
+    "sessionDBfuture": 4194304,
+    "reserve": 8388608,
+    "board": 8192
+  },
+  "peak": 50479104,
+  "cap": 67108864,
+  "free": 5061844992,
+  "projectedFloor": 5011365888,
+  "memAvailable": 3026894848,
+  "passed": true,
+  "standing": "retained remote modules/native inputs; donor files; flat object views; installed tools excluded without duplication"
+}

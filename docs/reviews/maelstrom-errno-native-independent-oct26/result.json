@@ -1,0 +1,122 @@
+{
+  "status": "ACCEPT_SCOPED_CONTROLLED_NATIVE",
+  "candidate": "792025867aa3cf190f76ee5199a3bee608f4b948",
+  "candidateTree": "71ef6dbff77d714e6b36aec86792598fc1461ab2",
+  "acceptedNativeCases": 26,
+  "acceptedModules": 2,
+  "preliminaryNativeCases": 9,
+  "totalNativeProcesses": 35,
+  "compiledAgain": false,
+  "originalSourceAndOraclesUnchanged": true,
+  "scope": "Controlled compiled-native errno latch; production CALL EDI/plain RET and errno-before-CMP; normalized initialized-fixture OFF/ON equivalence only",
+  "coverage": [
+    "errno0/4/37 both modules with before-CMP count0 and normalized OFF/ON state equality",
+    "foreign thread CALL/RET ignored with unchanged latch",
+    "foreign register bank CALL/RET ignored with unchanged latch",
+    "already-started select ownership rejects latch start",
+    "postframe mismatch reject",
+    "unsafe direct-window caller span reject",
+    "actual code16 via bridge stack and uop mode reject start",
+    "second owner indirect CALL while awaiting RET rejects"
+  ],
+  "actualABI": {
+    "status": "PASS",
+    "outputs": [
+      {
+        "path": "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+        "sha256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69",
+        "bytes": 1882300,
+        "imports": 291,
+        "functionExports": 2267,
+        "noStart": true,
+        "layout": "9a3bc9149d58209c"
+      },
+      {
+        "path": "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.compat.wasm",
+        "sha256": "365db557acdb39180d77acc61c8207e0b89d577c3071ba3e492e63c17900c7d8",
+        "bytes": 1884873,
+        "imports": 291,
+        "functionExports": 2267,
+        "noStart": true,
+        "layout": "9a3bc9149d58209c"
+      }
+    ],
+    "oracleSHA256": "1950bb7a21f065b1d88c947a6954a64dfb7c6bb9037062b3b248cee2567fc746",
+    "helperSHA256": "f7313b509c59cd6b01d51f9337b423d5e89c81e18df75ce233a9b308ce241cee",
+    "inventoryEntries": 269,
+    "derivedInventoryReused": true,
+    "scope": "Actual retained binary hashes/import+export type signatures/layout custom payload independently compared to accepted source ABI oracle. Exact source-derived layout inventory acceptance reused, no build."
+  },
+  "source": {
+    "candidate": "792025867aa3cf190f76ee5199a3bee608f4b948",
+    "candidateTree": "71ef6dbff77d714e6b36aec86792598fc1461ab2",
+    "originalSourceAndOraclesUnchanged": [
+      "tools/maelstrom-native-errno-latch.cjs",
+      "tools/maelstrom-select-completion-hook.cjs",
+      "test/maelstrom-errno-canonical-native.cjs",
+      "test/maelstrom-errno-canonical-static.py",
+      "tools/maelstrom-errno-canonical-build.cjs"
+    ],
+    "fixtures": [
+      {
+        "path": "test/maelstrom-errno-independent-native.cjs",
+        "bytes": 14351,
+        "sha256": "3f2092cf4cf581801781ecf1ae7d2de5718fec0eb2c07f3257528181a0b77f15"
+      },
+      {
+        "path": "test/maelstrom-errno-independent-foreign-ret.cjs",
+        "bytes": 15175,
+        "sha256": "be708ae7f291bc9faa14f1b974b7ae0182f8d5c88be4e3770382f27a7d211c4d"
+      }
+    ],
+    "coverageAssertionsPassed": true,
+    "acceptedExactEvidenceReused": "/tmp/maelstrom-errno-api-canonical-native-oct25/ops/result.json",
+    "nativeHooks": "th_call_r injects mne_call with decoder return PC,target,register before CALL side effects; th_ret records source and invokes mne_return after pop/ESP update before branch_end. Authentic errno bytes e82274ffff83c008c3 (CALL rel32,ADD EAX,8,RET), authentic head 8be8ffd783380474a2 (MOV EBP,EAX;CALL EDI;CMP [EAX],4;JZ). Synthetic CRT mapping and thread-data provider retained.",
+    "privateStateLimit": "msc completion/token/private fields have read-only getters; source rejects further arm/enter after one completion. No sanctioned exported post-completion stale-token mutation; exact retained binaries were not rewritten for injection."
+  },
+  "remaining": [
+    "post-completion stale token/phase/identity/private-global mutation native controls: source-model only; exact binary getters expose no mutation",
+    "park/cap exhaustion native controls",
+    "mode switch after arm or CALL native controls",
+    "full original _getptd/native CRT loader mapping",
+    "original-game errno/caller/gameplay",
+    "full-memory equivalence outside fixture spans",
+    "performance/engine/architecture comparisons"
+  ],
+  "runtime": {
+    "box": "bx_k38z8byn",
+    "leftRunning": true,
+    "shutdownOwner": "coordinator",
+    "executionCutoff": "2026-10-26T01:05:00Z",
+    "handback": "2026-10-26T01:10:00Z",
+    "shutdown": "2026-10-26T01:20:00Z",
+    "expiry": "2026-10-26T01:39:12.069Z",
+    "stopDeleteResume": false
+  },
+  "evidence": {
+    "archive": "/tmp/maelstrom-errno-native-independent-oct26/ops/remote-evidence.json.gz",
+    "manifest": "/tmp/maelstrom-errno-native-independent-oct26/ops/remote-evidence-manifest.json",
+    "coverage": "/tmp/maelstrom-errno-native-independent-oct26/ops/coverage-results.json",
+    "source": "/tmp/maelstrom-errno-native-independent-oct26/ops/source-tested.json"
+  },
+  "incidents": [
+    {
+      "kind": "checkout",
+      "detail": "Supplied standing flatLeaves lacked candidate donor own objects. Added own short flat donor view excluding info/alternates; no recursive traversal, object copy, clone or repack."
+    },
+    {
+      "kind": "capture",
+      "detail": "Early ad hoc source/ABI inspection produced truncated tool excerpts; one remote diagnostic inadvertently included full build-output region arrays (~132KB). Retained API output is diagnostic only and is not acceptance evidence. Subsequent API outputs summarized, archive transfers 24576B; no raised capture gate."
+    },
+    {
+      "kind": "projection",
+      "detail": "Initial 2MiB remote-new-output projection was exceeded after final fixtures/collection (measured about 2.4MiB), inside remaining all-byte cap headroom. Updated remote projection to4MiB before foreign-RET execution. No retrospective projection compliance claim."
+    },
+    {
+      "kind": "fixture-version",
+      "detail": "V1 preliminary9 native cases used identical pinned modules but lacked original8MiB Module constructor guard in wrapper; not used as final acceptance. V2 restored guard and corrected evidence labels/compat qualification,26 accepted native cases. No WAT compilation/rebuild or original source/oracle changes."
+    }
+  ],
+  "mainIntegrated": false,
+  "noWorkers": true
+}

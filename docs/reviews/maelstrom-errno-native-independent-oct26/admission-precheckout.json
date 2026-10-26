@@ -1,0 +1,18 @@
+{
+  "charges": {
+    "checkoutGitViews": 4194304,
+    "localFixturesEvidencePublication": 4194304,
+    "remoteFixturesEvidence": 2097152,
+    "sessionLauncherDBgrowth": 8388608,
+    "sharedWALSHM": 28319744,
+    "futureOutputs": 4194304,
+    "reserve": 8388608
+  },
+  "peak": 59777024,
+  "cap": 67108864,
+  "memAvailable": 2965880832,
+  "free": 5050032128,
+  "projectedFloor": 4990255104,
+  "passed": true,
+  "standing": "donor/object leaves/retained remote compiled modules/installed tools unchanged readonly"
+}

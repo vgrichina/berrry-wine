@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "checkout",
+    "detail": "Supplied standing flatLeaves lacked candidate donor own objects. Added own short flat donor view excluding info/alternates; no recursive traversal, object copy, clone or repack."
+  },
+  {
+    "kind": "capture",
+    "detail": "Early ad hoc source/ABI inspection produced truncated tool excerpts; one remote diagnostic inadvertently included full build-output region arrays (~132KB). Retained API output is diagnostic only and is not acceptance evidence. Subsequent API outputs summarized, archive transfers 24576B; no raised capture gate."
+  },
+  {
+    "kind": "projection",
+    "detail": "Initial 2MiB remote-new-output projection was exceeded after final fixtures/collection (measured about 2.4MiB), inside remaining all-byte cap headroom. Updated remote projection to4MiB before foreign-RET execution. No retrospective projection compliance claim."
+  },
+  {
+    "kind": "fixture-version",
+    "detail": "V1 preliminary9 native cases used identical pinned modules but lacked original8MiB Module constructor guard in wrapper; not used as final acceptance. V2 restored guard and corrected evidence labels/compat qualification,26 accepted native cases. No WAT compilation/rebuild or original source/oracle changes."
+  }
+]
