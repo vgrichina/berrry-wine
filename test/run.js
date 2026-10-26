@@ -1,0 +1,12636 @@
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
+const { createHostImports } = require('../lib/host-imports');
+const frameIntervals = require('../lib/frame-intervals');
+const { loadDlls, callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
+const { inputEventHwnd } = require('../lib/host-window');
+const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
+  applyStartupShow, startupShowArgs,
+  stageAndLoadPe, applyVirtualAllocTop, setExeName, setExeDrive, setExtraCmdline,
+  setEnvironmentVariable, handleLoadLibraryYield, serviceLoadLibraryYieldSync,
+  handleComDllYield, findVfsDllBytes } = require('../lib/process-boot');
+const {
+  applyExeCompatibilityPatches: applyProfilePatches,
+  applyLaunchPreferences: applyProfileLaunchPrefs,
+  onThreadExit: profileThreadExit,
+} = require('../lib/app-profiles');
+const {
+  processSharedCtx, adoptThreadPrimitives, makeWorkerApiLogger, workerApiShouldLog,
+  createInheritedWasmGlobals, recordInheritedWasmGlobal,
+} = require('../lib/worker-imports');
+const { seedExeImage, win16FileCandidates, residentWin16Module } = require('../lib/vfs-seed');
+const { expandIncludePatterns, guestPathInTree } = require('../lib/vfs-host-files');
+const { saveVfsToHost, mergeVfsTreeBack } = require('../lib/vfs-export');
+
+// A --spawn-processes child has ended: its C:\ and registry replace what it
+// was started with (see spawnVfsChild).
+function mergeChildState(vfs, storage, before, outDir, regOut) {
+  const { written, deleted } = mergeVfsTreeBack(vfs, before, outDir);
+  let keys = 0;
+  if (fs.existsSync(regOut)) {
+    storage.clearStore();
+    keys = storage.importStore(JSON.parse(fs.readFileSync(regOut, 'utf8')));
+  }
+  console.log(`[spawn] child state merged: ${written} file(s) written, ${deleted} deleted, ${keys} registry/INI key(s)`);
+}
+const {
+  decodeMfcCString,
+  g2w: translateGuest,
+  readSyncObjectName,
+  walkStackFrame,
+  formatFrames,
+} = require('../lib/mem-utils');
+const { formatCall: fmtApiCall, formatRet: fmtApiRet, formatOutParams: fmtApiOutParams, walkFrames } = require('../lib/api-format');
+const { fontMounts, BUNDLED_BITMAP_FONTS } = require('../lib/font-substitutions');
+const { APPS, resolveCopySuperops } = require('../lib/apps');
+const { CliVideoRecorder } = require('../lib/cli-recorder');
+const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
+const { createBatchClock } = require('../lib/batch-clock');
+const { createGuestClockSource } = require('../lib/guest-clock');
+const { createInputConsumptionTrace } = require('./input-consumption-trace');
+const { createMessageBoundaryTrace } = require('./message-boundary-trace');
+const { createStartupClock } = require('../lib/startup-clock');
+const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
+// Fixed memory-map addresses, from the map declared in src/00-regions.wat.
+const RegionMap = require('../lib/region-map.generated.js');
+let PNG;
+try { ({ PNG } = require('pngjs')); } catch (_) {}
+let createCanvas, Win98Renderer, rendererLoadError = null;
+try {
+  // A pure-JS raster surface, not a native canvas -- see lib/raster-canvas.js.
+  // No font registration: WAT measures and rasterizes all text from its own
+  // bitmap FON strikes, and the legacy draw_text/draw_rect host imports are
+  // dead (0 calls for notepad, calc and mspaint).
+  createCanvas = require('../lib/canvas-compat').createCanvas;
+  Win98Renderer = require('../lib/renderer').Win98Renderer;
+} catch (e) { rendererLoadError = e; }
+
+const ROOT = path.join(__dirname, '..');
+const SRC_DIR = path.join(ROOT, 'src');
+
+// Encode a canvas to PNG bytes.
+//
+// skia-canvas types toBuffer() as Promise<Buffer> and toBufferSync() as the
+// synchronous one. Most call sites here used toBuffer() and wrote the result
+// straight to disk, which happens to produce correct files today but is
+// relying on undocumented behaviour from an API declared async. One call site
+// (dlg-png) already guarded for this; now they all share one helper.
+//
+// This is hygiene, not a fix for anything measured: it made no difference to
+// memory or runtime. The snapshot memory problem was GPU surfaces -- see the
+// note in renderer.js _createOffscreen.
+// Set by main() once the DirectDraw present path exists. Every capture in this
+// harness goes through canvasToPng, so hooking here is what makes a --png or a
+// --dump land on the frame the guest just finished instead of on whatever the
+// last time-bounded upload left behind.
+let dxPresentHook = null;
+
+// The batch loop does not composite unless --live-present asks it to (see
+// LIVE_PRESENT), so anything that reads pixels -- off renderer.canvas or off a
+// window's back-canvas -- must bring the screen up to date first.
+function presentForRead() {
+  if (dxPresentHook) dxPresentHook();
+}
+
+function canvasToPng(canvas) {
+  presentForRead();
+  return typeof canvas.toBufferSync === 'function'
+    ? canvas.toBufferSync('png')
+    : canvas.toBuffer('image/png');
+}
+
+async function decodeMountedImage(hostPath) {
+  let skia;
+  try { skia = require('skia-canvas'); }
+  catch (_) {
+    throw new Error('decodeImage app assets require devDependency skia-canvas');
+  }
+  const source = await skia.loadImage(hostPath);
+  const canvas = new skia.Canvas(source.width, source.height);
+  const context = canvas.getContext('2d');
+  context.drawImage(source, 0, 0);
+  const rgba = new Uint8Array(context.getImageData(
+    0, 0, source.width, source.height).data);
+  return { width: source.width, height: source.height, rgba };
+}
+// Parse args (need these before autoBuild)
+const args = process.argv.slice(2);
+// WINE_RUN_EXTRA_ARGS='--lazy-ranges=5 ...': appended to every run.js command
+// line, so an existing gameplay test that spawns run.js becomes, unedited, the
+// same route under an extra flag (the lazy-loading audit runs each one this
+// way). Whitespace-separated; a flag given twice resolves as getArg reads it.
+if (process.env.WINE_RUN_EXTRA_ARGS) {
+  const extra = process.env.WINE_RUN_EXTRA_ARGS.split(/\s+/).filter(Boolean);
+  args.push(...extra);
+  process.argv.push(...extra);
+  console.error(`[run] WINE_RUN_EXTRA_ARGS: ${extra.join(' ')}`);
+}
+// --tee=PATH: also write everything this process prints (stdout and stderr)
+// to PATH. With WINE_RUN_EXTRA_ARGS it keeps the log of a run a test spawned
+// and only parsed, e.g. for tools/io-range-census.js over its --trace-fs.
+{
+  const tee = args.find(value => value.startsWith('--tee='));
+  if (tee) {
+    const fd = fs.openSync(tee.slice('--tee='.length), 'w');
+    for (const stream of [process.stdout, process.stderr]) {
+      const write = stream.write.bind(stream);
+      stream.write = (chunk, encoding, callback) => {
+        try { fs.writeSync(fd, typeof chunk === 'string' ? chunk : Buffer.from(chunk)); } catch (_) {}
+        return write(chunk, encoding, callback);
+      };
+    }
+  }
+}
+const getArg = (name, def) => {
+  const prefix = `--${name}=`;
+  const arg = args.find(value => value.startsWith(prefix));
+  return arg ? arg.slice(prefix.length) : def;
+};
+const getArgs = name => {
+  const prefix = `--${name}=`;
+  return args.filter(value => value.startsWith(prefix))
+    .flatMap(value => value.slice(prefix.length).split(','))
+    .map(value => value.trim()).filter(Boolean);
+};
+const hasFlag = name => args.includes(`--${name}`);
+// Was `--name=...` written at all? Distinct from getArg(), which cannot tell an
+// absent option from one that was given its default value.
+const argHas = name => args.some(a => a.startsWith(`--${name}=`));
+
+// WINE_ASSEMBLY_WASM=PATH pins one prebuilt artifact for this process and every
+// test that spawns it. Several tests already read that variable and forward it
+// as `--no-build --wasm=`; reading it here means a test that only passes
+// `--no-build` (the common shape) is pinned too, which is what makes the
+// legacy-vs-WATX matrix (tools/watx-matrix.js) able to run the SAME test file
+// against two different artifacts. An explicit --wasm= still wins.
+const ENV_WASM = process.env.WINE_ASSEMBLY_WASM || '';
+const NO_BUILD = hasFlag('no-build') || !!ENV_WASM; // --no-build: skip auto-build
+const NO_CLOSE = hasFlag('no-close');      // --no-close: don't inject WM_CLOSE
+const NO_RENDERER = hasFlag('no-renderer'); // --no-renderer: skip CLI canvas/renderer (guest-state diagnostics)
+// Experimental programmable D3D9 software path; no DOM or GL provider needed.
+// Keep capability opt-in separate: the implementation is not a full SM profile.
+const D3D9_RENDERER = getArg('d3d9-renderer', null);
+const D3D9_PROGRAMMABLE = hasFlag('d3d9-programmable');
+// --gl-renderer=software: draw OpenGL in WAT (src/09a8g-gl-raster.wat) into a
+// DirectDraw surface. Needs no --headless-gl and no native deps, so it is the
+// only way a GL app gets a context on a box without a display; --png captures
+// the surface like any DX primary. The browser twin is ?gl-renderer=software.
+const GL_RENDERER = getArg('gl-renderer', null);
+const GLIDE_RENDERER = getArg('glide-renderer', 'webgl');
+if (!['software', 'webgl'].includes(GLIDE_RENDERER))
+  throw new Error('--glide-renderer must be software or webgl');
+if (GL_RENDERER !== null && GL_RENDERER !== 'software' && GL_RENDERER !== 'webgl') {
+  throw new Error('--gl-renderer must be software or webgl');
+}
+// --d3d-worker: rasterize D3DIM (DX2-7) draws on a render worker_thread over
+// the shared memory, the CLI twin of the browser's render Worker. The guest's
+// main instance can Atomics.wait here, so no --threads is needed.
+const D3D_WORKER = hasFlag('d3d-worker');
+// --d3dim-gpu: rasterize D3DIM (DX2-7) triangles on WebGL instead of the
+// software rasterizer. Needs --headless-gl for a context; WAT still does all
+// transform and lighting (lib/d3dim-gpu.js).
+const D3DIM_GPU = hasFlag('d3dim-gpu');
+if (D3DIM_GPU && D3D_WORKER) { console.error('--d3dim-gpu and --d3d-worker are exclusive'); process.exit(2); }
+if (D3DIM_GPU && !hasFlag('headless-gl')) { console.error('--d3dim-gpu needs --headless-gl'); process.exit(2); }
+if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
+  throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
+}
+if (D3D9_RENDERER !== null && D3D9_RENDERER !== 'software') {
+  throw new Error('CLI --d3d9-renderer currently supports software only; WebGL requires a browser/provider');
+}
+const NO_MMX = hasFlag('no-mmx');          // --no-mmx: report a 486DX from CPUID so guests take scalar paths
+const DUMP_GDI = getArg('dump-gdi', null); // --dump-gdi=DIR: dump GDI bitmaps as PNGs
+const DUMP_DDRAW = getArg('dump-ddraw-surfaces', null); // --dump-ddraw-surfaces=DIR: dump DirectDraw surface DIBs as PNGs
+const DUMP_SDB = getArg('dump-sdb', null); // --dump-sdb=DIR: dump StretchDIBits source DIBs + per-call log
+const DUMP_CURSORS = getArg('dump-cursors', null); // --dump-cursors=DIR: PNG per cursor the guest builds (CreateIconIndirect)
+const DUMP_VIRTUAL_MAPS = hasFlag('dump-virtual-maps'); // --dump-virtual-maps: print raw sparse guest-map records
+// --control[=PORT]: live agent command channel (docs/design-agent-control.md).
+// An HTTP server accepts the same actions as --input, minus the batch prefix,
+// while the guest runs; drive it with tools/ctl.js or plain curl.
+const CONTROL_SPEC = getArg('control', null);
+const CONTROL = hasFlag('control') || CONTROL_SPEC !== null;
+// --control-stdin: same command set over stdin NDJSON instead of (or beside)
+// the HTTP server — one command per line, a JSON object or a bare --input
+// entry string; each reply comes back on stdout as one "[ctl] {...}" line.
+// For piping a generated stream or driving run.js from a parent process; an
+// interactive agent is better served by --control, whose replies pair with
+// the request. Not compatible with the interactive debug prompt (--break
+// without --watch-log), which owns stdin.
+const CONTROL_STDIN = hasFlag('control-stdin');
+// --frozen: with a live control channel, park before the first batch and run
+// only batches explicitly released by {action:"step", n}. This is the CLI
+// twin of browser frozen mode: agent think-time advances neither guest state
+// nor a --control recording.
+const CONTROL_FROZEN_START = hasFlag('frozen');
+const CONTROL_PORT = parseInt(CONTROL_SPEC || '8123', 10) || 8123;
+const CONTROL_HOST = getArg('control-host', '127.0.0.1'); // --control-host=0.0.0.0: explicit LAN opt-in (the channel carries eval)
+if (CONTROL_FROZEN_START && !(CONTROL || CONTROL_STDIN)) {
+  console.error('error: --frozen requires --control or --control-stdin');
+  process.exit(2);
+}
+// With --control the schedule is external, so a default batch budget makes no
+// sense: the run ends on a quit command, a stop action, or the outer timeout.
+// An explicit --max-batches still bounds it.
+const MAX_BATCHES = getArg('max-batches', null) !== null
+  ? parseInt(getArg('max-batches', '200'))
+  : ((CONTROL || CONTROL_STDIN) ? Infinity : 200);
+// --max-seconds=N: stop the batch loop after N seconds of wall clock, whatever
+// --max-batches says. For benchmarking, this is the useful axis: an app's cost
+// per batch is not constant (Caesar runs ~0.1ms/batch through its boot and then
+// several times that once a city is simulating), so picking a batch count that
+// lands near a target duration is guesswork that has to be redone per app and
+// breaks the moment the app gets further in the same budget. Fix the duration
+// instead and read the batch count as the throughput: same wall clock on both
+// sides of an A/B, and the faster build is simply the one that got further.
+const MAX_SECONDS = parseFloat(getArg('max-seconds', '0')) || 0;
+// --memory-mb=N: size of the shared linear memory, from 512 (the default every
+// host has always used) to 2048. The module imports (memory 8192 32768
+// shared), so all of them satisfy it, and everything above 0x20000000 is the
+// $VIRTUAL_BACKING_EXT sparse window -- nothing else is ever placed there.
+// Raise it only for an app that genuinely exhausts the 316MB primary pool
+// (Black & White 2's land load needs 2048), because the pages are committed up
+// front and a phone has to keep the 512MB.
+//
+// 2048 is the ceiling because $virtual_backing_ext_end is
+// (i32.shl (memory.size) 16): correct up to 3GB because every comparison it
+// feeds is unsigned, wrapping to 0 at exactly 4GB. 2048 is the last value that
+// is safe without auditing that arithmetic again.
+// An app whose registry entry sets `bigMemory: true` gets 2048 by default, the
+// first size the browser's ladder (host.js) tries for it; --memory-mb wins.
+// Before this the CLI ignored the flag, and Pirates! (2004) ran out of guest
+// heap loading its assets on the CLI while the page did not.
+const MEMORY_MB_EXPLICIT = getArg('memory-mb', null) !== null;
+const MEMORY_PAGES = (() => {
+  const mb = parseInt(getArg('memory-mb', '512'), 10);
+  if (!(mb >= 512 && mb <= 2048)) { console.error(`--memory-mb must be 512..2048, got ${mb}`); process.exit(2); }
+  return mb * 16; // a wasm page is 64KB
+})();
+// Composite the screen only every Nth batch. Nobody watches a headless run, so
+// intermediate frames exist only to be overwritten -- and they are not free:
+// skia-canvas 3.0.8 leaks roughly 320 bytes of unreclaimable native memory per
+// draw call (reproduced standalone; identical on GPU and CPU, and unaffected
+// by exports, forced GC, or recreating the Canvas). At one composite per batch
+// a long run pays that leak millions of times over. Snapshot actions call
+// repaint() themselves, so raising this does not affect captured pixels.
+const REPAINT_EVERY = Math.max(1, parseInt(getArg('repaint-every', '1')) || 1);
+// Minimum wall-clock gap between *unforced* DirectDraw surface uploads. An
+// upload of a live 640x480 surface measures ~11ms, about what a 20k-step batch
+// costs, so uploading each finished guest frame doubles a dxball run and a 16ms
+// cap does not help (the batches are already that long). Nothing looks at a
+// headless canvas between captures and every capture forces an upload anyway,
+// so the default is deliberately slow: 10Hz keeps a video recording and any
+// mid-run liveness check honest for ~10% of the run time. Pass 0 to upload
+// every finished frame, which is what measuring the present path itself needs.
+const DX_PRESENT_MIN_MS = Math.max(0, parseFloat(getArg('dx-present-min-ms', '100')) || 0);
+// When multiple --break addrs are passed, the WASM `set_bp` only holds one,
+// so the JS fallback (eipBefore check) must see every block entry. Force
+// batch-size=1 so each block run hits the check loop.
+let BATCH_SIZE = parseInt(getArg('batch-size', '1000'));
+const VERBOSE = hasFlag('verbose');
+const QUIET_BLOCKS = hasFlag('quiet-blocks'); // --quiet-blocks: suppress per-block EIP progress logs
+const TRACE = hasFlag('trace');           // --trace: log every block's EIP
+// --trace-api[=Name1,Name2]: log API calls with args + return values; with =NAMES, only those APIs
+const TRACE_API_RAW = args.find(a => a === '--trace-api' || a.startsWith('--trace-api='));
+const TRACE_API = !!TRACE_API_RAW;
+const TRACE_API_FILTER = (TRACE_API_RAW && TRACE_API_RAW.includes('='))
+  ? new Set(TRACE_API_RAW.split('=')[1].split(',').map(s => s.trim()).filter(Boolean))
+  : null;
+// --trace-api-paused (with --quiet-api): install the --trace-api logging but keep
+// the WAT API log OFF until a control command {"action":"trace-api","on":true}
+// turns it on. Any --trace-api switches every Win32 call to three host calls
+// (log, log_i32, log_api_exit), which slowed Black & White 2 about 4x and moved
+// a route's timing out from under its inputs; paused, the run is full speed up
+// to the moment worth tracing. {"on":false} pauses it again.
+const TRACE_API_PAUSED = hasFlag('trace-api-paused');
+const TRACE_API_DEDUP = hasFlag('trace-api-dedup'); // --trace-api-dedup: collapse N consecutive identical lines into "(xN)"
+const TRACE_API_COUNTS = hasFlag('trace-api-counts'); // --trace-api-counts: print histogram of API call names at end
+const TRACE_MOUSE_STATE = hasFlag('trace-mouse-state'); // --trace-mouse-state: log renderer mouse state changes seen by host imports
+const TRACE_MESSAGE_BOUNDARY = hasFlag('trace-message-boundary'); // 128 records/64KiB; returned MSG unavailable
+const TRACE_INPUT_DISPATCH = hasFlag('trace-input-dispatch'); // bounded schedule/dequeue/route/DispatchMessage timing
+// --trace-stack[=N|=Name1,Name2|=Name:N,...]: walk EBP chain on matched API calls
+const TRACE_STACK_RAW = args.find(a => a === '--trace-stack' || a.startsWith('--trace-stack='));
+const TRACE_STACK = !!TRACE_STACK_RAW;
+let TRACE_STACK_DEFAULT_DEPTH = 12;
+const TRACE_STACK_FILTER = (() => {
+  if (!TRACE_STACK_RAW || !TRACE_STACK_RAW.includes('=')) return null;
+  const spec = TRACE_STACK_RAW.split('=')[1];
+  // pure number → just override default depth
+  if (/^\d+$/.test(spec)) { TRACE_STACK_DEFAULT_DEPTH = parseInt(spec); return null; }
+  const filter = new Map();
+  for (const part of spec.split(',').map(s => s.trim()).filter(Boolean)) {
+    const [name, depth] = part.split(':');
+    filter.set(name, depth ? parseInt(depth) : TRACE_STACK_DEFAULT_DEPTH);
+  }
+  return filter;
+})();
+// --trace-stack-scan: for code built without frame pointers, where the EBP
+// chain is garbage (NFS II prints frames=[0x0003ffff]), list the stack dwords
+// that are return addresses instead: code pointers preceded by a call
+// instruction (mem-utils walkStackFrame). A stale return address left in a
+// dead slot matches too, so trust the innermost few and confirm with --count.
+const TRACE_STACK_SCAN = hasFlag('trace-stack-scan');
+function traceStackLine(getEbp, esp, dv, g2w, imageBase, buffer, depth) {
+  if (!TRACE_STACK_SCAN) return `frames=[${walkFrames(getEbp, dv, g2w, depth).map(hex).join(' <- ')}]`;
+  const frames = walkStackFrame(buffer, esp >>> 0, imageBase >>> 0,
+    { depth: depth * 16, codeLo: imageBase >>> 0, codeHi: 0x80000000 });
+  return formatFrames(frames, depth) || 'frame=[]';
+}
+const QUIET_API = hasFlag('quiet-api');               // --quiet-api: suppress [API] one-line log spam
+const API_COUNTS_TOP = parseInt(getArg('api-counts-top', '40'));
+const ESP_DELTA = hasFlag('esp-delta');   // --esp-delta: log ESP before/after each API call (for stdcall pop audit)
+const TRACE_ESP = getArg('trace-esp', null); // --trace-esp=LO-HI: per-block (eip, esp) + Δ from prev block (hex; HI optional)
+const TRACE_EIP_RANGE = getArg('trace-eip-range', null); // --trace-eip-range=LO-HI: log every block-entry EIP inside [LO,HI] (module+0xVA OK)
+const TRACE_EIP_FROM = parseInt(getArg('trace-eip-from', '0'), 10) || 0; // --trace-eip-from=BATCH: arm --trace-eip-range at that batch instead of 0 (trace one late window without paying for the whole boot)
+const TRACE_EIP_DETAIL = hasFlag('trace-eip-detail'); // --trace-eip-detail: include regs/flags/memory with --trace-eip-range
+const TRACE_EIP_STREAM = hasFlag('trace-eip-stream'); // --trace-eip-stream: write EIP lines immediately instead of buffering to the next batch boundary
+const TRACE_EIP_DUMP = getArg('trace-eip-dump', null); // --trace-eip-dump=0xADDR:LEN[,..]: compact dump on each detailed EIP hit
+const experiments = require('./runner-experiments').createRunnerExperiments({ hasFlag, getArg,
+  appPolicy: () => APP_ENTRY });
+const TRACE_GDI = hasFlag('trace-gdi');   // --trace-gdi: log GDI calls (CreateBitmap, BitBlt, etc.)
+const GDI_STATS = hasFlag('gdi-stats');   // --gdi-stats: print software-raster span/pixel totals at exit
+const LATENCY_STATS = hasFlag('latency-stats'); // --latency-stats: measure injected input -> next surface blit
+// --frame-stats[=FROM_BATCH]: guest-frame pacing (interval percentiles + jitter)
+// at exit. A benchmark that has to click through a menu to reach gameplay
+// spends most of its batches in the menu, and a menu redrawing on demand paces
+// nothing like a game loop -- mixing them buries the game's own distribution
+// under a much larger, much flatter one. Pass the batch gameplay starts at.
+const FRAME_STATS_ARG = getArg('frame-stats', null);
+const FRAME_STATS = FRAME_STATS_ARG !== null || hasFlag('frame-stats');
+// --frame-stats-out=FILE: also write the raw interval series as JSON.
+const FRAME_STATS_OUT = getArg('frame-stats-out', null);
+// --present-distinct[=FROM_BATCH]: per DirectDraw present, hash the presented
+// surface and report presents vs presents that changed the picture. The
+// question it answers is whether PRESENT/s is a frame rate for this app.
+const PRESENT_DISTINCT_ARG = getArg('present-distinct', null);
+const PRESENT_DISTINCT = {
+  on: PRESENT_DISTINCT_ARG !== null || hasFlag('present-distinct'),
+  from: Math.max(0, parseInt(PRESENT_DISTINCT_ARG || '0', 10) || 0),
+  presents: 0, counted: 0, changed: 0, unreadable: 0,
+  last: null, unique: new Set(), slots: new Map(),
+  // Guest ms at the first and last counted present, so the report can state
+  // a RATE per guest second -- the only unit a present cap is written in. A
+  // count per batch is not one: a batch is a budget of blocks, and the guest
+  // time it stands for is --tick-ms-per-batch (or the wall clock under
+  // --real-ticks) plus whatever Sleep/pacing charged on top.
+  // Per counted present: its guest ms and whether it changed the picture
+  // (null for an unhashed GPU present). The second half of the span, by guest
+  // time, is reported on its own as the steady state -- the first half holds
+  // whatever loading screen or fade the app started in.
+  firstMs: null, lastMs: null, times: [], changedTimes: [],
+  // GPU presents (D3D Present, SwapBuffers) are counted but not hashed: their
+  // pixels live in a backend surface, not in a DirectDraw DIB.
+  gpu: 0,
+  // A changed hash says only that SOMETHING moved. A game that writes its 3D
+  // view and then its HUD as two presents changes the hash twice per frame,
+  // so "every present is distinct" would still double-count. Per slot, keep
+  // the previous picture and histogram the bounding box of what each present
+  // changed: one recurring near-full box is one present per frame; a big box
+  // alternating with a small one is a split frame.
+  prevBytes: new Map(), rects: new Map(), seq: [],
+};
+// Present and composite after every batch, the way the browser does. Off by
+// default: nobody looks at a headless canvas between captures, and it is work a
+// real player never pays, charged to every benchmark. Measured 2026-09-19 on
+// the quiet box, MCM --d3d-worker to batch 230000, ABBA: race window
+// 5.73/5.75s -> 4.58/4.54s wall, whole run 121s -> 41s, the batch-229990 PNG
+// pixel-identical in all four. Every pixel read goes through presentForRead()
+// instead, so captures are unchanged.
+// Implied by the flags that measure presentation itself, and by an explicit
+// --repaint-every/--dx-present-min-ms, which only mean anything when it is on.
+const LIVE_PRESENT = hasFlag('live-present') || FRAME_STATS || LATENCY_STATS
+  || args.some(a => a.startsWith('--repaint-every=') || a.startsWith('--dx-present-min-ms='));
+const FRAME_STATS_FROM = Math.max(0, parseInt(FRAME_STATS_ARG, 10) || 0);
+const AUTO_MOUSE = getArg('auto-mouse', null); // --auto-mouse=X0,Y0,X1,Y1[,PERIOD]: sweep the pointer every PERIOD batches
+const TRACE_CTRL = hasFlag('trace-ctrl'); // --trace-ctrl: log every WAT-native control paint + its screen rect
+// --trace-input: which routing branch in lib/renderer-input.js consumed each
+// mouse event. Reach for it on "the click does nothing": a swallowed click
+// makes no API call, so an API trace shows a healthy-looking message pump and
+// nothing else. This names the early return that ate it.
+const TRACE_INPUT = hasFlag('trace-input');
+const TRACE_ERASE = hasFlag('trace-erase'); // --trace-erase: log every window-background erase + the brush it fills with
+const TRACE_RGN = hasFlag('trace-rgn');   // --trace-rgn: log HRGN create/combine/select + branch counts
+const TRACE_DC = hasFlag('trace-dc');     // --trace-dc: log DC→canvas target resolution (hwnd, ox/oy, canvas size)
+const TRACE_CLIP = hasFlag('trace-clip'); // --trace-clip: log _excludeChildrenClip kid/cousin rects + cover size per draw
+const TRACE_COMPOSITE = hasFlag('trace-composite'); // --trace-composite: one line per repaint: which path composited, and what each window contributed
+const TRACE_DX = hasFlag('trace-dx');   // --trace-dx: log DirectX COM methods with decoded rects/surface metadata
+const DX_SURFACES = hasFlag('dx-surfaces'); // --dx-surfaces: print the DX_OBJECTS surface manifest at exit
+// --dump-dx-surfaces=DIR: at exit, write every live DX surface as DIR/slotN-WxH-FMT.png, decoded by its
+// real pixel format (565/555/1555/4444/8888) through the same WAT decoder both D3DIM backends sample with.
+const DUMP_DX_SURFACES = getArg('dump-dx-surfaces', null);
+const GL_CENSUS = hasFlag('gl-census'); // --gl-census: at exit, which GL entry points this run actually issued, and whether the WAT mirror stayed trusted
+// --trace-gl[=Name1,Name2]: one line per GL command as the backend receives it,
+// arguments as hex with a float reading beside any word that looks like one
+// (GL passes GLfloat and GLenum through the same stack slots), and for a
+// packed draw its vertex count and first vertex. Honours --trace-from/-to.
+const TRACE_GL_RAW = args.find(a => a === '--trace-gl' || a.startsWith('--trace-gl='));
+const TRACE_GL_VERTS = hasFlag('trace-gl-verts'); // with --trace-gl: print every vertex of each packed draw
+if (TRACE_GL_RAW) {
+  const GLCompatTrace = require('../lib/gl-compat');
+  const only = TRACE_GL_RAW.includes('=')
+    ? new Set(TRACE_GL_RAW.slice(TRACE_GL_RAW.indexOf('=') + 1).split(',').filter(Boolean)) : null;
+  const names = GLCompatTrace.OP_NAMES || GLCompatTrace.CALLS;
+  // Entry points whose arguments are all GLdouble, and how many.
+  const GL_DOUBLE_ARGS = { gluLookAt: 9, gluPerspective: 4, gluOrtho2D: 4, glOrtho: 6,
+    glFrustum: 6, glDepthRange: 2, glClearDepth: 1, glTranslated: 3, glScaled: 3, glRotated: 4 };
+  const word = (dv, off) => {
+    const u = dv.getUint32(off, true) >>> 0;
+    const f = dv.getFloat32(off, true);
+    const a = Math.abs(f);
+    const floaty = u > 0xFFFF && Number.isFinite(f) && a >= 1e-4 && a <= 1e6;
+    return floaty ? `0x${u.toString(16)}~${+f.toPrecision(5)}` : `0x${u.toString(16)}`;
+  };
+  GLCompatTrace.hooks.trace = (slot, opcode, aux, capture) => {
+    if (!traceWindowOpen()) return;
+    const name = names[slot] || `op${opcode}`;
+    if (only && !only.has(name)) return;
+    const parts = [];
+    const doubles = GL_DOUBLE_ARGS[name] || 0;
+    if (capture && capture.buffer && doubles && capture.stackBytes >= 4 + doubles * 8) {
+      // Every argument is a GLdouble: print them as numbers, all of them.
+      // Split into words and capped at ten, gluLookAt lost its up vector.
+      const dv = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
+      for (let i = 0; i < doubles; i++) parts.push(`${+dv.getFloat64(4 + i * 8, true).toPrecision(6)}`);
+    } else if (capture && capture.buffer && capture.stackBytes >= 8) {
+      const dv = new DataView(capture.buffer, capture.stackOffset, capture.stackBytes);
+      for (let off = 4; off + 4 <= capture.stackBytes && parts.length < 10; off += 4) parts.push(word(dv, off));
+    }
+    let tail = '';
+    if (capture && capture.pointerOffset && capture.pointerLength) {
+      tail = ` ptr=${capture.pointerLength}B`;
+      if (capture.pointerLength % 76 === 0) {
+        const v = new Float32Array(capture.buffer, capture.pointerOffset, 19);
+        tail += ` verts=${capture.pointerLength / 76} v0=(${Array.from(v.slice(0, 3), x => +x.toPrecision(4))})`
+          + ` rgba=(${Array.from(v.slice(3, 7), x => +x.toPrecision(3))})`;
+        if (TRACE_GL_VERTS) {
+          // --trace-gl-verts: every vertex of the packed draw, object-space
+          // x,y,z and unit-0 u,v, for finding the one triangle that is wrong.
+          const all = new Float32Array(capture.buffer, capture.pointerOffset, capture.pointerLength / 4);
+          const rows = [];
+          for (let i = 0; i + 19 <= all.length; i += 19) {
+            rows.push(`  [gl]   v${i / 19} xyz=(${Array.from(all.slice(i, i + 3), x => +x.toPrecision(6))}) w=${+all[i + 14].toPrecision(4)}`
+              + ` uv=(${+all[i + 7].toPrecision(4)},${+all[i + 8].toPrecision(4)})`
+              + (all[i + 16] !== 1 ? ` q=${+all[i + 16].toPrecision(4)}` : ''));
+          }
+          tail += '\n' + rows.join('\n');
+        }
+      } else if (capture.pointerLength <= 64 && capture.pointerLength % 4 === 0) {
+        // A small array argument (glFogfv, glLightfv, glLoadMatrixf): its
+        // values, since the guest pointer is gone by the time anyone asks.
+        const dv = new DataView(capture.buffer, capture.pointerOffset, capture.pointerLength);
+        const vals = [];
+        for (let off = 0; off < capture.pointerLength; off += 4) vals.push(+dv.getFloat32(off, true).toPrecision(5));
+        tail += ` [${vals.join(', ')}]`;
+      }
+    }
+    console.log(`[gl] ${traceGateBatch >= 0 ? `b${traceGateBatch} ` : ''}${name}(${parts.join(', ')}) aux=0x${(aux >>> 0).toString(16)}${tail}`);
+  };
+}
+const TRACE_DX_RAW = hasFlag('trace-dx-raw'); // --trace-dx-raw: on each Execute, walk+hexdump the full instruction stream
+const TRACE_FS = hasFlag('trace-fs');     // --trace-fs: log filesystem CreateFile hits/misses
+const QUIET_FS = hasFlag('quiet-fs');     // --quiet-fs: omit ReadFile diagnostics implied by --trace-api; explicit --trace-fs wins
+// --lazy-ranges[=MS]: mount a registry entry's lazy files (`loadMode: 'lazy'`
+// or `'background'`, and legacy `httpRange` not marked `loadMode: 'required'`)
+// the way the page does -- provider-backed, async-only, MS of latency per
+// chunk read -- so
+// a headless run parks on cache misses exactly like a browser on HTTP ranges.
+// Its `preloadRanges` are fetched and pinned before the guest starts, as in
+// host.js; --no-preload-ranges skips them (the control arm that shows why a
+// file needs them). Without the flag those files are plain eager mounts.
+const LAZY_RANGES = hasFlag('lazy-ranges') || argHas('lazy-ranges');
+const LAZY_RANGES_MS = Math.max(0, Number(getArg('lazy-ranges', '0')) || 0);
+// --lazy-cache=legacy: the streamed-file cache shape before 1MB chunks and
+// sequential prefetch (256KB x 64 chunks, read-ahead on every miss, no
+// background prefetch) -- the control arm for measuring them. Default: the
+// page's shape (lib/byte-provider.js defaults).
+const LAZY_CACHE_OPTS = getArg('lazy-cache', '') === 'legacy'
+  ? { chunkSize: 256 * 1024, maxChunks: 64, readAhead: 1, prefetch: 0, sequentialReadAhead: false }
+  : undefined;
+const NO_PRELOAD_RANGES = hasFlag('no-preload-ranges');
+const TRACE_INI = hasFlag('trace-ini');   // --trace-ini: log GetPrivateProfileString resolutions
+const TRACE_REG = hasFlag('trace-reg');   // --trace-reg: log registry RegOpen/Query/Create/Set/Enum/Close
+const TRACE_SEH = hasFlag('trace-seh');   // --trace-seh: log SEH chain operations
+// --reg-import=FILE / --reg-export=FILE: carry the registry and INI store
+// across runs. The browser keeps it in localStorage, so an app's second launch
+// reads back what its first launch wrote; Node keeps it in a per-process Map,
+// so every headless run is a first run. Bugs that need persisted settings to
+// exist are invisible to the CLI without these.
+const REG_IMPORT = getArg('reg-import', '');
+const REG_EXPORT = getArg('reg-export', '');
+// --import-saves=FILE / --export-saves=FILE: the same state as a *save bundle*
+// (lib/save-bundle.js) — the app's persistFiles matches plus the registry/INI
+// store, in one zip. --reg-export carries only the second half, so a game whose
+// state lives in a .sav file round-trips through this pair and not that one.
+// Both need --app=ID: the bundle is keyed by app id and the persistFiles globs
+// that decide what may be written come from lib/apps.js, never from the bundle.
+const IMPORT_SAVES = getArg('import-saves', '');
+const EXPORT_SAVES = getArg('export-saves', '');
+const TRACE_WIN16 = hasFlag('trace-win16'); // --trace-win16: log every Win16 (NE) API call and its result
+// --trace-win16=dde: only the DDEML offers and answers. The full trace is
+// large enough to change the timing of anything involving two processes, so a
+// race between two emulators in one room needs the quiet version.
+const TRACE_WIN16_DDE = (getArg('trace-win16', '') || '').split(',').includes('dde');
+// --trace-fpu: every x87 exception flag as it is raised, and every FCLEX or
+// FNINIT that takes them down again. The flags are sticky, so a program that
+// reads the status word reports whatever the last few thousand instructions
+// left in it -- Visual Basic says "Division by zero" from a status read, which
+// can be an arbitrary distance from the divide that set ZE.
+const TRACE_FPU = hasFlag('trace-fpu');
+// --trace-code-writes: every guest write that retired decoded code -- address,
+// width, writer EIP, blocks dropped -- and every block retired by an
+// overlapping publish, as `retired entry <- publishing entry` pairs. The first
+// 40 of each print as they happen; the exit summary ranks them. Reach for it
+// when block decodes are high: a pair that recurs thousands of times is two
+// entries re-decoding each other with no guest write (Heroes III's fold bug),
+// and pair it with tools/code-drift.js to tell real SMC from that.
+// --trace-code-writes=all also counts the writes the shared code map let
+// through that retired NOTHING (false invalidations: a data store beside
+// code), ranked by page and writer EIP. Slow: one host call per such write.
+const TRACE_CODE_WRITES = hasFlag('trace-code-writes') || getArg('trace-code-writes', null) !== null;
+const TRACE_CODE_WRITES_ALL = getArg('trace-code-writes', null) === 'all';
+const TRACE_NET = hasFlag('trace-net');   // --trace-net: log every vln/1 frame on the virtual LAN wire
+// --vlan-ip=10.0.0.2: this process's room address (host of the room keeps
+// 10.0.0.1, which a guest can reach by typing "10.1"). --vlan-wire joins the
+// segment offered by the parent process
+// over child IPC, which is how two emulators share one room switch.
+const VLAN_IP = getArg('vlan-ip', null);
+// Per-app Nagle-style pacing of small virtual-LAN TCP sends (lib/apps.js
+// `vlanNagleMs`); --vlan-nagle-ms=N overrides it, 0 turns it off.
+const VLAN_NAGLE_ARG = getArg('vlan-nagle-ms', null);
+const VLAN_WIRE = hasFlag('vlan-wire');
+// --pipe-std=WHICH:END:LPORT:RIP:RPORT,... -- set by a parent run.js that
+// started this process for a guest CreateProcess with redirected std handles
+// (src/09d7-pipes.wat): each entry becomes a pipe end, connected over the
+// vlan wire to the parent, installed as std handle WHICH before the entry
+// point runs. Not meant to be typed by hand.
+const PIPE_STD = getArg('pipe-std', null);
+// --pipe-child-args="--trace-api=ReadFile --trace-from=N": extra flags for a
+// child started by process_spawn, space separated -- the only way to trace
+// the child's side. Keep them bounded: the child's output is relayed here.
+const PIPE_CHILD_ARGS = (getArg('pipe-child-args', '') || '').split(' ').filter(Boolean);
+// --spawn-processes (or `spawnProcesses: true` on the app in lib/apps.js):
+// every guest CreateProcess of an executable in the VFS starts a real child
+// emulator, not only one with redirected std handles. The child gets a
+// snapshot of this machine's C:\ and registry, and what it leaves behind is
+// merged back before the parent's wait on it returns -- so an installer that
+// runs msiexec.exe and waits for it sees what msiexec installed. Off by
+// default: without it a CreateProcess still reports success with no child,
+// which installer extraction tests rely on.
+const SPAWN_PROCESSES_FLAG = hasFlag('spawn-processes');
+// --spawned-child: this process is such a child (set by the parent, not by
+// hand): report the guest's exit code to the parent over IPC.
+const SPAWNED_CHILD = hasFlag('spawned-child');
+// Child IPC also covers redirected-pipe children and externally forked callers.
+// Once a launch is attempted, pending children/siblings cannot be enumerated
+// by this process-local ThreadManager. Keep failure conservative until exit.
+let threadSnapshotSystemIncomplete = !!(SPAWNED_CHILD || PIPE_STD || process.send);
+// A blocking socket call parks the guest; if it never wakes, stop instead of
+// spinning forever. Each wait is one macrotask, so this is a real bound.
+const VLAN_MAX_WAITS = parseInt(getArg('vlan-max-waits', '20000'), 10);
+// --vlan-pump-every=N: how often (in batches) a seat that is NOT blocked on
+// the wire still lets its transport deliver. 64 by default. A game that
+// streams every frame needs it shorter: at ~21 batches/s, 64 batches is ~3 s
+// of one-way latency, and Quake III shows "Connection Interrupted" once 64 of
+// its commands are unacknowledged (test-quake3-vlan-gameplay uses 8).
+const VLAN_PUMP_EVERY = Math.max(1, parseInt(getArg('vlan-pump-every', '64'), 10) || 64);
+// Released by { t: 'go' } from the parent process; `B:wait-go` in --input holds
+// every later scheduled event until one arrives. The IPC channel is the one the
+// vlan wire already uses, and ProcessWire ignores anything that is not a frame,
+// so the two listeners do not collide.
+//
+// Counted rather than latched, and each wait consumes one: a run with two
+// `wait-go` points is asking to be released twice, and a latch would let the
+// first signal fall through both of them.
+let goPending = 0;
+if (process.send) {
+  process.on('message', (msg) => { if (msg && msg.t === 'go') goPending++; });
+}
+const TIME_SCALE = parseFloat(getArg('time-scale', '1')) || 1;  // --time-scale=10: guest clock runs 10x
+const REAL_TICKS = hasFlag('real-ticks'); // --real-ticks: GetTickCount from the wall clock, not the batch counter
+// --wall-clock-ms=N: pin the ORIGIN of the CALENDAR clock (GetLocalTime/
+// GetSystemTime/GetSystemTimeAsFileTime, i.e. the `wall_clock` import) to a
+// fixed epoch millisecond. The elapsed-time clock is already batch-driven and
+// reproducible, but the calendar one is deliberately real, so a guest that
+// seeds itself from the time of day makes an otherwise identical A/B pair
+// diverge. Pin it and the two arms see the same calendar, which is what an A/B
+// needs. Left off, the calendar is still pinned, to a fixed default date (see
+// CALENDAR_ORIGIN_MS); --real-calendar is the way back to today's date.
+//
+// The pin sets where the calendar STARTS, not that it stops: from there it
+// advances by guest time (batchTicks(), guest milliseconds since the run
+// began), so it is still a moving clock and still identical between two runs
+// of one --input script. See where ctx.wallNowMs is rebound, next to the
+// get_ticks choice. `0` is not a valid pin (it is falsy, and a 1970 calendar is
+// not what anyone means) — the flag takes a real epoch value.
+const WALL_CLOCK_MS_ARG = getArg('wall-clock-ms', '');
+const WALL_CLOCK_MS = WALL_CLOCK_MS_ARG === '' ? 0 : Number(WALL_CLOCK_MS_ARG);
+if (WALL_CLOCK_MS_ARG !== '' && !(Number.isFinite(WALL_CLOCK_MS) && WALL_CLOCK_MS > 0)) {
+  throw new Error(`--wall-clock-ms=${WALL_CLOCK_MS_ARG}: expected a positive epoch millisecond`);
+}
+if (CONTROL_FROZEN_START && !(CONTROL || CONTROL_STDIN)) {
+  throw new Error('--frozen needs --control or --control-stdin');
+}
+if (CONTROL_FROZEN_START && REAL_TICKS) {
+  throw new Error('--frozen is incompatible with --real-ticks; use the deterministic batch clock');
+}
+// --tick-ms-per-batch=N: how much guest time one batch is worth on the
+// batch-driven clock (default 200). Neither default clock suits a game whose
+// engine steps on a WM_TIMER: at 200ms/batch Chip's Challenge burns its whole
+// 100-second level clock in 500 batches and puts up "Ooops! Out of time!"
+// before any input lands, while --real-ticks gives a 16-bit app that runs
+// 5000 batches in a third of a second about three timer ticks in total, so
+// nothing ever moves. Turn it down to drive a timer-paced game headlessly.
+// TICK_MS_PER_BATCH itself is defined after APP_ENTRY: an app can register its
+// own default (`cliTickMsPerBatch`).
+const CLOCK_ORIGIN = Date.now();
+// --dx-lock-pause-ms=N: charge N milliseconds of GUEST time to every Lock of a
+// PRIMARY DirectDraw surface and to every Flip. Off (0) by default.
+//
+// Why it exists: on real hardware, locking or flipping the primary is where
+// presentation back-pressure lives -- the call blocks until the display is
+// ready. Our emulator returns instantly, so a game whose loop was throttled by
+// the display on a Pentium free-runs here, and its "fps" is a number no real
+// machine ever produced. This flag puts the back-pressure back and asks what
+// the game does about it. A CLOCK_PACED game reads the clock, sees the time it
+// lost, and keeps the same simulation speed with fewer frames -- which is
+// exactly the proof that capping frames is safe for it. A FRAME_LOCKED game
+// has nothing to read and simply gets slower.
+//
+// It is charged as GUEST time, not host wall time: the headless clock is
+// batch-driven (see TICK_MS_PER_BATCH), so a real sleep would be invisible to
+// the guest. Adding guest ms without adding guest work is precisely "the Lock
+// blocked for N ms". Offscreen/back buffers are deliberately NOT charged --
+// those are composition, not presentation, and slowing them would measure
+// something else. Zero cost when the flag is absent.
+const DX_LOCK_PAUSE = {
+  ms: Math.max(0, parseFloat(getArg('dx-lock-pause-ms', '0')) || 0),
+  clock: null,          // set once createBatchClock has run
+  guestMsAdded: 0,
+  presents: 0,        // dx_trace kind 5 -- the charged event
+  primaryLocks: 0,
+  offscreenLocks: 0,
+  flips: 0,
+};
+// --- vertical blank, headless -------------------------------------------
+// There is no display and no requestAnimationFrame out here, so the guest
+// clock IS the display (the browser instead wakes a vblank park on a real rAF
+// callback; see host.js _awaitVblank and the block comment on $vblank_counter
+// in src/01-header.wat — the two are meant to differ and should not be
+// "unified"). When a DirectDraw call parks on yield_reason 13 the model has
+// already named the guest millisecond it is due at, and the honest thing is to
+// charge exactly that much guest time and let it through. Rescheduling instead
+// would never resolve at a small --tick-ms-per-batch, and would make the wait
+// cost a variable number of batches at a large one.
+//
+// Same pausedMs seam as --dx-lock-pause-ms: guest time the harness has decided
+// elapsed outside the batch schedule. It shifts the whole clock, so it cannot
+// go backwards.
+const VBLANK = {
+  clock: null,        // set once createBatchClock has run
+  waits: 0,
+  guestMsAdded: 0,
+};
+// --flip-vsync: make IDirectDrawSurface::Flip block to the next vblank the way
+// real hardware does, instead of returning immediately. Off by default — see
+// $dx_flip_vsync in src/01-header.wat.
+const FLIP_VSYNC = hasFlag('flip-vsync');
+// --present-cap=N: pace explicit frame ends (Flip, full-surface blits to the
+// primary, D3D Present, SwapBuffers) to at most N per GUEST second -- the
+// browser's per-app presentCap, here on the batch clock. Off by default so a
+// headless run's pacing stays the app's own. See $present_pace.
+const PRESENT_CAP = Math.max(0, parseInt(getArg('present-cap', '0'), 10) || 0);
+// --present-pace=smooth|deadline: how $present_pace spends the cap. smooth
+// (the default) sleeps one per-frame delay that moves at most 1.5ms a frame;
+// deadline sleeps each early frame to a deadline one period on. An app's
+// registry `presentPace` overrides the default; the flag wins.
+const PRESENT_PACE = (() => {
+  const v = getArg('present-pace', null);
+  if (v === null) return null;
+  if (v !== 'smooth' && v !== 'deadline') throw new Error(`--present-pace must be smooth or deadline, got ${v}`);
+  return v;
+})();
+// --real-ticks + --present-cap: the pacer's main-thread Sleep is measured and
+// waited out on the wall clock, so a capped real-ticks run paces in real time.
+// Scoped to capped runs: an uncapped --real-ticks run (the two-process vlan
+// tests, the Win16 gameplay tests) keeps sleeps on the batch clock, because a
+// wall-clock thread Sleep there leaves the main thread spinning on a live
+// thread and trips the stuck detector (test-blobby-host-probe).
+const REAL_TICK_SLEEPS = REAL_TICKS && PRESENT_CAP > 0;
+// --present-frames[=FROM_BATCH]: is a present cap safe for this app? Counts
+// detected frame ends against pump-bounded frames (and the app's
+// perf.logicalFrame counter when lib/apps.js declares one) from FROM_BATCH to
+// exit, per guest thread, and flags more than one frame end per game frame.
+// See lib/present-frame-audit.js.
+const PRESENT_FRAMES_ARG = getArg('present-frames', null);
+const PRESENT_FRAMES = hasFlag('present-frames') || PRESENT_FRAMES_ARG !== null;
+const PRESENT_FRAMES_FROM = Math.max(0, parseInt(PRESENT_FRAMES_ARG || '0', 10) || 0);
+// --present-at=logical|pump: for an app whose registry entry names its game
+// step (perf.logicalFrame), what a --present-cap paces. `logical` (default)
+// paces once per call of the step, via the decoder's marker
+// ($th_logical_frame, src/09a8); `pump` keeps the pump-bounded rule and only
+// counts steps -- the A/B arm. Apps without a step are unaffected.
+const PRESENT_AT = (() => {
+  const v = getArg('present-at', null);
+  if (v === null) return 'logical';
+  if (v !== 'logical' && v !== 'pump') throw new Error(`--present-at must be logical or pump, got ${v}`);
+  return v;
+})();
+// --- spin parking --------------------------------------------------------
+// Eight of the games in docs/frame-pacing-census.md busy-wait on the
+// millisecond clock and four more on an empty PeekMessage. Both detectors are
+// ON; --no-spin-park is the A/B arm that turns them off in one run, which is
+// how a suspected false park is ruled in or out. --spin-park-k=N moves the
+// threshold (K consecutive indistinguishable reads) for the same purpose.
+//
+// IMPORTANT for measuring any of this: at the default 200ms of guest time per
+// batch a spin loop never spins -- the clock leaps past whatever the guest is
+// waiting for on its first read. Spin numbers need
+// `--tick-ms-per-batch=1 --batch-size=100000`.
+const NO_SPIN_PARK = hasFlag('no-spin-park');
+// A cooperative guest THREAD caught spinning on the clock is slept to the
+// park's deadline (lib/thread-manager.js, postYield 14). This is the A/B arm
+// that puts back "give up one turn, then re-slice it".
+const NO_CLOCK_PARK_SLEEP = hasFlag('no-clock-park-sleep');
+const SPIN_PARK_K = parseInt(getArg('spin-park-k', ''), 10);
+const SPIN_PARK = { clockWaits: 0, peekWaits: 0, guestMsAdded: 0 };
+// --trace-sched[=N]: one compact line whenever what the threads are doing
+// changes, plus a heartbeat every N batches (default 5000) so a stall shows up
+// as a repeated line rather than as silence.
+// hasFlag is an exact match, so the =N form has to be accepted separately or
+// `--trace-sched=500` silently does nothing.
+const TRACE_SCHED = hasFlag('trace-sched') || getArg('trace-sched', null) !== null;
+const TRACE_SCHED_EVERY = parseInt(getArg('trace-sched', '5000'), 10) || 5000;
+// --spin-work-max=N: a clock read only counts toward a park when at most N
+// blocks retired since the previous read at that site (0 = no work check).
+const SPIN_WORK_MAX = parseInt(getArg('spin-work-max', ''), 10);
+// --spin-regs-check=MASK: which callee-saved registers the clock detector
+// requires unchanged between reads (bit0 EBX, bit1 EBP, bit2 ESI, bit3 EDI;
+// default 15). 0 drops the per-object false-positive guard (the A/B arm).
+const SPIN_REGS_CHECK = parseInt(getArg('spin-regs-check', ''), 10);
+// --virtual-alloc-top=0xADDR: start of the top-down VirtualAlloc arena (an
+// app's virtualAllocTop; see lib/process-boot.js applyVirtualAllocTop).
+const VIRTUAL_ALLOC_TOP_ARG = getArg('virtual-alloc-top', null);
+const TRACE_HOST = getArg('trace-host', null); // --trace-host=fn1,fn2: wrap arbitrary host fns to log args+return
+// --host-census[=N]: count every host import, print a histogram every N calls
+// straight to stdout. For batches that never return, where buffered logs never
+// get drained. Default 1M keeps a healthy run nearly silent.
+const HOST_CENSUS = (hasFlag('host-census') || getArg('host-census', null) !== null)
+  ? Number(getArg('host-census', 0)) || 1000000 : 0;
+const PROFILE_HOST = getArg('profile-host', null); // --profile-host=fn1,fn2: print count + total time for host imports
+const TRACE_WAVE = hasFlag('trace-wave');     // --trace-wave: log wave_out_* calls + cumulative totals
+const TRACE_THREAD = hasFlag('trace-thread'); // --trace-thread: log per-thread state transitions
+const TRACE_CRITICAL = hasFlag('trace-critical'); // --trace-critical: log CRITICAL_SECTION state around Enter/Leave
+const ASYNC_MM_TIMER_AFTER = Math.max(0,
+  parseInt(getArg('async-mm-timer-after', '0'), 10) || 0);
+const TRACE_YIELD = hasFlag('trace-yield');   // --trace-yield: log yield_reason transitions per thread
+const TRACE_BATCH_TIMING = hasFlag('trace-batch-timing'); // --trace-batch-timing: log run/repaint wall time per batch
+// --trace-from=N / --trace-to=N: confine every trace category to a window of
+// batches. A route that only misbehaves at batch 70,000 cannot be traced
+// otherwise -- the flags themselves are affordable, but writing their output
+// for the 70,000 batches of boot that precede the question is not, and on an
+// API-heavy app that write is the whole wall clock (see --quiet-api).
+const TRACE_FROM = parseInt(getArg('trace-from', '-1'), 10);
+const TRACE_TO = parseInt(getArg('trace-to', '-1'), 10);
+const TRACE_WINDOWED = TRACE_FROM >= 0 || TRACE_TO >= 0;
+// -1 means "not inside the batch loop", so setup and the exit summary are
+// never windowed -- only per-batch output is.
+let traceGateBatch = -1;
+function traceWindowOpen() {
+  if (!TRACE_WINDOWED || traceGateBatch < 0) return true;
+  if (TRACE_FROM >= 0 && traceGateBatch < TRACE_FROM) return false;
+  if (TRACE_TO >= 0 && traceGateBatch > TRACE_TO) return false;
+  return true;
+}
+// --decode-stats[=FROM_BATCH]: per-batch distribution of block decodes and of
+// the guest slice's wall time, printed at exit.
+//
+// This exists because --frame-stats cannot see decode cost. Its `interval
+// batches` series is the load-immune one, but a batch is a budget of *blocks*,
+// and decoding a block advances no EIP -- so a batch that re-decodes a thousand
+// blocks and a batch that decodes none retire the same number of blocks and are
+// indistinguishable in that series. The cost lands in host CPU, i.e. in
+// `interval ms`, which is the load-sensitive one.
+//
+// Decodes per batch is both: deterministic (identical across runs of one build)
+// and pointed straight at the mechanism. A block cache that evicts under
+// collision re-decodes in bursts; those bursts are the jank. Read the p99 and
+// the storm share, not the mean -- the mean is just total decodes over batches,
+// which the exit line already prints.
+// --batch-stats[=FROM_BATCH]: how many blocks each batch actually retired, and
+// why it stopped, printed at exit.
+//
+// `--batch-size=N` is a budget of N *blocks*, not steps, and a batch is free to
+// end long before it spends that budget: a blocking API yields, a WM_TIMER sets
+// $yield_flag, EIP goes to zero. From the outside a batch that ran 1000 blocks
+// and one that ran 12 look the same, so a region that is slow per batch is
+// ambiguous -- it is either genuine work per block, or a batch that keeps
+// bailing after a handful of blocks and paying the host's per-batch overhead
+// every time. Those two want opposite fixes, and this is the series that tells
+// them apart. Deterministic, so it is safe to diff between builds; the halt
+// histogram beside it names what is cutting the batches short.
+const BATCH_STATS_ARG = getArg('batch-stats', null);
+const BATCH_STATS = BATCH_STATS_ARG !== null || hasFlag('batch-stats');
+const BATCH_STATS_FROM = Math.max(0, parseInt(BATCH_STATS_ARG, 10) || 0);
+// --paint-audit: after every batch, recompute the shared paint/NC work counts
+// (PAINT_WORK_COUNTS) by walking the flag tables and stop on the first
+// disagreement. The same check always runs once at exit.
+const PAINT_AUDIT = hasFlag('paint-audit');
+let paintAuditFailures = 0;
+function paintAuditCheck(ex, where) {
+  if (!ex || !ex.paint_work_audit) return true;
+  const bad = ex.paint_work_audit() | 0;
+  if (!bad) return true;
+  paintAuditFailures++;
+  const counts = [0, 1, 2, 3, 4].map(k => ex.paint_work_count(k)).join(',');
+  console.log(`[paint-audit] MISMATCH at ${where}: mask=0x${bad.toString(16)} counts(paint,nc0..nc3)=${counts}`);
+  return false;
+}
+// --slice-split=B1[,B2,...]: cut the run into phases at those batch numbers and
+// report each phase's total guest-slice wall time, printed at exit.
+//
+// A run is rarely one workload. StarCraft's save route is a boot, then
+// gameplay, then the save itself, and "how long does the save take" cannot be
+// answered by timing two runs with different --max-batches: this box sits at
+// load 10-40, so the two runs are measured against different machines and the
+// subtraction carries both runs' noise. Splitting one run's own per-batch slice
+// times shares the load across every phase, so the phases are comparable to
+// each other even when the absolute numbers are not comparable to yesterday's.
+//
+// It reuses the per-batch series --decode-stats already collects, and turns
+// that collection on from batch 0 by itself, since a phase split is meaningless
+// over a truncated series.
+const SLICE_SPLIT = (getArg('slice-split', '') || '')
+  .split(',').map(s => parseInt(s, 10)).filter(n => Number.isFinite(n) && n > 0)
+  .sort((a, b) => a - b);
+const DECODE_STATS_ARG = getArg('decode-stats', null);
+const DECODE_STATS = DECODE_STATS_ARG !== null || hasFlag('decode-stats') || SLICE_SPLIT.length > 0;
+const DECODE_STATS_FROM = SLICE_SPLIT.length ? 0 : Math.max(0, parseInt(DECODE_STATS_ARG, 10) || 0);
+const AUDIO_STATS_RAW = args.find(a => a === '--audio-stats' || a.startsWith('--audio-stats=')); // --audio-stats[=N]: heartbeat every N waveOutWrites
+const AUDIO_STATS = !!AUDIO_STATS_RAW;
+const AUDIO_STATS_STRIDE = (AUDIO_STATS_RAW && AUDIO_STATS_RAW.includes('=')) ? parseInt(AUDIO_STATS_RAW.split('=')[1]) || 50 : 50;
+const BREAK_THREAD = getArg('break-thread', null); // --break-thread=Tn: only halt when bp/trace-at hits in given thread (T0=main)
+const TRACE_CALLSTACK_RAW = args.find(a => a === '--trace-callstack' || a.startsWith('--trace-callstack='));
+const TRACE_CALLSTACK = !!TRACE_CALLSTACK_RAW;
+const TRACE_CALLSTACK_DEPTH = TRACE_CALLSTACK_RAW && TRACE_CALLSTACK_RAW.includes('=')
+  ? Math.min(64, parseInt(TRACE_CALLSTACK_RAW.split('=')[1]) || 16) : 16;
+// --fault-null[=stop]: report every guest access no mapping covers (log, or
+// trap with =stop) instead of letting $g2w quietly absorb it into the NULL
+// sentinel. Off by default because the sentinel is what keeps a guest that
+// dereferences NULL running at all; arm it when a symptom shows up far from
+// whatever corrupted the pointer.
+const FAULT_NULL_RAW = args.find(a => a === '--fault-null' || a.startsWith('--fault-null='));
+const FAULT_NULL = !FAULT_NULL_RAW ? 0
+  : ({ stop: 2, raise: 3, page0: 4, reserved: 5 }[FAULT_NULL_RAW.split('=')[1]] || 1);
+// Offline census mode requires the separately built instrumented artifact from
+// tools/build-page-translation-stats.js. The canonical WASM has no counter
+// branch in $g2w, so profiling cannot perturb ordinary production runs.
+const GUEST_PAGE_STATS = hasFlag('guest-page-stats');
+const BREAKPOINT = getArg('break', null); // --break=0xADDR[,0xADDR,...]: break at address(es)
+const BREAK_ONCE = hasFlag('break-once'); // --break-once: do NOT re-arm bp after first hit (so prev_eip stays the true caller)
+const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)
+const TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit
+const TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit
+const TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N
+const TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)
+const BREAK_API = getArg('break-api', null); // --break-api=Name[,Name,...]: break on API call
+// --trace-api-mem=Name:ARG:LEN[,...]: at each entry of API Name, hexdump LEN
+// bytes at the guest pointer in stdcall argument ARG (0-based). For buffers
+// built on the stack just before the call (colour tables, rects, structs).
+const TRACE_API_MEM = (getArg('trace-api-mem', '') || '').split(',').filter(Boolean).map(spec => {
+  const [name, arg, len] = spec.split(':');
+  return { name, arg: parseInt(arg, 10) || 0, len: Math.min(parseInt(len, 10) || 64, 4096) };
+});
+const WATCH_SPEC = getArg('watch', null);    // --watch=0xADDR: break on memory change (dword)
+const WATCH_BYTE = getArg('watch-byte', null);   // --watch-byte=0xADDR: byte-granularity watch
+const WATCH_WORD = getArg('watch-word', null);   // --watch-word=0xADDR: 16-bit watch
+const WATCH_VALUE = getArg('watch-value', null); // --watch-value=0xVAL: only break when watch becomes this value
+const WATCH_LOG = hasFlag('watch-log');          // --watch-log: log each change and keep running (no debug prompt)
+const WATCH_START_BATCH = parseInt(getArg('watch-start-batch', '0'), 10) || 0; // delay arming --watch until batch N
+const WATCH_JS_ONLY = hasFlag('watch-js-only');  // --watch-js-only: sample in JS only; do not arm WAT watchpoint
+const TRACE_AT_WATCH = hasFlag('trace-at-watch'); // --trace-at-watch: diff --trace-at-dump regions vs previous hit, show changed bytes
+const SHOW_CSTRING = getArg('show-cstring', null); // --show-cstring=0xADDR[,0xADDR...]: decode MFC CString at these addrs in trace-at and debug prompt
+const SKIP_SPEC = getArg('skip', null);          // --skip=0xADDR[,0xADDR,...]: auto-return (simulate ret) when EIP hits
+const COUNT_SPEC = getArg('count', null);        // --count=0xADDR[,0xADDR,...]: passive hit counter per block dispatch (up to 16 slots)
+// --handler-hist-thread=N[,N...] --handler-hist-start=A --handler-hist-stop=B:
+// enable the existing WAT handler/block/pair histograms only for the requested
+// thread(s) in [A,B), then print a compact snapshot. A list divides that window
+// evenly and profiles one instance at a time because the counters live in the
+// shared linear memory. Profiling is off by default.
+const HANDLER_HIST_THREAD_SPEC = getArg('handler-hist-thread', '-1');
+const HANDLER_HIST_THREADS = HANDLER_HIST_THREAD_SPEC.split(',')
+  .map(v => parseInt(v, 10))
+  .filter(v => Number.isInteger(v) && v >= 0);
+const HANDLER_HIST_THREAD = HANDLER_HIST_THREADS.length ? HANDLER_HIST_THREADS[0] : -1;
+const HANDLER_HIST_START = Math.max(0, parseInt(getArg('handler-hist-start', '0'), 10) || 0);
+// How many rows the histogram prints. The default 24 is a reading convenience,
+// not a measurement boundary: a question about the terminator population (which
+// handlers reach $branch_end) needs the tail, because a block-ending handler can
+// be far down a per-op histogram and still be a large share of the transfers.
+const HANDLER_HIST_TOP = Math.max(1, parseInt(getArg('handler-hist-top', '24'), 10) || 24);
+const HANDLER_HIST_STOP = Math.max(HANDLER_HIST_START + 1,
+  parseInt(getArg('handler-hist-stop', String(MAX_BATCHES)), 10) || MAX_BATCHES);
+// --hot-block-dump=FILE: write every distinct block the histogram window saw,
+// as "0xADDR hits", one per line. The printed top-20 is for reading; this is
+// for tools/cache-slots.js, which needs the whole set to say whether the
+// direct-mapped block cache index is aliasing them.
+const HOT_BLOCK_DUMP = getArg('hot-block-dump', null);
+// --hist-json=FILE: the histogram window as the JSON tools/hot-loop-census.js
+// reads (the browser probe's shape), so a headless run feeds the same census.
+const HIST_JSON = getArg('hist-json', null);
+// --hist-json-blocks=N: how many blocks --hist-json keeps (default 400, 0 =
+// every block the window saw). tools/call-form-weighted.js wants all of them:
+// the tail is where a polymorphic call site's many small targets live.
+const HIST_JSON_BLOCKS = parseInt(getArg('hist-json-blocks', '400'), 10) || 0;
+// --edge-hist: also record every (previous block, this block) transfer in the
+// histogram window ($edge_hist_record, 04-cache.wat) and write them to
+// --hist-json as `edges`. That is what says how many distinct targets an
+// indirect call / jmp / ret site actually reached (tools/call-form-weighted.js).
+const EDGE_HIST = hasFlag('edge-hist');
+// --handler-hist-pairs=N: rows in the "top pairs" list (default 12). Raise it when summing
+// an idiom family (every cmp->jcc pair) across apps; the top 12 stops mid-family.
+const HANDLER_HIST_PAIRS = parseInt(getArg('handler-hist-pairs', '12'));
+// --cpu-prof-window=A:B:FILE: a V8 CPU profile of batches [A,B) only, written
+// as FILE (.cpuprofile, read with tools/cpuprof-top.js). `node --cpu-prof`
+// covers the whole process, so on an app whose load is minutes long the
+// window you asked about is a rounding error inside it.
+const CPU_PROF_WINDOW = (() => {
+  const spec = getArg('cpu-prof-window', null);
+  if (!spec) return null;
+  const m = /^(\d+):(\d+):(.+)$/.exec(spec);
+  if (!m || +m[2] <= +m[1]) throw new Error('--cpu-prof-window expects START:STOP:FILE with STOP > START');
+  return { start: +m[1], stop: +m[2], file: m[3] };
+})();
+// --cpu-window=A:B[,C:D...]: process CPU (user+sys, every thread including
+// --threads workers) and wall time spent on batches [A,B). Fixed work: the
+// guest executes the same batches in every arm, so this is the A/B number on a
+// loaded box, where wall clock is not (feedback: fixed work, user CPU).
+const CPU_WINDOWS = (getArg('cpu-window', '') || '').split(',').filter(Boolean).map(spec => {
+  const m = /^(\d+):(\d+)$/.exec(spec);
+  if (!m || +m[2] <= +m[1]) throw new Error('--cpu-window expects START:STOP with STOP > START');
+  return { start: +m[1], stop: +m[2], cpu: null, wall: 0 };
+});
+const DUMP_SPEC = getArg('dump', null);   // --dump=0xADDR:LEN: hexdump memory region
+const DUMP_SEH = hasFlag('dump-seh');     // --dump-seh: detailed SEH chain dump at end
+const DUMP_VMAP = hasFlag('dump-vmap');   // --dump-vmap: sparse VirtualAlloc map + which probes are mapped
+const DUMP_BACKCANVAS = hasFlag('dump-backcanvas'); // --dump-backcanvas: save back canvases alongside PNG snapshots
+const DUMP_VFS = hasFlag('dump-vfs');     // --dump-vfs: list all VFS files at end
+const SAVE_VFS = getArg('save-vfs', null); // --save-vfs=DIR: extract VFS files to directory
+const SAVE_VFS_SUFFIX = getArg('save-vfs-suffix', null); // --save-vfs-suffix=.gid: restrict extraction
+const SAVE_VFS_PREFIX = getArg('save-vfs-prefix', null); // --save-vfs-prefix='c:\\program files\\x': only that guest tree
+// --capture-launch=DIR: snapshot the VFS when ShellExecute names a VFS-backed
+// executable, before an installer bootstrap can delete its temporary child.
+// At exit DIR contains the snapshot plus launch.json for a second CLI stage.
+const CAPTURE_LAUNCH = getArg('capture-launch', null);
+// --overlay-dir=DIR: the writable C:\ overlay of docs/design-byo-media.md ⑤,
+// persisted to a host directory. Everything the guest writes is journalled and
+// replayed on the next run, so an installer can be run headlessly once and its
+// installed tree is simply there the second time. Unlike the browser's
+// localStorage persistFiles path this has no glob list and no per-file cap.
+const OVERLAY_DIR = getArg('overlay-dir', null);
+// Checkpoint between guest batches, where this otherwise-synchronous runner
+// can actually await storage. A hard SIGKILL can still cut off the current
+// interval or one long WASM batch, but it no longer loses the entire run.
+// Zero deliberately restores exit-only behavior for measurement/debugging.
+const OVERLAY_FLUSH_MS = Math.max(0,
+  parseInt(getArg('overlay-flush-ms', '5000'), 10) || 0);
+let vfsOverlay = null;
+let nextOverlayFlushAt = 0;
+let signalExitStarted = false;
+let terminationSignal = null;
+let signalExitWake = null;
+const VFS_DRIVE = getArg('vfs-drive', null); // --vfs-drive=D: mirror the EXE + explicit --vfs-include files on read-only D:\
+const VFS_INCLUDE = getArgs('vfs-include'); // --vfs-include=GLOB: mount matching files relative to the EXE directory
+// --vfs-tree=DIR: replay a captured VFS directory at C:\ while preserving its
+// relative paths. This is the second stage of --capture-launch for bootstrap
+// installers whose real child lives below WINDOWS\TEMP.
+const VFS_TREES = getArgs('vfs-tree');
+const GUEST_CWD = getArg('cwd', null); // --cwd=C:\DIR: initial guest process working directory
+// --vfs-mount=HOSTPATH=GUESTPATH: mount one host file at an exact guest path.
+// --vfs-include can only place a file at its own path relative to the EXE, so
+// an asset that has to appear somewhere else has no other way in -- a Winamp
+// visualizer kept in binaries/plugins/candidates has to be seen at
+// c:\plugins\vis_avs.dll before Winamp will enumerate it at all.
+const VFS_MOUNT = getArgs('vfs-mount');
+// --win16-lib=PATH (repeatable, a .DLL or a directory of them): shared 16-bit
+// runtimes that belong in the guest's system directory rather than beside the
+// exe. Their installer put them there and some of them check: CTL3D's LibMain
+// compares its own GetModuleFileName directory against GetSystemDirectory and
+// puts up "has not been correctly installed" when they differ, so a copy in
+// the app directory is rejected rather than merely untidy. Each file is both
+// searched by the NE loader and mounted at c:\windows\system\<name>, which is
+// what makes GetModuleFileName report it from there.
+const WIN16_LIBS = (() => {
+  const out = [];
+  for (const spec of getArgs('win16-lib')) {
+    const full = path.resolve(spec);
+    if (!fs.existsSync(full)) throw new Error(`--win16-lib: no such path: ${spec}`);
+    if (fs.statSync(full).isDirectory()) {
+      for (const entry of fs.readdirSync(full)) {
+        if (/\.(dll|drv|exe)$/i.test(entry)) out.push(path.join(full, entry));
+      }
+    } else out.push(full);
+  }
+  return out;
+})();
+// --zip=PATH (repeatable): mount a read-only ZIP archive into the VFS before
+// launch, under c:\program files\<zipname>\ (override with --zip-root=DIR); a
+// single top-level folder in the archive is unwrapped. Stored and deflated
+// entries only -- anything else fails loudly rather than handing the guest
+// garbage. Entries stay lazy: the catalog supplies each size, so enumerating a
+// mount inflates nothing. Coexists with --exe/--app, which still choose what
+// runs. See lib/zip-mount.js and docs/design-byo-media.md phase 2.
+const ZIP_MOUNTS = getArgs('zip');
+const ZIP_ROOT = getArg('zip-root', null);
+// --zip-exe=NAME: launch an executable that lives inside the archive. The
+// guest reads through the lazy zip mount, but the PE and DLL loaders are
+// host-path based -- `--exe` is a file and sibling DLLs are discovered next to
+// it -- so the archive is also unpacked to a temp directory to give them one.
+// The guest CWD becomes the mount root, so everything the app opens at runtime
+// still comes from the mounted archive.
+const ZIP_EXE = getArg('zip-exe', null);
+const ZIP_LAUNCH = (() => {
+  if (!ZIP_EXE) return null;
+  if (!ZIP_MOUNTS.length) throw new Error('--zip-exe needs --zip=PATH');
+  const zipMount = require('../lib/zip-mount');
+  const want = ZIP_EXE.toLowerCase().replace(/\//g, '\\');
+  for (const zipPath of ZIP_MOUNTS) {
+    const bytes = new Uint8Array(fs.readFileSync(zipPath));
+    const plan = zipMount.mountPlan(zipMount.readCatalogSync(bytes),
+      { zipPath, root: ZIP_ROOT || undefined });
+    const hit = plan.mapped.find(m => m.rel.toLowerCase() === want
+      || m.rel.toLowerCase().replace(/^.*\\/, '') === want);
+    if (!hit) continue;
+    const dir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'wine-zip-'));
+    for (const m of plan.mapped) {
+      const out = path.join(dir, ...m.rel.split('\\'));
+      fs.mkdirSync(path.dirname(out), { recursive: true });
+      fs.writeFileSync(out, zipMount.extractSync(bytes, m.entry));
+    }
+    return { exePath: path.join(dir, ...hit.rel.split('\\')), root: plan.root, zipPath, dir };
+  }
+  throw new Error(`--zip-exe=${ZIP_EXE} not found in ${ZIP_MOUNTS.join(', ')}`);
+})();
+// --iso=PATH (repeatable): mount an ISO 9660 image as a read-only CD-ROM
+// drive, D:\ for the first image and the next free letter after that
+// (override with --iso-drive=E). Joliet long names win when the image has
+// them; --iso-primary takes the 8.3 ISO names instead. Entries stay lazy: the
+// directory records supply every size, so a mount reads nothing but the
+// descriptors until the guest opens a file. The drive reports DRIVE_CDROM and
+// the image's volume label. See lib/iso9660.js and docs/design-byo-media.md
+// phase 3.
+const ISO_MOUNTS = getArgs('iso');
+const ISO_DRIVE = getArg('iso-drive', null);
+const ISO_PRIMARY = hasFlag('iso-primary');
+// --iso-exe=NAME: launch an executable that lives on the disc. Same shape as
+// --zip-exe: the bytes go to a temp file because the PE loader takes a host
+// path, and the guest CWD becomes the file's directory on D:\, so everything
+// the app opens afterwards comes off the disc.
+const ISO_EXE = getArg('iso-exe', null);
+const ISO_LAUNCH = (() => {
+  if (!ISO_EXE) return null;
+  if (!ISO_MOUNTS.length) throw new Error('--iso-exe needs --iso=PATH');
+  const iso9660 = require('../lib/iso9660');
+  const want = ISO_EXE.toLowerCase().replace(/\//g, '\\').replace(/^[a-z]:\\/, '');
+  let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+  for (const isoPath of ISO_MOUNTS) {
+    const image = iso9660.parseIso(new Uint8Array(fs.readFileSync(isoPath)),
+      { prefer: ISO_PRIMARY ? 'primary' : 'joliet' });
+    const hit = image.files.find(f => !f.isDirectory && (f.path.toLowerCase() === want
+      || f.path.toLowerCase().replace(/^.*\\/, '') === want));
+    if (!hit) { drive = String.fromCharCode(drive.charCodeAt(0) + 1); continue; }
+    const dir = fs.mkdtempSync(require('path').join(require('os').tmpdir(), 'wine-iso-'));
+    const out = require('path').join(dir, hit.name);
+    fs.writeFileSync(out, iso9660.readEntry(image, hit));
+    const guestDir = hit.path.includes('\\')
+      ? `${drive}:\\${hit.path.slice(0, hit.path.lastIndexOf('\\'))}`
+      : `${drive}:\\`;
+    return { exePath: out, guestDir, isoPath, drive };
+  }
+  throw new Error(`--iso-exe=${ISO_EXE} not found in ${ISO_MOUNTS.join(', ')}`);
+})();
+// --cue=PATH (repeatable): attach a mixed-mode CUE/BIN table of contents to
+// the CD-ROM drive. Pair this with --iso for the data track. Audio BIN files
+// stay on the host and are read only when an MCI cdaudio play reaches them.
+const CUE_MOUNTS = args.filter(value => value.startsWith('--cue='))
+  .map(value => value.slice('--cue='.length)).filter(Boolean);
+const CUE_DRIVE = getArg('cue-drive', null);
+// Browser-equivalent imported-media mount. tools/run-media.js analyzes the
+// selection, materializes only the chosen executable for the loader, then
+// forwards these exact source paths so this process mounts the original media
+// lazily into the guest VFS through lib/media-import.js.
+const MEDIA_MOUNTS = args.filter(value => value.startsWith('--media-mount='))
+  .map(value => value.slice('--media-mount='.length)).filter(Boolean);
+const MEDIA_EXE = getArg('media-exe', null);
+// --dll-seed=PATH[,PATH]: preload one more DLL as if the app registry had
+// listed it in `dlls:`. LoadLibraryA resolves a guest path against modules
+// that are already loaded and never opens the VFS itself, so a plugin the app
+// discovers at runtime -- every Winamp visualizer past the one in the registry
+// -- returns a junk handle unless it was seeded here first.
+const DLL_SEED = getArgs('dll-seed');
+// --stuck-after=N: end the run as STUCK once the main thread has sat at one EIP
+// (no API call, no register change) for more than N batches; default 10.
+// --stuck-after=0 disables the detector outright -- the spelling a long route
+// wants, instead of the --stuck-after=100000000 workaround older docs use.
+const STUCK_AFTER = parseInt(getArg('stuck-after', '10'), 10);
+if (!Number.isInteger(STUCK_AFTER) || STUCK_AFTER < 0) {
+  console.error(`error: --stuck-after expects a non-negative integer (0 disables), got ${JSON.stringify(getArg('stuck-after', ''))}`);
+  process.exit(2);
+}
+const WINVER = getArg('winver', null); // --winver=nt4|win2k|win98 or hex like 0x05650004
+// --env=NAME=VALUE (repeatable): set a compatibility variable in this guest
+// process only. The value may itself contain '='; an empty value is retained.
+const PROCESS_ENVIRONMENT = args.filter(value => value.startsWith('--env='))
+  .map(value => value.slice('--env='.length))
+  .map(spec => {
+    const equals = spec.indexOf('=');
+    if (equals <= 0) throw new Error(`invalid --env value ${JSON.stringify(spec)}; expected NAME=VALUE`);
+    return [spec.slice(0, equals), spec.slice(equals + 1)];
+  });
+// --app=sol launches what the desktop icon launches: lib/apps.js is the one
+// registry both hosts read, so the exe, the DLLs beside it, the data files it
+// needs in the VFS and its command line all come from the same entry the
+// browser uses. An explicit --exe/--args still wins over the registry.
+const APP_ID = getArg('app', null);
+const APP_ENTRY = (() => {
+  if (!APP_ID) return null;
+  const entry = APPS[APP_ID];
+  if (entry) return entry;
+  console.error(`unknown --app=${APP_ID}. Known ids:\n  ` +
+    Object.keys(APPS).sort().join(' '));
+  process.exit(1);
+})();
+// An explicit --fault-null wins; otherwise an app registered with
+// `nullPageFaults: true` takes Win98's NULL-guard-page rule (mode 4), the
+// same as the browser does.
+// `reservedPageFaults: true` takes Windows' reserved-page rule (mode 5):
+// a read of a MEM_RESERVE page that was never committed is offered to the
+// guest's exception filters synchronously (Serious Sam's stream buffers).
+const FAULT_NULL_MODE = FAULT_NULL || (APP_ENTRY && APP_ENTRY.reservedPageFaults === true ? 5
+  : APP_ENTRY && APP_ENTRY.nullPageFaults === true ? 4 : 0);
+// The batch clock (see --tick-ms-per-batch above). An app registered with
+// `cliTickMsPerBatch` gets that default; the flag still wins. A batch is a
+// fixed block budget, so for a CPU-bound renderer 200 ms/batch reads as a
+// machine that takes minutes per frame. The Plus! 98 D3DRM savers react to
+// that as they would on such a machine: every scene's display timer has run
+// out by the first Flip, so the switcher rebuilds the D3DRM device after each
+// frame and a capture finds a freshly cleared target (scr_scifi: 6 devices,
+// 5 Flips in 120000 batches at 200 or 20 ms/batch; 3 devices, 2120 Flips at 2).
+// The browser runs on the real clock and never reads this.
+const TICK_MS_PER_BATCH = Math.max(0, parseFloat(getArg('tick-ms-per-batch',
+  String(APP_ENTRY && Number.isFinite(APP_ENTRY.cliTickMsPerBatch)
+    ? APP_ENTRY.cliTickMsPerBatch : 200))) || 0);
+// An app's registry `wallClock` date pins the calendar origin like
+// --wall-clock-ms does; the flag wins. With neither, the CLI pins it to
+// DEFAULT_CALENDAR_MS, so two runs of one command see the same calendar: a
+// guest that seeds from the time of day (Deus Ex diverged per wall-clock
+// second) is otherwise a different run every second. --real-calendar hands the
+// guest today's date instead, and --real-ticks, which is real time by design,
+// keeps the real calendar too. The browser never pins.
+const DEFAULT_CALENDAR_MS = Date.parse('1999-06-01T12:00:00Z');
+const REAL_CALENDAR = hasFlag('real-calendar');
+const CALENDAR_ORIGIN_MS = WALL_CLOCK_MS ||
+  (APP_ENTRY && APP_ENTRY.wallClock ? Date.parse(APP_ENTRY.wallClock) : 0) ||
+  (REAL_CALENDAR || REAL_TICKS ? 0 : DEFAULT_CALENDAR_MS);
+// The guest's local time is this process's Date local time, so a pinned
+// calendar still read 05:00 on a PDT laptop and 12:00 on a UTC box. Pin the
+// zone too: UTC by default, which also agrees with GetTimeZoneInformation's
+// zero bias. --tz=NAME picks an IANA zone; --real-timezone (or --real-calendar
+// / --real-ticks) keeps the host's. Node re-reads TZ on assignment, and guest
+// thread workers share this process's zone.
+const TZ_ARG = getArg('tz', '');
+if (TZ_ARG) process.env.TZ = TZ_ARG;
+else if (!(hasFlag('real-timezone') || REAL_CALENDAR || REAL_TICKS)) process.env.TZ = 'UTC';
+// lib/apps.js `startupClock` (lib/startup-clock.js): the guest clock runs
+// `factor` times real speed until the app's startup ends, for a game whose
+// timer thread races its own initialisation (Comanche Gold). --startup-clock=
+// FACTOR[:MAX_MS] sets or overrides it; --no-startup-clock is the A/B arm.
+const STARTUP_CLOCK_CFG = (() => {
+  if (hasFlag('no-startup-clock')) return null;
+  const arg = getArg('startup-clock', '');
+  const base = (APP_ENTRY && APP_ENTRY.startupClock) || {};
+  if (!arg) return APP_ENTRY && APP_ENTRY.startupClock ? base : null;
+  const [factor, maxMs] = String(arg).split(':').map(Number);
+  return { ...base, factor, ...(maxMs > 0 ? { maxMs } : {}) };
+})();
+// 1 = smooth pacing (also the WAT default), 0 = deadline. Always pushed, to
+// the main instance and every guest-thread instance.
+const PRESENT_PACE_MODE = (PRESENT_PACE || (APP_ENTRY && APP_ENTRY.presentPace) || 'smooth') === 'deadline' ? 0 : 1;
+// The app's game step (lib/apps.js perf.logicalFrame), handed to every
+// instance's decoder when a cap or --present-frames wants it: a marker op on
+// that one block counts each step, and paces it when the cap is on and
+// --present-at is `logical`. Not armed otherwise, so an ordinary run decodes
+// exactly as before.
+// A Win16 app names its step as { seg, off }: an NE segment number of its own
+// module and an offset. The linear address only exists once the loader has
+// placed that segment, so `address` is filled in after load
+// (resolveLogicalFrame); a linear NE address in lib/apps.js would pin our
+// arena layout.
+const LOGICAL_FRAME = (() => {
+  const m = APP_ENTRY && APP_ENTRY.perf && APP_ENTRY.perf.logicalFrame;
+  if (!m) return null;
+  const segOff = m.address && typeof m.address === 'object';
+  if (!segOff && !(Number(m.address) > 0)) return null;
+  if (!PRESENT_CAP && !PRESENT_FRAMES) return null;
+  return {
+    address: segOff ? 0 : Number(m.address) >>> 0,
+    segOff: segOff ? m.address : null,
+    label: m.label || 'logical',
+    pace: PRESENT_CAP > 0 && PRESENT_AT === 'logical' ? 1 : 0,
+  };
+})();
+// Linear address of a { seg, off } step in the loaded Win16 task, or 0 when it
+// cannot be placed (not Win16, or the segment is not loaded).
+function resolveWin16SegOff(exports, so) {
+  if (!so || !exports.win16_seg_base || !(exports.is_win16 && exports.is_win16())) return 0;
+  const base = exports.win16_seg_base(Number(so.seg) | 0) >>> 0;
+  return base ? (base + (Number(so.off) & 0xFFFF)) >>> 0 : 0;
+}
+// Match the browser: an app registry opt-in is launch behavior, not a UI-only
+// hint. Keep explicit CLI flags as the A/B override, with `--no-…` strongest.
+const COPY_SUPEROPS = resolveCopySuperops(
+  APP_ENTRY, experiments.copySuperopsRequested, experiments.noCopySuperops);
+// Registry paths are repo-relative and lean on the top-level `binaries`
+// symlink, so they resolve the same from the page and from here.
+const appAsset = p => (path.isAbsolute(p) ? p : path.join(ROOT, p));
+const capturedGuestPath = hostPath => {
+  for (const tree of VFS_TREES) {
+    const guestPath = guestPathInTree(appAsset(tree), hostPath);
+    if (guestPath) return guestPath;
+  }
+  return null;
+};
+const EXE_PATH = getArg('exe', ZIP_LAUNCH ? ZIP_LAUNCH.exePath
+  : ISO_LAUNCH ? ISO_LAUNCH.exePath
+  : (APP_ENTRY ? appAsset(APP_ENTRY.exe) : 'test/binaries/notepad.exe'));
+const EXE_GUEST_PATH = (() => {
+  // An --iso-exe launch IS a guest path on the disc: an installer that copies
+  // "from its own directory" (Myth's VISE Setup: GetModuleFileName) must see
+  // D:\Setup.exe, not the host temp copy reported as C:\Setup.exe.
+  // A registry app's exeGuestPath is the same thing for an installed tree
+  // (lib/apps.js), and the browser honours it too.
+  const requested = getArg('exe-guest-path', null) || (ISO_LAUNCH
+    ? path.win32.join(ISO_LAUNCH.guestDir, path.basename(ISO_LAUNCH.exePath))
+    : (APP_ENTRY && !getArg('exe', null) && APP_ENTRY.exeGuestPath) || null);
+  if (!requested) return null;
+  const rooted = /^[a-z]:[\\/]/i.test(requested) ? requested : `c:\\${requested}`;
+  const normalized = path.win32.normalize(rooted.replace(/\//g, '\\'));
+  if (!/^[a-z]:\\[^\\]/i.test(normalized)) {
+    throw new Error(`--exe-guest-path needs a file path, got: ${requested}`);
+  }
+  return normalized;
+})();
+// A DLL shipped in the exe's own host directory lives beside the exe in the
+// guest too, and GetModuleFileName(hModule) must say so: Unreal's Core derives
+// the game's base directory from its own module path and reads UT2004.ini
+// beside itself, so C:\core.dll (the old basename fallback) threw at startup
+// while the INI sat in C:\System. Same rule as the page's app-local modules.
+const besideExeGuestPath = (hostPath, name) => {
+  if (!EXE_GUEST_PATH) return null;
+  if (path.resolve(path.dirname(hostPath)) !== path.resolve(path.dirname(EXE_PATH))) return null;
+  return path.win32.join(path.win32.dirname(EXE_GUEST_PATH), name);
+};
+// A --media-exe launch (tools/run-media.js) is a guest path too, and reports
+// its directory the way host.js does for imported media: NFS II's InstallShield
+// finds _SETUP.DLL beside D:\SETUP\ENGLISH\SETUP.EXE, not in D:\.
+const EXE_PROCESS_GUEST_PATH = EXE_GUEST_PATH ||
+  (MEDIA_EXE && /^[a-z]:\\/i.test(MEDIA_EXE) ? MEDIA_EXE : null);
+const EXE_PROCESS_NAME = EXE_PROCESS_GUEST_PATH
+  ? EXE_PROCESS_GUEST_PATH.replace(/^[a-z]:\\/i, '') : path.basename(EXE_PATH);
+// Windows file names are case-insensitive and the guest asks for whatever case
+// its source code used (MCM: LoadLibraryA("lang.dll") for LANG.DLL). A plain
+// existsSync(path.join(dir, name)) only agrees with that on macOS, so a DLL
+// search on a Linux host scans the directory for a case-folded match instead.
+const findHostFileCi = (dir, name) => {
+  const exact = path.join(dir, name);
+  if (fs.existsSync(exact)) return exact;
+  let entries;
+  try { entries = fs.readdirSync(dir); } catch (_) { return null; }
+  const want = name.toLowerCase();
+  const hit = entries.find(e => e.toLowerCase() === want);
+  return hit ? path.join(dir, hit) : null;
+};
+const canonicalPath = p => {
+  try { return fs.realpathSync(p); } catch (_) { return path.resolve(p); }
+};
+const MATCHED_APP = (() => {
+  if (APP_ENTRY) return { id: APP_ID, entry: APP_ENTRY };
+  const exePath = canonicalPath(EXE_PATH);
+  for (const [id, entry] of Object.entries(APPS)) {
+    if (entry.exe && canonicalPath(appAsset(entry.exe)) === exePath) return { id, entry };
+  }
+  return null;
+})();
+// Direct --exe runs of registered apps inherit only that app's explicit asset
+// manifest and DLL seeds. They do not inherit args or startup behavior, and an
+// arbitrary EXE outside the registry still mounts no companions implicitly.
+const ASSET_ENTRY = MATCHED_APP && MATCHED_APP.entry;
+const ASSET_ENTRY_ID = MATCHED_APP && MATCHED_APP.id;
+const getAssetFiles = entry => {
+  const files = [...((entry && entry.files) || [])];
+  if (!entry || !entry.localFileManifest) return files;
+  const manifestPath = appAsset(entry.localFileManifest);
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  if (!manifest || manifest.schemaVersion !== 1 || !Array.isArray(manifest.files)) {
+    throw new Error(`${ASSET_ENTRY_ID || APP_ID || 'app'}: invalid local media manifest`);
+  }
+  const manifestDir = path.dirname(entry.localFileManifest);
+  if (entry.localManifestIntegrity) {
+    const verified = require('../lib/app-files').validateLocalManifestSync(entry, manifest, {
+      resolve: url => path.join(manifestDir, url),
+      read: url => fs.readFileSync(appAsset(url)),
+      sha256: bytes => require('crypto').createHash('sha256').update(bytes).digest('hex'),
+    });
+    Object.defineProperty(verified.files, 'verifiedMedia', { value: verified });
+    return verified.files;
+  }
+  const local = manifest.files.filter(file => file && file.url)
+    .map(file => ({ ...file, url: path.join(manifestDir, file.url) }));
+  return require('../lib/app-files').mergeLocalManifestFiles(files, local);
+};
+const WASM_PATH = getArg('wasm', ENV_WASM || path.join(ROOT, 'build', 'wine-assembly.wasm')); // --wasm=FILE (or $WINE_ASSEMBLY_WASM): isolated prebuilt used with --no-build
+// Was a SPECIFIC artifact asked for, as opposed to falling back on the canonical
+// build/wine-assembly.wasm? A pin is a promise about WHICH module is under test —
+// the whole basis of the legacy-vs-WATX differential (tools/watx-matrix.js), where
+// one test file is run twice against two artifacts. Silently substituting a
+// different module for a pin does not produce a worse run, it produces a
+// MEANINGLESS one that still reports a verdict, so a pin that cannot be honoured
+// is fatal here (see main()). Nothing changes when no pin is given.
+const WASM_PINNED = argHas('wasm') || !!ENV_WASM;
+const PNG_OUT = getArg('png', null);     // --png=out.png: render to PNG via node-canvas
+const PNG_CANVAS = hasFlag('png-canvas'); // --png-canvas: always capture the composited screen, never a raw DX surface
+// --headless-gl: run the OpenGL path for real, with no browser. Without it
+// wglCreateContext returns 0 here and the guest takes its no-3D-hardware path,
+// which is why Warcraft III and Quake II could only ever be driven through
+// tools/profile-web-frames.js and a real Chrome -- and why none of this file's
+// tracing (--trace-api, --count, --break, --handler-hist) reached them.
+// Opt-in: a large amount of existing headless behaviour is pinned to the
+// software path, so enabling it by default would silently change what many
+// runs mean. Needs the optional native deps; it says so rather than rendering
+// black if they are missing.
+const HEADLESS_GL = hasFlag('headless-gl');
+if (HEADLESS_GL) {
+  const _hgl = require('../lib/headless-gl');
+  // Say it at startup, not at the first wglCreateContext. A GL context that
+  // silently fails to exist looks exactly like an emulator bug for the rest of
+  // the run, and that misreading has cost whole sessions before.
+  if (!_hgl.available()) {
+    console.log(`[gl] --headless-gl requested but UNAVAILABLE: ${_hgl.unavailableReason()}`);
+  } else {
+    // Installed and loadable is NOT the same as usable: GLFW needs a display,
+    // and on macOS the display list empties when the screen sleeps. Asking now
+    // turns "the app puts up a DirectX error and spins" into one line here.
+    const noDisplay = _hgl.noDisplayReason();
+    console.log(noDisplay
+      ? `[gl] --headless-gl requested but UNUSABLE: ${noDisplay}`
+      : `[gl] headless WebGL enabled (@node-3d/webgl), ${_hgl.displayCount()} display(s)`);
+  }
+}
+// --dump-image=0xGUESTADDR:W:H:PITCH:BPP:FILE.png (repeatable, comma-separated)
+// Render an arbitrary guest memory region as an image at exit, through the
+// current DirectDraw palette for 8bpp. A blit bug is a disagreement between
+// two buffers -- decoder output vs the surface it was copied into -- and only
+// one of them is a DX surface that --png can already show. A hexdump cannot
+// answer "is this one sheared too"; a picture can.
+const DUMP_IMAGE = getArg('dump-image', null);
+// --dx-raw-index: for an 8bpp DX surface, write the raw palette indices as
+// greyscale instead of looking them up in the colour table. An all-black
+// capture then tells you which of the two things is wrong: nothing there to
+// draw, or art sitting under a colour table that is still black.
+const DX_RAW_INDEX = hasFlag('dx-raw-index');
+// --dx-slot=N: capture this DirectDraw surface instead of the one the content
+// heuristic picks. The heuristic prefers an offscreen surface whose colour
+// count dwarfs the primary's, which is right for a game that composes into a
+// back buffer and wrong for a 3D app whose texture atlas is more colourful
+// than its rendered frame — every Organic Art screensaver captures its leaf
+// sheet that way and reads as "renders a texture, not a scene". --dx-surfaces
+// prints the slot numbers to choose from.
+const DX_SLOT = getArg('dx-slot', null);
+const VIDEO_OUT = getArg('video', null); // --video=out.webm: record deterministic renderer frames through ffmpeg
+const VIDEO_FPS = parseFloat(getArg('video-fps', '30')); // --video-fps=N: playback rate; one frame is captured per batch
+const VIDEO_START_BATCH = Math.max(0, parseInt(getArg('video-start-batch', '0'), 10) || 0); // --video-start-batch=N: skip setup batches before capture
+const FFMPEG_PATH = getArg('ffmpeg', 'ffmpeg'); // --ffmpeg=FILE: ffmpeg executable used by --video
+const INPUT_SPEC = getArg('input', null); // --input=batch:msg:wParam[:lParam],...  e.g. --input=50:0x111:11
+const SEED_WINDOW = getArg('seed-window', null); // --seed-window=TITLE[|TITLE...]: add foreign top-level windows for shell tests
+const EXTRA_ARGS = getArg('args', (APP_ENTRY && APP_ENTRY.args) || null); // --args="-quick -fullscreen": extra cmdline args appended after exe name
+const AUDIO_OUT = getArg('audio-out', null); // --audio-out=file.pcm: write raw PCM to file
+// --audio-out-max=N: stop writing --audio-out after N bytes (the byte count
+// keeps running). The headless clock is batch-driven, so a fast app can render
+// thousands of guest seconds of PCM in a few wall seconds: Tile World wrote
+// 663 MB in 2 s of coop, and a 15 s sweep run filled the disk before its PNG.
+const AUDIO_OUT_MAX = parseInt(getArg('audio-out-max', '0'), 10) || 0;
+const AUDIO_EXIT_BYTES = parseInt(getArg('audio-exit-bytes', '0'), 10) || 0; // --audio-exit-bytes=N: stop once captured PCM reaches N bytes
+const THREAD_SLICES = parseInt(getArg('thread-slices', '4')); // --thread-slices=N: worker slices per main batch (default 4; raise for compute-heavy audio decode)
+const WORKER_THREADS = hasFlag('threads'); // --threads: run each guest thread in a real OS thread (node worker_threads) instead of the cooperative scheduler
+const FORCE_COOPERATIVE_THREADS = hasFlag('no-threads'); // --no-threads: explicitly select the default cooperative scheduler for A/B commands
+if (WORKER_THREADS && FORCE_COOPERATIVE_THREADS) {
+  console.error('error: --threads and --no-threads are mutually exclusive');
+  process.exit(2);
+}
+const THREAD_BATCH_SIZE_ARG = parseInt(getArg('thread-batch-size', '0'), 10) || 0; // --thread-batch-size=N: steps per worker-thread slice with --threads (default: BATCH_SIZE, min 1000 -- the browser's main:worker parity)
+const CS_STEAL_AFTER = parseInt(getArg('cs-steal-after', '0'), 10) || 0; // --cs-steal-after=N: fruitless EnterCriticalSection rounds before taking the section by force (0 = WAT default; huge = never, to tell "waiting forever" from "took it")
+const THREADS_SERIAL = hasFlag('threads-serial'); // --threads-serial: with --threads, never run two guest threads at once (splits "race" from "wrong per-thread state")
+const ESP_AUDIT = hasFlag('esp-audit'); // --esp-audit: with --threads, check every handler's stdcall epilogue (4*(nargs+1)) on the thread that actually ran it
+const RPC_CENSUS = hasFlag('rpc-census'); // --rpc-census: with --threads, per-thread histogram of brokered host imports (a blocking one stops that thread until the main thread answers)
+// Module scope so every exit path can terminate the threads: a live worker keeps
+// node alive, so a run that ends — cleanly or by throwing — would otherwise hang
+// instead of reporting.
+let workerThreadHost = null;
+let closeD3DRender = null;
+// --wait-slices=N: worker slices per batch while the MAIN thread is parked in a
+// blocking wait a worker has to satisfy. Nothing else can run then, so this is
+// much larger than THREAD_SLICES; set it to THREAD_SLICES to turn the boost off.
+const WAIT_SLICES = parseInt(getArg('wait-slices', '64'));
+
+// Default is to compile from src/*.wat on every launch, so an edit is always
+// picked up. --no-build is honored (see main()): it loads WASM_PATH as-is, and
+// that file is whatever the last build left behind — so a --no-build run after
+// editing WAT silently measures the OLD module. Use it to pin one build across
+// several runs, never to check whether an edit worked.
+
+const hex = v => '0x' + (v >>> 0).toString(16).padStart(8, '0');
+// Guest thread ids are $current_thread_id: main is 1, a spawned thread is tid+1.
+// Printing "T0" for main reads as a thread that does not exist, so name it.
+const threadName = id => (((id >>> 0) === 1) ? 'main' : `T${(id >>> 0) - 1}`);
+
+// Win16 module ids, as assigned by $win16_module_id in src/08c-ne-loader.wat.
+// Index 0 is "the loader could not identify the module", which is a real state
+// worth naming rather than a gap.
+const WIN16_MODULES = [
+  '<unresolved>', 'KERNEL', 'USER', 'GDI', 'KEYBOARD',
+  'SOUND', 'SHELL', 'MMSYSTEM', 'COMMDLG', 'CARDS', 'DDEML',
+];
+let win16Ordinals;
+// "KERNEL.91 INITTASK" from (1, 91). The map is generated from the real
+// modules' export tables by tools/gen_win16_ordinals.js; a missing entry means
+// the ordinal is genuinely not exported under a name, so say so rather than
+// leave the caller guessing whether the lookup or the export was absent.
+function win16ApiName(moduleId, ordinal) {
+  const mod = WIN16_MODULES[moduleId] || `<module ${moduleId}>`;
+  if (win16Ordinals === undefined) {
+    try {
+      win16Ordinals = require(path.join(__dirname, '..', 'src', 'win16-ordinals.generated.json'));
+    } catch (_) { win16Ordinals = null; }
+  }
+  const name = win16Ordinals?.modules?.[mod]?.ordinals?.[String(ordinal)];
+  return `${mod}.${ordinal}${name ? ' ' + name : ' (no exported name)'}`;
+}
+
+// The patch table itself lives in lib/app-profiles.js, shared with the browser
+// host; only the CLI's env-var opt-in filter is here.
+function applyExeCompatibilityPatches(exeName, exports, memoryBuffer) {
+  applyProfilePatches(exeName, exports, memoryBuffer, {
+    skip: process.env.WA_SKIP_EXE_COMPAT_PATCHES === '1',
+    enabledKeys: process.env.WA_EXE_COMPAT_PATCHES
+      ? new Set(process.env.WA_EXE_COMPAT_PATCHES.split(',').map(s => s.trim()).filter(Boolean))
+      : null,
+  });
+}
+
+// Module-relative address syntax: `module.dll+0xVA` or `module.exe+0xVA` resolves
+// to runtime VA (loadAddr - origBase + VA) after DLLs load. Plain `0xVA` stays as-is.
+// `moduleBases` is populated after loadDlls(); resolveAddr() called via deferred
+// re-parse below.
+const moduleBases = {}; // name(lowercase, no .dll/.exe) → { loadAddr, origBase }
+function resolveAddr(spec) {
+  const s = String(spec).trim();
+  const m = s.match(/^([A-Za-z0-9_.]+?)(?:\.(?:dll|exe))?\s*\+\s*(0x[0-9a-fA-F]+)$/);
+  if (!m) return parseInt(s, 16) >>> 0;
+  const key = m[1].toLowerCase();
+  const va = parseInt(m[2], 16) >>> 0;
+  const mod = moduleBases[key];
+  if (!mod) {
+    console.error(`[resolveAddr] unknown module '${m[1]}' in spec '${spec}'. Known: ${Object.keys(moduleBases).join(',') || '(none yet)'}`);
+    return 0;
+  }
+  return ((va - mod.origBase + mod.loadAddr) >>> 0);
+}
+function resolveAddrList(spec) {
+  return spec ? spec.split(',').map(resolveAddr).filter(v => v !== 0) : [];
+}
+// The inverse, for printing. A crash dump full of bare runtime VAs is a dump
+// nobody can act on without first grepping the log for load lines and doing
+// the subtraction by hand -- and getting that wrong reads as a plausible
+// address in the wrong module. `exe` is skipped as a name because every
+// module key maps to it as well.
+function describeAddr(va) {
+  va = va >>> 0;
+  const mods = Object.entries(moduleBases)
+    .filter(([k]) => k !== 'exe')
+    .map(([name, m]) => ({ name, base: m.loadAddr >>> 0, orig: m.origBase >>> 0 }))
+    .sort((a, b) => a.base - b.base);
+  for (let i = 0; i < mods.length; i++) {
+    if (va < mods[i].base) continue;
+    // Bound by the next module's base; the last one gets a 16 MB cap so an
+    // address far above everything is reported as unattributed, not smeared
+    // onto whichever module happens to have loaded last.
+    const end = i + 1 < mods.length ? mods[i + 1].base : mods[i].base + 0x1000000;
+    if (va >= end) continue;
+    const off = (va - mods[i].base + mods[i].orig) >>> 0;
+    return `${hex(va)} (${mods[i].name}+${hex(off)})`;
+  }
+  return hex(va);
+}
+
+const breakAddrs = BREAKPOINT ? BREAKPOINT.split(',').map(s => parseInt(s, 16)) : []; // re-resolved post-DLL-load if any spec is module-relative
+if (breakAddrs.length > 1) {
+  BATCH_SIZE = 1; // WASM set_bp holds only one addr; JS check must see every block
+}
+const traceAtAddrs = TRACE_AT ? TRACE_AT.split(',').map(s => parseInt(s, 16) >>> 0) : [];
+let traceAtAddr = traceAtAddrs[0] || 0; // re-set after deferred resolve
+if (traceAtAddrs.length > 1) {
+  BATCH_SIZE = 1;
+}
+// --watch / --watch-byte / --watch-word can be comma-separated (multi-addr fan-out via JS)
+const parseWatchSpec = (spec) => spec ? spec.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0) : [];
+const watchAddrsArg = parseWatchSpec(WATCH_SPEC).concat(parseWatchSpec(WATCH_BYTE)).concat(parseWatchSpec(WATCH_WORD));
+if (watchAddrsArg.length > 1) {
+  BATCH_SIZE = 1;
+}
+function deferredResolveAddrs() {
+  // Re-parse all addr specs that may contain `module+0xVA`. Call after loadDlls.
+  if (BREAKPOINT && /\+/.test(BREAKPOINT)) {
+    const r = resolveAddrList(BREAKPOINT);
+    breakAddrs.length = 0; r.forEach(v => breakAddrs.push(v));
+  }
+  if (TRACE_AT && /\+/.test(TRACE_AT)) {
+    const r = resolveAddrList(TRACE_AT);
+    traceAtAddrs.length = 0; r.forEach(v => traceAtAddrs.push(v));
+    traceAtAddr = traceAtAddrs[0] || 0;
+  }
+  if (COUNT_SPEC && /\+/.test(COUNT_SPEC)) {
+    const r = resolveAddrList(COUNT_SPEC);
+    countAddrs.length = 0; r.forEach(v => countAddrs.push(v));
+  }
+  if (TRACE_AT_DUMP && /\+/.test(TRACE_AT_DUMP)) {
+    for (const d of traceAtDumps) {
+      if (d.spec && /\+/.test(d.spec)) d.addr = resolveAddr(d.spec) >>> 0;
+    }
+  }
+  if (TRACE_EIP_RANGE && /\+/.test(TRACE_EIP_RANGE)) {
+    parseTraceEipRange(TRACE_EIP_RANGE);
+  }
+}
+const breakThreadFilter = BREAK_THREAD ? parseInt(BREAK_THREAD.replace(/^T/i, ''), 10) : null;
+let traceAtHits = 0;
+const traceAtDumps = TRACE_AT_DUMP ? TRACE_AT_DUMP.split(',').map(s => {
+  const [a, l] = s.split(':');
+  const addr = /\+/.test(a) ? 0 : (parseInt(a, 16) >>> 0); // resolved later if module-relative
+  return { addr, spec: a, len: parseInt(l) || 64, prev: null };
+}) : [];
+// `expr[:len]`, where a leading `*` dereferences (read the dword at the
+// computed address and use that as the address) and `len` of `s` reads a
+// NUL-terminated ASCII string. Stack arguments are pointers, so without those
+// two forms this flag can only ever print the pointer, never the string or
+// struct it names: `*esp+4:s` is "the filename this call was given".
+const traceAtMem = TRACE_AT_MEM ? TRACE_AT_MEM.split(',').map(s => {
+  // The length follows the LAST colon: a Win16 far expression has its own
+  // (es:esi-2:64 is es:esi-2 for 64 bytes).
+  const cut = s.lastIndexOf(':');
+  const [expr, l] = cut > 0 && /^(\d+|s)$/i.test(s.slice(cut + 1).trim())
+    ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];
+  const str = /^s$/i.test((l || '').trim());
+  return { expr: (expr || '').trim(), len: str ? 0 : (parseInt(l) || 4), str };
+}).filter(d => d.expr) : [];
+const traceEipDumps = TRACE_EIP_DUMP ? TRACE_EIP_DUMP.split(',').map(s => {
+  const [a, l] = s.split(':');
+  return { addr: parseInt(a, 16) >>> 0, len: parseInt(l) || 32 };
+}) : [];
+const showCStringAddrs = SHOW_CSTRING ? SHOW_CSTRING.split(',').map(s => parseInt(s, 16) >>> 0) : [];
+const breakApis = BREAK_API ? BREAK_API.split(',') : [];
+const skipAddrs = SKIP_SPEC ? SKIP_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+const countAddrs = COUNT_SPEC ? COUNT_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+if (countAddrs.length > 16) { console.error('--count supports max 16 addresses'); process.exit(1); }
+
+// --trace-esp=LO[-HI]: parse hex range. Empty string ("--trace-esp") = whole address space.
+let traceEspLo = 0, traceEspHi = 0, traceEspOn = false;
+if (TRACE_ESP !== null) {
+  traceEspOn = true;
+  if (TRACE_ESP) {
+    const parts = TRACE_ESP.split('-');
+    traceEspLo = parseInt(parts[0], 16) >>> 0;
+    traceEspHi = parts[1] ? (parseInt(parts[1], 16) >>> 0) : 0;
+  }
+}
+
+// --trace-eip-range=LO-HI: split on the LAST `-` so module+0xVA-module+0xVA parses
+// (each side may itself contain no dash). Empty "--trace-eip-range" = whole space.
+// Module-relative specs are gated until deferredResolveAddrs() succeeds — otherwise
+// pre-DLL-load batches would fire against an unresolved 0,0 range (= match-all).
+let traceEipLo = 0, traceEipHi = 0, traceEipOn = false, traceEipArmed = false;
+const traceEipModuleRel = TRACE_EIP_RANGE && /\+/.test(TRACE_EIP_RANGE);
+function parseTraceEipRange(spec) {
+  if (!spec) return;
+  const dash = spec.lastIndexOf('-');
+  const loSpec = dash > 0 ? spec.slice(0, dash) : spec;
+  const hiSpec = dash > 0 ? spec.slice(dash + 1) : '';
+  traceEipLo = resolveAddr(loSpec) >>> 0;
+  traceEipHi = hiSpec ? (resolveAddr(hiSpec) >>> 0) : 0;
+  // Resolution succeeded if either bound is non-zero, OR no module prefix at all
+  // (caller passed bare hex / empty for match-all).
+  if (!/\+/.test(spec) || traceEipLo !== 0 || traceEipHi !== 0) traceEipArmed = true;
+}
+if (TRACE_EIP_RANGE !== null) {
+  traceEipOn = true;
+  parseTraceEipRange(TRACE_EIP_RANGE);
+}
+
+// One line describing what every thread is doing right now. Deliberately
+// terse: the value is in watching the pattern change — or fail to. A stalled
+// system prints the same short line, a healthy one churns.
+//
+//   [sched] b=48 M:run@0x4dd2af  T1:run@0x4465ed  T2:wait(0xe0005)@0x44b3f8
+//
+// The change signature omits addresses, so an EIP moving within the same state
+// does not print a line every batch.
+function describeSchedule(instance, threadManager) {
+  const hex = v => '0x' + ((v >>> 0).toString(16));
+  const stateOf = (e, thread) => {
+    if (thread && thread.state !== 'active') return thread.state;
+    if (thread && thread.suspendCount > 0) return 'susp';
+    const yr = e.get_yield_reason ? (e.get_yield_reason() | 0) : 0;
+    if (yr === 1) return `wait(${hex(e.get_wait_handle ? e.get_wait_handle() : 0)})`;
+    if (yr === 2) return 'exited';
+    if (yr === 7) return 'msgwait';
+    if (yr === 8) return 'netwait';
+    if (thread && thread.sleepUntil && Date.now() < thread.sleepUntil) return 'sleep';
+    return 'run';
+  };
+  const parts = [];
+  const sig = [];
+  const mainState = stateOf(instance.exports, null);
+  parts.push(`M:${mainState}@${hex(instance.exports.get_eip())}`);
+  sig.push(`M:${mainState}`);
+  if (threadManager && threadManager.threads) {
+    for (const [, t] of threadManager.threads) {
+      const e = t.instance ? t.instance.exports : null;
+      if (!e) {
+        // Worker-backed (--threads): the registers are in another OS thread, so
+        // the state comes from what its last slice reported. Skipping these would
+        // make a threaded hang look like a system with no threads in it.
+        if (!t.link) continue;
+        const yr = t.lastYield | 0;
+        const st = t.state !== 'active' ? t.state
+          : t.suspendCount > 0 ? 'susp'
+          : yr === 1 ? 'wait'
+          : yr === 2 ? 'exited'
+          : yr === 7 ? 'msgwait'
+          : yr === 8 ? 'netwait'
+          : (t.sleepUntil && Date.now() < t.sleepUntil) ? 'sleep'
+          : t.inFlight ? 'run' : 'idle';
+        parts.push(`T${t.tid}:${st}@${hex(t.lastEip || 0)}`);
+        sig.push(`T${t.tid}:${st}`);
+        continue;
+      }
+      const st = stateOf(e, t);
+      parts.push(`T${t.tid}:${st}@${hex(e.get_eip())}`);
+      sig.push(`T${t.tid}:${st}`);
+    }
+  }
+  return { text: parts.join('  '), sig: sig.join('|') };
+}
+
+function buildHandlerNameList() {
+  const names = [];
+  try {
+    const source = fs.readFileSync(path.join(SRC_DIR, '02-thread-table.wat'), 'utf8');
+    for (const line of source.split(/\r?\n/)) {
+      const match = line.match(/^\s*(\$[^\s()]+).*;;\s*(\d+)(?::\s*(.*))?$/);
+      if (!match) continue;
+      const id = parseInt(match[2], 10);
+      if (!Number.isFinite(id)) continue;
+      names[id] = match[3] ? `${match[1]}: ${match[3].trim()}` : match[1];
+    }
+  } catch (_) {}
+  return names;
+}
+
+async function main() {
+  return withCliFailureCleanup(async onFailure => {
+  // Fail closed before compilation, PE loading or any VFS mutation.
+  const verifiedAssetFiles = ASSET_ENTRY && ASSET_ENTRY.localManifestIntegrity
+    ? getAssetFiles(ASSET_ENTRY) : null;
+  const verifiedBytesByPath = new Map(verifiedAssetFiles
+    ? [...verifiedAssetFiles.verifiedMedia.byUrl].map(([url, bytes]) => [canonicalPath(appAsset(url)), bytes]) : []);
+  const readAssetBytes = hostPath => verifiedBytesByPath.get(canonicalPath(hostPath)) || fs.readFileSync(hostPath);
+  let wasmBytes;
+  // A PIN THAT CANNOT BE HONOURED IS FATAL. This used to fall through to the
+  // `else` and compile from src/, so `--wasm=/typo/path.wasm` (or a stale
+  // $WINE_ASSEMBLY_WASM) ran the CANONICAL build and reported a perfectly normal
+  // verdict about a module nobody asked for. Under tools/watx-matrix.js both
+  // columns then compile the same source and agree with each other by
+  // construction — a green differential that measured one compiler twice.
+  if (WASM_PINNED && !fs.existsSync(WASM_PATH)) {
+    console.error(`run.js: pinned wasm artifact does not exist: ${WASM_PATH}`);
+    console.error(`run.js: refusing to silently compile from src/ instead — ` +
+      `${argHas('wasm') ? '--wasm=' : '$WINE_ASSEMBLY_WASM'} names which module is under test.`);
+    process.exit(2);
+  }
+  if (NO_BUILD && fs.existsSync(WASM_PATH)) {
+    wasmBytes = fs.readFileSync(WASM_PATH);
+  } else {
+    // The canonical compiler is WATX (lib/compile-wat.js's compileWat was retired
+    // for full-tree builds; the src tree now spells region-symbolic operands that
+    // legacy silently lowers to `unreachable`). tools/watx-closure.js owns the
+    // closure and the option set so this path cannot drift from tools/build.sh —
+    // tailCalls:true is the same artifact build.sh writes to build/wine-assembly.wasm.
+    const { watxSourceClosure, compileClosure } = require('../tools/watx-closure.js');
+    const r = compileClosure(watxSourceClosure(), { tailCalls: true });
+    if (!r || !r.success || !r.wasmBinary) {
+      const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
+      console.error(`run.js: WATX compile failed${where}: ` +
+        String((r && (r.error || r.message)) || 'compile() returned no binary'));
+      process.exit(2);
+    }
+    // Stamp the layout fingerprint the same way tools/build-compile-wat.js
+    // does, so this path is checked by the same rule as a prebuilt artifact
+    // rather than being the one door the check does not cover.
+    const { layoutHash, appendSection } = require('../tools/region-layout-hash.js');
+    wasmBytes = appendSection(Buffer.from(r.wasmBinary), layoutHash(r.regions.regions));
+  }
+  const exeBytes = verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
+
+  // Where a DLL the guest asks for at run time comes from: what the app mounted
+  // in the VFS first, then the directories this process can see. The browser
+  // answers the same question with fetch(); the yield pumps that ask it are
+  // shared (lib/process-boot.js). COM used to look only at the filesystem, so a
+  // plugin sitting in the VFS was "not found" for CoCreateInstance and present
+  // for LoadLibrary.
+  const findRuntimeDllBytes = (fileName, fullName) => {
+    const fromVfs = findVfsDllBytes(ctx.vfs, fileName, fullName);
+    if (fromVfs) return fromVfs;
+    for (const dir of [
+      path.join(__dirname, 'binaries/dlls'),
+      path.dirname(EXE_PATH),
+      path.join(path.dirname(EXE_PATH), 'dlls'),
+      path.join(path.dirname(EXE_PATH), 'plugins'),
+    ]) {
+      const sp = findHostFileCi(dir, fileName);
+      if (sp) return new Uint8Array(readAssetBytes(sp));
+    }
+    return null;
+  };
+
+  const logs = [];
+  // Drain by walking forward, never with shift(). shift() moves the whole
+  // backing store down one slot, so draining N buffered lines costs O(N^2) --
+  // and N is not small: every Win32 call buffers an [API] line unless
+  // --quiet-api, and Runenlegen alone emits 12.9M of them (8.6M SelectObject +
+  // 4.3M BitBlt) composing its sprite sheets. Worse, the drain runs BETWEEN
+  // batches, so a run stuck in it never reaches the --max-seconds check: two
+  // orphaned simcity2000_demo runs outlived both `timeout 180` and
+  // --max-seconds=90 by 18.8 hours, burning 17.6 CPU-hours between them, with
+  // 99.4% of samples in Builtin_ArrayShift and not one wasm frame.
+  const flushLogs = () => {
+    for (let i = 0; i < logs.length; i++) console.log(logs[i]);
+    logs.length = 0;
+  };
+  onFailure(() => {
+    traceGateBatch = -1; // failure diagnostics are never hidden by a trace window
+    flushLogs();
+  });
+  let stopped = false;
+  let hostExitRequested = false;
+  // Batches actually executed. Not the same as MAX_BATCHES once --max-seconds
+  // or an early exit ends the loop, and it is the throughput number a
+  // fixed-duration benchmark is asking for.
+  let batchesRun = 0;
+  let netWaits = 0;   // consecutive net_wait yields, reset by any progress
+  let netWaitSince = 0;   // wall-clock ms of the first of them
+  let apiCount = 0;
+  // Set with h.log below. When on, the main instance counts its own Win32
+  // calls ($api_calls) and h.log sees only non-API log lines, so the total
+  // is the sum -- the same number the per-call log used to produce.
+  let apiLogOff = false;
+  // The WAT counter ($api_calls) runs only while the log is off. apiWatSeen is
+  // the part of it already folded into apiCount when --trace-api-paused
+  // switched the log on, so toggling never counts a call twice.
+  let apiWatSeen = 0;
+  const apiTotal = () => (apiLogOff && instance && instance.exports.get_api_calls)
+    ? apiCount + ((instance.exports.get_api_calls() >>> 0) - apiWatSeen) : apiCount;
+  const apiCounts = TRACE_API_COUNTS ? new Map() : null;
+  let lastApiName = null;  // track last API name for return value correlation
+  let lastApiEntry = null; // typed metadata for last API (for return formatting)
+  let lastApiArgs = null;  // raw dword args captured at entry, used for out-param dump on return
+  let lastTreeItemTrace = null;
+  let lastApiEsp = 0;      // ESP at API entry, for --esp-delta audit
+  let pendingComApiId = -1; // COM api_id from 0xC0DE0000 marker emitted just BEFORE the '<ord>' name log
+  let pendingWin16 = null;  // words following the 0xCA16A9F1 Win16 dispatch marker
+  let pendingFpu = null;    // words following the 0xCAF00001 --trace-fpu marker
+  let pendingCodeWrite = null; // words following the 0xCAC0DE01 --trace-code-writes marker
+  let pendingCodeRetire = null; // words following the 0xCAC0DE02 retire marker
+  let pendingCodeMiss = null; // words following the 0xCAC0DE03 false-invalidation marker
+  const codeWriteStats = { events: 0, dropped: 0, byEip: new Map(), byPage: new Map(),
+    retires: {}, overlapPairs: new Map(), overlapLogged: 0,
+    misses: 0, missByEip: new Map(), missByPage: new Map() };
+  let pendingSyncBail = null; // words following the 0xCADE5000 abandoned-wndproc marker
+  let dedupLast = null;    // {line, count} for --trace-api-dedup
+  const flushDedup = () => {
+    if (dedupLast && dedupLast.count > 1) logs.push(`  (x${dedupLast.count})`);
+    dedupLast = null;
+  };
+  onFailure(flushDedup);
+  const pushApi = line => {
+    if (!TRACE_API_DEDUP) { logs.push(line); return; }
+    if (dedupLast && dedupLast.line === line) { dedupLast.count++; return; }
+    flushDedup();
+    logs.push(line);
+    dedupLast = { line, count: 1 };
+  };
+  let inputEvent = null;   // pending input event to inject via check_input
+  let inputQueue = null;   // button ID sequence to inject
+  let crossThreadMsgs = []; // messages from worker threads to deliver via check_input
+
+  // Parse --input=batch:msg:wParam[:lParam],... into scheduled events.
+  // Also supports UI-level events that go through renderer handlers:
+  //   B:focus-find          — set focus on find dialog edit ctrl
+  //   B:keypress:CODE       — call renderer.handleKeyPress(CODE)
+  //   B:ime-start / ime-update:TEXT / ime-commit:TEXT — composition bridge
+  //   B:keydown:VK          — call renderer.handleKeyDown(VK)
+  //   B:hit-counts[:LABEL]  — print every --count total at this batch; two bracket a fixed window
+  //   B:di-keydown:VK      — set DirectInput/GetAsyncKeyState key-down state without WM_KEYDOWN
+  //   B:di-keyup:VK         — clear DirectInput/GetAsyncKeyState key-down state without WM_KEYUP
+  //   B:di-mousedown[:BTN]   — press DirectInput mouse button 1, 2 or 3 (middle) without moving the cursor
+  //   B:di-mouseup[:BTN]     — release DirectInput mouse button 1, 2 or 3 without moving the cursor
+  //   B:di-wheel:DELTA       — DirectInput wheel motion (lZ), WHEEL_DELTA units: 120 per notch away, -120 toward
+  //   B:click:X:Y           — handleMouseDown+Up at canvas (X,Y)
+  //   B:mousedown:X:Y       — handleMouseDown at canvas (X,Y)
+  //   B:mouseup:X:Y         — handleMouseUp at canvas (X,Y)
+  //   B:mousemove:X:Y       — handleMouseMove at canvas (X,Y)
+  //   B:relmousemove:DX:DY[:STEPS]  — feed a pointer-lock relative delta,
+  //     optionally spread over STEPS consecutive batches. Note the unit:
+  //     a batch, which on a fast-looping guest can be far shorter than one
+  //     of its frames -- and a DirectInput poll happens per frame, so steps
+  //     finer than a frame coalesce back into the lump they were splitting.
+  //     When the guest presents slowly, pace the steps on the wall clock
+  //     instead, one command per step.
+  //     A DirectInput game reads the whole delta accumulated since its last
+  //     poll, and headless frames are seconds apart, so one of these arrives
+  //     as a single lump no hand could produce. A 2D menu clamps it at the
+  //     screen edge; a 3D scene feeds it to a camera or a terrain pick and a
+  //     value like -2000 can send the game into an unbounded world query it
+  //     never returns from (measured on Black & White 2's land picker, see
+  //     docs/re-notes/black-white-2.md). Move in small steps, and photograph
+  //     a small nudge before trusting a big one.
+  //   B:wheel:X:Y:DELTA     — handleWheel at canvas (X,Y)
+  //   B:dump-find           — log current find dialog edit state
+  //   B:dump-main-edit      — log main edit text
+  //   B:focus-main-window   — set WAT focus to the top-level main window
+  //   B:dump-main-edit-state[:LABEL] — log main edit text/cursor/selection/scroll
+  //   B:dump-focus-text[:LABEL] — log focused hwnd text via WAT EditState or WM_GETTEXT
+  //   B:dump-focus-state[:LABEL] — log focused hwnd text, selection, and scroll state
+  //   B:dump-focus-unicode[:LABEL] — log focused RichEdit text via EM_GETTEXTEX/UTF-16
+  //   B:dump-print-state[:LABEL] — log printer lifecycle and message-loop state
+  //   B:formatrange-probe:WIDTH_TWIPS:HEIGHT_TWIPS[:LABEL] — paginate focused RichEdit
+  //   B:main-resize:WIDTH:HEIGHT — resize the top-level main window and deliver WM_SIZE
+  //   B:set-focus-text-b64:BASE64[:LABEL] — WM_SETTEXT decoded Latin-1 on the focused control
+  //   B:set-focus-selection:START:END[:LABEL] — set focused edit/RichEdit selection through EM_SETSEL
+  //   B:send-focus-message:MSG:WPARAM:LPARAM[:LABEL] — synchronously send a message to focus
+  //   B:dump-control-state:ID[:LABEL] — log a visible control's state without changing focus
+  //   B:dump-combobox:ID[:LABEL] — log a visible combobox's CB_GETCOUNT/CB_GETLBTEXT rows
+  //   B:dump-clipboard[:LABEL] — log supported clipboard format count and RTF snippet
+  //   B:seed-cf-dib[:LABEL] — publish a 32x24 checker CF_DIB and paste it into focus
+  //   B:dump-focus-charformat[:LABEL] — log focused hwnd EM_GETCHARFORMAT state
+  //   B:set-focus-charformat-color:COLOR[:LABEL] — EM_SETCHARFORMAT color on focused hwnd
+  //   B:set-focus-charformat-size:TWIPS[:LABEL] — EM_SETCHARFORMAT size on focused hwnd
+  //   B:set-focus-charformat-face:NAME[:TWIPS][:LABEL] — EM_SETCHARFORMAT face (and size) on focused hwnd
+  //   B:dump-focus-paraformat[:LABEL] — log focused hwnd EM_GETPARAFORMAT state
+  //   B:set-focus-paraformat-align:ALIGN[:LABEL] — EM_SETPARAFORMAT alignment on focused hwnd
+  //   B:set-focus-paraformat-basic:NUMBERING:START:RIGHT:OFFSET:TAB[:LABEL]
+  //       — EM_SETPARAFORMAT basic paragraph fields on focused hwnd
+  //   B:menu-edit-command:ID[:LABEL] — invoke exported WAT menu edit-command bridge
+  //   B:wheel-main-edit:DELTA — send WM_MOUSEWHEEL to the main edit
+  //   B:drag-main-edit:X1:Y1:X2:Y2 — mouse-drag inside the main edit
+  //   B:dlg-cmd:CMD — send WM_COMMAND wParam=CMD to the topmost visible dialog
+  //   B:dlg-post-cmd:CMD — post WM_COMMAND to the topmost visible dialog
+  //   B:dlg-input-cmd:CMD — deliver WM_COMMAND through check_input to that dialog
+  //   B:dlg-input-click:CTRL_ID — deliver an asynchronous BN_CLICKED WM_COMMAND
+  //   B:dlg-click:CTRL_ID — click a control by id in the topmost visible dialog
+  //   B:dlg-send:CTRL_ID:MSG:WPARAM:LPARAM — send a message to a dialog control by id
+  //   B:dlg-set-edit:CTRL_ID:TEXT — set an Edit control by id in the topmost visible dialog
+  //   B:dlg-dump[:LABEL] — log controls in the topmost visible dialog
+  //   B:dump-children:HWND[:LABEL] — log WAT child table entries for HWND
+  //   B:dump-tree[:LABEL] — log WAT TreeView item handles, hierarchy, state, and text
+  //   B:dump-listbox[:LABEL] — log WAT ListBox rows and selection
+  //   B:listbox-setsel:INDEX:SELECTED — set a row through LB_SETSEL
+  //   B:dump-listview[:LABEL] — log WAT ListView columns and cell text
+  //   B:dump-toolbar[:LABEL] — log ToolbarWindow32 TBBUTTON records/rects
+  //   B:toolbar-click:CMD[:LABEL] — click the toolbar button with command id
+  //     CMD at its current TB_GETITEMRECT centre. Prefer this over a literal
+  //     click:X:Y on a toolbar; a stale coordinate still lands on some other
+  //     control, so the button is never pressed and the run looks fine.
+  //   B:menu-dump[:LABEL] — log the currently-open WAT menu children
+  //   B:wave-in-feed:FRAMES[:RATE:AMPLITUDE] — feed synthetic sine PCM to waveIn
+  //   B:mixer-peak:BUS:VALUE[:HOLD_MS] — inject a 0..32767 mixer peak for visual tests
+  //   B:help-macro:HLP_FILE:MACRO — WinHelpA(HELP_COMMAND) a macro on a help file
+  //   B:vfs-export:FILENAME:PATH — write one virtual file to the host filesystem
+  //   B:vfs-import:FILENAME:PATH — load one host file into the virtual filesystem
+  //   B:assert-standard-scroll:AXIS:MIN_POS[:LABEL] — fail unless a visible standard bar reaches MIN_POS ("N%" = percent of page)
+  //   B:scroll-click:AXIS:PART[:HWND] — click a live scrollbar part (lo|hi|page-lo|page-hi|thumb)
+  //   B:scroll-drag:AXIS:DELTA[:HWND] — drag the live thumb DELTA px along the axis
+  //   B:dump-scrollbar:AXIS[:LABEL] — log a live scrollbar's screen strip rect and pos/page/range
+  //   B:wait-dlg-control:CTRL_ID[:LIMIT] — delay following events until a visible dialog has CTRL_ID
+  //   B:wait-focus-length:MIN_LENGTH[:LIMIT] — delay until focused text reaches MIN_LENGTH
+  //   B:wait-canvas-dark-pixels:MIN:MAX[:LIMIT] — delay until the repainted screen's near-black pixel count is in range
+  //   B:wait-vfs-file:LIMIT:PATH — delay until PATH exists in the guest VFS
+  //   B:sleep-ms:MS — wait real wall-clock time before continuing scheduled actions
+  //   B:set-batch-size:BLOCKS — change the main guest block budget for later batches
+  //   B:set-win16-trace:0|1 — toggle Win16 API tracing during a long run
+  //   B:wait-go[:LIMIT] — hold later events until the parent sends {t:'go'} over IPC (LIMIT in batches; default none)
+  //   B:call-func:ADDR[:A0:A1:A2:A3] — call a guest function through the WASM helper
+  //   B:read-dword:ADDR[:LABEL] — log a guest dword value
+  const scheduledInput = [];
+  // Parse "BATCH:kind:args" entries into scheduled events. Shared by the
+  // --input schedule and the --control live channel, which is why this is a
+  // function: the body below pushes straight into scheduledInput (100+ push
+  // sites predate the live channel) and the tail is spliced back off, so a
+  // caller gets exactly the events its own entries produced.
+  const parseInputEntries = (entries) => {
+    const first = scheduledInput.length;
+    for (const spec of entries) {
+      const parts = spec.split(':');
+      const batch = parseInt(parts[0]);
+      const kind = parts[1];
+      if (kind === 'focus-find' || kind === 'dump-find' || kind === 'dump-main-edit') {
+        scheduledInput.push({ batch, action: kind });
+      } else if (kind === 'focus-main-window') {
+        scheduledInput.push({ batch, action: kind });
+      } else if (kind === 'dump-main-edit-state') {
+        scheduledInput.push({ batch, action: kind, label: parts[2] || '' });
+      } else if (kind === 'wheel-main-edit') {
+        scheduledInput.push({ batch, action: kind, delta: parseInt(parts[2]) || 0 });
+      } else if (kind === 'drag-main-edit') {
+        scheduledInput.push({ batch, action: kind,
+          x1: parseInt(parts[2]), y1: parseInt(parts[3]),
+          x2: parseInt(parts[4]), y2: parseInt(parts[5]) });
+      } else if (kind === 'find-click') {
+        // B:find-click:CTRL_ID — click a find dialog button by ctrl id
+        // (1=Find Next, 2=Cancel, 0x411=Match case, 0x420=Up, 0x421=Down).
+        scheduledInput.push({ batch, action: 'find-click', ctrlId: parseInt(parts[2]) });
+      } else if (kind === 'dump-fr') {
+        // B:dump-fr — log current FINDREPLACE struct (Flags + lpstrFindWhat).
+        scheduledInput.push({ batch, action: 'dump-fr' });
+      } else if (kind === 'dump-mem') {
+        // B:dump-mem:0xADDR[:LEN] — hexdump guest memory at that batch.
+        scheduledInput.push({ batch, action: 'dump-mem',
+          arg: parts[2], arg2: parts[3] });
+      } else if (kind === 'heap-walk') {
+        // B:heap-walk:0xPTR — why GlobalLock/GlobalFree accept or refuse PTR.
+        scheduledInput.push({ batch, action: 'heap-walk', arg: parts[2] });
+      } else if (kind === 'tick-ms') {
+        // B:tick-ms:N — from this batch on, one batch is worth N ms of guest
+        // time (--tick-ms-per-batch, changed mid-run). For a run whose boot
+        // wants the fast default clock and whose later stage does not: a Bink
+        // video at 200ms/batch falls behind every frame and skips forever.
+        const ms = Number(parts[2]);
+        if (!Number.isFinite(ms) || ms <= 0) throw new Error(`tick-ms needs a positive ms value, got ${parts[2]}`);
+        scheduledInput.push({ batch, action: 'tick-ms', ms });
+      } else if (kind === 'slot-count') {
+        // B:slot-count[:LABEL] — log live WND_RECORDS slot count.
+        scheduledInput.push({ batch, action: 'slot-count', label: parts[2] || '' });
+      } else if (kind === 'dump-focus') {
+        // B:dump-focus[:LABEL] — log get_focus_hwnd + ctrl class/id.
+        scheduledInput.push({ batch, action: 'dump-focus', label: parts[2] || '' });
+      } else if (kind === 'dump-focus-text') {
+        scheduledInput.push({ batch, action: 'dump-focus-text', label: parts[2] || '' });
+      } else if (kind === 'dump-focus-state') {
+        scheduledInput.push({ batch, action: 'dump-focus-state', label: parts[2] || '' });
+      } else if (kind === 'dump-focus-unicode') {
+        scheduledInput.push({ batch, action: 'dump-focus-unicode', label: parts[2] || '' });
+      } else if (kind === 'set-focus-text-b64') {
+        scheduledInput.push({ batch, action: 'set-focus-text-b64',
+          text: Buffer.from(parts[2] || '', 'base64').toString('latin1'),
+          label: parts[3] || '' });
+      } else if (kind === 'dump-print-state') {
+        scheduledInput.push({ batch, action: 'dump-print-state', label: parts[2] || '' });
+      } else if (kind === 'formatrange-probe') {
+        scheduledInput.push({ batch, action: 'formatrange-probe',
+          width: parseInt(parts[2]) || 7200,
+          height: parseInt(parts[3]) || 14400,
+          label: parts[4] || '' });
+      } else if (kind === 'dump-control-state') {
+        scheduledInput.push({ batch, action: 'dump-control-state', ctrlId: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'dump-combobox') {
+        scheduledInput.push({ batch, action: 'dump-combobox', ctrlId: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'dump-clipboard') {
+        scheduledInput.push({ batch, action: 'dump-clipboard', label: parts[2] || '' });
+      } else if (kind === 'seed-cf-dib') {
+        scheduledInput.push({ batch, action: 'seed-cf-dib', label: parts[2] || '' });
+      } else if (kind === 'dump-focus-charformat') {
+        scheduledInput.push({ batch, action: 'dump-focus-charformat', label: parts[2] || '' });
+      } else if (kind === 'set-focus-selection') {
+        scheduledInput.push({
+          batch,
+          action: 'set-focus-selection',
+          start: parseInt(parts[2]) || 0,
+          end: parseInt(parts[3]) || 0,
+          label: parts[4] || '',
+        });
+      } else if (kind === 'send-focus-message') {
+        scheduledInput.push({
+          batch,
+          action: 'send-focus-message',
+          msg: parseInt(parts[2]) || 0,
+          wParam: parseInt(parts[3]) || 0,
+          lParam: parseInt(parts[4]) || 0,
+          label: parts[5] || '',
+        });
+      } else if (kind === 'set-focus-charformat-color') {
+        scheduledInput.push({ batch, action: 'set-focus-charformat-color',
+          color: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'set-focus-charformat-size') {
+        scheduledInput.push({ batch, action: 'set-focus-charformat-size',
+          twips: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'set-focus-charformat-face') {
+        // The face name carries spaces ("Times New Roman"), so the parts split
+        // is on ':' only and an optional size follows it.
+        scheduledInput.push({ batch, action: 'set-focus-charformat-face',
+          face: parts[2] || '', twips: parseInt(parts[3]) || 0, label: parts[4] || '' });
+      } else if (kind === 'dump-focus-paraformat') {
+        scheduledInput.push({ batch, action: 'dump-focus-paraformat', label: parts[2] || '' });
+      } else if (kind === 'set-focus-paraformat-align') {
+        scheduledInput.push({ batch, action: 'set-focus-paraformat-align',
+          align: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'set-focus-paraformat-basic') {
+        scheduledInput.push({ batch, action: 'set-focus-paraformat-basic',
+          numbering: parseInt(parts[2] || '0', 10),
+          start: parseInt(parts[3] || '0', 10),
+          right: parseInt(parts[4] || '0', 10),
+          offset: parseInt(parts[5] || '0', 10),
+          tab: parseInt(parts[6] || '0', 10),
+          label: parts[7] || '' });
+      } else if (kind === 'menu-edit-command') {
+        scheduledInput.push({ batch, action: 'menu-edit-command',
+          id: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'class-cmd') {
+        // B:class-cmd:CLASS:CMD — find first slot whose ctrl class == CLASS,
+        // then send WM_COMMAND wParam=CMD lParam=0. Used by dialog regression
+        // tests to drive OK/Cancel without a per-class hwnd export.
+        scheduledInput.push({ batch, action: 'class-cmd',
+          ctrlClass: parseInt(parts[2]), cmdId: parseInt(parts[3]) });
+      } else if (kind === 'dlg-cmd') {
+        scheduledInput.push({ batch, action: 'dlg-cmd', cmdId: parseInt(parts[2]) });
+      } else if (kind === 'dlg-post-cmd') {
+        scheduledInput.push({ batch, action: 'dlg-post-cmd', cmdId: parseInt(parts[2]) });
+      } else if (kind === 'dlg-input-cmd') {
+        scheduledInput.push({ batch, action: 'dlg-input-cmd', cmdId: parseInt(parts[2]) });
+      } else if (kind === 'dlg-input-click') {
+        scheduledInput.push({ batch, action: 'dlg-input-click', ctrlId: parseInt(parts[2]) });
+      } else if (kind === 'dlg-click') {
+        scheduledInput.push({ batch, action: 'dlg-click', ctrlId: parseInt(parts[2]) });
+      } else if (kind === 'ctrl-click') {
+        // B:ctrl-click:ID — find a control by ID anywhere and send a button click.
+        scheduledInput.push({ batch, action: 'ctrl-click', ctrlId: parseInt(parts[2]) });
+      } else if (kind === 'ctrl-cmd') {
+        // B:ctrl-cmd:ID — find a control by ID and send WM_COMMAND to its parent.
+        scheduledInput.push({ batch, action: 'ctrl-cmd', ctrlId: parseInt(parts[2]) });
+      } else if (kind === 'dlg-send') {
+        scheduledInput.push({ batch, action: 'dlg-send',
+          ctrlId: parseInt(parts[2]), msg: parseInt(parts[3]),
+          wParam: parseInt(parts[4]) || 0, lParam: parseInt(parts[5]) || 0 });
+      } else if (kind === 'dlg-set-edit') {
+        scheduledInput.push({ batch, action: 'dlg-set-edit',
+          ctrlId: parseInt(parts[2]), text: parts.slice(3).join(':') });
+      } else if (kind === 'dlg-dump') {
+        scheduledInput.push({ batch, action: 'dlg-dump', label: parts[2] || '' });
+      } else if (kind === 'dump-children') {
+        scheduledInput.push({ batch, action: 'dump-children', hwnd: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'hit-counts') {
+        // B:hit-counts[:label] — print every --count total at this batch.
+        // Two of them bracket a fixed batch window, so a rate read from the
+        // difference does not depend on when a control client asked.
+        scheduledInput.push({ batch, action: 'hit-counts', label: parts[2] || '' });
+      } else if (kind === 'dump-windows') {
+        scheduledInput.push({ batch, action: 'dump-windows', label: parts[2] || '' });
+      } else if (kind === 'dump-msgq') {
+        scheduledInput.push({ batch, action: 'dump-msgq', label: parts[2] || '' });
+      } else if (kind === 'dump-tree') {
+        scheduledInput.push({ batch, action: 'dump-tree', label: parts[2] || '' });
+      } else if (kind === 'dump-listbox') {
+        scheduledInput.push({ batch, action: 'dump-listbox', label: parts[2] || '' });
+      } else if (kind === 'listbox-setsel') {
+        scheduledInput.push({ batch, action: 'listbox-setsel', index: parseInt(parts[2]), selected: parseInt(parts[3]) !== 0 });
+      } else if (kind === 'dump-listview') {
+        scheduledInput.push({ batch, action: 'dump-listview', label: parts[2] || '' });
+      } else if (kind === 'dump-toolbar') {
+        scheduledInput.push({ batch, action: 'dump-toolbar', label: parts[2] || '' });
+      } else if (kind === 'toolbar-click') {
+        scheduledInput.push({ batch, action: 'toolbar-click', cmd: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'menu-dump') {
+        scheduledInput.push({ batch, action: 'menu-dump', label: parts[2] || '' });
+      } else if (kind === 'dlg-paint') {
+        scheduledInput.push({ batch, action: 'dlg-paint' });
+      } else if (kind === 'dlg-png') {
+        scheduledInput.push({ batch, action: 'dlg-png', path: parts.slice(2).join(':') });
+      } else if (kind === 'hwnd-png-pixels') {
+        scheduledInput.push({ batch, action: 'hwnd-png-pixels', hwnd: parseInt(parts[2]), path: parts.slice(3).join(':') });
+      } else if (kind === 'wait-title') {
+        scheduledInput.push({
+          batch,
+          action: 'wait-title',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          dumpStop: parts[4] === 'dump-stop',
+          label: parts[5] || '',
+          path: parts.slice(6).join(':'),
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-title-menu-open') {
+        // B:wait-title-menu-open:TITLE:LIMIT:VK[:LABEL]
+        // Wait for a visible window title, then synchronously open a menubar
+        // dropdown via Alt+VK before later same-batch menu actions run.
+        scheduledInput.push({
+          batch,
+          action: 'wait-title-menu-open',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          vk: parseInt(parts[4]) || 0,
+          label: parts[5] || '',
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-title-command') {
+        // B:wait-title-command:TITLE:LIMIT:COMMAND[:LABEL]
+        // Resolve the target HWND by its visible title before delivering
+        // WM_COMMAND. This avoids tests accidentally posting to HWND 0 while
+        // an application is still creating its main window.
+        scheduledInput.push({
+          batch,
+          action: 'wait-title-command',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          command: parseInt(parts[4]) || 0,
+          label: parts[5] || '',
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-title-snapshot') {
+        // B:wait-title-snapshot:TITLE:LIMIT:LABEL:PNG_PATH
+        // Wait for a window title, then dump the top dialog, write a raw
+        // canvas PNG, and stop before the next guest batch runs.
+        scheduledInput.push({
+          batch,
+          action: 'wait-title-snapshot',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          label: parts[4] || '',
+          path: parts.slice(5).join(':'),
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-title-windows-snapshot') {
+        // B:wait-title-windows-snapshot:TITLE:LIMIT:LABEL:PNG_PATH[:SETTLE]
+        // Wait for a visible window title, dump renderer window rows, write
+        // each back-canvas as PNG via pngjs pixels, then stop.
+        //
+        // A window becomes visible before the app has painted it: on Win98 a
+        // hidden window has no visible region, so everything drawn into its DC
+        // while hidden is discarded and the show is what *causes* the repaint.
+        // Winamp composes its whole skin while hidden, shows the player, and
+        // only then blits the composite again — capture at the instant the
+        // title appears and the back-canvas is still the COLOR_BTNFACE seed.
+        // SETTLE runs that many more batches after the match before capturing.
+        const settleTail = parts.length > 6 && /^\d+$/.test(parts[parts.length - 1]);
+        scheduledInput.push({
+          batch,
+          action: 'wait-title-windows-snapshot',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          label: parts[4] || '',
+          path: (settleTail ? parts.slice(5, -1) : parts.slice(5)).join(':'),
+          settle: settleTail ? parseInt(parts[parts.length - 1]) : 0,
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-title-dump-stop') {
+        // B:wait-title-dump-stop:TITLE:LIMIT:LABEL
+        // Wait for a window title, then dump the top dialog and stop before
+        // another guest batch can run.
+        scheduledInput.push({
+          batch,
+          action: 'wait-title',
+          title: (parts[2] || '').replace(/_/g, ' '),
+          limit: parseInt(parts[3]) || 2000,
+          label: parts[4] || '',
+          dumpStop: true,
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-dlg-control') {
+        scheduledInput.push({
+          batch,
+          action: 'wait-dlg-control',
+          ctrlId: parseInt(parts[2]),
+          limit: parseInt(parts[3]) || 2000,
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-focus-length') {
+        scheduledInput.push({
+          batch,
+          action: 'wait-focus-length',
+          minLength: parseInt(parts[2]) || 1,
+          limit: parseInt(parts[3]) || 2000,
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-go') {
+        // B:wait-go[:LIMIT] — hold this event and every later one until the
+        // parent process sends { t: 'go' } over the child IPC channel.
+        //
+        // Batch numbers are a per-process clock, and two emulator processes do
+        // not keep the same time: in the Hearts room the dealer covered 65000
+        // batches while the client covered 18000, so "deal at batch 40000" fired
+        // twenty seconds before the player it was meant to wait for had joined.
+        // Anything where one side must act only after something has happened on
+        // the other needs a signal rather than an estimate.
+        // No limit unless one is asked for, and this is the one default that
+        // must NOT be a batch count. The signal arrives on the wall clock,
+        // from another process; batches are not time, and an idle Win16 app
+        // burns two hundred thousand of them in under three seconds. A
+        // "generous" ceiling here silently released the wait and let a Hearts
+        // dealer deal before its player had finished joining -- which then
+        // looks exactly like a protocol fault on the other side. --max-batches
+        // still bounds the run.
+        scheduledInput.push({
+          batch,
+          action: 'wait-go',
+          limit: parts[2] !== undefined ? parseInt(parts[2]) || 0 : 0,
+          startBatch: batch,
+        });
+      } else if (kind === 'open-dlg-pick') {
+        // B:open-dlg-pick:FILENAME — find the open-dialog parent (class 12),
+        // set its filename edit (id 0x442) text to FILENAME, then fire IDOK.
+        scheduledInput.push({ batch, action: 'open-dlg-pick', filename: parts.slice(2).join(':') });
+      } else if (kind === 'open-dlg-filter') {
+        // B:open-dlg-filter:INDEX — find the open/save dialog filter ComboBox
+        // (id 0x445) and set its 1-based selection index.
+        scheduledInput.push({ batch, action: 'open-dlg-filter', index: parseInt(parts[2]) });
+      } else if (kind === 'edit-ok') {
+        // B:edit-ok:CTRL_ID:TEXT — find an Edit control (class 2) with
+        // matching ctrl id, WM_SETTEXT with TEXT, then fire IDOK on its
+        // parent dialog. Generic helper for simple modal prompt dialogs.
+        scheduledInput.push({ batch, action: 'edit-ok',
+          ctrlId: parseInt(parts[2]), text: parts.slice(3).join(':') });
+      } else if (kind === 'keypress' || kind === 'keydown' || kind === 'keyup' ||
+                 kind === 'di-keydown' || kind === 'di-keyup') {
+        scheduledInput.push({ batch, action: kind, code: parseInt(parts[2]) });
+      } else if (kind === 'di-mousedown' || kind === 'di-mouseup') {
+        const button = parts[2] === undefined ? 1 : parseInt(parts[2]);
+        if (button !== 1 && button !== 2 && button !== 3) {
+          throw new Error(`${kind} button must be 1, 2 or 3`);
+        }
+        scheduledInput.push({ batch, action: kind, button });
+      } else if (kind === 'di-wheel') {
+        const delta = parseInt(parts[2]);
+        if (!Number.isFinite(delta) || !delta) throw new Error('di-wheel needs a nonzero DELTA (120 per notch)');
+        scheduledInput.push({ batch, action: kind, delta });
+      } else if (kind === 'ime-start') {
+        scheduledInput.push({ batch, action: 'ime-start' });
+      } else if (kind === 'ime-update' || kind === 'ime-commit') {
+        scheduledInput.push({ batch, action: kind, text: parts.slice(2).join(':') });
+      } else if (kind === 'winamp-play') {
+        // B:winamp-play:FILENAME — write filename to guest mem, send Winamp IPC
+        scheduledInput.push({ batch, action: 'winamp-play', filename: parts.slice(2).join(':') });
+      } else if (kind === 'winamp-start') {
+        // B:winamp-start — post IPC_STARTPLAY to trigger playback
+        scheduledInput.push({ batch, action: 'winamp-start' });
+      } else if (kind === 'post-cmd') {
+        // B:post-cmd:WPARAM — post WM_COMMAND with given wParam to main_hwnd via post queue
+        scheduledInput.push({ batch, action: 'post-cmd', wParam: parseInt(parts[2]) });
+      } else if (kind === 'poke') {
+        // B:poke:GUEST_ADDR:VALUE — write a dword to guest memory
+        scheduledInput.push({ batch, action: 'poke', addr: parseInt(parts[2]), value: parseInt(parts[3]) });
+      } else if (kind === 'call-func') {
+        scheduledInput.push({ batch, action: 'call-func',
+          addr: parseInt(parts[2]),
+          args: [0, 1, 2, 3].map(i => parseInt(parts[3 + i]) || 0) });
+      } else if (kind === 'read-dword') {
+        scheduledInput.push({ batch, action: 'read-dword', addr: parseInt(parts[2]), label: parts[3] || '' });
+      } else if (kind === 'wave-in-feed') {
+        scheduledInput.push({
+          batch,
+          action: 'wave-in-feed',
+          frames: Math.max(1, parseInt(parts[2]) || 24000),
+          rate: Math.max(1, parseInt(parts[3]) || 48000),
+          amplitude: Math.max(0, Math.min(1, parseFloat(parts[4]) || 0.6)),
+        });
+      } else if (kind === 'mixer-peak') {
+        scheduledInput.push({
+          batch,
+          action: 'mixer-peak',
+          bus: Math.max(0, Math.min(2, parseInt(parts[2]) || 0)),
+          value: Math.max(0, Math.min(32767, parseInt(parts[3]) || 0)),
+          holdMs: Math.max(50, parseInt(parts[4]) || 500),
+        });
+      } else if (kind === 'help-macro') {
+        scheduledInput.push({
+          batch,
+          action: 'help-macro',
+          filename: parts[2],
+          macro: parts.slice(3).join(':'),
+        });
+      } else if (kind === 'vfs-export') {
+        scheduledInput.push({
+          batch,
+          action: 'vfs-export',
+          filename: parts[2],
+          path: parts.slice(3).join(':'),
+        });
+      } else if (kind === 'vfs-import') {
+        scheduledInput.push({
+          batch,
+          action: 'vfs-import',
+          filename: parts[2],
+          path: parts.slice(3).join(':'),
+        });
+      } else if (kind === 'assert-standard-scroll') {
+        // MIN_POS is scroll units, or "N%" of the bar's own page size (the
+        // visible client extent along that axis). Prefer the percentage: how
+        // far one arrow or page click moves is proportional to the view, so a
+        // pixel constant silently rots the moment window chrome changes size.
+        scheduledInput.push({
+          batch,
+          action: 'assert-standard-scroll',
+          axis: parts[2] === 'v' ? 'v' : 'h',
+          minPos: parseFloat(parts[3]) || 0,
+          minPct: /%\s*$/.test(parts[3] || ''),
+          label: parts[4] || '',
+        });
+      } else if (kind === 'scroll-click') {
+        // B:scroll-click:AXIS:PART[:HWND] — real mouse click on a live standard
+        // scrollbar. PART is lo|hi (the arrow buttons) or page-lo|page-hi (the
+        // track either side of the thumb). The point comes from the window's
+        // current client rect, so the click keeps landing on the arrow when
+        // frame metrics or default placement move.
+        scheduledInput.push({ batch, action: 'scroll-click',
+          axis: parts[2] === 'v' ? 'v' : 'h', part: parts[3] || 'hi',
+          target: parts[4] || '' });
+      } else if (kind === 'scroll-drag') {
+        // B:scroll-drag:AXIS:DELTA[:HWND] — press the live thumb, move DELTA px
+        // along the axis in three steps, release.
+        scheduledInput.push({ batch, action: 'scroll-drag',
+          axis: parts[2] === 'v' ? 'v' : 'h', delta: parseInt(parts[3]) || 0,
+          target: parts[4] || '' });
+      } else if (kind === 'dump-scrollbar') {
+        // B:dump-scrollbar:AXIS[:LABEL] — log a live standard scrollbar's strip
+        // rect in screen coords plus its page/range/pos, so pixel tests can
+        // sample the strip where it actually is.
+        scheduledInput.push({ batch, action: 'dump-scrollbar',
+          axis: parts[2] === 'v' ? 'v' : 'h', label: parts[3] || '',
+          target: parts[4] || '' });
+      } else if (kind === 'png') {
+        // B:png:PATH — write a PNG snapshot of renderer.canvas at this batch.
+        scheduledInput.push({ batch, action: 'png', path: parts.slice(2).join(':') });
+      } else if (kind === 'pixel') {
+        // B:pixel:X:Y[:LABEL] — repaint and log one canvas pixel.
+        scheduledInput.push({ batch, action: 'pixel',
+          x: parseInt(parts[2]), y: parseInt(parts[3]), label: parts[4] || '' });
+      } else if (kind === 'wait-canvas-dark-pixels') {
+        // Visual loading gates are host-load independent: later actions move
+        // with this event until the repainted frame actually reaches the range.
+        scheduledInput.push({
+          batch,
+          action: 'wait-canvas-dark-pixels',
+          min: Math.max(0, parseInt(parts[2]) || 0),
+          max: Math.max(0, parseInt(parts[3]) || 0),
+          limit: parseInt(parts[4]) || 2000,
+          startBatch: batch,
+        });
+      } else if (kind === 'wait-vfs-file') {
+        scheduledInput.push({
+          batch,
+          action: 'wait-vfs-file',
+          limit: parseInt(parts[2]) || 2000,
+          filename: parts.slice(3).join(':'),
+          startBatch: batch,
+        });
+      } else if (kind === 'png-raw') {
+        // B:png-raw:PATH — write the already-composited canvas without forcing repaint.
+        scheduledInput.push({ batch, action: 'png-raw', path: parts.slice(2).join(':') });
+      } else if (kind === 'png-pixels') {
+        // B:png-pixels:PATH — encode getImageData pixels through pngjs.
+        scheduledInput.push({ batch, action: 'png-pixels', path: parts.slice(2).join(':') });
+      } else if (kind === 'stop') {
+        // B:stop — end the harness after earlier same-batch actions complete.
+        scheduledInput.push({ batch, action: 'stop' });
+      } else if (kind === 'sleep-ms') {
+        scheduledInput.push({ batch, action: 'sleep-ms', ms: parseInt(parts[2]) || 0 });
+      } else if (kind === 'set-batch-size') {
+        scheduledInput.push({ batch, action: 'set-batch-size', size: parseInt(parts[2]) || 1 });
+      } else if (kind === 'set-win16-trace') {
+        scheduledInput.push({ batch, action: 'set-win16-trace', enabled: parseInt(parts[2]) !== 0 });
+      } else if (kind === 'canvas-resize') {
+        // B:canvas-resize:WIDTH:HEIGHT — emulate browser backing-canvas resize.
+        scheduledInput.push({ batch, action: 'canvas-resize', w: parseInt(parts[2]), h: parseInt(parts[3]) });
+      } else if (kind === 'main-resize') {
+        scheduledInput.push({ batch, action: 'main-resize', w: parseInt(parts[2]), h: parseInt(parts[3]) });
+      } else if (kind === 'corner-drag') {
+        // B:corner-drag:HWND:DX:DY — grab a window's live bottom-right corner
+        // and drag it by (DX,DY) in four steps. Like close-click, the grab
+        // point comes from the current rect, so the test does not silently
+        // stop grabbing anything when default placement or size moves.
+        scheduledInput.push({ batch, action: 'corner-drag',
+          target: parts[2], dx: parseInt(parts[3]), dy: parseInt(parts[4]) });
+      } else if (kind === 'close-click') {
+        // B:close-click:TARGET — real mouse click on a window's titlebar X,
+        // with the coordinates derived from the window's live rect instead of
+        // hardcoded in the test (which rots the moment placement changes).
+        // TARGET is 'find' (the Find/Replace dialog) or a hex hwnd.
+        scheduledInput.push({ batch, action: 'close-click', target: parts[2] || 'find' });
+      } else if (kind === 'caption-click') {
+        // B:caption-click:HWND:PART — click a caption button (min|max|close)
+        // derived from the window's live rect, the same way close-click does.
+        scheduledInput.push({ batch, action: 'caption-click',
+          target: parts[2] || '', part: parts[3] || 'close' });
+      } else if (kind === 'relmousemove') {
+        // The optional fourth field spreads the delta over that many batches
+        // instead of handing it over in one lump. See the flag comment above:
+        // a DirectInput game reads everything accumulated since its last poll,
+        // and a headless batch is roughly one of its frames, so `:20` is what
+        // makes an injected move look like a hand rather than a teleport.
+        scheduledInput.push({ batch, action: kind,
+          x: parseInt(parts[2]), y: parseInt(parts[3]),
+          steps: Math.max(1, parseInt(parts[4]) || 1) });
+      } else if (kind === 'click') {
+        scheduledInput.push({ batch, action: 'click', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'mousedown') {
+        scheduledInput.push({ batch, action: 'mousedown', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'dblclick') {
+        scheduledInput.push({ batch, action: 'dblclick', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'rclick') {
+        scheduledInput.push({ batch, action: 'rclick', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'mouseup') {
+        scheduledInput.push({ batch, action: 'mouseup', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'mousemove') {
+        scheduledInput.push({ batch, action: 'mousemove', x: parseInt(parts[2]), y: parseInt(parts[3]) });
+      } else if (kind === 'wheel') {
+        scheduledInput.push({ batch, action: 'wheel',
+          x: parseInt(parts[2]), y: parseInt(parts[3]), delta: parseInt(parts[4]) || 0 });
+      } else {
+        const msg = parseInt(parts[1]);
+        const wParam = parseInt(parts[2]) || 0;
+        const lParam = parseInt(parts[3]) || 0;
+        scheduledInput.push({ batch, msg, wParam, lParam });
+      }
+    }
+    return scheduledInput.splice(first);
+  };
+  if (INPUT_SPEC) {
+    scheduledInput.push(...parseInputEntries(INPUT_SPEC.split(',')));
+    scheduledInput.sort((a, b) => a.batch - b.batch);
+  }
+  // --auto-mouse=X0,Y0,X1,Y1[,PERIOD][,START]: a hand on the mouse, scripted.
+  // The browser HUD can only measure what a person does live, which is not a
+  // benchmark: nobody moves the pointer the same way twice. This sweeps it
+  // between two points forever, one move every PERIOD batches, so an input
+  // measurement is repeatable and diffable across builds. PERIOD is in
+  // batches rather than ms on purpose -- a batch is one message-loop turn, so
+  // the sweep keeps pace with the guest instead of with this machine's load.
+  if (AUTO_MOUSE) {
+    const n = AUTO_MOUSE.split(',').map(v => parseInt(v.trim(), 10));
+    const [x0, y0, x1, y1] = n;
+    const period = Math.max(1, n[4] || 4);
+    const start = Math.max(0, n[5] || 0);
+    if ([x0, y0, x1, y1].some(v => !Number.isFinite(v))) {
+      console.error('--auto-mouse needs at least X0,Y0,X1,Y1');
+      process.exit(2);
+    }
+    if (!Number.isFinite(MAX_BATCHES)) {
+      console.error('--auto-mouse with --control needs an explicit --max-batches (the sweep is pre-scheduled per batch)');
+      process.exit(2);
+    }
+    // Ping-pong, so the pointer never teleports: a jump from one edge back to
+    // the other is not a motion a hand makes, and a game that tracks pointer
+    // DELTA rather than position would see one huge bogus step per sweep.
+    const legs = Math.max(1, Math.floor(((MAX_BATCHES - start) / period) / 2));
+    let k = 0;
+    for (let b = start; b < MAX_BATCHES; b += period, k++) {
+      const leg = Math.floor(k / legs) % 2;
+      const t = (k % legs) / legs;
+      const f = leg ? 1 - t : t;
+      scheduledInput.push({
+        batch: b, action: 'mousemove',
+        x: Math.round(x0 + (x1 - x0) * f),
+        y: Math.round(y0 + (y1 - y0) * f),
+      });
+    }
+    scheduledInput.sort((a, b) => a.batch - b.batch);
+  }
+  const sortScheduledInput = (current) => {
+    scheduledInput.sort((a, b) =>
+      (a.batch - b.batch) || (current ? (a === current ? -1 : (b === current ? 1 : 0)) : 0));
+  };
+  const deferScheduledWait = (ev, batch, preferCurrent = false) => {
+    ev.batch = batch + 1;
+    for (const pending of scheduledInput) {
+      pending.batch++;
+      if (typeof pending.startBatch === 'number') pending.startBatch++;
+    }
+    scheduledInput.push(ev);
+    sortScheduledInput(preferCurrent ? ev : null);
+  };
+
+  // Resource parsing lives in WAT — nothing to pre-parse here.
+
+  // Set up renderer if node-canvas is available
+  let renderer = null;
+  if (!NO_RENDERER && createCanvas && Win98Renderer) {
+    const screenArg = args.find(a => a.startsWith('--screen='));
+    const [screenW, screenH] = screenArg ? screenArg.split('=')[1].split('x').map(Number) : [640, 480];
+    const canvas = createCanvas(screenW, screenH);
+    renderer = new Win98Renderer(canvas);
+    // This canvas is presented lazily (only when a png or repaint asks), so
+    // input must refresh the presentation transform itself before mapping.
+    renderer.lazyPresentation = true;
+    if (TRACE_COMPOSITE) renderer.traceComposite = true;
+    if (TRACE_INPUT) renderer.onInputTrace = (what) => console.log(`[input-route] ${what}`);
+  } else if (!NO_RENDERER) {
+    // Without this a stale node_modules (no pngjs) ran for half an hour with
+    // no screen: every png refused, pointer input dropped, nothing said why.
+    console.error(`[renderer] unavailable, so no screen, captures or pointer input: ${
+      rendererLoadError ? rendererLoadError.message.split('\n')[0] : 'createCanvas/Win98Renderer missing'}`);
+  }
+  let videoRecorder = null;
+  let videoEvery = 1;
+  let videoStartBatch = VIDEO_START_BATCH;
+  const audioTapPumps = new Set();
+  if (VIDEO_OUT) {
+    if (!renderer) throw new Error('--video requires the CLI renderer (remove --no-renderer)');
+    videoRecorder = new CliVideoRecorder(renderer.canvas, {
+      path: VIDEO_OUT,
+      fps: VIDEO_FPS,
+      ffmpeg: FFMPEG_PATH,
+    });
+  }
+
+  // String APIs where we want to log content
+  const STRING_APIS = [
+    'lstrlenA', 'lstrcpyA', 'lstrcpynA', 'LoadStringA', 'GetWindowTextA',
+    'SetWindowTextA', 'SetDlgItemTextA',
+    // File I/O — first arg is the path/pattern
+    'CreateFileA', 'OpenFile', 'DeleteFileA', 'FindFirstFileA', 'GetFileAttributesA',
+    'SetFileAttributesA', 'MoveFileA', 'CopyFileA', 'CreateDirectoryA', 'RemoveDirectoryA',
+    '_lopen', '_lcreat', 'LoadLibraryA', 'LoadLibraryExA', 'GetModuleHandleA',
+    'GetModuleFileNameA',
+    // Registry — first arg is hkey, but name arg is #2; separate handling below
+    // INI — first arg is section name string
+    'GetPrivateProfileStringA', 'WritePrivateProfileStringA', 'GetProfileStringA',
+    // Misc
+    'OutputDebugStringA', 'MessageBoxA',
+  ];
+
+  // DX_OBJECTS lives in high WASM memory on this branch.
+  // $DX_OBJECTS, from the map declared in src/00-regions.wat.
+  const DX_TYPE_NAMES = { 1:'DDraw', 2:'DDSurface', 3:'DDPalette', 4:'DSound', 5:'DSBuffer',
+    6:'DInput', 7:'DIDev', 8:'D3D', 9:'D3D3', 20:'D3DDev3', 23:'D3DVp3', 24:'D3DLight', 25:'D3DMat3',
+    26:'DPlay3', 27:'DPlayLobby2' };
+  function dxLookupThis(thisGuest, dv, g2w) {
+    if (!thisGuest) return null;
+    let wa, slot;
+    try {
+      wa = g2w(thisGuest);
+      slot = dv.getUint32(wa + 4, true);
+    } catch (_) { return null; }
+    if (slot >= 16384) return null; // $DX_MAX in src/09a8-handlers-directx.wat
+    const entry = RegionMap.BASE.DX_OBJECTS + slot * 32;
+    const type = dv.getUint32(entry, true);
+    if (!type) return null;
+    const rc = dv.getUint32(entry + 4, true);
+    const dims = dv.getUint32(entry + 12, true);
+    const fmt = dv.getUint32(entry + 16, true);
+    const flags = dv.getUint32(entry + 28, true);
+    const w = dims & 0xFFFF, h = (dims >>> 16) & 0xFFFF;
+    const bpp = fmt & 0xFFFF, pitch = (fmt >>> 16) & 0xFFFF;
+    return { slot, type, typeName: DX_TYPE_NAMES[type] || `T${type}`, rc, w, h, bpp, pitch, flags };
+  }
+  function dxDescThis(thisGuest, dv, g2w) {
+    const o = dxLookupThis(thisGuest, dv, g2w);
+    if (!o) return `this=${hex(thisGuest)}`;
+    let s = `this=#${o.slot}/${o.typeName}`;
+    if (o.type === 2) {
+      const sf = []; if (o.flags & 1) sf.push('PRI'); if (o.flags & 2) sf.push('BACK'); if (o.flags & 4) sf.push('OFF');
+      if (o.flags & 0x100) sf.push('CK');
+      s += `[${o.w}x${o.h} ${o.bpp}bpp pitch=${o.pitch}${sf.length?' '+sf.join('|'):''}]`;
+    }
+    return s;
+  }
+  function dxReadRect(ptr, dv, g2w) {
+    if (!ptr) return 'null';
+    try {
+      const wa = g2w(ptr);
+      return `(${dv.getInt32(wa, true)},${dv.getInt32(wa+4, true)},${dv.getInt32(wa+8, true)},${dv.getInt32(wa+12, true)})`;
+    } catch (_) { return hex(ptr); }
+  }
+  function dxSurfaceRef(guestPtr, dv, g2w) {
+    if (!guestPtr) return 'null';
+    const o = dxLookupThis(guestPtr, dv, g2w);
+    return o ? `#${o.slot}/${o.typeName}` : hex(guestPtr);
+  }
+  function decodeDx(name, esp, dv, g2w, memory) {
+    const a = [];
+    for (let i = 0; i < 6; i++) a.push(dv.getUint32(g2w(esp + 4 + i * 4), true));
+    // a[0]=this (for methods), a[0]=arg0 (for creators)
+    const desc = () => dxDescThis(a[0], dv, g2w);
+    // For ordinal-dispatched COM calls, name is "<ord>". Guess method from
+    // `this` type + arg shape. Not authoritative, but makes the trace readable.
+    if (name === '<ord>') {
+      const o = dxLookupThis(a[0], dv, g2w);
+      if (!o) return `[this=${hex(a[0])}]`;
+      try { const vtbl = dv.getUint32(g2w(a[0]), true); console.error(`  DBG: this=${hex(a[0])} vtbl=${hex(vtbl)} slot=${o.slot} type=${o.type}`); } catch(_) {}
+      // Type 2 = IDirectDrawSurface. Disambiguate common methods by arg shape.
+      if (o.type === 2) {
+        // BltFast: a[1],a[2] are small x,y coords, a[3] is another DDSurface
+        if (a[1] < 0x2000 && a[2] < 0x2000 && dxLookupThis(a[3], dv, g2w)) {
+          return `[~BltFast ${desc()} dst=(${a[1]},${a[2]}) src=${dxSurfaceRef(a[3], dv, g2w)} srcRect=${dxReadRect(a[4], dv, g2w)} trans=${hex(a[5])}]`;
+        }
+        // Blt: a[2] is a DDSurface* (or 0 for color-fill), a[4] is DDBLT_* flag bits
+        const bltFlagsLook = (a[4] & 0xFF000000) === 0 && a[4] !== 0;
+        const srcLooksLikeSurface = a[2] === 0 || dxLookupThis(a[2], dv, g2w);
+        if (srcLooksLikeSurface && bltFlagsLook) {
+          return `[~Blt ${desc()} dst=${dxReadRect(a[1], dv, g2w)} src=${dxSurfaceRef(a[2], dv, g2w)} srcRect=${a[3]?dxReadRect(a[3], dv, g2w):'null'} fl=${hex(a[4])}]`;
+        }
+      }
+      return `[${desc()} args=${a.slice(1,5).map(hex).join(',')}]`;
+    }
+    if (name === 'DirectDrawCreate' || name === 'DirectSoundCreate') {
+      return `[guid=${hex(a[0])} pp=${hex(a[1])}]`;
+    }
+    if (name === 'DirectInputCreateA') return `[hInst=${hex(a[0])} ver=${hex(a[1])} pp=${hex(a[2])}]`;
+    if (name === 'IDirectDraw_SetDisplayMode') return `[${desc()} ${a[1]}x${a[2]}x${a[3]}bpp]`;
+    if (name === 'IDirectDraw_SetCooperativeLevel') return `[${desc()} hwnd=${hex(a[1])} flags=${hex(a[2])}]`;
+    if (name === 'IDirectDraw_CreateSurface' || name === 'IDirectDraw2_CreateSurface') {
+      try {
+        const wa = g2w(a[1]);
+        const sz = dv.getUint32(wa, true);
+        const flags = dv.getUint32(wa + 4, true);
+        const h2 = dv.getUint32(wa + 8, true);
+        const w2 = dv.getUint32(wa + 12, true);
+        // DDSURFACEDESC(2): +20 dwBackBufferCount, +24 dwMipMapCount union,
+        // +72 ddpfPixelFormat (+4 flags, +12 bit count, +16..+28 R/G/B/A
+        // masks), +104 ddsCaps.
+        const caps = dv.getUint32(wa + 104, true);
+        const backbuf = dv.getUint32(wa + 20, true);
+        const cc = [];
+        for (const [bit, label] of [[0x200, 'PRIMARY'], [0x4, 'BACKBUF'], [0x8, 'COMPLEX'], [0x10, 'FLIP'],
+          [0x40, 'OFFSCREENPLAIN'], [0x800, 'SYSMEM'], [0x1000, 'TEXTURE'], [0x2000, '3DDEVICE'],
+          [0x4000, 'VIDMEM'], [0x20000, 'ZBUFFER'], [0x400000, 'MIPMAP']]) if (caps & bit) cc.push(label);
+        let extra = '';
+        if (flags & 0x20000) extra += ` mips=${dv.getUint32(wa + 24, true)}`;
+        if (flags & 0x1000) {
+          const pf = i => dv.getUint32(wa + 72 + i, true);
+          extra += ` pf{fl=${hex(pf(4))} ${pf(12)}bpp R=${hex(pf(16))} G=${hex(pf(20))} B=${hex(pf(24))} A=${hex(pf(28))}}`;
+        }
+        return `[${desc()} DDSD{sz=${sz} fl=${hex(flags)} ${w2}x${h2} caps=${cc.join('|')||hex(caps)} back=${backbuf}${extra}} pp=${hex(a[2])}]`;
+      } catch (_) { return `[${desc()} pDDSD=${hex(a[1])}]`; }
+    }
+    if (name === 'IDirectDrawSurface_Blt') {
+      return `[${desc()} dst=${dxReadRect(a[1], dv, g2w)} src=${dxSurfaceRef(a[2], dv, g2w)}${dxReadRect(a[3], dv, g2w)} fl=${hex(a[4])}]`;
+    }
+    if (name === 'IDirectDrawSurface_BltFast') {
+      return `[${desc()} dst=(${a[1]},${a[2]}) src=${dxSurfaceRef(a[3], dv, g2w)}${dxReadRect(a[4], dv, g2w)} trans=${hex(a[5])}]`;
+    }
+    if (name === 'IDirectDrawSurface_Flip') return `[${desc()} override=${hex(a[1])} flags=${hex(a[2])}]`;
+    if (name === 'IDirectDrawSurface_Lock') {
+      return `[${desc()} rect=${dxReadRect(a[1], dv, g2w)} pDDSD=${hex(a[2])} flags=${hex(a[3])}]`;
+    }
+    if (name === 'IDirectDrawSurface_Unlock') return `[${desc()} rect_or_ptr=${hex(a[1])}]`;
+    if (name === 'IDirectDrawSurface_SetColorKey') {
+      let low = 0, hi = 0;
+      try { const wa = g2w(a[2]); low = dv.getUint32(wa, true); hi = dv.getUint32(wa + 4, true); } catch (_) {}
+      return `[${desc()} flags=${hex(a[1])} key=${hex(low)}..${hex(hi)}]`;
+    }
+    if (name === 'IDirectDrawSurface_GetAttachedSurface') return `[${desc()} caps=${hex(a[1])} pp=${hex(a[2])}]`;
+    if (name === 'IDirectDrawSurface_SetPalette') return `[${desc()} pPal=${hex(a[1])}]`;
+    if (name === 'IDirectDrawPalette_SetEntries') return `[${desc()} flags=${hex(a[1])} start=${a[2]} count=${a[3]} pE=${hex(a[4])}]`;
+    // Default: just describe `this` if it resolves to a DX object
+    return `[${desc()}]`;
+  }
+
+  const traceCategories = new Set();
+  if (TRACE_GDI) traceCategories.add('gdi');
+  if (TRACE_CTRL) traceCategories.add('ctrl');
+  if (TRACE_ERASE) traceCategories.add('erase');
+  if (TRACE_RGN) traceCategories.add('rgn');
+  if (TRACE_DC) traceCategories.add('dc');
+  if (TRACE_CLIP) traceCategories.add('clip');
+  if (TRACE_DX) traceCategories.add('dx');
+  if (TRACE_DX_RAW) { traceCategories.add('dx'); traceCategories.add('dx-raw'); }
+  if (TRACE_FS) traceCategories.add('fs');
+  if (TRACE_INI) traceCategories.add('ini');
+  if (TRACE_REG) traceCategories.add('reg');
+  if (TRACE_WAVE) traceCategories.add('wave');
+  if (AUDIO_STATS) traceCategories.add('audio-stats');
+  if (TRACE_NET) traceCategories.add('net');
+  if (TRACE_WIN16) traceCategories.add('win16');
+  const traceHostNames = TRACE_HOST ? new Set(TRACE_HOST.split(',').map(s => s.trim()).filter(Boolean)) : null;
+
+  const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
+  const apiByName = new Map(apiTable.map(e => [e.name, e]));
+  const ctx = {
+    getMemory: () => ctx._memory ? ctx._memory.buffer : null,
+    // Without --headless-gl the WebGL backend has no context, CreateDevice fails
+    // with "D3D9 requires a GPU window", and most D3D8/9 games take their own
+    // no-3D path -- GeneRally's CLI gate depends on exactly that. An app with no
+    // such path (UT2003's listen server retries, spawning a 1 MB-allocating
+    // thread each time, until "Unable to allocate thread TLS vector") sets
+    // `d3d9WithoutGpu: 'software'` in lib/apps.js to get the software backend
+    // when no GPU is available. An explicit --d3d9-renderer always wins.
+    d3d9Backend: D3D9_RENDERER
+      || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
+    glBackend: GL_RENDERER || 'webgl',
+    glideBackend: GLIDE_RENDERER,
+    d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
+    createD3DRenderWorker: () => {
+      const {Worker} = require('worker_threads');
+      const {WorkerConsumer} = require('../lib/d3d-command-stream');
+      const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
+      return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
+        {module:wasmModule,memory,sigs,imageBase:instance.exports.get_image_base() >>> 0,
+          reclaimHeap:head=>instance.exports.d3d_render_adopt_free_list(head)});
+    },
+    renderer,
+    // --headless-gl: give the OpenGL bridge a drawable factory so wglCreateContext
+    // can succeed without a browser. Opt-in, because without it these guests take
+    // their documented no-3D-hardware path and a large amount of existing headless
+    // behaviour is pinned to that; turning it on silently would change what many
+    // runs mean. See lib/headless-gl.js.
+    createCanvas: HEADLESS_GL || GLIDE_RENDERER === 'software' ? createCanvas : null,
+    // Glide always gets one. Without it grSstWinOpen returned 0 under the
+    // default --glide-renderer=webgl, the games ignore that, and their first
+    // grBufferClear/guGammaCorrectionRGB then trapped on a closed context
+    // (NFS III, Diablo II). The bridge itself drops to software when the
+    // canvas has no WebGL, exactly as a GPU-less browser does.
+    glideCreateCanvas: createCanvas || null,
+    processId: 1000,
+    apiTable,
+    log: VERBOSE ? console.log.bind(console) : null,
+    // Live guest thread count, for HKEY_DYN_DATA\PerfStats KERNEL\Threads.
+    // A getter because the manager is built long after ctx is.
+    get threadManager() { return threadManager; },
+    verbose: VERBOSE,
+    _debugReadFile: TRACE_API && !QUIET_FS,
+    _debugFindFile: TRACE_API,
+    // Appended to every traced ReadFile (--trace-fs): the batch and the MAIN
+    // thread's synchronous-message depth. A read made while that depth is
+    // nonzero -- by main itself, or by a worker the cooperative scheduler runs
+    // inline from a nested wait -- cannot park on a lazy byte range, because
+    // the recursive $wnd_send_message frame cannot return to the host to await
+    // the fetch. That is what decides which ranges a lazy mount must preload.
+    ioTraceTag: () => `b=${traceGateBatch} mainDepth=${
+      instance.exports.get_sync_msg_depth ? instance.exports.get_sync_msg_depth() | 0 : 0}`,
+    onExit: (code) => { stopped = true; },
+    trace: traceCategories,
+    traceHost: traceHostNames,
+    hostCensus: HOST_CENSUS,
+    // The guest clock. --time-scale runs it faster than the wall clock, which
+    // separates "waiting for time to pass" from "doing work" in a slow run.
+    guestNowMs: () => CLOCK_ORIGIN + (Date.now() - CLOCK_ORIGIN) * TIME_SCALE,
+    // The calendar clock, pinned only when --wall-clock-ms= asked for it.
+    wallNowMs: CALENDAR_ORIGIN_MS ? () => CALENDAR_ORIGIN_MS : undefined,
+    // The room segment, when this process was launched into one. Without it
+    // the guest's sockets still work; the room is just this process alone.
+    vlanWire: VLAN_WIRE ? new (require('../lib/vlan-wire').ProcessWire)(process) : null,
+    audioStatsStride: AUDIO_STATS ? AUDIO_STATS_STRIDE : 0,
+    isEventHandle: handle => !!(threadManager && threadManager.isEventHandle(handle)),
+    signalSyncHandle: handle => threadManager
+      ? threadManager.setEvent(handle >>> 0) : 0,
+    resetSyncHandle: handle => threadManager
+      ? threadManager.resetEvent(handle >>> 0) : 0,
+    dumpSdb: DUMP_SDB ? { images: new Map(), log: [] } : null,
+    _audioOutFd: AUDIO_OUT ? fs.openSync(AUDIO_OUT, 'w') : undefined,
+    _audioOutPath: AUDIO_OUT || null,
+    _audioOutWav: AUDIO_OUT ? AUDIO_OUT.toLowerCase().endsWith('.wav') : false,
+    // One counter for the whole process: guest threads write the same file.
+    _audioOutCount: AUDIO_OUT ? { max: AUDIO_OUT_MAX, bytes: 0 } : undefined,
+    sharedAudio: {},  // shared waveOut state across threads
+    audioTap: () => (videoRecorder && videoRecorder.active ? videoRecorder : null),
+    registerAudioTapPump: fn => { if (typeof fn === 'function') audioTapPumps.add(fn); },
+    renderMidiForTap: (smf, options) => renderTinySynthNotes(smf, options),
+    g2w: (addr) => ctx.exports ? translateGuest(addr, ctx.exports.get_image_base(), ctx.getMemory()) : addr,
+    readFile: (name) => {
+      // Try to find file relative to exe directory
+      const exeDir = path.dirname(EXE_PATH);
+      const candidates = [
+        path.join(exeDir, name),
+        path.join(exeDir, path.basename(name)),
+        path.join(__dirname, 'binaries', 'help', path.basename(name)),
+      ];
+      for (const p of candidates) {
+        try { return new Uint8Array(fs.readFileSync(p)); } catch (_) {}
+      }
+      return null;
+    },
+    // Stage one NE DLL from the exe's own directory into the module slot WAT
+    // has just given its name. Called from LoadLibrary, for modules nothing
+    // imports statically — the Entertainment Pack's WEPUTIL and the per-level
+    // DLLs Stones ships one of per screen.
+    win16StageModule: (name, id) => {
+      if (!ctx.exports || !ctx.exports.win16_dll_staging) return false;
+      const dir = path.dirname(EXE_PATH);
+      let bytes = null;
+      for (const f of win16FileCandidates(name)) {
+        const p = path.join(dir, f);
+        if (!fs.existsSync(p)) continue;
+        bytes = fs.readFileSync(p);
+        break;
+      }
+      if (!bytes) {
+        const resident = residentWin16Module(ctx.vfs, name);
+        if (resident) {
+          bytes = resident.bytes;
+          if (resident.format === 'w32inst') return (bytes.length | 0x80000000) >>> 0;
+        }
+      }
+      if (!bytes) return false;
+      const room = ctx.exports.win16_app_dll_staging_size
+        ? ctx.exports.win16_app_dll_staging_size()
+        : 0x00100000;
+      if (bytes.length > room) return false;
+      const base = ctx.exports.win16_dll_staging(id);
+      const memory = new Uint8Array(ctx.getMemory());
+      memory.fill(0, base, base + room);
+      memory.set(bytes, base);
+      return bytes.length;
+    },
+  };
+  const base = createHostImports(ctx);
+  closeD3DRender = () => {
+    ctx.closeGlide();
+    return ctx.closeD3DRender();
+  };
+  if (ctx.vfs) {
+    ctx.vfs.dirs.add('c:\\windows');
+    ctx.vfs.dirs.add('c:\\windows\\system');
+    ctx.vfs.dirs.add('c:\\windows\\fonts');
+    mountSystemDataFiles(ctx.vfs, SYSTEM_DATA_FILES.map(file => ({
+      ...file,
+      bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),
+    })));
+    for (const name of BUNDLED_BITMAP_FONTS) {
+      const bundledFon = path.join(ROOT, 'fonts', name);
+      if (!fs.existsSync(bundledFon)) {
+        throw new Error(`missing bundled bitmap font: ${bundledFon}`);
+      }
+      ctx.vfs.files.set(`c:\\windows\\fonts\\${name.toLowerCase()}`, {
+        data: new Uint8Array(fs.readFileSync(bundledFon)), attrs: 0x20,
+      });
+    }
+    // Scalable faces mount under their Win98 filenames so the WAT TrueType
+    // rasterizer resolves ARIAL.TTF the way real GDI did, without knowing
+    // Liberation Sans is what it opens.
+    const substitutions = JSON.parse(fs.readFileSync(
+      path.join(ROOT, 'fonts', 'substitutions.json'), 'utf8'));
+    for (const mount of fontMounts(substitutions, { subset: true })) {
+      const file = path.join(ROOT, 'fonts', mount.file);
+      if (!fs.existsSync(file)) {
+        throw new Error(`missing substitute for ${mount.face} ${mount.style}: ${file}`);
+      }
+      ctx.vfs.files.set(mount.vfsPath, {
+        data: new Uint8Array(fs.readFileSync(file)), attrs: 0x20,
+      });
+    }
+  }
+  const { readStr } = base;
+  // NE name tables store Pascal strings, and the address the Win16 dispatcher
+  // reports is a linear one into the staged file rather than a guest address.
+  const readPascalStr = addr => {
+    const b = new Uint8Array(memory.buffer);
+    const len = b[addr];
+    if (!len || len > 64) return `<bad name at ${hex(addr)}>`;
+    return Buffer.from(b.subarray(addr + 1, addr + 1 + len)).toString('latin1');
+  };
+  // A far pointer into the Win16 selector arena. Selector index N is at
+  // WIN16_ARENA + (N-1)*64K (see $win16_seg_base in 08c-ne-loader.wat), and
+  // the arena is a direct WASM offset, so this needs no guest translation.
+  const win16Linear = (sel, off) =>
+    0x100000 + (((sel >> 3) - 1) * 0x10000) + (off & 0xFFFF);
+  // The DDE transaction types, which are the whole story of a DDE trace: a
+  // hex number here is one of a dozen things an application can be asked, and
+  // reading 0x4090 as "somebody poked me" takes a table lookup every time.
+  const WIN16_DDE_XTYP = {
+    0x0060: 'XTYP_REGISTER', 0x1030: 'XTYP_ADVSTART', 0x1062: 'XTYP_CONNECT',
+    0x2022: 'XTYP_ADVREQ', 0x20B0: 'XTYP_REQUEST', 0x20E2: 'XTYP_WILDCONNECT',
+    0x4010: 'XTYP_ADVDATA', 0x4050: 'XTYP_EXECUTE', 0x4090: 'XTYP_POKE',
+    0x8002: 'XTYP_ERROR', 0x8040: 'XTYP_ADVSTOP', 0x8072: 'XTYP_CONNECT_CONFIRM',
+    0x8080: 'XTYP_XACT_COMPLETE',
+    0x80A2: 'XTYP_DISCONNECT', 0x80C2: 'XTYP_REGISTER_NOTIFY',
+  };
+  const WIN16_MSG_NAMES = {
+    0x0000: 'WM_NULL', 0x0001: 'WM_CREATE', 0x0002: 'WM_DESTROY',
+    0x0003: 'WM_MOVE', 0x0005: 'WM_SIZE', 0x0006: 'WM_ACTIVATE',
+    0x0007: 'WM_SETFOCUS', 0x0008: 'WM_KILLFOCUS', 0x000A: 'WM_ENABLE',
+    0x000B: 'WM_SETREDRAW', 0x000C: 'WM_SETTEXT', 0x000D: 'WM_GETTEXT',
+    0x000F: 'WM_PAINT', 0x0010: 'WM_CLOSE', 0x0011: 'WM_QUERYENDSESSION',
+    0x0012: 'WM_QUIT', 0x0014: 'WM_ERASEBKGND', 0x0018: 'WM_SHOWWINDOW',
+    0x001C: 'WM_ACTIVATEAPP', 0x001F: 'WM_CANCELMODE', 0x0020: 'WM_SETCURSOR',
+    0x0021: 'WM_MOUSEACTIVATE', 0x0024: 'WM_GETMINMAXINFO',
+    0x0046: 'WM_WINDOWPOSCHANGING', 0x0047: 'WM_WINDOWPOSCHANGED',
+    0x0081: 'WM_NCCREATE', 0x0082: 'WM_NCDESTROY', 0x0083: 'WM_NCCALCSIZE',
+    0x0084: 'WM_NCHITTEST', 0x0085: 'WM_NCPAINT', 0x0086: 'WM_NCACTIVATE',
+    0x00A0: 'WM_NCMOUSEMOVE', 0x00A1: 'WM_NCLBUTTONDOWN',
+    0x0100: 'WM_KEYDOWN', 0x0101: 'WM_KEYUP', 0x0102: 'WM_CHAR',
+    0x0104: 'WM_SYSKEYDOWN', 0x0105: 'WM_SYSKEYUP', 0x0106: 'WM_SYSCHAR',
+    0x0110: 'WM_INITDIALOG', 0x0111: 'WM_COMMAND', 0x0112: 'WM_SYSCOMMAND',
+    0x0113: 'WM_TIMER', 0x0114: 'WM_HSCROLL', 0x0115: 'WM_VSCROLL',
+    0x0116: 'WM_INITMENU', 0x0117: 'WM_INITMENUPOPUP', 0x011F: 'WM_MENUSELECT',
+    0x0200: 'WM_MOUSEMOVE', 0x0201: 'WM_LBUTTONDOWN', 0x0202: 'WM_LBUTTONUP',
+    0x0203: 'WM_LBUTTONDBLCLK', 0x0204: 'WM_RBUTTONDOWN',
+    0x0205: 'WM_RBUTTONUP', 0x0206: 'WM_RBUTTONDBLCLK',
+  };
+  // The 16-bit MSG is not the 32-bit one narrowed in place:
+  //   +0 hwnd(W) +2 message(W) +4 wParam(W) +6 lParam(D) +10 time(D) +14 pt(D)
+  const readWin16Msg = (sel, off) => {
+    try {
+      const dv = new DataView(memory.buffer);
+      const p = ctx.g2w(win16Linear(sel, off));
+      const message = dv.getUint16(p + 2, true);
+      return `hwnd=${hex(dv.getUint16(p, true))} ` +
+        `${WIN16_MSG_NAMES[message] || hex(message)} ` +
+        `wP=${hex(dv.getUint16(p + 4, true))} lP=${hex(dv.getUint32(p + 6, true))}`;
+    } catch (_) { return null; }
+  };
+  const h = base.host;
+  // --latency-stats: how long an injected event takes to reach pixels. The
+  // blit is the moment GDI hands a dirty rect to the presentation surface,
+  // so wrap that import and close out whatever input is still outstanding.
+  // Batches are the deterministic half of the answer (one batch is one
+  // message-loop turn, and one browser step); the wall clock is reported but
+  // never asserted on, because this box runs at load 4-40 and that noise is
+  // larger than the thing being measured.
+  const latency = { pending: null, samples: [] };
+  if (LATENCY_STATS && typeof h.ctrl_paint_trace === 'function') {
+    // Wait for the control to actually repaint before accepting a blit as
+    // this event's blit — otherwise any of the ~20 unrelated uploads a batch
+    // already makes would stop the clock immediately and measure nothing.
+    const rawPaint = h.ctrl_paint_trace;
+    h.ctrl_paint_trace = (...args) => {
+      if (latency.pending) latency.pending.painted = true;
+      return rawPaint(...args);
+    };
+  }
+  if (LATENCY_STATS && typeof h.gdi_surface_upload === 'function') {
+    const rawUpload = h.gdi_surface_upload;
+    h.gdi_surface_upload = (...args) => {
+      const result = rawUpload(...args);
+      if (latency.pending && latency.pending.painted) {
+        latency.samples.push({
+          kind: latency.pending.kind,
+          batches: tickStateRef.batch - latency.pending.batch,
+          ms: Number(process.hrtime.bigint() - latency.pending.at) / 1e6,
+        });
+        latency.pending = null;
+      }
+      return result;
+    };
+  }
+  const tickStateRef = { batch: 0 };
+  const gameplayBench = getArg('gameplay-bench', null) ? require('../tools/diablo-gameplay-bench').createBenchmark({
+    out: getArg('gameplay-bench', null),
+    warmup: Number(getArg('gameplay-warmup', '100')),
+    iterations: Number(getArg('gameplay-iterations', '600')),
+    enabled: Number(getArg('gameplay-candidate', '1')),
+    apiCount: () => apiTotal(),
+    walking: hasFlag('gameplay-walking'), renderer,
+    profile: getArg('gameplay-profile', null),
+  }) : null;
+  // --frame-stats: how evenly the guest presents, not how often. Average fps
+  // is the number that hides judder -- 55fps of even 18ms frames looks
+  // smooth, 55fps of alternating 17/34ms frames does not, and both report
+  // "55".
+  //
+  // Two different events get counted, because in this harness they are not
+  // the same event and only one of them is the guest's.
+  //
+  //   upload — WAT handing a dirty rect to the presentation surface. This is
+  //            the guest drawing, and it is driven by guest code alone.
+  //   flush  — the presentation surface decoding into the canvas. This is
+  //            what lib/host-imports.js counts for the browser HUD.
+  //
+  // In the browser those coincide closely enough to call one "a frame": the
+  // step loop repaints every step and the flush only does work when the guest
+  // actually dirtied something, so the flush rate IS the guest's draw rate.
+  // In the CLI they do NOT coincide: run.js repaints once every REPAINT_EVERY
+  // batches and the flush happens when the compositor reads the canvas, so
+  // the flush series is a picture of the HARNESS's sampling cadence and its
+  // interval collapses to exactly one batch. Reporting that as guest pacing
+  // would be measuring our own repaint loop and calling it the game.
+  // The present series is the one to trust for a DirectX app. gdi_surface_upload
+  // is NOT a frame: on DX-Ball it fires 182160 times against 20860 presents,
+  // because it tracks each BltFast of a sprite into the back buffer, about ten
+  // per frame. dx_trace kind 5/6 is the flip itself, it costs one JS call per
+  // frame, and unlike the flush it does not depend on --repaint-every at all --
+  // which matters, because a repaint of a live 640x480 surface costs ~6ms and
+  // repainting often enough to resolve a frame is slower than the run budget.
+  const frameStats = {
+    present: { iv: [], t: [], lastBatch: -1, lastAt: 0n },
+    // dx_trace kind 30: one per $present_pace call, i.e. one per frame the
+    // cap governs -- the series to read when an app presents twice a frame.
+    paced: { iv: [], t: [], lastBatch: -1, lastAt: 0n },
+    pacedGuest: [],
+    flush: { iv: [], t: [], lastBatch: -1, lastAt: 0n },
+  };
+  // One entry per executed batch, for --decode-stats.
+  const decodeStatsDecodes = [];
+  const decodeStatsSliceUs = [];
+  // One entry per executed batch, for --batch-stats; halts is indexed by the
+  // reason code $run reports (see $last_run_halt in src/01-header.wat).
+  const batchStatsBlocks = [];
+  const batchStatsHalts = [0, 0, 0, 0, 0, 0];
+  const recordFrame = (series) => {
+    const at = process.hrtime.bigint();
+    // Outside the measurement window, still move the anchor forward. Skipping
+    // that would make the first in-window interval span the entire warm-up and
+    // land as a single enormous outlier at the top of every percentile.
+    if (tickStateRef.batch < FRAME_STATS_FROM) {
+      series.lastBatch = tickStateRef.batch;
+      series.lastAt = at;
+      return at;
+    }
+    series.t.push(Number(at) / 1e6);
+    if (series.lastBatch >= 0) {
+      series.iv.push({
+        batches: tickStateRef.batch - series.lastBatch,
+        ms: Number(at - series.lastAt) / 1e6,
+      });
+    }
+    series.lastBatch = tickStateRef.batch;
+    series.lastAt = at;
+    return at;
+  };
+  if (FRAME_STATS || LATENCY_STATS) {
+    ctx.onGuestFrame = () => {
+      const at = recordFrame(frameStats.flush);
+      // A presented frame is where a pointer move becomes pixels. The
+      // ctrl_paint + surface_upload pair above cannot close a move's sample
+      // in a fullscreen DirectDraw game, because such a game paints no
+      // WAT-native controls at all -- it blits its own back buffer.
+      if (latency.pending && latency.pending.kind === 'mousemove') {
+        latency.samples.push({
+          kind: 'mousemove',
+          batches: tickStateRef.batch - latency.pending.batch,
+          ms: Number(at - latency.pending.at) / 1e6,
+        });
+        latency.pending = null;
+      }
+    };
+  }
+  // --present-distinct: is a present a FRAME? Hash the presented DirectDraw
+  // surface on every present and count how many differ from the one before.
+  // PRESENT/s alone cannot say: StarCraft presents ~100/s while its game steps
+  // 18/s, and the browser's distinct-displayed-frame count is capped by the
+  // display refresh, so a 434/s menu and a 60/s one read alike there.
+  if (PRESENT_DISTINCT.on) {
+    const prevHook = ctx.onGuestFrame;
+    ctx.onGuestFrame = (frame) => {
+      if (prevHook) prevHook(frame);
+      if (!frame || (frame.kind !== 'directdraw' && frame.kind !== 'gpu')) return;
+      const pd = PRESENT_DISTINCT;
+      pd.presents++;
+      if (tickStateRef.batch < pd.from) return;
+      pd.counted++;
+      const nowMs = ctx.guestPeekMs ? Number(ctx.guestPeekMs()) : null;
+      if (pd.firstMs === null) pd.firstMs = nowMs;
+      pd.lastMs = nowMs;
+      pd.times.push(nowMs);
+      if (frame.kind === 'gpu') { pd.gpu++; pd.changedTimes.push(null); return; }
+      const dv = new DataView(ctx.getMemory());
+      const entry = RegionMap.BASE.DX_OBJECTS + (frame.slot >>> 0) * 32;
+      const h = dv.getUint16(entry + 14, true);
+      const pitch = dv.getUint16(entry + 18, true);
+      const dib = dv.getUint32(entry + 20, true);
+      if (!h || !pitch || !dib) { pd.unreadable++; return; }
+      const words = new Uint32Array(ctx.getMemory(), dib & ~3, (pitch * h) >>> 2);
+      let hash = 0x811c9dc5;
+      for (let i = 0; i < words.length; i++) hash = Math.imul(hash ^ words[i], 16777619);
+      hash >>>= 0;
+      const key = `${frame.slot >>> 0}:${hash}`;
+      const bytes = new Uint8Array(ctx.getMemory(), dib, pitch * h);
+      const prev = pd.prevBytes.get(frame.slot >>> 0);
+      if (prev && prev.length === bytes.length) {
+        let x0 = pitch, x1 = -1, y0 = h, y1 = -1;
+        for (let y = 0; y < h; y++) {
+          const row = y * pitch;
+          let first = -1, last = -1;
+          for (let x = 0; x < pitch; x++) {
+            if (bytes[row + x] !== prev[row + x]) { if (first < 0) first = x; last = x; }
+          }
+          if (first < 0) continue;
+          if (y < y0) y0 = y;
+          y1 = y;
+          if (first < x0) x0 = first;
+          if (last > x1) x1 = last;
+        }
+        // Byte columns, not pixels: bpp varies by slot and the question is
+        // which part of the surface moved, not its exact width.
+        const rect = y1 < 0 ? 'none' : `bytes x${x0}-${x1} rows ${y0}-${y1}`;
+        pd.rects.set(rect, (pd.rects.get(rect) || 0) + 1);
+        if (pd.seq.length < 24) pd.seq.push(rect);
+        prev.set(bytes);
+      } else {
+        pd.prevBytes.set(frame.slot >>> 0, bytes.slice());
+      }
+      if (pd.last !== key) pd.changed++;
+      pd.changedTimes.push(pd.last !== key);
+      pd.last = key;
+      pd.unique.add(key);
+      pd.slots.set(frame.slot >>> 0, (pd.slots.get(frame.slot >>> 0) || 0) + 1);
+    };
+  }
+  // The guest tells us when a DirectDraw frame is finished; nothing else can.
+  // Before this the harness polled -- one upload per 128 batches, kept only if
+  // presentBestDxOffscreen's 4-byte-per-row signature happened to differ -- so
+  // what reached the canvas was the harness's cadence, not the game's, and a
+  // ball moving between the sampled columns could stay stale indefinitely.
+  // Two rates, deliberately: correctness is tied to the guest (dirty), cost is
+  // tied to wall clock. Measured on dxball, 800 batches of 20k steps: uploads
+  // effectively off 15.0s, the 10Hz default 17.0s, one per finished frame
+  // 23.3s. Nothing watches a headless canvas between captures and the
+  // canvasToPng hook forces an upload at every capture, so the rate limit costs
+  // no evidence -- a --png still shows the frame the guest just finished.
+  const dxPresent = { dirty: false, lastAt: 0n };
+  const presentDxIfDirty = (minMs) => {
+    if (!dxPresent.dirty || !base.gdi || !base.gdi.presentBestDxOffscreen) return;
+    if (minMs > 0) {
+      const now = process.hrtime.bigint();
+      if (dxPresent.lastAt !== 0n && Number(now - dxPresent.lastAt) / 1e6 < minMs) return;
+      dxPresent.lastAt = now;
+    }
+    dxPresent.dirty = false;
+    // force=true: presentBestDxOffscreen's signature samples 4 bytes per row,
+    // so it cannot be trusted to notice a sprite moving between its columns.
+    base.gdi.presentBestDxOffscreen(true);
+  };
+  // ...but only if the upload is followed by a composite. presentBestDxOffscreen
+  // writes into the target window's canvas/frame layer, not into renderer.canvas,
+  // and renderer.canvas is what every capture serializes. The --png action ran
+  // renderer.repaint() and *then* canvasToPng, so on any batch where the 100ms
+  // rate limit had suppressed the present, the composite ran against the old
+  // layer and the upload arrived too late to reach the picture: the capture
+  // showed the previous finished frame. Because the limiter is keyed to the host
+  // wall clock, whether that happened depended on machine load and on nothing in
+  // the guest -- test-d3dim-globe-render-menu.js captures each of Globe's three
+  // fill modes five batches after selecting it and intermittently photographed
+  // the mode before (identical handler histogram, different PNG, on this box at
+  // load ~8). Present first, composite second, then serialize.
+  dxPresentHook = () => {
+    presentDxIfDirty(0);
+    if (renderer && typeof renderer.repaint === 'function') renderer.repaint();
+  };
+  if (typeof h.dx_trace === 'function') {
+    const rawDxTrace = h.dx_trace;
+    // kind 5 = Present, 6 = Flip. Every other kind (Lock/Unlock/Blt/SetEntries)
+    // happens several times within one frame and must not count as one FRAME,
+    // but kind 2 (Unlock) IS a finished write: a released lock means the guest
+    // is done touching those pixels, which is exactly when they are worth
+    // uploading for a game that renders straight into a locked surface.
+    h.dx_trace = (kind, ...a) => {
+      if (gameplayBench) gameplayBench.present(kind, ...a);
+      if (kind === 2 || kind === 5 || kind === 6) dxPresent.dirty = true;
+      if (FRAME_STATS && (kind === 5 || kind === 6)) recordFrame(frameStats.present);
+      if (FRAME_STATS && kind === 30) {
+        recordFrame(frameStats.paced);
+        // a[1] is the guest ms the pacer decided at. Headless, a main-thread
+        // Sleep with no other guest thread moves the guest clock instead of
+        // waiting (tickState.pausedMs), so the wall series above holds only
+        // the work between frames; this is the cadence the guest saw.
+        if (tickStateRef.batch >= FRAME_STATS_FROM) frameStats.pacedGuest.push(a[1] >>> 0);
+      }
+      // --dx-lock-pause-ms: presentation back-pressure, charged at kind 5.
+      //
+      // Kind 5 is $dx_present, and it is the ONE event every presentation path
+      // funnels into: Unlock on a primary, Flip on a flip chain, a Blt or
+      // BltFast whose destination is the primary, and a palette SetEntries.
+      // It is also exactly what host.js counts as PRESENT/s. Charging the
+      // primary Lock alone (the first thing tried here) reached only the
+      // games that render straight into a locked primary and silently missed
+      // every Blt-presenting game -- DX-Ball took 0ms over 6000 batches and
+      // read as a null result rather than as an unmeasured one.
+      //
+      // Kind 1 (Lock) is still classified, for the report only: it says
+      // whether the app presents by locking the primary or by blitting to it,
+      // and offscreen/back-buffer locks are composition and stay full speed.
+      if (DX_LOCK_PAUSE.ms > 0) {
+        if (kind === 1) {
+          if ((a[1] | 0) & 1) DX_LOCK_PAUSE.primaryLocks++;
+          else DX_LOCK_PAUSE.offscreenLocks++;
+        } else if (kind === 6) {
+          DX_LOCK_PAUSE.flips++;
+        } else if (kind === 5) {
+          DX_LOCK_PAUSE.presents++;
+          if (DX_LOCK_PAUSE.clock) {
+            DX_LOCK_PAUSE.clock.state.pausedMs += DX_LOCK_PAUSE.ms;
+            DX_LOCK_PAUSE.guestMsAdded += DX_LOCK_PAUSE.ms;
+          }
+        }
+      }
+      // Outside a --trace-from/--trace-to window, skip the logging tracer
+      // entirely rather than only suppressing its output: its formatters scan
+      // 64KB of DIB per Lock/Unlock/Present, which is the expensive half.
+      if (!traceWindowOpen()) return;
+      return rawDxTrace(kind, ...a);
+    };
+  }
+  // Keep the CLI harness instantiable while optional host-side font resource
+  // loading is unavailable; browser/full hosts can provide the real loader.
+  if (!h.add_font_resource) h.add_font_resource = () => 0;
+  if (SEED_WINDOW && renderer) {
+    const originalGetWindowRelated = h.get_window_related;
+    const originalActivateWindow = h.activate_window;
+    let seeded = false;
+    h.get_window_related = (hwnd, command) => {
+      if (!seeded && (hwnd >>> 0) === 0x10000 && command === 5) {
+        seeded = true;
+        const titles = SEED_WINDOW.split('|').map(title => title.trim()).filter(Boolean);
+        const foreignWasm = { exports: {
+          post_message_q(target, msg, wParam, lParam) {
+            logs.push(`[seed-window] post hwnd=${hex(target)} msg=${hex(msg)} wParam=${hex(wParam)} lParam=${hex(lParam)}`);
+            if ((msg >>> 0) === 0x0010 && renderer.windows[target >>> 0]) {
+              delete renderer.windows[target >>> 0];
+              if (renderer.notifyShellWindow) renderer.notifyShellWindow(2, target);
+              renderer.scheduleRepaint();
+              logs.push(`[seed-window] closed hwnd=${hex(target)}`);
+            }
+            return 1;
+          },
+        } };
+        titles.forEach((title, index) => {
+          const foreignHwnd = 0x70001 + index;
+          renderer.windows[foreignHwnd] = {
+            hwnd: foreignHwnd,
+            title,
+            className: index ? 'Notepad' : 'CalcFrame',
+            style: 0x10cf0000,
+            visible: true,
+            enabled: true,
+            isChild: false,
+            hasCaption: true,
+            x: 30 + index * 48,
+            y: 30 + index * 36,
+            w: 320,
+            h: 240,
+            zOrder: renderer._nextZ++,
+            wasm: foreignWasm,
+          };
+          if (renderer._computeClientRect) renderer._computeClientRect(renderer.windows[foreignHwnd]);
+        });
+      }
+      return originalGetWindowRelated(hwnd, command);
+    };
+    h.activate_window = hwnd => {
+      const result = originalActivateWindow(hwnd);
+      logs.push(`[seed-window] activate hwnd=${hex(hwnd)} result=${result}`);
+      return result;
+    };
+  }
+  const profileHostNames = PROFILE_HOST ? PROFILE_HOST.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const profileHostStats = new Map();
+  const wrapProfileHost = (hostObj, name) => {
+    if (!hostObj || typeof hostObj[name] !== 'function') return;
+    const orig = hostObj[name];
+    hostObj[name] = (...fnArgs) => {
+      const t0 = process.hrtime.bigint();
+      try {
+        return orig(...fnArgs);
+      } finally {
+        const dt = process.hrtime.bigint() - t0;
+        const s = profileHostStats.get(name) || { count: 0, ns: 0n };
+        s.count++;
+        s.ns += dt;
+        profileHostStats.set(name, s);
+      }
+    };
+  };
+  for (const name of profileHostNames) wrapProfileHost(h, name);
+
+  // --- Override logging ---
+  let criticalTracePending = null;
+  // Decoded API names, keyed by the guest pointer they were read from. This
+  // runs on EVERY api call -- 904,207 of them in a 55s Black & White 2 window --
+  // and it ran unconditionally, building a fresh Uint8Array view and
+  // concatenating the name a character at a time even under --quiet-api, where
+  // nothing downstream ever reads the string. It measured 1403ms of a 55769ms
+  // CPU profile (2.5%), plus its share of the 903ms spent in GC, which made it
+  // the largest single JS cost in the run. The bytes at a given pointer are a
+  // static string in the guest image and the memory is created with
+  // initial === maximum so the buffer is never detached, so one decode per
+  // distinct pointer is enough.
+  const apiNameCache = new Map();
+  // --quiet-api with no consumer of the per-call API log: every instance is
+  // told to skip the log / log_i32 / log_api_exit host calls outright
+  // (09b-dispatch $api_log_on) -- three host calls per Win32 API, 88M each in
+  // one Heroes III run. The count survives in WAT ($api_calls, apiTotal()).
+  // The list is every reader of an API name or exit below, plus --esp-audit,
+  // which wraps a worker's log. --quiet-api-fast is now an alias of this.
+  apiLogOff = QUIET_API &&
+    (!TRACE_API || TRACE_API_PAUSED) && !TRACE_API_COUNTS && !TRACE_CRITICAL &&
+    !TRACE_INPUT_DISPATCH && !TRACE_MESSAGE_BOUNDARY && !ESP_DELTA && !ESP_AUDIT && !breakApis.length &&
+    // Memory dumps accompany a paused API trace; they must not force its
+    // dispatch logger on before the explicit trace-api control command.
+    // Without --trace-api, memory-only tracing retains its existing behavior.
+    (!TRACE_API_MEM.length || (TRACE_API && TRACE_API_PAUSED));
+  h.log = (ptr, len) => {
+    let t = apiNameCache.get(ptr);
+    if (t === undefined) {
+      const b = new Uint8Array(memory.buffer, ptr, Math.min(len, 256));
+      t = '';
+      for (let i = 0; i < b.length && b[i]; i++) t += String.fromCharCode(b[i]);
+      apiNameCache.set(ptr, t);
+    }
+    // COM ordinal dispatch: 09b-dispatch.wat emits the api_id marker via
+    // host_log_i32 IMMEDIATELY before this log of the '<ord>' placeholder.
+    // Resolve the real method name now so all downstream tracing
+    // (--trace-api filter, --trace-stack, breakpoints, decodeDx, typed
+    // formatting via api_table.json) works against the real name.
+    let comOrdRaw = false;
+    if (t === '<ord>' && pendingComApiId >= 0) {
+      // Ids are array positions (tools/check-api-table.js gates it). A
+      // linear find here was ~28% of CLI CPU in a COM-heavy D3D8 world.
+      const entry = apiTable[pendingComApiId];
+      if (entry && entry.id === pendingComApiId) t = entry.name;
+      comOrdRaw = true;
+      pendingComApiId = -1;
+    }
+    messageBoundaryTrace.api(t);
+    apiCount++;
+    if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
+
+    if (TRACE_CRITICAL && (t === 'EnterCriticalSection' || t === 'LeaveCriticalSection')) {
+      try {
+        const e = instance.exports;
+        const esp = e.get_esp() >>> 0;
+        const imageBase = e.get_image_base() >>> 0;
+        const dv = new DataView(memory.buffer);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+        const cs = dv.getUint32(g2w((esp + 4) >>> 0), true) >>> 0;
+        const state = () => ({
+          lock: dv.getInt32(g2w((cs + 4) >>> 0), true),
+          recursion: dv.getUint32(g2w((cs + 8) >>> 0), true) >>> 0,
+          owner: dv.getUint32(g2w((cs + 12) >>> 0), true) >>> 0,
+        });
+        const before = state();
+        const ret = dv.getUint32(g2w(esp), true) >>> 0;
+        const tid = e.get_current_thread_id ? e.get_current_thread_id() >>> 0 : 0;
+        criticalTracePending = { name: t, cs, ret, tid, state };
+        logs.push(`[critical T0/tid${tid}] ${t} cs=${hex(cs)} ret=${hex(ret)} before={lock:${before.lock},rec:${before.recursion},owner:${before.owner}}`);
+      } catch (_) {
+        criticalTracePending = null;
+      }
+    }
+
+    if (TRACE_INPUT_DISPATCH && (t === 'DispatchMessageA' || t === 'DispatchMessageW')) {
+      try {
+        const e = instance.exports;
+        const esp = e.get_esp();
+        const imageBase = e.get_image_base();
+        const dv = new DataView(memory.buffer);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+        const msgPtr = dv.getUint32(g2w(esp + 4), true);
+        const msgHwnd = dv.getUint32(g2w(msgPtr), true);
+        const msgMsg = dv.getUint32(g2w(msgPtr + 4), true);
+        const msgWP = dv.getUint32(g2w(msgPtr + 8), true);
+        const msgLP = dv.getUint32(g2w(msgPtr + 12), true);
+        if ((msgMsg >= 0x0100 && msgMsg <= 0x0108) ||
+            (msgMsg >= 0x0200 && msgMsg <= 0x020D) ||
+            (msgMsg >= 0x00A0 && msgMsg <= 0x00AD)) {
+          inputConsumptionTrace.dispatch(t, msgHwnd, msgMsg, msgWP, msgLP);
+        }
+      } catch (_) {}
+    }
+
+    for (const spec of TRACE_API_MEM) {
+      if (t !== spec.name) continue;
+      try {
+        const e = instance.exports;
+        const imageBase = e.get_image_base() >>> 0;
+        const dv = new DataView(memory.buffer);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+        const ptr = dv.getUint32(g2w((e.get_esp() + 4 + spec.arg * 4) >>> 0), true) >>> 0;
+        logs.push(`[api-mem] ${t} arg${spec.arg}=${hex(ptr)} len=${spec.len}`);
+        for (let off = 0; ptr && off < spec.len; off += 16) {
+          const row = [];
+          for (let i = off; i < Math.min(off + 16, spec.len); i++) {
+            row.push(dv.getUint8(g2w((ptr + i) >>> 0)).toString(16).padStart(2, '0'));
+          }
+          logs.push(`  ${hex((ptr + off) >>> 0)}: ${row.join(' ')}`);
+        }
+      } catch (err) {
+        logs.push(`[api-mem] ${t} unreadable: ${err.message}`);
+      }
+    }
+
+    // Check API breakpoints
+    if (breakApis.length && breakApis.some(name => t.includes(name))) {
+      apiBreakHit = t;
+      // Dump entry-time stack + EBP chain BEFORE handler runs, so we see
+      // the real return address and caller chain (not post-handler state).
+      try {
+        const e = instance.exports;
+        const esp = e.get_esp();
+        const imageBase = e.get_image_base();
+        const dv = new DataView(memory.buffer);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+        const ret = dv.getUint32(g2w(esp), true);
+        const stackVals = [];
+        for (let i = 0; i < 8; i++) {
+          stackVals.push(hex(dv.getUint32(g2w(esp + i * 4), true)));
+        }
+        let ebp = e.get_ebp();
+        const chain = [];
+        for (let depth = 0; depth < 12 && ebp; depth++) {
+          try {
+            const callerRet = dv.getUint32(g2w(ebp + 4), true);
+            const prevEbp = dv.getUint32(g2w(ebp), true);
+            chain.push(hex(callerRet));
+            if (prevEbp <= ebp) break;
+            ebp = prevEbp;
+          } catch (_) { break; }
+        }
+        console.log(`\n*** API BREAK ENTRY for ${t}:`);
+        console.log(`  esp=${hex(esp)}  ret=${hex(ret)}`);
+        console.log(`  stack: ${stackVals.join(' ')}`);
+        console.log(`  ebp chain: ${chain.join(' -> ')}`);
+        if (TRACE_CALLSTACK && ctx.exports && ctx.exports.get_callstack_depth) {
+          const e = ctx.exports;
+          const d = e.get_callstack_depth() | 0;
+          const n = Math.min(d, TRACE_CALLSTACK_DEPTH);
+          console.log(`  [stack T0 depth=${d}]`);
+          for (let i = 0; i < n; i++) console.log(`    #${i} ret=${hex(e.get_callstack_entry(i))}`);
+        }
+      } catch (_) {}
+    }
+
+    if (ESP_DELTA) {
+      lastApiName = t;
+      lastApiEsp = instance.exports.get_esp();
+    }
+
+    if (TRACE_API && (!TRACE_API_FILTER || TRACE_API_FILTER.has(t))) {
+      const e = instance.exports;
+      const esp = e.get_esp();
+      const imageBase = e.get_image_base();
+      const dv = new DataView(memory.buffer);
+      const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+      const fmtCtx = { dv, g2w, memory: memory.buffer, readStr, hex };
+
+      const entry = apiByName.get(t);
+      lastApiName = t;
+      lastApiEntry = entry || null;
+      // Snapshot arg dwords at entry so out-param decoding survives stack churn
+      if (entry && Array.isArray(entry.args) && entry.args.some(a => a.out)) {
+        lastApiArgs = [];
+        try {
+          for (let i = 0; i < entry.args.length; i++) {
+            lastApiArgs.push(dv.getUint32(g2w(esp + 4 + i * 4), true));
+          }
+        } catch (_) { lastApiArgs = null; }
+      } else {
+        lastApiArgs = null;
+      }
+
+      // Typed formatter path
+      let header = fmtApiCall(entry, esp, fmtCtx);
+      // Legacy path: nargs raw dwords (fallback to 6 if unknown) + ad-hoc decoders
+      let strInfo = '';
+      if (!header) {
+        const n = (entry && typeof entry.nargs === 'number') ? entry.nargs : 6;
+        let argStr = '';
+        try {
+          for (let i = 0; i < n; i++) {
+            const a = dv.getUint32(g2w(esp + 4 + i * 4), true);
+            argStr += (i ? ', ' : '') + hex(a);
+          }
+        } catch (_) {}
+        const matchedApi = STRING_APIS.find(api => t.includes(api));
+        if (matchedApi) {
+          try {
+            const strPtr = dv.getUint32(g2w(esp + 4), true);
+            const strVal = readStr(g2w(strPtr), 200);
+            if (strVal) strInfo = ` str="${strVal}"`;
+          } catch (_) {}
+        }
+        if ((t === 'lstrcmpiA' || t === 'lstrcmpA') && !strInfo) {
+          try {
+            const s1 = dv.getUint32(g2w(esp + 4), true);
+            const s2 = dv.getUint32(g2w(esp + 8), true);
+            strInfo = ` "${readStr(g2w(s1), 32)}" vs "${readStr(g2w(s2), 32)}"`;
+          } catch (_) {}
+        }
+        header = `${t}(${argStr})`;
+      }
+      if (t === 'SendMessageA') {
+        try {
+          const msg = dv.getUint32(g2w(esp + 8), true);
+          const itemGuest = dv.getUint32(g2w(esp + 16), true);
+          if (msg === 0x110C && itemGuest) {
+            const item = g2w(itemGuest);
+            const mask = dv.getUint32(item, true);
+            const hItem = dv.getUint32(item + 4, true);
+            const textGuest = dv.getUint32(item + 16, true);
+            const textMax = dv.getUint32(item + 20, true);
+            strInfo += ` TVITEMA{mask=${hex(mask)},hItem=${hex(hItem)},pszText=${hex(textGuest)},cch=${textMax}}`;
+            lastTreeItemTrace = { textGuest, textMax };
+          }
+        } catch (_) {}
+      }
+      if (t === 'SendMessageW') {
+        try {
+          const msg = dv.getUint32(g2w(esp + 8), true);
+          const itemGuest = dv.getUint32(g2w(esp + 16), true);
+          if (msg === 0x0443 && itemGuest) { // TB_INSERTBUTTONW
+            const item = g2w(itemGuest);
+            const image = dv.getInt32(item, true);
+            const command = dv.getInt32(item + 4, true);
+            const state = dv.getUint8(item + 8);
+            const style = dv.getUint8(item + 9);
+            strInfo += ` button={image=${image},command=${command},state=0x${state.toString(16)},style=0x${style.toString(16)}}`;
+          }
+        } catch (_) {}
+      }
+
+      let dxInfo = '';
+      if (TRACE_DX) {
+        const isNamedDx = t.startsWith('IDirectDraw') || t.startsWith('IDirectSound') ||
+                          t.startsWith('IDirectInput') || t.startsWith('IDirect3D') ||
+                          t === 'DirectDrawCreate' || t === 'DirectSoundCreate' ||
+                          t === 'DirectInputCreateA' || t === 'Direct3DRMCreate';
+        let isOrdDx = false;
+        if (!isNamedDx && t === '<ord>') {
+          try {
+            const thisPtr = dv.getUint32(g2w(esp + 4), true);
+            if (dxLookupThis(thisPtr, dv, g2w)) isOrdDx = true;
+          } catch (_) {}
+        }
+        if (isNamedDx || isOrdDx) {
+          try { dxInfo = ' ' + decodeDx(t, esp, dv, g2w, memory); } catch (_) {}
+        }
+      }
+      let callerInfo = '';
+      try {
+        const callerRet = dv.getUint32(g2w(esp), true);
+        callerInfo = ` [esp=${hex(esp)} ret=${hex(callerRet)}]`;
+      } catch (_) {}
+      pushApi(`[API #${apiCount}] ${header}${strInfo}${dxInfo}${callerInfo}`);
+
+      // --trace-stack: walk EBP chain on matched calls
+      if (TRACE_STACK && (!TRACE_STACK_FILTER || TRACE_STACK_FILTER.has(t))) {
+        const depth = TRACE_STACK_FILTER ? TRACE_STACK_FILTER.get(t) : TRACE_STACK_DEFAULT_DEPTH;
+        flushDedup();
+        logs.push('  ' + traceStackLine(() => e.get_ebp(), esp, dv, g2w, imageBase, memory.buffer, depth));
+      }
+
+      // Legacy struct dumps only fire when API isn't typed (formatter already covers them)
+      if (!entry || !entry.args) {
+        if (t.includes('DispatchMessage') && apiCount <= 100) {
+          try {
+            const msgPtr = dv.getUint32(g2w(esp + 4), true);
+            const msgHwnd = dv.getUint32(g2w(msgPtr), true);
+            const msgMsg = dv.getUint32(g2w(msgPtr + 4), true);
+            const msgWP = dv.getUint32(g2w(msgPtr + 8), true);
+            const msgLP = dv.getUint32(g2w(msgPtr + 12), true);
+            flushDedup();
+            logs.push(`  MSG: hwnd=0x${msgHwnd.toString(16)} msg=0x${msgMsg.toString(16)} wP=0x${msgWP.toString(16)} lP=0x${msgLP.toString(16)}`);
+          } catch (_) {}
+        }
+        if (t === 'RegisterClassA' || t === 'RegisterClassW') {
+          try {
+            const wcPtr = dv.getUint32(g2w(esp + 4), true);
+            const wcWa = g2w(wcPtr);
+            const style = dv.getUint32(wcWa, true);
+            const wndProc = dv.getUint32(wcWa + 4, true);
+            const menuName = dv.getUint32(wcWa + 32, true);
+            const className = dv.getUint32(wcWa + 36, true);
+            const menuStr = (menuName > 0 && menuName < 0x10000)
+              ? `MAKEINTRESOURCE(${menuName})`
+              : (menuName ? `"${readStr(g2w(menuName), 32)}" (${hex(menuName)})` : '0');
+            const classStr = (className > 0 && className < 0x10000)
+              ? `MAKEINTATOM(${className})`
+              : (className ? `"${readStr(g2w(className), 32)}" (${hex(className)})` : '0');
+            flushDedup();
+            logs.push(`  WNDCLASS: style=${hex(style)} wndProc=${hex(wndProc)} class=${classStr} menu=${menuStr}`);
+          } catch (_) {}
+        }
+      }
+
+      // SEH tracing for _EH_prolog and _CxxThrowException
+      if (TRACE_SEH && (t.includes('_EH_prolog') || t.includes('_CxxThrowException'))) {
+        const fsBase = e.get_fs_base();
+        try {
+          const sehHead = dv.getUint32(g2w(fsBase), true);
+          flushDedup();
+          logs.push(`  [SEH] fs:[0]=${hex(sehHead)} EBP=${hex(e.get_ebp())}`);
+        } catch (_) {}
+      }
+
+      // Decode MSVC C++ throw payload on RaiseException(0xE06D7363)
+      if (t === 'RaiseException' || t === '_CxxThrowException') {
+        try {
+          const code = dv.getUint32(g2w(esp + 4), true);
+          const nArgs = dv.getUint32(g2w(esp + 12), true);
+          const argsPtr = dv.getUint32(g2w(esp + 16), true);
+          if (code === 0xe06d7363 && nArgs >= 3 && argsPtr) {
+            const magic = dv.getUint32(g2w(argsPtr), true);
+            const objPtr = dv.getUint32(g2w(argsPtr + 4), true);
+            const throwInfo = dv.getUint32(g2w(argsPtr + 8), true);
+            const pCTA = dv.getUint32(g2w(throwInfo + 12), true);
+            const nCT = dv.getUint32(g2w(pCTA), true);
+            const names = [];
+            for (let i = 0; i < nCT && i < 4; i++) {
+              const pCT = dv.getUint32(g2w(pCTA + 4 + i * 4), true);
+              const pType = dv.getUint32(g2w(pCT + 4), true);
+              const name = readStr(g2w(pType + 8), 80);
+              names.push(name);
+            }
+            logs.push(`  [C++ throw] magic=${hex(magic)} obj=${hex(objPtr)} throwInfo=${hex(throwInfo)} types=[${names.join(', ')}]`);
+            try {
+              const words = [];
+              for (let k = 0; k < 8; k++) words.push(hex(dv.getUint32(g2w(objPtr + k * 4), true)));
+              logs.push(`  [C++ throw] obj bytes: ${words.join(' ')}`);
+              const maybeStr = readStr(g2w(dv.getUint32(g2w(objPtr + 4), true)), 100);
+              if (maybeStr) logs.push(`  [C++ throw] obj+4 as str: "${maybeStr}"`);
+            } catch (_) {}
+          }
+        } catch (ex) { logs.push(`  [C++ throw] decode error: ${ex.message}`); }
+      }
+    } else if (!QUIET_API) {
+      logs.push('[API] ' + t);
+    }
+  };
+
+  h.log_i32 = val => {
+    // COM-dispatch marker (emitted by 09b-dispatch.wat BEFORE the '<ord>'
+    // name log). Stash api_id so h.log can substitute the real method
+    // name on the immediately-following entry log.
+    if (((val >>> 0) >>> 16) === 0xC0DE) {
+      pendingComApiId = (val >>> 0) & 0xFFFF;
+      return;
+    }
+    // Win16 API dispatch marker (09e-win16-api.wat), followed by the packed
+    // module<<16|ordinal and the linear return address. Every Win16 import is
+    // by ordinal, so "module 1 ordinal 91" is unreadable without the map the
+    // real modules' export tables provide — say KERNEL.91 INITTASK instead.
+    // 0xCA16A9F1 is an ordinal import and carries two words; 0xCA16A9F2 is a
+    // name import and carries a third, the address of the Pascal-string name.
+    // 0xCA16A9F0 / 0xCA16A9EF are the two halves of --trace-win16: the call
+    // with the four stack words nearest the top, then AX and DX once it has
+    // run. Only the F1/F2 markers mean the task stopped.
+    // --trace-fpu (06-fpu.wat): the flags, whether they went up or came down,
+    // and the EIP of the block that did it.
+    // $wnd_send_message ran out of interpreter rounds and is about to restore
+    // the caller's registers with the wndproc still mid-flight. The guest call
+    // is dropped on the floor, so anything the tail of that handler would have
+    // done simply never happens -- and nothing else in the run says so. Three
+    // words follow: EIP, yield_reason, message id, HWND, wParam, lParam.
+    if ((val >>> 0) === 0xCADE5000) { pendingSyncBail = { words: [] }; return; }
+    if (pendingSyncBail) {
+      pendingSyncBail.words.push(val >>> 0);
+      if (pendingSyncBail.words.length < 6) return;
+      const [eip, yr, msg, hwnd, wParam, lParam] = pendingSyncBail.words;
+      pendingSyncBail = null;
+      flushDedup();
+      logs.push(`[sync] ABANDONED wndproc hwnd=${hex(hwnd)} msg=${hex(msg)} ` +
+        `wParam=${hex(wParam)} lParam=${hex(lParam)} at ${hex(eip)} ` +
+        `after 64 rounds (yield_reason=${yr})`);
+      return;
+    }
+    if ((val >>> 0) === 0xCAC0DE02) { pendingCodeRetire = []; return; }
+    if (pendingCodeRetire) {
+      pendingCodeRetire.push(val >>> 0);
+      if (pendingCodeRetire.length < 4) return;
+      const [entry, extent, eip, byWrite] = pendingCodeRetire;
+      pendingCodeRetire = null;
+      const kind = byWrite ? 'write' : 'overlap';
+      codeWriteStats.retires[kind] = (codeWriteStats.retires[kind] || 0) + 1;
+      if (!byWrite) {
+        const key = `${hex(entry)} <- ${hex(eip)}`;
+        codeWriteStats.overlapPairs.set(key, (codeWriteStats.overlapPairs.get(key) || 0) + 1);
+        if (++codeWriteStats.overlapLogged <= 40) {
+          logs.push(`[code-retire] ${hex(entry)} (+${extent}) retired by overlapping publish at ${hex(eip)}`);
+        }
+      }
+      return;
+    }
+    if ((val >>> 0) === 0xCAC0DE01) { pendingCodeWrite = []; return; }
+    if (pendingCodeWrite) {
+      pendingCodeWrite.push(val >>> 0);
+      if (pendingCodeWrite.length < 4) return;
+      const [ga, len, eip, dropped] = pendingCodeWrite;
+      pendingCodeWrite = null;
+      codeWriteStats.events++;
+      codeWriteStats.dropped += dropped;
+      const bump = (m, k) => {
+        const e = m.get(k) || { n: 0, dropped: 0 };
+        e.n++; e.dropped += dropped; m.set(k, e);
+      };
+      bump(codeWriteStats.byEip, eip);
+      bump(codeWriteStats.byPage, ga & ~0xFFF);
+      if (codeWriteStats.events <= 40) {
+        logs.push(`[code-write] ${hex(ga)} len=${len} by ${hex(eip)} dropped ${dropped} block(s)`);
+      }
+      return;
+    }
+    if ((val >>> 0) === 0xCAC0DE03) { pendingCodeMiss = []; return; }
+    if (pendingCodeMiss) {
+      pendingCodeMiss.push(val >>> 0);
+      if (pendingCodeMiss.length < 3) return;
+      const [ga, , eip] = pendingCodeMiss;
+      pendingCodeMiss = null;
+      codeWriteStats.misses++;
+      const bump = (m, k) => m.set(k, (m.get(k) || 0) + 1);
+      bump(codeWriteStats.missByEip, eip);
+      bump(codeWriteStats.missByPage, ga & ~0xFFF);
+      return;
+    }
+    if ((val >>> 0) === 0xCAF00001) { pendingFpu = { words: [] }; return; }
+    if (pendingFpu) {
+      pendingFpu.words.push(val >>> 0);
+      if (pendingFpu.words.length < 3) return;
+      const [bits, raised, eip] = pendingFpu.words;
+      pendingFpu = null;
+      const names = ['IE', 'DE', 'ZE', 'OE', 'UE', 'PE', 'SF', 'ES']
+        .filter((_, i) => bits & (1 << i)).join('|') || 'none';
+      logs.push(`[fpu] ${raised ? 'raise' : 'clear'} ${names} at ${hex(eip)}`);
+      return;
+    }
+    if ((val >>> 0) === 0xCA16A9F1) { pendingWin16 = { want: 2, words: [] }; return; }
+    if ((val >>> 0) === 0xCA16A9F2) { pendingWin16 = { want: 3, words: [] }; return; }
+    // A by-name call into a loaded DLL that resolved: same three words as the
+    // unresolved marker, but it is a call rather than a stop.
+    if ((val >>> 0) === 0xCA16A9EE) { pendingWin16 = { want: 3, words: [], resolved: true }; return; }
+    // GetProcAddress asked a module this emulator answers for by name and got
+    // nothing back. Callers rarely check, so this is the only place the name
+    // is still known: Visual Basic reports "Sub or Function not defined" long
+    // afterwards with no way back to the Declare that failed.
+    if ((val >>> 0) === 0xCA16A9E5) { pendingWin16 = { want: 3, words: [], procMiss: true }; return; }
+    // The Win16 modal dialog pump handing one message on: hwnd, message,
+    // wParam, lParam, and the dialog the pump belongs to.
+    if ((val >>> 0) === 0xCA16A9EB) { pendingWin16 = { want: 6, words: [], route: true }; return; }
+    if ((val >>> 0) === 0xCA16A9EC) { pendingWin16 = { want: 5, words: [], posted: true }; return; }
+    if ((val >>> 0) === 0xCA16A9E9) { pendingWin16 = { want: 12, words: [], ddeAsk: true }; return; }
+    if ((val >>> 0) === 0xCA16A9E8) { pendingWin16 = { want: 2, words: [], ddeAns: true }; return; }
+    if ((val >>> 0) === 0xCA16A9E7) { pendingWin16 = { want: 3, words: [], ddeData: true }; return; }
+    // What CreateWindow made of its class name: the window, the class-name
+    // far pointer once flattened, the procedure the window ended up with, and
+    // what the class table says that name resolves to. They disagree exactly
+    // when the class was not found, which is otherwise invisible.
+    if ((val >>> 0) === 0xCA16A9E6) { pendingWin16 = { want: 4, words: [], wndClass: true }; return; }
+    if ((val >>> 0) === 0xCA16A9F0) { pendingWin16 = { want: 15, words: [], call: true }; return; }
+    if ((val >>> 0) === 0xCA16A9EF) { pendingWin16 = { want: 6, words: [], ret: true }; return; }
+    if (pendingWin16) {
+      pendingWin16.words.push(val >>> 0);
+      if (pendingWin16.words.length < pendingWin16.want) return;
+      const { call: isCall, ret: isRet, route: isRoute, posted: isPosted,
+              ddeAsk: isDdeAsk, ddeAns: isDdeAns, ddeData: isDdeData,
+              wndClass: isWndClass, procMiss: isProcMiss, resolved, words } = pendingWin16;
+      pendingWin16 = null;
+      if (isProcMiss) {
+        const mod = WIN16_MODULES[words[0] >>> 16] || `<module ${words[0] >>> 16}>`;
+        logs.push(`[win16] GetProcAddress ${mod}."${readPascalStr(words[2])}" -> NULL`);
+        return;
+      }
+      if (isWndClass) {
+        const [hwnd, cls, proc, found] = words;
+        const name = cls >= 0x10000 ? readStr(ctx.g2w(cls), 32) : `atom ${hex(cls)}`;
+        logs.push(`[win16] class hwnd=${hex(hwnd)} name=${hex(cls)} "${name}"` +
+          ` wndproc=${hex(proc)} class-table=${hex(found)}`);
+        return;
+      }
+      if (isDdeData) {
+        logs.push(`[win16] dde answered with ${words[0]} bytes:` +
+          ` ${hex(words[1])},${hex(words[2])}`);
+        return;
+      }
+      if (isDdeAsk) {
+        const [type, inst, conv, hsz1, hsz2, cb, fmt, hdata, head, dlen, head2, head3] = words;
+        // Named, not numbered. A string handle is per-instance, so the two
+        // sides of one conversation give the same name different numbers and
+        // comparing two transcripts by handle proves nothing -- which is how a
+        // poke that arrived under the right name still read as a mystery.
+        const hszText = (h) => {
+          if (!instance.exports.win16_dde_hsz_text) return String(h);
+          const wa = instance.exports.win16_dde_hsz_text(h | 0) >>> 0;
+          if (!wa) return String(h);
+          const bytes = new Uint8Array(memory.buffer);
+          let end = wa;
+          while (end < wa + 68 && bytes[end]) end++;
+          const text = Buffer.from(bytes.slice(wa, end)).toString('latin1');
+          return text ? `${h}:${JSON.stringify(text)}` : String(h);
+        };
+        logs.push(`[win16] dde offer ${WIN16_DDE_XTYP[type] || hex(type)}` +
+          ` inst=${inst} conv=${conv}` +
+          ` topic=${hszText(hsz1)} item=${hszText(hsz2)}` +
+          ` fmt=${fmt} data=${hex(hdata)}${hdata ? `[${dlen}]=${hex(head)},${hex(head2)},${hex(head3)}` : ''} callback=${hex(cb)}` +
+          `${cb >>> 16 ? '' : ' NO CALLBACK -- nobody to ask'}`);
+        return;
+      }
+      if (isDdeAns) {
+        // The value, not just yes/no: DDE_FBUSY ("ask me again") and DDE_FACK
+        // are both non-zero and mean opposite things to whoever is waiting.
+        logs.push(`[win16] dde answer ${words[0] ? 'ACCEPT' : 'REFUSE'}`
+          + `${(words[0] & 0x4000) ? ' BUSY' : ''} ret=${hex(words[0])} conv=${words[1]}`);
+        return;
+      }
+      if (isPosted) {
+        const [hwnd, msg, wp, lp, depth] = words;
+        logs.push(`[win16] post -> hwnd=${hex(hwnd)} msg=${hex(msg)}` +
+          `${WIN16_MSG_NAMES[msg] ? ` (${WIN16_MSG_NAMES[msg]})` : ''}` +
+          ` wp=${hex(wp)} lp=${hex(lp)} depth=${depth}`);
+        return;
+      }
+      if (isRoute) {
+        const [hwnd, msg, wp, lp, dlg, queued] = words;
+        logs.push(`[win16] ${dlg ? `dlg-pump ${hex(dlg)}` : 'task-loop'} -> hwnd=${hex(hwnd)} msg=${hex(msg)}` +
+          `${WIN16_MSG_NAMES[msg] ? ` (${WIN16_MSG_NAMES[msg]})` : ''}` +
+          ` wp=${hex(wp)} lp=${hex(lp)} queued=${queued}`);
+        return;
+      }
+      if (isRet) {
+        // `popped` counts the far return address plus the Pascal argument
+        // bytes the API removed. Comparing it against the API's real signature
+        // is how a frame bug is found before it becomes a return into nothing.
+        logs.push(`[win16]   -> AX=${hex(words[0])} DX=${hex(words[1])} eip=${hex(words[2])}`
+          + ` esp=${hex(words[3])} popped=${words[4] | 0} ds=${hex(words[5])}`);
+        return;
+      }
+      const [key, ret, nameAddr] = words;
+      const mod = WIN16_MODULES[key >>> 16] || `<module ${key >>> 16}>`;
+      // On a call the last word is the by-name flag; the ordinal field then
+      // holds a name-table offset and there is nothing to look up.
+      const what = isCall
+        ? (words[14] ? `${mod}.<name+${key & 0xFFFF}> (by name)`
+                    : win16ApiName(key >>> 16, key & 0xFFFF))
+        : (nameAddr === undefined
+            ? win16ApiName(key >>> 16, key & 0xFFFF)
+            : `${mod}.${readPascalStr(nameAddr)} (by name${resolved ? ', resolved' : ''})`);
+      if (isCall) {
+        // The message pump's four entry points all take an lpMsg, and an
+        // argument dump of a far pointer says nothing about which message is
+        // in flight. Decode the MSG itself — this is how you see whether a
+        // posted command ever reached the window procedure.
+        const msgArg = /USER\.(108|109|113|114) /.test(what)
+          ? readWin16Msg(words[3], words[2]) : null;
+        logs.push(`[win16] ${what}(${words.slice(2, 14).map(hex).join(', ')})  ret=${hex(ret)}` +
+          (msgArg ? `  {${msgArg}}` : ''));
+      } else {
+        logs.push(`[win16] ${what}  ret=${hex(ret)}`);
+      }
+      return;
+    }
+    if (ESP_DELTA && lastApiName) {
+      const espAfter = instance.exports.get_esp();
+      const delta = (espAfter - lastApiEsp) | 0;
+      logs.push(`[ESP] ${lastApiName}: ${hex(lastApiEsp)} -> ${hex(espAfter)} delta=${delta >= 0 ? '+' : ''}${delta}`);
+    }
+    if (TRACE_API && lastApiName) {
+      if (!lastApiEntry || !lastApiEntry.ret) {
+        // Legacy untyped path. Typed entries are formatted in log_api_exit
+        // using EAX, which is authoritative — skip here to avoid duplicate lines.
+        flushDedup();
+        logs.push(`  => ${hex(val)}`);
+        lastApiName = null;
+        lastApiEntry = null;
+        lastApiArgs = null;
+      }
+    } else {
+      logs.push('[i32] ' + hex(val));
+    }
+  };
+
+  let prevBlockEsp = null, prevBlockEip = 0, traceEspCount = 0;
+  if (traceEspOn) {
+    h.log_block = (eip, esp) => {
+      const delta = prevBlockEsp === null ? 0 : ((esp - prevBlockEsp) | 0);
+      const tag = prevBlockEsp === null
+        ? '(start)'
+        : `Δ=${delta >= 0 ? '+' : ''}${delta} from ${hex(prevBlockEip)}`;
+      logs.push(`[ESP-BLK] eip=${hex(eip >>> 0)} esp=${hex(esp >>> 0)} ${tag}`);
+      prevBlockEsp = esp;
+      prevBlockEip = eip;
+      traceEspCount++;
+    };
+  }
+
+  if (traceEipOn) {
+    h.log_eip = (eip) => {
+      let line = `[EIP] ${hex(eip >>> 0)}`;
+      if (TRACE_EIP_DETAIL && instance && instance.exports) {
+        line += ` ${regs()}`;
+        const e = instance.exports;
+        if (e.get_sync_msg_depth) line += ` syncDepth=${e.get_sync_msg_depth() | 0}`;
+        if (e.get_block_budget) line += ` blockBudget=${e.get_block_budget() | 0}`;
+        if (e.get_flag_res && e.get_flag_op && e.get_flag_a && e.get_flag_b && e.get_flag_sign_shift) {
+          line += ` flags{op=${e.get_flag_op()} a=${hex(e.get_flag_a())} b=${hex(e.get_flag_b())} res=${hex(e.get_flag_res())} sh=${e.get_flag_sign_shift()}}`;
+        }
+        if (traceEipDumps.length) {
+          const dv = new DataView(memory.buffer);
+          for (const d of traceEipDumps) {
+            const bytes = [];
+            for (let off = 0; off < d.len; off++) {
+              bytes.push(dv.getUint8(g2w((d.addr + off) >>> 0)).toString(16).padStart(2, '0'));
+            }
+            line += ` mem[${hex(d.addr)}:${d.len}]=${bytes.join(' ')}`;
+          }
+        }
+      }
+      TRACE_EIP_STREAM ? console.log(line) : logs.push(line);
+    };
+  }
+
+  if (ESP_DELTA || TRACE_API || TRACE_CRITICAL) {
+    h.log_api_exit = () => {
+      if (criticalTracePending) {
+        try {
+          const after = criticalTracePending.state();
+          logs.push(`[critical T0/tid${criticalTracePending.tid}] ${criticalTracePending.name} cs=${hex(criticalTracePending.cs)} ret=${hex(criticalTracePending.ret)} after={lock:${after.lock},rec:${after.recursion},owner:${after.owner}}`);
+        } catch (_) {}
+        criticalTracePending = null;
+      }
+      if (!lastApiName) return;
+      if (ESP_DELTA) {
+        const espAfter = instance.exports.get_esp();
+        const delta = (espAfter - lastApiEsp) | 0;
+        logs.push(`[ESP] ${lastApiName}: ${hex(lastApiEsp)} -> ${hex(espAfter)} delta=${delta >= 0 ? '+' : ''}${delta}`);
+      }
+      if (TRACE_API && lastApiEntry) {
+        const dv = new DataView(memory.buffer);
+        const imageBase = instance.exports.get_image_base();
+        const fmtCtx = { dv, g2w: addr => translateGuest(addr, imageBase, memory.buffer), memory: memory.buffer, readStr, hex };
+        const eax = instance.exports.get_eax();
+        const typedRet = fmtApiRet(lastApiEntry, eax, fmtCtx);
+        const outInfo = lastApiArgs ? fmtApiOutParams(lastApiEntry, lastApiArgs, fmtCtx) : '';
+        if (typedRet || outInfo) flushDedup();
+        if (typedRet) logs.push(`  ${typedRet.trim()}`);
+        if (outInfo) logs.push(outInfo);
+      }
+      if (TRACE_API && lastApiName === 'SendMessageA' && lastTreeItemTrace) {
+        try {
+          const imageBase = instance.exports.get_image_base();
+          const textValue = readStr(RegionMap.g2w(lastTreeItemTrace.textGuest, imageBase),
+            Math.min(lastTreeItemTrace.textMax, 1024));
+          logs.push(`  TVITEMA.text=${JSON.stringify(textValue)}`);
+        } catch (_) {}
+        lastTreeItemTrace = null;
+      }
+      lastApiName = null;
+      lastApiEntry = null;
+      lastApiArgs = null;
+    };
+  }
+
+  // --- Override exit to also log ---
+  h.exit = code => {
+    hostExitRequested = true;
+    logs.push('[Exit] code=' + code); stopped = true;
+    // A child process_spawn started: its parent's GetExitCodeProcess and
+    // WaitForSingleObject need the guest's own exit code, not this
+    // process's.
+    if (PIPE_STD && process.send) process.send({ t: 'child-exit', code: code >>> 0 });
+    // A --spawn-processes child has no wire to keep: once its exit code is
+    // on its way, drop the IPC channel, which otherwise keeps this process
+    // alive after its shutdown work and the parent waiting on it forever.
+    else if (SPAWNED_CHILD && process.send) {
+      process.send({ t: 'child-exit', code: code >>> 0 }, () => {
+        try { process.disconnect(); } catch (_) {}
+      });
+    }
+  };
+
+  // --- Override shell_about to log; the WAT side ($handle_ShellAboutA →
+  // $create_about_dialog → $host_register_dialog_frame) drives all
+  // rendering state. JS only sees the [ShellAbout] log line and the
+  // subsequent register_dialog_frame callback.
+  h.shell_about = (dlgHwnd, ownerHwnd, appPtr) => {
+    logs.push(`[ShellAbout] dlg=0x${dlgHwnd.toString(16)} owner=0x${ownerHwnd.toString(16)} "${readStr(appPtr)}"`);
+    return 1;
+  };
+
+  let capturedLaunch = null;
+  const baseShellExecute = h.shell_execute;
+  h.shell_execute = (hwnd, opWa, fileWa, paramsWa, dirWa, nShow) => {
+    threadSnapshotSystemIncomplete = true;
+    const file = fileWa ? readStr(fileWa) : '';
+    const params = paramsWa ? readStr(paramsWa) : '';
+    const operation = opWa ? readStr(opWa) : 'open';
+    const directory = dirWa ? readStr(dirWa) : '';
+    const result = baseShellExecute(hwnd, opWa, fileWa, paramsWa, dirWa, nShow);
+    // Capture is a separate handoff: never launch while taking its snapshot.
+    if (!CAPTURE_LAUNCH && ctx.vfs &&
+        (SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses)) &&
+        /^(?:winexec|open)?$/i.test(operation)) {
+      const parsed = parseShellLaunchCommand(file, params, operation);
+      const executable = resolveShellLaunchPath(parsed.file.trim(), ctx.vfs, parsed.isWinExec);
+      if (!executable) return 2; // ERROR_FILE_NOT_FOUND
+      // Keep ShellExecute's separate arguments and WinExec's tokenization;
+      // the transport accepts a quoted command line, not a shell expression.
+      const command = `"${executable}"${parsed.params ? ' ' + parsed.params : ''}`;
+      try {
+        // A transport PID is private to process_ctl, not a ShellExecute handle.
+        return spawnVfsChild(command, directory, false, nShow) ? 33 : 2;
+      } catch (e) {
+        logs.push(`[spawn] ShellExecute "${file}" failed: ${e.message}`);
+        return 0; // launch resources/transport unavailable; never fake success
+      }
+    }
+    if (!CAPTURE_LAUNCH || !ctx.vfs || capturedLaunch) return result;
+
+    // Inno and InstallShield both put command lines in lpFile, but disagree
+    // about whether the closing quote follows argv[0] or the final argument.
+    // Use the browser's parser so capture/replay sees exactly what a live
+    // ShellExecute handoff sees.
+    const parsedCommand = parseShellLaunchCommand(file, params, operation);
+    const executable = resolveShellLaunchPath(
+      parsedCommand.file.trim(), ctx.vfs, parsedCommand.isWinExec);
+    const inlineArgs = parsedCommand.params.trim();
+    const guestExe = ctx.vfs._resolvePath ? ctx.vfs._resolvePath(executable)
+      : (ctx.vfs._normPath ? ctx.vfs._normPath(executable) : executable.toLowerCase());
+    if (!ctx.vfs.files.has(guestExe)) return result;
+    // A mounted ISO entry may still be provider-backed here: ShellExecute
+    // names it without opening it first. Start the asynchronous read now and
+    // await it after the guest stops, before the synchronous VFS exporter
+    // writes the snapshot for the child stage.
+    const materialize = typeof ctx.vfs.materialize === 'function'
+      ? Promise.resolve(ctx.vfs.materialize(guestExe))
+      : null;
+    capturedLaunch = {
+      guestExe,
+      args: inlineArgs,
+      directory: directory || (ctx.vfs.getCurrentDirectory
+        ? ctx.vfs.getCurrentDirectory() : ctx.vfs.cwd || ''),
+      materialize,
+      vfs: {
+        files: new Map(ctx.vfs.files),
+        dirs: new Set(ctx.vfs.dirs),
+      },
+    };
+    logs.push(`[capture-launch] snapshotted ${guestExe} (${capturedLaunch.vfs.files.size} files)`);
+    return result;
+  };
+
+  // CreateProcess with redirected std handles (src/09d7-pipes.wat): start
+  // the child as another run.js over the same app manifest and build, at its
+  // own room address, with its std handles wired back here over the vlan
+  // wire. This process becomes the hub of that wire. 0 = "cannot", and the
+  // guest falls back to its old CreateProcess path.
+  const pipeChildren = [];
+  const pipeChildByPid = new Map();
+  const livePipeChildren = new Set();
+  // Browser aliases require a target-owned table; CLI IPC is unsupported.
+  // E4 validity and lifetime are independent of every possible DWORD exit code.
+  const processCtl = (op, pid, arg) => {
+    if (op === 3) return -50;
+    const kind = (pid >>> 0) & 0xFFFF0000;
+    if (op >= 4 && op <= 8 && kind !== 0x00E40000) return op === 8 ? -1 : -6;
+    const rec = pipeChildByPid.get(pid & 0xFFFF);
+    if (!rec) return op >= 4 && op <= 7 ? -6 : -1;
+    if (op === 2) return 1;
+    if (op === 0 || op === 4) return rec.exitCode >>> 0;
+    if (op === 6) return (0x1FFFFF & arg) === arg ? 1 : -5;
+    if (op === 7) { pipeChildByPid.delete(pid & 0xFFFF); return 1; }
+    if (op === 8) return rec.exited ? 0 : 0x102;
+    if (op === 1 || op === 5) {
+      if (rec.exited) return -5;
+      rec.exitCode = arg >>> 0;
+      rec.exited = true;
+      rec.child.kill();
+      return 1;
+    }
+    return -1;
+  };
+  h.process_ctl = processCtl;
+  ctx.processCtl = processCtl;
+  const nextChildPid = () => (0x4000 + (pipeChildren.length + 1) * 4) & 0xFFFF;
+  ctx.hasLiveChildren = () => livePipeChildren.size > 0;
+  const relayChild = (child, tag) => {
+    for (const stream of [child.stdout, child.stderr]) {
+      let pending = '';
+      stream.on('data', chunk => {
+        pending += chunk;
+        const lines = pending.split('\n');
+        pending = lines.pop();
+        for (const line of lines) console.log(`${tag} ${line}`);
+      });
+    }
+  };
+  // An ordinary CreateProcess (no redirected std handles) under
+  // --spawn-processes: the executable is looked up in this guest's own C:\
+  // -- an installer's child is usually a file it has just extracted, never
+  // something beside the host EXE -- and the child runs on a snapshot of
+  // that C:\ and of the registry. When the child process ends, the files and
+  // registry it left are merged back here, and only then does its exit code
+  // stop reading STILL_ACTIVE, so a parent's WaitForSingleObject +
+  // GetExitCodeProcess sees the child's work done.
+  const spawnVfsChild = (cmd, dirArg, forceSpawn = false, showCmd) => {
+    const vfs = ctx.vfs;
+    if (!vfs || !(forceSpawn || SPAWN_PROCESSES_FLAG || (APP_ENTRY && APP_ENTRY.spawnProcesses))) return 0;
+    const parsed = parseShellLaunchCommand(cmd, '', 'open');
+    const name = parsed.file.trim();
+    if (!name) return 0;
+    const cwd = dirArg || (vfs.getCurrentDirectory ? vfs.getCurrentDirectory() : 'c:\\');
+    const exeDir = EXE_GUEST_PATH ? path.win32.dirname(EXE_GUEST_PATH) : 'c:\\';
+    const names = /\.[a-z0-9]+$/i.test(path.win32.basename(name)) ? [name] : [name + '.exe', name];
+    // lpApplicationName resolves against the current directory only, and a
+    // bare command line searches the application directory, the current
+    // directory, SYSTEM and WINDOWS; the WAT side has folded the two into one
+    // string, so try the current directory first and then the search path.
+    const dirs = /^[a-z]:|^\\/i.test(name) ? [''] : name.includes('\\') ? [cwd]
+      : [cwd, exeDir, 'c:\\windows\\system', 'c:\\windows'];
+    let guestExe = null;
+    for (const d of dirs) {
+      for (const n of names) {
+        const norm = vfs._resolvePath(d ? path.win32.join(d, n) : n);
+        if (vfs.files.has(norm)) { guestExe = norm; break; }
+      }
+      if (guestExe) break;
+    }
+    if (!guestExe) {
+      console.log(`[spawn] CreateProcess "${cmd}": ${name} is not in the VFS`);
+      return 0;
+    }
+    const os = require('os');
+    const storage = require('../lib/storage');
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-child-'));
+    try {
+      const inDir = path.join(tmp, 'in');
+      const outDir = path.join(tmp, 'out');
+      const regIn = path.join(tmp, 'reg-in.json');
+      const regOut = path.join(tmp, 'reg-out.json');
+      const written = saveVfsToHost(vfs, inDir);
+      const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
+      const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
+      if (!exeRow) {
+        fs.rmSync(tmp, { recursive: true, force: true });
+        console.log(`[spawn] CreateProcess "${cmd}": ${guestExe} could not be exported`);
+        return 0;
+      }
+      fs.writeFileSync(regIn, JSON.stringify(storage.exportStore()));
+      // An app-local DLL loads as a real PE only when seeded (the app's `dlls`
+      // or --dll-seed); the child has no app entry, so hand it the parent's.
+      // Rollcage's setup relaunches its own exe as the front end, which then
+      // imports QMIXER.DLL from beside it and crashed on the unresolved import.
+      const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
+        .map(appAsset).filter(p => fs.existsSync(p));
+      const args = [
+        `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
+        `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
+        '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
+        '--stuck-after=0', '--max-batches=1000000000', `--max-seconds=${MAX_SECONDS || 600}`,
+        '--spawned-child', '--spawn-processes',
+        `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
+        ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
+        ...PIPE_CHILD_ARGS,
+        ...startupShowArgs(showCmd),
+        // and on down the tree: instmsi's msiexec is a grandchild.
+        ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
+      ];
+      const { fork } = require('child_process');
+      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
+      const pid = nextChildPid();
+      relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
+      pipeChildren.push(child);
+      const rec = { child, exited: false, exitCode: 259 };
+      livePipeChildren.add(rec);
+      pipeChildByPid.set(pid, rec);
+      let guestCode = null;
+      child.on('message', msg => { if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0; });
+      child.on('exit', code => {
+        try {
+          mergeChildState(vfs, storage, before, outDir, regOut);
+        } catch (e) {
+          console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
+        }
+        fs.rmSync(tmp, { recursive: true, force: true });
+        if (!rec.exited) rec.exitCode = (guestCode != null ? guestCode : (code == null ? 1 : code)) >>> 0;
+        rec.exited = true;
+        livePipeChildren.delete(rec);
+      });
+      if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
+      console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
+      return pid;
+    } catch (e) {
+      fs.rmSync(tmp, { recursive: true, force: true });
+      throw e;
+    }
+  };
+  h.process_spawn = (cmdWa, dirWa, childIp, specWa, count, forceSpawn, showCmd) => {
+    threadSnapshotSystemIncomplete = true;
+    const cmd = cmdWa ? readStr(cmdWa) : '';
+    if (!cmd) return 0;
+    if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn, showCmd);
+    if (!EXE_PATH) return 0;
+    const { ParentHub } = require('../lib/vlan-wire');
+    if (ctx.vlanWire && !(ctx.vlanWire instanceof ParentHub)) {
+      console.log(`[pipe] CreateProcess "${cmd}": this process is itself on a room wire; nested children are not supported`);
+      return 0;
+    }
+    const parsed = parseShellLaunchCommand(cmd, '', 'open');
+    const want = path.basename(parsed.file.trim().replace(/\\/g, '/')).toLowerCase();
+    const wantExe = /\.[a-z0-9]+$/.test(want) ? want : want + '.exe';
+    const dir = path.dirname(canonicalPath(EXE_PATH));
+    const hostExe = fs.readdirSync(dir).find(n => n.toLowerCase() === wantExe);
+    if (!hostExe) {
+      console.log(`[pipe] CreateProcess "${cmd}": no ${wantExe} beside ${EXE_PATH}`);
+      return 0;
+    }
+    const mem = new DataView(ctx.getMemory());
+    const parentIp = instance.exports.get_vlan_local_ip
+      ? (instance.exports.get_vlan_local_ip() >>> 0) : 0x0A000001;
+    const spec = [];
+    for (let i = 0; i < count; i++) {
+      const at = specWa + i * 16;
+      spec.push([mem.getInt32(at, true), mem.getInt32(at + 4, true),
+        mem.getInt32(at + 8, true), parentIp | 0, mem.getInt32(at + 12, true)].join(':'));
+    }
+    const ip = childIp >>> 0;
+    const ipText = [ip >>> 24, (ip >>> 16) & 255, (ip >>> 8) & 255, ip & 255].join('.');
+    const args = [
+      ...(APP_ID ? [`--app=${APP_ID}`] : []),
+      `--exe=${path.join(dir, hostExe)}`, `--args=${parsed.params.trim()}`,
+      '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
+      '--vlan-wire', `--vlan-ip=${ipText}`, `--pipe-std=${spec.join(',')}`,
+      '--stuck-after=0', '--vlan-max-waits=1000000000', '--max-batches=1000000000',
+      `--max-seconds=${MAX_SECONDS || 600}`,
+      // The child's side of a wire question is half the answer.
+      // (never --verbose: its per-batch output, relayed here, is unbounded)
+      ...(TRACE_NET ? ['--trace-net'] : []),
+      ...PIPE_CHILD_ARGS,
+      ...startupShowArgs(showCmd),
+    ];
+    const { fork } = require('child_process');
+    const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: ThreadManager.namedEventEnvironment() });
+    const tag = `[child ${ipText} ${hostExe}]`;
+    for (const stream of [child.stdout, child.stderr]) {
+      let pending = '';
+      stream.on('data', chunk => {
+        pending += chunk;
+        const lines = pending.split('\n');
+        pending = lines.pop();
+        for (const line of lines) console.log(`${tag} ${line}`);
+      });
+    }
+    if (!ctx.vlanWire) {
+      ctx.vlanWire = new ParentHub();
+      if (TRACE_NET) {
+        const { describeFrame } = require('../lib/vlan-wire');
+        ctx.vlanWire.onDeliver = bytes => console.log(`[net] .. arrived ${describeFrame(bytes)}`);
+      }
+    }
+    ctx.vlanWire.addChild(child, ip);
+    pipeChildren.push(child);
+    const pid = (0x4000 + pipeChildren.length * 4) & 0xFFFF;
+    const rec = { child, exited: false, exitCode: 259 };
+    livePipeChildren.add(rec);
+    pipeChildByPid.set(pid, rec);
+    child.on('message', msg => {
+      if (msg && msg.t === 'child-exit' && !rec.exited) {
+        rec.exitCode = msg.code >>> 0;
+        rec.exited = true;
+      }
+    });
+    // An emulator that ends without a guest ExitProcess (a crash, a
+    // --max-seconds stop) still ends the child process: report it as exited.
+    child.on('exit', code => {
+      if (!rec.exited) rec.exitCode = (code == null ? 1 : code) >>> 0;
+      rec.exited = true;
+      livePipeChildren.delete(rec);
+    });
+    if (pipeChildren.length === 1) process.on('exit', () => { for (const c of pipeChildren) c.kill(); });
+    console.log(`[pipe] CreateProcess "${cmd}" -> ${hostExe} at ${ipText}, std ${spec.join(' ')}`);
+    return pid;
+  };
+
+  // --- Override set_dlg_item_text to log ---
+  h.set_dlg_item_text = (hwnd, ctrlId, textPtr) => {
+    const text = readStr(textPtr);
+    logs.push(`[SetDlgItemText] hwnd=0x${hwnd.toString(16)} ctrl=${ctrlId} "${text}"`);
+    if (!ctx._controlText) ctx._controlText = new Map();
+    ctx._controlText.set(`${hwnd}:${ctrlId}`, text);
+    if (renderer) renderer.invalidate(hwnd);
+  };
+
+  // --- Override message_box to log ---
+  h.message_box = (h2, t, c, u) => {
+    // Log uType too. The icon bits are the only thing separating "the app told
+    // you something" from "the app refused" -- a sweep that only sees a new
+    // window on screen scores an error box as a command that worked.
+    logs.push(`[MessageBox] "${readStr(c)}": "${readStr(t)}" type=0x${(u >>> 0).toString(16)}`);
+    return 1;
+  };
+
+  // --- Override window functions to log ---
+  h.create_window = (hwnd, style, x, y, cx, cy, titlePtr, menuId) => {
+    const title = readStr(titlePtr);
+    logs.push(`[CreateWindow] hwnd=0x${hwnd.toString(16)} title="${title}" style=0x${style.toString(16)} pos=${x},${y} size=${cx}x${cy} menu=${menuId}`);
+    ctx.recordWindowText(hwnd, title);
+    if (renderer) renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId);
+    return hwnd;
+  };
+
+  h.show_window = (hwnd, cmd) => {
+    logs.push(`[ShowWindow] hwnd=0x${hwnd.toString(16)} cmd=${cmd}`);
+    if (renderer) renderer.showWindow(hwnd, cmd);
+    const win = renderer && renderer.windows[hwnd];
+    if (win && win.clientRect) return (win.clientRect.w & 0xFFFF) | ((win.clientRect.h & 0xFFFF) << 16);
+    // Inject button sequence if --buttons provided, else WM_CLOSE.
+    // Skip auto-WM_CLOSE when --input is in use — the test is orchestrating
+    // its own event timeline and shouldn't be killed prematurely.
+    // SW_HIDE is not a window coming up, it is one going away: MFC hides its
+    // unused toolbar/status children during frame setup, and closing the app
+    // on that leaves the real frame unpainted (fontview exited before its
+    // first WM_PAINT this way).
+    if (cmd !== 0 && !inputEvent && !inputQueue && !INPUT_SPEC && !CONTROL && !CONTROL_STDIN) {
+      const btnArg = args.find(a => a.startsWith('--buttons='));
+      if (btnArg) {
+        inputQueue = btnArg.split('=')[1].split(',').map(Number);
+        logs.push(`[test] Button queue: ${inputQueue}`);
+      } else if (!NO_CLOSE) {
+        inputEvent = { msg: 0x0010, wParam: 0, lParam: 0 };
+        logs.push('[test] Injecting WM_CLOSE');
+      }
+    }
+  };
+
+  h.dialog_loaded = (hwnd, parentHwnd) => {
+    // Report the same facts as [CreateWindow]. A dialog's style comes from its
+    // template, not from a CreateWindowEx argument, so without this the only
+    // record of "what style did this window end up with" is the chrome that
+    // does or doesn't appear on screen. wnd_style is what $defwndproc_ncpaint
+    // reads; dlg_style is what the template asked for. They should agree.
+    const ex = ctx.exports;
+    const hex = v => `0x${(v >>> 0).toString(16)}`;
+    let detail = '';
+    if (ex && ex.dlg_get_style) {
+      detail = ` dlg_style=${hex(ex.dlg_get_style(hwnd))}` +
+        ` wnd_style=${hex(ex.wnd_get_style_export ? ex.wnd_get_style_export(hwnd) : 0)}` +
+        ` size=${ex.dlg_get_cx(hwnd)}x${ex.dlg_get_cy(hwnd)}dlu` +
+        ` menu=${hex(ex.dlg_get_menu(hwnd))}`;
+    }
+    logs.push(`[CreateDialog] hwnd=0x${hwnd.toString(16)} parent=0x${parentHwnd.toString(16)}${detail}`);
+    // Which WAT control class each template control resolved to. A template
+    // names its controls by string ("SysTreeView32") or ordinal, and the class
+    // it lands on decides everything afterwards: class 0 keeps the app's own
+    // registered wndproc, anything else replaces it with the WAT-native
+    // control. Nothing else in the log says which of the two happened, so a
+    // control that renders but ignores every click looks identical to one that
+    // was never wired up at all.
+    if (ex && ex.wnd_next_child_slot && ex.ctrl_get_class) {
+      let slot = 0;
+      for (;;) {
+        slot = ex.wnd_next_child_slot(hwnd, slot);
+        if (slot < 0) break;
+        const ch = ex.wnd_slot_hwnd(slot);
+        const xy = ex.ctrl_get_xy(ch), wh = ex.ctrl_get_wh(ch);
+        const s16 = v => (v << 16) >> 16;
+        logs.push(`[CreateDialog]   ctrl hwnd=0x${(ch >>> 0).toString(16)}`
+          + ` id=${ex.ctrl_get_id(ch)} class=${ex.ctrl_get_class(ch)}`
+          + ` at ${s16(xy & 0xFFFF)},${s16(xy >>> 16)}`
+          + ` ${s16(wh & 0xFFFF)}x${s16(wh >>> 16)}`);
+        slot++;
+      }
+    }
+    if (renderer) renderer.createDialog(hwnd, parentHwnd);
+  };
+
+  let installingFiles = false;
+  h.set_window_text = (hwnd, textPtr) => {
+    const text = readStr(textPtr);
+    logs.push(`[SetWindowText] "${text}"`);
+    ctx.recordWindowText(hwnd, text);
+    if (renderer) renderer.setWindowText(hwnd, text);
+    // Track "Installing Files" page for button delay
+    if (text.includes('Installing')) installingFiles = true;
+    else if (text.includes('Completed') || text.includes('Finish')) installingFiles = false;
+  };
+
+  const installHostMenu = h.set_menu;
+  h.set_menu = (hwnd, menuResId) => {
+    logs.push(`[SetMenu] hwnd=0x${hwnd.toString(16)} menu=${menuResId}`);
+    installHostMenu(hwnd, menuResId);
+  };
+
+  // Deterministic tick: drive from the batch counter, not wall clock.
+  // Wall-clock ticks make pinball (and any timeGetTime-driven game) flake
+  // between runs because batches don't take a fixed wall-time.
+  // Each call advances by 1ms so games that compare consecutive timeGetTime
+  // calls within the same batch see time progressing (pinball's physics tick
+  // requires this — it compares two timeGetTime results and only advances
+  // when they differ). Tests may raise TICK_CALL_STEP_MS for apps with
+  // synchronous GetTickCount-driven animations that would otherwise crawl in
+  // headless slices. Batch transitions add a larger jump (~200ms) to keep
+  // the overall simulated pace realistic.
+  const tickCallStepMs = Math.max(1, parseInt(process.env.TICK_CALL_STEP_MS || '1', 10) || 1);
+  const batchClock = createBatchClock(TICK_MS_PER_BATCH, tickCallStepMs);
+  const tickState = batchClock.state;
+  if (gameplayBench) {
+    const ticks = batchClock.getTicks, peek = batchClock.batchTicks;
+    batchClock.getTicks = () => gameplayBench.active ? gameplayBench.now : ticks();
+    batchClock.batchTicks = () => gameplayBench.active ? gameplayBench.now : peek();
+  }
+  // Startup dilation wraps the batch clock's two readers, as the bench does,
+  // so guest calls, worker threads, sleeps, audio and vblank all see one clock.
+  // The raw batch reading is kept for ending it at the right raw instant.
+  const startupClock = createStartupClock(STARTUP_CLOCK_CFG);
+  ctx.startupClock = startupClock;
+  if (startupClock.active && !REAL_TICKS) {
+    const ticks = batchClock.getTicks, peek = batchClock.batchTicks;
+    const dilate = raw => (Math.floor(startupClock.map(raw)) | 0) & 0x7FFFFFFF;
+    batchClock.getTicks = () => dilate(ticks());
+    batchClock.batchTicks = () => dilate(peek());
+    ctx.startupClockRawNow = peek;
+  }
+  // Published for the --dx-lock-pause-ms hook installed above, which runs long
+  // before this line but only ever fires during the batch loop, long after it.
+  DX_LOCK_PAUSE.clock = batchClock;
+  VBLANK.clock = batchClock;
+  ctx.sharedAudio.audioClockMs = () => batchClock.batchTicks();
+  // --real-ticks hands the guest the wall clock instead. Two emulator
+  // processes in one room CANNOT share a batch-driven clock: a batch is not a
+  // unit of time and each process runs them at its own rate, so an idle Hearts
+  // dealer at fourteen thousand batches a second believes about forty-five
+  // minutes pass every real second, while the client working through a dialog
+  // believes far less. Anything either of them decides by elapsed time is then
+  // decided against a clock the other does not share.
+  //
+  // The choice is made ONCE, here, for every thread in the process:
+  // guestClock.ticks() is what a guest call gets and guestClock.publish() is
+  // what the batch loop hands worker-hosted threads below. Spelling the two
+  // out separately at their own call sites is what let --real-ticks reach the
+  // main thread and not the workers.
+  const guestClock = createGuestClockSource({
+    batchClock,
+    realTicks: REAL_TICKS,
+    timeScale: TIME_SCALE,
+    clockOrigin: CLOCK_ORIGIN,
+    mapElapsed: startupClock.active && REAL_TICKS ? raw => startupClock.map(raw) : null,
+  });
+  if (startupClock.active && REAL_TICKS) {
+    ctx.startupClockRawNow = () => (Date.now() - CLOCK_ORIGIN) * TIME_SCALE;
+  }
+  if (startupClock.active) {
+    console.log(`[startup-clock] factor=${startupClock.config.factor} ` +
+      `maxMs=${startupClock.config.maxMs} endOn=${startupClock.config.endOn}`);
+    ctx.startupClockEvent = (name) => {
+      if (!startupClock.active || name !== startupClock.config.endOn) return;
+      const raw = ctx.startupClockRawNow();
+      startupClock.end(raw, name);
+      console.log(`[startup-clock] ended by ${name} at raw ${Math.round(raw)} ms = ` +
+        `guest ${Math.round(startupClock.map(raw))} ms`);
+    };
+  }
+  // Resolve the reader at call time so the optional observer below sees the
+  // same mapped return as GetTickCount/timeGetTime/QueryPerformanceCounter.
+  h.get_ticks = () => guestClock.ticks();
+  const inputConsumptionTrace = createInputConsumptionTrace({
+    enabled: TRACE_INPUT_DISPATCH, logs,
+    snapshot: () => ({ batch: tickState.batch, guestMs: guestClock.publish(),
+      clock: guestClock.realTicks ? 'real' : 'batch',
+      lastGuestTick: inputConsumptionTrace.lastGuestTick }),
+  });
+  guestClock.ticks = inputConsumptionTrace.observeTicks(guestClock.ticks);
+  // BEGIN message-boundary installation: initialized before any guest execution.
+  const messageBoundaryTrace = createMessageBoundaryTrace({
+    enabled: TRACE_MESSAGE_BOUNDARY, logs,
+    snapshot: () => ({ batch: tickState.batch }),
+    getContext: () => ({ exports: instance.exports, memory,
+      translate: addr => translateGuest(addr, instance.exports.get_image_base(), memory.buffer) }),
+  });
+  h.log_api_exit = messageBoundaryTrace.wrapPostHandler(h.log_api_exit);
+  // END message-boundary installation
+  // Every OTHER import table in this process is built from `ctx` — one per
+  // guest thread, in makeWorkerImports — and createHostImports derives its
+  // get_ticks from ctx.guestNowMs. Overriding only `h` above therefore left
+  // the main thread on the batch clock and every spawned thread on the real
+  // wall clock, so the threads did not even agree about "now". Measured on
+  // StarCraft: two identical headless runs diverged in Storm's loader thread
+  // (T2) after ~156 batches, which moved every later VirtualAlloc base and
+  // made the written save file differ byte-for-byte between runs.
+  ctx.guestNowMs = () => h.get_ticks();
+  // The same clock read WITHOUT spending a per-call step: for the harness's
+  // own bookkeeping (--present-distinct rates, png guest-ms), which must not
+  // move the time the guest itself sees.
+  ctx.guestPeekMs = () => guestClock.publish();
+  // A queued DirectInput edge carries the moment it was queued, and the guest
+  // reads that against its own clock -- so the renderer has to stamp it with
+  // the clock chosen right above, not with the wall clock. Otherwise a run
+  // driven by a fixed --input script is only reproducible when the box is
+  // idle: the age the guest sees is real time spent between batches.
+  if (renderer) renderer._guestNowMs = h.get_ticks;
+  // The input queue's button-release hold (renderer-input.js takeInput) is
+  // also time on the guest's clock, read without spending a step, so polling
+  // the queue cannot move the time the guest sees.
+  if (renderer) renderer._inputNowMs = () => ctx.guestPeekMs();
+  // The hold itself is off here, as 37ff2f8df meant it to be ("CLI --input
+  // timing is unchanged"): an --input script already says when a button goes
+  // down and up. With it on, a click's release waited for an empty poll the
+  // parked guest only makes in the next batch -- by then beside that batch's
+  // scripted press, which GetMessage (hardware before posted) hands out ahead
+  // of the release's own posted follow-ups. Paint's tool buttons PostMessage
+  // their clicks to the toolbox, so the toolbox's release landed after the
+  // canvas press and took its capture. Floor 0 alone was not enough.
+  if (renderer) renderer._buttonHoldFloorMs = -1;
+  // --wall-clock-ms pins the calendar's ORIGIN; the calendar then advances
+  // with GUEST time. Freezing it outright was deterministic but not a clock:
+  // GetSystemTime returned one instant for the whole run, so anything that
+  // measures elapsed calendar time -- a save's timestamp, a "you have played
+  // for" counter, an expiry check, a log line -- saw zero pass no matter how
+  // far the guest got. batchTicks() is guest milliseconds since the run
+  // started, so the calendar moves at the rate the guest believes time moves
+  // and two runs of one --input script still see the identical calendar.
+  if (CALENDAR_ORIGIN_MS) ctx.wallNowMs = () => CALENDAR_ORIGIN_MS + batchClock.batchTicks();
+
+  // --- Override input for test injection ---
+  let lastInputEvent = null;
+  h.check_input = () => {
+    let evt = null;
+    let source;
+    if (inputEvent) {
+      source = 'pending';
+      evt = inputEvent;
+      inputEvent = null;
+    } else if (crossThreadMsgs.length > 0) {
+      source = 'cross-thread';
+      evt = crossThreadMsgs.shift();
+    } else if (inputQueue && inputQueue.length > 0) {
+      source = 'button-queue';
+      // Delay button clicks while on "Installing Files" page (let extraction thread work)
+      if (installingFiles) return 0;
+      const id = inputQueue.shift();
+      if (typeof id === 'object') { evt = id; } // allow full event objects in queue
+      // Button-id form: WM_COMMAND from a menu, hwnd=0 → WAT routes to main_hwnd.
+      // Previously hard-coded 0x10002 (edit child), which silently swallowed
+      // menu commands because the edit child's wndproc is WNDPROC_BUILTIN.
+      else evt = { msg: 0x0111, wParam: id, lParam: 0, hwnd: 0 };
+    } else if (renderer) {
+      source = 'renderer';
+      evt = renderer.checkInput();
+    }
+    if (!evt) return 0;
+    lastInputEvent = evt;
+    inputConsumptionTrace.dequeue(evt, source);
+    messageBoundaryTrace.dequeue(evt, source);
+    const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
+    logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
+    return packed;
+  };
+  // Default hwnd routing: keyboard messages (WM_KEYDOWN..WM_SYSCHAR, 0x100-0x108)
+  // land on the focus window. Anything else (menu commands, mouse, etc.)
+  // returns 0 so the WAT side defaults to main_hwnd.
+  //
+  // The focus is the POLLING guest's own $focus_hwnd, passed in by the import,
+  // exactly as host.js resolves it. Reading the main instance's focus here for
+  // every thread hid a browser-only bug: a helper thread with no focus that
+  // won the input FIFO (Moorhuhn's WinSock thread, whenever the main thread
+  // sat in a present-cap sleep) was told the key was the main window's and
+  // routed it, while the browser told it 0 and it kept the key.
+  h.check_input_hwnd = (focusHwnd) => {
+    const hwnd = inputEventHwnd(lastInputEvent,
+      { get_focus_hwnd: () => focusHwnd | 0 },
+      (why) => logs.push(`[check_input_hwnd] ${why}`));
+    inputConsumptionTrace.route(focusHwnd, hwnd);
+    return hwnd;
+  };
+  h.check_input_lparam = () => (lastInputEvent ? (lastInputEvent.lParam || 0) : 0);
+  h.check_input_wparam = () => (lastInputEvent ? (lastInputEvent.wParam || 0) : 0);
+  let lastMouseTracePos = -1;
+  let lastMouseTraceButtons = -1;
+  const lastAsyncMouseTrace = Object.create(null);
+  const traceMouseSnapshot = (reason, force) => {
+    if (!TRACE_MOUSE_STATE || !renderer) return;
+    const pos = renderer.getMousePosition ? (renderer.getMousePosition() >>> 0) : 0;
+    const buttons = renderer.getMouseButtons ? (renderer.getMouseButtons() >>> 0) : 0;
+    if (!force && pos === lastMouseTracePos && buttons === lastMouseTraceButtons) return;
+    lastMouseTracePos = pos;
+    lastMouseTraceButtons = buttons;
+    const x = pos & 0xFFFF;
+    const y = (pos >>> 16) & 0xFFFF;
+    logs.push(`[mouse-state] ${reason} x=${x} y=${y} buttons=${hex(buttons)}`);
+  };
+  // Games poll these three every frame, so the tracing versions are installed
+  // only when --trace-mouse-state asked for them. The plain versions below are
+  // what a normal run gets: no closure per call, no DataView per call, no
+  // per-call flag test — the same flag-gated installation the wrap()/waveWrap()
+  // helpers already use.
+  h.get_mouse_position = () =>
+    (renderer && renderer.getMousePosition ? renderer.getMousePosition() : 0);
+  h.set_mouse_position = (x, y) => {
+    if (renderer && renderer.setMousePosition) renderer.setMousePosition(x, y);
+  };
+  h.get_mouse_buttons = () =>
+    (renderer && renderer.getMouseButtons ? renderer.getMouseButtons() : 0);
+  // GetAsyncKeyState backing — delegate to renderer's stateful key map
+  h.get_async_key_state = (vKey) => (renderer ? renderer.getAsyncKeyState(vKey) : 0);
+  h.get_key_down_state = (vKey) =>
+    (renderer && renderer.peekAsyncKeyState ? renderer.peekAsyncKeyState(vKey) : 0);
+
+  if (TRACE_MOUSE_STATE) {
+    const baseGetWindowRect = h.get_window_rect;
+    let lastWindowRectTrace = '';
+    h.get_window_rect = (hwnd, rectPtr) => {
+      baseGetWindowRect(hwnd, rectPtr);
+      const mem = new DataView(ctx.getMemory());
+      const l = mem.getInt32(rectPtr, true);
+      const t = mem.getInt32(rectPtr + 4, true);
+      const r = mem.getInt32(rectPtr + 8, true);
+      const b = mem.getInt32(rectPtr + 12, true);
+      const line = `hwnd=0x${(hwnd >>> 0).toString(16)} rect=${l},${t},${r},${b}`;
+      if (line !== lastWindowRectTrace) {
+        lastWindowRectTrace = line;
+        logs.push(`[mouse-state] GetWindowRect ${line}`);
+      }
+    };
+    const plainMousePos = h.get_mouse_position;
+    h.get_mouse_position = () => {
+      traceMouseSnapshot('get_mouse_position', false);
+      return plainMousePos();
+    };
+    const plainSetMousePos = h.set_mouse_position;
+    h.set_mouse_position = (x, y) => {
+      plainSetMousePos(x, y);
+      traceMouseSnapshot(`set_mouse_position ${x | 0},${y | 0}`, true);
+    };
+    const plainMouseButtons = h.get_mouse_buttons;
+    h.get_mouse_buttons = () => {
+      traceMouseSnapshot('get_mouse_buttons', false);
+      return plainMouseButtons();
+    };
+    const plainAsyncKey = h.get_async_key_state;
+    h.get_async_key_state = (vKey) => {
+      const value = plainAsyncKey(vKey);
+      const key = vKey & 0xFF;
+      if ((key === 0x01 || key === 0x02) && lastAsyncMouseTrace[key] !== value) {
+        lastAsyncMouseTrace[key] = value;
+        traceMouseSnapshot(`GetAsyncKeyState(${hex(key)})=${hex(value)}`, true);
+      }
+      return value;
+    };
+    const lastKeyDownMouseTrace = Object.create(null);
+    const plainKeyDown = h.get_key_down_state;
+    h.get_key_down_state = (vKey) => {
+      const value = plainKeyDown(vKey);
+      const key = vKey & 0xFF;
+      if ((key === 0x01 || key === 0x02) && lastKeyDownMouseTrace[key] !== value) {
+        lastKeyDownMouseTrace[key] = value;
+        traceMouseSnapshot(`GetKeyDownState(${hex(key)})=${hex(value)}`, true);
+      }
+      return value;
+    };
+  }
+
+  // Create shared memory externally (WASM module imports it)
+  const memoryPages = !MEMORY_MB_EXPLICIT && APP_ENTRY && APP_ENTRY.bigMemory === true
+    ? 2048 * 16 : MEMORY_PAGES;
+  const memory = new WebAssembly.Memory({ initial: memoryPages, maximum: memoryPages, shared: true });
+  ctx._memory = memory;
+  h.memory = memory;
+
+  // ThreadManager setup (lazy — created after instance)
+  const { ThreadManager } = require('../lib/thread-manager');
+  let threadManager = null;
+  onFailure(() => threadManager?.closeNamedEventAuthority());
+
+  // Wire thread/event imports to ThreadManager
+  h.create_thread = (startAddr, param, stackSize, creationFlags, threadIdWa, creatorTid) =>
+    threadManager.createThread(startAddr, param, stackSize, creationFlags, threadIdWa, creatorTid);
+  h.duplicate_current_thread = (tid) => threadManager.duplicateCurrentThread(tid);
+  h.suspend_thread = (handle) => threadManager.suspendThread(handle);
+  h.resume_thread = (handle) => threadManager.resumeThread(handle);
+  h.thread_apc_target = (handle, tid) => threadManager.threadApcTarget(handle, tid);
+  h.thread_alert = (tid) => threadManager.alertThread(tid);
+  h.get_thread_priority = (handle, tid) => threadManager.getThreadPriority(handle, tid);
+  h.snapshot_threads = (out, capacity, pid, priorityClass) =>
+    threadManager.snapshotThreads(out, capacity, pid, priorityClass);
+  h.set_thread_priority = (handle, priority, tid) => threadManager.setThreadPriority(handle, priority, tid);
+  h.get_thread_locale = (tid) => threadManager.getThreadLocale(tid);
+  h.set_thread_locale = (locale, tid) => threadManager.setThreadLocale(locale, tid);
+  h.com_initialize_thread = (reserved, flags, tid) =>
+    threadManager.initializeComApartment(reserved, flags, tid);
+  h.com_uninitialize_thread = (tid) => threadManager.uninitializeComApartment(tid);
+  h.exit_thread = (exitCode) => threadManager.exitThread(exitCode);
+  h.get_exit_code_thread = (handle) => threadManager.getExitCodeThread(handle);
+  h.terminate_thread = (handle, exitCode) => threadManager.terminateThread(handle, exitCode);
+  const win32ThreadId = () => threadManager.currentWin32ThreadId();
+  // Opt in here, keeping browser imports and standalone local managers local.
+  // The manager itself is assigned after instantiation, so enable lazily.
+  const namedEventManager = () => {
+    threadManager.enableNamedEventAuthority();
+    return threadManager;
+  };
+  h.create_event = (manualReset, initialState, nameWa, wide) => {
+    const name = readSyncObjectName(memory, nameWa, wide);
+    return (wide & 2)
+      ? threadManager.createMutex(initialState, name, win32ThreadId())
+      : namedEventManager().createEvent(manualReset, initialState, name);
+  };
+  h.open_event = (nameWa, wide) => {
+    const name = readSyncObjectName(memory, nameWa, wide);
+    return (wide & 2) ? threadManager.openMutex(name) : namedEventManager().openEvent(name);
+  };
+  h.set_event = (handle) => ((handle >>> 0) & 0x80000000)
+    ? threadManager.releaseMutex((handle >>> 0) & 0x7fffffff, win32ThreadId())
+    : threadManager.setEvent(handle);
+  h.reset_event = (handle) => threadManager.resetEvent(handle);
+  h.close_event = handle => threadManager.closeEvent(handle);
+  // A wait reached from inside a synchronous SendMessage cannot yield: the
+  // recursive interpreter frame in $wnd_send_message would be abandoned. Give
+  // the signalling worker a bounded inline turn instead, exactly as host.js
+  // does in the browser.
+  const nestedSyncMessage = () =>
+    !!(ctx.exports && ctx.exports.get_sync_msg_depth && (ctx.exports.get_sync_msg_depth() | 0));
+  h.wait_single = (handle, timeout, entry = threadManager.captureNamedWaitEntry()) => {
+    return nestedSyncMessage()
+      ? threadManager.waitSingleCooperative(handle, timeout, win32ThreadId())
+      : threadManager.waitSingle(handle, timeout, win32ThreadId(), entry);
+  };
+  h.wait_multiple = (nCount, handlesWA, bWaitAll, timeout) => nestedSyncMessage()
+    ? threadManager.waitMultipleCooperative(nCount, handlesWA, bWaitAll, timeout, win32ThreadId())
+    : threadManager.waitMultiple(nCount, handlesWA, bWaitAll, timeout, win32ThreadId());
+  // The critical-section face of the same problem: see pumpThreadsOnce().
+  h.cs_pump = () => threadManager.pumpThreadsOnce();
+  h.create_semaphore = (initialCount, maxCount, nameWa, wide) => {
+    const name = readSyncObjectName(memory, nameWa, wide);
+    return threadManager.createSemaphore(initialCount, maxCount, name);
+  };
+  h.open_semaphore = (nameWa, wide) => {
+    const name = readSyncObjectName(memory, nameWa, wide);
+    return threadManager.openSemaphore(name);
+  };
+  h.release_semaphore = (handle, releaseCount, lpPrevCountWA) => threadManager.releaseSemaphore(handle, releaseCount, lpPrevCountWA);
+  // Check if a DLL file exists in VFS or host filesystem
+  h.has_dll_file = (nameWA) => {
+    const mem8 = new Uint8Array(memory.buffer);
+    let name = '';
+    for (let i = 0; i < 260; i++) {
+      const ch = mem8[nameWA + i];
+      if (!ch) break;
+      name += String.fromCharCode(ch);
+    }
+    const fileName = name.split('\\').pop().toLowerCase();
+    // Check VFS. A bare name is relative to the current directory, as in
+    // lib/host-imports.js; without that step MCM's LoadLibraryA("lang.dll")
+    // missed C:\...\LANG.DLL and only a case-insensitive host disk found it.
+    if (ctx.vfs) {
+      let resolved = '';
+      try { resolved = ctx.vfs._resolvePath(name); } catch (_) {}
+      const tryPaths = [resolved, name.toLowerCase(), 'c:\\' + fileName, 'c:\\plugins\\' + fileName];
+      for (const p of tryPaths) {
+        const entry = p && ctx.vfs.files.get(p);
+        // A DirectX system-file stub stands for a module we dispatch
+        // statically (lib/process-boot.js); it is not a PE to map.
+        if (entry && !entry.staticModule) return 1;
+      }
+    }
+    // Same search, and the same bytes, the load itself will use.
+    return findRuntimeDllBytes(fileName, name) ? 1 : 0;
+  };
+
+  // A cursor an app builds for itself never touches a window surface, so no
+  // capture in this harness can show it: it goes ICONINFO -> WAT compositor ->
+  // one host call and then straight into a CSS cursor. This writes that
+  // composite out, which is the only way to answer "is that the hand the game
+  // drew, and is it the right way up".
+  if (DUMP_CURSORS && PNG) {
+    fs.mkdirSync(DUMP_CURSORS, { recursive: true });
+    const inner = h.set_cursor_image;
+    let seq = 0;
+    h.set_cursor_image = (hcur, width, height, hotX, hotY, bgraWa) => {
+      if (bgraWa && width > 0 && height > 0) {
+        const src = new Uint8Array(ctx.getMemory(), bgraWa >>> 0, width * height * 4);
+        const png = new PNG({ width, height });
+        for (let i = 0; i < width * height; i++) {
+          png.data[i * 4 + 0] = src[i * 4 + 2];
+          png.data[i * 4 + 1] = src[i * 4 + 1];
+          png.data[i * 4 + 2] = src[i * 4 + 0];
+          png.data[i * 4 + 3] = src[i * 4 + 3];
+        }
+        const out = path.join(DUMP_CURSORS,
+          `cursor_${(hcur >>> 0).toString(16)}_${width}x${height}_hot${hotX}x${hotY}.png`);
+        fs.writeFileSync(out, PNG.sync.write(png));
+        seq++;
+        console.log(`[cursor] wrote ${out}`);
+      }
+      return inner ? inner(hcur, width, height, hotX, hotY, bgraWa) : undefined;
+    };
+    process.on('exit', () => {
+      if (!seq) console.log(`[cursor] no guest-built cursors were presented`);
+    });
+  }
+
+  // --host-census wraps the FINAL import table, after run.js has overridden
+  // host-imports' versions with its own logging ones. Wrapping earlier misses
+  // exactly the noisy functions the flag exists to find.
+  if (HOST_CENSUS) {
+    // Published so the run can print a final census at exit. Printing only on
+    // exact multiples of N means a run that makes fewer than N host calls
+    // reports NOTHING, which reads as "no host calls happened" — the opposite
+    // of the truth, and it cost a design decision once.
+    const counts = globalThis.__hostCensusCounts = new Map();
+    const argCounts = globalThis.__hostCensusArgs = new Map();
+    let total = 0;
+    globalThis.__hostCensusTotal = () => total;
+    for (const name of Object.keys(h)) {
+      if (typeof h[name] !== 'function') continue;
+      const orig = h[name];
+      h[name] = (...a) => {
+        counts.set(name, (counts.get(name) || 0) + 1);
+        // For single-int imports (log_i32 and friends) the argument IS the
+        // diagnostic: it says WHICH marker is spinning, not just that one is.
+        if (a.length === 1 && typeof a[0] === 'number') {
+          const key = `${name}(${(a[0] >>> 0).toString(16)})`;
+          argCounts.set(key, (argCounts.get(key) || 0) + 1);
+        }
+        if (++total % HOST_CENSUS === 0) {
+          const top = [...counts.entries()].sort((x, y) => y[1] - x[1]).slice(0, 12);
+          console.log(`[host-census] ${total} calls: `
+            + top.map(([n, c]) => `${n}=${c}`).join(' '));
+          const topArgs = [...argCounts.entries()].sort((x, y) => y[1] - x[1]).slice(0, 6);
+          if (topArgs.length) {
+            console.log('[host-census]   args: '
+              + topArgs.map(([n, c]) => `${n}=${c}`).join(' '));
+          }
+        }
+        return orig(...a);
+      };
+    }
+  }
+
+  const imports = { host: h };
+
+  // A CORRUPT PINNED ARTIFACT MUST NOT READ AS A PASS. The rejection from
+  // WebAssembly.compile() lands in the `main().catch` at the bottom of this file,
+  // which prints the error and deliberately leaves the exit code at 0 so guest
+  // threads still get stopped — fine for a guest-level fault mid-run, wrong here:
+  // a caller that pinned an artifact and got exit 0 has been told the artifact
+  // works. Fail loudly, before any of that machinery exists to be cleaned up.
+  let wasmModule;
+  try {
+    wasmModule = await WebAssembly.compile(wasmBytes);
+  } catch (e) {
+    if (!WASM_PINNED) throw e;
+    console.error(`run.js: pinned wasm artifact failed to compile: ${WASM_PATH}`);
+    console.error(`run.js: ${e && e.message ? e.message : e}`);
+    process.exit(1);
+  }
+
+  // THE WASM AND THE MIRROR ARE ONE MAP IN TWO PLACES. Since wave 3 the bases
+  // in both are the allocator's output, so a shaken artifact paired with the
+  // canonical lib/region-map.generated.js does not fail — every host import
+  // reads guest memory at the address the mirror names, the guest wrote it
+  // somewhere else, and the app draws a plausible wrong picture. That is what
+  // `--wasm=shaken.wasm` without $WINE_REGION_MAP used to do, silently.
+  // tools/region-shake-smoke.js pairs them; this refuses everything else.
+  //
+  // ABSENT is not a mismatch, and that costs nothing here. A stamp is written
+  // by tools/build-compile-wat.js, which is the only thing that can produce a
+  // SHAKEN artifact — the failure this guards. An unstamped .wasm came from an
+  // in-process compileClosure (tools/watx-matrix.js, test/compile-src.js and
+  // friends) with no regionShake, i.e. from this same tree, at the canonical
+  // layout the mirror already describes. Refusing those would break the
+  // compiler gates over a check they cannot satisfy.
+  {
+    const { SECTION_NAME } = require('../tools/region-layout-hash.js');
+    const found = WebAssembly.Module.customSections(wasmModule, SECTION_NAME);
+    const stamped = found.length ? new TextDecoder().decode(found[0]) : null;
+    if (stamped && stamped !== RegionMap.LAYOUT_HASH) {
+      console.error(`run.js: region layout MISMATCH between the wasm and the JS mirror.`);
+      console.error(`  wasm   ${WASM_PATH}`);
+      console.error(`         ${stamped}`);
+      console.error(`  mirror ${process.env.WINE_REGION_MAP || 'lib/region-map.generated.js'}`);
+      console.error(`         ${RegionMap.LAYOUT_HASH}`);
+      console.error(`run.js: the two halves of the memory map disagree about where the regions are. ` +
+        `A shaken artifact needs its own mirror — set $WINE_REGION_MAP, or use ` +
+        `tools/region-shake-smoke.js, which builds the pair. Running anyway would read the ` +
+        `wrong bytes and draw a plausible wrong picture rather than fail.`);
+      process.exit(2);
+    }
+  }
+
+  const instance = await WebAssembly.instantiate(wasmModule, imports);
+  ctx.exports = instance.exports;
+  // Quiet runs silence the per-call API log from the first instruction, DLL
+  // initialization included. Applied only after DllMain ran, the early calls
+  // were logged (and so counted twice, by h.log and by $api_calls) and a
+  // --trace-api-paused run printed them before it was switched on.
+  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
+  // Apply the app's page-index layout before decoding or creating threads.
+  // Positive CLI flags override app defaults (expanded wins if both are set).
+  // Each --no-* flag disables that app default; an explicit positive wins
+  // over its matching negative, as with the existing worker-heavy option.
+  {
+    const forceHeavy = hasFlag('worker-heavy-code-cache');
+    const wantExpanded = hasFlag('expanded-worker-code-cache')
+      || (!forceHeavy && !hasFlag('no-expanded-worker-code-cache') &&
+        APP_ENTRY && APP_ENTRY.expandedWorkerCodeCache === true);
+    const wantHeavy = hasFlag('worker-heavy-code-cache')
+      || (!hasFlag('no-worker-heavy-code-cache') && APP_ENTRY && APP_ENTRY.workerHeavyCodeCache === true);
+    if ((wantExpanded || wantHeavy) && instance.exports.set_page_index_layout) {
+      instance.exports.set_page_index_layout(wantExpanded ? 2 : 1);
+      console.log(wantExpanded
+        ? '[cache] expanded-worker page-index layout: main 512 slots, workers 32 (624KiB code)'
+        : '[cache] worker-heavy page-index layout: main 256 slots, workers 32');
+    }
+  }
+  if (D3D_WORKER) {
+    const {Worker} = require('worker_threads');
+    const {Encoder} = require('../lib/d3d-command-stream');
+    const sigs = JSON.parse(fs.readFileSync(path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
+    ctx.d3dCommands = new Encoder({
+      memory, module: wasmModule, sigs,
+      // The Encoder speaks the Web Worker surface; adapt a worker_thread to it.
+      workerFactory: () => {
+        const worker = new Worker(path.join(ROOT, 'lib', 'd3d-render-worker.js'));
+        const adapter = {
+          postMessage: message => worker.postMessage(message),
+          terminate: () => worker.terminate(),
+          set onerror(fn) { worker.on('error', fn); },
+          set onmessage(fn) { worker.on('message', data => fn({ data })); },
+        };
+        return adapter;
+      },
+      guestToWasm: pointer => instance.exports.guest_to_wasm(pointer >>> 0) >>> 0,
+      getImageBase: () => instance.exports.get_image_base() >>> 0,
+    });
+  }
+  if (D3DIM_GPU) {
+    const {D3DIMGpu} = require('../lib/d3dim-gpu');
+    ctx.d3dCommands = new D3DIMGpu({
+      getExports: () => instance.exports,
+      getMemory: () => memory.buffer,
+      createCanvas,
+    });
+    instance.exports.d3dim_gpu_enable(1);
+  }
+  if (GUEST_PAGE_STATS) {
+    if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
+      throw new Error('--guest-page-stats requires the offline artifact from ' +
+        '`node tools/build-page-translation-stats.js`');
+    }
+    instance.exports.reset_guest_page_stats();
+  }
+  let guestPageStatsReported = false;
+  const reportGuestPageStats = () => {
+    if (!GUEST_PAGE_STATS || guestPageStatsReported) return;
+    guestPageStatsReported = true;
+    const { STAT_NAMES } = require('../tools/build-page-translation-stats.js');
+    const values = STAT_NAMES.map((_, i) => instance.exports.get_guest_page_stat(i) >>> 0);
+    const stats = Object.fromEntries(STAT_NAMES.map((name, i) => [name, values[i]]));
+    const packedTotal = stats.packed_hit + stats.packed_miss;
+    const pct = (n, d) => d ? `${(n * 100 / d).toFixed(2)}%` : 'n/a';
+    console.log('\nGuest page translation stats (packed):');
+    console.log(`  direct=${stats.direct} dib=${stats.dib}`);
+    console.log(`  packed hit=${stats.packed_hit} miss=${stats.packed_miss} ` +
+      `hit-rate=${pct(stats.packed_hit, packedTotal)}`);
+    console.log(`  affine span packed hit=${stats.span_packed_hit} miss=${stats.span_packed_miss}`);
+  };
+  // A run that is stopped from outside still knows things worth having. The
+  // two-process tests kill both emulators when their checks are done, and
+  // without this the --count summary -- the whole point of the flag -- was
+  // never printed for either of them.
+  // The counter slots themselves live in shared linear memory (HIT_COUNT_BASE),
+  // so every instance bumps the same totals and main's read already covers the
+  // worker threads. What is NOT shared is $hit_count_n, the per-instance arming
+  // flag -- see thread-manager's set_count propagation; without it a worker ran
+  // the probed address without ever counting it.
+  const reportHitCounts = (header) => {
+    if (!countAddrs.length || !instance.exports.get_count) return;
+    console.log(header);
+    for (let i = 0; i < countAddrs.length; i++) {
+      console.log(`  ${hex(countAddrs[i])} = ${instance.exports.get_count(i) >>> 0}`);
+    }
+  };
+
+  // How many MMX instructions the guest retired, summed over the main
+  // instance and every worker (each is a separate WASM instance with its own
+  // globals). Reported on the way out however the run ends -- a long run that
+  // gets killed at a timeout is exactly the one where you most want to know
+  // whether the guest ever reached its MMX path.
+  var reportMmx = () => {
+    if (!instance.exports.get_mmx_exec_count) return;
+    let mmx = instance.exports.get_mmx_exec_count() >>> 0;
+    for (const t of (threadManager && threadManager.threads ? threadManager.threads.values() : [])) {
+      if (t.instance && t.instance.exports.get_mmx_exec_count) {
+        mmx += t.instance.exports.get_mmx_exec_count() >>> 0;
+      }
+    }
+    console.log(`MMX: ${mmx} instructions retired (cpuid mmx bit ${NO_MMX ? 'off' : 'on'})`);
+  };
+  // set_count writes the address AND zeroes that slot's count, so arming is not
+  // idempotent: the DLL onLoaded hook re-armed every slot on every late
+  // LoadLibrary and threw away whatever had been counted so far. Diablo loads a
+  // DLL around batch 39000, which is why a probe that really was hit 297413
+  // times reported 0 at --max-batches=40000 and the right answer at 35000.
+  // Re-arm a slot only when its resolved address actually changed.
+  const countArmed = new Array(countAddrs.length).fill(null);
+  const armCounts = () => {
+    if (!countAddrs.length || !instance.exports.set_count) return;
+    for (let i = 0; i < countAddrs.length; i++) {
+      if (!Number.isFinite(countAddrs[i])) continue;   // module+0xVA, not resolved yet
+      const addr = countAddrs[i] >>> 0;
+      if (countArmed[i] === addr) continue;
+      countArmed[i] = addr;
+      instance.exports.set_count(i, addr);
+      // A slot armed late has counted nothing before that point -- worth one
+      // line, because a `module+0xVA` probe that resolves after the code ran
+      // is otherwise indistinguishable from an address that never executed.
+      console.log(`[count] slot ${i} armed at ${hex(addr)}`);
+    }
+  };
+  // --present-frames: snapshot the frame-end counters at FROM_BATCH, report at
+  // exit. The app's perf.logicalFrame steps are counted by the decoder's
+  // marker in every instance (LOGICAL_FRAME), summed over threads. This used
+  // to arm a --count slot, which switches on $dbg_any and so ran the audit
+  // with block chaining and the micro-op tier off.
+  const presentAudit = require('../lib/present-frame-audit');
+  const presentLogical = PRESENT_FRAMES && LOGICAL_FRAME ? LOGICAL_FRAME : null;
+  let presentFramesFrom = null;
+  const presentFramesSnapshot = () => {
+    const insts = [{ name: 'main', exports: instance.exports }];
+    if (threadManager && threadManager.threads) {
+      for (const [, t] of threadManager.threads) {
+        if (t.instance) insts.push({ name: `T${t.tid}`, exports: t.instance.exports });
+      }
+    }
+    const logical = presentLogical
+      ? insts.reduce((n, { exports: ex }) => n +
+        (ex.get_logical_frame_count ? ex.get_logical_frame_count() >>> 0 : 0), 0)
+      : null;
+    // The batch clock read directly: a guest-clock read from the host would
+    // count toward the clock-spin detector.
+    return presentAudit.snapshot(insts, batchClock.batchTicks(), logical);
+  };
+  const presentFramesTick = (batch) => {
+    if (batch === PRESENT_FRAMES_FROM) presentFramesFrom = presentFramesSnapshot();
+  };
+  var reportPresentFrames = () => {
+    if (!PRESENT_FRAMES || !instance.exports.get_present_frame_ends) return;
+    const r = presentAudit.audit(presentFramesFrom, presentFramesSnapshot(),
+      { cap: PRESENT_CAP, logicalLabel: presentLogical && presentLogical.label,
+        mode: presentLogical && PRESENT_CAP ? PRESENT_AT : null });
+    console.log(`[present-frames] from batch ${presentFramesFrom ? PRESENT_FRAMES_FROM : 0}`
+      + (PRESENT_CAP ? `, cap ${PRESENT_CAP}/s` : ', uncapped'));
+    for (const line of r.lines) console.log(line);
+  };
+  for (const sig of ['SIGTERM', 'SIGINT']) {
+    process.on(sig, () => {
+      if (signalExitStarted) return;
+      signalExitStarted = true;
+      terminationSignal = sig;
+      console.log(`[signal] ${sig} requested orderly shutdown`);
+      // Leave through the normal cleanup path. In particular, a controlled
+      // recording owns an ffmpeg child plus buffered audio; process.exit()
+      // orphaned the temporary video and made a deliberate stop look exactly
+      // like a crashed control server. A frozen runner may be parked in
+      // waitForControlBatch(), so wake that wait as well as setting stopped.
+      stopped = true;
+      if (signalExitWake) signalExitWake();
+    });
+  }
+  if (instance.exports.set_process_id) instance.exports.set_process_id(ctx.processId);
+  if (instance.exports.set_desktop_color_depth) instance.exports.set_desktop_color_depth(APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
+  if (NO_MMX && instance.exports.set_cpu_mmx) instance.exports.set_cpu_mmx(0);
+  // timeSetEvent callbacks on a winmm timer guest thread (the Windows model)
+  // instead of the main thread's message pump. Shared memory, so set once.
+  // On by default, as in the browser; `--no-mm-timer-thread` or an app's
+  // `mmTimerThread: false` keeps the old main-thread delivery.
+  if (!hasFlag('no-mm-timer-thread') && (hasFlag('mm-timer-thread') || APP_ENTRY?.mmTimerThread !== false) &&
+      instance.exports.set_mm_timer_thread_mode) {
+    instance.exports.set_mm_timer_thread_mode(1);
+  }
+  if ((hasFlag('sse') || APP_ENTRY?.cpuSSE === true) && instance.exports.set_cpu_sse) {
+    instance.exports.set_cpu_sse(1);
+  }
+  if (VLAN_IP && instance.exports.set_vlan_local_ip) {
+    const octets = VLAN_IP.split('.').map(Number);
+    if (octets.length !== 4 || octets.some(o => !(o >= 0 && o <= 255))) {
+      console.error(`--vlan-ip: not an IPv4 address: ${VLAN_IP}`);
+      process.exit(2);
+    }
+    instance.exports.set_vlan_local_ip(octets.reduce((a, o) => ((a << 8) | o) >>> 0, 0) | 0);
+    if (TRACE_NET) console.log(`[net] room address ${VLAN_IP}`);
+  }
+  {
+    const nagle = VLAN_NAGLE_ARG !== null ? (parseInt(VLAN_NAGLE_ARG, 10) || 0)
+      : (Number.isFinite(APP_ENTRY?.vlanNagleMs) ? APP_ENTRY.vlanNagleMs : 0);
+    if (nagle > 0 && instance.exports.set_vlan_nagle_ms) instance.exports.set_vlan_nagle_ms(nagle | 0);
+  }
+  if (PIPE_STD && instance.exports.pipe_attach_std) {
+    const byPort = new Map();
+    for (const entry of PIPE_STD.split(',').filter(Boolean)) {
+      const [which, end, lport, rip, rport] = entry.split(':').map(v => parseInt(v, 10));
+      let h = byPort.get(lport);
+      if (h) instance.exports.pipe_set_std(which | 0, h | 0);
+      else {
+        h = instance.exports.pipe_attach_std(which | 0, end | 0, lport | 0, rip | 0, rport | 0) >>> 0;
+        if (!h) { console.error(`--pipe-std: could not open ${entry}`); process.exit(2); }
+        byPort.set(lport, h);
+      }
+      console.log(`[pipe] std ${which} = 0x${h.toString(16)} (${end ? 'write' : 'read'} end, port ${lport})`);
+    }
+    // The parent queues this child's frames until now: its std handles exist
+    // to receive them.
+    if (process.send) process.send({ t: 'child-ready' });
+  }
+  // A frame that reaches this process but that no guest ever peeks is
+  // indistinguishable, in the send/peek trace alone, from one that was never
+  // sent. Log the arrival itself so the two failures read differently.
+  if (TRACE_NET && ctx.vlanWire) {
+    const { describeFrame } = require('../lib/vlan-wire');
+    ctx.vlanWire.onDeliver = bytes => console.log(`[net] .. arrived ${describeFrame(bytes)}`);
+  }
+  if (renderer) {
+    renderer.wasm = instance;
+    renderer.wasmMemory = memory;
+    if (renderer.setInputHooks) {
+      renderer.setInputHooks(instance, (ASSET_ENTRY && ASSET_ENTRY.inputHooks) || null);
+    }
+  }
+
+  // Create ThreadManager now that we have the main instance
+  const makeWorkerImports = (tid) => {
+    let workerInstance = null;
+    // Host helpers such as COM activation make synchronous calls back into
+    // guest code. Resolve every export through this worker's instance once it
+    // exists; pointing them at the main instance corrupts the main EIP/ESP
+    // and returns whatever stale EAX it happened to hold.
+    const workerExportsProxy = new Proxy({}, {
+      get: (_target, name) => {
+        const e = workerInstance ? workerInstance.exports : instance.exports;
+        const value = e[name];
+        return typeof value === 'function' ? value.bind(e) : value;
+      },
+    });
+    // Everything process-scoped — the filesystem, the LAN wire, the clock, the
+    // audio device, the GDI handles — comes from one shared list, so the two
+    // hosts cannot quietly disagree about what a thread inherits.
+    const workerCtx = Object.assign(processSharedCtx(ctx), {
+      d3d9Bridge: ctx.d3d9Bridge,
+      getMemory: () => memory.buffer,
+      renderer,
+      onExit: () => {},
+      trace: traceCategories,
+      traceHost: traceHostNames,
+      hostCensus: HOST_CENSUS,
+      exports: workerExportsProxy,
+      _debugReadFile: TRACE_API && !QUIET_FS,
+      ioTraceTag: ctx.ioTraceTag,
+      sharedGdi: base.gdi,  // the live GDI table, not the copy in ctx
+      g2w: (addr) => translateGuest(addr, instance.exports.get_image_base(), memory.buffer),
+    });
+    const workerBase = createHostImports(workerCtx);
+    const wh = workerBase.host;
+    wh.memory = memory;
+    // Every thread in the process schedules against one ThreadManager. The
+    // list is shared, and adopting a name the main table does not implement
+    // throws rather than leaving the return-0 stub in place.
+    adoptThreadPrimitives(wh, h);
+    // An ordinary broker call runs outside runSlice's _runningThreadHandle
+    // scope. Charge a parked single wait to its actual guest thread, not main.
+    // Nested real Workers reject named waits locally in guest-rpc; cooperative
+    // instances still need the recursive-frame guard here.
+    wh.wait_single = (handle, timeout, entry) => {
+      if (workerInstance) entry = threadManager.captureNamedWaitEntry();
+      if (!threadManager._issuedAuthorityEvents.has((handle >>> 0) & 0x7fffffff)) {
+        return h.wait_single(handle, timeout); // preserve existing local routing
+      }
+      const e = workerInstance && workerInstance.exports;
+      return e && e.get_sync_msg_depth && e.get_sync_msg_depth()
+        ? threadManager.waitSingleCooperative(handle, timeout, (tid | 0) + 1)
+        : threadManager.waitSingle(handle, timeout, (tid | 0) + 1, entry || { error: 'EWAITPROTOCOL' });
+    };
+    // A console reader may live on a guest worker (telnet does). Its low-level
+    // input buffer is process-scoped, so it must drain the same host event and
+    // metadata latch as the main instance.
+    wh.check_input = h.check_input;
+    wh.check_input_lparam = h.check_input_lparam;
+    wh.check_input_wparam = h.check_input_wparam;
+    wh.check_input_hwnd = h.check_input_hwnd;
+    // Child processes belong to the process, not to the thread that started
+    // them: Windows Installer runs its custom-action EXEs (msiexec /D, /Y)
+    // from its engine thread, and waits on them from there.
+    wh.process_spawn = (...a) => h.process_spawn(...a);
+    wh.process_ctl = (...a) => h.process_ctl(...a);
+    for (const name of profileHostNames) wrapProfileHost(wh, name);
+    // Worker API tracing. The decode and the "the return belongs to the call
+    // just logged" latch are shared; what stays here is the CLI's own policy —
+    // count every call for the summary, and honour --quiet-api and
+    // --trace-api=NAMES exactly as the main thread does. That filter is not a
+    // nicety: without it a worker's idle poll (MsgWaitForMultipleObjects,
+    // Sleep, QueryPerformanceCounter) logs unfiltered, and a long two-process
+    // run emitted 2.3M such lines and died of heap exhaustion inside
+    // console.log with the filter the caller asked for ignored.
+    // Typed args for the worker trace. The worker instance does not exist yet
+    // (ThreadManager builds it from these imports), so its exports are looked
+    // up by tid at log time; before it is registered these return null and the
+    // trace falls back to the bare name.
+    const workerExports = () => {
+      if (!threadManager) return null;
+      for (const [, t] of threadManager.threads) {
+        if ((t.tid | 0) === (tid | 0) && t.instance) return t.instance.exports;
+      }
+      return null;
+    };
+    const workerFmtCtx = () => {
+      const e = workerExports();
+      if (!e || !e.get_esp || !e.get_image_base) return null;
+      const imageBase = e.get_image_base();
+      const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+      return {
+        esp: e.get_esp(),
+        ctx: { dv: new DataView(memory.buffer), g2w, memory: memory.buffer, readStr, hex },
+      };
+    };
+    const workerApiLog = makeWorkerApiLogger({
+      getBuffer: () => memory.buffer,
+      threadId: tid,
+      formatCall: (name) => {
+        const entry = apiByName.get(name);
+        if (!entry) return null;
+        const f = workerFmtCtx();
+        if (!f) return null;
+        let header = fmtApiCall(entry, f.esp, f.ctx);
+        if (!header) {
+          // Match the main-thread trace for older api_table entries which only
+          // carry nargs metadata. Worker-only shell code is precisely where raw
+          // arguments are most useful, and a bare "SetWindowPos" hid the bad
+          // geometry that the authentic Win98 Explorer asked us to apply.
+          const n = typeof entry.nargs === 'number' ? entry.nargs : 6;
+          const raw = [];
+          for (let i = 0; i < n; i++) {
+            raw.push(hex(f.ctx.dv.getUint32(f.ctx.g2w(f.esp + 4 + i * 4), true)));
+          }
+          header = `${name}(${raw.join(', ')})`;
+        }
+        const ret = f.ctx.dv.getUint32(f.ctx.g2w(f.esp), true);
+        header += ` [esp=${hex(f.esp)} ret=${hex(ret)}]`;
+        if (TRACE_STACK && (!TRACE_STACK_FILTER || TRACE_STACK_FILTER.has(name))) {
+          const depth = TRACE_STACK_FILTER
+            ? TRACE_STACK_FILTER.get(name) : TRACE_STACK_DEFAULT_DEPTH;
+          const e = workerExports();
+          header += '\n  ' + traceStackLine(() => e.get_ebp(), f.esp, f.ctx.dv, f.ctx.g2w,
+            e.get_image_base(), f.ctx.memory, depth);
+        }
+        return header;
+      },
+      formatReturn: (name, val) => {
+        const entry = apiByName.get(name);
+        if (!entry) return null;
+        const f = workerFmtCtx();
+        return f ? fmtApiRet(entry, val, f.ctx) : null;
+      },
+      onCall: (name) => {
+        if (apiCounts) apiCounts.set(name, (apiCounts.get(name) || 0) + 1);
+      },
+      resolveComName: (id) => {
+        const entry = apiTable[id];
+        return entry && entry.id === id ? entry.name : null;
+      },
+      shouldLog: (name) => workerApiShouldLog(
+        { traceApi: TRACE_API, quietApi: QUIET_API, filter: TRACE_API_FILTER }, name),
+      formatValue: hex,
+      emit: (line) => logs.push(line),
+    });
+    wh.log = workerApiLog.log;
+    wh.log_i32 = workerApiLog.log_i32;
+    // The API logger drops every value no visible call owns, which is all of
+    // a thread's --uop-census records; tools/uop-census.js --thread=N reads these.
+    if (experiments.uopCensus) {
+      wh.log_i32 = (val) => { logs.push(`[i32 T${tid}] ${hex(val)}`); workerApiLog.log_i32(val); };
+    }
+    if (TRACE_MOUSE_STATE) {
+      const workerGetMousePosition = wh.get_mouse_position;
+      const workerGetMouseButtons = wh.get_mouse_buttons;
+      wh.get_mouse_position = () => {
+        const value = workerGetMousePosition ? workerGetMousePosition() : 0;
+        const x = value & 0xFFFF;
+        const y = (value >>> 16) & 0xFFFF;
+        const buttons = workerGetMouseButtons ? (workerGetMouseButtons() >>> 0) : 0;
+        logs.push(`[mouse-state T${tid}] get_mouse_position x=${x} y=${y} buttons=${hex(buttons)}`);
+        return value;
+      };
+      wh.get_mouse_buttons = () => {
+        const value = workerGetMouseButtons ? (workerGetMouseButtons() >>> 0) : 0;
+        logs.push(`[mouse-state T${tid}] get_mouse_buttons buttons=${hex(value)}`);
+        return value;
+      };
+    }
+    if (traceEipOn) {
+      wh.log_eip = (eip) => {
+        let line = `[EIP T${tid}] ${hex(eip >>> 0)}`;
+        const e = workerExports();
+        if (TRACE_EIP_DETAIL && e) {
+          line += ` EAX=${hex(e.get_eax())} ECX=${hex(e.get_ecx())}`
+            + ` EDX=${hex(e.get_edx())} EBX=${hex(e.get_ebx())}`
+            + ` ESP=${hex(e.get_esp())} EBP=${hex(e.get_ebp())}`
+            + ` ESI=${hex(e.get_esi())} EDI=${hex(e.get_edi())}`;
+          if (traceEipDumps.length) {
+            const imageBase = e.get_image_base();
+            const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+            const dv = new DataView(memory.buffer);
+            for (const d of traceEipDumps) {
+              const bytes = [];
+              for (let off = 0; off < d.len; off++) {
+                bytes.push(dv.getUint8(g2w((d.addr + off) >>> 0))
+                  .toString(16).padStart(2, '0'));
+              }
+              line += ` mem[${hex(d.addr)}:${d.len}]=${bytes.join(' ')}`;
+            }
+          }
+        }
+        logs.push(line);
+      };
+    }
+    wh.exit = () => {};
+    wh.has_dll_file = h.has_dll_file;
+    const workerImports = { host: wh };
+    workerImports.__setInstance = value => { workerInstance = value; };
+    return workerImports;
+  };
+
+  // --threads: each guest thread gets a real OS thread (node worker_threads over
+  // this same shared memory) instead of a slice of this one. The guest's main
+  // thread stays in-process — 237 sites here call instance.exports directly, and
+  // moving them behind an async proxy is a different change — so this is not the
+  // browser's shape, where slot 0 is a Worker too. What it does cover, headlessly
+  // and on every run: the WAT's shared-memory locks and publish ordering under
+  // genuine parallelism, the per-thread RPC blocks, the worker scheduler in
+  // lib/thread-manager.js, and the wait-completion path whose absence made worker
+  // mode quietly wrong for a whole phase with every test still green.
+  let guestThreadHost = null;
+  // Computed here, not at parse time: the debug flags above rewrite BATCH_SIZE.
+  //
+  // A worker slice is the same size as a main slice, floored at 1000 like
+  // host.js's own step count, because that is the shape the browser runs:
+  // host.js hands its main step count straight to runWorkerSlices. This used
+  // to be max(BATCH_SIZE * THREAD_SLICES, 20000), which let every worker
+  // retire ~27x the blocks main did per batch. That is a race no real machine
+  // runs and the page never does: hype_glide_demo's loader thread (MSVCRT
+  // thread 0xb98b10) reached its sprite-row table at 0x757200 while main was
+  // still filling the 64K colour table beside it at 0x466b4f, followed a NULL
+  // row, and _XcptFilter turned the fault into ExitProcess -- the only crash
+  // in the 271-app dual-mode sweep (docs/crash-sweep-dual-mode-20261006.md).
+  const THREAD_BATCH_SIZE = THREAD_BATCH_SIZE_ARG || Math.max(BATCH_SIZE, 1000);
+  if (WORKER_THREADS) {
+    // Real parallelism: LOCK-prefixed instructions must be atomic across the
+    // worker_threads (07-decoder.wat $try_emit_locked, handler 499).
+    if (instance.exports.set_lock_atomic_mode) instance.exports.set_lock_atomic_mode(1);
+    const { GuestThreadHost } = require('../lib/guest-thread-host');
+    const sigs = JSON.parse(fs.readFileSync(
+      path.join(ROOT, 'lib', 'host-import-sigs.generated.json'), 'utf8')).sigs;
+    guestThreadHost = new GuestThreadHost({
+      findDll: findRuntimeDllBytes,
+      onDllMapped: record => {
+        require('../lib/process-boot').registerMappedDll(ctx, instance.exports, memory.buffer, record, console.log);
+      },
+      onDllRetired: row => {
+        if (ctx.dllResources && ctx.dllResources[row.loadAddr] &&
+            ctx.dllResources[row.loadAddr].generation === row.generation) delete ctx.dllResources[row.loadAddr];
+      },
+      memory,
+      module: wasmModule,
+      sigs,
+      // One import table per thread, built by the same factory the cooperative
+      // backend uses — so a worker's API trace still says which tid it came from.
+      hostImportsForSlot: (slot, tid) => makeWorkerImports(tid).host,
+      workerUrl: path.join(ROOT, 'lib', 'guest-worker.js'),
+      localMainExports: () => instance.exports,
+      countCalls: RPC_CENSUS,
+      // Guest log hooks stay Worker-local in an ordinary run: forwarding all
+      // three hooks adds several postMessages per API. An explicit diagnostic
+      // flag, however, must see worker-thread output just as cooperative mode
+      // does. This includes log_i32-only loop/Win16/FPU traces.
+      forwardGuestLogs: VERBOSE || TRACE_API || TRACE_API_COUNTS ||
+        experiments.traceLoopmatch || experiments.uopCensus ||
+        TRACE_WIN16 || TRACE_WIN16_DDE || TRACE_FPU,
+      // The audit runs inside each worker, against its own instance: this
+      // process's get_esp() belongs to the main thread and cannot see a
+      // worker's stack at all. Arities come from the same table
+      // tools/esp-epilogue.js checks the handlers against.
+      // Expected ESP movement per API, not raw nargs: the rule depends on the
+      // calling convention, and getting that wrong makes the audit lie. A
+      // stdcall handler pops the return address plus its arguments; a cdecl one
+      // pops ONLY the return address, because the caller cleans the arguments.
+      // Measured before this distinction existed, the audit's first "finding"
+      // was wsprintfA — a correct cdecl epilogue. tools/esp-epilogue.js skips
+      // cdecl entirely; expecting 4 checks it instead.
+      espExpect: ESP_AUDIT ? Object.fromEntries(apiTable
+        .filter(e => typeof e.nargs === 'number')
+        .map((e) => {
+          const conv = e.convention || 'stdcall';
+          if (conv === 'cdecl') return [e.name, 4];
+          if (conv !== 'stdcall' || e.nargs < 0) return null;
+          return [e.name, 4 * (e.nargs + 1)];
+        })
+        .filter(Boolean)) : null,
+      clockIntervalMs: 0,          // the CLI clock is the batch counter, published by hand
+      // The same clock the cooperative backend publishes, not a second one:
+      // hard-coding 200 here made --tick-ms-per-batch silently a no-op for
+      // every worker-hosted guest thread, so the threads disagreed about how
+      // fast time was passing.
+      tickMs: () => guestClock.publish(),
+      log: msg => console.log(msg),
+    });
+    await guestThreadHost.start();
+    workerThreadHost = guestThreadHost;
+    console.log('[threads] guest threads will run in node worker_threads (--threads)');
+  } else if (FORCE_COOPERATIVE_THREADS) {
+    console.log('[threads] guest threads will use the cooperative scheduler (--no-threads)');
+  }
+
+  const resolveThreadSendExternalYield = async (link, r, captured, inspectNames) => {
+    if (!guestThreadHost || (r.yield !== 3 && r.yield !== 5)) return false;
+    if (captured) {
+      const prepared = await require('../lib/process-boot').prepareScopedLibrary(
+        captured, findRuntimeDllBytes, new Uint8Array(exeBytes), inspectNames);
+      prepared.publish = result => {
+        require('../lib/process-boot').publishScopedDlls(ctx, instance.exports, memory.buffer, result, console.log);
+      };
+      return prepared;
+    }
+    // In CLI threaded mode slot 0 remains a local instance. Use the shared
+    // process-boot pumps there; Worker links use the worker-side loader commands
+    // below so all EIP/ESP mutations stay with the instance they belong to.
+    if (link === guestThreadHost._localLink) {
+      if (r.yield === 3) {
+        await handleComDllYield({
+          exports: instance.exports,
+          memoryBuffer: memory.buffer,
+          exeBytes: new Uint8Array(exeBytes),
+          resourceHost: ctx,
+          log: console.log,
+          findDll: findRuntimeDllBytes,
+          findDllSync: findRuntimeDllBytes,
+        });
+      } else {
+        await handleLoadLibraryYield({
+          exports: instance.exports,
+          memoryBuffer: memory.buffer,
+          resourceHost: ctx,
+          log: console.log,
+          findDll: findRuntimeDllBytes,
+          findDllSync: findRuntimeDllBytes,
+        });
+      }
+      return true;
+    }
+    if (r.yield === 5) {
+      await guestThreadHost.serviceDllYield(link);
+      return true;
+    }
+    const nameExport = r.yield === 3 ? 'get_com_dll_name' : 'get_loadlib_name';
+    const nameWA = (await link.callExport(nameExport)) >>> 0;
+    let dllName = '';
+    if (nameWA) {
+      const shared = new Uint8Array(memory.buffer);
+      for (let i = 0; i < 260 && shared[nameWA + i]; i++) {
+        dllName += String.fromCharCode(shared[nameWA + i]);
+      }
+    }
+    const fileName = dllName.split(/[\\/]/).pop().toLowerCase();
+    const dllBytes = fileName ? findRuntimeDllBytes(fileName, dllName) : null;
+    if (r.yield === 3) {
+      await guestThreadHost.comLoadDll(dllBytes, fileName, new Uint8Array(exeBytes), link);
+    } else {
+      await guestThreadHost.loadLibrary(dllBytes, fileName, link);
+    }
+    return true;
+  };
+
+  const inheritedWasmGlobals = createInheritedWasmGlobals();
+  const inheritWasm = (setter, ...args) =>
+    recordInheritedWasmGlobal(inheritedWasmGlobals, setter, args);
+  experiments.recordInherited(inheritWasm, { copySuperops: COPY_SUPEROPS, verbose: VERBOSE });
+  // A guest thread's API log feeds only --trace-api/--trace-api-counts, which
+  // keep it on (apiLogOff), so a quiet run silences it on every instance.
+  if (apiLogOff) inheritWasm('set_api_log', 0);
+  if (FLIP_VSYNC) inheritWasm('set_flip_vsync', 1);
+  if (PRESENT_CAP) inheritWasm('set_present_cap', PRESENT_CAP);
+  inheritWasm('set_present_pace_mode', PRESENT_PACE_MODE);
+  // A { seg, off } step is a Win16 task's, and a Win16 task has no guest
+  // threads; it is resolved on the main instance after load instead.
+  if (LOGICAL_FRAME && !LOGICAL_FRAME.segOff) inheritWasm('set_logical_frame', LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
+  // Guest threads run their own module instance over the shared memory, so the
+  // spin state is per-thread by construction — but the THRESHOLD is a setting
+  // and has to be propagated like every other one.
+  if (NO_SPIN_PARK) inheritWasm('set_spin_park_k', 0);
+  else if (Number.isFinite(SPIN_PARK_K)) inheritWasm('set_spin_park_k', SPIN_PARK_K);
+
+  threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
+    threadSnapshotSystemComplete: () => !threadSnapshotSystemIncomplete,
+    workerBackend: guestThreadHost,
+    serialSlices: THREADS_SERIAL,
+    csStealAfter: CS_STEAL_AFTER,
+    traceThread: TRACE_THREAD,
+    traceYield: TRACE_YIELD,
+    breakThreadFilter: breakThreadFilter,
+    traceCallstack: TRACE_CALLSTACK,
+    traceCallstackDepth: TRACE_CALLSTACK_DEPTH,
+    traceEipRange: (traceEipOn && traceEipArmed) ? { lo: traceEipLo, hi: traceEipHi } : null,
+    countAddrs: countAddrs,
+    faultUnmapped: FAULT_NULL_MODE,
+    inheritedWasmGlobals,
+    // Deadlines (Sleep, timed waits) must be kept on the clock the guest
+    // reads. Under a capped --real-ticks run (REAL_TICK_SLEEPS) that is the wall clock: on the batch clock a
+    // main-thread Sleep(16) ends at the next batch, however little wall time
+    // that is -- measured on dx_tunnel at --present-cap=60, every paced
+    // Sleep lasted ~3ms and the capped app ran at 66.8 frames/s.
+    now: REAL_TICK_SLEEPS ? () => guestClock.ticks() : () => batchClock.batchTicks(),
+    sleepNow: REAL_TICK_SLEEPS ? () => guestClock.ticks()
+      : () => Math.max(batchClock.batchTicks(), batchClock.state.lastTick),
+    clockParkSleep: !NO_CLOCK_PARK_SLEEP,
+    // For a spawned thread's io_wait park (yield 12). CLI providers usually
+    // read synchronously, so this mostly matters to tests that mount an
+    // async provider to mimic the browser's File-backed ISO reads.
+    getVfs: () => ctx.vfs || null,
+    onRenderWait: token => ctx.waitD3DRender(token),
+    hasMessage: () => !!(
+      inputEvent ||
+      (crossThreadMsgs && crossThreadMsgs.length) ||
+      (inputQueue && inputQueue.length) ||
+      (renderer && renderer.inputQueue && renderer.inputQueue.length)
+    ),
+    resolveThreadSendExternalYield,
+    // The per-app thread-exit fixups the browser host has always run — Winamp's
+    // visualizer bookkeeping — now run headless too, so a browser-only symptom
+    // is reproducible from the CLI.
+    onThreadExit: (info) => profileThreadExit(
+      path.basename(EXE_PATH), info, instance.exports, memory.buffer,
+      { log: (m) => console.log(m) }),
+  });
+  // Waits on a child process's handle (src/09d7-pipes.wat) ask the host
+  // that started it.
+  threadManager.processCtl = (op, pid, arg) => (ctx.processCtl ? ctx.processCtl(op, pid, arg) : -1);
+  ctx.closeSyncHandle = handle => threadManager.closeSyncHandle(handle);
+
+  const mem = new Uint8Array(memory.buffer);
+
+  // MSVCRT data imports (__argc/__argv) can be resolved while load_pe walks
+  // the executable import table. Seed process identity first so a lazy argv
+  // block built during import resolution sees the real launcher metadata.
+  setExeDrive(instance.exports, EXE_GUEST_PATH || MEDIA_EXE);
+  setExeName(instance.exports, memory.buffer, EXE_PROCESS_NAME);
+  if (EXTRA_ARGS) {
+    setExtraCmdline(instance.exports, memory.buffer, EXTRA_ARGS);
+  }
+
+  applyStartupShow(instance.exports, getArg('startup-show', undefined));
+  const { entry } = stageAndLoadPe(instance.exports, memory.buffer, exeBytes, console.log);
+  applyVirtualAllocTop(instance.exports, VIRTUAL_ALLOC_TOP_ARG !== null
+    ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop));
+  if (CS_STEAL_AFTER && instance.exports.set_cs_steal_after) {
+    instance.exports.set_cs_steal_after(CS_STEAL_AFTER);
+  }
+  if (Number.isFinite(SPIN_WORK_MAX)) inheritWasm('set_spin_work_max', SPIN_WORK_MAX);
+  if (Number.isFinite(SPIN_REGS_CHECK)) inheritWasm('set_spin_regs_check', SPIN_REGS_CHECK);
+  applyExeCompatibilityPatches(path.basename(EXE_PATH), instance.exports, memory.buffer);
+  // Screen-size-driven defaults from the same table (lib/app-profiles.js
+  // LAUNCH_PREFS) — the CLI's screen is whatever --screen= asked for, so a
+  // headless run reproduces exactly what a browser of that size would pick.
+  applyProfileLaunchPrefs(path.basename(EXE_PATH), instance.exports, memory.buffer, {
+    skip: process.env.WA_SKIP_LAUNCH_PREFS === '1',
+    hook: (ASSET_ENTRY && ASSET_ENTRY.launchPrefs) || null,
+    screen: renderer && renderer.canvas
+      ? { width: renderer.canvas.width, height: renderer.canvas.height } : null,
+  });
+  // A 16-bit task's DLLs load into the same selector arena its own segments
+  // went into, so this has to follow load_pe.
+  loadWin16Dlls(instance.exports, memory, exeBytes, path.dirname(EXE_PATH),
+    (dir, name) => {
+      for (const f of win16FileCandidates(name)) {
+        const p = path.join(dir, f);
+        if (fs.existsSync(p)) return fs.readFileSync(p);
+      }
+      // Then the system-directory pool, which is where a shared 16-bit runtime
+      // belongs and where its installer would have put it.
+      const wanted = name.replace(/\.[^.]*$/, '').toLowerCase();
+      for (const lib of WIN16_LIBS) {
+        if (path.basename(lib).replace(/\.[^.]*$/, '').toLowerCase() !== wanted) continue;
+        return fs.readFileSync(lib);
+      }
+      return null;
+    }, (m) => console.log(m), (ASSET_ENTRY && ASSET_ENTRY.win16Modules) || []);
+  const requiredDlls = detectRequiredDlls(exeBytes);
+
+  // Initialize DirectX COM vtable thunks (must be after load_pe sets image_base)
+  if (instance.exports.init_dx_com_thunks) {
+    instance.exports.init_dx_com_thunks();
+  }
+
+  // Queue environment overrides before loading DLLs: a CRT's DllMain snapshots
+  // GetEnvironmentStrings while it initializes. The WAT export keeps this
+  // lazy, so queueing here does not allocate or perturb the early guest heap.
+  const processEnvironment = new Map(Object.entries(
+    (ASSET_ENTRY && ASSET_ENTRY.environment) || {}));
+  for (const [name, value] of PROCESS_ENVIRONMENT) processEnvironment.set(name, value);
+  for (const [name, value] of processEnvironment) {
+    if (!setEnvironmentVariable(instance.exports, memory.buffer, name, value)) {
+      throw new Error(`failed to set guest process environment variable ${name}`);
+    }
+    console.log(`Guest environment: ${name}=${JSON.stringify(value)}`);
+  }
+
+  if (EXTRA_ARGS) {
+    console.log(`Extra cmdline args: ${JSON.stringify(EXTRA_ARGS)}`);
+  }
+
+  // Set emulated Windows version
+  if (WINVER && instance.exports.set_winver) {
+    const versions = { 'win98': 0xC0000A04, 'nt4': 0x05650004, 'win2k': 0x05650005, 'winxp': 0x0A280105 };
+    const v = versions[WINVER.toLowerCase()] || parseInt(WINVER);
+    if (v) { instance.exports.set_winver(v); console.log('Windows version: ' + hex(v)); }
+  } else if (shouldReportNtForDlls(requiredDlls) && instance.exports.set_winver) {
+    const v = 0x05650004;
+    instance.exports.set_winver(v);
+    console.log('Windows version: ' + hex(v) + ' (auto NT for MFC42U)');
+  }
+
+  // Load DLLs: explicit --dlls=path1,path2,... or auto-detect from EXE imports
+  const dllArg = getArg('dlls', null);
+  const dllDir = path.join(path.dirname(EXE_PATH), 'dlls');
+  let dlls;
+  if (dllArg) {
+    dlls = dllArg.split(',').map(p => ({
+      name: path.basename(p.trim()),
+      bytes: readAssetBytes(p.trim()),
+    }));
+  } else {
+    // Auto-detect: scan EXE imports, load any DLLs found in test/binaries/dlls/
+    // Only load DLLs that work as real PE DLLs; others are handled by WAT stub
+    // handlers — the one list, shared with the browser (lib/dll-registry.js),
+    // as is the graph walk itself (lib/process-boot.js).
+    const exeDir = path.dirname(EXE_PATH);
+    const dllSearchDirs = [
+      dllDir,
+      exeDir,
+      path.join(exeDir, '..', 'Shared_DLLs'),  // MW3-style extracted layout
+      path.join(exeDir, '..', 'shared_dlls'),
+      path.join(__dirname, 'binaries', 'dlls'),
+    ];
+    const findDllFile = name => {
+      for (const dir of dllSearchDirs) {
+        const p = findHostFileCi(dir, name);
+        if (p) return p;
+      }
+      return null;
+    };
+    // App-local DLLs ship beside their exe, so a dependency named by another
+    // DLL is looked up in this app's own `files` list too — same rule the page
+    // applies (index.html appFileByName).
+    const appFileByName = new Map();
+    for (const f of ((ASSET_ENTRY && ASSET_ENTRY.files) || [])) {
+      const url = typeof f === 'string' ? f : (f && f.url);
+      if (url) appFileByName.set(url.split('/').pop().toLowerCase(), url);
+    }
+    dlls = await resolveDllGraph({
+      exeBytes,
+      seeds: [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED],
+      detectRequiredDlls,
+      onMissing: (name, spec, { seed } = {}) => {
+        // One the app declares (`dlls`, --dll-seed) is not optional: running
+        // on without it only moves the failure into a built-in stub.
+        // A setup failure, so a nonzero exit (no guest thread exists yet).
+        if (seed) {
+          console.error(`run.js: declared DLL not found: ${spec} (test/binaries is ` +
+            `gitignored: link it into a fresh worktree)`);
+          process.exit(1);
+        }
+        console.warn(`[dll] ${name} is loaded as a real PE ` +
+          `but is not on disk (${spec}); its imports fall to WAT stubs and an ordinal ` +
+          `import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it ` +
+          `into a fresh worktree.`);
+      },
+      loadSpec: (spec) => {
+        // Registry seeds arrive as repo-relative paths; the graph walk's own
+        // discoveries arrive as bare DLL names.
+        const name = spec.split('/').pop();
+        const p = spec.includes('/')
+          ? appAsset(spec)
+          : (findDllFile(name) || (appFileByName.has(name.toLowerCase())
+              ? appAsset(appFileByName.get(name.toLowerCase())) : null));
+        return (p && fs.existsSync(p)) ? {
+          name,
+          bytes: readAssetBytes(p),
+          path: capturedGuestPath(p) || besideExeGuestPath(p, name) || undefined,
+        } : null;
+      },
+    });
+  }
+  // Register exe in moduleBases so `exe+0xVA` and basename-relative specs work.
+  {
+    const peOff = exeBytes[0x3C] | (exeBytes[0x3D] << 8) | (exeBytes[0x3E] << 16) | (exeBytes[0x3F] << 24);
+    const exeOrig = exeBytes[peOff + 52] | (exeBytes[peOff + 53] << 8) | (exeBytes[peOff + 54] << 16) | (exeBytes[peOff + 55] << 24);
+    const exeLoad = instance.exports.get_image_base();
+    const exeBase = path.basename(EXE_PATH).toLowerCase().replace(/\.[^.]+$/, '');
+    moduleBases['exe'] = { loadAddr: exeLoad, origBase: exeOrig };
+    moduleBases[exeBase] = { loadAddr: exeLoad, origBase: exeOrig };
+  }
+  // The page loads a registered app's files before it loads any DLL
+  // (lib/browser-shell.js loadFiles, then the DLL graph), so a DllMain that
+  // enumerates its own data already sees them -- UBER.DLL's DllMain scans
+  // C:\Modules for Myth's network modules. Mount the same manifest here first;
+  // the full mount below re-adds each path idempotently.
+  if (ctx.vfs && ASSET_ENTRY) {
+    for (const item of (verifiedAssetFiles || getAssetFiles(ASSET_ENTRY))) {
+      const url = typeof item === 'string' ? item : (item && item.url);
+      if (!url) continue;
+      const hostPath = appAsset(url);
+      let size;
+      try { size = fs.statSync(hostPath).size; } catch (_) { continue; }
+      const guests = typeof item === 'object' && Array.isArray(item.vfsPaths) ? item.vfsPaths
+        : [typeof item === 'object' && item.vfsPath ? item.vfsPath : url.replace(/^.*[\\/]/, '')];
+      for (const raw of guests) {
+        let vfsPath = String(raw).toLowerCase().replace(/\//g, '\\');
+        if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+        if (ctx.vfs.files.has(vfsPath)) continue;
+        ctx.vfs.ensureParentDirs(vfsPath);
+        ctx.vfs.setLazyFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(raw).replace(/^.*[\\/]/, ''), { attrs: 0x20, size,
+          load: () => new Uint8Array(item.bytes || fs.readFileSync(hostPath)) });
+      }
+    }
+  }
+  // A LoadLibraryA from inside a DllMain (UBER.DLL loading Myth's
+  // modules\TCPIP.DLL) is serviced in place: callDllMain cannot await. So is
+  // one from inside a nested synchronous send ($wnd_send_message asks through
+  // the service_load_library import), which cannot return to this loop either.
+  const onLoadLibraryYield = ex => serviceLoadLibraryYieldSync({
+    exports: ex, memoryBuffer: memory.buffer, resourceHost: ctx, log: console.log,
+    findDllSync: findRuntimeDllBytes, onLoadLibraryYield,
+  });
+  ctx.serviceLoadLibrary = () => onLoadLibraryYield(instance.exports);
+  threadManager._serviceDllYield = onLoadLibraryYield;
+  if (dlls.length > 0) {
+    mountLoadedDllFiles(ctx.vfs, dlls);
+    const dllResults = loadDlls(instance.exports, memory.buffer, exeBytes, dlls, console.log, {
+      onLoadLibraryYield,
+      exeName: path.basename(EXE_PATH),
+      extraArgs: EXTRA_ARGS || '',
+      registerDllResources: (dllConfigs, results) => {
+        const { extractBitmapBytes } = require('../lib/dib');
+        ctx.dllResources = ctx.dllResources || {};
+        for (let i = 0; i < dllConfigs.length && i < results.length; i++) {
+          try {
+            const bitmapBytes = extractBitmapBytes(dllConfigs[i].bytes);
+            const count = Object.keys(bitmapBytes).length;
+            if (count > 0) {
+              ctx.dllResources[results[i].loadAddr] = { bitmapBytes };
+              console.log(`DLL resources: ${dllConfigs[i].name} has ${count} bitmaps`);
+            }
+          } catch (_) {}
+        }
+      },
+    });
+    if (dllResults) {
+      threadManager.setLoadedDlls(dllResults, (ex, base, entry, log, options) =>
+        callDllMain(ex, base, entry, log, { ...options, onLoadLibraryYield }));
+      for (const r of dllResults) {
+        const key = r.name.toLowerCase().replace(/\.[^.]+$/, '');
+        moduleBases[key] = { loadAddr: r.loadAddr, origBase: r.origBase };
+      }
+    }
+    stopped = false;
+    hostExitRequested = false;
+  }
+
+  // Resolve any module-relative address specs now that all module bases are known.
+  deferredResolveAddrs();
+
+  // Put the exe where a running image expects to find itself; see lib/vfs-seed.js.
+  if (ctx.vfs) {
+    const exeName = seedExeImage(ctx.vfs, exeBytes, path.basename(EXE_PATH), EXE_GUEST_PATH).base;
+    const exeDir = path.dirname(EXE_PATH);
+    const addFile = (rawPath, hostPath, size) => {
+      let vfsPath = String(rawPath).toLowerCase().replace(/\//g, '\\');
+      if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+      ctx.vfs.ensureParentDirs(vfsPath);
+      return ctx.vfs.setLazyFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(rawPath).replace(/^.*[\\/]/, ''), {
+        attrs: 0x20,
+        size,
+        load: () => new Uint8Array(readAssetBytes(hostPath)),
+      });
+    };
+    const addFontAlias = (name, hostPath, size) => {
+      const base = String(name).replace(/^.*[\\/]/, '').toLowerCase();
+      if (/\.(ttf|ttc|fon)$/.test(base)) {
+        addFile('c:\\windows\\fonts\\' + base, hostPath, size);
+      }
+    };
+
+    // An arbitrary bare --exe mounts only the executable. A registered EXE
+    // gets that app's explicit file manifest; an ad-hoc run can add one or more
+    // --vfs-include globs rooted at the EXE directory. In particular, placing
+    // an EXE directly in /private/tmp no longer indexes every unrelated file
+    // and directory below /private/tmp (nor any sibling directory above it).
+    const includedFiles = expandIncludePatterns(exeDir, VFS_INCLUDE);
+    for (const tree of VFS_TREES) {
+      includedFiles.push(...expandIncludePatterns(appAsset(tree), ['**/*']));
+    }
+    for (const file of includedFiles) {
+      const size = fs.statSync(file.hostPath).size;
+      addFile(file.guestPath, file.hostPath, size);
+      addFontAlias(file.guestPath, file.hostPath, size);
+    }
+    for (const spec of VFS_MOUNT) {
+      const eq = spec.lastIndexOf('=');
+      if (eq <= 0) throw new Error(`--vfs-mount needs HOSTPATH=GUESTPATH, got: ${spec}`);
+      const hostPath = appAsset(spec.slice(0, eq).trim());
+      const guestPath = spec.slice(eq + 1).trim();
+      if (!guestPath) throw new Error(`--vfs-mount needs a guest path: ${spec}`);
+      const size = fs.statSync(hostPath).size;
+      addFile(guestPath, hostPath, size);
+      addFontAlias(guestPath, hostPath, size);
+    }
+    for (const lib of WIN16_LIBS) {
+      const guestPath = `c:\\windows\\system\\${path.basename(lib).toLowerCase()}`;
+      addFile(guestPath, lib, fs.statSync(lib).size);
+    }
+    // Mount a matched registry app's data files at the same VFS paths the page
+    // gives them. An entry is a repo-relative URL (-> c:\basename), or
+    // {url, vfsPath}, or {url, vfsPaths} when one file needs several aliases.
+    if (ASSET_ENTRY) {
+      // The page's download policy (lib/app-files.js), decided on the same
+      // files and sizes. Its lazy entries mount provider-backed under
+      // --lazy-ranges -- the audit of what the browser streams -- and stay
+      // ordinary eager mounts otherwise.
+      const policy = require('../lib/app-files').normalizeLazyFiles(ASSET_ENTRY, verifiedAssetFiles || getAssetFiles(ASSET_ENTRY), {
+        isWin16: !!(instance.exports.is_win16 && instance.exports.is_win16()),
+        // Only the sizes the page has too (an entry's own `size`): a stat()
+        // size here made the CLI decide differently from the browser and
+        // hid AoE II's black screen (EULA.RTF unsized -> streamed in the page).
+      });
+      const assetFiles = policy.files;
+      const ps = policy.summary;
+      console.log(`[files] policy ${ps.policy}: ${ps.eagerFiles} eager (${ps.eagerBytes} bytes), ` +
+        `${ps.lazyFiles} on demand (${ps.lazyBytes} bytes)${LAZY_RANGES ? '' : ' -- mounted eager without --lazy-ranges'}`);
+      const missing = [];
+      let lazyManifestStats = null;
+      // Every streamed file, both branches below: one exit line with the
+      // numbers the chunk-size/prefetch work is judged on -- parks (guest
+      // reads that missed and waited), parks per second of wall clock,
+      // bytes fetched, background prefetches and over-fetch (fetched bytes
+      // no read touched).
+      const lazyAll = { files: 0, bytes: 0, caches: [], t0: Date.now() };
+      const noteLazy = (cache, size) => {
+        if (!lazyAll.files) {
+          process.on('exit', () => {
+            let fetches = 0, bytes = 0, parks = 0, prefetches = 0, over = 0, touched = 0;
+            for (const c of lazyAll.caches) {
+              const st = c.stats;
+              fetches += st.fetches; bytes += st.bytesFetched; parks += st.misses;
+              prefetches += st.prefetches || 0; over += c.overFetchBytes || 0;
+              if (st.fetches) touched++;
+            }
+            const secs = Math.max(0.001, (Date.now() - lazyAll.t0) / 1000);
+            console.log(`[lazy] all streamed files: ${touched} of ${lazyAll.files} touched, ` +
+              `fetched ${fetches} chunks / ${bytes} of ${lazyAll.bytes} bytes, ` +
+              `parks ${parks} (${(parks / secs).toFixed(1)}/s over ${secs.toFixed(1)}s), ` +
+              `prefetches ${prefetches}, over-fetch ${over} bytes`);
+          });
+        }
+        lazyAll.files++;
+        lazyAll.bytes += size;
+        lazyAll.caches.push(cache);
+      };
+      for (const item of assetFiles) {
+        const url = typeof item === 'string' ? item : (item && item.url);
+        if (!url) continue;
+        const hostPath = appAsset(url);
+        let size = 0;
+        try {
+          size = fs.statSync(hostPath).size;
+        } catch (_) {
+          // {optional: true} mirrors host.js loadFiles: absent is allowed.
+          if (typeof item === 'object' && item.optional) {
+            console.log(`[app] optional file not present: ${url}`);
+          } else {
+            missing.push(url);
+          }
+          continue;
+        }
+        const paths = (typeof item === 'object' && Array.isArray(item.vfsPaths))
+          ? item.vfsPaths
+          : [(typeof item === 'object' && item.vfsPath) || url.replace(/^.*[\\\/]/, '')];
+        // Same rule as host.js loadFiles: a sized manifest entry (loadMode
+        // lazy/background) is a range mount with the default cache shape (1MB
+        // chunks, read-ahead/prefetch only while sequential); a legacy
+        // httpRange entry is one unless loadMode says required.
+        const sizedLazy = typeof item === 'object' && item &&
+          (item.loadMode === 'lazy' || item.loadMode === 'background');
+        if (LAZY_RANGES && sizedLazy) {
+          const bp = require('../lib/byte-provider');
+          const cache = bp.cached(new bp.NodeFileProvider(hostPath, { sync: false, latencyMs: LAZY_RANGES_MS }),
+            LAZY_CACHE_OPTS);
+          for (const p of paths) {
+            let vfsPath = String(p).toLowerCase().replace(/\//g, '\\');
+            if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+            ctx.vfs.ensureParentDirs(vfsPath);
+            ctx.vfs.setProviderFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(p).replace(/^.*[\\/]/, ''), { provider: cache });
+          }
+          // Thousands of these in one tree: one summary line, not one per file.
+          if (!lazyManifestStats) {
+            lazyManifestStats = { files: 0, bytes: 0, caches: [] };
+            process.on('exit', () => {
+              let fetches = 0, bytes = 0, touched = 0;
+              for (const c of lazyManifestStats.caches) {
+                const st = c.stats;
+                fetches += st.fetches; bytes += st.bytesFetched;
+                if (st.fetches) touched++;
+              }
+              console.log(`[lazy] loadMode files: ${touched} of ${lazyManifestStats.files} touched, ` +
+                `fetched ${fetches} chunks / ${bytes} of ${lazyManifestStats.bytes} bytes`);
+            });
+          }
+          lazyManifestStats.files++;
+          lazyManifestStats.bytes += size;
+          lazyManifestStats.caches.push(cache);
+          noteLazy(cache, size);
+          continue;
+        }
+        if (LAZY_RANGES && typeof item === 'object' && item.httpRange && item.loadMode !== 'required') {
+          const bp = require('../lib/byte-provider');
+          const cache = bp.cached(new bp.NodeFileProvider(hostPath, { sync: false, latencyMs: LAZY_RANGES_MS }),
+            LAZY_CACHE_OPTS);
+          let preloaded = 'no preload ranges';
+          if (item.preloadRanges && !NO_PRELOAD_RANGES) {
+            const r = await cache.preload(bp.preloadRangesFor(item.preloadRanges, cache.size));
+            preloaded = `preloaded ${r.chunks} chunks (${r.bytes} bytes)`;
+          } else if (item.preloadRanges) {
+            preloaded = 'preload ranges SKIPPED (--no-preload-ranges)';
+          }
+          for (const p of paths) {
+            let vfsPath = String(p).toLowerCase().replace(/\//g, '\\');
+            if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+            ctx.vfs.ensureParentDirs(vfsPath);
+            ctx.vfs.setProviderFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + String(p).replace(/^.*[\\/]/, ''), { provider: cache });
+          }
+          noteLazy(cache, size);
+          // Per-file lines only where they say something a total cannot (a
+          // preload range list), or under --verbose: the default policy
+          // streams thousands of files.
+          if (item.preloadRanges || VERBOSE) {
+            console.log(`[lazy] ${url}: ${size} bytes provider-backed, ${LAZY_RANGES_MS}ms/chunk, ${preloaded}`);
+            process.on('exit', () => {
+              const st = cache.stats;
+              console.log(`[lazy] ${url}: fetched ${st.fetches} chunks / ${st.bytesFetched} bytes ` +
+                `(pinned ${st.pinnedChunks} / ${st.pinnedBytes}), hits ${st.hits}, misses ${st.misses}`);
+            });
+          }
+          continue;
+        }
+        const decodedImage = (typeof item === 'object' && item.decodeImage)
+          ? await decodeMountedImage(hostPath)
+          : null;
+        if (typeof item === 'object' && item.iniSet) {
+          // Registry INI edits (lib/app-files.js applyIniSet), as the page does.
+          const edited = require('../lib/app-files').applyIniSet(
+            new Uint8Array(fs.readFileSync(hostPath)), item.iniSet);
+          for (const p of paths) {
+            let vfsPath = String(p).toLowerCase().replace(/\//g, '\\');
+            if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+            ctx.vfs.ensureParentDirs(vfsPath);
+            ctx.vfs.files.set(vfsPath, { data: edited.slice(), attrs: 0x20 });
+          }
+          continue;
+        }
+        for (const p of paths) {
+          const entry = addFile(p, hostPath, size);
+          entry.decodedImage = decodedImage;
+        }
+        // Same rule the page applies: a font the app ships is a font its
+        // installer had put in the font directory, so mount it there too,
+        // over the vendored substitute if one is already sitting there.
+        addFontAlias(url, hostPath, size);
+      }
+      if (missing.length) {
+        const msg = `${APP_ENTRY ? `--app=${APP_ID}` : `--exe=${EXE_PATH} (${ASSET_ENTRY_ID})`}: ` +
+          `${missing.length} file(s) not found: ${missing.slice(0, 5).join(', ')}` +
+          (missing.length > 5 ? ` (+${missing.length - 5} more)` : '');
+        if (ASSET_ENTRY.requiredFiles) throw new Error(msg);
+        console.log('[app] ' + msg);
+      }
+    }
+    if (VFS_DRIVE) {
+      const drive = VFS_DRIVE.replace(/:$/, '').toLowerCase();
+      if (!/^[a-z]$/.test(drive)) throw new Error(`invalid --vfs-drive: ${VFS_DRIVE}`);
+      const driveRoot = `${drive}:\\`;
+      ctx.vfs.dirs.add(`${drive}:`);
+      ctx.vfs.dirs.add(driveRoot);
+      ctx.vfs.files.set(driveRoot + exeName, { data: exeBytes, attrs: 0x21 });
+      for (const file of includedFiles) {
+        addFile(driveRoot + file.guestPath.replace(/\//g, '\\'), file.hostPath,
+          fs.statSync(file.hostPath).size);
+      }
+      ctx.vfs.setDriveReadOnly(drive, true);
+    }
+
+    // Read-only ZIP mounts (docs/design-byo-media.md phase 2). Mounted after
+    // the app manifest so a registered app's own files still win a collision,
+    // and before the guest runs, so the archive is simply part of the VFS.
+    if (ZIP_MOUNTS.length) {
+      const { mountZipSync } = require('../lib/zip-mount');
+      for (const zipPath of ZIP_MOUNTS) {
+        const bytes = new Uint8Array(fs.readFileSync(zipPath));
+        const result = mountZipSync(ctx.vfs, bytes,
+          { zipPath, root: ZIP_ROOT || undefined });
+        console.log(`[zip] mounted ${zipPath} -> ${result.root} ` +
+          `(${result.mounted.length} files of ${result.entries.length} entries)`);
+      }
+      if (ZIP_LAUNCH) {
+        // An app launched out of the archive expects its own directory to be
+        // the working directory, the way a shortcut's "Start in" would set it.
+        ctx.vfs.setCurrentDirectory(ZIP_LAUNCH.root);
+        console.log(`[zip] launching ${ZIP_EXE} from ${ZIP_LAUNCH.root}`);
+      }
+    }
+
+    // Read-only ISO 9660 mounts (docs/design-byo-media.md phase 3). A disc is
+    // its own drive letter, so it never collides with the app manifest on C:.
+    if (ISO_MOUNTS.length) {
+      const { mountIso } = require('../lib/iso9660');
+      let drive = (ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+      for (const isoPath of ISO_MOUNTS) {
+        const result = mountIso(ctx.vfs, new Uint8Array(fs.readFileSync(isoPath)),
+          { drive, prefer: ISO_PRIMARY ? 'primary' : 'joliet' });
+        console.log(`[iso] mounted ${isoPath} -> ${result.root} ` +
+          `label="${result.volumeLabel}" (${result.fileCount} files, ` +
+          `${result.iso.joliet ? 'Joliet' : 'primary'} names)`);
+        drive = String.fromCharCode(drive.charCodeAt(0) + 1);
+      }
+      if (ISO_LAUNCH) {
+        ctx.vfs.setCurrentDirectory(ISO_LAUNCH.guestDir);
+        console.log(`[iso] launching ${ISO_EXE} from ${ISO_LAUNCH.guestDir}`);
+      }
+    }
+
+    if (CUE_MOUNTS.length) {
+      const { mountCue } = require('../lib/cdrom');
+      let drive = (CUE_DRIVE || ISO_DRIVE || 'D').replace(/:$/, '').toUpperCase();
+      for (const cuePath of CUE_MOUNTS) {
+        const absoluteCue = path.resolve(cuePath);
+        const directory = path.dirname(absoluteCue);
+        const resolveTrack = name => path.resolve(directory, ...String(name).split('/'));
+        const result = mountCue(ctx.vfs, fs.readFileSync(absoluteCue, 'utf8'), {
+          drive,
+          volumeLabel: (ctx.vfs.volumeLabels && ctx.vfs.volumeLabels.get(drive.toLowerCase())) || 'AUDIO_CD',
+          trackSize: name => fs.statSync(resolveTrack(name)).size,
+          loadTrack: name => fs.promises.readFile(resolveTrack(name)),
+        });
+        console.log(`[cue] mounted ${cuePath} -> ${result.root} ` +
+          `tracks=${result.firstTrack}-${result.lastTrack} (${result.audioTracks.length} audio, lazy)`);
+        drive = String.fromCharCode(drive.charCodeAt(0) + 1);
+      }
+    } else if (ASSET_ENTRY && ASSET_ENTRY.cdAudio) {
+      // A registered app's CD is mounted by the page (lib/browser-shell.js)
+      // at its own letter and label; do the same so --app sees the same drive.
+      const { mountCue, parseCue } = require('../lib/cdrom');
+      const config = ASSET_ENTRY.cdAudio;
+      const absoluteCue = appAsset(config.cue);
+      const directory = path.dirname(absoluteCue);
+      const resolveTrack = name => path.resolve(directory, ...String(name).split('/'));
+      const cueText = fs.readFileSync(absoluteCue, 'utf8');
+      const parsedCue = parseCue(cueText);
+      if (parsedCue.tracks.some(track => !track.isAudio)) {
+        // A mixed-mode disc: its data track is the CD the game reads movies
+        // and data from (Civ2 MGE's D:\civ2\video), so mount it as the ISO it
+        // is -- lazily, through the same plan --media-mount and the page's
+        // media import use -- under the disc's own volume label.
+        const { openParts } = require('../lib/media-cli');
+        const { analyzeCueBundle } = require('../lib/media-import');
+        const parts = openParts([absoluteCue, ...parsedCue.files.map(file => resolveTrack(file.name))]);
+        const plan = await analyzeCueBundle(parts, { drive: config.drive || 'D' });
+        const mounted = await plan.mount(ctx.vfs);
+        console.log(`[cue] mounted ${config.cue} -> ${mounted.root} label="${plan.volumeLabel}" ` +
+          `(${plan.entryCount} data entries, ${mounted.disc.audioTracks.length} audio tracks, lazy)`);
+      } else {
+        const result = mountCue(ctx.vfs, cueText, {
+          drive: config.drive || 'D',
+          volumeLabel: config.volumeLabel,
+          trackSize: name => fs.statSync(resolveTrack(name)).size,
+          loadTrack: name => fs.promises.readFile(resolveTrack(name)),
+        });
+        console.log(`[cue] mounted ${config.cue} -> ${result.root} ` +
+          `tracks=${result.firstTrack}-${result.lastTrack} (${result.audioTracks.length} audio, lazy)`);
+      }
+    }
+
+    if (MEDIA_MOUNTS.length) {
+      const { analyzeMediaPaths } = require('../lib/media-cli');
+      const media = await analyzeMediaPaths(MEDIA_MOUNTS, { exePath: MEDIA_EXE });
+      const result = await media.plan.mount(ctx.vfs);
+      const guestExe = media.candidate.path;
+      const slash = guestExe.lastIndexOf('\\');
+      const guestDir = slash >= 2 ? guestExe.slice(0, slash) : guestExe.slice(0, 3);
+      ctx.vfs.setCurrentDirectory(guestDir);
+      console.log(`[media] mounted ${media.plan.name} -> ${result.root} ` +
+        `label="${media.plan.volumeLabel || ''}" (${media.plan.entryCount} entries)`);
+      console.log(`[media] launching ${guestExe} from ${guestDir}` +
+        `${media.candidate.autorun ? ' (AUTORUN.INF)' : ''}`);
+    }
+
+    // The writable C:\ overlay (docs/design-byo-media.md ⑤). Attached after
+    // every base mount and before the guest runs, because the replay order is
+    // base mounts → overlay files/dirs → whiteouts: a file the guest deleted
+    // last session must be removed *after* the mount put it back.
+    if (OVERLAY_DIR) {
+      const { nodeDirStore } = require('../lib/overlay-store');
+      const VfsOverlay = require('../lib/vfs-overlay');
+      vfsOverlay = VfsOverlay.attach(ctx.vfs, {
+        store: nodeDirStore(OVERLAY_DIR),
+        log: line => console.log(line),
+      });
+      const hydrated = await vfsOverlay.hydrate();
+      console.log(`[overlay] ${OVERLAY_DIR}: hydrated ${hydrated.files} file(s), ` +
+        `${hydrated.dirs} dir(s), ${hydrated.whiteouts} whiteout(s)` +
+        (vfsOverlay.errors.length ? `, ${vfsOverlay.errors.length} error(s)` : ''));
+      for (const error of vfsOverlay.errors) console.log(`[overlay] ${error.message}`);
+      nextOverlayFlushAt = Date.now() + OVERLAY_FLUSH_MS;
+    }
+
+    // Apply an explicit process cwd only after every mount, including the
+    // persisted writable overlay. Installer children commonly live solely in
+    // that overlay and must be directly resumable on a later CLI invocation.
+    // A registry app's workingDirectory is the browser shell's cwd too, so
+    // the CLI takes it as the default when --cwd is not given.
+    const guestCwd = GUEST_CWD || (APP_ENTRY && APP_ENTRY.workingDirectory) || null;
+    if (guestCwd) {
+      const rooted = /^[a-z]:[\\/]/i.test(guestCwd) ? guestCwd : `c:\\${guestCwd}`;
+      const cwd = path.win32.normalize(rooted.replace(/\//g, '\\'));
+      if (!ctx.vfs.setCurrentDirectory(cwd)) {
+        throw new Error(`working directory is not present in the guest VFS: ${guestCwd}`);
+      }
+      console.log(`[vfs] working directory: ${ctx.vfs.getCurrentDirectory()}`);
+    }
+
+    // A --reg-import snapshot stands in for the browser's localStorage: it is
+    // loaded before the app manifest so manifest defaults still win, exactly
+    // as they do on a browser profile that already has the key.
+    if (REG_IMPORT) {
+      try {
+        const { importStore } = require('../lib/storage');
+        const snap = JSON.parse(fs.readFileSync(REG_IMPORT, 'utf8'));
+        const n = importStore(snap);
+        console.log(`[reg] imported ${n} entries from ${REG_IMPORT}`);
+      } catch (e) {
+        console.error(`--reg-import failed: ${e.message}`);
+        process.exit(1);
+      }
+    }
+
+    // A save bundle restores both halves at once, and it restores them before
+    // the guest runs so the app finds its saves where it left them.
+    if (IMPORT_SAVES) {
+      try {
+        const saveBundle = require('../lib/save-bundle');
+        if (!APP_ENTRY) throw new Error('--import-saves needs --app=ID for its persistFiles globs');
+        const result = saveBundle.importBundle(
+          new Uint8Array(fs.readFileSync(IMPORT_SAVES)), {
+            vfs: ctx.vfs,
+            appId: APP_ID,
+            patterns: APP_ENTRY.persistFiles || [],
+            mode: hasFlag('import-saves-replace') ? 'replace' : 'merge',
+          });
+        console.log(`[saves] imported ${result.files.length} files and ` +
+          `${result.storeKeys} store keys from ${IMPORT_SAVES} (${result.mode})`);
+      } catch (e) {
+        console.error(`--import-saves failed: ${e.message}`);
+        process.exit(1);
+      }
+    }
+
+    // `--app` is the CLI spelling of selecting the same dropdown entry in the
+    // browser, so apply its installed-state manifest too. Direct `--exe` runs
+    // intentionally retain their no-startup-behavior contract.
+    // A local media manifest may carry the registry its installer would have
+    // written (tools/prepare-morrowind.js: DirectShow's self-registration).
+    if (APP_ENTRY && APP_ENTRY.localFileManifest) {
+      const local = JSON.parse(fs.readFileSync(appAsset(APP_ENTRY.localFileManifest), 'utf8'));
+      if (local && local.registry) {
+        const n = require('../lib/storage').importStore(local.registry);
+        console.log(`[reg] imported ${n} entries from ${APP_ENTRY.localFileManifest}`);
+      }
+    }
+    if (APP_ENTRY && (APP_ENTRY.startupRegistry || APP_ENTRY.startupIni)) {
+      try {
+        const { setRegValue, setIniValue } = require('../lib/storage');
+        for (const entry of APP_ENTRY.startupRegistry || []) {
+          setRegValue(entry.keyPath, entry.valueName, entry.type, entry.data);
+        }
+        for (const entry of APP_ENTRY.startupIni || []) {
+          setIniValue(entry.fileName, entry.section, entry.key, entry.value);
+        }
+      } catch (_) {}
+    }
+
+    // Plus!98 Organic Art theme SCRs: each theme ships a sibling .SCN with
+    // Active=0 (the real installer flips it to 1 when the user picks the
+    // theme). All SCRs read HKCU\...\Plus\DefaultScene from the same path,
+    // so without per-SCR override every theme falls back to CA_2001.
+    // Detect SCR + matching .SCN by basename, patch Active=1, and set
+    // DefaultScene to the SCN's [Description] Name= value.
+    const exeStem = exeName.replace(/\.scr$/i, '');
+    if (exeName.endsWith('.scr')) {
+      const targetScnKey = 'c:\\' + exeStem + '.scn';
+      const targetScn = ctx.vfs.files.get(targetScnKey);
+      if (targetScn) {
+        // The Plus!98 picker enumerates *.scn, builds a play-list of Active=1
+        // scenes, then rotates through them. To force a single theme SCR to
+        // play its own scene, we (a) flip the matching SCN to Active=1 and
+        // (b) flip every other SCN to Active=0 in the VFS only.
+        const patchScn = (key, makeActive) => {
+          const f = ctx.vfs.files.get(key);
+          if (!f) return null;
+          let t = Buffer.from(f.data).toString('latin1');
+          const want = makeActive ? '1' : '0';
+          if (/^Active=[01]\s*$/m.test(t)) {
+            t = t.replace(/^Active=[01]\s*$/m, 'Active=' + want);
+          } else if (/^\[Description\]\s*\r?\n/m.test(t)) {
+            t = t.replace(/^\[Description\]\s*\r?\n/m, (m) => m + 'Active=' + want + '\r\n');
+          }
+          ctx.vfs.files.set(key, { data: new Uint8Array(Buffer.from(t, 'latin1')), attrs: 0x20 });
+          return t;
+        };
+        let patched = 0, deactivated = 0;
+        for (const k of ctx.vfs.files.keys()) {
+          if (!/\.scn$/i.test(k)) continue;
+          if (k === targetScnKey) { patchScn(k, true); patched++; }
+          else { patchScn(k, false); deactivated++; }
+        }
+        const text = Buffer.from(ctx.vfs.files.get(targetScnKey).data).toString('latin1');
+        const nameMatch = text.match(/^Name=(.*)$/m);
+        const sceneName = nameMatch ? nameMatch[1].trim() : exeStem.toUpperCase();
+        try {
+          const { setRegValue } = require('../lib/storage');
+          setRegValue('HKCU\\Software\\Computer Artworks\\Organic Art\\Plus', 'DefaultScene', 1, sceneName);
+          if (VERBOSE) console.log(`[plus98] ${exeName} → DefaultScene="${sceneName}", Active=1 on ${exeStem}.scn, Active=0 on ${deactivated} others`);
+        } catch (_) {}
+      }
+    }
+
+    // Funpack community remakes default to showing a modeless "Get Started"
+    // walkthrough. Smoke tests need to exercise the game surface, not stop at
+    // first-run instructional dialogs.
+    const funpackApps = {
+      'funtris.exe': 'Funtris',
+      'peaks.exe': 'Peaks',
+      'pyramid.exe': 'Pyramid',
+      'fourstones.exe': 'Four Stones',
+    };
+    if (funpackApps[exeName]) {
+      try {
+        const { setRegValue, setIniValue } = require('../lib/storage');
+        setRegValue(`HKCU\\Software\\Funpack Software\\${funpackApps[exeName]}\\Options`, 'GetStarted', 4, 0);
+        if (exeName === 'pyramid.exe') {
+          setIniValue('win.ini', 'intl', 'iCDateCount', -1);
+        }
+      } catch (_) {}
+    }
+    if (exeName === 'quickblackjack.exe' && process.env.QBLACKJACK_SKIP_SEED !== '1') {
+      try {
+        const { setRegValue } = require('../lib/storage');
+        const purse = Number.isFinite(Number(process.env.QBLACKJACK_PURSE))
+          ? Number(process.env.QBLACKJACK_PURSE)
+          : 500;
+        const change = Number.isFinite(Number(process.env.QBLACKJACK_CHANGE))
+          ? Number(process.env.QBLACKJACK_CHANGE)
+          : 0;
+        setRegValue('HKCU\\Software\\Wesley Steiner\\Quick Blackjack\\Player', 'Purse', 4, purse);
+        setRegValue('HKCU\\Software\\Wesley Steiner\\Quick Blackjack\\Player', 'Change', 4, change);
+        const animation = Number.isFinite(Number(process.env.QBLACKJACK_ANIMATION))
+          ? Number(process.env.QBLACKJACK_ANIMATION)
+          : 0;
+        setRegValue('HKCU\\Software\\Wesley Steiner\\Quick Blackjack\\Tabletop', 'Animation', 4, animation);
+      } catch (_) {}
+    }
+
+  }
+
+  // Return addresses up the EBP chain, as a one-line list. The existing walker
+  // in the SEH dump caps EBP at 0x01A00000, which excludes any app whose stack
+  // the loader placed higher (Diablo's is at 0x074f____), so this one bounds
+  // the frame pointer only by "reads back a plausible frame".
+  const ebpChain = (depth = 8) => {
+    const dv = new DataView(memory.buffer);
+    const out = [];
+    let ebp = instance.exports.get_ebp() >>> 0;
+    for (let i = 0; i < depth; i++) {
+      if (!ebp || (ebp & 3)) break;
+      let saved, ret;
+      try {
+        saved = dv.getUint32(g2w(ebp), true) >>> 0;
+        ret = dv.getUint32(g2w(ebp + 4), true) >>> 0;
+      } catch (_) { break; }
+      if (!ret) break;
+      out.push(hex(ret));
+      if (saved <= ebp) break;
+      ebp = saved;
+    }
+    return out.join(' <- ');
+  };
+
+  const regs = () => {
+    const e = instance.exports;
+    const base = `EIP=${hex(e.get_eip())} EAX=${hex(e.get_eax())} ECX=${hex(e.get_ecx())} EDX=${hex(e.get_edx())} EBX=${hex(e.get_ebx())} ESP=${hex(e.get_esp())} EBP=${hex(e.get_ebp())} ESI=${hex(e.get_esi())} EDI=${hex(e.get_edi())}`;
+    // A 16-bit task's segment registers decide what every one of the above
+    // addresses. Printed only when there are any, so 32-bit traces are
+    // unchanged.
+    if (!e.get_sreg_ds) return base;
+    const ds = e.get_sreg_ds(), es = e.get_sreg_es(), ss = e.get_sreg_ss();
+    if (!(ds | es | ss)) return base;
+    return `${base} DS=${hex(ds)} ES=${hex(es)} SS=${hex(ss)} CS=${hex(e.get_sreg_cs())}`;
+  };
+
+  const g2w = addr => {
+    return translateGuest(addr, instance.exports.get_image_base(), memory.buffer);
+  };
+
+  const dumpStack = (label, count = 14) => {
+    try {
+      const esp = instance.exports.get_esp();
+      const dv = new DataView(memory.buffer);
+      console.log(`  ${label || 'Stack'} around ESP=${hex(esp)}:`);
+      for (let i = -2; i < count; i++) {
+        const addr = esp + i * 4;
+        try {
+          const val = dv.getUint32(g2w(addr), true);
+          const marker = i === 0 ? ' <-- ESP' : '';
+          console.log(`    [${hex(addr)}] = ${hex(val)}${marker}`);
+        } catch (_) { break; }
+      }
+    } catch (_) {}
+  };
+
+  const { disasmAt: _disasm } = require('../tools/disasm');
+  const disasmAt = (eip, count = 16) => {
+    try {
+      const wa = g2w(eip);
+      const buf = new Uint8Array(memory.buffer, wa, Math.min(count * 15, memory.buffer.byteLength - wa));
+      const lines = _disasm(buf, 0, eip, count);
+      lines.forEach(l => console.log('  ' + l));
+    } catch (_) {
+      console.log(`  Cannot disasm at ${hex(eip)}`);
+    }
+  };
+
+  const dumpSEH = (detailed) => {
+    try {
+      const fsBase = instance.exports.get_fs_base();
+      const imageBase = instance.exports.get_image_base();
+      const dv = new DataView(memory.buffer);
+      let ptr = dv.getUint32(g2w(fsBase), true);
+
+      if (detailed) {
+        console.log(`\n=== SEH Chain ===`);
+        console.log(`FS base (TIB): ${hex(fsBase)}`);
+        console.log(`FS:[0x00] SEH head:    ${hex(ptr)}`);
+        console.log(`FS:[0x04] Stack top:   ${hex(dv.getUint32(g2w(fsBase + 4), true))}`);
+        console.log(`FS:[0x08] Stack bottom:${hex(dv.getUint32(g2w(fsBase + 8), true))}`);
+        console.log(`FS:[0x18] Self:        ${hex(dv.getUint32(g2w(fsBase + 0x18), true))}`);
+        console.log('\nSEH frames:');
+      } else {
+        console.log(`  SEH chain (fs_base=${hex(fsBase)}, fs:[0]=${hex(ptr)}):`);
+      }
+
+      let depth = 0;
+      while (ptr !== 0xFFFFFFFF && ptr !== 0 && depth < 32) {
+        const next = dv.getUint32(g2w(ptr), true);
+        const handler = dv.getUint32(g2w(ptr + 4), true);
+
+        let extra = '';
+        if (detailed) {
+          try {
+            const frameEbp = ptr + 8;
+            const trylevel = dv.getInt32(g2w(frameEbp - 4), true);
+            const funcInfo = dv.getUint32(g2w(frameEbp - 8), true);
+            if (funcInfo >= imageBase && funcInfo < imageBase + 0x20000) {
+              const magic = dv.getUint32(g2w(funcInfo), true);
+              if ((magic & 0xFFFFFFF0) === 0x19930520) {
+                const nUnwind = dv.getUint32(g2w(funcInfo + 4), true);
+                const nTry = dv.getUint32(g2w(funcInfo + 12), true);
+                extra = ` [EH_prolog] trylevel=${trylevel} funcInfo=${hex(funcInfo)} magic=${hex(magic)} nUnwind=${nUnwind} nTry=${nTry}`;
+                if (nTry > 0) {
+                  const tryMapRva = dv.getUint32(g2w(funcInfo + 16), true);
+                  for (let t = 0; t < Math.min(nTry, 4); t++) {
+                    const tryAddr = tryMapRva + t * 20;
+                    const tryLow = dv.getInt32(g2w(tryAddr), true);
+                    const tryHigh = dv.getInt32(g2w(tryAddr + 4), true);
+                    const catchHigh = dv.getInt32(g2w(tryAddr + 8), true);
+                    const nCatch = dv.getInt32(g2w(tryAddr + 12), true);
+                    const catchArr = dv.getUint32(g2w(tryAddr + 16), true);
+                    extra += `\n      try[${t}]: levels ${tryLow}-${tryHigh}, catchHigh=${catchHigh}, nCatch=${nCatch}`;
+                    for (let c = 0; c < Math.min(nCatch, 4); c++) {
+                      const catchAddr = catchArr + c * 16;
+                      const flags = dv.getUint32(g2w(catchAddr), true);
+                      const typeInfo = dv.getUint32(g2w(catchAddr + 4), true);
+                      const dispObj = dv.getInt32(g2w(catchAddr + 8), true);
+                      const handlerAddr = dv.getUint32(g2w(catchAddr + 12), true);
+                      extra += `\n        catch[${c}]: flags=${hex(flags)} type=${hex(typeInfo)} dispObj=${dispObj} handler=${hex(handlerAddr)}`;
+                    }
+                  }
+                }
+              }
+            }
+          } catch (_) {}
+        }
+
+        const indent = detailed ? '  ' : '    ';
+        console.log(`${indent}[${depth}] ${hex(ptr)}: next=${hex(next)} handler=${hex(handler)}${extra}`);
+        ptr = next;
+        depth++;
+      }
+      if (depth === 0) console.log(detailed ? '  (empty — head is 0xFFFFFFFF)' : '    (empty - head is 0xFFFFFFFF)');
+
+      // EBP chain in detailed mode
+      if (detailed) {
+        console.log('\n=== EBP Chain ===');
+        let ebp = instance.exports.get_ebp();
+        for (let i = 0; i < 20 && ebp > 0 && ebp < 0x01A00000; i++) {
+          const savedEbp = dv.getUint32(g2w(ebp), true);
+          const retAddr = dv.getUint32(g2w(ebp + 4), true);
+          let ehInfo = '';
+          try {
+            const funcInfo = dv.getUint32(g2w(ebp - 8), true);
+            if (funcInfo >= imageBase && funcInfo < imageBase + 0x20000) {
+              const magic = dv.getUint32(g2w(funcInfo), true);
+              if ((magic & 0xFFFFFFF0) === 0x19930520) {
+                const trylevel = dv.getInt32(g2w(ebp - 4), true);
+                ehInfo = ` [EH frame] trylevel=${trylevel} funcInfo=${hex(funcInfo)}`;
+              }
+            }
+          } catch (_) {}
+          console.log(`  [${i}] EBP=${hex(ebp)} saved=${hex(savedEbp)} ret=${hex(retAddr)}${ehInfo}`);
+          ebp = savedEbp;
+        }
+      }
+    } catch (e) {
+      console.log(`  SEH dump error: ${e.message}`);
+    }
+  };
+
+  const hexdump = (guestAddr, len) => {
+    const dv = new DataView(memory.buffer);
+    console.log(`Hexdump ${hex(guestAddr)} (${len} bytes):`);
+    for (let off = 0; off < len; off += 16) {
+      let hexPart = '', ascPart = '';
+      for (let i = 0; i < 16 && off + i < len; i++) {
+        const b = dv.getUint8(g2w(guestAddr + off + i));
+        hexPart += b.toString(16).padStart(2, '0') + ' ';
+        ascPart += (b >= 0x20 && b < 0x7F) ? String.fromCharCode(b) : '.';
+      }
+      console.log(`  ${hex(guestAddr + off)}  ${hexPart.padEnd(49)}${ascPart}`);
+    }
+  };
+
+  // Grab a snapshot of a guest region as Uint8Array (for diff tracking)
+  const readBytes = (guestAddr, len) => {
+    const out = new Uint8Array(len);
+    const bytes = new Uint8Array(memory.buffer);
+    for (let i = 0; i < len; i++) out[i] = bytes[g2w(guestAddr + i)];
+    return out;
+  };
+
+  // Diff-hexdump: like hexdump but brackets bytes that differ from `prev`
+  const hexdumpDiff = (guestAddr, len, prev) => {
+    const cur = readBytes(guestAddr, len);
+    let changedRanges = [];
+    for (let i = 0; i < len; i++) {
+      if (prev[i] !== cur[i]) {
+        if (changedRanges.length && changedRanges[changedRanges.length-1][1] === i-1) {
+          changedRanges[changedRanges.length-1][1] = i;
+        } else {
+          changedRanges.push([i, i]);
+        }
+      }
+    }
+    console.log(`Hexdump ${hex(guestAddr)} (${len} bytes)${changedRanges.length ? ' [changed: ' + changedRanges.map(r => r[0] === r[1] ? `+${r[0]}` : `+${r[0]}..${r[1]}`).join(',') + ']' : ' [no changes]'}:`);
+    for (let off = 0; off < len; off += 16) {
+      let hexPart = '', ascPart = '';
+      for (let i = 0; i < 16 && off + i < len; i++) {
+        const b = cur[off + i];
+        const marker = prev[off + i] !== b ? '*' : ' ';
+        hexPart += b.toString(16).padStart(2, '0') + marker;
+        ascPart += (b >= 0x20 && b < 0x7F) ? String.fromCharCode(b) : '.';
+      }
+      console.log(`  ${hex(guestAddr + off)}  ${hexPart.padEnd(49)}${ascPart}`);
+    }
+    return cur;
+  };
+
+  // Pretty-print MFC CStrings at --show-cstring= addrs (returns multi-line string or '')
+  const showCStrings = () => {
+    if (!showCStringAddrs.length || !decodeMfcCString) return '';
+    const mem = new Uint8Array(memory.buffer);
+    const imageBase = instance.exports.get_image_base();
+    const lines = [];
+    for (const addr of showCStringAddrs) {
+      const d = decodeMfcCString(mem, addr, imageBase);
+      if (d) lines.push(`  [CString@${hex(addr)}] rc=${d.refcount} len=${d.len} "${d.text}"`);
+      else lines.push(`  [CString@${hex(addr)}] (not a CString)`);
+    }
+    return lines.join('\n');
+  };
+
+  let prevEip = 0, stuckCount = 0, eipZeroReported = false, prevApiCount = 0, prevRegFp = 0, prevWin16Calls = 0;
+  let prevWorkerFp = 0;
+  // x86 steps the worker instances have retired. A render thread that parks in
+  // Sleep at the end of every frame shows the SAME eip at every batch boundary,
+  // so the eip fingerprint below cannot see it working -- this counter can.
+  let workerStepsTotal = 0, prevWorkerSteps = 0;
+  let stepping = false;  // single-step mode after breakpoint
+  let apiBreakHit = null; // set when an API breakpoint triggers
+
+  // Watchpoint: WASM-level per-block memory watch (1/2/4 byte granularity)
+  let watchAddr = 0, watchPrevVal = 0, watchSize = 4;
+  let extraWatchAddrs = []; // additional addrs beyond watchAddr (JS-side fan-out)
+  let extraWatchPrev = []; // prev values for extras
+  if (WATCH_BYTE) {
+    const all = WATCH_BYTE.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0);
+    watchAddr = all[0]; extraWatchAddrs = all.slice(1);
+    watchSize = 1;
+  } else if (WATCH_WORD) {
+    const all = WATCH_WORD.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0);
+    watchAddr = all[0]; extraWatchAddrs = all.slice(1);
+    watchSize = 2;
+  } else if (WATCH_SPEC) {
+    const all = WATCH_SPEC.split(',').map(s => parseInt(s.split(':')[0], 16) >>> 0);
+    watchAddr = all[0]; extraWatchAddrs = all.slice(1);
+    watchSize = 4;
+  }
+  if (watchAddr) {
+    const sizeName = { 1: 'byte', 2: 'word', 4: 'dword' }[watchSize];
+    const extra = extraWatchAddrs.length ? ` +${extraWatchAddrs.length} more (JS fan-out)` : '';
+    const delayed = WATCH_START_BATCH > 0 ? `, delayed until batch ${WATCH_START_BATCH}` : '';
+    const mode = WATCH_JS_ONLY ? 'JS-sampled' : 'checked every block';
+    console.log(`Watchpoint set: ${hex(watchAddr)} (${sizeName}, ${mode}${delayed})${extra}`);
+  }
+  const readGuestSized = (addr) => {
+    const wa = g2w(addr);
+    const u8 = new Uint8Array(memory.buffer);
+    if (watchSize === 1) return u8[wa];
+    if (watchSize === 2) return u8[wa] | (u8[wa+1] << 8);
+    return new DataView(memory.buffer).getUint32(wa, true);
+  };
+  if (extraWatchAddrs.length) {
+    extraWatchPrev = extraWatchAddrs.map(a => readGuestSized(a) >>> 0);
+  }
+
+  let watchActive = false;
+  const activateWatchpoint = () => {
+    if (!watchAddr) return;
+    if (!WATCH_JS_ONLY) {
+      if (instance.exports.set_watchpoint_size) instance.exports.set_watchpoint_size(watchSize);
+      instance.exports.set_watchpoint(watchAddr);
+      watchPrevVal = instance.exports.get_watch_val();
+    } else {
+      watchPrevVal = readGuestSized(watchAddr) >>> 0;
+    }
+    watchActive = true;
+  };
+  if (!WATCH_START_BATCH) activateWatchpoint();
+
+  // Arm shadow call-stack (--trace-callstack). Gated WAT-side so off-runs pay
+  // zero cost in the hot path.
+  if (TRACE_CALLSTACK && instance.exports.set_callstack_enabled) {
+    instance.exports.set_callstack_enabled(1);
+  }
+  // Arm --fault-null. Same deal: the WAT check sits in the $g2w miss path, so
+  // an off-run never reaches it.
+  if (FAULT_NULL_MODE && instance.exports.set_fault_unmapped) {
+    instance.exports.set_fault_unmapped(FAULT_NULL_MODE);
+    console.log(`[fault] ${FAULT_NULL ? '--fault-null' : 'app page-fault option'} armed (mode=${FAULT_NULL_MODE}: `
+      + `${FAULT_NULL_MODE === 2 ? 'log and trap'
+          : FAULT_NULL_MODE === 3 ? 'log and raise a guest access violation'
+          : FAULT_NULL_MODE === 4 ? 'raise an access violation for the 4KB NULL guard page only'
+          : FAULT_NULL_MODE === 5 ? 'reserved-uncommitted pages offered to the guest filters synchronously; other misses stay quiet'
+          : 'log and continue'})`);
+  }
+  // Exclude PE/DLL load from the offline translation-path census.
+  if (GUEST_PAGE_STATS) instance.exports.reset_guest_page_stats();
+  if (TRACE_WIN16_DDE && instance.exports.set_win16_dde_trace) {
+    instance.exports.set_win16_dde_trace(1);
+  }
+  if (TRACE_WIN16 && instance.exports.set_win16_trace) {
+    instance.exports.set_win16_trace(1);
+  }
+  experiments.applyMain(instance, { copySuperops: COPY_SUPEROPS, ctx });
+  if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
+  if (FLIP_VSYNC && instance.exports.set_flip_vsync) {
+    instance.exports.set_flip_vsync(1);
+  }
+  if (PRESENT_CAP && instance.exports.set_present_cap) {
+    instance.exports.set_present_cap(PRESENT_CAP);
+  }
+  if (instance.exports.set_present_pace_mode) {
+    instance.exports.set_present_pace_mode(PRESENT_PACE_MODE);
+  }
+  // --trace-win16 prints where the loader placed each task segment, so a
+  // linear EIP or return address from the trace can be written as the
+  // { seg, off } that lib/apps.js and other durable notes need.
+  if (TRACE_WIN16 && instance.exports.is_win16 && instance.exports.is_win16()
+      && instance.exports.win16_seg_count && instance.exports.win16_seg_base) {
+    const n = instance.exports.win16_seg_count();
+    for (let seg = 1; seg <= n; seg++) {
+      const base = instance.exports.win16_seg_base(seg) >>> 0;
+      const limit = instance.exports.win16_seg_limit ? instance.exports.win16_seg_limit(seg) >>> 0 : 0;
+      console.log(`[win16] task seg ${seg} base=0x${base.toString(16)} limit=0x${limit.toString(16)}`);
+    }
+  }
+  if (LOGICAL_FRAME && LOGICAL_FRAME.segOff) {
+    LOGICAL_FRAME.address = resolveWin16SegOff(instance.exports, LOGICAL_FRAME.segOff);
+    if (!LOGICAL_FRAME.address) {
+      console.log(`[present] ${LOGICAL_FRAME.label} step ${JSON.stringify(LOGICAL_FRAME.segOff)} `
+        + 'is not a loaded Win16 segment; not marked');
+    }
+  }
+  if (LOGICAL_FRAME && LOGICAL_FRAME.address && instance.exports.set_logical_frame) {
+    instance.exports.set_logical_frame(LOGICAL_FRAME.address, LOGICAL_FRAME.pace);
+    console.log(`[present] ${LOGICAL_FRAME.label} step 0x${LOGICAL_FRAME.address.toString(16)} marked`
+      + (LOGICAL_FRAME.pace ? `, cap ${PRESENT_CAP}/s paces once per step` : ', counted only'));
+  }
+  if (instance.exports.set_spin_park_k) {
+    if (NO_SPIN_PARK) instance.exports.set_spin_park_k(0);
+    else if (Number.isFinite(SPIN_PARK_K)) instance.exports.set_spin_park_k(SPIN_PARK_K);
+  }
+  if (instance.exports.set_spin_work_max && Number.isFinite(SPIN_WORK_MAX)) instance.exports.set_spin_work_max(SPIN_WORK_MAX);
+  if (instance.exports.set_spin_regs_check && Number.isFinite(SPIN_REGS_CHECK)) instance.exports.set_spin_regs_check(SPIN_REGS_CHECK);
+  if (TRACE_FPU && instance.exports.set_fpu_trace) {
+    instance.exports.set_fpu_trace(1);
+  }
+  if (TRACE_CODE_WRITES && instance.exports.set_code_write_trace) {
+    instance.exports.set_code_write_trace(TRACE_CODE_WRITES_ALL ? 2 : 1);
+  }
+  const dumpCallstack = (label, e) => {
+    if (!TRACE_CALLSTACK || !e || !e.get_callstack_depth) return;
+    const depth = e.get_callstack_depth() | 0;
+    const n = Math.min(depth, TRACE_CALLSTACK_DEPTH);
+    if (!n) { console.log(`  [stack ${label}] (empty)`); return; }
+    console.log(`  [stack ${label} depth=${depth}]`);
+    for (let i = 0; i < n; i++) {
+      const ra = e.get_callstack_entry(i) >>> 0;
+      console.log(`    #${i} ret=${hex(ra)}`);
+    }
+  };
+
+  const watchFilterVal = WATCH_VALUE !== null ? parseInt(WATCH_VALUE, 16) : null;
+
+  const checkWatchpoint = (batch) => {
+    if (!watchAddr) return false;
+    if (!watchActive) {
+      if (batch < WATCH_START_BATCH) return false;
+      activateWatchpoint();
+      console.log(`Watchpoint armed at batch ${batch}: ${hex(watchAddr)} = ${hex(watchPrevVal)}`);
+      if (extraWatchAddrs.length) extraWatchPrev = extraWatchAddrs.map(a => readGuestSized(a) >>> 0);
+      return false;
+    }
+    let hit = false;
+    const newVal = WATCH_JS_ONLY ? (readGuestSized(watchAddr) >>> 0) : instance.exports.get_watch_val();
+    if (newVal !== watchPrevVal) {
+      const filtered = watchFilterVal !== null && (newVal >>> 0) !== (watchFilterVal >>> 0);
+      if (!filtered) {
+        console.log(`\n*** WATCHPOINT hit at batch ${batch}: [${hex(watchAddr)}] changed`);
+        console.log(`  Old: ${hex(watchPrevVal)}  New: ${hex(newVal)}  EIP: ${hex(instance.exports.get_eip())}  prev_eip: ${hex(instance.exports.get_dbg_prev_eip())}`);
+        // The writer's registers name the source of a bad store. A copy loop
+        // that wrote garbage into a surface is only diagnosable from the
+        // pointer it read, and --trace-at cannot stand in for this: it fires
+        // on block entries only, so a store inside a loop body never hits it.
+        console.log('  ' + regs());
+        console.log('  callers: ' + ebpChain());
+        if (hasFlag('watch-stack')) dumpStack('watch', 32);
+        hit = true;
+      }
+      watchPrevVal = newVal;
+    }
+    // JS-side fan-out for additional watch addresses
+    for (let i = 0; i < extraWatchAddrs.length; i++) {
+      const a = extraWatchAddrs[i];
+      const v = readGuestSized(a) >>> 0;
+      if (v !== extraWatchPrev[i]) {
+        if (watchFilterVal === null || v === (watchFilterVal >>> 0)) {
+          console.log(`\n*** WATCHPOINT hit at batch ${batch}: [${hex(a)}] changed`);
+          console.log(`  Old: ${hex(extraWatchPrev[i])}  New: ${hex(v)}  EIP: ${hex(instance.exports.get_eip())}  prev_eip: ${hex(instance.exports.get_dbg_prev_eip())}`);
+          hit = true;
+        }
+        extraWatchPrev[i] = v;
+      }
+    }
+    return hit;
+  };
+
+  const debugPrompt = async (reason) => {
+    console.log('  ' + regs());
+    console.log('  prev_eip: ' + hex(instance.exports.get_dbg_prev_eip()));
+    dumpStack(reason);
+    disasmAt(instance.exports.get_eip());
+    if (TRACE_SEH) dumpSEH();
+    const cs = showCStrings();
+    if (cs) console.log(cs);
+    flushLogs();
+    const readline = require('readline');
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    const answer = await new Promise(resolve =>
+      rl.question('[s]tep/[c]ont/[d]ump ADDR:LEN/[w]atch ADDR/[r]egs/[q]uit > ', resolve)
+    );
+    rl.close();
+    const cmd = answer.trim().toLowerCase();
+    if (cmd === 'q') { process.exit(0); }
+    if (cmd === 'c') { stepping = false; return; }
+    if (cmd === 's' || cmd === '') { stepping = true; return; }
+    if (cmd === 'r') { console.log(regs()); return debugPrompt(reason); }
+    if (cmd.startsWith('d')) {
+      const parts = cmd.slice(1).trim().split(':');
+      const addr = parseInt(parts[0], 16);
+      const len = parseInt(parts[1]) || 64;
+      if (!isNaN(addr)) hexdump(addr, len);
+      return debugPrompt(reason);
+    }
+    if (cmd.startsWith('w')) {
+      const addr = parseInt(cmd.slice(1).trim(), 16);
+      if (!isNaN(addr) && addr) {
+        watchAddr = addr;
+        // An explicit debugger command arms immediately, including when the
+        // command-line watch was disabled (address 0) or delayed. Preserve its
+        // byte/word/dword size and establish the baseline before continuing.
+        activateWatchpoint();
+        console.log(`  Watchpoint set: ${hex(addr)} (current: ${hex(watchPrevVal)})`);
+      } else if (cmd === 'w') {
+        if (watchAddr) console.log(`  Watchpoint: ${hex(watchAddr)} = ${hex(instance.exports.get_watch_val())}`);
+        else console.log('  No watchpoint. Use: w 0xADDR');
+      }
+      return debugPrompt(reason);
+    }
+    stepping = true;
+  };
+
+  // Live standard-scrollbar geometry. Non-client scrollbars are 16px strips
+  // laid just outside the client rect (see $defwndproc_do_ncpaint), so the
+  // strip follows the window's client rect and nothing about it is a constant
+  // a test can safely hardcode: frame metrics, default placement and the app's
+  // own control-bar layout all move it.
+  const SCROLL_STRIP = 16;
+  const findStandardScrollBar = (axis, target) => {
+    const e = instance.exports;
+    if (!renderer || !e.standard_scroll_pos) return null;
+    const bit = axis === 'v' ? 0x00200000 : 0x00100000;
+    const bar = axis === 'v' ? 1 : 0;
+    const wanted = target ? (parseInt(target, 16) | 0) : 0;
+    let match = null;
+    for (const win of Object.values(renderer.windows || {})) {
+      if (!win || !win.visible || !win.hwnd) continue;
+      if (wanted && (win.hwnd | 0) !== wanted) continue;
+      const style = e.wnd_get_style_export ? e.wnd_get_style_export(win.hwnd) >>> 0 : win.style >>> 0;
+      if (!(style & bit)) continue;
+      const pos = e.standard_scroll_pos(win.hwnd, bar) | 0;
+      if (!match || pos > match.pos) {
+        const cr = win.clientRect || { x: win.x, y: win.y, w: win.w, h: win.h };
+        match = {
+          hwnd: win.hwnd | 0, win, pos,
+          min: e.standard_scroll_min ? e.standard_scroll_min(win.hwnd, bar) | 0 : 0,
+          max: e.standard_scroll_max ? e.standard_scroll_max(win.hwnd, bar) | 0 : 0,
+          page: e.standard_scroll_page
+            ? (e.standard_scroll_page(win.hwnd, bar) | 0) || (axis === 'v' ? cr.h : cr.w)
+            : (axis === 'v' ? cr.h : cr.w),
+          strip: axis === 'v'
+            ? { x0: cr.x + cr.w, y0: cr.y, x1: cr.x + cr.w + SCROLL_STRIP, y1: cr.y + cr.h }
+            : { x0: cr.x, y0: cr.y + cr.h, x1: cr.x + cr.w, y1: cr.y + cr.h + SCROLL_STRIP },
+          axis,
+        };
+      }
+    }
+    return match;
+  };
+  // A point inside one part of a live scrollbar. 'lo'/'hi' are the arrow
+  // buttons at each end, 'page-lo'/'page-hi' the track just inside them, and
+  // 'thumb' the thumb at its current position.
+  const scrollBarPoint = (bar, part) => {
+    const s = bar.strip;
+    const vert = bar.axis === 'v';
+    const across = vert ? Math.floor((s.x0 + s.x1) / 2) : Math.floor((s.y0 + s.y1) / 2);
+    const lo = vert ? s.y0 : s.x0;
+    const hi = vert ? s.y1 : s.x1;
+    const long = hi - lo;
+    const track = Math.max(0, long - 2 * SCROLL_STRIP);
+    let along;
+    if (part === 'lo') along = lo + Math.floor(SCROLL_STRIP / 2);
+    else if (part === 'hi') along = hi - 1 - Math.floor(SCROLL_STRIP / 2);
+    else if (part === 'page-lo') along = lo + SCROLL_STRIP + 2;
+    else if (part === 'page-hi') along = hi - SCROLL_STRIP - 3;
+    else {
+      // Thumb: same arithmetic $defwndproc_paint_standard_scrollbar uses —
+      // size proportional to page/range, offset proportional to pos.
+      const range = Math.max(1, bar.max - bar.min + 1);
+      const thumb = Math.min(track, Math.max(SCROLL_STRIP,
+        Math.floor((track * Math.max(1, bar.page)) / range)));
+      const travel = Math.max(0, track - thumb);
+      const span = Math.max(1, (bar.max - bar.page + 1) - bar.min);
+      const off = Math.min(travel, Math.floor((travel * (bar.pos - bar.min)) / span));
+      along = lo + SCROLL_STRIP + off + Math.floor(thumb / 2);
+    }
+    return vert ? { x: across, y: along } : { x: along, y: across };
+  };
+
+  // A SuspendThread on the main thread parks the main WASM instance -- except
+  // while a multimedia-timer callback is borrowing it. timeSetEvent fires on a
+  // system thread on Win32; our cooperative backend runs the TimeProc on the
+  // main instance, so a mixer such as Miles' AIL_serve suspends the
+  // DuplicateHandle'd application thread, mixes, and then resumes it. Parking
+  // the instance at that suspend deadlocks the process against its own
+  // callback: Heroes II hung ten batches after its main menu this way. host.js
+  // has always made this exemption (_isMainExecutionSuspended); the CLI has to
+  // agree or the browser and the harness run different schedulers.
+  let mainRenderWait = null;
+  const mainExecutionSuspended = () => {
+    const ex = instance.exports;
+    if (threadManager.isMainNamedEventWaiting()) return true;
+    if (ex.get_yield_reason() === 16) {
+      const token = ex.get_d3d_render_token() | 0;
+      if (!mainRenderWait || mainRenderWait.token !== token) {
+        const wait = {token,done:false,polls:0,since:tickState.batch|0}; mainRenderWait = wait;
+        wait.promise = Promise.resolve().then(() => ctx.waitD3DRender(token))
+          .catch(error => console.error('[render]',error))
+          .then(() => { wait.done = true; });
+      }
+      if (!mainRenderWait.done) {
+        // A request the bridge already calls done should release main within
+        // a few event-loop turns. Morrowind once sat on one for 150k+ batches
+        // until its yield was cleared by hand; say so the first time it
+        // happens rather than letting it read as a slow scene.
+        const record = ctx.d3d9Bridge && ctx.d3d9Bridge.requests.get(token);
+        if (++mainRenderWait.polls === 1000 && record && record.done)
+          console.log(`[render] main parked on completed request ${token} for 1000 checks ` +
+            `(since batch ${mainRenderWait.since}); the wait never observed it`);
+        return true;
+      }
+      mainRenderWait = null; ex.clear_yield();
+    }
+    if (threadManager._renderSendTargets.has(ex)) return true;
+    if (ex.get_yield_reason() === 10 && (threadManager.backend === 'worker' ||
+        !threadManager.resolveCooperativeThreadSend(ex))) return true;
+    // Sleep(n) on the main thread. checkMainYield records the deadline after
+    // the batch that slept; host.js parks the main instance until it passes,
+    // and so must this loop, or Sleep(1001) lasts one batch of guest time.
+    // Moorhuhn 3 calibrates RDTSC across exactly that Sleep, and a TSC rate
+    // measured 5x low trips its speed-hack watchdog into ExitProcess.
+    // With no other guest thread to hand the idle batches to, skip them: move
+    // the clock to the deadline itself, so Sleep(1001) reads as 1001ms rather
+    // than rounding up to the next 200ms batch (a 240MHz TSC, still tripping
+    // the watchdog).
+    // Under --real-ticks the guest clock is the wall clock and pausedMs does
+    // not move it; the batch loop waits the remainder out in wall time
+    // instead (see mainSleepWallWait).
+    // A Sleep main made earlier in this batch (between thread slices) has not
+    // been through checkMainYield yet; record its deadline now.
+    threadManager.noteMainSleep();
+    if (!REAL_TICK_SLEEPS && threadManager.isMainSleeping() && !threadManager.hasLiveThreads()) {
+      tickState.pausedMs += threadManager.mainSleepRemaining();
+    }
+    if (threadManager.isMainSleeping()) return true;
+    if (!threadManager.isMainThreadSuspended()) return false;
+    return !(ex.is_mm_timer_callback_active && (ex.is_mm_timer_callback_active() | 0));
+  };
+
+  // A main thread parked on a software D3D request (yield 16) used to cost a
+  // whole batch per check: mainExecutionSuspended() said "parked", run() was
+  // skipped, and the loop counted the batch -- tickState.batch advances the
+  // guest clock by TICK_MS_PER_BATCH while the render worker is still
+  // rasterizing. UT2003/UT2004 read as "stuck forever in the first
+  // DrawIndexedPrimitive" this way: 1500 batches spent ~1490 of them parked,
+  // one per event-loop turn, and a --max-batches budget ran out with the
+  // guest 30 draws in. The browser has no such unit (host.js just yields to
+  // the event loop), so wait here, in wall time, for the one request the
+  // guest is actually blocked on. --no-render-park-wait restores the old
+  // batch-per-check behaviour for an A/B.
+  const RENDER_PARK_WAIT = !hasFlag('no-render-park-wait');
+  // skippedBatches: batches whose run() was skipped because main was still
+  // parked on a render request -- the number the fix drives to zero, and
+  // what test/test-d3d-render-park-batches.js reads through ctx.
+  const renderParkStats = ctx.renderParkStats = { waits: 0, wallMs: 0, skippedBatches: 0 };
+  const awaitMainRenderPark = async () => {
+    if (!RENDER_PARK_WAIT) return;
+    const ex = instance.exports;
+    if (ex.get_yield_reason() !== 16) return;
+    mainExecutionSuspended();
+    const wait = mainRenderWait;
+    if (!wait || wait.done) return;
+    const started = Date.now();
+    while (!wait.done && !stopped) {
+      await Promise.race([wait.promise, new Promise(r => setTimeout(r, 100))]);
+      if (deadlineMs && Date.now() > deadlineMs) break;
+    }
+    renderParkStats.waits++; renderParkStats.wallMs += Date.now() - started;
+  };
+
+  let lastSchedSig = null;
+  let lastSchedAt = 0;
+  const handlerNames = HANDLER_HIST_THREADS.length ? buildHandlerNameList() : [];
+  let handlerHistThreadIndex = 0;
+  let handlerHistThread = HANDLER_HIST_THREAD;
+  let handlerHistWindowStart = HANDLER_HIST_START;
+  let handlerHistWindowStop = HANDLER_HIST_STOP;
+  let handlerHistExports = null;
+  let handlerHistArmed = false;
+  let handlerHistDone = false;
+  let handlerHistUopAtArm = null;
+  const selectHandlerHistWindow = () => {
+    if (handlerHistThreadIndex >= HANDLER_HIST_THREADS.length) {
+      handlerHistDone = true;
+      return;
+    }
+    const span = HANDLER_HIST_STOP - HANDLER_HIST_START;
+    handlerHistThread = HANDLER_HIST_THREADS[handlerHistThreadIndex];
+    handlerHistWindowStart = HANDLER_HIST_START +
+      Math.floor(span * handlerHistThreadIndex / HANDLER_HIST_THREADS.length);
+    handlerHistWindowStop = HANDLER_HIST_START +
+      Math.floor(span * (handlerHistThreadIndex + 1) / HANDLER_HIST_THREADS.length);
+  };
+  selectHandlerHistWindow();
+  const findHandlerHistExports = () => {
+    if (handlerHistThread === 0) return instance.exports;
+    for (const [, thread] of threadManager.threads) {
+      if ((thread.tid | 0) === handlerHistThread && thread.instance) {
+        return thread.instance.exports;
+      }
+    }
+    return null;
+  };
+  const armHandlerHistogram = (batch) => {
+    handlerHistExports = findHandlerHistExports();
+    if (!handlerHistExports || !handlerHistExports.reset_handler_hist ||
+        !handlerHistExports.set_handler_hist_enabled) return;
+    if (EDGE_HIST && handlerHistExports.set_edge_hist) handlerHistExports.set_edge_hist(1);
+    handlerHistExports.reset_handler_hist();
+    // The uop tier's block counter at the window's start: blocks run INSIDE
+    // uop programs never reach the hot-block histogram, so the tier's share of
+    // the window is (uop blocks) / (uop blocks + threaded block entries).
+    handlerHistUopAtArm = handlerHistExports.uop_stats
+      ? { blocks: handlerHistExports.uop_stats(5) >>> 0, enters: handlerHistExports.uop_stats(4) >>> 0 } : null;
+    handlerHistExports.set_handler_hist_enabled(1);
+    handlerHistArmed = true;
+    console.log(`[handler-hist] armed T${handlerHistThread} at batch ${batch}`);
+  };
+  const printHandlerHistogram = (batch) => {
+    const e = handlerHistExports;
+    if (!e || !e.get_handler_hist_count || !e.get_handler_hist_base) return;
+    const u32 = new Uint32Array(memory.buffer);
+    const count = e.get_handler_hist_count() | 0;
+    // The pair matrix is count x count; the per-handler counters go further,
+    // and the fused superinstructions all live above `count`. Sum the whole
+    // counter array or the total drops every time a fusion lands.
+    const slots = e.get_handler_hist_slots ? (e.get_handler_hist_slots() | 0) : count;
+    const base = (e.get_handler_hist_base() >>> 2) >>> 0;
+    // --edge-hist borrows the pair matrix's memory, so there are no pairs.
+    const pairBase = e.get_handler_pair_hist_base && !EDGE_HIST
+      ? ((e.get_handler_pair_hist_base() >>> 2) >>> 0) : 0;
+    const handlers = [];
+    let total = 0;
+    for (let id = 0; id < slots; id++) {
+      const hits = u32[base + id] >>> 0;
+      total += hits;
+      if (hits) handlers.push({ id, hits });
+    }
+    handlers.sort((a, b) => b.hits - a.hits);
+    console.log(`[handler-hist] T${handlerHistThread} batches=${handlerHistWindowStart}..${batch} total=${total}`);
+    for (const row of handlers.slice(0, HANDLER_HIST_TOP)) {
+      const pct = total ? (row.hits * 100 / total).toFixed(2) : '0.00';
+      console.log(`  H${row.id} ${handlerNames[row.id] || '$handler_' + row.id} ${row.hits} (${pct}%)`);
+    }
+    // The x87 split, named rather than left to the top-24 cut. A fused family
+    // retires ONE dispatch for a whole region, so the two columns are not
+    // comparable as work: read `raw` against the same run with --x87-fusion
+    // off to see how many x87 dispatches the fold actually absorbed. Printed
+    // unconditionally because an app with no x87 prints zeros, which is itself
+    // the answer to "is the x87 fold relevant here".
+    const sumIds = ids => ids.reduce((a, id) => a + ((u32[base + id] >>> 0) || 0), 0);
+    const rawX87 = sumIds([188, 189, 190]);
+    const fusedX87 = sumIds([449, 450, 451, 452, 453]);
+    const pctOf = v => (total ? (v * 100 / total).toFixed(2) : '0.00');
+    console.log(`  x87: raw ${rawX87} (${pctOf(rawX87)}%)`
+      + ` [H188 ${u32[base + 188] >>> 0} H189 ${u32[base + 189] >>> 0}`
+      + ` H190 ${u32[base + 190] >>> 0}]`
+      + ` fused-dispatches ${fusedX87} (${pctOf(fusedX87)}%)`
+      + ` [H449 ${u32[base + 449] >>> 0} H450 ${u32[base + 450] >>> 0}`
+      + ` H451 ${u32[base + 451] >>> 0} H452 ${u32[base + 452] >>> 0}`
+      + ` H453 ${u32[base + 453] >>> 0}]`
+      + ` H439 ${u32[base + 439] >>> 0}`);
+    if (pairBase) {
+      const pairs = [];
+      let pairTotal = 0;
+      for (let prev = 0; prev < count; prev++) {
+        const rowBase = pairBase + prev * count;
+        for (let cur = 0; cur < count; cur++) {
+          const hits = u32[rowBase + cur] >>> 0;
+          pairTotal += hits;
+          if (hits) pairs.push({ prev, cur, hits });
+        }
+      }
+      pairs.sort((a, b) => b.hits - a.hits);
+      console.log('  top pairs:');
+      for (const row of pairs.slice(0, HANDLER_HIST_PAIRS)) {
+        const pct = pairTotal ? (row.hits * 100 / pairTotal).toFixed(2) : '0.00';
+        console.log(`    H${row.prev}->H${row.cur} ${handlerNames[row.prev] || '$handler_' + row.prev} -> ${handlerNames[row.cur] || '$handler_' + row.cur} ${row.hits} (${pct}%)`);
+      }
+    }
+    if (e.get_hot_block_hist_base && e.get_hot_block_hist_count) {
+      const hotBase = (e.get_hot_block_hist_base() >>> 2) >>> 0;
+      const hotCount = e.get_hot_block_hist_count() | 0;
+      const blocks = [];
+      let blockTotal = 0;
+      for (let i = 0; i < hotCount; i++) {
+        const addr = u32[hotBase + i * 2] >>> 0;
+        const hits = u32[hotBase + i * 2 + 1] >>> 0;
+        blockTotal += hits;
+        if (addr && hits) blocks.push({ addr, hits });
+      }
+      blocks.sort((a, b) => b.hits - a.hits);
+      // `distinct` is the executed-block working set for the window, which is
+      // what the direct-mapped block cache index (CACHE_MASK + 1 slots) has to
+      // hold. Compare the two before blaming cache size: distinct well under
+      // the slot count with heavy eviction is an index/aliasing problem, not a
+      // capacity one.
+      console.log(`  top blocks (distinct=${blocks.length} collisions=${e.get_hot_block_hist_collisions ? e.get_hot_block_hist_collisions() >>> 0 : 0}):`);
+      for (const row of blocks.slice(0, 20)) {
+        const pct = blockTotal ? (row.hits * 100 / blockTotal).toFixed(2) : '0.00';
+        console.log(`    ${hex(row.addr)} ${row.hits} (${pct}%)`);
+      }
+      if (HOT_BLOCK_DUMP) {
+        const dumpPath = HANDLER_HIST_THREADS.length > 1
+          ? `${HOT_BLOCK_DUMP}.T${handlerHistThread}` : HOT_BLOCK_DUMP;
+        fs.writeFileSync(dumpPath,
+          blocks.map(row => `${hex(row.addr)} ${row.hits}`).join('\n') + '\n');
+        console.log(`  wrote ${blocks.length} distinct blocks to ${dumpPath}`);
+      }
+      if (HIST_JSON) {
+        // The same shape tools/page-probes/read-handler-hist.js returns from a
+        // browser, so tools/hot-loop-census.js and browser-handler-hist.js read
+        // a headless window unchanged. Counts are load-immune, so a window
+        // taken on a busy box is as good as one from a quiet one; several
+        // windows of one run are what the census needs to tell a scene from a
+        // loop that is hot everywhere.
+        const jsonPath = HANDLER_HIST_THREADS.length > 1
+          ? `${HIST_JSON}.T${handlerHistThread}.${handlerHistWindowStart}` : HIST_JSON;
+        const mods = {};
+        const exeLoad = moduleBases.exe ? moduleBases.exe.loadAddr >>> 0 : -1;
+        for (const [name, m] of Object.entries(moduleBases)) {
+          if (name === 'exe') continue; // hist-blocks.js adds the exe from --exe-base
+          // Keys carry no extension; hist-blocks.js appends .dll to a bare
+          // name, so name the exe's own basename entry as the exe it is.
+          const ext = (m.loadAddr >>> 0) === exeLoad ? '.exe' : '.dll';
+          mods[name + ext] = [m.loadAddr >>> 0, m.origBase >>> 0];
+        }
+        let uop = null;
+        if (handlerHistUopAtArm && e.uop_stats) {
+          uop = { blocks: ((e.uop_stats(5) >>> 0) - handlerHistUopAtArm.blocks) >>> 0,
+            enters: ((e.uop_stats(4) >>> 0) - handlerHistUopAtArm.enters) >>> 0 };
+        }
+        let edges;
+        if (EDGE_HIST && e.get_edge_hist_base) {
+          const eb = (e.get_edge_hist_base() >>> 2) >>> 0;
+          const en = e.get_edge_hist_count() | 0;
+          edges = [];
+          for (let i = 0; i < en; i++) {
+            const n = u32[eb + i * 4 + 2] >>> 0;
+            if (n) edges.push([(u32[eb + i * 4] >>> 0).toString(16), (u32[eb + i * 4 + 1] >>> 0).toString(16), n]);
+          }
+          edges.sort((a, b) => b[2] - a[2]);
+          console.log(`  edges: ${edges.length} distinct, ${e.get_edge_hist_collisions() >>> 0} dropped (table full)`);
+          // $win32_dispatch records (caller block -> thunk) edges; name each
+          // thunk from its record so the window says which API a site called.
+          if (e.thunk_word) {
+            const thunks = {};
+            for (const [, to] of edges) {
+              if (thunks[to]) continue;
+              const a = parseInt(to, 16) >>> 0;
+              const w0 = e.thunk_word(a, 0) >>> 0, id = e.thunk_word(a, 1) | 0;
+              if (w0 === 0xFFFFFFFF && id === -1) continue;
+              thunks[to] = (w0 >>> 16) === 0xCACA ? `cont:${w0.toString(16)}`
+                : (apiTable[id] && apiTable[id].name) || `api#${id}`;
+            }
+            edges.thunks = thunks;
+          }
+        }
+        fs.writeFileSync(jsonPath, JSON.stringify({
+          source: 'run.js', thread: handlerHistThread,
+          window: { start: handlerHistWindowStart, stop: batch },
+          ops: total, handlers: handlers.slice(0, 30).map(r => [r.id, r.hits]),
+          blockHits: blockTotal, distinct: blocks.length,
+          blocks: (HIST_JSON_BLOCKS ? blocks.slice(0, HIST_JSON_BLOCKS) : blocks).map(r => [r.addr.toString(16), r.hits]),
+          mods, ...(uop ? { uop } : {}), ...(edges ? { edges, edgeDrops: e.get_edge_hist_collisions() >>> 0, ...(edges.thunks ? { thunks: edges.thunks } : {}) } : {}),
+        }));
+        console.log(`  wrote histogram JSON to ${jsonPath}`);
+      }
+    }
+    if (e.get_sib_consumer_hist_base && e.get_sib_consumer_hist_count) {
+      const sibBase = (e.get_sib_consumer_hist_base() >>> 2) >>> 0;
+      const sibCount = e.get_sib_consumer_hist_count() | 0;
+      const rows = [];
+      let sibTotal = 0;
+      const regNames = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi'];
+      const regName = id => id === 15 ? 'none' : (regNames[id] || String(id));
+      for (let i = 0; i < sibCount; i++) {
+        const key = u32[sibBase + i * 2] >>> 0;
+        const hits = u32[sibBase + i * 2 + 1] >>> 0;
+        if (!key || !hits) continue;
+        sibTotal += hits;
+        rows.push({
+          consumer: (key >>> 23) & 0x1ff,
+          op: (key >>> 14) & 0x1ff,
+          base: (key >>> 10) & 0xf,
+          index: (key >>> 6) & 0xf,
+          scale: (key >>> 4) & 3,
+          hits,
+        });
+      }
+      rows.sort((a, b) => b.hits - a.hits);
+      const recorded = e.get_sib_consumer_hist_total ? e.get_sib_consumer_hist_total() >>> 0 : sibTotal;
+      const collisions = e.get_sib_consumer_hist_collisions ? e.get_sib_consumer_hist_collisions() >>> 0 : 0;
+      console.log(`  top SIB consumers (recorded=${recorded}, collisions=${collisions}):`);
+      for (const row of rows.slice(0, 12)) {
+        const pct = sibTotal ? (row.hits * 100 / sibTotal).toFixed(2) : '0.00';
+        console.log(`    H${row.consumer} ${handlerNames[row.consumer] || '$handler_' + row.consumer}` +
+          ` op=0x${row.op.toString(16)} [${regName(row.base)}+${regName(row.index)}*${1 << row.scale}+disp]` +
+          ` ${row.hits} (${pct}%)`);
+      }
+    }
+  };
+  let deadlineMs = MAX_SECONDS ? Date.now() + MAX_SECONDS * 1000 : 0;
+  // --control: live agent command channel (docs/design-agent-control.md).
+  // Commands arrive over HTTP between batches. Input entries go through the
+  // same parseInputEntries the --input schedule uses and drain through the
+  // same per-action code at the top of the next batch; eval/snapshot/ping/
+  // quit execute right here in the callback — the guest is parked between
+  // batches, so instance and renderer state are coherent.
+  const liveOutstanding = new Map(); // last parsed ev of a live command -> resolve
+  let liveLogsStart = 0;
+  let controlFrozen = CONTROL_FROZEN_START;
+  let controlRunCredits = 0;
+  let controlWake = null;
+  let controlPreviousBatchRan = false;
+  let controlStepWaiter = null;
+  const wakeControlLoop = () => {
+    if (!controlWake) return;
+    const wake = controlWake;
+    controlWake = null;
+    wake();
+  };
+  signalExitWake = wakeControlLoop;
+  const finishPreviousControlBatch = () => {
+    if (!controlPreviousBatchRan) return;
+    controlPreviousBatchRan = false;
+    if (controlFrozen && controlRunCredits > 0) controlRunCredits--;
+    if (controlStepWaiter && --controlStepWaiter.remaining <= 0) {
+      const waiter = controlStepWaiter;
+      controlStepWaiter = null;
+      waiter.resolve({
+        batch: tickState.batch | 0,
+        ran: waiter.total,
+        steps: waiter.total,
+        frozen: controlFrozen,
+      });
+    }
+  };
+  const waitForControlBatch = async () => {
+    while (controlFrozen && controlRunCredits <= 0 && !stopped) {
+      const pausedAt = deadlineMs ? Date.now() : 0;
+      await new Promise(resolve => {
+        controlWake = resolve;
+      });
+      if (deadlineMs) deadlineMs += Date.now() - pausedAt;
+    }
+    if (!stopped) controlPreviousBatchRan = true;
+  };
+  const settleLiveInput = () => {
+    if (!liveOutstanding.size) return;
+    // One shared slice for every command settled this batch: per-command log
+    // attribution would need hooks all through the 2000-line action chain,
+    // and the common agent sends one command per round trip anyway.
+    const batchLogs = logs.slice(liveLogsStart);
+    for (const [ev, resolve] of liveOutstanding) {
+      if (!scheduledInput.includes(ev)) {
+        liveOutstanding.delete(ev);
+        resolve({ batch: tickState.batch | 0, logs: batchLogs });
+      }
+    }
+  };
+  const controlSafeValue = (value) => {
+    if (value === undefined) return null;
+    try {
+      return JSON.parse(JSON.stringify(value,
+        (k, v) => (typeof v === 'bigint' ? '0x' + v.toString(16) : v)));
+    } catch (_) { return String(value); }
+  };
+  const controlSnapshot = () => {
+    const we = instance.exports;
+    const windows = renderer ? Object.values(renderer.windows).map(w => ({
+      hwnd: '0x' + ((w.hwnd >>> 0) || 0).toString(16),
+      x: w.x | 0, y: w.y | 0, w: w.w | 0, h: w.h | 0,
+      visible: !!w.visible, isChild: !!w.isChild, title: w.title || '',
+    })) : [];
+    return {
+      batch: tickState.batch | 0,
+      eip: '0x' + (we.get_eip() >>> 0).toString(16),
+      quit: we.get_quit_flag ? !!we.get_quit_flag() : false,
+      yieldReason: we.get_yield_reason ? we.get_yield_reason() | 0 : 0,
+      focus: '0x' + ((we.get_focus_hwnd ? we.get_focus_hwnd() : 0) >>> 0).toString(16),
+      mainHwnd: '0x' + ((we.get_main_hwnd ? we.get_main_hwnd() : 0) >>> 0).toString(16),
+      screen: renderer && renderer.canvas
+        ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
+      frozen: {
+        frozen: controlFrozen,
+        tickMs: batchClock.getTickMsPerBatch(),
+        credits: controlRunCredits,
+        recording: !!videoRecorder,
+      },
+      windows,
+    };
+  };
+  const controlEval = (code) => {
+    // Direct eval inside a non-strict function body: the params are in
+    // scope, statements work, and the last expression's value comes back.
+    // `va` and `mods` are here for the same reason --trace-at takes
+    // `module+0xVA`: a DLL's load address is picked at load time, so a probe
+    // that wants a global out of a guest module cannot write its address
+    // down. Without these, reading one means grepping the run log for the
+    // load line and pasting a base into the expression -- which is wrong
+    // again on the next run, silently, because a bad base still reads
+    // *some* memory and returns plausible numbers.
+    const fn = new Function('instance', 'exports', 'renderer', 'memory', 'g2w', 'tickState', 'ctx',
+      'va', 'mods',
+      'return eval(' + JSON.stringify(String(code)) + ')');
+    return controlSafeValue(fn(instance, instance.exports, renderer, memory, g2w, tickState, ctx,
+      resolveAddr, moduleBases));
+  };
+  const controlPng = (filename) => {
+    if (!renderer || !renderer.canvas) throw new Error('renderer is unavailable');
+    if (!filename) throw new Error('png needs a path');
+    const buf = canvasToPng(renderer.canvas);
+    fs.writeFileSync(filename, buf);
+    return { batch: tickState.batch | 0, frozen: controlFrozen, path: filename, bytes: buf.length };
+  };
+  const handleControlCommand = (cmdIn) => {
+    const cmd = typeof cmdIn === 'string' ? { cmd: cmdIn } : (cmdIn || {});
+    const native = String(cmd.cmd || '').trim();
+    let match;
+    if (!cmd.action && /^(pause|resume)$/.test(native)) {
+      cmd.action = 'frozen';
+      cmd.mode = native === 'pause' ? 'on' : 'off';
+    } else if (!cmd.action && (match = native.match(/^(?:step|run)\s+(\d+)$/))) {
+      cmd.action = 'step';
+      cmd.n = Number(match[1]);
+    } else if (!cmd.action && (match = native.match(/^frozen\s+(on|off)$/))) {
+      cmd.action = 'frozen';
+      cmd.mode = match[1];
+    }
+    // Stdin ergonomics: a bare native name on a line ("snapshot") reads as
+    // the native action, not as an input entry that would fail to parse.
+    if (!cmd.action && /^(ping|snapshot|quit)$/.test(native)) {
+      cmd.action = native;
+    }
+    if (cmd.action === 'ping') {
+      return {
+        pong: true,
+        batch: tickState.batch | 0,
+        frozen: controlFrozen,
+        app: APP_ID || path.basename(EXE_PATH || ''),
+      };
+    }
+    if (cmd.action === 'snapshot') return controlSnapshot();
+    if (cmd.action === 'trace-api') {
+      if (!TRACE_API || !TRACE_API_PAUSED) throw new Error('trace-api needs --trace-api[=NAMES] --trace-api-paused');
+      const on = cmd.on !== false;
+      const watNow = instance.exports.get_api_calls ? instance.exports.get_api_calls() >>> 0 : 0;
+      if (on && apiLogOff) { apiCount += watNow - apiWatSeen; apiWatSeen = watNow; }
+      if (!on && !apiLogOff) apiWatSeen = watNow;
+      apiLogOff = !on;
+      const setLog = exports => { if (exports && exports.set_api_log) exports.set_api_log(on ? 1 : 0); };
+      setLog(instance.exports);
+      if (threadManager) for (const [, t] of threadManager.threads) setLog(t.instance && t.instance.exports);
+      inheritWasm('set_api_log', on ? 1 : 0);
+      logs.push(`[trace-api] ${on ? 'on' : 'paused'} at batch ${tickState.batch | 0}`);
+      return { traceApi: on, batch: tickState.batch | 0 };
+    }
+    if (cmd.action === 'message-boundary') {
+      if (!TRACE_MESSAGE_BOUNDARY) throw new Error('message-boundary needs --trace-message-boundary');
+      if (typeof cmd.on === 'boolean') messageBoundaryTrace.arm(cmd.on);
+      return messageBoundaryTrace.status();
+    }
+    if (cmd.action === 'eval') return controlEval(cmd.code || '');
+    if (cmd.action === 'png') return controlPng(String(cmd.path || ''));
+    if (cmd.action === 'input-message') {
+      const fields = ['hwnd', 'msg', 'wParam', 'lParam'];
+      const values = Object.fromEntries(fields.map(field => [field, Number(cmd[field] || 0)]));
+      if (!fields.every(field => Number.isFinite(values[field]))) {
+        throw new Error('input-message fields must be finite numbers');
+      }
+      if (!instance.exports.post_message_q) throw new Error('guest message queue is unavailable');
+      const queued = instance.exports.post_message_q(
+        values.hwnd, values.msg, values.wParam, values.lParam) | 0;
+      if (!queued) throw new Error('guest message queue is full');
+      if (renderer && renderer._wakeMessageWait) renderer._wakeMessageWait();
+      return { queued: true, batch: tickState.batch | 0, ...values };
+    }
+    if (cmd.action === 'quit') { stopped = true; wakeControlLoop(); return { quitting: true }; }
+    if (cmd.action === 'frozen') {
+      const mode = cmd.mode || 'on';
+      if (mode !== 'on' && mode !== 'off') throw new Error("frozen needs mode 'on' or 'off'");
+      controlFrozen = mode === 'on';
+      if (!controlFrozen) {
+        controlRunCredits = 0;
+        if (controlStepWaiter) {
+          const waiter = controlStepWaiter;
+          controlStepWaiter = null;
+          waiter.reject(new Error('frozen mode was disabled before the requested steps completed'));
+        }
+        wakeControlLoop();
+      }
+      return { frozen: controlFrozen, batch: tickState.batch | 0,
+        tickMs: batchClock.getTickMsPerBatch() };
+    }
+    if (cmd.action === 'tick') {
+      if (!controlFrozen) throw new Error('tick requires frozen mode');
+      if (videoRecorder) throw new Error('cannot change tick cadence while recording');
+      const ms = Number(cmd.ms);
+      if (!Number.isFinite(ms) || ms <= 0) throw new Error('tick needs a positive finite ms value');
+      batchClock.setTickMsPerBatch(ms);
+      return { batch: tickState.batch | 0, tickMs: batchClock.getTickMsPerBatch(),
+        guestMs: batchClock.batchTicks() };
+    }
+    if (cmd.action === 'step') {
+      if (!controlFrozen) throw new Error('step requires frozen mode (launch with --frozen or send frozen on)');
+      if (controlStepWaiter) throw new Error('another step command is still running');
+      const n = cmd.n === undefined ? 1 : Number(cmd.n);
+      if (!Number.isInteger(n) || n < 1) throw new Error('step needs a positive integer n');
+      if (cmd.ms !== undefined && Number(cmd.ms) !== batchClock.getTickMsPerBatch()) {
+        throw new Error(`CLI tick size is ${batchClock.getTickMsPerBatch()}ms; requested ${Number(cmd.ms)}ms`);
+      }
+      controlRunCredits += n;
+      wakeControlLoop();
+      const stepping = new Promise((resolve, reject) => {
+        controlStepWaiter = { remaining: n, total: n, resolve, reject };
+      });
+      // Batches done so far: lib/control-server.js keeps waiting while this
+      // moves, so a long step on a slow guest is not reported failed at 30 s.
+      const waiter = controlStepWaiter;
+      stepping.progress = () => waiter.total - waiter.remaining;
+      return stepping;
+    }
+    if (cmd.action === 'record') {
+      const mode = cmd.mode || 'status';
+      if (!['on', 'off', 'status'].includes(mode)) throw new Error("record needs mode 'on', 'off', or 'status'");
+      if (mode === 'status') {
+        return videoRecorder
+          ? { recording: true, ...videoRecorder.summary(), everyNSteps: videoEvery }
+          : { recording: false };
+      }
+      if (mode === 'off') {
+        if (!videoRecorder) return { recording: false };
+        const recorder = videoRecorder;
+        for (const pump of audioTapPumps) { try { pump(); } catch (_) {} }
+        videoRecorder = null;
+        return recorder.finish().then(summary => ({ recording: false, ...summary, everyNSteps: videoEvery }));
+      }
+      if (!controlFrozen) throw new Error('live CLI recording requires frozen mode so agent think-time is absent');
+      if (!renderer) throw new Error('CLI recording requires the renderer (remove --no-renderer)');
+      if (videoRecorder) throw new Error('a CLI recording is already active');
+      const every = cmd.everyNSteps === undefined ? 1 : Number(cmd.everyNSteps);
+      if (!Number.isInteger(every) || every < 1) throw new Error('record everyNSteps must be a positive integer');
+      const rawName = String(cmd.name || new Date().toISOString().replace(/[:.]/g, '-'));
+      const hasVideoExt = /\.(?:mp4|webm)$/i.test(rawName);
+      const safeName = rawName.replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'recording';
+      const out = hasVideoExt ? path.resolve(rawName) : path.resolve('recordings', `${safeName}.mp4`);
+      videoEvery = every;
+      videoStartBatch = tickState.batch | 0;
+      const tickMs = batchClock.getTickMsPerBatch();
+      const derivedFps = tickMs > 0 ? 1000 / (tickMs * every) : VIDEO_FPS;
+      videoRecorder = new CliVideoRecorder(renderer.canvas, {
+        path: out,
+        fps: derivedFps,
+        ffmpeg: FFMPEG_PATH,
+        startGuestMs: batchClock.batchTicks(),
+      });
+      return { recording: true, ...videoRecorder.summary(), everyNSteps: videoEvery };
+    }
+    const entry = String(cmd.cmd || '');
+    if (!entry) throw new Error('need {cmd:"action:args"} or action: ping|snapshot|eval|png|input-message|frozen|tick|step|record|quit');
+    // A frozen CLI is already at a coherent between-batches boundary. Capture
+    // there instead of queueing a png action that cannot execute until a
+    // later `step` (ctl.js checks that the file exists before it returns).
+    if (controlFrozen && entry.startsWith('png:')) {
+      return controlPng(entry.slice(4));
+    }
+    if (/^wait-/.test(entry)) {
+      throw new Error('wait-* entries are scheduled-only; poll snapshot or png instead');
+    }
+    const evs = parseInputEntries([`${tickState.batch | 0}:${entry}`]);
+    const last = evs[evs.length - 1];
+    // The parser's fallback reads an unrecognized kind as a raw message id;
+    // NaN there is a typo'd action name, not a message.
+    if (last && last.action === undefined && !Number.isFinite(last.msg)) {
+      throw new Error(`unknown input action ${JSON.stringify(entry.split(':')[0])}`);
+    }
+    const enqueue = (resolve) => {
+      if (resolve) liveOutstanding.set(last, resolve);
+      // After everything already due this batch, before everything scheduled
+      // later: the schedule is the fixture, the stream is the driver.
+      const now = tickState.batch | 0;
+      for (const ev of evs) ev.batch = now;
+      let at = scheduledInput.findIndex(e => e.batch > now);
+      if (at < 0) at = scheduledInput.length;
+      scheduledInput.splice(at, 0, ...evs);
+    };
+    // In frozen mode an input is deliberately only queued; waiting for it to
+    // execute would deadlock the ordinary `ctl click; ctl step` agent loop.
+    if (controlFrozen) {
+      enqueue(null);
+      return { queued: true, batch: tickState.batch | 0 };
+    }
+    return new Promise((resolve) => enqueue(resolve));
+  };
+  const control = (CONTROL || CONTROL_STDIN) ? (() => {
+    const server = CONTROL ? require('../lib/control-server').startControlServer({
+      port: CONTROL_PORT, host: CONTROL_HOST,
+      onCommand: handleControlCommand, log: line => console.log(line),
+    }) : null;
+    if (CONTROL_STDIN) {
+      const rl = require('readline').createInterface({ input: process.stdin, terminal: false });
+      let stdinCommands = Promise.resolve();
+      rl.on('line', (line) => {
+        const text = line.trim();
+        if (!text) return;
+        let cmd;
+        try { cmd = JSON.parse(text); } catch (_) { cmd = { cmd: text }; }
+        const list = Array.isArray(cmd) ? cmd : [cmd];
+        for (const one of list) {
+          // `new Promise(r => r(f()))`, not `Promise.resolve(f())`: the latter
+          // evaluates f() *before* the promise exists, so a synchronous throw
+          // escapes into the enclosing .then callback, where the rejection
+          // handler below cannot see it — it only covers the promise it is
+          // attached to. That is an unhandled rejection, and node exits 1 on
+          // it, so one bad `eval` expression killed a 38-minute B&W2 run that
+          // was sitting on the profile dialog. A control command must never be
+          // able to take the run down with it.
+          stdinCommands = stdinCommands.then(() => new Promise(r => r(handleControlCommand(one))).then(
+            value => console.log(`[ctl] ${JSON.stringify({ ok: true, id: one.id, value })}`),
+            error => console.log(`[ctl] ${JSON.stringify({ ok: false, id: one.id, error: String(error && error.message || error) })}`)));
+        }
+      });
+      // EOF just ends the stream — the pipe's producer finishing must not
+      // kill a run the HTTP channel (or a schedule) may still be driving.
+      rl.on('close', () => {});
+      // But an open stdin must not keep the process alive after the batch
+      // loop ends either (a terminal's stdin never reaches EOF).
+      return { close() {
+        rl.close();
+        if (typeof process.stdin.unref === 'function') process.stdin.unref();
+        if (server) server.close();
+      } };
+    }
+    return { close() { if (server) server.close(); } };
+  })() : null;
+
+  // A rejected async loader/yield bypasses the normal end-of-loop close.
+  // Retire the control channel before propagating the original failure.
+  let controlClosed = false;
+  const closeControl = () => {
+    if (control && !controlClosed) {
+      control.close();
+      controlClosed = true;
+    }
+  };
+  onFailure(closeControl);
+
+  const cpuProf = CPU_PROF_WINDOW ? {
+    session: null, startedAt: 0,
+    post(method, params) {
+      return new Promise((resolve, reject) => this.session.post(method, params || {},
+        (error, result) => error ? reject(error) : resolve(result)));
+    },
+    async start(batch) {
+      const inspector = require('inspector');
+      this.session = new inspector.Session();
+      this.session.connect();
+      await this.post('Profiler.enable');
+      await this.post('Profiler.setSamplingInterval', { interval: 100 });
+      await this.post('Profiler.start');
+      this.startedAt = batch;
+      console.log(`[cpu-prof] started at batch ${batch}`);
+    },
+    async stop(batch) {
+      const { profile } = await this.post('Profiler.stop');
+      this.session.disconnect();
+      this.session = null;
+      fs.writeFileSync(CPU_PROF_WINDOW.file, JSON.stringify(profile));
+      console.log(`[cpu-prof] batches ${this.startedAt}..${batch} -> ${CPU_PROF_WINDOW.file}`);
+    },
+  } : null;
+  if (TRACE_WINDOWED) {
+    const passthrough = console.log;
+    console.log = (...args) => { if (traceWindowOpen()) passthrough(...args); };
+    console.log(`[trace-window] tracing batches`
+      + ` ${TRACE_FROM >= 0 ? TRACE_FROM : 0}..${TRACE_TO >= 0 ? TRACE_TO : 'end'}`);
+  }
+  const executionStartedAt = performance.now();
+  for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
+    traceGateBatch = batch;
+    if (deadlineMs && Date.now() >= deadlineMs) {
+      traceGateBatch = -1; // why the run stopped is not per-batch trace output
+      console.log(`[max-seconds] stopping after ${MAX_SECONDS}s at batch ${batch}`);
+      break;
+    }
+    for (const w of CPU_WINDOWS) {
+      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); }
+      else if (w.cpu && !w.done && batch >= w.stop) {
+        const d = process.cpuUsage(w.cpu);
+        w.done = true;
+        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+      }
+    }
+    if (cpuProf) {
+      if (!cpuProf.session && !cpuProf.startedAt && batch >= CPU_PROF_WINDOW.start) await cpuProf.start(batch);
+      else if (cpuProf.session && batch >= CPU_PROF_WINDOW.stop) await cpuProf.stop(batch);
+    }
+    // Timers cannot fire while the normal runner stays in its synchronous
+    // batch loop. Poll wall time sparsely at the one safe seam and await the
+    // journal before entering the next guest batch. Sixty-four Date checks per
+    // 4096 batches keeps the disabled/no-overlay path free and the enabled
+    // path's bookkeeping negligible.
+    if (vfsOverlay && OVERLAY_FLUSH_MS && (batch & 63) === 0 &&
+        Date.now() >= nextOverlayFlushAt) {
+      const checkpoint = await vfsOverlay.flush();
+      nextOverlayFlushAt = Date.now() + OVERLAY_FLUSH_MS;
+      if (checkpoint.written || checkpoint.failed) {
+        console.log(`[overlay] checkpointed ${checkpoint.written} record(s) to ${OVERLAY_DIR}` +
+          (checkpoint.failed ? `, ${checkpoint.failed} failed` : ''));
+      }
+    }
+    if (HANDLER_HIST_THREADS.length && !handlerHistDone) {
+      if (!handlerHistArmed && batch >= handlerHistWindowStart) {
+        armHandlerHistogram(batch);
+      }
+      if (handlerHistArmed && batch >= handlerHistWindowStop) {
+        handlerHistExports.set_handler_hist_enabled(0);
+        printHandlerHistogram(batch);
+        handlerHistArmed = false;
+        handlerHistExports = null;
+        handlerHistThreadIndex++;
+        selectHandlerHistWindow();
+        // This batch has not run yet. Arm the next instance immediately so
+        // adjacent scheduled windows remain exactly [start,stop), without
+        // losing their boundary batch to the profiler hand-off.
+        if (!handlerHistDone && batch >= handlerHistWindowStart) {
+          armHandlerHistogram(batch);
+        }
+      }
+    }
+    if (TRACE_SCHED) {
+      const sched = describeSchedule(instance, threadManager);
+      if (sched.sig !== lastSchedSig || (batch - lastSchedAt) >= TRACE_SCHED_EVERY) {
+        const held = sched.sig === lastSchedSig ? ` (unchanged for ${batch - lastSchedAt} batches)` : '';
+        console.log(`[sched] b=${batch} ${sched.text}${held}`);
+        lastSchedSig = sched.sig;
+        lastSchedAt = batch;
+      }
+    }
+    tickState.batch = batch;
+    if (gameplayBench && batch === 0) gameplayBench.init(instance.exports, memory);
+    tickStateRef.batch = batch;
+    tickState.callsInBatch = 0;
+    if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
+    // --control: give the event loop a turn every batch so the control
+    // server's socket callbacks fire and settled replies flush. Without this
+    // the loop is synchronous end to end — the same mechanism that keeps
+    // SIGTERM queued forever (see the timeout -s KILL note in CLAUDE.md).
+    // --lazy-ranges: a spawned thread parked on a lazy read waits for a fill
+    // that only an event-loop turn can deliver (the page gets one every step).
+    if (LAZY_RANGES && threadManager && threadManager.hasIoFillInFlight &&
+        threadManager.hasIoFillInFlight()) {
+      await new Promise(resolve => setImmediate(resolve));
+    }
+    if (control) {
+      finishPreviousControlBatch();
+      await new Promise(resolve => setImmediate(resolve));
+      liveLogsStart = logs.length;
+      await waitForControlBatch();
+      if (stopped) break;
+    }
+    batchesRun = batch + 1;
+    let injectedInputThisBatch = false;
+    // Inject scheduled input events at the right batch
+    while (scheduledInput.length && scheduledInput[0].batch <= batch) {
+      const ev = scheduledInput.shift();
+      inputConsumptionTrace.schedule(ev);
+      injectedInputThisBatch = true;
+      // Start the input->blit clock on events a user would perform. The
+      // wrapped gdi_surface_upload stops it at the first blit that follows.
+      // mousemove counts too: on a mouse-driven game (a paddle, a cursor, a
+      // camera) it is THE event whose latency the player feels, and it is the
+      // one a browser session cannot measure end-to-end. A move never clobbers
+      // an outstanding sample -- with --auto-mouse the moves arrive faster
+      // than the guest paints, and overwriting would restart the clock just
+      // before the blit and report a latency far shorter than the real one.
+      // A move never clobbers an outstanding MOVE -- with --auto-mouse the
+      // moves arrive faster than the guest paints, and overwriting would
+      // restart the clock just before the blit and report a latency far
+      // shorter than the real one. It does replace an outstanding event of
+      // any other kind, because those close on a WAT control paint that a
+      // fullscreen game never performs: left in place, one unclosable keydown
+      // from the menu would block every move for the rest of the run.
+      if (LATENCY_STATS && /^(keypress|keydown|keyup|click|dblclick|mousemove)$/.test(ev.action)
+          && !(latency.pending && latency.pending.kind === 'mousemove' && ev.action === 'mousemove')) {
+        latency.pending = { kind: ev.action, batch, at: process.hrtime.bigint(), painted: false };
+      }
+      // UI-level events go through renderer handlers (mouse/keyboard pump),
+      // raw events go directly into inputQueue.
+      if (ev.action === 'focus-find' && renderer) {
+        // Find dialog is now driven entirely from WAT — set focus on the
+        // WAT-side EditState directly. No JS controls[] mirroring needed.
+        const watDlg = instance.exports.get_findreplace_dlg && instance.exports.get_findreplace_dlg();
+        const watEdit = instance.exports.get_findreplace_edit && instance.exports.get_findreplace_edit();
+        if (watDlg && watEdit) {
+          instance.exports.set_focus_hwnd(watEdit);
+          const scratchG = instance.exports.guest_alloc(256);
+          const n = instance.exports.get_edit_text(watEdit, scratchG, 255);
+          const dv = new DataView(memory.buffer);
+          let txt = '';
+          for (let i = 0; i < n; i++) txt += String.fromCharCode(dv.getUint8(g2w(scratchG) + i));
+          logs.push(`[input] focus-find: hwnd=0x${watDlg.toString(16)} editText=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] focus-find: NO FIND DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-main-edit' && renderer) {
+        // Find the first WAT EditState (class==2) attached to main_hwnd or
+        // its descendants and dump its text. Notepad's main edit is its
+        // sole child class-2 control, so first match is enough.
+        const we = instance.exports;
+        let found = 0;
+        if (we.ctrl_get_class && we.get_edit_text && we.guest_alloc) {
+          // Walk WND_RECORDS via renderer.windows; cheaper than exporting an iterator.
+          for (const w of Object.values(renderer.windows || {})) {
+            if (we.ctrl_get_class(w.hwnd) === 2 && w.visible) { found = w.hwnd; break; }
+          }
+        }
+        if (found) {
+          const scratchG = we.guest_alloc(4096);
+          const n = we.get_edit_text(found, scratchG, 4095);
+          const dv = new DataView(memory.buffer);
+          let txt = '';
+          for (let i = 0; i < n; i++) txt += String.fromCharCode(dv.getUint8(g2w(scratchG) + i));
+          logs.push(`[input] dump-main-edit: hwnd=0x${found.toString(16)} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-main-edit: NO EDIT at batch ${batch}`);
+        }
+      } else if (ev.action === 'focus-main-window') {
+        const we = instance.exports;
+        const hwnd = we.get_main_hwnd ? (we.get_main_hwnd() | 0) : 0;
+        if (hwnd && we.set_focus_hwnd) {
+          we.set_focus_hwnd(hwnd);
+          logs.push(`[input] focus-main-window: hwnd=0x${hwnd.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] focus-main-window: NO MAIN HWND at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-main-edit-state' && renderer) {
+        const we = instance.exports;
+        let found = 0;
+        if (we.ctrl_get_class && we.get_edit_text && we.guest_alloc) {
+          for (const w of Object.values(renderer.windows || {})) {
+            if (we.ctrl_get_class(w.hwnd) === 2 && w.visible) { found = w.hwnd; break; }
+          }
+        }
+        if (found) {
+          const scratchG = we.guest_alloc(8192);
+          const n = we.get_edit_text(found, scratchG, 8191);
+          const dv = new DataView(memory.buffer);
+          let txt = '';
+          for (let i = 0; i < n; i++) txt += String.fromCharCode(dv.getUint8(g2w(scratchG) + i));
+          const cursor = we.get_edit_cursor ? we.get_edit_cursor(found) : 0;
+          const sel = we.get_edit_sel_start ? we.get_edit_sel_start(found) : cursor;
+          const flags = we.get_edit_flags ? we.get_edit_flags(found) : 0;
+          const len = we.get_edit_text_len ? we.get_edit_text_len(found) : n;
+          const lineCount = we.send_message ? we.send_message(found, 0x00BA, 0, 0) : 1; // EM_GETLINECOUNT
+          const firstVisible = we.send_message ? we.send_message(found, 0x00CE, 0, 0) : 0; // EM_GETFIRSTVISIBLELINE
+          const label = ev.label ? ` ${ev.label}` : '';
+          logs.push(`[input] dump-main-edit-state${label}: hwnd=0x${found.toString(16)} len=${len} cursor=${cursor} sel=${sel} flags=0x${flags.toString(16)} firstVisible=${firstVisible} lineCount=${lineCount} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          const label = ev.label ? ` ${ev.label}` : '';
+          logs.push(`[input] dump-main-edit-state${label}: NO EDIT at batch ${batch}`);
+        }
+      } else if (ev.action === 'wheel-main-edit' && renderer) {
+        const we = instance.exports;
+        let found = 0;
+        if (we.ctrl_get_class && we.send_message) {
+          for (const w of Object.values(renderer.windows || {})) {
+            if (we.ctrl_get_class(w.hwnd) === 2 && w.visible) { found = w.hwnd; break; }
+          }
+        }
+        if (found) {
+          we.send_message(found, 0x020A, (ev.delta << 16), 0); // WM_MOUSEWHEEL
+          logs.push(`[input] wheel-main-edit: hwnd=0x${found.toString(16)} delta=${ev.delta} at batch ${batch}`);
+        } else {
+          logs.push(`[input] wheel-main-edit: NO EDIT at batch ${batch}`);
+        }
+      } else if (ev.action === 'drag-main-edit' && renderer) {
+        const we = instance.exports;
+        let found = null;
+        if (we.ctrl_get_class) {
+          for (const w of Object.values(renderer.windows || {})) {
+            if (we.ctrl_get_class(w.hwnd) === 2 && w.visible) { found = w; break; }
+          }
+        }
+        if (found) {
+          let ox = found.x || 0;
+          let oy = found.y || 0;
+          const parent = found.parentHwnd ? renderer.windows[found.parentHwnd] : null;
+          if (parent) {
+            ox += parent.isPopup ? parent.x : parent.x + 3;
+            oy += parent.isPopup ? parent.y : parent.y + 3 + 18 + (renderer._hasMenuBar && renderer._hasMenuBar(parent) ? 18 : 0) + 1;
+          }
+          const sx1 = ox + ev.x1, sy1 = oy + ev.y1;
+          const sx2 = ox + ev.x2, sy2 = oy + ev.y2;
+          renderer.handleMouseDown(sx1, sy1, 1);
+          renderer.handleMouseMove(sx2, sy2);
+          renderer.handleMouseUp(sx2, sy2, 1);
+          logs.push(`[input] drag-main-edit: hwnd=0x${found.hwnd.toString(16)} ${sx1},${sy1}->${sx2},${sy2} at batch ${batch}`);
+        } else {
+          logs.push(`[input] drag-main-edit: NO EDIT at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-find' && renderer) {
+        // Read EditState text directly from WAT — find dialog has no JS
+        // controls[] mirror anymore.
+        const watDlg = instance.exports.get_findreplace_dlg && instance.exports.get_findreplace_dlg();
+        const watEdit = instance.exports.get_findreplace_edit && instance.exports.get_findreplace_edit();
+        if (watDlg && watEdit) {
+          const scratchG = instance.exports.guest_alloc(256);
+          const n = instance.exports.get_edit_text(watEdit, scratchG, 255);
+          const dv = new DataView(memory.buffer);
+          let txt = '';
+          for (let i = 0; i < n; i++) txt += String.fromCharCode(dv.getUint8(g2w(scratchG) + i));
+          const focusedNow = instance.exports.get_focus_hwnd() === watEdit;
+          logs.push(`[input] dump-find: hwnd=0x${watDlg.toString(16)} focused=${focusedNow} editText=${JSON.stringify(txt)} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-find: NO FIND DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'find-click' && renderer) {
+        const we = instance.exports;
+        const dlg = we.get_findreplace_dlg && we.get_findreplace_dlg();
+        if (dlg) {
+          // Find the WAT-side child with this ctrl_id and dispatch
+          // WM_LBUTTONDOWN/UP through send_message — same path the
+          // renderer click handler now uses.
+          let s = 0, found = 0;
+          while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            if (we.ctrl_get_id(ch) === ev.ctrlId) { found = ch; break; }
+            s++;
+          }
+          if (found) {
+            we.send_message(found, 0x0201, 0, 0);
+            we.send_message(found, 0x0202, 0, 0);
+            logs.push(`[input] find-click: id=0x${ev.ctrlId.toString(16)} hwnd=0x${found.toString(16)} at batch ${batch}`);
+            {
+              const entries = [];
+              for (let i = 0; i < we.post_queue_depth(); i++) {
+                const h = we.post_queue_peek(i, 0);
+                const m = we.post_queue_peek(i, 1);
+                if (!h && !m) continue;
+                const wp = we.post_queue_peek(i, 2);
+                const lp = we.post_queue_peek(i, 3);
+                entries.push(`[${i}] h=0x${h.toString(16)} m=0x${m.toString(16)} wp=0x${wp.toString(16)} lp=0x${lp.toString(16)}`);
+              }
+              logs.push(`[input] post_queue after find-click: ${entries.length ? entries.join(' | ') : '(empty)'}`);
+            }
+          } else {
+            logs.push(`[input] find-click: id=0x${ev.ctrlId.toString(16)} NOT FOUND at batch ${batch}`);
+          }
+        } else {
+          logs.push(`[input] find-click: no find dialog at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-mem') {
+        // `--dump=` only fires at exit, and by then any scratch buffer has
+        // usually been freed and handed to something else -- a dump of it is
+        // then a picture of whatever moved in afterwards, which reads as
+        // corruption. This takes the same hexdump at a chosen batch instead,
+        // so a buffer can be inspected while its owner still holds it.
+        // Same format as --dump, so tools/dump2png.js parses either.
+        //   --input=41000:dump-mem:0xb9df84:12800
+        const at = parseInt(ev.arg, 16) >>> 0;
+        const len = parseInt(ev.arg2 || '256', 10) || 256;
+        logs.push(`[input] dump-mem at batch ${batch}`);
+        flushLogs();
+        hexdump(at, len);
+      } else if (ev.action === 'heap-walk') {
+        // Replays the exact-boundary walk GlobalLock does from the arena base,
+        // and names the header it stopped at when it refuses the pointer.
+        const we = instance.exports;
+        const ptr = parseInt(ev.arg, 16) >>> 0;
+        const hex = v => '0x' + (v >>> 0).toString(16);
+        const r = we.heap_walk_break(ptr, 0) >>> 0;
+        const verdict = r === 0 ? 'live Global handle'
+          : r === 1 ? 'misaligned (not a heap payload)'
+          : r === 2 ? 'no heap arena covers it'
+          : r === 3 ? 'block boundary, but GLOBAL_LIVE is clear'
+          : `walk stopped at header ${hex(r)}`;
+        logs.push(`[input] heap-walk ${hex(ptr)} at batch ${batch}: ${verdict}` +
+          (r > 3 || r === 3 ? ` (arena ${hex(we.heap_walk_break(ptr, 1))}..${hex(we.heap_walk_break(ptr, 2))})` : ''));
+        if (r > 3) { flushLogs(); hexdump(Math.max(0, r - 32), 96); }
+      } else if (ev.action === 'tick-ms') {
+        batchClock.setTickMsPerBatch(ev.ms);
+        logs.push(`[input] tick-ms ${batchClock.getTickMsPerBatch()} at batch ${batch} (guest ${batchClock.batchTicks()}ms)`);
+      } else if (ev.action === 'slot-count') {
+        const we = instance.exports;
+        const dlg = we.get_findreplace_dlg && we.get_findreplace_dlg();
+        const used = we.wnd_count_used ? we.wnd_count_used() : -1;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        logs.push(`[input] slot-count${tag}: used=${used} dlg=0x${(dlg||0).toString(16)} at batch ${batch}`);
+      } else if (ev.action === 'dump-focus') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        let extra = '';
+        if (h && cls === 2 && we.get_edit_text && we.guest_alloc) {
+          const scratchG = we.guest_alloc(512);
+          const n = we.get_edit_text(h, scratchG, 511);
+          const wa = g2w(scratchG);
+          const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, n));
+          extra = ` parent=0x${parent.toString(16)} text=${JSON.stringify(Buffer.from(bytes).toString('latin1'))}`;
+        } else if (parent) {
+          extra = ` parent=0x${parent.toString(16)}`;
+        }
+        const tag = ev.label ? ` ${ev.label}` : '';
+        logs.push(`[input] dump-focus${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id}${extra} at batch ${batch}`);
+      } else if (ev.action === 'dump-focus-text') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        let txt = '';
+        let n = 0;
+        if (!h) {
+          logs.push(`[input] dump-focus-text${tag}: NO FOCUS at batch ${batch}`);
+        } else if (cls === 2 && we.get_edit_text && we.guest_alloc) {
+          const scratchG = we.guest_alloc(8192);
+          n = we.get_edit_text(h, scratchG, 8191) | 0;
+          const wa = g2w(scratchG);
+          const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, n));
+          txt = Buffer.from(bytes).toString('latin1');
+          logs.push(`[input] dump-focus-text${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} len=${n} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cap = 8192;
+          const scratchG = we.guest_alloc(cap);
+          n = we.send_message(h, 0x000D, cap, scratchG) | 0; // WM_GETTEXT
+          const wa = g2w(scratchG);
+          const viewLen = Math.max(0, Math.min(n, cap - 1));
+          const bytes = new Uint8Array(memory.buffer, wa, viewLen);
+          txt = Buffer.from(bytes).toString('latin1');
+          logs.push(`[input] dump-focus-text${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} len=${n} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-focus-text${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO TEXT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-focus-state') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const style = (h && we.wnd_get_style_export) ? (we.wnd_get_style_export(h) >>> 0) : 0;
+        const editFlags = (h && we.get_edit_flags) ? (we.get_edit_flags(h) >>> 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] dump-focus-state${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const reportedLen = Math.max(0, we.send_message(h, 0x000E, 0, 0) | 0); // WM_GETTEXTLENGTH
+          const cap = Math.min(reportedLen + 1, 64 * 1024);
+          const textG = we.guest_alloc(cap);
+          const n = we.send_message(h, 0x000D, cap, textG) | 0; // WM_GETTEXT
+          const wa = g2w(textG);
+          const viewLen = Math.max(0, Math.min(n, cap - 1));
+          const bytes = new Uint8Array(memory.buffer, wa, viewLen);
+          const txt = Buffer.from(bytes).toString('latin1');
+          const startG = we.guest_alloc(4);
+          const endG = we.guest_alloc(4);
+          const dv = new DataView(memory.buffer);
+          dv.setUint32(g2w(startG), 0, true);
+          dv.setUint32(g2w(endG), 0, true);
+          const selRet = we.send_message(h, 0x00B0, startG, endG) >>> 0; // EM_GETSEL
+          const selStart = dv.getUint32(g2w(startG), true) >>> 0;
+          const selEnd = dv.getUint32(g2w(endG), true) >>> 0;
+          const lineCount = we.send_message(h, 0x00BA, 0, 0) | 0; // EM_GETLINECOUNT
+          const firstVisible = we.send_message(h, 0x00CE, 0, 0) | 0; // EM_GETFIRSTVISIBLELINE
+          logs.push(`[input] dump-focus-state${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} style=0x${style.toString(16)} flags=0x${editFlags.toString(16)} len=${n} sel=${selStart}..${selEnd} selRet=0x${selRet.toString(16)} firstVisible=${firstVisible} lineCount=${lineCount} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-focus-state${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO STATE API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-print-state') {
+        const tag = ev.label ? `:${ev.label}` : '';
+        const state = instance.exports.get_printer_doc_state ? instance.exports.get_printer_doc_state() | 0 : -1;
+        const pages = instance.exports.get_printer_page_count ? instance.exports.get_printer_page_count() | 0 : -1;
+        const quit = instance.exports.get_quit_flag ? instance.exports.get_quit_flag() | 0 : -1;
+        const reason = instance.exports.get_yield_reason ? instance.exports.get_yield_reason() | 0 : -1;
+        logs.push(`[input] dump-print-state${tag}: state=${state} pages=${pages} quit=${quit} yield=${reason} eip=0x${(instance.exports.get_eip() >>> 0).toString(16)} at batch ${batch}`);
+      } else if (ev.action === 'formatrange-probe') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? we.get_focus_hwnd() >>> 0 : 0;
+        const tag = ev.label ? `:${ev.label}` : '';
+        if (!h || !we.send_message || !we.guest_alloc || !we.guest_write32) {
+          logs.push(`[input] formatrange-probe${tag}: unavailable at batch ${batch}`);
+        } else {
+          const len = Math.max(0, we.send_message(h, 0x000E, 0, 0) | 0);
+          const fr = we.guest_alloc(48) >>> 0;
+          const put = (off, value) => we.guest_write32((fr + off) >>> 0, value | 0);
+          put(0, 1); put(4, 1); // deterministic non-null display/target DCs
+          put(8, 0); put(12, 0); put(16, ev.width); put(20, ev.height);
+          put(24, 0); put(28, 0); put(32, ev.width); put(36, ev.height);
+          const bounds = [0];
+          let cp = 0;
+          for (let page = 0; page < 256 && cp < len; page++) {
+            put(40, cp); put(44, len);
+            const next = we.richedit_formatrange_next
+              ? we.richedit_formatrange_next(fr) | 0
+              : we.send_message(h, 0x0439, 0, fr) | 0;
+            if (next <= cp || next > len) break;
+            cp = next;
+            bounds.push(cp);
+          }
+          we.send_message(h, 0x0439, 0, 0); // release RichEdit format cache
+          logs.push(`[input] formatrange-probe${tag}: hwnd=0x${h.toString(16)} len=${len} pages=${Math.max(0, bounds.length - 1)} bounds=${bounds.join(',')} complete=${cp === len ? 1 : 0} at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-focus-unicode') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h || !we.send_message || !we.guest_alloc) {
+          logs.push(`[input] dump-focus-unicode${tag}: NO FOCUS/API at batch ${batch}`);
+        } else {
+          const gtG = we.guest_alloc(24);
+          const textG = we.guest_alloc(32768);
+          const gtWA = g2w(gtG);
+          const textWA = g2w(textG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, gtWA, 24).fill(0);
+          new Uint8Array(memory.buffer, textWA, 32768).fill(0);
+          dv.setUint32(gtWA, 32768, true); // GETTEXTEX.cb, bytes
+          dv.setUint32(gtWA + 4, 0, true); // flags
+          dv.setUint32(gtWA + 8, 1200, true); // UTF-16LE
+          const n = we.send_message(h, 0x045E, gtG, textG) | 0; // EM_GETTEXTEX
+          let units = 0;
+          while (units < 16383 && dv.getUint16(textWA + units * 2, true)) units++;
+          const bytes = Buffer.from(new Uint8Array(memory.buffer, textWA, units * 2));
+          const txt = bytes.toString('utf16le');
+          const cps = Array.from(txt, ch => `U+${ch.codePointAt(0).toString(16).toUpperCase()}`).join(',');
+          logs.push(`[input] dump-focus-unicode${tag}: hwnd=0x${h.toString(16)} ret=${n} units=${units} codepoints=${cps} text=${JSON.stringify(txt)} at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-control-state') {
+        const we = instance.exports;
+        let h = 0;
+        for (const w of Object.values((renderer && renderer.windows) || {})) {
+          if (w.visible && we.ctrl_get_id && we.ctrl_get_id(w.hwnd) === ev.ctrlId) {
+            h = w.hwnd;
+            break;
+          }
+        }
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] dump-control-state${tag}: id=${ev.ctrlId} NOT FOUND at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cls = we.ctrl_get_class ? we.ctrl_get_class(h) : -1;
+          const parent = we.wnd_get_parent ? (we.wnd_get_parent(h) | 0) : 0;
+          const reportedLen = Math.max(0, we.send_message(h, 0x000E, 0, 0) | 0); // WM_GETTEXTLENGTH
+          const cap = Math.min(reportedLen + 1, 1024 * 1024);
+          const textG = we.guest_alloc(cap);
+          const n = we.send_message(h, 0x000D, cap, textG) | 0; // WM_GETTEXT
+          const wa = g2w(textG);
+          const viewLen = Math.max(0, Math.min(n, cap - 1));
+          const txt = Buffer.from(new Uint8Array(memory.buffer, wa, viewLen)).toString('latin1');
+          const startG = we.guest_alloc(4);
+          const endG = we.guest_alloc(4);
+          const dv = new DataView(memory.buffer);
+          dv.setUint32(g2w(startG), 0, true);
+          dv.setUint32(g2w(endG), 0, true);
+          const selRet = we.send_message(h, 0x00B0, startG, endG) >>> 0; // EM_GETSEL
+          const selStart = dv.getUint32(g2w(startG), true) >>> 0;
+          const selEnd = dv.getUint32(g2w(endG), true) >>> 0;
+          const lineCount = we.send_message(h, 0x00BA, 0, 0) | 0;
+          const firstVisible = we.send_message(h, 0x00CE, 0, 0) | 0;
+          logs.push(`[input] dump-control-state${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${ev.ctrlId} parent=0x${parent.toString(16)} len=${n} sel=${selStart}..${selEnd} selRet=0x${selRet.toString(16)} firstVisible=${firstVisible} lineCount=${lineCount} text=${JSON.stringify(txt)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-control-state${tag}: hwnd=0x${h.toString(16)} id=${ev.ctrlId} NO STATE API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-combobox') {
+        // A combobox's dropped list is a WAT popup window, not a LISTBOX
+        // control, so dump-listbox cannot see it. Read the rows the way the
+        // app does instead: CB_GETCOUNT + CB_GETLBTEXT.
+        const we = instance.exports;
+        let h = 0;
+        for (const w of Object.values((renderer && renderer.windows) || {})) {
+          if (w.visible && we.ctrl_get_id && we.ctrl_get_id(w.hwnd) === ev.ctrlId) {
+            h = w.hwnd;
+            break;
+          }
+        }
+        if (!h && we.wnd_slot_hwnd && we.ctrl_get_id) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.ctrl_get_id(hwnd) === ev.ctrlId) {
+              h = hwnd;
+              break;
+            }
+          }
+        }
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] dump-combobox${tag}: id=${ev.ctrlId} NOT FOUND at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const count = we.send_message(h, 0x0146, 0, 0) | 0;   // CB_GETCOUNT
+          const cur = we.send_message(h, 0x0147, 0, 0) | 0;     // CB_GETCURSEL
+          const bufG = we.guest_alloc(512);
+          const rows = [];
+          const shown = Math.max(0, Math.min(count, 128));
+          for (let i = 0; i < shown; i++) {
+            new Uint8Array(memory.buffer, g2w(bufG), 512).fill(0);
+            const n = we.send_message(h, 0x0148, i, bufG) | 0; // CB_GETLBTEXT
+            const len = Math.max(0, Math.min(n, 511));
+            const data = we.send_message(h, 0x0150, i, 0) >>> 0; // CB_GETITEMDATA
+            rows.push(JSON.stringify(readStr(g2w(bufG), len)) +
+              (data ? `@0x${data.toString(16)}` : ''));
+          }
+          logs.push(`[input] dump-combobox${tag}: hwnd=0x${h.toString(16)} id=${ev.ctrlId} count=${count} cursel=${cur} items=${rows.join(',')} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-combobox${tag}: hwnd=0x${h.toString(16)} id=${ev.ctrlId} NO SEND API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-clipboard') {
+        const we = instance.exports;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (we.clipboard_get_rtf_format_id && we.clipboard_rtf_len &&
+            we.clipboard_rtf_ptr && we.clipboard_count_formats &&
+            we.clipboard_is_format_available && we.clipboard_get_data_handle) {
+          const fmt = we.clipboard_get_rtf_format_id() >>> 0;
+          const textLen = we.clipboard_text_len ? (we.clipboard_text_len() >>> 0) : 0;
+          const rtfLen = we.clipboard_rtf_len() >>> 0;
+          const count = we.clipboard_count_formats() >>> 0;
+          const oleObject = we.clipboard_ole_data_object ? (we.clipboard_ole_data_object() >>> 0) : 0;
+          const availText = we.clipboard_is_format_available(1) >>> 0;
+          const availRtf = we.clipboard_is_format_available(fmt) >>> 0;
+          const availDib = we.clipboard_is_format_available(8) >>> 0;
+          const textHandle = we.clipboard_get_data_handle(1) >>> 0;
+          const rtfHandle = we.clipboard_get_data_handle(fmt) >>> 0;
+          const dibHandle = we.clipboard_get_data_handle(8) >>> 0;
+          let rtf = '';
+          const ptr = we.clipboard_rtf_ptr() >>> 0;
+          const wa = ptr ? g2w(ptr) : 0;
+          if (wa && rtfLen) {
+            const n = Math.min(rtfLen, 96, memory.buffer.byteLength - wa);
+            const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, n));
+            rtf = Buffer.from(bytes).toString('latin1');
+          }
+          logs.push(`[input] dump-clipboard${tag}: count=${count} oleObject=0x${oleObject.toString(16)} textLen=${textLen} rtfFmt=0x${fmt.toString(16)} rtfLen=${rtfLen} availText=${availText} availRtf=${availRtf} availDib=${availDib} textHandle=0x${textHandle.toString(16)} rtfHandle=0x${rtfHandle.toString(16)} dibHandle=0x${dibHandle.toString(16)} rtf=${JSON.stringify(rtf)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-clipboard${tag}: NO CLIPBOARD API at batch ${batch}`);
+        }
+      } else if (ev.action === 'seed-cf-dib') {
+        const we = instance.exports;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() >>> 0) : 0;
+        if (!h || !we.guest_alloc || !we.clipboard_store_binary_data || !we.post_message_q) {
+          logs.push(`[input] seed-cf-dib${tag}: unavailable focus=0x${h.toString(16)} at batch ${batch}`);
+        } else {
+          const width = 32, height = 24, stride = 96;
+          const dibSize = 40 + stride * height;
+          const dibG = we.guest_alloc(dibSize) >>> 0;
+          const dibWA = g2w(dibG);
+          const bytes = new Uint8Array(memory.buffer);
+          const dv = new DataView(memory.buffer);
+          bytes.fill(0, dibWA, dibWA + dibSize);
+          dv.setUint32(dibWA, 40, true);
+          dv.setInt32(dibWA + 4, width, true);
+          dv.setInt32(dibWA + 8, height, true);
+          dv.setUint16(dibWA + 12, 1, true);
+          dv.setUint16(dibWA + 14, 24, true);
+          dv.setUint32(dibWA + 20, stride * height, true);
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              const p = dibWA + 40 + y * stride + x * 3;
+              const red = ((x >> 3) + (y >> 3)) % 2 === 0;
+              bytes[p] = red ? 0 : 255;
+              bytes[p + 1] = 0;
+              bytes[p + 2] = red ? 255 : 0;
+            }
+          }
+          if (we.clipboard_clear_all_data) we.clipboard_clear_all_data();
+          const owned = we.clipboard_store_binary_data(8, dibG) >>> 0;
+          if (we.guest_free) we.guest_free(dibG);
+          const queued = we.post_message_q(h, 0x0302, 0, 0) | 0;
+          logs.push(`[input] seed-cf-dib${tag}: hwnd=0x${h.toString(16)} owned=0x${owned.toString(16)} queued=${queued} at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-text-b64') {
+        const e = instance.exports;
+        const h = e.get_focus_hwnd ? (e.get_focus_hwnd() >>> 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-text-b64${tag}: NO FOCUS at batch ${batch}`);
+        } else if (e.send_message && e.guest_alloc) {
+          const g = e.guest_alloc(ev.text.length + 1) >>> 0;
+          const wa = g2w(g);
+          const u8 = new Uint8Array(memory.buffer);
+          for (let i = 0; i < ev.text.length; i++) u8[wa + i] = ev.text.charCodeAt(i) & 0xff;
+          u8[wa + ev.text.length] = 0;
+          const ret = e.send_message(h, 0x000C, 0, g) >>> 0; // WM_SETTEXT
+          if (e.guest_free) e.guest_free(g);
+          logs.push(`[input] set-focus-text-b64${tag}: hwnd=0x${h.toString(16)} len=${ev.text.length} ret=${ret} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-text-b64${tag}: hwnd=0x${h.toString(16)} NO TEXT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-selection') {
+        const e = instance.exports;
+        const h = e.get_focus_hwnd ? (e.get_focus_hwnd() >>> 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-selection${tag}: NO FOCUS at batch ${batch}`);
+        } else if (e.send_message) {
+          const ret = e.send_message(h, 0x00B1, ev.start | 0, ev.end | 0) >>> 0; // EM_SETSEL
+          logs.push(`[input] set-focus-selection${tag}: hwnd=0x${h.toString(16)} range=${ev.start}..${ev.end} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-selection${tag}: hwnd=0x${h.toString(16)} NO SEND API at batch ${batch}`);
+        }
+      } else if (ev.action === 'send-focus-message') {
+        const e = instance.exports;
+        const h = e.get_focus_hwnd ? (e.get_focus_hwnd() >>> 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] send-focus-message${tag}: NO FOCUS at batch ${batch}`);
+        } else if (e.send_message) {
+          const ret = e.send_message(h, ev.msg | 0, ev.wParam | 0, ev.lParam | 0) >>> 0;
+          logs.push(`[input] send-focus-message${tag}: hwnd=0x${h.toString(16)} msg=0x${(ev.msg >>> 0).toString(16)} wParam=0x${(ev.wParam >>> 0).toString(16)} lParam=0x${(ev.lParam >>> 0).toString(16)} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] send-focus-message${tag}: hwnd=0x${h.toString(16)} NO SEND API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-focus-charformat') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] dump-focus-charformat${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cfSize = 60; // CHARFORMATA; RichEdit accepts this prefix for CHARFORMAT2A too.
+          const cfG = we.guest_alloc(128);
+          const cfWA = g2w(cfG);
+          new Uint8Array(memory.buffer, cfWA, 128).fill(0);
+          const dv = new DataView(memory.buffer);
+          dv.setUint32(cfWA, cfSize, true); // cbSize
+          const ret = we.send_message(h, 0x043A, 1, cfG) >>> 0; // EM_GETCHARFORMAT, SCF_SELECTION
+          const cb = dv.getUint32(cfWA, true) >>> 0;
+          const mask = dv.getUint32(cfWA + 4, true) >>> 0;
+          const effects = dv.getUint32(cfWA + 8, true) >>> 0;
+          const yHeight = dv.getInt32(cfWA + 12, true) | 0;
+          const yOffset = dv.getInt32(cfWA + 16, true) | 0;
+          const color = dv.getUint32(cfWA + 20, true) >>> 0;
+          const charset = dv.getUint8(cfWA + 24);
+          const pitch = dv.getUint8(cfWA + 25);
+          let face = '';
+          for (let i = 0; i < 32; i++) {
+            const ch = dv.getUint8(cfWA + 26 + i);
+            if (!ch) break;
+            face += String.fromCharCode(ch);
+          }
+          const bold = !!(effects & 0x1);
+          const italic = !!(effects & 0x2);
+          const underline = !!(effects & 0x4);
+          logs.push(`[input] dump-focus-charformat${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} ret=0x${ret.toString(16)} cb=${cb} mask=0x${mask.toString(16)} effects=0x${effects.toString(16)} bold=${bold ? 1 : 0} italic=${italic ? 1 : 0} underline=${underline ? 1 : 0} yHeight=${yHeight} yOffset=${yOffset} color=0x${color.toString(16)} charset=${charset} pitch=${pitch} face=${JSON.stringify(face)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-focus-charformat${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO CHARFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-charformat-color') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-charformat-color${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cfG = we.guest_alloc(128);
+          const cfWA = g2w(cfG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, cfWA, 128).fill(0);
+          dv.setUint32(cfWA, 60, true); // CHARFORMATA cbSize
+          dv.setUint32(cfWA + 4, 0x40000000, true); // CFM_COLOR
+          dv.setUint32(cfWA + 8, 0, true); // clear CFE_AUTOCOLOR
+          dv.setUint32(cfWA + 20, ev.color >>> 0, true); // crTextColor
+          const ret = we.send_message(h, 0x0444, 1, cfG) >>> 0; // EM_SETCHARFORMAT, SCF_SELECTION
+          logs.push(`[input] set-focus-charformat-color${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} color=0x${(ev.color >>> 0).toString(16)} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-charformat-color${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO CHARFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-charformat-size') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-charformat-size${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cfG = we.guest_alloc(128);
+          const cfWA = g2w(cfG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, cfWA, 128).fill(0);
+          dv.setUint32(cfWA, 60, true); // CHARFORMATA cbSize
+          dv.setUint32(cfWA + 4, 0x80000000, true); // CFM_SIZE
+          dv.setInt32(cfWA + 12, ev.twips | 0, true); // yHeight
+          const ret = we.send_message(h, 0x0444, 1, cfG) >>> 0; // EM_SETCHARFORMAT, SCF_SELECTION
+          logs.push(`[input] set-focus-charformat-size${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} twips=${ev.twips | 0} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-charformat-size${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO CHARFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-charformat-face') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-charformat-face${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const cfG = we.guest_alloc(128);
+          const cfWA = g2w(cfG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, cfWA, 128).fill(0);
+          dv.setUint32(cfWA, 60, true); // CHARFORMATA cbSize
+          // CFM_FACE 0x20000000, plus CFM_SIZE 0x80000000 when a size is given.
+          dv.setUint32(cfWA + 4, ev.twips ? 0xa0000000 : 0x20000000, true);
+          if (ev.twips) dv.setInt32(cfWA + 12, ev.twips | 0, true); // yHeight
+          const name = Buffer.from(String(ev.face).slice(0, 31), 'latin1');
+          new Uint8Array(memory.buffer, cfWA + 26, name.length).set(name); // szFaceName
+          const ret = we.send_message(h, 0x0444, 1, cfG) >>> 0; // EM_SETCHARFORMAT, SCF_SELECTION
+          logs.push(`[input] set-focus-charformat-face${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} face=${JSON.stringify(ev.face)} twips=${ev.twips | 0} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-charformat-face${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} NO CHARFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-focus-paraformat') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] dump-focus-paraformat${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const pfSize = 188; // PARAFORMAT2A; the first 156 bytes are PARAFORMAT.
+          const pfG = we.guest_alloc(256);
+          const pfWA = g2w(pfG);
+          new Uint8Array(memory.buffer, pfWA, 256).fill(0);
+          const dv = new DataView(memory.buffer);
+          dv.setUint32(pfWA, pfSize, true); // cbSize
+          const ret = we.send_message(h, 0x043D, 0, pfG) >>> 0; // EM_GETPARAFORMAT
+          const cb = dv.getUint32(pfWA, true) >>> 0;
+          const mask = dv.getUint32(pfWA + 4, true) >>> 0;
+          const numbering = dv.getUint16(pfWA + 8, true) >>> 0;
+          const effects = dv.getUint16(pfWA + 10, true) >>> 0;
+          const dxStartIndent = dv.getInt32(pfWA + 12, true) | 0;
+          const dxRightIndent = dv.getInt32(pfWA + 16, true) | 0;
+          const dxOffset = dv.getInt32(pfWA + 20, true) | 0;
+          const alignment = dv.getUint16(pfWA + 24, true) >>> 0;
+          const tabCount = dv.getInt16(pfWA + 26, true) | 0;
+          const tab0 = tabCount > 0 ? (dv.getInt32(pfWA + 28, true) | 0) : 0;
+          logs.push(`[input] dump-focus-paraformat${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} ret=0x${ret.toString(16)} cb=${cb} mask=0x${mask.toString(16)} numbering=${numbering} effects=0x${effects.toString(16)} dxStartIndent=${dxStartIndent} dxRightIndent=${dxRightIndent} dxOffset=${dxOffset} alignment=${alignment} tabCount=${tabCount} tab0=${tab0} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dump-focus-paraformat${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO PARAFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-paraformat-align') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-paraformat-align${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const pfG = we.guest_alloc(256);
+          const pfWA = g2w(pfG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, pfWA, 256).fill(0);
+          dv.setUint32(pfWA, 188, true); // PARAFORMAT2A cbSize
+          dv.setUint32(pfWA + 4, 0x00000008, true); // PFM_ALIGNMENT
+          dv.setUint16(pfWA + 24, ev.align >>> 0, true); // wAlignment
+          const ret = we.send_message(h, 0x0447, 0, pfG) >>> 0; // EM_SETPARAFORMAT
+          logs.push(`[input] set-focus-paraformat-align${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} alignment=${ev.align >>> 0} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-paraformat-align${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO PARAFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'set-focus-paraformat-basic') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? (we.get_focus_hwnd() | 0) : 0;
+        const cls = (h && we.ctrl_get_class) ? we.ctrl_get_class(h) : -1;
+        const id  = (h && we.ctrl_get_id)    ? we.ctrl_get_id(h)    : -1;
+        const parent = (h && we.wnd_get_parent) ? (we.wnd_get_parent(h) | 0) : 0;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (!h) {
+          logs.push(`[input] set-focus-paraformat-basic${tag}: NO FOCUS at batch ${batch}`);
+        } else if (we.send_message && we.guest_alloc) {
+          const pfG = we.guest_alloc(256);
+          const pfWA = g2w(pfG);
+          const dv = new DataView(memory.buffer);
+          new Uint8Array(memory.buffer, pfWA, 256).fill(0);
+          dv.setUint32(pfWA, 188, true); // PARAFORMAT2A cbSize
+          dv.setUint32(pfWA + 4, 0x00000037, true); // PFM_STARTINDENT|RIGHTINDENT|OFFSET|TABSTOPS|NUMBERING
+          dv.setUint16(pfWA + 8, ev.numbering >>> 0, true); // wNumbering
+          dv.setInt32(pfWA + 12, ev.start | 0, true); // dxStartIndent
+          dv.setInt32(pfWA + 16, ev.right | 0, true); // dxRightIndent
+          dv.setInt32(pfWA + 20, ev.offset | 0, true); // dxOffset
+          dv.setInt16(pfWA + 26, ev.tab ? 1 : 0, true); // cTabCount
+          if (ev.tab) dv.setInt32(pfWA + 28, ev.tab | 0, true); // rgxTabs[0]
+          const ret = we.send_message(h, 0x0447, 0, pfG) >>> 0; // EM_SETPARAFORMAT
+          logs.push(`[input] set-focus-paraformat-basic${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} numbering=${ev.numbering | 0} dxStartIndent=${ev.start | 0} dxRightIndent=${ev.right | 0} dxOffset=${ev.offset | 0} tab=${ev.tab | 0} ret=0x${ret.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] set-focus-paraformat-basic${tag}: hwnd=0x${h.toString(16)} class=${cls} id=${id} parent=0x${parent.toString(16)} NO PARAFORMAT API at batch ${batch}`);
+        }
+      } else if (ev.action === 'menu-edit-command') {
+        const we = instance.exports;
+        const tag = ev.label ? ` ${ev.label}` : '';
+        if (we.menu_try_edit_command) {
+          const ret = we.menu_try_edit_command(ev.id >>> 0) >>> 0;
+          logs.push(`[input] menu-edit-command${tag}: id=${ev.id >>> 0} ret=${ret} at batch ${batch}`);
+        } else {
+          logs.push(`[input] menu-edit-command${tag}: id=${ev.id >>> 0} NO MENU API at batch ${batch}`);
+        }
+      } else if (ev.action === 'open-dlg-pick') {
+        // Walk slots for a class-12 (Open/Save) dialog parent, find its
+        // filename edit child (ctrl id 0x442), WM_SETTEXT a heap-alloc'd
+        // filename, then post WM_COMMAND id=IDOK=1 to the dialog.
+        const we = instance.exports;
+        let dlg = 0;
+        for (let s = 0; s < 256; s++) {
+          const h = we.wnd_slot_hwnd(s);
+          if (h && we.ctrl_get_class(h) === 12) { dlg = h; break; }
+        }
+        if (!dlg) {
+          logs.push(`[input] open-dlg-pick: no class-12 dialog at batch ${batch}`);
+        } else {
+          // Find filename edit by walking parent's children
+          let edit = 0;
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+            const h = we.wnd_slot_hwnd(s);
+            if (we.ctrl_get_class(h) === 2 && we.ctrl_get_id(h) === 0x442) { edit = h; break; }
+            s++;
+          }
+          if (!edit) {
+            logs.push(`[input] open-dlg-pick: no filename edit at batch ${batch}`);
+          } else {
+            // Alloc the filename in guest memory + WM_SETTEXT it
+            const name = ev.filename;
+            const g = we.guest_alloc(name.length + 1);
+            const wa = g2w(g);
+            const u8 = new Uint8Array(memory.buffer);
+            for (let i = 0; i < name.length; i++) u8[wa + i] = name.charCodeAt(i);
+            u8[wa + name.length] = 0;
+            we.send_message(edit, 0x000C, 0, g);       // WM_SETTEXT
+            we.send_message(dlg, 0x0111, 1, 0);        // WM_COMMAND IDOK
+            logs.push(`[input] open-dlg-pick: ${name} at batch ${batch}`);
+          }
+        }
+      } else if (ev.action === 'open-dlg-filter') {
+        const we = instance.exports;
+        let dlg = 0;
+        for (let s = 0; s < 256; s++) {
+          const h = we.wnd_slot_hwnd(s);
+          if (h && we.ctrl_get_class(h) === 12) { dlg = h; break; }
+        }
+        if (!dlg) {
+          logs.push(`[input] open-dlg-filter: no class-12 dialog at batch ${batch}`);
+        } else {
+          let combo = 0;
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+            const h = we.wnd_slot_hwnd(s);
+            if (we.ctrl_get_class(h) === 5 && we.ctrl_get_id(h) === 0x445) { combo = h; break; }
+            s++;
+          }
+          if (!combo) {
+            logs.push(`[input] open-dlg-filter: no filter combo at batch ${batch}`);
+          } else {
+            const oneBased = ev.index | 0;
+            const zeroBased = Math.max(0, oneBased - 1);
+            const ret = we.send_message(combo, 0x014E, zeroBased, 0); // CB_SETCURSEL
+            const cur = we.send_message(combo, 0x0147, 0, 0) | 0; // CB_GETCURSEL
+            let text = '';
+            if (we.combobox_get_text && we.guest_alloc) {
+              const buf = we.guest_alloc(256);
+              const len = we.combobox_get_text(combo, buf, 256);
+              const wa = g2w(buf);
+              const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+              text = Buffer.from(bytes).toString('latin1');
+            }
+            logs.push(`[input] open-dlg-filter: requested=${oneBased} ret=${ret} selected=${cur + 1} text=${JSON.stringify(text)} at batch ${batch}`);
+          }
+        }
+      } else if (ev.action === 'edit-ok') {
+        // Find an Edit (class 2) with ctrl_id == ev.ctrlId, WM_SETTEXT with
+        // ev.text, then WM_COMMAND IDOK=1 to its parent dialog. Parent is
+        // discovered by walking wnd_next_child_slot on other slots.
+        const we = instance.exports;
+        let edit = 0;
+        for (let s = 0; s < 256; s++) {
+          const h = we.wnd_slot_hwnd(s);
+          if (!h) continue;
+          if (we.ctrl_get_class(h) === 2 && we.ctrl_get_id(h) === ev.ctrlId) {
+            edit = h; break;
+          }
+        }
+        if (!edit) {
+          logs.push(`[input] edit-ok: no edit id=${ev.ctrlId} at batch ${batch}`);
+        } else {
+          let dlg = 0;
+          for (let s = 0; s < 256; s++) {
+            const h = we.wnd_slot_hwnd(s);
+            if (!h || h === edit) continue;
+            let cs = 0;
+            while ((cs = we.wnd_next_child_slot(h, cs)) !== -1) {
+              if (we.wnd_slot_hwnd(cs) === edit) { dlg = h; break; }
+              cs++;
+            }
+            if (dlg) break;
+          }
+          const text = String(ev.text);
+          const g = we.guest_alloc(text.length + 1);
+          const wa = g2w(g);
+          const u8 = new Uint8Array(memory.buffer);
+          for (let i = 0; i < text.length; i++) u8[wa + i] = text.charCodeAt(i);
+          u8[wa + text.length] = 0;
+          we.send_message(edit, 0x000C, 0, g); // WM_SETTEXT
+          if (dlg) we.send_message(dlg, 0x0111, 1, 0); // WM_COMMAND IDOK
+          logs.push(`[input] edit-ok: id=${ev.ctrlId} text="${text}" edit=0x${edit.toString(16)} dlg=0x${(dlg||0).toString(16)} at batch ${batch}`);
+        }
+      } else if (ev.action === 'class-cmd') {
+        // Walk WND_RECORDS, find first hwnd whose control class matches,
+        // then send WM_COMMAND. Used to close About dialog (class 11) etc.
+        const we = instance.exports;
+        let found = 0;
+        for (let s = 0; s < 256; s++) {
+          const hwnd = we.wnd_slot_hwnd ? we.wnd_slot_hwnd(s) : 0;
+          if (!hwnd) continue;
+          const cls = we.ctrl_get_class ? we.ctrl_get_class(hwnd) : 0;
+          if (cls === ev.ctrlClass) { found = hwnd; break; }
+        }
+        if (found) {
+          we.send_message(found, 0x0111, ev.cmdId, 0);
+          logs.push(`[input] class-cmd: class=${ev.ctrlClass} cmd=${ev.cmdId} hwnd=0x${found.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] class-cmd: class=${ev.ctrlClass} NOT FOUND at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-cmd') {
+        const we = instance.exports;
+        let dlg = 0;
+        // A WAT-native modal (MessageBox, the common dialogs) owns the
+        // CACA0006 pump, and nothing else can complete it. It is the target
+        // whatever the renderer's z-order says, and it is not necessarily
+        // flagged isDialog there, so ask WAT first.
+        if (we.modal_dialog_hwnd) dlg = we.modal_dialog_hwnd() | 0;
+        if (dlg) {
+          we.send_message(dlg, 0x0111, ev.cmdId, 0);
+          logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} modal hwnd=0x${dlg.toString(16)} at batch ${batch}`);
+          continue;
+        }
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        // A property sheet's active page is itself a visible dialog and may
+        // have a higher z-order than the sheet frame. WM_COMMAND IDOK/IDCANCEL
+        // belongs to the outer dialog, so climb through dialog parents before
+        // injecting the command.
+        if (dlg && we.wnd_get_parent) {
+          for (let guard = 0; guard < 16; guard++) {
+            const parent = we.wnd_get_parent(dlg) | 0;
+            const parentWin = parent && renderer && renderer.windows
+              ? renderer.windows[parent]
+              : null;
+            if (!parent || !parentWin || !parentWin.isDialog) break;
+            dlg = parent;
+          }
+        }
+        if (dlg) {
+          we.send_message(dlg, 0x0111, ev.cmdId, 0);
+          logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} hwnd=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-cmd: cmd=${ev.cmdId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-post-cmd') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        // Match dlg-cmd's property-sheet behavior: commands belong to the
+        // outer frame rather than its higher-z-order active page.
+        if (dlg && we.wnd_get_parent) {
+          for (let guard = 0; guard < 16; guard++) {
+            const parent = we.wnd_get_parent(dlg) | 0;
+            const parentWin = parent && renderer && renderer.windows
+              ? renderer.windows[parent]
+              : null;
+            if (!parent || !parentWin || !parentWin.isDialog) break;
+            dlg = parent;
+          }
+        }
+        if (dlg && we.post_message_q) {
+          const queued = we.post_message_q(dlg, 0x0111, ev.cmdId, 0) | 0;
+          logs.push(`[input] dlg-post-cmd: cmd=${ev.cmdId} hwnd=0x${dlg.toString(16)} queued=${queued} at batch ${batch}`);
+        } else if (dlg) {
+          logs.push(`[input] dlg-post-cmd: cmd=${ev.cmdId} hwnd=0x${dlg.toString(16)} NO POST QUEUE at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-post-cmd: cmd=${ev.cmdId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-input-cmd') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        if (dlg) {
+          inputEvent = { msg: 0x0111, wParam: ev.cmdId, lParam: 0, hwnd: dlg };
+          logs.push(`[input] dlg-input-cmd: cmd=${ev.cmdId} hwnd=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-input-cmd: cmd=${ev.cmdId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-input-click') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        let child = 0;
+        if (dlg && we.wnd_next_child_slot && we.wnd_slot_hwnd && we.ctrl_get_id) {
+          const seen = new Set();
+          const findChildById = parent => {
+            if (!parent || seen.has(parent)) return 0;
+            seen.add(parent);
+            let s = 0;
+            while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+              const hwnd = we.wnd_slot_hwnd(s);
+              if (hwnd && we.ctrl_get_id(hwnd) === ev.ctrlId) return hwnd;
+              const nested = findChildById(hwnd);
+              if (nested) return nested;
+              s++;
+            }
+            return 0;
+          };
+          child = findChildById(dlg);
+        }
+        if (dlg && child) {
+          inputEvent = { msg: 0x0111, wParam: ev.ctrlId, lParam: child, hwnd: dlg };
+          logs.push(`[input] dlg-input-click: id=${ev.ctrlId} child=0x${child.toString(16)} dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else if (dlg) {
+          logs.push(`[input] dlg-input-click: id=${ev.ctrlId} NOT FOUND dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-input-click: id=${ev.ctrlId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-click') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        let found = 0;
+        if (dlg && we.wnd_next_child_slot && we.wnd_slot_hwnd && we.ctrl_get_id) {
+          const seen = new Set();
+          const findChildById = (parent) => {
+            if (!parent || seen.has(parent)) return 0;
+            seen.add(parent);
+            let s = 0;
+            while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+              const ch = we.wnd_slot_hwnd(s);
+              if (ch && we.ctrl_get_id(ch) === ev.ctrlId) return ch;
+              const nested = findChildById(ch);
+              if (nested) return nested;
+              s++;
+            }
+            return 0;
+          };
+          found = findChildById(dlg);
+          if (!found && renderer) {
+            const wins = Object.values(renderer.windows || {})
+              .filter(w => w && w.visible && w.isDialog)
+              .sort((a, b) => {
+                const area = (a.w * a.h) - (b.w * b.h);
+                return area || ((b.zOrder || 0) - (a.zOrder || 0));
+              });
+            for (const w of wins) {
+              found = findChildById(w.hwnd | 0);
+              if (found) break;
+            }
+          }
+        }
+        if (found) {
+          we.send_message(found, 0x0201, 0, 0);
+          const watModalHwnd = renderer && renderer._modalDialogHwnd
+            ? (renderer._modalDialogHwnd(renderer.wasm || instance) | 0)
+            : 0;
+          if (renderer && !watModalHwnd) {
+            renderer.inputQueue.push({ type: 'mouse', hwnd: found, msg: 0x0202, wParam: 0, lParam: 0 });
+            if (renderer._wakeMessageWait) renderer._wakeMessageWait();
+          } else {
+            we.send_message(found, 0x0202, 0, 0);
+          }
+          logs.push(`[input] dlg-click: id=${ev.ctrlId} hwnd=0x${found.toString(16)} dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else if (dlg) {
+          logs.push(`[input] dlg-click: id=${ev.ctrlId} NOT FOUND dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-click: id=${ev.ctrlId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'ctrl-click') {
+        const we = instance.exports;
+        const seen = new Set();
+        const findChildById = (parent) => {
+          if (!parent || seen.has(parent) || !we.wnd_next_child_slot || !we.wnd_slot_hwnd || !we.ctrl_get_id) return 0;
+          seen.add(parent);
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            if (ch && we.ctrl_get_id(ch) === ev.ctrlId) return ch;
+            const nested = findChildById(ch);
+            if (nested) return nested;
+            s++;
+          }
+          return 0;
+        };
+        let found = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          for (const w of wins) {
+            found = findChildById(w.hwnd | 0);
+            if (found) break;
+          }
+        }
+        if (!found && we.wnd_slot_hwnd) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (!hwnd) continue;
+            if (we.ctrl_get_id && we.ctrl_get_id(hwnd) === ev.ctrlId) {
+              found = hwnd;
+              break;
+            }
+          }
+        }
+        if (found) {
+          const parent = we.wnd_get_parent ? (we.wnd_get_parent(found) >>> 0) : 0;
+          const wh = we.ctrl_get_wh ? (we.ctrl_get_wh(found) >>> 0) : 0;
+          let routeNote = '';
+          if (parent && we.dialog_route_mouse_screen &&
+              we.wnd_mouse_msg_origin_x && we.wnd_mouse_msg_origin_y) {
+            const sx = (we.wnd_mouse_msg_origin_x(found) | 0) + ((wh & 0xffff) >> 1);
+            const sy = (we.wnd_mouse_msg_origin_y(found) | 0) + ((wh >>> 16) >> 1);
+            let down = we.dialog_route_mouse_screen(parent, 0x0201, 1, sx, sy) | 0;
+            const routedDown = down !== 0;
+            if (!routedDown) {
+              // Some legacy controls are visible while their private layout
+              // parent remains WS_VISIBLE-clear (WinHelp's MS_WINICON strip).
+              // Route those through the control's real subclass procedure.
+              we.send_message(found, 0x0201, 1, 0);
+              down = 1;
+            }
+            // Finish through the same router so its captured-button state is
+            // consumed and subclassed common-control buttons chain correctly.
+            let up;
+            if (routedDown) {
+              up = we.dialog_route_mouse_screen(parent, 0x0202, 0, sx, sy) | 0;
+            } else {
+              we.send_message(found, 0x0202, 0, 0);
+              up = 1;
+            }
+            routeNote = ` route=${down}/${up}@${sx},${sy}`;
+          } else {
+            // WM_LBUTTONDOWN carries MK_LBUTTON while the button is held.
+            we.send_message(found, 0x0201, 1, 0);
+            we.send_message(found, 0x0202, 0, 0);
+          }
+          logs.push(`[input] ctrl-click: id=${ev.ctrlId} hwnd=0x${found.toString(16)}${routeNote} at batch ${batch}`);
+        } else {
+          logs.push(`[input] ctrl-click: id=${ev.ctrlId} NOT FOUND at batch ${batch}`);
+        }
+      } else if (ev.action === 'ctrl-cmd') {
+        const we = instance.exports;
+        const seen = new Set();
+        const findChildById = (parent) => {
+          if (!parent || seen.has(parent) || !we.wnd_next_child_slot || !we.wnd_slot_hwnd || !we.ctrl_get_id) return 0;
+          seen.add(parent);
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            if (ch && we.ctrl_get_id(ch) === ev.ctrlId) return ch;
+            const nested = findChildById(ch);
+            if (nested) return nested;
+            s++;
+          }
+          return 0;
+        };
+        let found = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          for (const w of wins) {
+            found = findChildById(w.hwnd | 0);
+            if (found) break;
+          }
+        }
+        if (!found && we.wnd_slot_hwnd) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (!hwnd) continue;
+            if (we.ctrl_get_id && we.ctrl_get_id(hwnd) === ev.ctrlId) {
+              found = hwnd;
+              break;
+            }
+          }
+        }
+        if (found) {
+          const parent = we.wnd_get_parent ? (we.wnd_get_parent(found) >>> 0) : 0;
+          const target = parent || found;
+          we.send_message(target, 0x0111, ev.ctrlId & 0xffff, found);
+          let top = 0;
+          try { top = we.wnd_top_level ? (we.wnd_top_level(found) >>> 0) : 0; } catch (_) { top = 0; }
+          if (top && top !== target) we.send_message(top, 0x0111, ev.ctrlId & 0xffff, found);
+          logs.push(`[input] ctrl-cmd: id=${ev.ctrlId} hwnd=0x${found.toString(16)} target=0x${target.toString(16)} top=0x${top.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] ctrl-cmd: id=${ev.ctrlId} NOT FOUND at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-send') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        let found = 0;
+        if (dlg && we.wnd_next_child_slot && we.wnd_slot_hwnd && we.ctrl_get_id) {
+          const seen = new Set();
+          const findChildById = (parent) => {
+            if (!parent || seen.has(parent)) return 0;
+            seen.add(parent);
+            let s = 0;
+            while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+              const ch = we.wnd_slot_hwnd(s);
+              if (ch && we.ctrl_get_id(ch) === ev.ctrlId) return ch;
+              const nested = findChildById(ch);
+              if (nested) return nested;
+              s++;
+            }
+            return 0;
+          };
+          found = findChildById(dlg);
+          if (!found && renderer) {
+            const wins = Object.values(renderer.windows || {})
+              .filter(w => w && w.visible && w.isDialog)
+              .sort((a, b) => {
+                const area = (a.w * a.h) - (b.w * b.h);
+                return area || ((b.zOrder || 0) - (a.zOrder || 0));
+              });
+            for (const w of wins) {
+              found = findChildById(w.hwnd | 0);
+              if (found) break;
+            }
+          }
+        }
+        if (found) {
+          const ret = we.send_message(found, ev.msg, ev.wParam, ev.lParam) | 0;
+          const firstVisible = we.send_message(found, 0x00CE, 0, 0) | 0; // EM_GETFIRSTVISIBLELINE
+          logs.push(`[input] dlg-send: id=${ev.ctrlId} hwnd=0x${found.toString(16)} msg=0x${ev.msg.toString(16)} ret=${ret} firstVisible=${firstVisible} at batch ${batch}`);
+        } else if (dlg) {
+          logs.push(`[input] dlg-send: id=${ev.ctrlId} NOT FOUND dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-send: id=${ev.ctrlId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-set-edit') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        let edit = 0;
+        if (dlg && we.wnd_next_child_slot && we.wnd_slot_hwnd && we.ctrl_get_id && we.ctrl_get_class) {
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            if (ch && we.ctrl_get_id(ch) === ev.ctrlId && we.ctrl_get_class(ch) === 2) { edit = ch; break; }
+            s++;
+          }
+        }
+        if (edit) {
+          const text = String(ev.text);
+          const g = we.guest_alloc(text.length + 1);
+          const wa = g2w(g);
+          const u8 = new Uint8Array(memory.buffer);
+          for (let i = 0; i < text.length; i++) u8[wa + i] = text.charCodeAt(i);
+          u8[wa + text.length] = 0;
+          we.send_message(edit, 0x000C, 0, g); // WM_SETTEXT
+          logs.push(`[input] dlg-set-edit: id=${ev.ctrlId} text="${text}" edit=0x${edit.toString(16)} dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else if (dlg) {
+          logs.push(`[input] dlg-set-edit: id=${ev.ctrlId} NOT FOUND dlg=0x${dlg.toString(16)} at batch ${batch}`);
+        } else {
+          logs.push(`[input] dlg-set-edit: id=${ev.ctrlId} NO DIALOG at batch ${batch}`);
+        }
+      } else if (ev.action === 'dlg-dump') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+          }
+        }
+        const dumpDialog = (targetDlg) => {
+          const controls = [];
+          if (!targetDlg || !we.wnd_next_child_slot || !we.wnd_slot_hwnd) return controls;
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(targetDlg, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            const cls = we.ctrl_get_class ? we.ctrl_get_class(ch) : -1;
+            const id = we.ctrl_get_id ? we.ctrl_get_id(ch) : -1;
+            const xy = we.ctrl_get_xy ? we.ctrl_get_xy(ch) : 0;
+            const wh = we.ctrl_get_wh ? we.ctrl_get_wh(ch) : 0;
+            const style = we.wnd_get_style_export ? we.wnd_get_style_export(ch) >>> 0 : 0;
+            const sx = we.wnd_window_screen_x ? we.wnd_window_screen_x(ch) | 0 : 0;
+            const sy = we.wnd_window_screen_y ? we.wnd_window_screen_y(ch) | 0 : 0;
+            let text = '';
+            if (cls === 1 && we.button_get_text && we.guest_alloc) {
+              const buf = we.guest_alloc(256);
+              const len = we.button_get_text(ch, buf, 256);
+              const wa = g2w(buf);
+              const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+              text = ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+            } else if (cls === 3 && we.static_get_text && we.guest_alloc) {
+              const buf = we.guest_alloc(256);
+              const len = we.static_get_text(ch, buf, 256);
+              const wa = g2w(buf);
+              const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+              text = ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+              if (we.static_get_image_ordinal) {
+                const ordinal = we.static_get_image_ordinal(ch) | 0;
+                if (ordinal) text += ` imageOrd=${ordinal}`;
+              }
+            } else if (cls === 5 && we.combobox_get_text && we.guest_alloc) {
+              const buf = we.guest_alloc(256);
+              const len = we.combobox_get_text(ch, buf, 256);
+              const wa = g2w(buf);
+              const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+              const cur = we.combobox_get_cur_sel ? we.combobox_get_cur_sel(ch) : -1;
+              text = ' sel=' + cur + ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+            } else if (cls === 4 && we.listbox_get_count &&
+                       we.listbox_get_item_text && we.guest_alloc) {
+              const count = Math.max(0, Math.min(we.listbox_get_count(ch) | 0, 64));
+              const buf = we.guest_alloc(256);
+              const rows = [];
+              for (let row = 0; row < count; row++) {
+                const len = Math.max(0, Math.min(
+                  we.listbox_get_item_text(ch, row, buf, 256) | 0, 255));
+                rows.push(Buffer.from(new Uint8Array(memory.buffer, g2w(buf), len)).toString('latin1'));
+              }
+              const cur = we.listbox_get_cur_sel ? we.listbox_get_cur_sel(ch) : -1;
+              text = ' sel=' + cur + ' rows="' + rows.join(' || ') + '"';
+            }
+            let checked = '';
+            if (cls === 1 && we.send_message) {
+              checked = ` checked=${we.send_message(ch, 0x00F0, 0, 0) | 0}`;
+            }
+            controls.push(`hwnd=0x${ch.toString(16)} id=${id} cls=${cls} style=0x${style.toString(16)} xy=${xy & 0xffff},${xy >>> 16} wh=${wh & 0xffff},${wh >>> 16} screen=${sx},${sy}${text}${checked}`);
+            s++;
+          }
+          return controls;
+        };
+        if (ev.label === 'all' && renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => (a.zOrder || 0) - (b.zOrder || 0));
+          for (const w of wins) {
+            const controls = dumpDialog(w.hwnd | 0);
+            logs.push(`[input] dlg-dump:all dlg=0x${(w.hwnd | 0).toString(16)} ${controls.length ? controls.join(' | ') : '(no controls)'}`);
+          }
+        } else {
+          const controls = dumpDialog(dlg);
+          const modal = we.modal_dialog_hwnd ? (we.modal_dialog_hwnd() >>> 0) : 0;
+          logs.push(`[input] dlg-dump${ev.label ? ':' + ev.label : ''}: dlg=${dlg ? '0x' + dlg.toString(16) : 'none'} modal=${modal ? '0x' + modal.toString(16) : 'none'} ${controls.length ? controls.join(' | ') : '(no controls)'}`);
+        }
+      } else if (ev.action === 'dump-children') {
+        const we = instance.exports;
+        const parent = ev.hwnd >>> 0;
+        const children = [];
+        if (we.wnd_next_child_slot && we.wnd_slot_hwnd) {
+          let slot = 0;
+          for (let guard = 0; guard < 256; guard++) {
+            slot = we.wnd_next_child_slot(parent, slot) | 0;
+            if (slot < 0) break;
+            const hwnd = we.wnd_slot_hwnd(slot) >>> 0;
+            const cls = we.ctrl_get_class ? (we.ctrl_get_class(hwnd) | 0) : 0;
+            const id = we.ctrl_get_id ? (we.ctrl_get_id(hwnd) | 0) : 0;
+            const par = we.wnd_get_parent ? (we.wnd_get_parent(hwnd) >>> 0) : 0;
+            const proc = we.wnd_get_proc_export ? (we.wnd_get_proc_export(hwnd) >>> 0) : 0;
+            const style = we.wnd_get_style_export ? (we.wnd_get_style_export(hwnd) >>> 0) : 0;
+            const xy = we.ctrl_get_xy ? (we.ctrl_get_xy(hwnd) >>> 0) : 0;
+            const wh = we.ctrl_get_wh ? (we.ctrl_get_wh(hwnd) >>> 0) : 0;
+            const buttonFlags = cls === 1 && we.button_get_flags ? (we.button_get_flags(hwnd) >>> 0) : 0;
+            // A control that never appears is nearly always still owed a paint
+            // it is not allowed to take: `dirty` says it is queued, and the
+            // parent's `nc` bit 1 (erase) or its own `dirty` bit is what holds
+            // the queue up.
+            const dirty = we.paint_flag_test ? (we.paint_flag_test(hwnd) | 0) : -1;
+            // For a WS_CHILD the recorded CLIENT_RECT, not `wh`, is what
+            // $wnd_client_{w,h}_for_clip hands to the DC clip whenever it is
+            // non-empty — so a control that paints its own furniture (an
+            // edit's scrollbar strips, a combo's drop arrow) loses exactly the
+            // pixels this rect is short of `wh`, and nothing else in a trace
+            // says so.
+            const cr = we.get_client_rect_l
+              ? `${we.get_client_rect_l(hwnd) | 0},${we.get_client_rect_t(hwnd) | 0},${we.get_client_rect_r(hwnd) | 0},${we.get_client_rect_b(hwnd) | 0}`
+              : 'n/a';
+            // The update rect the selector actually reads. `dirty=1 upd=none`
+            // is a flag with no region (the selector drops it); a parent with
+            // `upd=none` never seeds its children at all.
+            const upd = we.update_rect_lt
+              ? (() => {
+                const lt = we.update_rect_lt(hwnd) | 0, rb = we.update_rect_rb(hwnd) | 0;
+                return (lt || rb) ? `${lt & 0xffff},${lt >> 16},${rb & 0xffff},${rb >> 16}` : 'none';
+              })()
+              : 'n/a';
+            children.push(`slot=${slot} hwnd=0x${hwnd.toString(16)} upd=${upd} parent=0x${par.toString(16)} proc=0x${proc.toString(16)} cls=${cls} id=${id} style=0x${style.toString(16)} buttonFlags=0x${buttonFlags.toString(16)} xy=${xy & 0xffff},${xy >>> 16} wh=${wh & 0xffff}x${wh >>> 16} cr=${cr} dirty=${dirty}`);
+            slot++;
+          }
+        }
+        const parentNc = we.nc_flags_test ? (we.nc_flags_test(parent) >>> 0) : 0;
+        const parentDirty = we.paint_flag_test ? (we.paint_flag_test(parent) | 0) : -1;
+        const parentUpdLt = we.update_rect_lt ? (we.update_rect_lt(parent) | 0) : 0;
+        const parentUpdRb = we.update_rect_rb ? (we.update_rect_rb(parent) | 0) : 0;
+        const parentUpd = (parentUpdLt || parentUpdRb)
+          ? `${parentUpdLt & 0xffff},${parentUpdLt >> 16},${parentUpdRb & 0xffff},${parentUpdRb >> 16}`
+          : 'none';
+        logs.push(`[input] dump-children${ev.label ? ':' + ev.label : ''}: parent=0x${parent.toString(16)} nc=0x${parentNc.toString(16)} dirty=${parentDirty} upd=${parentUpd} ${children.length ? children.join(' | ') : '(none)'}`);
+      } else if (ev.action === 'menu-dump') {
+        const we = instance.exports;
+        const hwnd = we.menu_open_hwnd ? (we.menu_open_hwnd() >>> 0) : 0;
+        const top = we.menu_open_top ? (we.menu_open_top() | 0) : -1;
+        const hover = we.menu_open_hover ? (we.menu_open_hover() | 0) : -1;
+        const subHover = we.menu_open_sub_hover ? (we.menu_open_sub_hover() | 0) : -1;
+        const x = we.menu_open_x ? (we.menu_open_x() | 0) : -1;
+        const y = we.menu_open_y ? (we.menu_open_y() | 0) : -1;
+        const count = hwnd && we.menu_child_count ? (we.menu_child_count(hwnd, top) | 0) : 0;
+        const items = [];
+        for (let i = 0; i < count; i++) {
+          const id = we.menu_child_id ? (we.menu_child_id(hwnd, top, i) | 0) : 0;
+          const flags = we.menu_child_flags ? (we.menu_child_flags(hwnd, top, i) | 0) : 0;
+          const subCount = we.menu_child_sub_count ? (we.menu_child_sub_count(hwnd, top, i) | 0) : 0;
+          const ptr = we.menu_child_label_ptr ? (we.menu_child_label_ptr(hwnd, top, i) >>> 0) : 0;
+          const len = we.menu_child_label_len ? (we.menu_child_label_len(hwnd, top, i) | 0) : 0;
+          let label = '';
+          if (ptr && len > 0) {
+            const bytes = new Uint8Array(memory.buffer, ptr, len);
+            label = Buffer.from(bytes).toString('latin1');
+          }
+          let sub = '';
+          if (subCount > 0 && we.menu_subchild_id && we.menu_subchild_label_ptr && we.menu_subchild_label_len) {
+            const subItems = [];
+            for (let j = 0; j < subCount; j++) {
+              const sid = we.menu_subchild_id(hwnd, top, i, j) | 0;
+              const sflags = we.menu_subchild_flags ? (we.menu_subchild_flags(hwnd, top, i, j) | 0) : 0;
+              const sptr = we.menu_subchild_label_ptr(hwnd, top, i, j) >>> 0;
+              const slen = we.menu_subchild_label_len(hwnd, top, i, j) | 0;
+              let slabel = '';
+              if (sptr && slen > 0) {
+                const bytes = new Uint8Array(memory.buffer, sptr, slen);
+                slabel = Buffer.from(bytes).toString('latin1');
+              }
+              subItems.push(`${j}:${sid}:"${slabel}"${sflags ? `:flags=0x${sflags.toString(16)}` : ''}`);
+            }
+            sub = ` sub=[${subItems.join(',')}]`;
+          }
+          items.push(`#${i} id=${id} flags=0x${flags.toString(16)} "${label}"${sub}`);
+        }
+        // Where the dropdown and its cascade actually are. Without this a
+        // "submenu never highlighted" report cannot be told apart from
+        // "the test aimed the mouse at the wrong place": both look like
+        // subhover=-1. Read the measured widths shared by painting and hit
+        // testing; the cascade hangs off the hovered row.
+        let geom = '';
+        if (hwnd && we.menu_dropdown_x && we.menu_dropdown_y) {
+          const dx = we.menu_dropdown_x(hwnd, top) | 0;
+          const dy = we.menu_dropdown_y(hwnd) | 0;
+          const dh = we.menu_dropdown_height ? (we.menu_dropdown_height(hwnd, top) | 0) : 0;
+          const dw = we.menu_dropdown_width ? (we.menu_dropdown_width(hwnd, top) | 0) : 180;
+          geom = ` drop=${dx},${dy} ${dw}x${dh}`;
+          if (hover >= 0 && we.menu_child_sub_count) {
+            const subn = we.menu_child_sub_count(hwnd, top, hover) | 0;
+            if (subn > 0) {
+              const sw = we.menu_submenu_width
+                ? (we.menu_submenu_width(hwnd, top, hover) | 0) : 180;
+              geom += ` cascade=${dx + dw},${dy + 2 + hover * 20} ${sw}x${subn * 20 + 4}`;
+            }
+          }
+        }
+        logs.push(`[input] menu-dump${ev.label ? ':' + ev.label : ''}: hwnd=${hwnd ? '0x' + hwnd.toString(16) : 'none'} top=${top} hover=${hover} subhover=${subHover} xy=${x},${y}${geom} count=${count} ${items.join(' | ') || '(no items)'}`);
+      } else if (ev.action === 'dlg-paint') {
+        const we = instance.exports;
+        let dlg = 0;
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          if (wins.length) dlg = wins[0].hwnd | 0;
+        }
+        let painted = 0;
+        if (dlg && we.send_message) {
+          we.send_message(dlg, 0x000F, 0, 0);
+          painted++;
+          if (we.wnd_next_child_slot && we.wnd_slot_hwnd) {
+            let s = 0;
+            while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+              const ch = we.wnd_slot_hwnd(s);
+              we.send_message(ch, 0x000F, 0, 0);
+              painted++;
+              s++;
+            }
+          }
+        }
+        if (renderer && renderer.flushRepaint) renderer.flushRepaint(true);
+        logs.push(`[input] dlg-paint painted=${painted} dlg=${dlg ? '0x' + dlg.toString(16) : 'none'} at batch ${batch}`);
+      } else if (ev.action === 'dlg-png' && renderer) {
+        try {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          const dlgWin = wins[0] || null;
+          const canvas = dlgWin && dlgWin._backCanvas;
+          if (!canvas) throw new Error('no dialog back-canvas');
+          const buf = canvasToPng(canvas);
+          fs.writeFileSync(ev.path, buf);
+          logs.push(`[input] dlg-png ${ev.path} (${buf.length} bytes) hwnd=0x${(dlgWin.hwnd | 0).toString(16)} at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] dlg-png FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-msgq') {
+        // What is actually waiting in the posted-message queue. The queue is
+        // WAT-private memory below GUEST_BASE, so --dump cannot show it.
+        const we = instance.exports;
+        const label = ev.label ? ':' + ev.label : '';
+        const depth = we.post_queue_depth ? (we.post_queue_depth() | 0) : -1;
+        const rows = [];
+        for (let i = 0; i < depth; i++) {
+          const f = n => (we.post_queue_peek(i, n) >>> 0);
+          rows.push(`[${i}] hwnd=0x${f(0).toString(16)} msg=0x${f(1).toString(16)}` +
+            ` wp=0x${f(2).toString(16)} lp=0x${f(3).toString(16)}`);
+        }
+        logs.push(`[input] dump-msgq${label}: depth=${depth} ${rows.join(' | ')} at batch ${batch}`);
+      } else if (ev.action === 'hit-counts') {
+        const label = ev.label ? ':' + ev.label : '';
+        const get = instance.exports.get_count;
+        const vals = get ? countAddrs.map((a, i) => `0x${(a >>> 0).toString(16)}=${get(i) >>> 0}`) : [];
+        logs.push(`[input] hit-counts${label}: ${vals.join(' ') || '(no --count)'} at batch ${batch}`);
+      } else if (ev.action === 'dump-windows' && renderer) {
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const entries = Object.entries(renderer.windows || {})
+          .sort((a, b) => (parseInt(a[0], 10) || 0) - (parseInt(b[0], 10) || 0));
+        if (!entries.length) {
+          logs.push(`[input] dump-windows${label}: (none) at batch ${batch}`);
+        }
+        for (const [hwndStr, win] of entries) {
+          if (!win) continue;
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          let ctrlClass = -1;
+          let ctrlId = -1;
+          let style = 0;
+          let owner = 0;
+          let wndProc = 0;
+          let dialogProc = 0;
+          try {
+            if (we && we.ctrl_get_class) ctrlClass = we.ctrl_get_class(hwnd) | 0;
+            if (we && we.ctrl_get_id) ctrlId = we.ctrl_get_id(hwnd) | 0;
+            if (we && we.wnd_get_style_export) style = we.wnd_get_style_export(hwnd) >>> 0;
+            if (we && we.wnd_get_owner) owner = we.wnd_get_owner(hwnd) >>> 0;
+            if (we && we.wnd_get_proc_export) wndProc = we.wnd_get_proc_export(hwnd) >>> 0;
+            if (we && we.dialog_get_proc_export) dialogProc = we.dialog_get_proc_export(hwnd) >>> 0;
+          } catch (_) {}
+          if (!style) style = win.style >>> 0;
+          const parent = win.parentHwnd ? `0x${(win.parentHwnd >>> 0).toString(16)}` : '0x0';
+          const enabled = (style & 0x08000000) === 0;
+          // Whether this window shows a menu bar. Anything driving an app
+          // through WM_COMMAND needs it: a window with no menu has no menu
+          // commands, so "I posted a command and nothing happened" says
+          // nothing about the app. The renderer already decides this to lay
+          // the window out, so ask it rather than guessing from the style.
+          let menuBar = false;
+          try { if (renderer._hasMenuBar) menuBar = !!renderer._hasMenuBar(win); } catch (_) {}
+          // GetWindowText on a combobox returns its edit-field text, which for
+          // a dropdown is the current selection. The renderer's title mirror
+          // only carries what WM_SETTEXT put there, so a combobox filled by
+          // CB_ADDSTRING + CB_SETCURSEL -- WordPad's font name box -- reads as
+          // empty here while the control itself holds the right string.
+          let title = win.title;
+          try {
+            if (ctrlClass === 5 && we && we.combobox_get_text && we.guest_alloc) {
+              const buf = we.guest_alloc(256);
+              const len = we.combobox_get_text(hwnd, buf, 256) | 0;
+              if (len > 0) {
+                title = Buffer.from(
+                  new Uint8Array(memory.buffer, g2w(buf), len)).toString('latin1');
+              }
+            }
+          } catch (_) {}
+          // What the *guest* is told, next to what the renderer believes.
+          // IsIconic/IsZoomed read these bits; win._minimized composites. They
+          // are supposed to agree, and printing only one hid it when they did
+          // not.
+          let iconic = false, zoomed = false;
+          try {
+            if (we && we.wnd_is_minimized) iconic = !!we.wnd_is_minimized(hwnd);
+            if (we && we.wnd_is_maximized) zoomed = !!we.wnd_is_maximized(hwnd);
+          } catch (_) {}
+          logs.push(`[input] window${label} hwnd=${hwndStr} class=${JSON.stringify(win.className || '')} ctrlClass=${ctrlClass} ctrlId=${ctrlId} parent=${parent} owner=0x${owner.toString(16)} wndProc=0x${wndProc.toString(16)} dialogProc=0x${dialogProc.toString(16)} z=${win.zOrder || 0} pos=${win.x},${win.y} size=${win.w}x${win.h} client=${JSON.stringify(win.clientRect)} visible=${win.visible} minimized=${!!win._minimized} iconic=${iconic} zoomed=${zoomed} enabled=${enabled} style=0x${style.toString(16)} dialog=${!!win.isDialog} menuBar=${menuBar} hasBack=${!!win._backCanvas} title=${JSON.stringify(title)} at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-tree') {
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const dv = new DataView(memory.buffer);
+        const u8 = new Uint8Array(memory.buffer);
+        const items = [];
+        // 0x07F00000 stays a literal: it is not a declared region base, only the
+        // exclusive end of the one below it, and spelling it region.end would
+        // encode an adjacency the allocator is free to change.
+        const table = we.treeview_get_table_base ? (we.treeview_get_table_base() >>> 0) : 0x07F00000;
+        const slots = we.treeview_get_slot_limit ? (we.treeview_get_slot_limit() | 0) : 32;
+        for (let i = 0; i < slots; i++) {
+          const p = table + i * 32;
+          const handle = dv.getUint32(p, true);
+          if (!handle) continue;
+          const parent = dv.getUint32(p + 4, true);
+          const child = dv.getUint32(p + 8, true);
+          const next = dv.getUint32(p + 12, true);
+          const state = dv.getUint32(p + 20, true);
+          const itemParam = dv.getUint32(p + 24, true);
+          const textG = dv.getUint32(p + 28, true);
+          let itemText = '';
+          if (textG) {
+            let q = g2w(textG);
+            const bytes = [];
+            while (q < u8.length && bytes.length < 255 && u8[q]) bytes.push(u8[q++]);
+            itemText = Buffer.from(bytes).toString('latin1');
+          }
+          items.push(`#${i} h=0x${handle.toString(16)} parent=0x${parent.toString(16)} child=0x${child.toString(16)} next=0x${next.toString(16)} state=0x${state.toString(16)} lParam=0x${itemParam.toString(16)} text=${JSON.stringify(itemText)}`);
+        }
+        const visible = we.treeview_get_visible_count ? (we.treeview_get_visible_count() | 0) : -1;
+        const firstRow = we.treeview_get_first_visible_row ? (we.treeview_get_first_visible_row() | 0) : -1;
+        const paintVisible = we.treeview_get_debug_paint_visible ? (we.treeview_get_debug_paint_visible() | 0) : -1;
+        const paintText = we.treeview_get_debug_paint_text ? (we.treeview_get_debug_paint_text() | 0) : -1;
+        const paintIterations = we.treeview_get_debug_paint_iterations ? (we.treeview_get_debug_paint_iterations() | 0) : -1;
+        const paintLastY = we.treeview_get_debug_paint_last_y ? (we.treeview_get_debug_paint_last_y() | 0) : -1;
+        const paintRows = we.treeview_get_debug_paint_rows ? (we.treeview_get_debug_paint_rows() | 0) : -1;
+        logs.push(`[input] dump-tree${label}: visible=${visible} firstRow=${firstRow} paintIterations=${paintIterations} paintVisible=${paintVisible} paintText=${paintText} paintRows=${paintRows} paintLastY=${paintLastY} ${items.join(' | ') || '(empty)'} at batch ${batch}`);
+      } else if (ev.action === 'dump-listbox' && renderer) {
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const entries = Object.entries(renderer.windows || {})
+          .sort((a, b) => (parseInt(a[0], 10) || 0) - (parseInt(b[0], 10) || 0));
+        let found = 0;
+        for (const [hwndStr, win] of entries) {
+          if (!win) continue;
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          const ctrlClass = we.ctrl_get_class ? (we.ctrl_get_class(hwnd) | 0) : -1;
+          if (ctrlClass !== 4 || !we.listbox_get_count || !we.listbox_get_item_text || !we.guest_alloc) continue;
+          found++;
+          const count = Math.max(0, Math.min(we.listbox_get_count(hwnd) | 0, 128));
+          const selection = we.listbox_get_cur_sel ? (we.listbox_get_cur_sel(hwnd) | 0) : -1;
+          const selected = [];
+          if (we.listbox_get_sel) {
+            for (let row = 0; row < count; row++) {
+              if (we.listbox_get_sel(hwnd, row) | 0) selected.push(row);
+            }
+          }
+          const buffer = we.guest_alloc(512);
+          const rows = [];
+          for (let row = 0; row < count; row++) {
+            const length = Math.max(0, Math.min(we.listbox_get_item_text(hwnd, row, buffer, 512) | 0, 511));
+            rows.push(`#${row} ${JSON.stringify(readStr(g2w(buffer), length))}`);
+          }
+          logs.push(`[input] dump-listbox${label}: hwnd=${hwndStr} count=${count} selection=${selection} selected=${selected.join(',')} ${rows.join(' ; ') || '(empty)'} at batch ${batch}`);
+        }
+        if (!found) logs.push(`[input] dump-listbox${label}: (none) at batch ${batch}`);
+      } else if (ev.action === 'listbox-setsel' && renderer) {
+        const we = instance.exports;
+        let found = 0;
+        for (const hwndStr of Object.keys(renderer.windows || {})) {
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          if (we.ctrl_get_class && (we.ctrl_get_class(hwnd) | 0) === 4) {
+            found = hwnd;
+            break;
+          }
+        }
+        const result = found && we.send_message
+          ? (we.send_message(found, 0x0185, ev.selected ? 1 : 0, ev.index) | 0)
+          : -1;
+        logs.push(`[input] listbox-setsel index=${ev.index} selected=${ev.selected} hwnd=0x${found.toString(16)} result=${result} at batch ${batch}`);
+      } else if (ev.action === 'dump-listview' && renderer) {
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const entries = Object.entries(renderer.windows || {})
+          .sort((a, b) => (parseInt(a[0], 10) || 0) - (parseInt(b[0], 10) || 0));
+        let found = 0;
+        for (const [hwndStr, win] of entries) {
+          if (!win) continue;
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          const ctrlClass = we.ctrl_get_class ? (we.ctrl_get_class(hwnd) | 0) : -1;
+          if (ctrlClass !== 18 || !we.listview_get_count || !we.listview_get_item_text || !we.guest_alloc) continue;
+          found++;
+          const count = Math.max(0, Math.min(we.listview_get_count(hwnd) | 0, 64));
+          const columns = Math.max(1, Math.min(we.listview_get_column_count ? (we.listview_get_column_count(hwnd) | 0) : 1, 8));
+          const buffer = we.guest_alloc(512);
+          const item = we.guest_alloc(40);
+          const itemWa = g2w(item);
+          const itemDv = new DataView(memory.buffer);
+          const cells = [];
+          const imageLists = we.send_message
+            ? [0, 1, 2].map(kind =>
+                `il${kind}=0x${(we.send_message(hwnd, 0x1002, kind, 0) >>> 0).toString(16)}`)
+              .join(' ')
+            : '';
+          for (let row = 0; row < count; row++) {
+            const values = [];
+            for (let column = 0; column < columns; column++) {
+              const length = Math.max(0, Math.min(we.listview_get_item_text(hwnd, row, column, buffer, 512) | 0, 511));
+              values.push(readStr(g2w(buffer), length));
+            }
+            let metadata = '';
+            if (we.send_message) {
+              new Uint8Array(memory.buffer, itemWa, 40).fill(0);
+              itemDv.setUint32(itemWa, 0x0006, true); // LVIF_IMAGE | LVIF_PARAM
+              itemDv.setInt32(itemWa + 4, row, true);
+              const ok = we.send_message(hwnd, 0x1005, 0, item) | 0; // LVM_GETITEMA
+              metadata = ` image=${itemDv.getInt32(itemWa + 28, true)} lParam=0x${itemDv.getUint32(itemWa + 32, true).toString(16)} get=${ok}`;
+            }
+            cells.push(`#${row}${metadata} ${values.map(value => JSON.stringify(value)).join(' | ')}`);
+          }
+          logs.push(`[input] dump-listview${label}: hwnd=${hwndStr} count=${count} columns=${columns} ${imageLists} ${cells.join(' ; ') || '(empty)'} at batch ${batch}`);
+        }
+        if (!found) logs.push(`[input] dump-listview${label}: (none) at batch ${batch}`);
+      } else if (ev.action === 'dump-toolbar' && renderer) {
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const entries = Object.entries(renderer.windows || {})
+          .sort((a, b) => (parseInt(a[0], 10) || 0) - (parseInt(b[0], 10) || 0));
+        const dv = new DataView(memory.buffer);
+        const u8 = new Uint8Array(memory.buffer);
+        let found = 0;
+        for (const [hwndStr, win] of entries) {
+          if (!win) continue;
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          let ctrlClass = -1;
+          let ctrlId = -1;
+          try {
+            if (we && we.ctrl_get_class) ctrlClass = we.ctrl_get_class(hwnd) | 0;
+            if (we && we.ctrl_get_id) ctrlId = we.ctrl_get_id(hwnd) | 0;
+          } catch (_) {}
+          if (ctrlClass !== 21 || !we || !we.send_message || !we.guest_alloc) continue;
+          found++;
+          const count = we.send_message(hwnd, 0x0418, 0, 0) | 0; // TB_BUTTONCOUNT
+          const recG = we.guest_alloc(20);
+          const rectG = we.guest_alloc(16);
+          const recP = g2w(recG);
+          const rectP = g2w(rectG);
+          const max = Math.max(0, Math.min(count, 64));
+          const items = [];
+          for (let i = 0; i < max; i++) {
+            u8.fill(0, recP, recP + 20);
+            u8.fill(0, rectP, rectP + 16);
+            const okBtn = we.send_message(hwnd, 0x0417, i, recG) | 0; // TB_GETBUTTON
+            const okRect = we.send_message(hwnd, 0x041D, i, rectG) | 0; // TB_GETITEMRECT
+            const img = dv.getInt32(recP + 0, true);
+            const cmd = dv.getInt32(recP + 4, true);
+            const state = u8[recP + 8] | 0;
+            const style = u8[recP + 9] | 0;
+            const left = dv.getInt32(rectP + 0, true);
+            const top = dv.getInt32(rectP + 4, true);
+            const right = dv.getInt32(rectP + 8, true);
+            const bottom = dv.getInt32(rectP + 12, true);
+            items.push(`#${i} ok=${okBtn}/${okRect} img=${img} cmd=${cmd} state=0x${state.toString(16)} style=0x${style.toString(16)} rect=${left},${top},${right},${bottom}`);
+          }
+          const extra = count > max ? ` ... +${count - max} more` : '';
+          logs.push(`[input] toolbar${label}: hwnd=0x${hwnd.toString(16)} ctrlId=${ctrlId} title=${JSON.stringify(win.title || '')} count=${count} ${items.join(' | ')}${extra} at batch ${batch}`);
+        }
+        if (!found) {
+          logs.push(`[input] toolbar${label}: (none) at batch ${batch}`);
+        }
+      } else if (ev.action === 'toolbar-click' && renderer && renderer.handleMouseDown) {
+        // Click a toolbar button by its command id, wherever it currently sits.
+        // Hardcoded pixel coordinates for toolbar buttons go stale silently the
+        // moment a control's layout moves: the click still lands on *something*,
+        // so the run stays green-looking while the button was never pressed.
+        // TB_GETITEMRECT is the same source dump-toolbar reads, and clientRect
+        // is already screen-space, so this stays correct across relayouts.
+        const label = ev.label ? ':' + ev.label : '';
+        const we = instance.exports;
+        const dv = new DataView(memory.buffer);
+        const u8 = new Uint8Array(memory.buffer);
+        let hit = null;
+        for (const [hwndStr, win] of Object.entries(renderer.windows || {})) {
+          if (!win || !win.visible || hit) continue;
+          const hwnd = parseInt(hwndStr, 10) || 0;
+          let ctrlClass = -1;
+          try { if (we && we.ctrl_get_class) ctrlClass = we.ctrl_get_class(hwnd) | 0; } catch (_) {}
+          // ctrlClass 21 is a WAT-owned toolbar; when a real comctl32.dll is
+          // loaded the same window is class ToolbarWindow32 with ctrlClass 0
+          // and a guest wndproc. TB_GETITEMRECT answers in both cases, so match
+          // on either and let send_message route it.
+          const isToolbar = ctrlClass === 21 || win.className === 'ToolbarWindow32';
+          if (!isToolbar || !we || !we.send_message || !we.guest_alloc) continue;
+          if (typeof renderer._computeClientRect === 'function') renderer._computeClientRect(win);
+          const client = win.clientRect;
+          if (!client) continue;
+          const count = we.send_message(hwnd, 0x0418, 0, 0) | 0; // TB_BUTTONCOUNT
+          const recG = we.guest_alloc(20);
+          const rectG = we.guest_alloc(16);
+          const recP = g2w(recG);
+          const rectP = g2w(rectG);
+          for (let i = 0; i < Math.min(count, 64) && !hit; i++) {
+            u8.fill(0, recP, recP + 20);
+            u8.fill(0, rectP, rectP + 16);
+            we.send_message(hwnd, 0x0417, i, recG); // TB_GETBUTTON
+            if (dv.getInt32(recP + 4, true) !== (ev.cmd | 0)) continue;
+            we.send_message(hwnd, 0x041D, i, rectG); // TB_GETITEMRECT
+            hit = {
+              hwnd,
+              x: client.x + ((dv.getInt32(rectP + 0, true) + dv.getInt32(rectP + 8, true)) >> 1),
+              y: client.y + ((dv.getInt32(rectP + 4, true) + dv.getInt32(rectP + 12, true)) >> 1),
+            };
+          }
+        }
+        if (hit) {
+          renderer.handleMouseDown(hit.x, hit.y, 1);
+          if (renderer.handleMouseUp) renderer.handleMouseUp(hit.x, hit.y, 1);
+          logs.push(`[input] toolbar-click${label} cmd=${ev.cmd} hwnd=0x${hit.hwnd.toString(16)} at ${hit.x},${hit.y} batch ${batch}`);
+        } else {
+          logs.push(`[input] toolbar-click${label} cmd=${ev.cmd} NOT FOUND at batch ${batch}`);
+        }
+      } else if (ev.action === 'hwnd-png-pixels' && renderer && PNG) {
+        try {
+          presentForRead();
+          const win = renderer.windows && renderer.windows[ev.hwnd];
+          const canvas = win && win._backCanvas;
+          if (!canvas) throw new Error(`no back-canvas for hwnd=0x${(ev.hwnd | 0).toString(16)}`);
+          const w = canvas.width | 0;
+          const h = canvas.height | 0;
+          const data = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+          const png = new PNG({ width: w, height: h });
+          png.data.set(data);
+          const buf = PNG.sync.write(png);
+          fs.writeFileSync(ev.path, buf);
+          logs.push(`[input] hwnd-png-pixels ${ev.path} (${buf.length} bytes) hwnd=0x${(ev.hwnd | 0).toString(16)} at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] hwnd-png-pixels FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-title-menu-open') {
+        const title = ev.title || '';
+        const wins = renderer ? Object.values(renderer.windows || {}) : [];
+        const found = wins.find(w => w && w.visible && String(w.title || '').includes(title));
+        if (found) {
+          logs.push(`[input] wait-title-menu-open${ev.label ? ':' + ev.label : ''}: matched "${title}" hwnd=0x${(found.hwnd | 0).toString(16)} at batch ${batch}`);
+          if (renderer && renderer.handleKeyDown && ev.vk) {
+            renderer.wasm = found.wasm || renderer.wasm;
+            renderer.wasmMemory = found.wasmMemory || renderer.wasmMemory;
+            if (typeof renderer._ensureWatMenu === 'function') renderer._ensureWatMenu(found);
+            renderer.handleKeyDown(18);
+            renderer.handleKeyDown(ev.vk);
+            logs.push(`[input] wait-title-menu-open${ev.label ? ':' + ev.label : ''}: Alt+${ev.vk} at batch ${batch}`);
+          } else {
+            logs.push(`[input] wait-title-menu-open${ev.label ? ':' + ev.label : ''}: unable to open menu at batch ${batch}`);
+          }
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch, true);
+        } else {
+          logs.push(`[input] wait-title-menu-open${ev.label ? ':' + ev.label : ''}: TIMEOUT "${title}" at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-title-command') {
+        const title = ev.title || '';
+        const wins = renderer ? Object.values(renderer.windows || {}) : [];
+        const found = wins.find(w => w && w.visible && String(w.title || '').includes(title));
+        const we = found && instance && instance.exports;
+        if (found && we && typeof we.post_message_q === 'function') {
+          const queued = we.post_message_q(found.hwnd | 0, 0x0111, ev.command | 0, 0) | 0;
+          const count = we.get_post_queue_count ? (we.get_post_queue_count() | 0) : -1;
+          logs.push(`[input] wait-title-command${ev.label ? ':' + ev.label : ''}: hwnd=0x${(found.hwnd | 0).toString(16)} command=${ev.command | 0} queued=${queued} count=${count} at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch, true);
+        } else {
+          logs.push(`[input] wait-title-command${ev.label ? ':' + ev.label : ''}: TIMEOUT "${title}" at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-title') {
+        const title = ev.title || '';
+        const wins = renderer ? Object.values(renderer.windows || {}) : [];
+        const found = wins.find(w => w && w.visible && String(w.title || '').includes(title));
+        if (found) {
+          logs.push(`[input] wait-title: matched "${title}" hwnd=0x${(found.hwnd | 0).toString(16)} at batch ${batch}`);
+          if (ev.dumpStop) {
+            scheduledInput.unshift({ batch, action: 'stop' });
+            if (ev.path) scheduledInput.unshift({ batch, action: 'dlg-png', path: ev.path });
+            scheduledInput.unshift({ batch, action: 'dlg-paint' });
+            scheduledInput.unshift({ batch, action: 'dlg-dump', label: ev.label || '' });
+          }
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-title: TIMEOUT "${title}" at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-title-windows-snapshot') {
+        const title = ev.title || '';
+        const wins = renderer ? Object.values(renderer.windows || {}) : [];
+        const found = wins.find(w => w && w.visible && String(w.title || '').includes(title));
+        if (found && ev.settle && !ev.settleUntil) {
+          ev.settleUntil = batch + ev.settle;
+          logs.push(`[input] wait-title: matched "${title}" hwnd=0x${(found.hwnd | 0).toString(16)}`
+            + ` at batch ${batch}, settling ${ev.settle} batches`);
+        }
+        if (found && ev.settleUntil && batch < ev.settleUntil) {
+          deferScheduledWait(ev, batch);
+        } else if (found) {
+          if (!ev.settleUntil) {
+            logs.push(`[input] wait-title: matched "${title}" hwnd=0x${(found.hwnd | 0).toString(16)} at batch ${batch}`);
+          }
+          const label = ev.label ? ':' + ev.label : '';
+          const entries = Object.entries(renderer.windows || {})
+            .sort((a, b) => (parseInt(a[0], 10) || 0) - (parseInt(b[0], 10) || 0));
+          for (const [hwndStr, win] of entries) {
+            if (!win) continue;
+            logs.push(`[input] window${label} hwnd=${hwndStr} pos=${win.x},${win.y} size=${win.w}x${win.h} client=${JSON.stringify(win.clientRect)} visible=${win.visible} dialog=${!!win.isDialog} hasBack=${!!win._backCanvas} title=${JSON.stringify(win.title)} at batch ${batch}`);
+            if (win._backCanvas && PNG && ev.path) {
+              try {
+                presentForRead();
+                const w = win._backCanvas.width | 0;
+                const h = win._backCanvas.height | 0;
+                const data = win._backCanvas.getContext('2d').getImageData(0, 0, w, h).data;
+                const png = new PNG({ width: w, height: h });
+                png.data.set(data);
+                const buf = PNG.sync.write(png);
+                const out = ev.path.replace(/\.png$/, `_back_${hwndStr}.png`);
+                fs.writeFileSync(out, buf);
+                logs.push(`[input] back-canvas-pixels ${out} (${buf.length} bytes, ${w}x${h}) hwnd=${hwndStr} at batch ${batch}`);
+              } catch (e) {
+                logs.push(`[input] back-canvas-pixels FAILED hwnd=${hwndStr}: ${e.message} at batch ${batch}`);
+              }
+            }
+          }
+          stopped = true;
+          logs.push(`[input] stop at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-title: TIMEOUT "${title}" at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-title-snapshot' || ev.action === 'wait-title-dump-stop') {
+        const title = ev.title || '';
+        const wins = renderer ? Object.values(renderer.windows || {}) : [];
+        const found = wins.find(w => w && w.visible && String(w.title || '').includes(title));
+        if (found) {
+          logs.push(`[input] wait-title: matched "${title}" hwnd=0x${(found.hwnd | 0).toString(16)} at batch ${batch}`);
+
+          const we = instance.exports;
+          let dlg = 0;
+          if (renderer) {
+            const dialogs = Object.values(renderer.windows || {})
+              .filter(w => w && w.visible && w.isDialog)
+              .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+            if (dialogs.length) dlg = dialogs[0].hwnd | 0;
+          }
+          if (!dlg && we.wnd_slot_hwnd && we.dlg_get_style) {
+            for (let s = 255; s >= 0; s--) {
+              const hwnd = we.wnd_slot_hwnd(s);
+              if (hwnd && we.dlg_get_style(hwnd)) { dlg = hwnd; break; }
+            }
+          }
+
+          const controls = [];
+          if (dlg && we.wnd_next_child_slot && we.wnd_slot_hwnd) {
+            let s = 0;
+            while ((s = we.wnd_next_child_slot(dlg, s)) !== -1) {
+              const ch = we.wnd_slot_hwnd(s);
+              const cls = we.ctrl_get_class ? we.ctrl_get_class(ch) : -1;
+              const id = we.ctrl_get_id ? we.ctrl_get_id(ch) : -1;
+              const xy = we.ctrl_get_xy ? we.ctrl_get_xy(ch) : 0;
+              const wh = we.ctrl_get_wh ? we.ctrl_get_wh(ch) : 0;
+              const style = we.wnd_get_style_export ? we.wnd_get_style_export(ch) >>> 0 : 0;
+              const sx = we.wnd_window_screen_x ? we.wnd_window_screen_x(ch) | 0 : 0;
+              const sy = we.wnd_window_screen_y ? we.wnd_window_screen_y(ch) | 0 : 0;
+              let text = '';
+              if (cls === 1 && we.button_get_text && we.guest_alloc) {
+                const buf = we.guest_alloc(256);
+                const len = we.button_get_text(ch, buf, 256);
+                const wa = g2w(buf);
+                const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+                text = ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+              } else if (cls === 3 && we.static_get_text && we.guest_alloc) {
+                const buf = we.guest_alloc(256);
+                const len = we.static_get_text(ch, buf, 256);
+                const wa = g2w(buf);
+                const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+                text = ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+              } else if (cls === 5 && we.combobox_get_text && we.guest_alloc) {
+                const buf = we.guest_alloc(256);
+                const len = we.combobox_get_text(ch, buf, 256);
+                const wa = g2w(buf);
+                const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, len));
+                const cur = we.combobox_get_cur_sel ? we.combobox_get_cur_sel(ch) : -1;
+                text = ' sel=' + cur + ' text="' + Buffer.from(bytes).toString('latin1') + '"';
+              } else if (cls === 4 && we.listbox_get_count &&
+                         we.listbox_get_item_text && we.guest_alloc) {
+                const count = Math.max(0, Math.min(we.listbox_get_count(ch) | 0, 64));
+                const buf = we.guest_alloc(256);
+                const rows = [];
+                for (let row = 0; row < count; row++) {
+                  const len = Math.max(0, Math.min(
+                    we.listbox_get_item_text(ch, row, buf, 256) | 0, 255));
+                  rows.push(Buffer.from(new Uint8Array(memory.buffer, g2w(buf), len)).toString('latin1'));
+                }
+                const cur = we.listbox_get_cur_sel ? we.listbox_get_cur_sel(ch) : -1;
+                text = ' sel=' + cur + ' rows="' + rows.join(' || ') + '"';
+              }
+              let checked = '';
+              if (cls === 1 && we.send_message) {
+                checked = ` checked=${we.send_message(ch, 0x00F0, 0, 0) | 0}`;
+              }
+              controls.push(`hwnd=0x${ch.toString(16)} id=${id} cls=${cls} style=0x${style.toString(16)} xy=${xy & 0xffff},${xy >>> 16} wh=${wh & 0xffff},${wh >>> 16} screen=${sx},${sy}${text}${checked}`);
+              s++;
+            }
+          }
+          const modal = we.modal_dialog_hwnd ? (we.modal_dialog_hwnd() >>> 0) : 0;
+          logs.push(`[input] dlg-dump${ev.label ? ':' + ev.label : ''}: dlg=${dlg ? '0x' + dlg.toString(16) : 'none'} modal=${modal ? '0x' + modal.toString(16) : 'none'} ${controls.length ? controls.join(' | ') : '(no controls)'}`);
+
+          if (ev.action === 'wait-title-snapshot' && renderer && renderer.canvas && PNG && ev.path) {
+            try {
+              presentForRead();
+              const w = renderer.canvas.width | 0;
+              const h = renderer.canvas.height | 0;
+              const data = renderer.canvas.getContext('2d').getImageData(0, 0, w, h).data;
+              const png = new PNG({ width: w, height: h });
+              png.data.set(data);
+              const buf = PNG.sync.write(png);
+              fs.writeFileSync(ev.path, buf);
+              logs.push(`[input] png-pixels ${ev.path} (${buf.length} bytes) at batch ${batch}`);
+            } catch (e) {
+              logs.push(`[input] png-pixels FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+            }
+          } else if (ev.action === 'wait-title-snapshot') {
+            logs.push(`[input] png-pixels FAILED ${ev.path || ''}: unavailable at batch ${batch}`);
+          }
+
+          stopped = true;
+          logs.push(`[input] stop at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-title: TIMEOUT "${title}" at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-dlg-control') {
+        const we = instance.exports;
+        let found = 0;
+        const seen = new Set();
+        const findChildById = (parent) => {
+          if (!parent || seen.has(parent) || !we.wnd_next_child_slot || !we.wnd_slot_hwnd || !we.ctrl_get_id) return 0;
+          seen.add(parent);
+          let s = 0;
+          while ((s = we.wnd_next_child_slot(parent, s)) !== -1) {
+            const ch = we.wnd_slot_hwnd(s);
+            if (ch && we.ctrl_get_id(ch) === ev.ctrlId) return ch;
+            const nested = findChildById(ch);
+            if (nested) return nested;
+            s++;
+          }
+          return 0;
+        };
+        if (renderer) {
+          const wins = Object.values(renderer.windows || {})
+            .filter(w => w && w.visible && w.isDialog)
+            .sort((a, b) => ((b.zOrder || 0) - (a.zOrder || 0)) || ((b.hwnd || 0) - (a.hwnd || 0)));
+          for (const w of wins) {
+            found = findChildById(w.hwnd | 0);
+            if (found) break;
+          }
+        }
+        if (!found && we.wnd_slot_hwnd && we.dlg_get_style) {
+          for (let s = 255; s >= 0; s--) {
+            const hwnd = we.wnd_slot_hwnd(s);
+            if (hwnd && we.dlg_get_style(hwnd)) {
+              found = findChildById(hwnd);
+              if (found) break;
+            }
+          }
+        }
+        if (found) {
+          logs.push(`[input] wait-dlg-control: matched id=${ev.ctrlId} hwnd=0x${found.toString(16)} at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-dlg-control: TIMEOUT id=${ev.ctrlId} at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-focus-length') {
+        const we = instance.exports;
+        const h = we.get_focus_hwnd ? we.get_focus_hwnd() >>> 0 : 0;
+        const len = h && we.send_message ? Math.max(0, we.send_message(h, 0x000E, 0, 0) | 0) : 0;
+        if (len >= ev.minLength) {
+          logs.push(`[input] wait-focus-length: matched len=${len} min=${ev.minLength} hwnd=0x${h.toString(16)} at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-focus-length: TIMEOUT len=${len} min=${ev.minLength} at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-go') {
+        if (goPending > 0) {
+          goPending--;
+          logs.push(`[input] wait-go: released at batch ${batch}`);
+        } else if (!ev.limit || batch - (ev.startBatch || batch) < ev.limit) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-go: TIMEOUT at batch ${batch}`);
+        }
+      } else if (ev.action === 'dump-fr' && renderer) {
+        // Read the FR struct from the dialog's userdata via the WAT side.
+        // For find dialog the userdata holds the guest FR ptr; FR.Flags
+        // is at +0x0C, FR.lpstrFindWhat at +0x10.
+        const we = instance.exports;
+        const dlg = we.get_findreplace_dlg && we.get_findreplace_dlg();
+        if (dlg) {
+          const frG = we.wnd_get_userdata_export ? we.wnd_get_userdata_export(dlg) : 0;
+          if (frG) {
+            const dv = new DataView(memory.buffer);
+            const wa = g2w(frG);
+            // lStructSize is the liveness bit: commdlg requires the caller to
+            // set it to sizeof(FINDREPLACE) = 40, so anything else means the
+            // caller freed the block
+            // and something else owns those bytes now.
+            const structSize = dv.getUint32(wa + 0x00, true);
+            const flags = dv.getUint32(wa + 0x0C, true);
+            const findBufG = dv.getUint32(wa + 0x10, true);
+            const findBufLen = dv.getUint16(wa + 0x18, true);
+            const replaceBufG = dv.getUint32(wa + 0x14, true);
+            const replaceBufLen = dv.getUint16(wa + 0x1A, true);
+            const findBufWa = g2w(findBufG);
+            const m8 = new Uint8Array(memory.buffer);
+            let txt = '';
+            for (let i = 0; i < findBufLen && m8[findBufWa + i]; i++) {
+              txt += String.fromCharCode(m8[findBufWa + i]);
+            }
+            let replacement = '';
+            if (replaceBufG) {
+              const replaceBufWa = g2w(replaceBufG);
+              for (let i = 0; i < replaceBufLen && m8[replaceBufWa + i]; i++) {
+                replacement += String.fromCharCode(m8[replaceBufWa + i]);
+              }
+            }
+            // Once the caller has freed its FINDREPLACE (lStructSize no longer
+            // reads 40) every field in it is somebody else's data, so the
+            // dialog's own edits and the flags we last sent are the only
+            // honest answer to "what did the app ask for".
+            const structLive = structSize === 40;
+            const editText = (hwnd) => {
+              if (!hwnd || !we.get_edit_text || !we.guest_alloc) return '';
+              const scratchG = we.guest_alloc(512);
+              const n = we.get_edit_text(hwnd, scratchG, 511) | 0;
+              return Buffer.from(new Uint8Array(memory.buffer, g2w(scratchG), Math.max(0, n))).toString('latin1');
+            };
+            if ((!replacement || !structLive) && we.get_findreplace_replace_edit) {
+              const fromEdit = editText(we.get_findreplace_replace_edit() | 0);
+              if (fromEdit || !structLive) replacement = fromEdit;
+            }
+            if (!structLive && we.get_findreplace_edit) {
+              txt = editText(we.get_findreplace_edit() | 0);
+            }
+            const watFlags = we.get_findreplace_last_flags ? we.get_findreplace_last_flags() >>> 0 : 0;
+            // The two length words are part of the answer, not decoration: a
+            // zero wFindWhatLen makes findWhat read back empty no matter what
+            // the buffer holds, and telling that apart from "nothing was
+            // copied" is the whole question when a Find comes back blank.
+            logs.push(`[input] dump-fr: dlg=0x${dlg.toString(16)} fr=0x${frG.toString(16)} size=${structSize} flags=0x${flags.toString(16)} watFlags=0x${watFlags.toString(16)} findWhat=${JSON.stringify(txt)} findBuf=0x${findBufG.toString(16)} findLen=${findBufLen} replaceWith=${JSON.stringify(replacement)} replaceBuf=0x${replaceBufG.toString(16)} replaceLen=${replaceBufLen} at batch ${batch}`);
+          } else {
+            logs.push(`[input] dump-fr: no FR ptr at batch ${batch}`);
+          }
+        }
+      } else if (ev.action === 'keypress' && renderer && renderer.handleKeyPress) {
+        // renderer.handleKeyPress already routes WM_CHAR to WAT when a
+        // WAT-managed edit has focus (see renderer-input.js), so don't
+        // also call send_char_to_focus here — that double-delivered
+        // each character to the find-dialog edit ("ABC" → "AABBCC").
+        renderer.handleKeyPress(ev.code);
+        logs.push(`[input] keypress code=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'ime-start' && renderer && renderer.handleCompositionStart) {
+        renderer.handleCompositionStart();
+        logs.push(`[input] ime-start at batch ${batch}`);
+      } else if (ev.action === 'ime-update' && renderer && renderer.handleCompositionUpdate) {
+        renderer.handleCompositionUpdate(ev.text);
+        logs.push(`[input] ime-update text=${JSON.stringify(ev.text)} at batch ${batch}`);
+      } else if (ev.action === 'ime-commit' && renderer && renderer.handleCompositionEnd) {
+        renderer.handleCompositionEnd(ev.text);
+        logs.push(`[input] ime-commit text=${JSON.stringify(ev.text)} at batch ${batch}`);
+      } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {
+        renderer.handleKeyDown(ev.code);
+        logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {
+        renderer.handleKeyUp(ev.code);
+        logs.push(`[input] keyup vk=${ev.code} at batch ${batch}`);
+      } else if ((ev.action === 'di-keydown' || ev.action === 'di-keyup') && renderer) {
+        if (!renderer._asyncKeys) renderer._asyncKeys = Object.create(null);
+        if (!renderer._asyncPressedKeys) renderer._asyncPressedKeys = Object.create(null);
+        const key = ev.code & 0xFF;
+        const down = ev.action === 'di-keydown';
+        renderer._asyncKeys[key] = down;
+        if (renderer.pokeKeyDownState) renderer.pokeKeyDownState(key, down);
+        if (down) renderer._asyncPressedKeys[key] = true;
+        // Event-buffered DirectInput devices must wake for test-injected state
+        // changes just as they do for renderer.handleKeyDown/handleKeyUp.
+        if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(1);
+        logs.push(`[input] ${ev.action} vk=${ev.code} at batch ${batch}`);
+      } else if (ev.action === 'di-wheel' && renderer) {
+        if (renderer._queueDirectInputMouseWheel) {
+          renderer._queueDirectInputMouseWheel(renderer._pointerInputMemory || renderer.wasmMemory, ev.delta);
+        }
+        if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(2);
+        logs.push(`[input] di-wheel ${ev.delta} at batch ${batch}`);
+      } else if ((ev.action === 'di-mousedown' || ev.action === 'di-mouseup') && renderer) {
+        const mask = ev.button === 2 ? 0x0002 : ev.button === 3 ? 0x0010 : 0x0001;
+        const vk = ev.button === 2 ? 0x02 : ev.button === 3 ? 0x04 : 0x01;
+        const down = ev.action === 'di-mousedown';
+        const wasDown = !!((renderer._mouseButtonsMask || 0) & mask);
+        renderer._mouseButtonsMask = down
+          ? ((renderer._mouseButtonsMask || 0) | mask)
+          : ((renderer._mouseButtonsMask || 0) & ~mask);
+        if (!renderer._asyncPressedKeys) renderer._asyncPressedKeys = Object.create(null);
+        if (down) renderer._asyncPressedKeys[vk] = true;
+        // A frozen control command is queued until the next step, while eval
+        // and recovery commands run immediately at the parked boundary. If
+        // one of those clears the host mask before this mouse-up executes,
+        // wasDown is already false even though the guest DirectInput device
+        // still holds the preceding press. Always forward synthetic releases:
+        // an extra up record is harmless, but omitting it leaves games firing.
+        if ((!down || wasDown !== down) && renderer._queueDirectInputMouseButton) {
+          renderer._queueDirectInputMouseButton(
+            renderer._pointerInputMemory || renderer.wasmMemory, mask, down);
+        }
+        if (renderer._signalDirectInputDevice) renderer._signalDirectInputDevice(2);
+        logs.push(`[input] ${ev.action} button=${ev.button} at batch ${batch}`);
+      } else if (ev.action === 'sleep-ms') {
+        if (ev.ms > 0) await new Promise(resolve => setTimeout(resolve, ev.ms));
+        logs.push(`[input] sleep-ms ${ev.ms} at batch ${batch}`);
+      } else if (ev.action === 'set-batch-size') {
+        BATCH_SIZE = Math.max(1, ev.size | 0);
+        logs.push(`[input] set-batch-size ${BATCH_SIZE} at batch ${batch}`);
+      } else if (ev.action === 'set-win16-trace') {
+        if (instance.exports.set_win16_trace) instance.exports.set_win16_trace(ev.enabled ? 1 : 0);
+        logs.push(`[input] set-win16-trace ${ev.enabled ? 1 : 0} at batch ${batch}`);
+      } else if (ev.action === 'wave-in-feed') {
+        const samples = new Float32Array(ev.frames);
+        for (let i = 0; i < samples.length; i++) {
+          samples[i] = Math.sin((i * Math.PI * 2 * 440) / ev.rate) * ev.amplitude;
+        }
+        const written = h.wave_in_feed_pcm ? h.wave_in_feed_pcm(0, [samples], ev.rate) : 0;
+        logs.push(`[input] wave-in-feed frames=${ev.frames} rate=${ev.rate} written=${written} at batch ${batch}`);
+      } else if (ev.action === 'mixer-peak') {
+        if (h.audio_mixer_mark_peak) h.audio_mixer_mark_peak(ev.bus, ev.value, ev.holdMs);
+        logs.push(`[input] mixer-peak bus=${ev.bus} value=${ev.value} hold=${ev.holdMs} at batch ${batch}`);
+      } else if (ev.action === 'vfs-export') {
+        try {
+          const key = ctx.vfs._resolvePath(ev.filename);
+          const entry = ctx.vfs.files.get(key);
+          if (!entry) throw new Error(`virtual file not found: ${key}`);
+          fs.mkdirSync(path.dirname(ev.path), { recursive: true });
+          fs.writeFileSync(ev.path, Buffer.from(entry.data));
+          logs.push(`[input] vfs-export ${key} -> ${ev.path} (${entry.data.length} bytes) at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] vfs-export FAILED ${ev.filename}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'help-macro') {
+        // WinHelpA(hwnd, file, HELP_COMMAND, "Macro(...)") - how an
+        // application runs a help macro, including one bound to a routine the
+        // help file registered from its own DLL.
+        const we = instance.exports;
+        if (!we.test_call_WinHelpA || !we.guest_alloc) {
+          logs.push(`[input] help-macro: build has no WinHelp entry at batch ${batch}`);
+        } else {
+          const writeAnsi = text => {
+            const buf = Buffer.from(text, 'latin1');
+            const ga = we.guest_alloc(buf.length + 1);
+            new Uint8Array(memory.buffer, g2w(ga), buf.length).set(buf);
+            new Uint8Array(memory.buffer, g2w(ga) + buf.length, 1)[0] = 0;
+            return ga;
+          };
+          const status = we.test_call_WinHelpA(0x8888,
+            writeAnsi(ev.filename), 0x0102, writeAnsi(ev.macro));
+          logs.push(`[input] help-macro ${ev.filename} ${JSON.stringify(ev.macro)}` +
+            ` -> accepted=${status}` +
+            ` dispatch=${we.get_help_dispatch_status ? we.get_help_dispatch_status() : '?'}` +
+            ` routines=${we.get_help_routine_count ? we.get_help_routine_count() : '?'}` +
+            ` at batch ${batch}`);
+        }
+      } else if (ev.action === 'vfs-import') {
+        try {
+          const key = ctx.vfs._resolvePath(ev.filename);
+          const data = new Uint8Array(fs.readFileSync(ev.path));
+          ctx.vfs.files.set(key, { data, attrs: 0x20 });
+          logs.push(`[input] vfs-import ${ev.path} -> ${key} (${data.length} bytes) at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] vfs-import FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'assert-standard-scroll') {
+        const match = findStandardScrollBar(ev.axis, '');
+        const floor = match && ev.minPct
+          ? Math.round((ev.minPos / 100) * match.page)
+          : ev.minPos;
+        const pass = !!match && match.pos >= floor;
+        const want = ev.minPct ? `${ev.minPos}% of page ${match ? match.page : '?'} = ${floor}` : `${floor}`;
+        logs.push(`[assert] ${pass ? 'PASS' : 'FAIL'} standard-scroll${ev.label ? ':' + ev.label : ''} axis=${ev.axis} min=${want} actual=${match ? match.pos : 'none'} hwnd=${match ? '0x' + match.hwnd.toString(16) : 'none'} at batch ${batch}`);
+        if (!pass) process.exitCode = 1;
+      } else if (ev.action === 'dump-scrollbar') {
+        const bar = findStandardScrollBar(ev.axis, ev.target);
+        if (!bar) {
+          logs.push(`[scrollbar]${ev.label ? ':' + ev.label : ''} axis=${ev.axis} none at batch ${batch}`);
+        } else {
+          const s = bar.strip;
+          logs.push(`[scrollbar]${ev.label ? ':' + ev.label : ''} axis=${ev.axis} hwnd=0x${bar.hwnd.toString(16)} strip=${s.x0},${s.y0},${s.x1},${s.y1} pos=${bar.pos} page=${bar.page} min=${bar.min} max=${bar.max} at batch ${batch}`);
+        }
+      } else if (ev.action === 'scroll-click' && renderer && renderer.handleMouseDown) {
+        const bar = findStandardScrollBar(ev.axis, ev.target);
+        if (!bar) {
+          logs.push(`[input] scroll-click: no ${ev.axis} scrollbar at batch ${batch}`);
+        } else {
+          const p = scrollBarPoint(bar, ev.part);
+          renderer.handleMouseDown(p.x, p.y, 1);
+          if (renderer.handleMouseUp) renderer.handleMouseUp(p.x, p.y, 1);
+          logs.push(`[input] scroll-click ${ev.axis}:${ev.part} hwnd=0x${bar.hwnd.toString(16)} at ${p.x},${p.y} at batch ${batch}`);
+        }
+      } else if (ev.action === 'scroll-drag' && renderer && renderer.handleMouseDown) {
+        const bar = findStandardScrollBar(ev.axis, ev.target);
+        if (!bar) {
+          logs.push(`[input] scroll-drag: no ${ev.axis} scrollbar at batch ${batch}`);
+        } else {
+          const p = scrollBarPoint(bar, 'thumb');
+          const x1 = ev.axis === 'v' ? p.x : p.x + ev.delta;
+          const y1 = ev.axis === 'v' ? p.y + ev.delta : p.y;
+          renderer.handleMouseDown(p.x, p.y, 1);
+          if (renderer.handleMouseMove) {
+            for (const t of [0.34, 0.67, 1]) {
+              renderer.handleMouseMove(
+                Math.round(p.x + (x1 - p.x) * t), Math.round(p.y + (y1 - p.y) * t));
+            }
+          }
+          if (renderer.handleMouseUp) renderer.handleMouseUp(x1, y1, 1);
+          logs.push(`[input] scroll-drag ${ev.axis} hwnd=0x${bar.hwnd.toString(16)} ${p.x},${p.y} -> ${x1},${y1} at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-vfs-file') {
+        const key = ctx.vfs._resolvePath(ev.filename);
+        const entry = ctx.vfs.files.get(key);
+        if (entry) {
+          logs.push(`[input] wait-vfs-file matched ${key} (${entry.data.length} bytes) at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-vfs-file TIMEOUT ${key} at batch ${batch}`);
+        }
+      } else if (ev.action === 'wait-canvas-dark-pixels' && renderer && renderer.canvas) {
+        presentForRead();
+        const w = renderer.canvas.width | 0;
+        const h = renderer.canvas.height | 0;
+        const rgba = renderer.canvas.getContext('2d').getImageData(0, 0, w, h).data;
+        let dark = 0;
+        for (let i = 0; i < rgba.length; i += 4) {
+          if (rgba[i] <= 16 && rgba[i + 1] <= 16 && rgba[i + 2] <= 16) dark++;
+        }
+        if (dark >= ev.min && dark <= ev.max) {
+          logs.push(`[input] wait-canvas-dark-pixels matched ${dark} in ${ev.min}..${ev.max} at batch ${batch}`);
+        } else if (batch - (ev.startBatch || batch) < (ev.limit || 2000)) {
+          deferScheduledWait(ev, batch);
+        } else {
+          logs.push(`[input] wait-canvas-dark-pixels TIMEOUT ${dark} not in ${ev.min}..${ev.max} at batch ${batch}`);
+        }
+      } else if (ev.action === 'png' && renderer && renderer.canvas) {
+        try {
+          if (typeof renderer.repaint === 'function') renderer.repaint();
+          const buf = canvasToPng(renderer.canvas);
+          fs.writeFileSync(ev.path, buf);
+          // guest-ms: a batch is not a time, and anything that charges guest
+          // time outside the batch schedule (a Sleep, --present-cap pacing)
+          // moves it -- so two arms compared "at batch N" can be seconds of
+          // game time apart. Match captures on this instead.
+          logs.push(`[input] png ${ev.path} (${buf.length} bytes) at batch ${batch}`
+            + (ctx.guestPeekMs ? ` guest-ms=${Number(ctx.guestPeekMs())}` : ''));
+          if (DUMP_BACKCANVAS) {
+            for (const [hwndStr, win] of Object.entries(renderer.windows)) {
+              if (!win) continue;
+              logs.push(`[input] window hwnd=${hwndStr} pos=${win.x},${win.y} size=${win.w}x${win.h} visible=${win.visible} dialog=${!!win.isDialog} hasBack=${!!win._backCanvas}`);
+              if (win._backCanvas && win._backCanvas.toBuffer) {
+                const bcPath = ev.path.replace('.png', `_back_${hwndStr}.png`);
+                fs.writeFileSync(bcPath, canvasToPng(win._backCanvas));
+                logs.push(`[input] back-canvas ${bcPath}`);
+              }
+              // The DirectDraw frame layer is a separate canvas composited over
+              // the back-canvas, so a blank screenshot with a blank back-canvas
+              // says nothing about whether the guest presented a frame. Dump it
+              // too: content here plus a blank screenshot is a compositor bug,
+              // and blank here is a presentation bug.
+              const dxc = win._dxFrameLayer && win._dxFrameLayer.canvas;
+              if (dxc && dxc.toBuffer) {
+                const dxPath = ev.path.replace('.png', `_dxlayer_${hwndStr}.png`);
+                fs.writeFileSync(dxPath, canvasToPng(dxc));
+                logs.push(`[input] dx-layer ${dxPath} (${dxc.width}x${dxc.height})`);
+              }
+            }
+          }
+        } catch (e) {
+          logs.push(`[input] png FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'png-raw' && renderer && renderer.canvas) {
+        try {
+          const buf = canvasToPng(renderer.canvas);
+          fs.writeFileSync(ev.path, buf);
+          logs.push(`[input] png-raw ${ev.path} (${buf.length} bytes) at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] png-raw FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'pixel' && renderer && renderer.canvas) {
+        try {
+          presentForRead();
+          const data = renderer.canvas.getContext('2d').getImageData(ev.x, ev.y, 1, 1).data;
+          logs.push(`[input] pixel${ev.label ? ':' + ev.label : ''}: ${ev.x},${ev.y} rgba=${data[0]},${data[1]},${data[2]},${data[3]} at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] pixel FAILED ${ev.x},${ev.y}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'png-pixels' && renderer && renderer.canvas && PNG) {
+        try {
+          presentForRead();
+          const w = renderer.canvas.width | 0;
+          const h = renderer.canvas.height | 0;
+          const data = renderer.canvas.getContext('2d').getImageData(0, 0, w, h).data;
+          const png = new PNG({ width: w, height: h });
+          png.data.set(data);
+          const buf = PNG.sync.write(png);
+          fs.writeFileSync(ev.path, buf);
+          logs.push(`[input] png-pixels ${ev.path} (${buf.length} bytes) at batch ${batch}`);
+        } catch (e) {
+          logs.push(`[input] png-pixels FAILED ${ev.path}: ${e.message} at batch ${batch}`);
+        }
+      } else if (ev.action === 'stop') {
+        stopped = true;
+        logs.push(`[input] stop at batch ${batch}`);
+      } else if (ev.action === 'canvas-resize' && renderer && renderer.canvas) {
+        const oldW = renderer.canvas.width | 0;
+        const oldH = renderer.canvas.height | 0;
+        renderer.canvas.width = ev.w | 0;
+        renderer.canvas.height = ev.h | 0;
+        if (typeof renderer.handleScreenResize === 'function') {
+          renderer.handleScreenResize(oldW, oldH, ev.w | 0, ev.h | 0);
+        }
+        if (typeof renderer.repaint === 'function') renderer.repaint();
+        logs.push(`[input] canvas-resize ${oldW}x${oldH} -> ${ev.w}x${ev.h} at batch ${batch}`);
+      } else if (ev.action === 'main-resize' && renderer) {
+        const we = instance.exports;
+        const hwnd = we.get_main_hwnd ? (we.get_main_hwnd() | 0) : 0;
+        const win = hwnd ? renderer.windows[hwnd] : null;
+        if (!win) {
+          logs.push(`[input] main-resize FAILED: no main window at batch ${batch}`);
+        } else {
+          win.w = Math.max(1, ev.w | 0);
+          win.h = Math.max(1, ev.h | 0);
+          win._maximized = false;
+          // Drop the back-canvas the way the browser's resize-drag release
+          // does (renderer-input.js handleMouseUp), so a resize here starts
+          // from the same blank surface a real one does. Keeping the old
+          // canvas made the harness repaint bugs that the browser shows.
+          win._backCanvas = null;
+          win._backCtx = null;
+          win._backW = 0;
+          win._backH = 0;
+          if (we.host_resize_commit) we.host_resize_commit(hwnd, win.x | 0, win.y | 0, win.w, win.h);
+          if (typeof renderer._computeClientRect === 'function') renderer._computeClientRect(win);
+          if (typeof renderer.invalidate === 'function') renderer.invalidate(hwnd);
+          logs.push(`[input] main-resize hwnd=0x${hwnd.toString(16)} -> ${win.w}x${win.h} at batch ${batch}`);
+        }
+      } else if (ev.action === 'winamp-play') {
+        // Winamp IPC: write filename to guest memory, send WM_USER messages
+        const we = instance.exports;
+        const nameLen = ev.filename.length;
+        // Allocate from heap so the string survives until dispatch
+        // IPC_PLAYFILE dereferences wParam: fn = *(char**)wParam
+        const nameGA = we.guest_alloc(nameLen + 1);
+        const ptrGA = we.guest_alloc(4);
+        const mem8 = new Uint8Array(memory.buffer);
+        for (let i = 0; i < nameLen; i++) mem8[g2w(nameGA) + i] = ev.filename.charCodeAt(i);
+        mem8[g2w(nameGA) + nameLen] = 0;
+        we.guest_write32(ptrGA, nameGA);
+        // Verify writes
+        const verifyStr = Array.from(mem8.slice(g2w(nameGA), g2w(nameGA) + nameLen)).map(c => String.fromCharCode(c)).join('');
+        const verifyPtr = we.guest_read32(ptrGA);
+        logs.push(`[winamp-play] nameGA=0x${nameGA.toString(16)} ptrGA=0x${ptrGA.toString(16)} str="${verifyStr}" [ptrGA]=0x${verifyPtr.toString(16)}`);
+        const mainHwnd = we.get_main_hwnd();
+        // Restore original WndProc so IPC reaches Winamp's handler
+        const origWndproc = we.get_wndproc();
+        if (we.wnd_table_set) {
+          we.wnd_table_set(mainHwnd, origWndproc);
+        }
+        const ipcMsgs = [
+          { hwnd: mainHwnd, msg: 0x400, wParam: 0, lParam: 101 },       // IPC_DELETE
+          { hwnd: mainHwnd, msg: 0x400, wParam: ptrGA, lParam: 100 },    // IPC_PLAYFILE (wParam -> ptr -> string)
+          // IPC_PLAYFILE auto-plays; don't send IPC_STARTPLAY here — it would Stop() the
+          // just-started decode threads and restart, wasting decoded audio.
+        ];
+        for (const msg of ipcMsgs) {
+          if (!we.post_message_q(msg.hwnd, msg.msg, msg.wParam, msg.lParam))
+            throw new Error('winamp-play: post queue full');
+        }
+        logs.push(`[input] winamp-play: "${ev.filename}" at GA=0x${nameGA.toString(16)} batch ${batch}`);
+      } else if (ev.action === 'winamp-start') {
+        // Post IPC_STARTPLAY to the main Winamp window
+        const we = instance.exports;
+        const mainHwnd = we.get_main_hwnd();
+        if (!we.post_message_q(mainHwnd, 0x400, 0, 102))
+          throw new Error('winamp-start: post queue full');
+        logs.push(`[input] winamp-start at batch ${batch}`);
+      } else if (ev.action === 'post-cmd') {
+        const we = instance.exports;
+        // A menu command belongs to the window showing the menu, which is not
+        // always get_main_hwnd(). Pinball's menu bar is on its second
+        // top-level window (0x10002); posting to the first sent every command
+        // to a window whose wndproc had never heard of it, and the sweep read
+        // that as two broken dialogs. Prefer a visible window with a menu bar,
+        // and fall back to the main hwnd when nothing has one.
+        let mainHwnd = we.get_main_hwnd();
+        if (renderer && renderer.windows && renderer._hasMenuBar) {
+          for (const [hs, win] of Object.entries(renderer.windows)) {
+            if (!win || !win.visible || win.isChild) continue;
+            let hasMenu = false;
+            try { hasMenu = !!renderer._hasMenuBar(win); } catch (_) {}
+            if (hasMenu) { mainHwnd = parseInt(hs, 10) || mainHwnd; break; }
+          }
+        }
+        if (!we.post_message_q(mainHwnd, 0x111, ev.wParam, 0))
+          throw new Error('post-cmd: post queue full');
+        logs.push(`[input] post-cmd wParam=0x${ev.wParam.toString(16)} at batch ${batch}`);
+      } else if (ev.action === 'poke') {
+        const wa = g2w(ev.addr);
+        const dv = new DataView(memory.buffer);
+        dv.setUint32(wa, ev.value, true);
+        logs.push(`[input] poke [0x${ev.addr.toString(16)}] = 0x${ev.value.toString(16)} at batch ${batch}`);
+      } else if (ev.action === 'call-func') {
+        const we = instance.exports;
+        if (we.call_func) {
+          const a = ev.args || [];
+          we.call_func(ev.addr >>> 0, a[0] >>> 0, a[1] >>> 0, a[2] >>> 0, a[3] >>> 0);
+          logs.push(`[input] call-func 0x${(ev.addr >>> 0).toString(16)}(${a.map(v => '0x' + (v >>> 0).toString(16)).join(',')}) at batch ${batch}`);
+        } else {
+          logs.push(`[input] call-func unavailable addr=0x${(ev.addr >>> 0).toString(16)} at batch ${batch}`);
+        }
+      } else if (ev.action === 'read-dword') {
+        const wa = g2w(ev.addr);
+        const dv = new DataView(memory.buffer);
+        const value = dv.getUint32(wa, true) >>> 0;
+        logs.push(`[input] read-dword${ev.label ? ':' + ev.label : ''} [0x${(ev.addr >>> 0).toString(16)}] = 0x${value.toString(16)} (${value}) at batch ${batch}`);
+      } else if (ev.action === 'corner-drag' && renderer && renderer.handleMouseDown) {
+        const hwnd = parseInt(ev.target, 16) | 0;
+        const win = hwnd && renderer.windows ? renderer.windows[hwnd] : null;
+        if (!win) {
+          logs.push(`[input] corner-drag: no window for hwnd ${ev.target} at batch ${batch}`);
+        } else {
+          const r = renderer._windowRectScreen(win);
+          const x0 = r.x + r.w - 1, y0 = r.y + r.h - 1;
+          const x1 = x0 + ev.dx, y1 = y0 + ev.dy;
+          renderer.handleMouseDown(x0, y0, 1);
+          if (renderer.handleMouseMove) {
+            for (const t of [0.25, 0.5, 1]) {
+              renderer.handleMouseMove(
+                Math.round(x0 + (x1 - x0) * t), Math.round(y0 + (y1 - y0) * t));
+            }
+          }
+          if (renderer.handleMouseUp) renderer.handleMouseUp(x1, y1, 1);
+          logs.push(`[input] corner-drag hwnd=0x${hwnd.toString(16)} ${x0},${y0} -> ${x1},${y1} at batch ${batch}`);
+        }
+      } else if (ev.action === 'close-click' && renderer && renderer.handleMouseDown) {
+        const we = instance.exports;
+        let hwnd = 0;
+        if (ev.target === 'find') {
+          hwnd = (we.get_findreplace_dlg && we.get_findreplace_dlg()) | 0;
+        } else {
+          hwnd = parseInt(ev.target, 16) | 0;
+        }
+        const win = hwnd && renderer.windows ? renderer.windows[hwnd] : null;
+        if (!win) {
+          logs.push(`[input] close-click: no window for target ${ev.target} at batch ${batch}`);
+        } else {
+          // Same close box renderer-input.js hit-tests: 21px wide, inset 3px
+          // from the right edge, spanning the caption below the 3px border.
+          const r = renderer._windowRectScreen(win);
+          const x = r.x + r.w - 14;
+          const y = r.y + 13;
+          renderer.handleMouseDown(x, y, 1);
+          if (renderer.handleMouseUp) renderer.handleMouseUp(x, y, 1);
+          logs.push(`[input] close-click ${ev.target} hwnd=0x${hwnd.toString(16)} at ${x},${y} at batch ${batch}`);
+        }
+      } else if (ev.action === 'caption-click' && renderer && renderer.handleMouseDown) {
+        const hwnd = parseInt(ev.target, 16) | 0;
+        const win = hwnd && renderer.windows ? renderer.windows[hwnd] : null;
+        if (!win) {
+          logs.push(`[input] caption-click: no window for hwnd ${ev.target} at batch ${batch}`);
+        } else {
+          // Win98 caption buttons are 16px wide in a row at the right end:
+          // close outermost, then max, then min (same boxes close-click uses).
+          const r = renderer._windowRectScreen(win);
+          const slot = ev.part === 'min' ? 2 : ev.part === 'max' ? 1 : 0;
+          const x = r.x + r.w - 14 - slot * 16;
+          const y = r.y + 13;
+          renderer.handleMouseDown(x, y, 1);
+          if (renderer.handleMouseUp) renderer.handleMouseUp(x, y, 1);
+          logs.push(`[input] caption-click ${ev.part} hwnd=0x${hwnd.toString(16)} at ${x},${y} at batch ${batch}`);
+        }
+      } else if (ev.action === 'click' && renderer && renderer.handleMouseDown) {
+        renderer.handleMouseDown(ev.x, ev.y, 1);
+        if (renderer.handleMouseUp) renderer.handleMouseUp(ev.x, ev.y, 1);
+        logs.push(`[input] click ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'mousedown' && renderer && renderer.handleMouseDown) {
+        renderer.handleMouseDown(ev.x, ev.y, 1);
+        logs.push(`[input] mousedown ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'rclick' && renderer && renderer.handleMouseDown) {
+        renderer.handleMouseDown(ev.x, ev.y, 2);
+        renderer.handleMouseUp(ev.x, ev.y, 2);
+        logs.push(`[input] rclick ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'dblclick' && renderer && renderer.handleMouseDown) {
+        // Two consecutive clicks at the same spot. handleMouseDown's
+        // built-in timing check folds the second DOWN into WM_LBUTTONDBLCLK
+        // so it reaches WAT-native dialog children via dialog_route_mouse.
+        renderer.handleMouseDown(ev.x, ev.y, 1);
+        renderer.handleMouseUp(ev.x, ev.y, 1);
+        renderer.handleMouseDown(ev.x, ev.y, 1, { doubleClick: true });
+        renderer.handleMouseUp(ev.x, ev.y, 1);
+        logs.push(`[input] dblclick ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'mouseup' && renderer && renderer.handleMouseUp) {
+        renderer.handleMouseUp(ev.x, ev.y, 1);
+        logs.push(`[input] mouseup ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'mousemove' && renderer && renderer.handleMouseMove) {
+        if (renderer.handleMenuHover) renderer.handleMenuHover(ev.x, ev.y);
+        renderer.handleMouseMove(ev.x, ev.y);
+        logs.push(`[input] mousemove ${ev.x},${ev.y} at batch ${batch}`);
+      } else if (ev.action === 'relmousemove' && renderer && renderer.handleRelativeMouseMove) {
+        // With `steps`, deliver one step's worth now and leave the remainder
+        // for the next batch. Integer division would lose the remainder on a
+        // delta that does not divide evenly, so each step takes what is left
+        // divided by the steps that are left -- the total always arrives.
+        const steps = Math.max(1, ev.steps | 0);
+        const dx = Math.trunc(ev.x / steps);
+        const dy = Math.trunc(ev.y / steps);
+        renderer.handleRelativeMouseMove(dx, dy);
+        logs.push(`[input] relmousemove ${dx},${dy} at batch ${batch}`
+          + (steps > 1 ? ` (step ${steps} of ${ev.x},${ev.y} remaining)` : ''));
+        if (steps > 1) {
+          scheduledInput.push({ batch: batch + 1, action: ev.action,
+            x: ev.x - dx, y: ev.y - dy, steps: steps - 1 });
+          scheduledInput.sort((a, b) => a.batch - b.batch);
+        }
+      } else if (ev.action === 'wheel' && renderer && renderer.handleWheel) {
+        renderer.handleWheel(ev.x, ev.y, ev.delta);
+        logs.push(`[input] wheel ${ev.x},${ev.y} delta=${ev.delta} at batch ${batch}`);
+      } else if (typeof ev.msg !== 'number') {
+        // A pointer action that needs the renderer, with none to take it (no
+        // offscreen canvas: a missing pngjs did this on a boat). Say so instead
+        // of reading ev.msg below, which threw out of the main loop and left
+        // the run idle with its control channel unanswered.
+        logs.push(`[input] ${ev.action} dropped at batch ${batch}: no renderer`);
+      } else if (renderer) {
+        renderer.inputQueue.push(inputConsumptionTrace.enqueue(
+          { type: 'key', hwnd: 0, msg: ev.msg, wParam: ev.wParam, lParam: ev.lParam }, ev));
+        logs.push(`[input] injected msg=0x${ev.msg.toString(16)} wParam=0x${ev.wParam.toString(16)} at batch ${batch}`);
+      } else {
+        inputEvent = inputConsumptionTrace.enqueue(
+          { msg: ev.msg, wParam: ev.wParam, lParam: ev.lParam, hwnd: 0 }, ev);
+        logs.push(`[input] injected msg=0x${ev.msg.toString(16)} wParam=0x${ev.wParam.toString(16)} at batch ${batch}`);
+      }
+    }
+    if (control) settleLiveInput();
+    if (stopped) {
+      flushLogs();
+      break;
+    }
+
+    const eipBefore = instance.exports.get_eip();
+
+    // Skip check: simulate ret when EIP hits a skip address
+    if (skipAddrs.length && skipAddrs.includes(eipBefore)) {
+      const dv = new DataView(memory.buffer);
+      const retAddr = dv.getUint32(g2w(instance.exports.get_esp()), true);
+      console.log(`[skip] ${hex(eipBefore)} -> ret to ${hex(retAddr)}`);
+      instance.exports.set_eip(retAddr);
+      instance.exports.set_esp(instance.exports.get_esp() + 4);
+      continue;
+    }
+
+    // WASM-level breakpoint: set once
+    if (breakAddrs.length === 1 && batch === 0 && instance.exports.set_bp) {
+      instance.exports.set_bp(breakAddrs[0]);
+    }
+    // --trace-at: arm set_bp once (mutually exclusive with --break; --break wins).
+    // If --trace-at-start-batch is set, delay arming too; otherwise early
+    // breakpoints can perturb hot generated-code paths before we need data.
+    if (traceAtAddr && !breakAddrs.length && batch === TRACE_AT_START_BATCH && instance.exports.set_bp) {
+      instance.exports.set_bp(traceAtAddr);
+      // Cooperative threads own separate WASM instances.  They inherit the
+      // main instance's breakpoint globals when spawned, but a delayed
+      // --trace-at is commonly armed after those instances already exist.
+      // Keep the diagnostic honest by arming every live instance here.
+      if (threadManager && threadManager.threads) {
+        for (const thread of threadManager.threads.values()) {
+          const te = thread && thread.instance && thread.instance.exports;
+          if (te && te.set_bp) te.set_bp(traceAtAddr);
+        }
+      }
+    }
+    // --trace-esp: arm range once
+    if (traceEspOn && batch === 0 && instance.exports.set_trace_esp) {
+      instance.exports.set_trace_esp(1, traceEspLo, traceEspHi);
+    }
+    // --trace-eip-range: arm only when resolution succeeded (skip at batch=0 if
+    // module-relative range hasn't resolved yet — late LoadLibrary path re-arms).
+    if (traceEipOn && traceEipArmed && batch === TRACE_EIP_FROM && instance.exports.set_trace_eip_range) {
+      instance.exports.set_trace_eip_range(1, traceEipLo, traceEipHi);
+    }
+    // Hit counters: arm any slot whose address is known and not armed yet. A
+    // module-relative slot stays unresolved until its DLL loads, so this cannot
+    // be a batch-0-only job.
+    if (batch === 0) armCounts();
+    if (PRESENT_FRAMES) presentFramesTick(batch);
+    // Breakpoint check (EIP before run)
+    if (breakAddrs.length && breakAddrs.includes(eipBefore)) {
+      if (breakThreadFilter !== null && breakThreadFilter !== 0) {
+        // --break-thread filter excludes main; skip silently
+      } else {
+        console.log(`\n*** BREAKPOINT hit at ${hex(eipBefore)} (batch ${batch})`);
+        dumpCallstack('T0', instance.exports);
+        stepping = true;
+        await debugPrompt('Break');
+      }
+    }
+
+    // Single-step mode
+    if (stepping) {
+      console.log(`[${batch}] EIP=${hex(eipBefore)}`);
+      await debugPrompt('Step');
+    }
+
+    if (TRACE) {
+      console.log(`[${batch}] >> ${hex(eipBefore)} ESP=${hex(instance.exports.get_esp())}`);
+    }
+
+    // Default to message-loop delivery for multimedia timers. The guest already
+    // synthesizes MM_TIMER (0x7FF0) in PeekMessageA/GetMessageA, which matches
+    // how our Win32-facing code expects timeSetEvent callbacks to arrive.
+    // Injecting the callback asynchronously here as well causes duplicate
+    // dispatch for apps that pump messages, including RCT and Abe.
+    //
+    // `--async-mm-timer` keeps the old path available for experiments on
+    // binaries that truly need out-of-band timer delivery.
+    if (instance.exports.fire_mm_timer && hasFlag('async-mm-timer') &&
+        batch >= ASYNC_MM_TIMER_AFTER && !hasFlag('no-timer')) {
+      const comBefore = instance.exports.guest_read32(0x003fea90);
+      const fired = instance.exports.fire_mm_timer();
+      const comAfter = instance.exports.guest_read32(0x003fea90);
+      if (comBefore !== comAfter) {
+        console.log(`[TIMER-CORRUPT] batch=${batch} before=${hex(comBefore)} after=${hex(comAfter)} fired=${fired} EIP=${hex(instance.exports.get_eip())}`);
+      }
+      if (fired && TRACE_API) {
+        const mem32 = new Uint32Array(memory.buffer);
+        const g2wOff = RegionMap.g2wOffset(instance.exports.get_image_base());
+        const trampVal = mem32[(0xa5a058 + g2wOff) >> 2];
+        console.log(`[mm_timer] fired at batch ${batch}, EIP=${hex(instance.exports.get_eip())}, [0xa5a058]=${hex(trampVal)}`);
+      }
+    }
+
+    // DEBUG: check COM wrapper for DDraw offscreen surface corruption
+    if (TRACE_API && instance.exports.guest_read32) {
+      const comSlot2 = 0x003fea90;
+      const vtbl = instance.exports.guest_read32(comSlot2);
+      if (vtbl !== 0 && vtbl < 0x02200000) {
+        console.log(`[CORRUPT-PRE] batch=${batch} COM slot2 vtable=${hex(vtbl)} EIP=${hex(instance.exports.get_eip())}`);
+        break;
+      }
+    }
+
+    const batchStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
+    const decodesBefore = DECODE_STATS && instance.exports.get_cache_stores
+      ? instance.exports.get_cache_stores() >>> 0 : 0;
+    const sliceT0 = DECODE_STATS ? process.hrtime.bigint() : 0n;
+    try {
+      if (REAL_TICK_SLEEPS && threadManager.isMainSleeping() && !threadManager.hasLiveThreads()) {
+        // --real-ticks --present-cap: a main-thread Sleep lasts real time. Without this the
+        // loop spins through empty batches until the wall clock catches up,
+        // which is the same thing at 100% CPU plus a STUCK verdict.
+        const ms = Math.max(0, Math.ceil(threadManager.mainSleepRemaining()));
+        if (ms > 0) await new Promise(r => setTimeout(r, ms));
+      }
+      await awaitMainRenderPark();
+      // An external event can change only while real time passes. Park the
+      // host asynchronously between probes; runnable guest siblings still
+      // receive their ordinary slices below, and main's guest frame stays put.
+      if (threadManager.isMainNamedEventWaiting()) {
+        await new Promise(resolve => setTimeout(resolve, 4));
+      }
+      // A main thread parked in GetMessage is otherwise resumed only by the
+      // checkMainYield() after run(), so the input this batch just injected
+      // was taken at the batch's END and everything it led to ran in the next
+      // batch -- beside that batch's own scripted events. A click's posted
+      // follow-ups then lost to the next press (hardware before posted):
+      // Paint's tool buttons PostMessage the click to the toolbox, whose
+      // release arrived after the canvas press and stole its capture. Resume
+      // here, after injection, so a batch's input runs in that batch. Flush
+      // first: the [input] markers are buffered, and output the guest prints
+      // directly (--trace-host) while handling that input must follow them.
+      flushLogs();
+      if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
+        threadManager.checkMainYield();
+      }
+      if (!mainExecutionSuspended()) instance.exports.run(BATCH_SIZE);
+      else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
+    } catch (e) {
+      flushLogs();
+      console.log(`\n*** CRASH at batch ${batch}: ${e.message}`);
+      console.log('  Full stack:', e.stack.split('\n').slice(0, 15).join('\n    '));
+      console.log('  EIP before batch: ' + describeAddr(eipBefore));
+      // eipBefore is only where the BATCH entered; hundreds of blocks may run
+      // after it, so on its own it routinely names an innocent function. When
+      // the guest transfers into blank memory the trap EIP is garbage too, and
+      // prev_eip is already inside the blank run -- the block that jumped is
+      // one further back. Both globals are exported; the dump just never
+      // printed them, which cost a session chasing the wrong function.
+      let prev2Eip = 0;
+      try {
+        const prevEip = instance.exports.get_dbg_prev_eip() >>> 0;
+        prev2Eip = instance.exports.get_dbg_prev2_eip() >>> 0;
+        console.log('  prev_eip:  ' + describeAddr(prevEip));
+        console.log('  prev2_eip: ' + describeAddr(prev2Eip));
+      } catch (_) {}
+      try { console.log('  thread_alloc: ' + hex(instance.exports.get_thread_alloc())); } catch (_) {}
+      console.log('  ' + regs());
+      disasmAt(eipBefore);
+      if (prev2Eip && prev2Eip !== eipBefore) disasmAt(prev2Eip);
+      disasmAt(instance.exports.get_eip());
+      dumpStack();
+      if (TRACE_SEH) dumpSEH();
+      const frames = e.stack.split('\n').filter(l => l.includes('wasm-function'));
+      if (frames.length) {
+        console.log('  WASM stack:');
+        frames.slice(0, 8).forEach(f => console.log('    ' + f.trim()));
+      }
+      process.exit(1);
+    }
+
+    if (gameplayBench && await gameplayBench.boundary(batchClock.batchTicks())) break;
+
+    // DEBUG: check COM wrapper after run
+    if (TRACE_API && instance.exports.guest_read32) {
+      const comSlot2 = 0x003fea90;
+      const vtbl = instance.exports.guest_read32(comSlot2);
+      if (vtbl !== 0 && vtbl < 0x02200000) {
+        console.log(`[CORRUPT-POST] batch=${batch} COM slot2 vtable=${hex(vtbl)} EIP=${hex(instance.exports.get_eip())}`);
+      }
+    }
+
+    if (PAINT_AUDIT && !paintAuditCheck(instance.exports, `batch ${batch}`)) break;
+
+    if (BATCH_STATS && batch >= BATCH_STATS_FROM && instance.exports.get_last_run_blocks) {
+      batchStatsBlocks.push(instance.exports.get_last_run_blocks() | 0);
+      const why = instance.exports.get_last_run_halt() | 0;
+      if (why >= 0 && why < batchStatsHalts.length) batchStatsHalts[why]++;
+    }
+
+    if (DECODE_STATS && batch >= DECODE_STATS_FROM) {
+      // Wrap-safe: get_cache_stores is a u32 counter read as unsigned.
+      const decodesAfter = instance.exports.get_cache_stores
+        ? instance.exports.get_cache_stores() >>> 0 : 0;
+      decodeStatsDecodes.push((decodesAfter - decodesBefore) >>> 0);
+      decodeStatsSliceUs.push(Number(process.hrtime.bigint() - sliceT0) / 1000);
+    }
+
+    const afterRunMs = TRACE_BATCH_TIMING ? Date.now() : 0;
+    // Upload only when the guest says a frame is finished, rate-limited by wall
+    // clock. This replaced a '(batch & 0x7f) === 0' poll, which uploaded on the
+    // harness's cadence rather than the game's and then discarded the upload
+    // unless a 4-byte-per-row signature happened to change.
+    if (LIVE_PRESENT) presentDxIfDirty(DX_PRESENT_MIN_MS);
+
+    // Flush deferred repaint so back canvas composites after all GDI writes.
+    // The scheduled-repaint flag survives a skipped flush, so coalescing here
+    // delays a composite, never drops one.
+    if (LIVE_PRESENT && renderer && renderer.flushRepaint
+        && (REPAINT_EVERY === 1 || batch % REPAINT_EVERY === 0)) {
+      renderer.flushRepaint();
+    }
+    if (videoRecorder && batch >= videoStartBatch
+        && ((batch - videoStartBatch) % videoEvery) === 0) {
+      for (const pump of audioTapPumps) { try { pump(); } catch (_) {} }
+      presentDxIfDirty(0);   // a recorded frame is a capture, not a live view
+      // DirectDraw presents schedule the desktop composite. A sparse
+      // --repaint-every value must not make the recorder repeatedly sample the
+      // previous screen canvas while the guest's surface advances underneath.
+      // Frozen PNG capture uses this same forced publication boundary.
+      if (renderer && typeof renderer.repaint === 'function') renderer.repaint();
+      await videoRecorder.capture(renderer.canvas);
+    }
+    if (TRACE_BATCH_TIMING) {
+      const afterPaintMs = Date.now();
+      console.log(`[batch-timing] batch=${batch} run=${afterRunMs - batchStartMs}ms paint=${afterPaintMs - afterRunMs}ms eip=${hex(instance.exports.get_eip())}`);
+    }
+
+    // WASM-level breakpoint check (after run returns)
+    {
+      const eipNow = instance.exports.get_eip();
+      if (breakAddrs.length && breakAddrs.includes(eipNow) && eipNow !== eipBefore) {
+        if (breakThreadFilter !== null && breakThreadFilter !== 0) {
+          // --break-thread filter excludes main; just re-arm and continue
+          if (instance.exports.set_bp && !BREAK_ONCE) instance.exports.set_bp(breakAddrs[0]);
+        } else {
+          console.log(`\n*** BREAKPOINT hit at ${hex(eipNow)} (batch ${batch}, WASM bp)`);
+          if (instance.exports.get_dbg_prev_eip) console.log('  dbg_prev_eip=' + hex(instance.exports.get_dbg_prev_eip()));
+          if (instance.exports.get_bp_first_caller) console.log('  bp_first_caller=' + hex(instance.exports.get_bp_first_caller()));
+          console.log('  ' + regs());
+          dumpStack();
+          dumpCallstack('T0', instance.exports);
+          // Re-arm WASM bp so subsequent hits also fire (skip if --break-once)
+          if (instance.exports.set_bp && !BREAK_ONCE) instance.exports.set_bp(breakAddrs[0]);
+        }
+      }
+      // --trace-at: one-line register dump per hit, no stop (matches any addr in traceAtAddrs)
+      if (traceAtAddrs.length && traceAtAddrs.includes(eipNow >>> 0)) {
+        const shouldLog =
+          batch >= TRACE_AT_START_BATCH &&
+          (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT);
+        if (shouldLog) {
+          traceAtHits++;
+          const e = instance.exports;
+          const esp = e.get_esp() >>> 0;
+          const dv = new DataView(memory.buffer);
+          let stk = '';
+          for (let i = 0; i < 6; i++) {
+            const addr = (esp + i * 4) >>> 0;
+            stk += `[esp+${i * 4}]=${hex(dv.getUint32(g2w(addr), true))} `;
+          }
+          let prevInfo = '';
+          if (e.get_dbg_prev_eip) prevInfo += ` prev_eip=${hex(e.get_dbg_prev_eip())}`;
+          if (e.get_bp_first_caller) prevInfo += ` bp_first_caller=${hex(e.get_bp_first_caller())}`;
+          let flagInfo = '';
+          if (e.get_flag_res && e.get_flag_op && e.get_flag_a && e.get_flag_b && e.get_flag_sign_shift) {
+            flagInfo = ` flags{op=${e.get_flag_op()} a=${hex(e.get_flag_a())} b=${hex(e.get_flag_b())} res=${hex(e.get_flag_res())} sh=${e.get_flag_sign_shift()}}`;
+          }
+          let memInfo = '';
+          if (traceAtMem.length) {
+            const regValue = (name) => {
+              switch (String(name || '').toLowerCase()) {
+                case 'eax': return e.get_eax() >>> 0;
+                case 'ecx': return e.get_ecx() >>> 0;
+                case 'edx': return e.get_edx() >>> 0;
+                case 'ebx': return e.get_ebx() >>> 0;
+                case 'esp': return e.get_esp() >>> 0;
+                case 'ebp': return e.get_ebp() >>> 0;
+                case 'esi': return e.get_esi() >>> 0;
+                case 'edi': return e.get_edi() >>> 0;
+                case 'eip': return e.get_eip() >>> 0;
+                default: return null;
+              }
+            };
+            const parseAddrExpr = (expr) => {
+              let s = String(expr || '').replace(/^\[/, '').replace(/\]$/, '').trim();
+              let deref = false;
+              if (s.startsWith('*')) { deref = true; s = s.slice(1).trim(); }
+              const inner = parseAddrExprBase(s);
+              if (inner === null || !deref) return inner;
+              try { return dv.getUint32(g2w(inner), true) >>> 0; } catch (_) { return null; }
+            };
+            const parseAddrExprBase = (s) => {
+              // Win16 far form, e.g. es:esi-2 (a VB p-code pointer): the
+              // selector's base from the loader's table plus the offset.
+              const far = s.match(/^(cs|ds|es|ss):(.+)$/i);
+              if (far && e.win16_seg_base) {
+                const sel = e[`get_sreg_${far[1].toLowerCase()}`]?.();
+                const off = parseAddrExprBase(far[2].trim());
+                if (sel === undefined || off === null) return null;
+                return (e.win16_seg_base(sel >>> 3) + (off & 0xffff)) >>> 0;
+              }
+              const m = s.match(/^(e(?:ax|bx|cx|dx|sp|bp|si|di|ip))\s*([+-])?\s*(0x[0-9a-fA-F]+|\d+)?$/i);
+              if (m) {
+                const base = regValue(m[1]);
+                if (base === null) return null;
+                const off = m[3] ? parseInt(m[3]) : 0;
+                return ((m[2] === '-') ? (base - off) : (base + off)) >>> 0;
+              }
+              const addr = parseInt(s, 16);
+              return Number.isFinite(addr) ? (addr >>> 0) : null;
+            };
+            const parts = [];
+            for (const d of traceAtMem) {
+              const addr = parseAddrExpr(d.expr);
+              if (addr === null) {
+                parts.push(`${d.expr}=<?>`);
+                continue;
+              }
+              try {
+                const wa = g2w(addr);
+                let val;
+                if (d.str) {
+                  const u8 = new Uint8Array(memory.buffer);
+                  let out = '';
+                  for (let i = 0; i < 128; i++) {
+                    const c = u8[wa + i];
+                    if (!c) break;
+                    out += (c >= 0x20 && c < 0x7f) ? String.fromCharCode(c) : '.';
+                  }
+                  parts.push(`${d.expr}@${hex(addr)}="${out}"`);
+                  continue;
+                }
+                if (d.len === 1) val = dv.getUint8(wa);
+                else if (d.len === 2) val = dv.getUint16(wa, true);
+                else if (d.len === 4) val = dv.getUint32(wa, true) >>> 0;
+                else {
+                  const bytes = new Uint8Array(memory.buffer, wa, Math.max(0, d.len));
+                  val = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+                  parts.push(`${d.expr}@${hex(addr)}=${val}`);
+                  continue;
+                }
+                parts.push(`${d.expr}@${hex(addr)}=${hex(val)}`);
+              } catch (ex) {
+                parts.push(`${d.expr}@${hex(addr)}=<${ex.message}>`);
+              }
+            }
+            memInfo = ` mem{${parts.join(' ')}}`;
+          }
+          console.log(`[TRACE-AT #${traceAtHits}] batch=${batch} ${regs()}${prevInfo}${flagInfo}${memInfo} ${stk}`);
+          dumpCallstack('T0', e);
+          for (const d of traceAtDumps) {
+            if (TRACE_AT_WATCH && d.prev) {
+              d.prev = hexdumpDiff(d.addr, d.len, d.prev);
+            } else {
+              hexdump(d.addr, d.len);
+              if (TRACE_AT_WATCH) d.prev = readBytes(d.addr, d.len);
+            }
+          }
+          const cs = showCStrings();
+          if (cs) console.log(cs);
+        }
+        if (instance.exports.set_bp && (!TRACE_AT_LIMIT || traceAtHits < TRACE_AT_LIMIT)) {
+          instance.exports.set_bp(traceAtAddr);
+        }
+      }
+    }
+
+    // Handle COM DLL loading yield (yield_reason=3). The pump itself is shared
+    // with the browser (lib/process-boot.js); only where the bytes come from
+    // is ours.
+    if (instance.exports.get_yield_reason() === 3) {
+      await handleComDllYield({
+        exports: instance.exports,
+        memoryBuffer: memory.buffer,
+        exeBytes: new Uint8Array(exeBytes),
+        resourceHost: ctx,
+        log: console.log,
+        findDll: findRuntimeDllBytes,
+        findDllSync: findRuntimeDllBytes,
+      });
+    }
+
+    // Handle the lazy-VFS io_wait yield (yield_reason=12). A provider-backed
+    // file (a mounted zip/iso entry, a dropped File, a remote URL) was asked
+    // for a chunk the host has not read yet. ReadFile parked with its stdcall
+    // frame restored and EIP on the thunk, so filling the chunk and clearing
+    // the yield re-enters the same call, which then takes the cache hit.
+    if (instance.exports.get_yield_reason() === 12) {
+      const pending = ctx.vfs && ctx.vfs.getPendingRead(1);
+      if (TRACE_YIELD) {
+        console.log(`[yield] T0 reason=12 (io_wait) ` +
+          (pending ? `path=${pending.path} off=${pending.offset} len=${pending.length}` : 'no pending record'));
+      }
+      if (pending) {
+        // Fail loudly rather than spinning: a provider that cannot deliver is
+        // a mount bug, and a silent retry loop would look like a hang.
+        await ctx.vfs.fillPendingRead(pending);
+        // The VFS owns identity-guarded completion. A worker may have installed
+        // a newer pending request while the main guest awaited this fill.
+      }
+      instance.exports.clear_yield();
+    }
+    if (instance.exports.get_yield_reason() === 16) mainExecutionSuspended();
+
+    // Handle the vertical-blank yield (yield_reason=13). A DirectDraw call
+    // parked with its stdcall frame intact and EIP on the thunk, so advancing
+    // the clock past the boundary and clearing the yield re-enters the same
+    // call, which then finds the vblank has happened and returns DD_OK.
+    if (instance.exports.get_yield_reason() === 13) {
+      const deadline = instance.exports.get_vblank_deadline_ms
+        ? instance.exports.get_vblank_deadline_ms() >>> 0 : 0;
+      // Charge against the batch BASE, not the last value handed out: the
+      // per-call step inside a batch is capped at the next base, so lifting
+      // only the last tick can leave the base short and re-park forever.
+      // +1 so the boundary is strictly passed rather than exactly met.
+      const owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
+      if (owed > 0) {
+        tickState.pausedMs += owed;
+        VBLANK.guestMsAdded += owed;
+      }
+      VBLANK.waits++;
+      if (TRACE_YIELD) {
+        console.log(`[yield] T0 reason=13 (vblank_wait) due=${deadline} ` +
+          `now=${tickState.lastTick} charged=${Math.max(0, owed)}ms`);
+      }
+      instance.exports.clear_yield();
+    }
+
+    // Handle the spin parks (yield_reason 14 = clock, 15 = empty PeekMessage).
+    // Both parked with the stdcall frame intact and EIP on the thunk, so
+    // clearing the yield re-enters the same call.
+    //
+    // WHAT IS DELIBERATELY *NOT* DONE HERE: guest time is not charged by
+    // default. The headless clock already advances TICK_MS_PER_BATCH per batch
+    // and a park ends its batch, so the very next batch hands the guest a new
+    // millisecond -- the wait resolves on the schedule the run asked for, and
+    // the clock is left exactly as --tick-ms-per-batch defined it. Charging
+    // the way the vblank park does would be a real distortion here rather than
+    // a correction: a vblank deadline is ~17ms away and needs the lift, while
+    // a clock park's deadline is the NEXT MILLISECOND, which at
+    // --tick-ms-per-batch=1 is already where the next batch lands. Paying it
+    // anyway would run the guest clock at two to three times the requested
+    // rate and silently rewrite every GetTickCount-delta the app computes --
+    // exactly the kind of perturbation that would move GTA2's
+    // GetTickCount/Sleep/GetTickCount startup probe.
+    //
+    // The one case that does need a lift is a run with no batch step at all
+    // (--tick-ms-per-batch=0), where nothing else would ever move the clock.
+    {
+      const spinYield = instance.exports.get_yield_reason();
+      if (spinYield === 14 || spinYield === 15) {
+        const deadline = (spinYield === 14 && instance.exports.get_spin_deadline_ms)
+          ? instance.exports.get_spin_deadline_ms() >>> 0 : 0;
+        let owed = 0;
+        if (spinYield === 14 && batchClock.getTickMsPerBatch() <= 0) {
+          owed = ((deadline + 1) - batchClock.batchTicks()) | 0;
+          if (owed > 0) tickState.pausedMs += owed; else owed = 0;
+        }
+        if (spinYield === 14) SPIN_PARK.clockWaits++; else SPIN_PARK.peekWaits++;
+        SPIN_PARK.guestMsAdded += owed;
+        if (TRACE_YIELD) {
+          console.log(`[yield] T0 reason=${spinYield} `
+            + `(${spinYield === 14 ? 'clock_spin' : 'peek_spin'}) due=${deadline} `
+            + `now=${tickState.lastTick} charged=${owed}ms`);
+        }
+        instance.exports.clear_yield();
+      }
+    }
+
+    // Handle the virtual LAN net_wait yield (yield_reason=8). The guest is
+    // parked inside a blocking socket call with EIP still on the thunk, so
+    // clearing the yield re-enters the same handler with the same
+    // arguments. Yielding to the event loop first is what lets inbound
+    // frames actually arrive: on a ProcessWire they come in over IPC, and
+    // nothing is delivered while this synchronous loop holds the thread.
+    if (instance.exports.get_yield_reason() === 8) {
+      // This cap is here to notice a wire that has stalled, and it counts
+      // waits because a blocking socket call makes one per attempt. A 16-bit
+      // task parked on a continuation slot is a different shape: it is bounded
+      // by its own wall-clock timeout and can legitimately spend hundreds of
+      // thousands of turns inside it, so counting those trips the cap on a
+      // wait that is working exactly as designed. A TPM_RETURNCMD popup menu
+      // parks the same way for as long as it stays open.
+      if (!(instance.exports.win16_pump_parked && instance.exports.win16_pump_parked()) &&
+          !(instance.exports.menu_track_parked && instance.exports.menu_track_parked())) {
+        if (netWaits++ === 0) netWaitSince = Date.now();
+      }
+      // On the wall clock a guest's own timed wait (a synchronous DirectPlay
+      // EnumSessions holds for up to 5 s) does end, and a fast box makes
+      // 20000 attempts well inside it; so there the cap also needs 30 s with
+      // no progress. On the batch clock no guest deadline passes while it
+      // waits, and the count alone is what ends a stalled wire.
+      if (netWaits > VLAN_MAX_WAITS && (!REAL_TICKS || Date.now() - netWaitSince > 30000)) {
+        console.log(`[net] no progress after ${VLAN_MAX_WAITS} blocking waits; stopping`);
+        stopped = true;
+        break;
+      }
+      if (TRACE_YIELD) {
+        console.log(`[yield] T0 reason=8 (net_wait) eip=${hex(instance.exports.get_eip())} ` +
+          `esp=${hex(instance.exports.get_esp())}`);
+      }
+      instance.exports.clear_yield();
+      await new Promise(resolve => setImmediate(resolve));
+      if (instance.exports.vlan_pump) instance.exports.vlan_pump();
+    } else {
+      netWaits = 0;
+      // A process on the wire that is not blocking on it still has to let its
+      // transport deliver. On a ProcessWire frames arrive over child IPC, and
+      // nothing is delivered while this synchronous loop holds the thread —
+      // so a peer that never blocks can never receive an unsolicited frame at
+      // all. That is not a corner case: a Hearts dealer sits in an ordinary
+      // message loop waiting to be connected to, and read its client's
+      // request only after its own run had ended. A WSAAsyncSelect server
+      // would starve the same way, which is the host-side half of the problem
+      // $vsock_pump's call in GetMessageA solves on the guest side.
+      if (ctx.vlanWire && batch % VLAN_PUMP_EVERY === 0) {
+        await new Promise(resolve => setImmediate(resolve));
+        if (instance.exports.vlan_pump) instance.exports.vlan_pump();
+      }
+    }
+
+    if (instance.exports.get_yield_reason() === 18) {
+      serviceLoadLibraryYieldSync({ exports: instance.exports, memoryBuffer: memory.buffer,
+        resourceHost: ctx, findDllSync: findRuntimeDllBytes });
+    }
+    // Handle LoadLibraryA yield (yield_reason=5)
+    if (instance.exports.get_yield_reason() === 5) {
+      if (TRACE_YIELD) {
+        console.log(`[yield] T0 reason=5 (load_library) eip=${hex(instance.exports.get_eip())} ` +
+          `esp=${hex(instance.exports.get_esp())} syncDepth=${instance.exports.get_sync_msg_depth ? instance.exports.get_sync_msg_depth() : 0}`);
+      }
+      await handleLoadLibraryYield({
+        exports: instance.exports,
+        memoryBuffer: memory.buffer,
+        resourceHost: ctx,
+        log: console.log,
+        trace: TRACE_YIELD ? console.log : null,
+        findDll: findRuntimeDllBytes,
+        findDllSync: findRuntimeDllBytes,
+        // CLI-only bookkeeping: `module+0xVA` probes need this module's base
+        // before the app can reach any code in it, so the breakpoint and
+        // counter slots are re-armed here rather than at the next batch.
+        onLoaded: ({ result, fileName, bytes: dllBytesArr }) => {
+          const key = fileName.toLowerCase().replace(/\.[^.]+$/, '');
+          const peOff2 = dllBytesArr[0x3C] | (dllBytesArr[0x3D] << 8) | (dllBytesArr[0x3E] << 16) | (dllBytesArr[0x3F] << 24);
+          const dllOrigBase = dllBytesArr[peOff2 + 52] | (dllBytesArr[peOff2 + 53] << 8) | (dllBytesArr[peOff2 + 54] << 16) | (dllBytesArr[peOff2 + 55] << 24);
+          moduleBases[key] = { loadAddr: result.loadAddr, origBase: dllOrigBase };
+          deferredResolveAddrs();
+          if (instance.exports.set_bp) {
+            if (breakAddrs.length) instance.exports.set_bp(breakAddrs[0]);
+            else if (traceAtAddr) instance.exports.set_bp(traceAtAddr);
+          }
+          armCounts();
+          if (traceEipOn && traceEipArmed && batch >= TRACE_EIP_FROM && instance.exports.set_trace_eip_range) {
+            instance.exports.set_trace_eip_range(1, traceEipLo, traceEipHi);
+          }
+        },
+      });
+    }
+
+    // Thread management: spawn pending threads, run worker slices
+    if (threadManager._pendingThreads.length) {
+      await threadManager.spawnPending();
+    }
+    if (WORKER_THREADS && threadManager.hasActiveThreads()) {
+      // Real threads: every runnable one gets a slice at the same time, and they
+      // run on other CPUs while this thread carries on. There is no quantum to
+      // hand out and no round-robin to be fair about — those exist because one JS
+      // thread has to be shared, which is the constraint this backend removes.
+      //
+      // The clock and the input-queue depth are published, not asked for: a
+      // worker reads them out of its control block without a round trip, and this
+      // is the only thread that knows them.
+      guestThreadHost.broker.publish({
+        tickMs: guestClock.publish(),
+        inputPending: (inputQueue ? inputQueue.length : 0)
+          + (renderer && renderer.inputQueue ? renderer.inputQueue.length : 0),
+      });
+      const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
+      // Same THREAD_SLICES structure as the cooperative branch below, and for a
+      // reason that is not cosmetic: what a producer thread gets out of a batch is
+      // counted in WAKEUPS, not in steps. Winamp's decoder does one buffer's worth
+      // of work and parks on its event again, so its slice ends on the yield no
+      // matter how large the slice was. One round of slices per batch gave it a
+      // quarter of the wakeups the cooperative backend gives it, and the captured
+      // PCM came out 4x behind — real samples, arriving too late to be the audio
+      // the run was measuring. Main runs between rounds for the same reason it does
+      // below, which is what keeps --max-batches meaning the same thing on both
+      // backends.
+      //
+      // Slice size is NOT BATCH_SIZE, though. A worker's slice size is only the
+      // granularity of its round trip back to this thread — nothing here is blocked
+      // while it runs — whereas BATCH_SIZE is tuned for the opposite constraint and
+      // apps run it as low as 100 steps.
+      let ran = 0;
+      for (let s = 0; s < THREAD_SLICES; s++) {
+        const workerSlices = threadManager.runWorkerSlices(THREAD_BATCH_SIZE);
+        // --threads-serial means nothing runs beside a guest thread, main
+        // included, or the switch would not answer the question it exists for.
+        if (THREADS_SERIAL) await workerSlices;
+        else if (s < THREAD_SLICES - 1 && !stopped && !mainExecutionSuspended()) {
+          // Main keeps running WHILE they do — the CLI's version of host.js
+          // awaiting the main slice and the thread slices together.
+          try { instance.exports.run(BATCH_SIZE); } catch (e) { /* reported below */ }
+        }
+        ran = await workerSlices;
+        if (!ran || stopped || !threadManager.hasActiveThreads()) break;
+      }
+      if (TRACE_BATCH_TIMING) {
+        console.log(`[batch-timing] batch=${batch} threads=${ran} worker=${Date.now() - workerStartMs}ms`);
+      }
+      if (threadManager.netWaitPending) {
+        threadManager.netWaitPending = false;
+        await new Promise(resolve => setImmediate(resolve));
+      }
+    } else if (threadManager.hasActiveThreads()) {
+      // Give worker threads extra runtime when main thread is idle (e.g., waiting for extraction)
+      // The same reasoning covers any blocking wait, not just the installer's:
+      // while the main thread is parked on an object only a worker can signal,
+      // the interleaved main runs below do nothing but re-poll it, and four
+      // worker slices a batch is the emulator throttling the one thread with
+      // work to do. Storm's MPQ reader is the case that shows it -- Diablo's
+      // Single Player transition waits on three MPQ decompression jobs, and
+      // giving the worker the batch it is blocking on took the same capture of
+      // its Choose Class screen from >75s (it did not finish) to 53s. The wait
+      // still returns the instant the object is signalled, so nothing is lost
+      // when the work finishes early. 256 slices measured no better than 64.
+      const mainParked = !!(threadManager.isMainWaitingOnThreads
+        && threadManager.isMainWaitingOnThreads());
+      const slices = installingFiles ? 1000 : (mainParked ? WAIT_SLICES : THREAD_SLICES);
+      // Keep re-polling the parked wait after every slice. Polling every 8th
+      // instead was measured 30% SLOWER on Diablo's Single Player transition
+      // (69s vs 53s, byte-identical output): the object gets signalled inside
+      // the boosted run, and any slice the main thread spends not noticing is
+      // a slice the worker spends spinning on an empty queue.
+      // The run=/paint= line above covers only the main instance. In a threaded
+      // app the game itself lives on a worker, so without this the profile
+      // reads as "nothing is running" while the box is pinned.
+      const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
+      for (let s = 0; s < slices; s++) {
+        const sliceStats = threadManager.runSlice(BATCH_SIZE);
+        if (sliceStats && sliceStats.steps) workerStepsTotal += sliceStats.steps;
+        // Re-run main between live worker slices so producer/consumer pairs
+        // progress together. Once the last worker exits, return to the outer
+        // loop; repeatedly re-entering the main message pump here can drain
+        // creation-time paints before an app has finished its first layout.
+        if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
+            !mainExecutionSuspended()) {
+          try { instance.exports.run(BATCH_SIZE); } catch (e) { break; }
+        }
+      }
+      if (TRACE_BATCH_TIMING) {
+        console.log(`[batch-timing] batch=${batch} worker=${Date.now() - workerStartMs}ms slices=${slices}`);
+      }
+      // Same story for a worker that called LoadLibraryA: the WAT handler has
+      // parked it on yield 5 and only the host can finish the load, which is
+      // asynchronous. Serve it here, then hand the loader's cursors back to
+      // main, because the next slice copies them the other way.
+      for (const thread of threadManager.threadsAwaitingLoadLibrary()) {
+        const e = threadManager.cooperativeCallbackExports(thread);
+        threadManager.adoptMainGlobals(e);
+        if (TRACE_YIELD) {
+          console.log(`[yield] T${thread.tid} reason=5 (load_library) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
+        }
+        await handleLoadLibraryYield({
+          exports: e,
+          memoryBuffer: memory.buffer,
+          resourceHost: ctx,
+          log: console.log,
+          trace: TRACE_YIELD ? console.log : null,
+          findDll: findRuntimeDllBytes,
+          findDllSync: findRuntimeDllBytes,
+        });
+        threadManager.publishWorkerGlobals(e);
+      }
+      // And a worker whose CoCreateInstance needs an in-proc server: clearing
+      // the yield re-enters its handler, which then finds the class loaded.
+      for (const thread of threadManager.threadsAwaitingComDll()) {
+        const e = threadManager.cooperativeCallbackExports(thread);
+        threadManager.adoptMainGlobals(e);
+        if (TRACE_YIELD) {
+          console.log(`[yield] T${thread.tid} reason=3 (com_load_dll) eip=${hex(e.get_eip())} esp=${hex(e.get_esp())}`);
+        }
+        await handleComDllYield({
+          exports: e,
+          memoryBuffer: memory.buffer,
+          exeBytes: new Uint8Array(exeBytes),
+          resourceHost: ctx,
+          log: console.log,
+          findDll: findRuntimeDllBytes,
+          findDllSync: findRuntimeDllBytes,
+        });
+        threadManager.publishWorkerGlobals(e);
+      }
+      // A worker parked in a blocking socket call is waiting on a frame that
+      // only the event loop can deliver. runSlice cannot await, so the turn
+      // has to be given here or the wait never ends.
+      if (threadManager.netWaitPending) {
+        threadManager.netWaitPending = false;
+        await new Promise(resolve => setImmediate(resolve));
+      }
+    }
+    // Render worker replies also require a real event-loop turn; Promise-only
+    // CLI batches starve message delivery even though their guest is parked.
+    if (ctx.d3d9Bridge && ctx.d3d9Bridge.requests.size)
+      await new Promise(resolve => setImmediate(resolve));
+    // A parked socket call is not the only way to be waiting on the wire. An
+    // app using WSAAsyncSelect never blocks in winsock at all: it sits in its
+    // message pump expecting to be told, so nothing above would ever yield and
+    // the IPC frames carrying that news would not be read until the run ended.
+    // The wire belongs to the process, not to a worker, so this turn is owed
+    // whenever one is attached -- not only while threads happen to be alive.
+    if (ctx.vlanWire && (batch & 63) === 0) {
+      await new Promise(resolve => setImmediate(resolve));
+    }
+    // The same for a --spawn-processes child: its end (and the merge of what
+    // it left behind) arrives as a child-process event, so a parent parked in
+    // WaitForSingleObject on it would otherwise spin until its own run ended.
+    else if ((batch & 63) === 0 && ctx.hasLiveChildren && ctx.hasLiveChildren()) {
+      await new Promise(resolve => setImmediate(resolve));
+    }
+    if (AUDIO_EXIT_BYTES > 0 && ctx._audioOutFd !== undefined) {
+      // The running count, not the file size: --audio-out-max may cap the file.
+      let audioBytes = ctx._audioOutCount ? ctx._audioOutCount.bytes : 0;
+      if (!audioBytes) try { audioBytes = fs.fstatSync(ctx._audioOutFd).size; } catch (_) {}
+      if (audioBytes >= AUDIO_EXIT_BYTES) {
+        console.log(`[audio] captured ${audioBytes} bytes; stopping at --audio-exit-bytes=${AUDIO_EXIT_BYTES}`);
+        stopped = true;
+        break;
+      }
+    }
+    {
+      const eipPostThreads = instance.exports.get_eip();
+      if (breakAddrs.length && breakAddrs.includes(eipPostThreads) && !breakAddrs.includes(eipBefore)) {
+        console.log(`\n*** BREAKPOINT (POST-THREADS) hit at ${hex(eipPostThreads)} (batch ${batch}, eipBefore=${hex(eipBefore)})`);
+        if (instance.exports.get_dbg_prev_eip) console.log('  dbg_prev_eip=' + hex(instance.exports.get_dbg_prev_eip()));
+        if (instance.exports.get_bp_first_caller) console.log('  bp_first_caller=' + hex(instance.exports.get_bp_first_caller()));
+      }
+    }
+    // Check if main thread is waiting on an event
+    await threadManager.resolveMainThreadSend();
+    if (threadManager.checkMainYield()) {
+      // Main thread still waiting — don't advance EIP check
+    }
+
+// Watchpoint check
+    if (checkWatchpoint(batch)) {
+      if (!WATCH_LOG) {
+        stepping = true;
+        await debugPrompt('Watch');
+      }
+    }
+
+    // API breakpoint check
+    if (apiBreakHit) {
+      flushLogs();
+      console.log(`\n*** API BREAKPOINT: ${apiBreakHit} (batch ${batch})`);
+      apiBreakHit = null;
+      stepping = true;
+      await debugPrompt('API Break');
+    }
+
+    // Flush logs
+    flushLogs();
+
+    const eip = instance.exports.get_eip();
+if (VERBOSE) {
+      console.log(`[${batch}] ${regs()}`);
+    } else {
+      const ex = instance.exports;
+      // Order-dependent on purpose. A plain XOR of the registers cancels any
+      // two that hold the same value: SimGolf's vector-constructor loop ends
+      // every batch at 0x4935a4 with EAX == ESI == the element pointer, so a
+      // 56,640-element array walking forward read as an unchanged CPU and was
+      // reported STUCK while it was making steady progress.
+      let regFp = 0;
+      for (const v of [ex.get_eax(), ex.get_ecx(), ex.get_edx(), ex.get_ebx(),
+                       ex.get_esi(), ex.get_edi(), ex.get_ebp(), ex.get_esp()]) {
+        regFp = (Math.imul(regFp, 0x01000193) ^ (v | 0)) | 0;
+      }
+      // A 16-bit task makes none of the calls `apiCount` counts -- that is the
+      // 32-bit dispatch path, which is why every Win16 run reports "0 API
+      // calls" -- so its only evidence of life was EIP and the registers, and
+      // both can read identical at two batch boundaries of a healthy message
+      // loop. An idle Minesweeper was therefore reported STUCK. Its own call
+      // counter is the signal that actually distinguishes working from wedged.
+      const win16Calls = ex.win16_api_count ? ex.win16_api_count() | 0 : 0;
+      // A worker thread doing all the drawing is invisible to every signal
+      // above: the main thread parks in GetMessageA with fixed registers and
+      // makes no further API calls, which is exactly what a healthy
+      // render-thread app looks like. CITYSCAP.SCR was cut off after 11
+      // batches this way, its renderer never given a chance to draw a frame.
+      // The eip alone is still not enough for that app: its render thread ends
+      // every frame in Sleep, so the sampled eip is identical at each batch
+      // boundary however much work happened in between. workerStepsTotal is
+      // the signal that separates "parked between frames" from "wedged".
+      let workerFp = 0;
+      if (threadManager && threadManager.threads) {
+        for (const [, t] of threadManager.threads) {
+          if (t.instance && t.instance.exports.get_eip) {
+            workerFp = (workerFp ^ t.instance.exports.get_eip()) | 0;
+          }
+        }
+      }
+      // Without a host exit, EIP 0 means a guest called through a NULL pointer.
+      // ExitProcess also clears EIP after calling h.exit; that sentinel is
+      // not a NULL call, regardless of the guest exit code. Other stop reasons
+      // do not suppress this diagnostic.
+      // The next thing worth knowing is which pointer. The stuck detector prints
+      // that chain, but it is disabled for --control/--control-stdin sessions
+      // (they idle by design between agent commands), so a driven run used to
+      // reach the end with nothing but a zero in a status sample. Report it
+      // once, here, whatever the mode, and do not end the run: the harness may
+      // still want screenshots of whatever is left on screen.
+      if (eip === 0 && !hostExitRequested && !eipZeroReported) {
+        eipZeroReported = true;
+        console.log(`[eip-zero] guest called through NULL at batch ${batch}`);
+        if (instance.exports.get_dbg_prev_eip) {
+          console.log(`  dbg_prev_eip=${hex(instance.exports.get_dbg_prev_eip())}`);
+        }
+        try {
+          const dv = new DataView(memory.buffer);
+          for (const [name, ptr] of [
+            ['eax', instance.exports.get_eax()], ['ecx', instance.exports.get_ecx()],
+            ['edx', instance.exports.get_edx()], ['esi', instance.exports.get_esi()],
+            ['edi', instance.exports.get_edi()],
+          ]) {
+            if (!ptr) continue;
+            const words = [];
+            for (let i = 0; i < 6; i++) words.push(hex(dv.getUint32(g2w((ptr + i * 4) >>> 0), true)));
+            console.log(`  ${name}[${hex(ptr)}]: ${words.join(' ')}`);
+          }
+        } catch (_) {}
+        dumpStack();
+      }
+      const apiNow = apiTotal();
+      if (injectedInputThisBatch || eip !== prevEip || apiNow !== prevApiCount
+          || regFp !== prevRegFp || win16Calls !== prevWin16Calls
+          || workerFp !== prevWorkerFp || workerStepsTotal !== prevWorkerSteps) {
+        prevWorkerFp = workerFp;
+        prevWorkerSteps = workerStepsTotal;
+        prevWin16Calls = win16Calls;
+        if (!QUIET_BLOCKS && eip !== prevEip) console.log(`[${batch}] ${regs()}`);
+        prevEip = eip;
+        prevApiCount = apiNow;
+        prevRegFp = regFp;
+        stuckCount = 0;
+      } else if (threadManager.isMainNamedEventWaiting()) {
+        // An owned finite authority continuation is intentional inactivity.
+        stuckCount = 0;
+      } else if (ex.get_yield_reason() === 16 && ctx.d3d9Bridge &&
+          ctx.d3d9Bridge.requests.has(ex.get_d3d_render_token() | 0)) {
+        // The render worker owns a live continuation. An unchanged guest CPU
+        // while it runs is intentional; normal wall deadlines still apply.
+        // Do not exempt an orphaned yield with no corresponding request.
+        stuckCount = 0;
+      } else if (ex.win16_pump_parked && ex.win16_pump_parked()) {
+        // A 16-bit modal dialog or message box with no message to handle waits
+        // on a continuation slot with every register unchanged. That is the
+        // defined behaviour of those addresses, not a hang.
+        stuckCount = 0;
+      } else if (scheduledInput.length) {
+        // Scripted UI tests often wait inside a stable message-loop thunk
+        // until the next scheduled click/capture. Do not let that idle time
+        // accumulate and instantly trip after the last event is consumed.
+        stuckCount = 0;
+      } else if (REAL_TICK_SLEEPS && threadManager.isMainSleeping()) {
+        // --real-ticks: a main thread inside a finite Sleep() has an unchanged
+        // EIP by definition while the wall clock runs the wait out.
+        stuckCount = 0;
+      } else if (control) {
+        // A controlled session idles by design between agent commands; the
+        // stuck detector would end it the moment the message pump goes quiet.
+        stuckCount = 0;
+      } else {
+        stuckCount++;
+        if (STUCK_AFTER > 0 && stuckCount > STUCK_AFTER) {
+          console.log(`STUCK at EIP=${hex(eip)} after ${stuckCount} batches`);
+          if (instance.exports.get_dbg_prev_eip) console.log(`  dbg_prev_eip=${hex(instance.exports.get_dbg_prev_eip())}`);
+          // A NULL indirect-call target is usually a missing COM vtable slot.
+          // Preserve both levels of the pointer chain in the terminal dump;
+          // registers alone show the object but hide which method was NULL.
+          if (eip === 0) {
+            try {
+              const dv = new DataView(memory.buffer);
+              for (const [name, ptr] of [
+                ['eax', instance.exports.get_eax()],
+                ['ecx', instance.exports.get_ecx()],
+                ['esi', instance.exports.get_esi()],
+                ['edi', instance.exports.get_edi()],
+              ]) {
+                if (!ptr) continue;
+                const words = [];
+                for (let i = 0; i < 6; i++) {
+                  words.push(hex(dv.getUint32(g2w((ptr + i * 4) >>> 0), true)));
+                }
+                console.log(`  ${name}[${hex(ptr)}]: ${words.join(' ')}`);
+              }
+            } catch (_) {}
+          }
+          dumpStack();
+          break;
+        }
+      }
+    }
+  }
+  traceGateBatch = -1; // back outside the loop: the exit summary is never windowed
+  const executionElapsedSeconds = Math.max(0, (performance.now() - executionStartedAt) / 1000);
+  // A window whose stop is --max-batches (or past a crash/stop) is never
+  // closed inside the loop; report it as ending at run end, not silently.
+  for (const w of CPU_WINDOWS) {
+    if (!w.cpu || w.done) continue;
+    const d = process.cpuUsage(w.cpu);
+    w.done = true;
+    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s`);
+  }
+  // The control server would otherwise hold the process open; unref lets a
+  // reply resolved in the final batch still flush while the exit path prints.
+  closeControl();
+  if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
+  if (ctx.d3dCommands && D3DIM_GPU) {
+    const d = ctx.d3dCommands.snapshot();
+    console.log(`[d3dim-gpu] draws=${d.draws} triangles=${d.triangles} clears=${d.clears} ` +
+      `fallbacks=${d.fallbacks} errors=${d.errors} fences=${d.fences} syncs=${d.syncs} ` +
+      `uploads=${d.uploads} uploadRows=${d.uploadRows} textureUploads=${d.textureUploads} drawMs=${d.drawMs.toFixed(1)} ` +
+      `syncMs=${d.syncMs.toFixed(1)} uploadMs=${d.uploadMs.toFixed(1)} textureMs=${d.textureMs.toFixed(1)}`);
+    ctx.d3dCommands.stop();
+    ctx.d3dCommands = null;
+  }
+  if (ctx.d3dCommands) {
+    ctx.d3dCommands.fence();
+    const d = ctx.d3dCommands.snapshot();
+    console.log(`[d3d-worker] ready=${d.ready} queued=${d.queued} fallbacks=${d.fallbacks} ` +
+      `fences=${d.fences} flips=${d.flips || 0} waits=${d.waits} waitMs=${d.waitMs.toFixed(1)} ` +
+      `submissions=${d.submissions} replayCommands=${d.replayCommands} replayMs=${d.replayMs.toFixed(1)}`);
+    ctx.d3dCommands.stop();
+  }
+
+  if (handlerHistArmed && handlerHistExports) {
+    handlerHistExports.set_handler_hist_enabled(0);
+    printHandlerHistogram(MAX_BATCHES);
+    handlerHistArmed = false;
+    handlerHistDone = true;
+  }
+
+  if (!stopped) {
+    console.log('\n--- Final state ---');
+    console.log(regs());
+    if (instance.exports.get_wndproc) console.log('wndproc:', hex(instance.exports.get_wndproc()));
+    if (instance.exports.get_thunk_base) console.log('thunk_base:', hex(instance.exports.get_thunk_base()), 'thunk_end:', hex(instance.exports.get_thunk_end()), 'num_thunks:', instance.exports.get_num_thunks());
+    if (instance.exports.get_heap_ptr) console.log('heap_ptr:', hex(instance.exports.get_heap_ptr()));
+    if (instance.exports.get_free_list) console.log('free_list:', hex(instance.exports.get_free_list()));
+    if (instance.exports.heap_stat) {
+      const st = i => Number(instance.exports.heap_stat(i));
+      const census = instance.exports.heap_free_census;
+      const buckets = [];
+      for (let b = 4; b < 31; b++) { const n = census(b); if (n) buckets.push(`${1 << b}:${n}`); }
+      console.log(`heap stats: allocs=${st(0)} frees=${st(1)} steps=${st(2)} (${(st(2) / Math.max(1, st(0))).toFixed(1)}/alloc)`
+        + ` misses=${st(3)} missSteps=${st(4)} freeList=${census(32)} [${buckets.join(' ')}]`);
+    }
+    if (instance.exports.get_heap_sparse_ptr) console.log('heap_sparse_ptr:', hex(instance.exports.get_heap_sparse_ptr()));
+    if (instance.exports.get_heap_sparse_end) console.log('heap_sparse_end:', hex(instance.exports.get_heap_sparse_end()));
+    if (instance.exports.get_virtual_alloc_top) console.log('virtual_alloc_top:', hex(instance.exports.get_virtual_alloc_top()));
+    if (instance.exports.get_heap_base) console.log('heap_base:', hex(instance.exports.get_heap_base()));
+    // A full cache wipe re-decodes the app's whole working set. Per thread,
+    // because each worker owns its own arena and its own counter.
+    if (instance.exports.get_cache_clears) {
+      const parts = [`M ${instance.exports.get_cache_clears()}`];
+      if (threadManager) {
+        for (const [, t] of threadManager.threads) {
+          if (t.instance && t.instance.exports.get_cache_clears) {
+            parts.push(`T${t.tid} ${t.instance.exports.get_cache_clears()}`);
+          }
+        }
+      }
+      console.log('cache: full clears', parts.join('  '));
+      // The rest of this report is the MAIN instance's counters. A game whose
+      // loop runs on a worker (Hype) does its decoding there, so the same
+      // counters are printed per thread: decodes, live-block evictions, page
+      // compiles and code-write invalidations, which together say whether a
+      // worker re-decodes because it overflows, aliases, or writes its code.
+      if (threadManager && instance.exports.get_cache_stores) {
+        for (const [, t] of threadManager.threads) {
+          const x = t.instance && t.instance.exports;
+          if (!x || !x.get_cache_stores) continue;
+          console.log(`cache[T${t.tid}]: block decodes ${x.get_cache_stores()}`
+            + ` evicted-live ${x.get_cache_evicts()}`
+            + (x.get_page_compiles ? ` | pages compiled ${x.get_page_compiles()}` : '')
+            + (x.get_page_index_evicts ? ` index-arena-full ${x.get_page_index_evicts()}` : '')
+            + (x.get_cache_invals ? ` | invalidations ${x.get_cache_invals()} dropped ${x.get_cache_inval_hits()}`
+              + ` last ${hex(x.get_cache_inval_page())}` : ''));
+        }
+      }
+      if (instance.exports.get_cache_stores) {
+        console.log('cache: block decodes', instance.exports.get_cache_stores(),
+          'of which evicted a live block', instance.exports.get_cache_evicts());
+        // Page evictions by cause: the index arena running out (capacity) vs
+        // two pages sharing a direct-mapped PAGE_DIR slot (aliasing).
+        if (instance.exports.get_page_index_evicts) {
+          const cap = instance.exports.get_page_index_evicts();
+          console.log('cache: page evictions by cause: index arena full', cap,
+            '| directory slot collision', instance.exports.get_cache_evicts() - cap);
+        }
+      }
+      if (instance.exports.get_page_fast) {
+        const hits = instance.exports.get_page_hits();
+        const misses = instance.exports.get_page_misses();
+        const total = hits + misses;
+        console.log('pages: compiled', instance.exports.get_page_compiles(),
+          '| index hits', hits, 'misses', misses,
+          total ? `(${(100 * hits / total).toFixed(1)}% hit)` : '',
+          '| desk trips skipped', instance.exports.get_page_fast());
+        if (instance.exports.get_page_ft) {
+          console.log('runs:  extended', instance.exports.get_page_ft_chains(),
+            '| blocks chained', instance.exports.get_page_ft_blocks(),
+            '| free fall-throughs', instance.exports.get_page_ft());
+          if (instance.exports.get_page_ft_missed) {
+            const free = instance.exports.get_page_ft();
+            const missed = instance.exports.get_page_ft_missed();
+            const fell = free + missed;
+            console.log('       fall-through branches', fell,
+              `| free ${free}`, `| paid ${missed}`,
+              fell ? `(${(100 * missed / fell).toFixed(1)}% of fall-throughs are the defrag headroom)` : '');
+          }
+        }
+        if (instance.exports.get_page_chunk_samples) {
+          const samples = instance.exports.get_page_chunk_samples();
+          const total = instance.exports.get_page_chunk_used_total();
+          const totalNumber = typeof total === 'bigint' ? Number(total) : total;
+          console.log('chunks: samples', samples,
+            '| used mean', samples ? Math.round(totalNumber / samples) : 0,
+            'max', instance.exports.get_page_chunk_used_max(),
+            '| <=4K', instance.exports.get_page_chunk_le_4k(),
+            '<=8K', instance.exports.get_page_chunk_le_8k(),
+            '<=12K', instance.exports.get_page_chunk_le_12k(),
+            '<=16K', instance.exports.get_page_chunk_le_16k(),
+            '| grows', instance.exports.get_page_chunk_grows(),
+            'reuses', instance.exports.get_page_chunk_reuses(),
+            'unpublished', instance.exports.get_page_unpublished());
+        }
+      }
+      if (instance.exports.get_cache_invals) {
+        console.log('cache: page invalidations', instance.exports.get_cache_invals(),
+          'that dropped a block', instance.exports.get_cache_inval_hits(),
+          'last', hex(instance.exports.get_cache_inval_page()));
+        if (TRACE_CODE_WRITES) {
+          const top = (m, label) => {
+            const rows = [...m].sort((a, b) => b[1].dropped - a[1].dropped).slice(0, 20);
+            console.log(`  code writes by ${label} (${m.size} distinct):`);
+            for (const [k, e] of rows) {
+              console.log(`    ${hex(k)}  writes ${e.n}  blocks dropped ${e.dropped}`);
+            }
+          };
+          console.log(`[code-write] ${codeWriteStats.events} retiring writes on the main ` +
+            `instance, ${codeWriteStats.dropped} blocks dropped`);
+          top(codeWriteStats.byEip, 'writer EIP');
+          top(codeWriteStats.byPage, 'target page');
+          const r = codeWriteStats.retires;
+          console.log(`[code-retire] blocks retired: by guest write ${r.write || 0}, ` +
+            `by an overlapping publish ${r.overlap || 0}`);
+          const pairs = [...codeWriteStats.overlapPairs].sort((a, b) => b[1] - a[1]);
+          console.log(`  overlap retirements, retired entry <- publishing EIP (${pairs.length} distinct):`);
+          for (const [k, n] of pairs.slice(0, 25)) console.log(`    ${k}  x${n}`);
+          if (TRACE_CODE_WRITES_ALL) {
+            console.log(`[code-miss] ${codeWriteStats.misses} writes reached the range walk and retired nothing`);
+            for (const [m, label] of [[codeWriteStats.missByEip, 'writer EIP'], [codeWriteStats.missByPage, 'target page']]) {
+              console.log(`  by ${label} (${m.size} distinct):`);
+              for (const [k, n] of [...m].sort((a, b) => b[1] - a[1]).slice(0, 20)) console.log(`    ${hex(k)}  x${n}`);
+            }
+          }
+        }
+        // Section 5's own scoreboard. A retire is one block taken out by a
+        // write to a byte it covers; a range drop is a write too wide to walk,
+        // where the whole page went instead. The ratio is the thesis: per-offset
+        // invalidation is only worth its complexity if retires dominate.
+        if (instance.exports.get_page_retires) {
+          const ret = instance.exports.get_page_retires();
+          const drop = instance.exports.get_page_range_drops();
+          console.log('       blocks retired one at a time', ret,
+            '| whole-page drops (write too wide to walk)', drop,
+            ret + drop ? `(${(100 * ret / (ret + drop)).toFixed(1)}% exact)` : '');
+        }
+      }
+    }
+    if (instance.exports.gdi_dc_state_used) {
+      const dcCapacity = instance.exports.gdi_dc_state_capacity
+        ? instance.exports.gdi_dc_state_capacity() : 256;
+      const objectCapacity = instance.exports.gdi_object_capacity
+        ? instance.exports.gdi_object_capacity() : 256;
+      console.log('gdi: dc_states', instance.exports.gdi_dc_state_used(), '/',
+        dcCapacity, '  objects', instance.exports.gdi_object_used(), '/', objectCapacity,
+        '  dc_mark', instance.exports.gdi_table_mark(2));
+    }
+    if (instance.exports.gdi_dib_arena_stat) {
+      const st = instance.exports.gdi_dib_arena_stat;
+      console.log('gdi: dib arena pages used', st(0), 'free', st(1),
+        'largest free run', st(2), 'of', st(3));
+    }
+  }
+  // --win16-arena: how the Win16 selector arena is spent. Every global block
+  // costs at least one 64KB slot, so "GlobalAlloc returned 0" is a question of
+  // how many blocks are live and how big, which only the segment table knows.
+  if (hasFlag('win16-arena') && instance.exports.win16_seg_count) {
+    const dv = new DataView(memory.buffer);
+    const table = RegionMap.BASE.WIN16_SEG_TABLE;
+    const entries = RegionMap.SIZE ? RegionMap.SIZE.WIN16_SEG_TABLE / 16 : 1024;
+    let used = 0, live = 0, freed = 0, liveSlots = 0, freedSlots = 0, other = 0;
+    let pooled = 0, pooledFree = 0;
+    const sizes = new Map();
+    for (let i = 1; i < entries; i++) {
+      const e = table + i * 16;
+      const base = dv.getUint32(e, true), flags = dv.getUint32(e + 8, true);
+      const bytes = dv.getUint32(e + 12, true);
+      if (!base && !flags) continue;
+      // Flag 0x40000: a pooled block, sharing one 64KB slot with others.
+      if (flags & 0x40000) { if (flags & 0x20000) pooledFree++; else { pooled++; live++; } continue; }
+      used++;
+      const slots = Math.max(1, Math.ceil(bytes / 0x10000));
+      if ((flags & 0x30000) === 0x30000) { freed++; freedSlots += slots; }
+      else if (flags & 0x10000) {
+        live++; liveSlots += slots;
+        const bucket = bytes < 256 ? '<256' : bytes < 4096 ? '<4K' : bytes < 0x10000 ? '<64K' : '>=64K';
+        sizes.set(bucket, (sizes.get(bucket) || 0) + 1);
+      } else other++;
+    }
+    console.log(`win16 arena: ${used} slots touched; pooled blocks ${pooled} live, ${pooledFree} free; ` +
+      `live global blocks ${live} (${liveSlots} slots), freed ${freed} (${freedSlots} slots), ` +
+      `other (NE/system) ${other}; live sizes ${[...sizes].map(([k, v]) => `${k}:${v}`).join(' ')}`);
+  }
+  // Critical-section contention, printed only when there was some. A steal means
+  // a section was taken from a holder that never released it — a real bug that
+  // was worked around to avoid hanging, so it should never pass unnoticed.
+  if (instance.exports.get_cs_waits) {
+    const waits = instance.exports.get_cs_waits() >>> 0;
+    const steals = instance.exports.get_cs_steals ? instance.exports.get_cs_steals() >>> 0 : 0;
+    const badLeaves = instance.exports.get_cs_bad_leaves ? instance.exports.get_cs_bad_leaves() >>> 0 : 0;
+    const barges = instance.exports.get_cs_barges ? instance.exports.get_cs_barges() >>> 0 : 0;
+    const abandoned = instance.exports.get_cs_abandoned ? instance.exports.get_cs_abandoned() >>> 0 : 0;
+    if (abandoned) {
+      const at = instance.exports.get_cs_abandoned_eip ? instance.exports.get_cs_abandoned_eip() >>> 0 : 0;
+      console.log(`critical sections: ${abandoned} parked Enter(s) ABANDONED — the guest was `
+        + `dispatched elsewhere (last at ${hex(at)}) with the call's frame still on the stack`);
+    }
+    const resumeDelta = instance.exports.get_cs_resume_esp_delta
+      ? instance.exports.get_cs_resume_esp_delta() | 0 : 0;
+    if (resumeDelta) {
+      console.log(`critical sections: ESP moved ${resumeDelta} bytes across a park before the retry`);
+    }
+    if (waits || steals || badLeaves || barges) {
+      console.log(`critical sections: main parked ${waits}x, stole ${steals}, `
+        + `barged ${barges} (nested wndproc), released ${badLeaves} it did not own`);
+    }
+    // Which sections are still held, and by whom. A thread that reports
+    // waitingOnCS says one half of a deadlock; this says the other, and a section
+    // whose OwningThread names a thread that is not inside it is the whole answer.
+    // Printed only when something is held at exit, which for a clean run is never.
+    if (instance.exports.get_cs_table) {
+      const dv = new DataView(memory.buffer);
+      const table = instance.exports.get_cs_table() >>> 0;
+      const entries = instance.exports.get_cs_table_entries() >>> 0;
+      const held = [];
+      for (let i = 0; i < entries; i++) {
+        const cs = dv.getUint32(table + i * 4, true) >>> 0;
+        if (!cs) continue;
+        const owner = dv.getUint32(cs + 12, true) >>> 0;
+        if (!owner) continue;
+        held.push(`    ${hex(cs)} owner=${threadName(owner)} lock=${dv.getInt32(cs + 4, true)} `
+          + `recursion=${dv.getInt32(cs + 8, true)}`);
+      }
+      if (held.length) {
+        console.log(`held critical sections at exit (${held.length}):`);
+        for (const line of held) console.log(line);
+      }
+    }
+  }
+
+  experiments.report(instance, threadManager, VERBOSE);
+  // A report may have called an export that logs (--uop-census's exit dump);
+  // nothing drains the buffer after the batch loop otherwise.
+  flushLogs();
+
+  if (DUMP_VIRTUAL_MAPS) {
+    const dv = new DataView(memory.buffer);
+    const state = RegionMap.BASE.VIRTUAL_MAP_STATE;
+    const table = RegionMap.BASE.VIRTUAL_MAP_TABLE;
+    const count = dv.getUint32(state, true);
+    const backingTop = dv.getUint32(state + 4, true);
+    const reservationTop = dv.getUint32(state + 8, true);
+    console.log(`virtual_maps: count=${count} backing_top=${hex(backingTop)} reservation_top=${hex(reservationTop)}`);
+    for (let i = 0; i < count; i++) {
+      const rec = table + i * 16;
+      const guest = dv.getUint32(rec, true);
+      const size = dv.getUint32(rec + 4, true);
+      const backing = dv.getUint32(rec + 8, true);
+      console.log(`  [${i}] guest=${hex(guest)}..${hex((guest + size) >>> 0)} size=${hex(size)} backing=${hex(backing)}`);
+    }
+  }
+
+  // --peek=ADDR[:LEN],... — dump memory at end. Addrs >= image_base treated as
+  // guest VA (translated via g2w); addrs below GUEST_BASE treated as raw WASM linear.
+  const peekArg = args.find(a => a.startsWith('--peek='));
+  if (peekArg) {
+    const dv = new DataView(memory.buffer);
+    const imgBase = instance.exports.get_image_base();
+    for (const spec of peekArg.split('=')[1].split(',')) {
+      const [a, l] = spec.split(':');
+      const addr = parseInt(a, 16);
+      const len = parseInt(l) || 4;
+      const wa = (addr >= imgBase) ? g2w(addr) : addr;
+      let line = `[peek] ${hex(addr)} (wa=${hex(wa)}): `;
+      for (let i = 0; i < len; i += 4) {
+        line += hex(dv.getUint32(wa + i, true)) + ' ';
+      }
+      console.log(line.trim());
+    }
+  }
+
+  if (ctx._finalizeWaveTrace) ctx._finalizeWaveTrace();
+
+  // If --audio-out=*.wav, prepend a 44-byte RIFF/WAVE header now that we know
+  // the captured format and total bytes. Plain .pcm output is left raw.
+  if (ctx._audioOutFd !== undefined && ctx._audioOutWav) {
+    // Format may have been captured by a worker thread's ctx; fall back to
+    // the renderer's last-seen format if the main ctx didn't observe it.
+    const fmt = ctx._audioOutFormat
+      || (ctx._waveStats && ctx._waveStats.lastFmt)
+      || { rate: 22050, ch: 2, bits: 16 };
+    // PCM byte counter is per-thread; trust the file size on disk instead.
+    const dataLen = fs.fstatSync(ctx._audioOutFd).size;
+    const bytesPerSec = fmt.rate * fmt.ch * (fmt.bits / 8);
+    const blockAlign = fmt.ch * (fmt.bits / 8);
+    const hdr = Buffer.alloc(44);
+    hdr.write('RIFF', 0);
+    hdr.writeUInt32LE(36 + dataLen, 4);
+    hdr.write('WAVE', 8);
+    hdr.write('fmt ', 12);
+    hdr.writeUInt32LE(16, 16);              // PCM fmt chunk size
+    hdr.writeUInt16LE(1, 20);               // PCM format
+    hdr.writeUInt16LE(fmt.ch, 22);
+    hdr.writeUInt32LE(fmt.rate, 24);
+    hdr.writeUInt32LE(bytesPerSec, 28);
+    hdr.writeUInt16LE(blockAlign, 32);
+    hdr.writeUInt16LE(fmt.bits, 34);
+    hdr.write('data', 36);
+    hdr.writeUInt32LE(dataLen, 40);
+    // Read the raw PCM we wrote, then rewrite header + data in one go.
+    fs.closeSync(ctx._audioOutFd);
+    ctx._audioOutFd = undefined;
+    const pcm = fs.readFileSync(ctx._audioOutPath);
+    const fd = fs.openSync(ctx._audioOutPath, 'w');
+    fs.writeSync(fd, hdr);
+    fs.writeSync(fd, pcm);
+    fs.closeSync(fd);
+    console.log(`[wav] wrote ${ctx._audioOutPath}: ${fmt.rate}Hz ${fmt.ch}ch ${fmt.bits}bit ${dataLen} B PCM (+44 B header)`);
+  }
+
+  if (videoRecorder) {
+    for (const pump of audioTapPumps) { try { pump(); } catch (_) {} }
+    const video = await videoRecorder.finish();
+    console.log(`[video] wrote ${video.path}: ${video.frames} frames, ` +
+      `${video.width}x${video.height} at ${video.fps}fps (${video.duration.toFixed(2)}s)`);
+  }
+
+  console.log(`\nStats: ${apiTotal()} API calls, ${batchesRun} batches`
+    + ` in ${executionElapsedSeconds.toFixed(3)}s (${(batchesRun / Math.max(executionElapsedSeconds,0.001)).toFixed(0)} batches/s)`);
+  if (renderParkStats.waits || renderParkStats.skippedBatches)
+    console.log(`render park: main waited on ${renderParkStats.waits} software D3D requests `
+      + `(${renderParkStats.wallMs}ms wall), ${renderParkStats.skippedBatches} batches skipped while parked`);
+  if (PRESENT_CAP && instance.exports.get_present_paced_count) {
+    console.log(`present pacing (main instance): cap ${PRESENT_CAP}/s ${PRESENT_PACE_MODE ? 'smooth' : 'deadline'}, `
+      + `${instance.exports.get_present_paced_count()} frames slept `
+      + `${instance.exports.get_present_paced_ms()} guest ms`
+      + (LOGICAL_FRAME && instance.exports.get_logical_frame_count
+        ? `, at=${LOGICAL_FRAME.pace ? 'logical' : 'pump'}: ${instance.exports.get_logical_frame_count()} `
+          + `${LOGICAL_FRAME.label} steps, ${instance.exports.get_logical_frame_paced()} paced at the step`
+        : ''));
+  }
+  reportPresentFrames();
+  reportMmx();
+  reportGuestPageStats();
+
+  // --reg-export writes what the run left in the registry/INI store, which is
+  // what a browser tab would have kept in localStorage. Feed it back with
+  // --reg-import to make the next run a *second* launch.
+  if (REG_EXPORT) {
+    const { exportStore } = require('../lib/storage');
+    const snap = exportStore();
+    fs.writeFileSync(REG_EXPORT, JSON.stringify(snap, null, 2));
+    console.log(`[reg] exported ${Object.keys(snap).length} entries to ${REG_EXPORT}`);
+  }
+  // --export-saves writes the memory card: the app's persistFiles matches plus
+  // the registry/INI store, hashed and zipped. Feed it back with --import-saves,
+  // hand it to tools/save-bundle.js, or sync it with lib/save-sync.js.
+  if (EXPORT_SAVES) {
+    try {
+      const saveBundle = require('../lib/save-bundle');
+      if (!APP_ENTRY) throw new Error('--export-saves needs --app=ID for its persistFiles globs');
+      const patterns = APP_ENTRY.persistFiles || [];
+      if (!patterns.length) {
+        console.log(`[saves] --app=${APP_ID} declares no persistFiles; ` +
+          `the bundle carries registry/INI state only`);
+      }
+      const bytes = saveBundle.exportBundle({ appId: APP_ID, vfs: ctx.vfs, patterns });
+      fs.writeFileSync(EXPORT_SAVES, Buffer.from(bytes));
+      const listed = saveBundle.inspectBundle(bytes);
+      console.log(`[saves] exported ${listed.files.length} files ` +
+        `(${listed.totalFileBytes} bytes) + ${listed.registryKeys} registry keys ` +
+        `to ${EXPORT_SAVES}`);
+      for (const f of listed.files) console.log(`[saves]   ${f.path} (${f.size} bytes)`);
+    } catch (e) {
+      console.error(`--export-saves failed: ${e.message}`);
+      process.exitCode = 1;
+    }
+  }
+  if (traceHostNames && traceHostNames.has('com_create_instance') &&
+      ctx.sharedCom && ctx.sharedCom.lastCallback) {
+    const c = ctx.sharedCom.lastCallback;
+    console.log(`[com-callback] complete=${c.completed ? 1 : 0} eip=${hex(c.eip)} ` +
+      `yield=${c.yieldReason} eax=${hex(c.eax)} out=${hex(c.out)} ` +
+      `factory=${hex(c.factory)} method=${hex(c.method)} iid=${hex(c.iid)}`);
+    const e = ctx.sharedCom.lastEntry;
+    if (e) console.log(`[com-entry] clsid=${e.clsid} iid=${e.iid} ` +
+      `factoryOnly=${e.classFactoryOnly ? 1 : 0} outer=${hex(e.outer)} ` +
+      `context=${hex(e.context)} outPtr=${hex(e.outPtr)}`);
+  }
+
+  if (HOST_CENSUS && globalThis.__hostCensusCounts) {
+    const total = globalThis.__hostCensusTotal ? globalThis.__hostCensusTotal() : 0;
+    const top = [...globalThis.__hostCensusCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20);
+    console.log(`\n[host-census] final: ${total} host calls total`);
+    for (const [n, c] of top) {
+      console.log(`  ${String(c).padStart(9)}  ${n}`);
+    }
+  }
+
+  if (VBLANK.waits > 0) {
+    console.log(`\n[vblank] ${VBLANK.waits} vertical-blank waits`
+      + ` -> ${VBLANK.guestMsAdded}ms of guest time charged`
+      + ` (${(VBLANK.guestMsAdded / VBLANK.waits).toFixed(1)}ms each)`);
+  }
+  // Always printed when a detector fired, and the trip counters are printed
+  // even at zero when the detectors are on: "this app never debounced" is the
+  // measurement that matters for a game that must not be parked, and a missing
+  // line cannot be told apart from a run that forgot to look.
+  {
+    const ex = instance && instance.exports;
+    let clockTrips = ex && ex.get_clock_spin_parks ? ex.get_clock_spin_parks() >>> 0 : 0;
+    let peekTrips = ex && ex.get_peek_spin_parks ? ex.get_peek_spin_parks() >>> 0 : 0;
+    const perThread = [];
+    // Guest threads spin too, and on the games this exists for they are where
+    // the spinning IS: Abe's Oddysee makes 56.9 million clock reads on a
+    // spawned thread and roughly eight hundred on its main one. A main-thread
+    // total would have read as "the detector barely fires".
+    if (threadManager && threadManager.threads) {
+      for (const [, t] of threadManager.threads) {
+        const te = t.instance && t.instance.exports;
+        if (!te || !te.get_clock_spin_parks) continue;
+        const c = te.get_clock_spin_parks() >>> 0;
+        const p = te.get_peek_spin_parks() >>> 0;
+        // slept = clock parks the cooperative scheduler turned into a sleep
+        // to the park's deadline (lib/thread-manager.js, postYield 14).
+        if (c || p) perThread.push(`T${t.tid} clock=${c} peek=${p}`
+          + (t.clockParkSleeps ? ` slept=${t.clockParkSleeps}` : ''));
+        clockTrips += c;
+        peekTrips += p;
+      }
+    }
+    if (!NO_SPIN_PARK && (clockTrips || peekTrips || SPIN_PARK.clockWaits || SPIN_PARK.peekWaits)) {
+      console.log(`\n[spin-park] clock ${clockTrips} trips`
+        + ` (${SPIN_PARK.clockWaits} serviced on the main thread), empty-PeekMessage`
+        + ` ${peekTrips} trips (${SPIN_PARK.peekWaits} serviced on the main thread)`
+        + (SPIN_PARK.guestMsAdded ? `, ${SPIN_PARK.guestMsAdded}ms of guest time charged` : '')
+        + `; K=${ex && ex.get_spin_park_k ? ex.get_spin_park_k() : '?'}`
+        + (perThread.length ? ` — ${perThread.join(', ')}` : ''));
+    }
+  }
+
+  // Retire a final non-barrier GL batch before any exit capture reads pixels or
+  // the process tears down shared memory. Normal frames still flush at their
+  // semantic barriers, so this adds no crossing to the run loop.
+  base.flushGLCommands(instance.exports);
+
+  if (PRESENT_DISTINCT.on) {
+    const pd = PRESENT_DISTINCT;
+    const hashedCount = pd.counted - pd.gpu;
+    const share = hashedCount ? (100 * pd.changed / hashedCount).toFixed(1) : '0.0';
+    console.log(`\n[present-distinct] from batch ${pd.from}: ${pd.counted} presents`
+      + ` (${pd.presents} total), ${pd.changed} changed the picture (${share}%),`
+      + ` ${pd.unique.size} unique frames, ${pd.unreadable} unreadable`
+      + (pd.gpu ? `, ${pd.gpu} gpu (not hashed)` : '')
+      + `; by slot ${[...pd.slots].map(([s, n]) => `${s}:${n}`).join(' ')}`);
+    if (pd.rects.size) {
+      const top = [...pd.rects].sort((a, b) => b[1] - a[1]).slice(0, 8);
+      console.log(`[present-distinct] region changed per present (vs the previous present of that slot),`
+        + ` ${pd.rects.size} distinct boxes:`);
+      for (const [rect, n] of top) console.log(`[present-distinct]   ${String(n).padStart(6)}  ${rect}`);
+      console.log(`[present-distinct] first ${pd.seq.length} in order: ${pd.seq.join(' | ')}`);
+    }
+    // Rates between the first and last counted present, in GUEST seconds.
+    const spanMs = pd.firstMs !== null ? pd.lastMs - pd.firstMs : 0;
+    if (spanMs > 0 && pd.counted > 1) {
+      const gs = spanMs / 1000;
+      const hashed = pd.counted - pd.gpu;
+      console.log(`[present-distinct] over ${gs.toFixed(2)} guest-s:`
+        + ` ${((pd.counted - 1) / gs).toFixed(1)} presents/guest-s`
+        + (hashed > 0 ? `, ${(pd.changed / gs).toFixed(1)} changed/guest-s` : ''));
+      const midMs = pd.firstMs + spanMs / 2;
+      let n2 = 0, c2 = 0, h2 = 0;
+      for (let i = 0; i < pd.times.length; i++) {
+        if (pd.times[i] < midMs) continue;
+        n2++;
+        if (pd.changedTimes[i] !== null) { h2++; if (pd.changedTimes[i]) c2++; }
+      }
+      const gs2 = (pd.lastMs - midMs) / 1000;
+      if (gs2 > 0) {
+        console.log(`[present-distinct] second half (${gs2.toFixed(2)} guest-s):`
+          + ` ${(n2 / gs2).toFixed(1)} presents/guest-s`
+          + (h2 > 0 ? `, ${(c2 / gs2).toFixed(1)} changed/guest-s (${(100 * c2 / h2).toFixed(1)}%)` : ''));
+      }
+    }
+  }
+
+  if (DX_LOCK_PAUSE.ms > 0) {
+    console.log(`\n[dx-lock-pause] ${DX_LOCK_PAUSE.ms}ms per present:`
+      + ` ${DX_LOCK_PAUSE.presents} presents charged`
+      + ` (${DX_LOCK_PAUSE.primaryLocks} primary locks, ${DX_LOCK_PAUSE.flips} flips,`
+      + ` ${DX_LOCK_PAUSE.offscreenLocks} offscreen locks left at full speed)`
+      + ` -> ${DX_LOCK_PAUSE.guestMsAdded}ms of guest time charged`);
+  }
+
+  // --gdi-stats: how much software rasterization the run actually did. Span
+  // counts and pixel counts answer different questions — a repaint storm shows
+  // up as pixels per batch, a clip/ROP fallback as slow-path share.
+  if (GDI_STATS && instance.exports.test_gdi_fast_count) {
+    const c = i => instance.exports.test_gdi_fast_count(i) >>> 0;
+    const fastPx = c(4), slowPx = c(5);
+    const px = fastPx + slowPx;
+    console.log(`\nGDI raster: ${c(0)} fast spans (${fastPx} px), ${c(3)} slow spans (${slowPx} px)`);
+    console.log(`            ${c(1)} fast bitblts, ${c(2)} fast stretches`);
+    console.log(`            ${(px / MAX_BATCHES).toFixed(0)} px/batch, slow-path share ${px ? (100 * slowPx / px).toFixed(1) : '0.0'}%`);
+    console.log(`            ${c(8)} band-walked spans (multi-rect clip, still fast)`);
+    console.log(`            slow spans by cause: ${c(6)} clip/bounds, ${c(7)} surface-or-ROP`);
+  }
+
+  if (LATENCY_STATS) {
+    const s = latency.samples;
+    if (!s.length) {
+      console.log('\nInput->blit: no samples (no input injected, or nothing ever blitted)');
+    } else {
+      const pick = (key, q) => {
+        const v = s.map(x => x[key]).sort((a, b) => a - b);
+        return v[Math.min(v.length - 1, Math.floor(q * v.length))];
+      };
+      console.log(`\nInput->blit: ${s.length} events` +
+        (latency.pending ? ` (1 never blitted)` : ''));
+      console.log(`             batches p50 ${pick('batches', 0.5)}, p95 ${pick('batches', 0.95)}, max ${pick('batches', 1)}`);
+      console.log(`             ms      p50 ${pick('ms', 0.5).toFixed(2)}, p95 ${pick('ms', 0.95).toFixed(2)}, max ${pick('ms', 1).toFixed(2)}`);
+      const kinds = [...new Set(s.map(x => x.kind))];
+      if (kinds.length > 1 || kinds[0] !== 'mousemove') console.log(`             kinds: ${kinds.join(', ')}`);
+    }
+  }
+
+  if (FRAME_STATS) {
+    const report = (label, series, note) => {
+      const f = series.iv;
+      if (f.length < 2) {
+        console.log(`  ${label}: ${f.length + (series.lastBatch >= 0 ? 1 : 0)} events — too few to pace`);
+        return;
+      }
+      const q = (key, p) => {
+        const v = f.map(x => x[key]).sort((a, b) => a - b);
+        return v[Math.min(v.length - 1, Math.floor(p * v.length))];
+      };
+      const med = q('batches', 0.5);
+      // Judder is the share of frames that are not the usual length. A frame
+      // twice the median is one the player sees held on screen; an average
+      // would call that run smooth.
+      const long = f.filter(x => x.batches >= Math.max(1, med) * 1.75).length;
+      const stepsPer = med * BATCH_SIZE;
+      const window = MAX_BATCHES - FRAME_STATS_FROM;
+      console.log(`  ${label}: ${f.length + 1} over ${window} batches`
+        + ` (one per ${(window / (f.length + 1)).toFixed(2)} batches ≈ ${stepsPer >= 1000 ? (stepsPer / 1000).toFixed(0) + 'k' : stepsPer} steps)`);
+      console.log(`      interval batches p50 ${med}, p90 ${q('batches', 0.9)}, p99 ${q('batches', 0.99)}, max ${q('batches', 1)}`
+        + `   long (>=1.75x median) ${long} of ${f.length} (${(100 * long / f.length).toFixed(1)}%)`);
+      console.log(`      interval ms      p50 ${q('ms', 0.5).toFixed(1)}, p90 ${q('ms', 0.9).toFixed(1)}, p99 ${q('ms', 0.99).toFixed(1)}   (wall clock — load-sensitive, never diff across runs)`);
+      // Evenness in wall ms: spread, frame-to-frame change and the census
+      // against a 60 Hz grid (lib/frame-intervals.js). Only meaningful with
+      // --real-ticks, where the guest clock and this one are the same clock.
+      console.log(frameIntervals.format(frameIntervals.summarize(series.t), '      wall '));
+      if (note) console.log(`      ${note}`);
+      if (med <= 1) {
+        console.log('      NOT RESOLVED: the interval is at or under one batch, so this series is'
+          + ' sampled at the batch rate and its spread is an artifact.'
+          + ` Re-run with --batch-size well under ${BATCH_SIZE} to resolve it.`);
+      }
+    };
+    console.log(FRAME_STATS_FROM
+      ? `\nFrame pacing (from batch ${FRAME_STATS_FROM}; earlier frames ignored):`
+      : '\nFrame pacing:');
+    report('guest present (dx_present)    ', frameStats.present,
+      'guest-driven and independent of --repaint-every, but NOT one per frame for every app:'
+      + ' $dx_present runs on each blit that reaches the primary, so an app that composes'
+      + ' straight onto the primary instead of flipping a back buffer trips it several times'
+      + ' per frame. Compare the count against --trace-api IDirectDrawSurface_Blt/Flip before'
+      + ' reading it as a frame rate');
+    if (PRESENT_CAP) {
+      report('paced frame   ($present_pace) ', frameStats.paced,
+        'one per frame end the cap governs, stamped when the pacer ran (before its sleep)');
+      console.log(frameIntervals.format(frameIntervals.summarize(frameStats.pacedGuest),
+        '      guest ms '));
+    }
+    report('host flush    (surface upload)', frameStats.flush,
+      `what the browser HUD counts as fps; in the CLI it is gated by the repaint loop (--repaint-every=${REPAINT_EVERY}), so treat it as the harness's cadence unless it agrees with the present count above`);
+    // The raw series behind the percentiles above, for evidence that has to
+    // carry samples rather than a summary. Interval `batches` is the
+    // load-immune guest measure; `ms` and `t` are wall clock.
+    if (FRAME_STATS_OUT) {
+      const raw = s => ({ t: s.t, intervals: s.iv });
+      fs.writeFileSync(FRAME_STATS_OUT, JSON.stringify({
+        from: FRAME_STATS_FROM, batchSize: BATCH_SIZE, tickMsPerBatch: TICK_MS_PER_BATCH,
+        present: raw(frameStats.present), flush: raw(frameStats.flush),
+        ...(PRESENT_CAP ? { paced: raw(frameStats.paced) } : {}),
+      }));
+      console.log(`  raw series written to ${FRAME_STATS_OUT}`);
+    }
+  }
+
+  if (paintAuditCheck(instance.exports, 'exit') && PAINT_AUDIT) {
+    const ex = instance.exports;
+    console.log(`[paint-audit] ok: counts(paint,nc0..nc3)=${[0, 1, 2, 3, 4].map(k => ex.paint_work_count(k)).join(',')}`);
+  }
+
+  if (BATCH_STATS) {
+    const n = batchStatsBlocks.length;
+    if (n < 2) {
+      console.log(`\nBatch pacing: ${n} batches executed — too few to pace`);
+    } else {
+      const q = (arr, p) => {
+        const v = arr.slice().sort((a, b) => a - b);
+        return v[Math.min(v.length - 1, Math.floor(p * v.length))];
+      };
+      const total = batchStatsBlocks.reduce((a, b) => a + b, 0);
+      const full = batchStatsBlocks.filter(b => b >= BATCH_SIZE).length;
+      const tiny = batchStatsBlocks.filter(b => b < BATCH_SIZE / 100).length;
+      const names = ['(none)', 'budget spent', 'EIP zero', 'yield_flag',
+                     'blocking wait', 'debug facility'];
+      console.log(BATCH_STATS_FROM
+        ? `\nBatch pacing (from batch ${BATCH_STATS_FROM}):`
+        : '\nBatch pacing:');
+      console.log(`  blocks retired per batch (budget ${BATCH_SIZE}): total ${total} over ${n} batches,`
+        + ` mean ${(total / n).toFixed(1)}`);
+      console.log(`      p50 ${q(batchStatsBlocks, 0.5)}, p90 ${q(batchStatsBlocks, 0.9)},`
+        + ` p99 ${q(batchStatsBlocks, 0.99)}, max ${q(batchStatsBlocks, 1)}`);
+      console.log(`      batches that spent the whole budget: ${full} of ${n}`
+        + ` (${(100 * full / n).toFixed(1)}%);`
+        + ` batches that retired under 1% of it: ${tiny} (${(100 * tiny / n).toFixed(1)}%)`);
+      console.log('      why each batch stopped: '
+        + batchStatsHalts.map((c, i) => c ? `${names[i]} ${c}` : null)
+            .filter(Boolean).join(', '));
+      console.log('      A low p50 with "budget spent" rare means the batches are not doing the work'
+        + ' you sized them for — the host pays its per-batch cost either way, so the guest is'
+        + ' being charged overhead for blocks it never ran.');
+    }
+  }
+
+  if (DECODE_STATS) {
+    const n = decodeStatsDecodes.length;
+    if (n < 2) {
+      console.log(`\nDecode pacing: ${n} batches executed — too few to pace`);
+    } else {
+      const q = (arr, p) => {
+        const v = arr.slice().sort((a, b) => a - b);
+        return v[Math.min(v.length - 1, Math.floor(p * v.length))];
+      };
+      const total = decodeStatsDecodes.reduce((a, b) => a + b, 0);
+      const mean = total / n;
+      // A "storm" is a batch that decodes far more than the median batch. That
+      // is the shape re-decode jank actually has: a cache that evicts under
+      // collision does not decode a little more everywhere, it decodes nothing
+      // for a while and then a burst. The mean cannot see it; this can.
+      const med = q(decodeStatsDecodes, 0.5);
+      const stormFloor = Math.max(8, med * 4);
+      const storms = decodeStatsDecodes.filter(d => d >= stormFloor);
+      const stormWork = storms.reduce((a, b) => a + b, 0);
+      const zero = decodeStatsDecodes.filter(d => d === 0).length;
+      console.log(DECODE_STATS_FROM
+        ? `\nDecode pacing (from batch ${DECODE_STATS_FROM}):`
+        : '\nDecode pacing:');
+      console.log(`  block decodes per batch: total ${total} over ${n} batches, mean ${mean.toFixed(1)}`);
+      console.log(`      p50 ${med}, p90 ${q(decodeStatsDecodes, 0.9)}, p99 ${q(decodeStatsDecodes, 0.99)}, max ${q(decodeStatsDecodes, 1)}`
+        + `   decode-free batches ${zero} of ${n} (${(100 * zero / n).toFixed(1)}%)`);
+      console.log(`      storms (>=${stormFloor} decodes, i.e. 4x median): ${storms.length} batches`
+        + ` carrying ${stormWork} decodes (${total ? (100 * stormWork / total).toFixed(1) : '0.0'}% of all decode work)`);
+      console.log('      deterministic: identical across runs of one build, so this series IS safe to'
+        + ' diff between builds, unlike anything measured in wall clock');
+      console.log(`  guest slice ms per batch: p50 ${(q(decodeStatsSliceUs, 0.5) / 1000).toFixed(2)},`
+        + ` p90 ${(q(decodeStatsSliceUs, 0.9) / 1000).toFixed(2)},`
+        + ` p99 ${(q(decodeStatsSliceUs, 0.99) / 1000).toFixed(2)},`
+        + ` max ${(q(decodeStatsSliceUs, 1) / 1000).toFixed(2)}`);
+      console.log('      wall clock — load-sensitive. Read it only against the decode series above,'
+        + ' and only within one interleaved run.');
+    }
+  }
+
+  if (SLICE_SPLIT.length && decodeStatsSliceUs.length) {
+    // Phase boundaries are batch numbers; the series starts at batch 0 because
+    // --slice-split forces DECODE_STATS_FROM to 0.
+    const bounds = [0, ...SLICE_SPLIT, Infinity];
+    const grand = decodeStatsSliceUs.reduce((a, b) => a + b, 0);
+    console.log('\nPhase split (guest slice wall time, one run, so load is shared across phases):');
+    for (let p = 0; p + 1 < bounds.length; p++) {
+      const lo = bounds[p], hi = bounds[p + 1];
+      let us = 0, decodes = 0, n = 0;
+      for (let i = 0; i < decodeStatsSliceUs.length; i++) {
+        if (i < lo || i >= hi) continue;
+        us += decodeStatsSliceUs[i];
+        decodes += decodeStatsDecodes[i] || 0;
+        n++;
+      }
+      if (!n) continue;
+      const end = Number.isFinite(hi) ? hi : decodeStatsSliceUs.length;
+      // decodeStatsSliceUs is MICROseconds (hrtime ns / 1000), so seconds is /1e6.
+      console.log(`  batches ${lo}..${end}  ${n} batches  guest ${(us / 1e6).toFixed(1)}s`
+        + `  (${grand ? (100 * us / grand).toFixed(1) : '0.0'}% of guest time)`
+        + `  mean ${(us / n / 1000).toFixed(2)}ms/batch  decodes ${decodes}`);
+    }
+    console.log(`  total guest slice ${(grand / 1e6).toFixed(1)}s over ${decodeStatsSliceUs.length} batches`);
+    console.log('      Phase SHARES are the durable number here; the absolute seconds move with box load.');
+  }
+
+  if (threadManager && threadManager.threads && threadManager.threads.size) {
+    console.log('\nThreads (final state):');
+    for (const [handle, t] of threadManager.threads) {
+      // A worker-backed thread's registers live in another OS thread's instance,
+      // and reading them would mean a round trip to a worker that may already be
+      // gone. Report what the scheduler itself knows instead of a dump error.
+      if (!t.instance && t.link) {
+        console.log(`  T${t.tid} h=0x${handle.toString(16)} state=${t.state} slot=${t.link.slot} `
+          + `slices=${t.link.sliceStats.slices} guestMs=${t.link.sliceStats.guestMs.toFixed(1)} `
+          + `rpc=${t.link.sliceStats.rpcSync}sync/${t.link.sliceStats.rpcAsync}async/${t.link.sliceStats.rpcLocal}local `
+          + `sleepCount=${t.sleepCount || 0} waitPolls=${t.waitPolls || 0} `
+          + `csPark/steal=${t.csWaits || 0}/${t.csSteals || 0}`
+          // A Leave this thread had no right to make is reported next to the park
+          // count, because the two together read as one sentence: N threads are
+          // waiting for a section that M misdirected releases already unlocked.
+          + (t.csBadLeaves ? ` csBadLeave=${t.csBadLeaves}@${hex(t.csBadLeaveAddr || 0)}`
+              + `(owner=${threadName(t.csBadLeaveOwner || 0)})` : '')
+          + (t.csBarges ? ` csBarge=${t.csBarges}` : '')
+          + (t.csWaitAddr ? ` waitingOnCS=${hex(t.csWaitAddr)} heldBy=${threadName(t.csWaitOwner || 0)}` : ''));
+        continue;
+      }
+      try {
+        const e = t.instance.exports;
+        const eip = e.get_eip ? e.get_eip() : 0;
+        const esp = e.get_esp ? e.get_esp() : 0;
+        const ebp = e.get_ebp ? e.get_ebp() : 0;
+        const yr = e.get_yield_reason ? e.get_yield_reason() : -1;
+        const wh = e.get_wait_handle ? e.get_wait_handle() : 0;
+        const cs = e.get_cs_waits ? `${e.get_cs_waits() >>> 0}/${e.get_cs_steals ? e.get_cs_steals() >>> 0 : 0}` : '-';
+        console.log(`  T${t.tid} h=0x${handle.toString(16)} state=${t.state} eip=0x${eip.toString(16)} esp=0x${esp.toString(16)} ebp=0x${ebp.toString(16)} yield=${yr} waitH=0x${wh.toString(16)} sleepCount=${t.sleepCount||0} csPark/steal=${cs}`);
+      } catch (ex) { console.log(`  T${t.tid} dump error: ${ex.message}`); }
+    }
+  }
+
+  // --esp-audit: how much was actually measured, per thread. Printed even when
+  // nothing offended, because "no complaints" and "the audit never ran" look
+  // identical otherwise, and a silent audit is worse than none.
+  if (ESP_AUDIT && threadManager && threadManager.threads && threadManager.threads.size) {
+    let any = false;
+    for (const [, t] of threadManager.threads) {
+      const a = t.espAudit;
+      if (!a) continue;
+      if (!any) { console.log('\nStdcall epilogue audit (--esp-audit):'); any = true; }
+      console.log(`  T${t.tid} ${a.checked} of ${a.calls} dispatches checked, `
+        + `${a.bad.length} handler(s) off`
+        + (a.bad.length ? ': ' + a.bad.map(b => `${b.name} ${b.delta}!=${b.expected}`).join(', ') : ''));
+    }
+    if (!any) console.log('\nStdcall epilogue audit (--esp-audit): no worker thread reported (needs --threads)');
+  }
+
+  // --rpc-census: what each guest thread went out to the host for. In worker
+  // mode a blocking import costs that thread a postMessage and an Atomics.wait,
+  // so this is the throughput question, and --host-census cannot answer it —
+  // it wraps the main thread's table and never sees a worker's calls.
+  if (RPC_CENSUS && workerThreadHost && workerThreadHost.broker) {
+    const { calls, served } = workerThreadHost.broker.stats();
+    console.log(`\nBrokered host imports (${served} served, top ${Math.min(20, calls.length)}):`);
+    const pad = String(calls[0] ? calls[0].count : 0).length;
+    for (const c of calls.slice(0, 20)) {
+      console.log(`  ${String(c.count).padStart(pad)}  T${c.slot}  ${c.name}`);
+    }
+  }
+
+  if (apiCounts) {
+    const sorted = [...apiCounts.entries()].sort((a, b) => b[1] - a[1]);
+    const shown = sorted.slice(0, API_COUNTS_TOP);
+    const rest = sorted.slice(API_COUNTS_TOP).reduce((s, [, n]) => s + n, 0);
+    console.log(`\nAPI call counts (top ${shown.length} of ${sorted.length} unique):`);
+    const pad = String(shown[0]?.[1] ?? 0).length;
+    for (const [name, n] of shown) console.log(`  ${String(n).padStart(pad)}  ${name}`);
+    if (rest) console.log(`  ${String(rest).padStart(pad)}  (${sorted.length - API_COUNTS_TOP} others)`);
+  }
+  if (profileHostStats.size) {
+    console.log('\nHost import profile:');
+    for (const [name, s] of profileHostStats) {
+      const ms = Number(s.ns) / 1e6;
+      const avgUs = s.count ? (ms * 1000 / s.count) : 0;
+      console.log(`  ${name}: count=${s.count} total=${ms.toFixed(3)}ms avg=${avgUs.toFixed(3)}us`);
+    }
+  }
+
+  reportHitCounts('Hit counts:');
+
+  if (DUMP_VFS && ctx.vfs) {
+    console.log('\n[VFS] Files (' + ctx.vfs.files.size + '):');
+    for (const [k, v] of ctx.vfs.files.entries()) {
+      console.log(`  ${k} (${v.data.length} bytes)`);
+    }
+    console.log(`[VFS] Directories:`);
+    for (const d of ctx.vfs.dirs) {
+      console.log(`  ${d}\\`);
+    }
+  }
+
+  // The overlay batches dirty paths and never writes from inside a guest
+  // batch; this is where the batch lands. A run killed with SIGKILL loses the
+  // journal, which is the documented cost of not writing through every write.
+  if (vfsOverlay) {
+    const flushed = await vfsOverlay.flush();
+    const signalPrefix = terminationSignal ? `${terminationSignal} ` : '';
+    console.log(`[overlay] ${signalPrefix}flushed ${flushed.written} record(s) to ${OVERLAY_DIR}` +
+      (flushed.failed ? `, ${flushed.failed} failed` : ''));
+    for (const error of vfsOverlay.errors) console.log(`[overlay] ${error.message}`);
+  }
+
+  if (SAVE_VFS && ctx.vfs) {
+    saveVfsToHost(ctx.vfs, SAVE_VFS, {
+      suffix: SAVE_VFS_SUFFIX,
+      prefix: SAVE_VFS_PREFIX,
+      skipPaths: ['c:\\app.exe'],
+      log: line => console.log(line),
+    });
+  }
+  if (CAPTURE_LAUNCH && capturedLaunch) {
+    if (capturedLaunch.materialize) {
+      const bytes = await capturedLaunch.materialize;
+      const entry = capturedLaunch.vfs.files.get(capturedLaunch.guestExe);
+      if (entry && bytes) {
+        capturedLaunch.vfs.files.set(capturedLaunch.guestExe, {
+          ...entry,
+          data: bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes),
+        });
+      }
+    }
+    const written = saveVfsToHost(capturedLaunch.vfs, CAPTURE_LAUNCH, {
+      log: line => console.log(line.replace(/^\[save-vfs\]/, '[capture-launch]')),
+    });
+    const executable = written.find(row =>
+      String(row.guestPath).toLowerCase() === capturedLaunch.guestExe.toLowerCase());
+    if (!executable) throw new Error(`captured launch executable disappeared: ${capturedLaunch.guestExe}`);
+    const metadata = {
+      schemaVersion: 1,
+      guestExe: capturedLaunch.guestExe,
+      exe: path.relative(CAPTURE_LAUNCH, executable.outputPath).split(path.sep).join('/'),
+      args: capturedLaunch.args,
+      directory: capturedLaunch.directory,
+      files: written.length,
+    };
+    fs.writeFileSync(path.join(CAPTURE_LAUNCH, 'launch.json'),
+      `${JSON.stringify(metadata, null, 2)}\n`);
+    console.log(`[capture-launch] wrote ${path.join(CAPTURE_LAUNCH, 'launch.json')}`);
+  } else if (CAPTURE_LAUNCH) {
+    console.log('[capture-launch] no VFS-backed executable was launched');
+  }
+
+  if (DUMP_SPEC) {
+    // Comma-separated, because the interesting question is almost always a
+    // *relationship* between two structs (a surface descriptor vs the globals
+    // that should agree with it), and one region per run costs a whole rerun
+    // of the app to answer it.
+    for (const spec of DUMP_SPEC.split(',')) {
+      const [addrStr, lenStr] = spec.split(':');
+      const dumpAddr = parseInt(addrStr, 16);
+      const dumpLen = parseInt(lenStr) || 256;
+      hexdump(dumpAddr, dumpLen);
+    }
+  }
+
+  // --dump-vmap: list the sparse VirtualAlloc mappings, and say for each
+  // --dump address whether it actually lands in one. Guest memory outside
+  // every mapping translates to the shared NULL sentinel, where writes are
+  // discarded and reads come back zero — so a hexdump of unmapped memory is
+  // an innocent-looking page of zeros rather than an error. That is worth one
+  // line of output whenever you are chasing memory that "should" hold data.
+  if (DUMP_VMAP) {
+    const dv2 = new DataView(memory.buffer);
+    const count = dv2.getUint32(RegionMap.BASE.VIRTUAL_MAP_STATE, true) >>> 0;
+    console.log(`Virtual map: ${count} mapping(s)`);
+    const maps = [];
+    for (let i = 0; i < count; i++) {
+      const rec = RegionMap.BASE.VIRTUAL_MAP_TABLE + i * 16;
+      const b = dv2.getUint32(rec, true) >>> 0;
+      const sz = dv2.getUint32(rec + 4, true) >>> 0;
+      const back = dv2.getUint32(rec + 8, true) >>> 0;
+      maps.push({ b, sz });
+      console.log(`  [${i}] guest ${hex(b)}..${hex(b + sz)}  size ${hex(sz)}  backing ${hex(back)}`);
+    }
+    if (DUMP_SPEC) {
+      for (const spec of DUMP_SPEC.split(',')) {
+        const a = parseInt(spec.split(':')[0], 16) >>> 0;
+        const hit = maps.findIndex(m => a >= m.b && a < m.b + m.sz);
+        console.log(`  probe ${hex(a)}: ${hit >= 0
+          ? `mapped in [${hit}]`
+          : 'NOT MAPPED — reads return 0 and writes are discarded'}`);
+      }
+    }
+  }
+
+  // Dump sprite list if requested
+  if (args.includes('--dump-sprites')) {
+    const { dumpSprites } = require('../tools/dump_sprites');
+    dumpSprites(new Uint8Array(memory.buffer));
+  }
+
+  if (DUMP_SEH || TRACE_SEH) {
+    dumpSEH(true);
+  }
+
+  const getDxSurfaceManifest = () => {
+    const mem = new Uint8Array(memory.buffer);
+    const dv = new DataView(memory.buffer);
+    const DX_BASE = RegionMap.BASE.DX_OBJECTS;
+    const DX_SLOTS = 16384; // matches $DX_MAX in src/09a8-handlers-directx.wat
+    const DX_SURF_PAL = RegionMap.BASE.DX_SURF_PAL; // per-surface owned palette COM pointer
+    let paletteWa = 0;
+    for (let slot = 0; slot < DX_SLOTS; slot++) {
+      const entry = DX_BASE + slot * 32;
+      const type = dv.getUint32(entry, true);
+      const ptr = dv.getUint32(entry + 20, true);
+      if (type === 3 && ptr) { paletteWa = ptr; break; }
+    }
+    const surfaces = [];
+    for (let slot = 0; slot < DX_SLOTS; slot++) {
+      const entry = DX_BASE + slot * 32;
+      const type = dv.getUint32(entry, true);
+      const flags = dv.getUint32(entry + 28, true);
+      if (type !== 2 || !flags) continue;
+      const w = dv.getUint16(entry + 12, true);
+      const h = dv.getUint16(entry + 14, true);
+      const bpp = dv.getUint16(entry + 16, true);
+      const pitch = dv.getUint16(entry + 18, true) || Math.ceil(w * bpp / 32) * 4;
+      const dib = dv.getUint32(entry + 20, true);
+      if (!w || !h || !dib) continue;
+      let firstNonZero = -1;
+      let checksum = 0;
+      const sampleBytes = Math.min(pitch * Math.min(h, 16), 0x4000);
+      for (let i = 0; i < sampleBytes; i++) {
+        const v = mem[dib + i];
+        if (firstNonZero < 0 && v !== 0) firstNonZero = i;
+        checksum = (checksum + v) >>> 0;
+      }
+      // A surface that had its own palette attached (an 8bpp texture, say)
+      // must be decoded with that one, not with whichever palette happened to
+      // be allocated first.
+      const palObject = dv.getUint32(DX_SURF_PAL + slot * 4, true);
+      const palInfo = dxLookupThis(palObject, dv, g2w);
+      const ownPal = palInfo && palInfo.type === 3
+        ? dv.getUint32(DX_BASE + palInfo.slot * 32 + 20, true) : 0;
+      surfaces.push({ slot, entry, flags, w, h, bpp, pitch, dib, firstNonZero, checksum,
+        paletteWa: ownPal || paletteWa });
+    }
+    return { mem, surfaces };
+  };
+
+  const dxSurfaceToRgba = (surface, mem) => {
+    const data = Buffer.alloc(surface.w * surface.h * 4);
+    for (let y = 0; y < surface.h; y++) {
+      const srcRow = surface.dib + y * surface.pitch;
+      for (let x = 0; x < surface.w; x++) {
+        const di = (y * surface.w + x) * 4;
+        let r = 0, g = 0, b = 0;
+        if (surface.bpp === 8) {
+          if (surface.paletteWa && !DX_RAW_INDEX) {
+            const pi = mem[srcRow + x];
+            r = mem[surface.paletteWa + pi * 4];
+            g = mem[surface.paletteWa + pi * 4 + 1];
+            b = mem[surface.paletteWa + pi * 4 + 2];
+          } else {
+            r = g = b = mem[srcRow + x];
+          }
+        } else if (surface.bpp === 16) {
+          const px = mem[srcRow + x * 2] | (mem[srcRow + x * 2 + 1] << 8);
+          r = (px >> 11) << 3; g = ((px >> 5) & 0x3F) << 2; b = (px & 0x1F) << 3;
+        } else if (surface.bpp === 24) {
+          b = mem[srcRow + x * 3]; g = mem[srcRow + x * 3 + 1]; r = mem[srcRow + x * 3 + 2];
+        } else if (surface.bpp === 32) {
+          b = mem[srcRow + x * 4]; g = mem[srcRow + x * 4 + 1]; r = mem[srcRow + x * 4 + 2];
+        }
+        data[di] = r; data[di + 1] = g; data[di + 2] = b; data[di + 3] = 255;
+      }
+    }
+    // The display gamma ramp, as the browser presenter applies it
+    // (_presentDxSurfaceToMainWindow), so a capture matches the page.
+    const { gammaLut, applyGamma } = require('../lib/dib');
+    const gamma = DX_RAW_INDEX ? null : gammaLut(instance.exports, memory.buffer);
+    if (gamma) {
+      applyGamma(gamma, new Uint32Array(data.buffer, data.byteOffset, surface.w * surface.h),
+        0, surface.w * surface.h);
+    }
+    return data;
+  };
+
+  const dxSurfaceContentScore = (surface, mem) => {
+    if (!surface || !surface.dib || !surface.w || !surface.h || !surface.pitch) {
+      return { colors: 0, nonZero: 0, total: 0 };
+    }
+    const colors = new Set();
+    let nonZero = 0;
+    let total = 0;
+    try {
+      const step = Math.max(1, Math.ceil(Math.sqrt((surface.w * surface.h) / 2048)));
+      for (let y = 0; y < surface.h; y += step) {
+        const srcRow = surface.dib + y * surface.pitch;
+        for (let x = 0; x < surface.w; x += step) {
+          let key = 0;
+          if (surface.bpp === 8) {
+            const idx = mem[srcRow + x] || 0;
+            if (surface.paletteWa) {
+              const pi = surface.paletteWa + idx * 4;
+              key = ((mem[pi] || 0) << 16) | ((mem[pi + 1] || 0) << 8) | (mem[pi + 2] || 0);
+            } else {
+              key = idx;
+            }
+          } else if (surface.bpp === 16) {
+            key = (mem[srcRow + x * 2] || 0) | ((mem[srcRow + x * 2 + 1] || 0) << 8);
+          } else if (surface.bpp === 24) {
+            const pi = srcRow + x * 3;
+            key = ((mem[pi + 2] || 0) << 16) | ((mem[pi + 1] || 0) << 8) | (mem[pi] || 0);
+          } else if (surface.bpp === 32) {
+            const pi = srcRow + x * 4;
+            key = ((mem[pi + 2] || 0) << 16) | ((mem[pi + 1] || 0) << 8) | (mem[pi] || 0);
+          }
+          colors.add(key >>> 0);
+          if (key !== 0) nonZero++;
+          total++;
+        }
+      }
+    } catch (_) {}
+    return { colors: colors.size, nonZero, total };
+  };
+
+  const chooseDxPresentationSurface = (surfaces, mem) => {
+    const primary = surfaces.filter(s => (s.flags & 1));
+    const offscreen = surfaces.filter(s => (s.flags & 4));
+    const scored = (surface) => ({ surface, score: dxSurfaceContentScore(surface, mem) });
+    const useful = (item) => item && item.score.nonZero > 0;
+    const bestByDiversity = (items) => items
+      .filter(useful)
+      .sort((a, b) =>
+        (b.score.colors - a.score.colors) ||
+        (b.score.nonZero - a.score.nonZero))[0] || null;
+
+    const primaryCandidates = primary.map(scored);
+    const offscreenCandidates = offscreen
+      .filter(s => s.w >= 320 && s.h >= 200)
+      .map(scored);
+    const bestPrimary = bestByDiversity(primaryCandidates);
+    const bestOffscreen = bestByDiversity(offscreenCandidates);
+
+    if (!bestPrimary) {
+      // A flipping chain leaves the primary blank between presents while the
+      // frame sits in the back buffer — every Organic Art screensaver looks
+      // like that at an arbitrary batch count. The back buffer is the frame,
+      // so it outranks any texture regardless of colour count.
+      const bestBack = bestByDiversity(surfaces.filter(s => (s.flags & 2)).map(scored));
+      if (bestBack) return bestBack.surface;
+      for (const p of primary) {
+        const matching = bestByDiversity(offscreenCandidates.filter(item =>
+          item.surface.w === p.w &&
+          item.surface.h === p.h &&
+          item.surface.bpp === p.bpp));
+        if (matching) return matching.surface;
+      }
+      return bestOffscreen ? bestOffscreen.surface : null;
+    }
+
+    // An offscreen surface may only stand in for a primary that has content
+    // when it is the same size — that is a back buffer the app composes into
+    // and then presents, so it is the frame a moment early. A differently
+    // sized offscreen is a texture, and a texture atlas routinely carries more
+    // colours than the frame drawn with it: every Organic Art screensaver
+    // captured its leaf/marble sheet under the old colour-diversity rule and
+    // read as "renders a texture, never a scene" when the primary in fact held
+    // the rendered geometry. The browser presents the primary; so does this.
+    if (bestOffscreen &&
+        bestOffscreen.surface.w === bestPrimary.surface.w &&
+        bestOffscreen.surface.h === bestPrimary.surface.h &&
+        bestOffscreen.score.colors >= 16 &&
+        bestOffscreen.score.colors >= Math.max(bestPrimary.score.colors + 8, bestPrimary.score.colors * 4)) {
+      return bestOffscreen.surface;
+    }
+
+    return bestPrimary.surface;
+  };
+
+  const writeRgbaPng = (outPath, width, height, data) => {
+    if (!PNG) throw new Error('pngjs is required for direct PNG capture');
+    const png = new PNG({ width, height });
+    png.data.set(data);
+    const pngBuf = PNG.sync.write(png);
+    fs.writeFileSync(outPath, pngBuf);
+    return pngBuf.length;
+  };
+
+  if (DUMP_IMAGE) {
+    const { mem, surfaces } = getDxSurfaceManifest();
+    const primary = surfaces.find(s => (s.flags & 1)) || surfaces[0];
+    const imgBase = instance.exports.get_image_base() >>> 0;
+    for (const spec of DUMP_IMAGE.split(',')) {
+      const [addrStr, wStr, hStr, pitchStr, bppStr, outPath] = spec.split(':');
+      const guest = parseInt(addrStr, 16) >>> 0;
+      const surface = {
+        dib: RegionMap.g2w(guest, imgBase),
+        w: parseInt(wStr, 10) | 0,
+        h: parseInt(hStr, 10) | 0,
+        pitch: parseInt(pitchStr, 10) | 0,
+        bpp: parseInt(bppStr, 10) | 0,
+        paletteWa: primary ? primary.paletteWa : 0,
+      };
+      if (!surface.w || !surface.h || !surface.pitch || !outPath) {
+        console.log(`[dump-image] bad spec "${spec}" — expected ADDR:W:H:PITCH:BPP:FILE.png`);
+        continue;
+      }
+      const bytes = writeRgbaPng(outPath, surface.w, surface.h, dxSurfaceToRgba(surface, mem));
+      console.log(`[dump-image] wrote ${outPath} (${bytes} bytes) from guest 0x${guest.toString(16)}` +
+        ` ${surface.w}x${surface.h} pitch=${surface.pitch} bpp=${surface.bpp}`);
+    }
+  }
+
+  if (DX_SURFACES) {
+    const { mem, surfaces } = getDxSurfaceManifest();
+    // $dx_surf_fmt_get's codes (src/09a8-handlers-directx.wat).
+    const DX_SURFACE_FORMATS = ['default', '565', 'x555', 'a1555', 'a4444', 'a8888', 'x888'];
+    // Every 8bpp upload resolves its colours through the single primary-palette
+    // global, not through the per-surface palette printed below. When those two
+    // disagree the picture is drawn with somebody else's palette, so print both.
+    const globalPal = instance.exports.get_dx_primary_pal_wa
+      ? instance.exports.get_dx_primary_pal_wa() >>> 0 : 0;
+    console.log(`[dx-surfaces] ${surfaces.length} live surface(s)` +
+      ` primaryPal=0x${globalPal.toString(16)}`);
+    for (const s of surfaces) {
+      const score = dxSurfaceContentScore(s, mem);
+      // The pixel layout, not just the depth: a 16bpp surface is 565, 555 or
+      // 1555/4444, and decoding one as another shifts every hue.
+      const fmt = instance.exports.d3dim_gpu_surface_fmt
+        ? DX_SURFACE_FORMATS[instance.exports.d3dim_gpu_surface_fmt(s.entry) | 0] || '?' : '?';
+      console.log(`  slot=${s.slot} ${s.w}x${s.h} bpp=${s.bpp} fmt=${fmt} pitch=${s.pitch}` +
+        ` flags=0x${s.flags.toString(16)} dib=0x${s.dib.toString(16)}` +
+        ` pal=0x${s.paletteWa.toString(16)} colors=${score.colors} nonZero=${score.nonZero}/${score.total}`);
+    }
+  }
+
+  if (DUMP_DX_SURFACES) {
+    const { surfaces } = getDxSurfaceManifest();
+    const decode = instance.exports.d3dim_gpu_decode_texture;
+    const fmtOf = instance.exports.d3dim_gpu_surface_fmt;
+    const names = ['default', '565', 'x555', 'a1555', 'a4444', 'a8888', 'x888'];
+    fs.mkdirSync(DUMP_DX_SURFACES, { recursive: true });
+    let written = 0;
+    for (const s of surfaces) {
+      const wa = decode ? decode(s.entry, 0) >>> 0 : 0;
+      if (!wa) continue;
+      // Re-read the buffer: the decoder's scratch allocation may have grown memory.
+      const rgba = new Uint8Array(memory.buffer).slice(wa, wa + s.w * s.h * 4);
+      const fmt = names[fmtOf(s.entry) | 0] || 'fmt' + (fmtOf(s.entry) | 0);
+      writeRgbaPng(path.join(DUMP_DX_SURFACES, `slot${s.slot}-${s.w}x${s.h}-${fmt}.png`), s.w, s.h, rgba);
+      written++;
+    }
+    console.log(`[dump-dx-surfaces] wrote ${written} surface(s) to ${DUMP_DX_SURFACES}`);
+  }
+
+  if (GL_CENSUS) {
+    // Which GL entry points did this app really use? The counters are
+    // load-immune, so this is readable on a busy box where no timing is.
+    const GLCompat = require('../lib/gl-compat');
+    const stats = GLCompat.stats;
+    const ops = stats.ops;
+    const names = GLCompat.OP_NAMES || GLCompat.CALLS;
+    const seen = [];
+    for (let i = 0; i < ops.length; i++) {
+      if (ops[i]) seen.push([names[i] || `op${i}`, ops[i], i]);
+    }
+    seen.sort((a, b) => b[1] - a[1]);
+    const total = seen.reduce((n, entry) => n + entry[1], 0);
+    console.log(`[gl-census] ${seen.length} distinct GL entry point(s), ${total} call(s)`);
+    for (const [name, count, index] of seen) {
+      console.log(`  ${String(count).padStart(10)}  ${name} (#${index})`);
+    }
+    // Geometry does NOT show up as glBegin/glVertex in the list above once the
+    // encoder packs a span: it arrives as one packed-draw record carrying many
+    // vertices. Print the executor's own counters beside the histogram so a
+    // run that draws plenty can never read as a run that draws nothing.
+    console.log(`[gl-census] packed spans enqueued=${stats.enqueued} draws=${stats.draws}` +
+      ` vertices=${stats.drawVertices} presents=${stats.presents}` +
+      ` frontFlushes=${stats.frontFlushes}`);
+    // The families src/09a8f-gl-matrix.wat cannot mirror yet. A zero here is
+    // what licenses a consumer to trust the WAT state for THIS app; it is not
+    // a general claim, which is exactly why it is printed per run.
+    // This list is EMPTY for the first time: gluPerspective/gluLookAt/
+    // gluOrtho2D, then glPushAttrib/glPopAttrib, all grew mirrors. It is kept
+    // rather than deleted because it is the shape the next gap gets reported
+    // in, and because an empty list and a missing check print differently
+    // below.
+    //
+    // With nothing in it the latch beside it is the only reading that can
+    // move, and it still can: the mirror caps the attribute stack at GL's
+    // required minimum of 16 and latches on a deeper push, because a dropped
+    // push leaves every later pop restoring the wrong nesting level.
+    const UNMIRRORED = [];
+    const used = UNMIRRORED.filter(name => {
+      const index = GLCompat.CALL_INDEX[name];
+      return index !== undefined && ops[index];
+    });
+    // The WAT mirror's own verdict, which is the one that counts: the JS list
+    // above says what was called, this says whether the mirror noticed. They
+    // are printed together because a disagreement is itself the finding.
+    const latched = instance.exports.gl_mtx_untrusted
+      ? instance.exports.gl_mtx_untrusted() | 0 : -1;
+    const latchedName = latched > 0 ? (GLCompat.CALLS[latched] || `op${latched}`) : '';
+    console.log(`[gl-census] unmirrored families used: ${used.length ? used.join(', ') : 'none'}` +
+      `; WAT untrusted latch: ${latched < 0 ? 'export missing'
+        : latched === 0 ? 'clear' : `${latchedName} (#${latched})`}`);
+    // The WAT software rasterizer (src/09a8g-gl-raster.wat): what it drew and
+    // what it had to drop for want of near-plane clipping, so a black frame
+    // reads as "never asked", "asked and dropped" or "drew" at a glance.
+    const sw = instance.exports;
+    if (sw.gl_sw_enabled && sw.gl_sw_enabled()) {
+      // With --d3d-worker the draws were rasterized, and counted, there.
+      const wk = ctx.d3dCommands && ctx.d3dCommands.snapshot ? ctx.d3dCommands.snapshot() : {};
+      console.log(`[gl-census] software raster: triangles=${((sw.gl_sw_triangles() >>> 0) + (wk.glTriangles || 0))}` +
+        ` dropped-at-eye-plane=${(sw.gl_sw_clipped() >>> 0) + (wk.glClipped || 0)}` +
+        ` culled=${(sw.gl_sw_culled() >>> 0) + (wk.glCulled || 0)}` +
+        (wk.glQueued ? ` worker-draws=${wk.glQueued} worker-tex-uploads=${wk.glTexQueued || 0}` : '') +
+        ` presents=${sw.gl_sw_presents() >>> 0} tex-uploads=${sw.gl_sw_tex_uploads() >>> 0}` +
+        ` tex-unsupported=${sw.gl_sw_tex_unsupported() >>> 0} target-slot=${sw.gl_sw_slot() | 0}` +
+        (() => {
+          // The target's size beside the drawable the host reported: a
+          // mismatch is a frame drawn into the wrong-sized buffer.
+          const e = sw.gl_sw_entry ? sw.gl_sw_entry() >>> 0 : 0;
+          const u16 = new Uint16Array(memory.buffer);
+          const t = e ? ` target=${u16[(e + 12) >>> 1]}x${u16[(e + 14) >>> 1]}` : '';
+          const d = sw.gl_sw_drawable ? sw.gl_sw_drawable() >>> 0 : 0;
+          return t + ` drawable=${d ? `${d >>> 16}x${d & 0xFFFF}` : 'unreported'}`;
+        })() +
+        (sw.gl_sw_bitmap && sw.gl_sw_bitmap() ? ` bitmap=0x${(sw.gl_sw_bitmap() >>> 0).toString(16)}` : ''));
+    }
+  }
+
+  if (PNG_OUT && renderer) {
+    const { mem, surfaces } = getDxSurfaceManifest();
+    const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
+    // Software GL drawing into a PFD_DRAW_TO_BITMAP DIB leaves only helper
+    // surfaces (depth, descriptors) in the DX table and no front buffer; the
+    // app shows that DIB through GDI, so the window canvas is the picture.
+    const ex = instance.exports;
+    const glBitmapOnly = ex.gl_sw_enabled && ex.gl_sw_enabled() && ex.gl_sw_front
+      && !ex.gl_sw_front() && ex.gl_sw_entry && ex.gl_sw_entry();
+    // A software GL front buffer IS the picture, black or not. Left to the
+    // content chooser, a black front loses to the 16bpp depth buffer, whose
+    // clear to 0xFFFF reads as "content" -- ptct's intro came out as a flat
+    // depth-buffer capture that way.
+    const glFrontSlot = (ex.gl_sw_enabled && ex.gl_sw_enabled() && ex.gl_sw_front
+      && ex.gl_sw_front()) ? (ex.gl_sw_slot() | 0) : null;
+    const glFront = glFrontSlot === null ? null
+      : (surfaces.find(s => s.slot === glFrontSlot) || null);
+    const surface = (PNG_CANVAS || (glBitmapOnly && wantSlot === null)) ? null
+      : (wantSlot === null ? (glFront || chooseDxPresentationSurface(surfaces, mem))
+        : (surfaces.find(s => s.slot === wantSlot) || null));
+    if (wantSlot !== null && !surface) {
+      console.log(`[dx-slot] no live surface in slot ${wantSlot} — falling back to the screen canvas`);
+    }
+    if (surface) {
+      const bytes = writeRgbaPng(PNG_OUT, surface.w, surface.h, dxSurfaceToRgba(surface, mem));
+      console.log(`Wrote ${PNG_OUT} (${bytes} bytes, dx slot ${surface.slot} ${surface.w}x${surface.h})`);
+    } else {
+      presentForRead();
+      const w = renderer.canvas.width | 0;
+      const h = renderer.canvas.height | 0;
+      const img = renderer.canvas.getContext('2d').getImageData(0, 0, w, h);
+      const bytes = writeRgbaPng(PNG_OUT, w, h, img.data);
+      console.log(`Wrote ${PNG_OUT} (${bytes} bytes, canvas ${w}x${h})`);
+    }
+    if (DUMP_BACKCANVAS) {
+      for (const [hwnd, win] of Object.entries(renderer.windows)) {
+        if (win) {
+          console.log(`  hwnd=${hwnd} pos=${win.x},${win.y} size=${win.w}x${win.h} client=${JSON.stringify(win.clientRect)} visible=${win.visible} title=${JSON.stringify(win.title)}`);
+        }
+        if (win && win._backCanvas) {
+          const back = canvasToPng(win._backCanvas);
+          const out = PNG_OUT.replace(/\.png$/, `_back_${hwnd}.png`);
+          fs.writeFileSync(out, back);
+          console.log(`  Wrote ${out} (${back.length} bytes, ${win._backW}x${win._backH})`);
+        }
+      }
+    }
+  }
+
+  // Dump the derived presentation of every canonical GDI surface as PNG.
+  if (DUMP_GDI && createCanvas) {
+    fs.mkdirSync(DUMP_GDI, { recursive: true });
+    let count = 0;
+    for (const [handle, presentation] of base.gdi.surfacePresentations.entries()) {
+      if (!presentation || !presentation.surface || !presentation.width || !presentation.height) continue;
+      const { width, height, surface } = presentation;
+      const c = createCanvas(width, height);
+      const dstCtx = c.getContext('2d');
+      const img = dstCtx.createImageData(width, height);
+      img.data.set(surface.rgbaRect(0, 0, width, height));
+      dstCtx.putImageData(img, 0, 0);
+      const outFile = path.join(DUMP_GDI, `gdi_${handle}_${width}x${height}.png`);
+      fs.writeFileSync(outFile, canvasToPng(c));
+      count++;
+    }
+    console.log(`Dumped ${count} GDI bitmaps to ${DUMP_GDI}/`);
+  }
+
+  // Dump all DirectDraw surfaces' current DIB contents as PNGs. Use the same
+  // low-memory DX_OBJECTS table that dxLookupThis() uses for live tracing so
+  // the diagnostic dump stays in sync with the current branch layout. When
+  // canvas is unavailable, fall back to PPM + a metadata manifest.
+  if (DUMP_DDRAW) {
+    fs.mkdirSync(DUMP_DDRAW, { recursive: true });
+    const mem = new Uint8Array(memory.buffer);
+    const dv = new DataView(memory.buffer);
+    const DX_BASE = RegionMap.BASE.DX_OBJECTS;
+    const DX_SLOTS = 16384; // matches $DX_MAX in src/09a8-handlers-directx.wat
+    const manifest = [];
+    // Read the primary palette WASM addr by scanning palette-type entries in
+    // the live DX table. Palette slots have type=3 and store their palette
+    // bytes at +20.
+    let paletteWa = 0;
+    for (let slot = 0; slot < DX_SLOTS; slot++) {
+      const entry = DX_BASE + slot * 32;
+      const type = dv.getUint32(entry, true);
+      const ptr = dv.getUint32(entry + 20, true);
+      if (type === 3 && ptr) { paletteWa = ptr; break; }
+    }
+    let count = 0;
+    for (let slot = 0; slot < DX_SLOTS; slot++) {
+      const entry = DX_BASE + slot * 32;
+      const type = dv.getUint32(entry, true);
+      const flags = dv.getUint32(entry + 28, true);
+      if (type !== 2 || !flags) continue;
+      const w = dv.getUint16(entry + 12, true);
+      const h = dv.getUint16(entry + 14, true);
+      const bpp = dv.getUint16(entry + 16, true);
+      const pitch = dv.getUint16(entry + 18, true) || Math.ceil(w * bpp / 32) * 4;
+      const dib = dv.getUint32(entry + 20, true);
+      if (!w || !h || !dib) continue;
+      let firstNonZero = -1;
+      let checksum = 0;
+      const sampleBytes = Math.min(pitch * Math.min(h, 16), 0x4000);
+      for (let i = 0; i < sampleBytes; i++) {
+        const v = mem[dib + i];
+        if (firstNonZero < 0 && v !== 0) firstNonZero = i;
+        checksum = (checksum + v) >>> 0;
+      }
+      const rgba = new Uint8Array(w * h * 4);
+      for (let y = 0; y < h; y++) {
+        const srcRow = dib + y * pitch;
+        for (let x = 0; x < w; x++) {
+          const di = (y * w + x) * 4;
+          let r = 0, g = 0, b = 0;
+          if (bpp === 8) {
+            if (paletteWa) {
+              const pi = mem[srcRow + x];
+              // PALETTEENTRY: R, G, B, flags
+              r = mem[paletteWa + pi * 4];
+              g = mem[paletteWa + pi * 4 + 1];
+              b = mem[paletteWa + pi * 4 + 2];
+            } else {
+              r = g = b = mem[srcRow + x];
+            }
+          } else if (bpp === 16) {
+            const px = mem[srcRow + x * 2] | (mem[srcRow + x * 2 + 1] << 8);
+            r = (px >> 11) << 3; g = ((px >> 5) & 0x3F) << 2; b = (px & 0x1F) << 3;
+          } else if (bpp === 24) {
+            b = mem[srcRow + x * 3]; g = mem[srcRow + x * 3 + 1]; r = mem[srcRow + x * 3 + 2];
+          } else if (bpp === 32) {
+            b = mem[srcRow + x * 4]; g = mem[srcRow + x * 4 + 1]; r = mem[srcRow + x * 4 + 2];
+          }
+          rgba[di] = r; rgba[di + 1] = g; rgba[di + 2] = b; rgba[di + 3] = 255;
+        }
+      }
+      const kind = (flags & 1) ? 'primary' : (flags & 2) ? 'backbuf' : (flags & 4) ? 'offscreen' : 'other';
+      manifest.push({ slot, kind, w, h, bpp, pitch, dib, flags, firstNonZero, checksum, sampleBytes });
+      const base = path.join(DUMP_DDRAW, `dx_${slot.toString().padStart(2, '0')}_${kind}_${w}x${h}_${bpp}bpp`);
+      if (createCanvas) {
+        const c = createCanvas(w, h);
+        const cctx = c.getContext('2d');
+        const img = cctx.createImageData(w, h);
+        img.data.set(rgba);
+        cctx.putImageData(img, 0, 0);
+        fs.writeFileSync(base + '.png', canvasToPng(c));
+      } else {
+        // Canvas isn't available in some sandboxes; emit a simple binary PPM
+        // so surface inspection still works without native deps.
+        const header = Buffer.from(`P6\n${w} ${h}\n255\n`, 'ascii');
+        const rgb = Buffer.allocUnsafe(w * h * 3);
+        for (let i = 0, j = 0; i < rgba.length; i += 4, j += 3) {
+          rgb[j] = rgba[i];
+          rgb[j + 1] = rgba[i + 1];
+          rgb[j + 2] = rgba[i + 2];
+        }
+        fs.writeFileSync(base + '.ppm', Buffer.concat([header, rgb]));
+      }
+      count++;
+    }
+    fs.writeFileSync(path.join(DUMP_DDRAW, 'manifest.json'), JSON.stringify(manifest, null, 2));
+    console.log(`Dumped ${count} DirectDraw surfaces to ${DUMP_DDRAW}/ (paletteWA=0x${(paletteWa>>>0).toString(16)})`);
+  }
+
+  // Dump StretchDIBits source DIBs and per-call log
+  if (DUMP_SDB && createCanvas && ctx.dumpSdb) {
+    fs.mkdirSync(DUMP_SDB, { recursive: true });
+    let imgCount = 0;
+    for (const [key, img] of ctx.dumpSdb.images) {
+      const c = createCanvas(img.w, img.h);
+      const cc = c.getContext('2d');
+      const id = cc.createImageData(img.w, img.h);
+      id.data.set(img.pixels);
+      cc.putImageData(id, 0, 0);
+      const outFile = path.join(DUMP_SDB, `sdb_${key}.png`);
+      fs.writeFileSync(outFile, canvasToPng(c));
+      imgCount++;
+    }
+    fs.writeFileSync(path.join(DUMP_SDB, 'calls.log'), ctx.dumpSdb.log.join('\n') + '\n');
+    console.log(`Dumped ${imgCount} StretchDIBits source DIBs and ${ctx.dumpSdb.log.length} call records to ${DUMP_SDB}/`);
+  }
+
+  if (workerThreadHost) workerThreadHost.stop();
+  if (closeD3DRender) await closeD3DRender();
+  threadManager?.closeNamedEventAuthority();
+  // A --vlan-wire run is a forked child, and an open IPC channel keeps node
+  // alive after everything else has finished: the run printed its Stats, hit
+  // --max-seconds, and then sat resident forever with its 512 MiB guest until
+  // the parent killed it. Every two-process test used to kill its seats for
+  // exactly this reason. The run is over, so hang up the wire.
+  if (VLAN_WIRE && process.connected) process.disconnect();
+  });
+}
+
+main().catch(async e => {
+  process.exitCode = process.exitCode || 1;
+  console.error(e);
+  // The threads have to be stopped either way
+  // or node waits on them forever and the error above never gets read.
+  if (workerThreadHost) workerThreadHost.stop();
+  if (closeD3DRender) {
+    try { await closeD3DRender(); } catch (error) { console.error('[render] retirement failed:',error); }
+  }
+});

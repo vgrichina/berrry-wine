@@ -1,0 +1,99 @@
+{
+  "authorizedNow": false,
+  "qualifiedNow": false,
+  "originalCommandPath": "/tmp/enigma-capture-budget-gameplay-oct26/ops/retained/command.json",
+  "originalCommandSHA256": "34e53c0a52fd92ce3cf7f8dffcaa75939510ba79fc5239f296bbbe2f0dd53649",
+  "originalArgv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-budget/capture-wrapper.cjs",
+    "/tmp/enigma-small-step-production-gameplay-oct26/runner/test/run-presented.cjs",
+    "--no-build",
+    "--wasm=/tmp/enigma-small-step-production-gameplay-oct26/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/tmp/enigma-small-step-production-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=84",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/enigma-small-step-production-gameplay-oct26/vfs",
+    "--max-batches=10000000",
+    "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+    "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--frozen"
+  ],
+  "conditionalNextArgv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/enigma-small-step-production-gameplay-oct26/capture-budget/capture-wrapper.cjs",
+    "/tmp/enigma-small-step-production-gameplay-oct26/runner/test/run-presented.cjs",
+    "--no-build",
+    "--wasm=/tmp/enigma-small-step-production-gameplay-oct26/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/tmp/enigma-small-step-production-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=84",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/enigma-small-step-production-gameplay-oct26/vfs",
+    "--max-batches=10000000",
+    "--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW",
+    "--count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--frozen",
+    "--trace-message-boundary",
+    "--trace-input-dispatch",
+    "--trace-mouse-state"
+  ],
+  "shellDisplayOnly": "/home/user/.nvm/versions/node/v24.22.1/bin/node --max-old-space-size=2048 --require=/tmp/enigma-small-step-production-gameplay-oct26/capture-budget/capture-wrapper.cjs /tmp/enigma-small-step-production-gameplay-oct26/runner/test/run-presented.cjs --no-build --wasm=/tmp/enigma-small-step-production-gameplay-oct26/runtime/build/wine-assembly.wasm --exe=/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/enigma.exe '--exe-guest-path=C:\\Enigma-1.01\\enigma.exe' '--cwd=C:\\Enigma-1.01' --dlls=/tmp/enigma-small-step-production-gameplay-oct26/system/msvcrt.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-small-step-production-gameplay-oct26/vfs/Enigma-1.01/SDL_ttf.dll --quiet-api --quiet-blocks --no-close --max-seconds=84 --memory-mb=512 --screen=640x480 --vfs-tree=/tmp/enigma-small-step-production-gameplay-oct26/vfs --max-batches=10000000 --trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW --count=0x5ab8f0,0x5ab957,0x5ab965,0x5ab98e --quiet-fs --control=18127 --trace-input --frozen --trace-message-boundary --trace-input-dispatch --trace-mouse-state",
+  "environment": {},
+  "unknownPins": [
+    "canonical completion module",
+    "accepted reconciled production observer runner",
+    "controller wireRunner transformed candidate"
+  ],
+  "requiredBeforeExecution": [
+    "separate coordinator runtime assignment and lifecycle",
+    "canonical invocation-owned final MSG/result completion hook independently qualified",
+    "new runner/helper/module/controller exact hashes accepted",
+    "actual remote path staging and mount parser validation",
+    "fresh runtime-specific complete resource admission, not this offline128MiB test budget"
+  ],
+  "controlBeforeInput": [
+    {
+      "action": "step",
+      "n": 1
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "message-boundary",
+      "on": true
+    },
+    {
+      "action": "message-boundary"
+    }
+  ],
+  "stopOn": [
+    "step timeout, no replay",
+    "nonzero credits",
+    "saturation",
+    "observer qualification false"
+  ],
+  "atomicInput": "ONE original controller transaction only after all prerequisites; original parent runtime-probe remains authoritative",
+  "note": "Exact original argv plus proposed diagnostic flags retained as a conditional command recipe, not a runnable/authorized present command. Existing stopped box paths are not asserted available. Current successfulReturnMSG remains false."
+}

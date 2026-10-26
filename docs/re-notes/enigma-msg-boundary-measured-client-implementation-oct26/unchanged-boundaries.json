@@ -1,0 +1,19 @@
+{
+  "baseSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "candidateSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+  "inverseDiagnosticOnlyDeltaSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "byteExactBaselineRestored": true,
+  "unchanged": [
+    "canonical parser",
+    "atomic transaction/ACK",
+    "ordinary click",
+    "renderer input",
+    "main execution/initializers/control ordering"
+  ],
+  "reusedParent": {
+    "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/boundary-results.json",
+    "sha256": "41eb7109a93fb9c53bde1b756c48f040d8338cf1f1a99ed790ed034c7a165ad3",
+    "fixtureSHA256": "d55cf82eb128458e5a76cb746167a351738f3626fc51d7797cf3c74f70341b5c"
+  },
+  "qualifications": "New imports and diagnostic callback/control are tested separately. No guest execution; source-order check only for initializer installation."
+}

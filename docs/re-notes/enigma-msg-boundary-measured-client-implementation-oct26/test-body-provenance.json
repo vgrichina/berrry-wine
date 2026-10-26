@@ -1,0 +1,6 @@
+{
+  "noninterferenceBodySHA256": "14034bde811214276f3ebc6a07b9143b6c581d8d57bfaeef52021e7171ac1e42",
+  "currentFixtureSHA256": "21cde00453db20055006225195505965e64c048f5eea15c632a40ff59a97c85f",
+  "passedEarlierFixtureSHA256": "ab0e7f25ee33a37f60073989c394ed098e7e9eebb71dd174b4afd3551a970089",
+  "reuse": "Only production logging gate and byte-challenge code changed after this exact noninterference function passed; function behavior and helper/runner pins unchanged."
+}

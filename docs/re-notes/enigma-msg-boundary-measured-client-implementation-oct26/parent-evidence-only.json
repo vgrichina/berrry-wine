@@ -1,0 +1,5 @@
+{
+  "parent": "3d1e80d983f7fb5b15a413e2011ab2748aa8576d",
+  "testRunEntryAbsent": true,
+  "sourceRecovery": "Full exact verified runner materialized from supplied source239 immutable local file; parent missing entry not retried. This branch adds source/test files; later integration must apply diagnostic delta against its independently reconciled tree."
+}

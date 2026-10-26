@@ -1,0 +1,36 @@
+{
+  "files": [
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/checkpoint.json",
+      "sha256": "87e9789d13d6c827aa30b0ae100e3decb5f188fe8d845798064f90f24af16a6e",
+      "bytes": 5059
+    },
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/boundary-results.json",
+      "sha256": "41eb7109a93fb9c53bde1b756c48f040d8338cf1f1a99ed790ed034c7a165ad3",
+      "bytes": 3372
+    },
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/fixture-execution.json",
+      "sha256": "eba52306c01d6354fb5cc7e300cd98be6581dfdc956c08dd3a1113da297f484d",
+      "bytes": 512
+    },
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/input-boundary.cjs",
+      "sha256": "d55cf82eb128458e5a76cb746167a351738f3626fc51d7797cf3c74f70341b5c",
+      "bytes": 8145
+    },
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/configuration.json",
+      "sha256": "4d8654abbc42f076a17992c4903d372f8d9074c780c011a2b0cbe13beb639dd2",
+      "bytes": 495
+    },
+    {
+      "path": "/tmp/enigma-start-game-input-delivery-repair-oct26/ops/publication.json",
+      "sha256": "78c58b346d743af86e86baaac61b750e2513ef6557ab6c962b05e3ae2047995a",
+      "bytes": 2370
+    }
+  ],
+  "groups": "Original atomic->real renderer->host dequeue, split-press state, stale-batch/credits/replay and original trace identity. Reused after exact inverse-delta baseline equality; not rerun.",
+  "initializers": "No guest initializers/runtime executed in old offline fixture or this task. New installation appears before instantiate/stageAndLoadPe/callDllMain by source inspection only."
+}

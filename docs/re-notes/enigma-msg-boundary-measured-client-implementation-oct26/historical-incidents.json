@@ -1,0 +1,18 @@
+{
+  "priorMemoryAvailableDenial": 3046785024,
+  "priorFalseIndividualClientCap": {
+    "path": "/tmp/enigma-msg-boundary-recovered-implementation-oct26/ops/admission-blocker.json",
+    "bytes": 134217728,
+    "actualRSS": 241934336,
+    "correction": "Superseded by measured-client-fleet-admission-oct26.json. No individual client cap; actual resident RSS is already deducted from MemAvailable. Future64MiB growth each retained."
+  },
+  "originalGameEvidence": "Host consumed WM_NCHITTEST/down/up HWND10001, down/up client321,169, but no returned MSG/application handling proof. No semantics repair, second input, held-click or forced movement performed.",
+  "realDenials": "All prior platform denials/runtime timeouts and historical test/admission incidents remain unchanged; no guest/API/SSH/resume/creation accessed here.",
+  "ownedIncidents": [
+    "initial read-only excerpts exceeded8192",
+    "git read-tree -i syntax missing --reset corrected",
+    "test fixture reused API name pointer corrected; first reproducer retained",
+    "byte-only mutation reason assertion corrected; first reproducer retained",
+    "read-only parent ls-tree empty entry handled; exact verified local source recovered with no missing-blob retry"
+  ]
+}

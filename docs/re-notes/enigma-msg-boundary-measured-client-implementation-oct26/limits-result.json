@@ -1,0 +1,31 @@
+{
+  "group": "limits",
+  "pass": true,
+  "runnerSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+  "helperSHA256": "05bb1c1bb50bc488891498aeed86036a9dc428a8e6f7f724ca2b9f6ab12ed227",
+  "fixtureSHA256": "21cde00453db20055006225195505965e64c048f5eea15c632a40ff59a97c85f",
+  "excerpts": [
+    {
+      "start": "  // BEGIN message-boundary installation:",
+      "bytes": 474,
+      "sha256": "4752a43bf4fc667c6dc2c67ea61509af13cc9935cd23cccd552cad1d6eb278e7"
+    },
+    {
+      "start": "  h.log = (ptr, len) => {",
+      "bytes": 14664,
+      "sha256": "6120dc29fcf4b38fd323167ccbf1df65a74ff59f1e2abdc2434a2084708c1a66"
+    },
+    {
+      "start": "  h.check_input = () => {",
+      "bytes": 1410,
+      "sha256": "bb0dfbe1cd003ab6a28cad9c23dffc9674627d90a8941628aad252ef9d0127d5"
+    },
+    {
+      "start": "  const handleControlCommand = (cmdIn) => {",
+      "bytes": 9437,
+      "sha256": "afc324d22dae3b537ff1e253a988c50f4781adf046ffea3f392d4223ebbbfa00"
+    }
+  ],
+  "successfulReturnMSG": false,
+  "guestExecution": false
+}

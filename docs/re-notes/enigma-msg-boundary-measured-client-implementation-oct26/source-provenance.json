@@ -1,0 +1,50 @@
+{
+  "revision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "root": "/tmp/civ2-win16-ordinary-gameplay-oct26/source",
+  "manifestSHA": "6f252e95c3e6e207eb0fa0e96b533a2ae809d6650c5aa60749b278267d013e5f",
+  "files": [
+    {
+      "path": "test/run.js",
+      "bytes": 687226,
+      "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+    },
+    {
+      "path": "src/01-header.wat",
+      "bytes": 297934,
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+    },
+    {
+      "path": "src/09b-dispatch.wat",
+      "bytes": 113594,
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "bytes": 292766,
+      "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33"
+    },
+    {
+      "path": "src/09a5b-handlers-window-late.wat",
+      "bytes": 202108,
+      "sha256": "2be5ab9368b37f942b326f3f22c089daf2dd0d23e6bf89864438e30f1e489e8f"
+    },
+    {
+      "path": "src/09a-handlers4-late.wat",
+      "bytes": 144723,
+      "sha256": "d760fdfbfdedb007063aca9603d4f23a8a770f4310e7734e90be966504c8d686"
+    },
+    {
+      "path": "src/13-exports.wat",
+      "bytes": 342381,
+      "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e"
+    },
+    {
+      "path": "test/input-consumption-trace.js",
+      "bytes": 2508,
+      "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be"
+    }
+  ],
+  "base": "3d1e80d983f7fb5b15a413e2011ab2748aa8576d",
+  "sourceRecovery": "Evidence-only parent can lack runner blob. Verified immutable local source is authoritative, no missing blob retry.",
+  "rootReadOnly": true
+}

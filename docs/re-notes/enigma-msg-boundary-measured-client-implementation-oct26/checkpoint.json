@@ -1,0 +1,146 @@
+{
+  "candidateSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+  "helperSHA256": "05bb1c1bb50bc488891498aeed86036a9dc428a8e6f7f724ca2b9f6ab12ed227",
+  "fixtureSHA256": "21cde00453db20055006225195505965e64c048f5eea15c632a40ff59a97c85f",
+  "completed": [
+    "production",
+    "limits",
+    "noninterference"
+  ],
+  "remaining": [
+    "canonical invocation-owned post-result hook; separately assigned runtime qualification"
+  ],
+  "successfulReturnMSG": false,
+  "sourceResults": {
+    "production": "/tmp/enigma-msg-boundary-measured-client-implementation-oct26/ops/production-result.json",
+    "limits": "/tmp/enigma-msg-boundary-measured-client-implementation-oct26/ops/limits-result.json",
+    "noninterference": "/tmp/enigma-msg-boundary-measured-client-implementation-oct26/ops/noninterference-result.json"
+  },
+  "groupReceipts": {
+    "production": {
+      "group": "production",
+      "pass": true,
+      "runnerSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+      "helperSHA256": "05bb1c1bb50bc488891498aeed86036a9dc428a8e6f7f724ca2b9f6ab12ed227",
+      "fixtureSHA256": "f0e7b7059f1c107516948f7a3c2e86495f45eedc5316789f8f7ab4df05f1df7d",
+      "excerpts": [
+        {
+          "start": "  // BEGIN message-boundary installation:",
+          "bytes": 474,
+          "sha256": "4752a43bf4fc667c6dc2c67ea61509af13cc9935cd23cccd552cad1d6eb278e7"
+        },
+        {
+          "start": "  h.log = (ptr, len) => {",
+          "bytes": 14664,
+          "sha256": "6120dc29fcf4b38fd323167ccbf1df65a74ff59f1e2abdc2434a2084708c1a66"
+        },
+        {
+          "start": "  h.check_input = () => {",
+          "bytes": 1410,
+          "sha256": "bb0dfbe1cd003ab6a28cad9c23dffc9674627d90a8941628aad252ef9d0127d5"
+        },
+        {
+          "start": "  const handleControlCommand = (cmdIn) => {",
+          "bytes": 9437,
+          "sha256": "afc324d22dae3b537ff1e253a988c50f4781adf046ffea3f392d4223ebbbfa00"
+        },
+        {
+          "start": "  apiLogOff = QUIET_API &&",
+          "bytes": 502,
+          "sha256": "fdda88cab2f537618c0da12f25a5d05445b8f15d718994b7e5764be70100b5dc"
+        },
+        {
+          "start": "  h.log = (ptr, len) => {",
+          "bytes": 14631,
+          "sha256": "7351dfa567829152ff753a126bb284790f3061576bc8fc1a71bb070977e85d07"
+        },
+        {
+          "start": "  h.check_input = () => {",
+          "bytes": 1363,
+          "sha256": "569b95d738d7738953cf3abe32f2889cfbe8481fc6726c1be571e2e68c2ddf17"
+        },
+        {
+          "start": "  // BEGIN message-boundary installation:",
+          "bytes": 401,
+          "sha256": "704704aca915c14ec3ec84d5b4f05a09294ef7427fabb7ead4d9d8f6f6580b2c"
+        },
+        {
+          "start": "  apiLogOff = QUIET_API &&",
+          "bytes": 475,
+          "sha256": "20f9e1d679abd4ffb90f8e834914fb3ca286469a4db692821516254143f2826f"
+        },
+        {
+          "start": "  const handleControlCommand = (cmdIn) => {",
+          "bytes": 9364,
+          "sha256": "5d9fa8a40549e24d231b0ba3b81f783666ac8cb5fb4dbed95cef2fb3959d038a"
+        }
+      ],
+      "successfulReturnMSG": false,
+      "guestExecution": false
+    },
+    "limits": {
+      "group": "limits",
+      "pass": true,
+      "runnerSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+      "helperSHA256": "05bb1c1bb50bc488891498aeed86036a9dc428a8e6f7f724ca2b9f6ab12ed227",
+      "fixtureSHA256": "21cde00453db20055006225195505965e64c048f5eea15c632a40ff59a97c85f",
+      "excerpts": [
+        {
+          "start": "  // BEGIN message-boundary installation:",
+          "bytes": 474,
+          "sha256": "4752a43bf4fc667c6dc2c67ea61509af13cc9935cd23cccd552cad1d6eb278e7"
+        },
+        {
+          "start": "  h.log = (ptr, len) => {",
+          "bytes": 14664,
+          "sha256": "6120dc29fcf4b38fd323167ccbf1df65a74ff59f1e2abdc2434a2084708c1a66"
+        },
+        {
+          "start": "  h.check_input = () => {",
+          "bytes": 1410,
+          "sha256": "bb0dfbe1cd003ab6a28cad9c23dffc9674627d90a8941628aad252ef9d0127d5"
+        },
+        {
+          "start": "  const handleControlCommand = (cmdIn) => {",
+          "bytes": 9437,
+          "sha256": "afc324d22dae3b537ff1e253a988c50f4781adf046ffea3f392d4223ebbbfa00"
+        }
+      ],
+      "successfulReturnMSG": false,
+      "guestExecution": false
+    },
+    "noninterference": {
+      "group": "noninterference",
+      "pass": true,
+      "runnerSHA256": "b80e60ea44ec01acb15d5471b9222413b565e56235ae95d8aa6ee8b4cca829d3",
+      "helperSHA256": "05bb1c1bb50bc488891498aeed86036a9dc428a8e6f7f724ca2b9f6ab12ed227",
+      "fixtureSHA256": "ab0e7f25ee33a37f60073989c394ed098e7e9eebb71dd174b4afd3551a970089",
+      "excerpts": [
+        {
+          "start": "  // BEGIN message-boundary installation:",
+          "bytes": 474,
+          "sha256": "4752a43bf4fc667c6dc2c67ea61509af13cc9935cd23cccd552cad1d6eb278e7"
+        },
+        {
+          "start": "  h.log = (ptr, len) => {",
+          "bytes": 14664,
+          "sha256": "6120dc29fcf4b38fd323167ccbf1df65a74ff59f1e2abdc2434a2084708c1a66"
+        },
+        {
+          "start": "  h.check_input = () => {",
+          "bytes": 1410,
+          "sha256": "bb0dfbe1cd003ab6a28cad9c23dffc9674627d90a8941628aad252ef9d0127d5"
+        },
+        {
+          "start": "  const handleControlCommand = (cmdIn) => {",
+          "bytes": 9437,
+          "sha256": "afc324d22dae3b537ff1e253a988c50f4781adf046ffea3f392d4223ebbbfa00"
+        }
+      ],
+      "successfulReturnMSG": false,
+      "guestExecution": false
+    }
+  },
+  "noninterferenceReuse": "Original passing group reused: exact noninterference function unchanged; later fixture changes only logging-gate and bounds mutation controls.",
+  "stage": "partial-source-implementation-tested-return-hook-blocked"
+}
