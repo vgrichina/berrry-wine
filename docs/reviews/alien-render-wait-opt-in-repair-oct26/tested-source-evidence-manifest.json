@@ -1,0 +1,126 @@
+{
+  "lib/render-wait-attribution.js": {
+    "sha256": "aa244e2741dc3eada31730b19a653f661b3fdd3c1e4bdfa1d09465a6a09745b0",
+    "bytes": 4614
+  },
+  "lib/host-imports.js": {
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "bytes": 197066
+  },
+  "lib/d3d9-host.js": {
+    "sha256": "a5ff73ec46f02c883659fff62a83bbd6bdd2dd43483dc353c80682228c297ee9",
+    "bytes": 87629
+  },
+  "test/test-render-wait-attribution.js": {
+    "sha256": "b877ca7f0aa27bbd4d11dc8b70ce7e4fbee51af8febda3f88c971506b4a4304e",
+    "bytes": 12246
+  },
+  "test/run.js": {
+    "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "bytes": 688295
+  },
+  "test/test-render-wait-opt-in.js": {
+    "sha256": "146210d28874ff671544589450ce286246f8ee9bc27befba5f2578df18560083",
+    "bytes": 8515
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/default-off-replay.json": {
+    "sha256": "334acdd2dcf7fd763763aa1ff4ee082a1096edfed41f2eed64e351df0c491fea",
+    "bytes": 648
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/runner-syntax.json": {
+    "sha256": "3bb1b20590f1d5d32e60cce57a1290f8d79cac210bf42d987df50e23b1c57330",
+    "bytes": 643
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/checkpoint.json": {
+    "sha256": "b2397f5def2d7b15aa27c1e23c1ba141ffd166b8d00ddc4bcee9719e45629a7b",
+    "bytes": 1054
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/tool-identities.json": {
+    "sha256": "ca0005046d01ecadc54cbe1fd36a4e28ee515c04338f512ecc48f162ae97f79b",
+    "bytes": 499
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/reuse-identities.json": {
+    "sha256": "e23d378e43b22a8039cbcc5f8ff45bd9b564e142bdd47d677c4c98360b537d82",
+    "bytes": 602
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/opt-in-wiring-first-oracle.js": {
+    "sha256": "572916e1aa96309c94000a302baa96b8b9e6301c505c7384ec054b82b30ae4ee",
+    "bytes": 8506
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/default-off-replay.out": {
+    "sha256": "af75b5f267e4f274d15a274eb4bb5eee11d49ecbab9da6c385b54dda4089f281",
+    "bytes": 228
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/replay-default-off.js": {
+    "sha256": "e1652176e7a10bac7de449b5c042d73a34f768edd4f098c09bac05287fc1b839",
+    "bytes": 1437
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/retained-test-syntax.json": {
+    "sha256": "1470341bfaae13e7680134850e7eb908830a21c8e9d9853d90cb42b846e4d16e",
+    "bytes": 682
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/default-off-contract.js": {
+    "sha256": "8cab353dd84e9682a9b2a75d7c87ec454af303c4937b740a120e7ead8d25b0b7",
+    "bytes": 1706
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/configuration.json": {
+    "sha256": "34f1f9921db961e844a45b9a34509a7383d8153495755ba1df78e4265bd6c244",
+    "bytes": 551
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/startup.out": {
+    "sha256": "fb1e5ef3ba2bca5cb6a434e44201727b821cb3adb1b692924c2af78b850cb6c8",
+    "bytes": 1455
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/verify-reuse.py": {
+    "sha256": "01f73eaf3b8fb2a6ba5d51981988f0d8ee8b8bbfe083840e3164cb360d63b750",
+    "bytes": 3252
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/admission-prepublication.json": {
+    "sha256": "66760e8867cc0d201235552169d6349a88ea03565be99ad5910d54b1393870d9",
+    "bytes": 6130
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/startup.js": {
+    "sha256": "43ae57edd567a931b61a00ec77b7846212daf894219e41318a66be635aced16f",
+    "bytes": 226
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/opt-in-wiring-corrected.json": {
+    "sha256": "b4fc972da11edc524e7149661bf1455d0050174c22fce89c65bf29ca41315821",
+    "bytes": 659
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/opt-in-wiring-corrected.out": {
+    "sha256": "0ad3aa120414ba4eaa3c4246325fee7873be5b7acb7b1cd59bcb5a94eb77cf8a",
+    "bytes": 183
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/reuse-identities.out": {
+    "sha256": "97ed498fed92c4f80bead5a3731c32fa8319546a6c7d6f2979107196ca9ba84d",
+    "bytes": 147
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/control.py": {
+    "sha256": "1636fa964223a2a32d575a9f31dc9957b023fd222e14dcd1a30193f821e79d4f",
+    "bytes": 6427
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/opt-in-wiring.err": {
+    "sha256": "4e48586e8fef173c42019f3e5c76972ce6e94f0b13a70c30143cdf6b76aca98b",
+    "bytes": 916
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/startup.json": {
+    "sha256": "e3c1e7ee33570c59da5058130b6bf16cd2a92a304a44fff6bf62c734afcc318a",
+    "bytes": 615
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/opt-in-wiring.json": {
+    "sha256": "9eacce3b5ebbb1cc9902045f142d8224f5c6e45e0612a6c6dee6bf4621596a9a",
+    "bytes": 658
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/README.md": {
+    "sha256": "18f9a1767949e52bb567727c2982db3a5c520f31b3c52c18f276e8f7d2d0036f",
+    "bytes": 7262
+  },
+  "docs/reviews/alien-render-wait-opt-in-repair-oct26/pinned-inputs.json": {
+    "sha256": "4250d00f3b02b8cbb610179b10876560bb78369f4c7b4b07304f0c02346c9c95",
+    "bytes": 1183
+  },
+  "test/fixtures/render-park-control.json": {
+    "sha256": "46e4c759d468a6e4faf24dc3d9e1f6dd57d80920dfdc776521faa7eeb152c6ac",
+    "bytes": 4837
+  }
+}

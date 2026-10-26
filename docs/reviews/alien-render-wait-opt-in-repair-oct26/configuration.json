@@ -1,0 +1,8 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedFiles": [],
+  "mountValidation": "No mounts/guest execution authorized; unchanged canonical parser receipt reused",
+  "parserReceipt": "/tmp/alien-render-wait-measured-client-accept-oct26/ops/parser.json",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-opt-in-repair-oct26/root-ref-digest.json"
+}

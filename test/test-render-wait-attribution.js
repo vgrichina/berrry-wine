@@ -16,12 +16,12 @@ const section = (s, a, b) => {
   assert.equal(s.indexOf(a, start + a.length), -1, `ambiguous production anchor ${a}`);
   return s.slice(start, end);
 };
-const hooks = section(runner, '  const renderWaitAttribution = createRenderWaitAttribution();', '  let lastSchedSig = null;');
+const hooks = section(runner, "  const renderWaitAttribution = hasFlag('trace-render-wait') ? createRenderWaitAttribution() : null;", '  let lastSchedSig = null;');
 const importHook = section(imports, '  ctx.waitD3DRender = token => {', '  ctx.closeD3DRender =');
 const resultMethod = section(bridgeSource, '    _result(entry, value,', '    _poll(token)');
 const issueMethod = section(bridgeSource, '    _issue(entry, opcode,', '    // Present is pipelined');
 const waitMethod = section(bridgeSource, '    wait(token) {', '    _presentBoundary(entry)');
-const terminal = section(runner, "  renderWaitAttribution.close(deadlineMs && Date.now() > deadlineMs ? 'deadline' : 'stopped');", '  if (PRESENT_CAP &&');
+const terminal = section(runner, "  renderWaitAttribution?.close(deadlineMs && Date.now() > deadlineMs ? 'deadline' : 'stopped');", '  if (PRESENT_CAP &&');
 assert(runner.includes("const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');"));
 const flush = async () => { for (let i = 0; i < 20; i++) await Promise.resolve(); };
 function harness(transform = x => x, baseline = false) {
@@ -43,7 +43,7 @@ function harness(transform = x => x, baseline = false) {
   const sandbox = { ctx, _d3d9Bridge: bridge, createRenderWaitAttribution,
     instance: { exports: ex }, tickState: { batch: 42 }, Date: fakeDate,
     console: { log: x => logs.push(x), error: (...x) => errors.push(x) },
-    setTimeout: fn => { timers.push(fn); }, hasFlag: () => false, REAL_TICK_SLEEPS: true,
+    setTimeout: fn => { timers.push(fn); }, hasFlag: name => name === 'trace-render-wait', REAL_TICK_SLEEPS: true,
     threadManager: { isMainNamedEventWaiting: () => false, _renderSendTargets: new Set(),
       noteMainSleep() {}, isMainSleeping: () => false, isMainThreadSuspended: () => false },
   };
@@ -202,8 +202,8 @@ async function main() {
   }
   console.log('PASS 12000 requests bounded collections/conservation/no double count');
   for (const transform of [
-    x => x.replace('renderWaitAttribution.begin(wait, ctx.d3d9Bridge?.requests.get(token));', ''),
-    x => x.replace(/renderWaitAttribution\.parkEnd\(wait, renderParkEnded,[\s\S]*?'pending'\)\);/, ''),
+    x => x.replace('renderWaitAttribution?.begin(wait, ctx.d3d9Bridge?.requests.get(token));', ''),
+    x => x.replace(/renderWaitAttribution\?\.parkEnd\(wait, renderParkEnded,[\s\S]*?'pending'\)\);/, ''),
   ]) {
     await assert.rejects(() => delayedBoundary(transform), assert.AssertionError);
   }

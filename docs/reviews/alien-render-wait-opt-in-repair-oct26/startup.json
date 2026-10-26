@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/alien-render-wait-opt-in-repair-oct26/ops/startup.js"
+  ],
+  "cwd": "/tmp/alien-render-wait-opt-in-repair-oct26/repo",
+  "exit": 0,
+  "wall": 0.06504334905184805,
+  "cpu": 0.030853,
+  "peakRSS": 70684672,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 1455,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-render-wait-opt-in-repair-oct26/ops/startup.js": "43ae57edd567a931b61a00ec77b7846212daf894219e41318a66be635aced16f"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

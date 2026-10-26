@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-render-wait-opt-in-repair-oct26/ops/verify-reuse.py"
+  ],
+  "cwd": "/tmp/alien-render-wait-opt-in-repair-oct26/repo",
+  "exit": 0,
+  "wall": 0.06946643395349383,
+  "cpu": 0.048452999999999996,
+  "peakRSS": 56455168,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 147,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-render-wait-opt-in-repair-oct26/ops/verify-reuse.py": "01f73eaf3b8fb2a6ba5d51981988f0d8ee8b8bbfe083840e3164cb360d63b750"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

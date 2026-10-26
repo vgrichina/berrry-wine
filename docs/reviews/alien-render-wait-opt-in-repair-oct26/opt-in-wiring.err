@@ -1,0 +1,13 @@
+AssertionError [ERR_ASSERTION]: The input did not match the regular expression /render wait/. Input:
+
+'render attribution: 1 completed, 0 rejected, 0 pending, 0 deadline, 0 stopped, 0 superseded; park 25ms = bridge-pending 20ms + ready-to-resume 5ms + unknown 0ms; unknown requests 0, slow samples dropped 0; slowest DRAW:completed:25ms'
+
+    at schedule (/tmp/alien-render-wait-opt-in-repair-oct26/repo/test/test-render-wait-opt-in.js:69:21)
+    at async main (/tmp/alien-render-wait-opt-in-repair-oct26/repo/test/test-render-wait-opt-in.js:76:13) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: 'render attribution: 1 completed, 0 rejected, 0 pending, 0 deadline, 0 stopped, 0 superseded; park 25ms = bridge-pending 20ms + ready-to-resume 5ms + unknown 0ms; unknown requests 0, slow samples dropped 0; slowest DRAW:completed:25ms',
+  expected: /render wait/,
+  operator: 'match',
+  diff: 'simple'
+}

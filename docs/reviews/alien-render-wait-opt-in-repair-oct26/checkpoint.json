@@ -1,0 +1,29 @@
+{
+  "candidate": "864733e0ca72eaac61d4de1aaad8d080362ea63e",
+  "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "testSHA256": "146210d28874ff671544589450ce286246f8ee9bc27befba5f2578df18560083",
+  "completed": [
+    "pinned-six-source-identities",
+    "node-startup",
+    "unchanged-default-off-reproducer-with-root-and-extraction-anchor-relocation",
+    "27-focused-CLI-hook-summary-cases",
+    "12-omitted-control-rejections",
+    "inverse-gate-delta-and-original-schedule-body-identities",
+    "runner-syntax",
+    "adapted-retained-test-syntax",
+    "source-diff-review"
+  ],
+  "evidence": [
+    "default-off-replay.json",
+    "opt-in-wiring-corrected.json"
+  ],
+  "remaining": [
+    "compact-evidence-commit",
+    "trusted-SSH-task-branch-push-exactref",
+    "board-release"
+  ],
+  "incidents": [
+    "First focused test expected wrong summary prefix /render wait/; actual unchanged helper emits render attribution:, corrected oracle only; original opt-in-wiring failure preserved"
+  ],
+  "mainForbidden": true
+}
