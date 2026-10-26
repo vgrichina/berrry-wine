@@ -1,0 +1,84 @@
+{
+  "stage": "precheckout",
+  "at": 1792996876.195606,
+  "ownedBytes": 601262,
+  "allocatedBytes": 614400,
+  "futureSessionEventsPositiveWalOnce": 12582912,
+  "reserve": 8388608,
+  "checkoutEvidenceGitPublicationGrowthAllowance": 12582912,
+  "projectedPeak": 34168832,
+  "limit": 67108864,
+  "freeDisk": 4435111936,
+  "freeAfterGrowth": 4401557504,
+  "memAvailable": 2804645888,
+  "afterClientHeap": 2250997760,
+  "ramFloor": 805306368,
+  "aggregateActualFleet": [
+    {
+      "pid": 265398,
+      "rss": 809455616,
+      "argv": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+    },
+    {
+      "pid": 265632,
+      "rss": 15650816,
+      "argv": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop "
+    },
+    {
+      "pid": 752162,
+      "rss": 378519552,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise. "
+    },
+    {
+      "pid": 857107,
+      "rss": 10620928,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 1789179,
+      "rss": 55959552,
+      "argv": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon "
+    },
+    {
+      "pid": 2204940,
+      "rss": 13606912,
+      "argv": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/file-bundle-parser-accepted-integrate-oct26.task.txt scratch/usage-watch/file-bundle-parser-accepted-integrate-oct26-run1 "
+    },
+    {
+      "pid": 2204945,
+      "rss": 193339392,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/file-bundle-parser-accepted-integrate-oct26-run1/final.txt - "
+    },
+    {
+      "pid": 2205170,
+      "rss": 20942848,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2207941,
+      "rss": 13590528,
+      "argv": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/renderer-side-polling-merged-branch-oct26.task.txt scratch/usage-watch/renderer-side-polling-merged-branch-oct26 "
+    },
+    {
+      "pid": 2207945,
+      "rss": 195694592,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/renderer-side-polling-merged-branch-oct26/final.txt - "
+    },
+    {
+      "pid": 2208198,
+      "rss": 23252992,
+      "argv": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    }
+  ],
+  "standingTools": {
+    "node": "/usr/local/bin/node",
+    "git": "/usr/bin/git",
+    "python": "/usr/bin/python3"
+  },
+  "standingReadonlyDonors": [
+    "/tmp/save-bundle-collision-retained-integrate-oct26/repo",
+    "/tmp/renderer-side-modifier-polling-repair-oct26/repo",
+    "/tmp/renderer-side-polling-independent-accept-oct26/repo"
+  ],
+  "pass": true
+}

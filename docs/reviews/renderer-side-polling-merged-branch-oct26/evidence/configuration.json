@@ -1,0 +1,8 @@
+{
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": null,
+  "intendedMountedFiles": [],
+  "mountValidation": "Not applicable: offline Git/Node only, no guest or mount execution",
+  "readiness": "16MiB Node serial, no compilation/instantiation, <=128KiB per test output, 24MiB individual files, 64MiB aggregate allocation",
+  "rootInitialRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/renderer-side-polling-merged-branch-oct26/root-ref-digest.json"
+}

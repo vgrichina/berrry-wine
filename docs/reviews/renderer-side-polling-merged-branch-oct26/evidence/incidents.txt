@@ -1,0 +1,1 @@
+Initial result parser expected TAP # summaries; installed Node24 used spec ℹ summaries. Actual independent29 execution exited0 with29PASS0FAIL. Initial checkpoint retained. Parser now accepts both reporters and reuses the exact retained execution without rerunning. No source/fixture/oracle changes.
