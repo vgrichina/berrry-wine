@@ -1,0 +1,19 @@
+[
+  "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "--max-old-space-size=2048",
+  "--require=/tmp/alien-shooter-required-exe-gameplay-api-oct26/capture-wrapper.cjs",
+  "/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js",
+  "--app=alien_shooter",
+  "--no-build",
+  "--wasm=/tmp/alien-shooter-current-gameplay-api-oct26/current.wasm",
+  "--d3d9-renderer=software",
+  "--tick-ms-per-batch=5",
+  "--batch-size=200000",
+  "--max-seconds=85",
+  "--no-close",
+  "--quiet-api",
+  "--frozen",
+  "--control=18129",
+  "--trace-at=0x416808",
+  "--trace-at-mem=ebp-0x3c:8"
+]

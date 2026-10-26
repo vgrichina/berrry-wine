@@ -1,0 +1,16 @@
+Error: ENOENT: no such file or directory, open '/tmp/alien-shooter-current-gameplay-api-oct26/runner/src/api_table.json'
+    at Object.readFileSync (node:fs:483:20)
+    at /tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:2719:34
+    at withCliFailureCleanup (/tmp/alien-shooter-current-gameplay-api-oct26/runner/lib/cli-failure-cleanup.js:10:18)
+    at main (/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:1707:10)
+    at Object.<anonymous> (/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js:12609:1)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/tmp/alien-shooter-current-gameplay-api-oct26/runner/src/api_table.json'
+}

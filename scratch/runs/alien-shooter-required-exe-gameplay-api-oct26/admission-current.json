@@ -1,0 +1,24 @@
+{
+  "charges": {
+    "retainedRemote": 49197056,
+    "requiredExe": 716800,
+    "remoteHelpers": 131072,
+    "remoteOutputs": 8388608,
+    "localHelpers": 90112,
+    "localCollected": 8388608,
+    "publicationDashboard": 16777216,
+    "Git": 2097152,
+    "launcher": 167936,
+    "session": 458752,
+    "positiveWALOnce": 0,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "total": 103190528,
+  "cap": 134217728,
+  "memAvailable": 3564195840,
+  "requiredNoResidentDeduction": 2483027968,
+  "projectedHostFree": 3673235456,
+  "hostFloor": 2982150144,
+  "passGate": true
+}

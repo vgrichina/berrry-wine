@@ -1,0 +1,16 @@
+{
+  "memAvailable": 3638390784,
+  "required": 2947104768,
+  "clientGrowth": 262750208,
+  "clients": [
+    {
+      "pid": 3150114,
+      "rss": 212172800
+    },
+    {
+      "pid": 3152013,
+      "rss": 196165632
+    }
+  ],
+  "passGate": true
+}

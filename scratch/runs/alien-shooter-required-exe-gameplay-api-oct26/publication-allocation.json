@@ -1,0 +1,19 @@
+{
+  "charges": {
+    "retainedRemote": 49913856,
+    "newRemote": 40960,
+    "localOwned": 245760,
+    "dashboardAndPublication": 16777216,
+    "Git": 2097152,
+    "launcher": 233472,
+    "session": 622592,
+    "positiveWALOnce": 385024,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "total": 87093248,
+  "cap": 134217728,
+  "projectedHostFree": 3681816576,
+  "hostFloor": 2982150144,
+  "passGate": true
+}

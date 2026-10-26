@@ -1,0 +1,9 @@
+{
+  "commandId": "cmd_awljud2lcqsi",
+  "startedAt": "2026-10-26T21:21:47.222Z",
+  "finishedAt": "2026-10-26T21:21:47.353Z",
+  "exitCode": 1,
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\nAssertionError\n",
+  "cause": "Incorrect helper assertion that DLL seeds must exist. Unchanged registered app requires no DLL seeds. Corrected helper only, before sole production invocation.",
+  "originalExactResponsePreviouslyInspected": true
+}

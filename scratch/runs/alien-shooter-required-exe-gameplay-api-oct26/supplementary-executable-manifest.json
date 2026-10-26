@@ -1,0 +1,8 @@
+{
+  "path": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+  "bytes": 712724,
+  "sha256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+  "mode": 420,
+  "provenance": "docs/re-notes/reflexive.md",
+  "corrects": "historical omission in 431 fixture / 594 stage manifests; earlier noGuest remains true"
+}

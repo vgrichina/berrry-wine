@@ -1,0 +1,11 @@
+{
+  "priorCompileCommit": "211aa6b720116bad1e2773c148a2f4c4529d4a58",
+  "priorMissingExeCommit": "fad434119acecf9d7af4ed837d162ba7107941cf",
+  "priorNoGuestClaimPreserved": true,
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "retainedRuntimeVerified": 582,
+  "recordedCompilerRemovals": 12,
+  "requiredDllSeeds": [],
+  "remaining": "Production src/api_table.json absent. No guest execution occurred. Exact source-backed minimal prerequisite recovery needs new scope; no repeat of unchanged production failure."
+}

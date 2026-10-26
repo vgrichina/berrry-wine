@@ -1,0 +1,21 @@
+{
+  "command": "timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 /tmp/alien-shooter-required-exe-gameplay-api-oct26/supervisor.py guest'",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/36941.err.log",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:22:25.442Z",
+  "known": true,
+  "logPath": "/home/user/.ascii/processes/36941.log",
+  "oomKilled": false,
+  "pid": 36941,
+  "processId": 36941,
+  "running": false,
+  "signal": null,
+  "startedAt": "2026-10-26T21:22:25.295Z",
+  "status": "exited",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true
+}
