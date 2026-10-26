@@ -80,7 +80,8 @@ function createAdapter(instance, {persist, readLive}) {
     },
     observe(batch){
       if(!started)throw Error('start required');if(closed)return null;
-      const s=snap(),key=JSON.stringify(s);if(key===last)return null;last=key;
+      const s=snap();diagnostic(s); // Validate even when captured fields have not changed.
+      const key=JSON.stringify(s);if(key===last)return null;last=key;
       const row=record(s.status===4?'captured':s.status===5?'rejected':'pending',batch);
       if(s.status===5){closed=true;throw Error('native latch status rejection');}
       if(s.status===4)closed=true;return row;

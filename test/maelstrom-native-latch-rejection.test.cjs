@@ -135,6 +135,9 @@ test('invalid adapter diagnostics close before persistence/live callbacks; parti
     assert.throws(()=>adapter.observe(1),/invalid native rejection/);assert.equal(f.rows.length,1);assert.equal(f.live(),1);assert.equal(adapter.observe(2),null);
   }
   const f=adapterFixture();f.d.rejectModes=1;assert.throws(()=>f.make().start(),/invalid native rejection/);assert.equal(f.starts(),0);
+  const same=adapterFixture(),reader=same.make();reader.start();reader.observe(0);
+  same.d.rejectModes=1;assert.throws(()=>reader.observe(1),/invalid native rejection/);
+  assert.equal(same.rows.length,2);assert.equal(same.live(),2);assert.equal(reader.observe(2),null);
 });
 test('fixture using published frozen observations stays explicitly synthetic and inconclusive about modes',()=>{
   // Published batch36170 select values; mode bits were NOT captured. Vary them.
