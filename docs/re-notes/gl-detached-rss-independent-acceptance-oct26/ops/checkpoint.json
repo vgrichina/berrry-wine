@@ -1,0 +1,42 @@
+{
+  "candidate": "dc9b0e8ee2c56f029a56fbb6dd42422ed29dd557",
+  "firstBoundary": "PASS",
+  "evidence": "after-peak-challenge.json",
+  "remaining": [
+    "Supply exactcurrentmain immutable commit/tree objects within sparse resource budget for dependency review/integration/affected merged-tree tests and sole ownership",
+    "Separately authorized browser/runtime renderer qualification"
+  ],
+  "independentCompleted": [
+    "early-success-detached-ignoreterm",
+    "sequential-independent-highwaters",
+    "adopted-child",
+    "waited-cpu-between-samples",
+    "timeout-ignoreterm-escalation",
+    "accounting-exception",
+    "signal-2",
+    "signal-1"
+  ],
+  "remainingCompleted": [
+    "cli-signal",
+    "cli-accounting",
+    "adopted-reaped-overcap"
+  ],
+  "verdict": "ACCEPT_MAIN_BLOCKED",
+  "limitation": "peakRSS lower bound max sampled aggregate and reaped highwater; not sum of independent maxima",
+  "incident": "independent harness decoded CLI output twice after eight completed groups; results preserved, only remaining CLI/adopted checks executed in remaining.py",
+  "fixtureHashes": {
+    "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/challenges.py": "4f39c0ce303ae4e7b7ff0a316b57714c91cb8d75f44159ba7ae8de0eddc92ab3",
+    "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/remaining.py": "c7c4c0abebddd852fd983b9909cb99a877f42b6e1870e3e3015175233f49a6ac",
+    "/tmp/gl-launch-controls-retained-challenges-oct26/ops/detached-peak-baseline-corrected.py": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602"
+  },
+  "publicationGate": {
+    "remoteMain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "reason": "Exact remote-main commit object unavailable in root and inspected readonly donors; no full fetch/checkout authorized. Cannot construct exact current-main tree and verify semantic dependencies. No main edits or ownership claimed.",
+    "evidence": [
+      "remote-main.log",
+      "main-review.json",
+      "main-review-donors.json",
+      "main-review.py"
+    ]
+  }
+}

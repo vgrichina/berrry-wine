@@ -1,0 +1,2 @@
+
+PALETTE_SUPERVISOR {"exit": -15, "stopReason": "aggregate disk limit", "peakRSS": 29192192, "sampledPeakRSS": 29192192, "reapedPeakRSS": 15466496, "cpuSeconds": 0.04764, "wallSeconds": 0.04804157721810043, "owned": [[3162665, "109733801"]], "cleanupComplete": true, "accounting": {"peakBytes": 68173824, "minProjectedFree": 3621609472, "minMemAvailable": 3764645888, "samples": 3}}

@@ -1,0 +1,60 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/remaining.py"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 92536832,
+  "cpuSeconds": 0.39,
+  "owned": [
+    [
+      3162660,
+      "109733788"
+    ],
+    [
+      3162661,
+      "109733790"
+    ],
+    [
+      3162662,
+      "109733791"
+    ],
+    [
+      3162663,
+      "109733793"
+    ],
+    [
+      3162664,
+      "109733799"
+    ],
+    [
+      3162665,
+      "109733801"
+    ],
+    [
+      3162666,
+      "109733808"
+    ],
+    [
+      3162667,
+      "109733809"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 0.37153549189679325,
+  "outputBytes": 1277,
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-rss-independent-acceptance-oct26": 413696,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-rss-independent-acceptance-oct26": 184320,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-26-36-01a17a1b-ac3f-7282-a866-db09790bd913.jsonl": 544768,
+      "positiveWALOnce": 16384,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17936384,
+    "projectedFree": 3639414784
+  }
+}

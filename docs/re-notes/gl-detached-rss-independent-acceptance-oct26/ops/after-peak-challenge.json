@@ -1,0 +1,31 @@
+{
+  "exit": 0,
+  "stopReason": "aggregate RSS limit",
+  "peakRSS": 63569920,
+  "sampledPeakRSS": 46792704,
+  "reapedPeakRSS": 63569920,
+  "cpuSeconds": 0.184017,
+  "wallSeconds": 0.22727367491461337,
+  "owned": [
+    [
+      3160264,
+      "109724980"
+    ],
+    [
+      3160265,
+      "109724982"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "independentChildPeak": {
+    "pid": 3160265,
+    "start": "109724982",
+    "rssHighWater": 63569920
+  },
+  "limit": 50331648,
+  "allOwnedGone": true,
+  "accountingCallbacks": 4,
+  "unrelatedAliveSameIdentity": true,
+  "verdict": "PASS_OR_DIFFERENT_FAILURE"
+}

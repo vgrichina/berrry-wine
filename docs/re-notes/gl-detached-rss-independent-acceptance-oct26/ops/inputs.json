@@ -1,0 +1,41 @@
+{
+  "task": "gl-detached-rss-independent-acceptance-oct26",
+  "candidate": "dc9b0e8ee2c56f029a56fbb6dd42422ed29dd557",
+  "sourcePins": [
+    {
+      "path": "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/helpers/palette-browser-launch.js",
+      "sha256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+      "bytes": 2893
+    },
+    {
+      "path": "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "sha256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+      "bytes": 11452
+    },
+    {
+      "path": "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/test-d3dim-palette-gpu-web.js",
+      "sha256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+      "bytes": 4436
+    },
+    {
+      "path": "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/test-palette-browser-launch-controls.js",
+      "sha256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+      "bytes": 2997
+    },
+    {
+      "path": "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/test-palette-browser-supervisor.py",
+      "sha256": "8be3cea926290022ba0e65770d23b0610b75d63c4497fe1067221798b4f34bc6",
+      "bytes": 5989
+    }
+  ],
+  "reproducer": "/tmp/gl-launch-controls-retained-challenges-oct26/ops/detached-peak-baseline-corrected.py",
+  "reproducerSHA256": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602",
+  "at": "2026-10-26T21:26:35.894057+00:00",
+  "memAvailable": 3123597312,
+  "diskFree": 3701313536,
+  "allocationBytes": 67108864,
+  "projectionBytes": 50331648,
+  "projection": "8MiB working source/tests/Git/evidence +24MiB client/session/events/positive WAL once +8MiB future publication/local growth +8MiB reserve",
+  "aggregateMinimum": 2596319232,
+  "nextGate": "Independent unchanged detached-RSS reproducer, then remaining CPU/timeout/signal/accounting challenges against exact production supervisor; conditional isolated current-main integration only if all gates and exclusive ownership pass"
+}

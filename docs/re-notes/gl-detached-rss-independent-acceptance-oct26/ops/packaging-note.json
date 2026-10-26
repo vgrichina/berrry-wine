@@ -1,0 +1,4 @@
+{
+  "rawRecoveryLog": "Original ops/recovery.log retained locally; init output omitted from publication for trailing blank-line lint",
+  "harness": "Original serialization failure retained unchanged; acceptance groups not rerun"
+}

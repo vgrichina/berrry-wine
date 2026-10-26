@@ -1,0 +1,136 @@
+{
+  "memAvailable": 3804151808,
+  "required": 2619015168,
+  "clients": [
+    {
+      "pid": 3155819,
+      "rss": 195936256,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-measured-allocation-gameplay-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3157320,
+      "rss": 198127616,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-retained-module-gameplay-api-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3159141,
+      "rss": 195141632,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-detached-rss-independent-acceptance-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3161390,
+      "rss": 214331392,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-complete-setup-map-gameplay-oct26/final.txt",
+        "-"
+      ]
+    }
+  ],
+  "clientUnconsumed320MiB": 538640384,
+  "taskCap": 268435456,
+  "CivCap": 805306368,
+  "hostReserve": 805306368,
+  "helperCaps": [
+    67108864,
+    67108864,
+    67108864
+  ],
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-rss-independent-acceptance-oct26": 438272,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-rss-independent-acceptance-oct26": 192512,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-26-36-01a17a1b-ac3f-7282-a866-db09790bd913.jsonl": 573440,
+      "positiveWALOnce": 16384,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17997824,
+    "projectedFree": 3638579200
+  },
+  "mountArgv": null,
+  "mountValidation": "N/A: no guest, mount, or filename-bearing mount argv",
+  "GitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "treeRSS": 268435456,
+    "GitDATA": "512MiB Git child only",
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ]
+  }
+}

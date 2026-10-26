@@ -1,0 +1,96 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/challenges.py"
+  ],
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 114688000,
+  "cpuSeconds": 2.15,
+  "owned": [
+    [
+      3161803,
+      "109730377"
+    ],
+    [
+      3161804,
+      "109730379"
+    ],
+    [
+      3161805,
+      "109730380"
+    ],
+    [
+      3161806,
+      "109730382"
+    ],
+    [
+      3161807,
+      "109730419"
+    ],
+    [
+      3161808,
+      "109730421"
+    ],
+    [
+      3161809,
+      "109730426"
+    ],
+    [
+      3161810,
+      "109730436"
+    ],
+    [
+      3161811,
+      "109730438"
+    ],
+    [
+      3161812,
+      "109730443"
+    ],
+    [
+      3161813,
+      "109730445"
+    ],
+    [
+      3161814,
+      "109730476"
+    ],
+    [
+      3161817,
+      "109730515"
+    ],
+    [
+      3161818,
+      "109730522"
+    ],
+    [
+      3161819,
+      "109730550"
+    ],
+    [
+      3161820,
+      "109730579"
+    ],
+    [
+      3161821,
+      "109730582"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 2.20060659898445,
+  "outputBytes": 3396,
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-rss-independent-acceptance-oct26": 368640,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-rss-independent-acceptance-oct26": 167936,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-26-36-01a17a1b-ac3f-7282-a866-db09790bd913.jsonl": 499712,
+      "positiveWALOnce": 12288,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17825792,
+    "projectedFree": 3642683392
+  }
+}

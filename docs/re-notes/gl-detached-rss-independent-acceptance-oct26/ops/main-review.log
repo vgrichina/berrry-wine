@@ -1,0 +1,16 @@
+fatal: ambiguous argument '754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2^{commit}': unknown revision or path not in the working tree.
+Use '--' to separate paths from revisions, like this:
+'git <command> [<revision>...] -- [<file>...]'
+Traceback (most recent call last):
+  File "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/main-review.py", line 7, in <module>
+    print('MAIN',g('rev-parse',m+'^{commit}'))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/gl-detached-rss-independent-acceptance-oct26/ops/main-review.py", line 4, in g
+    def g(*a):return subprocess.check_output(['/usr/bin/git','-C',str(R),*a],preexec_fn=lim).decode()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['/usr/bin/git', '-C', '/tmp/gl-detached-rss-independent-acceptance-oct26/repo', 'rev-parse', '754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2^{commit}']' returned non-zero exit status 128.

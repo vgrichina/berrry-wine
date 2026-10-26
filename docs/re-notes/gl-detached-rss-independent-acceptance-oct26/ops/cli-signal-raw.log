@@ -1,0 +1,2 @@
+
+PALETTE_SUPERVISOR {"exit": -15, "stopReason": "supervisor interrupted", "peakRSS": 29229056, "sampledPeakRSS": 29229056, "reapedPeakRSS": 13500416, "cpuSeconds": 0.036133, "wallSeconds": 0.04661262012086809, "owned": [[3162663, "109733793"]], "cleanupComplete": true, "accounting": {"peakBytes": 17907712, "minProjectedFree": 3672997888, "minMemAvailable": 3774828544, "samples": 2}}

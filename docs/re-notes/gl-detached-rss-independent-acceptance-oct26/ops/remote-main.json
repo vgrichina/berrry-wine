@@ -1,0 +1,42 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "ls-remote",
+    "origin",
+    "refs/heads/main"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 35041280,
+  "cpuSeconds": 0.1,
+  "owned": [
+    [
+      3162763,
+      "109734900"
+    ],
+    [
+      3162764,
+      "109734900"
+    ],
+    [
+      3162765,
+      "109734900"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 1.5452629840001464,
+  "outputBytes": 57,
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-rss-independent-acceptance-oct26": 425984,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-rss-independent-acceptance-oct26": 188416,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-26-36-01a17a1b-ac3f-7282-a866-db09790bd913.jsonl": 561152,
+      "positiveWALOnce": 16384,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17969152,
+    "projectedFree": 3639042048
+  }
+}

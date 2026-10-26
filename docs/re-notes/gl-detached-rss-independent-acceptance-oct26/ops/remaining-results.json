@@ -1,0 +1,76 @@
+{
+  "cli-signal": {
+    "exit": -15,
+    "stopReason": "supervisor interrupted",
+    "peakRSS": 29229056,
+    "sampledPeakRSS": 29229056,
+    "reapedPeakRSS": 13500416,
+    "cpuSeconds": 0.036133,
+    "wallSeconds": 0.04661262012086809,
+    "owned": [
+      [
+        3162663,
+        "109733793"
+      ]
+    ],
+    "cleanupComplete": true,
+    "accounting": {
+      "peakBytes": 17907712,
+      "minProjectedFree": 3672997888,
+      "minMemAvailable": 3774828544,
+      "samples": 2
+    },
+    "CLIExit": 1,
+    "allOwnedGone": true,
+    "unrelatedSameIdentity": true
+  },
+  "cli-accounting": {
+    "exit": -15,
+    "stopReason": "aggregate disk limit",
+    "peakRSS": 29192192,
+    "sampledPeakRSS": 29192192,
+    "reapedPeakRSS": 15466496,
+    "cpuSeconds": 0.04764,
+    "wallSeconds": 0.04804157721810043,
+    "owned": [
+      [
+        3162665,
+        "109733801"
+      ]
+    ],
+    "cleanupComplete": true,
+    "accounting": {
+      "peakBytes": 68173824,
+      "minProjectedFree": 3621609472,
+      "minMemAvailable": 3764645888,
+      "samples": 3
+    },
+    "CLIExit": 1,
+    "allOwnedGone": true,
+    "unrelatedSameIdentity": true
+  },
+  "adopted-reaped-overcap": {
+    "exit": 0,
+    "stopReason": "aggregate RSS limit",
+    "peakRSS": 63569920,
+    "sampledPeakRSS": 29360128,
+    "reapedPeakRSS": 63569920,
+    "cpuSeconds": 0.117903,
+    "wallSeconds": 0.15837557590566576,
+    "owned": [
+      [
+        3162666,
+        "109733808"
+      ],
+      [
+        3162667,
+        "109733809"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "independentPeak": 63569920,
+    "allOwnedGone": true,
+    "unrelatedSameIdentity": true
+  }
+}
