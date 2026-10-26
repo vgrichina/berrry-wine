@@ -1,0 +1,14 @@
+{
+  "passChecks": true,
+  "canonicalSHA256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394",
+  "effective": [
+    {
+      "size": 1000,
+      "trace": [],
+      "breaks": []
+    }
+  ],
+  "argvByteEquivalentExceptOwnedRoot": true,
+  "originalInputPacingUnchanged": true,
+  "guestInvoked": false
+}

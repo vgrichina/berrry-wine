@@ -128,5 +128,10 @@
     "path": "recipes/stage-delta.py",
     "bytes": 4780,
     "sha256": "7e7f08e00eedf06377fe62c31dd85fed9ef9129be46d56e1255e570a590cd41f"
+  },
+  {
+    "path": "canonical-pacing.json",
+    "bytes": 316,
+    "sha256": "5a737c85fd0e5dc0efc51232f19fd5298031876a5c2a6248bbb7d9e7e82e10f3"
   }
 ]
