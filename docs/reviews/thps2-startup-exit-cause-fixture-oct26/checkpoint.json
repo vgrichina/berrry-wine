@@ -1,0 +1,32 @@
+{
+  "candidate": "28d866798242da36343abdb043dad4ca2bba296d",
+  "checks": [
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/source-manifest.json",
+      "bytes": 82223,
+      "sha256": "63b1f8b95d5b7dd2c64b8b96e1fdb585cad386776ec71a622f8621f03964fbc3"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/output.log",
+      "bytes": 12991,
+      "sha256": "74313246cd6f2df2b23bf330d5819ed1a1925a4b976cde407932e7a4c4af1311"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/command.txt",
+      "bytes": 1828,
+      "sha256": "59068aaf700069924ea5e5b11a56e42104b65f63fcc8cee4afff563af3bbd859"
+    }
+  ],
+  "authenticMapping": "PASS",
+  "rsrcVA": "0x361e000",
+  "tests": "5 tests PASS; rejection controls embedded",
+  "sourceCorrection": false,
+  "sourceOwnership": null,
+  "box": {
+    "id": null,
+    "state": null,
+    "expiry": null
+  },
+  "noNodeAcceptance": true,
+  "incident": "Manual follow-up probe mistyped .rsrc VA 0x3620000 instead of derived 0x361e000; parser correctly rejected it. Corrected probe derives VA from section and passes. No production mapping defect."
+}

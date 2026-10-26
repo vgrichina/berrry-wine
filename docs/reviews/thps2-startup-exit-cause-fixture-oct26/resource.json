@@ -1,0 +1,10 @@
+{
+  "ownedBytes": 23853926,
+  "externalCaptureBytes": 260846,
+  "projectedBytes": 45086292,
+  "reserve": 8388608,
+  "publicationLogsEventsWALAndFutureAllowance": 12582912,
+  "wal": "No task database writes; any positive attributable external growth charged once within future allowance; no standing DB/WAL double charge",
+  "free": 3459854336,
+  "pass_": true
+}

@@ -1,0 +1,35 @@
+{
+  "free": 4090527744,
+  "memAvailable": 3837837312,
+  "aggregateClientRSSInitial": 2638966784,
+  "newClientAllowance": 268435456,
+  "nodeFloor": 805306368,
+  "provisionalBytes": 41943040,
+  "cap": 67108864,
+  "reserve": 8388608,
+  "hostRemainingFloor": 2982150144,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDataOnly": 536870912,
+    "nodeOldspace": 192
+  },
+  "pins": [
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe",
+      "target": "vfs/THPS2/thawk2.exe",
+      "bytes": 1359930,
+      "sha256": "fe5b66dd0a14bf5f3e5b00aceeeda9e1da165c7274a83a22fd1cb106e03d4b26",
+      "kind": "file"
+    }
+  ],
+  "mountArgv": [],
+  "mountValidation": "offline: no mounts or guest argv",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "incidents": [
+    "Initial policy/manifest output exceeded 8192 excerpt cap; subsequent excerpts bounded."
+  ]
+}

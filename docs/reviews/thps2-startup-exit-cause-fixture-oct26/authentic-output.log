@@ -1,0 +1,127 @@
+[bootstrap] append verified
+[supervisor] append bootstrap verified
+PE loaded. Entry: 0x004f1ff0
+DLL: binkw32.dll at 0x371f000, DllMain=0x374b59c, thunks=1976, origBase=0x10000000
+Patching EXE imports: binkw32.dll -> DLL #0 (binkw32.dll)
+After patching: 1976 thunks
+Calling DllMain at 0x374b59c...
+DllMain returned, EAX=0x1
+[vfs] working directory: c:\thps2
+[API #43] GetProcAddress(mod=h:0x0377c4ec, name="IsProcessorFeaturePresent") [esp=0x074fffb4 ret=0x0374c8ac]
+  => h:0x0377dccc
+[capture] metadata checkpoint only; no PNG retained {"at":"2026-10-26T18:50:44.809Z","requestedPhase":"menu.png","width":640,"height":480,"rgbaSHA256":"c120b7cffae950a4f431328d5bfba6f01e80f2b5479d2233373073db44025624"}
+[input] png /tmp/thps2-installed-demo-gameplay-api-oct26/guest/menu.png (2061 bytes) at batch 1 guest-ms=305
+[API #128] GetProcAddress(mod=h:0x0377c4ec, name="IsProcessorFeaturePresent") [esp=0x074fff6c ret=0x004f3630]
+  => h:0x0377dccc
+[FS] ReadFile(h=0x70000002, buf=0x74ffc93, n=0x1, read=0x1, pos=0x48, path=c:\thps2\thpcerr.log) tid=1 b=9 mainDepth=0
+[FS] ReadFile(h=0x70000004, buf=0x74ffc5b, n=0x1, read=0x1, pos=0x61, path=c:\thps2\thpcerr.log) tid=1 b=10 mainDepth=0
+[FS] ReadFile(h=0x7000000a, buf=0x74ffb73, n=0x1, read=0x1, pos=0x6c, path=c:\thps2\thpcerr.log) tid=1 b=13 mainDepth=0
+[FS] ReadFile(h=0x7000000b, buf=0x74ffb6b, n=0x1, read=0x1, pos=0x80, path=c:\thps2\thpcerr.log) tid=1 b=14 mainDepth=0
+[FS] ReadFile(h=0x7000000c, buf=0x74ffb63, n=0x1, read=0x1, pos=0x94, path=c:\thps2\thpcerr.log) tid=1 b=15 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x37914ec, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=15 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x379341c, n=0xc000, read=0xc000, pos=0x1000, path=c:\thps2\demo.pkr) tid=1 b=16 mainDepth=0
+[FS] ReadFile(h=0x7000000d, buf=0x37914ec, n=0x1000, read=0x1000, pos=0xd000, path=c:\thps2\demo.pkr) tid=1 b=16 mainDepth=0
+[FS] ReadFile(h=0x7000001c, buf=0x74ff973, n=0x1, read=0x1, pos=0xa8, path=c:\thps2\thpcerr.log) tid=1 b=18 mainDepth=0
+[FS] ReadFile(h=0x7000001d, buf=0x74ff96b, n=0x1, read=0x1, pos=0xbc, path=c:\thps2\thpcerr.log) tid=1 b=19 mainDepth=0
+[FS] ReadFile(h=0x7000001e, buf=0x74ff963, n=0x1, read=0x1, pos=0xd0, path=c:\thps2\thpcerr.log) tid=1 b=20 mainDepth=0
+[FS] ReadFile(h=0x70000041, buf=0x379fdec, n=0x4ea0, read=0x4ea0, pos=0x0, path=c:\windows\fonts\mssansserif.fon) tid=1 b=56 mainDepth=0
+[CreateWindow] hwnd=0x10001 title="TonyHawk" style=0x10cb0000 pos=0,0 size=640x480 menu=0
+[ShowWindow] hwnd=0x10001 cmd=5
+[FS] ReadFile(h=0x70000042, buf=0x74ffc93, n=0x1, read=0x1, pos=0xe4, path=c:\thps2\thpcerr.log) tid=1 b=57 mainDepth=0
+[FS] ReadFile(h=0x70000043, buf=0x74ffa6b, n=0x1, read=0x1, pos=0xf7, path=c:\thps2\thpcerr.log) tid=1 b=59 mainDepth=0
+[FS] ReadFile(h=0x70000044, buf=0x74fef23, n=0x1, read=0x1, pos=0x151, path=c:\thps2\thpcerr.log) tid=1 b=62 mainDepth=0
+[FS] ReadFile(h=0x70000045, buf=0x74fef4b, n=0x1, read=0x1, pos=0x178, path=c:\thps2\thpcerr.log) tid=1 b=63 mainDepth=0
+[FS] ReadFile(h=0x70000046, buf=0x74fef53, n=0x1, read=0x1, pos=0x19b, path=c:\thps2\thpcerr.log) tid=1 b=65 mainDepth=0
+[FS] ReadFile(h=0x70000047, buf=0x74fef53, n=0x1, read=0x1, pos=0x1c4, path=c:\thps2\thpcerr.log) tid=1 b=67 mainDepth=0
+[ShowWindow] hwnd=0x10001 cmd=5
+[FS] ReadFile(h=0x70000048, buf=0x74fef4b, n=0x1, read=0x1, pos=0x1e7, path=c:\thps2\thpcerr.log) tid=1 b=68 mainDepth=0
+[FS] ReadFile(h=0x70000049, buf=0x74ff2af, n=0x1, read=0x1, pos=0x202, path=c:\thps2\thpcerr.log) tid=1 b=70 mainDepth=0
+[FS] ReadFile(h=0x7000004a, buf=0x74ff2af, n=0x1, read=0x1, pos=0x251, path=c:\thps2\thpcerr.log) tid=1 b=73 mainDepth=0
+[FS] ReadFile(h=0x7000004b, buf=0x74ff2db, n=0x1, read=0x1, pos=0x28c, path=c:\thps2\thpcerr.log) tid=1 b=75 mainDepth=0
+[FS] ReadFile(h=0x7000004c, buf=0x74ff2bf, n=0x1, read=0x1, pos=0x2d7, path=c:\thps2\thpcerr.log) tid=1 b=77 mainDepth=0
+[FS] ReadFile(h=0x7000004d, buf=0x74ff2db, n=0x1, read=0x1, pos=0x2e8, path=c:\thps2\thpcerr.log) tid=1 b=78 mainDepth=0
+[FS] ReadFile(h=0x7000004e, buf=0x74ff2d3, n=0x1, read=0x1, pos=0x2f5, path=c:\thps2\thpcerr.log) tid=1 b=78 mainDepth=0
+[FS] ReadFile(h=0x7000004f, buf=0x74ff2cf, n=0x1, read=0x1, pos=0x2f8, path=c:\thps2\thpcerr.log) tid=1 b=79 mainDepth=0
+[FS] ReadFile(h=0x70000050, buf=0x74ff2cb, n=0x1, read=0x1, pos=0x311, path=c:\thps2\thpcerr.log) tid=1 b=80 mainDepth=0
+[FS] ReadFile(h=0x70000051, buf=0x74ff2c3, n=0x1, read=0x1, pos=0x32a, path=c:\thps2\thpcerr.log) tid=1 b=82 mainDepth=0
+[FS] ReadFile(h=0x70000052, buf=0x74ff2bb, n=0x1, read=0x1, pos=0x34b, path=c:\thps2\thpcerr.log) tid=1 b=83 mainDepth=0
+[FS] ReadFile(h=0x70000053, buf=0x74ff2b3, n=0x1, read=0x1, pos=0x36c, path=c:\thps2\thpcerr.log) tid=1 b=85 mainDepth=0
+[FS] ReadFile(h=0x70000054, buf=0x74ff2ab, n=0x1, read=0x1, pos=0x38a, path=c:\thps2\thpcerr.log) tid=1 b=86 mainDepth=0
+[FS] ReadFile(h=0x70000055, buf=0x74ff2a3, n=0x1, read=0x1, pos=0x3a8, path=c:\thps2\thpcerr.log) tid=1 b=88 mainDepth=0
+[FS] ReadFile(h=0x70000056, buf=0x74ff29b, n=0x1, read=0x1, pos=0x3c9, path=c:\thps2\thpcerr.log) tid=1 b=89 mainDepth=0
+[FS] ReadFile(h=0x70000057, buf=0x74ff293, n=0x1, read=0x1, pos=0x3ea, path=c:\thps2\thpcerr.log) tid=1 b=91 mainDepth=0
+[FS] ReadFile(h=0x70000058, buf=0x74ff2cf, n=0x1, read=0x1, pos=0x40b, path=c:\thps2\thpcerr.log) tid=1 b=92 mainDepth=0
+[FS] ReadFile(h=0x70000059, buf=0x74ff2cb, n=0x1, read=0x1, pos=0x42c, path=c:\thps2\thpcerr.log) tid=1 b=93 mainDepth=0
+[FS] ReadFile(h=0x7000005a, buf=0x74ff2c7, n=0x1, read=0x1, pos=0x443, path=c:\thps2\thpcerr.log) tid=1 b=94 mainDepth=0
+[FS] ReadFile(h=0x7000005b, buf=0x74ff2bf, n=0x1, read=0x1, pos=0x45a, path=c:\thps2\thpcerr.log) tid=1 b=96 mainDepth=0
+[FS] ReadFile(h=0x7000005c, buf=0x74ff2b7, n=0x1, read=0x1, pos=0x492, path=c:\thps2\thpcerr.log) tid=1 b=98 mainDepth=0
+[FS] ReadFile(h=0x7000005d, buf=0x74ff2af, n=0x1, read=0x1, pos=0x4c6, path=c:\thps2\thpcerr.log) tid=1 b=100 mainDepth=0
+[FS] ReadFile(h=0x7000005e, buf=0x74ff2ab, n=0x1, read=0x1, pos=0x4fa, path=c:\thps2\thpcerr.log) tid=1 b=102 mainDepth=0
+[FS] ReadFile(h=0x7000005f, buf=0x74ffcab, n=0x1, read=0x1, pos=0x4fd, path=c:\thps2\thpcerr.log) tid=1 b=103 mainDepth=0
+[FS] ReadFile(h=0x70000060, buf=0x74ffa5f, n=0x1, read=0x1, pos=0x51b, path=c:\thps2\thpcerr.log) tid=1 b=201 mainDepth=0
+[FS] ReadFile(h=0x70000061, buf=0x74ffa5f, n=0x1, read=0x1, pos=0x53e, path=c:\thps2\thpcerr.log) tid=1 b=202 mainDepth=0
+[FS] ReadFile(h=0x70000062, buf=0x74ffa5b, n=0x1, read=0x1, pos=0x54c, path=c:\thps2\thpcerr.log) tid=1 b=203 mainDepth=0
+[FS] ReadFile(h=0x70000063, buf=0x74ffa5f, n=0x1, read=0x1, pos=0x56f, path=c:\thps2\thpcerr.log) tid=1 b=205 mainDepth=0
+[FS] ReadFile(h=0x70000064, buf=0x74ffa5b, n=0x1, read=0x1, pos=0x57d, path=c:\thps2\thpcerr.log) tid=1 b=206 mainDepth=0
+[FS] ReadFile(h=0x70000065, buf=0x74ffa5f, n=0x1, read=0x1, pos=0x5a0, path=c:\thps2\thpcerr.log) tid=1 b=208 mainDepth=0
+[FS] ReadFile(h=0x70000066, buf=0x74ffa5b, n=0x1, read=0x1, pos=0x5ae, path=c:\thps2\thpcerr.log) tid=1 b=209 mainDepth=0
+[FS] ReadFile(h=0x70000067, buf=0x74ffa47, n=0x1, read=0x1, pos=0x5d1, path=c:\thps2\thpcerr.log) tid=1 b=211 mainDepth=0
+[FS] ReadFile(h=0x70000068, buf=0x74ffa5b, n=0x1, read=0x1, pos=0x5ea, path=c:\thps2\thpcerr.log) tid=1 b=213 mainDepth=0
+[FS] ReadFile(h=0x70000069, buf=0x74ffa47, n=0x1, read=0x1, pos=0x60d, path=c:\thps2\thpcerr.log) tid=1 b=214 mainDepth=0
+[ThreadManager] CreateThread handle=0xe1000 start=0x7504ca0 param=0x0 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x7504ca0 ESP=0x7efffff8
+Calling DllMain at 0x374b59c...
+DllMain returned, EAX=0x1
+[FS] ReadFile(h=0x7000006a, buf=0x74ffc8b, n=0x1, read=0x1, pos=0x626, path=c:\thps2\thpcerr.log) tid=1 b=215 mainDepth=0
+[FS] ReadFile(h=0x7000006b, buf=0x37a5c9c, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=215 mainDepth=0
+[FS] ReadFile(h=0x7000006c, buf=0x74ffc73, n=0x1, read=0x1, pos=0x644, path=c:\thps2\thpcerr.log) tid=1 b=215 mainDepth=0
+[FS] ReadFile(h=0x7000006d, buf=0x37a5c9c, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=216 mainDepth=0
+[FS] ReadFile(h=0x7000006e, buf=0x74ffc73, n=0x1, read=0x1, pos=0x666, path=c:\thps2\thpcerr.log) tid=1 b=216 mainDepth=0
+[FS] ReadFile(h=0x7000006f, buf=0x74ffc6f, n=0x1, read=0x1, pos=0x689, path=c:\thps2\thpcerr.log) tid=1 b=216 mainDepth=0
+[FS] ReadFile(h=0x70000070, buf=0x74ffc57, n=0x1, read=0x1, pos=0x695, path=c:\thps2\thpcerr.log) tid=1 b=217 mainDepth=0
+[FS] ReadFile(h=0x70000071, buf=0x74ffc57, n=0x1, read=0x1, pos=0x6a7, path=c:\thps2\thpcerr.log) tid=1 b=217 mainDepth=0
+[FS] ReadFile(h=0x70000072, buf=0x74ffc6f, n=0x1, read=0x1, pos=0x6be, path=c:\thps2\thpcerr.log) tid=1 b=217 mainDepth=0
+[FS] ReadFile(h=0x70000073, buf=0x74ffc63, n=0x1, read=0x1, pos=0x6c0, path=c:\thps2\thpcerr.log) tid=1 b=217 mainDepth=0
+[FS] ReadFile(h=0x70000075, buf=0x74ffc2b, n=0x1, read=0x1, pos=0x6d9, path=c:\thps2\thpcerr.log) tid=1 b=218 mainDepth=0
+[FS] ReadFile(h=0x70000081, buf=0x74ffb43, n=0x1, read=0x1, pos=0x6e4, path=c:\thps2\thpcerr.log) tid=1 b=218 mainDepth=0
+[FS] ReadFile(h=0x70000082, buf=0x74ffb3b, n=0x1, read=0x1, pos=0x6f8, path=c:\thps2\thpcerr.log) tid=1 b=218 mainDepth=0
+[FS] ReadFile(h=0x70000083, buf=0x74ffb33, n=0x1, read=0x1, pos=0x70c, path=c:\thps2\thpcerr.log) tid=1 b=219 mainDepth=0
+[FS] ReadFile(h=0x70000084, buf=0x74ffc6f, n=0x1, read=0x1, pos=0x720, path=c:\thps2\thpcerr.log) tid=1 b=220 mainDepth=0
+[FS] ReadFile(h=0x70000085, buf=0x74ffc5f, n=0x1, read=0x1, pos=0x734, path=c:\thps2\thpcerr.log) tid=1 b=221 mainDepth=0
+[FS] ReadFile(h=0x70000086, buf=0x74ffc37, n=0x1, read=0x1, pos=0x74b, path=c:\thps2\thpcerr.log) tid=1 b=221 mainDepth=0
+[FS] ReadFile(h=0x70000087, buf=0x37a5c9c, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=221 mainDepth=0
+[FS] ReadFile(h=0x70000087, buf=0x37d1c2c, n=0x8000, read=0x8000, pos=0xd1dde8, path=c:\thps2\demo.pkr) tid=1 b=221 mainDepth=0
+[FS] ReadFile(h=0x70000087, buf=0x37a5c9c, n=0x200, read=0x200, pos=0xd25de8, path=c:\thps2\demo.pkr) tid=1 b=221 mainDepth=0
+[FS] ReadFile(h=0x70000088, buf=0x74ffbdf, n=0x1, read=0x1, pos=0x75c, path=c:\thps2\thpcerr.log) tid=1 b=248 mainDepth=0
+[FS] ReadFile(h=0x70000089, buf=0x74ffc37, n=0x1, read=0x1, pos=0x78e, path=c:\thps2\thpcerr.log) tid=1 b=366 mainDepth=0
+[FS] ReadFile(h=0x7000008a, buf=0x74ffc7f, n=0x1, read=0x1, pos=0x7a1, path=c:\thps2\thpcerr.log) tid=1 b=366 mainDepth=0
+[FS] ReadFile(h=0x7000008b, buf=0x74ffc2f, n=0x1, read=0x1, pos=0x7c9, path=c:\thps2\thpcerr.log) tid=1 b=367 mainDepth=0
+[FS] ReadFile(h=0x7000008c, buf=0x37d8cac, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=526 mainDepth=0
+[FS] ReadFile(h=0x7000008c, buf=0x37d9cb4, n=0x1e400, read=0x1e400, pos=0xe70f86, path=c:\thps2\demo.pkr) tid=1 b=526 mainDepth=0
+[FS] ReadFile(h=0x7000008c, buf=0x37d8cac, n=0x200, read=0x200, pos=0xe8f386, path=c:\thps2\demo.pkr) tid=1 b=526 mainDepth=0
+[FS] ReadFile(h=0x7000008d, buf=0x37f70f4, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008d, buf=0x7ea00004, n=0xe1000, read=0xe1000, pos=0x1fbd9a8, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008d, buf=0x37f70f4, n=0x200, read=0x200, pos=0x209e9a8, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008e, buf=0x37f70f4, n=0x1000, read=0x1000, pos=0x0, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008e, buf=0x7e910004, n=0xe1000, read=0xe1000, pos=0x1fbd9a8, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008e, buf=0x37f70f4, n=0x200, read=0x200, pos=0x209e9a8, path=c:\thps2\demo.pkr) tid=1 b=527 mainDepth=0
+[FS] ReadFile(h=0x7000008f, buf=0x74ff9f7, n=0x1, read=0x1, pos=0x7e2, path=c:\thps2\thpcerr.log) tid=1 b=759 mainDepth=0
+[FS] ReadFile(h=0x70000090, buf=0x74ff977, n=0x1, read=0x1, pos=0x83f, path=c:\thps2\thpcerr.log) tid=1 b=760 mainDepth=0
+[API #3548] ExitProcess(0x00000001) [esp=0x074ffbd8 ret=0x004f03dc]
+[Exit] code=1
+held critical sections at exit (1):
+    0x0322ddb0 owner=main lock=0 recursion=1
+uop: installs=71 kills=7 retired-poor=7 enters=93461 blocks=1726641 head-exits=0 reguards=1303 rg-pages=20810 rg-nonadj=0 win-kept=93363 win-reset=98 gen=3 | compiled=71 declined=103 insns=2082 uops=11066 flushes=0 traces=44
+  declines: no-backedge=70 head-unsupported=33
+uop nobump: skips=505280
+uop hot: decays=24305 halvings=6
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=0 kills=0 enters=0 blocks=0
+
+Stats: 3548 API calls, 762 batches in 1.617s (471 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x7504ca0 esp=0x7efffff8 ebp=0x0 yield=0 waitH=0x0 sleepCount=547 csPark/steal=0/0
+[capture] lossless frame=1 bytes=361926 total=361926
+Wrote /tmp/thps2-installed-demo-gameplay-api-oct26/guest/final.png (361926 bytes, dx slot 10 640x480)
+[signal] SIGTERM requested orderly shutdown
