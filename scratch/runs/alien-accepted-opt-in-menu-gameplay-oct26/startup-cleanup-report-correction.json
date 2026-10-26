@@ -1,0 +1,22 @@
+{
+  "original": "startup-qualification.json",
+  "correction": "remaining entry was supervisor itself; exact Node startup succeeded; bookkeeping-only correction excludes self without changing executable/flags/environment/limits",
+  "liveness": {
+    "commandId": "cmd_mlfqazi5rsay",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:17:48.924Z",
+    "launcherFailed": false,
+    "noticedMs": 16,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T23:17:48.885Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"priorSupervisorPID\": 27024, \"exists\": false}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

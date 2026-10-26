@@ -1,0 +1,5 @@
+{
+  "exit": 1,
+  "stdout": "{\"error\":\"--status expects a positive integer process id, got \\\"cmd_29bvw8bnvdvh\\\"\",\"event\":\"error\"}\n",
+  "stderr": ""
+}

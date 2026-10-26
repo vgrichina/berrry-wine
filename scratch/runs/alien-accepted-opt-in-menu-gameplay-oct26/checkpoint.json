@@ -1,0 +1,31 @@
+{
+  "phase": "guest completed and collected",
+  "integration": "4e28cb946e67ffc8112043d27c8c23840e076007",
+  "legacyBase": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "closure": "legacyJS plus accepted exactseven, retainedcanonicalWasm; NOT whole-current-main emulator",
+  "effectiveFiles": 603,
+  "originalFiles": 602,
+  "completed": [
+    "complete production CLI startup with real guest",
+    "literal opt-in actual attribution and terminal summary",
+    "configuration dialog",
+    "title",
+    "rendered backdrop",
+    "serial acknowledged steps frozen0 through4650"
+  ],
+  "reused": "defaultoff32cases16omissions mergedsource helperbridgeoriginal12000 unchanged acceptance; no suites rerun",
+  "remaining": [
+    "main-menu",
+    "mission",
+    "gameplay",
+    "normal guest Quit"
+  ],
+  "blocker": "Single guest118.2s wall envelope exhausted while reaching backdrop before an inspected menu; no proven game/HRESULT bug. Final256 step lacked ACK and is not replayed.",
+  "guestBudgetSpent": {
+    "cpu": 78.24000000000001,
+    "wall": 118.19962565799995,
+    "captures": 5
+  },
+  "next": "Coordinator disposition only; no same-task second invocation authorized",
+  "ownedLive": []
+}

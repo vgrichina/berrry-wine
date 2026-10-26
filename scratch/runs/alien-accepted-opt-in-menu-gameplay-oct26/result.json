@@ -1,0 +1,61 @@
+{
+  "candidateId": "reflexive-alien-shooter",
+  "agentId": "codex:01a17a7c-39f2-7a13-8df9-679f8f6301d4",
+  "startedAt": "2026-10-26T23:17:49.293Z",
+  "finishedAt": "2026-10-26T23:19:47.557Z",
+  "outcome": "timeout",
+  "route": "startup title to menu attempt",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/alien-accepted-opt-in-menu-gameplay-oct26/capture-wrapper.cjs",
+    "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/runner/test/run.js",
+    "--app=alien_shooter",
+    "--no-build",
+    "--wasm=/tmp/alien-accepted-opt-in-menu-gameplay-oct26/current.wasm",
+    "--d3d9-renderer=software",
+    "--trace-render-wait",
+    "--tick-ms-per-batch=5",
+    "--batch-size=200000",
+    "--max-seconds=112",
+    "--no-close",
+    "--quiet-api",
+    "--frozen",
+    "--control=18129"
+  ],
+  "build": {
+    "commit": "4e28cb946e67ffc8112043d27c8c23840e076007",
+    "legacyBase": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "closure": "legacy JS plus accepted exactseven pins",
+    "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "environment": {
+    "box": "bx_nfacjvy7",
+    "node": "v24.22.1",
+    "renderer": "software",
+    "viewport": {
+      "width": 640,
+      "height": 480
+    }
+  },
+  "summary": "Full CLI and real opt-in wait attribution qualified. Inspected title and rendered backdrop; wall guard ended before menu/mission/gameplay. No owned processes remain; coordinator retains running box.",
+  "verification": "reviewed",
+  "screenshots": [
+    "frames/frame1.png",
+    "frames/frame2.png",
+    "frames/frame3.png",
+    "frames/frame4.png",
+    "frames/frame5.png"
+  ],
+  "artifacts": [
+    "outcome.json",
+    "checkpoint.json",
+    "pins.json",
+    "effective-input-manifest.json",
+    "runtime/guest/output.log",
+    "runtime/guest/terminal.json",
+    "runtime/guest/command.json",
+    "api-history-sanitized.jsonl"
+  ]
+}

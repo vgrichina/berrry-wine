@@ -1,0 +1,24 @@
+{
+  "at": 1793056693.329273,
+  "request": {
+    "cmd": "dlg-click:1"
+  },
+  "api": {
+    "commandId": "cmd_tx65jr67maxj",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:13.267Z",
+    "launcherFailed": false,
+    "noticedMs": 17,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-26T23:18:13.186Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":50}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

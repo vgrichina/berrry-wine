@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kkl7cjtefc0y",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-26T23:16:18.051Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-26T23:16:17.865Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 7, in <module>\nAssertionError\n",
+  "stderrTruncated": false,
+  "stdout": "{\"exit\": 1, \"stdout\": \"\", \"stderr\": \"node:fs:244\\n  binding.access(getValidatedPath(path), mode);\\n          ^\\n\\nError: ENOENT: no such file or directory, access 'test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe'\\n    at Object.accessSync (node:fs:244:11)\\n    at Object.<anonymous> (/tmp/alien-accepted-opt-in-menu-gameplay-oct26/runner/parser.cjs:13:269)\\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\\n    at node:internal/main/run_main_module:33:47 {\\n  errno: -2,\\n  code: 'ENOENT',\\n  syscall: 'access',\\n  path: 'test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe'\\n}\\n\\nNode.js v24.22.1\\n\"}\n",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

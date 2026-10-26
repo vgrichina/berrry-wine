@@ -1,0 +1,25 @@
+{
+  "at": 1793056710.3382225,
+  "request": {
+    "action": "step",
+    "n": 256
+  },
+  "api": {
+    "commandId": "cmd_mclwuiljxirb",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:30.241Z",
+    "launcherFailed": false,
+    "noticedMs": 89,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 90,
+    "startedAt": "2026-10-26T23:18:27.952Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":2098,\"ran\":256,\"steps\":256,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

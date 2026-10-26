@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/home/user/wine-assembly/ops/check-run-evidence.js",
+    "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/repo"
+  ],
+  "cwd": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/repo",
+  "exit": 0,
+  "wall": 0.024103327188640833,
+  "cpu": 0.023203999999999995,
+  "peakRSS": 82157568,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 66,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/home/user/wine-assembly/ops/check-run-evidence.js": "48dc34e9174c9be98c12f0ae7bf84d00f898d54d2cbec179ce5afb54a82b5925"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

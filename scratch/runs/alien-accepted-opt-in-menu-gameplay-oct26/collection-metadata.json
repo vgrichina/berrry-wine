@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_kd6xaoljxbht",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:20:29.479Z",
+  "launcherFailed": false,
+  "noticedMs": 42,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 42,
+  "startedAt": "2026-10-26T23:20:28.762Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 100109, \"sha256\": \"337e1cd941aba343bc0300b277ab1e08ba2e08c2a785f917faa40367fcc569ea\", \"ownedLive\": [], \"allocated\": 53043200, \"images\": [{\"name\": \"frame1.png\", \"bytes\": 7436, \"sha256\": \"23399c0b338b81b0cfd14d43cfde5a6f772ead69ea88bbf1f938a8f4db16981a\"}, {\"name\": \"frame5.png\", \"bytes\": 229359, \"sha256\": \"44d3b6639cd68bc6661c02f2f713446ed14b1b24970930c7b84d8053359f5292\"}, {\"name\": \"frame3.png\", \"bytes\": 20036, \"sha256\": \"8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8\"}, {\"name\": \"frame4.png\", \"bytes\": 20036, \"sha256\": \"8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8\"}, {\"name\": \"frame2.png\", \"bytes\": 2061, \"sha256\": \"8cc941f9dfaac83bcbc2ddb58618780e5892fec818d76739f6cb558fa35ce46d\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

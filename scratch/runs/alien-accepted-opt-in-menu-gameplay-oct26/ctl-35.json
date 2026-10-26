@@ -1,0 +1,24 @@
+{
+  "at": 1793056738.1698647,
+  "request": {
+    "cmd": "keypress:13"
+  },
+  "api": {
+    "commandId": "cmd_o74oidtoesuz",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:58.112Z",
+    "launcherFailed": false,
+    "noticedMs": 21,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 21,
+    "startedAt": "2026-10-26T23:18:58.009Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"queued\":true,\"batch\":3150}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_bwign8kvwdae",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:16:08.773Z",
+  "launcherFailed": false,
+  "noticedMs": 15,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-26T23:16:08.491Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"count\": 602, \"bad\": [], \"expectedSHA256\": \"9bb732e09c38535d8941f6cd091f4400676a5218fae5275f403c9f835a3af239\", \"allocated\": 50585600, \"memAvailable\": 7242104832, \"free\": 48960614400}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

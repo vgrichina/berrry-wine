@@ -1,0 +1,1 @@
+const fs=require('fs'),orig=fs.readFileSync;fs.readFileSync=function(p,...a){if(p==="/tmp/alien-accepted-opt-in-menu-gameplay-oct26/current.wasm"){console.log('CONFIG_ONLY_REACHED_NO_BUILD_MODULE_READ');process.exit(0)}return orig.call(this,p,...a)};

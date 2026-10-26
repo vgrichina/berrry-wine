@@ -1,0 +1,25 @@
+{
+  "at": 1793056730.262489,
+  "request": {
+    "action": "step",
+    "n": 244
+  },
+  "api": {
+    "commandId": "cmd_nv92fdwzgkei",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:50.206Z",
+    "launcherFailed": false,
+    "noticedMs": 17,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 18,
+    "startedAt": "2026-10-26T23:18:47.498Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":3150,\"ran\":244,\"steps\":244,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

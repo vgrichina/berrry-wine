@@ -1,0 +1,25 @@
+{
+  "at": 1793056727.2813916,
+  "request": {
+    "action": "step",
+    "n": 256
+  },
+  "api": {
+    "commandId": "cmd_ttrw9ixxrxxh",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:47.224Z",
+    "launcherFailed": false,
+    "noticedMs": 23,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 24,
+    "startedAt": "2026-10-26T23:18:45.699Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":2906,\"ran\":256,\"steps\":256,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

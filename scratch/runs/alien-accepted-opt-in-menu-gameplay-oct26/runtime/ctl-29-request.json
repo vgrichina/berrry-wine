@@ -1,0 +1,1 @@
+{"action": "eval", "code": "({attribution:ctx.renderWaitAttribution,bridgeRequests:ctx.d3d9Bridge?Array.from(ctx.d3d9Bridge.requests.entries()).slice(-2).map(([k,v])=>({token:k,done:v.done,error:String(v.error||\"\"),op:v.renderWaitOperation,ready:v.renderWaitReadyAt})):null})"}

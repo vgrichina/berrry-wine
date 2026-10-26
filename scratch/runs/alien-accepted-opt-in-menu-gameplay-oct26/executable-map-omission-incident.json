@@ -1,0 +1,14 @@
+{
+  "originalCount": 602,
+  "originalMapHasExecutable": false,
+  "supplement": {
+    "target": "runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+    "source": "/home/user/wine-assembly/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+    "sha256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+    "bytes": 712724,
+    "mode": 420
+  },
+  "firstFailure": "first-api-failure.json",
+  "guestInvocations": 0,
+  "scope": "Explicit assigned executable, no rediscovery or media reacquisition"
+}

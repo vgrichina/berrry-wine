@@ -1,0 +1,50 @@
+{
+  "at": 1793056354.1666048,
+  "memAvailable": 3741949952,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 18509824
+    },
+    {
+      "pid": 752162,
+      "rss": 406409216
+    },
+    {
+      "pid": 1789179,
+      "rss": 55885824
+    },
+    {
+      "pid": 3281358,
+      "rss": 193024000
+    },
+    {
+      "pid": 3283830,
+      "rss": 191606784
+    },
+    {
+      "pid": 3289319,
+      "rss": 237355008
+    }
+  ],
+  "required": 1811939328,
+  "free": 3363479552,
+  "projectedFree": 3095044096,
+  "localCap": 67108864,
+  "remoteCap": 268435456,
+  "localPlan": {
+    "selectiveGitSourceOps": 12582912,
+    "sessionEventsWAL": 12582912,
+    "future": 16777216,
+    "reserve": 8388608,
+    "captures": 16777216
+  },
+  "remotePlan": {
+    "inputs": 50307072,
+    "captures": 16777216,
+    "transferRecovery": 16777216,
+    "logs": 4194304,
+    "future": 33554432,
+    "reserve": 8388608
+  }
+}

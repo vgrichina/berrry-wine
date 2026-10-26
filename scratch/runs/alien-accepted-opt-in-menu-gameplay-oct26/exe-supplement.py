@@ -1,0 +1,6 @@
+from work import *
+p=ROOT/'test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe';assert p.stat().st_size==712724 and sha(p.read_bytes())=='aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446'
+x=dict(target='runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe',source=str(p),sha256=sha(p.read_bytes()),bytes=p.stat().st_size,mode=p.stat().st_mode&511)
+save('executable-map-omission-incident.json',dict(originalCount=602,originalMapHasExecutable=False,supplement=x,firstFailure='first-api-failure.json',guestInvocations=0,scope='Explicit assigned executable, no rediscovery or media reacquisition'))
+transfer([(x['target'],p)])
+j=py('import pathlib,json,hashlib;h=pathlib.Path('+repr(R)+');p=h/'+repr(x['target'])+';r=dict(bytes=p.stat().st_size,mode=p.stat().st_mode&511,sha256=hashlib.file_digest(p.open("rb"),"sha256").hexdigest());print(json.dumps(r));m=json.loads((h/"expected.json").read_text());m.append('+repr({k:x[k] for k in ['target','sha256','bytes','mode']})+');(h/"expected-with-executable.json").write_text(json.dumps(m));assert r=='+repr({k:x[k] for k in ['bytes','mode','sha256']}));save('executable-readback.json',j);print(j['stdout'])

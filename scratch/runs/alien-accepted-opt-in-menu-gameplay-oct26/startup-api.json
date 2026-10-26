@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_hjmyiurl2nd0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:17:24.091Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 23,
+  "startedAt": "2026-10-26T23:17:23.935Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,1 @@
+const fs=require('fs');console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,version:process.version,limits:fs.readFileSync('/proc/self/limits','utf8')}));

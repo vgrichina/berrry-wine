@@ -1,0 +1,25 @@
+{
+  "at": 1793056670.3905146,
+  "request": {
+    "action": "png",
+    "path": "/tmp/alien-accepted-opt-in-menu-gameplay-oct26/guest/frame1.png"
+  },
+  "api": {
+    "commandId": "cmd_4p5kqemfxedf",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:17:50.338Z",
+    "launcherFailed": false,
+    "noticedMs": 13,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T23:17:49.987Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":0,\"frozen\":true,\"path\":\"/tmp/alien-accepted-opt-in-menu-gameplay-oct26/guest/frame1.png\",\"bytes\":2061}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

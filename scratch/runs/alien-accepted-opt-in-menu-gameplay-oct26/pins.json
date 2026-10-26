@@ -1,0 +1,62 @@
+{
+  "runner/test/run.js": {
+    "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "bytes": 688295,
+    "mode": 436
+  },
+  "runner/lib/host-imports.js": {
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "bytes": 197066,
+    "mode": 436
+  },
+  "runner/lib/d3d9-host.js": {
+    "sha256": "a5ff73ec46f02c883659fff62a83bbd6bdd2dd43483dc353c80682228c297ee9",
+    "bytes": 87629,
+    "mode": 436
+  },
+  "runner/lib/render-wait-attribution.js": {
+    "sha256": "aa244e2741dc3eada31730b19a653f661b3fdd3c1e4bdfa1d09465a6a09745b0",
+    "bytes": 4614,
+    "mode": 436
+  },
+  "runner/test/test-render-wait-attribution.js": {
+    "sha256": "b877ca7f0aa27bbd4d11dc8b70ce7e4fbee51af8febda3f88c971506b4a4304e",
+    "bytes": 12246,
+    "mode": 436
+  },
+  "runner/test/test-render-wait-opt-in.js": {
+    "sha256": "146210d28874ff671544589450ce286246f8ee9bc27befba5f2578df18560083",
+    "bytes": 8515,
+    "mode": 436
+  },
+  "runner/test/fixtures/render-park-control.json": {
+    "sha256": "46e4c759d468a6e4faf24dc3d9e1f6dd57d80920dfdc776521faa7eeb152c6ac",
+    "bytes": 4837,
+    "mode": 436
+  },
+  "runner/lib/host-import-sigs.generated.json": {
+    "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069",
+    "bytes": 39713,
+    "mode": 436
+  },
+  "runner/lib/d3d-render-worker.js": {
+    "sha256": "f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52",
+    "bytes": 27983,
+    "mode": 436
+  },
+  "runner/src/api_table.json": {
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "bytes": 723350,
+    "mode": 436
+  },
+  "current.wasm": {
+    "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "bytes": 1880280,
+    "mode": 436
+  },
+  "runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe": {
+    "sha256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+    "bytes": 712724,
+    "mode": 420
+  }
+}

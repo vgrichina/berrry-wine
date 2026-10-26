@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_8smtnxwr0qoq",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:17:49.179Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T23:17:49.072Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1793056669.1743655, \"bad\": [], \"files\": 603, \"memAvailable\": 7215939584, \"free\": 48959389696, \"allocated\": 51568640, \"remoteCap\": 268435456, \"projectedWithCapturesLogsGrowthReserve\": 114483200, \"remainingInputIdentity\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

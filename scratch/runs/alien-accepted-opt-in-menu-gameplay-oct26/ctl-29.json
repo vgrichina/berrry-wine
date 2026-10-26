@@ -1,0 +1,25 @@
+{
+  "at": 1793056725.5991504,
+  "request": {
+    "action": "eval",
+    "code": "({attribution:ctx.renderWaitAttribution,bridgeRequests:ctx.d3d9Bridge?Array.from(ctx.d3d9Bridge.requests.entries()).slice(-2).map(([k,v])=>({token:k,done:v.done,error:String(v.error||\"\"),op:v.renderWaitOperation,ready:v.renderWaitReadyAt})):null})"
+  },
+  "api": {
+    "commandId": "cmd_3bns0twuzdjh",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:45.527Z",
+    "launcherFailed": false,
+    "noticedMs": 52,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 52,
+    "startedAt": "2026-10-26T23:18:45.415Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"attribution\":{\"requests\":1016,\"pending\":0,\"completed\":1016,\"rejected\":0,\"deadline\":0,\"stopped\":0,\"superseded\":0,\"lateSettlements\":0,\"unknownRequests\":846,\"parkWaits\":810,\"parkMs\":5948,\"bridgePendingMs\":5943,\"readyToResumeMs\":5,\"unknownMs\":0,\"bucketUpperMs\":[0,1,5,20,100,1000,null],\"latencyBuckets\":[462,262,35,208,45,4,0],\"slowest\":[{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":291,\"bridgePendingMs\":291,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":150,\"bridgePendingMs\":150,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":132,\"bridgePendingMs\":132,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":107,\"bridgePendingMs\":107,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":91,\"bridgePendingMs\":91,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":86,\"bridgePendingMs\":86,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":75,\"bridgePendingMs\":75,\"readyToResumeMs\":0,\"unknownMs\":0},{\"operation\":\"unknown\",\"state\":\"completed\",\"parkMs\":74,\"bridgePendingMs\":74,\"readyToResumeMs\":0,\"unknownMs\":0}],\"dropped\":1008,\"droppedMs\":4942},\"bridgeRequests\":[{\"token\":-1017,\"done\":true,\"error\":\"\",\"op\":\"unknown\",\"ready\":1793056715362}]}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

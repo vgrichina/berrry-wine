@@ -1,0 +1,25 @@
+{
+  "at": 1793056740.228071,
+  "request": {
+    "action": "step",
+    "n": 256
+  },
+  "api": {
+    "commandId": "cmd_baex2ap9edqb",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:19:00.165Z",
+    "launcherFailed": false,
+    "noticedMs": 20,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 20,
+    "startedAt": "2026-10-26T23:18:58.272Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":3406,\"ran\":256,\"steps\":256,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

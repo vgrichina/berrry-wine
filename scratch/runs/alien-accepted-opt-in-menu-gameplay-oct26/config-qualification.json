@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_u1krzjmgcnqy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T23:17:37.205Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T23:17:37.161Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"terminal\": {\"reason\": \"natural\", \"returncode\": 0, \"elapsed\": 0.35208555700000943, \"peakTreeRSS\": 97341440, \"peakTreeCPU\": 0.43, \"outputBytes\": 41, \"identities\": {\"27402\": {\"ppid\": 27401, \"state\": \"R\", \"start\": \"51746\", \"cpu\": 0.07, \"rss\": 15335424}, \"27403\": {\"ppid\": 27402, \"state\": \"R\", \"start\": \"51748\", \"cpu\": 0.36, \"rss\": 82006016}}, \"remainingOwnedLive\": [], \"box\": \"bx_nfacjvy7\", \"boxState\": \"RUNNING\", \"shutdownOwner\": \"coordinator\"}, \"output\": \"CONFIG_ONLY_REACHED_NO_BUILD_MODULE_READ\\n\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

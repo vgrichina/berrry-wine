@@ -1,0 +1,5 @@
+{
+  "localPackageFirstFailure": "TypeError: byte hashing helper called with Path; fixed by reading bytes, no runtime rerun",
+  "statusFirstFailure": "commandId supplied where --status requires positive PID; corrected to27489, exit0 confirmed",
+  "broadReadOutput": "initial policy read and one ps listing truncated; switched to bounded excerpts; no full ref listing captured"
+}

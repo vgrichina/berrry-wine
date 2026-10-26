@@ -1,0 +1,11 @@
+{
+  "command": "timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 /tmp/alien-accepted-opt-in-menu-gameplay-oct26/supervisor.py guest'",
+  "commandId": "cmd_29bvw8bnvdvh",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/27489.err.log",
+  "logPath": "/home/user/.ascii/processes/27489.log",
+  "pid": 27489,
+  "processId": 27489,
+  "startedAt": "2026-10-26T23:17:49.293Z",
+  "success": true
+}

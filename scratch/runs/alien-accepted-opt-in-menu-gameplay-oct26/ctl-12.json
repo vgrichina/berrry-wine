@@ -1,0 +1,25 @@
+{
+  "at": 1793056703.1290247,
+  "request": {
+    "action": "step",
+    "n": 256
+  },
+  "api": {
+    "commandId": "cmd_jaxv5dfksx4g",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:23.046Z",
+    "launcherFailed": false,
+    "noticedMs": 20,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 21,
+    "startedAt": "2026-10-26T23:18:20.488Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":1074,\"ran\":256,\"steps\":256,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

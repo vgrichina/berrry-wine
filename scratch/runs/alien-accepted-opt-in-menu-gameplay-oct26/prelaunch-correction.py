@@ -1,0 +1,3 @@
+from work import *
+j=json.loads(json.loads((O/'startup-qualification.json').read_text())['stdout']);pid=int(j['terminal']['remainingOwnedLive'][0]);assert j['terminal']['returncode']==0 and pid in [int(x) for x in j['terminal']['identities']]
+r=py('import pathlib,json;print(json.dumps(dict(priorSupervisorPID='+str(pid)+',exists=pathlib.Path("/proc/'+str(pid)+'").exists())))');assert not json.loads(r['stdout'])['exists'];save('startup-cleanup-report-correction.json',dict(original='startup-qualification.json',correction='remaining entry was supervisor itself; exact Node startup succeeded; bookkeeping-only correction excludes self without changing executable/flags/environment/limits',liveness=r))

@@ -1,0 +1,25 @@
+{
+  "at": 1793056715.9881196,
+  "request": {
+    "action": "step",
+    "n": 40
+  },
+  "api": {
+    "commandId": "cmd_0egi2xrwttkb",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T23:18:35.361Z",
+    "launcherFailed": false,
+    "noticedMs": 21,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 21,
+    "startedAt": "2026-10-26T23:18:34.625Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ok\":true,\"value\":{\"batch\":2650,\"ran\":40,\"steps\":40,\"frozen\":true}}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}
