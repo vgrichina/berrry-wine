@@ -1,0 +1,14 @@
+{
+  "node": "/usr/local/bin/node",
+  "realNode": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "heapFlag": "--max-old-space-size=64",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mounts": [],
+  "canonicalParserReceipt": "/tmp/alien-render-wait-measured-client-accept-oct26/ops/parser.json",
+  "configuration": "Same accepted runner/parser bytes; no mount argv or intended mounted files; all five clients launched so future unlaunched clients0; stopped clients never refilled.",
+  "limits": [
+    -1,
+    -1
+  ]
+}

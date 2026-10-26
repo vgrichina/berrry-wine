@@ -1,0 +1,14 @@
+{
+  "test/run.js": {
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+    "bytes": 687226
+  },
+  "lib/d3d9-host.js": {
+    "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "bytes": 87300
+  },
+  "lib/host-imports.js": {
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "bytes": 197066
+  }
+}

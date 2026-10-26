@@ -1,0 +1,149 @@
+{
+  "at": 1793053793.0231457,
+  "memAvailable": 3780390912,
+  "required": 1409286144,
+  "components": {
+    "host": 805306368,
+    "sharedChildPool": 268435456,
+    "residentGrowthOnce": 335544320,
+    "prospectiveUnlaunched": 0
+  },
+  "clients": [
+    {
+      "pid": 3226043,
+      "rss": 192761856,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-msg-boundary-measured-client-implementation-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3226183,
+      "rss": 195272704,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-transient-accounting-measured-client-repair-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3228174,
+      "rss": 194899968,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-controller-acceptance-capture-reserve-repair-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3236011,
+      "rss": 192864256,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-detached-transport-cleanup-repair-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3239455,
+      "rss": 201691136,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-render-wait-accepted-main-integration-oct26/final.txt",
+        "-"
+      ]
+    }
+  ],
+  "charges": {
+    "owned": 208896,
+    "launcher": 122880,
+    "session": 421888,
+    "positiveWALOnce": 0,
+    "sourceGitPublicationAllowance": 8388608,
+    "future": 25165824,
+    "reserve": 8388608
+  },
+  "total": 42696704,
+  "allocation": 100663296,
+  "free": 3460861952,
+  "projectedFree": 2969837568,
+  "floor": 2982150144,
+  "residentBasis": "RSS already deducted from MemAvailable; future64MiB each once, prospective320MiB is estimate only",
+  "limits": {
+    "gitDATAChildOnly": 536870912,
+    "gitAggregatePhysical": 268435456,
+    "testAggregatePhysical": 134217728,
+    "nodeHeapSeparate": 67108864,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}
