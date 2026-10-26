@@ -1,0 +1,56 @@
+{
+  "firstVerifiedPublication": {
+    "commit": "5475e14dc54076eb7a1003eaef57a71695940727",
+    "branch": "task/enigma-small-step-production-gameplay-oct26",
+    "remoteRef": "5475e14dc54076eb7a1003eaef57a71695940727\trefs/heads/task/enigma-small-step-production-gameplay-oct26",
+    "changed": [
+      "docs/re-notes/enigma-small-step-production-gameplay-oct26/README.md",
+      "docs/re-notes/enigma-small-step-production-gameplay-oct26/evidence-manifest.json",
+      "docs/re-notes/enigma-small-step-production-gameplay-oct26/ops.tar.gz",
+      "docs/re-notes/enigma-small-step-production-gameplay-oct26/receipt.json"
+    ],
+    "evidenceManifestSHA256": "fee60b978aa0c6b5e2960154a393454ea73a323a779d37dd810a845ea3794289"
+  },
+  "finalAdmission": {
+    "stage": "final",
+    "charges": {
+      "localOwned": 3006464,
+      "remoteOwned": 43995136,
+      "launcher": 1314816,
+      "positiveWAL": 1097728,
+      "futureSessionAndDB": 1048576,
+      "futurePublication": 1048576,
+      "reserve": 8388608
+    },
+    "total": 59899904,
+    "cap": 67108864,
+    "memAvailable": 3781246976,
+    "liveClients": [
+      {
+        "pid": 752162,
+        "rss": 400166912
+      },
+      {
+        "pid": 3101879,
+        "rss": 193409024
+      }
+    ],
+    "prospectiveGitAndHelper": 570425344,
+    "remainingMemory": 1063337984,
+    "memoryFloor": 805306368,
+    "localCivIIReserve": 1879048192,
+    "localGLReserve": 268435456,
+    "diskFree": 3757293568,
+    "projectedFree": 3697393664,
+    "diskFloor": 2982150144,
+    "pass": true
+  },
+  "payloadsRehashed": true,
+  "archiveMembers": 62,
+  "noGameBinaries": true,
+  "noPNGs": true,
+  "boxHandback": "RUNNING evidenced by successful APIexec",
+  "remainingOwnedLive": [],
+  "outcome": "BOUNDED_PROGRESS_INCOMPLETE_NO_MENU_GATE",
+  "limitation": "No authentic production error established. Finite20565-batch progression ended during initialization, controller uninvoked. Historical static-unpack diagnostic module remains unqualified as production renderer."
+}
