@@ -1,0 +1,68 @@
+✔ actual server writer response, success/error sequence and zero-copy offset views (5.633371ms)
+✔ valid wire compatibility: errors, Unicode/special names, ordering, whitespace and empty sets (0.379963ms)
+✔ independent truncation and uint32 header boundary sweep stays within supplied view (0.347672ms)
+✔ malformed JSON shapes and UTF-8 sequences reject atomically (0.253245ms)
+✔ descriptor/status/size and cross-kind duplicate matrix rejects malformed responses (0.439554ms)
+✔ inherited size/status cannot supply missing own fields; own special keys stay inert (1.243242ms)
+✖ inherited f must not turn missing-name success descriptor plus extra field into valid file (1.931893ms)
+✖ inherited f must not turn missing-name error descriptor plus extra field into valid response (0.99194ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 6
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.787112
+
+✖ failing tests:
+
+test at test/file-bundle-parser-independent-accept.test.cjs:120:1
+✖ inherited f must not turn missing-name success descriptor plus extra field into valid file (1.931893ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Map(1) {
+  +   'inherited-name' => Buffer(1) [Uint8Array] [
+  +     120
+  +   ]
+  + }
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-independent-accept-oct26/repo/test/file-bundle-parser-independent-accept.test.cjs:124:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Map(1) { 'inherited-name' => <Buffer 78> },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/file-bundle-parser-independent-accept.test.cjs:127:1
+✖ inherited f must not turn missing-name error descriptor plus extra field into valid response (0.99194ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Map(0) {}
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-independent-accept-oct26/repo/test/file-bundle-parser-independent-accept.test.cjs:130:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Map(0) {},
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

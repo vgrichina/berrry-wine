@@ -1,0 +1,25 @@
+{
+  "phase": "pre-publication",
+  "ownedFileBytes": 1983940,
+  "ownedFileCount": 54,
+  "launcherBytes": 121325,
+  "singleConservativeSharedWALCharge": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1363752,
+    "/home/user/.codex/state_5.sqlite-wal": 4194192,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "measuredFocusedTotal": 28308625,
+  "futureGrowth": 12582912,
+  "reserve": 8388608,
+  "projectedPeak": 49280145,
+  "hardLimit": 67108864,
+  "hostFree": 4548431872,
+  "hostFreeAfterProjectedGrowth": 4527460352,
+  "memAvailable": 3457503232,
+  "afterWorkerClientAllowance": 2920632320,
+  "rootRefsUnchanged": true,
+  "verdict": "PASS"
+}

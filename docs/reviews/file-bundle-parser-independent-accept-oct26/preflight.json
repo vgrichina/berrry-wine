@@ -1,0 +1,62 @@
+{
+  "phase": "before checkout",
+  "measuredOwnedFiles": {
+    "/tmp/file-bundle-parser-independent-accept-oct26/ops/board-watch.pid": 8,
+    "/tmp/file-bundle-parser-independent-accept-oct26/ops/board-watch.log": 4986
+  },
+  "measuredTotal": 4994,
+  "projection": 58720256,
+  "reserveIncluded": 8388608,
+  "hardLimit": 67108864,
+  "hostFree": 4559753216,
+  "freeAfterGrowth": 4501032960,
+  "memAvailable": 3430526976,
+  "workerClientAllowance": 536870912,
+  "cheapRAMFloorAfterAllowance": 805306368,
+  "aggregateCodexRSS": 1179623424,
+  "standingNode": {
+    "path": "/usr/local/bin/node",
+    "bytes": 123656816
+  },
+  "standingDonor": {
+    "path": "/tmp/file-bundle-parser-framing-repair-oct26/repo",
+    "bytes": 2132517,
+    "pins": {
+      "host.js": {
+        "bytes": 369360,
+        "sha256": "2acc67a77dcf381a740abaf84fcfb1e2c277cd64487564256a0d38e26fc28249"
+      },
+      "test/file-bundle-parser-framing.test.cjs": {
+        "bytes": 5446,
+        "sha256": "cb5a90daa9b6a9816c742ba3a1d64eceb5cc6fb04991dc09a1a57c74b327ea3a"
+      },
+      "lib/file-bundle.js": {
+        "bytes": 2461,
+        "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c"
+      }
+    }
+  },
+  "reusedPayloadHashes": {
+    "baseline.tap": "d16bc446ccc320477a0f13402dc17fc587513d622c4d664f804ba4b55d3aff74",
+    "remote-ref.txt": "cda8b63ccb6bbd79f881f4f030b616707340b3b402beffe30f8e4ff3097cc4e8",
+    "repaired.tap": "f9cf7e3da2ab2a58c0d0c8595093b6d323d77da3babb2c804ddcd24405915e3c",
+    "checkpoint.json": "d81875ff5413106d6dad45a61c39fc613b7a0a7dd57bfd424d62fa1baf740bc1",
+    "RECOVERY.md": "f45eca7306bce627603288c4b5d5ec01dd05e0d98b85b937d2acdbb916f831ed",
+    "pre-publication.json": "df8a2e79c410c078ac1432a62cc082133dc1d85a3d47a485ca56764fb3205723",
+    "preflight.json": "6141db61bb441fc8160d87ba17bde8d92fd4cbc220807927e5fce40fb4d03ca8",
+    "pre-test.json": "2f33cbf29667e40062ab2f9d1289932b9ae34a1b1bc8c04a83cb4dd4a2b78e5e",
+    "object-directories.json": "6420716fb3a72f8f8c331b7804ef306fdde4fdad5d9ec421c5004e048056568c",
+    "push.log": "0b23ee483797cd90760cfb1743b38cde3452cacff99fe2567d0be030d199ff4a",
+    "result.json": "de5de080c021baccc9ec2cfa3574295617ebf83971ae9e423e4dd5814b56c75e"
+  },
+  "flatLeaves": [
+    "/tmp/file-bundle-parser-framing-repair-oct26/repo/.git/objects",
+    "/tmp/render-elision-independent-integrate-oct26/repo/.git/objects",
+    "/tmp/render-elision-independent-integrate-oct26/ops/flat"
+  ],
+  "mountArgv": null,
+  "mountGate": "not applicable: no mount/guest command",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "futureGrowthIncludes": "launcher events/session/positive DBWAL once, no duplicate shared WAL charge",
+  "verdict": "PASS"
+}

@@ -1,0 +1,48 @@
+{
+  "candidate": "d0cda4dbe6d788694b98009f9897faf5c12c837e",
+  "base": "9148ceb18768955f647130c2e936228429892477",
+  "sourcePins": {
+    "host.js": {
+      "bytes": 369360,
+      "sha256": "2acc67a77dcf381a740abaf84fcfb1e2c277cd64487564256a0d38e26fc28249"
+    },
+    "test/file-bundle-parser-framing.test.cjs": {
+      "bytes": 5446,
+      "sha256": "cb5a90daa9b6a9816c742ba3a1d64eceb5cc6fb04991dc09a1a57c74b327ea3a"
+    },
+    "lib/file-bundle.js": {
+      "bytes": 2461,
+      "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c"
+    }
+  },
+  "independentTestSHA256": "406f6079b983baa41ba05620e73e603bd339adb139bc66b8f65f82b6abb736d5",
+  "groups": {
+    "reusedBaseline": {
+      "result": "3 pass / 5 fail",
+      "sha256": "d16bc446ccc320477a0f13402dc17fc587513d622c4d664f804ba4b55d3aff74"
+    },
+    "reusedRepair": {
+      "result": "8 pass / 0 fail",
+      "sha256": "f9cf7e3da2ab2a58c0d0c8595093b6d323d77da3babb2c804ddcd24405915e3c"
+    },
+    "focused": {
+      "result": "8 pass / 0 fail",
+      "path": "focused.tap",
+      "sha256": "1fc6b5748f5e2031f8791a9191223724b9acf8ae082c7d47cab6f67820383cc5"
+    },
+    "independent": {
+      "result": "6 pass / 2 fail",
+      "path": "independent.tap",
+      "sha256": "5fe3224c5fc971398c78185dc5bfcccfeb536178b6eec075d0ad375c1d883613"
+    },
+    "controls": {
+      "result": "1 pass / 0 fail",
+      "path": "controls.tap",
+      "sha256": "0960f98b2f809845df8122076967b020f78ce736fbb995b7c84a85cace75f04d"
+    }
+  },
+  "verdict": "REJECT",
+  "defect": "Inherited Object.prototype.f is accepted as descriptor name when two own keys are size/status and an extra field. Missing own f is not checked.",
+  "remaining": "Commit/push/remote verification; current-main reconciliation external, repair still rejected.",
+  "initialIndependentTestSHA256": "74c713bca399aee32842e7bed400d491698a0ddf972593ed43829b40705ef354"
+}

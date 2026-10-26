@@ -1,0 +1,139 @@
+✔ real server multi-file response, missing file, zero size, and offset views (8.107312ms)
+✔ 404 and 413 consume no bytes; successful files can follow either (0.295714ms)
+✖ malformed descriptor shapes and names reject the whole response (0.807654ms)
+✖ only explicit numeric 404/413 statuses without size are valid errors (0.287559ms)
+✖ sizes must be nonnegative safe integers fitting the remaining body (0.197089ms)
+✖ duplicate names reject successes, errors, and mixed descriptors in either order (0.256922ms)
+✔ invalid prefix, header framing, JSON and trailing bytes reject (0.220685ms)
+✖ invalid UTF-8 is not silently replaced in file names (0.268894ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 3
+ℹ fail 5
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 58.795943
+
+✖ failing tests:
+
+test at test/file-bundle-parser-framing.test.cjs:54:1
+✖ malformed descriptor shapes and names reject the whole response (0.807654ms)
+  AssertionError [ERR_ASSERTION]: null
+  + actual - expected
+  
+  + Map(1) {
+  +   'valid' => Buffer(0) [Uint8Array] []
+  + }
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-framing-repair-oct26/repo/test/file-bundle-parser-framing.test.cjs:58:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Map(1) { 'valid' => <Buffer > },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/file-bundle-parser-framing.test.cjs:62:1
+✖ only explicit numeric 404/413 statuses without size are valid errors (0.287559ms)
+  AssertionError [ERR_ASSERTION]: 0
+  + actual - expected
+  
+  + Map(0) {}
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-framing-repair-oct26/repo/test/file-bundle-parser-framing.test.cjs:64:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Map(0) {},
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/file-bundle-parser-framing.test.cjs:73:1
+✖ sizes must be nonnegative safe integers fitting the remaining body (0.197089ms)
+  AssertionError [ERR_ASSERTION]: 0.5
+  + actual - expected
+  
+  + Map(0) {}
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-framing-repair-oct26/repo/test/file-bundle-parser-framing.test.cjs:76:12)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: Map(0) {},
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/file-bundle-parser-framing.test.cjs:82:1
+✖ duplicate names reject successes, errors, and mixed descriptors in either order (0.256922ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Map(1) {
+  +   'same' => Buffer(0) [Uint8Array] []
+  + }
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-framing-repair-oct26/repo/test/file-bundle-parser-framing.test.cjs:86:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Map(1) { 'same' => <Buffer > },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/file-bundle-parser-framing.test.cjs:106:1
+✖ invalid UTF-8 is not silently replaced in file names (0.268894ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + Map(1) {
+  +   '�' => Buffer(0) [Uint8Array] []
+  + }
+  - null
+  
+      at TestContext.<anonymous> (/tmp/file-bundle-parser-framing-repair-oct26/repo/test/file-bundle-parser-framing.test.cjs:108:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: Map(1) { '�' => <Buffer > },
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

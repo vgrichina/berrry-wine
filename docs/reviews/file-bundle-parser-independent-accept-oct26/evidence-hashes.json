@@ -1,0 +1,15 @@
+{
+  "pre-controls-publication.json": "cf075c70607a820bd7e1ae0287c5bbd6990d9cd58b070d5b41d4d363830f139c",
+  "checkpoint.json": "962d79319cb75fba4e3fbb7757328aa577988b71165888b5c7f4794d77f2fd4c",
+  "controls.tap": "0960f98b2f809845df8122076967b020f78ce736fbb995b7c84a85cace75f04d",
+  "RECOVERY.md": "fb253b57ed82ed09fde8f03be4dc89b5f87f7a5d2d63e5b5425df982d45a4a37",
+  "preflight.json": "d07b3a799d878e532fd7f661b2ea08c0a6043e08d01d4f6b5014232b05cdd3cf",
+  "donor-repaired.tap": "f9cf7e3da2ab2a58c0d0c8595093b6d323d77da3babb2c804ddcd24405915e3c",
+  "independent.tap": "5fe3224c5fc971398c78185dc5bfcccfeb536178b6eec075d0ad375c1d883613",
+  "donor-baseline.tap": "d16bc446ccc320477a0f13402dc17fc587513d622c4d664f804ba4b55d3aff74",
+  "root-ref-final.json": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3",
+  "focused.tap": "1fc6b5748f5e2031f8791a9191223724b9acf8ae082c7d47cab6f67820383cc5",
+  "publication.json": "9499bcc5cee17cf2b070734b634a36e9fea26746ec0a909bd37ac5e1ee0d877f",
+  "donor-evidence-hashes.json": "e30f7208977359fe8509f9498da8a0effaa4c1146701f0ddbd349ffe76b54b02",
+  "REVIEW.md": "4428a7bcd9d0cdb542cd06b148d9892009f416355ddd8722b28e889de6298788"
+}
