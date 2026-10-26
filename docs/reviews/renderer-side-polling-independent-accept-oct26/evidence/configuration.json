@@ -1,0 +1,8 @@
+{
+  "candidate": "54af699eee71ed0cebc95de71ffd9248e6814679",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "trustedReceipt": "/tmp/renderer-side-modifier-polling-repair-oct26/repo/docs/reviews/renderer-side-modifier-polling-repair-oct26/evidence/configuration.json",
+  "unchangedSSH": true,
+  "mountArgv": [],
+  "mountParser": "N/A: offline tests, no mount or guest execution"
+}

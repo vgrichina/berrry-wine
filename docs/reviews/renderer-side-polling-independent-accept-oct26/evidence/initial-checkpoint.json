@@ -1,0 +1,111 @@
+{
+  "candidate": "54af699eee71ed0cebc95de71ffd9248e6814679",
+  "sourcepinsSha256": "be958118860f3e1ee19724c441bcb594a25c098f1bc2ddbbb05f5b637d9c814a",
+  "groups": [
+    {
+      "name": "independent29",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "--test",
+        "test/renderer-modifier-independent-accept.test.cjs"
+      ],
+      "exitCode": 0,
+      "bytes": 2374,
+      "sha256": "a5f3d23cb599b264fa0d1378855b49f8c3666c4cbef95e957848f404a788148f",
+      "evidence": "independent29.log",
+      "at": "2026-10-26T06:27:57.446392+00:00",
+      "testSha256": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf"
+    },
+    {
+      "name": "supplied37",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "--test",
+        "test/renderer-physical-modifiers.test.cjs"
+      ],
+      "exitCode": 0,
+      "bytes": 2708,
+      "sha256": "494f3b7adba185aaafbbcebcbce7debd2d13afd4e9f77f4c8d1300679ba0be5b",
+      "evidence": "supplied37.log",
+      "at": "2026-10-26T06:27:57.561140+00:00",
+      "testSha256": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de"
+    },
+    {
+      "name": "side28",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "--test",
+        "test/renderer-side-modifier-polling.test.cjs"
+      ],
+      "exitCode": 0,
+      "bytes": 2324,
+      "sha256": "2d07b5abde01016566a6f64ab0d6a17bfe60fd90670c3a6dc6a5f09e6173b708",
+      "evidence": "side28.log",
+      "at": "2026-10-26T06:27:57.675827+00:00",
+      "testSha256": "98ab85c8859f8ada4efd222f08abf4164f2b3b240f37837c3179607bd15db222"
+    },
+    {
+      "name": "legacy",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "../ops/run-legacy.cjs"
+      ],
+      "exitCode": 0,
+      "bytes": 93,
+      "sha256": "cd567b2912266931c3b6efebced13c74e9a907af6376f943490edb836d075d65",
+      "evidence": "legacy.log",
+      "at": "2026-10-26T06:27:57.708328+00:00",
+      "testSha256": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+    },
+    {
+      "name": "challenges25",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "--test",
+        "test/renderer-side-polling-independent-oct26.test.cjs"
+      ],
+      "exitCode": 1,
+      "bytes": 15699,
+      "sha256": "f5bff4c144aed28f6e2a81a5724920d27ed8ea79c49e28b195acfa5d695d7f2f",
+      "evidence": "challenges25.log",
+      "at": "2026-10-26T06:27:57.823274+00:00",
+      "testSha256": "e33b1062d56229c3da7541d82ab1ef336d2be4096f9e16eda06357fea09e005f"
+    },
+    {
+      "name": "preRepairChallenge",
+      "command": [
+        "timeout",
+        "25s",
+        "node",
+        "--max-old-space-size=16",
+        "--require",
+        "../ops/candidate-loader.cjs",
+        "--test",
+        "test/renderer-side-polling-independent-oct26.test.cjs"
+      ],
+      "exitCode": 1,
+      "bytes": 29384,
+      "sha256": "5d88ea98388750fb936f911fca199f451390aeb9d92da0147241f6cdfbc2cfcc",
+      "evidence": "preRepairChallenge.log",
+      "at": "2026-10-26T06:27:57.938202+00:00",
+      "testSha256": "e33b1062d56229c3da7541d82ab1ef336d2be4096f9e16eda06357fea09e005f"
+    }
+  ],
+  "remaining": [],
+  "blockers": []
+}

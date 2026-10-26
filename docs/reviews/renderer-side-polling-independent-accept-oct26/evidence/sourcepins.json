@@ -1,0 +1,122 @@
+{
+  "candidate": "54af699eee71ed0cebc95de71ffd9248e6814679",
+  "parent": "67b01162d74016f0f9f9915e1b07d7a81f942770",
+  "pins": {
+    "lib/renderer-input.js": {
+      "sha256": "209e06f67ec38940ecab071890a296e665500e43a52b9bd96abd4ec90fccf304",
+      "gitBlob": "3d675a36eea398f0cb827a9c6d36235c228c81f2"
+    },
+    "lib/mem-utils.js": {
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+      "gitBlob": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1"
+    },
+    "lib/region-map.generated.js": {
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+      "gitBlob": "7f96dd1a81886946eb5fccefd5676c24e9016349"
+    },
+    "test/renderer-physical-modifiers.test.cjs": {
+      "sha256": "f4ac77d2242372acd1ffb644880bb1137f05bc54e16062ccb946ca5c681286de",
+      "gitBlob": "97b0e73e8511c1c4c9b5db7ef8d4f2c9babe0903"
+    },
+    "test/renderer-side-modifier-polling.test.cjs": {
+      "sha256": "98ab85c8859f8ada4efd222f08abf4164f2b3b240f37837c3179607bd15db222",
+      "gitBlob": "118eaa5b8e6c61bb4522575b10daebb9dd4d9307"
+    },
+    "test/renderer-modifier-independent-accept.test.cjs": {
+      "sha256": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf",
+      "origin": "/tmp/renderer-side-polling-independent-accept-oct26/repo/docs/reviews/renderer-side-modifier-polling-repair-oct26/evidence/renderer-modifier-independent-accept.test.cjs"
+    },
+    "independent-baseline.tap": {
+      "sha256": "30d38a1943be41fcd02bf574fd497c2f88801612be070de619f4526b8b0e68c1"
+    },
+    "supplied-baseline.tap": {
+      "sha256": "3f6f78c4b585fea9e2de0c4f0224a7c33bb8bb86e1198ab3768d77e13a399469"
+    },
+    "independent-before.tap": {
+      "sha256": "493e61c7241e7f98f0be501bdf9b35115f368f488001b094e21aef0f2475478a"
+    },
+    "side-before.tap": {
+      "sha256": "11bdfaae2a68d98735bbcddfed5ef41ba016d9d5bd4ceadb1decb9618aad942f"
+    },
+    "baseline-renderer-input.js": {
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "candidate-renderer-input.js": {
+      "sha256": "f76dc7ed21d93bd54ca032882a9e3e816e93f1860fd113c8986372cc82e25957"
+    },
+    "legacy-keyboard-message-lparam.cjs": {
+      "sha256": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82"
+    },
+    "test/renderer-side-polling-independent-oct26.test.cjs": {
+      "sha256": "9ee2be3fee1af852b7fabfa6db805cfbac6a130ee6707ad9a267eca7bfae58d5"
+    }
+  },
+  "verifiedDonorPayloads": [
+    "baseline-loader.cjs",
+    "baseline-renderer-input.js",
+    "candidate-loader.cjs",
+    "candidate-renderer-input.js",
+    "checkpoint.json",
+    "configuration.json",
+    "incidents.txt",
+    "independent-after.tap",
+    "independent-baseline.tap",
+    "independent-before.tap",
+    "independent-final.tap",
+    "legacy-before.txt",
+    "legacy-final.txt",
+    "legacy-keyboard-message-lparam.cjs",
+    "predecessor/RECOVERY.md",
+    "predecessor/admission.json",
+    "predecessor/baseline-final.tap",
+    "predecessor/baseline-loader.cjs",
+    "predecessor/baseline-renderer-input.js",
+    "predecessor/baseline.tap",
+    "predecessor/before-tests.json",
+    "predecessor/checkpoint.json",
+    "predecessor/hashes.json",
+    "predecessor/legacy-keyboard-message-lparam.cjs",
+    "predecessor/legacy-result.txt",
+    "predecessor/ls-remote.stderr",
+    "predecessor/ls-remote.txt",
+    "predecessor/push.log",
+    "predecessor/recovered-blobs.json",
+    "predecessor/recovered-objects.json",
+    "predecessor/repair-final.tap",
+    "predecessor/repair.patch",
+    "predecessor/repair.tap",
+    "predecessor/resources-final.json",
+    "predecessor/resources-publication.json",
+    "predecessor/resources.py",
+    "predecessor/result.json",
+    "predecessor/root-ref-final.json",
+    "predecessor/run-legacy.cjs",
+    "predecessor-verification.json",
+    "renderer-modifier-independent-accept.test.cjs",
+    "resources-admission.json",
+    "resources-before-tests.json",
+    "resources-prepublication.json",
+    "run-legacy.cjs",
+    "setup-independent-baseline.tap",
+    "setup-independent-before.tap",
+    "setup-supplied-before.tap",
+    "side-after.tap",
+    "side-before.tap",
+    "side-final.tap",
+    "sourcepins.json",
+    "standing-inputs.json",
+    "supplied-after.tap",
+    "supplied-baseline.tap",
+    "supplied-before.tap",
+    "supplied-final.tap"
+  ],
+  "manifestSha256": "bd2e8c84d6cffe64305e864346c8be9ba08c071585c154f977b034e4c7310756",
+  "baselineFailuresReused": {
+    "independent": "2 pass / 27 fail",
+    "supplied": "1 pass / 36 fail"
+  },
+  "preRepairFailuresReused": {
+    "independent": "23 pass / 6 fail",
+    "side": "1 pass / 27 fail"
+  }
+}

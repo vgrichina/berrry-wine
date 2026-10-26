@@ -1,0 +1,36 @@
+✔ Shift side ownership public Left down / Left up first (2.878375ms)
+✔ Shift side ownership public Left down / Right up first (0.204894ms)
+✔ Shift side ownership public Right down / Left up first (0.189085ms)
+✔ Shift side ownership public Right down / Right up first (0.232986ms)
+✔ Shift peek, repeated query, repeat and fresh repress latches (0.195075ms)
+✔ Shift buffered side release follows message timeline, physical is immediate (0.210243ms)
+✔ Shift generic numeric owner never invents side identity (0.159469ms)
+✔ Shift public numeric focus release resets queued sides and allows fresh press (0.113885ms)
+✔ Shift device reset and async override retain separate ownership (0.176902ms)
+✔ Control side ownership public Left down / Left up first (0.178424ms)
+✔ Control side ownership public Left down / Right up first (0.071764ms)
+✔ Control side ownership public Right down / Left up first (0.253614ms)
+✔ Control side ownership public Right down / Right up first (0.067557ms)
+✔ Control peek, repeated query, repeat and fresh repress latches (0.054924ms)
+✔ Control buffered side release follows message timeline, physical is immediate (0.075692ms)
+✔ Control generic numeric owner never invents side identity (0.074229ms)
+✔ Control public numeric focus release resets queued sides and allows fresh press (0.081121ms)
+✔ Control device reset and async override retain separate ownership (0.04841ms)
+✔ Alt side ownership public Left down / Left up first (0.097383ms)
+✔ Alt side ownership public Left down / Right up first (0.048852ms)
+✔ Alt side ownership public Right down / Left up first (0.045265ms)
+✔ Alt side ownership public Right down / Right up first (0.044464ms)
+✔ Alt peek, repeated query, repeat and fresh repress latches (0.059002ms)
+✔ Alt buffered side release follows message timeline, physical is immediate (0.083708ms)
+✔ Alt generic numeric owner never invents side identity (0.041476ms)
+✔ Alt public numeric focus release resets queued sides and allows fresh press (0.056787ms)
+✔ Alt device reset and async override retain separate ownership (0.035086ms)
+✔ nonmodifier physical and async polling retain numeric key and latch (0.134282ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.679709

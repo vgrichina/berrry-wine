@@ -1,0 +1,45 @@
+✔ Shift left first worker=false buffered=false (2.414296ms)
+✔ Shift left first worker=false buffered=true (0.206447ms)
+✔ Shift left first worker=true buffered=false (0.248516ms)
+✔ Shift left first worker=true buffered=true (0.133831ms)
+✔ Shift right first worker=false buffered=false (0.198342ms)
+✔ Shift right first worker=false buffered=true (0.138059ms)
+✔ Shift right first worker=true buffered=false (0.093956ms)
+✔ Shift right first worker=true buffered=true (0.070181ms)
+✔ Shift autorepeat is owned once and unmatched release is harmless (0.361819ms)
+✔ Shift numeric lifecycle release clears both owners and permits fresh input (0.238428ms)
+✔ Shift numeric-only CLI repeat/release and location-only ownership (0.202131ms)
+✔ Control left first worker=false buffered=false (0.134603ms)
+✔ Control left first worker=false buffered=true (0.07996ms)
+✔ Control left first worker=true buffered=false (0.247194ms)
+✔ Control left first worker=true buffered=true (0.113894ms)
+✔ Control right first worker=false buffered=false (0.055855ms)
+✔ Control right first worker=false buffered=true (0.037791ms)
+✔ Control right first worker=true buffered=false (0.05323ms)
+✔ Control right first worker=true buffered=true (0.035036ms)
+✔ Control autorepeat is owned once and unmatched release is harmless (0.044574ms)
+✔ Control numeric lifecycle release clears both owners and permits fresh input (0.04271ms)
+✔ Control numeric-only CLI repeat/release and location-only ownership (0.066093ms)
+✔ Alt left first worker=false buffered=false (0.070672ms)
+✔ Alt left first worker=false buffered=true (0.051426ms)
+✔ Alt left first worker=true buffered=false (0.041419ms)
+✔ Alt left first worker=true buffered=true (0.04222ms)
+✔ Alt right first worker=false buffered=false (0.039365ms)
+✔ Alt right first worker=false buffered=true (0.041236ms)
+✔ Alt right first worker=true buffered=false (0.231364ms)
+✔ Alt right first worker=true buffered=true (0.070131ms)
+✔ Alt autorepeat is owned once and unmatched release is harmless (0.184957ms)
+✔ Alt numeric lifecycle release clears both owners and permits fresh input (0.119655ms)
+✔ Alt numeric-only CLI repeat/release and location-only ownership (0.093725ms)
+✔ Alt ownership preserves system-key context and Ctrl+Alt suppression (0.177883ms)
+✔ Alt alone toggles menu once on last release; F10 family is unchanged (0.15457ms)
+✔ resetting the physical map retires ownership without changing SetKeyboardState (0.56508ms)
+✔ press latch, ordinary repeat and release ordering remain intact (0.151924ms)
+ℹ tests 37
+ℹ suites 0
+ℹ pass 37
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 60.763213

@@ -1,0 +1,111 @@
+{
+  "at": "2026-10-26T06:25:53.857093+00:00",
+  "ownedBytes": 88554,
+  "sessionFiles": [],
+  "sessionBytes": 0,
+  "futureSessionEventsPositiveWalOnce": 12582912,
+  "reserve": 8388608,
+  "checkoutTestsEvidencePublicationAllowance": 4194304,
+  "projectedPeak": 25254378,
+  "limit": 67108864,
+  "freeDisk": 4487335936,
+  "freeAfterGrowth": 4462170112,
+  "memAvailable": 2992967680,
+  "workerClientAllowance": 536870912,
+  "executionHeap": 16777216,
+  "ramFloor": 805306368,
+  "aggregateActualProcesses": [
+    {
+      "pid": 265398,
+      "rss": 805842944,
+      "command": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+    },
+    {
+      "pid": 265632,
+      "rss": 15663104,
+      "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop "
+    },
+    {
+      "pid": 752162,
+      "rss": 372523008,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-authorized Wine Ops work. Read updated ~/.co"
+    },
+    {
+      "pid": 857107,
+      "rss": 11862016,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 1789179,
+      "rss": 53063680,
+      "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon "
+    },
+    {
+      "pid": 2187857,
+      "rss": 13721600,
+      "command": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/renderer-side-polling-independent-accept-oct26.task.txt scratch/usage-watch/renderer-side-polling-independent-accept-oct26 "
+    },
+    {
+      "pid": 2187858,
+      "rss": 13545472,
+      "command": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/browser-key-focus-release-repair-oct26.task.txt scratch/usage-watch/browser-key-focus-release-repair-oct26 "
+    },
+    {
+      "pid": 2187859,
+      "rss": 13877248,
+      "command": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/app-files-persist-url-policy-repair-oct26.task.txt scratch/usage-watch/app-files-persist-url-policy-repair-oct26 "
+    },
+    {
+      "pid": 2187861,
+      "rss": 13701120,
+      "command": "python3 scratch/usage-watch/start-worker.py scratch/usage-watch/vfs-persistence-bounded-restore-repair-oct26.task.txt scratch/usage-watch/vfs-persistence-bounded-restore-repair-oct26 "
+    },
+    {
+      "pid": 2187871,
+      "rss": 192028672,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_rea"
+    },
+    {
+      "pid": 2187872,
+      "rss": 200867840,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_rea"
+    },
+    {
+      "pid": 2187873,
+      "rss": 183402496,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_rea"
+    },
+    {
+      "pid": 2187874,
+      "rss": 189689856,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_rea"
+    },
+    {
+      "pid": 2188483,
+      "rss": 19767296,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2188525,
+      "rss": 19873792,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2188544,
+      "rss": 22081536,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2188578,
+      "rss": 21696512,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    }
+  ],
+  "aggregateRss": 2163208192,
+  "pass": true,
+  "standingNode": {
+    "path": "/usr/local/bin/node",
+    "bytes": 123656816
+  },
+  "standingDonor": "/tmp/renderer-side-modifier-polling-repair-oct26/repo (readonly; no new materialization)"
+}

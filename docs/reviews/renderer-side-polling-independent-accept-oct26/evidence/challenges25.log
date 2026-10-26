@@ -1,0 +1,33 @@
+✔ Shift/0: every overlapping release/repress pair preserves owner and per-query latch (4.505146ms)
+✔ Shift/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.319539ms)
+✔ Shift/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.173375ms)
+✔ Shift/0: direct physical reset and async override remain separate across both owners (0.116418ms)
+✔ Shift/1: every overlapping release/repress pair preserves owner and per-query latch (0.80031ms)
+✔ Shift/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.14387ms)
+✔ Shift/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.191519ms)
+✔ Shift/1: direct physical reset and async override remain separate across both owners (0.213711ms)
+✔ Control/0: every overlapping release/repress pair preserves owner and per-query latch (0.497843ms)
+✔ Control/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.594945ms)
+✔ Control/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.139171ms)
+✔ Control/0: direct physical reset and async override remain separate across both owners (0.069641ms)
+✔ Control/1: every overlapping release/repress pair preserves owner and per-query latch (0.775925ms)
+✔ Control/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.111369ms)
+✔ Control/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.078617ms)
+✔ Control/1: direct physical reset and async override remain separate across both owners (0.087293ms)
+✔ Alt/0: every overlapping release/repress pair preserves owner and per-query latch (0.747662ms)
+✔ Alt/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.178505ms)
+✔ Alt/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.088797ms)
+✔ Alt/0: direct physical reset and async override remain separate across both owners (0.055835ms)
+✔ Alt/1: every overlapping release/repress pair preserves owner and per-query latch (0.381526ms)
+✔ Alt/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.070542ms)
+✔ Alt/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.056997ms)
+✔ Alt/1: direct physical reset and async override remain separate across both owners (0.033212ms)
+✔ three overlapping modifier families retain independent physical owners, snapshots and query consumption (0.230622ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 25
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.262105

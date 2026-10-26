@@ -1,0 +1,327 @@
+✖ Shift/0: every overlapping release/repress pair preserves owner and per-query latch (2.904175ms)
+✖ Shift/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.561242ms)
+✔ Shift/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.353813ms)
+✔ Shift/0: direct physical reset and async override remain separate across both owners (0.183363ms)
+✖ Shift/1: every overlapping release/repress pair preserves owner and per-query latch (0.138109ms)
+✖ Shift/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.178815ms)
+✔ Shift/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.110928ms)
+✔ Shift/1: direct physical reset and async override remain separate across both owners (0.06954ms)
+✖ Control/0: every overlapping release/repress pair preserves owner and per-query latch (0.175698ms)
+✖ Control/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.248616ms)
+✔ Control/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.115658ms)
+✔ Control/0: direct physical reset and async override remain separate across both owners (0.075681ms)
+✖ Control/1: every overlapping release/repress pair preserves owner and per-query latch (0.103945ms)
+✖ Control/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.127829ms)
+✔ Control/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.067918ms)
+✔ Control/1: direct physical reset and async override remain separate across both owners (0.072976ms)
+✖ Alt/0: every overlapping release/repress pair preserves owner and per-query latch (0.149701ms)
+✖ Alt/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.209454ms)
+✔ Alt/0: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.113893ms)
+✔ Alt/0: direct physical reset and async override remain separate across both owners (0.09568ms)
+✖ Alt/1: every overlapping release/repress pair preserves owner and per-query latch (0.110156ms)
+✖ Alt/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.125065ms)
+✔ Alt/1: numeric reset during overlap leaves pending press bits consumable then admits a fresh side (0.107742ms)
+✔ Alt/1: direct physical reset and async override remain separate across both owners (0.050375ms)
+✔ three overlapping modifier families retain independent physical owners, snapshots and query consumption (0.225493ms)
+ℹ tests 25
+ℹ suites 0
+ℹ pass 13
+ℹ fail 12
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 50.168161
+
+✖ failing tests:
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Shift/0: every overlapping release/repress pair preserves owner and per-query latch (2.904175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Shift/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.561242ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+      32768,
+  -   32768,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 32768, 0 ],
+    expected: [ 32768, 32768, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Shift/1: every overlapping release/repress pair preserves owner and per-query latch (0.138109ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Shift/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.178815ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+  -   32768,
+      0,
+      32768
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 0, 32768 ],
+    expected: [ 32768, 0, 32768 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Control/0: every overlapping release/repress pair preserves owner and per-query latch (0.175698ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Control/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.248616ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+      32768,
+  -   32768,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 32768, 0 ],
+    expected: [ 32768, 32768, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Control/1: every overlapping release/repress pair preserves owner and per-query latch (0.103945ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Control/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.127829ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+  -   32768,
+      0,
+      32768
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 0, 32768 ],
+    expected: [ 32768, 0, 32768 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Alt/0: every overlapping release/repress pair preserves owner and per-query latch (0.149701ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Alt/0: buffered overlap release/repress consumes each latch once without dispatch rearming (0.209454ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+      32768,
+  -   32768,
+      0
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 32768, 0 ],
+    expected: [ 32768, 32768, 0 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:15:2
+✖ Alt/1: every overlapping release/repress pair preserves owner and per-query latch (0.110156ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  32769 !== 32768
+  
+      at step (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:27:39)
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:29:40)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 32769,
+    expected: 32768,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/renderer-side-polling-independent-oct26.test.cjs:34:2
+✖ Alt/1: buffered overlap release/repress consumes each latch once without dispatch rearming (0.125065ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+  +   32769,
+  -   32768,
+      0,
+      32768
+    ]
+  
+      at TestContext.<anonymous> (/tmp/renderer-side-polling-independent-accept-oct26/repo/test/renderer-side-polling-independent-oct26.test.cjs:45:127)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 32769, 0, 32768 ],
+    expected: [ 32768, 0, 32768 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

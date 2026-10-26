@@ -1,0 +1,3790 @@
+// Win98Renderer input handling — split from renderer.js
+// Mixed into Win98Renderer.prototype
+
+// Emulator-private addresses come from the region map generated out of
+// src/00-regions.wat (docs/watx-region-safety-design.md §6). Only the pinned
+// regions have fixed addresses; everything else is placed by the allocator, so
+// a literal here goes stale silently. In the browser the map arrives as the
+// global lib/region-map.generated.js installs, loaded first by index.html.
+var _regionMapInput = typeof require !== 'undefined' ? require('./region-map.generated')
+  : (typeof self !== 'undefined' ? self.RegionMap : globalThis.RegionMap);
+var _memUtilsInput = typeof require !== 'undefined' ? require('./mem-utils')
+  : (typeof self !== 'undefined' ? self.memUtils : globalThis.memUtils);
+
+// Pointer instrumentation for the perf HUD. Null in the CLI, and null in the
+// browser until the HUD is switched on, so the queue path costs one property
+// read per event when nobody is measuring. See lib/perf-hud.js.
+const _perfNow = () => (typeof performance !== 'undefined' && performance.now
+  ? performance.now() : Date.now());
+const _perfHud = () => (typeof window !== 'undefined' && window.WinePerf
+  && window.WinePerf.enabled ? window.WinePerf : null);
+const _perfInputMove = coalesced => { const p = _perfHud(); if (p) p.inputMove(coalesced); };
+const _perfInputTake = queuedAt => { const p = _perfHud(); if (p) p.inputTake(queuedAt); };
+
+// The shortest press the guest is shown (takeInput), on top of "not in the
+// same pump": well under a double-click interval or a deliberate hold. A page
+// may override it (window.__waMinButtonHoldMs) for an A/B; a negative value
+// turns the whole hold off.
+const _minButtonHoldMs = () => (typeof window !== 'undefined'
+  && Number.isFinite(window.__waMinButtonHoldMs) ? window.__waMinButtonHoldMs : 30);
+const _inputNow = _perfNow;
+// 1/2/3 for the left/right/middle press (incl. the double-click press) or
+// release, else 0.
+const _buttonOfDown = msg => (msg === 0x0201 || msg === 0x0203 ? 1
+  : msg === 0x0204 || msg === 0x0206 ? 2 : msg === 0x0207 || msg === 0x0209 ? 3 : 0);
+const _buttonOfUp = msg => (msg === 0x0202 ? 1 : msg === 0x0205 ? 2 : msg === 0x0208 ? 3 : 0);
+
+// Win32 keyboard messages carry the hardware scan code in lParam bits 16..23.
+// Games commonly ignore wParam and translate this field instead (Quake II's
+// MapKey is one such path), so a zero lParam makes their menus appear deaf even
+// though ordinary EDIT controls still work.  DOM `code` names physical keys
+// and therefore give the most faithful Set-1 code; numeric-only test/CLI
+// callers retain a VK fallback.
+const _set1ByDomCode = Object.freeze({
+  Escape: 0x01,
+  Digit1: 0x02, Digit2: 0x03, Digit3: 0x04, Digit4: 0x05, Digit5: 0x06,
+  Digit6: 0x07, Digit7: 0x08, Digit8: 0x09, Digit9: 0x0A, Digit0: 0x0B,
+  Minus: 0x0C, Equal: 0x0D, Backspace: 0x0E, Tab: 0x0F,
+  KeyQ: 0x10, KeyW: 0x11, KeyE: 0x12, KeyR: 0x13, KeyT: 0x14,
+  KeyY: 0x15, KeyU: 0x16, KeyI: 0x17, KeyO: 0x18, KeyP: 0x19,
+  BracketLeft: 0x1A, BracketRight: 0x1B, Enter: 0x1C,
+  ControlLeft: 0x1D,
+  KeyA: 0x1E, KeyS: 0x1F, KeyD: 0x20, KeyF: 0x21, KeyG: 0x22,
+  KeyH: 0x23, KeyJ: 0x24, KeyK: 0x25, KeyL: 0x26,
+  Semicolon: 0x27, Quote: 0x28, Backquote: 0x29, ShiftLeft: 0x2A,
+  Backslash: 0x2B,
+  KeyZ: 0x2C, KeyX: 0x2D, KeyC: 0x2E, KeyV: 0x2F, KeyB: 0x30,
+  KeyN: 0x31, KeyM: 0x32, Comma: 0x33, Period: 0x34, Slash: 0x35,
+  ShiftRight: 0x36, NumpadMultiply: 0x37, AltLeft: 0x38, Space: 0x39,
+  CapsLock: 0x3A,
+  F1: 0x3B, F2: 0x3C, F3: 0x3D, F4: 0x3E, F5: 0x3F,
+  F6: 0x40, F7: 0x41, F8: 0x42, F9: 0x43, F10: 0x44,
+  NumLock: 0x45, ScrollLock: 0x46,
+  Numpad7: 0x47, Numpad8: 0x48, Numpad9: 0x49, NumpadSubtract: 0x4A,
+  Numpad4: 0x4B, Numpad5: 0x4C, Numpad6: 0x4D, NumpadAdd: 0x4E,
+  Numpad1: 0x4F, Numpad2: 0x50, Numpad3: 0x51,
+  Numpad0: 0x52, NumpadDecimal: 0x53,
+  F11: 0x57, F12: 0x58,
+  NumpadEnter: 0x1C, ControlRight: 0x1D, NumpadDivide: 0x35,
+  AltRight: 0x38, Home: 0x47, ArrowUp: 0x48, PageUp: 0x49,
+  ArrowLeft: 0x4B, ArrowRight: 0x4D, End: 0x4F, ArrowDown: 0x50,
+  PageDown: 0x51, Insert: 0x52, Delete: 0x53,
+  MetaLeft: 0x5B, MetaRight: 0x5C, ContextMenu: 0x5D,
+});
+
+const _extendedDomCodes = new Set([
+  'NumpadEnter', 'ControlRight', 'NumpadDivide', 'AltRight',
+  'Home', 'ArrowUp', 'PageUp', 'ArrowLeft', 'ArrowRight', 'End',
+  'ArrowDown', 'PageDown', 'Insert', 'Delete',
+  'MetaLeft', 'MetaRight', 'ContextMenu',
+]);
+
+function _set1FromVk(vk) {
+  vk &= 0xFF;
+  if (vk >= 0x70 && vk <= 0x79) return 0x3B + (vk - 0x70); // F1..F10
+  if (vk === 0x7A || vk === 0x7B) return 0x57 + (vk - 0x7A); // F11/F12
+  if (vk >= 0x30 && vk <= 0x39) {
+    return [0x0B, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A][vk - 0x30];
+  }
+  if (vk >= 0x41 && vk <= 0x5A) {
+    return [
+      0x1E, 0x30, 0x2E, 0x20, 0x12, 0x21, 0x22, 0x23, 0x17,
+      0x24, 0x25, 0x26, 0x32, 0x31, 0x18, 0x19, 0x10, 0x13,
+      0x1F, 0x14, 0x16, 0x2F, 0x11, 0x2D, 0x15, 0x2C,
+    ][vk - 0x41];
+  }
+  return ({
+    0x08: 0x0E, 0x09: 0x0F, 0x0D: 0x1C, 0x10: 0x2A,
+    0x11: 0x1D, 0x12: 0x38, 0x14: 0x3A, 0x1B: 0x01,
+    0x20: 0x39, 0x21: 0x49, 0x22: 0x51, 0x23: 0x4F,
+    0x24: 0x47, 0x25: 0x4B, 0x26: 0x48, 0x27: 0x4D,
+    0x28: 0x50, 0x2D: 0x52, 0x2E: 0x53,
+    // Numpad digits. A touch-overlay button has no DOM code, and Quake's
+    // MapKey reads only this scan code, so a 0 here is a dead button.
+    0x60: 0x52, 0x61: 0x4F, 0x62: 0x50, 0x63: 0x51, 0x64: 0x4B,
+    0x65: 0x4C, 0x66: 0x4D, 0x67: 0x47, 0x68: 0x48, 0x69: 0x49,
+    0x6A: 0x37, 0x6B: 0x4E, 0x6D: 0x4A, 0x6E: 0x53, 0x6F: 0x35,
+    0x90: 0x45, 0x91: 0x46,
+    // US-layout OEM punctuation: ; = , - . / ` [ \ ] '
+    0xBA: 0x27, 0xBB: 0x0D, 0xBC: 0x33, 0xBD: 0x0C, 0xBE: 0x34, 0xBF: 0x35,
+    0xC0: 0x29, 0xDB: 0x1A, 0xDC: 0x2B, 0xDD: 0x1B, 0xDE: 0x28,
+  })[vk] || 0;
+}
+
+function keyboardMessageLParam(vkCode, info, keyUp, wasDown) {
+  const meta = info || {};
+  const code = typeof meta.code === 'string' ? meta.code : '';
+  const scan = _set1ByDomCode[code] || _set1FromVk(vkCode);
+  const extended = code ? _extendedDomCodes.has(code)
+    : ((vkCode >= 0x21 && vkCode <= 0x28) || vkCode === 0x2D ||
+      vkCode === 0x2E || vkCode === 0x5B || vkCode === 0x5C ||
+      vkCode === 0x5D || vkCode === 0x6F);
+  const previous = !!keyUp || !!wasDown || !!meta.repeat;
+  return (1 | ((scan & 0xFF) << 16) | (extended ? 0x01000000 : 0) |
+    (previous ? 0x40000000 : 0) | (keyUp ? 0x80000000 : 0)) >>> 0;
+}
+
+function installInputHandlers(R) {
+  const P = R.prototype;
+  // Process-shared emulator memory, placed by the region allocator. Browser
+  // mouse moves accumulate here so every real Worker sees one DirectInput
+  // device queue, while guest SetCursorPos changes only the virtual cursor and
+  // cannot manufacture a movement record.
+  const DI_MOUSE_INPUT_STATE = _regionMapInput.BASE.DI_MOUSE_INPUT_STATE;
+  const DI_MOUSE_EVENT_QUEUE_CAPACITY = 64;
+  const DI_MOUSE_BUTTON_RESERVE = 4;
+
+  // DirectInput's buffered API observes ordered records, not merely the
+  // current button mask. Keep motion and button edges in one shared FIFO so a
+  // click is hit-tested at the cursor position which preceded it. Event words
+  // carry the type in the high nibble: 1..4 for left/right down/up (7/8 for
+  // the middle button) over the
+  // wall-clock millisecond the edge was queued at (low 28 bits, so the guest
+  // can stamp the record with the moment of the click rather than the moment
+  // of the poll that drained it), or 5/6/9 over a signed 28-bit X/Y/wheel delta. A
+  // bare 1..4 is still accepted by the drain as an unstamped edge. The first
+  // two words remain independent movement
+  // accumulators for GetDeviceState callers. Motion that arrives while the
+  // FIFO is nearly full accumulates in two overflow words after the ring;
+  // those are flushed ahead of the next button edge, so a real browser burst
+  // can make the cursor catch up but can never crowd the click itself out.
+  P._queueDirectInputMouseEvent = function(memory, type, data) {
+    if (!memory || type < 1 || type > 9) return false;
+    const delta = type === 5 || type === 6 || type === 9;
+    const buffer = memory.buffer || memory;
+    if (!buffer || buffer.byteLength < DI_MOUSE_INPUT_STATE + 288) return false;
+    const words = new Int32Array(buffer);
+    const base = DI_MOUSE_INPUT_STATE >>> 2;
+    const overflowX = base + 4 + DI_MOUSE_EVENT_QUEUE_CAPACITY;
+    const overflowY = overflowX + 1;
+    const overflowZ = overflowY + 1;
+    const overflowFor = t => (t === 5 ? overflowX : t === 6 ? overflowY : overflowZ);
+    const shared = typeof SharedArrayBuffer !== 'undefined' && buffer instanceof SharedArrayBuffer;
+    const load = index => shared ? Atomics.load(words, index) : words[index];
+    const store = (index, value) => {
+      if (shared) Atomics.store(words, index, value | 0);
+      else words[index] = value | 0;
+    };
+    const add = (index, value) => {
+      if (shared) Atomics.add(words, index, value | 0);
+      else words[index] = (words[index] + (value | 0)) | 0;
+    };
+    const exchange = (index, value) => {
+      if (shared) return Atomics.exchange(words, index, value | 0);
+      const previous = words[index] | 0;
+      words[index] = value | 0;
+      return previous;
+    };
+    const packMotion = (eventType, delta) =>
+      ((eventType << 28) | ((delta || 0) & 0x0FFFFFFF)) | 0;
+    const enqueue = code => {
+      const head = load(base + 2) >>> 0;
+      const tail = load(base + 3) >>> 0;
+      if (((tail - head) >>> 0) >= DI_MOUSE_EVENT_QUEUE_CAPACITY) return false;
+      store(base + 4 + (tail & (DI_MOUSE_EVENT_QUEUE_CAPACITY - 1)), code);
+      store(base + 3, (tail + 1) >>> 0);
+      return true;
+    };
+
+    if (delta) {
+      const head = load(base + 2) >>> 0;
+      const tail = load(base + 3) >>> 0;
+      // Once overflow starts, keep later motion behind it even if the guest
+      // drains ring slots in the meantime. WAT consumes these two words only
+      // after the ring, preserving the event barrier.
+      if (load(overflowX) || load(overflowY) || load(overflowZ) ||
+          ((tail - head) >>> 0) >= DI_MOUSE_EVENT_QUEUE_CAPACITY - DI_MOUSE_BUTTON_RESERVE) {
+        add(overflowFor(type), data | 0);
+        return true;
+      }
+      return enqueue(packMotion(type, data));
+    }
+
+    // Materialize pending motion immediately before a button transition.
+    // Four reserved ring slots cover X, Y, press, and release even when the
+    // browser delivers the complete click before the guest polls again.
+    for (const [eventType, index] of [[5, overflowX], [6, overflowY], [9, overflowZ]]) {
+      const delta = exchange(index, 0);
+      if (delta && !enqueue(packMotion(eventType, delta))) {
+        add(index, delta);
+        return false;
+      }
+    }
+    // Stamp with the GUEST clock, the same one the drain reads, not with
+    // Date.now(). The two are not the same clock in either host: test/run.js
+    // derives guest time from the batch counter, so the real milliseconds
+    // between queueing an edge and the guest polling for it depend on how
+    // loaded the box is -- and an emulator run driven by a fixed --input
+    // script then produces a different guest state every time, which is not
+    // something a save-file A/B can be run on top of. The browser has the
+    // same seam across a pause, where its guest clock stops and Date.now()
+    // does not. Hosts set _guestNowMs; without one this falls back to
+    // Date.now(), which is what a host whose guest clock IS the wall clock
+    // would have passed anyway.
+    const nowMs = this._guestNowMs ? this._guestNowMs() : Date.now();
+    return enqueue(((type << 28) | (nowMs & 0x0FFFFFFF)) | 0);
+  };
+
+  P._queueDirectInputMouseButton = function(memory, buttonMask, down) {
+    // MK_ masks: left 0x1, right 0x2, middle 0x10 (rgbButtons[0..2]).
+    const type = buttonMask === 1 ? (down ? 1 : 2)
+      : buttonMask === 2 ? (down ? 3 : 4)
+        : buttonMask === 0x10 ? (down ? 7 : 8) : 0;
+    if (!type) return false;
+    return this._queueDirectInputMouseEvent(memory, type, 0);
+  };
+
+  // The wheel as DirectInput sees it: lZ for GetDeviceState callers (the +284
+  // accumulator) and an ordered type-9 record for GetDeviceData ones, in
+  // WHEEL_DELTA units (120 per notch, positive away from the user).
+  P._queueDirectInputMouseWheel = function(memory, delta) {
+    if (!memory || !(delta | 0)) return false;
+    const buffer = memory.buffer || memory;
+    if (!buffer || buffer.byteLength < DI_MOUSE_INPUT_STATE + 288) return false;
+    const words = new Int32Array(buffer), index = (DI_MOUSE_INPUT_STATE >>> 2) + 71;
+    if (typeof SharedArrayBuffer !== 'undefined' && buffer instanceof SharedArrayBuffer) Atomics.add(words, index, delta | 0);
+    else words[index] = (words[index] + (delta | 0)) | 0;
+    return this._queueDirectInputMouseEvent(memory, 9, delta | 0);
+  };
+
+  // DefWindowProc currently preserves the application-selected cursor for
+  // HTCLIENT because WNDCLASS cursor lookup is not implemented yet.  That is
+  // useful for app-defined cursors, but a resize cursor must never leak back
+  // into the client area after the pointer leaves a sizing border.
+  P._clearStaleResizeCursor = function(hit) {
+    if (hit >= 10 && hit <= 17) return false;
+    const style = this.canvas && this.canvas.style;
+    if (!style) return false;
+    if (style.cursor !== 'ew-resize' && style.cursor !== 'ns-resize' &&
+        style.cursor !== 'nwse-resize' && style.cursor !== 'nesw-resize') {
+      return false;
+    }
+    style.cursor = 'default';
+    return true;
+  };
+
+  // Non-client sizing cursors are determined entirely by the hit-test code,
+  // so update the browser cursor synchronously.  WM_SETCURSOR is still queued
+  // below for the guest, but waiting for its next message-pump turn makes the
+  // cursor visibly lag (and sometimes miss a short edge hover altogether).
+  P._syncResizeCursor = function(hit) {
+    const style = this.canvas && this.canvas.style;
+    if (!style) return false;
+    let cursor = '';
+    if (hit === 10 || hit === 11) cursor = 'ew-resize';
+    else if (hit === 12 || hit === 15) cursor = 'ns-resize';
+    else if (hit === 13 || hit === 17) cursor = 'nwse-resize';
+    else if (hit === 14 || hit === 16) cursor = 'nesw-resize';
+    if (!cursor) return this._clearStaleResizeCursor(hit);
+    if (style.cursor === cursor) return false;
+    style.cursor = cursor;
+    return true;
+  };
+
+  P._findTopWindow = function(hwnd) {
+    const direct = this.windows[hwnd];
+    const wasm = (direct && direct.wasm) || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_top_level) {
+      try {
+        const top = we.wnd_top_level(hwnd) >>> 0;
+        if (top && this.windows[top]) return this.windows[top];
+      } catch (_) {}
+    }
+    const win = direct;
+    if (!win) return null;
+    if (win.isChild && win.parentHwnd) return this.windows[win.parentHwnd] || null;
+    return win;
+  };
+
+  P._inputWindowAtPoint = function(canvasX, canvasY) {
+    return Object.values(this.windows || {})
+      .filter(win => win && win.visible && !win.isChild &&
+        canvasX >= win.x && canvasX < win.x + win.w &&
+        canvasY >= win.y && canvasY < win.y + win.h)
+      .sort((a, b) => this._compareTopLevelZ(b, a))[0];
+  };
+
+  P._inputWasmAtPoint = function(canvasX, canvasY) {
+    const hit = this._inputWindowAtPoint(canvasX, canvasY);
+    return (hit && hit.wasm) || this.wasm;
+  };
+
+  P._setKeyboardInputOwner = function(win) {
+    if (!win || !win.wasm) return;
+    this._keyboardInputWasm = win.wasm;
+    this._keyboardInputMemory = win.wasmMemory || null;
+    this.wasm = win.wasm;
+    if (win.wasmMemory) this.wasmMemory = win.wasmMemory;
+  };
+
+  P._restoreKeyboardInputOwner = function() {
+    // A pointer candidate (or another app's run slice) is not an activation
+    // decision. Prefer the record published by USER's activate_window import,
+    // including when a higher no-activate surface remains visible. Validate
+    // identity as well as HWND: a destroyed record may have been replaced.
+    const active = this._foregroundWindow;
+    if (active && this.windows && this.windows[active.hwnd >>> 0] === active &&
+        active.visible && !active.isChild && active.wasm) {
+      this._setKeyboardInputOwner(active);
+      return;
+    }
+    const ownedWindow = this._keyboardInputWasm && Object.values(this.windows || {})
+      .some(win => win && win.visible && !win.isChild && win.wasm === this._keyboardInputWasm);
+    if (!ownedWindow) {
+      const front = Object.values(this.windows || {})
+        .filter(win => win && win.visible && !win.isChild && win.wasm)
+        .sort((a, b) => this._compareTopLevelZ(b, a))[0];
+      if (front) this._setKeyboardInputOwner(front);
+    }
+    if (!this._keyboardInputWasm) return;
+    this.wasm = this._keyboardInputWasm;
+    if (this._keyboardInputMemory) this.wasmMemory = this._keyboardInputMemory;
+  };
+
+  // Nothing owns the keyboard until something is clicked.
+  //
+  // USER hands the focus to a window when it is activated, and an app's
+  // runtime then passes it on to whichever control should have it. We deliver
+  // the activation messages but never record a focus window for them, so
+  // `get_focus_hwnd()` sits at 0 until a mouse press lands on a child and
+  // _setInputFocus writes one. With focus 0 every key is routed to main_hwnd
+  // (lib/host-window.js `inputEventHwnd`), which is the top-level frame -- and
+  // a frame that keeps its gameplay in a child control does nothing with it.
+  //
+  // On a desktop that is invisible: you click the window before you play.
+  // On a phone driving the guest from the on-screen dpad (lib/touch-controls.js)
+  // there is no such click, and Rodent's Revenge answered its arrow keys with
+  // a completely still board -- the VB1 form is hwnd 0x10001 and the 276x276
+  // picture control that implements the board is 0x10005. Setting focus to
+  // 0x10005 by hand makes the same keystrokes move blocks, so the routing is
+  // right and only the seed is missing.
+  //
+  // The seed is deliberately narrow. It fires only when nothing holds the
+  // focus at all, and only when ONE child covers at least half of the
+  // top-level's client area -- which is what "this window's content IS that
+  // control" looks like. A frame with a toolbar, a status bar and no dominant
+  // child keeps the old main_hwnd routing untouched.
+  P._seedKeyboardFocus = function() {
+    const wasm = this.wasm;
+    const e = wasm && wasm.exports;
+    if (!e || !e.get_focus_hwnd || !e.wnd_child_from_point_deep) return 0;
+    if (!e.wnd_client_screen_x || !e.wnd_screen_w) return 0;
+    let focus = 0;
+    try { focus = e.get_focus_hwnd() | 0; } catch (_) { return 0; }
+    if (focus) return 0;
+    const top = Object.values(this.windows || {})
+      .filter(win => win && win.visible && !win.isChild && (!win.wasm || win.wasm === wasm))
+      .sort((a, b) => this._compareTopLevelZ(b, a))[0];
+    if (!top) return 0;
+    try {
+      const hwnd = top.hwnd | 0;
+      const wx = e.wnd_window_screen_x(hwnd) | 0;
+      const wy = e.wnd_window_screen_y(hwnd) | 0;
+      const ww = e.wnd_screen_w(hwnd) | 0;
+      const wh = e.wnd_screen_h(hwnd) | 0;
+      const cx = e.wnd_client_screen_x(hwnd) | 0;
+      const cy = e.wnd_client_screen_y(hwnd) | 0;
+      const border = cx - wx;
+      const cw = ww - border * 2;
+      const ch = wh - (cy - wy) - border;
+      if (cw <= 0 || ch <= 0) return 0;
+      const child = e.wnd_child_from_point_deep(
+        hwnd, cx + (cw >> 1), cy + (ch >> 1)) >>> 0;
+      if (!child || child === (hwnd >>> 0)) return 0;
+      if (this._isMouseInputDisabled(child, wasm)) return 0;
+      const childArea = (e.wnd_screen_w(child) | 0) * (e.wnd_screen_h(child) | 0);
+      if (childArea * 2 < cw * ch) return 0;
+      this._setInputFocus(wasm, child);
+      return child;
+    } catch (_) { return 0; }
+  };
+
+  P._inputWasmRunsInGuestWorker = function(wasm) {
+    return !!(wasm && this._guestWorkerWasms && this._guestWorkerWasms.has(wasm));
+  };
+
+  // Does the window that owns keyboard focus sit under a menu bar? Decides
+  // whether F10 is the renderer's menu toggle or a key for the application.
+  P._focusedTopLevelHasMenuBar = function() {
+    const e = this.wasm && this.wasm.exports;
+    if (!e || !e.get_focus_hwnd || !e.wnd_top_level) return false;
+    const focus = e.get_focus_hwnd() | 0;
+    if (!focus) return false;
+    const top = e.wnd_top_level(focus) | 0;
+    const win = this.windows && this.windows[top];
+    return this._hasMenuBar(win || null);
+  };
+
+  // Win98 reports a key as a SYSTEM key -- WM_SYSKEYDOWN/WM_SYSKEYUP, with
+  // context bit 29 set -- while Alt is held without Ctrl (Ctrl+Alt is AltGr),
+  // and for Alt itself; Alt's release is WM_SYSKEYUP only when Alt was tapped
+  // alone. StarCraft's Alt+S/L/O/H hotkeys compare against 0x104, so a plain
+  // WM_KEYDOWN with Alt merely "down" in GetKeyState never reaches them.
+  // Reads the physical key map: _asyncKeys can hold a stale Alt that the
+  // guest's own GetAsyncKeyState polling has not cleared yet.
+  P._keyMessage = function(vkCode, keyUp, lParam) {
+    const k = this._physicalKeys || this._asyncKeys || {};
+    let sys;
+    if (vkCode === 18) sys = !keyUp || !!this._altTapped;
+    else sys = !!k[18] && !k[17];
+    return {
+      msg: (keyUp ? 0x0101 : 0x0100) | (sys ? 0x0004 : 0),
+      lParam: (sys && !(keyUp && vkCode === 18) ? (lParam | (1 << 29)) /* KF_ALTDOWN context bit */ : lParam) >>> 0,
+    };
+  };
+
+  P._keyboardOwnerRunsInGuestWorker = function() {
+    return this._inputWasmRunsInGuestWorker(this.wasm);
+  };
+
+  // A Worker-backed window keeps the browser-side WASM instance only as an
+  // ownership/rendering token. set_focus enters the target wndproc and must
+  // never run on that idle instance: its EIP/selector globals do not describe
+  // the live task, so Win16 menu clicks trap before reaching the menu bar.
+  // Keep the shadow focus value useful for renderer hit testing; the queued
+  // mouse message performs the real focus transition in slot 0.
+  P._setInputFocus = function(wasm, hwnd) {
+    const e = wasm && wasm.exports;
+    if (!e) return;
+    const workerOwned = this._inputWasmRunsInGuestWorker(wasm);
+    // A live USER transaction owns publication and may reject the request or
+    // redirect focus from a callback. Never overwrite its result from JS.
+    if (!workerOwned && e.set_focus) {
+      e.set_focus(hwnd);
+      return;
+    }
+    if (e.set_focus_hwnd && (!e.get_focus_hwnd || (e.get_focus_hwnd() | 0) !== (hwnd | 0))) {
+      e.set_focus_hwnd(hwnd);
+    }
+    // The browser-side instance is only a rendering/ownership shadow in
+    // guest-main Worker mode. Publish the same focus transition to slot 0 so
+    // it delivers WM_KILLFOCUS/WM_SETFOCUS and updates its live focus global
+    // before consuming the next keyboard event. Win16 VB forms depend on that
+    // notification to hand focus from the frame to their gameplay child.
+    if (workerOwned && this._guestWorkerFocusPublishers) {
+      for (const publish of this._guestWorkerFocusPublishers) publish(wasm, hwnd | 0);
+    }
+  };
+
+  // One line per routing decision a mouse event goes through, when a host has
+  // installed `onInputTrace` (test/run.js does so for --trace-input).
+  //
+  // "the click did nothing" is a recurring class of bug here, and it is almost
+  // never visible in an API trace: the event is consumed by one of the many
+  // early returns in handleMouseDown/handleMouseUp and simply never reaches the
+  // guest, so there is no call to see. The down and up paths also apply
+  // different gates, which means a control can accept a press and never see the
+  // release. This says which branch took it.
+  P._traceInput = function(what) {
+    if (this.onInputTrace) {
+      try { this.onInputTrace(what); } catch (_) {}
+    }
+  };
+
+  P._modalDialogHwnd = function(wasm) {
+    const ownerWasm = wasm || this.wasm;
+    const we = ownerWasm && ownerWasm.exports;
+    if (we && we.modal_dialog_hwnd) {
+      try {
+        const hwnd = we.modal_dialog_hwnd() >>> 0;
+        if (hwnd) {
+          const win = this.windows && this.windows[hwnd];
+          if (win && win.visible) return hwnd;
+          if (we.modal_cancel_if_hwnd) we.modal_cancel_if_hwnd(hwnd);
+        }
+      } catch (_) {}
+    }
+    const modal = Object.values(this.windows).find(w =>
+      w.visible && w.isAboutDialog && (!ownerWasm || w.wasm === ownerWasm));
+    return modal ? (modal.hwnd | 0) : 0;
+  };
+
+  P._clientOriginScreen = function(hwnd) {
+    const win = this.windows[hwnd];
+    const wasm = (win && win.wasm) || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_client_screen_x && we.wnd_client_screen_y) {
+      try { return { x: we.wnd_client_screen_x(hwnd) | 0, y: we.wnd_client_screen_y(hwnd) | 0 }; } catch (_) {}
+    }
+    if (!win) return { x: 0, y: 0 };
+    if (win.isChild && win.parentHwnd) {
+      const parentOrigin = this._clientOriginScreen(win.parentHwnd);
+      return { x: parentOrigin.x + win.x, y: parentOrigin.y + win.y };
+    }
+    if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+    if (win.clientRect) return { x: win.clientRect.x, y: win.clientRect.y };
+    const y = win.y + 3 + (((win.style & 0x00C00000) === 0x00C00000) ? 19 : 0) + (this._hasMenuBar(win) ? 18 : 0) + 1;
+    return { x: win.x + 3, y };
+  };
+
+  P._windowOriginScreen = function(hwnd) {
+    const win = this.windows[hwnd];
+    const wasm = (win && win.wasm) || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_window_screen_x && we.wnd_window_screen_y) {
+      try { return { x: we.wnd_window_screen_x(hwnd) | 0, y: we.wnd_window_screen_y(hwnd) | 0 }; } catch (_) {}
+    }
+    if (!win) return { x: 0, y: 0 };
+    if (win.isChild && win.parentHwnd) {
+      const parentOrigin = this._clientOriginScreen(win.parentHwnd);
+      return { x: parentOrigin.x + win.x, y: parentOrigin.y + win.y };
+    }
+    return { x: win.x, y: win.y };
+  };
+
+  P._mouseMsgOriginScreen = function(hwnd) {
+    const win = this.windows[hwnd];
+    const wasm = (win && win.wasm) || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_mouse_msg_origin_x && we.wnd_mouse_msg_origin_y) {
+      try { return { x: we.wnd_mouse_msg_origin_x(hwnd) | 0, y: we.wnd_mouse_msg_origin_y(hwnd) | 0 }; } catch (_) {}
+    }
+    // A shaped bootstrap surface has a whole-window client rect. Once USER
+    // publishes geometry, its client origin also owns regioned input.
+    if (win && !win.isChild && win.region) return this._windowOriginScreen(hwnd);
+    return this._clientOriginScreen(hwnd);
+  };
+
+  P._windowRectScreen = function(win) {
+    const origin = this._windowOriginScreen(win.hwnd);
+    const wasm = (win && win.wasm) || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_screen_w && we.wnd_screen_h) {
+      try {
+        const w = we.wnd_screen_w(win.hwnd) | 0;
+        const h = we.wnd_screen_h(win.hwnd) | 0;
+        if (w > 0 && h > 0) return { x: origin.x, y: origin.y, w, h };
+      } catch (_) {}
+    }
+    return { x: origin.x, y: origin.y, w: win.w, h: win.h };
+  };
+
+  // Some MFC floating palettes host a modeless child dialog directly under a
+  // non-dialog popup (Paint's Fonts palette is the canonical example). Route
+  // those clicks from the popup root so dialog_route_mouse can recurse using
+  // the parent's stable client origin. The child dialog's standalone client
+  // rect may not have received WM_NCCALCSIZE and can otherwise swallow every
+  // combobox click despite painting at the correct screen position.
+  P._dialogMouseRouteRoot = function(win) {
+    if (!win || !win.isDialog || !win.isChild || !win.parentHwnd) return win;
+    const parent = this.windows && this.windows[win.parentHwnd];
+    return parent && !parent.isDialog ? parent : win;
+  };
+
+  P._mouseMaskForButton = function(button) {
+    if (button === 2) return 0x0002; // MK_RBUTTON
+    return 0x0001;                  // MK_LBUTTON (browser: 0, test harness: 1)
+  };
+
+  // Browser-shell assigns an app's declarative input policy to its process.
+  // The renderer is shared by several guests, so one page-global current-app
+  // policy would let the last launched app change every earlier app's input.
+  P.setInputHooks = function(owner, hooks) {
+    if (owner === null || owner === undefined) return;
+    if (!this._inputHooksByOwner) this._inputHooksByOwner = new Map();
+    if (hooks && typeof hooks === 'object') this._inputHooksByOwner.set(owner, hooks);
+    else this._inputHooksByOwner.delete(owner);
+  };
+
+  P._applyPointerInputHooks = function(win, canvasX, canvasY, button) {
+    const unchanged = { x: canvasX, y: canvasY, snapped: false };
+    if (!win || !this._inputHooksByOwner) return unchanged;
+    const owner = win.processId !== undefined && win.processId !== null
+      ? win.processId : (win.wasm || this.wasm);
+    const hooks = this._inputHooksByOwner.get(owner);
+    const rules = hooks && hooks.pointerSnap;
+    if (!Array.isArray(rules)) return unchanged;
+
+    for (const rule of rules) {
+      if (!rule || (rule.windowTitle !== undefined && rule.windowTitle !== win.title)) continue;
+      if (Array.isArray(rule.buttons) && !rule.buttons.includes(button)) continue;
+      const nativeSize = rule.nativeSize;
+      if (!Array.isArray(nativeSize) || nativeSize.length < 2) continue;
+      const nativeW = +nativeSize[0];
+      const nativeH = +nativeSize[1];
+      const scaleX = (win.w || 0) / nativeW;
+      const scaleY = (win.h || 0) / nativeH;
+      if (!Number.isFinite(scaleX) || !Number.isFinite(scaleY) ||
+          scaleX <= 0 || scaleY <= 0) continue;
+      const localX = (canvasX - win.x) / scaleX;
+      const localY = (canvasY - win.y) / scaleY;
+      for (const target of Array.isArray(rule.targets) ? rule.targets : []) {
+        const hit = target && target.hit;
+        const point = target && target.point;
+        if (!Array.isArray(hit) || hit.length < 4 ||
+            !Array.isArray(point) || point.length < 2) continue;
+        const coords = [hit[0], hit[1], hit[2], hit[3], point[0], point[1]].map(Number);
+        if (!coords.every(Number.isFinite)) continue;
+        if (localX >= coords[0] && localX < coords[2] &&
+            localY >= coords[1] && localY < coords[3]) {
+          return {
+            x: Math.round(win.x + coords[4] * scaleX),
+            y: Math.round(win.y + coords[5] * scaleY),
+            snapped: true,
+          };
+        }
+      }
+    }
+    return unchanged;
+  };
+
+  P._setMousePoint = function(x, y) {
+    this._mouseX = x | 0;
+    this._mouseY = y | 0;
+    // A guest Worker reads the pointer from shared memory instead of asking
+    // the page (host.js _rendererMousePublisher, guest-rpc get_mouse_position).
+    const publishers = this._mousePointPublishers;
+    if (publishers) {
+      for (const publish of publishers) publish(this._mouseX, this._mouseY);
+    }
+  };
+
+  // Guest-generated input is already in desktop coordinates. In particular it
+  // must not pass through the CSS/exclusive-canvas coordinate transform again.
+  // Queue messages instead of synchronously calling guest wndprocs from an import.
+  P.queueMouseInput = function(flags, dx, dy, data, extraInfo) {
+    flags >>>= 0;
+    if ((flags & ~0xf9ff) || ((flags & 0x180) && (flags & 0x1800)) ||
+        ((flags & 0x180) && (!(data & 3) || (data & ~3)))) return 0;
+    const oldX = this._mouseX | 0, oldY = this._mouseY | 0;
+    let x = oldX, y = oldY;
+    if (flags & 1) {
+      const width = Math.max(1, this.canvas.width | 0);
+      const height = Math.max(1, this.canvas.height | 0);
+      if (flags & 0x8000) {
+        x = Math.round(Math.min(65535, dx >>> 0) * (width - 1) / 65535);
+        y = Math.round(Math.min(65535, dy >>> 0) * (height - 1) / 65535);
+      } else {
+        x += dx | 0;
+        y += dy | 0;
+      }
+      x = Math.max(0, Math.min(width - 1, x));
+      y = Math.max(0, Math.min(height - 1, y));
+      const clip = this._applyCursorClip(x, y);
+      x = clip.x; y = clip.y;
+    }
+    const win = this._inputWindowAtPoint(x, y);
+    const wasm = (win && win.wasm) || this.wasm;
+    const memory = (win && win.wasmMemory) || this.wasmMemory;
+    const exports = wasm && wasm.exports;
+    const capture = exports && exports.get_capture_hwnd ? exports.get_capture_hwnd() : 0;
+    const captured = capture ? this._resolveCaptureTarget(capture, wasm) : null;
+    const deep = !captured && win ? this._hitTestDeepChild(win, x, y) : null;
+    const target = captured ? captured.targetHwnd : deep ? deep.hwnd : win ? win.hwnd : 0;
+    const origin = captured ? { x: captured.screenX, y: captured.screenY }
+      : deep ? { x: deep.sx, y: deep.sy } : win ? this._mouseMsgOriginScreen(win.hwnd) : { x: 0, y: 0 };
+    this._activeInputEvent = null;
+    this._setMousePoint(x, y);
+    const enqueue = (msg, high = 0, screen = false) => {
+      const px = screen ? x : x - origin.x, py = screen ? y : y - origin.y;
+      const buttons = this._mouseButtonsMask || 0;
+      const event = { type: 'mouse', hwnd: target >>> 0, msg,
+        wParam: ((high << 16) | buttons | (this._shiftDown ? 4 : 0) | (this._ctrlDown ? 8 : 0)) >>> 0,
+        lParam: ((py & 0xffff) << 16) | (px & 0xffff), mouseX: x, mouseY: y,
+        mouseButtons: buttons, extraInfo: extraInfo >>> 0, queuedAt: _perfNow() };
+      const tail = this.inputQueue[this.inputQueue.length - 1];
+      if (msg === 0x200 && !(flags & 0x2000) && tail && tail.msg === msg &&
+          tail.hwnd === event.hwnd && tail.wParam === event.wParam) {
+        this.inputQueue[this.inputQueue.length - 1] = event;
+      } else this.inputQueue.push(event);
+    };
+    if (flags & 1) {
+      const mx = flags & 0x8000 ? x - oldX : dx | 0;
+      const my = flags & 0x8000 ? y - oldY : dy | 0;
+      if (memory) {
+        const buffer = memory.buffer || memory;
+        if (buffer.byteLength >= DI_MOUSE_INPUT_STATE + 8) {
+          const words = new Int32Array(buffer), index = DI_MOUSE_INPUT_STATE >>> 2;
+          const shared = typeof SharedArrayBuffer !== 'undefined' && buffer instanceof SharedArrayBuffer;
+          if (shared) { Atomics.add(words, index, mx); Atomics.add(words, index + 1, my); }
+          else { words[index] += mx; words[index + 1] += my; }
+          if (mx) this._queueDirectInputMouseEvent(memory, 5, mx);
+          if (my) this._queueDirectInputMouseEvent(memory, 6, my);
+        }
+        if (!this._directInputMousePoints) this._directInputMousePoints = new WeakMap();
+        this._directInputMousePoints.set(memory, { x, y });
+      }
+      enqueue(0x200);
+    }
+    const button = (downFlag, upFlag, mask, downMsg, upMsg, vk, high = 0) => {
+      for (const [flag, down, msg] of [[downFlag, true, downMsg], [upFlag, false, upMsg]]) {
+        if (!(flags & flag)) continue;
+        const wasDown = !!((this._mouseButtonsMask || 0) & mask);
+        this._mouseButtonsMask = down ? (this._mouseButtonsMask || 0) | mask : (this._mouseButtonsMask || 0) & ~mask;
+        if (wasDown !== down && memory) this._queueDirectInputMouseButton(memory, mask, down);
+        if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+        if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+        this._asyncKeys[vk] = down;
+        if (down) this._asyncPressedKeys[vk] = true;
+        enqueue(msg, high);
+      }
+    };
+    button(2, 4, 1, 0x201, 0x202, 1);
+    button(8, 16, 2, 0x204, 0x205, 2);
+    button(32, 64, 16, 0x207, 0x208, 4);
+    if (data & 1) button(128, 256, 32, 0x20b, 0x20c, 5, 1);
+    if (data & 2) button(128, 256, 64, 0x20b, 0x20c, 6, 2);
+    if (flags & 0x800) enqueue(0x20a, data | 0, true);
+    if (flags & 0x1000) enqueue(0x20e, data | 0, true);
+    this._signalDirectInputDevice(2);
+    this._wakeMessageWait(true);
+    return 1;
+  };
+
+  P.setMousePosition = function(x, y) {
+    const clipped = this._applyCursorClip ? this._applyCursorClip(x | 0, y | 0) : { x: x | 0, y: y | 0 };
+    this._noteCursorWarp(clipped.x, clipped.y);
+    this._setMousePoint(clipped.x, clipped.y);
+    this._activeInputEvent = null;
+    return this.getMousePosition();
+  };
+
+  // Guest SetCursorPos lands here from every thread. A game that captures the
+  // mouse by recentring (Quake II engine, Unreal, Anachronox) warps to the same
+  // point every frame; a one-off warp (Diablo, Solitaire's drag) never repeats.
+  // Three warps to one point (within 2 px), each within 500 ms of the last,
+  // arm relative input for the next 2 s; every further warp extends it.
+  P._noteCursorWarp = function(x, y) {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    const w = this._cursorWarp;
+    if (w && Math.abs(w.x - x) <= 2 && Math.abs(w.y - y) <= 2 && now - w.t < 500) {
+      w.run++;
+      w.t = now;
+    } else {
+      this._cursorWarp = { x, y, t: now, run: 1 };
+    }
+    if (this._cursorWarp.run >= 3) this._recentringUntil = now + 2000;
+  };
+
+  // The runtime half of relative-mouse selection (relativeMouse: 'auto'): a
+  // recentring loop, or a DirectInput mouse acquired DISCL_EXCLUSIVE in the
+  // guest (WAT get_mouse_capture_hint, a DX-table scan, so polled at most every
+  // 250 ms). docs/mouse-model-audit.md.
+  P._autoRelativeMouse = function(nativeX, nativeY) {
+    const now = typeof performance !== 'undefined' ? performance.now() : Date.now();
+    if (this._recentringUntil && now < this._recentringUntil) return true;
+    const cached = this._captureHintCache;
+    if (cached && now - cached.t < 250) return cached.value;
+    let value = false;
+    try {
+      const wasm = this._inputWasmAtPoint && this._inputWasmAtPoint(nativeX, nativeY);
+      const e = wasm && wasm.exports;
+      value = !!(e && e.get_mouse_capture_hint && (e.get_mouse_capture_hint() | 0));
+    } catch (_) { value = false; }
+    this._captureHintCache = { t: now, value };
+    return value;
+  };
+
+  P.getMousePosition = function() {
+    const active = this._activeInputEvent;
+    if (active && active.type === 'mouse' && active.mouseX !== undefined && active.mouseY !== undefined) {
+      return (((active.mouseY || 0) & 0xFFFF) << 16) | ((active.mouseX || 0) & 0xFFFF);
+    }
+    return (((this._mouseY || 0) & 0xFFFF) << 16) | ((this._mouseX || 0) & 0xFFFF);
+  };
+
+  P.getMouseButtons = function() {
+    const active = this._activeInputEvent;
+    if (active && active.type === 'mouse' && active.mouseButtons !== undefined) return active.mouseButtons >>> 0;
+    return (this._mouseButtonsMask || 0) >>> 0;
+  };
+
+  P._signalDirectInputDevice = function(deviceType) {
+    const handles = this._directInputEventHandles;
+    const signal = this._directInputSignalEvent;
+    if (!handles || !signal) return;
+    const handle = handles[deviceType >>> 0] >>> 0;
+    if (!handle) return;
+    try { signal(handle); } catch (_) {}
+  };
+
+  P._consumeAsyncPressBit = function(vKey) {
+    const key = vKey & 0xFF;
+    if (!this._asyncPressedKeys || !this._asyncPressedKeys[key]) return 0;
+    this._asyncPressedKeys[key] = false;
+    return 1;
+  };
+
+  P.peekAsyncKeyState = function(vKey) {
+    const key = vKey & 0xFF;
+    const active = this._activeInputEvent;
+    const buttons = active && active.type === 'mouse' && active.mouseButtons !== undefined
+      ? active.mouseButtons
+      : (this._mouseButtonsMask || 0);
+    if (key === 0x01) return (buttons & 0x0001) ? 0x8000 : 0;
+    if (key === 0x02) return (buttons & 0x0002) ? 0x8000 : 0;
+    if (key === 0x04) return (buttons & 0x0010) ? 0x8000 : 0;
+    if (key === 0x05) return (buttons & 0x0020) ? 0x8000 : 0;
+    if (key === 0x06) return (buttons & 0x0040) ? 0x8000 : 0;
+    if (!this._asyncKeys) return 0;
+    return this._asyncKeys[key] ? 0x8000 : 0;
+  };
+
+  // DirectInput asks for the physical device state, not the state of the last
+  // Win32 keyboard message the app dispatched. Keep the two timelines
+  // separate: a game such as Liquid War polls DirectInput but intentionally
+  // never drains WM_KEYDOWN/WM_KEYUP, so using `_asyncKeys` leaves every key
+  // held forever when its queued key-up cannot advance that message snapshot.
+  P.peekKeyDownState = function(vKey) {
+    const key = vKey & 0xFF;
+    if (key === 0x01) return (this._mouseButtonsMask & 0x0001) ? 0x8000 : 0;
+    if (key === 0x02) return (this._mouseButtonsMask & 0x0002) ? 0x8000 : 0;
+    if (key === 0x04) return (this._mouseButtonsMask & 0x0010) ? 0x8000 : 0;
+    if (key === 0x05) return (this._mouseButtonsMask & 0x0020) ? 0x8000 : 0;
+    if (key === 0x06) return (this._mouseButtonsMask & 0x0040) ? 0x8000 : 0;
+    if (this._physicalKeys && Object.prototype.hasOwnProperty.call(this._physicalKeys, key)) {
+      return this._physicalKeys[key] ? 0x8000 : 0;
+    }
+    // Programmatic/CLI callers predating the physical map seed only the
+    // async map. Falling back keeps their explicit state injection useful.
+    return this._asyncKeys && this._asyncKeys[key] ? 0x8000 : 0;
+  };
+
+  // A DOM modifier's two physical sides share a VK. Numeric callers have no
+  // side identity: a numeric release remains the existing all-sides reset.
+  // Keep ownership with the physical map so replacing that map on reset
+  // cannot leave a second, stale collection of held keys behind.
+  P.pokeKeyDownState = function(vKey, down, keyInfo) {
+    if (!this._physicalKeys) this._physicalKeys = Object.create(null);
+    const vk = vKey & 0xFF;
+    let wasDown = !!this._physicalKeys[vk];
+    if (vk === 16 || vk === 17 || vk === 18) {
+      const name = vk === 16 ? 'Shift' : vk === 17 ? 'Control' : 'Alt';
+      const meta = keyInfo || {};
+      const side = meta.code === name + 'Left' ? 'left'
+        : meta.code === name + 'Right' ? 'right'
+        : meta.location === 1 ? 'left' : meta.location === 2 ? 'right' : '';
+      if (this._modifierPhysicalMap !== this._physicalKeys) {
+        this._modifierPhysicalMap = this._physicalKeys;
+        this._modifierOwners = Object.create(null);
+      }
+      const owners = this._modifierOwners[vk] || (this._modifierOwners[vk] = new Set());
+      // Bare VK injection retains the legacy async previous-state fallback.
+      wasDown = side ? owners.has(side) : undefined;
+      if (down) owners.add(side);
+      else if (side) owners.delete(side);
+      else owners.clear();
+      this._physicalKeys[vk] = owners.size > 0;
+    } else this._physicalKeys[vk] = !!down;
+    return wasDown;
+  };
+
+  // SetKeyboardState's backing. An app that clears a key it has just handled
+  // — Tetris does this so a held rotate key does not repeat — must be able to
+  // put the state back, or every later GetKeyboardState reports the key still
+  // down and the game reads one press as many.
+  P.pokeAsyncKeyState = function(vKey, down) {
+    if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+    this._asyncKeys[vKey & 0xFF] = !!down;
+  };
+
+  P._applyCursorClip = function(canvasX, canvasY) {
+    const we = this.wasm && this.wasm.exports;
+    if (!we || !we.clip_cursor_active || !we.clip_cursor_active()) {
+      return { x: canvasX, y: canvasY, active: false };
+    }
+    const l = we.clip_cursor_left ? (we.clip_cursor_left() | 0) : 0;
+    const t = we.clip_cursor_top ? (we.clip_cursor_top() | 0) : 0;
+    const r = we.clip_cursor_right ? (we.clip_cursor_right() | 0) : 0;
+    const b = we.clip_cursor_bottom ? (we.clip_cursor_bottom() | 0) : 0;
+    if (r <= l || b <= t) return { x: canvasX, y: canvasY, active: false };
+    return {
+      x: Math.min(Math.max(canvasX | 0, l), r - 1),
+      y: Math.min(Math.max(canvasY | 0, t), b - 1),
+      active: true,
+    };
+  };
+
+  P._mapExclusiveInputPoint = function(canvasX, canvasY) {
+    // Headless presentation is lazy: bring the transform up to date with the
+    // window stack first, or a click maps against a stale (or no) transform.
+    if (this.refreshInputPresentation) this.refreshInputPresentation();
+    const t = this._exclusiveTransform;
+    if (!t) return { x: canvasX, y: canvasY };
+
+    // The derived presentation can use a different destination rectangle
+    // from the hidden logical staging canvas (Retina integer scaling and the
+    // sharp/GPU filters do this). Browser events arrive in logical-canvas
+    // coordinates, so take them through the physical viewport when present.
+    // Map first and clamp in native space: a pointer in a letterbox bar then
+    // follows the nearest guest edge instead of disappearing until it happens
+    // to cross back into the image. This also keeps captured drags/releases
+    // alive after the browser pointer leaves the rendered guest rectangle.
+    const viewport = this._exclusivePresentationViewport;
+    if (viewport && viewport.outputW > 0 && viewport.outputH > 0 &&
+        viewport.dstW > 0 && viewport.dstH > 0 &&
+        viewport.nativeW > 0 && viewport.nativeH > 0) {
+      const physicalX = canvasX * viewport.outputW / Math.max(1, this.canvas.width);
+      const physicalY = canvasY * viewport.outputH / Math.max(1, this.canvas.height);
+      const nativeX = Math.floor(viewport.nativeX +
+        (physicalX - viewport.dstX) * viewport.nativeW / viewport.dstW);
+      const nativeY = Math.floor(viewport.nativeY +
+        (physicalY - viewport.dstY) * viewport.nativeH / viewport.dstH);
+      return {
+        x: Math.min(Math.max(nativeX, viewport.nativeX),
+          viewport.nativeX + viewport.nativeW - 1),
+        y: Math.min(Math.max(nativeY, viewport.nativeY),
+          viewport.nativeY + viewport.nativeH - 1),
+      };
+    }
+
+    const sourceX = Math.floor(t.srcX +
+      (canvasX - t.dstX) * t.srcW / Math.max(1, t.dstW));
+    const sourceY = Math.floor(t.srcY +
+      (canvasY - t.dstY) * t.srcH / Math.max(1, t.dstH));
+    return {
+      x: Math.min(Math.max(sourceX, t.srcX), t.srcX + t.srcW - 1),
+      y: Math.min(Math.max(sourceY, t.srcY), t.srcY + t.srcH - 1),
+    };
+  };
+
+  // Convert a guest/native point back to the logical canvas coordinate space
+  // accepted by handleMouseMove. Pointer-lock events provide deltas rather
+  // than a usable client position, while games such as Quake II continuously
+  // recenter the Win32 cursor with SetCursorPos. Starting each delta at that
+  // virtual cursor and taking it through the inverse presentation transform
+  // preserves the game's relative-mouse contract without double-mapping a
+  // scaled or letterboxed framebuffer.
+  P._unmapExclusiveInputPoint = function(nativeX, nativeY) {
+    const viewport = this._exclusivePresentationViewport;
+    if (viewport && viewport.outputW > 0 && viewport.outputH > 0 &&
+        viewport.dstW > 0 && viewport.dstH > 0 &&
+        viewport.nativeW > 0 && viewport.nativeH > 0) {
+      const physicalX = viewport.dstX +
+        (nativeX - viewport.nativeX) * viewport.dstW / viewport.nativeW;
+      const physicalY = viewport.dstY +
+        (nativeY - viewport.nativeY) * viewport.dstH / viewport.nativeH;
+      return {
+        x: physicalX * Math.max(1, this.canvas.width) / viewport.outputW,
+        y: physicalY * Math.max(1, this.canvas.height) / viewport.outputH,
+      };
+    }
+    const t = this._exclusiveTransform;
+    if (!t || t.srcW <= 0 || t.srcH <= 0) return { x: nativeX, y: nativeY };
+    return {
+      x: t.dstX + (nativeX - t.srcX) * t.dstW / t.srcW,
+      y: t.dstY + (nativeY - t.srcY) * t.dstH / t.srcH,
+    };
+  };
+
+  P.wantsHiddenMouse = function(canvasX, canvasY) {
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return false;
+    const wasm = this._inputWasmAtPoint(mapped.x, mapped.y);
+    const e = wasm && wasm.exports;
+    if (!e) return false;
+    // ShowCursor's display count and SetCursor(NULL) are independent Win32
+    // ways to hide the system pointer. The latter matters for games that draw
+    // a context-sensitive cursor into their own DirectDraw surface. Mirror it
+    // into the CSS class too, because renderer hover/resize handling may
+    // overwrite the inline cursor style between guest SetCursor calls.
+    if (e.get_cursor_display_count &&
+        (e.get_cursor_display_count() | 0) < 0) return true;
+    return !!(e.get_cursor && (e.get_cursor() >>> 0) === 0);
+  };
+
+  // Capture requires explicit app intent, independent of ShowCursor/ClipCursor.
+  // `relativeMouse`: true (the registry opted in), 'auto' (no registry choice:
+  // follow the guest's runtime signals), or false.
+  P.wantsRelativeMouse = function(canvasX, canvasY, relativeMouse = false) {
+    if (!relativeMouse) return false;
+    if (!this._exclusiveTransform && !this._exclusivePresentationViewport) return false;
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return false;
+    if (relativeMouse === 'auto') return this._autoRelativeMouse(mapped.x, mapped.y);
+    return true;
+  };
+
+  // `opts.guestCounts`: the delta is mouse counts (Pointer Lock movementX/Y),
+  // which a real fullscreen game receives one count per pixel of its own
+  // mode, so they enter the guest unscaled. Without it the delta is canvas
+  // pixels (touch trackpad, scripted input) and crosses the presentation
+  // transform, i.e. moves the guest cursor by the same share of the picture.
+  // Scaling counts by the stretch as well left a 640x480 game on a 1380-px
+  // page with 46% of its native mouse-look sensitivity (UT, Deus Ex).
+  P.handleRelativeMouseMove = function(deltaCanvasX, deltaCanvasY, opts) {
+    // Pointer-lock motion is a physical delta. DirectInput must receive the
+    // whole delta even when the Win32 cursor is already pinned to a
+    // ClipCursor edge: software-cursor games keep their own position and may
+    // apply a different sensitivity, so deriving DI motion from the clipped
+    // virtual cursor makes part of their screen permanently unreachable.
+    let scaleX = 1;
+    let scaleY = 1;
+    const viewport = this._exclusivePresentationViewport;
+    if (viewport && viewport.outputW > 0 && viewport.outputH > 0 &&
+        viewport.dstW > 0 && viewport.dstH > 0 &&
+        viewport.nativeW > 0 && viewport.nativeH > 0) {
+      scaleX = viewport.outputW / Math.max(1, this.canvas.width) *
+        viewport.nativeW / viewport.dstW;
+      scaleY = viewport.outputH / Math.max(1, this.canvas.height) *
+        viewport.nativeH / viewport.dstH;
+    } else {
+      const transform = this._exclusiveTransform;
+      if (transform && transform.dstW > 0 && transform.dstH > 0) {
+        scaleX = transform.srcW / transform.dstW;
+        scaleY = transform.srcH / transform.dstH;
+      }
+    }
+    if (opts && opts.guestCounts) {
+      // Counts are guest pixels: express the cursor step in canvas pixels.
+      const countsX = deltaCanvasX;
+      const countsY = deltaCanvasY;
+      deltaCanvasX = scaleX > 0 ? countsX / scaleX : countsX;
+      deltaCanvasY = scaleY > 0 ? countsY / scaleY : countsY;
+    }
+    const exactX = deltaCanvasX * scaleX + (this._relativeMouseRemainderX || 0);
+    const exactY = deltaCanvasY * scaleY + (this._relativeMouseRemainderY || 0);
+    const directDx = Math.trunc(exactX);
+    const directDy = Math.trunc(exactY);
+    this._relativeMouseRemainderX = exactX - directDx;
+    this._relativeMouseRemainderY = exactY - directDy;
+    const current = this._unmapExclusiveInputPoint(this._mouseX || 0, this._mouseY || 0);
+    this.handleMouseMove(current.x + deltaCanvasX, current.y + deltaCanvasY,
+      { relative: true, directDx, directDy });
+  };
+
+  P._beginWindowDrag = function(win, canvasX, canvasY) {
+    // Single-app mode has no desktop to drag a window around on. The phone
+    // presents the union of the visible top-level rects, so moving the app's
+    // own window does not reveal anything beside it -- it walks the picture
+    // off its own crop and drags teal in from the other side. The caption is
+    // also a fat touch target across the top of the screen, exactly where a
+    // thumb starts a scroll, so the drag is easy to begin by accident and
+    // there is no window edge to drop it back against. Windows itself refuses
+    // to move a MAXIMIZED window, and in single-app mode the app's window
+    // always is one.
+    //
+    // Dialogs stay draggable: moving a message box to read what is underneath
+    // it is a real thing to want, and the crop is not anchored on the dialog.
+    if (this.singleAppMode && win && !win.isDialog) return;
+    this._draggingWin = {
+      win,
+      offsetX: canvasX - win.x,
+      offsetY: canvasY - win.y,
+      pendingX: win.x,
+      pendingY: win.y,
+    };
+  };
+
+  P._wakeMessageWait = function(sliceWake) {
+    if (typeof performance !== 'undefined' && performance.now) {
+      this._recentMessageWakeAt = performance.now();
+    } else {
+      this._recentMessageWakeAt = Date.now();
+    }
+    const publishers = this._inputPendingPublishers;
+    if (publishers) {
+      for (const publish of publishers) publish(this.inputQueue.length, !!sliceWake);
+    }
+    // A parked guest's drive loop may be asleep on a timer (host.js
+    // _parkedSleepMs). This is the event it was waiting for, so cut the sleep
+    // short here rather than letting the click sit for up to 50ms. Hosts
+    // register themselves in run(); with none registered this is a no-op, so
+    // the CLI and the unit harnesses are unaffected.
+    const wakeHooks = this._stepWakeHooks;
+    if (wakeHooks) {
+      for (const wake of wakeHooks) {
+        try { wake(); } catch (_) {}
+      }
+    }
+  };
+
+  P._publishInputQueueDepth = function() {
+    const publishers = this._inputPendingPublishers;
+    if (publishers) {
+      for (const publish of publishers) publish(this.inputQueue.length, false);
+    }
+  };
+
+  P._closeWatDialogFrame = function(hwnd, wasm) {
+    const w = wasm || this.wasm;
+    const we = w && w.exports;
+    // A guest that runs in a Worker (the Threads route puts even its MAIN
+    // thread there) cannot be entered from here: the instance this page holds
+    // is a shadow without the guest's registers, and a dialog whose procedure
+    // is guest code -- every Win16 DialogBox -- trapped the moment the
+    // synchronous send below ran it (JezzBall's title-bar X, user report #42).
+    // Hand SC_CLOSE to the guest's own message pump instead, as the task-bar
+    // button hands it SC_MINIMIZE; DefWindowProc's SC_CLOSE arm posts the
+    // WM_CLOSE that the rest of this function would otherwise force.
+    if (this._inputWasmRunsInGuestWorker(w)) {
+      this.inputQueue.push({ type: 'command', hwnd,
+        msg: 0x0112, wParam: 0xF060, lParam: 0 }); // WM_SYSCOMMAND / SC_CLOSE
+      this._wakeMessageWait();
+      this.scheduleRepaint();
+      return;
+    }
+    if (we && we.send_message) {
+      // Win32 turns a titlebar close into WM_NCLBUTTONDOWN/HTCLOSE ->
+      // WM_SYSCOMMAND/SC_CLOSE -> WM_CLOSE, and applications hang their
+      // shutdown work off the SC_CLOSE arm, not off WM_CLOSE. Calculator is
+      // the clearest case: its whole main window is a dialog, so it comes
+      // through here, and PostQuitMessage(0) exists at exactly one address
+      // (0x1005bb6) inside its WM_SYSCOMMAND handler -- WM_CLOSE only calls
+      // DestroyWindow. Jumping straight to WM_CLOSE therefore closed the
+      // window without ever posting the quit, and did the same to every other
+      // app that saves state on SC_CLOSE.
+      we.send_message(hwnd, 0x0112, 0xF060, 0); // WM_SYSCOMMAND / SC_CLOSE
+      // An app that leaves SC_CLOSE to DefWindowProc still gets WM_CLOSE: the
+      // WAT arm posts it (09a5-handlers-window.wat), so it arrives on the
+      // app's own pump. If that already tore the frame down, or the app
+      // posted a quit, there is nothing further to force here.
+      if (!this.windows[hwnd] || (we.get_quit_flag && we.get_quit_flag())) {
+        if (we.modal_cancel_if_hwnd) we.modal_cancel_if_hwnd(hwnd);
+        this._wakeMessageWait();
+        this.scheduleRepaint();
+        this.repaint();
+        return;
+      }
+      const before = this.windows[hwnd];
+      we.send_message(hwnd, 0x0010, 0, 0); // WM_CLOSE
+      const after = this.windows[hwnd];
+      if (after && after === before && after.isDialog && !after.isAboutDialog && !after.isFindDialog) {
+        // Modeless CreateDialogParamA windows can return 0 from their dialog
+        // proc and rely on DefDlgProc/DefWindowProc to destroy the frame. The
+        // exported synchronous SendMessage path does not run that default
+        // fallback, so finish the titlebar close here.
+        if (we.modal_cancel_if_hwnd) we.modal_cancel_if_hwnd(hwnd);
+        if (we.wnd_destroy_tree) we.wnd_destroy_tree(hwnd);
+        if (we.destroy_dialog_frame) {
+          we.destroy_dialog_frame(hwnd);
+        } else {
+          for (const k of Object.keys(this.windows)) {
+            if (this.windows[k] && this.windows[k].parentHwnd === hwnd) delete this.windows[k];
+          }
+          delete this.windows[hwnd];
+        }
+      }
+      if (we.modal_cancel_if_hwnd) we.modal_cancel_if_hwnd(hwnd);
+      this._wakeMessageWait();
+      this.scheduleRepaint();
+      this.repaint();
+      return;
+    }
+    if (we && we.modal_cancel_if_hwnd) we.modal_cancel_if_hwnd(hwnd);
+    if (we && we.destroy_dialog_frame) {
+      we.destroy_dialog_frame(hwnd);
+    } else {
+      for (const k of Object.keys(this.windows)) {
+        if (this.windows[k] && this.windows[k].parentHwnd === hwnd) delete this.windows[k];
+      }
+      delete this.windows[hwnd];
+      this.scheduleRepaint();
+      this.repaint();
+    }
+  };
+
+  // WindowFromPoint-style deep hit-test: given a top-level window and a
+  // canvas-space click, walk the renderer's child tree to find the deepest
+  // visible descendant whose rect contains the point, and return its hwnd
+  // plus screen origin so callers can compute a child-local lParam. When
+  // the click lands in the top window's client area but not in any child,
+  // returns null (caller keeps the original top-window routing).
+  //
+  // Gated on `skipClass`: children whose WAT ctrl_get_class matches an
+  // entry are treated as "message-transparent" for routing purposes, so
+  // apps like notepad keep their existing "click goes to frame" semantics
+  // for the built-in edit control (class 2). Everything else (MDI client /
+  // MDI document / custom view windows) is eligible.
+  P._hitTestDeepChild = function(topWin, cx, cy) {
+    if (!topWin) return null;
+    const wasm = topWin.wasm || this.wasm;
+    const we = wasm && wasm.exports;
+    if (!we || !we.wnd_child_from_point_deep || !we.wnd_window_screen_x || !we.wnd_window_screen_y) return null;
+    const hwnd = we.wnd_child_from_point_deep(topWin.hwnd, cx, cy) >>> 0;
+    if (!hwnd) return null;
+    const origin = we.wnd_mouse_msg_origin_x && we.wnd_mouse_msg_origin_y
+      ? { x: we.wnd_mouse_msg_origin_x(hwnd) | 0, y: we.wnd_mouse_msg_origin_y(hwnd) | 0 }
+      : { x: we.wnd_window_screen_x(hwnd) | 0, y: we.wnd_window_screen_y(hwnd) | 0 };
+    return {
+      hwnd,
+      sx: origin.x,
+      sy: origin.y,
+    };
+  };
+
+  P._isMouseInputDisabled = function(hwnd, wasm) {
+    const we = wasm && wasm.exports;
+    return !!(hwnd && we && we.wnd_get_style_export &&
+      ((we.wnd_get_style_export(hwnd) >>> 0) & 0x08000000)); // WS_DISABLED
+  };
+
+  // Native registered controls inside resource dialogs must receive mouse
+  // input through the guest message loop. Synchronously
+  // calling a registered x86 wndproc can skip stateful work on WM_LBUTTONDOWN
+  // (notably SysTabControl32's selection notifications). WAT BUTTONs are safe
+  // on dialog_route_mouse: their built-in procedure only changes control state
+  // and queues BN_CLICKED for the parent, so it never enters a nested guest
+  // dialog procedure on the browser event stack.
+  P._queueNativeDialogChildMouseDown = function(win, canvasX, canvasY, msg, wParam) {
+    if (!win) return false;
+    const wasm = win.wasm || this.wasm;
+    const we = wasm && wasm.exports;
+    if (!we || !we.ctrl_get_class || !we.wnd_get_proc_export) return false;
+    const deep = this._hitTestDeepChild(win, canvasX, canvasY);
+    if (!deep) return false;
+    if (this._isMouseInputDisabled(deep.hwnd, wasm)) return false;
+    const childClass = we.ctrl_get_class(deep.hwnd) | 0;
+    const childProc = we.wnd_get_proc_export(deep.hwnd) >>> 0;
+    // class=0 distinguishes registered/custom controls from WAT-owned USER
+    // controls. WAT proc markers occupy the high 0xFFFFxxxx range; WAT-owned
+    // controls, including BUTTONs, stay on dialog_route_mouse.
+    const guestProc = childProc !== 0 && childProc < 0xFFFF0000;
+    const nativeRegistered = childClass === 0 && guestProc;
+    // A WAT control the guest has SUBCLASSED is no longer "only changes
+    // control state": its procedure is now x86 too, and on
+    // dialog_route_mouse it runs nested under this browser event, where a
+    // park (a lazily loaded click sound in sndPlaySoundA) can never be
+    // serviced and the press is abandoned after 64 rounds. Half-Life:
+    // Uplink's menu buttons (CODBlendBtn) never opened New Game for that.
+    // Through the queue it gets DispatchMessage -> subclass -> CallWindowProc,
+    // as on Windows.
+    const subclassedWat = childClass !== 0 && guestProc;
+    // ...but only when this instance is the one running the guest. In
+    // guest-main Worker mode it is an idle shadow: dialog_route_mouse would
+    // press the button against the shadow's own USER globals (capture, post
+    // queue), and the running guest never hears of it. Unreal Tournament's
+    // setup-wizard Next button did nothing with Threads on for that reason.
+    // Queued input reaches the same WAT control procedure through slot 0's
+    // own message pump. (853cf729 queued these; 4de7c7cc dropped it for
+    // every mode.) Common MessageBox/file-dialog buttons stay on
+    // dialog_route_mouse even then: their API call is parked in the CACA0006
+    // modal pump, not a guest GetMessage loop, and shared modal state carries
+    // the shadow's completion back to the Worker that owns the parked call.
+    const commonModal = we.modal_dialog_hwnd &&
+      (we.modal_dialog_hwnd() >>> 0) === (win.hwnd >>> 0);
+    const workerQueued = !commonModal && this._inputWasmRunsInGuestWorker(wasm);
+    if (!nativeRegistered && !workerQueued && !(subclassedWat && !commonModal)) return false;
+    const relX = canvasX - deep.sx;
+    const relY = canvasY - deep.sy;
+    this.wasm = wasm;
+    this.wasmMemory = win.wasmMemory || this.wasmMemory;
+    this._dispatchMouseEvent(win, {
+      type: 'mouse',
+      hwnd: deep.hwnd,
+      msg,
+      wParam,
+      lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+    });
+    this._traceInput(`down ${canvasX},${canvasY} -> native child`
+      + ` 0x${(deep.hwnd >>> 0).toString(16)} of 0x${(win.hwnd >>> 0).toString(16)}`);
+    this._directMouseDown = {
+      win,
+      targetHwnd: deep.hwnd,
+      screenX: deep.sx,
+      screenY: deep.sy,
+    };
+    this._lastDeepChild = {
+      topHwnd: win.hwnd,
+      childHwnd: deep.hwnd,
+      sx: deep.sx,
+      sy: deep.sy,
+      wasm,
+    };
+    return true;
+  };
+
+  // Resolve a captured-mouse target (from SetCapture / $capture_hwnd) to the
+  // screen origin of the coordinate space its WM_MOUSEMOVE/WM_LBUTTONUP
+  // lParams should be relative to. Handles three cases:
+  //   1. Top-level window in this.windows → origin = client origin.
+  //   2. Renderer-known child (isChild) → origin = target client origin.
+  //   3. WAT-native child control (not in this.windows) → ask WAT for the
+  //      absolute child origin and top-level owner. Covers controls created
+  //      via DialogBoxParam/listbox thumb drag/etc.
+  // Returns { win, screenX, screenY, targetHwnd } or null.
+  P._resolveCaptureTarget = function(capHwnd, captureWasm) {
+    if (!capHwnd) return null;
+    const wasm = captureWasm || this.wasm;
+    const we = wasm && wasm.exports;
+    if (we && we.wnd_top_level && we.wnd_mouse_msg_origin_x && we.wnd_mouse_msg_origin_y) {
+      const topHwnd = we.wnd_top_level(capHwnd) >>> 0;
+      const top = topHwnd ? this.windows[topHwnd] : null;
+      if (top) {
+        const origin = {
+          x: we.wnd_mouse_msg_origin_x(capHwnd) | 0,
+          y: we.wnd_mouse_msg_origin_y(capHwnd) | 0,
+        };
+        return {
+          win: top,
+          screenX: origin.x,
+          screenY: origin.y,
+          targetHwnd: capHwnd,
+          wasm,
+        };
+      }
+    }
+    const direct = this.windows[capHwnd];
+    if (!direct) return null;
+    const origin = this._mouseMsgOriginScreen(capHwnd);
+    return { win: direct, screenX: origin.x, screenY: origin.y, targetHwnd: capHwnd, wasm };
+  };
+
+  P._dispatchMouseEvent = function(ownerWin, evt) {
+    this._activeInputEvent = null;
+    if (evt && evt.type === 'mouse') {
+      evt.mouseX = this._mouseX || 0;
+      evt.mouseY = this._mouseY || 0;
+      evt.mouseButtons = this._mouseButtonsMask || 0;
+    }
+    // Windows coalesces pending WM_MOUSEMOVE messages. Keeping every browser
+    // pointer sample is especially harmful to software-cursor games: while
+    // the guest is busy, it later consumes a long run of obsolete positions
+    // and can draw several cursor images during one visual update. Only
+    // replace an adjacent move for the same target and button state; clicks,
+    // target crossings, and drag-state transitions remain strict barriers.
+    const tail = this.inputQueue.length
+      ? this.inputQueue[this.inputQueue.length - 1]
+      : null;
+    // Stamped on the way in so takeInput can report how long the guest left
+    // it sitting there. That queue age is the share of pointer-to-paddle
+    // latency this emulator owns; the rest belongs to the display.
+    if (evt && evt.type === 'mouse' && evt.msg === 0x0200) evt.queuedAt = _perfNow();
+    if (evt && evt.type === 'mouse' && evt.msg === 0x0200 &&
+        tail && tail.type === 'mouse' && tail.msg === 0x0200 &&
+        tail.hwnd === evt.hwnd && tail.wParam === evt.wParam &&
+        tail.mouseButtons === evt.mouseButtons) {
+      this.inputQueue[this.inputQueue.length - 1] = evt;
+      _perfInputMove(true);
+    } else {
+      this.inputQueue.push(evt);
+      if (evt && evt.type === 'mouse' && evt.msg === 0x0200) _perfInputMove(false);
+    }
+    this._wakeMessageWait();
+    // The event is on the queue -- say so. This used to return a flat false,
+    // which quietly disabled the one caller that reads it: handleMouseDown
+    // records `_directMouseDown` (the target that owes a matching
+    // WM_LBUTTONUP) only `if (dispatchedDirect)`, so for guest-owned child
+    // controls that state was never set and handleMouseUp's delivery branch
+    // was unreachable. Those controls got every DOWN and never a single UP.
+    //
+    // A Win32 button only fires BN_CLICKED on the UP, so a single click on one
+    // did nothing at all; anything acting on the DOWN still worked, which is
+    // why this survived so long. Diablo's Choose Class is the visible case --
+    // clicking a class never completed, so the game never enabled its OK
+    // button (created WS_DISABLED), and OK stayed dead forever. Double-clicking
+    // a class worked, because WM_LBUTTONDBLCLK is acted on directly.
+    //
+    // Every other call site ignores the result.
+    return true;
+  };
+
+  // Win98 Paint updates its coordinate status pane for every pointer move,
+  // including moves over its floating tool/color palettes. Its MFC status
+  // control keeps guest layout state but paints through WAT, so explicitly
+  // refresh that tiny surface after the renderer updates the host mouse point.
+  // The paired MFC control IDs make this specific to Paint rather than adding
+  // redraw traffic to every application with a status bar.
+  P._refreshPaintStatusForPointer = function(ownerWin, exports) {
+    const e = exports || (ownerWin && ownerWin.wasm && ownerWin.wasm.exports) ||
+      (this.wasm && this.wasm.exports);
+    if (!ownerWin || !e || !e.wnd_next_child_slot || !e.wnd_slot_hwnd ||
+        !e.ctrl_get_id || !e.send_message) return false;
+    let frameHwnd = ownerWin.hwnd >>> 0;
+    if (e.wnd_get_owner) {
+      const owner = e.wnd_get_owner(frameHwnd) >>> 0;
+      if (owner) frameHwnd = owner;
+    }
+    const frameWin = this.windows && this.windows[frameHwnd];
+    const frameTitle = frameWin && typeof frameWin.title === 'string' ? frameWin.title : '';
+    if (frameTitle !== 'Paint' && !frameTitle.endsWith(' - Paint')) return false;
+    if (!this._paintStatusPointerCache) this._paintStatusPointerCache = new Map();
+    const cachedStatus = this._paintStatusPointerCache.get(frameHwnd) >>> 0;
+    if (cachedStatus && (e.ctrl_get_id(cachedStatus) | 0) === 0xE801) {
+      e.send_message(cachedStatus, 0x000F, 0, 0); // WM_PAINT
+      return true;
+    }
+    this._paintStatusPointerCache.delete(frameHwnd);
+    let viewHwnd = 0;
+    let statusHwnd = 0;
+    for (let slot = 0; slot >= 0;) {
+      slot = e.wnd_next_child_slot(frameHwnd, slot) | 0;
+      if (slot < 0) break;
+      const child = e.wnd_slot_hwnd(slot) >>> 0;
+      const id = e.ctrl_get_id(child) | 0;
+      if (id === 0xE900) viewHwnd = child;
+      if (id === 0xE801) statusHwnd = child;
+      if (viewHwnd && statusHwnd) break;
+      slot++;
+    }
+    if (!viewHwnd || !statusHwnd) return false;
+    this._paintStatusPointerCache.set(frameHwnd, statusHwnd);
+    e.send_message(statusHwnd, 0x000F, 0, 0); // WM_PAINT
+    return true;
+  };
+
+  P._scrollbarHitPartShared = function(wasm, longDim, coord, pos, min, max) {
+    const e = wasm && wasm.exports;
+    if (e && e.scrollbar_hit_part) {
+      return e.scrollbar_hit_part(longDim | 0, coord | 0, pos | 0, min | 0, max | 0) | 0;
+    }
+    // Mirrors $scrollbar_arrow_size: short bars split their length between the arrows.
+    const arrow = longDim > 36 ? 16 : (longDim > 4 ? (longDim - 4) >> 1 : 0);
+    if (arrow && coord < arrow) return 1;
+    if (arrow && coord >= longDim - arrow) return 2;
+    const range = (max | 0) - (min | 0);
+    if (range <= 0) return 0;
+    const trackLen = longDim - (arrow ? arrow * 2 : 4);
+    if (trackLen < 6) return 0; // no thumb (SCROLL_MIN_THUMB)
+    const thumbSize = Math.max(16, Math.min(trackLen, Math.floor(trackLen / (range + 1))));
+    const travel = trackLen - thumbSize;
+    const thumbPos = (arrow || 2) + (travel > 0 ? Math.floor(((pos - min) * travel) / range) : 0);
+    if (coord < thumbPos) return 3;
+    if (coord >= thumbPos + thumbSize) return 4;
+    return 5;
+  };
+
+  P._scrollbarDragPosShared = function(wasm, longDim, coord, anchorCoord, anchorPos, min, max) {
+    const e = wasm && wasm.exports;
+    if (e && e.scrollbar_drag_pos) {
+      return e.scrollbar_drag_pos(longDim | 0, coord | 0, anchorCoord | 0, anchorPos | 0, min | 0, max | 0) | 0;
+    }
+    const range = (max | 0) - (min | 0);
+    if (range <= 0) return min | 0;
+    // Mirrors $scrollbar_arrow_size: short bars split their length between the arrows.
+    const arrow = longDim > 36 ? 16 : (longDim > 4 ? (longDim - 4) >> 1 : 0);
+    const trackLen = longDim - (arrow ? arrow * 2 : 4);
+    if (trackLen <= 0) return anchorPos | 0;
+    const thumbSize = Math.max(16, Math.min(trackLen, Math.floor(trackLen / (range + 1))));
+    const travel = trackLen - thumbSize;
+    if (travel <= 0) return anchorPos | 0;
+    let next = (anchorPos | 0) + (((coord | 0) - (anchorCoord | 0)) * range / travel | 0);
+    if (next < min) next = min | 0;
+    if (next > max) next = max | 0;
+    return next | 0;
+  };
+
+  P._nativeVerticalScrollInfo = function(wasm, hwnd) {
+    const e = wasm && wasm.exports;
+    if (!e || !e.send_message) return null;
+    let pos = 0;
+    let lineCount = 0;
+    try {
+      pos = e.send_message(hwnd, 0x00CE, 0, 0) | 0;      // EM_GETFIRSTVISIBLELINE
+      lineCount = e.send_message(hwnd, 0x00BA, 0, 0) | 0; // EM_GETLINECOUNT
+    } catch (_) {
+      return null;
+    }
+    if (lineCount <= 1) return null;
+    return {
+      min: 0,
+      max: Math.max(0, pos | 0, (lineCount | 0) - 1),
+      pos: Math.max(0, pos | 0),
+      lineCount: lineCount | 0,
+    };
+  };
+
+  P._standardScrollInfo = function(wasm, hwnd, axis) {
+    const e = wasm && wasm.exports;
+    if (!e || !e.standard_scroll_pos || !e.standard_scroll_min ||
+        !e.standard_scroll_max || !e.standard_scroll_page) return null;
+    const bar = axis === 'v' ? 1 : 0;
+    const min = e.standard_scroll_min(hwnd, bar) | 0;
+    const rawMax = e.standard_scroll_max(hwnd, bar) | 0;
+    const page = e.standard_scroll_page(hwnd, bar) >>> 0;
+    const max = Math.max(min, rawMax - Math.max(0, page - 1));
+    return {
+      min,
+      max,
+      rawMax,
+      page,
+      pos: Math.max(min, Math.min(max, e.standard_scroll_pos(hwnd, bar) | 0)),
+      disabled: e.standard_scroll_arrows ? (e.standard_scroll_arrows(hwnd, bar) | 0) : 0,
+    };
+  };
+
+  P._standardScrollbarMetrics = function(longDim, info) {
+    // Mirrors $scrollbar_arrow_size: short bars split their length between the arrows.
+    const arrow = longDim > 36 ? 16 : (longDim > 4 ? (longDim - 4) >> 1 : 0);
+    const track = Math.max(0, (longDim | 0) - arrow * 2);
+    const total = Math.max(0, (info.rawMax | 0) - (info.min | 0) + 1);
+    let thumb = info.page && total
+      ? Math.floor(track * info.page / total)
+      : 16;
+    thumb = track < 6 ? 0 : Math.max(0, Math.min(track, Math.max(16, thumb)));
+    const range = Math.max(0, (info.max | 0) - (info.min | 0));
+    const travel = Math.max(0, track - thumb);
+    const thumbPos = arrow + (range && travel
+      ? Math.floor(((info.pos | 0) - (info.min | 0)) * travel / range)
+      : 0);
+    return { arrow, track, thumb, range, travel, thumbPos };
+  };
+
+  P._standardScrollbarHitPart = function(longDim, coord, info) {
+    const metrics = this._standardScrollbarMetrics(longDim, info);
+    if (metrics.arrow && coord < metrics.arrow) return (info.disabled & 1) ? 0 : 1;
+    if (metrics.arrow && coord >= longDim - metrics.arrow) return (info.disabled & 2) ? 0 : 2;
+    if (!metrics.thumb || !metrics.range) return 0;
+    if (coord < metrics.thumbPos) return 3;
+    if (coord >= metrics.thumbPos + metrics.thumb) return 4;
+    return 5;
+  };
+
+  P._standardScrollbarDragPos = function(drag, coord) {
+    const metrics = this._standardScrollbarMetrics(drag.longDim, drag.info);
+    if (!metrics.range || !metrics.travel) return drag.anchorPos | 0;
+    let next = (drag.anchorPos | 0) +
+      ((((coord | 0) - (drag.anchorCoord | 0)) * metrics.range / metrics.travel) | 0);
+    if (next < drag.info.min) next = drag.info.min | 0;
+    if (next > drag.info.max) next = drag.info.max | 0;
+    return next | 0;
+  };
+
+  P._sendNativeVerticalScroll = function(wasm, hwnd, code, pos) {
+    const e = wasm && wasm.exports;
+    if (!e || !e.send_message || !hwnd) return false;
+    const clampedPos = Math.max(0, pos | 0);
+    const wParam = ((code & 0xFFFF) | ((clampedPos & 0xFFFF) << 16)) >>> 0;
+    let before = 0;
+    try { before = e.send_message(hwnd, 0x00CE, 0, 0) | 0; } catch (_) {}
+    try {
+      e.send_message(hwnd, 0x0115, wParam, 0); // WM_VSCROLL
+    } catch (_) {
+      return false;
+    }
+    // Native RichEdit builds differ in how much standard-scrollbar plumbing
+    // reaches their wndproc in this environment. If a thumb message did not
+    // move the viewport, reuse the standard edit scroll primitive as a narrow
+    // fallback for the same requested position.
+    if ((code === 4 || code === 5) && clampedPos !== before) {
+      let after = before;
+      try { after = e.send_message(hwnd, 0x00CE, 0, 0) | 0; } catch (_) {}
+      if (after === before) {
+        try { e.send_message(hwnd, 0x00B6, 0, clampedPos - before); } catch (_) {} // EM_LINESCROLL
+      }
+    }
+    this.invalidate(hwnd);
+    const parentWin = this._findParentWindow(hwnd);
+    if (parentWin) this.invalidate(parentWin.hwnd);
+    this.scheduleRepaint();
+    return true;
+  };
+
+  P._sendStandardScroll = function(wasm, hwnd, axis, code, pos) {
+    const e = wasm && wasm.exports;
+    if (!e || !e.send_message || !hwnd) return false;
+    const clampedPos = Math.max(0, pos | 0);
+    const wParam = ((code & 0xFFFF) | ((clampedPos & 0xFFFF) << 16)) >>> 0;
+    e.send_message(hwnd, axis === 'v' ? 0x0115 : 0x0114, wParam, 0);
+    this.invalidate(hwnd);
+    const parentWin = this._findParentWindow(hwnd);
+    if (parentWin) this.invalidate(parentWin.hwnd);
+    this.scheduleRepaint();
+    return true;
+  };
+
+  P._nativeScrollbarHit = function(topWin, deep, canvasX, canvasY, ownerWasm) {
+    if (!topWin || !deep || !deep.hwnd || !ownerWasm) return null;
+    const e = ownerWasm.exports;
+    if (!e || !e.send_message || !e.wnd_screen_w || !e.wnd_screen_h) return null;
+    const hwnd = deep.hwnd | 0;
+    if (e.ctrl_get_class) {
+      const ctrlClass = e.ctrl_get_class(hwnd) | 0;
+      if (ctrlClass === 2 || ctrlClass === 7) return null; // WAT EDIT/SCROLLBAR own their routing.
+    }
+    const childWin = this.windows && this.windows[hwnd];
+    const className = String((childWin && childWin.className) || '').toLowerCase();
+    const style = e.wnd_get_style_export ? (e.wnd_get_style_export(hwnd) >>> 0) : ((childWin && childWin.style) >>> 0);
+    const looksRichEdit = className.indexOf('richedit') === 0;
+    const hasVScroll = !!(style & 0x00200000);
+    const hasHScroll = !!(style & 0x00100000);
+    if (!looksRichEdit && !hasVScroll && !hasHScroll) return null;
+    const sx = e.wnd_window_screen_x ? (e.wnd_window_screen_x(hwnd) | 0) : (deep.sx | 0);
+    const sy = e.wnd_window_screen_y ? (e.wnd_window_screen_y(hwnd) | 0) : (deep.sy | 0);
+    const w = e.wnd_screen_w(hwnd) | 0;
+    const h = e.wnd_screen_h(hwnd) | 0;
+    const bar = 16;
+    if (w <= bar || h <= bar) return null;
+    let axis = null;
+    let coord = 0;
+    let longDim = 0;
+    if (hasVScroll && canvasX >= sx + w - bar && canvasX < sx + w &&
+        canvasY >= sy && canvasY < sy + h - (hasHScroll ? bar : 0)) {
+      axis = 'v';
+      coord = (canvasY - sy) | 0;
+      longDim = h - (hasHScroll ? bar : 0);
+    } else if (hasHScroll && canvasY >= sy + h - bar && canvasY < sy + h &&
+               canvasX >= sx && canvasX < sx + w - (hasVScroll ? bar : 0)) {
+      axis = 'h';
+      coord = (canvasX - sx) | 0;
+      longDim = w - (hasVScroll ? bar : 0);
+    } else {
+      return null;
+    }
+    const standard = !looksRichEdit;
+    const info = standard
+      ? this._standardScrollInfo(ownerWasm, hwnd, axis)
+      : this._nativeVerticalScrollInfo(ownerWasm, hwnd);
+    if (!info) return null;
+    let disabledArrow = false;
+    if (standard && info.disabled) {
+      const metrics = this._standardScrollbarMetrics(longDim, info);
+      disabledArrow = !!(metrics.arrow &&
+        ((coord < metrics.arrow && (info.disabled & 1)) ||
+         (coord >= longDim - metrics.arrow && (info.disabled & 2))));
+    }
+    let part = standard
+      ? this._standardScrollbarHitPart(longDim, coord, info)
+      : this._scrollbarHitPartShared(ownerWasm, longDim, coord, info.pos, info.min, info.max);
+    if (part && e.standard_scroll_arrows) {
+      const disabled = e.standard_scroll_arrows(hwnd, axis === 'v' ? 1 : 0) | 0;
+      if ((part === 1 && (disabled & 1)) || (part === 2 && (disabled & 2))) {
+        disabledArrow = true;
+        part = 0;
+      }
+    }
+    if (!part && !disabledArrow) return null;
+    return { hwnd, wasm: ownerWasm, topWin, axis, sx, sy, w, h, longDim, coord, part, info, standard, disabledArrow };
+  };
+
+  P._handleNativeScrollbarDown = function(topWin, deep, canvasX, canvasY, ownerWasm,
+      hit = this._nativeScrollbarHit(topWin, deep, canvasX, canvasY, ownerWasm)) {
+    if (!hit) return false;
+    // Disabled non-client arrows still own their rectangles. Consume the
+    // click here so it cannot fall through as a client WM_LBUTTONDOWN.
+    if (hit.disabledArrow) return true;
+    this._setInputFocus(ownerWasm, hit.hwnd);
+    const code = hit.part === 1 ? 0 :
+      hit.part === 2 ? 1 :
+      hit.part === 3 ? 2 :
+      hit.part === 4 ? 3 : -1;
+    if (code >= 0) {
+      if (hit.standard) this._sendStandardScroll(ownerWasm, hit.hwnd, hit.axis, code, hit.info.pos);
+      else this._sendNativeVerticalScroll(ownerWasm, hit.hwnd, code, hit.info.pos);
+    }
+    this._nativeScrollbarDrag = {
+      hwnd: hit.hwnd,
+      wasm: ownerWasm,
+      topWin,
+      axis: hit.axis,
+      sx: hit.sx,
+      sy: hit.sy,
+      longDim: hit.longDim,
+      part: hit.part,
+      anchorCoord: hit.coord,
+      anchorPos: hit.info.pos,
+      min: hit.info.min,
+      max: hit.info.max,
+      info: hit.info,
+      lastPos: hit.info.pos,
+      standard: hit.standard,
+    };
+    return true;
+  };
+
+  P._handleNativeScrollbarMove = function(canvasX, canvasY) {
+    const drag = this._nativeScrollbarDrag;
+    if (!drag) return false;
+    if (drag.part === 5) {
+      const coord = drag.axis === 'v' ? ((canvasY - drag.sy) | 0) : ((canvasX - drag.sx) | 0);
+      const next = drag.standard
+        ? this._standardScrollbarDragPos(drag, coord)
+        : this._scrollbarDragPosShared(
+          drag.wasm,
+          drag.longDim,
+          coord,
+          drag.anchorCoord,
+          drag.anchorPos,
+          drag.min,
+          drag.max
+        );
+      if (next !== drag.lastPos) {
+        drag.lastPos = next;
+        if (drag.standard) this._sendStandardScroll(drag.wasm, drag.hwnd, drag.axis, 5, next);
+        else this._sendNativeVerticalScroll(drag.wasm, drag.hwnd, 5, next); // SB_THUMBTRACK
+      }
+    }
+    return true;
+  };
+
+  P._handleNativeScrollbarUp = function(canvasX, canvasY) {
+    const drag = this._nativeScrollbarDrag;
+    if (!drag) return false;
+    if (drag.part === 5) {
+      this._handleNativeScrollbarMove(canvasX, canvasY);
+      if (drag.standard) this._sendStandardScroll(drag.wasm, drag.hwnd, drag.axis, 4, drag.lastPos);
+      else this._sendNativeVerticalScroll(drag.wasm, drag.hwnd, 4, drag.lastPos); // SB_THUMBPOSITION
+    }
+    this._nativeScrollbarDrag = null;
+    if (drag.standard) this._sendStandardScroll(drag.wasm, drag.hwnd, drag.axis, 8, drag.lastPos);
+    else this._sendNativeVerticalScroll(drag.wasm, drag.hwnd, 8, drag.lastPos); // SB_ENDSCROLL
+    return true;
+  };
+
+
+  P._openMenuContext = function() {
+    const seen = new Set();
+    const wasms = [];
+    const add = (w) => {
+      if (w && !seen.has(w)) {
+        seen.add(w);
+        wasms.push(w);
+      }
+    };
+    add(this.mainWasm);
+    add(this.wasm);
+    for (const win of Object.values(this.windows || {})) add(win && win.wasm);
+    for (const wasm of wasms) {
+      const exports = wasm && wasm.exports;
+      if (!exports || !exports.menu_open_hwnd) continue;
+      const hwnd = exports.menu_open_hwnd() | 0;
+      if (hwnd) return { wasm, exports, hwnd };
+    }
+    return null;
+  };
+
+  // Should a touch at this point press the mouse the moment the finger lands,
+  // instead of waiting to see whether the gesture becomes a long-press right
+  // click?
+  //
+  // A tap on a plain window has to wait: the same stationary gesture is how a
+  // touchscreen asks for a right click, and delivering a left press first
+  // would make every long press a left click as well (reveal AND flag, on
+  // Minesweeper). A tap on a push button has nothing to wait for -- a button
+  // has no right-click meaning, and its entire job is to look pressed while
+  // the finger is on it. Calculator reads as broken without this: nothing
+  // moves until the finger comes off.
+  //
+  // Only WAT-owned controls, whose pressed state we paint ourselves: a
+  // registered x86 control can do anything on WM_LBUTTONDOWN, including open
+  // a context menu of its own.
+  P.touchWantsImmediatePress = function(canvasX, canvasY) {
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return false;
+    // Open menus own the next click (including outside-click dismissal).
+    if (this._openMenuContext()) return true;
+    const win = this._inputWindowAtPoint(mapped.x, mapped.y);
+    if (!win) return false;
+    if (this._hasMenuBar(win)) {
+      this._ensureWatMenu(win);
+      const bar = this._menuBarPos(win);
+      if (bar && mapped.x >= bar.barX && mapped.y >= bar.barY &&
+          mapped.y < bar.barY + bar.barH) return true;
+    }
+    const we = (win.wasm || this.wasm) && (win.wasm || this.wasm).exports;
+    if (!we || !we.ctrl_get_class || !we.wnd_get_proc_export) return false;
+    const deep = this._hitTestDeepChild(win, mapped.x, mapped.y);
+    if (!deep) return false;
+    if (this._isMouseInputDisabled(deep.hwnd, win.wasm || this.wasm)) return false;
+    // WAT procs live in the 0xFFFFxxxx marker range; anything lower is the
+    // guest's own code and is not ours to press early.
+    if ((we.wnd_get_proc_export(deep.hwnd) >>> 0) < 0xFFFF0000) return false;
+    switch (we.ctrl_get_class(deep.hwnd) | 0) {
+      case 1:   // Button, including checkboxes and radios
+      case 7:   // ScrollBar
+      case 17:  // ProgressBar -- inert, but never a context menu
+      case 19:  // TrackBar
+      case 21:  // Toolbar
+        return true;
+      default:
+        return false;
+    }
+  };
+
+  P.handleMouseDown = function(canvasX, canvasY, button, opts) {
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return;
+    canvasX = mapped.x;
+    canvasY = mapped.y;
+    const clipped = this._applyCursorClip(canvasX, canvasY);
+    canvasX = clipped.x;
+    canvasY = clipped.y;
+    const forceDoubleClick = !!(opts && opts.doubleClick);
+    const buttonMask = this._mouseMaskForButton(button);
+    const ctrlDown = !!((opts && opts.ctrlKey) || this._ctrlDown);
+    const shiftDown = !!((opts && opts.shiftKey) || this._shiftDown);
+    const mouseWParam = buttonMask | (shiftDown ? 0x0004 : 0) | (ctrlDown ? 0x0008 : 0);
+    const inputWin = this._inputWindowAtPoint(canvasX, canvasY);
+    const inputWasm = (inputWin && inputWin.wasm) || this.wasm;
+    const inputMemory = (inputWin && inputWin.wasmMemory) || this.wasmMemory;
+    this._pointerInputWasm = inputWasm;
+    this._pointerInputMemory = inputMemory;
+    const buttonsBefore = this._mouseButtonsMask || 0;
+    this._mouseButtonsMask = (this._mouseButtonsMask || 0) | buttonMask;
+    if (!(buttonsBefore & buttonMask)) {
+      this._queueDirectInputMouseButton(inputMemory, buttonMask, true);
+    }
+    this._signalDirectInputDevice(2);
+    if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+    if (buttonMask & 0x0001) this._asyncPressedKeys[0x01] = true;
+    if (buttonMask & 0x0002) this._asyncPressedKeys[0x02] = true;
+    this._setMousePoint(canvasX, canvasY);
+    // Modal dialog: block input to other windows
+    const modalHwnd = this._modalDialogHwnd(inputWasm);
+    const modal = modalHwnd ? this.windows[modalHwnd] : null;
+    if (modalHwnd) {
+      // Only allow clicks within the modal
+      const modalWasm = (modal && modal.wasm) || this.wasm;
+      const modalExports = modalWasm && modalWasm.exports;
+      const mx = modalExports && modalExports.wnd_window_screen_x ? (modalExports.wnd_window_screen_x(modalHwnd) | 0) : (modal ? modal.x : 0);
+      const my = modalExports && modalExports.wnd_window_screen_y ? (modalExports.wnd_window_screen_y(modalHwnd) | 0) : (modal ? modal.y : 0);
+      const mw = modalExports && modalExports.wnd_screen_w ? (modalExports.wnd_screen_w(modalHwnd) | 0) : (modal ? modal.w : 0);
+      const mh = modalExports && modalExports.wnd_screen_h ? (modalExports.wnd_screen_h(modalHwnd) | 0) : (modal ? modal.h : 0);
+      if (canvasX < mx || canvasX >= mx + mw ||
+          canvasY < my || canvasY >= my + mh) {
+        return; // block
+      }
+      if (button !== 2 && this._queueNativeDialogChildMouseDown(
+          modal, canvasX, canvasY, forceDoubleClick ? 0x0203 : 0x0201, mouseWParam)) {
+        return;
+      }
+      if (button !== 2 && modalExports && (modalExports.dialog_route_mouse_screen || modalExports.dialog_route_mouse)) {
+        const msg = forceDoubleClick ? 0x0203 : 0x0201;
+        const routed = modalExports.dialog_route_mouse_screen
+          ? (modalExports.dialog_route_mouse_screen(modalHwnd, msg, mouseWParam, canvasX, canvasY) | 0)
+          : (() => {
+              const ox = modalExports.wnd_client_screen_x ? (modalExports.wnd_client_screen_x(modalHwnd) | 0) : (modal ? modal.clientRect.x : 0);
+              const oy = modalExports.wnd_client_screen_y ? (modalExports.wnd_client_screen_y(modalHwnd) | 0) : (modal ? modal.clientRect.y : 0);
+              const lp = (((canvasX - ox) & 0xFFFF) | (((canvasY - oy) & 0xFFFF) << 16)) >>> 0;
+              return modalExports.dialog_route_mouse(modalHwnd, msg, mouseWParam, lp) | 0;
+            })();
+        if (routed) {
+          this.wasm = modalWasm;
+          this.wasmMemory = modal.wasmMemory || this.wasmMemory;
+          this._wakeMessageWait();
+          this._dialogBtnDrag = { parent: modalHwnd, clientX: 0, clientY: 0, wasm: modalWasm };
+          this.scheduleRepaint();
+          this.repaint();
+          return;
+        }
+      }
+    }
+
+    // Menu tracking is WAT-side. JS only forwards the screen point.
+    {
+      const menu = this._openMenuContext();
+      if (menu) {
+        const we = menu.exports;
+        let handled = 0;
+        if (we.menu_handle_mouse_open) handled = we.menu_handle_mouse_open(canvasX, canvasY) | 0;
+        // Activation posts WM_COMMAND to the shared owning-thread queue. A
+        // Worker guest may be parked in GetMessage with the browser input
+        // queue empty, so explicitly request a slice to consume that command.
+        if (handled) this._wakeMessageWait(true);
+        if (handled && we.get_capture_hwnd && we.get_capture_hwnd() !== 0 && we.release_capture) {
+          we.release_capture();
+        }
+        this._menuMouseCapture = true;
+        this.repaint();
+        return;
+      }
+    }
+
+    // Direct WAT child hit-test for the modeless Find dialog. Its frame is a
+    // top-level browser canvas, but all child controls live only in WAT.
+    {
+      const findWindows = Object.values(this.windows)
+        .filter(w => w && w.visible && w.isFindDialog &&
+          canvasX >= w.x && canvasX < w.x + w.w &&
+          canvasY >= w.y && canvasY < w.y + w.h)
+        .sort((a, b) => (b.zOrder || 0) - (a.zOrder || 0));
+      const fallbackWasm = this.wasm;
+      if (!findWindows.length && fallbackWasm && fallbackWasm.exports && fallbackWasm.exports.get_findreplace_dlg) {
+        const dlg = fallbackWasm.exports.get_findreplace_dlg() | 0;
+        if (dlg) findWindows.push({ hwnd: dlg, wasm: fallbackWasm });
+      }
+      for (const findWin of findWindows) {
+        const wasm = findWin.wasm || fallbackWasm;
+        const we = wasm && wasm.exports;
+        const dlg = findWin.hwnd | 0;
+        if (!dlg || button === 2 || !we || !we.wnd_next_child_slot || !we.wnd_slot_hwnd ||
+            !we.wnd_window_screen_x || !we.wnd_window_screen_y || !we.wnd_screen_w || !we.wnd_screen_h ||
+            !we.send_message) continue;
+        let slot = 0;
+        while ((slot = we.wnd_next_child_slot(dlg, slot)) !== -1) {
+          const ch = we.wnd_slot_hwnd(slot) | 0;
+          slot++;
+          if (!ch) continue;
+          const x = we.wnd_window_screen_x(ch) | 0;
+          const y = we.wnd_window_screen_y(ch) | 0;
+          const w = we.wnd_screen_w(ch) | 0;
+          const h = we.wnd_screen_h(ch) | 0;
+          if (canvasX < x || canvasX >= x + w || canvasY < y || canvasY >= y + h) continue;
+          const style = we.wnd_get_style_export ? (we.wnd_get_style_export(ch) >>> 0) : 0;
+          if ((style & 0x0F) === 7) continue; // BS_GROUPBOX is a visual frame, not the click target.
+          const msg = forceDoubleClick ? 0x0203 : 0x0201;
+          const lp = (((canvasY - y) & 0xFFFF) << 16) | ((canvasX - x) & 0xFFFF);
+          we.send_message(ch, msg, mouseWParam, lp);
+          this._dialogBtnDrag = { target: ch, sx: x, sy: y, wasm };
+          this.scheduleRepaint();
+          this.repaint();
+          return;
+        }
+      }
+    }
+
+    // Find which window was clicked. Embedded wizard pages are separate
+    // dialog windows inside the outer frame; when dialogs overlap at the
+    // pointer, prefer the innermost/smaller dialog so child controls receive
+    // mouse input instead of the frame swallowing it.
+    const sortedWins = Object.values(this.windows)
+      .filter(w => w.visible && (!w.isChild || w.isFindDialog || w.isAboutDialog || w.isDialog))
+      .filter(w => {
+        const r = this._windowRectScreen(w);
+        return canvasX >= r.x && canvasX < r.x + r.w &&
+               canvasY >= r.y && canvasY < r.y + r.h;
+      })
+      .sort((a, b) => {
+        // Progman remains the desktop hit plane even if a guest foreground
+        // call gave it a numerically newer z-order. Otherwise its fullscreen
+        // ListView intercepts clicks visibly aimed at the stock taskbar.
+        const aDesktop = this._isWindowClass(a, 'progman');
+        const bDesktop = this._isWindowClass(b, 'progman');
+        if (aDesktop !== bDesktop) return aDesktop ? 1 : -1;
+        // Keep the inner-dialog preference local to one emulator instance.
+        // Cross-app overlap follows the renderer's global z-order.
+        if (a.wasm !== b.wasm) return (b.zOrder || 0) - (a.zOrder || 0);
+        // Embedded pages belong to their top-level surface. A small child
+        // dialog behind an owned popup must not win by area (InstallShield's
+        // progress dialog otherwise steals Select Components' Next click).
+        // Ownership is not parentage: wnd_top_level only climbs WS_CHILD.
+        const aTop = this._findTopWindow(a.hwnd) || a;
+        const bTop = this._findTopWindow(b.hwnd) || b;
+        if (aTop !== bTop) return this._compareTopLevelZ(bTop, aTop);
+        // An owned popup that really is above the other window wins outright.
+        // A combobox dropdown is a WS_POPUP owned by the combo and is not a
+        // dialog, so the inner-dialog preference below used to hand every
+        // click over its open list to the dialog underneath -- the list
+        // dismissed and nothing was ever picked. Pinball's Player Controls is
+        // the visible case: clicking a key in the Left Flipper list fell
+        // through to whichever combo sat beneath the popup and opened THAT.
+        const aPopup = !!(a.ownerHwnd && !a.isDialog && !a.isChild);
+        const bPopup = !!(b.ownerHwnd && !b.isDialog && !b.isChild);
+        if (aPopup !== bPopup) {
+          const az = a.zOrder || 0, bz = b.zOrder || 0;
+          if (aPopup && az > bz) return -1;
+          if (bPopup && bz > az) return 1;
+        }
+        const ad = !!(a.isFindDialog || a.isAboutDialog || a.isDialog);
+        const bd = !!(b.isFindDialog || b.isAboutDialog || b.isDialog);
+        if (ad !== bd) return ad ? -1 : 1;
+        if (ad && bd) return (a.w * a.h) - (b.w * b.h) || ((b.zOrder || 0) - (a.zOrder || 0));
+        return (b.zOrder || 0) - (a.zOrder || 0);
+      });
+    if (this.onInputTrace) {
+      this._traceInput(`down ${canvasX},${canvasY} candidates: ` + (sortedWins.length
+        ? sortedWins.map(w => {
+            const r = this._windowRectScreen(w);
+            return `0x${(w.hwnd >>> 0).toString(16)}@${r.x},${r.y} ${r.w}x${r.h}`
+              + `${w.isDialog ? ' dlg' : ''}`;
+          }).join(' ')
+        : '(none — the click will be dropped)'));
+    }
+    for (const win of sortedWins) {
+      // A disabled frame rejects the press before any activation effects.
+      // Checking only at client dispatch is too late: it has already stolen
+      // z-order and keyboard ownership, including from another app instance.
+      if (this._isMouseInputDisabled(win.hwnd, win.wasm || this.wasm)) return;
+      // Only the synchronous native/non-client paths below use this legacy
+      // preparation. A queued client press must first pass USER's
+      // WM_MOUSEACTIVATE transaction; hit testing is not permission to raise
+      // its surface, replace keyboard ownership, or notify guest focus.
+      let directInputPrepared = false;
+      const prepareDirectInput = () => {
+        if (directInputPrepared) return;
+        directInputPrepared = true;
+        this._raiseWindowGroup(win);
+        this._setKeyboardInputOwner(win);
+        this.scheduleRepaint();
+        // Keep the existing synchronous routes' focus transfer here while
+        // they await migration to USER activation. Dialog control routing
+        // already owns its own focus transfer.
+        if (!win.isFindDialog && !win.isAboutDialog && !win.isDialog) {
+          const w = win.wasm || this.wasm;
+          const we = w && w.exports;
+          const deepFocusTarget = button !== 2 ? this._hitTestDeepChild(win, canvasX, canvasY) : null;
+          const currentFocus = (we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0;
+          const targetFocus = deepFocusTarget
+            ? (this._isMouseInputDisabled(deepFocusTarget.hwnd, w) ? currentFocus : 0)
+            : (win.hwnd | 0);
+          if (we && currentFocus !== targetFocus) this._setInputFocus(w, targetFocus);
+        }
+      };
+
+      // Modal dialogs have WAT-native child controls, but their frame is
+      // renderer-known. Keep non-client dialog clicks out of the generic
+      // guest mouse route; that path can re-enter app code that expects a
+      // client message.
+      if (win.isDialog && !win.isAboutDialog && (win.ownerHwnd || win.parentHwnd) && button !== 2) {
+        const r = this._windowRectScreen(win);
+        if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+        const client = win.clientRect || {
+          x: r.x + 3,
+          y: r.y + 23,
+          w: Math.max(0, r.w - 6),
+          h: Math.max(0, r.h - 26),
+        };
+        const inClient = canvasX >= client.x && canvasX < client.x + client.w &&
+                         canvasY >= client.y && canvasY < client.y + client.h;
+        if (!inClient) {
+          prepareDirectInput();
+          // A menu bar is non-client area in its own right. Without this the
+          // whole NC click is dropped here and the generic menu check further
+          // down never runs for a dialog that has a parent — which is exactly
+          // where Moraff's Jiggler hangs its game menu (a borderless WS_POPUP
+          // dialog reparented onto the game window).
+          if (this._hasMenuBar(win)) {
+            if (typeof this._ensureWatMenu === 'function') this._ensureWatMenu(win);
+            const mw = win.wasm || this.wasm;
+            const mwe = mw && mw.exports;
+            const opened = (mwe && mwe.menu_handle_bar_click)
+              ? (mwe.menu_handle_bar_click(win.hwnd, canvasX, canvasY) | 0) : 0;
+            this._traceInput(`down ${canvasX},${canvasY} nc menu bar on `
+              + `0x${(win.hwnd >>> 0).toString(16)} took=${opened}`);
+            if (opened) {
+              this._menuMouseCapture = true;
+              this.repaint();
+              return;
+            }
+          }
+          const w = win.wasm || this.wasm;
+          const we = w && w.exports;
+          const hit = (we && we.hittest_sync) ? (we.hittest_sync(win.hwnd, canvasX, canvasY) | 0) : 0;
+          if (hit === 2) {
+            this._beginWindowDrag(win, canvasX, canvasY);
+            return;
+          }
+          const inClose =
+            canvasX >= r.x + r.w - 24 && canvasX < r.x + r.w - 3 &&
+            canvasY >= r.y + 3 && canvasY < r.y + 23;
+          if (hit === 20 || inClose) {
+            this._closeWatDialogFrame(win.hwnd, w);
+          }
+          if (win.isChild && win.parentHwnd) continue;
+          return;
+        }
+      }
+
+      const appDrawnChrome = !!win.region;
+
+      // Title-bar button clicks. WAT owns hit-test, pressed visual state,
+      // cancel-on-release-outside, and eventual WM_NCLBUTTONDOWN posting.
+      if (!appDrawnChrome && this._hasCaption(win)) {
+        const w = win.wasm || this.wasm;
+        const we = w && w.exports;
+        const hit = (we && we.nc_sysbutton_down)
+          ? (we.nc_sysbutton_down(win.hwnd, canvasX, canvasY) | 0)
+          : 0;
+        if (hit) {
+          prepareDirectInput();
+          this._sysBtnDrag = { hwnd: win.hwnd, wasm: w };
+          this.repaint();
+          return;
+        }
+      }
+
+      // Resize-edge drag. WAT's $defwndproc_do_nchittest returns HT codes
+      // 10..17 (LEFT/RIGHT/TOP/BOTTOM + corners) only for windows with
+      // WS_THICKFRAME, so the style gate lives on the guest side.
+      {
+        const w = win.wasm || this.wasm;
+        const we = w && w.exports;
+        const hit = (!appDrawnChrome && we && we.hittest_sync) ? (we.hittest_sync(win.hwnd, canvasX, canvasY) | 0) : 0;
+        if (hit >= 10 && hit <= 17) {
+          prepareDirectInput();
+          this._syncResizeCursor(hit);
+          this._resizingWin = {
+            hwnd: win.hwnd, win, hit, wasm: w,
+            startX: canvasX, startY: canvasY,
+            origX: win.x, origY: win.y, origW: win.w, origH: win.h,
+          };
+          return;
+        }
+      }
+
+      // Title bar drag to move window
+      if (!appDrawnChrome && (this._hasCaption(win) || win.hasCaption)) {
+        const w = win.wasm || this.wasm;
+        const we = w && w.exports;
+        const hit = (we && we.hittest_sync) ? (we.hittest_sync(win.hwnd, canvasX, canvasY) | 0) : 0;
+        if (hit === 2) {
+          prepareDirectInput();
+          this._beginWindowDrag(win, canvasX, canvasY);
+          return;
+        }
+      }
+
+      // Check menu bar clicks. Ask WAT even when the bar has not painted yet;
+      // early headless snapshots can have a pending menu blob before chrome
+      // pixels are visible.
+      // `_menuId` is only the JS-side mirror: a window whose menu was installed
+      // by the guest's own SetMenu before the renderer had a record for it
+      // never gets one, so ask _hasMenuBar (which consults the WAT blob) the
+      // same way the paint path does. Moraff's Jiggler is that case — its
+      // whole game menu hangs off a borderless WS_POPUP dialog, and gating on
+      // the mirror left the painted bar unclickable.
+      if (!appDrawnChrome && this._hasMenuBar(win)) {
+        if (typeof this._ensureWatMenu === 'function') this._ensureWatMenu(win);
+        const w = win.wasm || this.wasm;
+        const we = w && w.exports;
+        if (we && we.menu_handle_bar_click) {
+          const opened = we.menu_handle_bar_click(win.hwnd, canvasX, canvasY) | 0;
+          if (opened) {
+            prepareDirectInput();
+            this._menuMouseCapture = true;
+            this.repaint();
+            return;
+          }
+        }
+      }
+
+      if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+      const clientOrigin = this._mouseMsgOriginScreen(win.hwnd);
+      const clientX = clientOrigin.x;
+      const clientY = clientOrigin.y;
+
+      // WAT-managed dialogs: route the click into WAT, which hit-tests
+      // CONTROL_GEOM children and dispatches WM_LBUTTONDOWN/UP to the
+      // matching button / edit / listbox / colorgrid. Group-boxes are
+      // filtered out WAT-side. Covers FindReplace, About, and
+      // DialogBoxParamA/CreateDialogParamA dialogs.
+      const isWatDialog = !!(win.isFindDialog || win.isAboutDialog || win.isDialog);
+      if (button !== 2 && isWatDialog) {
+        const dialogWasm = win.wasm || this.wasm;
+        const we = dialogWasm && dialogWasm.exports;
+        if (this._queueNativeDialogChildMouseDown(
+            win, canvasX, canvasY, forceDoubleClick ? 0x0203 : 0x0201, mouseWParam)) {
+          return;
+        }
+          if (we && (we.dialog_route_mouse_screen || we.dialog_route_mouse)) {
+            prepareDirectInput();
+            let routeWin = this._dialogMouseRouteRoot(win);
+            let routeHwnd = routeWin.hwnd;
+            if (routeWin && typeof this._computeClientRect === 'function') this._computeClientRect(routeWin);
+          const routeOrigin = routeWin && routeWin.isPopup
+            ? this._windowOriginScreen(routeHwnd)
+            : this._clientOriginScreen(routeHwnd);
+          const routeClientX = routeOrigin.x;
+          const routeClientY = routeOrigin.y;
+          const lx = canvasX - routeClientX;
+          const ly = canvasY - routeClientY;
+          const lParam = ((lx & 0xFFFF) | ((ly & 0xFFFF) << 16)) >>> 0;
+          // Auto-detect double-click: a second LBUTTONDOWN within 500ms
+          // and 4px of the same dialog becomes WM_LBUTTONDBLCLK so the
+          // edit's word-select handler fires. Same window matches real
+          // Win32 behavior (no CS_DBLCLKS check — we always fold).
+          const msg = forceDoubleClick ? 0x0203 : 0x0201; // WM_LBUTTONDBLCLK / WM_LBUTTONDOWN
+          // Send the down (or dblclk) now; defer WM_LBUTTONUP to
+          // handleMouseUp so the user actually sees the button's pressed
+          // state while held. (button_wndproc sets the pressed flag on
+          // DOWN and clears it on UP; if both fire in the same tick, the
+          // pressed visual is never composited.) Cache (parent, lParam)
+          // so mouseup can route UP to the same child via
+          // dialog_route_mouse.
+          let routed = we.dialog_route_mouse_screen
+            ? (we.dialog_route_mouse_screen(routeHwnd, msg, mouseWParam, canvasX, canvasY) | 0)
+            : (we.dialog_route_mouse(routeHwnd, msg, mouseWParam, lParam) | 0);
+          let routedLParam = lParam;
+          let routedClientX = routeClientX;
+          let routedClientY = routeClientY;
+          if (!routed && routeWin && routeWin.isChild && we.dialog_ancestor) {
+            const parentHwnd = we.dialog_ancestor(routeHwnd) | 0;
+            if (parentHwnd && parentHwnd !== routeHwnd) {
+              const parentOrigin = {
+                x: we.wnd_mouse_msg_origin_x ? (we.wnd_mouse_msg_origin_x(parentHwnd) | 0) : this._clientOriginScreen(parentHwnd).x,
+                y: we.wnd_mouse_msg_origin_y ? (we.wnd_mouse_msg_origin_y(parentHwnd) | 0) : this._clientOriginScreen(parentHwnd).y,
+              };
+              const parentLx = canvasX - parentOrigin.x;
+              const parentLy = canvasY - parentOrigin.y;
+              const parentLParam = ((parentLx & 0xFFFF) | ((parentLy & 0xFFFF) << 16)) >>> 0;
+              const ok = we.dialog_route_mouse_screen
+                ? we.dialog_route_mouse_screen(parentHwnd, msg, mouseWParam, canvasX, canvasY)
+                : we.dialog_route_mouse(parentHwnd, msg, mouseWParam, parentLParam);
+              if (ok) {
+                routed = 1;
+                routeHwnd = parentHwnd;
+                routedLParam = parentLParam;
+                routedClientX = parentOrigin.x;
+                routedClientY = parentOrigin.y;
+              }
+            }
+          }
+          if (routed) {
+            this.wasm = dialogWasm;
+            this.wasmMemory = win.wasmMemory || this.wasmMemory;
+            this._wakeMessageWait();
+            this._dialogBtnDrag = {
+              parent: routeHwnd,
+              clientX: routedClientX,
+              clientY: routedClientY,
+              wasm: dialogWasm,
+            };
+            this.scheduleRepaint();
+            this.repaint();
+            return;
+          }
+        }
+        // No control claimed the press: the point is on the dialog's own
+        // client area or on a click-transparent child (a STATIC without
+        // SS_NOTIFY answers WM_NCHITTEST with HTTRANSPARENT). Win98 then
+        // delivers WM_LBUTTONDOWN to the dialog itself, and the generic client
+        // route below does exactly that. Returning here dropped the down while
+        // the move and the up still arrived, so a launcher that hit-tests its
+        // own bitmap buttons on the dialog (Morrowind's) never saw a press.
+      }
+
+      if (canvasX >= win.x && canvasX < win.x + win.w &&
+          canvasY >= win.y && canvasY < win.y + win.h) {
+        const snapped = this._applyPointerInputHooks(win, canvasX, canvasY, button);
+        if (snapped.snapped) {
+          canvasX = snapped.x;
+          canvasY = snapped.y;
+          this._setMousePoint(canvasX, canvasY);
+        }
+        // WindowFromPoint: if a child of this top-level contains the click,
+        // deliver to the child with child-local lParam (MDI document etc.).
+        let deep = this._hitTestDeepChild(win, canvasX, canvasY);
+        const ownerWasm = (win && win.wasm) || this.wasm;
+        // Disabled child windows do not participate in mouse input. Dialog
+        // controls already pass through dialog_route_mouse, which enforces
+        // WS_DISABLED, but ordinary child buttons take this direct path.
+        // Dr. Black Jack creates its action row on a normal top-level window;
+        // without this gate its grey Split button still depressed and posted
+        // WM_COMMAND before the first deal.
+        //
+        // The disabled child gets nothing -- but the *event* is not dropped.
+        // WindowFromPoint treats a disabled child as transparent and returns
+        // the window behind it, so USER delivers the click to the parent. An
+        // app can therefore owner-draw a control, mark it WS_DISABLED to keep
+        // USER's hands off it, and still act on the click from its own
+        // wndproc. Storm does exactly that for Diablo's OK and Cancel: both are
+        // created WS_DISABLED|BS_OWNERDRAW, and the game hit-tests them against
+        // the cursor position it polls every frame. Returning here instead left
+        // those buttons unclickable forever -- OK on Choose Class could not be
+        // pressed by any means.
+        if (deep && this._isMouseInputDisabled(deep.hwnd, ownerWasm)) {
+          this._lastDeepChild = null;
+          deep = null;
+        }
+        const targetHwnd = deep ? deep.hwnd : win.hwnd;
+        const relX = deep ? (canvasX - deep.sx) : (canvasX - clientX);
+        const relY = deep ? (canvasY - deep.sy) : (canvasY - clientY);
+        // A disabled top-level owner really does swallow input: there is no
+        // window behind it to fall through to.
+        if (this._isMouseInputDisabled(targetHwnd, ownerWasm)) {
+          this._lastDeepChild = null;
+          return;
+        }
+        let msg = button === 2 ? 0x0204 : 0x0201; // WM_RBUTTONDOWN / WM_LBUTTONDOWN
+        if (button !== 2) {
+          if (forceDoubleClick) msg = 0x0203; // WM_LBUTTONDBLCLK
+        }
+        {
+          const we = ownerWasm && ownerWasm.exports;
+          const deepClass = deep && we && we.ctrl_get_class
+            ? (we.ctrl_get_class(deep.hwnd) | 0)
+            : 0;
+          const deepWin = deep && this.windows ? this.windows[deep.hwnd] : null;
+          const deepIsThunderButton = !!(deep && deepClass === 1 && deepWin &&
+            String(deepWin.className || '').toLowerCase() === 'thundercommandbutton');
+          // VB1's ThunderCommandButton keeps its guest wndproc for VB object
+          // bookkeeping, but its standard push-button behavior lives in the
+          // native control shadow. Route rendered mouse input to that shadow;
+          // button_wndproc posts BN_CLICKED back to the Thunder form.
+          if (button !== 2 && deepIsThunderButton &&
+              we && we.control_wndproc_dispatch) {
+            prepareDirectInput();
+            const routedLParam = ((relX & 0xFFFF) | ((relY & 0xFFFF) << 16)) >>> 0;
+            this._setInputFocus(ownerWasm, targetHwnd | 0);
+            we.control_wndproc_dispatch(targetHwnd, msg, mouseWParam, routedLParam);
+            this._wakeMessageWait();
+            this._dialogBtnDrag = {
+              target: targetHwnd,
+              sx: deep.sx,
+              sy: deep.sy,
+              wasm: ownerWasm,
+              directControl: true,
+            };
+            this.scheduleRepaint();
+            this.repaint();
+            return;
+          }
+          // A combobox is opened by its own wndproc, and this router is what
+          // reaches it: it converts the screen point into the parent's client
+          // space and hands the message to the child there. Inside a dialog
+          // that already happens. On a toolbar -- WordPad's font and size
+          // combos -- nothing routed the click at all, so the list never
+          // dropped. Route on what the control is, not on what its parent is.
+          const deepIsCombo = !!(deep && deepClass === 5);
+          if (button !== 2 && (isWatDialog || deepIsCombo) && deep && we &&
+              (we.dialog_route_mouse_screen || we.dialog_route_mouse)) {
+            prepareDirectInput();
+            // The router hit-tests inside a container, so it takes the parent.
+            // A dialog target already is one; a combobox is a control, and
+            // handing it its own hwnd finds no child to route to.
+            const routeTarget = deepIsCombo && we.wnd_get_parent
+              ? ((we.wnd_get_parent(deep.hwnd) >>> 0) || targetHwnd)
+              : targetHwnd;
+            const routeOrigin = this._clientOriginScreen(routeTarget);
+            const routedLParam = (((canvasX - routeOrigin.x) & 0xFFFF) |
+              (((canvasY - routeOrigin.y) & 0xFFFF) << 16)) >>> 0;
+            const ok = we.dialog_route_mouse_screen
+              ? we.dialog_route_mouse_screen(routeTarget, msg, mouseWParam, canvasX, canvasY)
+              : we.dialog_route_mouse(routeTarget, msg, mouseWParam, routedLParam);
+            if (ok) {
+              this._wakeMessageWait();
+              // A later run slice may switch this.wasm to another app. The
+              // release belongs to this same instance and routing container.
+              this._dialogBtnDrag = { parent: routeTarget,
+                clientX: routeOrigin.x, clientY: routeOrigin.y, wasm: ownerWasm };
+              this.scheduleRepaint();
+              this.repaint();
+              return;
+            }
+          }
+        }
+        const scrollbarHit = button !== 2 && deep &&
+          this._nativeScrollbarHit(win, deep, canvasX, canvasY, ownerWasm);
+        if (scrollbarHit) {
+          prepareDirectInput();
+          this._handleNativeScrollbarDown(win, deep, canvasX, canvasY, ownerWasm, scrollbarHit);
+          this._lastDeepChild = null;
+          this.scheduleRepaint();
+          this.repaint();
+          return;
+        }
+        // User32 sends WM_NCHITTEST before the button message, even for an
+        // already-known top-level window.  hittest_sync above classifies the
+        // point for the host, but it intentionally runs DefWindowProc only;
+        // applications still need their own wndproc side effects.  MCM, for
+        // example, arms its owner-drawn OK button from WM_NCHITTEST and will
+        // ignore the following WM_LBUTTONDOWN if this message is absent.
+        const screenLParam = (((canvasY & 0xFFFF) << 16) | (canvasX & 0xFFFF)) >>> 0;
+        this._dispatchMouseEvent(win, {
+          type: 'mouse',
+          hwnd: targetHwnd,
+          msg: 0x0084,
+          wParam: 0,
+          lParam: screenLParam,
+        });
+        const dispatchedDirect = this._dispatchMouseEvent(win, {
+          type: 'mouse',
+          hwnd: targetHwnd,
+          msg,
+          wParam: mouseWParam,
+          lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+        });
+        this._traceInput(`down ${canvasX},${canvasY} -> child 0x${(targetHwnd >>> 0).toString(16)}`
+          + ` of 0x${(win.hwnd >>> 0).toString(16)} dispatched=${dispatchedDirect ? 1 : 0}`);
+        if (dispatchedDirect) {
+          this._directMouseDown = { win, targetHwnd, screenX: deep ? deep.sx : clientX, screenY: deep ? deep.sy : clientY };
+        }
+        this._lastDeepChild = deep
+          ? { topHwnd: win.hwnd, childHwnd: deep.hwnd, sx: deep.sx, sy: deep.sy, wasm: ownerWasm }
+          : null;
+        return;
+      }
+    }
+  }
+
+  P.handleMouseUp = function(canvasX, canvasY, button) {
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (this.onInputTrace) {
+      const d = this._directMouseDown;
+      const g = this._dialogBtnDrag;
+      this._traceInput(`up ${canvasX},${canvasY} enter:`
+        + ` outside=${mapped.outside ? 1 : 0}`
+        + ` directDown=${d ? '0x' + (d.targetHwnd >>> 0).toString(16) : 'none'}`
+        + ` btnDrag=${g ? '0x' + (g.parent >>> 0).toString(16) : 'none'}`
+        + ` resizing=${this._resizingWin ? 1 : 0} dragging=${this._draggingWin ? 1 : 0}`);
+    }
+    if (mapped.outside) {
+      const mask = this._mouseMaskForButton(button);
+      const wasDown = !!((this._mouseButtonsMask || 0) & mask);
+      this._mouseButtonsMask = (this._mouseButtonsMask || 0) & ~mask;
+      if (wasDown) this._queueDirectInputMouseButton(this._pointerInputMemory || this.wasmMemory, mask, false);
+      this._pointerInputMemory = null;
+      this._pointerInputWasm = null;
+      this._signalDirectInputDevice(2);
+      return;
+    }
+    canvasX = mapped.x;
+    canvasY = mapped.y;
+    const clipped = this._applyCursorClip(canvasX, canvasY);
+    canvasX = clipped.x;
+    canvasY = clipped.y;
+    const upMask = this._mouseMaskForButton(button);
+    const inputWasm = this._pointerInputWasm || this._inputWasmAtPoint(canvasX, canvasY);
+    this._pointerInputWasm = null;
+    const inputMemory = this._pointerInputMemory || this.wasmMemory;
+    this._pointerInputMemory = null;
+    const wasDown = !!((this._mouseButtonsMask || 0) & upMask);
+    this._mouseButtonsMask = (this._mouseButtonsMask || 0) & ~upMask;
+    if (wasDown) this._queueDirectInputMouseButton(inputMemory, upMask, false);
+    this._signalDirectInputDevice(2);
+    this._setMousePoint(canvasX, canvasY);
+    if (this._resizingWin) {
+      const r = this._resizingWin;
+      this._resizingWin = null;
+      const nx = Number.isFinite(r.pendingX) ? r.pendingX : r.origX;
+      const ny = Number.isFinite(r.pendingY) ? r.pendingY : r.origY;
+      const nw = Number.isFinite(r.pendingW) ? r.pendingW : r.origW;
+      const nh = Number.isFinite(r.pendingH) ? r.pendingH : r.origH;
+      r.win.x = nx | 0;
+      r.win.y = ny | 0;
+      r.win.w = nw | 0;
+      r.win.h = nh | 0;
+      r.win._backCanvas = null;
+      r.win._backCtx = null;
+      r.win._backW = 0;
+      r.win._backH = 0;
+      this._resizeOutline = null;
+      const w = r.wasm || (r.win && r.win.wasm) || this.wasm;
+      const we = w && w.exports;
+      if (we && we.host_resize_commit) {
+        we.host_resize_commit(r.hwnd, r.win.x, r.win.y, r.win.w, r.win.h);
+      }
+      const hit = we && we.hittest_sync
+        ? (we.hittest_sync(r.hwnd, canvasX, canvasY) | 0)
+        : 0;
+      this._syncResizeCursor(hit);
+      if (typeof this._computeClientRect === 'function') this._computeClientRect(r.win);
+      // Not queuePaint: that pushes a raw WM_PAINT into inputQueue, which the
+      // pump polls (phase 7) with its own hwnd, ahead of the erase phase and
+      // before the app has acted on the WM_SIZE host_resize_commit just
+      // posted. Solitaire answered it by drawing the *old* card layout onto
+      // the freshly allocated back-canvas; the real post-WM_SIZE paint then
+      // drew the new layout over it without erasing, leaving both layouts and
+      // grey holes where the stale paint had clipped the erase out.
+      // host_resize_commit already sets the paint+erase flags, so all the
+      // host owes here is dirty chrome and a composite.
+      if (typeof this.invalidate === 'function') this.invalidate(r.hwnd);
+      this.repaint();
+      return;
+    }
+    if (this._draggingWin) {
+      const drag = this._draggingWin;
+      this._draggingWin = null;
+      const win = drag.win;
+      const nx = Number.isFinite(drag.pendingX) ? drag.pendingX : canvasX - drag.offsetX;
+      const ny = Number.isFinite(drag.pendingY) ? drag.pendingY : canvasY - drag.offsetY;
+      win.x = nx | 0;
+      win.y = ny | 0;
+      if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+      const w = win.wasm || this.wasm;
+      const we = w && w.exports;
+      if (we && we.host_move_commit) {
+        we.host_move_commit(win.hwnd, win.x, win.y);
+      }
+      this.queuePaint(win.hwnd);
+      this.repaint();
+      return;
+    }
+    if (button !== 2 && this._handleNativeScrollbarUp(canvasX, canvasY)) {
+      this.scheduleRepaint();
+      this.repaint();
+      return;
+    }
+    const modalHwnd = this._modalDialogHwnd(inputWasm);
+    const modal = modalHwnd ? this.windows[modalHwnd] : null;
+    if (modal && button !== 2) {
+      if (this._dialogBtnDrag && this._dialogBtnDrag.parent !== modalHwnd) {
+        this._traceInput(`up ${canvasX},${canvasY} DROPPED: dialogBtnDrag parent`
+          + ` 0x${(this._dialogBtnDrag.parent >>> 0).toString(16)} != modal 0x${modalHwnd.toString(16)}`);
+        this._dialogBtnDrag = null;
+        this.scheduleRepaint();
+        this.repaint();
+        return;
+      }
+      if (!this._dialogBtnDrag &&
+          (canvasX < modal.x || canvasX >= modal.x + modal.w ||
+           canvasY < modal.y || canvasY >= modal.y + modal.h)) {
+        this._traceInput(`up ${canvasX},${canvasY} DROPPED: outside modal 0x${modalHwnd.toString(16)}`
+          + ` rect ${modal.x},${modal.y} ${modal.w}x${modal.h}`);
+        return;
+      }
+    }
+    if (button !== 2 && !this._dialogBtnDrag) {
+      const dialogWins = Object.values(this.windows)
+        .filter(w => w && w.visible && w.wasm === inputWasm &&
+          w.isDialog && !w.isAboutDialog && (w.ownerHwnd || w.parentHwnd))
+        .filter(w => {
+          const r = this._windowRectScreen(w);
+          return canvasX >= r.x && canvasX < r.x + r.w &&
+                 canvasY >= r.y && canvasY < r.y + r.h;
+        })
+        .sort((a, b) => (b.zOrder || 0) - (a.zOrder || 0));
+      const dlg = dialogWins[0];
+      if (dlg) {
+        const r = this._windowRectScreen(dlg);
+        if (typeof this._computeClientRect === 'function') this._computeClientRect(dlg);
+        const client = dlg.clientRect || {
+          x: r.x + 3,
+          y: r.y + 23,
+          w: Math.max(0, r.w - 6),
+          h: Math.max(0, r.h - 26),
+        };
+        const inClient =
+          canvasX >= client.x && canvasX < client.x + client.w &&
+          canvasY >= client.y && canvasY < client.y + client.h;
+        if (!inClient) {
+          if (canvasX >= r.x + r.w - 24 && canvasX < r.x + r.w - 3 &&
+              canvasY >= r.y + 3 && canvasY < r.y + 23) {
+            this._closeWatDialogFrame(dlg.hwnd, dlg.wasm || this.wasm);
+          }
+          if (!(dlg.isChild && dlg.parentHwnd)) {
+            this._traceInput(`up ${canvasX},${canvasY} DROPPED: outside client of dialog`
+              + ` 0x${(dlg.hwnd >>> 0).toString(16)} client ${client.x},${client.y}`
+              + ` ${client.w}x${client.h}`);
+            return;
+          }
+        }
+      }
+    }
+
+    // End deferred dialog button press. Send WM_LBUTTONUP to the same
+    // control that received the DOWN by routing through the parent again
+    // with the cursor's current position. button_wndproc clears its
+    // pressed flag and (for kinds that auto-toggle) processes the click.
+    if (this._dialogBtnDrag && button !== 2) {
+      const drag = this._dialogBtnDrag;
+      this._dialogBtnDrag = null;
+      const dragWasm = drag.wasm || this.wasm;
+      const we = dragWasm && dragWasm.exports;
+      if (drag.target && we) {
+        const lx = canvasX - drag.sx;
+        const ly = canvasY - drag.sy;
+        const lParam = ((lx & 0xFFFF) | ((ly & 0xFFFF) << 16)) >>> 0;
+        this.wasm = dragWasm;
+        if (drag.directControl && we.control_wndproc_dispatch) {
+          we.control_wndproc_dispatch(drag.target, 0x0202, 0, lParam);
+          this._wakeMessageWait();
+        } else {
+          this._dispatchMouseEvent(this.windows[drag.target] || null, {
+            type: 'mouse', hwnd: drag.target, msg: 0x0202, wParam: 0, lParam,
+          });
+        }
+        this.scheduleRepaint();
+        this.repaint();
+        return;
+      }
+      if (we && (we.dialog_route_mouse_screen || we.dialog_route_mouse)) {
+        // A dialog button captures the mouse on DOWN. Deliver its UP through
+        // GetMessage/DispatchMessage so a modal loop resumes after the button
+        // procedure returns. Calling the child synchronously while the guest
+        // is yielded inside GetMessage can strand native modal controls after
+        // they set their completion state (for example, a property sheet).
+        // WAT-owned modal dialogs run through the emulator's synchronous
+        // dialog manager, so their release must stay on dialog_route_mouse.
+        // Native guest dialogs have no WAT modal hwnd and need a queued UP to
+        // wake their GetMessage/DispatchMessage loop.
+        const captureHwnd = !modalHwnd && we.get_capture_hwnd ? (we.get_capture_hwnd() | 0) : 0;
+        const capture = captureHwnd ? this._resolveCaptureTarget(captureHwnd, dragWasm) : null;
+        if (capture) {
+          const lx = canvasX - capture.screenX;
+          const ly = canvasY - capture.screenY;
+          this.wasm = dragWasm;
+          this.wasmMemory = capture.win.wasmMemory || this.wasmMemory;
+          const lp = (((ly & 0xFFFF) << 16) | (lx & 0xFFFF)) >>> 0;
+          const captureClass = we.ctrl_get_class ? (we.ctrl_get_class(capture.targetHwnd) | 0) : 0;
+          if (captureClass && we.send_message) {
+            // WAT-owned controls do not need the guest GetMessage loop to
+            // dispatch their captured release. This includes BUTTONs in an
+            // owned native dialog: button_wndproc only updates the control
+            // here and queues BN_CLICKED for the parent, so a nested dialog is
+            // still entered later by the ordinary guest message pump. Queuing
+            // this UP instead can let a framework pre-translate and consume it
+            // before DispatchMessage; the button then stays pressed and never
+            // emits BN_CLICKED (InstallShield 11 wizard navigation).
+            we.send_message(capture.targetHwnd, 0x0202, 0, lp);
+          } else {
+            this._dispatchMouseEvent(capture.win, {
+              type: 'mouse',
+              hwnd: capture.targetHwnd,
+              msg: 0x0202,
+              wParam: 0,
+              lParam: lp,
+            });
+          }
+          this.scheduleRepaint();
+          this.repaint();
+          return;
+        }
+        const lx = canvasX - drag.clientX;
+        const ly = canvasY - drag.clientY;
+        const lParam = ((lx & 0xFFFF) | ((ly & 0xFFFF) << 16)) >>> 0;
+        // USER's native router owns capture and receives the actual release
+        // point, including outside coordinates. A miss is not permission to
+        // fabricate another UP at the original DOWN point (which can click
+        // the control the user deliberately dragged away from).
+        if (we.dialog_route_mouse_screen) {
+          we.dialog_route_mouse_screen(drag.parent, 0x0202, 0, canvasX, canvasY);
+        } else {
+          we.dialog_route_mouse(drag.parent, 0x0202, 0, lParam);
+        }
+        this._wakeMessageWait();
+        this.scheduleRepaint();
+        this.repaint();
+      }
+      return;
+    }
+
+    if (this._directMouseDown) {
+      const d = this._directMouseDown;
+      this._traceInput(`up ${canvasX},${canvasY} -> native child`
+        + ` 0x${(d.targetHwnd >>> 0).toString(16)} (matching its DOWN)`);
+      this._directMouseDown = null;
+      const relX = canvasX - d.screenX;
+      const relY = canvasY - d.screenY;
+      this._dispatchMouseEvent(d.win, {
+        type: 'mouse',
+        hwnd: d.targetHwnd,
+        msg: button === 2 ? 0x0205 : 0x0202,
+        wParam: 0,
+        lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+      });
+      this._lastDeepChild = null;
+      return;
+    }
+
+    // End sysbutton press. WAT owns release/cancel/dispatch.
+    if (this._sysBtnDrag && button !== 2) {
+      const drag = this._sysBtnDrag;
+      this._sysBtnDrag = null;
+      const w = drag.wasm || this.wasm;
+      const we = w && w.exports;
+      const dragWin = this.windows[drag.hwnd];
+      if (dragWin && dragWin.isDialog && !dragWin.isAboutDialog) {
+        this._closeWatDialogFrame(drag.hwnd, w);
+        return;
+      }
+      if (we && we.nc_sysbutton_up) we.nc_sysbutton_up(canvasX, canvasY);
+      this.repaint();
+      return;
+    }
+
+    // Menus capture the mouse while tracking. The opening/selection work is
+    // done on button-down in the WAT menu tracker; the matching button-up
+    // must be consumed instead of leaking to the app window underneath.
+    if (this._menuMouseCapture && button !== 2) {
+      this._menuMouseCapture = false;
+      this.repaint();
+      return;
+    }
+
+    // If a window has mouse capture, route mouse-up to it regardless of position.
+    // Works for both renderer-known windows and WAT-native child controls. This
+    // runs after _dialogBtnDrag so dialog buttons get their synchronous
+    // WM_LBUTTONUP/WM_COMMAND path instead of a generic queued mouse message.
+    const captureWasm = (this._dialogBtnDrag && this._dialogBtnDrag.wasm) ||
+      (this._lastDeepChild && this._lastDeepChild.wasm) || this.wasm;
+    const we = captureWasm && captureWasm.exports;
+    const capHwnd = we && we.get_capture_hwnd && we.get_capture_hwnd();
+    const cap = capHwnd ? this._resolveCaptureTarget(capHwnd, captureWasm) : null;
+    if (cap) {
+      const capWin = this.windows[cap.targetHwnd] || cap.win;
+      const snapped = this._applyPointerInputHooks(capWin, canvasX, canvasY, button);
+      const upX = snapped.snapped ? snapped.x : canvasX;
+      const upY = snapped.snapped ? snapped.y : canvasY;
+      if (snapped.snapped) this._setMousePoint(upX, upY);
+      const relX = upX - cap.screenX;
+      const relY = upY - cap.screenY;
+      const msg = button === 2 ? 0x0205 : 0x0202; // WM_RBUTTONUP / WM_LBUTTONUP
+      const lParam = (((relY & 0xFFFF) << 16) | (relX & 0xFFFF)) >>> 0;
+      const captureClass = we.ctrl_get_class ? (we.ctrl_get_class(cap.targetHwnd) | 0) : 0;
+      if (captureClass && we.send_message) {
+        we.send_message(cap.targetHwnd, msg, 0, lParam);
+      } else {
+        this._dispatchMouseEvent(cap.win, {
+          type: 'mouse', hwnd: cap.targetHwnd, msg, wParam: 0, lParam,
+        });
+      }
+      this._lastDeepChild = null;
+      return;
+    }
+
+    // Send mouse-up to topmost window under cursor
+    const sortedWins = Object.values(this.windows)
+      .filter(w => w.visible && !w.isChild)
+      .sort((a, b) => (b.zOrder || 0) - (a.zOrder || 0));
+    for (const win of sortedWins) {
+      if (canvasX >= win.x && canvasX < win.x + win.w &&
+          canvasY >= win.y && canvasY < win.y + win.h) {
+        const snapped = this._applyPointerInputHooks(win, canvasX, canvasY, button);
+        if (snapped.snapped) {
+          canvasX = snapped.x;
+          canvasY = snapped.y;
+          this._setMousePoint(canvasX, canvasY);
+        }
+        if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+        const clientOrigin = this._mouseMsgOriginScreen(win.hwnd);
+        const clientX = clientOrigin.x;
+        const clientY = clientOrigin.y;
+        const deep = this._hitTestDeepChild(win, canvasX, canvasY);
+        const targetHwnd = deep ? deep.hwnd : win.hwnd;
+        const relX = deep ? (canvasX - deep.sx) : (canvasX - clientX);
+        const relY = deep ? (canvasY - deep.sy) : (canvasY - clientY);
+        const ownerWasm = win.wasm || this.wasm;
+        if (deep && this._isMouseInputDisabled(targetHwnd, ownerWasm)) {
+          this._lastDeepChild = null;
+          return;
+        }
+        this._dispatchMouseEvent(win, {
+          type: 'mouse',
+          hwnd: targetHwnd,
+          msg: button === 2 ? 0x0205 : 0x0202, // WM_RBUTTONUP / WM_LBUTTONUP
+          wParam: 0,
+          lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+        });
+        this._lastDeepChild = null;
+        return;
+      }
+    }
+  }
+
+  P.handleMouseMove = function(canvasX, canvasY, motion) {
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return;
+    canvasX = mapped.x;
+    canvasY = mapped.y;
+    const clipped = this._applyCursorClip(canvasX, canvasY);
+    canvasX = clipped.x;
+    canvasY = clipped.y;
+    const inputWin = this._inputWindowAtPoint(canvasX, canvasY);
+    const inputMemory = (inputWin && inputWin.wasmMemory) || this.wasmMemory;
+    if (inputMemory) {
+      if (!this._directInputMousePoints) this._directInputMousePoints = new WeakMap();
+      const previous = this._directInputMousePoints.get(inputMemory);
+      let dx = 0, dy = 0;
+      if (motion && motion.relative) {
+        dx = Number.isFinite(motion.directDx)
+          ? (motion.directDx | 0) : canvasX - (this._mouseX || 0);
+        dy = Number.isFinite(motion.directDy)
+          ? (motion.directDy | 0) : canvasY - (this._mouseY || 0);
+      } else if (previous && !(motion && motion.teleport)) {
+        dx = canvasX - previous.x;
+        dy = canvasY - previous.y;
+      }
+      // motion.teleport says the pointer APPEARED here rather than travelled
+      // here, so the reference point moves but DirectInput is told nothing.
+      // A mouse cannot teleport; a finger does nothing else. Each tap on a
+      // touchscreen arrives as one absolute jump from wherever the previous
+      // tap was, and feeding that jump to a DIMOUSESTATE relative axis is a
+      // lie about physical motion. Games that keep their own cursor believe
+      // it: Marbles (Plus! 98) polls GetDeviceState once per WM_MOUSEMOVE and
+      // never reads the Win32 cursor at all, so a few taps walked its pointer
+      // off the finger and parked it on the mode menu's bottom-right item --
+      // QUIT -- after which every tap anywhere on the screen called
+      // ExitProcess. That is the "clicking in Marbles just quits" report.
+      this._directInputMousePoints.set(inputMemory, { x: canvasX, y: canvasY });
+      if (dx || dy) {
+        const buffer = inputMemory.buffer || inputMemory;
+        if (buffer && buffer.byteLength >= DI_MOUSE_INPUT_STATE + 8) {
+          const words = new Int32Array(buffer);
+          const index = DI_MOUSE_INPUT_STATE >>> 2;
+          if (typeof SharedArrayBuffer !== 'undefined' && buffer instanceof SharedArrayBuffer) {
+            if (dx) Atomics.add(words, index, dx | 0);
+            if (dy) Atomics.add(words, index + 1, dy | 0);
+          } else {
+            words[index] = (words[index] + (dx | 0)) | 0;
+            words[index + 1] = (words[index + 1] + (dy | 0)) | 0;
+          }
+          if (dx) this._queueDirectInputMouseEvent(inputMemory, 5, dx | 0);
+          if (dy) this._queueDirectInputMouseEvent(inputMemory, 6, dy | 0);
+        }
+      }
+    }
+    this._setMousePoint(canvasX, canvasY);
+    this._signalDirectInputDevice(2);
+    // An open menu holds the mouse, exactly as handleMouseDown already treats
+    // it: the tracking loop owns every move until the menu closes, so the
+    // window underneath must not see one. handleMenuHover has already taken
+    // this point. Delivering it as well left a WM_MOUSEMOVE queued against a
+    // window whose thread is parked behind the menu, and it would arrive out
+    // of order once the menu went away.
+    if (this._openMenuContext()) return;
+    // Sysbutton press tracking: pressed visual is shown only while the
+    // cursor stays over the original button (mirrors real Windows).
+    if (this._sysBtnDrag) {
+      const w0 = this._sysBtnDrag.wasm || this.wasm;
+      const we0 = w0 && w0.exports;
+      if (we0 && we0.nc_sysbutton_move) {
+        if (we0.nc_sysbutton_move(canvasX, canvasY)) {
+          this.repaint();
+        }
+      }
+      return;
+    }
+
+    // Resize drag. Win98's classic interaction leaves the window intact and
+    // moves an outline until release.  Changing win.{x,y,w,h} here while
+    // deferring WM_SIZE used to detach Paint's menu/status child surfaces
+    // from a discarded backing canvas, producing a broken mid-drag frame.
+    if (this._resizingWin) {
+      const r = this._resizingWin;
+      this._syncResizeCursor(r.hit);
+      const dx = canvasX - r.startX;
+      const dy = canvasY - r.startY;
+      const MIN_W = 80, MIN_H = 40;
+      let nx = r.origX, ny = r.origY, nw = r.origW, nh = r.origH;
+      // Left edges move x+w together (dragging left shrinks width).
+      if (r.hit === 10 || r.hit === 13 || r.hit === 16) { // HTLEFT/TOPLEFT/BOTTOMLEFT
+        let cdx = dx;
+        if (nw - cdx < MIN_W) cdx = nw - MIN_W;
+        nx = r.origX + cdx;
+        nw = r.origW - cdx;
+      }
+      if (r.hit === 11 || r.hit === 14 || r.hit === 17) { // HTRIGHT/TOPRIGHT/BOTTOMRIGHT
+        nw = Math.max(MIN_W, r.origW + dx);
+      }
+      if (r.hit === 12 || r.hit === 13 || r.hit === 14) { // HTTOP/TOPLEFT/TOPRIGHT
+        let cdy = dy;
+        if (nh - cdy < MIN_H) cdy = nh - MIN_H;
+        ny = r.origY + cdy;
+        nh = r.origH - cdy;
+      }
+      if (r.hit === 15 || r.hit === 16 || r.hit === 17) { // HTBOTTOM/BOTTOMLEFT/BOTTOMRIGHT
+        nh = Math.max(MIN_H, r.origH + dy);
+      }
+      r.pendingX = nx;
+      r.pendingY = ny;
+      r.pendingW = nw;
+      r.pendingH = nh;
+      this._resizeOutline = { x: nx, y: ny, w: nw, h: nh };
+      this.repaint();
+      return;
+    }
+    // Window dragging
+    if (this._draggingWin) {
+      this._draggingWin.pendingX = (canvasX - this._draggingWin.offsetX) | 0;
+      this._draggingWin.pendingY = (canvasY - this._draggingWin.offsetY) | 0;
+      return;
+    }
+    if (this._handleNativeScrollbarMove(canvasX, canvasY)) {
+      this.scheduleRepaint();
+      return;
+    }
+    // If a window has mouse capture, route all moves to it regardless of position.
+    // Works for both renderer-known windows and WAT-native child controls
+    // (listbox thumb drag, etc). Child-local lParam is computed from the
+    // resolved screen origin, not the top window's client origin.
+    const captureWasm = (this._dialogBtnDrag && this._dialogBtnDrag.wasm) ||
+      (this._lastDeepChild && this._lastDeepChild.wasm) || this.wasm;
+    const we = captureWasm && captureWasm.exports;
+    const capHwnd = we && we.get_capture_hwnd && we.get_capture_hwnd();
+    const cap = capHwnd ? this._resolveCaptureTarget(capHwnd, captureWasm) : null;
+    if (cap) {
+      const relX = canvasX - cap.screenX;
+      const relY = canvasY - cap.screenY;
+      if (we.post_message_q && this.windows[cap.targetHwnd]) {
+        // WM_SETCURSOR is only meaningful for top-level windows; skip for
+        // WAT-native children (hittest_sync would miss and the cursor would
+        // flicker to the arrow as the captured control moves off-bounds).
+        const hit = (we.hittest_sync ? (we.hittest_sync(cap.targetHwnd, canvasX, canvasY) | 0) : 1);
+        this._syncResizeCursor(hit);
+        const lp = (hit & 0xFFFF) | ((0x0200 & 0xFFFF) << 16);
+        we.post_message_q(cap.targetHwnd, 0x0020, cap.targetHwnd, lp >>> 0);
+      }
+      const lParam = (((relY & 0xFFFF) << 16) | (relX & 0xFFFF)) >>> 0;
+      const captureClass = we.ctrl_get_class ? (we.ctrl_get_class(cap.targetHwnd) | 0) : 0;
+      if (captureClass && we.send_message) {
+        we.send_message(cap.targetHwnd, 0x0200,
+          this._mouseButtonsMask || 0, lParam);
+      } else {
+        this._dispatchMouseEvent(cap.win, {
+          type: 'mouse',
+          hwnd: cap.targetHwnd,
+          msg: 0x0200, // WM_MOUSEMOVE
+          wParam: this._mouseButtonsMask || 0, // capture does not imply a held button
+          lParam,
+        });
+      }
+      this._refreshPaintStatusForPointer(cap.win, we);
+      this.scheduleRepaint();
+      return;
+    }
+    // If a previous mousedown landed on a deep child (MDI document etc.),
+    // route moves to that same child with child-local lParam and MK_LBUTTON
+    // so the pencil/view stays in "drag in progress" mode.
+    if (this._lastDeepChild) {
+      const d = this._lastDeepChild;
+      const top = this.windows[d.topHwnd];
+      if (top && top.visible) {
+        const relX = canvasX - d.sx;
+        const relY = canvasY - d.sy;
+        this._dispatchMouseEvent(top, {
+          type: 'mouse',
+          hwnd: d.childHwnd,
+          msg: 0x0200, // WM_MOUSEMOVE
+          wParam: this._mouseButtonsMask || 0,
+          lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+        });
+        this._refreshPaintStatusForPointer(top, d.wasm && d.wasm.exports);
+        this.scheduleRepaint();
+        return;
+      }
+    }
+    // Mouse down/up already walk front-to-back. Hover must use the same
+    // ordering: a WAT-native Help window commonly overlaps the game that
+    // opened it, and insertion order otherwise delivers WM_MOUSEMOVE (and its
+    // link cursor) to the older game underneath.
+    const hoverWins = Object.values(this.windows)
+      .filter(w => w.visible && !w.isChild)
+      .sort((a, b) => (b.zOrder || 0) - (a.zOrder || 0));
+    for (const win of hoverWins) {
+      if (!win.visible) continue;
+      if (canvasX >= win.x && canvasX < win.x + win.w &&
+          canvasY >= win.y && canvasY < win.y + win.h) {
+        if (typeof this._computeClientRect === 'function') this._computeClientRect(win);
+        const clientOrigin = this._mouseMsgOriginScreen(win.hwnd);
+        const clientX = clientOrigin.x;
+        const clientY = clientOrigin.y;
+        const deep = this._hitTestDeepChild(win, canvasX, canvasY);
+        const targetHwnd = deep ? deep.hwnd : win.hwnd;
+        const relX = deep ? (canvasX - deep.sx) : (canvasX - clientX);
+        const relY = deep ? (canvasY - deep.sy) : (canvasY - clientY);
+        const ownerWasm = win.wasm || this.wasm;
+        const ownerExports = ownerWasm && ownerWasm.exports;
+        if (deep && this._isMouseInputDisabled(targetHwnd, ownerWasm)) return;
+        // Post WM_SETCURSOR before WM_MOUSEMOVE so the guest wndproc sees
+        // them in real-DispatchMessage order (post queue drains before the
+        // host input poll in GetMessageA).
+        if (ownerExports && ownerExports.post_message_q) {
+          // WindowFromPoint locates the child by its *window* rect, which
+          // includes any non-client scrollbar strips, so a deep hit is not
+          // automatically client-area input. Hit-test the child too, but
+          // trust only the scrollbar codes from it: a WAT-native control
+          // whose rect does not resolve reports HTNOWHERE, and treating that
+          // as chrome would flip the cursor to the arrow over its content.
+          // Top-level chrome still needs the full code, for resize cursors.
+          const hitTarget = deep ? deep.hwnd : win.hwnd;
+          let hit = 1;
+          if (ownerExports.hittest_sync) {
+            const raw = ownerExports.hittest_sync(hitTarget, canvasX, canvasY) | 0;
+            hit = deep ? ((raw === 4 || raw === 6 || raw === 7) ? raw : 1) : raw;
+          }
+          this._syncResizeCursor(hit);
+          const screenLParam = (((canvasY & 0xFFFF) << 16) | (canvasX & 0xFFFF)) >>> 0;
+          ownerExports.post_message_q(targetHwnd, 0x0084, 0, screenLParam);
+          const lp = (hit & 0xFFFF) | ((0x0200 & 0xFFFF) << 16);
+          ownerExports.post_message_q(targetHwnd, 0x0020, targetHwnd, lp >>> 0);
+        }
+        this._dispatchMouseEvent(win, {
+          type: 'mouse',
+          hwnd: targetHwnd,
+          msg: 0x0200, // WM_MOUSEMOVE
+          wParam: this._mouseButtonsMask || 0,
+          lParam: ((relY & 0xFFFF) << 16) | (relX & 0xFFFF),
+        });
+        this._refreshPaintStatusForPointer(win, ownerExports);
+        return;
+      }
+    }
+    // Off every window: the desktop. Windows gives it a class cursor of
+    // IDC_ARROW like any other window, but ours is a renderer surface with no
+    // hwnd to send WM_SETCURSOR to (GetDesktopWindow hands out a bare
+    // constant), so the reset happens here. Without it the pointer keeps
+    // whatever the last window set — you drag mspaint's pencil out onto the
+    // desktop and it stays a pencil.
+    this._syncResizeCursor(0);
+    const style = this.canvas && this.canvas.style;
+    if (style && style.cursor !== 'default') style.cursor = 'default';
+  }
+
+  P.handleWheel = function(canvasX, canvasY, deltaY) {
+    const delta = deltaY > 0 ? -120 : 120;
+    // DirectInput games read the wheel from the mouse device, not from
+    // WM_MOUSEWHEEL, and need no focus window to receive it.
+    const diMemory = this._pointerInputMemory || this.wasmMemory;
+    if (diMemory && this._queueDirectInputMouseWheel(diMemory, delta) && this._signalDirectInputDevice) {
+      this._signalDirectInputDevice(2);
+    }
+    const we = this.wasm && this.wasm.exports;
+    if (!we || !we.send_message) return;
+    const wParam = ((delta & 0xFFFF) << 16) >>> 0;
+    let target = this._findWatEditTarget();
+    if (!target && we.get_focus_hwnd) {
+      const focus = we.get_focus_hwnd() | 0;
+      if (focus && (!we.ctrl_get_class || ((we.ctrl_get_class(focus) | 0) !== 2))) {
+        target = focus;
+      }
+    }
+    if (!target) return;
+    const lParam = (((canvasY | 0) & 0xFFFF) << 16) | ((canvasX | 0) & 0xFFFF);
+    we.send_message(target, 0x020A, wParam, lParam >>> 0);
+    this.invalidate(target);
+    const parentWin = this._findParentWindow(target);
+    if (parentWin) this.invalidate(parentWin.hwnd);
+  }
+
+  P.handleMenuHover = function(canvasX, canvasY) {
+    // Same mapping every other pointer entry point does: in single-app mode
+    // the desktop is presented as a scaled crop, so a browser event's canvas
+    // coordinates are not guest coordinates. Without this the hit test ran
+    // against the raw point, missed the popup, and menus never highlighted
+    // (nor opened a cascade) under an exclusive presentation.
+    const mapped = this._mapExclusiveInputPoint(canvasX, canvasY);
+    if (mapped.outside) return;
+    canvasX = mapped.x;
+    canvasY = mapped.y;
+    const menu = this._openMenuContext();
+    if (!menu) return;
+    const we = menu.exports;
+    if (!we.menu_hover_from_point || !we.menu_open_hover) return;
+    const oldHover = we.menu_open_hover() | 0;
+    const oldSubHover = we.menu_open_sub_hover ? (we.menu_open_sub_hover() | 0) : -1;
+    const newHover = we.menu_hover_from_point(canvasX, canvasY) | 0;
+    const newSubHover = we.menu_open_sub_hover ? (we.menu_open_sub_hover() | 0) : -1;
+    if (newHover !== oldHover || newSubHover !== oldSubHover) {
+      this.repaint();
+    }
+  }
+
+  P._findWatEditTarget = function() {
+    const we = this.wasm && this.wasm.exports;
+    // A top-level window that holds the focus itself. Typing may still be
+    // redirected into an EDIT *inside* it (the frame-has-focus case below),
+    // but never into an EDIT in some other window: TetriNET's Playing Fields
+    // form takes its arrow keys itself, and the redirect sent them to a
+    // connection-settings edit on the main form instead, so no piece moved.
+    let focusTop = 0;
+    if (we && we.send_message && we.get_focus_hwnd) {
+      const focus = we.get_focus_hwnd() | 0;
+      if (focus && we.ctrl_get_class) {
+        const cls = we.ctrl_get_class(focus) | 0;
+        if (cls === 2) return focus;
+        // Focused native child windows, notably WordPad's RichEdit20A, must
+        // keep keyboard events on the queued native-focus path. Asking WAT's
+        // edit_command_target() here would fall back to the first visible WAT
+        // EDIT, which is often a toolbar combobox child.
+        const parent = we.wnd_get_parent ? (we.wnd_get_parent(focus) | 0) : 0;
+        if (parent) return 0;
+        focusTop = focus;
+      }
+    }
+    // edit_command_target() moves the focus to the first visible EDIT in any
+    // window before it returns it, so it cannot be asked and then vetoed: with
+    // a top-level holding the focus, only the fallback below, which stays
+    // inside that window, may pick an EDIT.
+    if (!focusTop && we && we.send_message && we.edit_command_target) {
+      const target = we.edit_command_target() | 0;
+      if (target && (!we.ctrl_get_class || ((we.ctrl_get_class(target) | 0) === 2))) return target;
+    }
+
+    // Browser focus can legitimately sit on the top-level frame while the
+    // user expects typing to go into its child EDIT. Do a renderer-side
+    // WindowFromFocus-style fallback across visible child EDIT controls,
+    // preferring controls in the frontmost top-level window. WAT remains the
+    // owner of focus state; JS only chooses which WAT instance/control to ask.
+    const tops = Object.values(this.windows || {})
+      .filter(w => w && w.visible && !w.isChild)
+      .sort((a, b) => (b.zOrder || 0) - (a.zOrder || 0));
+    for (const top of tops) {
+      if (focusTop && (top.hwnd | 0) !== focusTop) continue;
+      const wasm = top.wasm || this.wasm;
+      const e = wasm && wasm.exports;
+      if (!e || !e.ctrl_get_class || !e.send_message) continue;
+      // Under a focused frame, any EDIT inside it qualifies (a view's EDIT is
+      // a grandchild), as edit_command_target would have found it.
+      const inside = w => {
+        if (w.parentHwnd === top.hwnd) return true;
+        if (!focusTop || !e.wnd_get_parent) return false;
+        for (let h = w.hwnd | 0, guard = 0; h && guard < 32; guard++) {
+          if (h === focusTop) return true;
+          h = e.wnd_get_parent(h) | 0;
+        }
+        return false;
+      };
+      const edit = Object.values(this.windows || {}).find(w =>
+        w && w.visible && w.isChild && inside(w) &&
+        (w.wasm || this.wasm) === wasm &&
+        (e.ctrl_get_class(w.hwnd) | 0) === 2);
+      if (!edit) continue;
+      this.wasm = wasm;
+      this.wasmMemory = top.wasmMemory || edit.wasmMemory || this.wasmMemory;
+      this._setInputFocus(wasm, edit.hwnd);
+      return edit.hwnd | 0;
+    }
+    return 0;
+  }
+
+  P._guestToWasmAddress = function(guestAddr, wasm, memory) {
+    const e = wasm && wasm.exports;
+    if (!e || !e.get_image_base) return 0;
+    return _memUtilsInput.guestToWasm(
+      guestAddr, e, memory, e.get_image_base() >>> 0);
+  };
+
+  P._nativeTextEditState = function(hwnd) {
+    const wasm = this.wasm;
+    const we = wasm && wasm.exports;
+    const memory = this.wasmMemory;
+    if (!hwnd || !we || !we.send_message || !we.guest_alloc || !memory || !memory.buffer) return null;
+    if (we.ctrl_get_class && ((we.ctrl_get_class(hwnd) | 0) === 2)) return null;
+
+    const cap = 8192;
+    const textG = we.guest_alloc(cap) >>> 0;
+    const startG = we.guest_alloc(4) >>> 0;
+    const endG = we.guest_alloc(4) >>> 0;
+    if (!textG || !startG || !endG) {
+      if (we.guest_free) {
+        if (textG) we.guest_free(textG);
+        if (startG) we.guest_free(startG);
+        if (endG) we.guest_free(endG);
+      }
+      return null;
+    }
+
+    const textWa = this._guestToWasmAddress(textG, wasm, memory);
+    const startWa = this._guestToWasmAddress(startG, wasm, memory);
+    const endWa = this._guestToWasmAddress(endG, wasm, memory);
+    if (!textWa || !startWa || !endWa || textWa >= memory.buffer.byteLength) {
+      if (we.guest_free) {
+        we.guest_free(textG);
+        we.guest_free(startG);
+        we.guest_free(endG);
+      }
+      return null;
+    }
+
+    const dv = new DataView(memory.buffer);
+    const bytes = new Uint8Array(memory.buffer);
+    dv.setUint32(startWa, 0, true);
+    dv.setUint32(endWa, 0, true);
+
+    let len = 0;
+    try {
+      len = we.send_message(hwnd, 0x000D, cap, textG) | 0; // WM_GETTEXT
+      we.send_message(hwnd, 0x00B0, startG, endG);         // EM_GETSEL
+    } catch (_) {
+      if (we.guest_free) {
+        we.guest_free(textG);
+        we.guest_free(startG);
+        we.guest_free(endG);
+      }
+      return null;
+    }
+
+    const viewLen = Math.max(0, Math.min(len, cap - 1, memory.buffer.byteLength - textWa));
+    let text = '';
+    for (let i = 0; i < viewLen; i++) text += String.fromCharCode(bytes[textWa + i] || 0);
+    const selStart = dv.getUint32(startWa, true) >>> 0;
+    const selEnd = dv.getUint32(endWa, true) >>> 0;
+    if (we.guest_free) {
+      we.guest_free(textG);
+      we.guest_free(startG);
+      we.guest_free(endG);
+    }
+    return { hwnd, text, selStart, selEnd };
+  };
+
+  P._nativeTextLogicalToStringIndex = function(text, logicalPos) {
+    const want = Math.max(0, logicalPos >>> 0);
+    let logical = 0;
+    let i = 0;
+    while (i < text.length && logical < want) {
+      if (text.charCodeAt(i) === 13 && text.charCodeAt(i + 1) === 10) i += 2;
+      else i += 1;
+      logical += 1;
+    }
+    return i;
+  };
+
+  P._replaceNativeTextSelection = function(hwnd, text) {
+    const wasm = this.wasm;
+    const we = wasm && wasm.exports;
+    const memory = this.wasmMemory;
+    if (!hwnd || !we || !we.send_message || !we.guest_alloc || !memory || !memory.buffer) return false;
+
+    const bytes = [];
+    const s = String(text || '');
+    for (let i = 0; i < s.length; i++) bytes.push(s.charCodeAt(i) & 0xFF);
+    bytes.push(0);
+
+    const g = we.guest_alloc(bytes.length) >>> 0;
+    const wa = this._guestToWasmAddress(g, wasm, memory);
+    if (!g || !wa || wa + bytes.length > memory.buffer.byteLength) {
+      if (g && we.guest_free) we.guest_free(g);
+      return false;
+    }
+    new Uint8Array(memory.buffer).set(bytes, wa);
+
+    try {
+      we.send_message(hwnd, 0x00C2, 1, g); // EM_REPLACESEL, allow undo
+      if (we.guest_free) we.guest_free(g);
+      this.invalidate(hwnd);
+      const parentWin = this._findParentWindow(hwnd);
+      if (parentWin) this.invalidate(parentWin.hwnd);
+      this.scheduleRepaint();
+      return true;
+    } catch (_) {
+      if (we.guest_free) we.guest_free(g);
+      return false;
+    }
+  };
+
+  P._handleNativeTextShortcut = function(vkCode) {
+    const we = this.wasm && this.wasm.exports;
+    if (!we || !we.get_focus_hwnd || !we.send_message) return false;
+    const ctrl = !!(this._asyncKeys && this._asyncKeys[17]);
+    if (!ctrl || (vkCode !== 65 && vkCode !== 67 && vkCode !== 86 && vkCode !== 88)) return false;
+
+    const hwnd = we.get_focus_hwnd() | 0;
+    if (!hwnd) return false;
+    if (we.ctrl_get_class && ((we.ctrl_get_class(hwnd) | 0) === 2)) return false;
+
+    if (vkCode === 65) { // Ctrl+A
+      try {
+        we.send_message(hwnd, 0x00B1, 0, 0xFFFFFFFF >>> 0); // EM_SETSEL 0,-1
+        this.invalidate(hwnd);
+        const parentWin = this._findParentWindow(hwnd);
+        if (parentWin) this.invalidate(parentWin.hwnd);
+        this._suppressNextKeyPress = vkCode;
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    if (vkCode === 86) { // Ctrl+V
+      if (we.native_richedit_clipboard_paste) {
+        try {
+          const ret = we.native_richedit_clipboard_paste(hwnd) >>> 0;
+          this.invalidate(hwnd);
+          const parentWin = this._findParentWindow(hwnd);
+          if (parentWin) this.invalidate(parentWin.hwnd);
+          this.scheduleRepaint();
+          this._suppressNextKeyPress = vkCode;
+          return !!ret;
+        } catch (_) {
+          return false;
+        }
+      }
+      if (!this._nativeTextClipboard) {
+        this._suppressNextKeyPress = vkCode;
+        return true;
+      }
+      if (this._replaceNativeTextSelection(hwnd, this._nativeTextClipboard)) {
+        this._suppressNextKeyPress = vkCode;
+        return true;
+      }
+      return false;
+    }
+
+    if ((vkCode === 67 || vkCode === 88) &&
+        we.native_richedit_clipboard_copy &&
+        we.native_richedit_clipboard_cut) {
+      try {
+        const ret = vkCode === 88
+          ? (we.native_richedit_clipboard_cut(hwnd) >>> 0)
+          : (we.native_richedit_clipboard_copy(hwnd) >>> 0);
+        if (vkCode === 88) {
+          this.invalidate(hwnd);
+          const parentWin = this._findParentWindow(hwnd);
+          if (parentWin) this.invalidate(parentWin.hwnd);
+          this.scheduleRepaint();
+        }
+        this._suppressNextKeyPress = vkCode;
+        return !!ret;
+      } catch (_) {
+        return false;
+      }
+    }
+
+    const state = this._nativeTextEditState(hwnd);
+    if (!state) return false;
+    const lo = Math.min(state.selStart, state.selEnd);
+    const hi = Math.max(state.selStart, state.selEnd);
+    if (hi > lo) {
+      const a = this._nativeTextLogicalToStringIndex(state.text, lo);
+      const b = this._nativeTextLogicalToStringIndex(state.text, hi);
+      this._nativeTextClipboard = state.text.slice(a, b);
+      if (vkCode === 88) this._replaceNativeTextSelection(hwnd, '');
+    }
+    this._suppressNextKeyPress = vkCode;
+    return true;
+  };
+
+  P._findParentWindow = function(hwnd) {
+    const we = this.wasm && this.wasm.exports;
+    if (we && we.wnd_top_level) {
+      const top = we.wnd_top_level(hwnd) >>> 0;
+      if (top && this.windows[top]) return this.windows[top];
+    }
+    return null;
+  }
+
+  P.handleKeyDown = function(vkCode, keyInfo) {
+    if (this._exited) return;
+    this._restoreKeyboardInputOwner();
+    // A key is the first thing an on-screen dpad ever sends, so this is where
+    // an app that was never clicked gets the focus USER would have given it.
+    this._seedKeyboardFocus();
+    // Update async key state up-front so handlers that read it (edit's
+    // Shift/Ctrl+arrow, Ctrl+A, etc.) see the right modifier state for
+    // *this* keystroke. Otherwise the _asyncKeys bump that checkInput
+    // does later only lands after the next modifier press, which loses
+    // chords issued in the same batch.
+    if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+    if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+    const modifier = vkCode === 16 || vkCode === 17 || vkCode === 18;
+    const modifierWasDown = modifier && !!this.peekKeyDownState(vkCode);
+    const physicalWasDown = this.pokeKeyDownState(vkCode, true, keyInfo);
+    const wasDown = modifier && physicalWasDown !== undefined
+      ? physicalWasDown : !!this._asyncKeys[vkCode & 0xFF];
+    const keyLParam = keyboardMessageLParam(vkCode, keyInfo, false, wasDown);
+    // TranslateMessage gives the WM_CHAR its keystroke's lParam; the char the
+    // browser reports for this key next takes it from here (handleKeyPress).
+    this._charLParam = keyLParam;
+    this._asyncKeys[vkCode & 0xFF] = true;
+    this._asyncPressedKeys[vkCode & 0xFF] = true;
+    this._signalDirectInputDevice(1);
+    // The browser-side instance is only an ownership token when slot 0 runs
+    // in a Worker. Calling its edit/dialog exports would update a different
+    // set of WebAssembly globals and consume the key before the live guest can
+    // see it. Native GetMessage routing in slot 0 owns all keyboard handling.
+    if (this._keyboardOwnerRunsInGuestWorker()) {
+      // ...except the answer to a common modal (MessageBox, file dialogs).
+      // Its API call is parked in the Worker's CACA0006 pump, which never
+      // reads this queue: it only waits for the shared completion that the
+      // shadow's WAT dialog publishes, exactly as a click on its buttons
+      // does (dialog_route_mouse). Queued, Enter/Esc could never dismiss
+      // the box -- Drakan's "Beta Demo Warning" with Threads on, in every
+      // browser (USER-DRAKAN-WEBKIT-20261011).
+      if (vkCode === 13 || vkCode === 27) {
+        const sw = this.wasm && this.wasm.exports;
+        const modalHwnd = sw && sw.dialog_handle_key ? this._modalDialogHwnd() : 0;
+        if (modalHwnd) {
+          sw.dialog_handle_key(modalHwnd, vkCode, 0);
+          this.scheduleRepaint();
+          this._suppressNextKeyPress = vkCode;
+          return;
+        }
+      }
+      this.inputQueue.push({
+        type: 'key', hwnd: 0, wParam: vkCode, ...this._keyMessage(vkCode, false, keyLParam),
+      });
+      this._wakeMessageWait(true);
+      return;
+    }
+    const we = this.wasm && this.wasm.exports;
+    const menu = this._openMenuContext();
+    const menuOpenHwnd = menu ? menu.hwnd : 0;
+
+    if (vkCode === 18) { // Alt: the renderer's menu-mode tap, and WM_SYSKEYDOWN for the app
+      this._altDown = true;
+      if (!modifierWasDown) this._altTapped = true;
+      this.inputQueue.push({
+        type: 'key', hwnd: 0, wParam: vkCode, ...this._keyMessage(vkCode, false, keyLParam),
+      });
+      this._wakeMessageWait(true);
+      return;
+    }
+    if (vkCode === 27) { // Escape
+      // Consumed here, so the WM_CHAR the browser queues next is not the
+      // application's either.
+      if (menuOpenHwnd) {
+        if (menu.exports.menu_handle_key_open) menu.exports.menu_handle_key_open(vkCode);
+        this.repaint();
+        this._suppressNextKeyPress = 27;
+        return;
+      }
+      if (this._menuMode) { this._menuMode = false; this._suppressNextKeyPress = 27; return; }
+    }
+    // A modal dialog owns Enter/Esc even if the previous modeless dialog's
+    // child still has the WAT focus. This happens when Notepad's modeless
+    // Find dialog opens a not-found MessageBox.
+    if ((vkCode === 13 || vkCode === 27) && we && (we.send_message || we.post_message_q)) {
+      const modalHwnd = this._modalDialogHwnd();
+      if (modalHwnd) {
+        if (we.dialog_handle_key) we.dialog_handle_key(modalHwnd, vkCode, 0);
+        this.scheduleRepaint();
+        if (vkCode === 27) this._suppressNextKeyPress = 27;
+        return;
+      }
+    }
+
+    // Open dropdown keyboard routing is WAT-side.
+    if (menuOpenHwnd) {
+      if (we.menu_handle_key_open && we.menu_handle_key_open(vkCode)) {
+        this.repaint();
+        if (vkCode >= 65 && vkCode <= 90) this._suppressNextKeyPress = vkCode;
+        return;
+      }
+    }
+
+    // Any non-Alt key cancels the alt-tap
+    this._altTapped = false;
+
+    // Menu mode or Alt+letter: WAT opens the matching top-level bar item.
+    if ((this._menuMode || this._altDown) && vkCode >= 65 && vkCode <= 90) {
+      if (we && we.menu_open_bar_accel && we.menu_open_bar_accel(vkCode)) {
+        this._menuMode = false;
+        this._altDown = false;
+        this._suppressNextKeyPress = vkCode;
+        this.repaint();
+        return;
+      }
+      this._menuMode = false;
+      this._altDown = false;
+    }
+
+    // Global Win98 shortcuts that don't conflict with the browser.
+    // Use _asyncKeys (set at top of this fn) for modifier state — the
+    // _shiftDown/_ctrlDown locals only update after edit routing.
+    {
+      const shift = !!(this._asyncKeys && this._asyncKeys[16]);
+      // F10: Win98 posts it to the application as WM_SYSKEYDOWN, and menu
+      // activation is only DefWindowProc's default. A window with a menu bar
+      // keeps the renderer's menu-mode toggle; one without (StarCraft opens
+      // its own Game Menu on F10) must see the key itself.
+      if (vkCode === 121 && !shift) {
+        if (this._focusedTopLevelHasMenuBar()) {
+          this._menuMode = !this._menuMode;
+          return;
+        }
+        this._f10ToGuest = true;
+        this.inputQueue.push({
+          type: 'key', hwnd: 0, msg: 0x0104, wParam: vkCode, lParam: keyLParam,
+        });
+        this._wakeMessageWait(true);
+        return;
+      }
+      // Shift+F10: WM_CONTEXTMENU to focused hwnd at (-1,-1) sentinel
+      if (vkCode === 121 && shift) {
+        const hwnd = (we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0;
+        if (hwnd && we.post_message_q) {
+          we.post_message_q(hwnd, 0x007B, hwnd, 0xFFFFFFFF >>> 0);
+        }
+        return;
+      }
+      // F1: WM_HELP to focused hwnd (apps that handle it pop context help).
+      // Like F10, only a window with a menu bar gets that; a game without
+      // one (StarCraft's Help menu) reads the WM_KEYDOWN itself. WM_HELP is
+      // a Win95 message, so a 16-bit task never gets one and binds F1 as an
+      // ordinary key: Civilization II's City Status advisor.
+      if (vkCode === 112 && this._focusedTopLevelHasMenuBar()
+          && !(we && we.is_win16 && we.is_win16())) {
+        const hwnd = (we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0;
+        if (hwnd && we.post_message_q) {
+          we.post_message_q(hwnd, 0x0053, 0, 0);
+        }
+        return;
+      }
+      // Alt+Down: combobox dropdown (CB_SHOWDROPDOWN). Cheap stub: only
+      // fires when focus is a combobox child; WAT side decides what to do.
+      if (vkCode === 40 && this._altDown) {
+        const hwnd = (we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0;
+        if (hwnd && we.send_message) {
+          we.send_message(hwnd, 0x014F, 1, 0);
+          this.invalidate(hwnd);
+          return;
+        }
+      }
+
+      // Dialog focus/default-button traversal lives in WAT; JS only decides
+      // whether a raw browser key should be offered to that dialog helper.
+      if (vkCode === 9 || vkCode === 13 || vkCode === 27 || vkCode === 32
+          || vkCode === 37 || vkCode === 38 || vkCode === 39 || vkCode === 40) {
+        const focus = (we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0;
+        if (we && we.dialog_handle_key) {
+          let dlg = 0;
+          const modalHwnd = this._modalDialogHwnd();
+          if (modalHwnd) dlg = modalHwnd;
+          else if (we.dialog_ancestor) dlg = we.dialog_ancestor(focus) | 0;
+          if (!dlg && we.get_findreplace_dlg) dlg = we.get_findreplace_dlg() | 0;
+          if (dlg && we.dialog_handle_key(dlg, vkCode, shift ? 1 : 0)) {
+            this.scheduleRepaint();
+            if (vkCode === 27) this._suppressNextKeyPress = 27;
+            return;
+          }
+        }
+      }
+    }
+
+    if (this._handleNativeTextShortcut(vkCode)) return;
+
+    // Route WM_KEYDOWN to WAT EditState — WAT is sole source of truth for
+    // edit text. Handles both WAT-only controls and JS-visible Edit children.
+    // Function keys skip it: the edit does nothing with them, and they are
+    // the application's accelerators (Notepad's F5 Time/Date, F3 Find Next),
+    // which only TranslateAccelerator in the guest's own message loop sees.
+    // Text-editing keys stay direct so they keep their order with WM_CHAR.
+    if (!(vkCode >= 112 && vkCode <= 123)) {
+      const editTarget = this._findWatEditTarget();
+      if (editTarget && we.send_message) {
+        we.send_message(editTarget, 0x0100, vkCode, 0);
+        this.invalidate(editTarget);
+        const parentWin = this._findParentWindow(editTarget);
+        if (parentWin) this.invalidate(parentWin.hwnd);
+        // send_message already enters an installed x86 edit subclass and
+        // chains to the native EDIT proc synchronously. Queuing the same
+        // WM_KEYDOWN again made Backspace/Delete/navigation run twice.
+        return;
+      }
+    }
+
+    if (vkCode === 16) this._shiftDown = true;
+    else if (vkCode === 17) this._ctrlDown = true;
+    this.inputQueue.push({
+      type: 'key', hwnd: 0, wParam: vkCode, ...this._keyMessage(vkCode, false, keyLParam),
+    });
+    this._wakeMessageWait(true);
+  }
+
+  P.handleKeyUp = function(vkCode, keyInfo) {
+    this._restoreKeyboardInputOwner();
+    this.pokeKeyDownState(vkCode, false, keyInfo);
+    const modifier = vkCode === 16 || vkCode === 17 || vkCode === 18;
+    const stillDown = modifier && !!this.peekKeyDownState(vkCode);
+    const upMessage = this._keyMessage(vkCode, true,
+      keyboardMessageLParam(vkCode, keyInfo, true, true));
+    // A release only takes effect where it lands in the queue. Clearing the
+    // state here while earlier key messages are still in flight retracts the
+    // modifier before the guest has even seen the keystroke it modified: the
+    // Ctrl-up of a Ctrl+Z would land before the queued WM_KEYDOWN for Z, and
+    // TranslateAccelerator, which reads this state, would see a bare Z.
+    // takeInput clears it when the WM_KEYUP is actually dispatched.
+    const keyInFlight = this.inputQueue.some(e => e && e.type === 'key');
+    if (!keyInFlight && this._asyncKeys) this._asyncKeys[vkCode & 0xFF] = stillDown;
+    this._signalDirectInputDevice(1);
+    if (vkCode === 16) this._shiftDown = stillDown;
+    if (vkCode === 17) this._ctrlDown = stillDown;
+    if (vkCode === 18 && !stillDown) {
+      this._altDown = false;
+      // Alt tap (press and release without other keys) activates menu mode
+      if (this._altTapped) {
+        this._menuMode = !this._menuMode;
+        this._altTapped = false;
+      }
+    }
+    const sysF10 = vkCode === 121 && this._f10ToGuest;
+    if (vkCode === 121) this._f10ToGuest = false;
+    this.inputQueue.push({
+      type: 'key', hwnd: 0, wParam: vkCode,
+      // Snapshot this release's position in the message timeline. Reading
+      // today's physical map in takeInput would lose buffered chords.
+      ...(modifier ? { modifierDown: stillDown } : {}),
+      msg: sysF10 ? 0x0105 : upMessage.msg, lParam: upMessage.lParam,
+    });
+    this._wakeMessageWait(true);
+  }
+
+  P.handleKeyPress = function(charCode) {
+    if (this._exited) return;
+    this._restoreKeyboardInputOwner();
+    // WM_CHAR's lParam is the keystroke's, as TranslateMessage copies it: its
+    // low word is a repeat count, and a guest that loops over it reads 0 as
+    // "no characters". NFS II's lib_char did exactly that, so Escape never
+    // skipped its intro. A character with no keystroke behind it (IME, paste,
+    // a second char from one beforeinput) still counts once.
+    const charLParam = this._charLParam || 1;
+    this._charLParam = 0;
+    if (this._suppressNextKeyPress) {
+      const suppress = this._suppressNextKeyPress;
+      let shouldSuppress = suppress === true;
+      if (!shouldSuppress && suppress >= 65 && suppress <= 90) {
+        shouldSuppress = charCode === suppress || charCode === suppress + 32;
+      }
+      if (suppress === 27 || suppress === 13) shouldSuppress = charCode === suppress;
+      this._suppressNextKeyPress = false;
+      if (shouldSuppress) return;
+    }
+    if (this._activeInputProfile) {
+      this._profileMark && this._profileMark('handle-keypress', { charCode });
+    } else {
+      this._profileInput && this._profileInput('keypress', { charCode });
+    }
+    if (this._keyboardOwnerRunsInGuestWorker()) {
+      this._profileMark && this._profileMark('queue-wm-char');
+      this.inputQueue.push({
+        type: 'key', hwnd: 0, msg: 0x0102, wParam: charCode, lParam: charLParam,
+      });
+      this._wakeMessageWait(true);
+      return;
+    }
+    // Route WM_CHAR to WAT EditState — WAT is sole source of truth for edit text.
+    const we = this.wasm && this.wasm.exports;
+    const editTarget = this._findWatEditTarget();
+    if (editTarget && we.send_message) {
+      this._profileMark && this._profileMark('wm-char-send-start', { hwnd: editTarget });
+      we.send_message(editTarget, 0x0102, charCode, 0);
+      this._profileMark && this._profileMark('wm-char-send-end', { hwnd: editTarget });
+      this.invalidate(editTarget);
+      const parentWin = this._findParentWindow(editTarget);
+      if (parentWin) this.invalidate(parentWin.hwnd);
+      return;
+    }
+    this._profileMark && this._profileMark('queue-wm-char');
+    this.inputQueue.push({
+      type: 'key', hwnd: 0, msg: 0x0102, wParam: charCode, lParam: charLParam,
+    });
+    this._wakeMessageWait(true);
+  }
+
+  P._compositionTarget = function() {
+    const we = this.wasm && this.wasm.exports;
+    return this._findWatEditTarget() ||
+      ((we && we.get_focus_hwnd) ? (we.get_focus_hwnd() | 0) : 0);
+  };
+
+  P.handleCompositionStart = function() {
+    if (this._exited) return;
+    this._restoreKeyboardInputOwner();
+    const hwnd = this._compositionTarget();
+    this._imeComposition = { hwnd, text: '' };
+  };
+
+  P.handleCompositionUpdate = function(text) {
+    if (this._exited) return;
+    const state = this._imeComposition || { hwnd: this._compositionTarget(), text: '' };
+    state.text = String(text || '');
+    this._imeComposition = state;
+  };
+
+  P.handleCompositionEnd = function(text) {
+    if (this._exited) return;
+    const we = this.wasm && this.wasm.exports;
+    const state = this._imeComposition || { hwnd: this._compositionTarget(), text: '' };
+    const committed = String(text || '');
+    if (state.hwnd && we && we.send_message) {
+      // The browser owns pre-edit/candidate UI. Sending WM_IME_STARTCOMPOSITION
+      // to the Win98 RichEdit20A control without a guest IMM module corrupts
+      // its native buffer, so only finalized UTF-16 units enter the guest.
+      // WM_CHAR accepts UTF-16 code units and therefore preserves surrogate
+      // pairs as well as BMP text. An empty commit is a cancellation.
+      for (let i = 0; i < committed.length; i++) {
+        we.send_message(state.hwnd, 0x0102, committed.charCodeAt(i), 0);
+      }
+      this.invalidate(state.hwnd);
+      const parentWin = this._findParentWindow(state.hwnd);
+      if (parentWin) this.invalidate(parentWin.hwnd);
+      this.scheduleRepaint();
+    }
+    this._imeComposition = null;
+  };
+
+  // Take the next queued event this caller is allowed to have, or null.
+  //
+  // `owns` lets a host with more than one guest in the page skip events aimed
+  // at somebody else's window instead of swallowing them: the browser runs
+  // several emulator instances against one queue, so the first event is not
+  // always this instance's to dequeue. Without a filter this is a plain shift.
+  P.takeInput = function(owns) {
+    const q = this.inputQueue;
+    const idx = owns ? q.findIndex(owns) : (q.length ? 0 : -1);
+    if (idx < 0) {
+      // Only an empty queue means "nothing in flight". Events still waiting
+      // for another instance leave the active event alone.
+      if (q.length === 0) this._activeInputEvent = null;
+      // An empty poll ends the guest's pump: any button pressed before it has
+      // now been visible for a frame (see the release hold below).
+      if (this._buttonPress) {
+        for (const k in this._buttonPress) if (this._buttonPress[k]) this._buttonPress[k].polled = true;
+      }
+      if (this._pointerMoved) this._pointerMoved.polled = true;
+      return null;
+    }
+    // A button release is never handed over in the same message pump as its
+    // press. A physical click holds the button ~100ms, so on Windows a game
+    // that polls button STATE once a frame (SDL_GetMouseState: Dungeons of
+    // Dredmor's GUI) always sees it down. A tap, or any click whose two
+    // messages queued up while the guest was busy, puts WM_LBUTTONDOWN and
+    // WM_LBUTTONUP back to back; the guest's PeekMessage loop then drains
+    // both before its next frame and the press is never observed -- the
+    // button "does nothing". So after a press the release waits for (a) one
+    // empty poll, which is what ends the pump that delivered the press -- a
+    // frame-rate-independent "the guest has had a frame" -- and (b) a short
+    // floor (_minButtonHoldMs(), 30ms) in case a nested PeekMessage inside
+    // the handler is what consumed that empty poll. Later events wait behind
+    // the held release, so order is preserved.
+    // The hold is measured on the clock the guest runs on. In the browser that
+    // is the wall clock. A headless host runs its guest on a batch clock
+    // (test/run.js: 200ms of guest time per batch, done in microseconds when
+    // the guest is parked in GetMessage) and sets _inputNowMs to read it
+    // without advancing it; on the wall clock there, a title-screen click's
+    // release never came of age, and every mouse event queued behind it --
+    // Bricks' whole block drag -- was never delivered.
+    const now = this._inputNowMs ? () => this._inputNowMs() : _inputNow;
+    const head = q[idx];
+    const btn = head ? _buttonOfUp(head.msg) : 0;
+    const press = btn && this._buttonPress ? this._buttonPress[btn] : null;
+    // A host can set its own floor (_buttonHoldFloorMs): 0 keeps only the
+    // empty-poll rule, and a negative value turns the hold off for that host,
+    // like the page's __waMinButtonHoldMs A/B switch. test/run.js turns it off
+    // (see there): its --input script is the press timing.
+    const floor = Number.isFinite(this._buttonHoldFloorMs)
+      ? this._buttonHoldFloorMs : _minButtonHoldMs();
+    // The same rule for a press that follows the pointer onto a new spot. A
+    // game that arms a button from hover, worked out once a frame from where
+    // the pointer is, never arms it for a press delivered in the same pump as
+    // the move that brought the pointer there: Disciples II's menu buttons
+    // drew pressed and did nothing on the first click of every screen, and a
+    // second click (the pointer already there) worked. A tap is always such a
+    // click: on a phone every menu needed two taps. So the press waits until
+    // the move has had an empty poll and the floor, like a release.
+    const pressBtn = head ? _buttonOfDown(head.msg) : 0;
+    const moved = pressBtn && !btn ? this._pointerMoved : null;
+    const hold = press || moved;
+    if (hold && floor >= 0) {
+      const left = hold.at + floor - now();
+      if (!hold.polled || left > 0) {
+        hold.polled = true;
+        // Something has to poll again: a guest parked in GetMessage is woken
+        // by new input, and the release is already queued.
+        if (!this._buttonHoldTimer && typeof setTimeout === 'function') {
+          this._buttonHoldTimer = setTimeout(() => {
+            this._buttonHoldTimer = null;
+            this._wakeMessageWait(true);
+          }, Math.max(0, Math.ceil(left)));
+        }
+        return null;
+      }
+    }
+    const evt = q.splice(idx, 1)[0];
+    const pressed = evt ? _buttonOfDown(evt.msg) : 0;
+    if (pressed) this._pointerMoved = null;
+    else if (evt && evt.msg === 0x0200 && evt.mouseX !== undefined) {
+      const at = this._lastMovePoint;
+      if (!at || at.x !== evt.mouseX || at.y !== evt.mouseY) {
+        this._pointerMoved = { at: now(), polled: false };
+        this._lastMovePoint = { x: evt.mouseX, y: evt.mouseY };
+      }
+    }
+    if (pressed) {
+      if (!this._buttonPress) this._buttonPress = Object.create(null);
+      this._buttonPress[pressed] = { at: now(), polled: false };
+    } else if (btn && this._buttonPress) {
+      this._buttonPress[btn] = null;
+    }
+    this._publishInputQueueDepth();
+    this._activeInputEvent = evt || null;
+    if (!evt) return null;
+    if (evt.queuedAt) _perfInputTake(evt.queuedAt);
+    if (evt.msg === 0x0100 || evt.msg === 0x0102 || evt.msg === 0x0104) {
+      this._profileMark && this._profileMark('input-queue-dispatch', { msg: evt.msg, wParam: evt.wParam });
+    }
+    // After delivering WM_PAINT, schedule repaint so menus redraw on top
+    if (evt.msg === 0x000F) this.scheduleRepaint();
+    // Track async key state for GetAsyncKeyState. The press bit is the half
+    // that is easy to forget -- GetAsyncKeyState's low bit reports "pressed
+    // since you last asked", so a game that polls it misses the keystroke
+    // entirely if only _asyncKeys is updated here.
+    if (evt.msg === 0x0100 || evt.msg === 0x0104) { // WM_KEYDOWN, WM_SYSKEYDOWN
+      if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+      if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+      this._asyncKeys[evt.wParam & 0xFF] = true;
+      this._asyncPressedKeys[evt.wParam & 0xFF] = true;
+    } else if (evt.msg === 0x0101 || evt.msg === 0x0105) { // WM_KEYUP, WM_SYSKEYUP
+      if (this._asyncKeys) this._asyncKeys[evt.wParam & 0xFF] = !!evt.modifierDown;
+    }
+    return evt;
+  }
+
+  P.checkInput = function() {
+    return this.takeInput(null) || 0;
+  }
+
+  // GetAsyncKeyState(vKey) — high bit set while down, low bit set once
+  // after a press until consumed by GetAsyncKeyState.
+  P.getAsyncKeyState = function(vKey) {
+    return this.peekAsyncKeyState(vKey) | this._consumeAsyncPressBit(vKey);
+  }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { installInputHandlers, keyboardMessageLParam };
+} else if (typeof window !== 'undefined') {
+  window.installInputHandlers = installInputHandlers;
+}
