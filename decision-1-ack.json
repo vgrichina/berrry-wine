@@ -1,0 +1,154 @@
+{
+  "serial": 76,
+  "snap": {
+    "batch": 3460,
+    "eip": "0x5114f5",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10082",
+    "mainHwnd": "0x1000b",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 20,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 0,
+        "y": 0,
+        "w": 480,
+        "h": 321,
+        "visible": false,
+        "isChild": false,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1000b",
+        "x": 0,
+        "y": 0,
+        "w": 640,
+        "h": 480,
+        "visible": true,
+        "isChild": false,
+        "title": "Sid Meier's Civilization II"
+      },
+      {
+        "hwnd": "0x10076",
+        "x": 454,
+        "y": 0,
+        "w": 178,
+        "h": 134,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10077",
+        "x": 454,
+        "y": 135,
+        "w": 178,
+        "h": 299,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10078",
+        "x": 0,
+        "y": 0,
+        "w": 454,
+        "h": 434,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1007b",
+        "x": 20,
+        "y": 20,
+        "w": 480,
+        "h": 321,
+        "visible": false,
+        "isChild": false,
+        "title": "MrTimer"
+      },
+      {
+        "hwnd": "0x1007c",
+        "x": 0,
+        "y": 0,
+        "w": 654,
+        "h": 454,
+        "visible": false,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1007f",
+        "x": 8,
+        "y": 4,
+        "w": 16,
+        "h": 16,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10080",
+        "x": 26,
+        "y": 4,
+        "w": 16,
+        "h": 16,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10081",
+        "x": 90,
+        "y": 195,
+        "w": 462,
+        "h": 92,
+        "visible": true,
+        "isChild": false,
+        "title": "What Shall We Name This City?"
+      },
+      {
+        "hwnd": "0x10082",
+        "x": 95,
+        "y": 27,
+        "w": 225,
+        "h": 30,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10083",
+        "x": 6,
+        "y": 61,
+        "w": 223,
+        "h": 26,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10084",
+        "x": 231,
+        "y": 61,
+        "w": 223,
+        "h": 26,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      }
+    ]
+  },
+  "at": "2026-10-26T22:11:25.999Z"
+}

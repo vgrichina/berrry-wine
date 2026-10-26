@@ -1,0 +1,446 @@
+{
+  "requests": [
+    {
+      "action": "step",
+      "n": 500,
+      "id": "serial-1"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-2"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/language.png",
+      "id": "serial-3"
+    },
+    {
+      "cmd": "click:210:280",
+      "id": "serial-4"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-5"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-6"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/heralds.png",
+      "id": "serial-7"
+    },
+    {
+      "cmd": "click:320:327",
+      "id": "serial-8"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-9"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-10"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/intro.png",
+      "id": "serial-11"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-12"
+    },
+    {
+      "cmd": "keydown:27",
+      "id": "serial-13"
+    },
+    {
+      "cmd": "keyup:27",
+      "id": "serial-14"
+    },
+    {
+      "action": "step",
+      "n": 300,
+      "id": "serial-15"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-16"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/post-intro.png",
+      "id": "serial-17"
+    },
+    {
+      "cmd": "click:478:464",
+      "id": "serial-18"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-19"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-20"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/world.png",
+      "id": "serial-21"
+    },
+    {
+      "cmd": "click:180:391",
+      "id": "serial-22"
+    },
+    {
+      "cmd": "click:320:464",
+      "id": "serial-23"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-24"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-25"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/difficulty.png",
+      "id": "serial-26"
+    },
+    {
+      "cmd": "click:90:465",
+      "id": "serial-27"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-28"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-29"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/civilizations.png",
+      "id": "serial-30"
+    },
+    {
+      "cmd": "click:327:435",
+      "id": "serial-31"
+    },
+    {
+      "cmd": "click:468:465",
+      "id": "serial-32"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-33"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-34"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/barbarians.png",
+      "id": "serial-35"
+    },
+    {
+      "cmd": "click:172:465",
+      "id": "serial-36"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-37"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-38"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/rules.png",
+      "id": "serial-39"
+    },
+    {
+      "cmd": "click:385:465",
+      "id": "serial-40"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-41"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-42"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/gender.png",
+      "id": "serial-43"
+    },
+    {
+      "cmd": "click:235:465",
+      "id": "serial-44"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-45"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-46"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/tribe.png",
+      "id": "serial-47"
+    },
+    {
+      "cmd": "click:320:465",
+      "id": "serial-48"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-49"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-50"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/name.png",
+      "id": "serial-51"
+    },
+    {
+      "cmd": "click:210:465",
+      "id": "serial-52"
+    },
+    {
+      "action": "step",
+      "n": 250,
+      "id": "serial-53"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-54"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/ready.png",
+      "id": "serial-55"
+    },
+    {
+      "cmd": "click:388:465",
+      "id": "serial-56"
+    },
+    {
+      "action": "step",
+      "n": 300,
+      "id": "serial-57"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-58"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/map-entry.png",
+      "id": "serial-59"
+    },
+    {
+      "cmd": "click:320:460",
+      "id": "serial-60"
+    },
+    {
+      "action": "step",
+      "n": 200,
+      "id": "serial-61"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-62"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/map-before.png",
+      "id": "serial-63"
+    },
+    {
+      "cmd": "click:320:118",
+      "id": "serial-64"
+    },
+    {
+      "action": "step",
+      "n": 50,
+      "id": "serial-65"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-66"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/gameplay-before.png",
+      "id": "serial-67"
+    },
+    {
+      "cmd": "click:174:31",
+      "id": "serial-68"
+    },
+    {
+      "action": "step",
+      "n": 10,
+      "id": "serial-69"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-70"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/orders-menu.png",
+      "id": "serial-71"
+    },
+    {
+      "cmd": "click:211:52",
+      "id": "serial-72"
+    },
+    {
+      "action": "step",
+      "n": 100,
+      "id": "serial-73"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-74"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/city-name.png",
+      "id": "serial-75"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-76"
+    },
+    {
+      "cmd": "click:210:272",
+      "id": "serial-77"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-78"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-79"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/city-founded-ui.png",
+      "id": "serial-80"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-81"
+    },
+    {
+      "cmd": "click:320:347",
+      "id": "serial-82"
+    },
+    {
+      "action": "step",
+      "n": 150,
+      "id": "serial-83"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-84"
+    },
+    {
+      "action": "png",
+      "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26/rome-city-screen.png",
+      "id": "serial-85"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-86"
+    },
+    {
+      "cmd": "click:320:162",
+      "id": "serial-87"
+    },
+    {
+      "action": "step",
+      "n": 100,
+      "id": "serial-88"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-89"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-90"
+    },
+    {
+      "cmd": "click:626:12",
+      "id": "serial-91"
+    },
+    {
+      "action": "step",
+      "n": 50,
+      "id": "serial-92"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-93"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-94"
+    },
+    {
+      "cmd": "click:215:262",
+      "id": "serial-95"
+    },
+    {
+      "cmd": "click:320:291",
+      "id": "serial-96"
+    },
+    {
+      "action": "step",
+      "n": 1,
+      "id": "serial-97"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-98"
+    },
+    {
+      "action": "snapshot",
+      "id": "serial-99"
+    }
+  ],
+  "ackCount": 99,
+  "decision7": "File prepared after guest cutoff; absent from control-in; not submitted/replayed",
+  "normalQuitUnverified": true
+}

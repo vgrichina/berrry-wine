@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-26T22:10:50.755131+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-city-founding-gameplay-oct26": 40960,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-city-founding-gameplay-oct26": 380928,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-city-founding-gameplay-oct26": 380928,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T22-08-45-01a17a42-456a-7260-bc24-d756b7d0cc61.jsonl": 790528
+    },
+    "positiveWALGrowthOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 0,
+      "/home/user/.codex/queue_1.sqlite-wal": 0,
+      "/home/user/.codex/goals_1.sqlite-wal": 0,
+      "/home/user/.codex/state_5.sqlite-wal": 0,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 0
+    },
+    "total": 1593344,
+    "standingInputsExcluded": true
+  },
+  "future": 92274688,
+  "captures": 41943040,
+  "publication": 8388608,
+  "futureSessionEventsWAL": 33554432,
+  "reserve": 8388608,
+  "allocation": 134217728,
+  "projected": 93868032,
+  "diskFree": 3523764224,
+  "projectedHostFree": 3431489536,
+  "hostFloor": 2982150144,
+  "memAvailable": 4108095488,
+  "requiredMemAvailable": 3489660928,
+  "residentClients": [
+    {
+      "pid": 3214528,
+      "rss": 197283840
+    }
+  ],
+  "ramPolicy": "Residents already deducted once; host768MiB guest768MiB other2Git512MiB each Enigma128MiB GLcontroller128MiB remaininggrowth; no prospective320MiB repeat",
+  "admitted": true
+}

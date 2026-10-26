@@ -1,0 +1,11 @@
+{
+  "ownRun": {
+    "errors": [],
+    "missing": [],
+    "invalid": []
+  },
+  "passing": true,
+  "officialChecker": "ops/check-run-evidence.js",
+  "fullLog": "evidencecheck.log",
+  "scope": "Other runs left unchanged; no global validity claim"
+}

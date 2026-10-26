@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-26T22:10:35.377033+00:00",
+  "identity": "identity.json",
+  "productionRunner": {
+    "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+  },
+  "configuration": "configuration-reuse.json",
+  "canonicalEnumeration": "donor-prior-reused-mount-validation.json",
+  "standingAssets": "donor-prior-reused-standing-system-assets.json",
+  "startup": "startup-receipt.json",
+  "sourceModuleExecutableAPIWorkersLibraries": "identity.json complete239source337fixture checks",
+  "sourceStandingFootprint": 27086369,
+  "fixtureStandingFootprint": 372035495,
+  "taskAllocation": 134217728,
+  "resourceAdmission": "startup-admission.json; guest-admission.json immediately before guest",
+  "png": {
+    "width": 640,
+    "height": 480,
+    "lossless": true,
+    "eachMax": 2097152,
+    "totalMax": 41943040,
+    "countMax": 20
+  },
+  "action": "Ordinary Orders menu Build City with selected Roman Settlers; name/default confirmation and city UI; normal quit",
+  "timePlan": {
+    "totalWall": 90,
+    "setupObservedDonorWall": 35,
+    "remainingFoundingAndCleanup": 55,
+    "setupCaptures": 16,
+    "acceptanceCaptures": 4,
+    "manualDecisionSerial": true
+  },
+  "cutoff": "2026-10-26T22:30:00Z",
+  "handback": "2026-10-26T22:35:00Z",
+  "shutdown": "2026-10-26T22:38:00Z",
+  "expiry": "2026-10-26T22:40:00Z",
+  "box": null,
+  "noCompile": true,
+  "noCopy": true
+}

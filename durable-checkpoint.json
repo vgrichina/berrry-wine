@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-26T22:13:11.329852+00:00",
+  "source": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "sourceFiles": 239,
+  "fixtureFiles": 337,
+  "passed": [
+    "pins rehashed",
+    "same configuration canonical mount338 and10comma validated",
+    "exact Node startup",
+    "serial controller same-frame/wrong-dialog selfcheck",
+    "known setup frozen pixel checks",
+    "ordinary selectedSettlers Orders BuildNewCity defaultRome",
+    "personally inspected foundingnotice and Rome citymap",
+    "identity-safe cleanup"
+  ],
+  "partial": [
+    "production cityscreen reached as native child/control layout after tutorial dismissal but no pixels inspected",
+    "normal quit attempted; no Exit0; supervisorwall90 killed"
+  ],
+  "blocker": "Controller capture/time allocation:16 setup + Orders/name/foundingnotice/firstcitytutorial exhausted20 before production UI; no21st capture or second guest. Not an observed game/runtime defect.",
+  "runtimeAttempts": 1,
+  "replay": false,
+  "sourcePatch": false,
+  "priorMovementAcceptance": "12a671414ed20182975c50a8d35355d8f2f5d0bf unchanged; no movement input",
+  "remaining": [
+    "production cityscreen visual acceptance",
+    "normal quit"
+  ],
+  "priorIncidents": "donor-durable-checkpoint.json",
+  "publication": "pending"
+}

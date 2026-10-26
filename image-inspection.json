@@ -1,0 +1,115 @@
+{
+  "at": "2026-10-26T22:13:11.329852+00:00",
+  "personallyInspected": {
+    "gameplay-before.png": "Selected Roman Settlers; Moves1; Plains; Roman Map4000BC. Sprite blink-off; no coordinate inference.",
+    "orders-menu.png": "Build New City enabled at top of Orders menu; shortcut b shown; ordinary menu click used.",
+    "city-name.png": "What Shall We Name This City? Rome selected; OK/Cancel. Settlers sprite and shield visibly present below.",
+    "city-founded-ui.png": "Found New City illustration with Rome Founded:4000B.C.; personally inspected. Filename does not establish production UI.",
+    "rome-city-screen.png": "Actually City Tutorial:Your First City, text explains production/CHANGE; Rome size1 city visibly on map beneath. This is not the production city screen despite filename."
+  },
+  "allImages": [
+    {
+      "path": "city-founded-ui.png",
+      "bytes": 235571,
+      "sha256": "39f58c7a680982fd3ee9e4844e207e0ce075e0e443c45414ca1c9d1c38505966"
+    },
+    {
+      "path": "rules.png",
+      "bytes": 276350,
+      "sha256": "df4af0c5faa754c0024d72f4c4383a056ea2638eee91d435b110de54f8753846"
+    },
+    {
+      "path": "world.png",
+      "bytes": 373434,
+      "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6"
+    },
+    {
+      "path": "post-intro.png",
+      "bytes": 342351,
+      "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c"
+    },
+    {
+      "path": "map-entry.png",
+      "bytes": 302615,
+      "sha256": "38327d4e6c9483fe396c86a4199d14193499f6a3deba5677f866d3baec417487"
+    },
+    {
+      "path": "name.png",
+      "bytes": 306125,
+      "sha256": "3d8aa1bc34af77991ab339c6cc29da979aec21379e3be81d83e04c86d0b844d9"
+    },
+    {
+      "path": "tribe.png",
+      "bytes": 393903,
+      "sha256": "c4d1d24a0e5d3829ca4d8b03e168d1d45bf4751d2836e29d304c5084d55be72a"
+    },
+    {
+      "path": "orders-menu.png",
+      "bytes": 125186,
+      "sha256": "3194744bc7ce3777df969046a1febc313cc306e0495a337cdafbab62e2dfdba0"
+    },
+    {
+      "path": "city-name.png",
+      "bytes": 165245,
+      "sha256": "fcf8d73c7fb7c5f7829d1ea28af89379ecace6d5eafdb9456394b7f86020ebde"
+    },
+    {
+      "path": "ready.png",
+      "bytes": 299111,
+      "sha256": "2acc5caaace338921e001e1ae6ff382ad39fc182f41232dfcdf08994143eaa47"
+    },
+    {
+      "path": "heralds.png",
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171"
+    },
+    {
+      "path": "gameplay-before.png",
+      "bytes": 158032,
+      "sha256": "23ba27f11aad2d24c4f60ee0b713f8018bc4d05054b376a7bdf4022d39b5cf0b"
+    },
+    {
+      "path": "civilizations.png",
+      "bytes": 414300,
+      "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7"
+    },
+    {
+      "path": "rome-city-screen.png",
+      "bytes": 257868,
+      "sha256": "86c2579890fe26358741eaf001c966f1317cc744d7f49cd76a19e064e95dc669"
+    },
+    {
+      "path": "barbarians.png",
+      "bytes": 374726,
+      "sha256": "51dbdf2dcbd4fa7466e560bd1dc56ac2a1cfef199ad89016ef81fdad39b13268"
+    },
+    {
+      "path": "map-before.png",
+      "bytes": 170807,
+      "sha256": "a4c4158927a29d0263005021d17d89d52d25d92302a4dd5a34f3809a0aed5939"
+    },
+    {
+      "path": "difficulty.png",
+      "bytes": 353624,
+      "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48"
+    },
+    {
+      "path": "language.png",
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da"
+    },
+    {
+      "path": "gender.png",
+      "bytes": 309381,
+      "sha256": "aaaaf87727ed33fc82cb3b1da2a065db2276e4004c4a3d1a5574af59be8eb304"
+    },
+    {
+      "path": "intro.png",
+      "bytes": 53424,
+      "sha256": "ecc58f62ae2aabf4010c46052125f39267c4b10c0ff90123225959fd36cde567"
+    }
+  ],
+  "cityFoundingVerified": true,
+  "cityMapVerified": true,
+  "productionScreenVisuallyVerified": false
+}

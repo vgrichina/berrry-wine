@@ -1,0 +1,11 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T22-08-45-01a17a42-456a-7260-bc24-d756b7d0cc61.jsonl",
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 4182016,
+    "/home/user/.codex/state_5.sqlite-wal": 4403200,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+  }
+}

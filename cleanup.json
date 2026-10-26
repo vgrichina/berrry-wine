@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-26T22:13:11.329852+00:00",
+  "identities": [
+    {
+      "pid": 3217275,
+      "expectedStart": 109986005,
+      "actualStart": null,
+      "ownedLive": false
+    },
+    {
+      "pid": 3217276,
+      "expectedStart": 109986008,
+      "actualStart": null,
+      "ownedLive": false
+    },
+    {
+      "pid": 3217277,
+      "expectedStart": 109986008,
+      "actualStart": null,
+      "ownedLive": false
+    }
+  ],
+  "ownedLive": [],
+  "guestNormalExit": false,
+  "forcedBy": "90-second wall supervisor",
+  "box": null,
+  "otherWatchersUntouched": true
+}

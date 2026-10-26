@@ -1,0 +1,2893 @@
+{
+  "at": "2026-10-26T22:10:17.797630+00:00",
+  "source": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "sourceFiles": 239,
+  "fixtureFiles": 337,
+  "checks": [
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-backend.js",
+      "bytes": 65687,
+      "sha256": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-fixed.js",
+      "bytes": 29976,
+      "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-shader.js",
+      "bytes": 47578,
+      "sha256": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3dim-gpu.js",
+      "bytes": 53302,
+      "sha256": "f0bc4d36f5d80554bb236ff54bbec76024abc5b7e4ffd1797202d586c26db13b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/gpu-backend.js",
+      "bytes": 49276,
+      "sha256": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/render-clear.js",
+      "bytes": 4377,
+      "sha256": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/00-regions.wat",
+      "bytes": 68743,
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/01-header.wat",
+      "bytes": 297934,
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/01b-api-hashes.generated.wat",
+      "bytes": 289426,
+      "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/02-thread-table.wat",
+      "bytes": 33956,
+      "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/03-registers.wat",
+      "bytes": 61869,
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/03a-page-watch.wat",
+      "bytes": 8175,
+      "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/04-cache.wat",
+      "bytes": 162508,
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/05-alu.wat",
+      "bytes": 256723,
+      "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/05b-string-ops.wat",
+      "bytes": 27980,
+      "sha256": "a93e3e69a36b0bf430db09dce9504aa382e60c9e17ed64f83b76536dee1d5a4d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/05c-seg16-ops.wat",
+      "bytes": 51895,
+      "sha256": "5a0724ec8ce77a7071f2d3abd155d156433fcd530a3ef742c726fece168dd110"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/06-fpu.wat",
+      "bytes": 72331,
+      "sha256": "9e762a871b487b82b1683a2671ec46926556291bc05bce387ce9ee04012bc925"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/06b-core-handlers.wat",
+      "bytes": 103298,
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/06c-mmx.wat",
+      "bytes": 60242,
+      "sha256": "aceccd5def769cf81dbedf940b716919604bba80ec2a7d0773ba0660848f6939"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/07-decoder.wat",
+      "bytes": 321708,
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/07b-loop-match.wat",
+      "bytes": 433017,
+      "sha256": "a426320bb3bf3b103433cbdc5aa9b82e11eaea213e4c7e7396c24d7575a3c024"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/07c-block-exec.wat",
+      "bytes": 444010,
+      "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/07d-uop-engine.wat",
+      "bytes": 164570,
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/07e-uop-compiler.wat",
+      "bytes": 315991,
+      "sha256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/08-pe-loader.wat",
+      "bytes": 392432,
+      "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/08b-dll-loader.wat",
+      "bytes": 108860,
+      "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/08c-ne-loader.wat",
+      "bytes": 143883,
+      "sha256": "d848222c5aaeb9e3b72b11500ac7ac54bbbeb7461ef487195d6f36ffde0a0e05"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers.wat",
+      "bytes": 63111,
+      "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers0-sound.wat",
+      "bytes": 13322,
+      "sha256": "b3b1a0a090456c001abe80016689475ff639511eb5ada004cee81c8f0fd7ca49"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers1-user.wat",
+      "bytes": 203362,
+      "sha256": "e033fecf609935e2889637bc8e52794445110d4cc9d517a184420f53043ed2b4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers2-runtime.wat",
+      "bytes": 93022,
+      "sha256": "ad612792f4f8d24621cb1c1bbce1a9b497e927fba65b1341846a1f9e27e16ae9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers3-sync.wat",
+      "bytes": 84580,
+      "sha256": "a6e66153d90c4c98db4ccd5500a324832cc1eb195a206e3380596209d2ef94a1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a-handlers4-late.wat",
+      "bytes": 144723,
+      "sha256": "d760fdfbfdedb007063aca9603d4f23a8a770f4310e7734e90be966504c8d686"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a0-handlers-base.wat",
+      "bytes": 399740,
+      "sha256": "65b108f43813c4a9ac1eac9ccffec132ca34dabe6b35c570ab28a50dc4bc758d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a0b-handlers-base-late.wat",
+      "bytes": 234519,
+      "sha256": "320585bac79573c0a7666ed31d24eb5d3bf077ebd4f18d9a7325a74112f5a9d8"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a0c-handlers-device-io.wat",
+      "bytes": 15060,
+      "sha256": "3e931da8afa6ebe034e1071626235d93d86b21b051663c9d510f4454fc66d6e9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a0d-toolhelp.wat",
+      "bytes": 23440,
+      "sha256": "b81439d9487e878feace12a88f015d9c4440cd326b98210374af6a67d59b6b4c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a0e-process-memory.wat",
+      "bytes": 4885,
+      "sha256": "6366bee2a8a5168beed62be58adba3c5eb00604cf232b28f55fb48915a75b07f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a1-comctl-handlers.wat",
+      "bytes": 165456,
+      "sha256": "fc1ed2d372df182952a3e5d9f390fff9e178a64c1f0b90ec2f7708fc9e95b9fb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a2-handlers-console.wat",
+      "bytes": 167752,
+      "sha256": "660700e927d2025a618ebb0678ff7ed214d5fae8703b665c5d05804aadef3d58"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a3-handlers-audio.wat",
+      "bytes": 277811,
+      "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a4-handlers-gdi.wat",
+      "bytes": 283062,
+      "sha256": "104b52320a5e3c8cd6cb6ac89393372b9f6f25e8d84ee83a2de6899a8708a393"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a4b-handlers-cursor-icon.wat",
+      "bytes": 40075,
+      "sha256": "92a206d7d49c5475e22cab7236cfcd5b14413fca5ed663b244945c48dd023e66"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a5-handlers-window.wat",
+      "bytes": 292766,
+      "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a5b-handlers-window-late.wat",
+      "bytes": 202108,
+      "sha256": "2be5ab9368b37f942b326f3f22c089daf2dd0d23e6bf89864438e30f1e489e8f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a5c-handlers-wide.wat",
+      "bytes": 27621,
+      "sha256": "cf354d70d0123db95442cc672486adaf8b5f6f9845ebd7b392c663ca57e7320b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a5d-handlers-windowpos.wat",
+      "bytes": 37599,
+      "sha256": "e2a468c45c8854a26b043470964daaaec07939596a80bee1700fb231a1309a40"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a6-handlers-crt.wat",
+      "bytes": 246055,
+      "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7-handlers-dispatch.wat",
+      "bytes": 416616,
+      "sha256": "a48d91236185bcdd18403e549787ca45223cd56d78ab15d22bb7c3cb74a2cb58"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7b-ole.wat",
+      "bytes": 806484,
+      "sha256": "6aaa993fcf1c58899aab02e3b16866214f0e785eacad87835f8cc70fe8fc0c2d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7c-mixer.wat",
+      "bytes": 35586,
+      "sha256": "4374dce53f5af1e8f2d578958dd4b3fa7ac4803400311657571dbe5531bae090"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7d-handlers-shell-file.wat",
+      "bytes": 236729,
+      "sha256": "0e161365bdc939c81931e4885be4d7cb1e34cc4a0a38ced18c29cf9496afaf97"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7e-video-codecs.wat",
+      "bytes": 32639,
+      "sha256": "d5705c23981b6a806e42999a5be933c1f8736ec2f3eb980b53ece54aa4dd2729"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7f-video-avi.wat",
+      "bytes": 64048,
+      "sha256": "1d3da9662d40d88f5ec0ef53ca37b53ff52458341c9ddb3dc93e7abd2a57e251"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7g-video-icm.wat",
+      "bytes": 78590,
+      "sha256": "207c804dc5cee081e1185dc2bdabbd8e49cffa0098f8269a6757bc07d0aa640b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7h-video-mciavi.wat",
+      "bytes": 67211,
+      "sha256": "a2a107b31c4b73bf2caefe2f66756c0cae0ac9680f53f96f1b39f6ade318707f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a7i-video-mciwnd.wat",
+      "bytes": 22042,
+      "sha256": "c4697a604fbdc51da22948559d585b7f7d60a451f6f7934ef6c71f0473b010fb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8-handlers-directx.wat",
+      "bytes": 1057680,
+      "sha256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8b-handlers-opengl.wat",
+      "bytes": 16197,
+      "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8c-gl-encoder.wat",
+      "bytes": 44718,
+      "sha256": "debf14711e19d2c5d193eff3cee5d728f8942a4d2b53587e91153907d905fb69"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8ca-gl-lists.wat",
+      "bytes": 19850,
+      "sha256": "11b390d52c7a3f5958c94170545647cc948b718264c6ce38a788ec5721aee7bc"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8cb-gl-bitmap.wat",
+      "bytes": 35279,
+      "sha256": "9bcf3cc0d2513cb50b61d4035a4c5bc9c029db6fb7dd0b063962e3218d398480"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8cc-gl-stencil.wat",
+      "bytes": 12683,
+      "sha256": "6e31c06cb1cfb7778ed9f6384866f0dd22731578252e8e2dcfa01a4e5c01d3de"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8cd-gl-color-mask.wat",
+      "bytes": 5239,
+      "sha256": "da7a1f2a4aea4cff87b0ad841a90807fea8c255f3040d3719c2bf4156554477f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8d-gl-abi.generated.wat",
+      "bytes": 2713,
+      "sha256": "05693257457d0404b4ebbe8559e207e6c2970f648a8410099d0b948d3e151e9a"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8e-gl-state.wat",
+      "bytes": 45583,
+      "sha256": "c633a0a767bc5e5ea9a68d06cb89a2b708e2551029a0c092c38caea28998fe47"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8f-gl-matrix.wat",
+      "bytes": 74365,
+      "sha256": "a9a5c4f6058677dd535dff91f0d63ecdd7dd7fb011a3f29be826e7744a386019"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8g-gl-raster.wat",
+      "bytes": 205774,
+      "sha256": "f7f637d3cb4dc21931346c58927bc501d7e061bbbe3006bcdc11717096374bbe"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a8h-glide.wat",
+      "bytes": 168750,
+      "sha256": "ccc60e16d81584a031ea455752aecc425aad87693c518165eefc2dae2a91e3bf"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09a9-comctl32.wat",
+      "bytes": 160197,
+      "sha256": "7847d73c5a3b4222c94ee59374f675b549cb3d3a32743375dce69114842d0e39"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09aa-handlers-d3dim.wat",
+      "bytes": 140876,
+      "sha256": "80a923f141a5361edb40de68bbbbbcc9ac90ef68f2336b26599b219cc621f039"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ab-handlers-d3dim-core.wat",
+      "bytes": 544499,
+      "sha256": "1918c58d24edaa1d2c07d3e0f0b96c566d1428a538a47a7e8ae3645625066316"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ac-handlers-d3d8.wat",
+      "bytes": 117905,
+      "sha256": "73ee973c7aaf374f2b378ec502ea268279908b69917204907ff6c237be818922"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ad-handlers-d3d9.wat",
+      "bytes": 209009,
+      "sha256": "3cff68503bcd1ac0699a8d0fe2fd1d54ed79c2b7cfceacce7739069f5ca4a64c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ae-d3d9-resources.wat",
+      "bytes": 151936,
+      "sha256": "fd8e0fc4b98bd1c8631934e19ea50f483b50398fb5033c22ce64be0a9f792955"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09af-d3d-shader-ir.wat",
+      "bytes": 122718,
+      "sha256": "aabdebfd1473693ed2c1601570ac0fc629e12000ac06fd5208890f313d644613"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ag-d3d-shader-vm.wat",
+      "bytes": 194436,
+      "sha256": "d2ea659e5b67c7d0c7ed619a39845962bf398b181a9ff1a3822027e02516c88c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ah-d3d-software.wat",
+      "bytes": 143023,
+      "sha256": "43ec7d8685cc4942dbdb30b8c9efacf28ec1add81fed4f55f008b7dbe9c4b0c3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ai-d3d-render-lifetime.wat",
+      "bytes": 16092,
+      "sha256": "fd2ef49db696bb333fc57258af3edacda5b9b2728ed0f018ccf740364297dcfb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09aj-d3d-fixed.wat",
+      "bytes": 115132,
+      "sha256": "15acb3542a03ac6ffddecaae5467b8083cd91085e310524e058d2011582563b1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09ak-d3d-depth.wat",
+      "bytes": 14458,
+      "sha256": "ccc22a0736e11a7371119bd66ca453d2379db9880b2cc13a972ac351bc74f32b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09al-d3d-reset.wat",
+      "bytes": 15239,
+      "sha256": "1847b2414a4c86615883d44db8ed9fc377721bb4c8ef477533e19293fc84ee62"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09am-d3d-color.wat",
+      "bytes": 57053,
+      "sha256": "2737a82cd51243daeacddeccd14c8cb1f06f9bfb4397908a03241db32dbe43e1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09b-dispatch.wat",
+      "bytes": 113594,
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09b2-dispatch-table.generated.wat",
+      "bytes": 1375748,
+      "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c-help.wat",
+      "bytes": 54709,
+      "sha256": "1a84acdcba0d84a09229ff4536ff2b4f3dc1c88befa00b44294c4f6ca509c2f5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c0-window-table.wat",
+      "bytes": 113491,
+      "sha256": "707bffa46ed65a1894e03b834726294cfbdd4a453066252a8e9688ba90cf8984"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c2-treeview.wat",
+      "bytes": 109358,
+      "sha256": "bd0904b3a6d3dda2ecac7142d2a4e8bdc7350b36e5242cf8c370f9854d2753ef"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls.wat",
+      "bytes": 180044,
+      "sha256": "2b0f3783e2c57a96ef94e42b8873d5f798afe820f10aeeb1147534c396e94e6e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls0-basic-wndprocs.wat",
+      "bytes": 142302,
+      "sha256": "af333a7d28e1b0a21bb3e99e0afa3ff6463a850d50fed692b488879e11250cd5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls1-browse-dialog.wat",
+      "bytes": 30207,
+      "sha256": "bff02be9a4119daeb97717fe57cf2399ff06477174e94fdec0f20364b8321f3a"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls2-open-save-dialog.wat",
+      "bytes": 49631,
+      "sha256": "739f003d1b9215cb08792dede95319c8f1822237c1bc7283701ad79e9dad92af"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls3-color-dialog.wat",
+      "bytes": 61169,
+      "sha256": "afeadda4c94bb264686c7ff41da81a8ce5d1e4677f018f48cbb201de2fd72a31"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-controls4-shell-dialogs.wat",
+      "bytes": 33889,
+      "sha256": "4b99cd7a8af6aae04a273d24d5a2bd155e47edefdf04588b0d2956e167c725bb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs.wat",
+      "bytes": 138167,
+      "sha256": "629179ab5e65edb0ba496bc8ab4ea7bfb1f02fb6982c5b3026a7ab83446aa3d4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs1-toolbar.wat",
+      "bytes": 70465,
+      "sha256": "2a239c38f20e11f2c5fb315afc0d04fceb7b7ba5ef148c3f132e83108f7f80e7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs2-tooltip-trackbar.wat",
+      "bytes": 39555,
+      "sha256": "50a1141434801068b26bfef6388c9708c70ffeef19c6b65e3779e00c91d9d3de"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs3-listbox.wat",
+      "bytes": 66500,
+      "sha256": "468cf820b4820c0aa2fe5e2c42cf91d80b9fdf729206476d6ec117dda03a7f6c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs4-combobox.wat",
+      "bytes": 70077,
+      "sha256": "498a3c09f428d9a745e11cda4a9caa70098f7ed46f1d293e74293c3b8eab9a52"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs5-edit.wat",
+      "bytes": 159239,
+      "sha256": "074c173009da12fc49eed8c01c3a7d6d8274ad567fea2250c71511d78edb352b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3-wndprocs6-animate.wat",
+      "bytes": 42576,
+      "sha256": "14b0085c53ef0d9feae6394f3981291e0f7dea0f0f5b15d8383826657e0f588f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3a-dialog-runtime.wat",
+      "bytes": 91320,
+      "sha256": "e6334909cd2580a18f61a6307c99820a08710f2b799d12593d82c0d505d110d0"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c3b-scrollbar.wat",
+      "bytes": 40193,
+      "sha256": "5cc2efb5331864cdc0dae4968cd7045c6b0a66f2ad102435a4c11efe05661fc4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c4-defwndproc.wat",
+      "bytes": 73568,
+      "sha256": "ba9200187b6cf1ea7e3adc40142d40f04b45053736fa0400b5620336783bdec2"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c5-menu.wat",
+      "bytes": 316366,
+      "sha256": "85bb31de601a28e3aeaf38f298ff134e3003f2f3ac1438d18d1d21d89814e902"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c6-winhelp-core.wat",
+      "bytes": 98628,
+      "sha256": "53066a3d64f3d6ff829bcec58343daae57c019684429ea563f21b1e0505ca319"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c7-winhelp-hlp.wat",
+      "bytes": 290855,
+      "sha256": "e2c5ea784d6aabccc68e266d11003039a9003ecf2533634ae76ff83fc8397e17"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c8-winhelp-cnt.wat",
+      "bytes": 44754,
+      "sha256": "1d342496c3d94c628e4eca4a6de67408f018a62fbb7fd6683f092028073fc5b7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09c9-winhelp-ui.wat",
+      "bytes": 184800,
+      "sha256": "172f2432749d517af42f39b1595d7991c6c1b49c312851819e4713538a5fb948"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d-winsock.wat",
+      "bytes": 262420,
+      "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d1-mpr.wat",
+      "bytes": 7722,
+      "sha256": "0b500cf83415c2125c169505193b272bf767be68d954d99f3e56f921c87d95b8"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d2-tapi.wat",
+      "bytes": 17304,
+      "sha256": "7d7f73daf1e98274cfcc1e62eca54e71ff865ad91aae46ac19b563bc3c2834f8"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d3-spooler.wat",
+      "bytes": 6858,
+      "sha256": "8f39e30062fa5720e66401671eee805585197ee0f4d7f0cc600afd7fad023ec1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d4-dplay-net.wat",
+      "bytes": 62636,
+      "sha256": "57badf93ecc19597c02e4fee45009813b726b02645479ea17d1d9439b2ccfa21"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d5-dispdib.wat",
+      "bytes": 13045,
+      "sha256": "0e7cf56899d8b956478cf45282a375eed6be155c908fe6d4042b42d2a4f70466"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d6-wininet.wat",
+      "bytes": 7743,
+      "sha256": "07bff4c56411398b507a130a80d1d8a476a71972cfb473aae49bdc76125fd2c6"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09d7-pipes.wat",
+      "bytes": 39148,
+      "sha256": "1d754f1a785256bfaffd8d4b2413ddb59fb4a13315e6bde83cb0af613b89f2ee"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09e-win16-api.wat",
+      "bytes": 1085539,
+      "sha256": "65538229bd51b0a031713befb175cd3f80213860640ea47dd42277028de1ae5d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09e2-win16-dialog.wat",
+      "bytes": 75116,
+      "sha256": "a2b7d73093b9b3c715524365b61f351cb4b555604deda47279ed66f8ce55bbe4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/09f-win16-ddeml.wat",
+      "bytes": 110263,
+      "sha256": "6b1f2b7fd507b00e54eaa3bd5a72af2a8b5db0c6d43a6ea83aa419ae1dea3f57"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10-helpers.wat",
+      "bytes": 533986,
+      "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10a-gdi-bitmap.wat",
+      "bytes": 111220,
+      "sha256": "82f562c08ee7ebe894524b61f0c5e8e533e14ec6b9f761b910b04cd620d74506"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10b-gdi-font.wat",
+      "bytes": 206760,
+      "sha256": "1f63521fc1ab826d66d8bcc1e7d0fffd5907f9be48d6df498d00197a41d96d32"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10c-truetype.wat",
+      "bytes": 284451,
+      "sha256": "3c3f3a7758976eed86e6fa7f73182b0a520e6143fbb36851d1de0ca9339c2e91"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10c1-truetype-hint.wat",
+      "bytes": 160145,
+      "sha256": "c5cf7c9d5caa58585bf4483505cc17f872ed1fa7a1a37a82b68a80cc376cbbdc"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10d-gdi-region-path.wat",
+      "bytes": 251697,
+      "sha256": "5d0e35ac421defa378a3171f611d552d5c8511f2a615d302e6c21ab020260c0b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10e-gdi-metafile.wat",
+      "bytes": 169044,
+      "sha256": "f150a4484325db1a41053219a018e940a4e26016e2fc29c372f7257668c4be2f"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10f-gdi-dc.wat",
+      "bytes": 125719,
+      "sha256": "7e6944b92c150ce07378ba6a4736f1b2d88b7bb64a2f2321d08d87e654451a53"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10g-gdi-raster.wat",
+      "bytes": 456636,
+      "sha256": "1724be82f258bc4f3a0b8318ba027f2ac7472564dae789dd1534c436e0a2d9b5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/10h-gdi-adapters.wat",
+      "bytes": 16190,
+      "sha256": "8e3de44cba63bc0de10e500050e3a69612b5d973afdc80c57c4993b3e6eed53e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/11-seh.wat",
+      "bytes": 58449,
+      "sha256": "365d4af01ac91ec9fa1a560d21a768a13ff3445697c848277dfdc7682005d5e3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/12-wsprintf.wat",
+      "bytes": 21194,
+      "sha256": "e71272a507fcd4316c0240525c4101f252200069dfc1d2d1ca3b1ba8285fce75"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/13-exports.wat",
+      "bytes": 342381,
+      "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/api_table.json",
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/kernel32-exports.json",
+      "bytes": 47170,
+      "sha256": "e8d07ca86b5ed6df96b55e4938d758361d0bb65f1f4b943aa935b4f6447d5405"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/main.watx",
+      "bytes": 5893,
+      "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/src/win16-ordinals.generated.json",
+      "bytes": 42442,
+      "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/compile-src.js",
+      "bytes": 2508,
+      "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/helpers/palette-gpu-browser.js",
+      "bytes": 17077,
+      "sha256": "3972b7e3bd48141654ec33dfd26bf8da05fb64ee6184b852fb80c2208946d4cf"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/helpers/palette-gpu-wat.js",
+      "bytes": 2854,
+      "sha256": "d702dd06f8e1e2021830bbcb3c27f4f320171bf89d05d7ed30daf5d2d87bd046"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/test-d3dim-palette-gpu-web.js",
+      "bytes": 4367,
+      "sha256": "2900b8ffeb2578e232215245d6a2e010cd081818204b0bd86c3aa2d4a277145b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-closure.js",
+      "bytes": 5027,
+      "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/CHANGELOG.md",
+      "bytes": 115884,
+      "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/PROVENANCE.md",
+      "bytes": 8451,
+      "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/compiler-codegen.js",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/compiler-parser.js",
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/compiler-stages.js",
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx-src/compiler.js",
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/watx.js",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/run.js",
+      "bytes": 687226,
+      "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/gl-compat.js",
+      "bytes": 106632,
+      "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/mem-utils.js",
+      "bytes": 13470,
+      "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/region-map.generated.js",
+      "bytes": 36089,
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/gl-command-stream.js",
+      "bytes": 7766,
+      "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/dib.js",
+      "bytes": 12071,
+      "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/dump_sprites.js",
+      "bytes": 3035,
+      "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/save-bundle.js",
+      "bytes": 29124,
+      "sha256": "4ac22b490b0c201d5c4d7ee0047882522eeb4690d93b095e4eb755d84590f3ee"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/storage.js",
+      "bytes": 79616,
+      "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/zip-mount.js",
+      "bytes": 32525,
+      "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/byte-provider.js",
+      "bytes": 35492,
+      "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/control-server.js",
+      "bytes": 7126,
+      "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/disasm.js",
+      "bytes": 29904,
+      "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/simd-ops.js",
+      "bytes": 8592,
+      "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vfs-overlay.js",
+      "bytes": 14961,
+      "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/overlay-store.js",
+      "bytes": 22883,
+      "sha256": "355c04686750794b161b725c00195fc84ea8d89f59a0ab773b4f7f93ecfbc0c9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/media-cli.js",
+      "bytes": 3730,
+      "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/cdrom.js",
+      "bytes": 14034,
+      "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/media-import.js",
+      "bytes": 37173,
+      "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/iso9660.js",
+      "bytes": 23867,
+      "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/app-files.js",
+      "bytes": 16426,
+      "sha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/process-boot.js",
+      "bytes": 52033,
+      "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-guest-bridge.js",
+      "bytes": 4652,
+      "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-invoke.js",
+      "bytes": 5358,
+      "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-load-error.js",
+      "bytes": 676,
+      "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-lifecycle.js",
+      "bytes": 12104,
+      "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-image.js",
+      "bytes": 7091,
+      "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/ne-sources.js",
+      "bytes": 3473,
+      "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/dll-loader.js",
+      "bytes": 98961,
+      "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/pe.js",
+      "bytes": 4787,
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/dll-registry.js",
+      "bytes": 6443,
+      "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/guest-thread-host.js",
+      "bytes": 73126,
+      "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d-command-stream.js",
+      "bytes": 47664,
+      "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/render-worker.js",
+      "bytes": 17410,
+      "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/thread-send-waits.js",
+      "bytes": 14963,
+      "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/guest-rpc.js",
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/named-event-authority.js",
+      "bytes": 15058,
+      "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vlan-wire.js",
+      "bytes": 13050,
+      "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/present-frame-audit.js",
+      "bytes": 6506,
+      "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/build-page-translation-stats.js",
+      "bytes": 6442,
+      "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/region-layout-hash.js",
+      "bytes": 8031,
+      "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/region-layout.js",
+      "bytes": 8174,
+      "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d-shader-ir.js",
+      "bytes": 15243,
+      "sha256": "9ada4145c3c585418c841e605332622ccbba101805d66750dd57ce213b452056"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/thread-manager.js",
+      "bytes": 226864,
+      "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/worker-imports.js",
+      "bytes": 22458,
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/tools/diablo-gameplay-bench.js",
+      "bytes": 10737,
+      "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/headless-gl.js",
+      "bytes": 14928,
+      "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/runner-experiments.js",
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/runner-win-census.js",
+      "bytes": 7071,
+      "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/runner-experiment-report.js",
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/renderer.js",
+      "bytes": 214846,
+      "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/renderer-input.js",
+      "bytes": 181810,
+      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/canvas-compat.js",
+      "bytes": 984,
+      "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/raster-canvas.js",
+      "bytes": 17590,
+      "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/presentation-filter.js",
+      "bytes": 53087,
+      "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/surface.js",
+      "bytes": 14312,
+      "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/host.js",
+      "bytes": 369423,
+      "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/main-io-wait.js",
+      "bytes": 3133,
+      "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/startup-clock.js",
+      "bytes": 3363,
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/input-consumption-trace.js",
+      "bytes": 2508,
+      "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/guest-clock.js",
+      "bytes": 3204,
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/batch-clock.js",
+      "bytes": 2726,
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/tinysynth-offline.js",
+      "bytes": 11712,
+      "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vendor/webaudio-tinysynth.js",
+      "bytes": 62376,
+      "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/cli-recorder.js",
+      "bytes": 9287,
+      "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/apps.js",
+      "bytes": 413346,
+      "sha256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/app-file-sizes.generated.js",
+      "bytes": 304086,
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/font-substitutions.js",
+      "bytes": 2966,
+      "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/api-format.js",
+      "bytes": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vfs-export.js",
+      "bytes": 4975,
+      "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vfs-host-files.js",
+      "bytes": 3689,
+      "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/vfs-seed.js",
+      "bytes": 8258,
+      "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/app-profiles.js",
+      "bytes": 18930,
+      "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/host-window.js",
+      "bytes": 63752,
+      "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/frame-intervals.js",
+      "bytes": 5466,
+      "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/host-imports.js",
+      "bytes": 197066,
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/filesystem.js",
+      "bytes": 158109,
+      "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/resources-icon.js",
+      "bytes": 20791,
+      "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-host.js",
+      "bytes": 87300,
+      "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-software-backend.js",
+      "bytes": 87802,
+      "sha256": "d73d855a6936881712c7b75e203cfc717c43dd82ca38fe67a576f4fc37da93ee"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d-geometry-batches.js",
+      "bytes": 3149,
+      "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-texture.js",
+      "bytes": 3107,
+      "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/glide-host.js",
+      "bytes": 17374,
+      "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/glide-software.js",
+      "bytes": 27955,
+      "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/glide-backend.js",
+      "bytes": 41345,
+      "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/gl-render-host.js",
+      "bytes": 15356,
+      "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/host-audio.js",
+      "bytes": 207077,
+      "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/audio-worklet-host.js",
+      "bytes": 14592,
+      "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/gdi-surface.js",
+      "bytes": 20152,
+      "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a"
+    },
+    {
+      "path": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/cli-failure-cleanup.js",
+      "bytes": 717,
+      "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.FRE",
+      "bytes": 6874,
+      "sha256": "0ba44755b809138f56fafac5983b0610a2ec814808a67e39b304101eb64d5969"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.GER",
+      "bytes": 6731,
+      "sha256": "67b49c2908e3bf2bf73f4aa3a733da08a5b168279f70784fab0008a9648e05f2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ADVICE.TXT",
+      "bytes": 5799,
+      "sha256": "0f6a2220dd1afd5f57e22d442aa3f43cb23b8ed2dddb378e1537ea476f7db8cb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITIES.GIF",
+      "bytes": 46452,
+      "sha256": "a78f6e3736c31d5a18167e39daa643f315ac641ef5401087dd4d0a6ecf99fe6c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.FRE",
+      "bytes": 6771,
+      "sha256": "8fefb989fd8b895efc85b708f79ebc58eee08dde71d06bcc1055d31ad4f126a4"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GER",
+      "bytes": 6626,
+      "sha256": "353edc79a08ba9b59e31dbb36e4db933d584466381758f1ce18ff6e01a12a1c0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.GIF",
+      "bytes": 66152,
+      "sha256": "96d45d56d41bdac1bd0b88650cd2338c613cf2d237417dbfccbe2c97c8f2dca9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CITY.TXT",
+      "bytes": 6785,
+      "sha256": "8155cce5e5771520feab366948c9d3ffaa34738ccc0b48a6ec09a73aba399c87"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2.EXE",
+      "bytes": 1741824,
+      "sha256": "c5fce7d293d7825e6f9c5a96ee9c5bb4c7f5428646af037f15cdbdc56268e54f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2ART.DLL",
+      "bytes": 122986,
+      "sha256": "3b4237ba3e7f8b7f8e742e9425781bd1ddbda9bc6c2bd421de2785586e30a082"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CIV2MAP.EXE",
+      "bytes": 1765376,
+      "sha256": "6204d93eb3cce0c92de2dd36c3776837649fd521c757471c9c64af3f9dbe1529"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.FRE",
+      "bytes": 14540,
+      "sha256": "d18dae6774e952cc0e08f06f9387364a71e22f0925787ef7b305e09ced009776"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.GER",
+      "bytes": 13745,
+      "sha256": "dc41781df69d27ab701e8c05da39e9856695d8d1631dcd094f771e8d2e0ac015"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL0.TXT",
+      "bytes": 10995,
+      "sha256": "f119cf50d2b3684ba0734318c71be5c55c5cea09c5a606fd2f5ab024dac4812e"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.FRE",
+      "bytes": 14375,
+      "sha256": "f117c1471d8b192e79188d20cc447d212b6d8efecaf6617a84d37f2ea0b91162"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.GER",
+      "bytes": 13485,
+      "sha256": "6b9a8efce22e62bda33948f18c1e72b05c30acc27f6bc34be131540d83a2863a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL1.TXT",
+      "bytes": 11231,
+      "sha256": "6bf2d3777585ce6c47498228e28eb0d20e11e6e458886349fb670cd14f6b0c78"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.FRE",
+      "bytes": 14735,
+      "sha256": "4e3c9073122a722ff979096f641a27b7896dee632292f08047033c431245e981"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.GER",
+      "bytes": 13904,
+      "sha256": "4e6e9b4555ab64e16d567a66d4db80cce6f674408a4cfec6d08ab2f2b13dcc30"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/COUNCIL2.TXT",
+      "bytes": 10984,
+      "sha256": "139151c234b5a4328f0d877210bce2d58a6583da5439c7b72c9cffc6847f727d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CPUID16.DLL",
+      "bytes": 4192,
+      "sha256": "84e92c61ad1a69bd19f73f21322d98eb0e7b07a498887f52a70ccd7c3f1cd0b2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CREDITS.TXT",
+      "bytes": 2801,
+      "sha256": "73a723ebf06e8cd95e0fce6a9ffb1ac6bb5798cf78abcde82e6f9a373d0ba45f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/CV.DLL",
+      "bytes": 4047252,
+      "sha256": "0a2a0a2282fdd448ec9112f1b9e706e9e08139ef6e60b18598dc891c79a1df04"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.FRE",
+      "bytes": 1921,
+      "sha256": "4d37376718c05308abcd280828e335a71715e1d51fde66f5a2c8821a5a7969c9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.GER",
+      "bytes": 1916,
+      "sha256": "87c7da9371488828a2c13356ce05bd09688015848da75a6557c8ac43f26c7587"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/DEBUG.TXT",
+      "bytes": 1733,
+      "sha256": "c1e663c550ace31f6754f0ca5393493a094607a27629f00a7716e8d2315fe682"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ERRORS.DB",
+      "bytes": 341,
+      "sha256": "d012e87c1c54aac6434a7635cb3b7289f49bb01f5395a37e69c41fcd26609852"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/EUROPE.MP",
+      "bytes": 54098,
+      "sha256": "8ef3dfa730535aa85292a96bb41a2b4ca4bf11c709afee6487e1cbe17ede5b98"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.FRE",
+      "bytes": 107203,
+      "sha256": "6daa34e09277b3173a599153cbe099f0257f3b98e45773ca4265d9768153cc68"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.GER",
+      "bytes": 106323,
+      "sha256": "678aad1037ad234ef80b80aae5cfb1a9e6bb6de0b0def8705bec3af980d2d02b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GAME.TXT",
+      "bytes": 93195,
+      "sha256": "c12daf61ca27cf14c0dcb36cc9dccfc6d59b6fa155892b7022fb18b2cd0fa837"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/GREECE.MP",
+      "bytes": 24098,
+      "sha256": "dad06a074ea7b28e521ab496dfb2be77f3382dcc905ef3c9ac7946eb64699f7d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ICONS.GIF",
+      "bytes": 54241,
+      "sha256": "14291d40d3effe417f244a526117782b91f1d21c4989350b0bbc1ac9516b69ae"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALL.BIN",
+      "bytes": 53061,
+      "sha256": "d824f1f49646824eacbd5352ca88a0e4040d6966a0f8d4256853e70cd9d9ddcf"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.EXE",
+      "bytes": 14080,
+      "sha256": "9032c68da25c1d68d79219fee12fa887ee25465e38efd1ed5c5bc3bed4716c71"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLE.INF",
+      "bytes": 3986,
+      "sha256": "a1fe9d2116a99789be8b056205336ab567168fbb6c7ec811b4fc251ae0d735ac"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.EXE",
+      "bytes": 14080,
+      "sha256": "9032c68da25c1d68d79219fee12fa887ee25465e38efd1ed5c5bc3bed4716c71"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLF.INF",
+      "bytes": 3995,
+      "sha256": "ba671bdc918115ebbf88d76429a1a6d14de69c021b1e5f9c787350980f37152a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.EXE",
+      "bytes": 14080,
+      "sha256": "9032c68da25c1d68d79219fee12fa887ee25465e38efd1ed5c5bc3bed4716c71"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INSTALLG.INF",
+      "bytes": 3991,
+      "sha256": "479fbdca5842019110f2c1fbaf76a4dc2ec50dda446f63e14bcae2d2674b0535"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTER.DAT",
+      "bytes": 17,
+      "sha256": "4998c1112b50b56884ec7cdee70d5f64bb32e929cbc876802988882491936592"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/INTRO.DLL",
+      "bytes": 866921,
+      "sha256": "7491cf9d51150e3568eb4e0cff6714ec930a1104aa085e1a9f9b09c5e31f4c5f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAME.AVI",
+      "bytes": 1729350,
+      "sha256": "856092f5ca5008bc56c8e9b9591cce207166b9ba34e7c1683c96c0978f9e351b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDAZT.AVI",
+      "bytes": 1587780,
+      "sha256": "5f23073e1445ffd8f8eed9949cbcfac5fd4a54ab10c3557089d6ff7a758a0f6f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDBAB.AVI",
+      "bytes": 1586140,
+      "sha256": "f437ebae7abf490404638460737c179e6a7ddf3a6381a47bbe2e14c3ede6c6d1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCAR.AVI",
+      "bytes": 1589960,
+      "sha256": "1652959bcd7d369af311153ba441e14a0f3719bf2dda43be8f98a734209fc0b0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCEL.AVI",
+      "bytes": 1582540,
+      "sha256": "caecee46a740c2e21ba0a0d974754be17aef18eeba13d89cd2a532157be5b7ff"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDCHI.AVI",
+      "bytes": 1587784,
+      "sha256": "90bcb012441046f5faa32fb5416b1b53af2f3fa2302ca6b9a3b9b9ea9f80b47d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDEGY.AVI",
+      "bytes": 1949782,
+      "sha256": "c9e6206bdc76da9e5b0ead4a80936dab5c1c29a110793fc8a01143dfb05c6e4d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDENG.AVI",
+      "bytes": 1586100,
+      "sha256": "c6a389b0d28c44c9245893b3cc0e91ab06ce86aad132716dd11a5ed8aed8799b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDFRE.AVI",
+      "bytes": 1580844,
+      "sha256": "4be0fae52bd6aa3549940d7ec46df7c78ee6cfeccea3832f772238c4549e2f13"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGER.AVI",
+      "bytes": 1555152,
+      "sha256": "c886ed1e37edd84fbab73e3361d253d260cf223799f292ae348f406e56d2c914"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDGRE.AVI",
+      "bytes": 1587264,
+      "sha256": "d3a8b370f7b4aadd87fbebaa73bf4dc4491c4ba8b2429515a46962483d0497fe"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDIND.AVI",
+      "bytes": 1583444,
+      "sha256": "bd9e6bd21853ae95b0997fdec7349cdb74b1b61a474c3864a838fdd88c200e03"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDJAP.AVI",
+      "bytes": 1585748,
+      "sha256": "712b2f7b81ebfcf90a6a9860dd275d8ae19fe5b67b59ae4a5a1431448a19805b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDMON.AVI",
+      "bytes": 1585424,
+      "sha256": "c33d166d36776cd9df5260b47757cefb2c1e4b04aace01e280be0a7ccf751efb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDPER.AVI",
+      "bytes": 1590088,
+      "sha256": "eaec83c826702b762d6720bf783ba99f86c63d6c27b590b9deaba18b50fdc2e6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDROM.AVI",
+      "bytes": 1586604,
+      "sha256": "cccdba56906b063291a87832e0ce2a4b1a9c6142892889de2b679fcc1cc23696"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDRUS.AVI",
+      "bytes": 1587896,
+      "sha256": "9505356d82a8d11a0d50237b1bda369bbd3c3c5d32c05dbb3b74b5e6224ecafb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSIO.AVI",
+      "bytes": 1586804,
+      "sha256": "d25469e70b6757b73427ff398a1b1c7d6cbc59ca41a92bb6cee94a9277a98556"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDSPA.AVI",
+      "bytes": 1569116,
+      "sha256": "fde698cc5c5e0f6bc3eb72af746017bc53ad9d18fc87530ffc86b7ab4d6a0f7c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDVIK.AVI",
+      "bytes": 1217932,
+      "sha256": "fed0a421a4a5f28a1b89805853b0faeff77d3fdc9b68a2e6953a1b63dd822d8b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/KINGS/HRLDZUL.AVI",
+      "bytes": 1557352,
+      "sha256": "26b70df34f2a539dd68d02b0455c53100f292320ee21a5904429c465a9431dcc"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.FRE",
+      "bytes": 6902,
+      "sha256": "bae092bd437adb9594c3b7ff7b5b95c3db045b570cac933233f43e6a81a475e9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.GER",
+      "bytes": 7006,
+      "sha256": "119f9b5745fd8b867af32febded365663775c159cac7bb83d809a6c99a3f5c4f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LABELS.TXT",
+      "bytes": 5789,
+      "sha256": "064ac12e4967b6ff79d3645cb1a0db803267dc8e3db2fc48f9d929f5c353f77d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/LOSER.AVI",
+      "bytes": 1900690,
+      "sha256": "a3c50995d3819de9957cf0f6bfdf27962ff10f5a73ebfae0960775c42b613581"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.FRE",
+      "bytes": 881,
+      "sha256": "bf6c9b1e1327e49b602136c4dae814f73efa25dea4792a35027a905376e96f8d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.GER",
+      "bytes": 895,
+      "sha256": "1049476c35cf04c990f0040fa85e8a95d276eaf9e67701d8f9dc391fd52d2c41"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MAPMENU.TXT",
+      "bytes": 728,
+      "sha256": "0b5665cc4d671e7186832df20b3148e2bb70788af964585b12d9d515c34e5bba"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MEDITERR.MP",
+      "bytes": 24098,
+      "sha256": "a32d5ba4a74a16e863a31925a2fde9257230a8bedcae91421a3322ba15310751"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.FRE",
+      "bytes": 2394,
+      "sha256": "ad19e450f2a02fadd526cba50b266a2ec4a881be80380ae441a07482022043b6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.GER",
+      "bytes": 2374,
+      "sha256": "f92353182d3c57a3d0754ece96c7ac4875b06c4e01c2eb64dc55cb1c8b7e7999"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MENU.TXT",
+      "bytes": 2032,
+      "sha256": "192818ffe43106d81cb9e863905e60863c51bda67859b1cba0399a507266da6a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MK.DLL",
+      "bytes": 2569834,
+      "sha256": "11ae22a8fd22e938ee48e02dc9483f3a4ed57b1e3fe449f16f4c7e5c98a756c1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MODULES.DB",
+      "bytes": 100,
+      "sha256": "1ba2486f5e0340e3250c2e35fa9584032d1090300d7e28d59e54964b43082fa2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/MPLOGO.BMP",
+      "bytes": 4718,
+      "sha256": "c54470738c5841133c5ec78633601abee0a92faa9d6b05d4c1cd55eb61149417"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PACIFIC.MP",
+      "bytes": 54098,
+      "sha256": "2cd657954bc67d2b6f15f69492393e41301c031d2c8b79ff9a8f46cc8df8174b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.FRE",
+      "bytes": 19683,
+      "sha256": "084fe0dd2735791e4ff675b7691a72c0ac7b164c4685940a2d44fdd1358726b5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.GER",
+      "bytes": 16692,
+      "sha256": "50fae7e1e8e7e59fdbcdc6574358c5ec7e4db390452025a2eef8e1d1a4f8fc9b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA.TXT",
+      "bytes": 16692,
+      "sha256": "50fae7e1e8e7e59fdbcdc6574358c5ec7e4db390452025a2eef8e1d1a4f8fc9b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDE",
+      "bytes": 25552,
+      "sha256": "c838195cd492297c777ebe816624395c3415cbf0ab4c676b7b7012b9a1d8848c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDF",
+      "bytes": 30001,
+      "sha256": "f1517b033b7adb7017ee2b0fdc4d4497298d10b3a8047090074a44959aeb78f8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC1.PDG",
+      "bytes": 28681,
+      "sha256": "f6ef61b753ee011156a0bd924e04d4e45f710528403e390fe523b82dc8efc983"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDE",
+      "bytes": 24788,
+      "sha256": "8ad952dba11ed3294a6ef2e020787bf436598bcfc6a6baed1957361d223514d8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDF",
+      "bytes": 29507,
+      "sha256": "bd46410868a1fb0aea77023a0d8350d885802ec0be09f013fe77db1079296a01"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC2.PDG",
+      "bytes": 28028,
+      "sha256": "54a58921c8d9fbcd1329b407233c4391b98d642fda28488b19a14046e31ebc42"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDE",
+      "bytes": 20609,
+      "sha256": "b8370ce7315f887cf624c339af38ba94ee9740657ddd02caef4d95bf76a9333f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDF",
+      "bytes": 24488,
+      "sha256": "289868c7de48c808515afe2eccd176868446efed5bc9f7f5b9075283466f0310"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC3.PDG",
+      "bytes": 22968,
+      "sha256": "5c3304f011cb665d8a4bd9365c806aeec31930caa2bc40f99d9cb68fab5117f3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDE",
+      "bytes": 8804,
+      "sha256": "ae272ad830dec87e888fcdb9604f4b1700bfd1a5d725ef1acf119868d2f0c12b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDF",
+      "bytes": 10253,
+      "sha256": "ef1b4140e4a19f030b21df388dea223579a00874f028db4371d6226909906fa0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/ADVANC4.PDG",
+      "bytes": 9559,
+      "sha256": "1813476803af107ea9b72f1bd430bfd70fe23242ace0bbdbfba091259cd7846c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CIVJUMP.DLL",
+      "bytes": 30646,
+      "sha256": "da3db89a94c884f519cfe123d313ba193eb1d645c4387bc0e05ebf878b79e952"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDE",
+      "bytes": 18411,
+      "sha256": "92f15e7072755d40d5b76dc5a2aa874d683b85a238bb4975b484bc1493877063"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDF",
+      "bytes": 22155,
+      "sha256": "146af1ff8c396faea04a25b37e2818366b859cf5baacaed27ce6a6a3f028076d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/CONCEPT.PDG",
+      "bytes": 19368,
+      "sha256": "89d067da001d26fce6b043ff8fa383b52e3bc321c11d9b1ce41c616d7f1f5bc5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDE",
+      "bytes": 13762,
+      "sha256": "7948b0d6b3760a1f2498131ee2e7845ac23ec11866faae5ed9b91568702b8fd2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDF",
+      "bytes": 15799,
+      "sha256": "7dbe224fe47528854f3b7f957bd07002ee5bcc7fa16de2446f53ff032adc1b5c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/DESCRIBE.PDG",
+      "bytes": 14993,
+      "sha256": "896f7d666a06f4ec1c9c5e7cfbe3af72457d0e66054914c456fbaf799817f5d6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_A",
+      "bytes": 96,
+      "sha256": "dbe88cbe562fcf172228ca3b4b7a2b52c605e7384301f217c2a876d0bea8e357"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_B",
+      "bytes": 68,
+      "sha256": "60ea237a1b43b6e4e68765a671b3ead79a492670dc4d9b2360eba79a3f443871"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_C",
+      "bytes": 241,
+      "sha256": "90e924cb5e2cec1d90411785e379b6d1f470281c8cffe121cdd305166a839316"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_D",
+      "bytes": 66,
+      "sha256": "f429de463a2fdb9fc1678496396bfedab9497f76195ada5058bcd1680e5e8df1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_E",
+      "bytes": 89,
+      "sha256": "c4ccc2cfddb00e8b3ec9bba4a841ce66f926ddac685761a27894bfa60bd9183c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_F",
+      "bytes": 86,
+      "sha256": "b6aa1a7a3bc845491cc614c6ea8dbb2fb9f74725d4e43c135304dff48de2f72c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_G",
+      "bytes": 56,
+      "sha256": "195e0c65d6e8f0a8cbf26cfad50a8d28cccfff025e966ed9ae8d7c74849ae329"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_H",
+      "bytes": 17,
+      "sha256": "a03d365ee4fb1f2cc5f866a9dd003ba584739e8e5675bebb066be1ec5c56b48f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_I",
+      "bytes": 63,
+      "sha256": "03ef0b0568742162b2842b71ab7af078acf9276264b72abe5ffc3a35dd2f0092"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_J",
+      "bytes": 17,
+      "sha256": "754b6a2e4fc3cb205144242e3924a43f958e5d100dc280feba027b06a51fc411"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_L",
+      "bytes": 22,
+      "sha256": "770d166bc323a7b0b70a1490eef5f0522cbf40b263c45b7c09277ec197b626f6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_M",
+      "bytes": 111,
+      "sha256": "2fd0cb269f1d5ae538b5d1161319b33daa5b64942dcf771f0e34a28b5e672577"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_N",
+      "bytes": 12,
+      "sha256": "640cef05e2e65c91214787a1a20a2f664391b88f54e3aed00fba715638fe8cbb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_O",
+      "bytes": 47,
+      "sha256": "01592f51c1f1de17a7737aab43bfa4f9374679ff42769b3dad43019791265fe1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_P",
+      "bytes": 139,
+      "sha256": "ff95531579ea3bb5df91d0b6e4b459316b8dbe56313f4201f159c139d9dd2497"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_R",
+      "bytes": 48,
+      "sha256": "2992f3ee85aaccb6ed23fc5e4f94c9000c6a00759f9a9c6ca1c3b217d6aaeb1f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_S",
+      "bytes": 67,
+      "sha256": "121270d3dc5dcb69e8bafa5041f5d4c283e383c6e68d5a13035d63355105855d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_T",
+      "bytes": 105,
+      "sha256": "7242454445be97dded05f6eeb5f2cbb92ddd898a09bfd44c35efa539b2a0efd0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_U",
+      "bytes": 27,
+      "sha256": "d9414e03d20a63a738136e9a4d3bff34fbd8b5a42059234e8817e8171eb39586"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCH_V",
+      "bytes": 27,
+      "sha256": "3045023631cec62d46907061938ebb3bdd860fd4bedb21f24da011651dd6d528"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FRCHLIST",
+      "bytes": 4111,
+      "sha256": "c0cd8c88a72082419657f76699c6071bbb441a43c7e568bdb6ecc4fb12d45dc3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/FUNCTION.APR",
+      "bytes": 46542,
+      "sha256": "8ae499c35530bf45f0087a87108ddc4687ceaa21ba02fab766313941278df28c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_A",
+      "bytes": 67,
+      "sha256": "751fe541d02be8758a99dca528981aa1b9b17a1e8754585f3eb3211ed67acd4e"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_B",
+      "bytes": 88,
+      "sha256": "f7a217c5717d3d23ab987528ba32576080c49693c5445c420a8288b0e280c75e"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_C",
+      "bytes": 12,
+      "sha256": "c88f444188544a9bc4b5328b329e90c7d4e856bd0372b2818e4f963b2af7bfc4"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_D",
+      "bytes": 42,
+      "sha256": "a56cb2843f953df6c9f405e6892f6ea7c2d65ac6da7318fee03687e46c4b34be"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_E",
+      "bytes": 59,
+      "sha256": "518da50366ee8de74285a46e6cbff00d3f6620266f0a9c3d27def0f77f33ba60"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_F",
+      "bytes": 107,
+      "sha256": "63cad6069d8a83efcd89646730ae88aa450e78241e0973c8c1d701490c5ec6a4"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_G",
+      "bytes": 62,
+      "sha256": "605c2efce6403859afb3a4ff1c5c200dfeeda9e51fb3b14cbf8429682843afd6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_H",
+      "bytes": 57,
+      "sha256": "2dea09d4df63fcb36cab893acbd0850d047d33edd8ad0f313ec66e1d62887f23"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_I",
+      "bytes": 22,
+      "sha256": "f3dfab2f39184176d52e23c3193fb13f5b5ee56d2cb6ead040128d761e866c82"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_J",
+      "bytes": 9,
+      "sha256": "72d6277fa739fbb2ecda9d982f00f33d77e560f2c134802bcb1674651e2da0ac"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_K",
+      "bytes": 182,
+      "sha256": "d21b99df442d96567eb8b98fb52687b44b45d25f11f825675f4975310cd88cc0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_L",
+      "bytes": 47,
+      "sha256": "37a1ae4f25ea32e33f70647a65126ceae74c8d55d26b6984cfe4397b8a842c3b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_M",
+      "bytes": 101,
+      "sha256": "ee73db9d5b38975601cbc172cf072661298ca085f9ce9bd0b5f6cc4e1ac78d07"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_N",
+      "bytes": 17,
+      "sha256": "0c79e4c608d86d5dc6b6ee6a3b7b319242b883078ca57bb467179efa9b8b56da"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_O",
+      "bytes": 37,
+      "sha256": "91c8ebc3df9a6d7b2d6199160fa07e4f09614cc450db2fe935f74ef8b7fc3cc0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_P",
+      "bytes": 71,
+      "sha256": "c08fb97de6a5af6230baea01056f6549ac4d6bc46238de10c2e6a315b804d258"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_R",
+      "bytes": 88,
+      "sha256": "e1b82e2dd68717e544984f41d25bec2b65ee500743db1c2335d899c5a58e8a9f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_S",
+      "bytes": 157,
+      "sha256": "f3e6507eca02c69d8e1b9fcac6f3838d7c6ba0117c3d69b6d55b42ed3db19357"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_T",
+      "bytes": 49,
+      "sha256": "f3ba5177ab2c84e16c0a46db638448cff4bc5437481d95c2e94d0e1c7ea78cdb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_U",
+      "bytes": 27,
+      "sha256": "e6d55f0f74ec533922eebeec5350fafcb6e469dcfe7d816811c931fab31d8d33"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_V",
+      "bytes": 26,
+      "sha256": "2e38ab1871243feec73c6ba007335189886380cdcd0f164f7a17196f92d0c4cc"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_W",
+      "bytes": 67,
+      "sha256": "29504034a6516ebca02dd365a457abc40369b864a350a213b64383b87e278417"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERM_Z",
+      "bytes": 18,
+      "sha256": "51d425bca81f4d9cf9506a7a3c733cfc2ad9e5d27cbb973b3f3a302e7362caa3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GERMLIST",
+      "bytes": 3914,
+      "sha256": "d17f35c1b74f5231364280ae658b64edc66098116fdf8a778ffc5f401d9af85c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GET_INFO.EXE",
+      "bytes": 11087239,
+      "sha256": "c62b1501e0c81685d2f6d91dc861ee9a4793f6785dc4d9f839e5ede7c98204b3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDE",
+      "bytes": 7274,
+      "sha256": "ba82ca80754342cdf4d83c6c098eeaf784c6319b1ffade1629552981d33de26b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDF",
+      "bytes": 8510,
+      "sha256": "b2dbbd10d29baf3a50663f1a7be6457ff3afa76c4227362448c5d05a944f1ae5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GOVERN.PDG",
+      "bytes": 8553,
+      "sha256": "e2a14f97a7f3c9516b6a12c5e9234a27cb1a8e7a551a6d93db8c0d6510b7b400"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/GRAPHICS.APR",
+      "bytes": 859092,
+      "sha256": "12685ca8bfe1ab5cf2726d18b221453fdca06533f1665ffcbcf8b4475ba26b6f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDE",
+      "bytes": 24820,
+      "sha256": "13d1453baf785d101d208e4b2fd838c5b5b74a151b9eb33e91ba4b87ae5ccded"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDF",
+      "bytes": 29962,
+      "sha256": "2463385999fafb8b52da8eec006fe3a3feb30303362bae678dd7c7d9a38e89fd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/IMPROV.PDG",
+      "bytes": 27169,
+      "sha256": "40d98cf7e54ce71713f67006f88e0171666ae7ba1cdd11037df476a7343e5049"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_A",
+      "bytes": 92,
+      "sha256": "a81529cbc0dd69668a7961d560b6e582dccaca8499ca0df515e413922f563225"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_B",
+      "bytes": 43,
+      "sha256": "e840f08090227b7453b9d80b1ce777e2266fbc28d62cb536d5bc79a929758547"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_C",
+      "bytes": 195,
+      "sha256": "fc5a4930347d91ec7e5f433bcc97d3320e7697f4940a16b323bc829a28128deb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_D",
+      "bytes": 48,
+      "sha256": "75a2e61ac1d595c31cbe2c9163aa3eb1b8e5b9a6091ae32046583fa4a91e3b7b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_E",
+      "bytes": 55,
+      "sha256": "b087b81f745d23b47e60177fbdcdaa4f020ae2dc47161e98921c058e10336ced"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_F",
+      "bytes": 87,
+      "sha256": "0709155eb86d0bbf5907089bdd1ee2e77415ae97a62a6f04e7e240b11139eb0c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_G",
+      "bytes": 62,
+      "sha256": "42907ec70c9f44698cd5ff3809a463b2d0ddba3805aebb037ea5649be75c34a5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_H",
+      "bytes": 47,
+      "sha256": "cdfc50d2a0c9a0c3cf6651ce992f3f64160ce2f8ffcee0b55610d649b732fc97"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_I",
+      "bytes": 42,
+      "sha256": "f2890ab237202529be6bf0dc486997013eff58c62a17f985b15f8592b4ab3ea5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_J",
+      "bytes": 12,
+      "sha256": "45bc88b9b20bd13592d8be1a4e19db67341d95484859a3ce03aa2bc212ce457b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_K",
+      "bytes": 12,
+      "sha256": "adff68bd10873ee4829a462f914497bd08df8a9faeb9e79d3c38f20fca8d8165"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_L",
+      "bytes": 47,
+      "sha256": "055772c58b47e1200954465cc8c63d0c5e1ffc7b42df90e724e8482f07d55252"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_M",
+      "bytes": 136,
+      "sha256": "99edfd6ce2851d9bd509c55a631b88ae3d0d3edb346c1a3c67754b547f5232a2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_N",
+      "bytes": 25,
+      "sha256": "c9fe854c0d00310d419016b700941560b0c5b628814a8a1ec034cc7be0f2ff33"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_O",
+      "bytes": 27,
+      "sha256": "3ece334d89908db7194eef3906f73a932aa9f0e2ba915dcf73aecde5317c5d9f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_P",
+      "bytes": 96,
+      "sha256": "29ec966386cfe25b8956e9efe996dda25afdba023278ba9f09d8c94748049e91"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_R",
+      "bytes": 77,
+      "sha256": "215ef376c5a76b65d5a67db3cfeb83e285f7bc8ae2fafbad2b7af20a117b2912"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_S",
+      "bytes": 166,
+      "sha256": "d1f20c95076d19e9a234f21922cd8efd525ffd103db416c43d9f41a9254667f4"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_T",
+      "bytes": 64,
+      "sha256": "7c0616e4d329b2c21907be39508a98ae8d68c35b285707163551e043f2ef9e34"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_U",
+      "bytes": 17,
+      "sha256": "bd4e5aed3a997e28ef844acb4725701e6c5e8535a1862029883dccbb4a2b7f08"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_V",
+      "bytes": 11,
+      "sha256": "dfdd44614f6bf83675815ce2a1322a7e4533baa9f8021bbb4609fb2809a20e70"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/PEDIA_W",
+      "bytes": 51,
+      "sha256": "60b705a9d9f1b588e3f341b156e4e4bd8233dd7a2f38093854bae2d8c6f3e805"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDE",
+      "bytes": 21467,
+      "sha256": "57409f61798b9a98ab920a6c019ac0a943edc3d72388d2d40403e76068540b62"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDF",
+      "bytes": 25486,
+      "sha256": "baccb401a112893416f6ba039cb1b16f14ec8349858377c2a6050af7552791f0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/TERRAIN.PDG",
+      "bytes": 23357,
+      "sha256": "123fe47f24b454babbb562d0c9a30edc21b49d2919c54bbac31d66d2691f94ff"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDE",
+      "bytes": 24589,
+      "sha256": "2da539b31ff2eb4841211c175cec8b8bed6a37a07a390e8b56023cd86a90a538"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDF",
+      "bytes": 29260,
+      "sha256": "2f81a764cc5aca739f1b0f04b750f5f47e6c80283c34f9a2b2a86fb38a74add0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS.PDG",
+      "bytes": 27155,
+      "sha256": "a19770157d85f79d3edf59c2fea5dab21adc92ed87117cd2c8384802d20346e7"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDE",
+      "bytes": 9720,
+      "sha256": "7d857ceade6175ab267bd03d2a93209ddbb8da823f50beff67a8419a625b25d3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDF",
+      "bytes": 11624,
+      "sha256": "fdec6bcc428562a5eb33d2f23b7ca8cdfd8e7678d20d08d7ce8d7b65e55ed67d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/UNITS2.PDG",
+      "bytes": 10918,
+      "sha256": "6b1187a28a490e7ebed4516de4f411fa5bbb9f03bb53e50b4064d18aada2447c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDE",
+      "bytes": 17363,
+      "sha256": "83e027ebf2ebf40ac43dcc40fea3906d35869444ace4e4765fef6dd9efeddb51"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDF",
+      "bytes": 19875,
+      "sha256": "5414718f1147775f0b67b7e313b7a43a30d4937184a3ea5c0f2acdeeeb0c92f9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WONDER.PDG",
+      "bytes": 18654,
+      "sha256": "6ccac874d4e3ee384597e069646b9d9579e682a8f392ad8d22e9903ccf077797"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEDIA/WORDLIST",
+      "bytes": 3656,
+      "sha256": "6094947a46301cf794c9d5d0dea92ecaf7d56b5c1f80548a970f6d27c1c2cd5c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PEOPLE.GIF",
+      "bytes": 21227,
+      "sha256": "0818d85567b3567c50148bd8d7606548a0f9a4457d8b709113ca5bdc6ad809e8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/PV.DLL",
+      "bytes": 1562730,
+      "sha256": "aa7f22f1a83091e85a889fc7e140cb13243500676d92919853ddd15fc950249c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.ENG",
+      "bytes": 1852,
+      "sha256": "56c03ea6d227acafaf26971c0edb0bda2eebaa39a990e30179551023c8168ec0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.FRA",
+      "bytes": 1872,
+      "sha256": "ba8020f6072ddf3e34312f99929318874410189b41688e640baf979a11ee48a9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/README.GER",
+      "bytes": 2211,
+      "sha256": "29922e6fc1dcb752f50b0c5a233a62baf53bbf37a75d2fc290693b0d57935909"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.FRE",
+      "bytes": 1188,
+      "sha256": "d968704aa49d47cfba70140e15c83bc55af8adb5dec10bf382a03f80c84e4c1a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.GER",
+      "bytes": 1239,
+      "sha256": "077a92ee5c4be2fe638205c7cec36e13ce852b50ae4ef0502039e55a183de354"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.SCN",
+      "bytes": 77339,
+      "sha256": "48ddc0cd7fe911c0799c7ff41e2b1013a35feb08c5d1c69bfea695fef933e563"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/ROME.TXT",
+      "bytes": 1179,
+      "sha256": "285b2abdafdb13e11210d024adb0c70947d68f789d5e578f6e330456de2dca00"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.FRE",
+      "bytes": 28144,
+      "sha256": "3bf42b79ac0ddaa11777c7c6f0484cd2c5b2e457bde0684536fc3fcf08d3f53d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.GER",
+      "bytes": 27161,
+      "sha256": "304f0a81705417491791eccdd63879d2be86d3ba53c1c48441f89d7883437f45"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/RULES.TXT",
+      "bytes": 25693,
+      "sha256": "1d05b27e8f8fbd93d7227eef0cfacd75302c0685cdcbeedb0dc6170b32307dfa"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SMEDSNET.DLL",
+      "bytes": 86294,
+      "sha256": "a1bb992c239154e1d17e44831439b28faa1039f8f7a1ac9195003fa727a8edfd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AIRCOMBT.WAV",
+      "bytes": 209226,
+      "sha256": "8fe6c642f47ef1506607ee52bfbd41ea5438a53130d24a9ec7a0c04de6d67e1a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/AQUEDUCT.WAV",
+      "bytes": 127588,
+      "sha256": "c6c43d1c41c9245cb716dc9198cab0870ff5a4a0cbcd47c212ae9e68b20cce7f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BARRACKS.WAV",
+      "bytes": 86928,
+      "sha256": "c87960b0a64cff1a4e55cdeb2ad8305a5417758d5f34c1cefd3296493ff77cba"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BIGGUN.WAV",
+      "bytes": 44344,
+      "sha256": "1849dcde43289c26a14f4245bd089eb1f1730d6cb7f46bdac7a852dbc5da424a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDCITY.WAV",
+      "bytes": 115372,
+      "sha256": "7224ec935de131350bc280da9fa11444040c299601532326b41127f6b642d00b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BLDSPCSH.WAV",
+      "bytes": 81182,
+      "sha256": "0cc3d8bdc605a997c6554fa307239f9ced342a7138fc72a527a56b630216c531"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/BOATSINK.WAV",
+      "bytes": 179702,
+      "sha256": "efd74d8d9f4a5f85d05d4c88afff314c081af8ee13ab686bd7687c120427c565"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATAPULT.WAV",
+      "bytes": 64328,
+      "sha256": "0243f94aea3f6fbc054c88792a7ada264ef437f3adf0deb61cf8b7ff9d6fa23c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CATHEDRL.WAV",
+      "bytes": 130464,
+      "sha256": "cebf14abff3d4952721a16f6a403c7380faec2be0582e45e0aca87f8d66804ac"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CAVALRY.WAV",
+      "bytes": 131592,
+      "sha256": "5e590cc3b93c19b596e96c0483b57ce5a45b274aa41c237c4eb537a380b5eae8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS1.WAV",
+      "bytes": 88998,
+      "sha256": "9020fa1107b8a3b08717b1a4cd58279244a4a9b7c13416216d4300a5ab6cd9ea"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS2.WAV",
+      "bytes": 82724,
+      "sha256": "1399f48220cce18581cc7db01ccdea8c54feed9b68b3556be323c5c239199164"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CHEERS3.WAV",
+      "bytes": 88088,
+      "sha256": "56a2994d760654c99299b83e20d2eb0c6f77d0edce199843aa79c9ad67e31be8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CIVDISOR.WAV",
+      "bytes": 85200,
+      "sha256": "3a1a72d537ae78270fc38c70080e961299c45232b6ff507f4231b2cd110c875d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/CRWDBUGL.WAV",
+      "bytes": 132188,
+      "sha256": "53e544d882f3dd3c1aad1094157a6a13d42bb5221fccb3b92b7510b26303cb95"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIESEL.WAV",
+      "bytes": 129380,
+      "sha256": "e78fea7452b5943b20ae97a13cbdc41bc7c63d599d5c8592696bb589ca441d3b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVCRASH.WAV",
+      "bytes": 131498,
+      "sha256": "cab5b9260d9164fae4455d00a449a4177d72bec024a333e9b3c424aeeda8aca3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DIVEBOMB.WAV",
+      "bytes": 203050,
+      "sha256": "d6ee4f4a7ccf02df4344f502aba402f9ad500a80a0be21ac8d7965ba47d7db06"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMA0.WAV",
+      "bytes": 91142,
+      "sha256": "37b0424db358229f1d8c65177ee5fd01c33e1b62e429ddda82a4177cb91984e0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAL.WAV",
+      "bytes": 276630,
+      "sha256": "48a41d3140fa5f7fc9ae7263a3e6cf6440ce1f3831286d479d425ec8de81cce9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAN.WAV",
+      "bytes": 45976,
+      "sha256": "4233e1efc9fba5bc3e9af6ed1496157cbf28d25ae0e13bb8f82e16c49fc34ba3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMAY.WAV",
+      "bytes": 32028,
+      "sha256": "54db81d2d543278aa0f1edf770f73e8bd47f6ac91ff1621dbbb82641e7fc4b76"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMB0.WAV",
+      "bytes": 85568,
+      "sha256": "31ed9ff682561b5f58ee4f4f6fc690f7e8e3d88ed51430a62285b11e5b161330"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBL.WAV",
+      "bytes": 377908,
+      "sha256": "54d53b490acef7c796f6d0faa7cd706f4e5c43e39fa3f8962684bfc71d20c997"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBN.WAV",
+      "bytes": 125016,
+      "sha256": "b54db4e3ab2e0c427d15c504a6b02f21f8e6305efe82edc497e7f53677213095"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMBY.WAV",
+      "bytes": 84850,
+      "sha256": "6a7db76109e08b54824d37213a8105d16a8103fa699445fb6ba69043447a2f81"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMC0.WAV",
+      "bytes": 154158,
+      "sha256": "837bb2b1686af6e43152202726557b318364138e16f60ae8f3f50462d1e3ab54"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCL.WAV",
+      "bytes": 492366,
+      "sha256": "0d932a83b4ab0f255f8063479866adc5b6a2b6bb852b18a7373aafe0efa97bdd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCN.WAV",
+      "bytes": 79822,
+      "sha256": "4bc7b1415bdfa77adc2a380d11b67186c5aa0637d516ed76edb4cfaa76ad4979"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/DRUMCY.WAV",
+      "bytes": 101762,
+      "sha256": "4c136da14b78ee831c60c1254e279fb6c66c3c18e7ede7911f6ddc7e947d2136"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ELEPHANT.WAV",
+      "bytes": 52682,
+      "sha256": "0de11c2a85a9d338731113fd2f4a563328528c4354c64ec168c10002e249ae12"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENDOTURN.WAV",
+      "bytes": 3080,
+      "sha256": "07d0078d1814132fc5f1779e85d7cf632e6556138d36ffa4861bc55c59ec9527"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/ENGNSPUT.WAV",
+      "bytes": 246004,
+      "sha256": "88972a25f93f58e41266cafd0c06f191c7c1dd7ba51c6441b62ae20decf1deb1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE1.WAV",
+      "bytes": 140290,
+      "sha256": "85e34540562bc1ba5d4f5663e22845843adff6ddda5718e621774415d207f5c5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE2.WAV",
+      "bytes": 126760,
+      "sha256": "b31f947c4bed1d6642a90d4e27f63908eeb39a1d9ee86b6d0c10befeb12a11df"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE3.WAV",
+      "bytes": 95462,
+      "sha256": "a7561f5988bd1719fc3703a5a0dd720b41e8bcb0b64922674e8900b6b2655f10"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE4.WAV",
+      "bytes": 78426,
+      "sha256": "b23d29a6e424054d568fc784ede9ae7728d7f22228d0bfa0b4e76ff5c59e43ae"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE5.WAV",
+      "bytes": 73310,
+      "sha256": "9294adcfa824c106f3141312e45ccdead4da4160cefe44a533a5603bc17eb516"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE6.WAV",
+      "bytes": 151028,
+      "sha256": "65795cadf4294e76287418e881540aaba55cf987d9fd12f72208a7099e5f48db"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE7.WAV",
+      "bytes": 87324,
+      "sha256": "df25babae119da67b6ee366924651e85c6d9ae6f70f4bd2fc77ff702998dd632"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FANFARE8.WAV",
+      "bytes": 91436,
+      "sha256": "de1b51661368a9d2b058d97df97ea79295e39024f680961425d10d16cc459afb"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK03.WAV",
+      "bytes": 11606,
+      "sha256": "f930616db6969fafb0685319a71284fe20e8513c99be1eafcae86906e2475ae1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBK04.WAV",
+      "bytes": 2574,
+      "sha256": "791012d785c52e70a0691cd7ac66e4bfd04e3e2109725a3c1efa854ff6a6fa77"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FEEDBKXX.WAV",
+      "bytes": 3080,
+      "sha256": "42b914dd8f27e6a9372ab1697e747b36f0a784eb49dbdb595161e2ab9c6ef7af"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/FIRE---.WAV",
+      "bytes": 19880,
+      "sha256": "bfc033ee54ce831d773b399ef876f80e01dad6d691829c7c68980a460ca6d825"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/GUILLOTN.WAV",
+      "bytes": 40158,
+      "sha256": "f0cebf85eb924c5869300a5d1730ba4a3c15c7a911d40cf77a1a9e168ae2ef6c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/HELISHOT.WAV",
+      "bytes": 138144,
+      "sha256": "2984538de4bd1a8ce4990175244ce98d89e0786a8d16bb17381ccc05c8087954"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/INFANTRY.WAV",
+      "bytes": 66674,
+      "sha256": "146bd6178c38b374a6a619607b76faa3b30b005f96616d8a6c9ec2c03f95bbe5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETBOMB.WAV",
+      "bytes": 149722,
+      "sha256": "12383b899f3ff4e886afe97248a70052cc8ee4b3f70b12277cb6232ba61a5d18"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCOMBT.WAV",
+      "bytes": 141104,
+      "sha256": "2a90a0377eba2d08f0a6805fc1914c9642f755bc81caf8841c6ad14f2f219d39"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETCRASH.WAV",
+      "bytes": 103246,
+      "sha256": "ef06d1151aa2992bcb783b211c425c51ac4b17c2f57282d9d99ee535b4d924ee"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/JETSPUTR.WAV",
+      "bytes": 218708,
+      "sha256": "883998648e478ed9549c83ebe66b058bd3292be10bf99db1718d93089e14a567"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LARGEXPL.WAV",
+      "bytes": 83838,
+      "sha256": "5f56c33638a0c00bda472629258f57811bba048c66249715ab9e65780342ce6c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/LETTER.WAV",
+      "bytes": 3128,
+      "sha256": "525087b4ba8b50bb9a8bae787a3a1f89addd2c356779cbf4108186fb10aa2c7f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MCHNGUNS.WAV",
+      "bytes": 74172,
+      "sha256": "2a3f973c24e360d1db7aee708be5f5bd0732a519e65053705235a0f1c862fe05"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDEXPL.WAV",
+      "bytes": 57004,
+      "sha256": "1abb5707afa1364739dfe1fcb6520e66c260d5f34a6de71448993eda7ec26244"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MEDGUN.WAV",
+      "bytes": 23536,
+      "sha256": "0c46a3d4fc7b0792a9dcbdb7a087c342a80e68030547b7e9c2d1589dfe24662e"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUEND.WAV",
+      "bytes": 609938,
+      "sha256": "569c5a7865a8ac9e1ae4255557ac3cb4fe8c92d54c04d3b431066514e76ad74f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENULOOP.WAV",
+      "bytes": 318450,
+      "sha256": "414e655a004f02065554afbb52ae04b921d60ca9e2f03da5780ec2e7e15082ef"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MENUOK.WAV",
+      "bytes": 79736,
+      "sha256": "77cb226c66c15beced3a2c2b3b647b1b210474a978dea1841afb89ff6c1f420c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MISSILE.WAV",
+      "bytes": 74906,
+      "sha256": "e9a9f7dc1e1476be139fbed01b431e987936638a7bc6f4ac9f925290e19b449f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MOVPIECE.WAV",
+      "bytes": 1722,
+      "sha256": "dfe7aa6b7761f4d8b761474d5e4ad6325220fc7fc18b6a0d5ed6e8f54f14c939"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/MRKTPLCE.WAV",
+      "bytes": 144936,
+      "sha256": "b4920cadf451db7b1c9d72abca0ec28dd97f14f72e97b95d8e822dd352ac1403"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NAVBTTLE.WAV",
+      "bytes": 92258,
+      "sha256": "318bdc2cda323e06fbb0b43729c3b8b2295e53e57cbf7d3f7300c9feb131e704"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEG1.WAV",
+      "bytes": 4642,
+      "sha256": "af0e4bbdcbca5f1226853f5730af60bc64b969699f8db12a94a21abafa77ef18"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWBANK.WAV",
+      "bytes": 44160,
+      "sha256": "69750e5afed1e8dfbf8a00547a5286f631be9fb75ee43b635ff26f97d4cb9417"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWGOVT.WAV",
+      "bytes": 81232,
+      "sha256": "230b260a9a9fdfc3495e773e59f7bb01d018b0ec0dc02e3ba8f6e89ee477e73f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NEWONDER.WAV",
+      "bytes": 82036,
+      "sha256": "a1fc98b7ac920618941686cc19452d906acade8bba2a0628f99d05ea008b6df4"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/NUKEXPLO.WAV",
+      "bytes": 331178,
+      "sha256": "ace3a52aeab0a9f5eed5bc179dfe54de2a05a62f35f665e23e1a4a1ee42b4317"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POMPCIRC.WAV",
+      "bytes": 120596,
+      "sha256": "8f28f864e17c04e81d4a76db994693ff2407fdfbaa8e3777f4d48af2309a9acf"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/POS1.WAV",
+      "bytes": 11504,
+      "sha256": "dc9f7608d76b4909725d4a02cebceda0e81b42920e222c46550f7bb1cec04f56"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SELL.WAV",
+      "bytes": 61366,
+      "sha256": "959c36da51eb54dba045d86475ca8d1d15af34d9030df762baee6e0784d92f24"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SMALLEXP.WAV",
+      "bytes": 42328,
+      "sha256": "aad2f4fdce6f4d0932bc154e5648a550fb1580d42b9f4e6cb42a47250a77417a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SPYSOUND.WAV",
+      "bytes": 79832,
+      "sha256": "ba718aaf128cd124e4dedf9d9027040a35a3535ddb200ff8e6962bb83b81e234"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/STKMARKT.WAV",
+      "bytes": 71460,
+      "sha256": "752d4517782f9dfee1d09b933148c49cff65f3014695ae79bcf671f919ea8087"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWORDFGT.WAV",
+      "bytes": 78990,
+      "sha256": "b12135519639008287abbe38e14fd22aa49a5aac475534c2f8a6628f0c1d5994"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/SWRDHORS.WAV",
+      "bytes": 83248,
+      "sha256": "a1090e6fc5bac8362d2f279b1df099c32b53be096243f0f13a8cacca5d2fdd1b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SOUND/TORPEDOS.WAV",
+      "bytes": 134378,
+      "sha256": "890fdca148702553e08d2dc1f9ee5bb816304c6d22bd15bec02b52db1a3aaa55"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/SS.DLL",
+      "bytes": 1132138,
+      "sha256": "d8f6185768468e59ec2f46e299ad16f7988d724552fff25066fbc2ef3673d27a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN1.GIF",
+      "bytes": 46491,
+      "sha256": "1562bfaf6b0a2982c00f7dc59dac7c5e990a0cca44d2d8f071982195b2fac248"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TERRAIN2.GIF",
+      "bytes": 55966,
+      "sha256": "c512c451630a3d9835738a26874e5e9a8209681c6bb4dc007ebe36dd9ae179b9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TILES.DLL",
+      "bytes": 1091689,
+      "sha256": "9168a2cc394e2827996328400fe2a9568a3a8e130c9e5ef669e985678d5d8d6a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TIMERDLL.DLL",
+      "bytes": 15314,
+      "sha256": "8c53ca7974ee05ba9b12cdf1368d5669a2eddd32eb81d36347ee3be8b80f1287"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.FRE",
+      "bytes": 15674,
+      "sha256": "93ebca011bc0dad13e183478980a68db7bb44dc5c90d71201cd1effd25607ae8"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.GER",
+      "bytes": 15468,
+      "sha256": "f62a6d5bde9c9d82f41b703d026e7a5b03a130f0d3504622858d81603ff640c2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.SAV",
+      "bytes": 69749,
+      "sha256": "21b36d9a00aaf1941b124130ffd7225984d2d77a53e36d0a8e25c3c88557cc49"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/TUTORIAL.TXT",
+      "bytes": 12833,
+      "sha256": "4e126db8587d08895222569f265955ee979a578d3f4a126bef5fdcd900838aea"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/UNITS.GIF",
+      "bytes": 52880,
+      "sha256": "84970ffcd0613230acffacb6570fc53e655c63535e5214dfcc0aefaf4ccccec9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY0.AVI",
+      "bytes": 1351376,
+      "sha256": "f5578e17b1c1ea4787b49bfe57395dd0d0786163817fd8c8520fe9299cbf9323"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY1.AVI",
+      "bytes": 1400624,
+      "sha256": "769044e30e53a4b12074a18380cffff08a597778147a05cbdc9b829bd7f90acd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/ANARCHY2.AVI",
+      "bytes": 1380144,
+      "sha256": "4c58a0f7bb5ee95b5eee83493b4aecba67f8180bdec6be7d0d18e48230ee7034"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL0.AVI",
+      "bytes": 30342416,
+      "sha256": "467981e34ddb955b5da0827dc6bb87bb8655513f71c7c6705526f403c5e1854a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL1.AVI",
+      "bytes": 26901568,
+      "sha256": "47967f39cc7cd547decc2b6d875ae3e3797dc98efff104f44c08eb758ae920cc"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/COUNCIL2.AVI",
+      "bytes": 29615360,
+      "sha256": "a70f128dfec9903fb84e5437b9d9cbfb766573984ec4b8613b7bfd7251e0f973"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/LAUNCH.AVI",
+      "bytes": 1693602,
+      "sha256": "1778f9f9f0abcc22531a31a8381f4c56bd785dce32ffb4c8e71241a148f7f7dd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/OPENING.AVI",
+      "bytes": 13071552,
+      "sha256": "c9dbee209fe550b6ad95273f3cc8762874dc5bc2045dfbbc3de8ddd9988d64d2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/VFWFIX.REG",
+      "bytes": 996,
+      "sha256": "1fa8abb03bd2aeeed867e6d97b06c2e375918eb99c88244b5ae94e71a6854220"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WINWIN.AVI",
+      "bytes": 7470432,
+      "sha256": "1b089ef23022aaf192a67794d2fe51bb4c76bd9157199a61500654c730c1f928"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER00.AVI",
+      "bytes": 6168304,
+      "sha256": "96bb35f50c2db31ccc25bdcead2634b26866e1f8c8e1393b00ff15a5e175dda0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER01.AVI",
+      "bytes": 7034400,
+      "sha256": "f3ba96c0e42d924bca144839813f4aba98a37db3c83f55aa65726f43d753093b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER02.AVI",
+      "bytes": 6362832,
+      "sha256": "19b5461ef6a926f21b1340a464b9eebe75fbf9c81f422872f737c8723a9e1a09"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER03.AVI",
+      "bytes": 6798592,
+      "sha256": "29fbc8e976fd8c9d00d77004e8b3435b70ede152b477cd9e4e095ba4a32334c1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER04.AVI",
+      "bytes": 6501376,
+      "sha256": "303a7cc778b3e8d475e0c8b3a71f499df2699c8fa9e9b932b28d131307cf82b2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER05.AVI",
+      "bytes": 8748738,
+      "sha256": "9c0da532c87821d21be0417727d5491b67a48b7843d6b92fef438be3a42fa03f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER06.AVI",
+      "bytes": 6250512,
+      "sha256": "8c027cc129edd013fe35a93bc90396f2b440d3c01df08045e60413725684415a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER07.AVI",
+      "bytes": 6849120,
+      "sha256": "2c9d648037cc1dda8c2827c8061c61ba19b4f28457a984b10584fb230c2829b0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER08.AVI",
+      "bytes": 6369728,
+      "sha256": "7c5c17769b46406c89e3b51c7a3c03519bfe1e2173f4a26626ede748ac88c8d9"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER09.AVI",
+      "bytes": 6219600,
+      "sha256": "5f58d656615b84fc949a35137b940d38e3edcf7c8a45c9f2e65652c65572fca0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER10.AVI",
+      "bytes": 6040752,
+      "sha256": "81c347323e406785299f433b6bc77adad35d7f273ed7e21c7762dfbdcd6516e2"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER11.AVI",
+      "bytes": 7405296,
+      "sha256": "6e73f0b1b58edae3b6166d87bbb1fc3c51d52f30228d33b66d245ea11a87ef8f"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER12.AVI",
+      "bytes": 5668192,
+      "sha256": "3007cbd39ec1f4aac7d12bda0722a2343ddac24efbe7dd636732f5ac9063cd22"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER13.AVI",
+      "bytes": 6318816,
+      "sha256": "948239475e50fc20eba87b3c4ce42eb977491e596c62c2b54b793be2520e837c"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER14.AVI",
+      "bytes": 4821104,
+      "sha256": "1bbc1f37d3f18a0b8c6b353693c0a105843210f4802eae4131bd0002c0691e7a"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER15.AVI",
+      "bytes": 6613408,
+      "sha256": "d1bb5f129f3b1a033e66889e2bc4d4fa0854647a8d40563c0d5d88ae87d625a6"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER16.AVI",
+      "bytes": 6048848,
+      "sha256": "6e5d3fdaad2997ab934a16e981d106a7151140aabad872d730c589891a8b3efd"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER17.AVI",
+      "bytes": 7231824,
+      "sha256": "43c57d4746ee7e92f9349b7d1dcc497751aec3f8204d5d2e1ffc66232dd67fa5"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER18.AVI",
+      "bytes": 6349440,
+      "sha256": "7056307b1276760d7865efb713e6b4c499cf6112376784bf2acde0dd35e8e12e"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER19.AVI",
+      "bytes": 6709424,
+      "sha256": "dc8ed9640ede8e2763156d4c79ed0e6a43558b2cd46bd6013026016ae4ef2d37"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER20.AVI",
+      "bytes": 6387344,
+      "sha256": "86f36bb9b8888a64f857f17fb95e87b42d87ee64dd03137d1a40e382ead89161"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER21.AVI",
+      "bytes": 6343696,
+      "sha256": "b6cdbe6a3cfe5dfa2d8cb618fb98aff5361f3f46b396e38322cfc2cd9691dbb0"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER22.AVI",
+      "bytes": 7651488,
+      "sha256": "11f5a5e1500742f1de38f77bd660555159cc10f0cc3c9625e8235a432979b039"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER23.AVI",
+      "bytes": 6890994,
+      "sha256": "8bb7c26c74e73a6c5696e306a158a10e2381c2d580b7074ec863e1b8adda3217"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER24.AVI",
+      "bytes": 7580240,
+      "sha256": "93677a49dcf23ca273f6a5298d20187a3fe3793287c90ca8c9964204e729ac79"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER25.AVI",
+      "bytes": 7042928,
+      "sha256": "01f0d2d4fd18f1a478e8a40b675a219362dcc69af8e5d51bb90f3cc4ef367af1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER26.AVI",
+      "bytes": 7050832,
+      "sha256": "97ebbb48396443e3762bc748d40d902aa75393f191f3c426e409f778d9a016ec"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/VIDEO/WONDER27.AVI",
+      "bytes": 5563728,
+      "sha256": "8724cc1ca6e7a4f827134baef94a20c7af667886eabd6fa46dc5b892a55f480b"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WING.DLL",
+      "bytes": 92208,
+      "sha256": "4d21333b4997beecb667181bee4c1081b32be8f1d54ce0e71eeee173fecd3f52"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WONDER.DLL",
+      "bytes": 74346,
+      "sha256": "5c54300fdbae2fab5b59c14b1fa6d2925625f8e3567b65139795f5868bc934c1"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_M.MP",
+      "bytes": 24098,
+      "sha256": "dcdd198fa6c9ab19faf0743ce673e85da177bc746ba23bd9fe21ee0f53e91643"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD_S.MP",
+      "bytes": 12098,
+      "sha256": "b7b12560440b45d6661bc32a852037e290bf7fb9a706fb5ae303244a5bfa3c02"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WORLD.MP",
+      "bytes": 54098,
+      "sha256": "bc99986ca2d5ba875951cd5724314be07a816e49bba656532028e84585679587"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.FRE",
+      "bytes": 632,
+      "sha256": "934b7aa16fa55cbd833f7b66526dec597c7346b668d4706bac8328bb2e12e7bf"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.GER",
+      "bytes": 674,
+      "sha256": "11d0ff72de7a91778c9c82e5a744f841373abd7176dd2ea131b8f63690ee26b3"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.SCN",
+      "bytes": 154951,
+      "sha256": "2947d2079384c38b95ec3f3a7c40cde4f1f6ec55f58228ab1efb379f7901759d"
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/civilization-2-win16/cd/CIV2/WWII.TXT",
+      "bytes": 568,
+      "sha256": "1754424c5b2b05d0ddf1fef5790b78c090d824d2ecad7cac98f06743159c083d"
+    }
+  ],
+  "module": {
+    "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+    "bytes": 1880280,
+    "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  }
+}

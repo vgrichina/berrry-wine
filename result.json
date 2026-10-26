@@ -1,0 +1,97 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T22:10:50.836873+00:00",
+  "finishedAt": "2026-10-26T22:14:27.361277+00:00",
+  "outcome": "timeout",
+  "verification": "reviewed",
+  "route": "gameplay",
+  "summary": "Real ordinary Rome city founding4000BC and resulting citymap visually verified. Production cityscreen pixels and normal quit incomplete:20image capture planning exhausted at firstcitytutorial, then90s wall cutoff. No game/runtime defect established.",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "test/run.js",
+    "--app=civ2_win16",
+    "--no-build",
+    "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--control-stdin",
+    "--frozen",
+    "--batch-size=100000",
+    "--tick-ms-per-batch=20",
+    "--max-seconds=85"
+  ],
+  "build": {
+    "commit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "environment": {
+    "host": "local",
+    "node": "24.18.1",
+    "renderer": "production headless raster",
+    "viewport": "640x480"
+  },
+  "screenshots": [
+    "barbarians.png",
+    "city-founded-ui.png",
+    "city-name.png",
+    "civilizations.png",
+    "difficulty.png",
+    "gameplay-before.png",
+    "gender.png",
+    "heralds.png",
+    "intro.png",
+    "language.png",
+    "map-before.png",
+    "map-entry.png",
+    "name.png",
+    "orders-menu.png",
+    "post-intro.png",
+    "ready.png",
+    "rome-city-screen.png",
+    "rules.png",
+    "tribe.png",
+    "world.png"
+  ],
+  "gameplayScreenshots": [
+    "gameplay-before.png",
+    "orders-menu.png",
+    "city-name.png",
+    "city-founded-ui.png",
+    "rome-city-screen.png"
+  ],
+  "artifacts": [
+    "README.md",
+    "identity.json",
+    "readiness.json",
+    "configuration-reuse.json",
+    "guest-admission.json",
+    "guest-launch.json",
+    "guest-receipt.json",
+    "guest.log",
+    "control-in.jsonl",
+    "control-audit.json",
+    "pixel-checkpoints.json",
+    "image-inspection.json",
+    "durable-checkpoint.json",
+    "cleanup.json"
+  ],
+  "cityFoundingVerified": true,
+  "cityMapVerified": true,
+  "productionCityScreenVisuallyVerified": false,
+  "normalQuit": false,
+  "box": null,
+  "remainingGates": [
+    "production cityscreen personal pixel inspection",
+    "normal quit"
+  ],
+  "authenticGuestError": null,
+  "taskBlocker": "Capture/time allocation in controller, not an observed game defect",
+  "publicationBranch": "task/civ2-win16-city-founding-gameplay-oct26",
+  "gameplaySceneReview": {
+    "reviewer": "civ2-win16-city-founding-gameplay-oct26 worker",
+    "review": "Personally inspected actual founding notice and Rome size1 citymap; production cityscreen and normal quit incomplete."
+  }
+}

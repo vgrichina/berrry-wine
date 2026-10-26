@@ -1,0 +1,22 @@
+{
+  "at": "2026-10-26T22:10:35.241670+00:00",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=768",
+    "-e",
+    "const fs=require(\"fs\"); console.log(JSON.stringify({executable:process.execPath,version:process.version,execArgv:process.execArgv,environment:process.env,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),raster:require(\"./lib/canvas-compat\").createCanvas(1,1).width,pngjs:require.resolve(\"pngjs\")}));"
+  ],
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "pid": 3216707,
+  "wallLimit": 120,
+  "cpuLimit": 90,
+  "rssLimit": 805306368,
+  "fileLimit": 25165824,
+  "outputLimit": 2097152
+}

@@ -1,0 +1,134 @@
+{
+  "serial": 81,
+  "snap": {
+    "batch": 3610,
+    "eip": "0x5114c1",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10086",
+    "mainHwnd": "0x1000b",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 20,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 0,
+        "y": 0,
+        "w": 480,
+        "h": 321,
+        "visible": false,
+        "isChild": false,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1000b",
+        "x": 0,
+        "y": 0,
+        "w": 640,
+        "h": 480,
+        "visible": true,
+        "isChild": false,
+        "title": "Sid Meier's Civilization II"
+      },
+      {
+        "hwnd": "0x10076",
+        "x": 454,
+        "y": 0,
+        "w": 178,
+        "h": 134,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10077",
+        "x": 454,
+        "y": 135,
+        "w": 178,
+        "h": 299,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10078",
+        "x": 0,
+        "y": 0,
+        "w": 454,
+        "h": 434,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1007b",
+        "x": 20,
+        "y": 20,
+        "w": 480,
+        "h": 321,
+        "visible": false,
+        "isChild": false,
+        "title": "MrTimer"
+      },
+      {
+        "hwnd": "0x1007c",
+        "x": 0,
+        "y": 0,
+        "w": 654,
+        "h": 454,
+        "visible": false,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x1007f",
+        "x": 8,
+        "y": 4,
+        "w": 16,
+        "h": 16,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10080",
+        "x": 26,
+        "y": 4,
+        "w": 16,
+        "h": 16,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      },
+      {
+        "hwnd": "0x10085",
+        "x": 25,
+        "y": 121,
+        "w": 592,
+        "h": 240,
+        "visible": true,
+        "isChild": false,
+        "title": "Found New City"
+      },
+      {
+        "hwnd": "0x10086",
+        "x": 6,
+        "y": 209,
+        "w": 578,
+        "h": 26,
+        "visible": true,
+        "isChild": true,
+        "title": ""
+      }
+    ]
+  },
+  "at": "2026-10-26T22:11:33.206Z"
+}
