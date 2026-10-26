@@ -1,0 +1,16 @@
+{
+  "independent": {
+    "pass": 1,
+    "fail": 3,
+    "log": "independent.log",
+    "path": "actual create loaded-source measured scope",
+    "oracle": "Native iterator event sequence equals observed sequence"
+  },
+  "prior124": {
+    "path": "/tmp/render-indexed-get-coverage-repair-oct26/ops/result.json",
+    "sha256": "923679931c162f4feaea4348180dba01d32b128a278a96660a321deab4a756a2",
+    "disposition": "exact source/fixture receipts reused; not rerun after new defect",
+    "pass": 124
+  },
+  "scope": "New defect stops review. Compound/logical/getter/proxy/throw and unchanged full scan repro coverage reused from accepted exact-revision receipts, not newly re-exercised. No timing or runtime claims."
+}

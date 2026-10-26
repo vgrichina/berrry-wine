@@ -1,0 +1,9 @@
+{
+  "candidate": "e859f8d23933b4823420fcd0e9eb8286f96760b4",
+  "actualTree": "3cc8bc80eacfb5295c9753c21ce0189565ecf799",
+  "admissionTree": "5ea8549f4bdc5eeb693075629d3124dded6bd332",
+  "pins": {
+    "test/test-d3d9-indexed-get-coverage.js": "7200796ece24c869abd05ad86082eb2da0b6a9c5172c83f70067f5c75ae961ff",
+    "tools/d3d9-operation-observer.js": "5a09d2fd73b714ec9407f8190d044b35e6e2798d422fd8fbb7b79737bdbefca8"
+  }
+}

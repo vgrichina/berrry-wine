@@ -1,0 +1,9 @@
+{
+  "candidate": "e859f8d23933b4823420fcd0e9eb8286f96760b4",
+  "tree": "3cc8bc80eacfb5295c9753c21ce0189565ecf799",
+  "observerSHA256": "5a09d2fd73b714ec9407f8190d044b35e6e2798d422fd8fbb7b79737bdbefca8",
+  "productionRendererSHA256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+  "reproducerSHA256": "7a78c3ff1821f4424c97527aacc6448627b94a18443a61b07ae5aac95af87019",
+  "sourceAndFixturesUnchanged": true,
+  "prior124Reused": true
+}

@@ -1,0 +1,67 @@
+[
+  {
+    "path": "RECOVERY.md",
+    "bytes": 485,
+    "sha256": "e29ccaae855442f7b49955943753496a61a0dea8e3b647dddba1965286a7aff7"
+  },
+  {
+    "path": "REVIEW.md",
+    "bytes": 1063,
+    "sha256": "c35506e3a37e77e568e6790bed79f855ed2eca9e31667e09971030ee8d8d40b0"
+  },
+  {
+    "path": "candidate.json",
+    "bytes": 422,
+    "sha256": "88b3595bea87e4074a8402fbaad6a65cd9e3d5ff89a4136f83c52c62fdfd4e7b"
+  },
+  {
+    "path": "configuration.json",
+    "bytes": 681,
+    "sha256": "1a86342167fbe2b06dca141da25fee06a92c3480ed055c851ee3c02d0b4d1ab0"
+  },
+  {
+    "path": "controls.json",
+    "bytes": 712,
+    "sha256": "71e49ea914019cc9317268f1e4ecc7030fcf11ac96ff2798be9fc2d04f11119a"
+  },
+  {
+    "path": "gate-independent.json",
+    "bytes": 438,
+    "sha256": "e93cfbe455466f419ac1de7e38b7f75d89526743b6d2d25c9c14c23e27fdf56a"
+  },
+  {
+    "path": "gate-postcheckout.json",
+    "bytes": 439,
+    "sha256": "5c7576571e4a2cc39ef906c033a7c4ee35ae89d3ed9c98e637d7988befe0b64e"
+  },
+  {
+    "path": "gate-precheckout.json",
+    "bytes": 442,
+    "sha256": "6e1762bb0612a57d8b398956703e0d3c57957a047675aa667d1d191c296d5370"
+  },
+  {
+    "path": "incidents.json",
+    "bytes": 887,
+    "sha256": "f083b4adc307ec4655e8f6506f9942f0d37bae0fe52029b396cfa8357137e916"
+  },
+  {
+    "path": "independent.json",
+    "bytes": 242,
+    "sha256": "33208f6e8889abbb7f4d48c7cf492f6c91918b9ecef6ccddc3b22ef1538d4b27"
+  },
+  {
+    "path": "independent.log",
+    "bytes": 5978,
+    "sha256": "2be8bd754cc422173b602c60e63a9fea9e5f39d127c116fe0b45109dbbc50d94"
+  },
+  {
+    "path": "reproduce.js",
+    "bytes": 1595,
+    "sha256": "7a78c3ff1821f4424c97527aacc6448627b94a18443a61b07ae5aac95af87019"
+  },
+  {
+    "path": "tested-tree.json",
+    "bytes": 455,
+    "sha256": "e7a1804a4d222626f6d32364019d3b92e0a2ab0838086fd5614ff9993c76218a"
+  }
+]

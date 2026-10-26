@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js"
+  ],
+  "exitCode": 1,
+  "seconds": 0.1776740550994873,
+  "outputBytes": 5978,
+  "incident": null
+}

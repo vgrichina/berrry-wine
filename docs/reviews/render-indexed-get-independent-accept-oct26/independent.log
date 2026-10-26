@@ -1,0 +1,101 @@
+{"pattern":"[value]","native":["iterator","next","return"],"actual":["iterator","next","return"],"transformed":"'use strict';module.exports=function(){const log=[];const iterator={next(){log.push('next');return {value:7,done:false};},return(){log.push('return');return {done:true};},[Symbol.iterator](){log.push('iterator');return this;}};const {a:[value]}=__renderOperationObserver.destructure(({a:iterator}),[null]);return log;};"}
+{"pattern":"[,]","native":["iterator","next","return"],"actual":["iterator","return"],"transformed":"'use strict';module.exports=function(){const log=[];const iterator={next(){log.push('next');return {value:7,done:false};},return(){log.push('return');return {done:true};},[Symbol.iterator](){log.push('iterator');return this;}};const {a:[]}=__renderOperationObserver.destructure(({a:iterator}),[null]);return log;};"}
+{"pattern":"[,,]","native":["iterator","next","next","return"],"actual":["iterator","next","return"],"transformed":"'use strict';module.exports=function(){const log=[];const iterator={next(){log.push('next');return {value:7,done:false};},return(){log.push('return');return {done:true};},[Symbol.iterator](){log.push('iterator');return this;}};const {a:[,]}=__renderOperationObserver.destructure(({a:iterator}),[null]);return log;};"}
+{"pattern":"[value,,]","native":["iterator","next","next","return"],"actual":["iterator","next","return"],"transformed":"'use strict';module.exports=function(){const log=[];const iterator={next(){log.push('next');return {value:7,done:false};},return(){log.push('return');return {done:true};},[Symbol.iterator](){log.push('iterator');return this;}};const {a:[value,]}=__renderOperationObserver.destructure(({a:iterator}),[null]);return log;};"}
+✔ control: nested array binding with value preserves iterator effects (42.567356ms)
+✖ nested array single elision preserves iterator effects (14.212179ms)
+✖ nested array two elisions preserve iterator effects (14.66631ms)
+✖ nested array trailing elision after value preserves iterator effects (13.507416ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 1
+ℹ fail 3
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 125.923017
+
+✖ failing tests:
+
+test at docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:19:1
+✖ nested array single elision preserves iterator effects (14.212179ms)
+  AssertionError [ERR_ASSERTION]: nested array elisions must retain every iterator step
+  + actual - expected
+  
+    [
+      'iterator',
+  -   'next',
+      'return'
+    ]
+  
+      at compare (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:15:12)
+      at TestContext.<anonymous> (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:19:67)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'iterator', 'return' ],
+    expected: [ 'iterator', 'next', 'return' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:20:1
+✖ nested array two elisions preserve iterator effects (14.66631ms)
+  AssertionError [ERR_ASSERTION]: nested array elisions must retain every iterator step
+  + actual - expected
+  
+    [
+      'iterator',
+      'next',
+  -   'next',
+      'return'
+    ]
+  
+      at compare (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:15:12)
+      at TestContext.<anonymous> (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:20:64)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'iterator', 'next', 'return' ],
+    expected: [ 'iterator', 'next', 'next', 'return' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:21:1
+✖ nested array trailing elision after value preserves iterator effects (13.507416ms)
+  AssertionError [ERR_ASSERTION]: nested array elisions must retain every iterator step
+  + actual - expected
+  
+    [
+      'iterator',
+      'next',
+  -   'next',
+      'return'
+    ]
+  
+      at compare (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:15:12)
+      at TestContext.<anonymous> (/tmp/render-indexed-get-independent-accept-oct26/repo/docs/reviews/render-indexed-get-independent-accept-oct26/reproduce.js:21:81)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: [ 'iterator', 'next', 'return' ],
+    expected: [ 'iterator', 'next', 'next', 'return' ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

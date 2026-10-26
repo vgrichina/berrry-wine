@@ -1,0 +1,10 @@
+{
+  "inspection": "Initial CLAUDE/policy/board/admission inspection exceeded8KiB excerpt bound and combined tool display truncated; no retrospective compliant inspection claim. No observed individual read over64KiB. Subsequent file excerpts bounded.",
+  "admissionTree": "Coordinator admission tree5ea8549 describes earlier candidate9004; actual e859 publication tree recorded in candidate.json. Exact candidate commit and source/fixture SHA pins verified; no substitution.",
+  "resourceGateFailures": 0,
+  "testFailures": "New semantic defect unchanged reproducer1PASS3FAIL; intentionally failing oracle retained.",
+  "accessDenials": 0,
+  "sourceRepair": false,
+  "runtime": false,
+  "rawLogWhitespace": "git diff --cached --check reports6 whitespace-only lines in unchanged Node assertion output. Raw failure log preserved; scoped code/document check excludes only independent.log."
+}

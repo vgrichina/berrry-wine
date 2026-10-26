@@ -1,0 +1,20 @@
+{
+  "at": 1792978629.5203874,
+  "label": "precheckout",
+  "parts": {
+    "owned": 40960,
+    "launcher": 200704,
+    "session": 512000,
+    "sharedWALSHM": 28434432,
+    "positiveDBgrowth": 2097152,
+    "future": 6291456,
+    "reserve": 8388608,
+    "operationGrowth": 10485760
+  },
+  "projected": 56451072,
+  "memoryAvailable": 2560610304,
+  "memoryRequired": 1275068416,
+  "free": 4826169344,
+  "projectedFree": 4801003520,
+  "pass": true
+}
