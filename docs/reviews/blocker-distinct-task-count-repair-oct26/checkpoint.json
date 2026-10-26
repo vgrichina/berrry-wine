@@ -13,7 +13,8 @@
     "python was absent; used installed python3 without installation.",
     "First test run exposed empty-ID phantom dependency; corrected in owned model. Initial TAP was not retained by wrapper; same failure reproduced on immediate rerun, then subsequent fixture failure overwrote that output. Original failure retained in task event stream.",
     "Search regression initially tried assigning const matches; corrected fixture to set query. No access denials or limit relaxations.",
-    "First local commit lacked author identity in isolated repository; reused donor configured identity locally. No global or donor configuration changed."
+    "First local commit lacked author identity in isolated repository; reused donor configured identity locally. No global or donor configuration changed.",
+    "Initial push inherited donor HTTPS origin and lacked HTTPS credentials. Corrected isolated origin to equivalent GitHub SSH URL with the prescribed identity and strict known-host settings; no unchanged retry, credential or trust-file changes."
   ],
   "scope": "Four owned ops files and this review directory only; snapshot/task text excluded; no runtime/gameplay/boxes/agents/main changes",
   "status": "Implementation reviewed locally; awaiting independent acceptance"
