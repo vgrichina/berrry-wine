@@ -1,0 +1,110 @@
+{
+  "candidate": "cd4a60e378464ff6247007353b0428d9c1a210f2",
+  "sourceASTOnly": true,
+  "passed": 6,
+  "failed": 13,
+  "rows": [
+    {
+      "name": "actual transformed AST: each reason metadata is exact; first failure persists after changed predicates and hooks",
+      "pass": true,
+      "detail": {
+        "reasons": 9,
+        "hooks": 4
+      }
+    },
+    {
+      "name": "raw even/signed/large mode values normalize individually and in simultaneous failure order",
+      "pass": true,
+      "detail": {
+        "cases": 21
+      }
+    },
+    {
+      "name": "status guards: rejected/inert/accepted states execute no scalar or memory effects",
+      "pass": true,
+      "detail": {
+        "statuses": 6
+      }
+    },
+    {
+      "name": "all partial export sets rejected at construction before start/live/persist",
+      "pass": true
+    },
+    {
+      "name": "all diagnostic fields malformed reject and close before any live/persist on unchanged native snapshot",
+      "pass": true,
+      "detail": {
+        "cases": 72
+      }
+    },
+    {
+      "name": "all-absent legacy exports preserve callback ordering and captured zero errno",
+      "pass": true
+    },
+    {
+      "name": "malformed native errno=NaN cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native errno=undefined cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native errno=4294967296 cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native caller=NaN cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native caller=undefined cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native caller=4294967296 cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native token=NaN cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native token=undefined cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native token=4294967296 cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native event=NaN cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native event=undefined cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "malformed native event=4294967296 cannot authorize a decoded completion rejection or callbacks",
+      "pass": false,
+      "error": "malformed contextual export reached live/persist; error=native latch status rejection; published=[{\"status\":5,\"event\":0,\"token\":0,\"thread\":0,\"regs\":0,\"pre\":0,\"post\":0,\"selectRet\":0,\"parks\":0,\"result\":0,\"nativeEntry\":0,\"callBlock\":0,\"sourceBlock\":0,\"pc\":0,\"esp\":0,\"eax\":0,\"ebp\":0,\"errno\":0,\"caller\":0,\"socketSet\":0,\"timeout\":0}]\n\n5 !== 3\n"
+    },
+    {
+      "name": "diagnostic expected return cannot contradict pinned production return anchor",
+      "pass": false,
+      "error": "The input did not match the regular expression /invalid native rejection/. Input:\n\n'Error: native latch status rejection'\n"
+    }
+  ]
+}

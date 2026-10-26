@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "inspection",
+    "detail": "Initial combined instruction/receipt inspection result was truncated; overlarge excerpts were emitted. Retained as an inspection-limit incident, no claim of retrospective compliance. Subsequent reads/excerpts bounded."
+  },
+  {
+    "kind": "receipt-tree",
+    "detail": "Supplied admission candidate568a0a48 correctly pins review but tree9be6db33 is predecessor source-tested tree. Setup asserted actual review tree ae463966406b440b9fad4d9db3f50dfeac2aad25 before checkout; setup stdout retained stale predecessor label. Actual candidate checkout and source baseline are recorded separately."
+  },
+  {
+    "kind": "fixture-output-path",
+    "detail": "Unchanged independent reproducer writes results beside itself; first repair run updated sparse tracked historical independent-results.json. Copied new19PASS result to owned ops and restored original historical file byte-exact from568a0a48; subsequent runs use unchanged ops fixture copy. No historical failures removed or committed over."
+  },
+  {
+    "kind": "sparse-path",
+    "detail": "Initial git add rejected new regression outside explicit sparse definition; chain stopped before write-tree. Added only owned fixture/review paths to sparse definition and restaged. No permission/resource guard changed."
+  }
+]

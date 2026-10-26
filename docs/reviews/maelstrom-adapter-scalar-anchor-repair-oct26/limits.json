@@ -1,0 +1,46 @@
+{
+  "allocationBytes": 67108864,
+  "reserveBytes": 8388608,
+  "minAvailableRAM": 1073741824,
+  "minProjectedHostFree": 2982150144,
+  "nodeHeapMiB": 128,
+  "aggregateAuthorizedLightHeapsMiB": 512,
+  "concurrentTestProcesses": 1,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "fileBytes": 25165824,
+  "stdoutStderrBytes": 131072,
+  "captureBytes": 2097152,
+  "readBytes": 65536,
+  "excerptBytes": 8192,
+  "termKillReapSeconds": 5,
+  "tools": {
+    "node": {
+      "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "size": 123656816,
+      "standingAllocatedBytes": 123662336,
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+    },
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "size": 8020928,
+      "standingAllocatedBytes": 8024064,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "size": 4066232,
+      "standingAllocatedBytes": 4067328,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "size": 846888,
+      "standingAllocatedBytes": 847872,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b"
+    }
+  },
+  "mountArgv": [],
+  "mountValidation": "N/A: offline source/fixture task has no filename mounts or conditional guest; no mount parser execution claimed",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

@@ -1,0 +1,20 @@
+{
+  "at": 1792978213.0978372,
+  "charges": {
+    "owned": 3653632,
+    "launcher": 233472,
+    "session": 684032,
+    "sharedWALSHM": 28434432,
+    "positiveDB": 10182656,
+    "future": 6291456,
+    "reserve": 8388608,
+    "board": 16384
+  },
+  "projectedAllNewBytes": 57884672,
+  "cap": 67108864,
+  "memAvailable": 2760523776,
+  "free": 4829683712,
+  "projectedFree": 4771799040,
+  "passGate": true,
+  "standing": "installed tools and verified donor/object leaves/original binaries not copied or double charged"
+}

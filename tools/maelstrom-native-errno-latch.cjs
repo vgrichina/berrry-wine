@@ -35,6 +35,12 @@ const NET_ANCHORS = Object.freeze({
   0x10001362: '8be8ffd783380474a2',
   0x1000139c: '8bc55e5d5b81c414010000c3',
 });
+// Original PE guest mapping, already required by the binary/loaded-image
+// verifiers. These are not allocator-selected emulator memory region bases.
+// Keep the return predicate and its host decoder on this same pinned mapping.
+const NET_LAYOUT = Object.freeze({ preferredBase: 0x10000000,
+  loadedBase: 0x7a2000, selectReturnVA: 0x10001362 });
+const SELECT_RETURN = NET_LAYOUT.loadedBase + NET_LAYOUT.selectReturnVA - NET_LAYOUT.preferredBase;
 function once(s, a, b) {
   if (s.split(a).length !== 2) throw Error('missing/ambiguous exact anchor: ' + a.slice(0, 80));
   return s.replace(a, b);
@@ -84,13 +90,13 @@ function verifyBinaries(binaries) {
   for (const [name, pin] of Object.entries(BINARY_PINS))
     if (!Buffer.isBuffer(binaries[name]) || sha(binaries[name]) !== pin) throw Error('binary pin: ' + name);
   const net = pe(binaries.net), crt = pe(binaries.crt), exe = pe(binaries.exe);
-  if (net.base !== 0x10000000 || crt.base !== 0x78000000) throw Error('preferred base');
+  if (net.base !== NET_LAYOUT.preferredBase || crt.base !== 0x78000000) throw Error('preferred base');
   for (const [va, hex] of Object.entries(NET_ANCHORS)) net.check(Number(va), hex);
   if (JSON.stringify(net.imported(0x10002010)) !== '["MSVCRT.dll","_errno"]') throw Error('authentic native errno import');
   crt.check(0x7800c430, 'e82274ffff83c008c3'); // _getptd(); add eax,8; ret
   exe.check(0x40e125, 'e8c253000083c40885c0756e');
-  return Object.freeze({ successor: 0x7a2000 + (0x10001366 - net.base),
-    selectRet: 0x7a2000 + (0x10001362 - net.base), frame: 0x114 + 4 * 4,
+  return Object.freeze({ successor: NET_LAYOUT.loadedBase + (0x10001366 - net.base),
+    selectRet: SELECT_RETURN, frame: 0x114 + 4 * 4,
     crtEntryRva: 0x7800c430 - crt.base, crtTailRva: 0x7800c435 - crt.base,
     crtRetRva: 0x7800c438 - crt.base });
 }
@@ -219,7 +225,7 @@ function transform(sources, options = {}) {
   out['src/05-alu.wat'] = alu.slice(0, start) + ret + alu.slice(end);
   return out;
 }
-module.exports = { transform, verifyBinaries, PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, NET_ANCHORS, pe, once, storage };
+module.exports = { transform, verifyBinaries, PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, pe, once, storage };
 
 if (require.main === module) {
   const fs = require('node:fs'), path = require('node:path');

@@ -1,0 +1,22 @@
+{
+  "candidate": "568a0a4825a29e75ecabc26594f8ecef1e4c3d3f",
+  "candidateTree": "ae463966406b440b9fad4d9db3f50dfeac2aad25",
+  "historicalSourceTestedTree": "9be6db3325d2e3b439dd76994c2f919fff5c60cf",
+  "sourceTestedTree": "40265be422da898146ea0afaaca9d69cb1ace2d3",
+  "sourceSHA256": {
+    "tools/maelstrom-original-errno-adapter.cjs": "07561f8f4eeb44534fc193f18913aca635cbd662226bf44992598b800e775c2d",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996"
+  },
+  "reproducerSHA256": "8483dd85879c25d32c78125251741db6fd53248ed5d14b4f632e07777f19a401",
+  "sourceRoot": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source",
+  "sourceInputs": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/source-inputs.json",
+  "sourcePinsReused": 12,
+  "previousManifestEntriesReused": 69,
+  "reviewManifestEntriesReused": 68,
+  "controls": "controls.json",
+  "preservation": "preservation.json",
+  "compiler": false,
+  "Wasm": false,
+  "runtime": false
+}

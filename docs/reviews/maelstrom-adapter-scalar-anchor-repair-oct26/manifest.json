@@ -1,0 +1,46 @@
+{
+  "independent-results.json": {
+    "bytes": 3003,
+    "sha256": "1041fe3ef2cd19c78f8ccb38c9f51cd76d6210a7bd57ac7b964168df364c55a8"
+  },
+  "compare-guards.cjs": {
+    "bytes": 1909,
+    "sha256": "3d9111f1e3735b8efcff7e31c46d3bc39c829ff60e75571d80412873a94e6096"
+  },
+  "baseline-independent-results.json": {
+    "bytes": 7972,
+    "sha256": "ece2bf287c26a683a1e41718ac90fc38dfec7d31d7570fca2ddd5e4538abb15b"
+  },
+  "preservation.json": {
+    "bytes": 2219,
+    "sha256": "fd176f183c6a2f84b353f1acc4060766857704742557191951f8283eb41fc032"
+  },
+  "tested-tree.json": {
+    "bytes": 1146,
+    "sha256": "dbbda70b5c0f459f619fb6c37c2cf51f3bb2570400a34fd797dee023afdeaa32"
+  },
+  "preservation.cjs": {
+    "bytes": 2335,
+    "sha256": "6a344dfaf0268b362bbb27f025b800cca6341adfc6a5c2c93a8c54c76a67dc2d"
+  },
+  "README.md": {
+    "bytes": 4451,
+    "sha256": "8eff509519c02dbb8634846d654f28434bbecb7bb0202f510a574a5608ba837c"
+  },
+  "limits.json": {
+    "bytes": 1620,
+    "sha256": "f6ae68197ef3c09285b41f8499eb3cc9c31c2fcbb0386e29b9304c34d9ce0745"
+  },
+  "admission-conservative-final-tests.json": {
+    "bytes": 514,
+    "sha256": "15dce74448334325298b6b632dcb2e32d614746ea13aa7a58584699d6f2bf4ae"
+  },
+  "controls.json": {
+    "bytes": 2329,
+    "sha256": "21f25b7785bfcd0dd536740f0bf4c3267bd8be476d97504c6f61ece62b8d7201"
+  },
+  "incidents.json": {
+    "bytes": 1315,
+    "sha256": "d6254cf21ef664ac129d1a41393a0c733d7f1dfa88abeac288ec495ba48d9cbd"
+  }
+}
