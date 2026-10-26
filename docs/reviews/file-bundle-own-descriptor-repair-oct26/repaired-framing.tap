@@ -1,0 +1,16 @@
+✔ real server multi-file response, missing file, zero size, and offset views (6.580915ms)
+✔ 404 and 413 consume no bytes; successful files can follow either (0.474159ms)
+✔ malformed descriptor shapes and names reject the whole response (0.542826ms)
+✔ only explicit numeric 404/413 statuses without size are valid errors (0.374593ms)
+✔ sizes must be nonnegative safe integers fitting the remaining body (0.211656ms)
+✔ duplicate names reject successes, errors, and mixed descriptors in either order (0.33094ms)
+✔ invalid prefix, header framing, JSON and trailing bytes reject (0.344314ms)
+✔ invalid UTF-8 is not silently replaced in file names (0.266671ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 52.217256

@@ -1,0 +1,14 @@
+{
+  "RECOVERY.md": "f515a487d7c4ad22a50c113a9c8e99edb994cc5835632deba85c6184b79e55ef",
+  "REVIEW.md": "6bc69aab0637e732500d2492ed82813ae85df1ff47bae7a267095d90ffd32595",
+  "admission-publication.json": "bb74a1f90c016bcdad76b201ec37880d4f4c43386e29970f652379c3a361035a",
+  "baseline-framing.tap": "2b14ed69715806cf15626be27c24f81265bc72de9d5bab251c410834c3f9d8dc",
+  "baseline-independent.tap": "3ace896e75fd0f995ad1ad640d01e54ebcfd3b69630fec2db1adc185da4cf36d",
+  "baseline-own.tap": "079e7b5e98dfa0f0f8ced94584bdf05699322044056d692af144514c34c4121d",
+  "checkpoint-baseline.json": "9a8964bc8e89e4075e8114efe2aff8076a01acd3db075e8635d9fe8602468848",
+  "checkpoint-repaired.json": "caed748e92ea556dae54a5dfab5cdce991517b0ce82d23a1d6a0504330589e8f",
+  "repaired-framing.tap": "b9870c903a7f8e16ab8ee15e328afa1318090fb081bd2192c863e7ad50f81af9",
+  "repaired-independent.tap": "978ccf3cbc5006d150924f13687857d1b2ebf99671434fa84a715e941f92daa8",
+  "repaired-own.tap": "00de161a1537ce0f7633517c277ce48cbf972983cb07d46aa65a2dea8203772c",
+  "source-verification.json": "a2cee21158b98e69b665e5de73cfddd33360601f8e1b6cf79cfcd30b0835afdc"
+}

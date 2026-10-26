@@ -1,0 +1,17 @@
+✔ actual server writer response, success/error sequence and zero-copy offset views (4.989011ms)
+✔ valid wire compatibility: errors, Unicode/special names, ordering, whitespace and empty sets (0.72503ms)
+✔ independent truncation and uint32 header boundary sweep stays within supplied view (0.466555ms)
+✔ malformed JSON shapes and UTF-8 sequences reject atomically (0.347583ms)
+✔ descriptor/status/size and cross-kind duplicate matrix rejects malformed responses (0.803145ms)
+✔ inherited size/status cannot supply missing own fields; own special keys stay inert (1.247578ms)
+✔ inherited f must not turn missing-name success descriptor plus extra field into valid file (0.668063ms)
+✔ inherited f must not turn missing-name error descriptor plus extra field into valid response (0.624741ms)
+✔ name-inheritance controls: clean realm rejects both repros and own f stays valid in polluted realm (1.592706ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 53.170552

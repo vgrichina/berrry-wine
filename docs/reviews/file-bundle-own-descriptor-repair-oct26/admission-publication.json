@@ -1,0 +1,36 @@
+{
+  "time": 1792994901.7467515,
+  "dispatchRechecked": {
+    "at": "2026-10-26T06:05:56.735850+00:00",
+    "task": "file-bundle-own-descriptor-repair-oct26",
+    "review": "c5c22bc471b9b1842844b925edc4bbb5152d39fc",
+    "candidate": "d0cda4dbe6d788694b98009f9897faf5c12c837e",
+    "verifiedCommittedPayloads": 13,
+    "memAvailable": 3153735680,
+    "diskFree": 4534251520,
+    "projectedGrowth": 58720256,
+    "admission": "PASS",
+    "donor": "/tmp/file-bundle-parser-independent-accept-oct26/repo"
+  },
+  "repoOps": 1961151,
+  "launcher": 109123,
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T06-06-00-01a176d0-d8ec-7151-9e18-dcbde976007c.jsonl",
+  "sessionBytes": 416931,
+  "sharedWALOnceConservativeFull": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1491472,
+    "/home/user/.codex/state_5.sqlite-wal": 4194192,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "futureIncludingPublicationAndSessionWAL": 12582912,
+  "reserve": 8388608,
+  "peak": 49789805,
+  "limit": 67108864,
+  "freeAfterGrowth": 4472916024,
+  "memAfterClientAllowance": 1529991168,
+  "nodeStanding": "/usr/local/bin/node; installed execute in place",
+  "donorStanding": "unchanged flat object leaves, read only",
+  "verdict": "PASS"
+}

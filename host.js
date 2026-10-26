@@ -812,6 +812,7 @@ class WineAssembly {
       // Every descriptor is exactly one of {f, size} or {f, status}.
       // Errors reserve their names too: no descriptor may shadow another.
       if (!entry || typeof entry !== 'object' || Array.isArray(entry) ||
+          !Object.prototype.hasOwnProperty.call(entry, 'f') ||
           typeof entry.f !== 'string' || names.has(entry.f)) return null;
       names.add(entry.f);
       const keys = Object.keys(entry);
