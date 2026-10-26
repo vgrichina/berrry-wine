@@ -1,0 +1,14 @@
+{
+  "completeBytes": 67018752,
+  "projection": 436117504,
+  "allocation": 1073741824,
+  "accounting": {
+    "samples": 183,
+    "peakProjected": 436125696,
+    "minFree": 48597532672,
+    "minMem": 6754258944
+  },
+  "boxLeftRunning": true,
+  "expiry": "2026-10-26T23:02:04.169Z",
+  "shutdownOwner": "coordinator"
+}

@@ -1,0 +1,92 @@
+{
+  "exit": 1,
+  "stopReason": "accounting check failed: [Errno 2] No such file or directory: '/tmp/gl-published-webgl-api-qualification-oct26/tmp/org.chromium.Chromium.betterchromium-timezone.O4M9Ox/SingletonSocket'",
+  "peakRSS": 1616187392,
+  "sampledPeakRSS": 1616187392,
+  "reapedPeakRSS": 357720064,
+  "cpuSeconds": 15.095028999999998,
+  "wallSeconds": 4.1531709449999425,
+  "owned": [
+    [
+      21985,
+      "52223"
+    ],
+    [
+      22038,
+      "52590"
+    ],
+    [
+      22039,
+      "52592"
+    ],
+    [
+      22040,
+      "52592"
+    ],
+    [
+      22042,
+      "52594"
+    ],
+    [
+      22044,
+      "52594"
+    ],
+    [
+      22047,
+      "52594"
+    ],
+    [
+      22048,
+      "52594"
+    ],
+    [
+      22068,
+      "52599"
+    ],
+    [
+      22071,
+      "52599"
+    ],
+    [
+      22077,
+      "52602"
+    ],
+    [
+      22113,
+      "52606"
+    ],
+    [
+      22122,
+      "52608"
+    ],
+    [
+      22126,
+      "52609"
+    ],
+    [
+      22145,
+      "52617"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/gl-published-webgl-api-qualification-oct26/repo/test/test-d3dim-palette-gpu-web.js"
+  ],
+  "limits": {
+    "physicalRSS": 2147483648,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "NodeHeapMiB": 512,
+    "GitDATAChildOnly": 536870912
+  },
+  "accounting": {
+    "samples": 183,
+    "peakProjected": 436125696,
+    "minFree": 48597532672,
+    "minMem": 6754258944
+  }
+}

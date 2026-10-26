@@ -1,0 +1,37 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 105529344,
+  "sampledPeakRSS": 105529344,
+  "reapedPeakRSS": 85102592,
+  "cpuSeconds": 0.929891,
+  "wallSeconds": 0.36797337900009097,
+  "owned": [
+    [
+      21977,
+      "52183"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,puppeteer:require.resolve(\"puppeteer\"),puppeteerLoaded:!!require(\"puppeteer\").launch,launchConfiguration:require(\"./test/helpers/palette-browser-launch\").launchConfiguration(),environment:process.env}))"
+  ],
+  "limits": {
+    "physicalRSS": 2147483648,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "NodeHeapMiB": 512,
+    "GitDATAChildOnly": 536870912
+  },
+  "accounting": {
+    "samples": 19,
+    "peakProjected": 433778688,
+    "minFree": 48599928832,
+    "minMem": 7215480832
+  }
+}

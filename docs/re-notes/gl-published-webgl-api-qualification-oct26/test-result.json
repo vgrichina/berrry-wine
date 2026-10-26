@@ -1,0 +1,28 @@
+{
+  "source": "0d65e6daf568a2b0104fcaea75801e9fcac6d1ae",
+  "diff": "",
+  "sourceRoot": "/tmp/gl-published-webgl-api-qualification-oct26/source",
+  "fixture": {
+    "head": "c57ba2b0d7dc63fb159580772d530db873c28325",
+    "diff": ""
+  },
+  "extraWatSha256": "0fd5acd70a154a196cbcc981ad78eb900e42899302773dec5e88d8ae6d7037aa",
+  "stage": "browser setup",
+  "results": [],
+  "route": "cooperative full-VM WebGL; production guest/render Worker queue is not covered",
+  "wasmSha256": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "scripts": {
+    "lib/gpu-backend.js": "f0d70cfe6418d3297a4f414a7d4980e3cf279c0ee000bc923c0b0481cce1589d",
+    "lib/d3d9-shader.js": "fe0067d9c472ae48dffde9140e0000aaefdf41b489825ea1d8bee8e63d385440",
+    "lib/d3d9-fixed.js": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+    "lib/render-clear.js": "f54281334bc40134e7a23208f6139045528e5fac600f448fe295d8d2671f0fc9",
+    "lib/d3d9-backend.js": "ba5063750e6c8caf684f6ce72c7b91437539e4e49008c3111f5978d3752c6773",
+    "lib/d3dim-gpu.js": "f0bc4d36f5d80554bb236ff54bbec76024abc5b7e4ffd1797202d586c26db13b",
+    "test/helpers/palette-gpu-browser.js": "3972b7e3bd48141654ec33dfd26bf8da05fb64ee6184b852fb80c2208946d4cf"
+  },
+  "launchControl": {
+    "executablePath": "/opt/google/chrome/chrome",
+    "executableSha256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97"
+  },
+  "error": "Error: Failed to launch the browser process:  Code: null\n\nstderr:\n\n\nTROUBLESHOOTING: https://pptr.dev/troubleshooting\n\n    at ChildProcess.onClose (file:///tmp/gl-published-webgl-api-qualification-oct26/deps/node_modules/@puppeteer/browsers/lib/launch.js:343:24)\n    at ChildProcess.emit (node:events:526:24)\n    at ChildProcess._handle.onexit (node:internal/child_process:324:12)"
+}

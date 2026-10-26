@@ -1,0 +1,29 @@
+{
+  "stage": "publication-fresh",
+  "memAvailable": 3861192704,
+  "required": 2692022272,
+  "clients": [
+    {
+      "pid": 3204494,
+      "rss": 198557696
+    },
+    {
+      "pid": 3214528,
+      "rss": 196427776
+    }
+  ],
+  "growthOnce": 276103168,
+  "charges": {
+    "/tmp/gl-published-webgl-api-qualification-oct26": 14323712,
+    "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-api-qualification-oct26": 483328,
+    "session": 983040,
+    "positiveWALOnce": 1339392,
+    "futureArchiveGitEvidencePublication": 33554432,
+    "futureSessionEvents": 16777216,
+    "reserve": 8388608
+  },
+  "projection": 75849728,
+  "cap": 134217728,
+  "projectedFree": 3467501568,
+  "passAdmission": true
+}

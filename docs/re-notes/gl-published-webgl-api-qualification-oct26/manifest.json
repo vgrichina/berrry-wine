@@ -1,0 +1,66 @@
+{
+  "operations.tar.gz": {
+    "bytes": 126210,
+    "sha256": "ac409080d7153d84908301455a79a36bff568b654cf6a7face2bc9b4f51e9357"
+  },
+  "executables.json": {
+    "bytes": 443,
+    "sha256": "efdead0e97548c4a47a56f2eae84560a2bbb5c03a73f7017524b05a0f371e05f"
+  },
+  "integrity-after.json": {
+    "bytes": 219,
+    "sha256": "c8bf3518cbb1b86bfc4c69a17e966c3c62f60a7b53fb75996f273159a8111ec5"
+  },
+  "checkpoint.json": {
+    "bytes": 1325,
+    "sha256": "d61120c35b5a6d0129acea6834617587a5f85fa15a24847192f8c1880830bced"
+  },
+  "admission-publication-fresh.json": {
+    "bytes": 711,
+    "sha256": "d129e0245beae98cd8e53567079ce5de1a5944ee12477ab5a0ea4e1ca9545f7b"
+  },
+  "local-after-integrity.json": {
+    "bytes": 65,
+    "sha256": "e1d3f0c5c7921c5d53a02a0a1ffca48459d6252ae065ee38dd82f0fe374eb883"
+  },
+  "remote-final-accounting.json": {
+    "bytes": 315,
+    "sha256": "b6b99ab3390157ac74a1aee3591f7cae1eac9bf12114a6373390c1696059d4b5"
+  },
+  "node-startup.json": {
+    "bytes": 3302,
+    "sha256": "4814e740b48a0b65d9cb5ec141e907b8b9b19ecef166fcd02b6431903922f655"
+  },
+  "integrity-before.json": {
+    "bytes": 219,
+    "sha256": "c8bf3518cbb1b86bfc4c69a17e966c3c62f60a7b53fb75996f273159a8111ec5"
+  },
+  "node-startup-receipt.json": {
+    "bytes": 1163,
+    "sha256": "10f5765aa46e04b26f2f3d06585d9503ed6f66c54f0822cc233293fc467f59a3"
+  },
+  "remote-admission.json": {
+    "bytes": 2521,
+    "sha256": "7155c66e78f634feece92245038165fbd42e50021ad1eac6991e09e408dfbc2f"
+  },
+  "test-result.json": {
+    "bytes": 1813,
+    "sha256": "292f30c8c5c2ed7f2172d1868fe34ae469011e38fc1e22ed8a8b54927243902e"
+  },
+  "cleanup.json": {
+    "bytes": 154,
+    "sha256": "70e523c96d88bf8ec0a3b9fd61e9f06ff0af01692fe8cc14a9c4daabbf163f1d"
+  },
+  "README.md": {
+    "bytes": 6589,
+    "sha256": "8fa523bdb1d330a406c2eb6a2682016411d3a5f19b9f1e29a67afba18e6b2dd4"
+  },
+  "remote-evidence-manifest.json": {
+    "bytes": 2953,
+    "sha256": "ddd83f97bacdc53f06e03484df5aac6d2f5c8aed4919b8422a322852297ae872"
+  },
+  "test-receipt.json": {
+    "bytes": 1535,
+    "sha256": "b194dde11ec0c441b18d01ef3528625b11eca2a48a9203a3594dda67e5bd4bc2"
+  }
+}

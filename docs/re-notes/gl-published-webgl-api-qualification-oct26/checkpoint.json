@@ -1,0 +1,32 @@
+{
+  "success": false,
+  "candidate": "c57ba2b0d7dc63fb159580772d530db873c28325",
+  "tree": "ef4fa7219aadb4241e9eb20c0d969bbb1cf139ce",
+  "moduleSHA256": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "oracleSHA256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+  "stage": "browser setup",
+  "observations": [],
+  "remaining": [
+    "qualification blocked; no replay"
+  ],
+  "physicalAccountingCaveat": "maximum of simultaneous sampled aggregate and waited descendant high-water is lower bound, independent peaks not summed",
+  "route": "cooperative full-VM WebGL; production guest/render Worker queue is not covered",
+  "gameplayClaim": false,
+  "priorFailure": "95297d0d startup1083064320>1073741824 preserved",
+  "observedCounts": {
+    "WebGL1": 0,
+    "WebGL2": 0
+  },
+  "expectedCountsEach": 42,
+  "soleInvocation": true,
+  "cleanup": {
+    "remainingOwned": [],
+    "cleanupComplete": true,
+    "boxLeftRunning": true,
+    "expiry": "2026-10-26T23:02:04.169Z",
+    "shutdownOwner": "coordinator"
+  },
+  "remainingGate": "Repair accounting callback transient-file handling; a further browser invocation requires coordinator assignment. No replay in this task.",
+  "historicalFailure": "95297d0d272eefd0cc0d5e15f9c16f30961e7d37 retained unchanged",
+  "commitPending": true
+}
