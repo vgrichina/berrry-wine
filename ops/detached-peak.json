@@ -1,0 +1,52 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/gl-launch-controls-independent-accept-oct26/ops/detached-peak-reproducer.py"
+  ],
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 72613888,
+  "cpuSeconds": 0.31000000000000005,
+  "owned": [
+    [
+      3140695,
+      "109636402"
+    ],
+    [
+      3140700,
+      "109636406"
+    ],
+    [
+      3140701,
+      "109636407"
+    ],
+    [
+      3140702,
+      "109636410"
+    ],
+    [
+      3140708,
+      "109636424"
+    ],
+    [
+      3140709,
+      "109636427"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 0.44792405399493873,
+  "outputBytes": 1466,
+  "disk": {
+    "components": {
+      "/tmp/gl-launch-controls-retained-challenges-oct26": 73728,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-retained-challenges-oct26": 143360,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-22-01a17a0d-b9f8-7703-9d9f-b04f49359782.jsonl": 446464,
+      "positiveWALOnce": 0,
+      "reproducerFixedPathGrowth": 12288,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17453056,
+    "projectedFree": 3713953792
+  }
+}

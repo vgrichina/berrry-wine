@@ -1,0 +1,22 @@
+{
+  "exit": 7,
+  "stopReason": null,
+  "peakRSS": 40108032,
+  "cpuSeconds": 0.09596299999999999,
+  "wallSeconds": 0.13360158214345574,
+  "owned": [
+    [
+      3140701,
+      "109636407"
+    ],
+    [
+      3140702,
+      "109636410"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "unrelatedAliveSameIdentity": true,
+  "detachedOwned": true,
+  "allOwnedGone": true
+}

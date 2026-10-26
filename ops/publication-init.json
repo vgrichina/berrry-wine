@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "maintenance.auto=false",
+    "init",
+    "-b",
+    "task/gl-launch-controls-retained-challenges-oct26"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 23855104,
+  "cpuSeconds": 0,
+  "owned": [
+    [
+      3142873,
+      "109642495"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 0.025874463841319084,
+  "outputBytes": 97,
+  "disk": {
+    "components": {
+      "/tmp/gl-launch-controls-retained-challenges-oct26": 274432,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-retained-challenges-oct26": 167936,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-22-01a17a0d-b9f8-7703-9d9f-b04f49359782.jsonl": 532480,
+      "positiveWALOnce": 290816,
+      "reproducerFixedPathGrowth": 12288,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 18055168,
+    "projectedFree": 3711655936
+  }
+}

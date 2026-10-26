@@ -1,0 +1,152 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 5021,
+    "sha256": "563ddfbf4176cafa16bf5da1729ae3b46f2cc2ed156244496c8565455cc95d6f"
+  },
+  {
+    "path": "ops/baseline.json",
+    "bytes": 550,
+    "sha256": "ab42597fc01c2922609feaf8ea9a018e5ef731ba03f2a9edca48863be72bac23"
+  },
+  {
+    "path": "ops/checkpoint.json",
+    "bytes": 2281,
+    "sha256": "53751b03f7ffe99e9ebf815e27bfe4e601f6bb923a26e70dd802b08d0a203d4b"
+  },
+  {
+    "path": "ops/corrected-peak-admission.json",
+    "bytes": 3940,
+    "sha256": "72fa000bd489b2ad401c1a928ac5f5c06229bc23431d99eee4777dbf7f107ae7"
+  },
+  {
+    "path": "ops/corrected-peak.json",
+    "bytes": 1120,
+    "sha256": "72d89870d7fea0a082fa65ca8e54eef31e0fb2b030111b2efdc9c422145534ba"
+  },
+  {
+    "path": "ops/corrected-peak.log",
+    "bytes": 1219,
+    "sha256": "0a9a51e7e6520a58d5f38dd4d1dcff8f32bd6d1def00cb03a9f2be8365e2dca3"
+  },
+  {
+    "path": "ops/detached-control.json",
+    "bytes": 362,
+    "sha256": "ffa28628b7ae57ed416d7d0c9da7083e5b591cc451f5609f1ddd1dc090da35be"
+  },
+  {
+    "path": "ops/detached-peak-admission.json",
+    "bytes": 3928,
+    "sha256": "ffbeb4da1353b7b0bec5c9da2250eebe16790fcc126cb358763509492bae776f"
+  },
+  {
+    "path": "ops/detached-peak-baseline-corrected.py",
+    "bytes": 4016,
+    "sha256": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602"
+  },
+  {
+    "path": "ops/detached-peak-reproducer.py",
+    "bytes": 4015,
+    "sha256": "b68baa5d2132b01d3ceaf3e75a3775d3400d98ba7d4a27a6a29a5e819a95039a"
+  },
+  {
+    "path": "ops/detached-peak.json",
+    "bytes": 1120,
+    "sha256": "69527857b62d73196b840fee5693baf1094fd13343107cf842eec65d2dd1ed3e"
+  },
+  {
+    "path": "ops/detached-peak.log",
+    "bytes": 1466,
+    "sha256": "71fbee97c62cc12c5239cfa79866aa7ad01d534da85c8f2571b1b3a664737df0"
+  },
+  {
+    "path": "ops/first-baseline.json",
+    "bytes": 324,
+    "sha256": "ec64893f49a514d1682ccd0a99336f0ff992f668d0e1f96daca415a69eee668e"
+  },
+  {
+    "path": "ops/first-detached-control.json",
+    "bytes": 374,
+    "sha256": "40b4309b860feb4ee29223f75c50533a741fa905187577e73947e535cac42aa9"
+  },
+  {
+    "path": "ops/fixture-incident.json",
+    "bytes": 792,
+    "sha256": "6309cf5c74a4a094d153755bf4303d8f340a846f3a86cdc7861a8675f8cb9568"
+  },
+  {
+    "path": "ops/initial-root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  {
+    "path": "ops/inputs.json",
+    "bytes": 1061,
+    "sha256": "775e600c7fda076a8d4320ab8f4b5c9805114550b72c92f36c7c0aea0198cb8b"
+  },
+  {
+    "path": "ops/peak-challenge.json",
+    "bytes": 529,
+    "sha256": "03fdde602b0c8f071c770fcbd9530afe621c92df2026cf9b0f649f7a3092a7c5"
+  },
+  {
+    "path": "ops/prior-checkpoint.json",
+    "bytes": 1965,
+    "sha256": "d6e7bd02cadc9e2df919525edd19a19eacfa579c26b93b7a0c1b32cd9026a41b"
+  },
+  {
+    "path": "ops/prior-incidents.json",
+    "bytes": 599,
+    "sha256": "4c6e487870ff645a6ddbbed004cda5dedd60a9486f2affda710db065a2b08a03"
+  },
+  {
+    "path": "ops/publication-init-admission.json",
+    "bytes": 3943,
+    "sha256": "af5cab562f430c4213406a3ac876fd64e3f55872c245c52783faabadcb813b5e"
+  },
+  {
+    "path": "ops/publication-init.json",
+    "bytes": 931,
+    "sha256": "97fbc61ff76f6a8a7d34169ed0ff35a4526b204519e08c449f1bbd2ddee0b774"
+  },
+  {
+    "path": "ops/publication-init.log",
+    "bytes": 97,
+    "sha256": "6b1c5778c646a003f081998972ed3a02a1d70eecc5e37c1b41b6f810863b19af"
+  },
+  {
+    "path": "ops/published-source-binding.json",
+    "bytes": 1105,
+    "sha256": "3ad4ab34b0509f76ba1243907bd9cd2ce50eedacc5431fa7e9242483b3f19fce"
+  },
+  {
+    "path": "ops/readonly-tool-identities.json",
+    "bytes": 890,
+    "sha256": "59b33e8541ee8401c7935776fb8393c91accf6830a28a97023455dfe9818665a"
+  },
+  {
+    "path": "ops/reuse-configuration.json",
+    "bytes": 523,
+    "sha256": "7ae217d4c97b4755da02c1bcf17b8a49e5ecf406d3ad4b63e249c0f68b24fe10"
+  },
+  {
+    "path": "ops/reused-evidence.json",
+    "bytes": 886,
+    "sha256": "56955dd40efbd1caced1717ecb55f4168ffd5ed880f2a163d1d11ff6d1accd0b"
+  },
+  {
+    "path": "ops/run.py",
+    "bytes": 5974,
+    "sha256": "11d3b18fb7bd0b9e5b89289bce17c47e6f5280a6e99cb3b6bfc4ec876833b9cd"
+  },
+  {
+    "path": "ops/startup.json",
+    "bytes": 531,
+    "sha256": "1c1d235f8acc75e2353fbdc0b38f541c2e11984e1b2e59c4afcf0c93abc4df1e"
+  },
+  {
+    "path": "ops/startup.log",
+    "bytes": 2192,
+    "sha256": "c034e9cd37032c012ff00117fed1292bbadc55c28a30521a47b6a79e1a1f647b"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 42729472,
+  "cpuSeconds": 0.18065099999999998,
+  "wallSeconds": 0.23181633185595274,
+  "owned": [
+    [
+      3141374,
+      "109638465"
+    ],
+    [
+      3141378,
+      "109638468"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "independentChildPeak": {
+    "pid": 3141378,
+    "start": "109638468",
+    "rssHighWater": 63569920
+  },
+  "limit": 50331648,
+  "allOwnedGone": true,
+  "accountingCallbacks": 6,
+  "unrelatedAliveSameIdentity": true,
+  "verdict": "REJECT"
+}

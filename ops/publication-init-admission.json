@@ -1,0 +1,136 @@
+{
+  "memAvailable": 2887233536,
+  "required": 2623787008,
+  "clients": [
+    {
+      "pid": 3115073,
+      "rss": 195805184,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-current-gameplay-api-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3137326,
+      "rss": 202989568,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-retained-intro-gameplay-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3137512,
+      "rss": 196571136,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-retained-challenges-oct26/final.txt",
+        "-"
+      ]
+    },
+    {
+      "pid": 3140866,
+      "rss": 203399168,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-presented-menu-progress-gameplay-oct26/final.txt",
+        "-"
+      ]
+    }
+  ],
+  "clientUnconsumed320MiB": 543412224,
+  "taskCap": 268435456,
+  "CivCap": 805306368,
+  "hostReserve": 805306368,
+  "helperCaps": [
+    67108864,
+    67108864,
+    67108864
+  ],
+  "disk": {
+    "components": {
+      "/tmp/gl-launch-controls-retained-challenges-oct26": 147456,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-retained-challenges-oct26": 167936,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-22-01a17a0d-b9f8-7703-9d9f-b04f49359782.jsonl": 532480,
+      "positiveWALOnce": 290816,
+      "reproducerFixedPathGrowth": 12288,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17928192,
+    "projectedFree": 3711782912
+  },
+  "mountArgv": null,
+  "mountValidation": "N/A: no guest, mount, or filename-bearing mount argv",
+  "GitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "limits": {
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "treeRSS": 268435456,
+    "GitDATA": "512MiB Git child only",
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ]
+  }
+}

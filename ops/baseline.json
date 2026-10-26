@@ -1,0 +1,12 @@
+{
+  "wal": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 3252224,
+    "/home/user/.codex/state_5.sqlite-wal": 4399104,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243456
+  },
+  "old": 851968,
+  "walNote": "Conservative earlier21:05 baseline predates current session: positive growth charged once, including all pre-wrapper task growth; replaces later baseline without adding twice."
+}

@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require(\"fs\"); console.log(JSON.stringify({exec:process.execPath,flags:process.execArgv,version:process.version,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),environment:Object.fromEntries([\"NODE_PATH\",\"CHROME\",\"TMPDIR\",\"GIT_SSH_COMMAND\",\"PYTHONDONTWRITEBYTECODE\"].map(k=>[k,process.env[k]]))}))"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 37564416,
+  "wall": 0.02715081488713622,
+  "outputBytes": 2192
+}

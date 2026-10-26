@@ -1,0 +1,13 @@
+{
+  "standingSource": {
+    "path": "/tmp/gl-browser-launch-control-repair-oct26/source",
+    "files": 346,
+    "logicalBytes": 27456657,
+    "allocatedBytes": 28237824
+  },
+  "reproducerSHA256": "b68baa5d2132b01d3ceaf3e75a3775d3400d98ba7d4a27a6a29a5e819a95039a",
+  "node": "startup reused exact Node24.18.1 heap64 CPU90 FSIZE24MiB DATA/AS unlimited; no Node executed in this Python-only remaining challenge",
+  "noMountArgv": true,
+  "noRemoteExecution": true,
+  "priorCommit": "9ab064a0c9b1f764f6b884db09b7b9cdea1ab257"
+}

@@ -1,0 +1,63 @@
+{
+  "candidate": "716cd7181e811f8eb94cc19799deb478ca960385",
+  "verdict": "REJECT",
+  "sourceSupervisorSHA256": "63d4cfdfa7363b9246b34d6515844dd48de98990473c527f0ce0558ab6e0fa54",
+  "priorReceiptCommit": "9ab064a0c9b1f764f6b884db09b7b9cdea1ab257",
+  "passingReused": [
+    "exact five source hashes",
+    "trusted SSH exact remote candidate SHA",
+    "Node64MiB heap startup; inherited DATA/AS unlimited CPU90 FSIZE24MiB",
+    "production fixture --launch-config-check installed wrapper rejection",
+    "independent comma-bearing wrapper/symlink rejection with unexecuted sentinel",
+    "explicit true ELF selection and resolved path",
+    "real GitDATA512MiB children; unchanged Node limits"
+  ],
+  "passingNew": [
+    "failure-exit7 detached child ownership and cleanup",
+    "unrelated sentinel preserved with same PID/start identity",
+    "independent enclosing256MiB tree gate; no remaining owned identities"
+  ],
+  "firstRun": "unchanged original fixture32MiB cap stopped baseline before measured-peak receipt; FileNotFoundError preserved, not behavioral rejection",
+  "firstBehavioralRejection": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 42729472,
+    "cpuSeconds": 0.18065099999999998,
+    "wallSeconds": 0.23181633185595274,
+    "owned": [
+      [
+        3141374,
+        "109638465"
+      ],
+      [
+        3141378,
+        "109638468"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "independentChildPeak": {
+      "pid": 3141378,
+      "start": "109638468",
+      "rssHighWater": 63569920
+    },
+    "limit": 50331648,
+    "allOwnedGone": true,
+    "accountingCallbacks": 6,
+    "unrelatedAliveSameIdentity": true,
+    "verdict": "REJECT"
+  },
+  "remainingNotRun": [
+    "independent cumulativeCPU",
+    "additional exit/timeout/signal/accountingfailure challenges"
+  ],
+  "remainingGates": [
+    "repair RSS peak accounting on separately assigned source branch",
+    "independent acceptance affected by repair",
+    "current-main integration and affected merged-tree checks under sole owner; subsetparent0d65e6d is NOT main",
+    "separately authorized compliant browser/runtime; renderer identity unproven"
+  ],
+  "box": null,
+  "lifecycle": "No box assigned or touched. Coordinator owns shutdown.",
+  "noImplementationPatch": true
+}

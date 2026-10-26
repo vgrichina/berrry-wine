@@ -1,0 +1,43 @@
+{
+  "candidate": "716cd7181e811f8eb94cc19799deb478ca960385",
+  "candidateBranch": "task/gl-browser-launch-control-repair-oct26",
+  "subsetParent": "0d65e6daf568a2b0104fcaea75801e9fcac6d1ae",
+  "original149PinsMain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "verdict": "BLOCKED_ACCEPTANCE_INCOMPLETE",
+  "passing": [
+    "exact five source hashes",
+    "trusted SSH exact remote candidate SHA",
+    "Node64MiB heap startup; inherited DATA/AS unlimited CPU90 FSIZE24MiB",
+    "production fixture --launch-config-check installed wrapper rejection",
+    "independent comma-bearing wrapper/symlink rejection with unexecuted sentinel",
+    "explicit true ELF selection and resolved path",
+    "real GitDATA512MiB children; unchanged Node limits"
+  ],
+  "reuse": [
+    "all149 initial pins",
+    "148 unchanged pins; compiler and framebuffer oracle byte-exact blocks",
+    "supplied suites retained as prior evidence; no duplicate replay"
+  ],
+  "blocked": [
+    "detached/orphan independent ownership and unrelated-process safety",
+    "detached child peakRSS bound",
+    "independent cumulative CPU bound",
+    "exit/timeout/signal/accounting failure challenges"
+  ],
+  "firstFailure": {
+    "kind": "fresh physical admission denial before execution",
+    "memAvailable": 3490222080,
+    "requiredIncremental": 3560435712,
+    "retry": false
+  },
+  "suspectedIssue": "Sampled RSS ignores wait4 ru_maxrss; retained deterministic reproducer is UNEXECUTED and establishes no defect.",
+  "remainingGates": [
+    "Finish independent bounded challenges after actual capacity release",
+    "Sole-owner source integration onto current main; subset parent is NOT main",
+    "Affected merged-tree validation",
+    "Separately authorized compliant browser runtime; no Chrome/WebGL/guest in this task",
+    "Renderer hardware identity unproven; prior42 observations not fully conformant runtime"
+  ],
+  "box": null,
+  "lifecycle": "N/A; coordinator owns all runtime shutdown"
+}

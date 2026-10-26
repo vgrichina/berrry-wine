@@ -1,0 +1,12 @@
+DETACHED_CONTROL {"exit": 7, "stopReason": null, "peakRSS": 40108032, "cpuSeconds": 0.09596299999999999, "wallSeconds": 0.13360158214345574, "owned": [[3140701, "109636407"], [3140702, "109636410"]], "output": "", "cleanupComplete": true, "unrelatedAliveSameIdentity": true, "detachedOwned": true, "allOwnedGone": true}
+Traceback (most recent call last):
+  File "/tmp/gl-launch-controls-independent-accept-oct26/ops/detached-peak-reproducer.py", line 50, in <module>
+    result['output']=result['output'].decode();result['independentChildPeak']=json.loads((D/'measured-peak.json').read_text()); result['limit']=32*1024*1024; result['allOwnedGone']=all(absent(k) for k in result['owned']);result['accountingCallbacks']=state['count'];result['unrelatedAliveSameIdentity']=s.key(s.snapshot()[unrelated.pid])==s.key(u)
+                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1029, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/gl-launch-controls-independent-accept-oct26/tmp/measured-peak.json'
