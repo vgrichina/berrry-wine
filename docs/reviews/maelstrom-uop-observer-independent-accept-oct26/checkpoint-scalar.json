@@ -1,0 +1,26 @@
+{
+  "candidate": "145e66c80606c1ab4f854cef0cfcff2f5d6364ac",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "inputs": {
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "abfb36515543b9465fdf66f0b0975f18ec10c109c9eb55ad1ffef4bbd69f2bb4"
+  },
+  "command": {
+    "label": "scalar",
+    "args": [
+      "node",
+      "test/maelstrom-adapter-scalar-anchor.test.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "reason": null,
+    "bytes": 1286,
+    "seconds": 0.33746976300608367,
+    "reaped": true,
+    "sha256": "917763d62951c8c11ae95b9a8d335eddc3eb8d1049a0f7e6fb0236d45c772f1d"
+  },
+  "remaining": [
+    "independent adversarial challenges",
+    "publication",
+    "full canonical/runtime gates"
+  ]
+}

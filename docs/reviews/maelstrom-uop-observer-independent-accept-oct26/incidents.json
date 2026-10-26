@@ -1,0 +1,10 @@
+[
+  {
+    "kind": "compiler-excerpt-checkpoint-order",
+    "detail": "Full compiler SHA256/Git blob captured during setup; byte-exact excerpt receipt added only before expanded independent rerun. Initial ordering not retroactively compliant."
+  },
+  {
+    "kind": "local-origin-recipe-corrected",
+    "detail": "Setup initially entered wrong GitHub owner in local origin; corrected from readonly donor before any network operation. Retained setup recipe corrected. No denied attempt."
+  }
+]

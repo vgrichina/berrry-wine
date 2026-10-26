@@ -1,0 +1,26 @@
+{
+  "candidate": "145e66c80606c1ab4f854cef0cfcff2f5d6364ac",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "inputs": {
+    "test/maelstrom-native-latch-rejection.test.cjs": "1e2d53587ad9f4e3944f49aae7097c0bb443a2ae10ffde8aa8c434dd970e9679"
+  },
+  "command": {
+    "label": "rejection",
+    "args": [
+      "node",
+      "test/maelstrom-native-latch-rejection.test.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "reason": null,
+    "bytes": 1678,
+    "seconds": 0.1055036709876731,
+    "reaped": true,
+    "sha256": "09be84dcfa7f7c0306d3fd3a1e3f3a9f44ca669d6550fa3d826a20340e0f01b5"
+  },
+  "remaining": [
+    "independent adversarial challenges",
+    "publication",
+    "full canonical/runtime gates"
+  ]
+}

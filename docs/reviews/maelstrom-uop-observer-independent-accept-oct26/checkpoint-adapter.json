@@ -1,0 +1,26 @@
+{
+  "candidate": "145e66c80606c1ab4f854cef0cfcff2f5d6364ac",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "inputs": {
+    "test/maelstrom-original-errno-adapter.cjs": "f8f869435e420fe321ac58fc7eb01c198c1a4f053fc438782722a549144b529c"
+  },
+  "command": {
+    "label": "adapter",
+    "args": [
+      "node",
+      "test/maelstrom-original-errno-adapter.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "reason": null,
+    "bytes": 378,
+    "seconds": 0.0290660000173375,
+    "reaped": true,
+    "sha256": "a2723af047ac710238e760bfb5e1bb7ce4ba5a6d540a119be405c6403ec1bec4"
+  },
+  "remaining": [
+    "independent adversarial challenges",
+    "publication",
+    "full canonical/runtime gates"
+  ]
+}

@@ -1,0 +1,80 @@
+[
+  {
+    "path": "src/09d-winsock.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/09d-winsock.wat",
+    "bytes": 262420,
+    "sha256": "c281da4763624a29910386d2d6b05a66f98ca92b2a9194827d880c0234ba89ab"
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/09b-dispatch.wat",
+    "bytes": 113843,
+    "sha256": "55812e1cf277c3bb0daa6524f38f3723433c6a23878be96451a676412a11ee00"
+  },
+  {
+    "path": "src/09b2-dispatch-table.generated.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/09b2-dispatch-table.generated.wat",
+    "bytes": 1375748,
+    "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+  },
+  {
+    "path": "src/05-alu.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/05-alu.wat",
+    "bytes": 256723,
+    "sha256": "e70c56e06d7568d5b9a6c09022659ef27ca8ac5eaef56409bf042c7e57a2edb6"
+  },
+  {
+    "path": "src/06b-core-handlers.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/06b-core-handlers.wat",
+    "bytes": 103298,
+    "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21"
+  },
+  {
+    "path": "src/13-exports.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/13-exports.wat",
+    "bytes": 344898,
+    "sha256": "739397dc54a77e93b367334fd4ca96c921180f57a7558913a3301f1de4520b86"
+  },
+  {
+    "path": "src/03-registers.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/03-registers.wat",
+    "bytes": 61869,
+    "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+  },
+  {
+    "path": "src/04-cache.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/04-cache.wat",
+    "bytes": 162508,
+    "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd"
+  },
+  {
+    "path": "src/07-decoder.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/07-decoder.wat",
+    "bytes": 321708,
+    "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837"
+  },
+  {
+    "path": "src/02-thread-table.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/02-thread-table.wat",
+    "bytes": 33956,
+    "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426"
+  },
+  {
+    "path": "src/07c-block-exec.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/07c-block-exec.wat",
+    "bytes": 444010,
+    "sha256": "5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95"
+  },
+  {
+    "path": "src/07d-uop-engine.wat",
+    "standing": "/tmp/maelstrom-native-latch-rejection-reason-oct26/ops/pinned-source/src/07d-uop-engine.wat",
+    "bytes": 164570,
+    "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+  },
+  {
+    "path": "src/07e-uop-compiler.wat",
+    "standing": "/tmp/maelstrom-uop-owned-native-observer-repair-oct26/repo/src/07e-uop-compiler.wat",
+    "bytes": 315991,
+    "sha256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3"
+  }
+]

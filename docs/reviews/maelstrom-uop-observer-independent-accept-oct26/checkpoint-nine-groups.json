@@ -1,0 +1,26 @@
+{
+  "candidate": "145e66c80606c1ab4f854cef0cfcff2f5d6364ac",
+  "helperSHA256": "3ea873bc5c18283fc6045b55d00a2e957eaff46b4372534dd59fba18354a9f6f",
+  "inputs": {
+    "test/maelstrom-uop-native-observer.test.cjs": "9f30bf39c9f841195bda049e5e0f06d683bf20ac1cf06b073ef65a31d0e8c914"
+  },
+  "command": {
+    "label": "nine-groups",
+    "args": [
+      "node",
+      "test/maelstrom-uop-native-observer.test.cjs"
+    ],
+    "exit": 0,
+    "expected": 0,
+    "reason": null,
+    "bytes": 1214,
+    "seconds": 0.144850398064591,
+    "reaped": true,
+    "sha256": "dd57d1fe91ba89dd6691bee9b3cf2f9b5eaa2d45687fd238aea38bb06fe2b257"
+  },
+  "remaining": [
+    "independent adversarial challenges",
+    "publication",
+    "full canonical/runtime gates"
+  ]
+}

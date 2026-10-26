@@ -1,0 +1,34 @@
+{
+  "candidate": "145e66c80606c1ab4f854cef0cfcff2f5d6364ac",
+  "path": "src/07e-uop-compiler.wat",
+  "fullSHA256": "e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3",
+  "gitBlob": "edfb3a323b323917385b5eae92497796351dc868",
+  "recipe": "bytes.splitlines(keepends=True); join lines[first-1:last], each range separately in order",
+  "ranges": [
+    {
+      "first": 387,
+      "last": 408,
+      "bytes": 1240,
+      "sha256": "bb4d530fc3ec9dd28952db042a5dc54fed97c56bdd31fddc922457ecb2a968b7"
+    },
+    {
+      "first": 1553,
+      "last": 1566,
+      "bytes": 961,
+      "sha256": "39d2f5229defd18e469b712d4b1da502040d333fbda7123f39cc821575cf0458"
+    },
+    {
+      "first": 1649,
+      "last": 1652,
+      "bytes": 194,
+      "sha256": "c73968ca38af8851bec80a25c1f3d6e2cb13c08c7a820d1d6351c5fbeac8d834"
+    },
+    {
+      "first": 4750,
+      "last": 4758,
+      "bytes": 612,
+      "sha256": "28e409fb38f41ec43c775ff493486ae27d04b6c3b95cd97599e002f3f7b1c7e6"
+    }
+  ],
+  "allBytesEqualGit": true
+}

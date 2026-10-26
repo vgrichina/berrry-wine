@@ -1,0 +1,1 @@
+terminal callback closure PASS: 68 cases (throw identity, reentrancy, snapshots, pending behavior)

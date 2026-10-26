@@ -1,0 +1,14 @@
+PASS independent compiler source drift and read-once snapshots including option side effects
+PASS independent disabled transform has zero source, compiler, binary and option access
+PASS independent compiler prefix declines precisely two addresses including relocated CRT control
+PASS independent transform modifies exactly allowed fragments and never disables UOP
+PASS independent post-construction option and source mutation cannot retarget generated observer
+PASS independent wrong original binaries and explicit CRT bases reject
+PASS independent loaded-image verifier binds CRT, relocated module anchors, image base and IAT
+PASS independent stale owner snapshots and wrong native register or return frame close
+PASS independent actual threaded CALL transfer rejects wrong native target without repairing it
+PASS independent foreign owner is inert then owned native execution captures actual independent values
+PASS independent disable-enable at every live stage is terminal and never a successful fallback
+PASS independent pre-CMP capture reads live memory once then remains immutable after corruption
+PASS independent arbitrary live caller/errno/argument words are read at genuine threaded RET
+{"pass":true,"groups":13,"assertions":4348,"candidate":"145e66c80606c1ab4f854cef0cfcff2f5d6364ac","scope":"bounded compiler-prefix and native _getptd fixture only; authentic game and full compiler unqualified"}

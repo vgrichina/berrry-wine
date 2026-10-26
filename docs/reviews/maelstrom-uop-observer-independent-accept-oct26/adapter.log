@@ -1,0 +1,8 @@
+PASS missing export rejects
+PASS start exactly once; duplicate owner rejects
+PASS nonpristine refuses before invocation
+PASS observation requires start
+PASS rejection persists first state and closes
+PASS native capture remains historical and once, preserves errno zero
+PASS loaded mappings and authentic byte controls
+{"passed":7,"offlineAdapterOnly":true,"guestInvoked":false}
