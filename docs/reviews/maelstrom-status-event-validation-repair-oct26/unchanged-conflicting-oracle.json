@@ -1,0 +1,11 @@
+{
+  "pins": {
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095"
+  },
+  "sourceAssertion": "test/maelstrom-adapter-scalar-anchor.test.cjs:83-89",
+  "firstFailure": "status=-2147483648,event=0",
+  "contradiction": "requires adapter.observe to return a row for every raw endpoint of status/event, including states required invalid by this assignment",
+  "originalSuitePassed": false,
+  "unchanged": true
+}

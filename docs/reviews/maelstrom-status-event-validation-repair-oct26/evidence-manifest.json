@@ -1,0 +1,117 @@
+[
+  {
+    "path": "historical-13-failure.log",
+    "bytes": 1852,
+    "sha256": "37812e122a867455947aeeb2539caf32fd11de5de5b0d1be4d0646ec61ef929e"
+  },
+  {
+    "path": "status-event-results.json",
+    "bytes": 1163,
+    "sha256": "afda6b4d49ab4c4aabe459a2ff373a756475458a83fd0d811184a17e97d110d7"
+  },
+  {
+    "path": "independent-results.json",
+    "bytes": 3003,
+    "sha256": "1041fe3ef2cd19c78f8ccb38c9f51cd76d6210a7bd57ac7b964168df364c55a8"
+  },
+  {
+    "path": "historical-source-incidents.json",
+    "bytes": 1649,
+    "sha256": "0a9667841d6989d9fa9baed70ac684d4f9569f723936695b4e8ae31263a8aad3"
+  },
+  {
+    "path": "existing-source.log",
+    "bytes": 621,
+    "sha256": "989323658ab2b0ad0feb0ae042bbc4e0540ffa2bd935f8321292136be0452f73"
+  },
+  {
+    "path": "historical-incidents.json",
+    "bytes": 1057,
+    "sha256": "38a8c8e7331caf9e8c7f16be13216539affc61241cb1b6017e007e41acc9531d"
+  },
+  {
+    "path": "existing-adapter.log",
+    "bytes": 378,
+    "sha256": "a2723af047ac710238e760bfb5e1bb7ce4ba5a6d540a119be405c6403ec1bec4"
+  },
+  {
+    "path": "preservation.json",
+    "bytes": 2219,
+    "sha256": "fd176f183c6a2f84b353f1acc4060766857704742557191951f8283eb41fc032"
+  },
+  {
+    "path": "tested-tree.json",
+    "bytes": 1515,
+    "sha256": "f6705d8379164d3ef1852a43149acf60a3c61691299f81a71cadceda77c95125"
+  },
+  {
+    "path": "configuration.json",
+    "bytes": 386,
+    "sha256": "1c6f9e288159208507b795896013c8142bd0854ec6aa49ec79a445b72c83676f"
+  },
+  {
+    "path": "oracle-pins.json",
+    "bytes": 193,
+    "sha256": "103da4be34073ab7e57e2d880c91e2daf9c600f9cfa4cb886ef5ca3cc00410b1"
+  },
+  {
+    "path": "standing-inputs.json",
+    "bytes": 1363,
+    "sha256": "37833abced616aa61fe57bb62eb4215ade02912490ee27b45b902b856a7b8727"
+  },
+  {
+    "path": "independent.cjs",
+    "bytes": 7589,
+    "sha256": "8483dd85879c25d32c78125251741db6fd53248ed5d14b4f632e07777f19a401"
+  },
+  {
+    "path": "semantic-regression-final.log",
+    "bytes": 727,
+    "sha256": "38ee554da00a7eede6abcf4cb760c0eb6d019140fe291e4fb16a4969d7355189"
+  },
+  {
+    "path": "existing-latch.log",
+    "bytes": 1251,
+    "sha256": "1d9b7c0482e1c3986731728b04209b40900b34c41baf879f33f0c2211b7ced37"
+  },
+  {
+    "path": "status-event-independent.cjs",
+    "bytes": 2842,
+    "sha256": "f75ee990a11e42d513854fc23bbb80f8065c133d3996c35141098ad896f8ec17"
+  },
+  {
+    "path": "preservation.cjs",
+    "bytes": 2335,
+    "sha256": "6a344dfaf0268b362bbb27f025b800cca6341adfc6a5c2c93a8c54c76a67dc2d"
+  },
+  {
+    "path": "README.md",
+    "bytes": 4355,
+    "sha256": "4522619666ee3844a4a530b2a10c52a05fc8e381ede7e332ad82d1f36fd6c140"
+  },
+  {
+    "path": "existing-rejection.log",
+    "bytes": 1678,
+    "sha256": "09be84dcfa7f7c0306d3fd3a1e3f3a9f44ca669d6550fa3d826a20340e0f01b5"
+  },
+  {
+    "path": "baseline-status-event-results.json",
+    "bytes": 2336,
+    "sha256": "ad2d22aeee7aaa5b1085a7a28f91788c1f57e33952c6086f7737766a883bb6e3"
+  },
+  {
+    "path": "unchanged-conflicting-oracle.json",
+    "bytes": 586,
+    "sha256": "b6cbe6ccdd0373bafea26408d8e1969882d18235e9cffe07475366243df9fd33"
+  },
+  {
+    "path": "unchanged-19.log",
+    "bytes": 1823,
+    "sha256": "b1734b76d0682a0e6fd853937709342d9ccc80b93d18170286eb77c96c40730d"
+  },
+  {
+    "path": "incidents.json",
+    "bytes": 1711,
+    "sha256": "e9100a2d27f2317befd24c919c7480afd8e139271d9a27a461443b883a646847"
+  }
+]

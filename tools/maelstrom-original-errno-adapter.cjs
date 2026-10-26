@@ -2,15 +2,30 @@
 const { FIELDS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, DIAGNOSTIC_FIELDS, REJECTION_REASONS } = require('./maelstrom-native-errno-latch.cjs');
 const owners = new WeakSet();
 const SELECT_FIELDS = Object.freeze(['started','phase','token','entries','parks','completions','fault','capped','active','thread','regs','pre','post','ret','result']);
-function scalars(e, prefix, fields, label) {
-  return Object.fromEntries(fields.map(k => {
+function scalars(e, prefix, fields, label, validate) {
+  const rawSnapshot = Object.fromEntries(fields.map(k => {
     const raw = e[prefix+k]();
     // Wasm i32 exports are signed; synthetic/JS snapshots may be unsigned.
     // Validate before converting either representation to the persisted u32.
     if (!Number.isInteger(raw) || raw < -0x80000000 || raw > 0xffffffff)
       throw Error('invalid native '+label+': '+k);
-    return [k, raw >>> 0];
+    return [k, raw];
   }));
+  if (validate) validate(rawSnapshot);
+  return Object.fromEntries(fields.map(k => [k, rawSnapshot[k] >>> 0]));
+}
+// Derived from storage() in maelstrom-native-errno-latch.cjs: start 0/0 ->
+// 1/0, complete -> 2/1, owned CALL -> 3/2, owned RET -> 4/3. Every rejection
+// writes status 5 without changing event, so 5/0, 5/1 AND 5/2 are legal.
+// A host observation may skip any number of intermediate native states.
+function validateNativeState(native, previous) {
+  const {status, event} = native;
+  if (!(status >= 0 && status <= 5 &&
+      (status === 5 ? event >= 0 && event <= 2 : event === Math.max(0, status - 1))))
+    throw Error('invalid native status/event');
+  if (previous && (status < previous.status || event < previous.event ||
+      (previous.status === 0 && status !== 1 && !(status === 5 && event === 0))))
+    throw Error('invalid native status/event transition');
 }
 // Decode only immutable scalar rejection exports, never guest memory or errno.
 function decodeRejection(native, diagnostic) {
@@ -64,12 +79,13 @@ function createAdapter(instance, {persist, readLive}) {
   const hasDiagnostic=DIAGNOSTIC_FIELDS.some(k=>Object.hasOwn(e,'mne_'+k));
   if(hasDiagnostic)for(const k of DIAGNOSTIC_FIELDS)
     if(typeof e['mne_'+k]!=='function')throw Error('missing mne_'+k);
-  owners.add(instance);let started=false,closed=false,last='';
+  owners.add(instance);let started=false,closed=false,last='',previous=null;
   function snapshot() {
     try {
-      const native=scalars(e,'mne_',FIELDS,'scalar');
+      const native=scalars(e,'mne_',FIELDS,'scalar',raw=>validateNativeState(raw,previous));
       const rejection=hasDiagnostic ? decodeRejection(native,scalars(e,'mne_',DIAGNOSTIC_FIELDS,'rejection diagnostic')) : null;
       const msc=scalars(e,'msc_',SELECT_FIELDS,'select scalar');
+      previous={status:native.status,event:native.event};
       return {native,rejection,msc};
     } catch(error){closed=true;throw error;}
   }
@@ -82,7 +98,7 @@ function createAdapter(instance, {persist, readLive}) {
     start(){
       if(started||closed)throw Error('one invocation only');started=true;
       const initial=snapshot();
-      if(FIELDS.some(k=>initial.native[k]!==0)||initial.rejection!==null)throw Error('nonpristine native latch');
+      if(FIELDS.some(k=>initial.native[k]!==0)||initial.rejection!==null){closed=true;throw Error('nonpristine native latch');}
       e.mne_start();const row=record('started',null,snapshot());
       if(row.historicalNativeLatch.status!==1){closed=true;throw Error('native latch start rejected');}
     },

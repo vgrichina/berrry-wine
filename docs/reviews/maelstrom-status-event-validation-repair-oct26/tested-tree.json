@@ -1,0 +1,34 @@
+{
+  "base": "74bae4da50a39a29f8c4af7d75f4c5038a012f14",
+  "sourceTestedTree": "300e89944ad86a957943c2ca13476e8884912c8c",
+  "pins": {
+    "tools/maelstrom-original-errno-adapter.cjs": "9229658f726e512d01942a3dad2491cf6075f0d6faef1a1f2081b0549e688fd3",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "test/maelstrom-status-event-validation.test.cjs": "e52f0cfcd1bdd745558c650b86527681994e103d8b251c027b96253b960cbdd9",
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996"
+  },
+  "unchangedRepro": {
+    "sha256": "f75ee990a11e42d513854fc23bbb80f8065c133d3996c35141098ad896f8ec17",
+    "baseline": "2PASS8FAIL",
+    "repair": "10PASS0FAIL",
+    "reportCandidateField": "historical constant in unchanged oracle; use this receipt to identify tested checkout"
+  },
+  "unchangedPriorRepro": "19PASS",
+  "existingGroups": 40,
+  "preservationGroups": 1,
+  "newRegression": {
+    "groups": 7,
+    "cases": 924
+  },
+  "historical13Group3474CaseSuite": {
+    "unchanged": true,
+    "passed": false,
+    "reason": "generic endpoint assertion requires illegal status/event acceptance; five groups pass before failure at line86"
+  },
+  "acceptance": "BLOCKED_BY_CONFLICTING_REQUIRED_ORACLE",
+  "completeGeneratedWATByteIdentical": true,
+  "historicalSourcePinsOraclesUnchanged": true,
+  "syntheticBoundaryOnly": true,
+  "authenticBatch36170Cause": "UNKNOWN",
+  "nativeQualification": false
+}

@@ -1,0 +1,57 @@
+{
+  "candidate": "ecd805602e7204f7dcc1b94edbf018dadae85a73",
+  "passed": 2,
+  "failed": 8,
+  "results": [
+    {
+      "name": "valid status4/event3 preserves errno 0",
+      "pass": true
+    },
+    {
+      "name": "valid status4/event3 preserves errno 305419896",
+      "pass": true
+    },
+    {
+      "name": "invalid status/event 4/0 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"captured\",\"status\":4,\"event\":0,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 4/1 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"captured\",\"status\":4,\"event\":1,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 4/2 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"captured\",\"status\":4,\"event\":2,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 4/99 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"captured\",\"status\":4,\"event\":99,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 99/0 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"pending\",\"status\":99,\"event\":0,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 1/3 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"pending\",\"status\":1,\"event\":3,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 2/0 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"pending\",\"status\":2,\"event\":0,\"errno\":0}]"
+    },
+    {
+      "name": "invalid status/event 3/1 rejects before callbacks",
+      "pass": false,
+      "error": "accepted invalid state; effects=[\"live\",\"persist\"] published=[{\"kind\":\"pending\",\"status\":3,\"event\":1,\"errno\":0}]"
+    }
+  ],
+  "syntheticBoundaryOnly": true,
+  "authenticBatch36170Cause": "UNKNOWN"
+}

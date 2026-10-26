@@ -1,0 +1,22 @@
+PASS every raw native scalar rejects malformed inputs before start and callbacks, including legacy
+PASS every raw native scalar rejects before callbacks in pending, capture and rejection contexts
+PASS every select scalar rejects before start or callbacks, also with unchanged native snapshot
+PASS every diagnostic scalar rejects before start and on capture, unchanged or rejection snapshots
+PASS missing and nonfunction native/select/partial diagnostic exports reject construction inertly
+/tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:90
+    } catch(error){closed=true;throw error;}
+                               ^
+
+Error: invalid native status/event
+    at validateNativeState (/tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:25:11)
+    at /tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:85:58
+    at scalars (/tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:14:17)
+    at snapshot (/tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:85:20)
+    at Object.observe (/tmp/maelstrom-status-event-validation-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs:107:22)
+    at /tmp/maelstrom-status-event-validation-repair-oct26/repo/test/maelstrom-adapter-scalar-anchor.test.cjs:86:15
+    at test (/tmp/maelstrom-status-event-validation-repair-oct26/repo/test/maelstrom-adapter-scalar-anchor.test.cjs:11:27)
+    at Object.<anonymous> (/tmp/maelstrom-status-event-validation-repair-oct26/repo/test/maelstrom-adapter-scalar-anchor.test.cjs:83:1)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+
+Node.js v24.18.1
