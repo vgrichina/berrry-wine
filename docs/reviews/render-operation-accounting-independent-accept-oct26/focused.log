@@ -1,0 +1,24 @@
+✔ indexed reads, actual warm exported producer 16 (111.892822ms)
+✔ lexically captured copy, actual warm exported producer 16 (77.569075ms)
+✔ backing store through captured constructors, actual warm exported producer 16 (89.156192ms)
+✔ indexed reads, actual warm exported producer 32 (86.378101ms)
+✔ lexically captured copy, actual warm exported producer 32 (88.296961ms)
+✔ backing store through captured constructors, actual warm exported producer 32 (71.919754ms)
+✔ indexed reads, actual warm exported producer 64 (88.433858ms)
+✔ lexically captured copy, actual warm exported producer 64 (89.171831ms)
+✔ backing store through captured constructors, actual warm exported producer 64 (83.683089ms)
+✔ entry accessors and own descriptors restored (normal) (85.134861ms)
+✔ entry accessors and own descriptors restored (throw) (75.052807ms)
+✔ generic AST observation preserves evaluation order, constructors, lvalues and method receivers (3.720456ms)
+✔ object-valued source indices are observed with one native key conversion (87.658833ms)
+✔ observed and native producer outputs remain equivalent 16 (70.884983ms)
+✔ observed and native producer outputs remain equivalent 32 (81.254005ms)
+✔ observed and native producer outputs remain equivalent 64 (91.327653ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1366.987081

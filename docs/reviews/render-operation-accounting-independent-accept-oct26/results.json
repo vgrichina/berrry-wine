@@ -1,0 +1,83 @@
+{
+  "verdict": "REJECT",
+  "candidate": "58317122c69c9ad0ff8486e14326909c90041dcc",
+  "testedCandidateTree": "fa63d6b72b6f15c777565dfa19eb3d57d193a97a",
+  "original": {
+    "pass": 20,
+    "fail": 0
+  },
+  "focused": {
+    "pass": 16,
+    "fail": 0
+  },
+  "rawUnchanged": {
+    "pass": 4,
+    "fail": 9,
+    "exit": 1
+  },
+  "independent": {
+    "pass": 10,
+    "fail": 4,
+    "exit": 1
+  },
+  "newTimings": 0,
+  "timingReuse": "/tmp/render-performance-independent-oct26/ops/result.json and donor identity-and-reuse.json; existing 30 rows unchanged",
+  "checks": [
+    {
+      "path": "tools/d3d9-rgba-benchmark.js",
+      "sha256": "c0c47499a31143d613413c6d4e1257189b05d209ce0124dfab91cfc4ce7c9133"
+    },
+    {
+      "path": "tools/d3d9-operation-observer.js",
+      "sha256": "c51908d9f1db74231737aa93f91c9e50e864ef1344515281ae436300c8e36be6"
+    },
+    {
+      "path": "test/test-d3d9-real-operation-accounting.js",
+      "sha256": "2b44723ec99f8faf765bbf2322f175bdc7ec6941a6193ffe940e08d25d4c7306"
+    },
+    {
+      "path": "docs/reviews/render-performance-independent-oct26/reproduce.js",
+      "sha256": "5eb9a226e4d29a93db46b73fe44fe83122ba1e1df25d0ab4b138617481ea4714"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c"
+    },
+    {
+      "standingReceipt": "/tmp/render-real-operation-accounting-repair-oct26/ops/result.json",
+      "sha256": "60d5a087bbb746a59da06764488c01e4cbd2f92b35a7710846a4436e791db755"
+    },
+    {
+      "standingReceipt": "/tmp/render-real-operation-accounting-repair-oct26/ops/identity-and-reuse.json",
+      "sha256": "ca51d1e355973cb7946f9e049eaa522402030bc4fdac1e74fbb3fe2b6532663d"
+    },
+    {
+      "suite": "original",
+      "summary": [
+        "\u2139 pass 20",
+        "\u2139 fail 0"
+      ]
+    },
+    {
+      "suite": "focused",
+      "summary": [
+        "\u2139 pass 16",
+        "\u2139 fail 0"
+      ]
+    },
+    {
+      "suite": "raw-review",
+      "summary": [
+        "\u2139 pass 4",
+        "\u2139 fail 9"
+      ]
+    },
+    {
+      "suite": "independent-final",
+      "summary": [
+        "\u2139 pass 10",
+        "\u2139 fail 4"
+      ]
+    }
+  ]
+}
