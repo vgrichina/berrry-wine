@@ -1,0 +1,191 @@
+{
+  "verdict": "REJECT",
+  "candidate": "a742e90d848f5e7fd98d384e2447466f0ec4119d",
+  "candidateTree": "85cd41da3d9f9b4c76a634dc3dc9ab8ba3a16918",
+  "originalTests": {
+    "pass": 20,
+    "fail": 0
+  },
+  "independentTests": {
+    "pass": 3,
+    "fail": 10,
+    "expectedExit": 1
+  },
+  "mutationScenarioRowsAccepted": 126,
+  "mutantHitProbes": [
+    {
+      "mutation": "indexed full-source scan",
+      "side": 16,
+      "actualAddedBytes": 1024,
+      "counts": {
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "indexed full-source scan",
+      "side": 32,
+      "actualAddedBytes": 4096,
+      "counts": {
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "indexed full-source scan",
+      "side": 64,
+      "actualAddedBytes": 16384,
+      "counts": {
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "captured-U8 source copy and allocation",
+      "side": 16,
+      "actualAddedBytes": 1024,
+      "counts": {
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "captured-U8 source copy and allocation",
+      "side": 32,
+      "actualAddedBytes": 4096,
+      "counts": {
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "captured-U8 source copy and allocation",
+      "side": 64,
+      "actualAddedBytes": 16384,
+      "counts": {
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "ArrayBuffer-backed U8 allocation",
+      "side": 16,
+      "actualAddedBytes": 1024,
+      "counts": {
+        "sourceReads": 1024,
+        "snapshotReads": 1024,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "ArrayBuffer-backed U8 allocation",
+      "side": 32,
+      "actualAddedBytes": 4096,
+      "counts": {
+        "sourceReads": 4096,
+        "snapshotReads": 4096,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    },
+    {
+      "mutation": "ArrayBuffer-backed U8 allocation",
+      "side": 64,
+      "actualAddedBytes": 16384,
+      "counts": {
+        "sourceReads": 16384,
+        "snapshotReads": 16384,
+        "scans": 1,
+        "sliceBytes": 5632,
+        "sourceCopyBytes": 0,
+        "setBytes": 4096,
+        "constructorCopyBytes": 0,
+        "allocationBytes": 5632,
+        "allocations": 22,
+        "cacheHits": 1,
+        "decodes": 0
+      }
+    }
+  ],
+  "productionChanged": false,
+  "reusedEvidence": {
+    "manifestFilesVerified": 38,
+    "operationRows": 42,
+    "timingRows": 30,
+    "timingsRerun": false
+  },
+  "remainingScope": [
+    "real indexed scan/captured-constructor copy/ArrayBuffer allocation accounting",
+    "restore global constructor present on entry",
+    "independent repair acceptance; coordinator owns any next assignment"
+  ]
+}

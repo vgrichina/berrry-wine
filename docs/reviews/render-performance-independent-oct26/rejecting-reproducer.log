@@ -1,0 +1,175 @@
+{"mutation":"indexed full-source scan","side":16,"actualAddedBytes":1024,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"indexed full-source scan","side":32,"actualAddedBytes":4096,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"indexed full-source scan","side":64,"actualAddedBytes":16384,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"captured-U8 source copy and allocation","side":16,"actualAddedBytes":1024,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"captured-U8 source copy and allocation","side":32,"actualAddedBytes":4096,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"captured-U8 source copy and allocation","side":64,"actualAddedBytes":16384,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"ArrayBuffer-backed U8 allocation","side":16,"actualAddedBytes":1024,"counts":{"sourceReads":1024,"snapshotReads":1024,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"ArrayBuffer-backed U8 allocation","side":32,"actualAddedBytes":4096,"counts":{"sourceReads":4096,"snapshotReads":4096,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+{"mutation":"ArrayBuffer-backed U8 allocation","side":64,"actualAddedBytes":16384,"counts":{"sourceReads":16384,"snapshotReads":16384,"scans":1,"sliceBytes":5632,"sourceCopyBytes":0,"setBytes":4096,"constructorCopyBytes":0,"allocationBytes":5632,"allocations":22,"cacheHits":1,"decodes":0}}
+✖ gate must reject real producer regression: indexed full-source scan 16x16 (34.01299ms)
+✖ gate must reject real producer regression: indexed full-source scan 32x32 (19.660758ms)
+✖ gate must reject real producer regression: indexed full-source scan 64x64 (55.880845ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 16x16 (13.540951ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 32x32 (15.419814ms)
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 64x64 (36.073243ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 16x16 (12.213522ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 32x32 (15.63641ms)
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 64x64 (31.856266ms)
+✔ suppressed scan instrumentation is rejected (9.088843ms)
+✔ improved counts cannot accept a broken identity cache (24.406015ms)
+✔ throwing producer restores own methods, snapshots and native globals (11.494774ms)
+✖ measure restores the global constructor present on entry, including throw (2.375695ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 3
+ℹ fail 10
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 335.700214
+
+✖ failing tests:
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 16x16 (34.01299ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 32x32 (19.660758ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: indexed full-source scan 64x64 (55.880845ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 16x16 (13.540951ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 32x32 (15.419814ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: captured-U8 source copy and allocation 64x64 (36.073243ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 16x16 (12.213522ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 32x32 (15.63641ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:59:34
+✖ gate must reject real producer regression: ArrayBuffer-backed U8 allocation 64x64 (31.856266ms)
+  AssertionError [ERR_ASSERTION]: Missing expected exception: extra real source work must exceed the performance gate
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:75:16)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: undefined,
+    operator: 'throws',
+    diff: 'simple'
+  }
+
+test at ../../../tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:116:1
+✖ measure restores the global constructor present on entry, including throw (2.375695ms)
+  AssertionError [ERR_ASSERTION]: preserve prior instrumentation instead of overwriting it
+  + actual - expected
+
+  + [Function: Uint8Array]
+  - [Function: Uint8Array]
+
+      at TestContext.<anonymous> (/tmp/render-performance-independent-oct26/repo/docs/reviews/render-performance-independent-oct26/reproduce.js:123:12)
+      at async Test.run (node:internal/test_runner/test:1332:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:911:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
