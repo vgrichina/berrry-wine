@@ -1,0 +1,537 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "fixtureSHA256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2",
+  "verifierSHA256": "f5d6d90074485969f9a6ddbd1ece0f92db2367af9219c33974f0daee77db493f",
+  "accepted": [
+    {
+      "case": "errno0-tail",
+      "backend": "tail",
+      "errno": 0,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 40848
+    },
+    {
+      "case": "errno0-compat",
+      "backend": "compat",
+      "errno": 0,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 40916
+    },
+    {
+      "case": "errno4-tail",
+      "backend": "tail",
+      "errno": 4,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 2033440
+    },
+    {
+      "case": "errno4-compat",
+      "backend": "compat",
+      "errno": 4,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 40950
+    },
+    {
+      "case": "errno37-tail",
+      "backend": "tail",
+      "errno": 37,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 40882
+    },
+    {
+      "case": "errno37-compat",
+      "backend": "compat",
+      "errno": 37,
+      "equivalent": true,
+      "status": 4,
+      "event": 3,
+      "rejectionReason": 0,
+      "process": 41001
+    },
+    {
+      "case": "wrong-select-return-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 4,
+      "process": 41036
+    },
+    {
+      "case": "wrong-select-return-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 4,
+      "process": 41672
+    },
+    {
+      "case": "wrong-native-target-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41070
+    },
+    {
+      "case": "wrong-native-target-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41706
+    },
+    {
+      "case": "wrong-return-pc-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41104
+    },
+    {
+      "case": "wrong-return-pc-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41740
+    },
+    {
+      "case": "wrong-ebp-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41138
+    },
+    {
+      "case": "wrong-ebp-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41774
+    },
+    {
+      "case": "unsafe-errno-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41172
+    },
+    {
+      "case": "unsafe-errno-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41808
+    },
+    {
+      "case": "return-without-call-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41232
+    },
+    {
+      "case": "return-without-call-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41879
+    },
+    {
+      "case": "block-mode-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41266
+    },
+    {
+      "case": "block-mode-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41913
+    },
+    {
+      "case": "stale-start-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41300
+    },
+    {
+      "case": "stale-start-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41947
+    },
+    {
+      "case": "foreign-thread-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 2,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41334
+    },
+    {
+      "case": "foreign-thread-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 2,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41984
+    },
+    {
+      "case": "foreign-regbank-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 2,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 41368
+    },
+    {
+      "case": "foreign-regbank-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 2,
+      "event": 1,
+      "rejectionReason": 0,
+      "process": 42018
+    },
+    {
+      "case": "postframe-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41418
+    },
+    {
+      "case": "postframe-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 42052
+    },
+    {
+      "case": "unsafe-caller-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41452
+    },
+    {
+      "case": "unsafe-caller-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 42102
+    },
+    {
+      "case": "uop-mode-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41486
+    },
+    {
+      "case": "uop-mode-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 42969
+    },
+    {
+      "case": "code16-mode-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 41520
+    },
+    {
+      "case": "code16-mode-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 0,
+      "rejectionReason": 0,
+      "process": 43003
+    },
+    {
+      "case": "nested-call-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41554
+    },
+    {
+      "case": "nested-call-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 5,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 43037
+    },
+    {
+      "case": "foreign-thread-ret-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 3,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41588
+    },
+    {
+      "case": "foreign-thread-ret-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 3,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 43100
+    },
+    {
+      "case": "foreign-regbank-ret-tail",
+      "backend": "tail",
+      "errno": null,
+      "equivalent": false,
+      "status": 3,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 41638
+    },
+    {
+      "case": "foreign-regbank-ret-compat",
+      "backend": "compat",
+      "errno": null,
+      "equivalent": false,
+      "status": 3,
+      "event": 2,
+      "rejectionReason": 0,
+      "process": 43137
+    }
+  ],
+  "mutants": [
+    {
+      "name": "module",
+      "rejected": true,
+      "error": "module identity"
+    },
+    {
+      "name": "backend",
+      "rejected": true,
+      "error": "backend identity"
+    },
+    {
+      "name": "errno",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "return",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "phase",
+      "rejected": true,
+      "error": "select completion identity/phase"
+    },
+    {
+      "name": "status",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "missing-process",
+      "rejected": true,
+      "error": "missing process receipt"
+    },
+    {
+      "name": "failed-process",
+      "rejected": true,
+      "error": "process exit"
+    },
+    {
+      "name": "not-reaped",
+      "rejected": true,
+      "error": "reaped"
+    },
+    {
+      "name": "surviving-process",
+      "rejected": true,
+      "error": "surviving group"
+    },
+    {
+      "name": "wrong-process-case",
+      "rejected": true,
+      "error": "Expected values to be strictly deep-equal:"
+    },
+    {
+      "name": "failed-api",
+      "rejected": true,
+      "error": "Expected values to be strictly deep-equal:"
+    },
+    {
+      "name": "ON-initialized-span",
+      "rejected": true,
+      "error": "derived ON state"
+    },
+    {
+      "name": "OFF-initialized-span",
+      "rejected": true,
+      "error": "OFF/ON equivalence"
+    },
+    {
+      "name": "paired-corrupt-span",
+      "rejected": true,
+      "error": "derived ON state"
+    },
+    {
+      "name": "preflight-span",
+      "rejected": true,
+      "error": "initialized span identity"
+    },
+    {
+      "name": "lazy-flags",
+      "rejected": true,
+      "error": "derived ON state"
+    },
+    {
+      "name": "CMP-executed",
+      "rejected": true,
+      "error": "derived ON state"
+    },
+    {
+      "name": "nested-RET-captured",
+      "rejected": true,
+      "error": "CALL/RET ownership progression"
+    },
+    {
+      "name": "rejection-reason",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "rejection-return",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "rejection-phase",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "process-output-forgery",
+      "rejected": true,
+      "error": "process output/result binding"
+    },
+    {
+      "name": "process-attempt-mismatch",
+      "rejected": true,
+      "error": "attempt/process command binding"
+    },
+    {
+      "name": "wrong-control-return",
+      "rejected": true,
+      "error": "actual altered return PC"
+    }
+  ],
+  "valid": 40,
+  "rejectedMutants": 25,
+  "nativeInstantiations": 0
+}

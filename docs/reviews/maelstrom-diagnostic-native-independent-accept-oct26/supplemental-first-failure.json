@@ -1,0 +1,19 @@
+{
+  "case": "completion-code16-tail",
+  "expectedModeCallback": 1,
+  "actualModeCallback": 0,
+  "process": {
+    "path": "native-1792989869197225539.json",
+    "sha256": "c7931f77653e4346f62bc3b524615f9ff69a68f70c5bf01bf6abf093cd317a24",
+    "exit": 1,
+    "pid": 43945,
+    "reaped": true,
+    "remainingGroup": []
+  },
+  "rawStderrSHA256": "ef6ad0f1775897a6d7966b41b8b02fb1f52fa354fd84543ca72ecf5004c5c119",
+  "unchangedReproducer": "git show 7caee0b80b6645808e1e2bc2f246f48d6fdeb8f5:docs/reviews/maelstrom-diagnostic-native-remaining-api-oct26/completion-modes-native.cjs",
+  "reproducerSHA256": "6384adbc6e615d2b6a3a952992b7024e424915aa7f56630d34b861f190525ac7",
+  "productionDefectEstablished": false,
+  "unchangedRetry": false,
+  "decision": "SUPPLEMENTAL_CLAIM_REMAINS_UNQUALIFIED; not promoted into canonical acceptance"
+}

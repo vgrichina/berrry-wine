@@ -1,0 +1,10 @@
+[
+  {
+    "type": "bootstrap output excess",
+    "detail": "Initial mount-path search glob accidentally included prior events; shell output 82712 tokens truncated; no credential content intended; subsequent inspection bounded. Not a native or candidate failure."
+  },
+  {
+    "type": "bootstrap excerpt excess",
+    "detail": "Alternate object-path list printed 3915 tokens; subsequently summarize only."
+  }
+]

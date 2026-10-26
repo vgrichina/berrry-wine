@@ -1,0 +1,10 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "verifierSHA256": "f5d6d90074485969f9a6ddbd1ece0f92db2367af9219c33974f0daee77db493f",
+  "valid": 40,
+  "rejectedMutants": 25,
+  "remaining": [
+    "readiness decision",
+    "publication"
+  ]
+}

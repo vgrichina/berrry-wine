@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=512",
+    "--require",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo/test/maelstrom-diagnostic-canonical-native.cjs",
+    "errno4"
+  ],
+  "cwd": "/tmp/maelstrom-diagnostic-changed-module-native-oct26/repo",
+  "pid": 2033440,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.1946315380046144,
+  "streamBytes": {
+    "stdout": 567,
+    "stderr": 0
+  },
+  "aggregateLogMax": 131072,
+  "retained": 567,
+  "fileMax": 25165824,
+  "cpuSeconds": 90,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 70619136
+}

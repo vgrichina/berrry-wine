@@ -1,0 +1,36 @@
+{
+  "publication": "7caee0b80b6645808e1e2bc2f246f48d6fdeb8f5",
+  "productionCandidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "pins": [
+    {
+      "path": "test/maelstrom-diagnostic-canonical-native.cjs",
+      "bytes": 15764,
+      "sha256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2"
+    },
+    {
+      "path": "docs/reviews/maelstrom-diagnostic-native-remaining-api-oct26/completion-modes-native.cjs",
+      "bytes": 17109,
+      "sha256": "6384adbc6e615d2b6a3a952992b7024e424915aa7f56630d34b861f190525ac7"
+    },
+    {
+      "path": "tools/maelstrom-diagnostic-canonical-build.cjs",
+      "bytes": 7793,
+      "sha256": "5e017d86566fc64d7e2f4e0357cfb4e8e54e53152995a6c0317f2a5da9d98b3f"
+    },
+    {
+      "path": "tools/maelstrom-native-errno-latch.cjs",
+      "bytes": 15288,
+      "sha256": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095"
+    },
+    {
+      "path": "tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "sha256": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930"
+    }
+  ],
+  "hashAuditReused": {
+    "remoteEvidence": 535,
+    "priorCaptureEvidence": 455,
+    "mismatches": 0
+  }
+}

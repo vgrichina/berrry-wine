@@ -1,0 +1,85 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 8234,
+      "sha256": "6b289a2712dac3fcb7c1ba3cfb12c780a71d01ef599aa1642d050f038937b89e"
+    },
+    {
+      "path": "checkpoint-mutants.json",
+      "bytes": 256,
+      "sha256": "3bdec9c625c77f91df959aa5c89ae4c6418dc6b219bcf9236f6eefb2fd440ed4"
+    },
+    {
+      "path": "checkpoint-processes.json",
+      "bytes": 19064,
+      "sha256": "d3fe870749baeee98d2a54f0e3afe9b8709483f6634d6fb5f6319841af0c675b"
+    },
+    {
+      "path": "checkpoint-records.json",
+      "bytes": 8972,
+      "sha256": "76dcf29d18267174c69cdafc09c3f03ac7cbbd8b9a2cfab5138d4a1065be8d99"
+    },
+    {
+      "path": "configuration.json",
+      "bytes": 801,
+      "sha256": "5483d8ba8ffae86860a8962ac874453bbb68043d8fdab1408b15c0128ee2f35b"
+    },
+    {
+      "path": "incidents.json",
+      "bytes": 410,
+      "sha256": "8a5768d236e8fc0f98bcecc137fdfb4b2841ec98af3f186d7f6b7ecabf914db5"
+    },
+    {
+      "path": "independent-tests.json",
+      "bytes": 11554,
+      "sha256": "cc09611678e4fc482b918db70adcf93569ceb3b8ab08bfc596255a4f3db184e2"
+    },
+    {
+      "path": "input-manifest.json",
+      "bytes": 1196,
+      "sha256": "c678141770721a4128fa5b3ca28d0f7465e04a96a3dd5eeb54aeec95c2bb8305"
+    },
+    {
+      "path": "prior/native-1792988851542169373.json",
+      "bytes": 807,
+      "sha256": "99d6db27b557b2514c5f4d6691f0c552a004a3ae1d861a751f4cabda12c4066e"
+    },
+    {
+      "path": "prior/native-1792988851542169373.stdout",
+      "bytes": 567,
+      "sha256": "a556a2339c0ebbc06d385755cf7e04f0f75f7f9b81cc04193d6db7fb4dc05ddb"
+    },
+    {
+      "path": "prior/native-errno4-tail-attempt.json",
+      "bytes": 434,
+      "sha256": "780c3014e2e2d4232d6aadd0955fd38c04ea2be1899f81aebfe3dba0f6c9205b"
+    },
+    {
+      "path": "prior/native-result-errno4-tail.json",
+      "bytes": 42896,
+      "sha256": "f3964c6456ec22681f4c77373df6d253e8e281e00f3b03ffa593c86ec1175d81"
+    },
+    {
+      "path": "supplemental-first-failure.json",
+      "bytes": 831,
+      "sha256": "33e4f526fc2e8226c4f98627dcf86ecfe7866dfb99858d0e4c620a51f10e34da"
+    },
+    {
+      "path": "supplemental-first-failure.stderr",
+      "bytes": 1024,
+      "sha256": "ef6ad0f1775897a6d7966b41b8b02fb1f52fa354fd84543ca72ecf5004c5c119"
+    },
+    {
+      "path": "tests-process.json",
+      "bytes": 635,
+      "sha256": "cd8754d623ff87cd6523c331ed0a433c76a3f8666740b6f174d13a5aaab3b8a6"
+    }
+  ],
+  "reusedCoordinatorAudit": {
+    "remoteDecodedPayloads": 535,
+    "earlierDecodedPayloads": 455,
+    "mismatches": 0
+  },
+  "priorReceiptIndependentlyRead": true
+}

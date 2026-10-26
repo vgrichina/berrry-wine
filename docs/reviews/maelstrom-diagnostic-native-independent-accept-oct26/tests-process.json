@@ -1,0 +1,23 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=256",
+    "/tmp/maelstrom-diagnostic-native-independent-accept-oct26/repo/test/maelstrom-diagnostic-native-independent-accept-oct26.cjs",
+    "/tmp/maelstrom-diagnostic-native-remaining-api-oct26/ops",
+    "/tmp/maelstrom-diagnostic-changed-module-native-oct26/ops",
+    "/tmp/maelstrom-diagnostic-native-independent-accept-oct26/ops"
+  ],
+  "exit": 0,
+  "reason": null,
+  "pid": 2073395,
+  "reaped": true,
+  "elapsed": 0.0524991670390591,
+  "counts": {
+    "stdout": 59,
+    "stderr": 0
+  },
+  "cpuWallSeconds": 60,
+  "heapMiB": 256,
+  "fileMax": 25165824,
+  "captureMax": 2097152
+}
