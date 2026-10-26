@@ -1,0 +1,37 @@
+{
+  "files": [
+    {
+      "file": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe",
+      "sha256": "fe5b66dd0a14bf5f3e5b00aceeeda9e1da165c7274a83a22fd1cb106e03d4b26",
+      "imports": [
+        "KERNEL32.dll",
+        "USER32.dll",
+        "GDI32.dll",
+        "ADVAPI32.dll",
+        "SHELL32.dll",
+        "ole32.dll",
+        "DDRAW.dll",
+        "DINPUT.dll",
+        "WINMM.dll",
+        "DSOUND.dll",
+        "DPLAYX.dll",
+        "binkw32.dll"
+      ]
+    },
+    {
+      "file": "/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/binkw32.dll",
+      "sha256": "1fd7ef7873c8a3be7e2f127b306d0d24d7d88e20cf9188894eff87b5af0d495f",
+      "imports": [
+        "KERNEL32.dll",
+        "USER32.dll",
+        "WINMM.dll",
+        "GDI32.dll"
+      ]
+    }
+  ],
+  "selectedOriginalCompanions": [
+    "binkw32.dll"
+  ],
+  "additionalSystemDonorDLLs": [],
+  "reason": "No CRT DLL imports. The imported standard Win32/DirectX DLL names are builtin providers in the pinned historical runner/module; no separate artificial DLL image is introduced. A missing dynamic dependency remains a first-run blocker, not permission to add stubs."
+}

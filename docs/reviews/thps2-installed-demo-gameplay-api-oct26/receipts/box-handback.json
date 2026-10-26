@@ -1,0 +1,16 @@
+{
+  "at": 1793040966.820896,
+  "box": "bx_xfbwmcty",
+  "reported": {
+    "sandbox": {
+      "createdAt": "2026-10-26T18:29:32.829Z",
+      "health": "ok",
+      "id": "bx_xfbwmcty",
+      "state": "idle"
+    }
+  },
+  "leaveRunning": true,
+  "shutdownOwner": "coordinator",
+  "shutdown": "2026-10-26T19:20:00Z",
+  "expiry": "2026-10-26T19:29:32Z"
+}

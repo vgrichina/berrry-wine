@@ -1,0 +1,43 @@
+{
+  "inputPins": 26,
+  "staticABI": "pass",
+  "APIChunkRoundtrip": "pass",
+  "initialRemoteFileHashes": 164,
+  "changedProfileHelperHashes": "pass",
+  "exactNodeStartup": "pass",
+  "PNGDecodeAndPixelHash": "pass",
+  "PNGVisuallyInspected": true,
+  "runEvidenceCheck": {
+    "runs": 1,
+    "errors": [],
+    "missing": [],
+    "invalid": []
+  },
+  "pureCanonicalScheduleCorrection": {
+    "passResult": {
+      "pass": true,
+      "canonicalDeferralSHA256": "24fbb8e9dd4470f29b6703fe50ed68a19dad2154341aaccdce877090c1862bc1",
+      "sameBatchRejected": true,
+      "oldFirst": {
+        "index": 0,
+        "action": "png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/menu.png",
+        "at": 1,
+        "expected": 19000
+      },
+      "correctedFirst": {
+        "index": 0,
+        "action": "png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/menu.png",
+        "at": 19001,
+        "expected": 19000
+      },
+      "correctedActions": 16,
+      "guestExecuted": false
+    },
+    "guestRetested": false
+  },
+  "authenticGuestAttempts": 1,
+  "guestExit": 1,
+  "gameplay": false,
+  "movementResponse": false,
+  "currentMainQualified": false
+}

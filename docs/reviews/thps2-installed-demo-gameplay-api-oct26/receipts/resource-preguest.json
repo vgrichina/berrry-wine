@@ -1,0 +1,39 @@
+{
+  "at": 1793040587.5418696,
+  "charges": {
+    "hostOwned": 1323008,
+    "remoteOwned": 48730112,
+    "hostSession": 1249280,
+    "hostLauncher": 1409024,
+    "attributablePositiveDBGrowth": 2625536,
+    "futureEvidenceAndPublication": 700000,
+    "futureCapturesBoth": 1600000,
+    "futureSessionLauncherDB": 1000000,
+    "reserve": 8388608
+  },
+  "total": 67025568,
+  "cap": 67108864,
+  "hostFree": 4147245056,
+  "hostMemAvailable": 4026056704,
+  "remote": {
+    "ownedBytes": 48730112,
+    "memAvailable": 7190671360,
+    "diskFree": 48878931968,
+    "nodeProcesses": [
+      {
+        "pid": 864,
+        "exe": "avahi-daemon: running [box-node-b805bdc1b46cb7be.local]",
+        "flags": [],
+        "rss": 4808704
+      }
+    ]
+  },
+  "remoteRequired": 3758096384,
+  "physicalFloor": 2684354560,
+  "headroom": 805306368,
+  "prospectiveHelpersTransient": 268435456,
+  "prospectiveFixedArena": 536870912,
+  "prospectiveOldSpace": 536870912,
+  "noDoubleSubtractRSS": true,
+  "passGate": true
+}

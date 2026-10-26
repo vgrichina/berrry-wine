@@ -1,0 +1,289 @@
+{
+  "files": [
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/README.md",
+      "bytes": 7650,
+      "sha256": "d2fc78b2aa880219e773dbb2854f4243682df551ef9419b575d85095b26c42b8"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/capture.cjs",
+      "bytes": 1442,
+      "sha256": "7b2a9514136a534f86b42b47f3fae077dbe6d537fb494284d25df1db26aced64"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/check_schedule.cjs",
+      "bytes": 1985,
+      "sha256": "a12743fd97896bb1684a4135c864be5e0f67adccc3fa3b1f90fc87b6033b3a04"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/collect.py",
+      "bytes": 1810,
+      "sha256": "b9daa2d54147590e3c708f88dd3c120c30f2bf1946148b3585596d6e163bd07f"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/common.py",
+      "bytes": 1705,
+      "sha256": "ebaa6bc772aa66492429680577c9cecabd9efa9806f293299a93925efe4077e0"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/configure.py",
+      "bytes": 2850,
+      "sha256": "b4ecb855751784fe64612c333d18c52f8fe348b30a15b38dd6fb6bfdc4e9c226"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/guest_launch.py",
+      "bytes": 1292,
+      "sha256": "871d5b5403a888e9d5d7fe86297a61d5cc88051b8f86ad8df32a08c827291e28"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/measure.py",
+      "bytes": 2651,
+      "sha256": "2907cbb155d915bf67cdda048631b626c2a17157ec31fd0f4eb51e9c4fe3746f"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/package.py",
+      "bytes": 12252,
+      "sha256": "dbd52dd4f4998a2146a3de70a8777d9459d70215d33fe5263b4baef9033eb2f0"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/prepare.py",
+      "bytes": 5220,
+      "sha256": "27fe4f71ff5d1d972c3d7be0b3e4ff7885811f97169cefe771e38091a4adc6bd"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/profile_update.py",
+      "bytes": 1943,
+      "sha256": "aa3e684f1cbdc87e919ea12bb8a35e984021daaf82973a34c529969f63b9a4eb"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/bootstrap-incident.json",
+      "bytes": 1692,
+      "sha256": "87c87aaefa65810902847332b7aa3a10896bccac170b1e336b016128629a2828"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/box-handback.json",
+      "bytes": 348,
+      "sha256": "6d83fc8a6c095eb4ef5cf48f79793fa333a4166b09bda7810d5d5627a8f20a23"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/checkout.json",
+      "bytes": 184,
+      "sha256": "26574c95bd00c66c181fa39675a6be2388270a94cdbf818c2d4f458feaa3ea93"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/checkpoint-publication.json",
+      "bytes": 175,
+      "sha256": "5700a1ad2b3f37e2c7cb50cbba46ed31073e401d5c9f067338c0416fefac0053"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/chunked-api-roundtrip.json",
+      "bytes": 184,
+      "sha256": "bdaedd1ccba31db43790e4c75122ece2f92e50b74d7f6515c42d2382cd63d807"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/cleanup.json",
+      "bytes": 78,
+      "sha256": "13c76cba9fa3fc03b811809e181fe0b008098da7deb0ac301aa358a946d26505"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/guest-summary.json",
+      "bytes": 4454,
+      "sha256": "a5dde7f100dfdc28b0d7640e16769eb989fc88f72379a77ec2dea1a985b7068c"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/host-before-transfer.json",
+      "bytes": 127,
+      "sha256": "dce2f3f2c558224c31e7ba721d83c89172c6ddec42051b58125fb8e664c7eedd"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/lock-release.json",
+      "bytes": 125,
+      "sha256": "f32ae3109a2c84a56dbd76d4e9d225adbec519f03f43fa57b7fa8cf2db3a54e5"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/mount-parser-tested.json",
+      "bytes": 3168,
+      "sha256": "d1114964c3b92fc52f22564ba103548666b1ddba995a01b5e5836d26e8d04ab3"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/mount-parser.json",
+      "bytes": 3179,
+      "sha256": "9c091aadeeace5cea3f3560b357163703e4140294baf37218fdc9aa0d250a40e"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/owned-runner-retirement.json",
+      "bytes": 459,
+      "sha256": "6b81f7e1958f270bfa200963461dda910571f8c3d187194a95b9102c6d3c7b0e"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/pe-imports.json",
+      "bytes": 1179,
+      "sha256": "bae3c5b120b6e439dc7c37a79153fce1f52e1f8ef80fa67596cf54d5998e51b9"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/png-review.json",
+      "bytes": 393,
+      "sha256": "74bb8932bdd1ffa49f55885e903cc8f54c953685ea89d24c629be4d79fadf78e"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/profile-remote-hashes.json",
+      "bytes": 592,
+      "sha256": "6bca40494e0ed1cf82d8fcf51f7ae5c84eef19b64863ee9345315e2d2aae00ea"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/profile-update.json",
+      "bytes": 1502,
+      "sha256": "f4447fc354985369c22a410c819da1d2a4be80ee8fb935d02233594793475f83"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/remote-hashes.json",
+      "bytes": 86,
+      "sha256": "3f751a64e8c3db58dcb4d21217adf305bbf15853a1a671f17aac27e8df42d3b8"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/resource-before-transfer.json",
+      "bytes": 82,
+      "sha256": "645e2fdaaab0f2cd7a0be67a833f66413f71e125dffbe139e33dc83809c41696"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/resource-preguest.json",
+      "bytes": 998,
+      "sha256": "dad07567cb3f0d8067cb4055b21e2788109dac2fb6d42c9321fabdbb34d6aa95"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/resource-prepublication.json",
+      "bytes": 831,
+      "sha256": "37c5cbdf759dfb2cd905c722d6524684f908c91c96549e1105b55320d6df88ee"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/resource-prestage.json",
+      "bytes": 1000,
+      "sha256": "2f31e766bf83b8a4e91f3f8be3c84dec61796fda72a663f169f62dd51ab64d0d"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/runtime-schedule.json",
+      "bytes": 380,
+      "sha256": "2572ceda707e03f3bf783a97bb54d2a7389c0ca2b815a9854a345c9fe943b59f"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/schedule-offline-correction.json",
+      "bytes": 513,
+      "sha256": "c501d4baf7d1c0709a27a3564253064b5f9a88a05d5b8e299dae71d4b8e2e376"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/startup-final.json",
+      "bytes": 3881,
+      "sha256": "b4996fe4068300b47fcbbdfcece15410ddc1f70b5c9ac31abf8091843661b97f"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/static-abi.json",
+      "bytes": 543,
+      "sha256": "3bc5af42c4823645837009fd46e1986c2cf12d938cb96a7daeefe68c6970be63"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/supervisor-bootstrap-correction.json",
+      "bytes": 128,
+      "sha256": "dd0fa6fd58512191a142752e1eb2899179ac24dda107abd5d3e43b73b0b03636"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/trusted-git.json",
+      "bytes": 269,
+      "sha256": "e7be4d68ff5cf4991614766c2fbb76d98758304b485f137cd8fc95ff53eb82af"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/receipts/worker-identity.json",
+      "bytes": 353,
+      "sha256": "3b99dd6889d84ccf6613f1dff67375f2b281940dc03c585b866cc190fdec7fa6"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/remote_check.py",
+      "bytes": 3168,
+      "sha256": "96f73c0d8f5cafc8f686b92a1802a7a6e5af90883ca910d64d68727d09e7dcf5"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/retire_runner.py",
+      "bytes": 1376,
+      "sha256": "45da361246227bb7f0f2c200a84067d5661d78971946c97f362e8c6810955694"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/stage.py",
+      "bytes": 4766,
+      "sha256": "4f5ed30f55304e784f839c234387a24ca39b5a8fa4919aa10c5eaf5967c10c63"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/static_abi.py",
+      "bytes": 1303,
+      "sha256": "d34fb5d8378ed7d684b532e9f74642e8ccc638c0d821bd97ad2899632389621c"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/supervise.cjs",
+      "bytes": 2662,
+      "sha256": "934d49e5c2631b9b451f08484a41c91bfcfd9cbe9b98a0537781f44172a05641"
+    },
+    {
+      "path": "docs/reviews/thps2-installed-demo-gameplay-api-oct26/validation.json",
+      "bytes": 1153,
+      "sha256": "40d569b0dcbcd043bc7f1c077e3f0f511d6b4f757ad01a460ddfeb9e48abaaf9"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/attempt-started.json",
+      "bytes": 359,
+      "sha256": "0b51f9f7bc968c478fb34e92be16add029a49b4f99b31dea14e9a3be0b92ecfc"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/bootstrap-failed-before-fork.json",
+      "bytes": 360,
+      "sha256": "a0b8843a7580c88c68a9309e5242fb55934adaad10f23e4c16ae16b851065280"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/command.txt",
+      "bytes": 1828,
+      "sha256": "59068aaf700069924ea5e5b11a56e42104b65f63fcc8cee4afff563af3bbd859"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/exit-call-disassembly.txt",
+      "bytes": 428,
+      "sha256": "edec33bd3fc74f96ae72b6050ea80d53e96d764651bfaf5497f9d018b1d2f680"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/final.png",
+      "bytes": 361926,
+      "sha256": "a967f9283fb409c6118862441c6f2c2ecfdcc2ed4ce2fef73b8710ce92c8e812"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/frame-metadata.jsonl",
+      "bytes": 335,
+      "sha256": "775bd9fb12f4e595778c2d0bdacff80e992b2ad196726da067d2fa2e5acc0a65"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/guest-args-corrected-NOT-RUN.json",
+      "bytes": 1359,
+      "sha256": "5a7b9580caf959d11ae6452bc75e462ccb3329f4d0387f2e00efb2dbdd62b3f5"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/guest-args-tested.json",
+      "bytes": 1348,
+      "sha256": "1938ac20360a7ee0e5f67ce83bdd62306893ba72e7cc0020a92cca0e593e8b11"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/output.log",
+      "bytes": 12991,
+      "sha256": "74313246cd6f2df2b23bf330d5819ed1a1925a4b976cde407932e7a4c4af1311"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/result.json",
+      "bytes": 3555,
+      "sha256": "3b9c4617427984a39497c689eea827dc90dda86f4adbbee8180774827b820337"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/source-manifest.json",
+      "bytes": 82223,
+      "sha256": "63b1f8b95d5b7dd2c64b8b96e1fdb585cad386776ec71a622f8621f03964fbc3"
+    },
+    {
+      "path": "scratch/runs/20261026T185044Z-thps2-demo-installed-api/terminal.json",
+      "bytes": 2852,
+      "sha256": "34ea388caa067002c00fc4bc92e6e469b2000555a5b6442cb77bac8dee9078af"
+    }
+  ]
+}

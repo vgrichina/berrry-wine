@@ -1,0 +1,12 @@
+
+/home/user/wine-assembly/test/binaries/candidates/thps2-demo/game/thawk2.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+004f03cc <.text+0xef3cc>:
+  4f03cc:	ff 74 24 08          	push   DWORD PTR [esp+0x8]
+  4f03d0:	89 3d 48 bd 61 03    	mov    DWORD PTR ds:0x361bd48,edi
+  4f03d6:	ff 15 b0 71 50 00    	call   DWORD PTR ds:0x5071b0
+  4f03dc:	5f                   	pop    edi
+  4f03dd:	c3                   	ret

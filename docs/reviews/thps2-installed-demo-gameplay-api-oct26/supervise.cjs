@@ -3,7 +3,7 @@ const fs=require('fs'),cp=require('child_process'),path=require('path');
 const H='/tmp/thps2-installed-demo-gameplay-api-oct26', O=H+'/ops', E=H+'/guest';
 const args=JSON.parse(fs.readFileSync(O+'/guest-args.json'));
 const schedule=JSON.parse(fs.readFileSync(O+'/input-timeline.json'));
-const log=fs.openSync(E+'/output.log','ax');fs.writeSync(log,'[supervisor] append bootstrap verified\n');
+const log=fs.openSync(E+'/output.log','a');fs.writeSync(log,'[supervisor] append bootstrap verified\n');
 const start=Date.now(),events=[];let reason='natural',ending=false,peakRSS=0;
 const p=cp.fork(args[2],args.slice(3),{execPath:args[0],execArgv:[args[1],`--require=${O}/capture.cjs`],cwd:H+'/runner',env:process.env,detached:true,stdio:['ignore',log,log,'ipc']});
 function group(){const out=[];for(const d of fs.readdirSync('/proc'))if(/^\d+$/.test(d)){try{const s=fs.readFileSync('/proc/'+d+'/stat','utf8');const a=s.slice(s.lastIndexOf(')')+2).split(' ');if(+a[2]===p.pid)out.push(+d);}catch{}}return out;}

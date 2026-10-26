@@ -1,0 +1,32 @@
+{
+  "charges": {
+    "hostClosure": 0,
+    "remoteClosure": 48212283,
+    "codecBoth": 500000,
+    "gitCheckoutEvidence": 1500000,
+    "hostSession": 724992,
+    "hostLauncher": 1323008,
+    "futureSessionLauncherWAL": 2200000,
+    "capturesLogsBoth": 1800000,
+    "helpersBoth": 250000,
+    "reserve": 8388608
+  },
+  "total": 64898891,
+  "cap": 67108864,
+  "hostMemAvailable": 2788343808,
+  "hostFree": 4170371072,
+  "remote": {
+    "memAvailable": 7298252800,
+    "diskFree": 49054314496
+  },
+  "remoteRequired": 3758096384,
+  "aggregateLiveArenaBytes": 0,
+  "prospectiveArenaBytes": 536870912,
+  "prospectiveGuestHeapBytes": 536870912,
+  "prospectiveSupervisorHeapBytes": 201326592,
+  "helpersTransient": 268435456,
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T18-31-16-01a1797b-285d-7c33-8f8d-2ede823f1135.jsonl",
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/thps2-installed-demo-gameplay-api-oct26",
+  "standingGameBytes": 39848772,
+  "passGate": true
+}

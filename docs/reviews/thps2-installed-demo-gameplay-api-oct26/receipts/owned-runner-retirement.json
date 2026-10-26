@@ -1,0 +1,11 @@
+{
+  "retired": "runner only",
+  "reclaimedBytes": 6864896,
+  "guestProcesses": [],
+  "gameFixtureUntouched": true,
+  "moduleUntouched": true,
+  "evidenceUntouched": true,
+  "standingDonorsUntouched": true,
+  "at": 1793041060.9006457,
+  "reason": "Measured publication projection67992768 exceeded67108864. Retire verified disposable task-owned remote runner closure after evidence retrieval; exact source/Git/hash recovery recipe retained. No gate relaxed."
+}

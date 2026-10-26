@@ -1,0 +1,133 @@
+{
+  "code": null,
+  "signal": "SIGKILL",
+  "reason": "wall-cutoff",
+  "elapsedMs": 89093,
+  "peakRSS": 284299264,
+  "events": [
+    {
+      "ms": 19000,
+      "actions": [
+        "png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/menu.png"
+      ],
+      "label": "menu checkpoint",
+      "sentAt": "2026-10-26T18:51:03.391Z",
+      "elapsedMs": 19005
+    },
+    {
+      "ms": 20000,
+      "actions": [
+        "keydown:13"
+      ],
+      "label": "main-menu to single-session",
+      "sentAt": "2026-10-26T18:51:04.391Z",
+      "elapsedMs": 20005
+    },
+    {
+      "ms": 20400,
+      "actions": [
+        "keyup:13"
+      ],
+      "label": "release Enter",
+      "sentAt": "2026-10-26T18:51:04.791Z",
+      "elapsedMs": 20405
+    },
+    {
+      "ms": 28000,
+      "actions": [
+        "keydown:13"
+      ],
+      "label": "single-session to skater",
+      "sentAt": "2026-10-26T18:51:12.391Z",
+      "elapsedMs": 28005
+    },
+    {
+      "ms": 28400,
+      "actions": [
+        "keyup:13"
+      ],
+      "label": "release Enter",
+      "sentAt": "2026-10-26T18:51:12.791Z",
+      "elapsedMs": 28405
+    },
+    {
+      "ms": 36000,
+      "actions": [
+        "keydown:13"
+      ],
+      "label": "Tony Hawk to level",
+      "sentAt": "2026-10-26T18:51:20.391Z",
+      "elapsedMs": 36005
+    },
+    {
+      "ms": 36400,
+      "actions": [
+        "keyup:13"
+      ],
+      "label": "release Enter",
+      "sentAt": "2026-10-26T18:51:20.790Z",
+      "elapsedMs": 36404
+    },
+    {
+      "ms": 44000,
+      "actions": [
+        "keydown:13"
+      ],
+      "label": "Marseille to loading/Play",
+      "sentAt": "2026-10-26T18:51:28.391Z",
+      "elapsedMs": 44005
+    },
+    {
+      "ms": 44400,
+      "actions": [
+        "keyup:13"
+      ],
+      "label": "release Enter",
+      "sentAt": "2026-10-26T18:51:28.791Z",
+      "elapsedMs": 44405
+    },
+    {
+      "ms": 64000,
+      "actions": [
+        "keydown:38",
+        "keydown:32"
+      ],
+      "label": "Up+Space; Space may dismiss Play",
+      "sentAt": "2026-10-26T18:51:48.390Z",
+      "elapsedMs": 64004
+    },
+    {
+      "ms": 65800,
+      "actions": [
+        "keyup:38",
+        "keyup:32"
+      ],
+      "label": "release Up+Space",
+      "sentAt": "2026-10-26T18:51:50.191Z",
+      "elapsedMs": 65805
+    },
+    {
+      "ms": 68300,
+      "actions": [
+        "png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/after-up-space.png",
+        "keydown:37"
+      ],
+      "label": "movement checkpoint; begin Left",
+      "sentAt": "2026-10-26T18:51:52.691Z",
+      "elapsedMs": 68305
+    },
+    {
+      "ms": 70100,
+      "actions": [
+        "keyup:37"
+      ],
+      "label": "release Left",
+      "sentAt": "2026-10-26T18:51:54.491Z",
+      "elapsedMs": 70105
+    }
+  ],
+  "remaining": [],
+  "box": "bx_xfbwmcty",
+  "leaveRunning": true,
+  "expiry": "2026-10-26T19:29:32Z"
+}

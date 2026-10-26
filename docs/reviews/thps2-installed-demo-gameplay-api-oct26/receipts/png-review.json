@@ -1,0 +1,11 @@
+{
+  "bytes": 361926,
+  "sha256": "a967f9283fb409c6118862441c6f2c2ecfdcc2ed4ce2fef73b8710ce92c8e812",
+  "width": 640,
+  "height": 480,
+  "rgbaSHA256": "7f1dd37b8f2d7785294f44e3303e8004716a861c5fd74d1141c53a8c0704df15",
+  "inspected": true,
+  "screen": "THPS2 demo title/splash, visibly color-corrupted; no menu or Marseille gameplay",
+  "gameplay": false,
+  "ordinaryMovementResponse": false
+}

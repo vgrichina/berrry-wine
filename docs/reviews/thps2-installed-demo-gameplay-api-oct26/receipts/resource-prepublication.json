@@ -1,0 +1,32 @@
+{
+  "at": 1793041071.995337,
+  "charges": {
+    "hostOwned": 1806336,
+    "remoteOwned": 42258432,
+    "hostSession": 2064384,
+    "hostLauncher": 1474560,
+    "attributablePositiveDBGrowth": 4042752,
+    "futureEvidenceAndPublication": 900000,
+    "futureCapturesBoth": 0,
+    "futureSessionLauncherDB": 500000,
+    "reserve": 8388608
+  },
+  "total": 61435072,
+  "cap": 67108864,
+  "hostFree": 4133920768,
+  "hostMemAvailable": 3632885760,
+  "remote": {
+    "ownedBytes": 42258432,
+    "memAvailable": 7242698752,
+    "diskFree": 48855789568,
+    "nodeProcesses": []
+  },
+  "remoteRequired": 3758096384,
+  "physicalFloor": 2684354560,
+  "headroom": 805306368,
+  "prospectiveHelpersTransient": 268435456,
+  "prospectiveFixedArena": 536870912,
+  "prospectiveOldSpace": 536870912,
+  "noDoubleSubtractRSS": true,
+  "passGate": true
+}

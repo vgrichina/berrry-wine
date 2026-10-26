@@ -3,6 +3,9 @@ import fcntl,base64,re,shutil
 lock=open('/tmp/wine-game-capture-bx_xfbwmcty.lock','a+')
 print('Waiting interruptibly for assigned box lock',flush=True);fcntl.flock(lock,fcntl.LOCK_EX);print('LOCK ACQUIRED',flush=True)
 save('lock.json',dict(pid=os.getpid(),path=lock.name,acquired=time.time()))
+hostmem=int(re.search(r'MemAvailable:\s+(\d+)',pathlib.Path('/proc/meminfo').read_text())[1])*1024
+save('host-before-transfer.json',dict(memAvailable=hostmem,diskFree=shutil.disk_usage(H).free,helperHeapMax=201326592,remainingNewProjection=50000000))
+assert hostmem>=805306368 and shutil.disk_usage(H).free-50000000>=2982150144
 assert time.time()+180<1793041800,'guest cutoff too close'
 remote=py('import pathlib,json,shutil,subprocess;print(json.dumps(dict(memAvailable=int(pathlib.Path("/proc/meminfo").read_text().split("MemAvailable:")[1].split()[0])*1024,diskFree=shutil.disk_usage("/tmp").free,liveNode=subprocess.check_output(["pgrep","-a","node"],text=True) if subprocess.run(["pgrep","node"],stdout=subprocess.DEVNULL).returncode==0 else "none")))');save('resource-before-transfer.json',remote)
 assert remote['memAvailable']>=3758096384 and remote['diskFree']-50000000>=2982150144
@@ -12,6 +15,9 @@ for offset in range(0,len(test),49152):send(test[offset:offset+49152],'transfer-
 r=py('import pathlib,hashlib,json;p=pathlib.Path('+repr(str(H/'transfer-probe'))+');print(json.dumps(dict(bytes=p.stat().st_size,sha256=hashlib.sha256(p.read_bytes()).hexdigest())));p.unlink()')
 assert r['sha256']==hashlib.sha256(test).hexdigest();save('chunked-api-roundtrip.json',dict(r,chunkBytes=49152,base64ArgBytes=65536,readbackHashVerified=True))
 manifest=json.load(open(O/'manifest.json'))
+for name in ['capture.cjs','supervise.cjs','remote_check.py','guest-args.json','input-timeline.json']:
+ p=O/name;manifest.append(dict(path=str(p),target='ops/'+name,bytes=p.stat().st_size,sha256=sha(p),kind='file'))
+save('transfer-manifest.json',manifest)
 for i,e in enumerate(manifest):
  if e['kind']=='git':data=git('show',e['revision']+':'+e['historicalPath'],cwd=pathlib.Path(e['donor']))
  else:data=pathlib.Path(e['path']).read_bytes()
@@ -19,8 +25,6 @@ for i,e in enumerate(manifest):
  # Stage directly: no archive or host payload copy.
  for offset in range(0,len(data),49152):send(data[offset:offset+49152],e['target'],offset)
  if i%20==0:print('transferred',i+1,len(manifest),flush=True)
-for name in ['capture.cjs','supervise.cjs','remote_check.py','guest-args.json','input-timeline.json']:
- send((O/name).read_bytes(),'ops/'+name)
 send(json.dumps(manifest).encode(),'ops/manifest.json')
 verify='''import pathlib,json,hashlib,os
 H=pathlib.Path(ROOT);m=json.load(open(H/'ops/manifest.json'));bad=[]

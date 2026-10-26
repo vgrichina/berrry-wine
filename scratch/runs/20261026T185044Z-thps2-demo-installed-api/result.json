@@ -1,0 +1,64 @@
+{
+  "candidateId": "thps2-demo",
+  "taskId": "thps2-installed-demo-gameplay-api-oct26",
+  "agentId": "codex:01a1797b-285d-7c33-8f8d-2ede823f1135",
+  "startedAt": "2026-10-26T18:50:44.303Z",
+  "finishedAt": "2026-10-26T18:52:13.569Z",
+  "outcome": "failed",
+  "route": "startup",
+  "command": "env -u NODE_OPTIONS -u WINE_RUN_EXTRA_ARGS -u WINE_REGION_MAP -u WINE_ASSEMBLY_WASM -u MAELSTROM_CAPTURE_INSTALL -u ENIGMA_TERMINAL_CAPTURE_INSTALL /home/user/.nvm/versions/node/v24.22.1/bin/node --max-old-space-size=512 --require=/tmp/thps2-installed-demo-gameplay-api-oct26/ops/capture.cjs /tmp/thps2-installed-demo-gameplay-api-oct26/runner/test/run.js --no-build --wasm=/tmp/thps2-installed-demo-gameplay-api-oct26/runtime/build/wine-assembly.wasm --exe=/tmp/thps2-installed-demo-gameplay-api-oct26/vfs/THPS2/thawk2.exe '--exe-guest-path=C:\\THPS2\\thawk2.exe' '--cwd=C:\\THPS2' --dlls=/tmp/thps2-installed-demo-gameplay-api-oct26/vfs/THPS2/binkw32.dll --vfs-tree=/tmp/thps2-installed-demo-gameplay-api-oct26/vfs --quiet-api --quiet-blocks --no-close --real-ticks --memory-mb=512 --screen=640x480 --max-seconds=76 --max-batches=10000000 --trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW --trace-api-dedup --png=/tmp/thps2-installed-demo-gameplay-api-oct26/guest/final.png --input=0:wait-go,0:png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/menu.png,1:wait-go,1:keydown:13,2:wait-go,2:keyup:13,3:wait-go,3:keydown:13,4:wait-go,4:keyup:13,5:wait-go,5:keydown:13,6:wait-go,6:keyup:13,7:wait-go,7:keydown:13,8:wait-go,8:keyup:13,9:wait-go,9:keydown:38,9:keydown:32,10:wait-go,10:keyup:38,10:keyup:32,11:wait-go,11:png:/tmp/thps2-installed-demo-gameplay-api-oct26/guest/after-up-space.png,11:keydown:37,12:wait-go,12:keyup:37",
+  "build": {
+    "commit": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+    "dirtyPatchSha256": null,
+    "wasmSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "sourceManifest": "source-manifest.json"
+  },
+  "environment": {
+    "host": "bx_xfbwmcty",
+    "mode": "headless CLI/API",
+    "node": "v24.22.1",
+    "renderer": "historical raster/DX capture slot10",
+    "viewport": "640x480",
+    "threadMode": "cooperative guest threads",
+    "screenReview": "title/splash with visibly incorrect colors"
+  },
+  "summary": "Original installed demo exits1 during title startup at API3548 ExitProcess, ESP074ffbd8 return004f03dc, 762 batches/1.617s before planned ordinary input. No Marseille/gameplay/menu/movement qualification. Host IPC lingered until bounded supervisor cleanup.",
+  "verification": "reviewed",
+  "screenshot": "final.png",
+  "artifacts": [
+    "source-manifest.json",
+    "frame-metadata.jsonl",
+    "output.log",
+    "command.txt",
+    "guest-args-corrected-NOT-RUN.json",
+    "bootstrap-failed-before-fork.json",
+    "terminal.json",
+    "exit-call-disassembly.txt",
+    "guest-args-tested.json",
+    "attempt-started.json"
+  ],
+  "qualification": {
+    "gameplay": false,
+    "menu": false,
+    "ordinaryMovementResponse": false,
+    "ollie": false,
+    "currentMain": false
+  },
+  "firstFailure": {
+    "api": "ExitProcess",
+    "argument": 1,
+    "apiOrdinal": 3548,
+    "esp": "0x074ffbd8",
+    "returnPC": "0x004f03dc",
+    "callPC": "0x004f03d6",
+    "IAT": "0x005071b0",
+    "underlyingCause": "unknown; guest thpcerr.log was not exported"
+  },
+  "lifecycle": {
+    "box": "bx_xfbwmcty",
+    "state": "RUNNING (API idle/health ok)",
+    "expiry": "2026-10-26T19:29:32Z",
+    "shutdownOwner": "coordinator",
+    "guestProcessesRemaining": 0
+  }
+}

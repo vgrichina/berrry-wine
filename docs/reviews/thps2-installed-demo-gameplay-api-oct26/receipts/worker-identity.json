@@ -1,0 +1,14 @@
+{
+  "session": "01a1797b-285d-7c33-8f8d-2ede823f1135",
+  "pid": 2904238,
+  "model": "gpt-6.1-sol",
+  "reasoning": "medium",
+  "autoCompaction": 200000,
+  "scope": "total",
+  "liveFlags": [
+    "model_auto_compact_token_limit=200000",
+    "model_auto_compact_token_limit_scope=\"total\"",
+    "gpt-6.1-sol",
+    "model_reasoning_effort=\"medium\""
+  ]
+}

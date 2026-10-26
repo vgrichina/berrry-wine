@@ -11,7 +11,7 @@ step(68300,['png:'+R+'/guest/after-up-space.png','keydown:37'],'movement checkpo
 step(70100,['keyup:37'],'release Left')
 timeline.sort(key=lambda e:e['ms']);save('input-timeline.json',timeline)
 entries=[]
-for i,e in enumerate(timeline):entries += [f'{i}:wait-go']+[f'{i}:{action}' for action in e['actions']]
+for i,e in enumerate(timeline):entries += [f'{2*i}:wait-go']+[f'{2*i+1}:{action}' for action in e['actions']]
 args=[node,'--max-old-space-size=512',R+'/runner/test/run.js','--no-build','--wasm='+R+'/runtime/build/wine-assembly.wasm','--exe='+R+'/vfs/THPS2/thawk2.exe','--exe-guest-path=C:\\THPS2\\thawk2.exe','--cwd=C:\\THPS2','--dlls='+R+'/vfs/THPS2/binkw32.dll','--vfs-tree='+R+'/vfs','--quiet-api','--quiet-blocks','--no-close','--real-ticks','--memory-mb=512','--screen=640x480','--max-seconds=76','--max-batches=10000000','--trace-api=LoadLibraryA,GetProcAddress,ExitProcess,MessageBoxA,MessageBoxW','--trace-api-dedup','--png='+R+'/guest/final.png','--input='+','.join(entries)]
 save('guest-args.json',args)
 s=pathlib.Path('/tmp/maelstrom-head-yield-observer-oct24/ops/run.js').read_text();assert hashlib.sha256(s.encode()).hexdigest()=='4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809'

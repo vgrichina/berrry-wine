@@ -1,0 +1,16 @@
+{
+  "passGate": true,
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "historicalRevision": "d8cd8c54c8d63c107696f1e4ef7a1e229dcadc1e",
+  "mirrorSHA256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+  "mirrorLayout": "9a3bc9149d58209c",
+  "customLayoutSections": [
+    [
+      "wine-region-layout",
+      "9a3bc9149d58209c"
+    ]
+  ],
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "currentRootRunnerUsed": false,
+  "wasmRebuilt": false
+}

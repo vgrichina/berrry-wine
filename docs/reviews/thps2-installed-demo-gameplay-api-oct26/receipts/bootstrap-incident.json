@@ -1,0 +1,25 @@
+{
+  "phase": "supervisor-bootstrap",
+  "guestAttempts": 0,
+  "reason": "exclusive append ax rejected existing logger before cp.fork at source line8",
+  "sourceOrderProof": "fs.openSync line6; cp.fork line8",
+  "API": {
+    "commandId": "cmd_jq5jdwxsgm4o",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T18:50:18.567Z",
+    "launcherFailed": false,
+    "noticedMs": 15,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 16,
+    "startedAt": "2026-10-26T18:50:18.474Z",
+    "stderr": "node:fs:621\n  return binding.open(\n                 ^\n\nError: EEXIST: file already exists, open '/tmp/thps2-installed-demo-gameplay-api-oct26/guest/output.log'\n    at Object.openSync (node:fs:621:18)\n    at Object.<anonymous> (/tmp/thps2-installed-demo-gameplay-api-oct26/ops/supervise.cjs:6:14)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  errno: -17,\n  code: 'EEXIST',\n  syscall: 'open',\n  path: '/tmp/thps2-installed-demo-gameplay-api-oct26/guest/output.log'\n}\n\nNode.js v24.22.1\n",
+    "stderrTruncated": false,
+    "stdout": "{\"supervisorExit\": 1}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "correction": "ordinary append a; preserve bootstrap receipt; no guest acceptance or Node ABI/startup replay"
+}

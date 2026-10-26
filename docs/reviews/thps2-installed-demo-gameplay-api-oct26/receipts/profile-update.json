@@ -1,0 +1,45 @@
+{
+  "profile": "single-frame",
+  "helperSHA256": "9dae92170fbf4ef5acf0a2b0be43b93d3b3a7c8ec86f227df708d3b65d67cb4b",
+  "heldLease": {
+    "pid": 2919887,
+    "path": "/tmp/wine-game-capture-bx_xfbwmcty.lock",
+    "acquired": 1793040169.0448692
+  },
+  "replacesDefaultProfileBeforeAnyGuest": true,
+  "attempts": 0,
+  "fsize": 2097152,
+  "combinedOutput": 2097152,
+  "maxPNG": 1294816,
+  "intermediateMetadataOnly": true,
+  "files": [
+    {
+      "path": "/tmp/enigma-single-frame-independent-closeout-oct24/repo/tools/lossless-capture-png.cjs",
+      "target": "ops/lossless-capture-png.cjs",
+      "bytes": 3682,
+      "sha256": "9dae92170fbf4ef5acf0a2b0be43b93d3b3a7c8ec86f227df708d3b65d67cb4b",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/thps2-installed-demo-gameplay-api-oct26/ops/capture.cjs",
+      "target": "ops/capture.cjs",
+      "bytes": 1442,
+      "sha256": "7b2a9514136a534f86b42b47f3fae077dbe6d537fb494284d25df1db26aced64",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/thps2-installed-demo-gameplay-api-oct26/ops/remote_check.py",
+      "target": "ops/remote_check.py",
+      "bytes": 3168,
+      "sha256": "96f73c0d8f5cafc8f686b92a1802a7a6e5af90883ca910d64d68727d09e7dcf5",
+      "kind": "file"
+    },
+    {
+      "path": "/tmp/thps2-installed-demo-gameplay-api-oct26/ops/guest_launch.py",
+      "target": "ops/guest_launch.py",
+      "bytes": 1292,
+      "sha256": "871d5b5403a888e9d5d7fe86297a61d5cc88051b8f86ad8df32a08c827291e28",
+      "kind": "file"
+    }
+  ]
+}
