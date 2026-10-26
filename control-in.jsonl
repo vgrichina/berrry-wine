@@ -1,0 +1,33 @@
+{"action": "step", "n": 500, "id": "1793049628081373703"}
+{"action": "snapshot", "id": "1793049631275577416"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/language.png", "id": "1793049631342789707"}
+{"cmd": "click:210:280", "id": "1793049638930896842"}
+{"action": "step", "n": 150, "id": "1793049638997100691"}
+{"action": "snapshot", "id": "1793049640071731992"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/heralds.png", "id": "1793049640137473865"}
+{"cmd": "click:320:327", "id": "1793049645846601127"}
+{"action": "step", "n": 200, "id": "1793049645913050306"}
+{"action": "snapshot", "id": "1793049647337523936"}
+{"cmd": "keydown:27", "id": "1793049647403262563"}
+{"cmd": "keyup:27", "id": "1793049647470127362"}
+{"action": "step", "n": 300, "id": "1793049647534685755"}
+{"action": "snapshot", "id": "1793049649669110142"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/post-intro.png", "id": "1793049649735549333"}
+{"cmd": "click:478:464", "id": "1793049654489927543"}
+{"action": "step", "n": 200, "id": "1793049654555609543"}
+{"action": "snapshot", "id": "1793049655980064820"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/new-game.png", "id": "1793049656045444684"}
+{"cmd": "click:180:391", "id": "1793049669618533354"}
+{"cmd": "click:320:464", "id": "1793049669685529199"}
+{"action": "step", "n": 200, "id": "1793049669751986393"}
+{"action": "snapshot", "id": "1793049671176136248"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/difficulty.png", "id": "1793049671241507826"}
+{"cmd": "click:90:465", "id": "1793049675728917477"}
+{"action": "step", "n": 200, "id": "1793049675796748157"}
+{"action": "snapshot", "id": "1793049677222685484"}
+{"action": "png", "path": "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26/civilizations.png", "id": "1793049677288429430"}
+{"cmd": "click:327:435", "id": "1793049684510324584"}
+{"cmd": "click:468:465", "id": "1793049684577060191"}
+{"action": "step", "n": 200, "id": "1793049684643029660"}
+{"action": "snapshot", "id": "1793049686068695876"}
+{"action": "quit", "id": "1793049686134160214"}

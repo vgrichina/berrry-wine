@@ -1,0 +1,214 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 3214,
+      "sha256": "449793fcc9bc68f0cf4939c224283fea3c41675ad9da0abb9bb72d392076d198"
+    },
+    {
+      "path": "accounting-inputs.json",
+      "bytes": 238,
+      "sha256": "346a669cb402e567b6e39f079c5c90f433547934664e8246b63a98613fc7eb26"
+    },
+    {
+      "path": "civilizations.png",
+      "bytes": 414300,
+      "sha256": "32b1c82c91778b557a3db68848d7f269450b34c17d1f741883e6ee256a3411e7"
+    },
+    {
+      "path": "cleanup.json",
+      "bytes": 269,
+      "sha256": "265d20fa8952dace37548885e3716557a1f99a4d29fdac8c52e743cf4081154a"
+    },
+    {
+      "path": "configuration-reuse.json",
+      "bytes": 757,
+      "sha256": "31626ba0a5d63e92a6c5b7afced81e6d61f5b4f5d7f9ee92a102ef34f80d873c"
+    },
+    {
+      "path": "control-checkpoint.json",
+      "bytes": 936,
+      "sha256": "4393b174186e5d8279d77d12fefaa362984e0cfcd9da296e06d8b65ed2538a15"
+    },
+    {
+      "path": "control-in.jsonl",
+      "bytes": 2385,
+      "sha256": "399314f6dab73d06470abea0c6800717512123453e631ac46afdd86cd95d0d4a"
+    },
+    {
+      "path": "difficulty.png",
+      "bytes": 353624,
+      "sha256": "836fef6769deb6dc09bd4bcaa54923ce08d38be9a2fb5d83ee9afbeb504ead48"
+    },
+    {
+      "path": "durable-checkpoint.json",
+      "bytes": 2039,
+      "sha256": "38a4152f665a0c69d5a1fe70cafe603a1f73284bbae3450e5490e96677ee7ab0"
+    },
+    {
+      "path": "evidence-check-admission.json",
+      "bytes": 1661,
+      "sha256": "001413f290c8bd7e6256ff72883c9d50d164f20988f97fe2453cbe2f20b9f334"
+    },
+    {
+      "path": "evidence-check-launch.json",
+      "bytes": 593,
+      "sha256": "ee12e7ecda84ef88f873fcb04f21542ea2961feb9d5dcde743f28604a28d52c5"
+    },
+    {
+      "path": "evidence-check-receipt.json",
+      "bytes": 891,
+      "sha256": "a6298298021e646df1f39e05a09c3e69bb1fe13225e2288db656803e92d81e50"
+    },
+    {
+      "path": "evidence-check.log",
+      "bytes": 143,
+      "sha256": "37de0d85c741764ea61932f23517001f032d4222917cc69a84a40197c69d06fc"
+    },
+    {
+      "path": "guest-admission.json",
+      "bytes": 1659,
+      "sha256": "29bca78ab6292633990a641ca56132b5119cd9eed52edfc8c2499a24bfe24578"
+    },
+    {
+      "path": "guest-launch.json",
+      "bytes": 824,
+      "sha256": "7893508dc712054863b40a355433d813cda3f7cd0c307c0843cb52fa8215256d"
+    },
+    {
+      "path": "guest-receipt.json",
+      "bytes": 1137,
+      "sha256": "5f1dc5178d26fa5ac49f3d8d2b8ca152523a1381e661eeb8811e94aaabb13107"
+    },
+    {
+      "path": "guest.log",
+      "bytes": 23478,
+      "sha256": "84f99039920542981e8d413a65d3de97b24dd02385605da2cb75b9bb3979e1e5"
+    },
+    {
+      "path": "helpers/account.py",
+      "bytes": 898,
+      "sha256": "0a57aa6510ef682a826cbdbbe76c2fffedab4bc177a91c2fd8aed19b1c711950"
+    },
+    {
+      "path": "helpers/admit.py",
+      "bytes": 1707,
+      "sha256": "b32d322f8670d3be7f9f90f8e962ea8624af1c545186eac10ec7d7035a0e180d"
+    },
+    {
+      "path": "helpers/check-evidence.js",
+      "bytes": 810,
+      "sha256": "fa2aea3ea4749fd6c08a757d5427ee2991ac812b31f6d3d6483e3fed9457fa89"
+    },
+    {
+      "path": "helpers/control.py",
+      "bytes": 757,
+      "sha256": "894893e1cc7e612f7fb2af8d5f746cad4b699d4bf84021bd3c405f0dc6380ca8"
+    },
+    {
+      "path": "helpers/git-op.py",
+      "bytes": 3216,
+      "sha256": "d8f508c895c8cade11587f1aae248e2509fdf9e588b089fc4b085b0b6b923f99"
+    },
+    {
+      "path": "helpers/setup.py",
+      "bytes": 3225,
+      "sha256": "e73d2e5b7fc5f8bfb0bf107511f38554752461604815ae6cdae1d996c817b797"
+    },
+    {
+      "path": "helpers/supervise.py",
+      "bytes": 3976,
+      "sha256": "c158339673221f770efa5597b5ff854228b7c86feff6a4e7822be93b6644454b"
+    },
+    {
+      "path": "heralds.png",
+      "bytes": 135028,
+      "sha256": "c7259983a0e9b570fa1162355e5b81a2ae6b81ddedc6efa2bbb9942df101c171"
+    },
+    {
+      "path": "identity.json",
+      "bytes": 136936,
+      "sha256": "aac390dfc27ea86d8b458d92c6075ad9b97f595324c1acaef42d3c681b259cd0"
+    },
+    {
+      "path": "image-inspection.json",
+      "bytes": 2576,
+      "sha256": "71040940f04f5762f3ba747878b1f6fadac7bee9a3219ff8c93fd9f0bc329ab4"
+    },
+    {
+      "path": "initial-root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "language.png",
+      "bytes": 58309,
+      "sha256": "399f61790d9aff29723a8f297066f3412c04e86ad17c0ef47b50ea17503aa9da"
+    },
+    {
+      "path": "module.json",
+      "bytes": 250,
+      "sha256": "59c333d8aad5749c7ed75147a7e02a02c5fca24d00d267a81bb32752cc45eb7b"
+    },
+    {
+      "path": "new-game.png",
+      "bytes": 373434,
+      "sha256": "5b7911f74ba56c3439b0083e971cffeff12bb938258dd2e549e11766a6421ae6"
+    },
+    {
+      "path": "post-intro.png",
+      "bytes": 342351,
+      "sha256": "dc2a535ec391430ac245a4b97167300cd67c5557a8a07444877bf583f4e9a77c"
+    },
+    {
+      "path": "prior-configuration-reuse.json",
+      "bytes": 757,
+      "sha256": "31626ba0a5d63e92a6c5b7afced81e6d61f5b4f5d7f9ee92a102ef34f80d873c"
+    },
+    {
+      "path": "prior-reused-mount-check-receipt.json",
+      "bytes": 754,
+      "sha256": "4b7fe0c5ca33ec5d2bfcbbe4fe70f51d89062538754c42a0926efb82736686c4"
+    },
+    {
+      "path": "prior-reused-mount-validation.json",
+      "bytes": 173937,
+      "sha256": "54def8fabc262fe5264a1ad49196b4824756dfa5d90b2372d2eaed2c31e184fc"
+    },
+    {
+      "path": "prior-reused-standing-system-assets.json",
+      "bytes": 17111,
+      "sha256": "1257f782ebea09ba6c230647fdc77bea087e8a80e0eac42079536190f5bea47d"
+    },
+    {
+      "path": "result.json",
+      "bytes": 1369,
+      "sha256": "85e229a059fe97b4332288e85d8b41e39c580a608272f06acf58e23264ff8b8c"
+    },
+    {
+      "path": "startup-admission.json",
+      "bytes": 1659,
+      "sha256": "e74767e299a7006cce28f57413216389d605e47c7c08d6ef73e9fa76977535c4"
+    },
+    {
+      "path": "startup-launch.json",
+      "bytes": 807,
+      "sha256": "89fd54f4193f0a0f94b9963f9fe44f5f9914e1dc04161e9728abaf152236a5f4"
+    },
+    {
+      "path": "startup-receipt.json",
+      "bytes": 1107,
+      "sha256": "feb4ed8b1f57ec1a9c37561bc7bb06128fdffc9c493ad008385d553348977067"
+    },
+    {
+      "path": "startup.log",
+      "bytes": 2031,
+      "sha256": "c9bc2db0bd41a884bcf18f14f66b07bbd1693fd774308ba7c10617264387899b"
+    },
+    {
+      "path": "wal-peaks.json",
+      "bytes": 315,
+      "sha256": "5ae462913662987a20f4b77670bbe5d62ecd6d0bc2d18684721b322dca3b8c79"
+    }
+  ]
+}

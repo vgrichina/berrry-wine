@@ -1,0 +1,60 @@
+{
+  "requests": 33,
+  "responses": 33,
+  "allAcknowledged": true,
+  "steps": [
+    {
+      "batch": 500,
+      "ran": 500,
+      "steps": 500,
+      "frozen": true
+    },
+    {
+      "batch": 650,
+      "ran": 150,
+      "steps": 150,
+      "frozen": true
+    },
+    {
+      "batch": 850,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1150,
+      "ran": 300,
+      "steps": 300,
+      "frozen": true
+    },
+    {
+      "batch": 1350,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1550,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1750,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    },
+    {
+      "batch": 1950,
+      "ran": 200,
+      "steps": 200,
+      "frozen": true
+    }
+  ],
+  "total": 1950,
+  "zeroCreditsAllSnapshots": true,
+  "overlap": false,
+  "timeout": false,
+  "replay": false
+}

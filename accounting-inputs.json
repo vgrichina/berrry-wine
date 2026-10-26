@@ -1,0 +1,5 @@
+{
+  "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl",
+  "allocation": 134217728,
+  "walPolicy": "charge whole allocated WAL peaks conservatively once plus future"
+}

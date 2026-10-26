@@ -1,0 +1,43 @@
+{
+  "candidateId": "civilization-2-win16",
+  "app": "civ2_win16",
+  "startedAt": "2026-10-26T21:20:26.918199Z",
+  "outcome": "harness-error",
+  "verification": "reviewed",
+  "route": "ordinary-new-game-setup",
+  "summary": "Visually inspected post-intro newgame menu and Small world/Chieftain/3civilizations ordinary UI. SixPNG budget reached at competition; barbarian dialog metadata only. No map/city/unit gameplay. Normal quit59.24s no authentic guest failure.",
+  "build": {
+    "originalmain": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "screenshots": [
+    "language.png",
+    "heralds.png",
+    "post-intro.png",
+    "new-game.png",
+    "difficulty.png",
+    "civilizations.png"
+  ],
+  "gameplayScreenshots": [],
+  "artifacts": [
+    "README.md",
+    "module.json",
+    "identity.json",
+    "configuration-reuse.json",
+    "guest-admission.json",
+    "guest-launch.json",
+    "guest-receipt.json",
+    "guest.log",
+    "control-in.jsonl",
+    "control-checkpoint.json",
+    "image-inspection.json",
+    "durable-checkpoint.json",
+    "cleanup.json"
+  ],
+  "box": null,
+  "remainingGates": [
+    "Visually inspect barbarian activity dialog and remaining ordinary setup",
+    "Reach and visually inspect map/city/unit gameplay"
+  ],
+  "authenticStartupBlocker": null
+}

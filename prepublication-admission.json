@@ -1,0 +1,52 @@
+{
+  "at": "2026-10-26T21:22:59.238950+00:00",
+  "accounting": {
+    "entries": {
+      "/tmp/civ2-win16-post-intro-dialog-gameplay-oct26": 12288,
+      "/home/user/wine-assembly/scratch/runs/civ2-win16-post-intro-dialog-gameplay-oct26": 2211840,
+      "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-post-intro-dialog-gameplay-oct26": 241664,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-19-20-01a17a15-0597-7a41-bc82-15ef96f3ae15.jsonl": 2863104
+    },
+    "walConservativeUpperBoundOnce": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 3604480,
+      "/home/user/.codex/state_5.sqlite-wal": 4399104,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4354048
+    },
+    "total": 34095104
+  },
+  "futureIncluding8MiBReserve": 50331648,
+  "captureProjection": 12582912,
+  "remotePublicationBound": 2097152,
+  "remoteRuntimeBytes": 0,
+  "allocation": 134217728,
+  "projected": 84426752,
+  "diskFree": 3709284352,
+  "hostProjectedFree": 3658952704,
+  "hostRequiredFree": 2982150144,
+  "memAvailable": 3757490176,
+  "required": 2415919104,
+  "residentClientsAlreadyDeducted": [
+    {
+      "pid": 3147614,
+      "rss": 193220608
+    },
+    {
+      "pid": 3150114,
+      "rss": 209321984
+    },
+    {
+      "pid": 3152013,
+      "rss": 196218880
+    }
+  ],
+  "guestPhysicalCap": 805306368,
+  "hostReserve": 805306368,
+  "GLCap": 268435456,
+  "remoteHelperCaps": 201326592,
+  "prospectiveClientAllowance": 335544320,
+  "completedHeavyReserved": 0,
+  "admitted": true
+}

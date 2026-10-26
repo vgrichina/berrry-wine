@@ -1,0 +1,12 @@
+{
+  "normalQuitAcknowledged": true,
+  "exitCode": 0,
+  "stopReason": null,
+  "remainingOwned": [],
+  "moduleSHA256Unchanged": true,
+  "box": null,
+  "boxState": "not assigned",
+  "expiry": null,
+  "hostStopped": false,
+  "coordinatorShutdownOwnershipUnchanged": true
+}

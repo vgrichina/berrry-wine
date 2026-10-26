@@ -1,0 +1,47 @@
+{
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "module": {
+    "path": "/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm",
+    "bytes": 1880280,
+    "sha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "compiled": false,
+    "readonly": true
+  },
+  "priorCommit": "8a7870b6fbb29000ed2101c415dc4509307c6ac7",
+  "reusedPassed": [
+    "source239 fixture337 identities",
+    "unchanged mount337files10comma canonical parser receipt reused",
+    "startup sameNodeFlagsEnv corrected physicalcap limits",
+    "production guest launch with initializers unchanged",
+    "ordinary presented language/heralds input",
+    "visible intro and ordinary numericEscape removal of intro windows",
+    "all1650batches ACK and zero credits",
+    "normal quit and cleanup"
+  ],
+  "passed": [
+    "source239 fixture337 freshly matched",
+    "unchanged canonical mount337files10comma receipt reuse validated this task",
+    "exact Node24.18.1 startup limits/environment",
+    "production initializers and guest normal launch",
+    "numeric Escape once intro removal",
+    "visually inspected newgame/worldsize/difficulty/competition",
+    "all1950 batches ACK zero-credit snapshots",
+    "normal quit cleanup"
+  ],
+  "remaining": [
+    "Visually inspect barbarian activity dialog and remaining ordinary setup",
+    "Reach and visually inspect map/city/unit gameplay"
+  ],
+  "gameplay": false,
+  "authenticGuestFailure": null,
+  "incidentsPreserved": [
+    "prior598016B reserve shortfall",
+    "prior initial session/WAL accounting omissions",
+    "prior90sec startup cutoff not authentic failure",
+    "current symbolicEscape parsedNaN",
+    "current unnecessary subsequent keypress27",
+    "current capture budget misallocation",
+    "Six PNGs consumed before map/city/unit. Setup verification consumed2; sequential new-game setup required more captures than four remaining. Gameplay unverified; not authentic guest failure."
+  ],
+  "runtimeAttemptConsumed": true
+}
