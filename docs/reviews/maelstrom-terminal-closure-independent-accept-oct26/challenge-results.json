@@ -1,0 +1,706 @@
+{
+  "candidate": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "passed": 174,
+  "failed": 0,
+  "cases": 174,
+  "results": [
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":4,\"event\":3,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":0,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":1,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":true,\"status\":5,\"event\":2,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":4,\"event\":3,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":1,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":2,\"reason\":0} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":1} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":2} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":3} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":4} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":5} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":6} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":7} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":8} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} live return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} live error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} live object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} live undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} live symbol",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} persist return",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} persist error",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} persist object",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} persist undefined",
+      "pass": true
+    },
+    {
+      "name": "{\"legacy\":false,\"status\":5,\"event\":0,\"reason\":9} persist symbol",
+      "pass": true
+    },
+    {
+      "name": "nonterminal callback stays observable true live",
+      "pass": true
+    },
+    {
+      "name": "nonterminal callback stays observable true persist",
+      "pass": true
+    },
+    {
+      "name": "nonterminal callback stays observable false live",
+      "pass": true
+    },
+    {
+      "name": "nonterminal callback stays observable false persist",
+      "pass": true
+    }
+  ],
+  "syntheticOnly": true,
+  "authenticBatch36170Cause": "UNKNOWN"
+}

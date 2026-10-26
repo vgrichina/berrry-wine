@@ -1,0 +1,114 @@
+{
+  "verdict": "ACCEPT",
+  "candidate": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "testedTree": "77bc9bfbcb460422df49bcedf0de2d682cbb7410",
+  "pins": {
+    "tools/maelstrom-original-errno-adapter.cjs": "28c1c3249ef488d4b2df1ccb3d0658cc1b02803ca9163f5a2bb24f945ba00551",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-terminal-callback-closure.test.cjs": "5850bb6f19f456ee80c182344f2eeba660ac53ee2845fd4f8089e092c348bf72",
+    "test/maelstrom-adapter-scalar-anchor.test.cjs": "abfb36515543b9465fdf66f0b0975f18ec10c109c9eb55ad1ffef4bbd69f2bb4",
+    "test/maelstrom-status-event-validation.test.cjs": "e52f0cfcd1bdd745558c650b86527681994e103d8b251c027b96253b960cbdd9",
+    "docs/reviews/maelstrom-state-acceptance-retained-closeout-oct26/remaining-independent.cjs": "10421b75e1ed40dae8e51368537eb76b1f9aba75460cfc3831bd840d556d02e5"
+  },
+  "fixtureReconciliation": {
+    "original": "ea00969e24722ff0946aef0e59e18ed8ed4d40f6123b6a23fdfd20b566341996",
+    "corrected": "abfb36515543b9465fdf66f0b0975f18ec10c109c9eb55ad1ffef4bbd69f2bb4",
+    "why": "Prior correction retained byte-exact: status/event are finite reachable enums; unrestricted scalar endpoints retain signed/unsigned u32 normalization. Illegal enum endpoints must reject, not be accepted. No fixture edited. Historical13/3474 conflicting oracle remains historical; corrected13/3748 rerun passes."
+  },
+  "sourceReview": "Only production change is observe() setting closed=true for validated status4/status5 immediately before record(), which calls readLive then persist. Callback throw/reentry cannot bypass terminal closure. Snapshot materializes native/diagnostic/select scalars before callbacks, preserving detached historical values under export mutation. Closure leaves last-key deduplication and nonterminal behavior intact. Rejection still throws after successful persist; a callback throw preserves exact identity. No concrete defect found.",
+  "results": {
+    "independent26": {
+      "groups": 26,
+      "cases": 74,
+      "failed": 0
+    },
+    "regression": {
+      "cases": 68,
+      "failed": 0
+    },
+    "correctedScalar": {
+      "groups": 13,
+      "cases": 3748,
+      "failed": 0
+    },
+    "unchanged10": {
+      "groups": 10,
+      "failed": 0
+    },
+    "unchanged19": {
+      "groups": 19,
+      "failed": 0
+    },
+    "semantic": {
+      "groups": 7,
+      "cases": 924,
+      "failed": 0
+    },
+    "adapter": {
+      "groups": 7,
+      "failed": 0
+    },
+    "rejection": {
+      "groups": 14,
+      "failureCombinations": 511,
+      "failed": 0
+    },
+    "independentChallenge": {
+      "cases": 174,
+      "failed": 0
+    },
+    "reusedUnaffected": {
+      "groups": 20,
+      "model": 13,
+      "source": 6,
+      "preservation": 1
+    }
+  },
+  "failures": "No candidate test failures. Setup ENOENT and resource/control qualifications recorded separately; all historical failures preserved.",
+  "commands": "/tmp/maelstrom-terminal-closure-independent-accept-oct26/ops/commands.jsonl",
+  "resources": {
+    "at": 1792981926.205062,
+    "charges": {
+      "owned": 4722688,
+      "launcher": 167936,
+      "session": 602112,
+      "sharedWALSHM": 28434432,
+      "positiveDB": 2781184,
+      "future": 8388608,
+      "reserve": 8388608,
+      "board": 16384
+    },
+    "projected": 53501952,
+    "cap": 67108864,
+    "memAvailable": 2493329408,
+    "ownRAMAllowance": 201326592,
+    "free": 4750442496,
+    "projectedFree": 4696940544,
+    "passGate": true
+  },
+  "incidents": {
+    "current": [
+      "Initial pwd had no per-child limits. Bootstrap inspections used CPU60/file24MiB/VM128MiB/timeout60 kill5, but lacked output supervisor, used unbounded read_text/read_bytes for some local files, and first tool output truncated. No retrospective compliance. Full controls apply after bootstrap; conservative inherited DB baseline includes growth.",
+      "Initial setup supervisor could not chdir into not-yet-created owned repo (ENOENT); no child executed. Corrected default cwd to owned base before checkout, limits unchanged.",
+      "Python supervisory children initially had CPU/file/wall/output bounds but no explicit Python heap bound after bootstrap (Node tests always used max-old-space-size128). Before publication, Python child AS soft limit128MiB added; non-Python children retain installed-tool address-space requirements, Node heap128MiB. No retrospective compliance claimed; exact-input completed tests retained."
+    ],
+    "historical": "Donor ops/incidents.json, published review incidents and original failure retained unchanged; no retrospective compliance."
+  },
+  "mainIntegration": false,
+  "root": "Tracked/index/refs READONLY. Initial launcher root-ref digest reused; no later full-ref listing/comparison performed. User supplied main9148ceb1; unchanged by this task.",
+  "authenticBatch36170Cause": "UNKNOWN",
+  "futureQualification": "Changed-module qualification required before any future guest execution; this source acceptance does not authorize runtime.",
+  "box": {
+    "assigned": null,
+    "id": "bx_k38z8byn",
+    "state": "Historical coordinator-reported STOPPED, not accessed/reverified",
+    "expiry": "2026-10-26T01:39:12.069Z historical",
+    "lifecycleOwner": "coordinator"
+  },
+  "restrictions": "No workers/compiler/build/native/Wasm/guest/Boat/browser/service/deploy/trust edits/denial retry. Claude idle, HeroesII laptop-owned, corpus denial untouched.",
+  "remaining": [
+    "publication",
+    "cleanup"
+  ]
+}

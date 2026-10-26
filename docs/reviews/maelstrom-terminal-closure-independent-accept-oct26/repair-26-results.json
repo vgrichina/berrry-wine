@@ -1,0 +1,114 @@
+{
+  "candidate": "7508a8c20f8dd172a1a341112695ba5e4f72918d",
+  "passed": 26,
+  "failed": 0,
+  "cases": 74,
+  "results": [
+    {
+      "name": "legal monotonic and skipped observations; legacy=false",
+      "pass": true
+    },
+    {
+      "name": "all reachable rejection event stages close; legacy=false",
+      "pass": true
+    },
+    {
+      "name": "backward and illegal skips reject before callbacks; legacy=false",
+      "pass": true
+    },
+    {
+      "name": "pristine start cannot skip native start state; legacy=false",
+      "pass": true
+    },
+    {
+      "name": "callback order and historical snapshot survives live export mutation; legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 4,3 live legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 4,3 persist legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,0 live legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,0 persist legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,1 live legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,1 persist legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,2 live legacy=false",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,2 persist legacy=false",
+      "pass": true
+    },
+    {
+      "name": "legal monotonic and skipped observations; legacy=true",
+      "pass": true
+    },
+    {
+      "name": "all reachable rejection event stages close; legacy=true",
+      "pass": true
+    },
+    {
+      "name": "backward and illegal skips reject before callbacks; legacy=true",
+      "pass": true
+    },
+    {
+      "name": "pristine start cannot skip native start state; legacy=true",
+      "pass": true
+    },
+    {
+      "name": "callback order and historical snapshot survives live export mutation; legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 4,3 live legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 4,3 persist legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,0 live legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,0 persist legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,1 live legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,1 persist legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,2 live legacy=true",
+      "pass": true
+    },
+    {
+      "name": "terminal callback throw closes 5,2 persist legacy=true",
+      "pass": true
+    }
+  ],
+  "syntheticBoundaryOnly": true,
+  "authenticBatch36170Cause": "UNKNOWN"
+}

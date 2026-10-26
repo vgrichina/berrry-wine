@@ -1,0 +1,21 @@
+{
+  "base": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "head": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "sourceFixtures": {
+    "tools/maelstrom-original-errno-adapter.cjs": "28c1c3249ef488d4b2df1ccb3d0658cc1b02803ca9163f5a2bb24f945ba00551",
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-original-errno-adapter.cjs": "f8f869435e420fe321ac58fc7eb01c198c1a4f053fc438782722a549144b529c"
+  },
+  "result": {
+    "groups": 7,
+    "passAll": true
+  },
+  "remaining": [
+    "rejection14",
+    "independent-challenge",
+    "retained-unaffected"
+  ],
+  "blockers": [],
+  "evidence": "/tmp/maelstrom-terminal-closure-independent-accept-oct26/ops/adapter7.log"
+}

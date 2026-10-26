@@ -1,0 +1,7 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "validation": "No mount/runtime operation. Reuse unchanged donor configuration.json no-mount receipt; no parser invocation needed for empty mount argv.",
+  "rootInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/maelstrom-terminal-closure-independent-accept-oct26/root-ref-digest.json"
+}

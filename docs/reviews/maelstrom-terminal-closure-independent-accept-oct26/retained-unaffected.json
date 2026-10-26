@@ -1,0 +1,22 @@
+{
+  "candidate": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "groups": 20,
+  "model": 13,
+  "sourceSnapshot": 6,
+  "preservation": 1,
+  "inputPins": {
+    "tools/maelstrom-native-errno-latch.cjs": "24b0e65c902cad56974a12da48251b77b3eebb018c4bd5825d7e2f5050b06095",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-native-errno-latch.test.cjs": "3272481c7d6d97d4159151df8e6317f6bf7c15364853925ea72fbe9cc2b69436",
+    "test/maelstrom-native-errno-source-snapshot.test.cjs": "a4e790fb83ed6f68ee68d4cd227f82c4c1ae9b18b9d2d98cc6c8ec4e7fc1ba22",
+    "test/maelstrom-select-hook-model.cjs": "fe015cc73e30295c541efbda6d5eeb000b7fe9d288aa524331bf279ad7ae71b6",
+    "/tmp/maelstrom-status-event-validation-repair-oct26/ops/existing-latch.log": "1d9b7c0482e1c3986731728b04209b40900b34c41baf879f33f0c2211b7ced37",
+    "/tmp/maelstrom-status-event-validation-repair-oct26/ops/existing-source.log": "989323658ab2b0ad0feb0ae042bbc4e0540ffa2bd935f8321292136be0452f73",
+    "/tmp/maelstrom-status-event-validation-repair-oct26/ops/preservation.json": "fd176f183c6a2f84b353f1acc4060766857704742557191951f8283eb41fc032",
+    "/tmp/maelstrom-status-event-validation-repair-oct26/ops/historical-incidents.json": "38a8c8e7331caf9e8c7f16be13216539affc61241cb1b6017e007e41acc9531d",
+    "/tmp/maelstrom-status-event-validation-repair-oct26/ops/historical-source-incidents.json": "0a9667841d6989d9fa9baed70ac684d4f9569f723936695b4e8ae31263a8aad3"
+  },
+  "standingSourceManifest": "05d7fd44e4b6eadff578969fd910e465863df3d84d38ccee1eb78a7209884a4a",
+  "reused": true,
+  "reason": "Unaffected complete transform/select hook/source/binary/fixture inputs match prior passing exact-input receipts; no compilation or requalification. Initial coordinator admission independently verified all53 committed donor evidence artifacts."
+}

@@ -1,0 +1,8 @@
+{
+  "current": [
+    "Initial pwd had no per-child limits. Bootstrap inspections used CPU60/file24MiB/VM128MiB/timeout60 kill5, but lacked output supervisor, used unbounded read_text/read_bytes for some local files, and first tool output truncated. No retrospective compliance. Full controls apply after bootstrap; conservative inherited DB baseline includes growth.",
+    "Initial setup supervisor could not chdir into not-yet-created owned repo (ENOENT); no child executed. Corrected default cwd to owned base before checkout, limits unchanged.",
+    "Python supervisory children initially had CPU/file/wall/output bounds but no explicit Python heap bound after bootstrap (Node tests always used max-old-space-size128). Before publication, Python child AS soft limit128MiB added; non-Python children retain installed-tool address-space requirements, Node heap128MiB. No retrospective compliance claimed; exact-input completed tests retained."
+  ],
+  "historical": "Donor ops/incidents.json, published review incidents and original failure retained unchanged; no retrospective compliance."
+}

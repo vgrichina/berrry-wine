@@ -1,0 +1,28 @@
+{
+  "donor": "/tmp/maelstrom-terminal-callback-closure-repair-oct26/repo",
+  "candidate": "bbcc8685a900c1714e11b2eda4b7ac99f3d6f105",
+  "tools": {
+    "node": {
+      "path": "/usr/local/bin/node",
+      "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+      "standingBytes": 123656816
+    },
+    "python3": {
+      "path": "/usr/bin/python3",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standingBytes": 8020928
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standingBytes": 4066232
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+      "standingBytes": 846888
+    }
+  },
+  "readonlySourceInputs": "05d7fd44e4b6eadff578969fd910e465863df3d84d38ccee1eb78a7209884a4a",
+  "allocationRule": "Standing tools/read-only inputs used in place. New lstat blocks including short flat object links charged."
+}
