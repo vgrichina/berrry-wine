@@ -14,5 +14,7 @@
   "supplied-tests.tap": "a5e8e04979d171ff3e55dbcb5cb4aea1489df4b9444bba035edff92aac86a8c8",
   "../../test/file-bundle-bounded-read-independent.test.cjs": "1de60518bf41701269faf7dc53702cd0905a5a4203b431c8fc8bc58a61d67855",
   "../../test/file-bundle-bounded-read-independent-controls.cjs": "f68723d0eb8284ecb2997e5bcfcb1596ea292d3fa3c98b9d91c78f72da9235ec",
-  "oracle-controls-first-failure.tap.gz": "580ad0653201ed81fb9daa89ec66e22949147c356d51e0b06296d2b2b60ecb2f"
+  "oracle-controls-first-failure.tap.gz": "580ad0653201ed81fb9daa89ec66e22949147c356d51e0b06296d2b2b60ecb2f",
+  "PUBLICATION.md": "33bd21fde85c56212329f616e1d99962779763d1e28534c0d22af7f90a6a420b",
+  "publication-incident.json": "519015fbcbb821a66643e536a1b843b59b93ffa6469df87117c84fb1c62a522a"
 }

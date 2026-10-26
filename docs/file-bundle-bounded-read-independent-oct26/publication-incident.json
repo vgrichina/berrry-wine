@@ -1,0 +1,7 @@
+{
+  "incident": "Publication shell succeeded in push and exact ls-remote, then git status received SIGXFSZ (153) because the worker applied the 128KiB capture cap as RLIMIT_FSIZE to all files, including Git optional index refresh.",
+  "incompleteOwnedLockBytes": 131072,
+  "originalIndexBytes": 1518634,
+  "resolution": "Removed incomplete owned lock only after command termination; GIT_OPTIONAL_LOCKS=0 status succeeds, clean checkout. Git status optional refresh is not needed. Publication already verified; no push retry. Mandatory 24MiB individual file / 128KiB output guards remain.",
+  "commit": "324444e85485b375e4fef11865f4806202fe659b"
+}
