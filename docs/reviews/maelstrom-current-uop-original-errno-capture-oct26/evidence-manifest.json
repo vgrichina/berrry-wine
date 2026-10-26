@@ -1,0 +1,755 @@
+{
+  "candidate": "c6279bb936462834ccd9b51ea99a684a5befcda3",
+  "module": {
+    "path": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/errno-latch.wasm",
+    "bytes": 1884180,
+    "sha256": "fec642f6c711e57e1c4a3dfaeaff0e11be587c56fc64cde394ed7f54147b5988",
+    "verified": true
+  },
+  "payloads": [
+    {
+      "path": "evidence/api-error.json.gz",
+      "bytes": 184,
+      "sha256": "651ccb4b9a4d17662a19c616269c06faf4ca50112d7cce434ece74386d0a53a9",
+      "uncompressedBytes": 219,
+      "uncompressedSHA256": "28597bd3a4dedfa4a73ef416b55df9c2860a9f276a5b9385713b34a5e6170671",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/api-error.json"
+    },
+    {
+      "path": "evidence/api-history.jsonl.gz",
+      "bytes": 115424,
+      "sha256": "90cf23480b38d52518e23c54425c64239ed79b9ab6438f4fc298fd3690c34cda",
+      "uncompressedBytes": 384863,
+      "uncompressedSHA256": "8901dd9f67790b444a9e61ed75c0ce7ce60aaa0236466cc629e812ea94623522",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/api-history.jsonl"
+    },
+    {
+      "path": "evidence/asset-projection.json.gz",
+      "bytes": 123,
+      "sha256": "c8d2b7e912879b1735d94f27a78f73d36607da486c7c0523370aaaaa01ab192a",
+      "uncompressedBytes": 135,
+      "uncompressedSHA256": "93d2cf23bb1bb0b3cde5782d4e4510bca981a93e22b08aee6e33f60879705a06",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/asset-projection.json"
+    },
+    {
+      "path": "evidence/assets-transfer.json.gz",
+      "bytes": 15313,
+      "sha256": "cdccb92438ff8bc75c1efed8999d965c65c44de2445c114f71b40b4e03e3085e",
+      "uncompressedBytes": 65883,
+      "uncompressedSHA256": "43d7a7b56f931bcced39df0e6442c150b64b1848c6b2b6930a2b2fcce5b2c34f",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/assets-transfer.json"
+    },
+    {
+      "path": "evidence/box-handback.json.gz",
+      "bytes": 321,
+      "sha256": "aca38c1a6f0c56c7306cd368c51e7365921192f0cada4195341e4cd5fe0a97b6",
+      "uncompressedBytes": 534,
+      "uncompressedSHA256": "58b9fff3e7ceb9a1511b4c85e8b2392a0921c45deae29438f97a30af4196264c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/box-handback.json"
+    },
+    {
+      "path": "evidence/build-result-api.json.gz",
+      "bytes": 864,
+      "sha256": "5c3d95cd7347cde456d4b564bc4b0d1ad159a02694bfe78197f53ad65d29493e",
+      "uncompressedBytes": 1818,
+      "uncompressedSHA256": "89eb4e6ea7c1c35f12ecdb3a60b87eff088db9f5161a2cd09e726f78bd40987a",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/build-result-api.json"
+    },
+    {
+      "path": "evidence/build-transfer.json.gz",
+      "bytes": 1636,
+      "sha256": "cc95c9a6335f0bf3f72a8c23788a652575a3545734918fc9dfa0ed5d0e2516b5",
+      "uncompressedBytes": 5454,
+      "uncompressedSHA256": "de131711a37035777e220d397bdf59969c2bdfc7e80357b22fda6075b22c7918",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/build-transfer.json"
+    },
+    {
+      "path": "evidence/build-transform-preflight.json.gz",
+      "bytes": 1199,
+      "sha256": "15f8a5e64eb9f8de15b9a9c578ae1434845874a673a722681a1b942e77925dc0",
+      "uncompressedBytes": 2673,
+      "uncompressedSHA256": "6c2f59395f8ecf47a774a8d4ea3b60ecc8086485f94f527965cf73d55d12e60d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/build-transform-preflight.json"
+    },
+    {
+      "path": "recovery/build.py",
+      "bytes": 1280,
+      "sha256": "544a2c694eaa6f236f4235b99fc2aa4a6626666087473d5910575e2d9464bc9c",
+      "uncompressedBytes": 1280,
+      "uncompressedSHA256": "544a2c694eaa6f236f4235b99fc2aa4a6626666087473d5910575e2d9464bc9c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/build.py"
+    },
+    {
+      "path": "recovery/canonical-build-tail-only.cjs",
+      "bytes": 8097,
+      "sha256": "3708120d60a21808a4160ba7dd9041b1486a641031d9e8c7df5e02eb5da18876",
+      "uncompressedBytes": 8097,
+      "uncompressedSHA256": "3708120d60a21808a4160ba7dd9041b1486a641031d9e8c7df5e02eb5da18876",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/canonical-build-tail-only.cjs"
+    },
+    {
+      "path": "evidence/checkout.json.gz",
+      "bytes": 246,
+      "sha256": "537adf12881653452ae86af03cdf3a0c37641c69f3be6c9ce1fea65daf6548ec",
+      "uncompressedBytes": 374,
+      "uncompressedSHA256": "eec014ef9388a3f644af2ae492e04ce28b5300fa84c4fcc53506211c1f9167ab",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/checkout.json"
+    },
+    {
+      "path": "evidence/checkpoint-guest-terminal.json.gz",
+      "bytes": 918,
+      "sha256": "9169cb6f7a5363c576a866be2f4d6fe91bb9ece02929aa75776cedad54ade59d",
+      "uncompressedBytes": 2489,
+      "uncompressedSHA256": "79c56c284c68834b60f03c2d2bd7d2ec35a764d89a697be526440c31738fb055",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/checkpoint-guest-terminal.json"
+    },
+    {
+      "path": "evidence/checkpoint-ready.json.gz",
+      "bytes": 195,
+      "sha256": "5e4fc68caab84a337cd819b865e00213507d1c98132eab7705f695ba726ade21",
+      "uncompressedBytes": 247,
+      "uncompressedSHA256": "325c3e9911c910766b7a1e8dfb8c1db8825c147ef5b6526fb6a3679c11b38f64",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/checkpoint-ready.json"
+    },
+    {
+      "path": "evidence/collect-inventory-api.json.gz",
+      "bytes": 500,
+      "sha256": "2e572bad5e39dab5c784f8388c6cad7e20887bfc95f553ecbb8270c8b3a1c264",
+      "uncompressedBytes": 942,
+      "uncompressedSHA256": "b250fe1a728e3e58d154ebd726d9b602324d73586e97e84b181cfbc0c231c961",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collect-inventory-api.json"
+    },
+    {
+      "path": "recovery/collect.py",
+      "bytes": 2590,
+      "sha256": "4fca02ee8412481b5d6b150cf78d16b42063205a15012ba422800a8dd9b9c2f7",
+      "uncompressedBytes": 2590,
+      "uncompressedSHA256": "4fca02ee8412481b5d6b150cf78d16b42063205a15012ba422800a8dd9b9c2f7",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collect.py"
+    },
+    {
+      "path": "evidence/collected/ops/guest/command.json.gz",
+      "bytes": 817,
+      "sha256": "85a8b9f30333ed2e12d791381f1e4f9b7ea94fe2692bcfa193c283ad4ad30433",
+      "uncompressedBytes": 2291,
+      "uncompressedSHA256": "a7dbbd8d59f40fbdc1e1ba627e4c36a0f7985eada97efc13c8f5be0e9e0bf915",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected/ops/guest/command.json"
+    },
+    {
+      "path": "evidence/collected/ops/guest/output.log.gz",
+      "bytes": 726,
+      "sha256": "19d69a57372eb7ad8de02f6278a95653d060785a797649c2076fd583e299e43d",
+      "uncompressedBytes": 1884,
+      "uncompressedSHA256": "ac031f1104793f9059450ed6e6bf2469abcb3547eea04762b1d8bbb7e08d586b",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected/ops/guest/output.log"
+    },
+    {
+      "path": "evidence/collected/ops/guest/terminal.json.gz",
+      "bytes": 917,
+      "sha256": "6cef5e684582a9b9e6372c1f39bb84dd140f8875c2fb5a0d3579e794448ecdd3",
+      "uncompressedBytes": 2488,
+      "uncompressedSHA256": "7632c8e7ba4defa2c377ed017a36111e205635d0494f4910f86d59eee02e30f2",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected/ops/guest/terminal.json"
+    },
+    {
+      "path": "evidence/collected/tree-validation.json.gz",
+      "bytes": 875,
+      "sha256": "9d1757baa0c8bce7d8ca3e348e319e15228a035e36cf1af40b9f3ca358df44ef",
+      "uncompressedBytes": 9661,
+      "uncompressedSHA256": "2bbc43669113a34d87485a8a2b240e06e5f4d7b007ba7bd550c1d99141a0e4ad",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected/tree-validation.json"
+    },
+    {
+      "path": "evidence/collected-build/build-inputs.json.gz",
+      "bytes": 13266,
+      "sha256": "615ab4eed56d5c00dd701446ed64a6ead4e2e23255e1865075ba0e1f587d0877",
+      "uncompressedBytes": 46847,
+      "uncompressedSHA256": "7795bcf0a99eaab88d442a533e17e61ee76ab54338057b7de1fc79ccf0c8029c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/build-inputs.json"
+    },
+    {
+      "path": "evidence/collected-build/build-outputs.json.gz",
+      "bytes": 7391,
+      "sha256": "68949529ba75e534f99520aa042db72fa167991fabf932b6620fb2fe2e13eb1c",
+      "uncompressedBytes": 56622,
+      "uncompressedSHA256": "0980a5306e5676856f2b8e86a73aa0ec66c35378612bacf895ec6d0b7932a8d2",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/build-outputs.json"
+    },
+    {
+      "path": "evidence/collected-build/compile/command.json.gz",
+      "bytes": 533,
+      "sha256": "51bfec6da0799a34666a7ef79d4b14dba4883a1b3f8f815f889eef843a5405b2",
+      "uncompressedBytes": 1207,
+      "uncompressedSHA256": "a92c9207e4eefebcf59b70b60d0c70bd1a22aef25c26ad65c9c32ff9b699ba35",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/compile/command.json"
+    },
+    {
+      "path": "evidence/collected-build/compile/output.log.gz",
+      "bytes": 213,
+      "sha256": "dd09610274d324930f6f2337355afbef190b67d3d520b4a5a934535092008ecf",
+      "uncompressedBytes": 263,
+      "uncompressedSHA256": "a7c9b706e284048079b4b13fa92c7b61ef69f3a08a8bf134e179518eec51ce22",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/compile/output.log"
+    },
+    {
+      "path": "evidence/collected-build/compile/terminal.json.gz",
+      "bytes": 631,
+      "sha256": "59e3b5d05acd06e0dbd23521d64414a7ac864bb6a9e0234d5caabe655a55f14d",
+      "uncompressedBytes": 1403,
+      "uncompressedSHA256": "f4d8928ab161efed13831ef6108f3ad3707142993a080f93f626b043fbea9092",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/compile/terminal.json"
+    },
+    {
+      "path": "evidence/collected-build/startup/command.json.gz",
+      "bytes": 643,
+      "sha256": "5a7ac8e20a081981e1bc73c0caae275d85a42c86fcb056e4150e9e67fa668433",
+      "uncompressedBytes": 1332,
+      "uncompressedSHA256": "00a340ea1d81bd48365e346045fbd6007c7f69ce3523a727b347e5010461def7",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/startup/command.json"
+    },
+    {
+      "path": "evidence/collected-build/startup/output.log.gz",
+      "bytes": 369,
+      "sha256": "f9af3432ae39b72df71d257a2f542d5cfbcbe3cd7cb5ad7046080808fd2fadb2",
+      "uncompressedBytes": 679,
+      "uncompressedSHA256": "d72fb5c1bc5bc7d7b044435e2e21e77eab5b4e81e1d06e27bd1afd1db86c49d5",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/startup/output.log"
+    },
+    {
+      "path": "evidence/collected-build/startup/terminal.json.gz",
+      "bytes": 742,
+      "sha256": "0213ea0f45637c3a6c8b0a66418e7ad565827b7d85ab6f55b4df7301d8db4ba8",
+      "uncompressedBytes": 1529,
+      "uncompressedSHA256": "5277bdc977daac6a2be995d4575ca2495019af050cb7fc44061282896bccb444",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-build/startup/terminal.json"
+    },
+    {
+      "path": "evidence/collected-manifest.json.gz",
+      "bytes": 316,
+      "sha256": "e14ae362bfb6f5d9c5f551fcb2b06a3426ca17e1bac96aeb48e2e6b6eda2a229",
+      "uncompressedBytes": 588,
+      "uncompressedSHA256": "7e6b2ba66ba43c8b1e087d36c130a2f35a80ca26c2a99d70f617f20af4027dce",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/collected-manifest.json"
+    },
+    {
+      "path": "recovery/common.py",
+      "bytes": 5555,
+      "sha256": "308b4aa32fbcd7df39aeb92fdd9c0a2d41a6468a9d7e6014a7ea8297d37d6268",
+      "uncompressedBytes": 5555,
+      "uncompressedSHA256": "308b4aa32fbcd7df39aeb92fdd9c0a2d41a6468a9d7e6014a7ea8297d37d6268",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/common.py"
+    },
+    {
+      "path": "evidence/compile-api.json.gz",
+      "bytes": 244,
+      "sha256": "2e79e73010bdd674412af9c43b6ed568453f55dc8a547ad39f769a955cef0466",
+      "uncompressedBytes": 372,
+      "uncompressedSHA256": "26d89f9353fae6c57d1b3b58b90781c8e7fbb92c3861b926b205f0d20f749742",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/compile-api.json"
+    },
+    {
+      "path": "evidence/compile-first-preinput-api.json.gz",
+      "bytes": 245,
+      "sha256": "00b8d1a83f671f7627ba1c1c050ebbd7a4a02f8c82fa14503916d7babc3da4ba",
+      "uncompressedBytes": 372,
+      "uncompressedSHA256": "a75c68eb098bcbceb2fc4799ca001e2eb64a48806c378b97eb469acfad7a6a88",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/compile-first-preinput-api.json"
+    },
+    {
+      "path": "evidence/configuration.json.gz",
+      "bytes": 292,
+      "sha256": "9a706fb315c295fb2965b7f955f356e77f1c5826861d9677d9c717c3e7a06114",
+      "uncompressedBytes": 394,
+      "uncompressedSHA256": "237590beb896b6d3a30b0cbc90f43ce6b5cfcb9ac1c7eb17917ccbbbd1ee2f06",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/configuration.json"
+    },
+    {
+      "path": "evidence/current-manifest.json.gz",
+      "bytes": 7900,
+      "sha256": "309243be8b35f4d1d548ed7b6e3f38f09cf5a2266089f62d099cbb12b13d1ed9",
+      "uncompressedBytes": 23118,
+      "uncompressedSHA256": "af6a5743fd8e709bdde5deb3aec4543602ee1e382e808bd520f5414f28203f0a",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/current-manifest.json"
+    },
+    {
+      "path": "evidence/db-baseline.json.gz",
+      "bytes": 153,
+      "sha256": "89b3eb44571ad74aeea9824ada37f21bfec9f8fdce25636ea14e70dac2925f94",
+      "uncompressedBytes": 294,
+      "uncompressedSHA256": "5679b3aa4144b2fb228f6cd364f8491a3fcb8d56aa917c2bfb1ba3d4f2f26f49",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/db-baseline.json"
+    },
+    {
+      "path": "recovery/extend-loaded-mapping.py",
+      "bytes": 1482,
+      "sha256": "c3abe2f6389b6c8085959b235b7ae8e13328418a23350041d33aa490622d5e9d",
+      "uncompressedBytes": 1482,
+      "uncompressedSHA256": "c3abe2f6389b6c8085959b235b7ae8e13328418a23350041d33aa490622d5e9d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/extend-loaded-mapping.py"
+    },
+    {
+      "path": "evidence/final-runner-transfer.json.gz",
+      "bytes": 336,
+      "sha256": "88a4067dfc01bd699f90272ada9c0fc7e836e4bf8ae582d006cd44b3c8bd846c",
+      "uncompressedBytes": 646,
+      "uncompressedSHA256": "564d5239ebeb97cce4db2378ef7c948b0ac7c1e0ba7958662e6b62e45d49e9ce",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/final-runner-transfer.json"
+    },
+    {
+      "path": "evidence/first-build-preinput-incident.json.gz",
+      "bytes": 278,
+      "sha256": "8683e335b1142e98437974df48eb9c5f1dc5a9080a01f50e4b40aee9e92d436d",
+      "uncompressedBytes": 471,
+      "uncompressedSHA256": "e3bd4f3bb674cd30c9b1a5016dd9b700456719e6988c1ecdc0e734b4b254fd52",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/first-build-preinput-incident.json"
+    },
+    {
+      "path": "evidence/guest-api.json.gz",
+      "bytes": 1081,
+      "sha256": "44041f489a500b11fd00c0197ee0a10c0727417916f1ccfc3766b43278552f7f",
+      "uncompressedBytes": 2753,
+      "uncompressedSHA256": "74c9fe612916c43f7afcd45d2788320b9ac9f6bb8773a699e139b6aecdda4b2e",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/guest-api.json"
+    },
+    {
+      "path": "recovery/guest.py",
+      "bytes": 1125,
+      "sha256": "f04a5edbf0f2a7f2f8a197ad7a46e9ab2b9f8c3ed984d4dc7c60a95b9ebb827b",
+      "uncompressedBytes": 1125,
+      "uncompressedSHA256": "f04a5edbf0f2a7f2f8a197ad7a46e9ab2b9f8c3ed984d4dc7c60a95b9ebb827b",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/guest.py"
+    },
+    {
+      "path": "evidence/handback-process-api.json.gz",
+      "bytes": 347,
+      "sha256": "5fd5471aadcdfc0cff455c93bdaeb3ae412895d8a9191c5c6e673bd9dd21edc1",
+      "uncompressedBytes": 655,
+      "uncompressedSHA256": "5091b9ebc85bc9e8994bb7955bd57e4f23a062bd14bc69671498e23e6143e481",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/handback-process-api.json"
+    },
+    {
+      "path": "evidence/immutable-pins.json.gz",
+      "bytes": 866,
+      "sha256": "14a3bf4ddda71198981cb3365dc53ac534e1b8dd1d6570e2cb071eabb2589478",
+      "uncompressedBytes": 2241,
+      "uncompressedSHA256": "ac49b8661698babd286ccd23d139367aeecefa93e58cf4cd52cc3722099f081e",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/immutable-pins.json"
+    },
+    {
+      "path": "evidence/incidents.json.gz",
+      "bytes": 884,
+      "sha256": "e4d967484292872e4ee23bcef4f0c9767960fbf7dafa42fbbf438b8b359e1a47",
+      "uncompressedBytes": 1577,
+      "uncompressedSHA256": "f66b58d18167117bd2c1548f0e4782605a29fac2d3f256a2626bddf72b327e5f",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/incidents.json"
+    },
+    {
+      "path": "recovery/launch-compile.py",
+      "bytes": 330,
+      "sha256": "19d73f14224aa04bbf1094fc21c3fc05ebc4336f6ac3fcab6861982ac5b6a02f",
+      "uncompressedBytes": 330,
+      "uncompressedSHA256": "19d73f14224aa04bbf1094fc21c3fc05ebc4336f6ac3fcab6861982ac5b6a02f",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/launch-compile.py"
+    },
+    {
+      "path": "evidence/loaded-mapping-extension.json.gz",
+      "bytes": 454,
+      "sha256": "bde0c7726928030c6b5534401a9b160e5da081a9ab6e14f7fb8b12b320cf7870",
+      "uncompressedBytes": 866,
+      "uncompressedSHA256": "0889e9e7fb9b754778058920d58eaf39bdc5d852a118e4806141c1a9933369cd",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/loaded-mapping-extension.json"
+    },
+    {
+      "path": "evidence/logger-directory-repair.json.gz",
+      "bytes": 301,
+      "sha256": "66816a84465c41d9a5e7f871c5119f1580458d657bdf512ba8a03aeede8a5124",
+      "uncompressedBytes": 416,
+      "uncompressedSHA256": "d2ea23e43610e3dd07a3c706bc589e07a62c1e44c4f54b98696e9ff682e39cc4",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/logger-directory-repair.json"
+    },
+    {
+      "path": "evidence/missing-build-sh-transfer.json.gz",
+      "bytes": 205,
+      "sha256": "36ee317d12bf52c23019e5cb019e3364c28e78e095b162f1a801bb94d7e44162",
+      "uncompressedBytes": 238,
+      "uncompressedSHA256": "ca3c0ec773c8d713ce747b65a8dffcb0aa8a59566a7580941a391a43eac8688d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/missing-build-sh-transfer.json"
+    },
+    {
+      "path": "evidence/mount-actual-api.json.gz",
+      "bytes": 488,
+      "sha256": "1ffd923bf07161121e523d0be734eda3cb5643e28610ad1de12eccbaadc79e98",
+      "uncompressedBytes": 1060,
+      "uncompressedSHA256": "10991c77e4e331172b1c66e03927b5ca62ba77aa57c95bdcaaf1e9aea86e62bd",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/mount-actual-api.json"
+    },
+    {
+      "path": "evidence/mount-actual-extended-api.json.gz",
+      "bytes": 488,
+      "sha256": "cc9da3f89fb088360b55a16c9aae8064669df59d561627329a1aa58b9fe4abd8",
+      "uncompressedBytes": 1060,
+      "uncompressedSHA256": "5434870d7128781a39f3f4fe3cb373a23426053e41ea0b6b2d31dc0cf13947e1",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/mount-actual-extended-api.json"
+    },
+    {
+      "path": "evidence/mount-actual-final-api.json.gz",
+      "bytes": 488,
+      "sha256": "12333a5741cd19d0c8a691b25044fb0cf52e90ae854fc2772b50242ffef757e1",
+      "uncompressedBytes": 1060,
+      "uncompressedSHA256": "dca6c9bc92ee2672451653ef33f3fafddd4366173ebd97c69fb174b058127f4d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/mount-actual-final-api.json"
+    },
+    {
+      "path": "evidence/mount-precheckout.json.gz",
+      "bytes": 3751,
+      "sha256": "bbd1d5be083562a2e90023ab8ac0bd61bae1549a71a90c41e3039d8da4f871cf",
+      "uncompressedBytes": 19119,
+      "uncompressedSHA256": "fa4c4bf90fd8711b17e614cecc38e5503afb8b31bd4a5ad08aa260d18b4c97af",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/mount-precheckout.json"
+    },
+    {
+      "path": "evidence/observation.json.gz",
+      "bytes": 1841,
+      "sha256": "413880a2c07e5c4f5220f9bb63ddcb27d812e2047196c60751f6dbd403828ab3",
+      "uncompressedBytes": 5195,
+      "uncompressedSHA256": "98833991be1eddcf4a1cb5f6662cb8b383768b177ace4dc99971eb8a154e7bb3",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/observation.json"
+    },
+    {
+      "path": "evidence/one-guest-launch.json.gz",
+      "bytes": 107,
+      "sha256": "c83c0470bf672497aaef28476aff009f97f8c56067913a53fb4c25de363772a7",
+      "uncompressedBytes": 107,
+      "uncompressedSHA256": "297846a7c9a16b591e2e63af0fc305800f7e8dda3940a09cc757f8ba96217166",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/one-guest-launch.json"
+    },
+    {
+      "path": "evidence/owned-git-packing.json.gz",
+      "bytes": 117,
+      "sha256": "79851afb0932d953fedab6231b8dd8108f7188d0ba8becdd1ae0794231c2614f",
+      "uncompressedBytes": 124,
+      "uncompressedSHA256": "21b498b848aea0a0a5439b5d5266e21b79c458c684888e7764add4cbf4caac50",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/owned-git-packing.json"
+    },
+    {
+      "path": "recovery/pack-owned.py",
+      "bytes": 1038,
+      "sha256": "f106db029ea378ba0d44e4daafdd033e2498f6e1357ed4417095664e528a892e",
+      "uncompressedBytes": 1038,
+      "uncompressedSHA256": "f106db029ea378ba0d44e4daafdd033e2498f6e1357ed4417095664e528a892e",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/pack-owned.py"
+    },
+    {
+      "path": "recovery/prepare.py",
+      "bytes": 7108,
+      "sha256": "812857751c0b62b2562725b99c66755af39e80a53387a3c54133544db3d646fd",
+      "uncompressedBytes": 7108,
+      "uncompressedSHA256": "812857751c0b62b2562725b99c66755af39e80a53387a3c54133544db3d646fd",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/prepare.py"
+    },
+    {
+      "path": "recovery/raw-registers.py",
+      "bytes": 832,
+      "sha256": "5a8f55e35c9c99ccf25a8805c3d4972703bd801e8612651518ce2b5fa063631a",
+      "uncompressedBytes": 832,
+      "uncompressedSHA256": "5a8f55e35c9c99ccf25a8805c3d4972703bd801e8612651518ce2b5fa063631a",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/raw-registers.py"
+    },
+    {
+      "path": "evidence/reconstruction-recipe.json.gz",
+      "bytes": 342,
+      "sha256": "2eced5c4ed2b6fbb3d0754710b4d0878a27f0125e20e5c186ae4ba8bcef6e9f2",
+      "uncompressedBytes": 500,
+      "uncompressedSHA256": "2a47be1e2e3c253a2067cf9ac53011deafa6182af01465132d9ba260daf24afb",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/reconstruction-recipe.json"
+    },
+    {
+      "path": "evidence/recovered-git-objects.json.gz",
+      "bytes": 10455,
+      "sha256": "038c6d2d29dd4021a9d536c02c7f211ca1385b9504dff150f7fe194d16edc692",
+      "uncompressedBytes": 37011,
+      "uncompressedSHA256": "e415267e02155ed59e5d7bd62d6e3f8ec5802fa34878e60bc8cb7dd40f38dbb5",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/recovered-git-objects.json"
+    },
+    {
+      "path": "evidence/remote-after-build.json.gz",
+      "bytes": 150,
+      "sha256": "3e9153aeecc56579bb900f7192a25877048d1f49f4e017513ca111f423a38619",
+      "uncompressedBytes": 277,
+      "uncompressedSHA256": "7769fa856c4bea91b8265f9856074dfc42fcb1f9f0a049724ccbbe596493fac3",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-after-build.json"
+    },
+    {
+      "path": "evidence/remote-assets-readback.json.gz",
+      "bytes": 262,
+      "sha256": "a29f5d2e1f9bf9b2d06fa11f680571198c70ae93d5bac13b26f1ad9cc67ea234",
+      "uncompressedBytes": 443,
+      "uncompressedSHA256": "e9c617effc65a889ec2ff8e20ddad8e1165a07cbe465cac091f85a3538ce5e2d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-assets-readback.json"
+    },
+    {
+      "path": "evidence/remote-final.json.gz",
+      "bytes": 185,
+      "sha256": "f2612010ef790deedf3683b89f3d57b1362dcff720cbbb9dc404bbf3b0bef77f",
+      "uncompressedBytes": 350,
+      "uncompressedSHA256": "0ee55aa17118a8ceee61e72a5fa512bde1628840a07a270bd428e56fbb9ff283",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-final.json"
+    },
+    {
+      "path": "evidence/remote-immediate-precompile-corrected.json.gz",
+      "bytes": 151,
+      "sha256": "bdfef211f6e3b951d454f093d8786cbfa11c1a65d968ab659a020caa2fb6c949",
+      "uncompressedBytes": 277,
+      "uncompressedSHA256": "d7de2a2bc9c0d292c00a6436a56d7ba97c56f1c984328a2bedb5d92f6077ed87",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-immediate-precompile-corrected.json"
+    },
+    {
+      "path": "evidence/remote-immediate-precompile.json.gz",
+      "bytes": 150,
+      "sha256": "d6c89ae8f3a295a9f50fce777b8340d344d78703514efd6116458b95f7a3a563",
+      "uncompressedBytes": 277,
+      "uncompressedSHA256": "5c0ad36e9b390524024352e58eeac721bc96209fefdb2c9dcd4c88460b330482",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-immediate-precompile.json"
+    },
+    {
+      "path": "evidence/remote-immediate-preguest.json.gz",
+      "bytes": 185,
+      "sha256": "e5178ad2a35aa46d3dd720c07957132ea67b695f46e528678abed68728a14121",
+      "uncompressedBytes": 350,
+      "uncompressedSHA256": "ab2607dccf8f234b60aaf1c25471b2ddfec1a2d0d65116670d9cfa8309f3b0b7",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-immediate-preguest.json"
+    },
+    {
+      "path": "evidence/remote-initial.json.gz",
+      "bytes": 145,
+      "sha256": "0b858cf2741b0bd58485dad86be568272cc76033f92d55fc7b12cf21619d14e0",
+      "uncompressedBytes": 271,
+      "uncompressedSHA256": "792b8fae42e29c93b3a3436c213e6b80afd3523ceebb71c5d0a1fc6ca656fa44",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-initial.json"
+    },
+    {
+      "path": "evidence/remote-precompile-staging-corrected.json.gz",
+      "bytes": 148,
+      "sha256": "3fedd37181d4bc503822774b2f41cc3b19ea7eebddb85c4a581a40230d501ad2",
+      "uncompressedBytes": 277,
+      "uncompressedSHA256": "fb22c8a4718b3d9066748f531f6d64e151e61b4cae535e0e5dea17e19c3788be",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-precompile-staging-corrected.json"
+    },
+    {
+      "path": "evidence/remote-precompile.json.gz",
+      "bytes": 149,
+      "sha256": "227836e63d97b25614cc6d31f1f762bb24e7ba7cf7829601fc47a23a5c660c4d",
+      "uncompressedBytes": 277,
+      "uncompressedSHA256": "d367c38f9157b3ff3fe53598c468d7560441f1943f1682524caa6c9c0ea5f501",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-precompile.json"
+    },
+    {
+      "path": "evidence/remote-process-artifacts.json.gz",
+      "bytes": 134,
+      "sha256": "414493d4be1330b6c2c6383244f4f4f381161e78f7740a0a99c1065d83853e28",
+      "uncompressedBytes": 142,
+      "uncompressedSHA256": "fa6c587ec29482227eb51aa28c73aa1f5dc971f66bf48178c99c27e095f74c56",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-process-artifacts.json"
+    },
+    {
+      "path": "evidence/remote-source-cleared.json.gz",
+      "bytes": 294,
+      "sha256": "186c728e27c956285cff3cb5ea80fb5237bb6ec683702d34a2add60425d95041",
+      "uncompressedBytes": 497,
+      "uncompressedSHA256": "4dba00b8d5e6c092999cc0d732e4c9450575250df6c5a70cdf7d0b5e5b2b5846",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/remote-source-cleared.json"
+    },
+    {
+      "path": "recovery/repair-stage.py",
+      "bytes": 1881,
+      "sha256": "aaa840668b7af805c459db18164ee69803c1419a741555462c30fe5d96a69152",
+      "uncompressedBytes": 1881,
+      "uncompressedSHA256": "aaa840668b7af805c459db18164ee69803c1419a741555462c30fe5d96a69152",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/repair-stage.py"
+    },
+    {
+      "path": "evidence/resource-assets-staged.json.gz",
+      "bytes": 337,
+      "sha256": "f7c555e2c8a9afd5b09942f12be629694662fe1293651c335d5dbfa2247713d0",
+      "uncompressedBytes": 568,
+      "uncompressedSHA256": "d1818530846fc1b58b780b11eaf5eb1bcc82375a0da1e39ea72d44f04e6e82e2",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-assets-staged.json"
+    },
+    {
+      "path": "evidence/resource-immediate-precompile-corrected.json.gz",
+      "bytes": 336,
+      "sha256": "69f2d4eb2fc4725fd5b64833688a6559aeeca3b38a8fd0ccccead47fa388b406",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "bbf5fdf3251dff35bfe2e2ff7edf99b65c3908838bda461448dede0264201d96",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-immediate-precompile-corrected.json"
+    },
+    {
+      "path": "evidence/resource-immediate-precompile.json.gz",
+      "bytes": 336,
+      "sha256": "3ffbf0b6bfd3a3b64f74d5f590d7e42b9b03e905858329bfeccb6ca1545e0ee0",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "f2b5de9dbdffa8214ad3b3c518b178c4ff4267b5226af4575bc0507253a032ac",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-immediate-precompile.json"
+    },
+    {
+      "path": "evidence/resource-immediate-preguest.json.gz",
+      "bytes": 343,
+      "sha256": "150db705ad77a5c262cc7817a9b1e97d4cd4304ba2f45077b1b1e4922c631653",
+      "uncompressedBytes": 568,
+      "uncompressedSHA256": "01f67aa1ab479f3458f74b0a6505d6895ba47a3196f214d2ac7c7bca838591fe",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-immediate-preguest.json"
+    },
+    {
+      "path": "evidence/resource-initial-compressed-source.json.gz",
+      "bytes": 334,
+      "sha256": "9bf5abee45396a54d58193a151d473eb7802cf92878cf1e049874190c43eee39",
+      "uncompressedBytes": 561,
+      "uncompressedSHA256": "19faf2977375716a3ebd2876bff0149bf938bcf20dd6486db7820426bdd64e8c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-initial-compressed-source.json"
+    },
+    {
+      "path": "evidence/resource-initial.json.gz",
+      "bytes": 333,
+      "sha256": "9d8189f3c3c19da391de2be1263b2d498faa2185211d8e0ea07d05d287e42ac7",
+      "uncompressedBytes": 561,
+      "uncompressedSHA256": "47f8bb668c32d36440616863eb78dcd04dfdb3a47d618e02a616227d0a1148ab",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-initial.json"
+    },
+    {
+      "path": "evidence/resource-postguest.json.gz",
+      "bytes": 340,
+      "sha256": "99f8d99aa0af3e2741cfea51bd8616f3dd17af740c5ffbf7f0f1f78666dc8641",
+      "uncompressedBytes": 568,
+      "uncompressedSHA256": "626371cfb11c6de38101a06c6fdec68bcb34a21d0d74081401bfaa58ab275254",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-postguest.json"
+    },
+    {
+      "path": "evidence/resource-pre-assets-transfer.json.gz",
+      "bytes": 338,
+      "sha256": "1b002a5e63c8821d7a90b6aadc278a0db3478ac9c74101ce04c102097d5b2586",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "237a3874abefb9e99099f14ab2789c81310ce5a6900db0d1db8d9eb2ab7c1437",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-pre-assets-transfer.json"
+    },
+    {
+      "path": "evidence/resource-pre-build-transfer.json.gz",
+      "bytes": 337,
+      "sha256": "0826a223f0f9ef4c73a6927287b9eada8e03899c0cc91ccc07612d8be5779587",
+      "uncompressedBytes": 563,
+      "uncompressedSHA256": "251df0eca8e417b3c642362dbe67075f7ea8aad185f1c7b68a5a8cfd1d96c978",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-pre-build-transfer.json"
+    },
+    {
+      "path": "evidence/resource-precompile-staging-corrected.json.gz",
+      "bytes": 334,
+      "sha256": "2778523a6bab42a7d58d720a1e447382a7c401dd1ff43cc3c2bac26c9a6d727c",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "de1140b02d508f4a4e2a95a7a312b463509970e7001d5d4a9c2a979de1f0ff15",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-precompile-staging-corrected.json"
+    },
+    {
+      "path": "evidence/resource-precompile.json.gz",
+      "bytes": 337,
+      "sha256": "39352b163839895cb7aad784ca807158bee0664b2607b08a3e66430bc99b2246",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "0358246fddb1a4db264aab98976870a090d8958c5df748980b82855dfed9d743",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-precompile.json"
+    },
+    {
+      "path": "evidence/resource-source-prepared.json.gz",
+      "bytes": 336,
+      "sha256": "a1431b222c73a8eb1dfb034d0716ee0a333fb151af80a89f4ff48a44ec8ed9b5",
+      "uncompressedBytes": 562,
+      "uncompressedSHA256": "473c9424cb53c8226a9dd883c7a32772df99d698a2b39d53c87cabb7eea9ce6c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/resource-source-prepared.json"
+    },
+    {
+      "path": "recovery/retain-tail.py",
+      "bytes": 2326,
+      "sha256": "54c60b0b7d5d28834d3b010a705f708905d122ddd8c4813fcc4bddc4c8e7efcb",
+      "uncompressedBytes": 2326,
+      "uncompressedSHA256": "54c60b0b7d5d28834d3b010a705f708905d122ddd8c4813fcc4bddc4c8e7efcb",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/retain-tail.py"
+    },
+    {
+      "path": "recovery/review.py",
+      "bytes": 5462,
+      "sha256": "1c78ff34a44514676b6700b8c106867e7e71a2283ef13bd672a224d075652caa",
+      "uncompressedBytes": 5462,
+      "uncompressedSHA256": "1c78ff34a44514676b6700b8c106867e7e71a2283ef13bd672a224d075652caa",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/review.py"
+    },
+    {
+      "path": "evidence/schedule.json.gz",
+      "bytes": 110,
+      "sha256": "1abe3c37fd0c39a2688ed9632289750ea2d2bb864734842b09be1f0635e93839",
+      "uncompressedBytes": 160,
+      "uncompressedSHA256": "9722ece50abdd1f064d4f64b37bec7ee305f55a6957d151fb38605cfc3bd599d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/schedule.json"
+    },
+    {
+      "path": "evidence/source-closure.json.gz",
+      "bytes": 7991,
+      "sha256": "94f27228790006fa481aa99f3a9b58dfe09764ecd84e978218284cc10ecd012a",
+      "uncompressedBytes": 23321,
+      "uncompressedSHA256": "5cfe6cd0c73f7b227e894ce4a065292751d66a50edfa2ba325ea86db774c3b8f",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/source-closure.json"
+    },
+    {
+      "path": "evidence/startup-api.json.gz",
+      "bytes": 901,
+      "sha256": "c4690bd02c6cc11ea1d339ad27642694c8d389dae3890d8ae4cf193b3ae762d9",
+      "uncompressedBytes": 1836,
+      "uncompressedSHA256": "a0ed579064c66b181e09dfc4e473ae1a7b8d1e855c72a1d3ebc957c23496dd71",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/startup-api.json"
+    },
+    {
+      "path": "recovery/supervise-corrected.py",
+      "bytes": 4024,
+      "sha256": "6002a1b0a6ff5a6f4a2a1f89448f090ee3f7e26404aa76058e254f0981747790",
+      "uncompressedBytes": 4024,
+      "uncompressedSHA256": "6002a1b0a6ff5a6f4a2a1f89448f090ee3f7e26404aa76058e254f0981747790",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/supervise-corrected.py"
+    },
+    {
+      "path": "recovery/supervise.py",
+      "bytes": 3973,
+      "sha256": "b739038cea3b3b1bfb3ed6a489a55eff6d809efbc2f6841b18ad21be8845b6c4",
+      "uncompressedBytes": 3973,
+      "uncompressedSHA256": "b739038cea3b3b1bfb3ed6a489a55eff6d809efbc2f6841b18ad21be8845b6c4",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/supervise.py"
+    },
+    {
+      "path": "evidence/tail-retained.json.gz",
+      "bytes": 181,
+      "sha256": "6799b84dcefc7467daacc5c051969ba2fa5c698026b1379fcc6cd2ec74aae23d",
+      "uncompressedBytes": 213,
+      "uncompressedSHA256": "6f23ba4a21034ff0400f6acbcfb3d0cfc9c662e9414378ff8ff0e63ed568d9ee",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/tail-retained.json"
+    },
+    {
+      "path": "recovery/wire-and-stage.py",
+      "bytes": 3155,
+      "sha256": "79caed981174d848281eb25b50236e507e3ef0d42f76d996b15ad48e2b2b8d71",
+      "uncompressedBytes": 3155,
+      "uncompressedSHA256": "79caed981174d848281eb25b50236e507e3ef0d42f76d996b15ad48e2b2b8d71",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/wire-and-stage.py"
+    },
+    {
+      "path": "recovery/wire.cjs",
+      "bytes": 3773,
+      "sha256": "cfb9dd995961692b367a3a824796a206a990d7e9228672a3e67e844cf1c7829c",
+      "uncompressedBytes": 3773,
+      "uncompressedSHA256": "cfb9dd995961692b367a3a824796a206a990d7e9228672a3e67e844cf1c7829c",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/wire.cjs"
+    },
+    {
+      "path": "evidence/wired-runner.json.gz",
+      "bytes": 116,
+      "sha256": "df9b7d9dc683ed72e737407064121316c4d4bafe978105e33af126e39c399971",
+      "uncompressedBytes": 108,
+      "uncompressedSHA256": "110b4c53c9082ad125c3dfd7411b59216317e45045d059a14078e5150375836d",
+      "source": "/tmp/maelstrom-current-uop-original-errno-capture-oct26/ops/wired-runner.json"
+    }
+  ]
+}
