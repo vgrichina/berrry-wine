@@ -1,0 +1,17 @@
+FAIL delivered down followed by window blur releases guest once: canvas.setAttribute is not a function
+FAIL hidden cancellation releases without a blur: canvas.setAttribute is not a function
+FAIL repeated blur/hidden, stale keyup, and focus recovery do not duplicate release: canvas.setAttribute is not a function
+FAIL repeat and duplicate downs retain delivery but own one release: canvas.setAttribute is not a function
+FAIL two modifier sides and chord retain original down metadata: canvas.setAttribute is not a function
+FAIL fallback code-less ownership distinguishes side/location and VK: canvas.setAttribute is not a function
+FAIL normal keyup retires ownership before cancellation: canvas.setAttribute is not a function
+FAIL page input/select/editable/dialog and exclusive agent keys acquire no ownership: canvas.setAttribute is not a function
+FAIL owned keyup on a newly focused page control releases its original down: canvas.setAttribute is not a function
+FAIL unowned and stale keyups cannot release another input producer: canvas.setAttribute is not a function
+FAIL ordinary proxy/canvas focus movement and visible events do not cancel keys: canvas.setAttribute is not a function
+FAIL toolbar refocus keeps the guest key owned: canvas.setAttribute is not a function
+FAIL swallowed Alt+Enter releases only the Alt actually delivered: canvas.setAttribute is not a function
+FAIL composition lifecycle and text commit survive key cancellation without invented commit: canvas.setAttribute is not a function
+FAIL soft keyboard balanced pairs never acquire lasting physical ownership: canvas.setAttribute is not a function
+FAIL mouse capture cancellation remains independently owned: canvas.setAttribute is not a function
+0 passed; 16 failed

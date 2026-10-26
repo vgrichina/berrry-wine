@@ -1,0 +1,20 @@
+{
+  "at": 1792996300.104089,
+  "taskTreeBytes": 1864062,
+  "launcherBytes": 183398,
+  "sessionBytes": 600230,
+  "nodeStanding": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816
+  },
+  "readonlySourceBytes": 60908,
+  "futureLauncherSessionAndSingleSharedPositiveWALAllowance": 12582912,
+  "publicationAndOtherGrowthAllowance": 4194304,
+  "reserve": 8388608,
+  "limit": 67108864,
+  "accounting": "lstat owned paths; donor symlink leaves not followed; shared WAL charged once via future allowance",
+  "projectedBytes": 27813514,
+  "freeDisk": 4456427520,
+  "memAvailable": 2788503552,
+  "pass": true
+}

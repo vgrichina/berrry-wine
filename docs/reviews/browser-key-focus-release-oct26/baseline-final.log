@@ -1,0 +1,99 @@
+FAIL delivered down followed by window blur releases guest once: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL hidden cancellation releases without a blur: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL repeated blur/hidden, stale keyup, and focus recovery do not duplicate release: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL repeat and duplicate downs retain delivery but own one release: Expected values to be strictly deep-equal:
++ actual - expected
+
++ []
+- [
+-   [
+-     'up',
+-     65,
+-     {
+-       code: 'KeyA',
+-       location: 0,
+-       repeat: false
+-     }
+-   ]
+- ]
+
+FAIL two modifier sides and chord retain original down metadata: Expected values to be strictly equal:
+
+3 !== 0
+
+FAIL fallback code-less ownership distinguishes side/location and VK: Expected values to be strictly equal:
+
+3 !== 0
+
+PASS normal keyup retires ownership before cancellation
+PASS page input/select/editable/dialog and exclusive agent keys acquire no ownership
+FAIL owned keyup on a newly focused page control releases its original down: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL unowned and stale keyups cannot release another input producer: Expected values to be strictly deep-equal:
++ actual - expected
+
++ [
++   [
++     'up',
++     65,
++     {
++       code: 'KeyA',
++       location: 0,
++       repeat: false
++     }
++   ]
++ ]
+- []
+
+PASS ordinary proxy/canvas focus movement and visible events do not cancel keys
+FAIL toolbar refocus keeps the guest key owned: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL swallowed Alt+Enter releases only the Alt actually delivered: Expected values to be strictly equal:
+
+1 !== 0
+
+FAIL composition lifecycle and text commit survive key cancellation without invented commit: Expected values to be strictly equal:
+
+1 !== 0
+
+PASS soft keyboard balanced pairs never acquire lasting physical ownership
+FAIL release retains delivered VK and side when keyup metadata changes: Expected values to be strictly deep-equal:
++ actual - expected
+
+  [
+    [
+      'up',
++     163,
+-     17,
+      {
+        code: 'ControlRight',
++       location: 0,
+-       location: 2,
+        repeat: false
+      }
+    ]
+  ]
+
+FAIL browser-reserved keys still forwarded by the bridge get balanced on blur: Expected values to be strictly equal:
+
+1 !== 0
+
+PASS composition commit suppresses trailing duplicate text events as before
+FAIL mouse capture cancellation remains independently owned: Expected values to be strictly equal:
+
+1 !== 0
+
+5 passed; 14 failed

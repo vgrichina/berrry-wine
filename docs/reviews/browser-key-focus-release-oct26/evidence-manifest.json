@@ -1,0 +1,46 @@
+{
+  "README.md": {
+    "bytes": 2682,
+    "sha256": "19c52423f076de54f29a42b2f069ad84318d36be0b56c52d4fefc9d26b033dc3"
+  },
+  "admission.json": {
+    "bytes": 757,
+    "sha256": "d2e73daa304d15b1c42a079a66d4c384e486543f5175cac90a3c16ab5dbcefa7"
+  },
+  "baseline-final.log": {
+    "bytes": 2504,
+    "sha256": "76d80cca3714b5044068624e7545100f965d5768ce136ae171b4ff75fcedd70a"
+  },
+  "baseline.log": {
+    "bytes": 2001,
+    "sha256": "fcbaaa14dce0523d0f554f9c7ec1db067143d273b782c2428b19c221662568bc"
+  },
+  "checkpoint.json": {
+    "bytes": 913,
+    "sha256": "b0b7b95c5a2a44b3d2611d83b701232a91a35e6737ee3feaa9089cfc2b40530a"
+  },
+  "fixture-first-failure.log": {
+    "bytes": 1747,
+    "sha256": "ab4dc2eece2795dd5bd68847995c12238143b948c0ad2e7d59af05240c9b7849"
+  },
+  "incidents.txt": {
+    "bytes": 1027,
+    "sha256": "cf4eff73ba6082cec94d9a87b117567cfe961fb0e2d5a2e3f4a2fc6b4a248a86"
+  },
+  "pins.json": {
+    "bytes": 1448,
+    "sha256": "34d58b56f5cecc16db645ac054addfb504ffc85a108d148eff253589314648b5"
+  },
+  "repair-final.log": {
+    "bytes": 1348,
+    "sha256": "c13181da63326aac5b58b774c18f337fb9eee9a48e6c4532fe19d7ea0198faeb"
+  },
+  "repair.log": {
+    "bytes": 1123,
+    "sha256": "615552b0f3996ebf7c0e3f30c838b95e60145074e9197f061e5bc5ca62076f19"
+  },
+  "resource-prepublication.json": {
+    "bytes": 638,
+    "sha256": "49f060cab6b8488dd7655c480ed9873bf1723caf1e9f8392134bfedbddebe4ec"
+  }
+}

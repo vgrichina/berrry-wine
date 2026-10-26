@@ -1,0 +1,27 @@
+{
+  "at": 1792996300.10223,
+  "base": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "testedSourceSHA256": "9732e516772572e3a8e7ce972cdb73477efa6e965ba299654a632c9979b42b05",
+  "testedFixtureSHA256": "9a71d7d4161c580d99d5ebb8fdbfaac484f810fe2d47f5ced113cad167acce1f",
+  "baselineSourceSHA256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+  "groups": [
+    {
+      "fixture": "final unchanged fixture",
+      "source": "baseline",
+      "result": "5 passed; 14 failed",
+      "exit": 1,
+      "evidence": "baseline-final.log"
+    },
+    {
+      "fixture": "final unchanged fixture",
+      "source": "repair",
+      "result": "19 passed; 0 failed",
+      "exit": 0,
+      "evidence": "repair-final.log"
+    }
+  ],
+  "remaining": [
+    "coordinator independent review and main integration"
+  ],
+  "runtime": "none; no assigned box; state/expiry N/A; coordinator retains lifecycle ownership"
+}

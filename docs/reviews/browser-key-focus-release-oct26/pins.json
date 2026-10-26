@@ -1,0 +1,24 @@
+{
+  "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "browserInputSHA256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9",
+  "readonlyObjectLeaves": [
+    "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/ops/objects/1",
+    "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/ops/objects/2",
+    "/tmp/render-elision-independent-integrate-oct26/ops/flat",
+    "/tmp/file-bundle-bounded-read-repair-oct26/ops/flat",
+    "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/ops/objects/5",
+    "/home/user/wine-assembly/.git/objects",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main1",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/1",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/0",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/main0",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/2",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/4",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/5",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/6",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/8",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/7",
+    "/tmp/maelstrom-terminal-closure-accepted-integrate-oct26/ops/v/10",
+    "/tmp/browser-key-focus-release-repair-oct26/ops/donor-flat"
+  ]
+}

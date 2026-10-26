@@ -1,0 +1,18 @@
+{
+  "at": 1792995970.8467972,
+  "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "projectedTaskBytes": 58720256,
+  "reserveBytes": 8388608,
+  "futureLauncherAllowance": 12582912,
+  "launcherCurrentBytes": 105159,
+  "freeDisk": 3794395136,
+  "memoryAvailable": 2598981632,
+  "actualWorkerRSS": 1021304832,
+  "remainingClientExecutionAllowance": 536870912,
+  "memoryFloor": 805306368,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A offline local file reads; no mounts or guest execution",
+  "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "pass": true
+}

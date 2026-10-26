@@ -1,0 +1,17 @@
+PASS delivered down followed by window blur releases guest once
+PASS hidden cancellation releases without a blur
+PASS repeated blur/hidden, stale keyup, and focus recovery do not duplicate release
+PASS repeat and duplicate downs retain delivery but own one release
+PASS two modifier sides and chord retain original down metadata
+PASS fallback code-less ownership distinguishes side/location and VK
+PASS normal keyup retires ownership before cancellation
+PASS page input/select/editable/dialog and exclusive agent keys acquire no ownership
+PASS owned keyup on a newly focused page control releases its original down
+PASS unowned and stale keyups cannot release another input producer
+PASS ordinary proxy/canvas focus movement and visible events do not cancel keys
+PASS toolbar refocus keeps the guest key owned
+PASS swallowed Alt+Enter releases only the Alt actually delivered
+PASS composition lifecycle and text commit survive key cancellation without invented commit
+PASS soft keyboard balanced pairs never acquire lasting physical ownership
+PASS mouse capture cancellation remains independently owned
+16 passed; 0 failed
