@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs"
+  ],
+  "cpu": 90,
+  "wall": 120,
+  "file": 25165824,
+  "output": 2097152
+}

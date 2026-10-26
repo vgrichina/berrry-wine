@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "read-output-excerpt-overrun",
+    "detail": "Initial policy and broad donor search output exceeded 8192B excerpt; tool truncation preserved in session. Subsequent reads bounded; no test or source failure."
+  },
+  {
+    "kind": "fixture-incomplete-runner-excerpt",
+    "detail": "First reproducer failed SyntaxError before execution: runner excerpt ended5731 before closing5733. Exact first excerpt and first-command-failure retained. Corrected to full unchanged5702-5733 block; no production changes."
+  },
+  {
+    "kind": "fixture-missing-host-require",
+    "detail": "Initial independent harness lacked unconditional disasm require seam; ReferenceError before acceptance. Retained diagnostic; explicit seam added, unexpected calls still throw. Global reproducer already passed and will be reused."
+  },
+  {
+    "kind": "source-audit-external-fixture-dependency",
+    "detail": "Initial audit assumed every pinned mode-transition fixture path belonged to candidate tree and got IndexError on absent entry. Corrected audit distinguishes separate pinned fixture-branch paths from candidate-tree paths; no materialization or source edits. Exact donor hashes checked before execution."
+  },
+  {
+    "kind": "sparse-write-tree-policy",
+    "detail": "Initial plain write-tree requested unrelated immutable army-authority archive blob outside sparse task. Followed donor publication recipe: write-tree --missing-ok with all trees and required executed/changed blobs flat, then commit-tree; untouched non-sparse blobs remain absent. No executed input missing, no full-ref/object capture or broad materialization. First error preserved."
+  }
+]

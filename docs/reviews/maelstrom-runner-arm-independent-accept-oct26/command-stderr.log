@@ -1,0 +1,30 @@
+evalmachine.<anonymous>:242
+
+
+
+SyntaxError: Unexpected end of input
+    at new Script (node:vm:117:7)
+    at createScript (node:vm:269:10)
+    at Object.runInContext (node:vm:300:10)
+    at reproduce (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/global-order-reproducer.cjs:33:6)
+    at Object.<anonymous> (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/global-order-reproducer.cjs:43:20)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+    at Object..js (node:internal/modules/cjs/loader:2002:10)
+    at Module.load (node:internal/modules/cjs/loader:1594:32)
+    at Module._load (node:internal/modules/cjs/loader:1396:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+
+Node.js v24.18.1
+ReferenceError: require is not defined
+    at evalmachine.<anonymous>:582:33
+    at evalmachine.<anonymous>:1751:32
+    at Script.runInContext (node:vm:149:12)
+    at Object.runInContext (node:vm:301:6)
+    at Object.initialize (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs:45:23)
+    at /tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs:51:30
+    at test (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs:48:36)
+    at main (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs:50:8)
+    at Object.<anonymous> (/tmp/maelstrom-runner-arm-independent-accept-oct26/repo/docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs:100:1)
+    at Module._compile (node:internal/modules/cjs/loader:1871:14)
+error: invalid object 100644 90413573b25a8bc99486bb8bdb4c64e60b45188d for 'docs/reviews/army-authority-startup-repair-20261021.evidence.tgz'
+fatal: git-write-tree: error building trees

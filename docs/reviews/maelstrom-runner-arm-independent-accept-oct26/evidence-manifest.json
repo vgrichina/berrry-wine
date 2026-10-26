@@ -1,0 +1,140 @@
+{
+  "candidate": "3fef8f026fffb4f47261097edd51e14cbd044964",
+  "payloads": [
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/README.md",
+      "bytes": 6312,
+      "sha256": "236bb4a6feafe7864dd549309a390fdabe3134697bbb4dd6e6a31e1c12dfb0ba"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/checkout.json",
+      "bytes": 436,
+      "sha256": "43a9712d3831254f687c139f23b8679fb4260eff15400a87a7bce6634e7971fb"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/checkpoint.json",
+      "bytes": 5467,
+      "sha256": "9bbd7d8fbf5d6a17878afa9d5c8c49b0a90f8e7d0f187fb3e64ff4d1f12a9251"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/command-stderr.log",
+      "bytes": 2144,
+      "sha256": "78fcc4305013eeaae66b2567854469ce4bd338ea07aafa596c26e8f49ff0a09a"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/first-incomplete-loader-excerpts.json",
+      "bytes": 13905,
+      "sha256": "a0ffe88a03045a7ef89c5da6a6c0e68821148afc22f6c41219b64355ad97192e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/global-order-reproducer-command.json",
+      "bytes": 297,
+      "sha256": "88e542578a577c5ba2c73f4c023e17cd6b375491aa33c5ca3018b0ee298d3e44"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/global-order-reproducer-result.json",
+      "bytes": 571,
+      "sha256": "519a2828798ac3aa067640b1bf3da5d36523ed02327c7bb80da24da7cfacbd36"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/global-order-reproducer.cjs",
+      "bytes": 2988,
+      "sha256": "0b9b4be5e0a8a1ff0b69140ea13e01ea3ce402a2dcabc36a986488682cd95808"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/incidents.json",
+      "bytes": 1656,
+      "sha256": "0edfdd3eb54e6717f2a69c242621f6c50b67d38428dc725da11e028fc1854cfa"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges-command.json",
+      "bytes": 296,
+      "sha256": "14ff8c67cfb92ac9ee5a667c523d0ce66abcf23ea9c7d239c20cc6378ea92b51"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges-result.json",
+      "bytes": 5198,
+      "sha256": "ecdd2ed28c83b78bef274a73587bc33e253e6f657d557ac33b3f59ebdd9ee89d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-challenges.cjs",
+      "bytes": 8616,
+      "sha256": "01a62ff25f8d8a79820caa27d697bc09d089e064d79167111a8cd02682965d5f"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/independent-initial-fixture-failure.json",
+      "bytes": 1365,
+      "sha256": "0712d447c5dd15bb4757288ea14e84bd86fa983b83db3e0ff4c8c01aedbdb712"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/launch-configuration.json",
+      "bytes": 651,
+      "sha256": "1922d0f55de21ba2b0830060cb8d876a0bb15db78174d3311759792703b914a3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/loader-excerpts.json",
+      "bytes": 13942,
+      "sha256": "6d8b5f173e0b8e83b1eab8eb8af33653b5eb65b2a5d302f0f2543e6c4579b633"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/node-exact-configuration.json",
+      "bytes": 1327,
+      "sha256": "a7dffba54d1aca6931a371d0240974a4f6e8d82c8dfdcf2c588052ef67fb51e0"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/node-startup-exact.json",
+      "bytes": 1907,
+      "sha256": "f9e26bf465663041fcaedd387962b0256a2ba44362439c903d46326d04e031f5"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/recipe-audit.py",
+      "bytes": 2486,
+      "sha256": "d524a0951a7cdc3e1e5ddf1f5993d0e370243e022e22240af6287507549c32be"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/recipe-common.py",
+      "bytes": 3905,
+      "sha256": "e047173c36a91a00062e412e2642d69005f94435548402b03d12e644ee320f23"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/recipe-prepare-inputs.py",
+      "bytes": 2564,
+      "sha256": "369e7f8c102592b22b2866043da55ce52f3e8c66d3021db1dc45534b69a01fa1"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/recipe-test.py",
+      "bytes": 1192,
+      "sha256": "3d3a7bacea0ddd97a1fa30320048974bc62bb1c8b841c97ca0b69abf10291ca3"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/resources-publication.json",
+      "bytes": 3963,
+      "sha256": "fe162a83045f71ab4435880849c99ec62f7d24e4b739597471ee82b24066e34d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/reused-evidence.json",
+      "bytes": 428,
+      "sha256": "b8bf748d48e5fc4664ea74a2f3db5b8b80716006fb1fbefa94a5e08fbdeb969e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/source-audit.json",
+      "bytes": 9322,
+      "sha256": "79fa467215ee6fbe9c819a8f745dc5a6721dd15167fc2066cf306d2e20ea5f67"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/sparse-write-tree-first-failure.json",
+      "bytes": 329,
+      "sha256": "1784e14974c9c3e0ac6605fbf61b2d31b58c66dbf055cae20309446adf33c6c6"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/standing-inputs.json",
+      "bytes": 4205,
+      "sha256": "21504d7b77f2ee1f6a5fba3b1f665b6f3bf4dc1f5d7c5d617e7d15a77b2a8272"
+    },
+    {
+      "path": "docs/reviews/maelstrom-runner-arm-independent-accept-oct26/tree-relationship.json",
+      "bytes": 2778,
+      "sha256": "c55b1087715438379abbbf1fc858315fa8def59273652bcbc5c91636b5fff6f2"
+    }
+  ]
+}

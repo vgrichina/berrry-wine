@@ -1,0 +1,12 @@
+{
+  "base": "3fef8f026fffb4f47261097edd51e14cbd044964",
+  "branch": "task/maelstrom-runner-arm-independent-accept-oct26",
+  "objects": 552,
+  "flatNoAlternates": true,
+  "shallowBoundary": "3fef8f026fffb4f47261097edd51e14cbd044964",
+  "readOnlyDonor": "/tmp/maelstrom-initialized-runner-arm-repair-oct26/repo",
+  "selected": [
+    "tools/maelstrom-initialized-runner-arm.cjs",
+    "test/test-maelstrom-initialized-runner-arm.cjs"
+  ]
+}

@@ -1,0 +1,145 @@
+{
+  "candidate": "3fef8f026fffb4f47261097edd51e14cbd044964",
+  "pass": true,
+  "count": 9,
+  "results": [
+    {
+      "name": "complete pinned setup: all initialization precedes sole arm",
+      "pass": true
+    },
+    {
+      "name": "late setup and arm failures prevent all main run sites",
+      "pass": true
+    },
+    {
+      "name": "altered/multiple/already-transformed inputs reject deterministically",
+      "pass": true
+    },
+    {
+      "name": "helper/adapter/select completion bytes retained outside sole replacement",
+      "pass": true
+    },
+    {
+      "name": "observation site 0: successful return, thrown run, rejected mode drift",
+      "pass": true
+    },
+    {
+      "name": "observation site 1: successful return, thrown run, rejected mode drift",
+      "pass": true
+    },
+    {
+      "name": "observation site 2: successful return, thrown run, rejected mode drift",
+      "pass": true
+    },
+    {
+      "name": "first suspended run site performs neither run nor observation",
+      "pass": true
+    },
+    {
+      "name": "unchanged archived DLL ordering violates global contract even on later validation failure",
+      "pass": true
+    }
+  ],
+  "setupSHA256": "f07697c40f195b6fedd13727aa59943b54232b9c7386b01fa20e4d46c62bb9da",
+  "setupBytes": 87780,
+  "fixturePrefixSHA256": "72b9c77dc026640b4a267da07657d755192acc9e0bc7729a7b80d3c2a644c85e",
+  "runSiteHashes": [
+    "76501748c0e47db868d73c1002e9bc1d819229fa775890e2e5bf9372c6326900",
+    "7b1482c7640fdc9d838c8ebbd095d7d78dda69951fc389ff9fc6ddb97a718ce1",
+    "f9a8404976f0be00248ef12abf0319ebf36681ea7961f9c3d587c32d84dc6a8c"
+  ],
+  "loadedInputs": [
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-native-errno-latch.cjs",
+      "sha256": "52d044f14d6ee129b2b6f5b81335f7d2c00b70a9f7513b7bd179203936150da8",
+      "bytes": 19338
+    },
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-select-completion-hook.cjs",
+      "sha256": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+      "bytes": 15019
+    },
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs",
+      "sha256": "85d86f19ce431c7c9248ef080e4267451f6027b5d8927dd2ebdf0d955d3dd075",
+      "bytes": 8519
+    },
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiments.js",
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+      "bytes": 39152
+    },
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiment-report.js",
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+      "bytes": 24188
+    },
+    {
+      "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx.js",
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+      "bytes": 2663
+    }
+  ],
+  "pins": [
+    {
+      "path": "test/runner-experiments.js",
+      "blob": "ec5954be8cb0990c3e610e614be90ec7721a0858",
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    {
+      "path": "test/runner-experiment-report.js",
+      "blob": "f1320850df147c508d982e4b3aedf55596e0ac32",
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+      "bytes": 164570,
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+    },
+    {
+      "path": "tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "sha256": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+      "blob": "71ba5ed8023b81fdce393634c3374a2b92f87f42"
+    }
+  ],
+  "peakRSS": 96440320,
+  "prior34Replayed": 0,
+  "prior29Replayed": 0,
+  "guestInstructionsExecuted": 0,
+  "globalContractAccepted": false,
+  "postLoaderTransformAccepted": true
+}

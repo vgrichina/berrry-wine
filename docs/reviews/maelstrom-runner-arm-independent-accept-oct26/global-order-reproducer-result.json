@@ -1,0 +1,35 @@
+{
+  "reproduced": true,
+  "globalContractSatisfied": false,
+  "ordinary": [
+    {
+      "event": "dll-run",
+      "armed": false
+    },
+    {
+      "event": "gate-release"
+    },
+    {
+      "event": "validation"
+    },
+    {
+      "event": "main-initialize"
+    },
+    {
+      "event": "arm"
+    }
+  ],
+  "failedValidation": [
+    {
+      "event": "dll-run",
+      "armed": false
+    },
+    {
+      "event": "gate-release"
+    },
+    {
+      "event": "validation"
+    }
+  ],
+  "qualification": "source-backed mocked call ordering only; no guest instructions executed"
+}

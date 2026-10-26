@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "write-tree"
+  ],
+  "code": 128,
+  "stderr": "error: invalid object 100644 90413573b25a8bc99486bb8bdb4c64e60b45188d for 'docs/reviews/army-authority-startup-repair-20261021.evidence.tgz'\nfatal: git-write-tree: error building trees\n"
+}

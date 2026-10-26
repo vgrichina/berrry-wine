@@ -1,0 +1,110 @@
+[
+  {
+    "path": "/tmp/maelstrom-initialized-runner-arm-repair-oct26/repo/tools/maelstrom-initialized-runner-arm.cjs",
+    "bytes": 3005,
+    "sha256": "6c69aa23d0e35f5d10cc7726720c05e0c98f9c3b2e24186430ef2169317b4055",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-initialized-runner-arm-repair-oct26/repo/test/test-maelstrom-initialized-runner-arm.cjs",
+    "bytes": 14150,
+    "sha256": "67c36f8d6f23ea47d8518060199d01d91ac8dfc834649cbb2fab6b894b56530f",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-initialized-runner-arm-repair-oct26/ops/corrected-final-run.js",
+    "bytes": 688972,
+    "sha256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/ops/capture-run.js",
+    "bytes": 688799,
+    "sha256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/test-maelstrom-mode-transition.cjs",
+    "bytes": 11456,
+    "sha256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-native-errno-latch.cjs",
+    "bytes": 19338,
+    "sha256": "52d044f14d6ee129b2b6f5b81335f7d2c00b70a9f7513b7bd179203936150da8",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-original-errno-adapter.cjs",
+    "bytes": 8519,
+    "sha256": "85d86f19ce431c7c9248ef080e4267451f6027b5d8927dd2ebdf0d955d3dd075",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiment-report.js",
+    "bytes": 24188,
+    "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx.js",
+    "bytes": 2663,
+    "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx-src/compiler-parser.js",
+    "bytes": 38100,
+    "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx-src/compiler-stages.js",
+    "bytes": 31195,
+    "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx-src/compiler-codegen.js",
+    "bytes": 302257,
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/watx-src/compiler.js",
+    "bytes": 18610,
+    "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/src/07d-uop-engine.wat",
+    "bytes": 164570,
+    "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/tools/maelstrom-select-completion-hook.cjs",
+    "bytes": 15019,
+    "sha256": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/ops/closure.tar.gz",
+    "bytes": 6273755,
+    "sha256": "656a1569d905f49385a7e3a3e6b878f81b96aa547d275f5fcf521cfaa254dd4e",
+    "readOnly": true
+  },
+  {
+    "path": "/usr/local/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "installedInPlace": true
+  }
+]

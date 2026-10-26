@@ -1,0 +1,12 @@
+{
+  "candidate": "3fef8f026fffb4f47261097edd51e14cbd044964",
+  "rootVerifiedExactRemoteAnd18Payloads": true,
+  "manifestSHA256": "0d58ca26431472d5dea40a2c0ccf0cebfcbdc825b91df09b8cade9f2850ca7db",
+  "priorGroupsReplayed": 0,
+  "priorGroups": [
+    "30 full setup wiring checks",
+    "4 CLI controls",
+    "29 guard controls"
+  ],
+  "donorFinalReceiptSHA256": "f13a996a68306eaeb0533e68c9e919601477f8f0308b82a7da009dc5f63c0a4a"
+}
