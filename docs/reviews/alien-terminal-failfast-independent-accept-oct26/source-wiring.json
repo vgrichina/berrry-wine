@@ -1,0 +1,40 @@
+{
+  "candidate": {
+    "commit": "f4455d87f011890622b76c846e342492b2bdcfda",
+    "tree": "d4d5c1a7b95e93fe2a093a4b02bf40764ee5c8e3",
+    "base": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+    "branch": "task/alien-controller-terminal-failfast-repair-oct26",
+    "remoteRef": "f4455d87f011890622b76c846e342492b2bdcfda\trefs/heads/task/alien-controller-terminal-failfast-repair-oct26",
+    "pins": {
+      "test/helpers/alien-control-sequence.py": "2683ce016f55fe071067ca331b768019cc8f480881b28f973aea2760c9d3c5fa",
+      "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+      "test/test-alien-control-sequence.py": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+      "test/fixtures/alien-control-sequence/control-server.cjs": "4656d80826a488f31f713ecc19ea24fe0684d38be0218907c4ede51a0732cd57",
+      "test/fixtures/alien-control-sequence/historical-boundary.json": "c76a5c650075579017cc577081484e549613675f5be6955e6819c0234b26d702",
+      "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    }
+  },
+  "gitBlobVerification": [
+    "100644 blob e6ce417ae1a823635f57585bd107f6c502e26ff6\tlib/control-server.js",
+    "100644 blob 1588c240d2729077e147d2d12356a0819cd4c818\ttest/alien-gameplay-sequence.py",
+    "100644 blob a97b8339f8ca32c21cdae0a6b727b38452576d3e\ttest/fixtures/alien-control-sequence/control-server.cjs",
+    "100644 blob a131bd10c326d02693fe2b87ddec18283f33b23a\ttest/fixtures/alien-control-sequence/historical-boundary.json",
+    "100644 blob ae862a44e40728e86d729d73d31b2e810045aff8\ttest/helpers/alien-control-sequence.py",
+    "100644 blob 7e19bed3609715c09c807c919247e4eb3a930cee\ttest/test-alien-control-sequence.py"
+  ],
+  "runnerGitBlob": "100644 blob f52b03a096a9a614b681cdf0f912ce20ca19fcba\ttest/run.js",
+  "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "defaultOffReceiptReused": {
+    "productionRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "productionHookSHA256": "83c6860ee18d042620ef2e143a10e85e3db0c4550dffb35d489fa7998a0bceac",
+    "flags": [],
+    "expectedRequestsWithoutOptIn": 0
+  },
+  "receiptSource": "/tmp/alien-opt-in-independent-integrate-oct26/repo/docs/reviews/alien-opt-in-independent-integrate-oct26",
+  "receiptSHA256": "8e9539048f7805ec52339eb4ec395d4cb8608cd9373ee45dcec719310fc6ba5e",
+  "receiptExit": 0,
+  "contractSHA256": "8cab353dd84e9682a9b2a75d7c87ec454af303c4937b740a120e7ead8d25b0b7",
+  "productionServer": "unchanged lib/control-server.js actually executed",
+  "CLI": "exact pinned parser/main/controller/HTTP; default refusal tested",
+  "evalNull": "unchanged validator accepts ok:true,value:null; retained normal production group reused; no new gameplay claim"
+}

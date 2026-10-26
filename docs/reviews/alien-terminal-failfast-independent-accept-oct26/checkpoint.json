@@ -1,0 +1,24 @@
+{
+  "candidate": "f4455d87f011890622b76c846e342492b2bdcfda",
+  "completed": [
+    "identity",
+    "retained-integrity",
+    "startup",
+    "empty-mount",
+    "unchanged-historical-production",
+    "CLI-default-refusal",
+    "early-terminal",
+    "dispatch-boundary-rejection",
+    "independent-omission-rejected"
+  ],
+  "remaining": [
+    "publish rejection only"
+  ],
+  "evidence": [
+    "historical-execution.json",
+    "historical-output.log"
+  ],
+  "disposition": "REJECT",
+  "counterexample": "terminal receipt durable after intent directory fsync, before transport; PNG still sent",
+  "productionSourceUnchanged": true
+}

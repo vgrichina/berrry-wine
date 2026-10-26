@@ -1,0 +1,26 @@
+test_boundary (__main__.Challenge.test_boundary) ... FAIL
+
+======================================================================
+FAIL: test_boundary (__main__.Challenge.test_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py", line 88, in test_boundary
+    self.assertEqual(observed,receipt['expectedSends'],'command sent after known durable terminal receipt')
+AssertionError: Lists differ: [{'action': 'snapshot'}, {'action': 'png',[109 chars]it'}] != []
+
+First list contains 5 additional elements.
+First extra element 0:
+{'action': 'snapshot'}
+
++ []
+- [{'action': 'snapshot'},
+-  {'action': 'png', 'path': '/tmp/offline-only.png'},
+-  {'action': 'eval', 'code': 'null'},
+-  {'cmd': 'keypress:13'},
+-  {'action': 'quit'}] : command sent after known durable terminal receipt
+
+----------------------------------------------------------------------
+Ran 1 test in 0.242s
+
+FAILED (failures=1)
+{"mode": "omit-terminal-check", "oracleRejected": true}

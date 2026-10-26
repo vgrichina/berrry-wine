@@ -1,0 +1,29 @@
+{
+  "mode": "early-terminal",
+  "entry": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-gameplay-sequence.py",
+  "events": [],
+  "cliReturn": 1,
+  "cliOutput": "{\"error\": \"known guest terminal receipt\", \"guestAcceptance\": \"unqualified\"}\n",
+  "sends": [],
+  "ledger": {
+    "guestAcceptance": "unqualified",
+    "lastAcknowledgedBatch": null,
+    "lastFrozenBatch": null,
+    "next": 0,
+    "planSHA256": "57ec8b893f04860d27732f532f3375a625acf29029fcaf8205314e60c789a6cf",
+    "reason": "known guest terminal receipt",
+    "receipts": [],
+    "runId": "independent-offline-injected",
+    "status": "terminal",
+    "terminalObserved": {
+      "batch": 4650,
+      "reason": "already-ended",
+      "returncode": 0
+    },
+    "version": 1
+  },
+  "restartReturn": 1,
+  "restartSentNothing": true,
+  "guestExecuted": false,
+  "expectedSends": []
+}

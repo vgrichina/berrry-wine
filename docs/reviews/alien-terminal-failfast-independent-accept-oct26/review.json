@@ -1,0 +1,169 @@
+{
+  "disposition": "REJECT",
+  "candidate": {
+    "commit": "f4455d87f011890622b76c846e342492b2bdcfda",
+    "tree": "d4d5c1a7b95e93fe2a093a4b02bf40764ee5c8e3",
+    "base": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+    "branch": "task/alien-controller-terminal-failfast-repair-oct26",
+    "remoteRef": "f4455d87f011890622b76c846e342492b2bdcfda\trefs/heads/task/alien-controller-terminal-failfast-repair-oct26",
+    "pins": {
+      "test/helpers/alien-control-sequence.py": "2683ce016f55fe071067ca331b768019cc8f480881b28f973aea2760c9d3c5fa",
+      "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+      "test/test-alien-control-sequence.py": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+      "test/fixtures/alien-control-sequence/control-server.cjs": "4656d80826a488f31f713ecc19ea24fe0684d38be0218907c4ede51a0732cd57",
+      "test/fixtures/alien-control-sequence/historical-boundary.json": "c76a5c650075579017cc577081484e549613675f5be6955e6819c0234b26d702",
+      "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+    }
+  },
+  "reason": "Terminal receipt arrives after durable dispatch intent and before transport; actual CLI still sends PNG",
+  "groups": {
+    "historical": {
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+        "historical"
+      ],
+      "cwd": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo",
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 130641920,
+      "physicalCap": 134217728,
+      "cpu": 0.87,
+      "wall": 0.8773482569959015,
+      "outputBytes": 259,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 13,
+      "supervisorIncluded": true,
+      "peakOwners": {
+        "3343296": 19660800,
+        "3343297": 21979136,
+        "3343299": 51646464,
+        "3343306": 23724032,
+        "3343293": 13631488
+      }
+    },
+    "early-terminal": {
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+        "early-terminal"
+      ],
+      "cwd": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo",
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 108728320,
+      "physicalCap": 134217728,
+      "cpu": 0.67,
+      "wall": 0.41835952806286514,
+      "outputBytes": 153,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 5,
+      "supervisorIncluded": true,
+      "peakOwners": {
+        "3343536": 21102592,
+        "3343537": 50270208,
+        "3343532": 3801088,
+        "3343534": 13762560,
+        "3343535": 19791872
+      }
+    },
+    "dispatch-boundary": {
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+        "dispatch-boundary"
+      ],
+      "cwd": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo",
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 111407104,
+      "physicalCap": 134217728,
+      "cpu": 0.37,
+      "wall": 0.4559266879223287,
+      "outputBytes": 1131,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 4,
+      "supervisorIncluded": true,
+      "peakOwners": {
+        "3343544": 19660800,
+        "3343545": 26345472,
+        "3343546": 51769344,
+        "3343532": 13631488
+      }
+    },
+    "omit-terminal-check": {
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+        "omit-terminal-check"
+      ],
+      "cwd": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo",
+      "exit": 0,
+      "reason": "natural",
+      "peakSampledRSS": 113225728,
+      "physicalCap": 134217728,
+      "cpu": 0.38,
+      "wall": 0.309796170797199,
+      "outputBytes": 1135,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 4,
+      "supervisorIncluded": true,
+      "peakOwners": {
+        "3343681": 19660800,
+        "3343682": 28180480,
+        "3343683": 51752960,
+        "3343679": 13631488
+      }
+    }
+  },
+  "retained": "all manifest entries hash/size verified; production/unit/mutations groups reused unchanged",
+  "newTests": "unchanged historical CLI subprocess; early terminal + default refusal; fsync-boundary receipt -> real HTTP PNG; omission of terminal check rejected",
+  "concurrency": "No independent simultaneous lock contention executed before first counterexample. Existing single-ledger flock and one-shot passing receipts reused, not a new concurrency proof.",
+  "atomicity": "Hook invokes genuine fsync first; observes uncertain pending PNG ledger after file and directory fsync; external terminal file+directory fsynced before returning to unchanged caller; observed restart sends zero. No power-loss/filesystem crash guarantee or exhaustive crash-window acceptance.",
+  "sampling": "Whole pool/supervisor/descendant RSS sampled at 10ms; sub-sample spikes not excluded; old-space is not total RSS cap.",
+  "remaining": [
+    "source repair of terminal dispatch boundary by separate owner",
+    "independent acceptance of repaired exact tree then separately owned source integration; this candidate must not integrate",
+    "separately admitted fresh runtime/closure/module/readiness/lifecycle gates, exact step ACK and frozen-zero before input; gameplay and normal Quit unqualified"
+  ],
+  "historical": "ACK4650 distinct terminal4754; step256 never acknowledged/replayed; exhausted runtime allowance unchanged",
+  "lifecycle": {
+    "assignedBox": null,
+    "queries": 0,
+    "owner": "coordinator",
+    "EnigmaGL": "untouched; root-owned shutdown2026-10-27T00:20Z; no API state queried"
+  },
+  "incidents": "Original donor resource/WAL/memory/parser/ENOENT/packaging and guest/access incidents remain unchanged in inherited review. No new resource-limit violation. Broad read-only /tmp filename discovery encountered unrelated permission-denied paths; no access retried or changed."
+}

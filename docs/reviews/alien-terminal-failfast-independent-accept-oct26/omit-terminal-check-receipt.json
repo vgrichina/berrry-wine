@@ -1,0 +1,93 @@
+{
+  "mode": "omit-terminal-check",
+  "entry": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-gameplay-sequence.py",
+  "events": [],
+  "cliReturn": 0,
+  "cliOutput": "{\"status\": \"terminal\", \"next\": 5, \"lastAcknowledgedBatch\": 4650, \"lastFrozenBatch\": 4650, \"terminalObserved\": {\"quitting\": true}, \"guestAcceptance\": \"unqualified\"}\n",
+  "sends": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "png",
+      "path": "/tmp/offline-only.png"
+    },
+    {
+      "action": "eval",
+      "code": "null"
+    },
+    {
+      "cmd": "keypress:13"
+    },
+    {
+      "action": "quit"
+    }
+  ],
+  "ledger": {
+    "guestAcceptance": "unqualified",
+    "lastAcknowledgedBatch": 4650,
+    "lastFrozenBatch": 4650,
+    "next": 5,
+    "planSHA256": "57ec8b893f04860d27732f532f3375a625acf29029fcaf8205314e60c789a6cf",
+    "reason": "guest reported terminal",
+    "receipts": [
+      {
+        "command": {
+          "action": "snapshot"
+        },
+        "index": 0,
+        "responseBytes": 101,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"batch\":4650,\"quit\":false,\"frozen\":{\"frozen\":true,\"credits\":0},\"yieldReason\":16}}",
+        "responseSHA256": "24111dfb25719446e54e71a503263f2f31b187779f373f1486737ab07d2a6364"
+      },
+      {
+        "command": {
+          "action": "png",
+          "path": "/tmp/offline-only.png"
+        },
+        "index": 1,
+        "responseBytes": 90,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"batch\":4650,\"frozen\":true,\"path\":\"/tmp/offline-only.png\",\"bytes\":20}}",
+        "responseSHA256": "0e3d425e153ba1dcb02cd78da08685848040b6ec896941e61774bdf7d24a4c88"
+      },
+      {
+        "command": {
+          "action": "eval",
+          "code": "null"
+        },
+        "index": 2,
+        "responseBytes": 24,
+        "responseExcerpt": "{\"ok\":true,\"value\":null}",
+        "responseSHA256": "2b2684638be7293df19ad9bd5d3c6a1188b9f06834085093745320d72722fcb2"
+      },
+      {
+        "command": {
+          "cmd": "keypress:13"
+        },
+        "index": 3,
+        "responseBytes": 48,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"batch\":4650,\"queued\":true}}",
+        "responseSHA256": "82341f40f7a4f7e5c5b0ae014e9e7c241721902a63d7a8306477f22d1792fbe0"
+      },
+      {
+        "command": {
+          "action": "quit"
+        },
+        "index": 4,
+        "responseBytes": 37,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"quitting\":true}}",
+        "responseSHA256": "1612cddc97c6a7d0552679acef0c0e7b35d5cdfe035ed50b21868ab281d19b8a"
+      }
+    ],
+    "runId": "independent-offline-injected",
+    "status": "terminal",
+    "terminalObserved": {
+      "quitting": true
+    },
+    "version": 1
+  },
+  "restartReturn": 1,
+  "restartSentNothing": true,
+  "guestExecuted": false,
+  "expectedSends": []
+}

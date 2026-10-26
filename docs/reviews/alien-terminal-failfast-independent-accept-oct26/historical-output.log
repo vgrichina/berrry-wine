@@ -1,0 +1,6 @@
+test_historical_failure_owns_entire_recipe_and_durable_latch (retained_regression.Production.test_historical_failure_owns_entire_recipe_and_durable_latch) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.777s
+
+OK

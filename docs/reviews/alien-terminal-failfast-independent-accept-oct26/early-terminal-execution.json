@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+    "early-terminal"
+  ],
+  "cwd": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 108728320,
+  "physicalCap": 134217728,
+  "cpu": 0.67,
+  "wall": 0.41835952806286514,
+  "outputBytes": 153,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 5,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3343536": 21102592,
+    "3343537": 50270208,
+    "3343532": 3801088,
+    "3343534": 13762560,
+    "3343535": 19791872
+  }
+}

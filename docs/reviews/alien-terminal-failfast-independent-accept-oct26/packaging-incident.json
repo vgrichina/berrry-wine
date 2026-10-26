@@ -1,0 +1,6 @@
+{
+  "incident": "Optional static runner-wiring read initially used CivII standing source path; SHA mismatch blocked packaging before publication. Resolved via authoritative Alien inputs.json exact source path, no execution or acceptance on mismatched source.",
+  "incorrectSHA": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "correctSource": "/tmp/alien-opt-in-independent-integrate-oct26/repo/test/run.js",
+  "minimalGitCommitIncident": "Ordinary git commit rejected unavailable inherited evidence-parent blob90413573b25a8bc99486bb8bdb4c64e60b45188d. No broad checkout/fetch/retry. Use retained donor write-tree --missing-ok + commit-tree recipe, preserving entire unrelated tree; normal push still required."
+}
