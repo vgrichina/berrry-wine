@@ -1,0 +1,8 @@
+{
+  "expected": "62b15e94e8898bc5d855392cf7ff639229177e7d",
+  "actual": "62b15e94e8898bc5d855392cf7ff639229177e7d",
+  "mainPushAttempted": false,
+  "productionIntegrated": false,
+  "decision": "REJECT PUBLICATION",
+  "reason": "Unchanged affected Telegram regression fails the new row label"
+}

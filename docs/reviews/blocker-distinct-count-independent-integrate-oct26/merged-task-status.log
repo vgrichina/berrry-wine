@@ -1,0 +1,14 @@
+✔ actual unchecked duplicate records retain provenance without becoming ready or done (3.973817ms)
+✔ explicit duplicate overrides every checkbox and legacy prose; never completes a dependency (0.638218ms)
+✔ fenced examples cannot mark real ready work duplicate or reopen a duplicate (0.24556ms)
+✔ recognized statuses, terminal annotations, unknown tokens and checkbox fallback remain compatible (0.894159ms)
+✔ duplicate IDs remain separate; a genuine ready row is still actionable (0.190186ms)
+✔ production watchdog and dashboard exclude duplicates but retain ready work and visible history (6.115005ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 79.669561

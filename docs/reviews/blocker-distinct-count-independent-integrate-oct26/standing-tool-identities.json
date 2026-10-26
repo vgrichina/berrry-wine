@@ -1,0 +1,10 @@
+{
+  "/usr/bin/git": {
+    "standingBytes": 4066232,
+    "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+  },
+  "/home/user/.nvm/versions/node/v24.18.1/bin/node": {
+    "standingBytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  }
+}

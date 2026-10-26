@@ -1,0 +1,20 @@
+{
+  "result": "PASS",
+  "permutationCases": 26,
+  "hostileEvidenceEscaped": true,
+  "snapshotSha256": "2956d87a3e730bb3c94dce672fff4846f230b1d2a4524ee3baf1eb5619709ac2",
+  "counts": {
+    "distinctBlockedTaskIds": 77,
+    "rawBlockedRows": 91,
+    "duplicateBlockedRows": 14,
+    "anonymousBlockedRows": 0
+  },
+  "repeatedGroups": 15,
+  "conflictingGroups": 2,
+  "statusConflictGroups": 1,
+  "roots": 89,
+  "dependents": 2,
+  "privateInputUnchanged": true,
+  "privateTextPersisted": false,
+  "browser": "inert DOM VM only; live browser untested"
+}

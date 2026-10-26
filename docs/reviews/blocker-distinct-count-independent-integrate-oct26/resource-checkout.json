@@ -1,0 +1,52 @@
+{
+  "label": "checkout",
+  "time": 1793039599.3725636,
+  "ownedBytes": 98304,
+  "positiveWalGrowth": 0,
+  "projectedBytes": 50429952,
+  "allocation": 67108864,
+  "reserve": 8388608,
+  "hostFree": 4185890816,
+  "hostAfterGrowth": 4135559168,
+  "memoryAvailable": 2975629312,
+  "memoryRequired": 2561912832,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 18432000
+    },
+    {
+      "pid": 752162,
+      "rss": 380801024
+    },
+    {
+      "pid": 1789179,
+      "rss": 57925632
+    },
+    {
+      "pid": 2901813,
+      "rss": 204173312
+    },
+    {
+      "pid": 2903914,
+      "rss": 208928768
+    },
+    {
+      "pid": 2904102,
+      "rss": 203239424
+    },
+    {
+      "pid": 2904238,
+      "rss": 209379328
+    },
+    {
+      "pid": 2905670,
+      "rss": 205291520
+    }
+  ],
+  "prospectiveClient": 268435456,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A: no mount or guest invocation",
+  "passGate": true
+}

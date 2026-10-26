@@ -1,0 +1,42 @@
+{
+  "tree": "2cca38b8995e8ce231a6cbcde6d429e322f5990c",
+  "base": "62b15e94e8898bc5d855392cf7ff639229177e7d",
+  "changedPaths": [
+    "ops/app.js",
+    "ops/blocker-model.js",
+    "ops/blocker-model.test.js",
+    "ops/telegram-blockers.js"
+  ],
+  "sourceHashes": {
+    "ops/blocker-model.js": {
+      "bytes": 5955,
+      "sha256": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+      "candidateSha256": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+      "matchesExactCandidate": true
+    },
+    "ops/blocker-model.test.js": {
+      "bytes": 12110,
+      "sha256": "81ea8d77d64c9c8fd4a7fbc5bbe2926b20b8da28a6f61e351d884c61d8f91674",
+      "candidateSha256": "81ea8d77d64c9c8fd4a7fbc5bbe2926b20b8da28a6f61e351d884c61d8f91674",
+      "matchesExactCandidate": true
+    },
+    "ops/telegram-blockers.js": {
+      "bytes": 2465,
+      "sha256": "82e8f4e3d63cb0adcc3f78831432fe75bf23ece4343559937ee9251b6d68ce0a",
+      "candidateSha256": "82e8f4e3d63cb0adcc3f78831432fe75bf23ece4343559937ee9251b6d68ce0a",
+      "matchesExactCandidate": true
+    },
+    "ops/app.js": {
+      "bytes": 79909,
+      "sha256": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
+      "candidateSha256": "823f46634556a0cb5f0c2e389055eb0529e320ae5e0824e29428e0270e63cd2d",
+      "matchesExactCandidate": false
+    }
+  },
+  "productionSubtreePreservation": "Only four named ops paths differ; main duplicate-status display/overview filtering retained in app.js; all reader/runtime and other main paths unchanged",
+  "candidateTests": "10/10 reused on exact donor; merged app.js differs by retained main fixes and was independently challenged",
+  "independentChallenge": "26 permutations + hostile HTML + exact read-only private snapshot PASS",
+  "taskStatus": "6/6 PASS",
+  "telegram": "1/2 PASS; wording oracle failure retained unchanged",
+  "disposition": "REJECT PUBLICATION"
+}

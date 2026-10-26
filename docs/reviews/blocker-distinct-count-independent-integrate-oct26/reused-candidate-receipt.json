@@ -1,0 +1,12 @@
+{
+  "candidate": "7e3d2fb6859c5190f71f535ff5ea31988f890ed8",
+  "behaviorTests": "10/10 PASS; unchanged source hashes verified after documentation-only commit",
+  "payloadHashes": {
+    "docs/reviews/blocker-distinct-task-count-repair-oct26/tests.tap": "8fd17160318df75059e9056c369545a4d460e2743f6fa383d85fed01c37f4bd1",
+    "ops/app.js": "823f46634556a0cb5f0c2e389055eb0529e320ae5e0824e29428e0270e63cd2d",
+    "ops/blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+    "ops/blocker-model.test.js": "81ea8d77d64c9c8fd4a7fbc5bbe2926b20b8da28a6f61e351d884c61d8f91674",
+    "ops/telegram-blockers.js": "82e8f4e3d63cb0adcc3f78831432fe75bf23ece4343559937ee9251b6d68ce0a"
+  },
+  "coordinatorPriorVerification": "scratch/usage-watch/blocker-count-root-review-oct26.json: all13payloads verified; reused, not resealed"
+}

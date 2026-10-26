@@ -1,0 +1,10 @@
+{
+  "candidate": "7e3d2fb6859c5190f71f535ff5ea31988f890ed8",
+  "group": "independent adversarial challenge",
+  "result": "PASS",
+  "reusedCandidateTests": "10/10",
+  "remaining": [
+    "affected merged-tree behavioral tests",
+    "publication review/gate/ref checks"
+  ]
+}
