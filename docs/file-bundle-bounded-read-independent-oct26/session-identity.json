@@ -1,0 +1,29 @@
+{
+  "sessionId": "01a176c7-7bfc-73c2-a73e-7f1c486d0999",
+  "sessionPath": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T05-55-47-01a176c7-7bfc-73c2-a73e-7f1c486d0999.jsonl",
+  "sessionBytes": 579821,
+  "liveFleet": [
+    {
+      "pid": 2143046,
+      "rss": 194068480,
+      "model": "gpt-6.1-sol",
+      "medium": true,
+      "total200k": true
+    },
+    {
+      "pid": 2144284,
+      "rss": 203022336,
+      "model": "gpt-6.1-sol",
+      "medium": true,
+      "total200k": true
+    },
+    {
+      "pid": 2151067,
+      "rss": 244334592,
+      "model": "gpt-6.1-sol",
+      "medium": true,
+      "total200k": true
+    }
+  ],
+  "aggregateActualFleetRSS": 641425408
+}

@@ -1,0 +1,16 @@
+✔ oversized opened file is rejected without reading and handle closes (1.587887ms)
+✔ growth after stat reads only budget plus one overflow byte (0.585457ms)
+✔ cumulative budget, overflow recovery, zero budget and requested order (0.767458ms)
+✔ truncation and short reads frame actual bytes, not stale stat size (0.550091ms)
+✔ large remaining budget still uses fixed-size read chunks (3.106224ms)
+✔ replacement after opened-handle stat cannot switch the read target (5.527966ms)
+✔ open/stat/read/probe/close errors and nonregular files stay 404 and release handles (0.890029ms)
+✔ ordinary real files round trip and writeBundle sends exact framing/length (1.886106ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 48.656722
