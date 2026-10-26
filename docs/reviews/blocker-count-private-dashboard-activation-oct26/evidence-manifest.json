@@ -7,6 +7,10 @@
     "bytes": 74,
     "sha256": "687d0db1254d3e3b9c8a1b2189f14e8c5a22ae15f831ccf3617056bfffb9b830"
   },
+  "final-audit.json": {
+    "bytes": 1491,
+    "sha256": "780ff6a430a31797f26f5a0e0747bff42eeabead39a7ed478fe3ceae42516017"
+  },
   "resources-pre-activation.json": {
     "bytes": 2423,
     "sha256": "e0b59468c6591d7cbf6f6c570600f57071cbbfca81162b7ea76cb1ca92a83791"
@@ -40,12 +44,12 @@
     "sha256": "fc857087fa18243985d16b89ed0d347e3fc5dcbfc9b29ee8f72a9f67ca2efbd8"
   },
   "control.py": {
-    "bytes": 5122,
-    "sha256": "4258c8f298432135c138229bef844f265f6a199bc1b27ff13852874b944250c4"
+    "bytes": 5118,
+    "sha256": "12c5a7c7833ae4817f6fcdffcfa3c5903d9ac594d0734945db5cfcbacef33755"
   },
   "receipt.json": {
-    "bytes": 5962,
-    "sha256": "f23481f1b77b462334b315dd2372b2399858d46f69451a861c83f3a9f21b17dd"
+    "bytes": 7413,
+    "sha256": "de7ca80d73ade7cd0ea5cd650f644eada8f845ccc9737e1affc5a05fd04eb43d"
   },
   "browser.cjs": {
     "bytes": 5614,
@@ -104,8 +108,8 @@
     "sha256": "0b29d633e95901ab979409a34c8652f384edf9548387b70f5719f7519e115151"
   },
   "notes.json": {
-    "bytes": 1827,
-    "sha256": "1c4033a692494ce6d50a1c9772d820c62176a96ec66f7ae548dddae5f561814e"
+    "bytes": 2083,
+    "sha256": "7d31c2ddae847cf02dcfa0a735136838862d26c772f9f3d9aa11d31ddbe04256"
   },
   "browser-monitor.json": {
     "bytes": 405,

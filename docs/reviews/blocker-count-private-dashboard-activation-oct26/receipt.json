@@ -83,7 +83,7 @@
   "taskBranch": "task/blocker-count-private-dashboard-activation-oct26",
   "publication": "exact commit and remote verification recorded in sibling final-receipt.json after commit to avoid self-referential commit hash",
   "evidenceDirectory": "docs/reviews/blocker-count-private-dashboard-activation-oct26",
-  "acceptanceReused": "Accepted Blockers summary activation/browser gate complete. Sidebar remains raw91 rows and overview raw count by accepted source; any wider count-label change needs a separate coordinator assignment. No source changes in this task.",
+  "acceptanceReused": "Exact accepted 10 implementation,26 independent,6 merged status,2 mocked Telegram groups; no repetition.",
   "remainingGate": "Accepted Blockers summary activation/browser gate complete. Sidebar remains raw91 rows and overview raw count by accepted source; any wider count-label change needs a separate coordinator assignment. No source changes in this task.",
   "resources": {
     "at": 1793041281.1931257,
@@ -174,5 +174,41 @@
     "state": "unassigned",
     "expiry": null,
     "owner": "coordinator"
+  },
+  "finalAudit": {
+    "at": 1793041477.362072,
+    "deployed": {
+      "app.js": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
+      "blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+      "readers.js": "079da22e440c6a3eb6efb28a994b222fe827290ccfb0874ae48f1802ef08c78c"
+    },
+    "allOther1357RuntimeFilesStillUnchanged": true,
+    "service": {
+      "at": 1793041477.3600445,
+      "pid": 2896015,
+      "rssBytes": 508882944
+    },
+    "browserProfileAbsent": true,
+    "resources": {
+      "ownedBytesIncludingLauncher": 2555354,
+      "positiveWALConservativeUpperBound": 25894360,
+      "walObservedBytes": {
+        "memories_1.sqlite-wal": 0,
+        "logs_2.sqlite-wal": 12244672,
+        "queue_1.sqlite-wal": 4152992,
+        "goals_1.sqlite-wal": 873472,
+        "state_5.sqlite-wal": 4387832,
+        "thread_history_1.sqlite-wal": 4235392
+      },
+      "walQualification": "Initial per-WAL baseline was not captured; conservatively charge entire current aggregate shared WAL footprint once instead of claiming zero task growth. This upper-bounds currently materialized positive task WAL, without claiming all shared bytes are attributable.",
+      "futureGrowthAllowanceBytes": 16777216,
+      "reserveBytes": 8388608,
+      "projectedTotalBytes": 53615538,
+      "hardBytes": 67108864,
+      "hostFreeBytes": 4105203712,
+      "hostFreeAfterProjectedGrowthBytes": 4054143528,
+      "pass": true
+    },
+    "publicationScope": "focused nonprivate evidence only; no main push; no public deployment"
   }
 }

@@ -29,7 +29,7 @@ def resources(label,browser=536870912):
   try:
    c=(q/'cmdline').read_bytes().split(b'\0');exe=(q/'exe').resolve().name
    if 'codex' not in exe: continue
-   rss=int((q/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE');clients.append({'pid':int(q.name),'rss':rss,'flags':[a.decode(errors='replace') for a in c if b'model' in a or b'compac' in a or b'medium' in a or b'gpt-' in a]})
+   rss=int((q/'statm').read_text().split()[1])*os.sysconf('SC_PAGE_SIZE');clients.append({'pid':int(q.name),'rss':rss,'flags':[a.decode(errors='replace') for a in c if len(a)<256 and (a.startswith(b'model_') or a==b'gpt-6.1-sol')]})
   except (OSError,ValueError,IndexError): pass
  mem=int(next(s.split()[1] for s in pathlib.Path('/proc/meminfo').read_text().splitlines() if s.startswith('MemAvailable:')))*1024
  actual=ownedbytes();projected=max(45*1024**2,actual+16*1024**2)+8*1024**2
