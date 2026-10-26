@@ -1,0 +1,117 @@
+{
+  "at": "2026-10-26T21:21:00.829010+00:00",
+  "parent": "716cd7181e811f8eb94cc19799deb478ca960385",
+  "verdict": "BOUNDED_REPAIR_TESTS_PASS_INDEPENDENT_ACCEPTANCE_PENDING",
+  "files": [
+    {
+      "path": "test/helpers/palette-browser-launch.js",
+      "beforeSHA256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+      "afterSHA256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+      "bytes": 2893
+    },
+    {
+      "path": "test/helpers/palette-browser-supervisor.py",
+      "beforeSHA256": "63d4cfdfa7363b9246b34d6515844dd48de98990473c527f0ce0558ab6e0fa54",
+      "afterSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+      "bytes": 11452
+    },
+    {
+      "path": "test/test-d3dim-palette-gpu-web.js",
+      "beforeSHA256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+      "afterSHA256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+      "bytes": 4436
+    },
+    {
+      "path": "test/test-palette-browser-launch-controls.js",
+      "beforeSHA256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+      "afterSHA256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+      "bytes": 2997
+    },
+    {
+      "path": "test/test-palette-browser-supervisor.py",
+      "beforeSHA256": "86353cfb73f5317eced34f6bb9af6916bd076e2911a1de6225bfba6fb54fcc23",
+      "afterSHA256": "8be3cea926290022ba0e65770d23b0610b75d63c4497fe1067221798b4f34bc6",
+      "bytes": 5989
+    }
+  ],
+  "reproducerSHA256": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602",
+  "reproducerSourceSelection": "before: exact readonly candidate path; after: importlib path redirect only to repaired sparse supervisor; runpy executes unchanged original bytes and __file__, child argv/oracle/cap untouched",
+  "before": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 47054848,
+    "cpuSeconds": 0.16450800000000002,
+    "wallSeconds": 0.21454348508268595,
+    "owned": [
+      [
+        3148940,
+        "109669890"
+      ],
+      [
+        3148941,
+        "109669892"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "independentChildPeak": {
+      "pid": 3148941,
+      "start": "109669892",
+      "rssHighWater": 63569920
+    },
+    "limit": 50331648,
+    "allOwnedGone": true,
+    "accountingCallbacks": 5,
+    "unrelatedAliveSameIdentity": true,
+    "verdict": "REJECT"
+  },
+  "after": {
+    "exit": 0,
+    "stopReason": "aggregate RSS limit",
+    "peakRSS": 63569920,
+    "sampledPeakRSS": 46784512,
+    "reapedPeakRSS": 63569920,
+    "cpuSeconds": 0.12373799999999999,
+    "wallSeconds": 0.2039082699920982,
+    "owned": [
+      [
+        3149838,
+        "109673916"
+      ],
+      [
+        3149839,
+        "109673918"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "independentChildPeak": {
+      "pid": 3149839,
+      "start": "109673918",
+      "rssHighWater": 63569920
+    },
+    "limit": 50331648,
+    "allOwnedGone": true,
+    "accountingCallbacks": 4,
+    "unrelatedAliveSameIdentity": true,
+    "verdict": "PASS_OR_DIFFERENT_FAILURE"
+  },
+  "tests": {
+    "path": "test/test-palette-browser-supervisor.py",
+    "exit": 0,
+    "evidence": "ops/supervisor-tests.log"
+  },
+  "remaining": [
+    "Fresh independent CPU/timeout/signal/accounting acceptance challenges; supplied affected regression results do not replace them",
+    "Sole-owner current-main integration and affected merged-tree validation; subset parent is NOT main",
+    "Separately authorized compliant runtime and renderer identity"
+  ],
+  "reusedUnchanged": [
+    "all149 initial pins and148 unchanged pins",
+    "wrapper/ELF/Git-only DATA Node inheritance exact-pin passing receipts at9ab064a0c9b1f764f6b884db09b7b9cdea1ab257",
+    "compiler excerpt c5f123f02171e3e685e4faad669cfb418cf79d6b588409b6cbcbcb2533df64dc",
+    "framebuffer oracle8e6cbd295dadc13d01d817f04d914edcf303109adde338f53cad325ab7e613b8"
+  ],
+  "box": null,
+  "lifecycle": "No box operations; coordinator retains shutdown ownership"
+}

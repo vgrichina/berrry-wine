@@ -1,0 +1,53 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/gl-detached-peak-rss-repair-oct26/ops/reproduce.py",
+    "before"
+  ],
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 108789760,
+  "cpuSeconds": 0.32,
+  "owned": [
+    [
+      3148936,
+      "109669875"
+    ],
+    [
+      3148937,
+      "109669879"
+    ],
+    [
+      3148938,
+      "109669879"
+    ],
+    [
+      3148939,
+      "109669881"
+    ],
+    [
+      3148940,
+      "109669890"
+    ],
+    [
+      3148941,
+      "109669892"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 0.4336315430700779,
+  "outputBytes": 1501,
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-peak-rss-repair-oct26": 65536,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-peak-rss-repair-oct26": 126976,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-17-15-01a17a13-1c91-75e1-8993-e0adf1af1647.jsonl": 405504,
+      "positiveWALOnce": 360448,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 17735680,
+    "projectedFree": 3670061056
+  }
+}

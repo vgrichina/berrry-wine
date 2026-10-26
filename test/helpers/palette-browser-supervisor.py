@@ -4,6 +4,13 @@
 CPU is conservatively charged: observed per-identity own+waited CPU high-water
 marks may double-charge waited work, but never subtract exited processes.
 No process-group or executable-name ownership assumptions are used.
+
+RSS retains both simultaneous /proc samples and Linux wait4 high water (which
+also carries the maximum of descendants already waited by that child). Their
+maximum is a lower bound, not an exact simultaneous aggregate peak: independent
+maxima must not be summed as if they occurred together. Peaks below the cap can
+still overlap between samples without being detected; a single reaped peak
+above the cap always rejects, including after the command has exited.
 """
 import argparse
 import ctypes
@@ -85,6 +92,7 @@ def supervise(argv, *, rss_limit=1792*MIB, cpu_limit=90, wall_limit=120,
     owned = {}
     cpu = {}
     peak = 0
+    reaped_peak = 0
     output = bytearray()
     reason = None
     interrupted = []
@@ -145,8 +153,9 @@ def supervise(argv, *, rss_limit=1792*MIB, cpu_limit=90, wall_limit=120,
                     reason = check()
                 except Exception as error:
                     reason = 'accounting check failed: '+str(error)
-        # Reap only adopted children, preserving final wait4 CPU even for short
-        # processes that completed entirely between /proc samples.
+        # Reap only owned direct/adopted children. Linux wait4 retains CPU and
+        # max RSS even when a child (or its waited descendants) has completed
+        # entirely between /proc samples. ru_maxrss is KiB on this Linux helper.
         for candidate in selected.values():
             if candidate['ppid'] != os.getpid():
                 continue
@@ -159,6 +168,11 @@ def supervise(argv, *, rss_limit=1792*MIB, cpu_limit=90, wall_limit=120,
             row = selected.get(pid)
             identity = key(row) if row else (pid, 'reaped')
             cpu[identity] = max(cpu.get(identity, 0), usage.ru_utime + usage.ru_stime)
+            reaped_peak = max(reaped_peak, usage.ru_maxrss * 1024)
+            # Do this before successful-exit cleanup can finish. A reaped
+            # process has zero current RSS and will disappear on the next tick.
+            if reaped_peak > rss_limit:
+                reason = reason or 'aggregate RSS limit'
             if pid == child.pid:
                 exit_code = os.waitstatus_to_exitcode(status)
                 child.returncode = exit_code
@@ -191,7 +205,8 @@ def supervise(argv, *, rss_limit=1792*MIB, cpu_limit=90, wall_limit=120,
         reason = reason or 'output limit'
     if sum(cpu.values()) > cpu_limit:
         reason = reason or 'aggregate CPU limit'
-    return dict(exit=exit_code, stopReason=reason, peakRSS=peak, cpuSeconds=sum(cpu.values()),
+    return dict(exit=exit_code, stopReason=reason, peakRSS=max(peak, reaped_peak),
+                sampledPeakRSS=peak, reapedPeakRSS=reaped_peak, cpuSeconds=sum(cpu.values()),
                 wallSeconds=time.monotonic()-start, owned=[list(k) for k in owned],
                 output=bytes(output[:output_limit]), cleanupComplete=not selected)
 

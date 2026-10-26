@@ -1,0 +1,12 @@
+DETACHED_CONTROL {"exit": 7, "stopReason": null, "peakRSS": 44433408, "cpuSeconds": 0.07792, "wallSeconds": 0.09914376400411129, "owned": [[3148938, "109669879"], [3148939, "109669881"]], "output": "", "cleanupComplete": true, "unrelatedAliveSameIdentity": true, "detachedOwned": true, "allOwnedGone": true}
+PEAK_CHALLENGE {"exit": 0, "stopReason": null, "peakRSS": 47054848, "cpuSeconds": 0.16450800000000002, "wallSeconds": 0.21454348508268595, "owned": [[3148940, "109669890"], [3148941, "109669892"]], "output": "", "cleanupComplete": true, "independentChildPeak": {"pid": 3148941, "start": "109669892", "rssHighWater": 63569920}, "limit": 50331648, "allOwnedGone": true, "accountingCallbacks": 5, "unrelatedAliveSameIdentity": true, "verdict": "REJECT"}
+Traceback (most recent call last):
+  File "/tmp/gl-detached-peak-rss-repair-oct26/ops/reproduce.py", line 21, in <module>
+    runpy.run_path(str(f),run_name='__main__')
+  File "<frozen runpy>", line 286, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/tmp/gl-launch-controls-retained-challenges-oct26/ops/detached-peak-baseline-corrected.py", line 53, in <module>
+    assert result['verdict']!='REJECT','candidate accepted detached child peak above RSS cap; sampled peak and wait4 omit exited RSS high water'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: candidate accepted detached child peak above RSS cap; sampled peak and wait4 omit exited RSS high water

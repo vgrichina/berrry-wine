@@ -1,0 +1,90 @@
+{
+  "at": "2026-10-26T21:17:14.942252+00:00",
+  "candidate": "716cd7181e811f8eb94cc19799deb478ca960385",
+  "files": [
+    {
+      "path": "test/helpers/palette-browser-launch.js",
+      "blob": "6814ae990fb31b96362e056bdc1f88782d5cc968",
+      "sha256": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+      "bytes": 2893
+    },
+    {
+      "path": "test/helpers/palette-browser-supervisor.py",
+      "blob": "dc425c3b10944fa0f434ada2b2880937bccbf902",
+      "sha256": "63d4cfdfa7363b9246b34d6515844dd48de98990473c527f0ce0558ab6e0fa54",
+      "bytes": 10480
+    },
+    {
+      "path": "test/test-d3dim-palette-gpu-web.js",
+      "blob": "46f0556920270acbc04194614541be99601bced5",
+      "sha256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+      "bytes": 4436
+    },
+    {
+      "path": "test/test-palette-browser-launch-controls.js",
+      "blob": "9eab18476d0ae5b342b124e7b8501911201044be",
+      "sha256": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+      "bytes": 2997
+    },
+    {
+      "path": "test/test-palette-browser-supervisor.py",
+      "blob": "490dd8f29303a8fe9daddf0653252265e70b8071",
+      "sha256": "86353cfb73f5317eced34f6bb9af6916bd076e2911a1de6225bfba6fb54fcc23",
+      "bytes": 3925
+    }
+  ],
+  "reproducer": "/tmp/gl-launch-controls-retained-challenges-oct26/ops/detached-peak-baseline-corrected.py",
+  "reproducerSHA256": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602",
+  "priorRemoteVerification": {
+    "argv": [
+      "/usr/bin/git",
+      "ls-remote",
+      "git@github.com:vgrichina/wine-assembly.git",
+      "refs/heads/task/gl-launch-controls-retained-challenges-oct26"
+    ],
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 35201024,
+    "cpuSeconds": 0.09,
+    "owned": [
+      [
+        3144887,
+        "109648610"
+      ],
+      [
+        3144890,
+        "109648611"
+      ],
+      [
+        3144892,
+        "109648611"
+      ]
+    ],
+    "remainingOwned": [],
+    "wall": 1.6864417060278356,
+    "outputBytes": 102,
+    "disk": {
+      "components": {
+        "/tmp/gl-launch-controls-retained-challenges-oct26": 827392,
+        "/home/user/wine-assembly/scratch/usage-watch/gl-launch-controls-retained-challenges-oct26": 184320,
+        "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-11-22-01a17a0d-b9f8-7703-9d9f-b04f49359782.jsonl": 593920,
+        "positiveWALOnce": 294912,
+        "reproducerFixedPathGrowth": 12288,
+        "futureGrowth": 8388608,
+        "reserve": 8388608
+      },
+      "total": 18690048,
+      "projectedFree": 3708903424
+    }
+  },
+  "resource": {
+    "MemAvailableBytes": 3685650432,
+    "diskFreeBytes": 3722162176,
+    "allocationBytes": 67108864,
+    "projectedIncrementalBytes": 50331648,
+    "projectionBreakdown": "8 MiB working source/tests/Git/evidence + 24 MiB client/session/events/WAL positive growth allowance + 8 MiB future growth + 8 MiB reserve; fresh actual measurement required before operations",
+    "physicalTaskCapBytes": 268435456,
+    "aggregateMinimumBytes": 2596319232
+  },
+  "nextGate": "Unchanged corrected independent peak reproducer rejects the over-cap detached child; no cleanup/sentinel regression."
+}

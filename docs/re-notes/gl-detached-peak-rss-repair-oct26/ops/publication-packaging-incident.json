@@ -1,0 +1,4 @@
+{
+  "error": "git diff --cached --check rejected copied raw source-review.log diff context whitespace",
+  "correction": "omit redundant raw source diff log from published docs; preserve unchanged local original; source diff and behavioral evidence unchanged"
+}

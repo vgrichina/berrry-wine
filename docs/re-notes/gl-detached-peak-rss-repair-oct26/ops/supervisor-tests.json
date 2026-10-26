@@ -1,0 +1,100 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/gl-detached-peak-rss-repair-oct26/repo/test/test-palette-browser-supervisor.py"
+  ],
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 173731840,
+  "cpuSeconds": 3.0700000000000003,
+  "owned": [
+    [
+      3150639,
+      "109678097"
+    ],
+    [
+      3150640,
+      "109678099"
+    ],
+    [
+      3150641,
+      "109678100"
+    ],
+    [
+      3150642,
+      "109678102"
+    ],
+    [
+      3150643,
+      "109678120"
+    ],
+    [
+      3150644,
+      "109678121"
+    ],
+    [
+      3150662,
+      "109678163"
+    ],
+    [
+      3150663,
+      "109678165"
+    ],
+    [
+      3150664,
+      "109678186"
+    ],
+    [
+      3150666,
+      "109678202"
+    ],
+    [
+      3150667,
+      "109678204"
+    ],
+    [
+      3150668,
+      "109678211"
+    ],
+    [
+      3150670,
+      "109678215"
+    ],
+    [
+      3150671,
+      "109678221"
+    ],
+    [
+      3150675,
+      "109678268"
+    ],
+    [
+      3150717,
+      "109678311"
+    ],
+    [
+      3150718,
+      "109678318"
+    ],
+    [
+      3150725,
+      "109678322"
+    ]
+  ],
+  "remainingOwned": [],
+  "wall": 2.384876088006422,
+  "outputBytes": 2565,
+  "disk": {
+    "components": {
+      "/tmp/gl-detached-peak-rss-repair-oct26": 385024,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-detached-peak-rss-repair-oct26": 163840,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-17-15-01a17a13-1c91-75e1-8993-e0adf1af1647.jsonl": 528384,
+      "positiveWALOnce": 405504,
+      "reproducerFixedPathGrowth": 0,
+      "futureGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "total": 18259968,
+    "projectedFree": 3668004864
+  }
+}

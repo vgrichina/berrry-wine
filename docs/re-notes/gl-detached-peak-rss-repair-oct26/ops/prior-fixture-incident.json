@@ -1,0 +1,13 @@
+{
+  "originalSHA256": "b68baa5d2132b01d3ceaf3e75a3775d3400d98ba7d4a27a6a29a5e819a95039a",
+  "correctedSHA256": "40d190267cb84f8bbd76594a80a268d207f980b50f7ec5d9c682c8968ec43602",
+  "firstRun": "detached-peak.json/log preserved unchanged",
+  "kind": "fixture failed before peak allocation; not candidate behavioral rejection",
+  "diagnostic": "32MiB aggregate threshold can stop baseline supervisor+parent+child before accounting callback2; measured control tree40108032B already exceeds33554432B",
+  "changes": [
+    "fixed-path fixture output now task-owned tmp",
+    "both peak challenge threshold and comparison32MiB ->48MiB; unchanged48MiB child allocation"
+  ],
+  "authorization": "resolve routine internal fixture errors within same task; source unchanged",
+  "noUnchangedRetry": true
+}

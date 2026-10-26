@@ -1,0 +1,18 @@
+{"exit": -15, "stopReason": "aggregate CPU limit", "peakRSS": 52035584, "sampledPeakRSS": 52035584, "reapedPeakRSS": 23199744, "cpuSeconds": 0.378067, "wallSeconds": 0.18606046889908612, "owned": [[3150641, "109678100"], [3150642, "109678102"]], "cleanupComplete": true}
+PASS detached child remains CPU/RSS charged and cleaned
+{"exit": -15, "stopReason": "aggregate RSS limit", "peakRSS": 51904512, "sampledPeakRSS": 51904512, "reapedPeakRSS": 23199744, "cpuSeconds": 0.914042, "wallSeconds": 0.4248285759240389, "owned": [[3150643, "109678120"], [3150644, "109678121"]], "cleanupComplete": true}
+PASS detached child aggregate RSS enforcement
+{"exit": 0, "stopReason": "aggregate RSS limit", "peakRSS": 62652416, "sampledPeakRSS": 41156608, "reapedPeakRSS": 62652416, "cpuSeconds": 0.16893199999999997, "wallSeconds": 0.21803248906508088, "owned": [[3150662, "109678163"], [3150663, "109678165"]], "cleanupComplete": true}
+PASS waited detached descendant high water rejects missed inter-sample peak
+{"exit": -15, "stopReason": "wall deadline", "peakRSS": 27262976, "sampledPeakRSS": 27262976, "reapedPeakRSS": 12591104, "cpuSeconds": 0.059401000000000044, "wallSeconds": 0.15276058809831738, "owned": [[3150664, "109678186"]], "cleanupComplete": true}
+PASS timeout cleanup
+{"exit": 7, "stopReason": null, "peakRSS": 27131904, "sampledPeakRSS": 27131904, "reapedPeakRSS": 12460032, "cpuSeconds": 0.10470200000000006, "wallSeconds": 0.07197353895753622, "owned": [[3150666, "109678202"], [3150667, "109678204"]], "cleanupComplete": true}
+PASS failure/orphan cleanup
+{"exit": 0, "stopReason": "output limit", "peakRSS": 21889024, "sampledPeakRSS": 21889024, "reapedPeakRSS": 12464128, "cpuSeconds": 0.05557800000000003, "wallSeconds": 0.03792224917560816, "owned": [[3150668, "109678211"]], "cleanupComplete": true}
+PASS output bound
+{"exit": -15, "stopReason": "supervisor interrupted", "peakRSS": 27262976, "sampledPeakRSS": 27262976, "reapedPeakRSS": 12464128, "cpuSeconds": 0.04108400000000002, "wallSeconds": 0.05034880293533206, "owned": [[3150670, "109678215"]], "cleanupComplete": true}
+PASS supervisor signal cleanup
+{"exit": -15, "stopReason": "accounting check failed: synthetic ledger rejection", "peakRSS": 25690112, "sampledPeakRSS": 25690112, "reapedPeakRSS": 12464128, "cpuSeconds": 0.027394000000000016, "wallSeconds": 0.46633367403410375, "owned": [[3150671, "109678221"]], "cleanupComplete": true}
+PASS accounting exception cleanup
+PASS JS bootstrap actual supervised re-exec and detached failure cleanup
+PASS unrelated process untouched throughout

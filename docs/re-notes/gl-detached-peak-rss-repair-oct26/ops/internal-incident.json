@@ -1,0 +1,5 @@
+{
+  "error": "KeyError wal before recovery execution: run name baseline overwrote wrapper disk baseline",
+  "correction": "separate immutable disk-baseline.json from operation receipt baseline.json; conservative original WAL baseline reused",
+  "operationExecuted": false
+}

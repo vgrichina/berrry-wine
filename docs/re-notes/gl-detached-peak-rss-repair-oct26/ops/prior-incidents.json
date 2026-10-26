@@ -1,0 +1,13 @@
+[
+  {
+    "firstFailure": "fresh admission blocked detached test; no execution/no retry",
+    "receipt": "detached-peak-admission.json"
+  },
+  {
+    "publication": "Separate Git-only closeout admission at64MiB also initially denied at2641674240B available vs3374702592B needed; no Git ran. Measured real capacity release to3631104000B permitted same unchanged narrow closeout config.",
+    "receipt": "publication-init-admission.json"
+  },
+  {
+    "watcher": "Background shell tail-f exited with shell; attempted kill returned no-such-process. No watcher left; no unrelated process signalled."
+  }
+]
