@@ -1,0 +1,120 @@
+{
+  "status": "COMPLETE",
+  "verdict": "REJECT",
+  "task": "render-subview-tagged-independent-integrate-oct26",
+  "sessionID": "01a175b8-8d36-7432-b7eb-4a05a7885129",
+  "candidate": "9004eca8e8f45a982f53eb24cf2c663565357f84",
+  "publication": {
+    "commit": "9f1e9e5f0c435936d01263db941a33589f75cc8b",
+    "publicationTree": "046454b4b132c1b8790e6d98b2e1708c4e8e0528",
+    "branch": "task/render-subview-tagged-independent-integrate-oct26",
+    "remoteTaskSHA": "9f1e9e5f0c435936d01263db941a33589f75cc8b",
+    "remoteMainSHA": "020576f4f6b206eb7981afdcf4eadc1002b8a0b2",
+    "mainChanged": false,
+    "normalPush": true,
+    "verified": true,
+    "clean": true,
+    "reviewManifestFiles": 13,
+    "sourceTestedTree": "5ea8549f4bdc5eeb693075629d3124dded6bd332",
+    "sourceFixtureReviewTree": "1d9102aee22f6678610284dd782129c6d1f143fa",
+    "implementationUntouched": true
+  },
+  "testedTree": {
+    "verdict": "REJECT",
+    "candidate": "9004eca8e8f45a982f53eb24cf2c663565357f84",
+    "candidateSourceTestedTree": "5ea8549f4bdc5eeb693075629d3124dded6bd332",
+    "sourceFixtureReviewTree": "1d9102aee22f6678610284dd782129c6d1f143fa",
+    "sourceUnmodified": true,
+    "productionRendererSHA256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "previousOracleSHA256": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5",
+    "independentOracleSHA256": "8f73cc8be7e1a6c61403ca75d4c4c8fc2790175da38462c9e40d77204ed21781",
+    "tests": {
+      "unchangedPrior": "14PASS",
+      "suppliedOriginalFocusedNew": "57PASS (20+16+21)",
+      "independent": "4PASS6FAIL; all6 bypass budgetAccepted=true"
+    },
+    "baselineReuse": "/tmp/render-subview-tagged-receiver-repair-oct26/ops/baseline.json:10PASS4FAIL",
+    "noRepair": true,
+    "mainIntegration": false,
+    "remoteMainBefore": "020576f4f6b206eb7981afdcf4eadc1002b8a0b2",
+    "remainingBlocker": "Compound assignment indexed Gets and computed object-destructuring indexed Gets silently bypass source-read accounting; require future separately authorized repair and independent acceptance.",
+    "limits": "U8 byte ranges and synchronous exact loaded script only; no general JS equivalence or performance/gameplay acceptance"
+  },
+  "tests": {
+    "unchangedPrior": "14PASS",
+    "originalFocusedNew": "57PASS(20+16+21)",
+    "independent": "4PASS6FAIL; all6 bypasses accepted by unchanged warm budget",
+    "baselineReused": "10PASS4FAIL",
+    "olderRaw": "4PASS9FAIL measured budget rejections, not green13"
+  },
+  "blocker": "Compound-assignment indexed Gets and computed-destructuring indexed Gets perform full1024/4096/16384-byte scans yet count0; budget accepts all6. No implementation repair/main integration.",
+  "remainingScope": "Future separately assigned repair and independent acceptance required. Source/fixture rejection only; no general JS equivalence/game performance/gameplay claim.",
+  "resources": {
+    "finalPeakAdmission": "FAIL",
+    "peak": {
+      "at": 1792976785.5635402,
+      "parts": {
+        "ownAllocated": 39301120,
+        "launcherAllocated": 360448,
+        "session": 872448,
+        "sharedWALSHM": 28434432,
+        "positiveDBgrowthConservativeFloor": 2097152,
+        "futureOutputsSessionDB": 6291456,
+        "reserve": 8388608
+      },
+      "projectedAllNewBytes": 85745664,
+      "availableRAM": 2785648640,
+      "freeDisk": 4830212096,
+      "projectedFreeDisk": 4815532032,
+      "pass": false
+    },
+    "cleanup": {
+      "at": 1792976837.1226187,
+      "parts": {
+        "ownAllocated": 2777088,
+        "launcherAllocated": 372736,
+        "session": 872448,
+        "sharedWALSHM": 28434432,
+        "positiveDBgrowthConservativeFloor": 2097152,
+        "futureOutputsSessionDB": 6291456,
+        "reserve": 8388608
+      },
+      "projectedAfterCleanup": 49233920,
+      "historicalPeakProjected": 85745664,
+      "historicalAdmission": "FAIL; not retrospectively compliant",
+      "cleanup": "Owned ops/v removed; no donor/root tracked mutation; isolated object view can be restored only after fresh admission",
+      "availableRAM": 2838937600,
+      "freeDisk": 4866125824
+    },
+    "incidents": "incidents.json",
+    "retrospectiveComplianceClaim": false
+  },
+  "watcher": {
+    "pid": 1829503,
+    "uid": 1000,
+    "startTicks": "102362620",
+    "parent": 1829016,
+    "argv": [
+      "tail",
+      "-n",
+      "0",
+      "-f",
+      "messageboard.txt"
+    ],
+    "toolSession": 92385,
+    "identityVerifiedBeforeTERM": true,
+    "signal": "TERM",
+    "reapedExit": 143,
+    "procAbsent": true
+  },
+  "rootDonor": "Root tracked/index/refs and donors readonly; append-only board only. Initial root-ref receipt reused, no later comparison claimed.",
+  "runtime": {
+    "assignedBox": null,
+    "boxState": "No access; coordinator reported bx_k38z8byn STOPPED",
+    "expiry": null,
+    "lifecycleOwner": "coordinator",
+    "newRuntimeTests": false
+  },
+  "ownership": "RELEASED; STOP; no successors/workers",
+  "evidence": "evidence-manifest.json; RECOVERY.md describes removed owned Git object view"
+}

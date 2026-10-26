@@ -1,0 +1,23 @@
+{
+  "at": 1792977088.3154013,
+  "dbInitial": {
+    "/home/user/.codex/memories_1.sqlite": 45056,
+    "/home/user/.codex/logs_2.sqlite": 75055104,
+    "/home/user/.codex/queue_1.sqlite": 69632,
+    "/home/user/.codex/thread_history_1.sqlite": 800161792,
+    "/home/user/.codex/goals_1.sqlite": 32768,
+    "/home/user/.codex/state_5.sqlite": 18694144
+  },
+  "projection": 64086016,
+  "parts": {
+    "shared": 28434432,
+    "checkoutGitViewsEvidence": 14680064,
+    "future": 8388608,
+    "reserve": 8388608,
+    "sessionLauncherDB": 4194304
+  },
+  "memoryAvailable": 2532556800,
+  "freeDisk": 4379484160,
+  "shortLinksEstimate": 8986,
+  "leaves": 228
+}

@@ -1,0 +1,13 @@
+{
+  "candidate": "9004eca8e8f45a982f53eb24cf2c663565357f84",
+  "candidateTree": "5ea8549f4bdc5eeb693075629d3124dded6bd332",
+  "sourceFixtureTestedTree": "6f1fe619e678301fcbb75c50e574c8689e8b23cc",
+  "finalCombined": 124,
+  "sourceSHA256": "5a09d2fd73b714ec9407f8190d044b35e6e2798d422fd8fbb7b79737bdbefca8",
+  "benchmarkSHA256": "14dc4da352c147b8a4af8dbdc22dbc0146a6633f68949b321474795b574a787d",
+  "productionRendererSHA256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+  "unchangedReproducerSHA256": "8f73cc8be7e1a6c61403ca75d4c4c8fc2790175da38462c9e40d77204ed21781",
+  "newFixtureSHA256": "7200796ece24c869abd05ad86082eb2da0b6a9c5172c83f70067f5c75ae961ff",
+  "productionRendererUnchanged": true,
+  "mainIntegration": false
+}

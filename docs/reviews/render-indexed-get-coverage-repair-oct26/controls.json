@@ -1,0 +1,35 @@
+{
+  "baselineUnchangedReproducer": {
+    "pass": 4,
+    "fail": 6,
+    "reuse": "exact candidate9004eca8 independent review, no repeat baseline",
+    "allSixBudgetAccepted": true
+  },
+  "repairedUnchangedReproducer": {
+    "pass": 10,
+    "fail": 0,
+    "allSixBudgetAccepted": false,
+    "sizes": [
+      1024,
+      4096,
+      16384
+    ]
+  },
+  "requiredPrior": {
+    "prior": 14,
+    "original": 20,
+    "focused": 16,
+    "newPrior": 21
+  },
+  "newTargeted": 43,
+  "finalCombined": {
+    "pass": 124,
+    "fail": 0,
+    "receipt": "all-final.json",
+    "log": "all-final.log"
+  },
+  "olderRaw": "4PASS9FAIL remains expected measured budget rejection, accepted exact-revision evidence reused; not green13",
+  "newTimings": 0,
+  "oraclesAndBudgets": "all byte-identical; unchanged-pins.json",
+  "syntaxCompatibility": "Legacy read/construct-only instrument clients keep native lvalues/counters; create always supplies reference hook. New controls exercise actual create, no fallback measurement."
+}

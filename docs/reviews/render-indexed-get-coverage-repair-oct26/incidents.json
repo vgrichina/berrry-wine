@@ -1,0 +1,42 @@
+{
+  "inspection": [
+    {
+      "command": "/bin/bash -lc 'pwd && cat CLAUDE.md'",
+      "capturedBytes": 22246
+    },
+    {
+      "command": "/bin/bash -lc 'cat scratch/usage-watch/coordinator-policy.md; cat scratch/usage-watch/render-indexed-get-coverage-repair-oct26.admission.json; tail -80 messageboard.txt'",
+      "capturedBytes": 83844
+    },
+    {
+      "command": "/bin/bash -lc 'cat scratch/usage-watch/render-indexed-get-coverage-repair-oct26.admission.json'",
+      "capturedBytes": 20195
+    },
+    {
+      "command": "/bin/bash -lc \"cat scratch/usage-watch/coordinator-policy.md; ls -la /tmp/render-indexed-get-coverage-repair-oct26; python3 - <<'PY'\nimport json\np=json.load(open('scratch",
+      "capturedBytes": 14727
+    },
+    {
+      "command": "/bin/bash -lc \"rg --files scratch/usage-watch | rg 'render-indexed|mount|resource|admission|guard' | head -50; python3 - <<'PY'\nimport json\np=json.load(open('scratch/usag",
+      "capturedBytes": 10675
+    },
+    {
+      "command": "/bin/bash -lc \"rg -n 'ObjectPattern|Assignment|instrument|execute\\\\(' /tmp/render-indexed-get-coverage-repair-oct26/repo/test/test-d3d9-subview-tagged-receiver.js; sed -n",
+      "capturedBytes": 11814
+    },
+    {
+      "command": "/bin/bash -lc \"head -85 /tmp/render-indexed-get-coverage-repair-oct26/ops/targeted.log; sed -n '38,120p' tools/d3d9-operation-observer.js\"",
+      "capturedBytes": 11250
+    }
+  ],
+  "qualification": "Initial inspection commands exceeded excerpt8KiB; one combined inspection captured83844B exceeding read64KiB. Below128KiB command capture and2MiB capture, retained as noncompliant inspection; no retrospective compliant claim. Later excerpts bounded.",
+  "targetedInitial": "33PASS8FAIL due missing parentheses around sequence expressions in reconstructed keys/defaults; fixed source, unchanged native comparison expectations; final43PASS.",
+  "focusedInitial": "15PASS1FAIL historical syntax-only adapter lacked new reference hook; preserve old oracle reads1 via explicit native compatibility branch; full measured create always has hook, final16PASS.",
+  "watcherDiscovery": "Two watchers detected; no signal sent. Parent thread env absent; identified own using exact initial launch UTC/startticks/cwd/UID/argv, other watcher untouched. Failed discovery assertion followed only independent read-only audit/resource check, no resource-gate bypass.",
+  "sparsePublication": "Initial Git add outside sparse patterns rejected; use authorized --sparse add for owned new evidence. Staged-state assertion adjusted to inspect HEAD plus index; no oracle/source change.",
+  "sparsePinResolution": "Donor omitted an unrelated sparse fixture; resolved hashes directly from pinned candidate blobs via isolated Git, without donor mutation.",
+  "hashReadQualification": "Initial setup pinned full-file read_bytes included production renderer larger than64KiB; retained as inspection read violation. Final SHA verification streams64KiB.",
+  "resourceGateFailures": 0,
+  "accessDenialRetry": false,
+  "runtime": "No assigned box or runtime access. Existing denied SSH retained in upstream evidence; no retry."
+}

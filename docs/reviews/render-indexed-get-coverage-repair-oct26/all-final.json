@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "docs/reviews/render-indexed-get-coverage-repair-oct26/reproduce.js",
+    "docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js",
+    "test/test-d3d9-rgba-performance.js",
+    "test/test-d3d9-rgba-source-identity.js",
+    "test/test-d3d9-immutable-rgba-snapshot.js",
+    "test/test-d3d9-rgba-generation-independent.js",
+    "test/test-d3d9-byte-identity-acceptance.js",
+    "test/test-d3d9-real-operation-accounting.js",
+    "test/test-d3d9-subview-tagged-receiver.js",
+    "test/test-d3d9-indexed-get-coverage.js"
+  ],
+  "exitCode": 0,
+  "seconds": 6.652142286300659,
+  "availableRAM": 3125268480,
+  "freeDisk": 4846866432,
+  "maxRSSKiB": 184608,
+  "outputBytes": 16385,
+  "incident": null
+}

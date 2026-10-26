@@ -1,0 +1,13 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "mountValidation": "No guest/mount commands assigned or executed; canonical mount parser conditional checkpoint inapplicable. Exact dedicated Git config unchanged.",
+  "pins": {
+    "tools/d3d9-operation-observer.js": "e29f9513aa316b9d9000c64b3352ab7fb3b8e4452f021729c10e641eac5b38e0",
+    "tools/d3d9-rgba-benchmark.js": "14dc4da352c147b8a4af8dbdc22dbc0146a6633f68949b321474795b574a787d",
+    "test/test-d3d9-subview-tagged-receiver.js": "b187933496e743ee385871db31527a15e8a644528ac77514bb20ed8fc28682ea",
+    "lib/d3d9-host.js": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+    "docs/reviews/render-operation-accounting-independent-accept-oct26/reproduce.js": "0d8353b3e844dd4c4001f78f9aced21aa17935e7a84253509c4f548682ad5af5"
+  }
+}

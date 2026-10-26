@@ -1,0 +1,16 @@
+{
+  "pid": 1839391,
+  "uid": 1000,
+  "startTicks": "102427029",
+  "parent": 1838933,
+  "argv": [
+    "tail",
+    "-n",
+    "0",
+    "-f",
+    "messageboard.txt"
+  ],
+  "toolSession": 32701,
+  "startUTC": 1792977061.051433,
+  "identity": "Exact argv, UID, root cwd and start within initial owned 01:11:01 tool command; second watcher start later belongs to other task and is untouched."
+}

@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "node",
+    "--test",
+    "--test-concurrency=1",
+    "docs/reviews/render-subview-tagged-independent-integrate-oct26/reproduce.js"
+  ],
+  "exitCode": 1,
+  "seconds": 0.6950465810950845,
+  "bytes": 7583,
+  "termination": null,
+  "limits": {
+    "cpu": 60,
+    "wall": 60,
+    "heapMiB": 128,
+    "fileMiB": 24,
+    "captureKiB": 128,
+    "killReapSeconds": 5
+  }
+}

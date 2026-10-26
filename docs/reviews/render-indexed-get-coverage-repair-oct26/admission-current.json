@@ -1,0 +1,21 @@
+{
+  "at": 1792977657.693787,
+  "parts": {
+    "ownAllocated": 10461184,
+    "launcherAllocated": 339968,
+    "session": 974848,
+    "sharedWALSHM": 28434432,
+    "positiveDBgrowth": 942080,
+    "futureOutputsSessionDB": 8388608,
+    "reserve": 8388608
+  },
+  "projectedAllNewBytes": 57929728,
+  "availableRAM": 2875539456,
+  "freeDisk": 4845973504,
+  "projectedFreeDisk": 4829196288,
+  "sessionPaths": [
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T01-10-30-01a175c2-4c91-74c1-a5ba-96ecc23a37d7.jsonl"
+  ],
+  "pass": true,
+  "standingReadonlyInputs": "donor candidate objects plus 228 supplied flat leaves, no recursive alternates; installed tools used in place; not copied or charged twice"
+}
