@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require(\"fs\");console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),environment:{TMPDIR:process.env.TMPDIR,NODE_OPTIONS:process.env.NODE_OPTIONS||null}}))"
+  ],
+  "cwd": "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 85770240,
+  "physicalCap": 134217728,
+  "cpu": 0,
+  "wall": 0.03262534714303911,
+  "outputBytes": 1818,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

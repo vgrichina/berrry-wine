@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/ops/signature-oracle.py"
+  ],
+  "cwd": "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 70123520,
+  "physicalCap": 134217728,
+  "cpu": 0.13,
+  "wall": 0.1489177760668099,
+  "outputBytes": 166,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

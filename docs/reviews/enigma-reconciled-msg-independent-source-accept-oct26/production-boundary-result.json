@@ -1,0 +1,55 @@
+{
+  "candidate": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "runnerSHA256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "pass": true,
+  "cases": 3,
+  "omissions": [
+    {
+      "name": "actual-import-installation",
+      "rejected": true
+    },
+    {
+      "name": "actual-setter",
+      "rejected": true
+    },
+    {
+      "name": "actual-observer-qualification",
+      "rejected": true
+    },
+    {
+      "name": "setter-after-earliest-loader",
+      "rejected": true
+    }
+  ],
+  "excerpts": {
+    "installation": {
+      "start": 252541,
+      "end": 253464,
+      "bytes": 923,
+      "sha256": "1e9d51baafa18f7423cd635eca2248d62c4c2d5ce8a114458238be757827816d"
+    },
+    "qualification": {
+      "start": 274990,
+      "end": 275350,
+      "bytes": 360,
+      "sha256": "f56367cae6e7521edc2b5d73dd955f5fa88d1f5fd10e22e3b31b9c4e2ceec3cb"
+    },
+    "peCall": {
+      "start": 309730,
+      "end": 309822,
+      "bytes": 92,
+      "sha256": "5d1372adda4e6eabf4043b8a8b3aac0b51ddf0b2b327b5586ceabaf24802442f"
+    }
+  },
+  "actualSourceOrder": {
+    "installation": 252541,
+    "imports": 272025,
+    "qualification": 274990,
+    "stageAndLoadPe": 309730,
+    "loadWin16Dlls": 311045,
+    "loadDlls": 319197
+  },
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "qualification": "Exact runner statements with host loader substitute; no real initializer/guest executed"
+}

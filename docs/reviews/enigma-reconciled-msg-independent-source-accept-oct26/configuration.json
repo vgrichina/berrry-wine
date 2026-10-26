@@ -1,0 +1,22 @@
+{
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "base": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountParser": "N/A offline: no mount/guest conditional execution",
+  "rootRef": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "limits": "shared pool1 tests/pool2 Git before exclusive lock; Git DATA only child; inherited Node limits checked before acceptance",
+  "standingDonor": "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26",
+  "standingTools": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "/usr/bin/python3",
+    "/usr/bin/git"
+  ]
+}

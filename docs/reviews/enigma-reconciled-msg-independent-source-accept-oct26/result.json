@@ -1,0 +1,34 @@
+{
+  "verdict": "ACCEPTED_SOURCE_ONLY",
+  "acceptedSHA": "425755ee5ee9be0734c7aca187521100f5487674",
+  "base": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+  "testedTree": "fb1ef0832eb9e0229cd272c67b8465c4fcbf4396",
+  "runnerSHA256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "sourceChanged": false,
+  "newChallenges": [
+    "unchanged earliest actual reconciled production runner reproducer3modes4omissions",
+    "actual CLI default-off and enabled installed-owner contract9omissions",
+    "13nonrunner actual original identities and prerequisite/main reverse identity",
+    "streaming independent295signature mapping against actual canonical include list incl4indentedGL and4rejectingcontrols"
+  ],
+  "reusedGroups": "Unchanged six donor behavior groups/96 baseline comparisons; independent33 continuation cases/396 ownership completions/routes; hash verified exact receipt chain, not rerun",
+  "compiled": false,
+  "canonicalRuntimeQualified": false,
+  "gameplay": "unknown",
+  "mainForbidden": true,
+  "nextGate": [
+    "separately admitted normal tools/gen-host-import-sigs.js --check and canonical build",
+    "changed-module initializer/thunk/decoded CALL-JMP/park-retry/async runtime qualification",
+    "step-completion ACK and zero-credit frozen snapshot before Enigma input"
+  ],
+  "box": {
+    "id": null,
+    "state": "N/A no assigned box; none queried",
+    "expiry": null,
+    "lifecycleOwner": "coordinator unchanged"
+  },
+  "incidents": "All prior real platform denials/timeouts/admission incidents retained by exact hashed immutable receipts plus upstream-incidents.json. No unchanged denied operation or whole-generator retry. Initial combined readonly policy/receipt displays exceeded tool excerpt and truncated; no execution capture limit raised.",
+  "remaining": [
+    "own branch publication/exact remote verification"
+  ]
+}

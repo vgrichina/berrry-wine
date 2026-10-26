@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/ops/production-boundary.js",
+    "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/ops",
+    "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo"
+  ],
+  "cwd": "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 114663424,
+  "physicalCap": 134217728,
+  "cpu": 0.02,
+  "wall": 0.03358388412743807,
+  "outputBytes": 118,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

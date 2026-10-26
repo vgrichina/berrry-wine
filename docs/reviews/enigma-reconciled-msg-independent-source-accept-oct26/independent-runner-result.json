@@ -1,0 +1,53 @@
+{
+  "pass": true,
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "runnerSHA256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "excerpts": {
+    "install": "1e9d51baafa18f7423cd635eca2248d62c4c2d5ce8a114458238be757827816d",
+    "qualify": "f56367cae6e7521edc2b5d73dd955f5fa88d1f5fd10e22e3b31b9c4e2ceec3cb",
+    "loader": "5d1372adda4e6eabf4043b8a8b3aac0b51ddf0b2b327b5586ceabaf24802442f",
+    "cli": "84ce8344c169324ceea20ea3828ec1f58cfea15cb6d858e214ba02d9453357e8"
+  },
+  "cases": 2,
+  "omissions": [
+    {
+      "name": "owner-import-installation",
+      "rejected": true
+    },
+    {
+      "name": "observer-wire",
+      "rejected": true
+    },
+    {
+      "name": "arming-control",
+      "rejected": true
+    },
+    {
+      "name": "disabled-default",
+      "rejected": true
+    },
+    {
+      "name": "completion-qualification",
+      "rejected": true
+    },
+    {
+      "name": "setter",
+      "rejected": true
+    },
+    {
+      "name": "park-control",
+      "rejected": true
+    },
+    {
+      "name": "bind-control",
+      "rejected": true
+    },
+    {
+      "name": "resume-context-control",
+      "rejected": true
+    }
+  ],
+  "method": "Exact pinned runner statements and actual CLI flag definition; real production helper/owner via production require; substituted host loader, no guest/module execution",
+  "compiled": false,
+  "canonicalRuntimeQualified": false
+}

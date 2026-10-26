@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require(\"fs\");const {WAT_FILES}=require(\"/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo/lib/wat-manifest.js\");fs.writeFileSync(\"/tmp/enigma-reconciled-msg-independent-source-accept-oct26/ops/canonical-manifest.json\",JSON.stringify(WAT_FILES.map(x=>\"src/\"+x)));console.log(\"PASS canonical production manifest\");"
+  ],
+  "cwd": "/tmp/enigma-reconciled-msg-independent-source-accept-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 70909952,
+  "physicalCap": 134217728,
+  "cpu": 0.01,
+  "wall": 0.019594318000599742,
+  "outputBytes": 35,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,414 @@
+{
+  "acceptedOriginal": "e8bceb042bc3eff6bab73642988be29a7522287e",
+  "acceptance": "ffeadab427cfff4fdeae4ca7375678c6a89d699e",
+  "receipts": {
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-4-execution.json": {
+      "sha256": "d12bafd34c9d2aabef4e962524f3d137aa0f6de07d43762d0e44d97dd62b1f7f",
+      "bytes": 857
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-closeout.json": {
+      "sha256": "90870594bebe4bb9979c1f168d3b1a08d13fff89d1b427d81e3e6579ab21a7bc",
+      "bytes": 4821
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/closeout-summary.json": {
+      "sha256": "4e5667182c3b0bbee73a1904d975ecb7d532996211ede9d22101d2a6be66ad5c",
+      "bytes": 583
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/first-source-review-execution.json": {
+      "sha256": "1feb6576b3c55f25ad0504ab9fff0d50c06e53771a6f78f48e3a8eca7deae7a5",
+      "bytes": 616
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/passing-resources.json": {
+      "sha256": "2c9a950e7302ebb3ccee96d66fbaf7d335dcd7802019abcf9641c496ac37654e",
+      "bytes": 830
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-6-execution.json": {
+      "sha256": "3abb2146f5d1e061d0ec204a4aad9f06f8d757077900cdc4f29a9875286627e7",
+      "bytes": 693
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/pins.json": {
+      "sha256": "b1ef3aca132b484fde4d732774d325148affce3956f6e9627586775742020133",
+      "bytes": 1742
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/db-baseline.json": {
+      "sha256": "172b2059579e18a6fd1731fd3a88e5128ddf4db2b40d39eddb80b74cac7587c7",
+      "bytes": 300
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/ownership-result.json": {
+      "sha256": "6c9fbc3465bd9278be946872997a6ac00a06a7c9737f495c2731c429abcb6b39",
+      "bytes": 853
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-7.json": {
+      "sha256": "d93ac89788bdbf29d5579204a2846499d047c73ee08c772c74a951f11ce21a39",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/physical-parse-incident.json": {
+      "sha256": "cb1f3d882ad61b0b7204639ccbd5601df7255eba2c9ec38fe7ce78b09d535d3a",
+      "bytes": 562
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-10-execution.json": {
+      "sha256": "f6fd5e1ff57b0d3772354f32b3ac1110969b80a2a0744c01352ae10f09b22e1a",
+      "bytes": 728
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-6.json": {
+      "sha256": "0ec8174ac0b0690a8a0f77a7a756cc43c3c4842a0e49a658cb75f4ce715b59b4",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/reused-evidence.json": {
+      "sha256": "7f1492682272481269f1929b50d14a85ed3b4f572a95acba4fc4b93f2aa9a818",
+      "bytes": 7688
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-ownership.json": {
+      "sha256": "98a577b79d605d23763e84ca7ca7c57296fbe09320485440066702373dcec948",
+      "bytes": 3485
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-debug.json": {
+      "sha256": "d4a1f6f0a5b29662d41011af7b1060e0de4a0cf907f0d90c71c562e01cbb3a57",
+      "bytes": 3480
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/checkout.json": {
+      "sha256": "a9d6eae772575163bf784f57050f374f98f90032485ddf3e2c444867c53a1d70",
+      "bytes": 4146
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-ready-to-commit.json": {
+      "sha256": "97d23fcd3c094f57e743aa843ce83125451e370f81638bfe041833476170e946",
+      "bytes": 4828
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/checkpoint.json": {
+      "sha256": "d1177eafa7e05933af677af0b011e7c5235fe871f1ac2955cea123e5db740527",
+      "bytes": 2745
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-8.json": {
+      "sha256": "0299790db47278b3f21dca1b87f00e10f57a2e04a016359a9645f9ca78ecca2d",
+      "bytes": 4159
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/partial-runner-prerequisite.patch.gz": {
+      "sha256": "7c588c9c24b5b6fb8f03c82982cae2138094663852d9f9ab322981ca88141209",
+      "bytes": 1869
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-9.json": {
+      "sha256": "1c0fc2d84fc9a62063e170d91f99e66ed65c969f844111ef78109371035b11b4",
+      "bytes": 4159
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/second-source-review-execution.json": {
+      "sha256": "2fd5bc2f9f74089f6718c715cf944dec02788a260516ec345e87543c740930b4",
+      "bytes": 616
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/configuration.json": {
+      "sha256": "4107889950af86f71fb7d47e90884fae79cb54b1949527c20b3b631e13c6be57",
+      "bytes": 672
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/startup-configuration.json": {
+      "sha256": "3d359a02fcc2ddff940aae1b6bb0c1b7b9ae91f38bc6c88567243b81e4ac68f1",
+      "bytes": 465
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/fixture-token-correction.json": {
+      "sha256": "e762db6a66c44679afd56c968d5ed5b4b53cea374702c3462c176c792562a0bb",
+      "bytes": 548
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/first-continuations-execution.json": {
+      "sha256": "cbe5b2f6f358dadd6ab345e9f374bae70a86bb110b8350b16cfcbfdd37adf08d",
+      "bytes": 784
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-3.json": {
+      "sha256": "40a42be65f28885f39b0f50de83d816ada4aef6f8101f585a84db81d4829f833",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/source-review-owned-errors.json": {
+      "sha256": "90ceed7284bf12e8d3114d42430589c8158194967c5ccf73089a80cf22fde69b",
+      "bytes": 292
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-production-boundary.json": {
+      "sha256": "a53f728b3e409285e73ab4f3bc7e617b375fc7fbebf2b91ae4157c845b4bf9d9",
+      "bytes": 4169
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/second-continuations-execution.json": {
+      "sha256": "2992da5b172c3c02cb5cb2f3ccabd0dd7ee9a148ca4d11fc622ce4a0b178c4e7",
+      "bytes": 784
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-2.json": {
+      "sha256": "c03821927d5a7e73ce1ae316a05a1399559bf85689cde6b68d9f8ea1fe2df036",
+      "bytes": 4159
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/third-continuations-execution.json": {
+      "sha256": "c3ca9b36df6927bd46abaa7c15798f9773a17c27c395b626f8d6ce1791132000",
+      "bytes": 793
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-prepublication.json": {
+      "sha256": "1886a72ce6bc87bedba35e661ffd326de24fff98e0f751c4ef752effb8e74610",
+      "bytes": 4155
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-initial.json": {
+      "sha256": "f0b58c0619a777b3014c3dd8d821dba98f49f1b687e1c28be3208fb45d309e6f",
+      "bytes": 4153
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/node-startup-execution.json": {
+      "sha256": "f508f3566e2b67d79547beb0f423b0d3643a5f0b198890816bdc3f3888ccb49d",
+      "bytes": 857
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-8-execution.json": {
+      "sha256": "b0f9fae46b3f545c8add813dea53a57a3abc2292572b12ac6d841eb6b8eb73d3",
+      "bytes": 746
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-2-execution.json": {
+      "sha256": "dad8e7149c963c1b321a40c21d97d2f230609e3879ce532387a934bdc3d01ebb",
+      "bytes": 693
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/source-review-result.json": {
+      "sha256": "1dfd82632dd983ead0395d39526454b52286c8036da27ba4cfa49061ac959ea3",
+      "bytes": 7418
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-source-review.json": {
+      "sha256": "1f1a389af05361d4552a371c2848191c2df3016725f35ccfcbe547b7397a16ac",
+      "bytes": 4154
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-3-execution.json": {
+      "sha256": "ce3adc15bd577516054b45309ff986b0cfe4eec48beb21b9ed0a2b5d89e3644d",
+      "bytes": 697
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-5-execution.json": {
+      "sha256": "3a8d93891a451b560089111aa06fdd45f7108ee65eae645a1b30997f82f37ef9",
+      "bytes": 686
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-9-execution.json": {
+      "sha256": "c6b4d7480405f2214a91164c8bb16344a9a5f18d05ff29bffbe272c869a54959",
+      "bytes": 693
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/continuations-result.json": {
+      "sha256": "ffe095ec9c729cdc9d404ca7228299fd5c8276098f4f77dd50306467cbad75a2",
+      "bytes": 3164
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-7-execution.json": {
+      "sha256": "db1e9b58a9dec901aee5ea04a9694b80197fcbec618f7264bee939406d7837f7",
+      "bytes": 781
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/dispatch-provenance.json": {
+      "sha256": "de34b599f55ea13df78ef26d8c752500bd73b9032c823257af799cff39443810",
+      "bytes": 1271
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/sparse-absence.json": {
+      "sha256": "ca3fe492a3f5f7e6ccad03b3746242ed2fce8025cd836decf23c14b6e5981417",
+      "bytes": 5430
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/continuations-execution.json": {
+      "sha256": "84864c7f5c5771e160c202ddf683d12ac37771e7d2f6818a2d0069d2654e6dea",
+      "bytes": 782
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-10.json": {
+      "sha256": "b5e1d81f09057d62f148aa8f027b3720aafaa4459287ac72aebea041160c0e7b",
+      "bytes": 4161
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/ownership-execution.json": {
+      "sha256": "219deba78ca49b7e09c278ed96cdb590bd5208d0f0bccc36d051d4bde08989f7",
+      "bytes": 779
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/production-boundary-execution.json": {
+      "sha256": "ad538cb978c0ee3a06a9a7b17405930c06cf0d7bb95adb0cdf53c159079aee16",
+      "bytes": 788
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/fixture-omission-correction.json": {
+      "sha256": "a00a3f1296af5ae822e52fafac415e8ffa92569bc9b097ef34f9d2a9ecbe4887",
+      "bytes": 302
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-node-startup.json": {
+      "sha256": "d55ff0cc6d10023404a30badd8d891d174ed8ae1a67092f931dde292408674bd",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/publication.json": {
+      "sha256": "21e0c5ff7d6a5978627be09c7bb81161bd4520f60f080416607872cecfe1bbbe",
+      "bytes": 7473
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/live-clients.json": {
+      "sha256": "d6acdc66da20c3155a95e4ea2ab43627eaeab858434499f589cb858c49783b43",
+      "bytes": 2092
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-1.json": {
+      "sha256": "712ab37268b4af49d36e828edacdbddf0515117383aebb4c61f107bd557ef0b1",
+      "bytes": 4158
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/README.md": {
+      "sha256": "3c689ee32592df98c4fc1b80d0b252afc5fdbdad155e017c6b22d5fb606139c4",
+      "bytes": 8288
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/production-boundary-result.json": {
+      "sha256": "10bb8db779aaa75d2e2fba557326643d8ede244965c9ee27b08d487f1a06d923",
+      "bytes": 1413
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/debug-execution.json": {
+      "sha256": "891fe88b437956104ec3b644cdf2a4713a3eb2196ff30e1a57661b4dc5c5392b",
+      "bytes": 776
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/first-admission-continuations.json": {
+      "sha256": "b90603e50c9186581fc6a6cadb544c1b0c7af196c87fa13278f53f49676062ef",
+      "bytes": 3489
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-4.json": {
+      "sha256": "ae169fb54269ddd417e2cb356ac0de176f2151dcf9f17d1c9b8a583e4ffcc6b8",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/sparse-commit-incident.json": {
+      "sha256": "c47747cb079b7449cb580e6be8655254cba0c51aefbef7f8d70b5aafda4d11a1",
+      "bytes": 376
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/git-3283047-1-execution.json": {
+      "sha256": "acad6012badb08f1aa8cd9738228d77705e3395da1cb7ead831bd20c1adf9ce8",
+      "bytes": 726
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-continuations.json": {
+      "sha256": "9dfd5a76b759757186693065d184d51c469322751d0cff906912d34f4c7f3ef3",
+      "bytes": 3489
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/admission-git-3283047-5.json": {
+      "sha256": "797bc69974c3ecda58c169a73f2a9eaa4459b8d08e270be19cde17da948e969e",
+      "bytes": 4160
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/source-review-execution.json": {
+      "sha256": "5122378f6f75a5f182f910e69bc44352c48c4ab9daeead1d58ad331ebc935db1",
+      "bytes": 616
+    },
+    "/tmp/enigma-canonical-msg-independent-source-accept-oct26/repo/docs/reviews/enigma-canonical-msg-independent-source-accept-oct26/candidate-unchanged.json": {
+      "sha256": "c32571099b399e902dc452b9f9283c234663ca2a02849eade4aa740934e95db8",
+      "bytes": 1587
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-semantics-result.json": {
+      "sha256": "2308684d4c001d9b5d19df416c47f9c71ef549c68bbf940faa5c92851a0dfc01",
+      "bytes": 2821
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/fleet-reservation-reconciliation.json": {
+      "sha256": "de73733fddb2d995f7ab11ef3d5637161ac4e346c87d904042bde124e6eba998",
+      "bytes": 495
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/reused-evidence.json": {
+      "sha256": "b14d3dd914726e7d67749e45dd73b37dd12c8827cc005f60c39b21b96204fe41",
+      "bytes": 992
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/historical-incidents.json": {
+      "sha256": "76cd0815657ac8afc3ca77827d33164de4b889f04d19fe88b7e1d2127b7366b9",
+      "bytes": 2463
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/checkpoint.json": {
+      "sha256": "cc4bd70d33f76e82880442096b8dce409f2ca0b7baa70e93705a265b06a93d7e",
+      "bytes": 2938
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-result.json": {
+      "sha256": "79b06b699ea14ecce2b875fc5c108238b70540245f43509d9c98f1431020b61d",
+      "bytes": 32759
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/noninterference-execution.json": {
+      "sha256": "efab03662778f5760f7e71785b29124e74067b992b381c344f6ec8cd4abe7230",
+      "bytes": 786
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/completion.patch.gz": {
+      "sha256": "48edcb5ba45eb0ac5db9eb5d749b6a021a776eb89dc0cf8c1d1e74657d060732",
+      "bytes": 13830
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/disk-double-charge-admission-incident.json": {
+      "sha256": "a2a4bd88eade9670b5c7bda7b4e1a55f54bde526ee9dd0618ad1b1b2fb22e50d",
+      "bytes": 4741
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/structure-result.json": {
+      "sha256": "56deec0e6c3ab39b63a9b15b243f23ac054515f4ec8db6ba38c22f6e23f99638",
+      "bytes": 561
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/node-startup-output.log": {
+      "sha256": "48a5e1a00079916e51efd0ad102d00f64c49f1f436ee888015095b191eb3f232",
+      "bytes": 1798
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-streamed-execution.json": {
+      "sha256": "e92d661eb39536c87d82e434cadf65d5c2662db51637b35f9204ea18c77582b2",
+      "bytes": 673
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/actual-client-launch.json": {
+      "sha256": "1d1afde2ff833f56ace84bfc3d26a9d84b3d6465956de953338515e0b451e6a1",
+      "bytes": 760
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/limits-execution.json": {
+      "sha256": "504aee29fd17238c9ed10f32c3f0915ac0826442179862b8ecd9aea7afde58f6",
+      "bytes": 777
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/structure-execution.json": {
+      "sha256": "ffcd50a2d46822b778e3a7d9dff5bf84f932b144f465fc5c07ce25c524e402ec",
+      "bytes": 678
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/production-result.json": {
+      "sha256": "42bc0f51789e0f2c3c4cf9c218ce8e024d3dd785fbe909721e60a432aa8c71b7",
+      "bytes": 2813
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/production-execution.json": {
+      "sha256": "1d0ac268582bea639dd20f5d6b7c89caf6f089a313163d605a6007793e95cbed",
+      "bytes": 781
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/configuration.json": {
+      "sha256": "08335254e82efd4c2766aabea6869b36dfc5673e3a05dd12eb43d8a61b0dfb96",
+      "bytes": 2023
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/source-provenance.json": {
+      "sha256": "9c6a9b1cba4821d396a27bf304c2d862149ef0954bc48402ba8d902827c10dfd",
+      "bytes": 1602
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/complete-ledger.json": {
+      "sha256": "cb1479c27cd8fccdbfb62b60ba336bd5a69abb5ee06c297d01401f0c06d9e22d",
+      "bytes": 4822
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/startup-configuration.json": {
+      "sha256": "28df812ff0d8d32aa75349f23b52537a1e36609a3e8290a8d00108f3a6fdd2b5",
+      "bytes": 462
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/allocation-correction.json": {
+      "sha256": "086fa063821430dfe3939d3b75602d5e4e737817ae41a7486ff737998426c4fd",
+      "bytes": 495
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-first-memory-execution.json": {
+      "sha256": "36bc6fc5fc1f05414eb6a6cd3d247a6d92e8d8250f69c487bf68e8d17aea2545",
+      "bytes": 797
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/challenges-execution.json": {
+      "sha256": "15b1868d8d19c13cbc8250535b1a68d6cb22a117fac53a42213ba4cfb27a0545",
+      "bytes": 782
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/limits-result.json": {
+      "sha256": "940ff2f3f480b1e3036433ca6c3beff2a3c6d0873bd5d1c3fcd5236dd6f93ea4",
+      "bytes": 2809
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/node-startup-execution.json": {
+      "sha256": "021274de0560f195b6e2c1e4fe46caaf0cc95cf06328879a7bbfb16bd71a1437",
+      "bytes": 855
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/noninterference-result.json": {
+      "sha256": "7a92efec4a5b320420fb5ef7afe6a21730286b2fcab292afe46e692b2f330f42",
+      "bytes": 2818
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/patch-review.json": {
+      "sha256": "3eadcc560a61ff945c4234e14b1e579e9de0b2c4e69e180c150e592893e437c9",
+      "bytes": 926
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/continuations-result.json": {
+      "sha256": "9d27f3afac5b750c97f3b03081a5454e1661fd4953b5ab12bbd87076e9ae6239",
+      "bytes": 2816
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/continuations-execution.json": {
+      "sha256": "66d51794f142d0386880a2a15d9f29e6a3d154f78607599a91d8932e23c21366",
+      "bytes": 785
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/baseline-semantics-execution.json": {
+      "sha256": "7a50472f8b8137b74cf1f4a83c79a97d2645e90dc8815da7fd586856a236c15a",
+      "bytes": 789
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/README.md": {
+      "sha256": "de5f7d9ee9ede767ae1b18210e2be64c952e799918daa1aab0b3d8447cf7f84a",
+      "bytes": 8048
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/challenges-result.json": {
+      "sha256": "42df096e01fe3dbdc184c23761bf98c4713132abba6e8ffbc6449edd350aff66",
+      "bytes": 2813
+    },
+    "/tmp/enigma-canonical-msg-completion-hook-repair-oct26/repo/docs/re-notes/enigma-canonical-msg-completion-hook-repair-oct26/imports-first-memory-execution.json": {
+      "sha256": "2d6e2f5837817ca10771be66896d7304b9b01b0c1443903791fb85a5d904f280",
+      "bytes": 682
+    }
+  },
+  "groups": "Donor six behavior groups incl96 baseline state comparisons; independent33 continuation cases,396 ownership completions, route checks; original uncompiled/resource qualifications retained",
+  "rerun": false,
+  "compiled": false,
+  "canonicalRuntimeQualified": false
+}

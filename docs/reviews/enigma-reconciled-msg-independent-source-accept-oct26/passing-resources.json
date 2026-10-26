@@ -1,0 +1,27 @@
+{
+  "testPeakSampledRSS": 114663424,
+  "gitPeakSampledRSS": 72925184,
+  "limits": {
+    "testPhysical": 134217728,
+    "gitPhysical": 268435456,
+    "gitChildDATA": 536870912,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "nodeOldSpace": 67108864
+  },
+  "allNaturalZero": true,
+  "supervisorAndDescendantsIncluded": true,
+  "sharedPool": "test1; Git2 before exclusive /tmp/wine-ops-production-git.lock",
+  "standingInputs": {
+    "source": "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo",
+    "tools": [
+      "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+      "/usr/bin/python3",
+      "/usr/bin/git"
+    ]
+  },
+  "noIndividualClientCap": true
+}
