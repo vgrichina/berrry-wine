@@ -1,0 +1,138 @@
+{
+  "captureSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+  "correctedSHA256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+  "fullReviewedSetup": {
+    "firstLine": 5755,
+    "lastLine": 7500,
+    "bytes": 87607,
+    "sha256": "bf269bf1fc5e19c6f639f4d4a9c7e5be17a7db29993805a5b6bea431673af700"
+  },
+  "originalArmLine": 5763,
+  "newArmLine": 7502,
+  "ordinaryApplyMainLine": 6588,
+  "modeAffectingSetup": "actual applyMain calls set_uop(1) by default with nonnull ctx; remaining main setters complete before arm",
+  "setterCallInventory": [
+    {
+      "line": 6555,
+      "call": "instance.exports.set_watchpoint_size(watchSize)"
+    },
+    {
+      "line": 6556,
+      "call": "instance.exports.set_watchpoint(watchAddr)"
+    },
+    {
+      "line": 6568,
+      "call": "instance.exports.set_callstack_enabled(1)"
+    },
+    {
+      "line": 6573,
+      "call": "instance.exports.set_fault_unmapped(FAULT_NULL_MODE)"
+    },
+    {
+      "line": 6584,
+      "call": "instance.exports.set_win16_dde_trace(1)"
+    },
+    {
+      "line": 6587,
+      "call": "instance.exports.set_win16_trace(1)"
+    },
+    {
+      "line": 6590,
+      "call": "instance.exports.set_api_log(0)"
+    },
+    {
+      "line": 6592,
+      "call": "instance.exports.set_flip_vsync(1)"
+    },
+    {
+      "line": 6595,
+      "call": "instance.exports.set_present_cap(PRESENT_CAP)"
+    },
+    {
+      "line": 6598,
+      "call": "instance.exports.set_present_pace_mode(PRESENT_PACE_MODE)"
+    },
+    {
+      "line": 6620,
+      "call": "instance.exports.set_logical_frame(LOGICAL_FRAME.address, LOGICAL_FRAME.pace)"
+    },
+    {
+      "line": 6625,
+      "call": "instance.exports.set_spin_park_k(0)"
+    },
+    {
+      "line": 6626,
+      "call": "instance.exports.set_spin_park_k(SPIN_PARK_K)"
+    },
+    {
+      "line": 6628,
+      "call": "instance.exports.set_spin_work_max(SPIN_WORK_MAX)"
+    },
+    {
+      "line": 6629,
+      "call": "instance.exports.set_spin_regs_check(SPIN_REGS_CHECK)"
+    },
+    {
+      "line": 6631,
+      "call": "instance.exports.set_fpu_trace(1)"
+    },
+    {
+      "line": 6634,
+      "call": "instance.exports.set_code_write_trace(TRACE_CODE_WRITES_ALL ? 2 : 1)"
+    }
+  ],
+  "otherImmediateSetup": [
+    "deferredResolveAddrs",
+    "VFS seeding/assets/saves/registry (awaited branches; no guest execution entry in this segment)",
+    "optional disassembler import",
+    "watch activation",
+    "handler histogram window selection",
+    "control channel registration (callbacks deferred to batch/event-loop; no awaited operation between registration and arm)",
+    "onFailure(closeControl)",
+    "trace console wrapper",
+    "performance.now execution clock"
+  ],
+  "postLoaderBeforeArmRunCalls": 0,
+  "firstBatchLoopLine": 7504,
+  "runLines": [
+    10401,
+    10871,
+    10918
+  ],
+  "afterRunObservationSites": 3,
+  "unchangedBeforeReplacementAndAfterBoundary": true,
+  "loaderScopeBlocker": {
+    "status": "literal global before-ANY-guest guarantee NOT SATISFIED by unchanged captured loader",
+    "runnerLoadDllsLine": 5704,
+    "loaderSHA256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "archive": {
+      "bytes": 6273755,
+      "sha256": "656a1569d905f49385a7e3a3e6b878f81b96aa547d275f5fcf521cfaa254dd4e",
+      "maxChunkBytes": 8192
+    },
+    "excerpts": [
+      {
+        "firstLine": 959,
+        "lastLine": 975,
+        "bytes": 858,
+        "sha256": "453d6748765a777bf794bfa6417dffaaf4ed4feb37cd379f2a79a09dceaaa6eb",
+        "text": "  // raises the game's SMemReAlloc critical-error dialog. Mapping every image\n  // first is fine; initialize each dependency before the DLL that imports it.\n  for (const r of orderDllInitializers(dlls, results)) {\n    if (r.dllMain) {\n      const outcome = callDllMain(exports, r.loadAddr, r.dllMain, log, {\n        lpReserved: 1,\n        advanceGuestTime: options.advanceGuestTime,\n        onLoadLibraryYield: options.onLoadLibraryYield,\n      });\n      finishDllInitialization(exports, memory, r, outcome);\n    } else finishDllInitialization(exports, memory, r, null);\n    releaseTemporaryDllReference(exports, memory, r);\n  }\n\n  // Win9x card games normally call CARDS!cdtInit before the first draw.\n  // Some Entertainment Pack binaries start painting through cdtDrawExt before\n  // that import is reached under our cooperative startup path, leaving the\n"
+      },
+      {
+        "firstLine": 1180,
+        "lastLine": 1193,
+        "bytes": 722,
+        "sha256": "2a9951b06702034febc12305a8b876c6fbe2a9928ce1584207fb19d9d72d367a",
+        "text": "  // DirectX DLLs calibrate RDTSC against GetTickCount around Sleep, and seeing\n  // zero elapsed milliseconds sends their arithmetic through corrupt state.\n  // The bounded count still catches a DLL that tries to sleep forever.\n  try {\n    let sleepYields = 0;\n    let resumes = 0;\n    for (;;) {\n      exports.run(options.cooperative ? options.maxBlocks : maxBlocks);\n      if (options.cooperative) {\n        if (options.didRun) options.didRun();\n        if (options.cancelled()) return { completed: false };\n        if ((exports.get_eip() >>> 0) <= 2 ||\n            (exports.get_yield_reason && exports.get_yield_reason() === 2)) break;\n        const halt = exports.get_last_run_halt ? exports.get_last_run_halt() : 3;\n"
+      },
+      {
+        "firstLine": 2066,
+        "lastLine": 2081,
+        "bytes": 709,
+        "sha256": "3c4ebb8761dc16131b81b689d11edfee697ee33b022d600b2b90d3e602c6ee1b",
+        "text": "function callDllMain(exports, loadAddr, dllMain, log, options = {}) {\n  const gate = requireDllCallbackGate(exports);\n  try { return callDllMainOwned(exports, loadAddr, dllMain, log, options); } finally { gate.release(); }\n}\n\nasync function callDllMainAsync(exports, loadAddr, dllMain, log, options = {}) {\n  const gate = await acquireDllCallbackGate(exports);\n  try { return await callDllMainAsyncOwned(exports, loadAddr, dllMain, log, options); } finally { gate.release(); }\n}\n\nfunction loadDlls(exports, memory, exeBytes, dlls, log, options = {}) {\n  const gate = requireDllCallbackGate(exports);\n  try { return loadDllsOwned(exports, memory, exeBytes, dlls, log, options); } finally { gate.release(); }\n}\n"
+      }
+    ],
+    "explanation": "loadDlls invokes callDllMain and its exports.run before loaded-anchor validation. Preserving loader/CRT/anchor verification and a sole post-applyMain arm cannot also put this arm before prior DLL guest execution. Independent review/coordinator must resolve this stricter scope; no loader bypass or guest attempt was made."
+  }
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/ops/capture-run.js",
+    "bytes": 688799,
+    "sha256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/ops/source-run.js",
+    "bytes": 687226,
+    "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/runner-experiment-report.js",
+    "bytes": 24188,
+    "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+    "readOnly": true
+  },
+  {
+    "path": "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo/test/test-maelstrom-mode-transition.cjs",
+    "bytes": 11456,
+    "sha256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+    "readOnly": true
+  },
+  {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "readOnly": true
+  }
+]

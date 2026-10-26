@@ -1,0 +1,159 @@
+{
+  "commit": "5a80f7c43ed4a44bec559f5f1e9f9eb9f7d5e8d6",
+  "branch": "task/maelstrom-mode-transition-observer-repair-oct26",
+  "prior29": {
+    "schema": "maelstrom-mode-transition-offline/v1",
+    "outcome": "GUARD_CORRECT_RUNNER_ARM_ORDER_PREREQUISITE",
+    "tests": [
+      {
+        "name": "authentic early-start ordering reproduces reason15 before select entry",
+        "pass": true
+      },
+      {
+        "name": "source-supported prerequisite: initialize, then arm preserves mode1 invocation",
+        "pass": true
+      },
+      {
+        "name": "mode0 initialization then arm remains supported",
+        "pass": true
+      },
+      {
+        "name": "mode0 change rejects while awaiting",
+        "pass": true
+      },
+      {
+        "name": "mode0 same-mode request accepted while awaiting",
+        "pass": true
+      },
+      {
+        "name": "mode0 change rejects while select",
+        "pass": true
+      },
+      {
+        "name": "mode0 same-mode request accepted while select",
+        "pass": true
+      },
+      {
+        "name": "mode0 change rejects while parked",
+        "pass": true
+      },
+      {
+        "name": "mode0 same-mode request accepted while parked",
+        "pass": true
+      },
+      {
+        "name": "mode0 change rejects while completed",
+        "pass": true
+      },
+      {
+        "name": "mode0 same-mode request accepted while completed",
+        "pass": true
+      },
+      {
+        "name": "mode0 change rejects while native",
+        "pass": true
+      },
+      {
+        "name": "mode0 same-mode request accepted while native",
+        "pass": true
+      },
+      {
+        "name": "mode1 change rejects while awaiting",
+        "pass": true
+      },
+      {
+        "name": "mode1 same-mode request accepted while awaiting",
+        "pass": true
+      },
+      {
+        "name": "mode1 change rejects while select",
+        "pass": true
+      },
+      {
+        "name": "mode1 same-mode request accepted while select",
+        "pass": true
+      },
+      {
+        "name": "mode1 change rejects while parked",
+        "pass": true
+      },
+      {
+        "name": "mode1 same-mode request accepted while parked",
+        "pass": true
+      },
+      {
+        "name": "mode1 change rejects while completed",
+        "pass": true
+      },
+      {
+        "name": "mode1 same-mode request accepted while completed",
+        "pass": true
+      },
+      {
+        "name": "mode1 change rejects while native",
+        "pass": true
+      },
+      {
+        "name": "mode1 same-mode request accepted while native",
+        "pass": true
+      },
+      {
+        "name": "no reset/rearm after capture; changing terminal mode preserves immutable capture",
+        "pass": true
+      },
+      {
+        "name": "rejected start cannot rearm; fresh instance is prerequisite",
+        "pass": true
+      },
+      {
+        "name": "capture closes before reentrant persist callback",
+        "pass": true
+      },
+      {
+        "name": "capture closes before throwing persist callback",
+        "pass": true
+      },
+      {
+        "name": "reject closes before reentrant persist callback",
+        "pass": true
+      },
+      {
+        "name": "reject closes before throwing persist callback",
+        "pass": true
+      }
+    ],
+    "count": 29,
+    "sourceUnchanged": true,
+    "moduleSHA256": "566534846b01385cb45ce1bd75d6e7ed72228ced8671480d07fa6a49296b673f",
+    "moduleBytes": 6957,
+    "watSHA256": "1b995cd8f8c888e8a11fa4f30d46dc4b4da14ac077b9f1a5104f3eeb5ff3a0c6",
+    "watBytes": 49948,
+    "memoryBytes": 262144,
+    "processRSS": 74440704,
+    "processPeakRSS": 74440704,
+    "syntheticOnly": true,
+    "originalGameAcceptance": false,
+    "requestedModeInAuthenticCapture": null,
+    "rejectingPCInAuthenticCapture": null
+  },
+  "priorCheckpoint": {
+    "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+    "testSHA256": "57758fa0a9b6d769fce63d873a2ebf7aca3fb62f18f1c7298d5e309054384491",
+    "result": "PASS",
+    "count": 29,
+    "elapsed": 0.10590672492980957,
+    "remaining": [
+      "source-backed outcome review",
+      "task branch publication"
+    ],
+    "reused": {
+      "builds": 2,
+      "nativeGroups": 30,
+      "controls": 119,
+      "replayed": 0
+    }
+  },
+  "manifestSHA256": "8d68d8712d139afd67ddbcd4948cc5c5538d97fe247bf00c51f9994067f3227a",
+  "verifiedPayloads": 15,
+  "replayed": 0
+}

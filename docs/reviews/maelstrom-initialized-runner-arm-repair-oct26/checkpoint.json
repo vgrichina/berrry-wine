@@ -1,0 +1,76 @@
+{
+  "base": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "candidateToolSHA256": "6c69aa23d0e35f5d10cc7726720c05e0c98f9c3b2e24186430ef2169317b4055",
+  "testSHA256": "67c36f8d6f23ea47d8518060199d01d91ac8dfc834649cbb2fab6b894b56530f",
+  "captureSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+  "generatedSHA256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+  "sourceFixturePins": [
+    {
+      "path": "test/runner-experiments.js",
+      "blob": "ec5954be8cb0990c3e610e614be90ec7721a0858",
+      "bytes": 39152,
+      "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+    },
+    {
+      "path": "test/runner-experiment-report.js",
+      "blob": "f1320850df147c508d982e4b3aedf55596e0ac32",
+      "bytes": 24188,
+      "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+    },
+    {
+      "path": "tools/watx.js",
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "blob": "678b529d637f5c0ab4482570a55f85514cd682ac",
+      "bytes": 38100,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "blob": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+      "bytes": 31195,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+      "bytes": 302257,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "blob": "29d724bec5888623d9a0a9466301d0001bd30438",
+      "bytes": 18610,
+      "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+    },
+    {
+      "path": "src/07d-uop-engine.wat",
+      "blob": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+      "bytes": 164570,
+      "sha256": "cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3"
+    },
+    {
+      "path": "tools/maelstrom-select-completion-hook.cjs",
+      "bytes": 15019,
+      "sha256": "b8fbdf8bc259f903c4b0c0b78f2834698c97759b7cf3cb9fc0d1f5a77a0c932d",
+      "blob": "71ba5ed8023b81fdce393634c3374a2b92f87f42"
+    }
+  ],
+  "result": "PASS",
+  "count": 30,
+  "elapsed": 0.31156113813631237,
+  "evidence": "test-result.json",
+  "reused29": true,
+  "remaining": [
+    "review and task branch publication",
+    "independent wiring review",
+    "separately authorized runtime acceptance",
+    "strict before-any-guest interpretation: earlier DLL initializers remain outside the observer boundary"
+  ],
+  "cliControls": 4,
+  "cliEvidence": "cli-test-result.json"
+}

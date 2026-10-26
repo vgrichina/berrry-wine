@@ -1,0 +1,101 @@
+{
+  "schema": "focused-task-evidence/v1",
+  "base": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "outcome": "POST_LOADER_ARM_REPAIR_TESTED_STRICT_PRE_GUEST_SCOPE_BLOCKED",
+  "files": [
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/README.md",
+      "bytes": 7765,
+      "sha256": "3730b191260f922f9f008465d983f72a27a6b22e0f228b76d365a8b47341dffa"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/checkpoint.json",
+      "bytes": 2884,
+      "sha256": "9e095155b2eaa2a7b019e03fcdbf47191e3dd9e3f71c3af505aeeccb31246617"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/cli-test-result.json",
+      "bytes": 1492,
+      "sha256": "367ed0d6f4f8fa44b1fe7d8c2a86d877b972d42cd2254450069f987d07eeea1f"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/generate.json",
+      "bytes": 650,
+      "sha256": "ed62cf46af769d81e7617d67da65dfb7e821db646170624cf3d4e712234ef15e"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/incidents.json",
+      "bytes": 1731,
+      "sha256": "937971530c042bb05f709e2a3afcc66b2b62b01d6c35edb9b5b0ad02958a488d"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/launch-configuration.json",
+      "bytes": 689,
+      "sha256": "80584ba9e1e9ae9c629d77e805fd57e96aee3c1d9addf3c4a4fb00fab6881f01"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/node-startup.json",
+      "bytes": 1907,
+      "sha256": "bedda2bdd7de8deaa20712229c05b6f7cfdb8f42ca1360867e35315701b59af9"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/resources.json",
+      "bytes": 3906,
+      "sha256": "95561c44fed484f9c55641ba06119a7b749ea5a3ae18793c08c2866f6c4f70fe"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/reused-evidence.json",
+      "bytes": 4377,
+      "sha256": "427f3a671cd25fb4acc889814777bf689b814d18775898785076e79d526277c8"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/source-audit.json",
+      "bytes": 6633,
+      "sha256": "06ef16615fa1ee30869d470182be1ea474a6d6eba3dd17ae5293e9396bd22a39"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/standing-inputs.json",
+      "bytes": 1356,
+      "sha256": "fd6a744e1051b894dfa2ddcd9acc47cfb6add9b8cf7e1e37d02879426b3457ef"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/test-command.json",
+      "bytes": 496,
+      "sha256": "d13f23bf3bf1f8d2ac5133493d2d137c2866e739dfd9e494d4f9c0527accc812"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/test-first-failure.json",
+      "bytes": 1033,
+      "sha256": "8aab92fa324426178bf845f9c4a0d28d3773a4f73bf000dbb036aab386269dbb"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/test-followup-failure.json",
+      "bytes": 1044,
+      "sha256": "701b2e4e540ba643b5b5e6f8f2e72299595e530ee00812c4e46dd2a64970e1ed"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/test-result.json",
+      "bytes": 5837,
+      "sha256": "c948cf6dea2bbe8719b810cc29048cc4e6e3c60eec9d09f452c6ac647c5b4b78"
+    },
+    {
+      "path": "docs/reviews/maelstrom-initialized-runner-arm-repair-oct26/tree-relationship.json",
+      "bytes": 412,
+      "sha256": "5890a8a866f9ccde9493096b90cc05096e1cbf7ff7cc82e776862b91987de568"
+    },
+    {
+      "path": "test/test-maelstrom-initialized-runner-arm.cjs",
+      "bytes": 14150,
+      "sha256": "67c36f8d6f23ea47d8518060199d01d91ac8dfc834649cbb2fab6b894b56530f"
+    },
+    {
+      "path": "tools/maelstrom-initialized-runner-arm.cjs",
+      "bytes": 3005,
+      "sha256": "6c69aa23d0e35f5d10cc7726720c05e0c98f9c3b2e24186430ef2169317b4055"
+    }
+  ],
+  "sourceTestTree": "b91594e2e1b1d259147efa596d04014648b1c410",
+  "generatedRunnerSHA256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+  "guardAndAdapterUnchanged": true,
+  "mainUnchanged": true
+}

@@ -1,0 +1,16 @@
+{
+  "schema": "maelstrom-initialized-runner-arm/v1",
+  "inputSHA256": "5b2596b3746e17427d26a50466ed36adcfec9f9f119755f05b1fa4bc3c79be58",
+  "outputSHA256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+  "inputBytes": 688799,
+  "outputBytes": 688972,
+  "replacement": {
+    "offset": 319330,
+    "beforeBytes": 87073,
+    "beforeSHA256": "ee96f4f2c56aaa8c8b3fba376548cc794c3922782dd191c63e59ce0a1f534c47",
+    "afterBytes": 87246,
+    "afterSHA256": "864f8dff9f2f75a4f5d15cd9f67780308f2a155f6215a2e009c95b87c8e1c8ba"
+  },
+  "armCount": 1,
+  "scope": "post-loader setup to main execution; earlier DLL initialization unchanged"
+}

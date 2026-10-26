@@ -1,0 +1,9 @@
+{
+  "base": "a18735d3b0e6dcb49a6cd1d65d054111d54340ff",
+  "sourceTestTree": "b91594e2e1b1d259147efa596d04014648b1c410",
+  "toolSHA256": "6c69aa23d0e35f5d10cc7726720c05e0c98f9c3b2e24186430ef2169317b4055",
+  "testSHA256": "67c36f8d6f23ea47d8518060199d01d91ac8dfc834649cbb2fab6b894b56530f",
+  "testResults": "30 wiring plus4 CLI controls PASS",
+  "noSourceChangesAfterPassingGroup": true,
+  "prior29Reused": true
+}

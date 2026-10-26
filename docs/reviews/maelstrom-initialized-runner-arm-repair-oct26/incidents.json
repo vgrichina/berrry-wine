@@ -1,0 +1,22 @@
+[
+  {
+    "kind": "initial-policy-read-excerpt-overrun",
+    "detail": "First policy read exceeded 8192-byte excerpt; subsequent focused reads bounded. Initial /ops literal lookup absent; supplied donor ops/capture-run.js exists and is used read-only."
+  },
+  {
+    "kind": "fixture-host-globals",
+    "detail": "Initial wiring harness omitted fs append diagnostic seam, then automatic option defaults shadowed intrinsic JSON. Full original error bytes retained command-stderr.log and test-first-failure.json; corrected fixture only, unchanged production/guard. Intermediate followup receipt retained."
+  },
+  {
+    "kind": "boundary-review-improvement",
+    "detail": "First boundary after setup flags passed28 checks; review found additional pre-loop setup. Preserved first-boundary receipts; moved final arm immediately before batch loop; affected group30 checks now passes including final failure-hook and clock failures. No prior29 replay."
+  },
+  {
+    "kind": "strict-pre-guest-loader-conflict",
+    "detail": "Authentic pinned dll-loader executes DllMain before observer validation. Global before-any-guest claim is blocked under required unchanged loader scope; post-loader initialization-to-main boundary repaired/tested. Source-audit.json retains exact archive/loader evidence."
+  },
+  {
+    "kind": "loader-excerpt-line-provenance",
+    "detail": "First source-audit selected current-root line ranges against the correctly pinned archived loader; review detected irrelevant excerpts. Original source-audit retained externally. Corrected excerpts use archived loader lines959-975,1180-1193,2066-2081 and exact hashes; conclusion reverified against actual capture source. No source/test change or repeat required."
+  }
+]

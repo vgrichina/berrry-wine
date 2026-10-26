@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/maelstrom-initialized-runner-arm-repair-oct26/repo/test/test-maelstrom-initialized-runner-arm.cjs",
+    "/tmp/maelstrom-mode-transition-observer-repair-oct26/ops/capture-run.js",
+    "/tmp/maelstrom-mode-transition-observer-repair-oct26/repo"
+  ],
+  "wallSeconds": 120,
+  "cpuSeconds": 90,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodePhysicalAllowance": 335544320,
+  "gitDataOnlyChild": 536870912
+}

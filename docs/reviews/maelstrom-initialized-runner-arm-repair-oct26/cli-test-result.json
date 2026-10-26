@@ -1,0 +1,43 @@
+{
+  "count": 4,
+  "results": [
+    {
+      "name": "existing output refuses overwrite",
+      "passCheck": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "EEXIST: file already exists, open '/tmp/maelstrom-initialized-runner-arm-repair-oct26/ops/corrected-final-run.js'\n",
+      "executable": "/usr/local/bin/node",
+      "heapFlag": "--max-old-space-size=192"
+    },
+    {
+      "name": "input refuses overwrite",
+      "passCheck": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "EEXIST: file already exists, open '/tmp/maelstrom-mode-transition-observer-repair-oct26/ops/capture-run.js'\n",
+      "executable": "/usr/local/bin/node",
+      "heapFlag": "--max-old-space-size=192"
+    },
+    {
+      "name": "already-corrected input rejects before output",
+      "passCheck": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "captured runner SHA-256 mismatch\n",
+      "executable": "/usr/local/bin/node",
+      "heapFlag": "--max-old-space-size=192"
+    },
+    {
+      "name": "wrong arity rejects",
+      "passCheck": true,
+      "exitCode": 1,
+      "stdout": "",
+      "stderr": "usage: node tools/maelstrom-initialized-runner-arm.cjs CAPTURE_RUN_JS NEW_OUTPUT_JS\n",
+      "executable": "/usr/local/bin/node",
+      "heapFlag": "--max-old-space-size=192"
+    }
+  ],
+  "generatedSHA256": "2f10a91ed0d909094ad122c5fc6fc5856d79d449603bb74c7cdeca63cefa0e9a",
+  "toolSHA256": "6c69aa23d0e35f5d10cc7726720c05e0c98f9c3b2e24186430ef2169317b4055"
+}
