@@ -1,0 +1,19 @@
+{
+  "task": "maelstrom-qualified-guards-original-local-capture-oct26",
+  "base": "62b15e94e8898bc5d855392cf7ff639229177e7d",
+  "source": "55f9724ef127100c3bb54aebca73e5cda5472c5f",
+  "bundleSHA256": "21118ffb517a80a3c35edcbb30b7a50cd13a27f55456ca1e3d4bb01f328a1480",
+  "payloads": {
+    "root-ref-digest-initial.json": "947f7df8972af631fdca093102fd4deffef84b91122706fd57b62e98ff91cdfd",
+    "initial.json": "aa134eaf410fac98b3df772403aa9666e2bf5dc43cda52726c92f047b3ade204",
+    "input-pins.json": "83480aebd19b96fab7f444539f34163f4179e543b1f95191d90fb22e4daba4ec",
+    "closeout.py": "13e1f4e09ca70b3ccf954197b6c8e5900b929086ec758edca84689c5442b5391",
+    "resource-prepublication.json": "c2e8bf6dc80110a0b648d0e2cf26dc46ace94138e2572d19e426b85331d1c0de",
+    "resource-before-staging.json": "399cfb94516e62daa55557c4d638d3dc780c2f30aa9e207c47a51aec4de19258",
+    "checkpoint-terminal.json": "c00e2207afec081a4eab0f5366cf0384346dc42528d8e5daba9e9a1e0a381683",
+    "common.py": "63b7d50a7b07afd2753b3525859a155764f4c1e03701e9fdcb5a1aaeca403f47",
+    "coordinator-admission.json": "2a3a49d82ce5c8373603644bb41da64eac529fa147e50ceba0118fbdf8b8f8aa"
+  },
+  "guestAttempts": 0,
+  "originalGameAcceptance": false
+}
