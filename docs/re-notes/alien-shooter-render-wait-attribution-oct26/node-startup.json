@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "console.log(JSON.stringify({exec:process.execPath,args:process.execArgv,env:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|WINE)/.test(k))),limits:require('fs').readFileSync('/proc/self/limits','utf8')}))"
+  ],
+  "cwd": "/tmp/alien-shooter-render-wait-attribution-oct26/repo",
+  "exit": 0,
+  "wall": 0.08684173692017794,
+  "cpu": 0.048616999999999994,
+  "peakRSS": 59539456,
+  "physicalCap": 134217728,
+  "reason": null,
+  "outputBytes": 1689,
+  "gitDATAChildOnly": false,
+  "physicalBasis": "aggregate child process tree plus Python supervisor sampled RSS"
+}

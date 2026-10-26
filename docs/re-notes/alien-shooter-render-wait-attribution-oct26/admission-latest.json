@@ -1,0 +1,47 @@
+{
+  "at": 1793052315.1449628,
+  "memAvailable": 3890151424,
+  "required": 2159312896,
+  "components": {
+    "host": 805306368,
+    "otherLightTests": 134217728,
+    "serializedGit": 536870912,
+    "ownTests": 134217728,
+    "helpers": 134217728,
+    "remainingClientGrowth": 414482432,
+    "completedGL": 0,
+    "prospectiveClient": 0
+  },
+  "clients": [
+    {
+      "pid": 3195039,
+      "rss": 195997696,
+      "growth": 139546624
+    },
+    {
+      "pid": 3198357,
+      "rss": 196603904,
+      "growth": 138940416
+    },
+    {
+      "pid": 3204494,
+      "rss": 199548928,
+      "growth": 135995392
+    }
+  ],
+  "charges": {
+    "owned": 2297856,
+    "session": 823296,
+    "launcher": 282624,
+    "futurePublication": 33554432,
+    "reserve": 8388608,
+    "remainingSourceGit": 8388608,
+    "positiveWAL": 0
+  },
+  "total": 53735424,
+  "allocation": 134217728,
+  "free": 3575042048,
+  "projectedFree": 3516321792,
+  "hostFloor": 2982150144,
+  "residentBasis": "GL closeout21:56 board; current clients already resident, charge only remaining320MiB growth once; no heavy-build floor for light tests"
+}

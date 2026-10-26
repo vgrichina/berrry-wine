@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/alien-shooter-render-wait-attribution-oct26/repo/test/test-render-wait-attribution.js"
+  ],
+  "cwd": "/tmp/alien-shooter-render-wait-attribution-oct26/repo",
+  "exit": 0,
+  "wall": 0.18047285615466535,
+  "peakRSS": 70561792,
+  "physicalCap": 134217728,
+  "reason": null,
+  "outputBytes": 565,
+  "gitDATAChildOnly": false
+}

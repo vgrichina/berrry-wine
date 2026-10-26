@@ -1,0 +1,51 @@
+--- pinned/test/run.js
++++ candidate/test/run.js
+@@ -6,0 +7 @@
++const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
+@@ -6814,0 +6816,2 @@
++  const renderWaitAttribution = createRenderWaitAttribution();
++  ctx.renderWaitAttribution = renderWaitAttribution.stats;
+@@ -6822,0 +6826 @@
++        renderWaitAttribution.begin(wait, ctx.d3d9Bridge?.requests.get(token));
+@@ -6824,2 +6828,2 @@
+-          .catch(error => console.error('[render]',error))
+-          .then(() => { wait.done = true; });
++          .catch(error => { renderWaitAttribution.reject(wait); console.error('[render]',error); })
++          .then(() => { wait.done = true; renderWaitAttribution.settle(wait); });
+@@ -6889,0 +6894,2 @@
++    renderWaitAttribution.parkStart(wait, started);
++    let renderParkDeadline = false;
+@@ -6892,3 +6898,6 @@
+-      if (deadlineMs && Date.now() > deadlineMs) break;
+-    }
+-    renderParkStats.waits++; renderParkStats.wallMs += Date.now() - started;
++      if (deadlineMs && Date.now() > deadlineMs) { renderParkDeadline = true; break; }
++    }
++    const renderParkEnded = Date.now();
++    renderParkStats.waits++; renderParkStats.wallMs += renderParkEnded - started;
++    renderWaitAttribution.parkEnd(wait, renderParkEnded,
++      stopped ? 'stopped' : (renderParkDeadline ? 'deadline' : 'pending'));
+@@ -11524,0 +11534,2 @@
++  renderWaitAttribution.close(deadlineMs && Date.now() > deadlineMs ? 'deadline' : 'stopped');
++  if (renderWaitAttribution.stats.requests) console.log(renderWaitAttribution.summary());
+--- pinned/lib/d3d9-host.js
++++ candidate/lib/d3d9-host.js
+@@ -279 +279 @@
+-    _result(entry, value, finalize = () => 1, allowLost = false) {
++    _result(entry, value, finalize = () => 1, allowLost = false, operation = 'unknown') {
+@@ -284,0 +285 @@
++        renderWaitOperation: operation, renderWaitReadyAt: null,
+@@ -291 +292 @@
+-        .then(() => { record.done = true; });
++        .then(() => { record.renderWaitReadyAt = Date.now(); record.done = true; });
+@@ -495 +496,2 @@
+-        return this._result(entry, this._submit(entry, opcode, payload), finalize);
++        return this._result(entry, this._submit(entry, opcode, payload), finalize, false,
++          Object.keys(Stream.OPCODES).find(name => Stream.OPCODES[name] === opcode));
+@@ -508 +510,2 @@
+-          .then(() => this._submit(entry, opcode, payload)), finalize);
++          .then(() => this._submit(entry, opcode, payload)), finalize, false,
++          Object.keys(Stream.OPCODES).find(name => Stream.OPCODES[name] === opcode));
+@@ -547 +550 @@
+-      return this._result(entry, previous.completed, done => { previous.dest.set(done.pixels); return 0; });
++      return this._result(entry, previous.completed, done => { previous.dest.set(done.pixels); return 0; }, false, 'PRESENT');

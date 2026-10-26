@@ -1,0 +1,26 @@
+{
+  "parent": "cfd88c28518abce3518695fc9e65161b46e6d23e",
+  "selected": [
+    {
+      "path": "test/run.js",
+      "donor": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/test/run.js",
+      "sha256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+      "rootSHA256": "a6f4fddf106d899f30cced9219d2de450fa7c629756b685726604e5eb25beb82"
+    },
+    {
+      "path": "lib/d3d9-host.js",
+      "donor": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/d3d9-host.js",
+      "sha256": "3519e4ffeee513a1ba106ac25c77cadab7ffbe492eb61f70f5b4f7fbb38db22c",
+      "rootSHA256": "3b8b9b66a759a6b51f7ce45e70c050559d00271274a0bac935dbf0c451a482c3"
+    },
+    {
+      "path": "lib/host-imports.js",
+      "donor": "/tmp/civ2-win16-ordinary-gameplay-oct26/source/lib/host-imports.js",
+      "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+      "rootSHA256": "5c1e53f7144cc4be1dd4e9c62a2f13d50766a87e9288bf371bf0a2a09c055534"
+    }
+  ],
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "node": "/usr/local/bin/node",
+  "nodeSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+}

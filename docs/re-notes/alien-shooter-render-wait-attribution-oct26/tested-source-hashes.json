@@ -1,0 +1,26 @@
+{
+  "test/run.js": {
+    "bytes": 688070,
+    "sha256": "25d549eaff7f2e03db5328703944b6bde08fb149202e85ea17625d390486c390"
+  },
+  "lib/d3d9-host.js": {
+    "bytes": 87629,
+    "sha256": "a5ff73ec46f02c883659fff62a83bbd6bdd2dd43483dc353c80682228c297ee9"
+  },
+  "lib/host-imports.js": {
+    "bytes": 197066,
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60"
+  },
+  "lib/render-wait-attribution.js": {
+    "bytes": 4614,
+    "sha256": "aa244e2741dc3eada31730b19a653f661b3fdd3c1e4bdfa1d09465a6a09745b0"
+  },
+  "test/test-render-wait-attribution.js": {
+    "bytes": 12179,
+    "sha256": "2a7de718fb664e508813611c549efc7ae4d77df97ddb46deff87a87ef606aa87"
+  },
+  "test/fixtures/render-park-control.json": {
+    "bytes": 4837,
+    "sha256": "46e4c759d468a6e4faf24dc3d9e1f6dd57d80920dfdc776521faa7eeb152c6ac"
+  }
+}

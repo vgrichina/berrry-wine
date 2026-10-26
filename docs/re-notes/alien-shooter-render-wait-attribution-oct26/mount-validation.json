@@ -1,0 +1,1759 @@
+{
+  "receipt": "/tmp/alien-shooter-required-exe-gameplay-api-oct26/ops/canonical-parser.json",
+  "receiptSHA256": "43126cdbce96ff1a6c43864ee9ecb707625a574f9eee5095512033232a350899",
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/alien-shooter-required-exe-gameplay-api-oct26/capture-wrapper.cjs",
+    "/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/run.js",
+    "--app=alien_shooter",
+    "--no-build",
+    "--wasm=/tmp/alien-shooter-current-gameplay-api-oct26/current.wasm",
+    "--d3d9-renderer=software",
+    "--tick-ms-per-batch=5",
+    "--batch-size=200000",
+    "--max-seconds=85",
+    "--no-close",
+    "--quiet-api",
+    "--frozen",
+    "--control=18129",
+    "--trace-at=0x416808",
+    "--trace-at-mem=ebp-0x3c:8"
+  ],
+  "enumeration": [
+    {
+      "url": "game/AlienShooter.cfg",
+      "vfsPath": "c:\\AlienShooter.cfg"
+    },
+    {
+      "url": "game/Bmp/951.BMP",
+      "vfsPath": "c:\\Bmp\\951.BMP"
+    },
+    {
+      "url": "game/Bmp/952.BMP",
+      "vfsPath": "c:\\Bmp\\952.BMP"
+    },
+    {
+      "url": "game/Bmp/953.BMP",
+      "vfsPath": "c:\\Bmp\\953.BMP"
+    },
+    {
+      "url": "game/cursores/arrow.ani",
+      "vfsPath": "c:\\cursores\\arrow.ani"
+    },
+    {
+      "url": "game/cursores/attack.ANI",
+      "vfsPath": "c:\\cursores\\attack.ANI"
+    },
+    {
+      "url": "game/Font/001font.tga",
+      "vfsPath": "c:\\Font\\001font.tga"
+    },
+    {
+      "url": "game/Font/002font.tga",
+      "vfsPath": "c:\\Font\\002font.tga"
+    },
+    {
+      "url": "game/Font/003font.tga",
+      "vfsPath": "c:\\Font\\003font.tga"
+    },
+    {
+      "url": "game/license.txt",
+      "vfsPath": "c:\\license.txt"
+    },
+    {
+      "url": "game/Logs/error.log",
+      "vfsPath": "c:\\Logs\\error.log"
+    },
+    {
+      "url": "game/Maps/common_compaign.lgc",
+      "vfsPath": "c:\\Maps\\common_compaign.lgc"
+    },
+    {
+      "url": "game/Maps/common_event.lgc",
+      "vfsPath": "c:\\Maps\\common_event.lgc"
+    },
+    {
+      "url": "game/Maps/common_fame.lgc",
+      "vfsPath": "c:\\Maps\\common_fame.lgc"
+    },
+    {
+      "url": "game/Maps/common_menu.lgc",
+      "vfsPath": "c:\\Maps\\common_menu.lgc"
+    },
+    {
+      "url": "game/Maps/common_statebar.lgc",
+      "vfsPath": "c:\\Maps\\common_statebar.lgc"
+    },
+    {
+      "url": "game/Maps/common_survive.lgc",
+      "vfsPath": "c:\\Maps\\common_survive.lgc"
+    },
+    {
+      "url": "game/Maps/common_table.lgc",
+      "vfsPath": "c:\\Maps\\common_table.lgc"
+    },
+    {
+      "url": "game/Maps/COMMON.LGC",
+      "vfsPath": "c:\\Maps\\COMMON.LGC"
+    },
+    {
+      "url": "game/Maps/compaign_birth.lgc",
+      "vfsPath": "c:\\Maps\\compaign_birth.lgc"
+    },
+    {
+      "url": "game/Maps/credits.men",
+      "vfsPath": "c:\\Maps\\credits.men"
+    },
+    {
+      "url": "game/Maps/default.lgc",
+      "vfsPath": "c:\\Maps\\default.lgc"
+    },
+    {
+      "url": "game/Maps/end.lgc",
+      "vfsPath": "c:\\Maps\\end.lgc"
+    },
+    {
+      "url": "game/Maps/end.map",
+      "vfsPath": "c:\\Maps\\end.map"
+    },
+    {
+      "url": "game/Maps/end.men",
+      "vfsPath": "c:\\Maps\\end.men"
+    },
+    {
+      "url": "game/Maps/EXPORT.LGC",
+      "vfsPath": "c:\\Maps\\EXPORT.LGC"
+    },
+    {
+      "url": "game/Maps/gamebar1024.men",
+      "vfsPath": "c:\\Maps\\gamebar1024.men"
+    },
+    {
+      "url": "game/Maps/gamebar640.men",
+      "vfsPath": "c:\\Maps\\gamebar640.men"
+    },
+    {
+      "url": "game/Maps/gamebar800.men",
+      "vfsPath": "c:\\Maps\\gamebar800.men"
+    },
+    {
+      "url": "game/Maps/gamemenu.men",
+      "vfsPath": "c:\\Maps\\gamemenu.men"
+    },
+    {
+      "url": "game/Maps/highscores.men",
+      "vfsPath": "c:\\Maps\\highscores.men"
+    },
+    {
+      "url": "game/Maps/ITEMS.LGC",
+      "vfsPath": "c:\\Maps\\ITEMS.LGC"
+    },
+    {
+      "url": "game/Maps/Level_01.lgc",
+      "vfsPath": "c:\\Maps\\Level_01.lgc"
+    },
+    {
+      "url": "game/Maps/Level_01.map",
+      "vfsPath": "c:\\Maps\\Level_01.map"
+    },
+    {
+      "url": "game/Maps/Level_01demo.lgc",
+      "vfsPath": "c:\\Maps\\Level_01demo.lgc"
+    },
+    {
+      "url": "game/Maps/Level_01demo.map",
+      "vfsPath": "c:\\Maps\\Level_01demo.map"
+    },
+    {
+      "url": "game/Maps/Level_02.lgc",
+      "vfsPath": "c:\\Maps\\Level_02.lgc"
+    },
+    {
+      "url": "game/Maps/Level_02.map",
+      "vfsPath": "c:\\Maps\\Level_02.map"
+    },
+    {
+      "url": "game/Maps/Level_03.lgc",
+      "vfsPath": "c:\\Maps\\Level_03.lgc"
+    },
+    {
+      "url": "game/Maps/Level_03.map",
+      "vfsPath": "c:\\Maps\\Level_03.map"
+    },
+    {
+      "url": "game/Maps/Level_04.lgc",
+      "vfsPath": "c:\\Maps\\Level_04.lgc"
+    },
+    {
+      "url": "game/Maps/Level_04.map",
+      "vfsPath": "c:\\Maps\\Level_04.map"
+    },
+    {
+      "url": "game/Maps/Level_05.lgc",
+      "vfsPath": "c:\\Maps\\Level_05.lgc"
+    },
+    {
+      "url": "game/Maps/Level_05.map",
+      "vfsPath": "c:\\Maps\\Level_05.map"
+    },
+    {
+      "url": "game/Maps/Level_06.lgc",
+      "vfsPath": "c:\\Maps\\Level_06.lgc"
+    },
+    {
+      "url": "game/Maps/Level_06.map",
+      "vfsPath": "c:\\Maps\\Level_06.map"
+    },
+    {
+      "url": "game/Maps/Level_07.lgc",
+      "vfsPath": "c:\\Maps\\Level_07.lgc"
+    },
+    {
+      "url": "game/Maps/Level_07.map",
+      "vfsPath": "c:\\Maps\\Level_07.map"
+    },
+    {
+      "url": "game/Maps/Level_08.lgc",
+      "vfsPath": "c:\\Maps\\Level_08.lgc"
+    },
+    {
+      "url": "game/Maps/Level_08.map",
+      "vfsPath": "c:\\Maps\\Level_08.map"
+    },
+    {
+      "url": "game/Maps/Level_09.lgc",
+      "vfsPath": "c:\\Maps\\Level_09.lgc"
+    },
+    {
+      "url": "game/Maps/Level_09.map",
+      "vfsPath": "c:\\Maps\\Level_09.map"
+    },
+    {
+      "url": "game/Maps/Level_10.lgc",
+      "vfsPath": "c:\\Maps\\Level_10.lgc"
+    },
+    {
+      "url": "game/Maps/Level_10.map",
+      "vfsPath": "c:\\Maps\\Level_10.map"
+    },
+    {
+      "url": "game/Maps/Level_11.lgc",
+      "vfsPath": "c:\\Maps\\Level_11.lgc"
+    },
+    {
+      "url": "game/Maps/Level_11.map",
+      "vfsPath": "c:\\Maps\\Level_11.map"
+    },
+    {
+      "url": "game/Maps/load.men",
+      "vfsPath": "c:\\Maps\\load.men"
+    },
+    {
+      "url": "game/Maps/LOGO.LGC",
+      "vfsPath": "c:\\Maps\\LOGO.LGC"
+    },
+    {
+      "url": "game/Maps/logo.map",
+      "vfsPath": "c:\\Maps\\logo.map"
+    },
+    {
+      "url": "game/Maps/MAINMENU.LGC",
+      "vfsPath": "c:\\Maps\\MAINMENU.LGC"
+    },
+    {
+      "url": "game/Maps/mainmenu.map",
+      "vfsPath": "c:\\Maps\\mainmenu.map"
+    },
+    {
+      "url": "game/Maps/mainmenu.men",
+      "vfsPath": "c:\\Maps\\mainmenu.men"
+    },
+    {
+      "url": "game/Maps/mainmenu640.men",
+      "vfsPath": "c:\\Maps\\mainmenu640.men"
+    },
+    {
+      "url": "game/Maps/mainmenu800.men",
+      "vfsPath": "c:\\Maps\\mainmenu800.men"
+    },
+    {
+      "url": "game/Maps/MONSTERS.LGC",
+      "vfsPath": "c:\\Maps\\MONSTERS.LGC"
+    },
+    {
+      "url": "game/Maps/options.men",
+      "vfsPath": "c:\\Maps\\options.men"
+    },
+    {
+      "url": "game/Maps/play.men",
+      "vfsPath": "c:\\Maps\\play.men"
+    },
+    {
+      "url": "game/Maps/SHOP.LGC",
+      "vfsPath": "c:\\Maps\\SHOP.LGC"
+    },
+    {
+      "url": "game/Maps/shop.map",
+      "vfsPath": "c:\\Maps\\shop.map"
+    },
+    {
+      "url": "game/Maps/shop.men",
+      "vfsPath": "c:\\Maps\\shop.men"
+    },
+    {
+      "url": "game/Maps/slide.lgc",
+      "vfsPath": "c:\\Maps\\slide.lgc"
+    },
+    {
+      "url": "game/Maps/slide.map",
+      "vfsPath": "c:\\Maps\\slide.map"
+    },
+    {
+      "url": "game/Maps/slide.men",
+      "vfsPath": "c:\\Maps\\slide.men"
+    },
+    {
+      "url": "game/Maps/survive_01.lgc",
+      "vfsPath": "c:\\Maps\\survive_01.lgc"
+    },
+    {
+      "url": "game/Maps/survive_01.map",
+      "vfsPath": "c:\\Maps\\survive_01.map"
+    },
+    {
+      "url": "game/Maps/survive_birth.lgc",
+      "vfsPath": "c:\\Maps\\survive_birth.lgc"
+    },
+    {
+      "url": "game/Maps/tmp.map",
+      "vfsPath": "c:\\Maps\\tmp.map"
+    },
+    {
+      "url": "game/Music/end.ogg",
+      "vfsPath": "c:\\Music\\end.ogg"
+    },
+    {
+      "url": "game/Music/menu_mus.ogg",
+      "vfsPath": "c:\\Music\\menu_mus.ogg"
+    },
+    {
+      "url": "game/Music/mus00.ogg",
+      "vfsPath": "c:\\Music\\mus00.ogg"
+    },
+    {
+      "url": "game/Music/mus01.ogg",
+      "vfsPath": "c:\\Music\\mus01.ogg"
+    },
+    {
+      "url": "game/Music/mus02.ogg",
+      "vfsPath": "c:\\Music\\mus02.ogg"
+    },
+    {
+      "url": "game/Music/wind.ogg",
+      "vfsPath": "c:\\Music\\wind.ogg"
+    },
+    {
+      "url": "game/objects.res",
+      "vfsPath": "c:\\objects.res"
+    },
+    {
+      "url": "game/readme.txt",
+      "vfsPath": "c:\\readme.txt"
+    },
+    {
+      "url": "game/Screens/1.bin",
+      "vfsPath": "c:\\Screens\\1.bin"
+    },
+    {
+      "url": "game/strings.ini",
+      "vfsPath": "c:\\strings.ini"
+    },
+    {
+      "url": "game/Text/ammo_01.txt",
+      "vfsPath": "c:\\Text\\ammo_01.txt"
+    },
+    {
+      "url": "game/Text/ammo_02.txt",
+      "vfsPath": "c:\\Text\\ammo_02.txt"
+    },
+    {
+      "url": "game/Text/ammo_03.txt",
+      "vfsPath": "c:\\Text\\ammo_03.txt"
+    },
+    {
+      "url": "game/Text/ammo_04.txt",
+      "vfsPath": "c:\\Text\\ammo_04.txt"
+    },
+    {
+      "url": "game/Text/ammo_05.txt",
+      "vfsPath": "c:\\Text\\ammo_05.txt"
+    },
+    {
+      "url": "game/Text/ammo_06.txt",
+      "vfsPath": "c:\\Text\\ammo_06.txt"
+    },
+    {
+      "url": "game/Text/ammo_07.txt",
+      "vfsPath": "c:\\Text\\ammo_07.txt"
+    },
+    {
+      "url": "game/Text/ammo_08.txt",
+      "vfsPath": "c:\\Text\\ammo_08.txt"
+    },
+    {
+      "url": "game/Text/ammo_09.txt",
+      "vfsPath": "c:\\Text\\ammo_09.txt"
+    },
+    {
+      "url": "game/Text/credits.txt",
+      "vfsPath": "c:\\Text\\credits.txt"
+    },
+    {
+      "url": "game/Text/end.txt",
+      "vfsPath": "c:\\Text\\end.txt"
+    },
+    {
+      "url": "game/Text/enough.txt",
+      "vfsPath": "c:\\Text\\enough.txt"
+    },
+    {
+      "url": "game/Text/item_720.txt",
+      "vfsPath": "c:\\Text\\item_720.txt"
+    },
+    {
+      "url": "game/Text/item_721.txt",
+      "vfsPath": "c:\\Text\\item_721.txt"
+    },
+    {
+      "url": "game/Text/item_722.txt",
+      "vfsPath": "c:\\Text\\item_722.txt"
+    },
+    {
+      "url": "game/Text/item_723.txt",
+      "vfsPath": "c:\\Text\\item_723.txt"
+    },
+    {
+      "url": "game/Text/item_724.txt",
+      "vfsPath": "c:\\Text\\item_724.txt"
+    },
+    {
+      "url": "game/Text/item_725.txt",
+      "vfsPath": "c:\\Text\\item_725.txt"
+    },
+    {
+      "url": "game/Text/item_726.txt",
+      "vfsPath": "c:\\Text\\item_726.txt"
+    },
+    {
+      "url": "game/Text/item_727.txt",
+      "vfsPath": "c:\\Text\\item_727.txt"
+    },
+    {
+      "url": "game/Text/item_728.txt",
+      "vfsPath": "c:\\Text\\item_728.txt"
+    },
+    {
+      "url": "game/Text/item_729.txt",
+      "vfsPath": "c:\\Text\\item_729.txt"
+    },
+    {
+      "url": "game/Text/item_730.txt",
+      "vfsPath": "c:\\Text\\item_730.txt"
+    },
+    {
+      "url": "game/Text/item_731.txt",
+      "vfsPath": "c:\\Text\\item_731.txt"
+    },
+    {
+      "url": "game/Text/level_01.txt",
+      "vfsPath": "c:\\Text\\level_01.txt"
+    },
+    {
+      "url": "game/Text/level_02.txt",
+      "vfsPath": "c:\\Text\\level_02.txt"
+    },
+    {
+      "url": "game/Text/level_03.txt",
+      "vfsPath": "c:\\Text\\level_03.txt"
+    },
+    {
+      "url": "game/Text/level_04.txt",
+      "vfsPath": "c:\\Text\\level_04.txt"
+    },
+    {
+      "url": "game/Text/level_05.txt",
+      "vfsPath": "c:\\Text\\level_05.txt"
+    },
+    {
+      "url": "game/Text/level_06.txt",
+      "vfsPath": "c:\\Text\\level_06.txt"
+    },
+    {
+      "url": "game/Text/level_07.txt",
+      "vfsPath": "c:\\Text\\level_07.txt"
+    },
+    {
+      "url": "game/Text/level_08.txt",
+      "vfsPath": "c:\\Text\\level_08.txt"
+    },
+    {
+      "url": "game/Text/level_09.txt",
+      "vfsPath": "c:\\Text\\level_09.txt"
+    },
+    {
+      "url": "game/Text/level_10.txt",
+      "vfsPath": "c:\\Text\\level_10.txt"
+    },
+    {
+      "url": "game/Text/weapon_01.txt",
+      "vfsPath": "c:\\Text\\weapon_01.txt"
+    },
+    {
+      "url": "game/Text/weapon_02.txt",
+      "vfsPath": "c:\\Text\\weapon_02.txt"
+    },
+    {
+      "url": "game/Text/weapon_03.txt",
+      "vfsPath": "c:\\Text\\weapon_03.txt"
+    },
+    {
+      "url": "game/Text/weapon_04.txt",
+      "vfsPath": "c:\\Text\\weapon_04.txt"
+    },
+    {
+      "url": "game/Text/weapon_05.txt",
+      "vfsPath": "c:\\Text\\weapon_05.txt"
+    },
+    {
+      "url": "game/Text/weapon_06.txt",
+      "vfsPath": "c:\\Text\\weapon_06.txt"
+    },
+    {
+      "url": "game/Text/weapon_07.txt",
+      "vfsPath": "c:\\Text\\weapon_07.txt"
+    },
+    {
+      "url": "game/Text/weapon_08.txt",
+      "vfsPath": "c:\\Text\\weapon_08.txt"
+    },
+    {
+      "url": "game/Text/weapon_09.txt",
+      "vfsPath": "c:\\Text\\weapon_09.txt"
+    },
+    {
+      "url": "game/Vid/000load.vid",
+      "vfsPath": "c:\\Vid\\000load.vid"
+    },
+    {
+      "url": "game/Vid/001curs.vid",
+      "vfsPath": "c:\\Vid\\001curs.vid"
+    },
+    {
+      "url": "game/Vid/002fnt78.vid",
+      "vfsPath": "c:\\Vid\\002fnt78.vid"
+    },
+    {
+      "url": "game/Vid/009.vid",
+      "vfsPath": "c:\\Vid\\009.vid"
+    },
+    {
+      "url": "game/Vid/011.vid",
+      "vfsPath": "c:\\Vid\\011.vid"
+    },
+    {
+      "url": "game/Vid/012.vid",
+      "vfsPath": "c:\\Vid\\012.vid"
+    },
+    {
+      "url": "game/Vid/020.vid",
+      "vfsPath": "c:\\Vid\\020.vid"
+    },
+    {
+      "url": "game/Vid/040.vid",
+      "vfsPath": "c:\\Vid\\040.vid"
+    },
+    {
+      "url": "game/Vid/041.vid",
+      "vfsPath": "c:\\Vid\\041.vid"
+    },
+    {
+      "url": "game/Vid/042.vid",
+      "vfsPath": "c:\\Vid\\042.vid"
+    },
+    {
+      "url": "game/Vid/049.vid",
+      "vfsPath": "c:\\Vid\\049.vid"
+    },
+    {
+      "url": "game/Vid/050.vid",
+      "vfsPath": "c:\\Vid\\050.vid"
+    },
+    {
+      "url": "game/Vid/051.vid",
+      "vfsPath": "c:\\Vid\\051.vid"
+    },
+    {
+      "url": "game/Vid/052.vid",
+      "vfsPath": "c:\\Vid\\052.vid"
+    },
+    {
+      "url": "game/Vid/059.vid",
+      "vfsPath": "c:\\Vid\\059.vid"
+    },
+    {
+      "url": "game/Vid/060.vid",
+      "vfsPath": "c:\\Vid\\060.vid"
+    },
+    {
+      "url": "game/Vid/061.vid",
+      "vfsPath": "c:\\Vid\\061.vid"
+    },
+    {
+      "url": "game/Vid/062.vid",
+      "vfsPath": "c:\\Vid\\062.vid"
+    },
+    {
+      "url": "game/Vid/069.vid",
+      "vfsPath": "c:\\Vid\\069.vid"
+    },
+    {
+      "url": "game/Vid/070.vid",
+      "vfsPath": "c:\\Vid\\070.vid"
+    },
+    {
+      "url": "game/Vid/079.vid",
+      "vfsPath": "c:\\Vid\\079.vid"
+    },
+    {
+      "url": "game/Vid/080.vid",
+      "vfsPath": "c:\\Vid\\080.vid"
+    },
+    {
+      "url": "game/Vid/081.vid",
+      "vfsPath": "c:\\Vid\\081.vid"
+    },
+    {
+      "url": "game/Vid/082.vid",
+      "vfsPath": "c:\\Vid\\082.vid"
+    },
+    {
+      "url": "game/Vid/089.vid",
+      "vfsPath": "c:\\Vid\\089.vid"
+    },
+    {
+      "url": "game/Vid/101.vid",
+      "vfsPath": "c:\\Vid\\101.vid"
+    },
+    {
+      "url": "game/Vid/102.vid",
+      "vfsPath": "c:\\Vid\\102.vid"
+    },
+    {
+      "url": "game/Vid/104.vid",
+      "vfsPath": "c:\\Vid\\104.vid"
+    },
+    {
+      "url": "game/Vid/105.vid",
+      "vfsPath": "c:\\Vid\\105.vid"
+    },
+    {
+      "url": "game/Vid/106.vid",
+      "vfsPath": "c:\\Vid\\106.vid"
+    },
+    {
+      "url": "game/Vid/107.vid",
+      "vfsPath": "c:\\Vid\\107.vid"
+    },
+    {
+      "url": "game/Vid/108.vid",
+      "vfsPath": "c:\\Vid\\108.vid"
+    },
+    {
+      "url": "game/Vid/110.vid",
+      "vfsPath": "c:\\Vid\\110.vid"
+    },
+    {
+      "url": "game/Vid/112.vid",
+      "vfsPath": "c:\\Vid\\112.vid"
+    },
+    {
+      "url": "game/Vid/113.vid",
+      "vfsPath": "c:\\Vid\\113.vid"
+    },
+    {
+      "url": "game/Vid/114.vid",
+      "vfsPath": "c:\\Vid\\114.vid"
+    },
+    {
+      "url": "game/Vid/115.vid",
+      "vfsPath": "c:\\Vid\\115.vid"
+    },
+    {
+      "url": "game/Vid/116.vid",
+      "vfsPath": "c:\\Vid\\116.vid"
+    },
+    {
+      "url": "game/Vid/117.vid",
+      "vfsPath": "c:\\Vid\\117.vid"
+    },
+    {
+      "url": "game/Vid/118.vid",
+      "vfsPath": "c:\\Vid\\118.vid"
+    },
+    {
+      "url": "game/Vid/119.vid",
+      "vfsPath": "c:\\Vid\\119.vid"
+    },
+    {
+      "url": "game/Vid/120.vid",
+      "vfsPath": "c:\\Vid\\120.vid"
+    },
+    {
+      "url": "game/Vid/121.vid",
+      "vfsPath": "c:\\Vid\\121.vid"
+    },
+    {
+      "url": "game/Vid/123.vid",
+      "vfsPath": "c:\\Vid\\123.vid"
+    },
+    {
+      "url": "game/Vid/124.vid",
+      "vfsPath": "c:\\Vid\\124.vid"
+    },
+    {
+      "url": "game/Vid/125.vid",
+      "vfsPath": "c:\\Vid\\125.vid"
+    },
+    {
+      "url": "game/Vid/127.vid",
+      "vfsPath": "c:\\Vid\\127.vid"
+    },
+    {
+      "url": "game/Vid/129.vid",
+      "vfsPath": "c:\\Vid\\129.vid"
+    },
+    {
+      "url": "game/Vid/130.vid",
+      "vfsPath": "c:\\Vid\\130.vid"
+    },
+    {
+      "url": "game/Vid/131.vid",
+      "vfsPath": "c:\\Vid\\131.vid"
+    },
+    {
+      "url": "game/Vid/132.vid",
+      "vfsPath": "c:\\Vid\\132.vid"
+    },
+    {
+      "url": "game/Vid/133.vid",
+      "vfsPath": "c:\\Vid\\133.vid"
+    },
+    {
+      "url": "game/Vid/134.vid",
+      "vfsPath": "c:\\Vid\\134.vid"
+    },
+    {
+      "url": "game/Vid/135.vid",
+      "vfsPath": "c:\\Vid\\135.vid"
+    },
+    {
+      "url": "game/Vid/136.vid",
+      "vfsPath": "c:\\Vid\\136.vid"
+    },
+    {
+      "url": "game/Vid/137.vid",
+      "vfsPath": "c:\\Vid\\137.vid"
+    },
+    {
+      "url": "game/Vid/140.vid",
+      "vfsPath": "c:\\Vid\\140.vid"
+    },
+    {
+      "url": "game/Vid/141.vid",
+      "vfsPath": "c:\\Vid\\141.vid"
+    },
+    {
+      "url": "game/Vid/143.vid",
+      "vfsPath": "c:\\Vid\\143.vid"
+    },
+    {
+      "url": "game/Vid/144.vid",
+      "vfsPath": "c:\\Vid\\144.vid"
+    },
+    {
+      "url": "game/Vid/145.vid",
+      "vfsPath": "c:\\Vid\\145.vid"
+    },
+    {
+      "url": "game/Vid/146.vid",
+      "vfsPath": "c:\\Vid\\146.vid"
+    },
+    {
+      "url": "game/Vid/147.vid",
+      "vfsPath": "c:\\Vid\\147.vid"
+    },
+    {
+      "url": "game/Vid/149.vid",
+      "vfsPath": "c:\\Vid\\149.vid"
+    },
+    {
+      "url": "game/Vid/151.vid",
+      "vfsPath": "c:\\Vid\\151.vid"
+    },
+    {
+      "url": "game/Vid/154.vid",
+      "vfsPath": "c:\\Vid\\154.vid"
+    },
+    {
+      "url": "game/Vid/158.vid",
+      "vfsPath": "c:\\Vid\\158.vid"
+    },
+    {
+      "url": "game/Vid/159.vid",
+      "vfsPath": "c:\\Vid\\159.vid"
+    },
+    {
+      "url": "game/Vid/160.vid",
+      "vfsPath": "c:\\Vid\\160.vid"
+    },
+    {
+      "url": "game/Vid/164.vid",
+      "vfsPath": "c:\\Vid\\164.vid"
+    },
+    {
+      "url": "game/Vid/166.vid",
+      "vfsPath": "c:\\Vid\\166.vid"
+    },
+    {
+      "url": "game/Vid/167.vid",
+      "vfsPath": "c:\\Vid\\167.vid"
+    },
+    {
+      "url": "game/Vid/170.vid",
+      "vfsPath": "c:\\Vid\\170.vid"
+    },
+    {
+      "url": "game/Vid/174.vid",
+      "vfsPath": "c:\\Vid\\174.vid"
+    },
+    {
+      "url": "game/Vid/176.vid",
+      "vfsPath": "c:\\Vid\\176.vid"
+    },
+    {
+      "url": "game/Vid/177.vid",
+      "vfsPath": "c:\\Vid\\177.vid"
+    },
+    {
+      "url": "game/Vid/179.vid",
+      "vfsPath": "c:\\Vid\\179.vid"
+    },
+    {
+      "url": "game/Vid/180.vid",
+      "vfsPath": "c:\\Vid\\180.vid"
+    },
+    {
+      "url": "game/Vid/181.vid",
+      "vfsPath": "c:\\Vid\\181.vid"
+    },
+    {
+      "url": "game/Vid/182.vid",
+      "vfsPath": "c:\\Vid\\182.vid"
+    },
+    {
+      "url": "game/Vid/183.vid",
+      "vfsPath": "c:\\Vid\\183.vid"
+    },
+    {
+      "url": "game/Vid/185.vid",
+      "vfsPath": "c:\\Vid\\185.vid"
+    },
+    {
+      "url": "game/Vid/186.vid",
+      "vfsPath": "c:\\Vid\\186.vid"
+    },
+    {
+      "url": "game/Vid/187.vid",
+      "vfsPath": "c:\\Vid\\187.vid"
+    },
+    {
+      "url": "game/Vid/200.vid",
+      "vfsPath": "c:\\Vid\\200.vid"
+    },
+    {
+      "url": "game/Vid/201.vid",
+      "vfsPath": "c:\\Vid\\201.vid"
+    },
+    {
+      "url": "game/Vid/202.vid",
+      "vfsPath": "c:\\Vid\\202.vid"
+    },
+    {
+      "url": "game/Vid/207.vid",
+      "vfsPath": "c:\\Vid\\207.vid"
+    },
+    {
+      "url": "game/Vid/210.vid",
+      "vfsPath": "c:\\Vid\\210.vid"
+    },
+    {
+      "url": "game/Vid/211.vid",
+      "vfsPath": "c:\\Vid\\211.vid"
+    },
+    {
+      "url": "game/Vid/212.vid",
+      "vfsPath": "c:\\Vid\\212.vid"
+    },
+    {
+      "url": "game/Vid/220.vid",
+      "vfsPath": "c:\\Vid\\220.vid"
+    },
+    {
+      "url": "game/Vid/230.vid",
+      "vfsPath": "c:\\Vid\\230.vid"
+    },
+    {
+      "url": "game/Vid/232.vid",
+      "vfsPath": "c:\\Vid\\232.vid"
+    },
+    {
+      "url": "game/Vid/233.vid",
+      "vfsPath": "c:\\Vid\\233.vid"
+    },
+    {
+      "url": "game/Vid/234.vid",
+      "vfsPath": "c:\\Vid\\234.vid"
+    },
+    {
+      "url": "game/Vid/235.vid",
+      "vfsPath": "c:\\Vid\\235.vid"
+    },
+    {
+      "url": "game/Vid/236.vid",
+      "vfsPath": "c:\\Vid\\236.vid"
+    },
+    {
+      "url": "game/Vid/238.vid",
+      "vfsPath": "c:\\Vid\\238.vid"
+    },
+    {
+      "url": "game/Vid/241.vid",
+      "vfsPath": "c:\\Vid\\241.vid"
+    },
+    {
+      "url": "game/Vid/242.vid",
+      "vfsPath": "c:\\Vid\\242.vid"
+    },
+    {
+      "url": "game/Vid/243.vid",
+      "vfsPath": "c:\\Vid\\243.vid"
+    },
+    {
+      "url": "game/Vid/244.vid",
+      "vfsPath": "c:\\Vid\\244.vid"
+    },
+    {
+      "url": "game/Vid/245.vid",
+      "vfsPath": "c:\\Vid\\245.vid"
+    },
+    {
+      "url": "game/Vid/246.vid",
+      "vfsPath": "c:\\Vid\\246.vid"
+    },
+    {
+      "url": "game/Vid/247.vid",
+      "vfsPath": "c:\\Vid\\247.vid"
+    },
+    {
+      "url": "game/Vid/252.vid",
+      "vfsPath": "c:\\Vid\\252.vid"
+    },
+    {
+      "url": "game/Vid/253.vid",
+      "vfsPath": "c:\\Vid\\253.vid"
+    },
+    {
+      "url": "game/Vid/254.vid",
+      "vfsPath": "c:\\Vid\\254.vid"
+    },
+    {
+      "url": "game/Vid/255.vid",
+      "vfsPath": "c:\\Vid\\255.vid"
+    },
+    {
+      "url": "game/Vid/256.vid",
+      "vfsPath": "c:\\Vid\\256.vid"
+    },
+    {
+      "url": "game/Vid/257.vid",
+      "vfsPath": "c:\\Vid\\257.vid"
+    },
+    {
+      "url": "game/Vid/258.vid",
+      "vfsPath": "c:\\Vid\\258.vid"
+    },
+    {
+      "url": "game/Vid/259.vid",
+      "vfsPath": "c:\\Vid\\259.vid"
+    },
+    {
+      "url": "game/Vid/290.vid",
+      "vfsPath": "c:\\Vid\\290.vid"
+    },
+    {
+      "url": "game/Vid/301.vid",
+      "vfsPath": "c:\\Vid\\301.vid"
+    },
+    {
+      "url": "game/Vid/302.vid",
+      "vfsPath": "c:\\Vid\\302.vid"
+    },
+    {
+      "url": "game/Vid/303.vid",
+      "vfsPath": "c:\\Vid\\303.vid"
+    },
+    {
+      "url": "game/Vid/304.vid",
+      "vfsPath": "c:\\Vid\\304.vid"
+    },
+    {
+      "url": "game/Vid/305.vid",
+      "vfsPath": "c:\\Vid\\305.vid"
+    },
+    {
+      "url": "game/Vid/306.vid",
+      "vfsPath": "c:\\Vid\\306.vid"
+    },
+    {
+      "url": "game/Vid/307.vid",
+      "vfsPath": "c:\\Vid\\307.vid"
+    },
+    {
+      "url": "game/Vid/308.vid",
+      "vfsPath": "c:\\Vid\\308.vid"
+    },
+    {
+      "url": "game/Vid/309.vid",
+      "vfsPath": "c:\\Vid\\309.vid"
+    },
+    {
+      "url": "game/Vid/332.vid",
+      "vfsPath": "c:\\Vid\\332.vid"
+    },
+    {
+      "url": "game/Vid/333.vid",
+      "vfsPath": "c:\\Vid\\333.vid"
+    },
+    {
+      "url": "game/Vid/334.vid",
+      "vfsPath": "c:\\Vid\\334.vid"
+    },
+    {
+      "url": "game/Vid/350.vid",
+      "vfsPath": "c:\\Vid\\350.vid"
+    },
+    {
+      "url": "game/Vid/351.vid",
+      "vfsPath": "c:\\Vid\\351.vid"
+    },
+    {
+      "url": "game/Vid/352.vid",
+      "vfsPath": "c:\\Vid\\352.vid"
+    },
+    {
+      "url": "game/Vid/353.vid",
+      "vfsPath": "c:\\Vid\\353.vid"
+    },
+    {
+      "url": "game/Vid/358.vid",
+      "vfsPath": "c:\\Vid\\358.vid"
+    },
+    {
+      "url": "game/Vid/400.vid",
+      "vfsPath": "c:\\Vid\\400.vid"
+    },
+    {
+      "url": "game/Vid/401.vid",
+      "vfsPath": "c:\\Vid\\401.vid"
+    },
+    {
+      "url": "game/Vid/402.vid",
+      "vfsPath": "c:\\Vid\\402.vid"
+    },
+    {
+      "url": "game/Vid/403.vid",
+      "vfsPath": "c:\\Vid\\403.vid"
+    },
+    {
+      "url": "game/Vid/404.vid",
+      "vfsPath": "c:\\Vid\\404.vid"
+    },
+    {
+      "url": "game/Vid/405.vid",
+      "vfsPath": "c:\\Vid\\405.vid"
+    },
+    {
+      "url": "game/Vid/406.vid",
+      "vfsPath": "c:\\Vid\\406.vid"
+    },
+    {
+      "url": "game/Vid/407.vid",
+      "vfsPath": "c:\\Vid\\407.vid"
+    },
+    {
+      "url": "game/Vid/408.vid",
+      "vfsPath": "c:\\Vid\\408.vid"
+    },
+    {
+      "url": "game/Vid/409.vid",
+      "vfsPath": "c:\\Vid\\409.vid"
+    },
+    {
+      "url": "game/Vid/410.vid",
+      "vfsPath": "c:\\Vid\\410.vid"
+    },
+    {
+      "url": "game/Vid/411.vid",
+      "vfsPath": "c:\\Vid\\411.vid"
+    },
+    {
+      "url": "game/Vid/412.vid",
+      "vfsPath": "c:\\Vid\\412.vid"
+    },
+    {
+      "url": "game/Vid/413.vid",
+      "vfsPath": "c:\\Vid\\413.vid"
+    },
+    {
+      "url": "game/Vid/414.vid",
+      "vfsPath": "c:\\Vid\\414.vid"
+    },
+    {
+      "url": "game/Vid/415.vid",
+      "vfsPath": "c:\\Vid\\415.vid"
+    },
+    {
+      "url": "game/Vid/417.vid",
+      "vfsPath": "c:\\Vid\\417.vid"
+    },
+    {
+      "url": "game/Vid/418.vid",
+      "vfsPath": "c:\\Vid\\418.vid"
+    },
+    {
+      "url": "game/Vid/419.vid",
+      "vfsPath": "c:\\Vid\\419.vid"
+    },
+    {
+      "url": "game/Vid/423.vid",
+      "vfsPath": "c:\\Vid\\423.vid"
+    },
+    {
+      "url": "game/Vid/424.vid",
+      "vfsPath": "c:\\Vid\\424.vid"
+    },
+    {
+      "url": "game/Vid/425.vid",
+      "vfsPath": "c:\\Vid\\425.vid"
+    },
+    {
+      "url": "game/Vid/426.vid",
+      "vfsPath": "c:\\Vid\\426.vid"
+    },
+    {
+      "url": "game/Vid/427.vid",
+      "vfsPath": "c:\\Vid\\427.vid"
+    },
+    {
+      "url": "game/Vid/428.vid",
+      "vfsPath": "c:\\Vid\\428.vid"
+    },
+    {
+      "url": "game/Vid/429.vid",
+      "vfsPath": "c:\\Vid\\429.vid"
+    },
+    {
+      "url": "game/Vid/430.vid",
+      "vfsPath": "c:\\Vid\\430.vid"
+    },
+    {
+      "url": "game/Vid/431.vid",
+      "vfsPath": "c:\\Vid\\431.vid"
+    },
+    {
+      "url": "game/Vid/435.vid",
+      "vfsPath": "c:\\Vid\\435.vid"
+    },
+    {
+      "url": "game/Vid/436.vid",
+      "vfsPath": "c:\\Vid\\436.vid"
+    },
+    {
+      "url": "game/Vid/437.vid",
+      "vfsPath": "c:\\Vid\\437.vid"
+    },
+    {
+      "url": "game/Vid/440.vid",
+      "vfsPath": "c:\\Vid\\440.vid"
+    },
+    {
+      "url": "game/Vid/443.vid",
+      "vfsPath": "c:\\Vid\\443.vid"
+    },
+    {
+      "url": "game/Vid/450.vid",
+      "vfsPath": "c:\\Vid\\450.vid"
+    },
+    {
+      "url": "game/Vid/452.vid",
+      "vfsPath": "c:\\Vid\\452.vid"
+    },
+    {
+      "url": "game/Vid/500.vid",
+      "vfsPath": "c:\\Vid\\500.vid"
+    },
+    {
+      "url": "game/Vid/501.vid",
+      "vfsPath": "c:\\Vid\\501.vid"
+    },
+    {
+      "url": "game/Vid/502.vid",
+      "vfsPath": "c:\\Vid\\502.vid"
+    },
+    {
+      "url": "game/Vid/503.vid",
+      "vfsPath": "c:\\Vid\\503.vid"
+    },
+    {
+      "url": "game/Vid/505.vid",
+      "vfsPath": "c:\\Vid\\505.vid"
+    },
+    {
+      "url": "game/Vid/506.vid",
+      "vfsPath": "c:\\Vid\\506.vid"
+    },
+    {
+      "url": "game/Vid/507.vid",
+      "vfsPath": "c:\\Vid\\507.vid"
+    },
+    {
+      "url": "game/Vid/549.vid",
+      "vfsPath": "c:\\Vid\\549.vid"
+    },
+    {
+      "url": "game/Vid/550.vid",
+      "vfsPath": "c:\\Vid\\550.vid"
+    },
+    {
+      "url": "game/Vid/551.vid",
+      "vfsPath": "c:\\Vid\\551.vid"
+    },
+    {
+      "url": "game/Vid/552.vid",
+      "vfsPath": "c:\\Vid\\552.vid"
+    },
+    {
+      "url": "game/Vid/601.vid",
+      "vfsPath": "c:\\Vid\\601.vid"
+    },
+    {
+      "url": "game/Vid/602.vid",
+      "vfsPath": "c:\\Vid\\602.vid"
+    },
+    {
+      "url": "game/Vid/604.vid",
+      "vfsPath": "c:\\Vid\\604.vid"
+    },
+    {
+      "url": "game/Vid/605.vid",
+      "vfsPath": "c:\\Vid\\605.vid"
+    },
+    {
+      "url": "game/Vid/606.vid",
+      "vfsPath": "c:\\Vid\\606.vid"
+    },
+    {
+      "url": "game/Vid/607.vid",
+      "vfsPath": "c:\\Vid\\607.vid"
+    },
+    {
+      "url": "game/Vid/608.vid",
+      "vfsPath": "c:\\Vid\\608.vid"
+    },
+    {
+      "url": "game/Vid/609.vid",
+      "vfsPath": "c:\\Vid\\609.vid"
+    },
+    {
+      "url": "game/Vid/610.vid",
+      "vfsPath": "c:\\Vid\\610.vid"
+    },
+    {
+      "url": "game/Vid/612.vid",
+      "vfsPath": "c:\\Vid\\612.vid"
+    },
+    {
+      "url": "game/Vid/615.vid",
+      "vfsPath": "c:\\Vid\\615.vid"
+    },
+    {
+      "url": "game/Vid/631.vid",
+      "vfsPath": "c:\\Vid\\631.vid"
+    },
+    {
+      "url": "game/Vid/650.vid",
+      "vfsPath": "c:\\Vid\\650.vid"
+    },
+    {
+      "url": "game/Vid/651.vid",
+      "vfsPath": "c:\\Vid\\651.vid"
+    },
+    {
+      "url": "game/Vid/652.vid",
+      "vfsPath": "c:\\Vid\\652.vid"
+    },
+    {
+      "url": "game/Vid/653.vid",
+      "vfsPath": "c:\\Vid\\653.vid"
+    },
+    {
+      "url": "game/Vid/654.vid",
+      "vfsPath": "c:\\Vid\\654.vid"
+    },
+    {
+      "url": "game/Vid/660.vid",
+      "vfsPath": "c:\\Vid\\660.vid"
+    },
+    {
+      "url": "game/Vid/661.vid",
+      "vfsPath": "c:\\Vid\\661.vid"
+    },
+    {
+      "url": "game/Vid/662.vid",
+      "vfsPath": "c:\\Vid\\662.vid"
+    },
+    {
+      "url": "game/Vid/663.vid",
+      "vfsPath": "c:\\Vid\\663.vid"
+    },
+    {
+      "url": "game/Vid/714.vid",
+      "vfsPath": "c:\\Vid\\714.vid"
+    },
+    {
+      "url": "game/Vid/716.vid",
+      "vfsPath": "c:\\Vid\\716.vid"
+    },
+    {
+      "url": "game/Vid/718.vid",
+      "vfsPath": "c:\\Vid\\718.vid"
+    },
+    {
+      "url": "game/Vid/719.vid",
+      "vfsPath": "c:\\Vid\\719.vid"
+    },
+    {
+      "url": "game/Vid/720.vid",
+      "vfsPath": "c:\\Vid\\720.vid"
+    },
+    {
+      "url": "game/Vid/721.vid",
+      "vfsPath": "c:\\Vid\\721.vid"
+    },
+    {
+      "url": "game/Vid/722.vid",
+      "vfsPath": "c:\\Vid\\722.vid"
+    },
+    {
+      "url": "game/Vid/723.vid",
+      "vfsPath": "c:\\Vid\\723.vid"
+    },
+    {
+      "url": "game/Vid/727.vid",
+      "vfsPath": "c:\\Vid\\727.vid"
+    },
+    {
+      "url": "game/Vid/741.vid",
+      "vfsPath": "c:\\Vid\\741.vid"
+    },
+    {
+      "url": "game/Vid/742.vid",
+      "vfsPath": "c:\\Vid\\742.vid"
+    },
+    {
+      "url": "game/Vid/743.vid",
+      "vfsPath": "c:\\Vid\\743.vid"
+    },
+    {
+      "url": "game/Vid/745.vid",
+      "vfsPath": "c:\\Vid\\745.vid"
+    },
+    {
+      "url": "game/Vid/746.vid",
+      "vfsPath": "c:\\Vid\\746.vid"
+    },
+    {
+      "url": "game/Vid/749.vid",
+      "vfsPath": "c:\\Vid\\749.vid"
+    },
+    {
+      "url": "game/Vid/751.vid",
+      "vfsPath": "c:\\Vid\\751.vid"
+    },
+    {
+      "url": "game/Vid/752.vid",
+      "vfsPath": "c:\\Vid\\752.vid"
+    },
+    {
+      "url": "game/Vid/755.vid",
+      "vfsPath": "c:\\Vid\\755.vid"
+    },
+    {
+      "url": "game/Vid/760.vid",
+      "vfsPath": "c:\\Vid\\760.vid"
+    },
+    {
+      "url": "game/Vid/763.vid",
+      "vfsPath": "c:\\Vid\\763.vid"
+    },
+    {
+      "url": "game/Vid/765.vid",
+      "vfsPath": "c:\\Vid\\765.vid"
+    },
+    {
+      "url": "game/Vid/782.vid",
+      "vfsPath": "c:\\Vid\\782.vid"
+    },
+    {
+      "url": "game/Vid/785.vid",
+      "vfsPath": "c:\\Vid\\785.vid"
+    },
+    {
+      "url": "game/Vid/786.vid",
+      "vfsPath": "c:\\Vid\\786.vid"
+    },
+    {
+      "url": "game/Vid/912.bmp",
+      "vfsPath": "c:\\Vid\\912.bmp"
+    },
+    {
+      "url": "game/Vid/912.vid",
+      "vfsPath": "c:\\Vid\\912.vid"
+    },
+    {
+      "url": "game/Vid/914.bmp",
+      "vfsPath": "c:\\Vid\\914.bmp"
+    },
+    {
+      "url": "game/Vid/914.vid",
+      "vfsPath": "c:\\Vid\\914.vid"
+    },
+    {
+      "url": "game/Vid/916.vid",
+      "vfsPath": "c:\\Vid\\916.vid"
+    },
+    {
+      "url": "game/Vid/918.vid",
+      "vfsPath": "c:\\Vid\\918.vid"
+    },
+    {
+      "url": "game/Vid/950.vid",
+      "vfsPath": "c:\\Vid\\950.vid"
+    },
+    {
+      "url": "game/Vid/956.vid",
+      "vfsPath": "c:\\Vid\\956.vid"
+    },
+    {
+      "url": "game/Vid/961.vid",
+      "vfsPath": "c:\\Vid\\961.vid"
+    },
+    {
+      "url": "game/Vid/966.vid",
+      "vfsPath": "c:\\Vid\\966.vid"
+    },
+    {
+      "url": "game/Vid/alien_logo.vid",
+      "vfsPath": "c:\\Vid\\alien_logo.vid"
+    },
+    {
+      "url": "game/Vid/back_butt00.vid",
+      "vfsPath": "c:\\Vid\\back_butt00.vid"
+    },
+    {
+      "url": "game/Vid/back_eqp00.vid",
+      "vfsPath": "c:\\Vid\\back_eqp00.vid"
+    },
+    {
+      "url": "game/Vid/emptfast.vid",
+      "vfsPath": "c:\\Vid\\emptfast.vid"
+    },
+    {
+      "url": "game/Vid/emptslow.vid",
+      "vfsPath": "c:\\Vid\\emptslow.vid"
+    },
+    {
+      "url": "game/Vid/empty_fastest.vid",
+      "vfsPath": "c:\\Vid\\empty_fastest.vid"
+    },
+    {
+      "url": "game/Vid/empty.vid",
+      "vfsPath": "c:\\Vid\\empty.vid"
+    },
+    {
+      "url": "game/Vid/eteam_logo.vid",
+      "vfsPath": "c:\\Vid\\eteam_logo.vid"
+    },
+    {
+      "url": "game/Vid/game_logo.bmp",
+      "vfsPath": "c:\\Vid\\game_logo.bmp"
+    },
+    {
+      "url": "game/Vid/help.bmp",
+      "vfsPath": "c:\\Vid\\help.bmp"
+    },
+    {
+      "url": "game/Vid/loading.bmp",
+      "vfsPath": "c:\\Vid\\loading.bmp"
+    },
+    {
+      "url": "game/Vid/main_back.vid",
+      "vfsPath": "c:\\Vid\\main_back.vid"
+    },
+    {
+      "url": "game/Vid/menu_butt00.vid",
+      "vfsPath": "c:\\Vid\\menu_butt00.vid"
+    },
+    {
+      "url": "game/Vid/pistol_ammo.vid",
+      "vfsPath": "c:\\Vid\\pistol_ammo.vid"
+    },
+    {
+      "url": "game/Vid/preview_female00.vid",
+      "vfsPath": "c:\\Vid\\preview_female00.vid"
+    },
+    {
+      "url": "game/Vid/preview_male00.vid",
+      "vfsPath": "c:\\Vid\\preview_male00.vid"
+    },
+    {
+      "url": "game/Vid/shop_back.vid",
+      "vfsPath": "c:\\Vid\\shop_back.vid"
+    },
+    {
+      "url": "game/Vid/weapon00.vid",
+      "vfsPath": "c:\\Vid\\weapon00.vid"
+    },
+    {
+      "url": "game/Wav/ammo_pickup.wav",
+      "vfsPath": "c:\\Wav\\ammo_pickup.wav"
+    },
+    {
+      "url": "game/Wav/armor_hit1.wav",
+      "vfsPath": "c:\\Wav\\armor_hit1.wav"
+    },
+    {
+      "url": "game/Wav/armor_hit2.wav",
+      "vfsPath": "c:\\Wav\\armor_hit2.wav"
+    },
+    {
+      "url": "game/Wav/barrel_death.wav",
+      "vfsPath": "c:\\Wav\\barrel_death.wav"
+    },
+    {
+      "url": "game/Wav/big_door.wav",
+      "vfsPath": "c:\\Wav\\big_door.wav"
+    },
+    {
+      "url": "game/Wav/big_explosion.WAV",
+      "vfsPath": "c:\\Wav\\big_explosion.WAV"
+    },
+    {
+      "url": "game/Wav/bomb_activate.wav",
+      "vfsPath": "c:\\Wav\\bomb_activate.wav"
+    },
+    {
+      "url": "game/Wav/broke_armor.wav",
+      "vfsPath": "c:\\Wav\\broke_armor.wav"
+    },
+    {
+      "url": "game/Wav/buy.wav",
+      "vfsPath": "c:\\Wav\\buy.wav"
+    },
+    {
+      "url": "game/Wav/drop_item.wav",
+      "vfsPath": "c:\\Wav\\drop_item.wav"
+    },
+    {
+      "url": "game/Wav/drop_shell.wav",
+      "vfsPath": "c:\\Wav\\drop_shell.wav"
+    },
+    {
+      "url": "game/Wav/drop_shell2.wav",
+      "vfsPath": "c:\\Wav\\drop_shell2.wav"
+    },
+    {
+      "url": "game/Wav/drop_shotgunshell.wav",
+      "vfsPath": "c:\\Wav\\drop_shotgunshell.wav"
+    },
+    {
+      "url": "game/Wav/energy_off.wav",
+      "vfsPath": "c:\\Wav\\energy_off.wav"
+    },
+    {
+      "url": "game/Wav/energy_on.wav",
+      "vfsPath": "c:\\Wav\\energy_on.wav"
+    },
+    {
+      "url": "game/Wav/explosion.wav",
+      "vfsPath": "c:\\Wav\\explosion.wav"
+    },
+    {
+      "url": "game/Wav/female_death.wav",
+      "vfsPath": "c:\\Wav\\female_death.wav"
+    },
+    {
+      "url": "game/Wav/flame_thrower.wav",
+      "vfsPath": "c:\\Wav\\flame_thrower.wav"
+    },
+    {
+      "url": "game/Wav/footsteps.wav",
+      "vfsPath": "c:\\Wav\\footsteps.wav"
+    },
+    {
+      "url": "game/Wav/generator.wav",
+      "vfsPath": "c:\\Wav\\generator.wav"
+    },
+    {
+      "url": "game/Wav/gib_drop.WAV",
+      "vfsPath": "c:\\Wav\\gib_drop.WAV"
+    },
+    {
+      "url": "game/Wav/granade_luncher.wav",
+      "vfsPath": "c:\\Wav\\granade_luncher.wav"
+    },
+    {
+      "url": "game/Wav/machine_gun.wav",
+      "vfsPath": "c:\\Wav\\machine_gun.wav"
+    },
+    {
+      "url": "game/Wav/magma_shot.wav",
+      "vfsPath": "c:\\Wav\\magma_shot.wav"
+    },
+    {
+      "url": "game/Wav/male_death.wav",
+      "vfsPath": "c:\\Wav\\male_death.wav"
+    },
+    {
+      "url": "game/Wav/miss_hit.wav",
+      "vfsPath": "c:\\Wav\\miss_hit.wav"
+    },
+    {
+      "url": "game/Wav/miss_hit2.wav",
+      "vfsPath": "c:\\Wav\\miss_hit2.wav"
+    },
+    {
+      "url": "game/Wav/monster_death.wav",
+      "vfsPath": "c:\\Wav\\monster_death.wav"
+    },
+    {
+      "url": "game/Wav/monster_death2.wav",
+      "vfsPath": "c:\\Wav\\monster_death2.wav"
+    },
+    {
+      "url": "game/Wav/monster_hit.wav",
+      "vfsPath": "c:\\Wav\\monster_hit.wav"
+    },
+    {
+      "url": "game/Wav/monster_hit2.wav",
+      "vfsPath": "c:\\Wav\\monster_hit2.wav"
+    },
+    {
+      "url": "game/Wav/monster_minigun.wav",
+      "vfsPath": "c:\\Wav\\monster_minigun.wav"
+    },
+    {
+      "url": "game/Wav/monster1_attack.wav",
+      "vfsPath": "c:\\Wav\\monster1_attack.wav"
+    },
+    {
+      "url": "game/Wav/monster2_ambient.WAV",
+      "vfsPath": "c:\\Wav\\monster2_ambient.WAV"
+    },
+    {
+      "url": "game/Wav/monster2_attack.wav",
+      "vfsPath": "c:\\Wav\\monster2_attack.wav"
+    },
+    {
+      "url": "game/Wav/monster4_death.wav",
+      "vfsPath": "c:\\Wav\\monster4_death.wav"
+    },
+    {
+      "url": "game/Wav/monster5_attack.wav",
+      "vfsPath": "c:\\Wav\\monster5_attack.wav"
+    },
+    {
+      "url": "game/Wav/monster5_death.wav",
+      "vfsPath": "c:\\Wav\\monster5_death.wav"
+    },
+    {
+      "url": "game/Wav/mouse_click.wav",
+      "vfsPath": "c:\\Wav\\mouse_click.wav"
+    },
+    {
+      "url": "game/Wav/mouse_error.wav",
+      "vfsPath": "c:\\Wav\\mouse_error.wav"
+    },
+    {
+      "url": "game/Wav/mouse_over.wav",
+      "vfsPath": "c:\\Wav\\mouse_over.wav"
+    },
+    {
+      "url": "game/Wav/null.wav",
+      "vfsPath": "c:\\Wav\\null.wav"
+    },
+    {
+      "url": "game/Wav/pick_armor.wav",
+      "vfsPath": "c:\\Wav\\pick_armor.wav"
+    },
+    {
+      "url": "game/Wav/pistol_shot.wav",
+      "vfsPath": "c:\\Wav\\pistol_shot.wav"
+    },
+    {
+      "url": "game/Wav/plasma_shot.wav",
+      "vfsPath": "c:\\Wav\\plasma_shot.wav"
+    },
+    {
+      "url": "game/Wav/rocket_launch.wav",
+      "vfsPath": "c:\\Wav\\rocket_launch.wav"
+    },
+    {
+      "url": "game/Wav/shotgun.wav",
+      "vfsPath": "c:\\Wav\\shotgun.wav"
+    },
+    {
+      "url": "game/Wav/take_healh.wav",
+      "vfsPath": "c:\\Wav\\take_healh.wav"
+    },
+    {
+      "url": "game/Wav/wall_destroy.wav",
+      "vfsPath": "c:\\Wav\\wall_destroy.wav"
+    },
+    {
+      "url": "game/Wav/weapon_pickup.wav",
+      "vfsPath": "c:\\Wav\\weapon_pickup.wav"
+    }
+  ],
+  "supplementaryExecutable": {
+    "path": "/tmp/alien-shooter-current-gameplay-api-oct26/runner/test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe",
+    "bytes": 712724,
+    "sha256": "aae2547ccec2e235344bc9cf6e5e9ef4c9923b13c9e8fbd1fe14c65b64252446",
+    "mode": 420,
+    "provenance": "docs/re-notes/reflexive.md",
+    "corrects": "historical omission in 431 fixture / 594 stage manifests; earlier noGuest remains true"
+  },
+  "scope": "unchanged historical enumeration; actual offline Node tests have no mounts; no guest launched"
+}

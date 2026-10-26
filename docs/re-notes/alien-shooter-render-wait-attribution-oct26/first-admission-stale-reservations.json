@@ -1,0 +1,20 @@
+{
+  "at": 1793051984.274955,
+  "memAvailable": 3350925312,
+  "required": 3489660928,
+  "charges": {
+    "owned": 24576,
+    "session": 536576,
+    "launcher": 241664,
+    "futurePublication": 33554432,
+    "reserve": 8388608,
+    "remainingSourceGit": 8388608,
+    "positiveWAL": 0
+  },
+  "total": 51134464,
+  "allocation": 134217728,
+  "free": 3590701056,
+  "projectedFree": 3531980800,
+  "hostFloor": 2982150144,
+  "residentBasis": "MemAvailable already deducts residents; retain coordinator aggregate floor and outstanding growth once"
+}

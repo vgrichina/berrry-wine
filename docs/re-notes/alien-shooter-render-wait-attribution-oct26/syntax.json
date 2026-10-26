@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require('fs'),vm=require('vm');for(const p of ['test/run.js','lib/d3d9-host.js','lib/host-imports.js','lib/render-wait-attribution.js','test/test-render-wait-attribution.js'])new vm.Script(fs.readFileSync(p,'utf8'),{filename:p});console.log('PASS full selected JavaScript syntax; no execution')"
+  ],
+  "cwd": "/tmp/alien-shooter-render-wait-attribution-oct26/repo",
+  "exit": 0,
+  "wall": 0.0352051320951432,
+  "cpu": 0.032337,
+  "peakRSS": 65675264,
+  "physicalCap": 134217728,
+  "reason": null,
+  "outputBytes": 51,
+  "gitDATAChildOnly": false,
+  "physicalBasis": "aggregate child process tree plus Python supervisor sampled RSS"
+}
