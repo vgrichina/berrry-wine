@@ -1,0 +1,40 @@
+{
+  "candidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "completed": [
+    "exact manifest4 SHA256",
+    "actualHEAD identity",
+    "unchanged production discovery file/symlink/dir pass",
+    "required-cross-sample challenge REJECT candidate: production and shared accept truncation"
+  ],
+  "reused": "23 controls,6 omissions,5 AST-identical process functions donor receipts; unchanged identities required",
+  "remaining": [
+    "repair required cross-sample version inventory",
+    "fresh independent remaining gaps after repair; no repetition of unchanged passing groups"
+  ],
+  "sourceHashes": {
+    "test/helpers/palette-browser-supervisor.py": {
+      "sha256": "43f0d49ca5eb389174d5f8f9a9710b70e590a0447d567eb6c2dd929052c5ff7b",
+      "bytes": 21189
+    },
+    "test/test-palette-disk-accounting.py": {
+      "sha256": "57702e19953f934092a17572728ca00bd98402900028d92dbf39179f17525ff7",
+      "bytes": 14752
+    },
+    "test/test-palette-disk-accounting-omissions.py": {
+      "sha256": "6fb3384b07a4d479a408dbfdcae3a4a025da297a96b0f3061ddc31e51e14b8dc",
+      "bytes": 2151
+    },
+    "test/fixtures/gl-transient-accounting/remote-run.py": {
+      "sha256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+      "bytes": 6803
+    }
+  },
+  "evidence": [
+    "production-first.json",
+    "production-first.log"
+  ],
+  "verdict": "REJECT",
+  "blocker": "Same required inode truncates16384bytes/32blocks to0; actual check returnsNone twice unknown0; _charge retains identity only.",
+  "publication": "source/main FORBIDDEN after rejection; evidence-only own branch",
+  "reproducerSHA256": "59993ac44a3f85edc39fe2d420c503ce9789fccad6588be4f3bd2cc942199ac0"
+}

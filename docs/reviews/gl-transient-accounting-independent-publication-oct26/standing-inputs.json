@@ -1,0 +1,32 @@
+{
+  "tools": {
+    "supervisor": {
+      "path": "/tmp/gl-published-webgl-api-qualification-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "resolved": "/tmp/gl-published-webgl-api-qualification-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "sha256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+      "installedAllocatedBytes": 12288
+    },
+    "python": {
+      "path": "/usr/bin/python3",
+      "resolved": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "installedAllocatedBytes": 8024064
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "resolved": "/usr/bin/git",
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "installedAllocatedBytes": 4067328
+    },
+    "ssh": {
+      "path": "/usr/bin/ssh",
+      "resolved": "/usr/bin/ssh",
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+      "installedAllocatedBytes": 847872
+    }
+  },
+  "standingDonorSelectiveBytes": 2609152,
+  "note": "installed tools/readonly donor excluded; all own .git,source,outputs/publication,external session/events and positive WAL counted once",
+  "noMountArgv": true,
+  "nodeExecution": false
+}

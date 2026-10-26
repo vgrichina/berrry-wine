@@ -1,0 +1,32 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 59981824,
+  "sampledPeakRSS": 59981824,
+  "reapedPeakRSS": 27262976,
+  "cpuSeconds": 0.391555,
+  "wallSeconds": 0.25131047307513654,
+  "owned": [
+    [
+      3257525,
+      "110190060"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "test/test-palette-disk-accounting.py",
+    "Accounting.test_production_discovery_races"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 128,
+    "GitDataMiB": null,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}

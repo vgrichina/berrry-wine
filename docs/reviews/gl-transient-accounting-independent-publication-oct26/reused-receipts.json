@@ -1,0 +1,52 @@
+{
+  "accounting-supervised": {
+    ".json": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-supervised.json",
+      "sha256": "e8e166ee1ed109d44f3c1132830113d50008dbd4d42c7e62e8fd2903b05a5177"
+    },
+    ".log": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-supervised.log",
+      "sha256": "b4b1581964cf485dc2abe5469bd317aa4d2671a6c53ce12b693472917436d163"
+    }
+  },
+  "accounting-final-bounds": {
+    ".json": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-final-bounds.json",
+      "sha256": "6a34780ec1bec9af0686e36516c31550049594987da91eba09cae964df3aed23"
+    },
+    ".log": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-final-bounds.log",
+      "sha256": "e2a2fa316d450017abafafac0b8e2f4e3f0916b7af238ae88536adc6afe8b5f5"
+    }
+  },
+  "accounting-final-bound-fixture": {
+    ".json": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-final-bound-fixture.json",
+      "sha256": "a6b50761a174faccc8ef3dfe7a2576292bf4d7c8f415c9406c7f758b06812455"
+    },
+    ".log": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/accounting-final-bound-fixture.log",
+      "sha256": "adcd8b55ceac9c77e5db5eb05eac053b8b46a95768be87213263005db9990d65"
+    }
+  },
+  "omissions": {
+    ".json": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/omissions.json",
+      "sha256": "6e454cacf956dae104a0b15bd26ea5b9911d83c3e4f7849cf67f7f7da53b41a5"
+    },
+    ".log": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/omissions.log",
+      "sha256": "1fb4a41870249f63e5335ebc25f64011fb595afb725ffa6edd42cf389bd8444b"
+    }
+  },
+  "review": {
+    ".json": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/review.json",
+      "sha256": "929c673e4fe514276a8fe013aa051333f7ef113192c40ba6cc3121e2d757a60b"
+    },
+    ".log": {
+      "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/review.log",
+      "sha256": "1fc8cc9404fff64195e43df70d610183fd29078a11e2409f680117703abe2edb"
+    }
+  }
+}

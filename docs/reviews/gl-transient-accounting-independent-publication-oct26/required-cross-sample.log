@@ -1,0 +1,66 @@
+{
+  "candidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "helperSHA256": "43f0d49ca5eb389174d5f8f9a9710b70e590a0447d567eb6c2dd929052c5ff7b",
+  "wrapperSHA256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+  "results": [
+    {
+      "boundary": "retained-production-callback",
+      "before": {
+        "dev": 64769,
+        "ino": 2212107,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793054736607468666,
+        "ctime_ns": 1793054736607468666
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 2212107,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793054736609468658,
+        "ctime_ns": 1793054736609468658
+      },
+      "requiredMutationRejected": false,
+      "actual": null,
+      "ledgerReceipt": {
+        "samples": 2,
+        "retries": 0,
+        "unknown": 0,
+        "lastBytes": 8192
+      }
+    },
+    {
+      "boundary": "shared-accounting-check",
+      "before": {
+        "dev": 64769,
+        "ino": 2212107,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793054736610468654,
+        "ctime_ns": 1793054736610468654
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 2212107,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793054736610468654,
+        "ctime_ns": 1793054736610468654
+      },
+      "requiredMutationRejected": false,
+      "actual": null,
+      "ledgerReceipt": {
+        "peakBytes": 8413184,
+        "minProjectedFree": 3439235072,
+        "minMemAvailable": 3792191488,
+        "samples": 2
+      }
+    }
+  ]
+}
+Traceback (most recent call last):
+  File "/tmp/gl-transient-accounting-independent-publication-oct26/ops/required-cross-sample.py", line 75, in <module>
+    assert all(r['requiredMutationRejected'] for r in results), 'required input truncation silently accepted at unchanged production/shared boundary'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: required input truncation silently accepted at unchanged production/shared boundary

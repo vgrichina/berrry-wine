@@ -1,0 +1,28 @@
+{
+  "production-first": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 59981824,
+    "sampledPeakRSS": 59981824,
+    "cpuSeconds": 0.391555,
+    "wallSeconds": 0.25131047307513654,
+    "cleanupComplete": true
+  },
+  "required-cross-sample": {
+    "exit": 1,
+    "stopReason": null,
+    "peakRSS": 64835584,
+    "sampledPeakRSS": 64835584,
+    "cpuSeconds": 0.476608,
+    "wallSeconds": 0.3057394230272621,
+    "cleanupComplete": true
+  },
+  "incidents": [
+    "Initial readonly excerpts exceeded8192; bounded subsequently",
+    "first evidence git add rejected owned paths outside inherited sparse definition; next use explicit add --sparse for own evidence only; empty diff checks did not establish staged publication",
+    "initial admission main called again during closeout overwrote ops/admission-initial; immutable original copied in published evidence, preserved as authoritative initial"
+  ],
+  "verdict": "REJECT",
+  "sourcePublication": false,
+  "mainUntouched": true
+}

@@ -1,0 +1,31 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 64835584,
+  "sampledPeakRSS": 64835584,
+  "reapedPeakRSS": 32067584,
+  "cpuSeconds": 0.476608,
+  "wallSeconds": 0.3057394230272621,
+  "owned": [
+    [
+      3258150,
+      "110194580"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/gl-transient-accounting-independent-publication-oct26/ops/required-cross-sample.py"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 128,
+    "GitDataMiB": null,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}
