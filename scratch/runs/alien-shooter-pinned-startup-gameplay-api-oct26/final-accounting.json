@@ -1,0 +1,23 @@
+{
+  "charges": {
+    "allRemoteTaskRoots": 52883456,
+    "localCurrent": 4431872,
+    "localPriorRequired": 1155072,
+    "dashboard": 626688,
+    "launcher": 356352,
+    "session": 1064960,
+    "positiveWALOnce": 2105344,
+    "futureGrowth": 16777216,
+    "reserve": 8388608,
+    "prospectiveCloseoutGit": 2097152
+  },
+  "total": 89886720,
+  "cap": 201326592,
+  "projectedHostFree": 3638005760,
+  "hostFloor": 2982150144,
+  "boxAPIState": "idle",
+  "boxRunningReachable": true,
+  "shutdownOwner": "coordinator",
+  "noOwnedLive": true,
+  "passGate": true
+}

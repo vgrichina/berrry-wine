@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xy1unh1y0qjo",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T21:38:18.964Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-26T21:38:18.912Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"roots\": {\"/tmp/alien-shooter-current-gameplay-api-oct26\": 50712576, \"/tmp/alien-shooter-retained-gameplay-api-oct26\": 40960, \"/tmp/alien-shooter-required-exe-gameplay-api-oct26\": 40960, \"/tmp/alien-shooter-pinned-startup-gameplay-api-oct26\": 2088960}, \"finalReadback\": {\"src/api_table.json\": {\"bytes\": 723350, \"sha256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\"}, \"lib/host-import-sigs.generated.json\": {\"bytes\": 39713, \"sha256\": \"7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069\"}, \"lib/d3d-render-worker.js\": {\"bytes\": 27983, \"sha256\": \"f3d77c20eb14a8f72233216af03d2a50e60862b2fd10202e4970878050124b52\"}}, \"ownedLive\": [], \"free\": 48922906624, \"memAvailable\": 7390420992}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
