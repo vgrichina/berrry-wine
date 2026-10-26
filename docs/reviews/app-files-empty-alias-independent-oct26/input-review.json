@@ -1,0 +1,148 @@
+{
+  "candidate": "e9f3142b68816c6512d65db132ea43ba4e8c36ca",
+  "base": "52b7bb0e9e73fc839344c33f00cffa2c638fc193",
+  "pins": {
+    "lib/app-files.js": {
+      "candidateBlobSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "donorSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "expected": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7"
+    },
+    "host.js": {
+      "candidateBlobSha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+      "donorSha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+      "expected": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4"
+    },
+    "lib/filesystem.js": {
+      "candidateBlobSha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+      "donorSha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+      "expected": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+    },
+    "lib/browser-shell.js": {
+      "candidateBlobSha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890",
+      "donorSha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890",
+      "expected": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890"
+    },
+    "test/app-files-persist-url-policy-oct26.test.cjs": {
+      "candidateBlobSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+      "donorSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+      "expected": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54"
+    },
+    "test/app-files-empty-alias-fallback-oct26.test.cjs": {
+      "candidateBlobSha256": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a",
+      "donorSha256": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a",
+      "expected": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a"
+    },
+    "test/test-app-files-policy.js": {
+      "candidateBlobSha256": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8",
+      "donorSha256": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8",
+      "expected": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8"
+    }
+  },
+  "checkpointGroupsVerifiedAgainstRaw": [
+    {
+      "name": "baseline-empty",
+      "checkpointRawSha256": "43ec1db5ca546fcfc8056a8c70adf28fd4753400916d72ddd6038338bbcb1151",
+      "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778"
+      },
+      "exitCode": 1
+    },
+    {
+      "name": "baseline-existing-policy",
+      "checkpointRawSha256": "68ed4774f9162f1143f512aa4454b01f8741b042b460824c419e0446921e1c02",
+      "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778",
+        "test/test-app-files-policy.js": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8"
+      },
+      "exitCode": 1
+    },
+    {
+      "name": "baseline-existing-policy-recovered",
+      "checkpointRawSha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac",
+      "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778",
+        "test/test-app-files-policy.js": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8"
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "repaired-empty",
+      "checkpointRawSha256": "ec08cccf652cef1cd8f024cc7079663750e48fa1a383316d5f7a4f3291e20eea",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778"
+      },
+      "exitCode": 1
+    },
+    {
+      "name": "repaired-supplied",
+      "checkpointRawSha256": "ab5427147eff177a4e1042ffe9fae1d14c3db34cb2fc3c669a254952221203c8",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778",
+        "test/app-files-persist-url-policy-oct26.test.cjs": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54"
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "repaired-existing-policy",
+      "checkpointRawSha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "1913445ee6c54ec159c51974b1a490c8298f29419e6efc7d87890c8f9171f778",
+        "test/test-app-files-policy.js": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8"
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "baseline-empty-final",
+      "checkpointRawSha256": "3581cd535bb5efb1d4342983a6327bc1d8e05642f0c35371659d1d9eed68d321",
+      "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a"
+      },
+      "exitCode": 1
+    },
+    {
+      "name": "repaired-empty-final",
+      "checkpointRawSha256": "2709709284d85d162a647df59a15f58cc4dd1cd4a50b6f520c55672242dbfaed",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a"
+      },
+      "exitCode": 0
+    },
+    {
+      "name": "repaired-independent-legacy-expectations",
+      "checkpointRawSha256": "dadd0958f5cab73b964571192e9285edc81960e39790677bf189a98de491e632",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a",
+        "../ops/run-independent.cjs": "a7a13435c279dcdee3dbd898be656c65b1067d228cfc1e63dd9facffe789a08a"
+      },
+      "exitCode": 1
+    },
+    {
+      "name": "repaired-independent-adapted",
+      "checkpointRawSha256": "0d49ed6bb011c066bb45c5d6982f1195c0d38deb435695fc90252cc9f1baef0d",
+      "sourceSha256": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+      "fixtureHashes": {
+        "test/app-files-empty-alias-fallback-oct26.test.cjs": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a",
+        "../ops/run-independent.cjs": "a7a13435c279dcdee3dbd898be656c65b1067d228cfc1e63dd9facffe789a08a"
+      },
+      "exitCode": 0
+    }
+  ],
+  "originalIndependent": {
+    "revision": "2ff9d314807c517a2338233021ac75132dc7c949",
+    "readOnlyRepository": "/tmp/app-files-url-contract-independent-accept-oct26/repo",
+    "bytesEqual": true,
+    "sha256": "9109256868d2eb66ff936072b897220ca42f99577f25a885ff0dc51b554b9677"
+  },
+  "iniReuse": "Original receipt hash verified; applyIniSet through exports byte-exact and both pinned test/apps inputs unchanged at candidate/base. Not rerun.",
+  "adaptationReview": "Exact original verified. Wrapper has exactly three unique substitutions: policy pin, title and old boundary assertion. No other assertions or original bytes change. Fresh host-backed independent groups confirm new expectation; suffix and priority mutations fail.",
+  "historicalLabelQualification": "checkpoint candidate labels retain base HEAD during uncommitted test runs; source hashes identify actual tested repair and fixture; final commit pins now verified independently."
+}

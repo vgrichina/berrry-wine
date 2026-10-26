@@ -1,0 +1,16 @@
+✔ independent empty-list URL fallbacks preserve literal suffixes and comma names (35.350908ms)
+✔ independent empty-list explicit paths normalize exactly as actual host (35.653617ms)
+✔ nonempty aliases suppress both fallbacks, retain alias order and shared fetch/provider (6.599221ms)
+✔ absent/non-array aliases and falsy explicit paths follow host fallback (43.736057ms)
+✔ persist globs and case/slashes match while unmatched paths keep lazy policy (2.749394ms)
+✔ optional persisted presence stays eager; absence remains optional and does not create a mount (3.7977ms)
+✔ explicit httpRange and loadMode declarations remain authoritative, including persisted matches (3.056469ms)
+✔ optional nonmatching declarations remain lazy and preserve frozen metadata (0.961282ms)
+ℹ tests 8
+ℹ suites 0
+ℹ pass 8
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 210.769554

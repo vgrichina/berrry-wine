@@ -1,0 +1,21 @@
+{
+  "at": 1792998712.938191,
+  "actualTaskLauncherSessionBytes": 3506087,
+  "positiveWALConservativelyChargedOnce": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2278392,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4247752
+  },
+  "futureBytesOnce": 12582912,
+  "reserve": 8388608,
+  "projectedPeak": 51715087,
+  "limit": 67108864,
+  "freeDisk": 3795197952,
+  "freeAfterGrowth": 3746988952,
+  "memAvailable": 2320699392,
+  "afterClientHeap": 1767051264,
+  "pass": true
+}

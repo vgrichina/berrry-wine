@@ -1,0 +1,14 @@
+[
+  {
+    "event": "Initial broad combined policy/source reads returned truncated output and exceeded the 8192-byte read-excerpt gate. Later source/provenance reads bounded; no test output exceeded 900 bytes.",
+    "effect": "Inspection/capture deviation disclosed; no assertion or resource gate weakened."
+  },
+  {
+    "event": "First integration precondition rejected because candidate parent contains a comment absent in pinned main.",
+    "resolution": "Byte-exact comparison after removing the known accepted explanatory comment proved no other baseline app-files difference. Integrated the exact accepted final app-files blob; unrelated main bytes/modes preserved."
+  },
+  {
+    "event": "Pinned main full host differs from accepted host due to parser hardening.",
+    "resolution": "Retained main host bytes/mode; exact 16464-byte loadFiles extraction verified unchanged. Original fixtures retained byte-exact, bounded wrapper changes only one full-host identity guard in memory. Both compatibility groups passed."
+  }
+]

@@ -1,0 +1,98 @@
+{
+  "docs/reviews/app-files-empty-alias-fallback-oct26/focused-manifest.json": {
+    "bytes": 219,
+    "sha256": "14264fdfe6c79955577f6abb88f75b870cf3905d8346560237639751347d84e9"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/baseline-empty.txt": {
+    "bytes": 2745,
+    "sha256": "85943651123cd92647090934f7cbf51cc591bb5635d3e23f5c5a531aa76e3659"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/run-independent.cjs": {
+    "bytes": 1475,
+    "sha256": "a7a13435c279dcdee3dbd898be656c65b1067d228cfc1e63dd9facffe789a08a"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/independent-adaptation.json": {
+    "bytes": 375,
+    "sha256": "4cf96bdc69a06f20c6ba3048e6f08d063be08eadf7a793c2876a4fb183f93d60"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-existing-policy.txt": {
+    "bytes": 118,
+    "sha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/baseline-existing-policy-recovered.txt": {
+    "bytes": 118,
+    "sha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-empty.txt": {
+    "bytes": 1501,
+    "sha256": "b87697a115f69fd9e1cb8064eabca6605c3ddd99945844f133c31ff8eb5b5309"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/baseline-empty-final.txt": {
+    "bytes": 2749,
+    "sha256": "ea5d56c01ebe1ad91069aff4b1a9d118fc496ee3e56ca46f0ff1514a461ad351"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/reused-receipts.json": {
+    "bytes": 753,
+    "sha256": "424f929710e3cc9503e8f30259b71dc4586bfa41f79b1e707cfb40b3ce6e05a8"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/reused-ini.txt": {
+    "bytes": 144,
+    "sha256": "67b614c1d1380b96dc2d23c2ab096fa0dbdd8d7c073613b07474e92b951df5ed"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/dependency-recovery.json": {
+    "bytes": 374,
+    "sha256": "6cfa77a9ecb5116e6f971e16ea6dcde4f789a1e14edf5a19e964f77dfd6c9217"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-independent-adapted.txt": {
+    "bytes": 873,
+    "sha256": "0d49ed6bb011c066bb45c5d6982f1195c0d38deb435695fc90252cc9f1baef0d"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-independent-legacy-expectations.txt": {
+    "bytes": 2647,
+    "sha256": "9a38f60edee482fa6c6b91b7574cda21034ef0f18a5d5462715819414170587c"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-supplied.txt": {
+    "bytes": 735,
+    "sha256": "ab5427147eff177a4e1042ffe9fae1d14c3db34cb2fc3c669a254952221203c8"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/publication-admission.json": {
+    "bytes": 955,
+    "sha256": "982463b52b6845a8922d9a5f9695bcb239c8beafa20e4e5b51ada6f740395bff"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/admission.json": {
+    "bytes": 1217,
+    "sha256": "adc86a357e178309843db4efc989cda9ac3f5706edc7fd35e9bc765289909e05"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/final-source-pins.json": {
+    "bytes": 708,
+    "sha256": "c5c55bf213cb7ff958ae7d6503da52898dde4ed0eb1ae6b0dd597ad4193a0613"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/independent-original.cjs": {
+    "bytes": 6830,
+    "sha256": "9109256868d2eb66ff936072b897220ca42f99577f25a885ff0dc51b554b9677"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/checkpoint-tests.json": {
+    "bytes": 9420,
+    "sha256": "e723f636ba05e207f77f0ca2d93a91d556979956dd8e4f68192ed465f26c378e"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/repaired-empty-final.txt": {
+    "bytes": 763,
+    "sha256": "2709709284d85d162a647df59a15f58cc4dd1cd4a50b6f520c55672242dbfaed"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/baseline-existing-policy.txt": {
+    "bytes": 1085,
+    "sha256": "68ed4774f9162f1143f512aa4454b01f8741b042b460824c419e0446921e1c02"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/README.md": {
+    "bytes": 3759,
+    "sha256": "972c9087653eb7e8a60a2e05fa364635434e063321516069fcbf6c2e74c164e1"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/incidents.json": {
+    "bytes": 897,
+    "sha256": "da1fe0f1dcd214f8faa04fdb1319e03ba373a3fb8cc95106983218ef01b65761"
+  },
+  "docs/reviews/app-files-empty-alias-fallback-oct26/run-group.py": {
+    "bytes": 1538,
+    "sha256": "8ae63a6e5a3a0524de2163e2b2afa2e4a3dc11cbe39122e836892e35e47fa683"
+  }
+}

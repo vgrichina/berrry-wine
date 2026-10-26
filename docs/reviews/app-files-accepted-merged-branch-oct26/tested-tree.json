@@ -1,0 +1,19 @@
+{
+  "tree": "5dfb98fccaf2193b21c63425df3d13009907ebaf",
+  "base": "c3d394149406189cf1c5dbbc434491f0130666c9",
+  "candidate": "e9f3142b68816c6512d65db132ea43ba4e8c36ca",
+  "acceptance": "7ec5f75eaaa873bd58165b2e83745bd6648fecae",
+  "validation": "7 supplied + 8 independent merged compatibility PASS; only old full-host pin adapted in-memory, all original assertions unchanged; 3 exact closure rejecting mutants reused",
+  "completed": [
+    "integration",
+    "preservation",
+    "73 accepted manifest payloads",
+    "exact Node/fixture/method closure",
+    "merged compatibility 7+8"
+  ],
+  "remaining": [
+    "docs-only finalization",
+    "task-only push",
+    "exact remote verification"
+  ]
+}

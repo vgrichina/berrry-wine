@@ -1,0 +1,24 @@
+{
+  "at": 1792999243.7219172,
+  "ownedBytes": 1620492,
+  "launcherSessionBytes": 602335,
+  "sessionId": "01a17713-12d7-7fa3-bbcf-0f2bf76cf98f",
+  "positiveWALOnce": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 0,
+    "/home/user/.codex/goals_1.sqlite-wal": 37080,
+    "/home/user/.codex/state_5.sqlite-wal": 0,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 0
+  },
+  "futureOnce": 12582912,
+  "reserve": 8388608,
+  "projectedPeak": 23231427,
+  "allocation": 67108864,
+  "freeDisk": 3554955264,
+  "diskAfterRemainingGrowth": 3533983744,
+  "memAvailable": 2127618048,
+  "memoryAfterLightClient": 1573969920,
+  "memoryFloor": 805306368,
+  "pass": true
+}

@@ -1,0 +1,1 @@
+PASS app file policy: everything streams except non-parking file classes; small, Win16 and opted-out apps fully eager

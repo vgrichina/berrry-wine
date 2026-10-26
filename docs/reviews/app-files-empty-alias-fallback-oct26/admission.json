@@ -1,0 +1,27 @@
+{
+  "at": 1792997389.421665,
+  "pins": {
+    "lib/app-files.js": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3",
+    "host.js": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+    "test/app-files-persist-url-policy-oct26.test.cjs": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54"
+  },
+  "memAvailable": 2614337536,
+  "freeDisk": 4421902336,
+  "projectedBytes": 58720256,
+  "reserve": 8388608,
+  "launcherFutureAllowanceOnce": 12582912,
+  "client": 536870912,
+  "heap": 16777216,
+  "standingTools": {
+    "node": "/usr/local/bin/node",
+    "git": "/usr/bin/git"
+  },
+  "donorsReadonly": [
+    "/tmp/app-files-persist-url-policy-repair-oct26/repo",
+    "/tmp/app-files-url-contract-independent-accept-oct26/repo"
+  ],
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/app-files-empty-alias-fallback-repair-oct26/root-ref-digest.json",
+  "mountValidation": "N/A: no guest mounts or runtime; local host method receives JS objects only",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pass": true
+}

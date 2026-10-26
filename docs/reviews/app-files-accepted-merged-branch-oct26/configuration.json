@@ -1,0 +1,13 @@
+{
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "N/A no guest/mount/runtime commands. Canonical parser has no invocation to validate.",
+  "immutableInputs": {
+    "main": "c3d394149406189cf1c5dbbc434491f0130666c9",
+    "candidate": "e9f3142b68816c6512d65db132ea43ba4e8c36ca",
+    "acceptance": "7ec5f75eaaa873bd58165b2e83745bd6648fecae"
+  },
+  "donorsReadOnly": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/app-files-accepted-merged-branch-oct26/root-ref-digest.json",
+  "laterRootComparison": "Not required; no root Git writes. Concurrent coordinator/sole-owner ref changes are outside this task."
+}

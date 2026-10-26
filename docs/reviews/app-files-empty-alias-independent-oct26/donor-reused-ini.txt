@@ -1,0 +1,1 @@
+PASS applyIniSet: in-place, case-insensitive key edits; appended keys and sections; bytes preserved; registry files override the local manifest

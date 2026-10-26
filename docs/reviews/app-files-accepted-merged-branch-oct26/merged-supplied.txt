@@ -1,0 +1,15 @@
+✔ empty aliases fall back to actual literal URL basename and keep persisted files eager (5.163078ms)
+✔ empty aliases prefer explicit fallback paths including case and separators (0.923541ms)
+✔ nonempty aliases retain precedence over explicit fallback and URL (0.417332ms)
+✔ explicit loading declarations remain authoritative with empty aliases (1.005124ms)
+✔ whole-app eager gates, unknown sizes and eager extensions remain unchanged (0.305563ms)
+✔ strings and ordinary objects retain literal identities and nonmutation behavior (0.942776ms)
+✔ empty-alias nonmatching lazy copy preserves metadata and alias array identity (0.191358ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92.358414
