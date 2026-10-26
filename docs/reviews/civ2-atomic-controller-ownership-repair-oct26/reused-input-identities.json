@@ -1,0 +1,28 @@
+{
+  "previousOwnControllerSHA256": "f6fb85b3857d3cb8cac18425b18a68a1fee8f5c53dd3361e8b97a7e2db2d981e",
+  "finalControllerSHA256": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+  "inverseRunOnlyDeltaReconstructsExactPreviouslyTestedSource": true,
+  "changesAfterPreviousGroups": [
+    "runAttempted flag initializer",
+    "run() single attempt + stopped/poisoned terminal finally; atomic claim/start/launch/control/capture/match/setup/decision bodies unchanged"
+  ],
+  "reusedOwnPassingGroups": [
+    "original3,4,5,6,8,9,10",
+    "independent guard",
+    "independent stream all3",
+    "planning-guard omission (fails in launch before run)"
+  ],
+  "rerunAffected": [
+    "original1 and7 using run",
+    "atomicity schedule",
+    "ownership all9 +2omissions",
+    "new lower-overhead process shell all4 +actual CLI"
+  ],
+  "originalDonorGroup2Reused": {
+    "testBodyAndFixtureUnchanged": true,
+    "fixtureSHA256": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea",
+    "priorReceipt": "prior-reused-acceptance.json"
+  },
+  "setupBodyByteExactToDonor": true,
+  "plannerByteExactToDonor": true
+}

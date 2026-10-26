@@ -3,10 +3,10 @@ const assert = require('assert/strict'), fs = require('fs'), vm = require('vm'),
 // Negative control transforms the actual production boundary, never a substitute planner.
 if(process.argv.includes('--omit-planning-guard')) {
   const Module=require('module'), file=require.resolve('../tools/civ2-serial-controller');
-  const source=fs.readFileSync(file,'utf8'),guard='plan.admit(); started = true; persist();';
+  const source=fs.readFileSync(file,'utf8'),guard='plan.admit(); // Read-only admission; an impossible plan cannot launch.';
   assert.equal(source.split(guard).length,2);
   const mutant=new Module(file,module);mutant.filename=file;mutant.paths=module.paths;
-  mutant._compile(source.replace(guard,'/* deliberately omitted by rejecting control */ started = true; persist();'),file);
+  mutant._compile(source.replace(guard,'/* deliberately omitted by rejecting control */'),file);
   require.cache[file]=mutant;
 }
 const {createController, launchController} = require('../tools/civ2-serial-controller');
@@ -16,7 +16,7 @@ const intro = {width:640,height:480,data:Buffer.alloc(640*480*4)};
 for(let y=181;y<300;y++)for(let x=171;x<460;x++) {
   const i=(y*640+x)*4;intro.data[i]=180;intro.data[i+1]=100;intro.data[i+2]=40;
 }
-const config = (count=22) => ({outputDir:'/tmp/civ2-offline-fixture-output',referenceDir:'/tmp/civ2-offline-fixture-reference',sessionId:'offline-only',plan:{
+const config = (count=22) => ({outputDir:fs.mkdtempSync(__dirname+'/../test-output/original-'),referenceDir:'/tmp/civ2-offline-fixture-reference',sessionId:'offline-only',plan:{
   allocationId:'synthetic-offline-fixture-NOT-runtime-authorization',totalCaptures:count,perImageBytes:1024,
   retainedBytes:count*1024,totalCaptureBytes:count*1024,width:640,height:480,
   setupMs:1000,acceptanceMs:1000,cleanupMs:1000,totalMs:3000,cutoff:4000,ackTimeoutMs:100}});
@@ -35,6 +35,7 @@ function fixture(cfg=config()) {
   const c=createController(cfg,deps);
   return {c,deps,requests,outputs,setClock:x=>clock=x,setMode:x=>mode=x};
 }
+fs.mkdirSync(__dirname+'/../test-output',{recursive:true});
 const checks=[];
 let group=0;
 const from=Number((process.argv.find(a=>a.startsWith('--from='))||'--from=1').split('=')[1]);
@@ -42,7 +43,8 @@ const through=Number((process.argv.find(a=>a.startsWith('--through='))||'--throu
 async function test(name,fn){
   if(++group<from || group>through)return;
   await fn();checks.push(name);console.log('PASS '+name);
-  const dir=__dirname+'/../docs/reviews/civ2-controller-capture-plan-oct26';
+  const dir=__dirname+'/../docs/reviews/civ2-atomic-controller-ownership-repair-oct26/original-groups';
+  fs.mkdirSync(dir,{recursive:true});
   const file=dir+'/checkpoint-'+group+'.json';
   const sources=['tools/civ2-capture-plan.js','tools/civ2-serial-controller.js','test/test-civ2-capture-plan.js','test/fixtures/civ2-controller/predecessor-controller.js'];
   const hashes=Object.fromEntries(sources.map(p=>[p,crypto.createHash('sha256').update(fs.readFileSync(__dirname+'/../'+p)).digest('hex')]));

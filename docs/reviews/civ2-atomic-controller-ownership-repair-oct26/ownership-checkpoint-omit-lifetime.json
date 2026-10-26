@@ -1,0 +1,15 @@
+{
+  "parent": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "sourceSHA256": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+  "testSHA256": "05c593153a9b5c56de47e3a16102a7f6c2f4df57c7d10221c1744763c0067d13",
+  "completed": [
+    "launcher-owner blocks standalone without modifying any owner or ledger",
+    "standalone-owner blocks launcher including aliased output directory",
+    "real-FS paused first ledger blocks all four launcher/standalone owner pairs",
+    "claim write and initial ledger failures retain tombstones and prohibit same/new reentry",
+    "launcher failure and pending launcher reentry never credit a restart",
+    "pre-existing ledger/control/empty-or-foreign-owner are retained without any launcher",
+    "standalone run failure and concurrent/same-object reentry cannot dispatch again"
+  ],
+  "remaining": "later groups, affected regressions, independent acceptance; gameplay UI/quit pending"
+}

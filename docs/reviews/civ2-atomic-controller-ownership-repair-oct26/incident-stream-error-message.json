@@ -1,0 +1,7 @@
+{
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "testSHA256": "9e73f5a4eace98960c6e63ada6548a71e506812cfbb7a2563ed6919fb96208e8",
+  "error": "AssertionError [ERR_ASSERTION]: The input did not match the regular expression /existing task ledger/. Input:\n\n'Error: existing/unavailable task ownership; no allowance reset or uncertain replay'\n\n    at /tmp/civ2-atomic-controller-ownership-repair-oct26/repo/test/independent-civ2-controller.js:59:81\n    at runNextTicks (node:internal/process/task_queues:65:5)\n    at process.processTimers (node:internal/timers:538:9)\n    at async check (/tmp/civ2-atomic-controller-ownership-repair-oct26/repo/test/independent-civ2-controller.js:34:15)\n    at async /tmp/civ2-atomic-controller-ownership-repair-oct26/repo/test/independent-civ2-controller.js:51:3",
+  "completed": [],
+  "remaining": "STOP source adoption; coordinator repair and fresh affected acceptance; production UI/normal quit unverified"
+}

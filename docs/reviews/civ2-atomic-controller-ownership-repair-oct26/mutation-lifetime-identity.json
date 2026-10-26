@@ -1,0 +1,6 @@
+{
+  "control": "lifetime-identity",
+  "originalSHA256": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+  "mutantSHA256": "6f480e267b56851eb942a55aac90f0e8b7aca45e886be7580796888fe63aae10",
+  "inMemoryOnly": true
+}

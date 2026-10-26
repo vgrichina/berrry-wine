@@ -1,0 +1,108 @@
+{
+  "parent": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "completed": [
+    {
+      "group": "atomicity",
+      "evidence": [
+        "ops/operations.jsonl",
+        "repo/docs/reviews/civ2-capture-reserve-independent-accept-oct26/atomicity-observation.json"
+      ],
+      "at": "2026-10-26T22:56:49.352227+00:00"
+    },
+    {
+      "group": "ownership-8-groups",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/ownership-checkpoint.json"
+      ],
+      "at": "2026-10-26T22:57:57.288762+00:00"
+    },
+    {
+      "group": "final-atomicity",
+      "evidence": [
+        "repo/docs/reviews/civ2-capture-reserve-independent-accept-oct26/atomicity-observation.json"
+      ],
+      "at": "2026-10-26T22:58:20.094873+00:00"
+    },
+    {
+      "group": "final-stream",
+      "evidence": [
+        "repo/docs/reviews/civ2-capture-reserve-independent-accept-oct26/checkpoint-stream.json"
+      ],
+      "at": "2026-10-26T22:59:01.388851+00:00"
+    },
+    {
+      "group": "process-concurrency-4-groups",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/process-checkpoint.json"
+      ],
+      "at": "2026-10-26T22:59:27.125464+00:00"
+    },
+    {
+      "group": "final-ownership-and-omissions",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/ownership-checkpoint.json",
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/mutation-exclusive-create.json",
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/mutation-lifetime-identity.json"
+      ],
+      "at": "2026-10-26T22:59:45.408013+00:00"
+    },
+    {
+      "group": "original-group-1",
+      "evidence": [
+        "repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-1.json"
+      ],
+      "at": "2026-10-26T22:59:45.543909+00:00"
+    },
+    {
+      "group": "original-groups-3-through-10-and-planning-omission",
+      "evidence": [
+        "repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-10.json"
+      ],
+      "at": "2026-10-26T22:59:57.984260+00:00"
+    },
+    {
+      "group": "final-guard",
+      "evidence": [
+        "repo/docs/reviews/civ2-capture-reserve-independent-accept-oct26/checkpoint-guard.json"
+      ],
+      "at": "2026-10-26T23:00:23.364119+00:00"
+    },
+    {
+      "group": "original-final-affected-9-groups-and-omission",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/original-groups/checkpoint-10.json"
+      ],
+      "at": "2026-10-26T23:00:33.004173+00:00"
+    },
+    {
+      "group": "run-lifecycle-final-atomicity",
+      "evidence": [
+        "repo/docs/reviews/civ2-capture-reserve-independent-accept-oct26/atomicity-observation.json"
+      ],
+      "at": "2026-10-26T23:01:41.026324+00:00"
+    },
+    {
+      "group": "final-lifecycle-processes",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/process-checkpoint.json"
+      ],
+      "at": "2026-10-26T23:02:19.128108+00:00"
+    },
+    {
+      "group": "final-process-shell-and-affected-reuse",
+      "evidence": [
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/process-shell-checkpoint.json",
+        "repo/docs/reviews/civ2-atomic-controller-ownership-repair-oct26/reused-input-identities.json"
+      ],
+      "at": "2026-10-26T23:04:09.318280+00:00"
+    }
+  ],
+  "hashes": {
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+    "tools/civ2-serial-controller.js": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+    "test/test-civ2-controller-ownership.js": "05c593153a9b5c56de47e3a16102a7f6c2f4df57c7d10221c1744763c0067d13",
+    "test/test-civ2-capture-plan.js": "f3e87d2c9143bb00153bf87a3dcebd1213f38b3d05cc83fd6a4c02692a9b2498",
+    "test/independent-civ2-controller.js": "9e73f5a4eace98960c6e63ada6548a71e506812cfbb7a2563ed6919fb96208e8"
+  },
+  "remaining": "task branch commit/push/exact remote verification and board release; STOP for fresh independent acceptance; production UI/normal Quit pending"
+}

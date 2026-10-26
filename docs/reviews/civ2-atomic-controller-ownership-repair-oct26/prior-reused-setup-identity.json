@@ -1,0 +1,11 @@
+{
+  "controllerSHA256": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+  "predecessorSHA256": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea",
+  "setupBodySHA256": "8975e554a64579964f61c6a6233139a4e21aaa52ed32c47d2ba88e856efc33bb",
+  "preserved": "all setup input commands, batch counts, pixel rectangles and intro signature",
+  "transformations": [
+    "credit unchanged intro signature to planner",
+    "read intro bytes via injectable read boundary"
+  ],
+  "passed": true
+}

@@ -1,0 +1,66 @@
+{
+  "incidents": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "test/test-civ2-controller-process-ownership.py"
+      ],
+      "environment": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+        "HOME": "/home/user",
+        "LANG": "C.UTF-8",
+        "TZ": "UTC",
+        "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+        "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+      },
+      "outerPoolPid": 3277717,
+      "outerPoolIncluded": true,
+      "gitDataLimit": null,
+      "physicalLimit": 134217728,
+      "cpuLimit": 90,
+      "wallLimit": 120,
+      "fileLimit": 25165824,
+      "outputLimit": 2097152,
+      "excerptLimit": 8192,
+      "peakAggregateRSS": 147927040,
+      "peakAggregateCPU": 0.08,
+      "wallSeconds": 0.060681739123538136,
+      "outputBytes": 0,
+      "exitCode": -9,
+      "stopReason": "physical/CPU/wall/output limit",
+      "output": ""
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "test/test-civ2-controller-process-ownership.py"
+      ],
+      "environment": {
+        "PATH": "/usr/local/bin:/usr/bin:/bin",
+        "HOME": "/home/user",
+        "LANG": "C.UTF-8",
+        "TZ": "UTC",
+        "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+        "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+      },
+      "outerPoolPid": 3278261,
+      "outerPoolIncluded": true,
+      "gitDataLimit": null,
+      "physicalLimit": 134217728,
+      "cpuLimit": 90,
+      "wallLimit": 120,
+      "fileLimit": 25165824,
+      "outputLimit": 2097152,
+      "excerptLimit": 8192,
+      "peakAggregateRSS": 137949184,
+      "peakAggregateCPU": 0.08,
+      "wallSeconds": 0.061095943907275796,
+      "outputBytes": 0,
+      "exitCode": -9,
+      "stopReason": "physical/CPU/wall/output limit",
+      "output": ""
+    }
+  ],
+  "resolution": "first tried startup-verified jitless/single-threaded flags but still exceeded128MiB; now replace concurrent Python harness with Bash (Python verification only after all V8s exit), same cap and production schedule; no unchanged retry",
+  "limitsUnchanged": true
+}

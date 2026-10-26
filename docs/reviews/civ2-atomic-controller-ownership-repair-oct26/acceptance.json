@@ -1,0 +1,57 @@
+{
+  "parent": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "candidateSHA256": {
+    "tools/civ2-serial-controller.js": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377"
+  },
+  "result": "OFFLINE REPAIR PASSED; fresh independent acceptance required; no main",
+  "groups": {
+    "unchangedAtomicitySchedule": "PASS one launch",
+    "ownership": 9,
+    "crossProcessPairs": 4,
+    "independentRealAppendStreams": 3,
+    "independentGuard": "PASS",
+    "originalAffected": "1,3,4,5,6,7,8,9,10 PASS; final run-only delta required rerun1,7",
+    "reusedOriginal2": "exact predecessor/test body unchanged",
+    "omissions": [
+      "exclusive-create rejected (marker altered)",
+      "lifetime verification rejected (unauthorized request reached frozen gate)",
+      "planning guard rejected (missing expected rejection)"
+    ]
+  },
+  "physical": {
+    "successfulTestPeak": 131756032,
+    "testCap": 134217728,
+    "gitPeak": 38010880,
+    "gitCap": 268435456,
+    "resourceStops": [
+      {
+        "peak": 147927040,
+        "cap": 134217728,
+        "command": [
+          "/usr/bin/python3",
+          "test/test-civ2-controller-process-ownership.py"
+        ]
+      },
+      {
+        "peak": 137949184,
+        "cap": 134217728,
+        "command": [
+          "/usr/bin/python3",
+          "test/test-civ2-controller-process-ownership.py"
+        ]
+      }
+    ]
+  },
+  "lifecycle": {
+    "assignedBox": null,
+    "state": "N/A no box queried or changed",
+    "expiry": null,
+    "shutdownOwner": "coordinator"
+  },
+  "remaining": [
+    "fresh independent source acceptance",
+    "separately admitted production city-screen UI and normal guest Quit/Exit0"
+  ],
+  "historicalRomeFoundingAndMovement": "retained historical passes, not rerun"
+}

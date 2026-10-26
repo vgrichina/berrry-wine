@@ -1,0 +1,46 @@
+{
+  "launches": 1,
+  "secondError": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+  "firstStarted": true,
+  "ledger": {
+    "allocationId": "one-task-not-runtime-permission",
+    "minimumCaptures": 22,
+    "attempts": 0,
+    "successes": 0,
+    "chargedBytes": 0,
+    "retainedBytes": 0,
+    "uncertainRetainedCaptures": 0,
+    "stopped": false,
+    "reservedStages": [
+      "language",
+      "heralds",
+      "intro",
+      "post-intro",
+      "world",
+      "difficulty",
+      "civilizations",
+      "barbarians",
+      "rules",
+      "gender",
+      "tribe",
+      "name",
+      "ready",
+      "map-entry",
+      "map-before",
+      "gameplay-before",
+      "orders-menu",
+      "city-name",
+      "city-founded-ui",
+      "first-city-tutorial",
+      "production-screen",
+      "quit-confirmation"
+    ],
+    "phaseEnds": {
+      "setup": 1793055702795,
+      "acceptance": 1793055704795,
+      "cleanup": 1793055706795
+    },
+    "records": []
+  },
+  "schedule": "A existence checks; pause before A temp write; B complete actual start and launch; A write+rename and launch"
+}

@@ -1,0 +1,13 @@
+{
+  "group": 4,
+  "name": "explicit sufficient plan preserves acceptance/tutorial/production/confirmation and counters",
+  "hashes": {
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+    "tools/civ2-serial-controller.js": "f6fb85b3857d3cb8cac18425b18a68a1fee8f5c53dd3361e8b97a7e2db2d981e",
+    "test/test-civ2-capture-plan.js": "f3e87d2c9143bb00153bf87a3dcebd1213f38b3d05cc83fd6a4c02692a9b2498",
+    "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+  },
+  "passed": true,
+  "syntheticOnly": true,
+  "remaining": "unexecuted subsequent groups and publication; gameplay productionUI/quit unverified"
+}

@@ -1,0 +1,80 @@
+{
+  "candidate": "a3fa32333bbcdc2c8717811432ef5cf6938be776",
+  "productionPins": {
+    "tools/civ2-serial-controller.js": {
+      "bytes": 10330,
+      "sha256": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "gitBlob": "1b514f0927d438bd28e64600e639040059c237fa"
+    },
+    "tools/civ2-capture-plan.js": {
+      "bytes": 6871,
+      "sha256": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "gitBlob": "2d6097e82be5f1688867984ad65cfa2d37056c30"
+    },
+    "test/test-civ2-capture-plan.js": {
+      "bytes": 12676,
+      "sha256": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "gitBlob": "7254d1ed89e64881ef18637c2c59b84c6616881b"
+    },
+    "test/fixtures/civ2-controller/predecessor-controller.js": {
+      "bytes": 6134,
+      "sha256": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea",
+      "gitBlob": "bdc2f5af1cddd28c1a946523017901bf9d6b2ba6"
+    }
+  },
+  "testSHA256": "9e73f5a4eace98960c6e63ada6548a71e506812cfbb7a2563ed6919fb96208e8",
+  "completed": [
+    {
+      "name": "two_controller_start_same_allocation_must_have_one_launcher",
+      "passed": true,
+      "result": {
+        "launches": 1,
+        "secondError": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+        "firstStarted": true,
+        "ledger": {
+          "allocationId": "one-task-not-runtime-permission",
+          "minimumCaptures": 22,
+          "attempts": 0,
+          "successes": 0,
+          "chargedBytes": 0,
+          "retainedBytes": 0,
+          "uncertainRetainedCaptures": 0,
+          "stopped": false,
+          "reservedStages": [
+            "language",
+            "heralds",
+            "intro",
+            "post-intro",
+            "world",
+            "difficulty",
+            "civilizations",
+            "barbarians",
+            "rules",
+            "gender",
+            "tribe",
+            "name",
+            "ready",
+            "map-entry",
+            "map-before",
+            "gameplay-before",
+            "orders-menu",
+            "city-name",
+            "city-founded-ui",
+            "first-city-tutorial",
+            "production-screen",
+            "quit-confirmation"
+          ],
+          "phaseEnds": {
+            "setup": 1793055702795,
+            "acceptance": 1793055704795,
+            "cleanup": 1793055706795
+          },
+          "records": []
+        },
+        "schedule": "A existence checks; pause before A temp write; B complete actual start and launch; A write+rename and launch"
+      }
+    }
+  ],
+  "remaining": "subsequent independent groups; real production UI and normal quit remain unverified",
+  "guestExecuted": false
+}

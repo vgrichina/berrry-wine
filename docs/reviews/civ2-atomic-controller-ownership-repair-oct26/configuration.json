@@ -1,0 +1,53 @@
+{
+  "priorReceiptSHA256": "4e5d3d63349596097796bd2c837bd7a494a96e5aca98b227781b6481d635eb75",
+  "unchangedConfiguration": {
+    "standingReceipt": "/tmp/civ2-capture-reserve-independent-accept-oct26/ops/pins-configuration.json",
+    "sha256": "8dbb209c9fbda1cd827d854a8990f4e524c53107b6389643938991f72033245b",
+    "sourceReceipt": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/ops/pins-configuration.json",
+    "sourceReceiptSHA256": "04fe5a19db8086a5435919bf24338fe97ccc33ed925048128413aba3631b63ee",
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountsExecuted": false,
+    "unchangedCanonicalEnumeration": {
+      "actualArgv": [
+        "test/run.js",
+        "--app=civ2_win16",
+        "--no-build",
+        "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm"
+      ],
+      "canonicalParserReceipt": "donor-prior-reused-mount-validation.json",
+      "manifestSHA256": "be401b35c47dc654e1cc1f6cf1ffab857950c10880681b0ccd1db7769f519f76",
+      "cueSHA256": "1fec92d6dcc6fc33a80c78494ddbe0ff446cb43fa8a00ff8a328e442eaa9ec71",
+      "files": 338,
+      "commaCases": 10,
+      "sameReadonlySource": true,
+      "sourcePin": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+      "fontsAndDependenciesReceipt": "prior-reused-standing-system-assets.json",
+      "pngjsUnchanged": true,
+      "changedPhysicalRSSCap": 805306368,
+      "startupMustRun": true,
+      "priorIncidentsPreserved": true,
+      "at": "2026-10-26T22:10:17.812006+00:00",
+      "actualMountArgv": [
+        "test/run.js",
+        "--app=civ2_win16",
+        "--no-build",
+        "--wasm=/home/user/wine-assembly/scratch/recovery/civ2-win16-retained-canonical-oct26/canonical.wasm"
+      ],
+      "unchangedParserSourceVerifiedBy239Manifest": true,
+      "priorReceiptSHA256": "54def8fabc262fe5264a1ad49196b4824756dfa5d90b2372d2eaed2c31e184fc",
+      "filenameEnumerationRetained": "prior-reused-mount-validation.json",
+      "actualResolvedFilesUnchanged": true,
+      "manifestFiles": 337,
+      "mergedFiles": 338,
+      "startupReceipt": "startup-receipt.json",
+      "sameTaskEnumerationValidated": true,
+      "source239Rehashed": true,
+      "fixture337Rehashed": true
+    },
+    "enumerationFiles": 338,
+    "commaBearingFiles": 10,
+    "rootRefReceipt": "root-ref-digest.json"
+  },
+  "noRuntimeOrMountExecution": true,
+  "taskAllocation": 67108864
+}

@@ -1,0 +1,132 @@
+[
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-1.json",
+    "sha256": "96b6c2bc079866e3c9fb59b5761a30b01b6d09193fe03fab577b7bda5d7ab156",
+    "group": 1,
+    "name": "production guard rejects unchanged 20-image allocation before launch or first step",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-10.json",
+    "sha256": "6496909ef552907719c05285e5c5a685873811790708bea32197c73bf6061f16",
+    "group": 10,
+    "name": "a fresh controller cannot reset an existing task ledger or replay its control stream",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-2.json",
+    "sha256": "c46627c8b7b86d0949a87fe01169bc7c56d12860aeeeab140499f8d601af4ac9",
+    "group": 2,
+    "name": "byte-exact original main reproduces twentieth tutorial capture exhaustion",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-3.json",
+    "sha256": "219724d0f23cc0318660544b9256cd78b2195ebcd18c51360bd033f0563de67c",
+    "group": 3,
+    "name": "actual predecessor setup wiring retains all sixteen pixel checks and serial zero ownership",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-4.json",
+    "sha256": "24930087a40a2ec951c2193539089d1615ebc99a9354a43425eac1af73b8c951",
+    "group": 4,
+    "name": "explicit sufficient plan preserves acceptance/tutorial/production/confirmation and counters",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-5.json",
+    "sha256": "76ce2e0a781283418ccc91fc27116c7d98d20ff1accdc4a61bc9258d2214e48c",
+    "group": 5,
+    "name": "extra tutorial needs explicit additional route/count/byte allocation; unknown dialog cannot confirm",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-6.json",
+    "sha256": "3f7255813142d628393d67b0bb54fc987cc103267aa1d052f0f66ec86f5917a6",
+    "group": 6,
+    "name": "failed capture and uncertain/failed ACK retain charges and prohibit replay",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-7.json",
+    "sha256": "06f51eb357d4885a5422d7b5be84338b177811c311c6e6e2a7c3efa5bb6a2d39",
+    "group": 7,
+    "name": "deadline reserve refuses setup overrun and impossible cutoff before any request",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-8.json",
+    "sha256": "19747b5cca3f12566201a3dff39506ee00d24cf17aa60a1a9230844bfe495457",
+    "group": 8,
+    "name": "count/byte saturation rejects preflight; failed output keeps conservative allocation",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  },
+  {
+    "path": "/tmp/civ2-controller-acceptance-capture-reserve-repair-oct26/repo/docs/reviews/civ2-controller-capture-plan-oct26/checkpoint-9.json",
+    "sha256": "6fcd6505a9cfea786b304a18067a4184a464297320281d332c11bf70f485365b",
+    "group": 9,
+    "name": "no input without current matching pixels or frozen zero; no serial overlap",
+    "passed": true,
+    "hashes": {
+      "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+      "tools/civ2-serial-controller.js": "505a5af9ec308218b684ab3a5b729b1a9428971101f4f9f0a59e9532fc5950f7",
+      "test/test-civ2-capture-plan.js": "124822e58d14b227b17da1bc9a98695ac378750ea43054e30412be88f175ac44",
+      "test/fixtures/civ2-controller/predecessor-controller.js": "2f0f8784099332d7ba75539f5b484d1b6180a211ed3186c3d51b149df609edea"
+    }
+  }
+]

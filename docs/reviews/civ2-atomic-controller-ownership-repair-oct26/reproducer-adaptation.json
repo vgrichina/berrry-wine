@@ -1,0 +1,9 @@
+{
+  "originalSHA256": "8414d425c73c5475ac3d6039acdc65077b0e27a3aaa968b61a91d62314331128",
+  "adaptedSHA256": "9e73f5a4eace98960c6e63ada6548a71e506812cfbb7a2563ed6919fb96208e8",
+  "onlyChanges": [
+    "CIV2_SOURCE/input replaced with own tools production source path",
+    "candidate hash binding loaded separately; original pins retained unchanged"
+  ],
+  "atomicityScheduleAndAssertionsUnchanged": true
+}

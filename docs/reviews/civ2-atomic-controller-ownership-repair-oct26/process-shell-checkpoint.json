@@ -1,0 +1,128 @@
+{
+  "completed": [
+    {
+      "pair": [
+        "launcher",
+        "launcher"
+      ],
+      "replies": [
+        {
+          "started": false,
+          "launches": 0,
+          "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+          "pid": 3279512
+        },
+        {
+          "started": true,
+          "launches": 1,
+          "pid": 3279513
+        }
+      ],
+      "retry": {
+        "started": false,
+        "launches": 0,
+        "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+        "pid": 3279526
+      },
+      "cliExit": 1,
+      "markerAndLedgerUnchanged": true,
+      "noControl": true
+    },
+    {
+      "pair": [
+        "launcher",
+        "standalone"
+      ],
+      "replies": [
+        {
+          "started": false,
+          "launches": 0,
+          "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+          "pid": 3279544
+        },
+        {
+          "started": true,
+          "launches": 0,
+          "pid": 3279545
+        }
+      ],
+      "retry": {
+        "started": false,
+        "launches": 0,
+        "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+        "pid": 3279558
+      },
+      "cliExit": 1,
+      "markerAndLedgerUnchanged": true,
+      "noControl": true
+    },
+    {
+      "pair": [
+        "standalone",
+        "launcher"
+      ],
+      "replies": [
+        {
+          "started": true,
+          "launches": 0,
+          "pid": 3279576
+        },
+        {
+          "started": false,
+          "launches": 0,
+          "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+          "pid": 3279577
+        }
+      ],
+      "retry": {
+        "started": false,
+        "launches": 0,
+        "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+        "pid": 3279590
+      },
+      "cliExit": 1,
+      "markerAndLedgerUnchanged": true,
+      "noControl": true
+    },
+    {
+      "pair": [
+        "standalone",
+        "standalone"
+      ],
+      "replies": [
+        {
+          "started": true,
+          "launches": 0,
+          "pid": 3279608
+        },
+        {
+          "started": false,
+          "launches": 0,
+          "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+          "pid": 3279609
+        }
+      ],
+      "retry": {
+        "started": false,
+        "launches": 0,
+        "error": "existing task ledger/ownership unavailable; no allowance reset or uncertain replay",
+        "pid": 3279622
+      },
+      "cliExit": 1,
+      "markerAndLedgerUnchanged": true,
+      "noControl": true
+    }
+  ],
+  "hashes": {
+    "tools/civ2-serial-controller.js": "a3492908d1a7bd0ed173727dc52ec6defbacd0bc39ac9db7348fe25d086734d3",
+    "tools/civ2-capture-plan.js": "bc954137db0433354edb99d55d95836cf468c3c3d8897a12005cb46bc77f2377",
+    "test/fixtures/civ2-controller/owner-process.js": "17c6c5f927eba3981438eeaaf1bbb20ec1942b3f20f245d9681cafaafc7558d7",
+    "test/test-civ2-controller-process-ownership.sh": "95d9811c454f698f1a269949031a4d7dfeb51df80a253db339cc9e8855c03d73"
+  },
+  "flags": [
+    "--jitless",
+    "--single-threaded",
+    "--max-old-space-size=64"
+  ],
+  "remaining": "review/publication then fresh independent acceptance; real production UI/normal quit pending"
+}

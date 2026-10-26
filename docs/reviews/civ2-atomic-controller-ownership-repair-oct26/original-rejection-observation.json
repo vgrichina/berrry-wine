@@ -1,0 +1,47 @@
+{
+  "launches": 2,
+  "secondError": null,
+  "firstStarted": true,
+  "secondStarted": true,
+  "ledger": {
+    "allocationId": "one-task-not-runtime-permission",
+    "minimumCaptures": 22,
+    "attempts": 0,
+    "successes": 0,
+    "chargedBytes": 0,
+    "retainedBytes": 0,
+    "uncertainRetainedCaptures": 0,
+    "stopped": false,
+    "reservedStages": [
+      "language",
+      "heralds",
+      "intro",
+      "post-intro",
+      "world",
+      "difficulty",
+      "civilizations",
+      "barbarians",
+      "rules",
+      "gender",
+      "tribe",
+      "name",
+      "ready",
+      "map-entry",
+      "map-before",
+      "gameplay-before",
+      "orders-menu",
+      "city-name",
+      "city-founded-ui",
+      "first-city-tutorial",
+      "production-screen",
+      "quit-confirmation"
+    ],
+    "phaseEnds": {
+      "setup": 1793054766987,
+      "acceptance": 1793054768987,
+      "cleanup": 1793054770987
+    },
+    "records": []
+  },
+  "schedule": "A existence checks; pause before A temp write; B complete actual start and launch; A write+rename and launch"
+}
