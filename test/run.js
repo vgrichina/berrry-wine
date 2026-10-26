@@ -51,6 +51,7 @@ const { renderTinySynthNotes } = require('../lib/tinysynth-offline');
 const { createBatchClock } = require('../lib/batch-clock');
 const { createGuestClockSource } = require('../lib/guest-clock');
 const { createInputConsumptionTrace } = require('./input-consumption-trace');
+const { createMessageBoundaryTrace } = require('./message-boundary-trace');
 const { createStartupClock } = require('../lib/startup-clock');
 const { parseShellLaunchCommand, resolveShellLaunchPath } = require('../host.js');
 // Fixed memory-map addresses, from the map declared in src/00-regions.wat.
@@ -307,6 +308,7 @@ const TRACE_API_PAUSED = hasFlag('trace-api-paused');
 const TRACE_API_DEDUP = hasFlag('trace-api-dedup'); // --trace-api-dedup: collapse N consecutive identical lines into "(xN)"
 const TRACE_API_COUNTS = hasFlag('trace-api-counts'); // --trace-api-counts: print histogram of API call names at end
 const TRACE_MOUSE_STATE = hasFlag('trace-mouse-state'); // --trace-mouse-state: log renderer mouse state changes seen by host imports
+const TRACE_MESSAGE_BOUNDARY = hasFlag('trace-message-boundary'); // 128 records/64KiB; returned MSG unavailable
 const TRACE_INPUT_DISPATCH = hasFlag('trace-input-dispatch'); // bounded schedule/dequeue/route/DispatchMessage timing
 // --trace-stack[=N|=Name1,Name2|=Name:N,...]: walk EBP chain on matched API calls
 const TRACE_STACK_RAW = args.find(a => a === '--trace-stack' || a.startsWith('--trace-stack='));
@@ -3316,7 +3318,7 @@ async function main() {
   // which wraps a worker's log. --quiet-api-fast is now an alias of this.
   apiLogOff = QUIET_API &&
     (!TRACE_API || TRACE_API_PAUSED) && !TRACE_API_COUNTS && !TRACE_CRITICAL &&
-    !TRACE_INPUT_DISPATCH && !ESP_DELTA && !ESP_AUDIT && !breakApis.length &&
+    !TRACE_INPUT_DISPATCH && !TRACE_MESSAGE_BOUNDARY && !ESP_DELTA && !ESP_AUDIT && !breakApis.length &&
     // Memory dumps accompany a paused API trace; they must not force its
     // dispatch logger on before the explicit trace-api control command.
     // Without --trace-api, memory-only tracing retains its existing behavior.
@@ -3343,6 +3345,7 @@ async function main() {
       comOrdRaw = true;
       pendingComApiId = -1;
     }
+    messageBoundaryTrace.api(t);
     apiCount++;
     if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
 
@@ -4477,6 +4480,22 @@ async function main() {
       lastGuestTick: inputConsumptionTrace.lastGuestTick }),
   });
   guestClock.ticks = inputConsumptionTrace.observeTicks(guestClock.ticks);
+  // BEGIN message-boundary installation: initialized before any guest execution.
+  const messageBoundaryTrace = createMessageBoundaryTrace({
+    enabled: TRACE_MESSAGE_BOUNDARY, logs,
+    snapshot: () => ({ batch: tickState.batch }),
+    getContext: () => ({ exports: instance.exports, memory,
+      translate: addr => translateGuest(addr, instance.exports.get_image_base(), memory.buffer) }),
+  });
+  h.log_api_exit = messageBoundaryTrace.wrapPostHandler(h.log_api_exit);
+  const { createMessageCompletionOwner } = require('./message-completion-owner.js');
+  const messageCompletionOwner = createMessageCompletionOwner({
+    enabled: () => TRACE_MESSAGE_BOUNDARY && messageBoundaryTrace.status().armed && !messageBoundaryTrace.status().saturated,
+    observe: detail => messageBoundaryTrace.completed(detail),
+    gap: () => messageBoundaryTrace.completionGap(),
+  });
+  Object.assign(h, messageCompletionOwner.imports);
+  // END message-boundary installation
   // Every OTHER import table in this process is built from `ctx` — one per
   // guest thread, in makeWorkerImports — and createHostImports derives its
   // get_ticks from ctx.guestNowMs. Overriding only `h` above therefore left
@@ -4548,6 +4567,7 @@ async function main() {
     if (!evt) return 0;
     lastInputEvent = evt;
     inputConsumptionTrace.dequeue(evt, source);
+    messageBoundaryTrace.dequeue(evt, source);
     const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);
     logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);
     return packed;
@@ -4886,6 +4906,12 @@ async function main() {
 
   const instance = await WebAssembly.instantiate(wasmModule, imports);
   ctx.exports = instance.exports;
+  // Install on the main instance before any guest initializer executes. An
+  // older module is explicitly unqualified, never silently called complete.
+  if (TRACE_MESSAGE_BOUNDARY && instance.exports.set_message_completion) {
+    instance.exports.set_message_completion(1);
+    messageBoundaryTrace.qualifyCompletion();
+  }
   // Quiet runs silence the per-call API log from the first instruction, DLL
   // initialization included. Applied only after DllMain ran, the early calls
   // were logged (and so counted twice, by h.log and by $api_calls) and a
@@ -7292,6 +7318,11 @@ async function main() {
       inheritWasm('set_api_log', on ? 1 : 0);
       logs.push(`[trace-api] ${on ? 'on' : 'paused'} at batch ${tickState.batch | 0}`);
       return { traceApi: on, batch: tickState.batch | 0 };
+    }
+    if (cmd.action === 'message-boundary') {
+      if (!TRACE_MESSAGE_BOUNDARY) throw new Error('message-boundary needs --trace-message-boundary');
+      if (typeof cmd.on === 'boolean') messageBoundaryTrace.arm(cmd.on);
+      return messageBoundaryTrace.status();
     }
     if (cmd.action === 'eval') return controlEval(cmd.code || '');
     if (cmd.action === 'png') return controlPng(String(cmd.path || ''));

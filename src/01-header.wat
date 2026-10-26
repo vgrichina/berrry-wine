@@ -16,6 +16,13 @@
   (import "host" "log" (func $host_log (param i32 i32)))
   (import "host" "log_i32" (func $host_log_i32 (param i32)))
   (import "host" "log_api_exit" (func $host_log_api_exit))
+  ;; Optional main-instance diagnostics. Explicit tokens survive deferred USER
+  ;; continuations in host-owned metadata; no guest stack/MSG bytes are added.
+  (import "host" "message_begin" (func $host_message_begin (param i32 i32 i32 i32 i32 i32 i32 i32) (result i32)))
+  (import "host" "message_park" (func $host_message_park (param i32)))
+  (import "host" "message_bind" (func $host_message_bind (param i32 i32 i32)))
+  (import "host" "message_resume" (func $host_message_resume (param i32 i32) (result i32)))
+  (import "host" "message_complete" (func $host_message_complete (param i32 i32)))
   (import "host" "log_block" (func $host_log_block (param i32 i32)))
   ;; log_block(eip, esp) — invoked at the top of each decoded block when
   ;; trace_esp_flag is non-zero and EIP is inside [trace_esp_lo, trace_esp_hi].
@@ -4367,3 +4374,6 @@
   (global $getmessage_owner_generation (mut i32) (i32.const 0))
   (global $GETMESSAGE_HOOKS i32 (region.addr $GETMESSAGE_HOOKS 0))
   (global $GETMESSAGE_HOOKS_SIZE i32 (region.size $GETMESSAGE_HOOKS))
+
+  (global $message_completion_on (mut i32) (i32.const 0))
+  (global $message_completion_active (mut i32) (i32.const 0))

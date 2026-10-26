@@ -1836,6 +1836,9 @@
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $ncode))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $font_enum_ret_thunk))
+    (if (global.get $message_completion_on)
+      (then (call $host_message_bind (global.get $message_completion_active) (i32.const 1)
+        (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))))
     (global.set $eip (call $hook_dispatch_enter (i32.const 2)))
     (global.set $steps (i32.const 0)))
 
@@ -2016,9 +2019,20 @@
   ;; wait, and it consumed its stack frame) replaces the thread's extra info
   ;; with that message's, and every source here attaches 0.
   (func $handle_GetMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $sp i32) (local $ret i32)
+    (call $handle_GetMessage_observed (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
+  (func $handle_GetMessage_observed (param $diagnostic_api i32) (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32) (local $ret i32) (local $token i32) (local $outer i32)
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $sp)))
+    (if (global.get $message_completion_on)
+      (then
+        (local.set $outer (global.get $message_completion_active))
+        (local.set $token (call $host_message_begin (local.get $diagnostic_api)
+          (global.get $current_thread_id) (local.get $sp) (local.get $arg0)
+          (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+        (global.set $message_completion_active (local.get $token))))
     (call $handle_GetMessageA_pump (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
     (if (i32.and (i32.eqz (global.get $yield_flag))
@@ -2026,7 +2040,20 @@
       (then (global.set $msg_extra_info (i32.const 0))))
     (if (i32.and (i32.eqz (global.get $code16))
           (i32.and (i32.eq (i32.load offset=16 (global.get $reg_base)) (i32.add (local.get $sp) (i32.const 20))) (i32.ge_s (i32.load (global.get $reg_base)) (i32.const 0))))
-      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.const 1) (i32.load (global.get $reg_base))))))
+      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.const 1) (i32.load (global.get $reg_base)))))
+    (if (global.get $message_completion_on)
+      (then
+        ;; An intact call frame yielded on its own thunk: keep this invocation
+        ;; parked, never mistake the handler's stale EAX for a returned result.
+        (if (i32.and (i32.ne (global.get $yield_flag) (i32.const 0))
+                     (i32.eq (i32.load offset=16 (global.get $reg_base)) (local.get $sp)))
+          (then (call $host_message_park (local.get $token)))
+          (else
+            (if (i32.and (i32.eqz (global.get $yield_flag))
+                         (i32.eq (i32.load offset=16 (global.get $reg_base))
+                                 (i32.add (local.get $sp) (i32.const 20))))
+              (then (call $host_message_complete (local.get $token) (i32.load (global.get $reg_base)))))))
+        (global.set $message_completion_active (local.get $outer)))))
 
   (func $handle_GetMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32)
@@ -2352,13 +2379,24 @@
   ;; A PeekMessage that returned a message (removed or not, as in USER)
   ;; replaces the thread's extra info with that message's: always 0 here.
   (func $handle_PeekMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $sp i32) (local $ret i32)
+    (call $handle_PeekMessage_observed (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
+  (func $handle_PeekMessage_observed (param $diagnostic_api i32) (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32) (local $ret i32) (local $token i32) (local $outer i32)
     ;; A DISPDIB game draws to the VGA window with no call per frame; its
     ;; message poll is where the frame is shown (09d5-dispdib.wat).
     (if (i32.load offset=4 (global.get $DISPDIB_STATE))
       (then (call $dispdib_present)))
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $sp)))
+    (if (global.get $message_completion_on)
+      (then
+        (local.set $outer (global.get $message_completion_active))
+        (local.set $token (call $host_message_begin (local.get $diagnostic_api)
+          (global.get $current_thread_id) (local.get $sp) (local.get $arg0)
+          (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+        (global.set $message_completion_active (local.get $token))))
     (call $handle_PeekMessageA_pump (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
     (if (i32.and
@@ -2368,7 +2406,20 @@
       (then (global.set $msg_extra_info (i32.const 0))))
     (if (i32.and (i32.eqz (global.get $code16))
           (i32.and (i32.eq (i32.load offset=16 (global.get $reg_base)) (i32.add (local.get $sp) (i32.const 24))) (i32.ne (i32.load (global.get $reg_base)) (i32.const 0))))
-      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.and (local.get $arg4) (i32.const 1)) (i32.load (global.get $reg_base))))))
+      (then (call $getmessage_hook_begin (local.get $ret) (local.get $arg0) (i32.and (local.get $arg4) (i32.const 1)) (i32.load (global.get $reg_base)))))
+    (if (global.get $message_completion_on)
+      (then
+        ;; An intact call frame yielded on its own thunk: keep this invocation
+        ;; parked, never mistake the handler's stale EAX for a returned result.
+        (if (i32.and (i32.ne (global.get $yield_flag) (i32.const 0))
+                     (i32.eq (i32.load offset=16 (global.get $reg_base)) (local.get $sp)))
+          (then (call $host_message_park (local.get $token)))
+          (else
+            (if (i32.and (i32.eqz (global.get $yield_flag))
+                         (i32.eq (i32.load offset=16 (global.get $reg_base))
+                                 (i32.add (local.get $sp) (i32.const 24))))
+              (then (call $host_message_complete (local.get $token) (i32.load (global.get $reg_base)))))))
+        (global.set $message_completion_active (local.get $outer)))))
 
   (func $handle_PeekMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32)

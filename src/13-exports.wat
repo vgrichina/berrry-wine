@@ -5732,3 +5732,8 @@
   ;; See the banner at the top of src/01-header.wat.
 
   (func (export "get_dx_display_palette_wa") (result i32) (call $dx_present_pal_get))
+
+  ;; Per-instance, deliberately absent from inherited worker setters. Enable
+  ;; once before initializers; arming is host-side and cannot reset the budget.
+  (func (export "set_message_completion") (param $on i32)
+    (global.set $message_completion_on (i32.ne (local.get $on) (i32.const 0))))

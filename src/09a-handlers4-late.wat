@@ -2397,23 +2397,38 @@ SetColorAdjustment — validate and copy complete per-DC state.
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $font_enum_ret_thunk))
 
+    (if (global.get $message_completion_on)
+      (then (call $host_message_bind (global.get $message_completion_active) (i32.const 2)
+        (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))))
     (global.set $hook_active_node (local.get $node))
     (global.set $eip (call $hook_node_proc (local.get $node)))
     (global.set $steps (i32.const 0)))
 
   (func $getmessage_hook_continue
-    (local $sp i32) (local $tid i32)
+    (local $sp i32) (local $tid i32) (local $token i32)
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (if (global.get $message_completion_on)
+      (then (local.set $token (call $host_message_resume (i32.const 2) (local.get $sp)))))
     (local.set $tid (call $gl32 (i32.add (local.get $sp) (i32.const 16))))
     (global.set $eip (call $gl32 (i32.add (local.get $sp) (i32.const 4))))
     (global.set $hook_active_node (call $gl32 (i32.add (local.get $sp) (i32.const 8))))
     (i32.store (global.get $reg_base) (call $gl32 (i32.add (local.get $sp) (i32.const 12))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 20)))
-    (call $getmessage_hook_leave (local.get $tid)))
+    (call $getmessage_hook_leave (local.get $tid))
+    ;; The saved BOOL, caller ESP/EIP and hook ownership are restored. MSG now
+    ;; includes all guest hook mutations, before the next guest instruction.
+    (if (global.get $message_completion_on)
+      (then (call $host_message_complete (local.get $token) (i32.load (global.get $reg_base))))))
 
   (func $keyboard_hook_finish
     (local $sp i32) (local $ret i32) (local $msg i32) (local $remove i32)
+    (local $token i32) (local $outer i32)
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (if (global.get $message_completion_on)
+      (then
+        (local.set $outer (global.get $message_completion_active))
+        (local.set $token (call $host_message_resume (i32.const 1) (local.get $sp)))
+        (global.set $message_completion_active (local.get $token))))
     (local.set $ret (call $gl32 (i32.add (local.get $sp) (i32.const 4))))
     (local.set $msg (call $gl32 (i32.add (local.get $sp) (i32.const 12))))
     (local.set $remove (call $gl32 (i32.add (local.get $sp) (i32.const 16))))
@@ -2421,4 +2436,9 @@ SetColorAdjustment — validate and copy complete per-DC state.
     (global.set $eip (local.get $ret))
     (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 20)))
     (i32.store (global.get $reg_base) (i32.const 1))
-    (call $getmessage_hook_begin (local.get $ret) (local.get $msg) (local.get $remove) (i32.const 1)))
+    (call $getmessage_hook_begin (local.get $ret) (local.get $msg) (local.get $remove) (i32.const 1))
+    (if (global.get $message_completion_on)
+      (then
+        ;; complete refuses a token just rebound to WH_GETMESSAGE.
+        (call $host_message_complete (local.get $token) (i32.load (global.get $reg_base)))
+        (global.set $message_completion_active (local.get $outer)))))

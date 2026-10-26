@@ -1,0 +1,88 @@
+{
+  "pass_": true,
+  "base": "ddaff339bd7e1b10b2579a7ab7aed71d86d8edcd",
+  "paths": [
+    {
+      "path": "src/01-header.wat",
+      "reverseToCurrentMain": true,
+      "mainBlob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+      "newPath": false
+    },
+    {
+      "path": "src/09a5-handlers-window.wat",
+      "reverseToCurrentMain": true,
+      "mainBlob": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+      "newPath": false
+    },
+    {
+      "path": "src/09a5b-handlers-window-late.wat",
+      "reverseToCurrentMain": true,
+      "mainBlob": "add268a6c7203d3ac56b2e10c7fe910ab6e93e44",
+      "newPath": false
+    },
+    {
+      "path": "src/09a-handlers4-late.wat",
+      "reverseToCurrentMain": true,
+      "mainBlob": "7fdf60ea294f7d25933eb0628b77b04be18d2378",
+      "newPath": false
+    },
+    {
+      "path": "src/13-exports.wat",
+      "reverseToCurrentMain": true,
+      "mainBlob": "e775571b6c5fda3820de5446d3f69cdf35485fb2",
+      "newPath": false
+    },
+    {
+      "path": "lib/host-imports.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": "d2334524d59b0326c8679037149f02bc537c4432",
+      "newPath": false
+    },
+    {
+      "path": "test/run.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": "f52b03a096a9a614b681cdf0f912ce20ca19fcba",
+      "newPath": false
+    },
+    {
+      "path": "test/message-boundary-trace.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    },
+    {
+      "path": "test/test-message-boundary-trace.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    },
+    {
+      "path": "test/message-completion-owner.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    },
+    {
+      "path": "test/wat-completion-function-fixture.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    },
+    {
+      "path": "test/test-message-completion.js",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    },
+    {
+      "path": "test/fixtures/enigma-message-original-functions.json",
+      "reverseToCurrentMain": true,
+      "mainBlob": null,
+      "newPath": true
+    }
+  ],
+  "wholeRunnerReverseIdentity": true,
+  "unrelatedRunnerBehavior": "All original current-main bytes including Alien plumbing retained; actual guest execution unqualified",
+  "signatureDelta": "Five diagnostic imports only, all other signatures unchanged; final closure regenerated",
+  "compiled": false
+}

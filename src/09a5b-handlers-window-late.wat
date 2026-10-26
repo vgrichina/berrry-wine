@@ -1375,7 +1375,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; missing twenty-two things this one does, timers and the post queue among
   ;; them.
   (func $handle_PeekMessageW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $handle_PeekMessageA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+    (call $handle_PeekMessage_observed (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
   ;; 637: SendDlgItemMessageW — routing and stack layout are identical to A,
   ;; and the message payload is opaque here: the control that receives it is
@@ -1680,7 +1680,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; emulator produces a non-ASCII WM_CHAR, so there is nothing left to
   ;; translate. If that changes, convert here rather than forking the pump.
   (func $handle_GetMessageW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $handle_GetMessageA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+    (call $handle_GetMessage_observed (i32.const 2) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
   ;; MDICLIENT's private state, allocated on WM_CREATE:
   ;;   +0 hWindowMenu from CLIENTCREATESTRUCT

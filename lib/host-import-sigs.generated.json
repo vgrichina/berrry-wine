@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 290,
+  "count": 295,
   "sigs": {
     "log": {
       "params": [
@@ -17,6 +17,51 @@
     },
     "log_api_exit": {
       "params": [],
+      "results": []
+    },
+    "message_begin": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "message_park": {
+      "params": [
+        "i32"
+      ],
+      "results": []
+    },
+    "message_bind": {
+      "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": []
+    },
+    "message_resume": {
+      "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "message_complete": {
+      "params": [
+        "i32",
+        "i32"
+      ],
       "results": []
     },
     "log_block": {
