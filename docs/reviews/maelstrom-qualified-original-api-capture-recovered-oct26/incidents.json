@@ -1,0 +1,14 @@
+[
+  {
+    "kind": "procedural-read-overrun",
+    "detail": "Initial tool reads of instructions/pins were not limited to8192 bytes. No guest or runtime group executed; all subsequent capture reads bounded."
+  },
+  {
+    "kind": "checkout-object-location",
+    "detail": "Pinned evidence/source revisions absent in root object store; task alternates flattened dependency-first from immutable closeout donor and root. No fetch or donor/root mutation."
+  },
+  {
+    "kind": "source-read-location",
+    "detail": "Source ls-tree against root lacked pinned object; corrected same-task reads to isolated task alternate object store. No guest consumed."
+  }
+]

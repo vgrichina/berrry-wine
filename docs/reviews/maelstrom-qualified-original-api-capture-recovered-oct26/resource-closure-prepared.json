@@ -1,0 +1,144 @@
+{
+  "at": 1793039668.2108798,
+  "charges": {
+    "local": 8785920,
+    "remote": 20130262,
+    "launcher": 266240,
+    "session": 724992,
+    "positiveDBWAL": 274432,
+    "futureSessionDBPublication": 4194304,
+    "reserve": 8388608,
+    "operation": 2000000
+  },
+  "total": 44764758,
+  "cap": 67108864,
+  "memAvailable": 2871558144,
+  "liveClients": [
+    {
+      "pid": 865,
+      "rss": 3719168,
+      "command": "avahi-daemon: running [box-node-5e91798b545b57de.local] "
+    },
+    {
+      "pid": 12620,
+      "rss": 2179072,
+      "command": "fusermount3 -o rw,nosuid,nodev,fsname=portal,auto_unmount,subtype=portal -- /run/user/1000/doc "
+    },
+    {
+      "pid": 265398,
+      "rss": 863219712,
+      "command": "tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 "
+    },
+    {
+      "pid": 265414,
+      "rss": 12087296,
+      "command": "node ops/telegram-watchdog.js "
+    },
+    {
+      "pid": 265422,
+      "rss": 263634944,
+      "command": "/home/user/.nvm/versions/node/v24.18.1/bin/node /home/user/wine-assembly/ops/telegram.js "
+    },
+    {
+      "pid": 265632,
+      "rss": 18432000,
+      "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop "
+    },
+    {
+      "pid": 271075,
+      "rss": 264327168,
+      "command": "node ops/work-watchdog.js "
+    },
+    {
+      "pid": 752162,
+      "rss": 390176768,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b3"
+    },
+    {
+      "pid": 857107,
+      "rss": 12636160,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 1789179,
+      "rss": 57921536,
+      "command": "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon "
+    },
+    {
+      "pid": 2896015,
+      "rss": 561590272,
+      "command": "node /home/user/wine-dashboard-b0b9bc090/ops/server.js --port=8098 --root=/home/user/wine-assembly "
+    },
+    {
+      "pid": 2901813,
+      "rss": 205500416,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 2902058,
+      "rss": 24780800,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2903914,
+      "rss": 208207872,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 2904102,
+      "rss": 202371072,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 2904238,
+      "rss": 207319040,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 2904414,
+      "rss": 23764992,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2904424,
+      "rss": 24100864,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2904436,
+      "rss": 23572480,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2905670,
+      "rss": 201371648,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_c"
+    },
+    {
+      "pid": 2905866,
+      "rss": 24834048,
+      "command": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host "
+    },
+    {
+      "pid": 2906955,
+      "rss": 7446528,
+      "command": "sudo -n /opt/ascii-agent/ascii-capture --filelist /dev/shm/inc-snapshot-primary-e6f3cade/filelist.txt --staging-dir /dev/shm/inc-snapshot-primary-e6f3cade/engine --chunk-size-bytes"
+    },
+    {
+      "pid": 2906956,
+      "rss": 119078912,
+      "command": "/opt/ascii-agent/ascii-capture --filelist /dev/shm/inc-snapshot-primary-e6f3cade/filelist.txt --staging-dir /dev/shm/inc-snapshot-primary-e6f3cade/engine --chunk-size-bytes 2621440"
+    },
+    {
+      "pid": 2955986,
+      "rss": 19337216,
+      "command": "node ops/hosting/public-server.js /home/user/.config/wine-ops/access.json "
+    }
+  ],
+  "localProspectiveHelper": 201326592,
+  "localRemainingFloor": 805306368,
+  "hostFree": 4170641408,
+  "hostFloor": 2982150144,
+  "passChecks": true,
+  "alreadyLiveRSSNotSubtractedAgain": true
+}
