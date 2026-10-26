@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/gl-required-file-version-inventory-repair-oct26/ops/recover-git-metadata.py", line 15, in <module>
+    dest=g/'objects'/oid[:2]/oid[2:];dest.parent.mkdir(exist_ok=True);dest.write_bytes(zlib.compress(raw));seen.add(oid);total+=len(raw);assert total<8*1048576
+                                                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1038, in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: '/tmp/gl-required-file-version-inventory-repair-oct26/repo/.git/objects/9e/7b74218b6518534638efdd9a48310df7b6f1ad'

@@ -1,0 +1,10 @@
+{
+  "source": "first tool stdout; initial JSON accidentally overwritten by later fresh check, preserved as historical incident",
+  "ownMeasured": 593920,
+  "projected": 42536960,
+  "memAvailable": 2938056704,
+  "required": 1207959552,
+  "projectedFree": 3100643328,
+  "admitted": true,
+  "correction": "all resident native Codex clients now counted, including coordinator/resume clients; fresh corrected full receipt is authoritative"
+}

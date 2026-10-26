@@ -1,0 +1,193 @@
+{
+  "at": 1793055485.24603,
+  "baseCandidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "helperSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "testsPassed": 27,
+  "productionOmissionsRejected": 9,
+  "unchangedReproducerOmissionRejected": true,
+  "actualMeasurements": {
+    "accounting-regressions-final": {
+      "peakRSS": 60678144,
+      "sampledPeakRSS": 60678144,
+      "reapedPeakRSS": 27779072,
+      "wallSeconds": 0.24225100502371788,
+      "cpuSeconds": 0.26273199999999997,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "pinned-blobs": {
+      "peakRSS": 45219840,
+      "sampledPeakRSS": 45219840,
+      "reapedPeakRSS": 12451840,
+      "wallSeconds": 0.045429526129737496,
+      "cpuSeconds": 0.038791000000000006,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "version-controls-final": {
+      "peakRSS": 60538880,
+      "sampledPeakRSS": 60538880,
+      "reapedPeakRSS": 27770880,
+      "wallSeconds": 0.0953269221354276,
+      "cpuSeconds": 0.162297,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "version-controls": {
+      "peakRSS": 60669952,
+      "sampledPeakRSS": 60669952,
+      "reapedPeakRSS": 27770880,
+      "wallSeconds": 0.16002218308858573,
+      "cpuSeconds": 0.275186,
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "branch-create": {
+      "peakRSS": 53260288,
+      "sampledPeakRSS": 53260288,
+      "reapedPeakRSS": 12320768,
+      "wallSeconds": 0.05613218597136438,
+      "cpuSeconds": 0.085601,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "omissions": {
+      "peakRSS": 67895296,
+      "sampledPeakRSS": 67895296,
+      "reapedPeakRSS": 35356672,
+      "wallSeconds": 0.13643804006278515,
+      "cpuSeconds": 0.264866,
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "omissions-final": {
+      "peakRSS": 60293120,
+      "sampledPeakRSS": 60293120,
+      "reapedPeakRSS": 27394048,
+      "wallSeconds": 0.35826762299984694,
+      "cpuSeconds": 0.31310699999999997,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "review-diff": {
+      "peakRSS": 52695040,
+      "sampledPeakRSS": 52695040,
+      "reapedPeakRSS": 12451840,
+      "wallSeconds": 0.04682909185066819,
+      "cpuSeconds": 0.06071800000000001,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "required-cross-sample": {
+      "peakRSS": 53870592,
+      "sampledPeakRSS": 53870592,
+      "reapedPeakRSS": 21233664,
+      "wallSeconds": 0.06157814711332321,
+      "cpuSeconds": 0.09048500000000001,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "required-cross-sample-final": {
+      "peakRSS": 52953088,
+      "sampledPeakRSS": 52953088,
+      "reapedPeakRSS": 21233664,
+      "wallSeconds": 0.07702333992347121,
+      "cpuSeconds": 0.124597,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "reproducer-omission": {
+      "peakRSS": 82182144,
+      "sampledPeakRSS": 82182144,
+      "reapedPeakRSS": 32448512,
+      "wallSeconds": 0.168665582081303,
+      "cpuSeconds": 0.456328,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "accounting-regressions": {
+      "peakRSS": 60403712,
+      "sampledPeakRSS": 60403712,
+      "reapedPeakRSS": 27766784,
+      "wallSeconds": 0.11267484095878899,
+      "cpuSeconds": 0.18823,
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    "diff-check": {
+      "peakRSS": 45350912,
+      "sampledPeakRSS": 45350912,
+      "reapedPeakRSS": 12451840,
+      "wallSeconds": 0.05276332888752222,
+      "cpuSeconds": 0.066789,
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    }
+  },
+  "sourcePublication": "own branch only; fresh independent acceptance remains",
+  "webGL1": "0/42",
+  "webGL2": "0/42",
+  "backend": "unknown",
+  "box": null,
+  "lifecycle": "no assigned box; coordinator retains all lifecycle ownership",
+  "metadataRecovery": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 67825664,
+    "sampledPeakRSS": 67825664,
+    "reapedPeakRSS": 17825792,
+    "cpuSeconds": 0.443479,
+    "wallSeconds": 0.20491407602094114,
+    "owned": [
+      [
+        3275568,
+        "110282903"
+      ],
+      [
+        3275569,
+        "110282905"
+      ],
+      [
+        3275570,
+        "110282907"
+      ]
+    ],
+    "cleanupComplete": true,
+    "command": [
+      "/usr/bin/python3",
+      "/tmp/gl-required-file-version-inventory-repair-oct26/ops/recover-git-metadata.py"
+    ],
+    "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+    "limits": {
+      "physicalMiB": 256,
+      "GitDataMiB": 512,
+      "CPU": 90,
+      "wall": 120,
+      "fileMiB": 24,
+      "outputMiB": 2,
+      "excerpt": 8192
+    },
+    "python": "/usr/bin/python3"
+  },
+  "completeAdmission": {
+    "ownMeasured": 7868416,
+    "projected": 49811456,
+    "memAvailable": 3876720640,
+    "required": 1879048192,
+    "projectedFree": 3079991296,
+    "admitted": true
+  }
+}

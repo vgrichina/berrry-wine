@@ -230,7 +230,8 @@ class AllocatedDisk:
     to the next sample and the independent free-space gate.
     """
     def __init__(self, roots, *, transient_roots=(), max_entries=100000,
-                 max_depth=64, max_seconds=1.0, attempts=3, ceiling=None):
+                 max_depth=64, max_seconds=1.0, attempts=3, ceiling=None,
+                 mutable_file_roots=()):
         def absolute(p):
             p = pathlib.Path(p)
             if not p.is_absolute() or '..' in p.parts:
@@ -238,6 +239,11 @@ class AllocatedDisk:
             return p
         self.roots = tuple(absolute(p) for p in roots)
         self.transient = tuple(absolute(p) for p in transient_roots)
+        # External WAL files may change size/version, but remain identity-pinned.
+        # This exception cannot cover a directory or an unenumerated subtree.
+        self.mutable_files = frozenset(absolute(p) for p in mutable_file_roots)
+        if not self.mutable_files.issubset(self.roots):
+            raise ValueError('mutable files must be explicit accounting roots')
         if not self.roots or any(a == b or a in b.parents or b in a.parents
                                 for i, a in enumerate(self.roots) for b in self.roots[i+1:]):
             raise ValueError('accounting roots must not overlap')
@@ -252,6 +258,7 @@ class AllocatedDisk:
             raise ValueError('accounting root inventory bound')
         self.identities = {}
         self.required_seen = {}
+        self.required_names = {}
         self.receipt = dict(samples=0, retries=0, unknown=0, lastBytes=None)
         for p in self.roots + self.transient:
             fd = self._open_path(p)
@@ -259,6 +266,8 @@ class AllocatedDisk:
                 s = os.fstat(fd)
                 if p in self.transient and not stat.S_ISDIR(s.st_mode):
                     raise AccountingUnknown('transient root is not a directory')
+                if p in self.mutable_files and not stat.S_ISREG(s.st_mode):
+                    raise AccountingUnknown('mutable accounting root is not a regular file')
                 self.identities[p] = self._identity(s)
             finally:
                 os.close(fd)
@@ -269,7 +278,8 @@ class AllocatedDisk:
 
     @classmethod
     def _version(cls, s):
-        return cls._identity(s) + (s.st_size, s.st_blocks, s.st_mtime_ns, s.st_ctime_ns)
+        return cls._identity(s) + (s.st_size, s.st_blocks, s.st_mtime_ns, s.st_ctime_ns,
+                                   s.st_mode, s.st_uid, s.st_gid, s.st_nlink)
 
     @staticmethod
     def _open_path(p):
@@ -313,10 +323,18 @@ class AllocatedDisk:
         if self.ceiling is not None and self.total > self.ceiling:
             raise AccountingUnknown('allocated-byte ceiling')
         if not any(p == r or r in p.parents for r in self.transient):
-            identity = self._identity(s)
-            if self.required_seen.get(p, identity) != identity:
+            # Directory timestamps/blocks reflect namespace activity, including
+            # explicitly transient descendants. Pin identity here and compare
+            # the mandatory child namespace separately. Required file versions
+            # survive both successful samples and discarded partial retries.
+            version = (self._identity(s) if stat.S_ISDIR(s.st_mode) or
+                       p in self.mutable_files else self._version(s))
+            prior = self.required_seen.get(p, version)
+            if prior[:3] != version[:3]:
                 raise AccountingUnknown('required accounting entry replaced: '+str(p))
-            self.required_seen[p] = identity
+            if prior != version:
+                raise AccountingUnknown('required accounting file version changed: '+str(p))
+            self.required_seen[p] = version
             self.present.add(p)
             if len(self.required_seen) > self.max_entries:
                 raise AccountingUnknown('required accounting inventory bound')
@@ -324,11 +342,18 @@ class AllocatedDisk:
     def _walk(self, fd, p, before, depth):
         self._charge(before, depth, p)
         if stat.S_ISDIR(before.st_mode):
+            # Store only bounded mandatory names. A transient root's name is
+            # validated by _validate_roots, while its contents may churn freely.
+            mandatory = set()
             with os.scandir(fd) as entries:
                 for entry in entries:
                     if time.monotonic() > self.deadline:
                         raise AccountingUnknown('accounting traversal time bound')
                     q = p / entry.name
+                    if not any(q == r or r in q.parents for r in self.transient):
+                        mandatory.add(entry.name)
+                        if len(mandatory) > self.max_entries:
+                            raise AccountingUnknown('required namespace inventory bound')
                     try:
                         s = os.stat(entry.name, dir_fd=fd, follow_symlinks=False)
                     except FileNotFoundError:
@@ -356,6 +381,10 @@ class AllocatedDisk:
                         self._disappeared(fd, before, q)
                     if self._version(s) != self._version(after):
                         self._churn(q)
+            if not any(p == r or r in p.parents for r in self.transient):
+                if self.required_names.get(p, mandatory) != mandatory:
+                    raise AccountingUnknown('required directory namespace changed between samples: '+str(p))
+                self.required_names[p] = mandatory
         if self._version(before) != self._version(os.fstat(fd)):
             self._churn(p)
 
@@ -425,7 +454,8 @@ def accounting_check(config):
         raise ValueError('invalid reserve/future charge')
     receipt = dict(peakBytes=0, minProjectedFree=None, minMemAvailable=None, samples=0)
     ledger = AllocatedDisk(roots, transient_roots=config.get('transientRoots', ()), ceiling=64*MIB)
-    wal = {p: AllocatedDisk([p], ceiling=64*MIB) for p in config['walBaseline']}
+    wal = {p: AllocatedDisk([p], ceiling=64*MIB, mutable_file_roots=[p])
+           for p in config['walBaseline']}
     if any(pathlib.Path(p) == r or r in pathlib.Path(p).parents
            for p in wal for r in roots):
         raise ValueError('WAL must be charged once outside roots')

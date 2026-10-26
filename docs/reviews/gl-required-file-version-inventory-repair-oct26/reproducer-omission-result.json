@@ -1,0 +1,61 @@
+{
+  "candidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "helperSHA256": "22918fb93ae5a02c4e6dfdf2ed63e3183c53828e22101aa3a6900b0ac892cfca",
+  "wrapperSHA256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+  "results": [
+    {
+      "boundary": "retained-production-callback",
+      "before": {
+        "dev": 64769,
+        "ino": 2213091,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793055406555806792,
+        "ctime_ns": 1793055406555806792
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 2213091,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793055406557806784,
+        "ctime_ns": 1793055406557806784
+      },
+      "requiredMutationRejected": false,
+      "actual": null,
+      "ledgerReceipt": {
+        "samples": 2,
+        "retries": 0,
+        "unknown": 0,
+        "lastBytes": 8192
+      }
+    },
+    {
+      "boundary": "shared-accounting-check",
+      "before": {
+        "dev": 64769,
+        "ino": 2213091,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793055406562806765,
+        "ctime_ns": 1793055406562806765
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 2213091,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793055406562806765,
+        "ctime_ns": 1793055406562806765
+      },
+      "requiredMutationRejected": false,
+      "actual": null,
+      "ledgerReceipt": {
+        "peakBytes": 8413184,
+        "minProjectedFree": 3415560192,
+        "minMemAvailable": 3565244416,
+        "samples": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 69730304,
+  "sampledPeakRSS": 69730304,
+  "reapedPeakRSS": 32104448,
+  "cpuSeconds": 0.278822,
+  "wallSeconds": 0.14618202415294945,
+  "owned": [
+    [
+      3275523,
+      "110282231"
+    ],
+    [
+      3275524,
+      "110282233"
+    ],
+    [
+      3275525,
+      "110282235"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/gl-required-file-version-inventory-repair-oct26/ops/recover-git-metadata.py"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 256,
+    "GitDataMiB": 512,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}

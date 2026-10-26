@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/gl-required-file-version-inventory-repair-oct26/repo/test/test-palette-disk-accounting-omissions.py", line 32, in <module>
+    assert not result.wasSuccessful(),(label,'missing control escaped')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('required inventory omitted', 'missing control escaped')

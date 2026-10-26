@@ -1,0 +1,30 @@
+{
+  "client": {
+    "pid": 3267099,
+    "argv": [
+      "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+      "exec",
+      "--profile",
+      "wine-worker",
+      "-c",
+      "model_auto_compact_token_limit=200000",
+      "-c",
+      "model_auto_compact_token_limit_scope=\"total\"",
+      "-m",
+      "gpt-6.1-sol",
+      "-c",
+      "model_reasoning_effort=\"medium\"",
+      "--json",
+      "--output-last-message",
+      "/home/user/wine-assembly/scratch/usage-watch/gl-required-file-version-inventory-repair-oct26/final.txt",
+      "-"
+    ],
+    "rss": 188080128
+  },
+  "session": "01a17a6a-f493-7de1-8e46-3072bd036c96",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "No guest or mount invocation; canonical parser inapplicable. No conditional runtime.",
+  "sourcePinVerified": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gl-required-file-version-inventory-repair-oct26/root-ref-digest.json"
+}

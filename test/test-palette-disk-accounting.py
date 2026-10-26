@@ -271,6 +271,88 @@ class Accounting(unittest.TestCase):
         with self.assertRaisesRegex(sup.AccountingUnknown, 'between samples'):
             ledger.allocated()
 
+    def test_required_file_versions_at_actual_callbacks(self):
+        for boundary in ('production', 'shared'):
+            for mutation in ('truncate', 'rewrite', 'chmod'):
+                with self.subTest(boundary=boundary, mutation=mutation):
+                    self.required.write_bytes(b'r'*16384)
+                    if boundary == 'production':
+                        check = callback(self.root)['check']
+                    else:
+                        check = sup.accounting_check(dict(roots=[str(self.root)],
+                            transientRoots=[str(self.tmp)], reserve=8*M,
+                            future=0, walBaseline={}))
+                    self.assertIsNone(check())
+                    before = self.required.stat()
+                    # Give the filesystem's ctime clock a distinct tick. A
+                    # metadata inventory cannot detect an all-metadata-equal
+                    # rewrite; this control must actually change a version.
+                    sup.time.sleep(.02)
+                    if mutation == 'chmod':
+                        self.required.chmod(before.st_mode ^ 0o100)
+                    else:
+                        self.required.write_bytes(b'' if mutation == 'truncate' else b'z'*16384)
+                        # A writer restoring mtime must still fail on ctime/version.
+                        os.utime(self.required, ns=(before.st_atime_ns, before.st_mtime_ns))
+                    self.assertEqual(self.required.stat().st_ino, before.st_ino)
+                    self.assertNotEqual(sup.AllocatedDisk._version(before),
+                                        sup.AllocatedDisk._version(self.required.stat()))
+                    with self.assertRaisesRegex(sup.AccountingUnknown, 'file version'):
+                        check()
+
+    def test_partial_retry_preserves_first_observed_file_version(self):
+        # Before any successful sample, a retry must not reset a version that
+        # was observed in a discarded partial walk at the production boundary.
+        ns = callback(self.root)
+        ledger = ns['disk']
+        charge = ledger._charge
+        fired = []
+        def changing(s, depth, p):
+            charge(s, depth, p)
+            if p == self.required and not fired:
+                fired.append(True)
+                self.required.write_bytes(b'')
+                raise sup._TransientMutation(str(self.tmp))
+        with mock.patch.object(ledger, '_charge', changing), self.assertRaisesRegex(sup.AccountingUnknown, 'file version'):
+            ns['check']()
+        self.assertEqual(ledger.receipt['retries'], 1)
+        self.assertEqual(ledger.receipt['samples'], 0)
+        self.assertIsNone(ledger.receipt['lastBytes'])
+
+    def test_mandatory_directory_namespace_and_transient_churn(self):
+        ns = callback(self.root)
+        check = ns['check']
+        self.assertIsNone(check())
+        # A directory timestamp change alone is not an input version change.
+        for p in (self.root, self.tmp):
+            s = p.stat()
+            os.utime(p, ns=(s.st_atime_ns, s.st_mtime_ns+1000000))
+        v = self.tmp/'new'
+        v.write_bytes(b'x'*8192)
+        self.assertIsNone(check())
+        v.unlink()
+        self.assertIsNone(check())
+        # The mandatory namespace is frozen independently of timestamps.
+        s = self.root.stat()
+        (self.root/'unregistered-input').write_bytes(b'n')
+        os.utime(self.root, ns=(s.st_atime_ns, s.st_mtime_ns))
+        with self.assertRaisesRegex(sup.AccountingUnknown, 'namespace changed'):
+            check()
+
+    def test_mutable_file_policy_cannot_cover_namespace_or_replacement(self):
+        for options in (dict(mutable_file_roots=[self.tmp]),
+                        dict(mutable_file_roots=[self.required])):
+            with self.assertRaises(ValueError):
+                self.ledger(**options)
+        with self.assertRaisesRegex(sup.AccountingUnknown, 'not a regular file'):
+            sup.AllocatedDisk([self.tmp], mutable_file_roots=[self.tmp])
+        ledger = sup.AllocatedDisk([self.required], mutable_file_roots=[self.required])
+        ledger.allocated()
+        self.required.rename(self.root/'old')
+        self.required.write_bytes(b'r')
+        with self.assertRaises(sup.AccountingUnknown):
+            ledger.allocated()
+
     def test_required_replacement_between_samples_is_unknown(self):
         ledger = self.ledger()
         ledger.allocated()

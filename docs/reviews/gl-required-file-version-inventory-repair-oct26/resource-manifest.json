@@ -1,0 +1,200 @@
+{
+  "at": 1793055652.1500146,
+  "physicalBytesByDisjointComponent": {
+    "/tmp/gl-required-file-version-inventory-repair-oct26/repo/.git": 6180864,
+    "/tmp/gl-required-file-version-inventory-repair-oct26/repo/test": 73728,
+    "/tmp/gl-required-file-version-inventory-repair-oct26/repo/docs/reviews/gl-required-file-version-inventory-repair-oct26": 200704,
+    "/tmp/gl-required-file-version-inventory-repair-oct26/ops": 278528,
+    "/home/user/wine-assembly/scratch/usage-watch/gl-required-file-version-inventory-repair-oct26": 266240,
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T22-53-12-01a17a6a-f493-7de1-8e46-3072bd036c96.jsonl": 851968
+  },
+  "positiveWalOnce": 0,
+  "completeAdmission": {
+    "at": 1793055652.1286318,
+    "label": "prepublication complete footprint after explicit metadata recovery",
+    "ownMeasured": 7868416,
+    "projected": 49811456,
+    "allocation": 67108864,
+    "future": 16777216,
+    "reserve": 8388608,
+    "selectiveGitSourceEvidencePublication": 16777216,
+    "positiveWalGrowth": 0,
+    "session": "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T22-53-12-01a17a6a-f493-7de1-8e46-3072bd036c96.jsonl",
+    "launcher": "/home/user/wine-assembly/scratch/usage-watch/gl-required-file-version-inventory-repair-oct26",
+    "clients": [
+      {
+        "pid": 265632,
+        "argv": [
+          "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+          "app-server",
+          "daemon",
+          "pid-update-loop"
+        ],
+        "rss": 18952192
+      },
+      {
+        "pid": 752162,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "resume",
+          "--profile",
+          "wine-coordinator",
+          "--strict-config",
+          "01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+          "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise."
+        ],
+        "rss": 406519808
+      },
+      {
+        "pid": 857107,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+        ],
+        "rss": 10727424
+      },
+      {
+        "pid": 1789179,
+        "argv": [
+          "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+          "app-server",
+          "--listen",
+          "unix://",
+          "--analytics-default-enabled",
+          "--managed-daemon"
+        ],
+        "rss": 52826112
+      },
+      {
+        "pid": 3255109,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/enigma-canonical-msg-completion-hook-repair-oct26/final.txt",
+          "-"
+        ],
+        "rss": 126328832
+      },
+      {
+        "pid": 3255457,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+        ],
+        "rss": 9863168
+      },
+      {
+        "pid": 3267099,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/gl-required-file-version-inventory-repair-oct26/final.txt",
+          "-"
+        ],
+        "rss": 187064320
+      },
+      {
+        "pid": 3267326,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+        ],
+        "rss": 19329024
+      },
+      {
+        "pid": 3268566,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/civ2-atomic-controller-ownership-repair-oct26/final.txt",
+          "-"
+        ],
+        "rss": 189095936
+      },
+      {
+        "pid": 3268753,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+        ],
+        "rss": 18141184
+      },
+      {
+        "pid": 3270367,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+          "exec",
+          "--profile",
+          "wine-worker",
+          "-c",
+          "model_auto_compact_token_limit=200000",
+          "-c",
+          "model_auto_compact_token_limit_scope=\"total\"",
+          "-m",
+          "gpt-6.1-sol",
+          "-c",
+          "model_reasoning_effort=\"medium\"",
+          "--json",
+          "--output-last-message",
+          "/home/user/wine-assembly/scratch/usage-watch/alien-opt-in-independent-integrate-oct26/final.txt",
+          "-"
+        ],
+        "rss": 193609728
+      },
+      {
+        "pid": 3270596,
+        "argv": [
+          "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+        ],
+        "rss": 19116032
+      }
+    ],
+    "prospectiveClients": 0,
+    "clientGrowth": 805306368,
+    "memAvailable": 3876720640,
+    "required": 1879048192,
+    "free": 3407667200,
+    "remainingFleetGrowth": 327675904,
+    "projectedFree": 3079991296,
+    "floor": 2982150144,
+    "standing": "readonly donor and installed tools excluded; no links",
+    "mountArgv": [],
+    "mountValidation": "no guest invocation or mounts in this offline task; nothing to parse",
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "admitted": true
+  },
+  "clientCorrection": "all resident clients counted, exec-only historical undercount retained",
+  "standingInputs": "immutable donors and installed tools excluded; no symlinks/alternates/hardlink concealment"
+}

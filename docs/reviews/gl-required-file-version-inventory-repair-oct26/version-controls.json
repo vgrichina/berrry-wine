@@ -1,0 +1,35 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 60669952,
+  "sampledPeakRSS": 60669952,
+  "reapedPeakRSS": 27770880,
+  "cpuSeconds": 0.275186,
+  "wallSeconds": 0.16002218308858573,
+  "owned": [
+    [
+      3269564,
+      "110251301"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/gl-required-file-version-inventory-repair-oct26/repo/test/test-palette-disk-accounting.py",
+    "Accounting.test_required_file_versions_at_actual_callbacks",
+    "Accounting.test_partial_retry_preserves_first_observed_file_version",
+    "Accounting.test_mandatory_directory_namespace_and_transient_churn",
+    "Accounting.test_mutable_file_policy_cannot_cover_namespace_or_replacement"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 128,
+    "GitDataMiB": null,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}

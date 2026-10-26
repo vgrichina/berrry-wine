@@ -1,0 +1,27 @@
+{
+  "baseCandidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "completed": [
+    "unchanged-production-and-shared-reproducer-PASS",
+    "version-controls-PASS-coarse-ctime-permission-gap-fixed-and-first-failure-retained",
+    "affected-accounting-regressions-PASS",
+    "CORRECTION-accounting-regressions-first-run-FAILED-identical-metadata-rewrite-fixture-not-yet-PASS",
+    "affected-accounting-regressions-final-27-PASS",
+    "nine-production-omission-controls-PASS",
+    "unchanged-reproducer-rejects-omitted-version-comparison-both-callbacks",
+    "final-unchanged-reproducer-PASS-restored-source",
+    "source-review-diff-check-process-function-hashes-and-final-reproducer-PASS"
+  ],
+  "historicalRejection": "7123b7ce3bb0641afdb048457664e1e7419ff522",
+  "mainForbidden": true,
+  "at": 1793055485.2184184,
+  "sourceHashes": {
+    "test/test-palette-disk-accounting.py": "ba345439265be5ef1a91873628ad429db6ae072d4da5811ddafda3232a939991",
+    "test/test-palette-disk-accounting-omissions.py": "81b25b3aef40e8be4eeadfa02795a07a0c7b264bee3edece35413e16644df2e2",
+    "test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c"
+  },
+  "remaining": [
+    "publication",
+    "fresh-independent-acceptance"
+  ]
+}

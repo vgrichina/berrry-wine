@@ -1,0 +1,23 @@
+{
+  "parent": "5145a673eddc6e1db969d7b323a45598f13b6db3",
+  "files": {
+    "test/helpers/palette-browser-supervisor.py": {
+      "sha256": "43f0d49ca5eb389174d5f8f9a9710b70e590a0447d567eb6c2dd929052c5ff7b",
+      "bytes": 21189
+    },
+    "test/test-palette-disk-accounting.py": {
+      "sha256": "57702e19953f934092a17572728ca00bd98402900028d92dbf39179f17525ff7",
+      "bytes": 14752
+    },
+    "test/test-palette-disk-accounting-omissions.py": {
+      "sha256": "6fb3384b07a4d479a408dbfdcae3a4a025da297a96b0f3061ddc31e51e14b8dc",
+      "bytes": 2151
+    },
+    "test/fixtures/gl-transient-accounting/remote-run.py": {
+      "sha256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+      "bytes": 6803
+    }
+  },
+  "ownedWrapper": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/remote-run.py",
+  "ownedWrapperMatchesTracked": true
+}

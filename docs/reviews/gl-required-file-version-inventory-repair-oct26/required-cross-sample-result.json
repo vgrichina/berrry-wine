@@ -1,0 +1,61 @@
+{
+  "candidate": "9e7b74218b6518534638efdd9a48310df7b6f1ad",
+  "helperSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "wrapperSHA256": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+  "results": [
+    {
+      "boundary": "retained-production-callback",
+      "before": {
+        "dev": 64769,
+        "ino": 1101383,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793055411265788279,
+        "ctime_ns": 1793055411265788279
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 1101383,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793055411268788268,
+        "ctime_ns": 1793055411268788268
+      },
+      "requiredMutationRejected": true,
+      "actual": "AccountingUnknown('required accounting file version changed: /tmp/gl-required-file-version-inventory-repair-oct26/ops/tmpq7or3_c3/required-pinned-input')",
+      "ledgerReceipt": {
+        "samples": 1,
+        "retries": 0,
+        "unknown": 1,
+        "lastBytes": null
+      }
+    },
+    {
+      "boundary": "shared-accounting-check",
+      "before": {
+        "dev": 64769,
+        "ino": 1101383,
+        "size": 16384,
+        "blocks": 32,
+        "mtime_ns": 1793055411268788268,
+        "ctime_ns": 1793055411268788268
+      },
+      "after": {
+        "dev": 64769,
+        "ino": 1101383,
+        "size": 0,
+        "blocks": 0,
+        "mtime_ns": 1793055411269788264,
+        "ctime_ns": 1793055411269788264
+      },
+      "requiredMutationRejected": true,
+      "actual": "AccountingUnknown('required accounting file version changed: /tmp/gl-required-file-version-inventory-repair-oct26/ops/tmpp4lplvdj/required-pinned-input')",
+      "ledgerReceipt": {
+        "peakBytes": 8413184,
+        "minProjectedFree": 3412541440,
+        "minMemAvailable": 3060178944,
+        "samples": 1
+      }
+    }
+  ]
+}

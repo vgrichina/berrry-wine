@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-26T22:53:00.966512+00:00",
+  "task": "gl-required-file-version-inventory-repair-oct26",
+  "MemAvailable": 3039383552,
+  "requiredRam": 1677721600,
+  "freeDisk": 3436535808,
+  "newAllocation": 67108864,
+  "projectedFree": 3369426944,
+  "pinnedSource": {
+    "test/helpers/palette-browser-supervisor.py": "43f0d49ca5eb389174d5f8f9a9710b70e590a0447d567eb6c2dd929052c5ff7b",
+    "test/test-palette-disk-accounting.py": "57702e19953f934092a17572728ca00bd98402900028d92dbf39179f17525ff7",
+    "test/test-palette-disk-accounting-omissions.py": "6fb3384b07a4d479a408dbfdcae3a4a025da297a96b0f3061ddc31e51e14b8dc",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c"
+  },
+  "reproducerSha256": "59993ac44a3f85edc39fe2d420c503ce9789fccad6588be4f3bd2cc942199ac0",
+  "existingWorkersPreserved": 4,
+  "verdict": "PASS"
+}

@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 45350912,
+  "sampledPeakRSS": 45350912,
+  "reapedPeakRSS": 12451840,
+  "cpuSeconds": 0.066789,
+  "wallSeconds": 0.05276332888752222,
+  "owned": [
+    [
+      3272226,
+      "110266031"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/gl-required-file-version-inventory-repair-oct26/ops/git-child.py",
+    "diff",
+    "--check"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 256,
+    "GitDataMiB": 512,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}

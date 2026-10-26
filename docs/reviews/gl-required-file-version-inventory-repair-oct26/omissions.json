@@ -1,0 +1,31 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 67895296,
+  "sampledPeakRSS": 67895296,
+  "reapedPeakRSS": 35356672,
+  "cpuSeconds": 0.264866,
+  "wallSeconds": 0.13643804006278515,
+  "owned": [
+    [
+      3270840,
+      "110257367"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/gl-required-file-version-inventory-repair-oct26/repo/test/test-palette-disk-accounting-omissions.py"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "limits": {
+    "physicalMiB": 128,
+    "GitDataMiB": null,
+    "CPU": 90,
+    "wall": 120,
+    "fileMiB": 24,
+    "outputMiB": 2,
+    "excerpt": 8192
+  },
+  "python": "/usr/bin/python3"
+}

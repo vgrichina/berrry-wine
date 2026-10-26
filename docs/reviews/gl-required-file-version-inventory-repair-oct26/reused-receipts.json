@@ -1,0 +1,38 @@
+{
+  "README.md": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/README.md",
+    "sha256": "26edc85cbb928f06574c049f561455f96983299b10ee5d94123b3738505df554"
+  },
+  "pins.json": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/pins.json",
+    "sha256": "e550673351ec8f7d55f06c3341eac80e96b8aea774ccc9e912f064e43f8163b8"
+  },
+  "production-first.json": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/production-first.json",
+    "sha256": "b99dbbd3bf849a8c01991841428a7d57cd8d16c7539dbc48ff1fbfc4759ef3f3"
+  },
+  "production-first.log": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/production-first.log",
+    "sha256": "9a2d264522e266d94814428770d3c5cd1ce42c653814accdc049044795053237"
+  },
+  "required-cross-sample-result.json": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/required-cross-sample-result.json",
+    "sha256": "85cc002cbe604caa55d042d4e4b9c25146141b76a3467e2dd3ca2f980663c880"
+  },
+  "required-cross-sample.log": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/required-cross-sample.log",
+    "sha256": "90905184a58f5496e457582b069da7359c1385635b19d4b7575ddeeca6c608b2"
+  },
+  "reused-receipts.json": {
+    "path": "/tmp/gl-transient-accounting-independent-publication-oct26/repo/docs/reviews/gl-transient-accounting-independent-publication-oct26/reused-receipts.json",
+    "sha256": "ef84ab937f00c713829bcaf62493459c9ed2c48e9655bac961208fccf872b0bb"
+  },
+  "review.json": {
+    "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/review.json",
+    "sha256": "929c673e4fe514276a8fe013aa051333f7ef113192c40ba6cc3121e2d757a60b"
+  },
+  "review.log": {
+    "path": "/tmp/gl-transient-accounting-measured-client-repair-oct26/ops/review.log",
+    "sha256": "1fc8cc9404fff64195e43df70d610183fd29078a11e2409f680117703abe2edb"
+  }
+}
