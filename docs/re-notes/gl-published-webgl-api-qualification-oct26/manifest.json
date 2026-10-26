@@ -12,8 +12,8 @@
     "sha256": "c8bf3518cbb1b86bfc4c69a17e966c3c62f60a7b53fb75996f273159a8111ec5"
   },
   "checkpoint.json": {
-    "bytes": 1325,
-    "sha256": "d61120c35b5a6d0129acea6834617587a5f85fa15a24847192f8c1880830bced"
+    "bytes": 1397,
+    "sha256": "a58d7af5068843be7d0055b67612edd37676caa0b212adcc70de82ba36196dce"
   },
   "admission-publication-fresh.json": {
     "bytes": 711,
@@ -62,5 +62,9 @@
   "test-receipt.json": {
     "bytes": 1535,
     "sha256": "b194dde11ec0c441b18d01ef3528625b11eca2a48a9203a3594dda67e5bd4bc2"
+  },
+  "final-accounting.json": {
+    "bytes": 2197,
+    "sha256": "a2609ae4fe5ffbb7b536aea23f3220ae745a3e8fcbd60cbc6daf655a4bf0f60a"
   }
 }

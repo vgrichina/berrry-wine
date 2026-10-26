@@ -28,5 +28,6 @@
   },
   "remainingGate": "Repair accounting callback transient-file handling; a further browser invocation requires coordinator assignment. No replay in this task.",
   "historicalFailure": "95297d0d272eefd0cc0d5e15f9c16f30961e7d37 retained unchanged",
-  "commitPending": true
+  "commitPending": false,
+  "initialEvidenceCommit": "ab89183a8ea98d9d68f94d25000db275a2547aaf"
 }

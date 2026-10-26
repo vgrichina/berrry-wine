@@ -1,0 +1,66 @@
+{
+  "publication": {
+    "commit": "ab89183a8ea98d9d68f94d25000db275a2547aaf",
+    "branch": "task/gl-published-webgl-api-qualification-oct26",
+    "remote": "ab89183a8ea98d9d68f94d25000db275a2547aaf",
+    "exactRemoteVerified": true,
+    "evidencePath": "/tmp/gl-published-webgl-api-qualification-oct26/repo/docs/re-notes/gl-published-webgl-api-qualification-oct26",
+    "mainChanged": false,
+    "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "local": {
+    "stage": "closeout",
+    "memAvailable": 4031156224,
+    "required": 2694787072,
+    "clients": [
+      {
+        "pid": 3204494,
+        "rss": 197169152
+      },
+      {
+        "pid": 3214528,
+        "rss": 195051520
+      }
+    ],
+    "growthOnce": 278867968,
+    "charges": {
+      "/tmp/gl-published-webgl-api-qualification-oct26": 14921728,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-api-qualification-oct26": 487424,
+      "session": 1007616,
+      "positiveWALOnce": 1339392,
+      "futureArchiveGitEvidencePublication": 33554432,
+      "futureSessionEvents": 16777216,
+      "reserve": 8388608
+    },
+    "projection": 76476416,
+    "cap": 134217728,
+    "projectedFree": 3466723328,
+    "passAdmission": true
+  },
+  "remote": {
+    "box": "bx_bcpdmz2t",
+    "state": "RUNNING evidenced by this fresh supported API exec",
+    "completeTree": 67022848,
+    "externalDetachedLogs": {
+      "/home/user/.ascii/processes/21524.log": 0,
+      "/home/user/.ascii/processes/21524.err.log": 4096,
+      "/home/user/.ascii/processes/21852.log": 4096,
+      "/home/user/.ascii/processes/21852.err.log": 0
+    },
+    "completeMeasured": 67031040,
+    "projectionWith352MiBFutureReserve": 436129792,
+    "allocation": 1073741824,
+    "free": 48966721536,
+    "expiry": "2026-10-26T23:02:04.169Z",
+    "shutdownOwner": "coordinator"
+  },
+  "cleanup": {
+    "remainingOwned": [],
+    "cleanupComplete": true,
+    "boxLeftRunning": true,
+    "expiry": "2026-10-26T23:02:04.169Z",
+    "shutdownOwner": "coordinator"
+  },
+  "qualification": "blocked",
+  "noReplay": true
+}
