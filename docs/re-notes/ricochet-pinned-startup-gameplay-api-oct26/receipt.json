@@ -1,0 +1,217 @@
+{
+  "status": "BOUNDED_LOADING_OBSERVATION_NO_GAMEPLAY",
+  "sourceRevision": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "sourceManifest": "/home/user/wine-assembly/scratch/usage-watch/civ2-win16-pinned-inputs-oct26.json",
+  "sourceManifestSHA256": "6f252e95c3e6e207eb0fa0e96b533a2ae809d6650c5aa60749b278267d013e5f",
+  "moduleSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "moduleReusedInPlace": true,
+  "productionRunnerSHA256": "87ab63d768eb59a09a8b69df2ccb3843270dd867a67405abd82f02c25c1628e7",
+  "supplementaryManifest": [
+    {
+      "path": "src/api_table.json",
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+      "target": "runner/src/api_table.json",
+      "mode": 436
+    }
+  ],
+  "verifiedRuntime": {
+    "commandId": "cmd_oskh8w0zkcgm",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:33:11.059Z",
+    "launcherFailed": false,
+    "noticedMs": 11,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 12,
+    "startedAt": "2026-10-26T21:33:10.421Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"verified\": 509, \"moduleSHA256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"supplementary\": {\"path\": \"src/api_table.json\", \"bytes\": 723350, \"sha256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\", \"target\": \"runner/src/api_table.json\", \"mode\": 436}, \"at\": 1793050391.0549445}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "configuration": {
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=2048",
+      "--require=/tmp/ricochet-current-gameplay-api-oct26/capture-bounds.cjs",
+      "/tmp/ricochet-current-gameplay-api-oct26/runner/test/run.js",
+      "--app=ricochet_xtreme",
+      "--no-build",
+      "--wasm=/tmp/ricochet-current-gameplay-api-oct26/canonical.wasm",
+      "--dll-seed=IFC22.dll",
+      "--no-close",
+      "--stuck-after=0",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--batch-size=200000",
+      "--max-batches=10000000",
+      "--max-seconds=85",
+      "--control=8128",
+      "--frozen"
+    ],
+    "parserReceipt": "/tmp/ricochet-retained-module-gameplay-api-oct26/ops/canonical-parser.json",
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+    "enumerated": 358,
+    "commaFiles": [],
+    "startupReceipt": "/tmp/ricochet-current-gameplay-api-oct26/ops/guest-preflight-api.json",
+    "unchangedExecutableFlagsEnvironmentLimits": true
+  },
+  "productionInvocations": 1,
+  "guestStarted": true,
+  "batches": 900,
+  "APIcalls": 576847,
+  "inputTransitions": [],
+  "screenshots": [
+    {
+      "path": "menu.png",
+      "batch": 200,
+      "scene": "Reflexive logo splash, filename menu is historical helper label only",
+      "bytes": 39663,
+      "sha256": "d2946353798fb12deadb903994bb70f3e06fbf4f6817637d22cb3f9365f24c01",
+      "width": 640,
+      "height": 480,
+      "inspected": true
+    },
+    {
+      "path": "frame700.png",
+      "batch": 700,
+      "scene": "Loading artwork; no menu or gameplay",
+      "bytes": 215527,
+      "sha256": "5d0198804541209c4afc633ca76ab7e0628993ae649c6b398a149756144d39c6",
+      "width": 640,
+      "height": 480,
+      "inspected": true
+    },
+    {
+      "path": "final900.png",
+      "batch": 900,
+      "scene": "Same loading artwork; no menu or gameplay",
+      "bytes": 215527,
+      "sha256": "5d0198804541209c4afc633ca76ab7e0628993ae649c6b398a149756144d39c6",
+      "width": 640,
+      "height": 480,
+      "inspected": true
+    }
+  ],
+  "playGameObserved": false,
+  "anonymousGuestObserved": false,
+  "roundObserved": false,
+  "paddleBallMovementObserved": false,
+  "gameplayObserved": false,
+  "terminal": {
+    "reason": "natural",
+    "returncode": 0,
+    "elapsed": 87.73278252499995,
+    "peakTreeRSS": 257617920,
+    "peakTreeCPU": 35.79,
+    "outputBytes": 2607,
+    "identities": {
+      "54031": {
+        "ppid": 54030,
+        "state": "R",
+        "start": "206436",
+        "cpu": 35.79,
+        "rss": 184000512
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_ex22dvm8",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "firstFailure": {
+    "at": 1793050417.3969822,
+    "ended": 1793050427.6681561,
+    "request": {
+      "action": "step",
+      "n": 500
+    },
+    "response": {
+      "commandId": "cmd_mvattjoiad0s",
+      "cwd": ".",
+      "exitCode": 1,
+      "finishedAt": "2026-10-26T21:33:47.627Z",
+      "launcherFailed": false,
+      "noticedMs": 17,
+      "oomKilled": false,
+      "signal": null,
+      "startMs": 17,
+      "startedAt": "2026-10-26T21:33:37.480Z",
+      "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 2, in <module>\n  File \"/usr/lib/python3.12/urllib/request.py\", line 215, in urlopen\n    return opener.open(url, data, timeout)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 515, in open\n    response = self._open(req, data)\n               ^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 532, in _open\n    result = self._call_chain(self.handle_open, protocol, protocol +\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 492, in _call_chain\n    result = func(*args)\n             ^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 1373, in http_open\n    return self.do_open(http.client.HTTPConnection, req)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/urllib/request.py\", line 1348, in do_open\n    r = h.getresponse()\n        ^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/http/client.py\", line 1457, in getresponse\n    response.begin()\n  File \"/usr/lib/python3.12/http/client.py\", line 336, in begin\n    version, status, reason = self._read_status()\n                              ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/http/client.py\", line 297, in _read_status\n    line = str(self.fp.readline(_MAXLINE + 1), \"iso-8859-1\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/socket.py\", line 707, in readinto\n    return self._sock.recv_into(b)\n           ^^^^^^^^^^^^^^^^^^^^^^^\nTimeoutError: timed out\n",
+      "stderrTruncated": false,
+      "stdout": "",
+      "stdoutTruncated": false,
+      "success": false,
+      "timedOut": false
+    }
+  },
+  "admission": {
+    "at": 1793050391.8586535,
+    "stage": "before-execution",
+    "charges": {
+      "remote": 53657600,
+      "priorLocal": 2510848,
+      "ownLocalGit": 135168,
+      "launcherEvents": 176128,
+      "session": 507904,
+      "positiveWALOnce": 688128,
+      "future": 33554432,
+      "reserve": 8388608,
+      "incremental": 0
+    },
+    "total": 99618816,
+    "cap": 201326592,
+    "memAvailable": 3930320896,
+    "aggregateRAMMinimum": 2550136832,
+    "hostFree": 3668172800,
+    "projectedFree": 3634618368,
+    "hostFloor": 2982150144,
+    "cacheCountedOnce": true,
+    "walBaseline": "/tmp/ricochet-current-gameplay-api-oct26/ops/sqlite-baseline.json",
+    "residentClientsAlreadyDeducted": true,
+    "pass": true
+  },
+  "handback": {
+    "commandId": "cmd_07zlgeux4ilx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-26T21:36:08.727Z",
+    "launcherFailed": false,
+    "noticedMs": 13,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 13,
+    "startedAt": "2026-10-26T21:36:08.605Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"ownedLive\": [], \"box\": \"bx_ex22dvm8\", \"state\": \"RUNNING APIexec\", \"moduleSHA256\": \"f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75\", \"apiTableSHA256\": \"562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486\", \"shutdownOwner\": \"coordinator\", \"expiry\": \"2026-10-26T22:31:02.949Z\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "historical": {
+    "priorCommit": "af7fd08d4379e1a00ca75b83cbbbe7428ad09398",
+    "earlierCommit": "a4bd44da43adbbdc0aff3e1a2541ca6cb63e9806",
+    "oldCap": 67108864,
+    "projection70623232Deficit": 3514368,
+    "final67223552Overrun": 114688,
+    "retrospectiveCompliance": false
+  },
+  "qualification": "One production run reached actual guest and initialized IFC22 DllMain. Three PNGs inspected: splash200, loading700/900. The 500-batch controller call timed out after10s, preserved verbatim; no replay/overlap. Snapshots showed credits169/93/23 then zero at700 before next step200. Final900 snapshot zero credits. No gameplay input sent because menu never verified. Normal explicit control quit at87.73s supervisor wall (runner87.474s), near90s total budget. Capture transfer/inspection and frozen coordination consumed part of wall budget. This is a bounded loading observation plus controller timeout, not proof of a hang or guest failure. No trap observed. DLL warnings for ole32/shell32 retained without inferring causation. No recompilation/source checkout/full restaging/oracle changes. No further guest invocation because only2.27s wall budget remains.",
+  "closureQualification": "Relative require scan inspected pinned sources and verified their hashes against standing239 manifest. One lexical unresolved example in tools/disasm.js line10 is a comment, not an executed require. Runtime read inspection includes unconditional api_table, system data, bitmap and substitution fonts. Existing fixture/runtime508 checks reused and reverified plus exact supplemental table; no other startup read failed.",
+  "lifecycle": {
+    "box": "bx_ex22dvm8",
+    "state": "RUNNING",
+    "guestCutoff": "2026-10-26T21:50:00Z",
+    "handback": "before21:55UTC",
+    "shutdown": "2026-10-26T22:00:00Z",
+    "expiry": "2026-10-26T22:31:02.949Z",
+    "watchPID": 3114879,
+    "watchUntouched": true,
+    "shutdownOwner": "coordinator"
+  }
+}

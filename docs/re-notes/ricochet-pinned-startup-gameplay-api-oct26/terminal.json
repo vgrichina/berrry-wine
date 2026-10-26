@@ -1,0 +1,1 @@
+{"reason": "natural", "returncode": 0, "elapsed": 87.73278252499995, "peakTreeRSS": 257617920, "peakTreeCPU": 35.79, "outputBytes": 2607, "identities": {"54031": {"ppid": 54030, "state": "R", "start": "206436", "cpu": 35.79, "rss": 184000512}}, "remainingOwnedLive": [], "box": "bx_ex22dvm8", "boxState": "RUNNING", "shutdownOwner": "coordinator"}

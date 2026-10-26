@@ -1,0 +1,57 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 2162,
+    "sha256": "cbaa0a28291f6ef875e766348bed250df48884ddf5e683a530f6bce7b16312c0"
+  },
+  {
+    "path": "command.json",
+    "bytes": 826,
+    "sha256": "5d952bfe38ca641de3e20c30e4f26c131241f76efb1851a6c49ccad39fef0fd9"
+  },
+  {
+    "path": "final900.png",
+    "bytes": 215527,
+    "sha256": "5d0198804541209c4afc633ca76ab7e0628993ae649c6b398a149756144d39c6"
+  },
+  {
+    "path": "first-controller-failure.json",
+    "bytes": 2201,
+    "sha256": "64fd3f596c741cd51f01f93f39014d0a96d3000c1236fb9d6fa7aae3c223383e"
+  },
+  {
+    "path": "frame700.png",
+    "bytes": 215527,
+    "sha256": "5d0198804541209c4afc633ca76ab7e0628993ae649c6b398a149756144d39c6"
+  },
+  {
+    "path": "menu.png",
+    "bytes": 39663,
+    "sha256": "d2946353798fb12deadb903994bb70f3e06fbf4f6817637d22cb3f9365f24c01"
+  },
+  {
+    "path": "operations.tar.gz",
+    "bytes": 35055,
+    "sha256": "261ca0901484cd82b9661dfbfe04b546f7aa3bf937396f1014a9d0102ee53d44"
+  },
+  {
+    "path": "output.log",
+    "bytes": 2607,
+    "sha256": "e2c3fd397ad438d46518ff4547dd44f6aaca062cecfd6c7a3c6661c899df9753"
+  },
+  {
+    "path": "receipt.json",
+    "bytes": 10013,
+    "sha256": "187aa59a587d6adb3af7cb726de37ba7c26633dbaf28a1e3419d6bf3b8c5b896"
+  },
+  {
+    "path": "supplementary-startup-manifest.json",
+    "bytes": 208,
+    "sha256": "60119fc7935b6802ac341e9ad784afa1b0ca90fbdcf7da5fa8707bbc919891da"
+  },
+  {
+    "path": "terminal.json",
+    "bytes": 347,
+    "sha256": "4eb96b0643c7c9ed872574a54dc98205452a84051d75bcd1a354b843391f9e56"
+  }
+]
