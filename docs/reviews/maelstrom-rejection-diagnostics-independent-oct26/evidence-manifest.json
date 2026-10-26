@@ -1,0 +1,52 @@
+[
+  {
+    "path": "README.md",
+    "bytes": 4536,
+    "sha256": "1124b35bbae1bfe7397ec78de1ba69a9c22914d002c9772695c49c9f3bc84b2f"
+  },
+  {
+    "path": "admission-prepublication.json",
+    "bytes": 512,
+    "sha256": "8c394ca55e16e305d14ce8b14f4009b11ea19f7f0741fefe3ec2888c1a5f2bd8"
+  },
+  {
+    "path": "compare-guards.cjs",
+    "bytes": 1909,
+    "sha256": "3d9111f1e3735b8efcff7e31c46d3bc39c829ff60e75571d80412873a94e6096"
+  },
+  {
+    "path": "incidents.json",
+    "bytes": 852,
+    "sha256": "c03279d4b9507d8cd97f517c1fd6eac4952371fe0034b5ccee9673df13eff4e9"
+  },
+  {
+    "path": "independent-results.json",
+    "bytes": 7972,
+    "sha256": "ece2bf287c26a683a1e41718ac90fc38dfec7d31d7570fca2ddd5e4538abb15b"
+  },
+  {
+    "path": "independent.cjs",
+    "bytes": 7589,
+    "sha256": "8483dd85879c25d32c78125251741db6fd53248ed5d14b4f632e07777f19a401"
+  },
+  {
+    "path": "independent.cjs.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "independent.cjs.stdout",
+    "bytes": 6015,
+    "sha256": "e41bc84e8fc4966d504cf779cfa514cf2d1e00acaebd8cb3a00a638e0a4574d0"
+  },
+  {
+    "path": "supplied-controls.json",
+    "bytes": 1606,
+    "sha256": "d663d64c4ef18a4cb302f416e4978cc247ee5d0e61bb1cc24f21a41a32577fcd"
+  },
+  {
+    "path": "tested-tree.json",
+    "bytes": 620,
+    "sha256": "3356a56dd8a8600264e61db92565f64db0054e965c60f2773f5e806a2cac20ea"
+  }
+]

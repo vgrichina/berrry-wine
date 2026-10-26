@@ -1,0 +1,67 @@
+[
+  {
+    "test": "test/maelstrom-native-latch-rejection.test.cjs",
+    "argv": [
+      "node",
+      "--max-old-space-size=128",
+      "test/maelstrom-native-latch-rejection.test.cjs"
+    ],
+    "returncode": 0,
+    "reason": null,
+    "elapsed": 0.07987997401505709,
+    "bytes": 1678,
+    "reaped": true
+  },
+  {
+    "test": "test/maelstrom-native-errno-latch.test.cjs",
+    "argv": [
+      "node",
+      "--max-old-space-size=128",
+      "test/maelstrom-native-errno-latch.test.cjs"
+    ],
+    "returncode": 0,
+    "reason": null,
+    "elapsed": 0.17026066093239933,
+    "bytes": 1251,
+    "reaped": true
+  },
+  {
+    "test": "test/maelstrom-native-errno-source-snapshot.test.cjs",
+    "argv": [
+      "node",
+      "--max-old-space-size=128",
+      "test/maelstrom-native-errno-source-snapshot.test.cjs"
+    ],
+    "returncode": 0,
+    "reason": null,
+    "elapsed": 0.18369376403279603,
+    "bytes": 621,
+    "reaped": true
+  },
+  {
+    "test": "test/maelstrom-original-errno-adapter.cjs",
+    "argv": [
+      "node",
+      "--max-old-space-size=128",
+      "test/maelstrom-original-errno-adapter.cjs"
+    ],
+    "returncode": 0,
+    "reason": null,
+    "elapsed": 0.02405345009174198,
+    "bytes": 378,
+    "reaped": true
+  },
+  {
+    "test": "/tmp/maelstrom-rejection-diagnostics-independent-oct26/ops/compare-guards.cjs",
+    "argv": [
+      "node",
+      "--max-old-space-size=128",
+      "/tmp/maelstrom-rejection-diagnostics-independent-oct26/ops/compare-guards.cjs"
+    ],
+    "returncode": 0,
+    "reason": null,
+    "elapsed": 0.032950764056295156,
+    "bytes": 249,
+    "reaped": true
+  }
+]

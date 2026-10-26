@@ -1,0 +1,14 @@
+[
+  {
+    "event": "Initial combined policy/evidence inspection exceeded requested output excerpt; tool truncated output. Subsequent focused reads used narrow selections. No source mutation/test bypass."
+  },
+  {
+    "event": "Dispatch task entry absent in five-acceptance-dispatch-oct26.json; used explicit superseding task admission with candidate/tree/3 hashes and 227 standing flatLeaves."
+  },
+  {
+    "event": "First independent AST fixture lacked i32.lt_u implementation. Preserved attempt1 evidence; added evaluator operation only, rerun passes AST group; candidate unchanged."
+  },
+  {
+    "event": "Predecessor pretest denial followed by erroneous shell continuation into fixture setup retained by reference to predecessor incidents.json. This task uses explicit && gates; independent fixture failures stop command and remain failures."
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "candidate": "cd4a60e378464ff6247007353b0428d9c1a210f2",
+  "sourceTestedTree": "9be6db3325d2e3b439dd76994c2f919fff5c60cf",
+  "candidateFiles": {
+    "tools/maelstrom-native-errno-latch.cjs": "a63e283d896fad50119fa4f541a083b51efc34c42a8ef7cc0f51a197e092058c",
+    "tools/maelstrom-original-errno-adapter.cjs": "721eb7ff25a60cdbf305307bb13e7079ffef68e4855d2045247d7914bfaa2116",
+    "test/maelstrom-native-latch-rejection.test.cjs": "1e2d53587ad9f4e3944f49aae7097c0bb443a2ae10ffde8aa8c434dd970e9679"
+  },
+  "candidateUnmodified": true,
+  "mergedTree": null,
+  "integration": "REJECT: no merged-tree or main mutation"
+}

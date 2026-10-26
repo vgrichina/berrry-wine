@@ -1,0 +1,58 @@
+PASS actual transformed AST: each reason metadata is exact; first failure persists after changed predicates and hooks
+PASS raw even/signed/large mode values normalize individually and in simultaneous failure order
+PASS status guards: rejected/inert/accepted states execute no scalar or memory effects
+PASS all partial export sets rejected at construction before start/live/persist
+PASS all diagnostic fields malformed reject and close before any live/persist on unchanged native snapshot
+PASS all-absent legacy exports preserve callback ordering and captured zero errno
+FAIL malformed native errno=NaN cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native errno=undefined cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native errno=4294967296 cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native caller=NaN cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native caller=undefined cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native caller=4294967296 cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native token=NaN cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native token=undefined cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native token=4294967296 cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native event=NaN cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native event=undefined cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL malformed native event=4294967296 cannot authorize a decoded completion rejection or callbacks: malformed contextual export reached live/persist; error=native latch status rejection; published=[{"status":5,"event":0,"token":0,"thread":0,"regs":0,"pre":0,"post":0,"selectRet":0,"parks":0,"result":0,"nativeEntry":0,"callBlock":0,"sourceBlock":0,"pc":0,"esp":0,"eax":0,"ebp":0,"errno":0,"caller":0,"socketSet":0,"timeout":0}]
+
+5 !== 3
+
+FAIL diagnostic expected return cannot contradict pinned production return anchor: The input did not match the regular expression /invalid native rejection/. Input:
+
+'Error: native latch status rejection'
+
