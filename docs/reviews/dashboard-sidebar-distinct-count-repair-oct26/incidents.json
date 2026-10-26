@@ -1,0 +1,6 @@
+[
+  "Initial instruction/source exploration exceeded the 8192-byte display excerpt target. Later commands use bounded output and preserve raw logs; no task/private snapshot was captured.",
+  "Initial synthetic harness omitted external homeView and dosView globals. Both first failures and corrected unchanged-donor assertion failures are retained in command logs. These were test-fixture setup errors; source was not changed to accommodate them.",
+  "Reused validated 367-store leaf-first alternate closure from accepted predecessor in isolated Git only. Original nested-alternate warnings are preserved; no shared Git configuration or donor objects were modified.",
+  "Publication diff check rejected whitespace in unchanged Node assertion output. Raw stdout/stderr are now losslessly base64-encoded in JSON with original SHA256; original local logs remain intact. Source and tests unchanged; no acceptance repeated."
+]

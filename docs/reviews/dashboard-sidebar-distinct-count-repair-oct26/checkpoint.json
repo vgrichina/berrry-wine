@@ -1,0 +1,20 @@
+{
+  "base": "938ea5bb01a25c51a9d70db756be3873fefe68f7",
+  "candidateFiles": {
+    "ops/app.js": "81fd237e43112d93f946ed327e3d4e9cdd57ed1f7fc0642d2583e0b3e8693059",
+    "ops/blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b",
+    "ops/dashboard-sidebar-count.test.js": "ab1060e661250d5147f8519f59c9dbc299562220ece509993a70d5d6c1601b3d"
+  },
+  "group": "focused navigation/detail regression",
+  "result": "5/5 PASS",
+  "commandReceipt": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-14.json",
+  "stdoutSHA256": "3d0f54c7a03ce167869a202085b285fb14d0bf7032bf93753763c322c129d56a",
+  "baseline": "5 assertion failures on exact immutable donor after resolving test-only missing external-view stubs; no loader errors",
+  "remaining": [
+    "diff review",
+    "task branch commit/push and exact remote verification",
+    "independent review",
+    "coordinator integration/deployment authorization"
+  ],
+  "noMainOwnership": true
+}

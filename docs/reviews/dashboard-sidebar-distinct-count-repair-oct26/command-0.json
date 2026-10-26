@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "-e",
+    "const fs=require(\"fs\");console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),rss:process.memoryUsage().rss,NODE_OPTIONS:process.env.NODE_OPTIONS,startup:true}))"
+  ],
+  "cwd": "None",
+  "exitCode": 0,
+  "elapsed": 0.02525688405148685,
+  "gitDataOnly": false,
+  "stdout": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-0.stdout",
+  "stderr": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-0.stderr",
+  "stdoutSHA256": "ee041786c55d0d42c3f0a7dde95bca096983b4df3ad8c044af981afd77d1d196",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192"
+}

@@ -1,0 +1,108 @@
+{
+  "label": "pre-acceptance",
+  "at": 1793041912.3757553,
+  "MemAvailable": 3672178688,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 17580032,
+      "flags": []
+    },
+    {
+      "pid": 752162,
+      "rss": 393416704,
+      "flags": []
+    },
+    {
+      "pid": 857107,
+      "rss": 10670080,
+      "flags": []
+    },
+    {
+      "pid": 1789179,
+      "rss": 58404864,
+      "flags": []
+    },
+    {
+      "pid": 2959043,
+      "rss": 199356416,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2959606,
+      "rss": 23015424,
+      "flags": []
+    },
+    {
+      "pid": 2962540,
+      "rss": 200802304,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2962768,
+      "rss": 205135872,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963179,
+      "rss": 22827008,
+      "flags": []
+    },
+    {
+      "pid": 2963234,
+      "rss": 25133056,
+      "flags": []
+    },
+    {
+      "pid": 2963259,
+      "rss": 195555328,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963612,
+      "rss": 22937600,
+      "flags": []
+    }
+  ],
+  "aggregateClientRSS": 1374834688,
+  "existingRSSAlreadyCountedInMemAvailable": true,
+  "newClientReserveCountedOnce": 268435456,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 1342177280,
+  "ownedAllocatedIncludingLauncherAndPositiveWAL": 2347008,
+  "positiveWALConservativeUpperBound": 32768,
+  "wal": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 1032192,
+    "/home/user/.codex/state_5.sqlite-wal": 4395008,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243456
+  },
+  "projectedBytesIncluding8MiBReserve": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 4049113088,
+  "hostRemainingProjected": 4009517056,
+  "pass": true
+}

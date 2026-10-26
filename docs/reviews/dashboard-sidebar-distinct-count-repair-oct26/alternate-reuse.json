@@ -1,0 +1,7 @@
+{
+  "stores": 367,
+  "closureSHA256": "451b47e0fb03f2eb6b08f485aa1a8a9e5153f2a5e3b3dfdb8d6f7e711309f9e9",
+  "readOnlyDonor": "/tmp/blocker-count-telegram-regression-publication-oct26/repo",
+  "priorWarningEvidence": "/tmp/blocker-count-private-dashboard-activation-oct26/repo/docs/reviews/blocker-count-private-dashboard-activation-oct26/git-warnings.json",
+  "method": "unchanged bounded leaf-first existing stores; isolated Git configuration only"
+}

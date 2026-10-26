@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/dashboard-sidebar-distinct-count-repair-oct26/repo/ops/dashboard-sidebar-count.test.js",
+    "--app=/tmp/blocker-count-telegram-regression-publication-oct26/repo/ops/app.js"
+  ],
+  "cwd": "None",
+  "exitCode": 1,
+  "elapsed": 0.07810355396941304,
+  "gitDataOnly": false,
+  "stdout": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-13.stdout",
+  "stderr": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-13.stderr",
+  "stdoutSHA256": "d80feba90ecb58daa06d34121c6403d5c761f15e1312bfc2b3f2d1ea84b1d3a3",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192"
+}

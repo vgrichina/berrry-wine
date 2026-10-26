@@ -1,0 +1,123 @@
+{
+  "label": "precheckout",
+  "at": 1793041808.9332638,
+  "MemAvailable": 3845918720,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 17588224,
+      "flags": []
+    },
+    {
+      "pid": 752162,
+      "rss": 387788800,
+      "flags": []
+    },
+    {
+      "pid": 857107,
+      "rss": 10723328,
+      "flags": []
+    },
+    {
+      "pid": 1789179,
+      "rss": 64028672,
+      "flags": []
+    },
+    {
+      "pid": 2949359,
+      "rss": 193118208,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2949552,
+      "rss": 20299776,
+      "flags": []
+    },
+    {
+      "pid": 2959043,
+      "rss": 202432512,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2959606,
+      "rss": 23044096,
+      "flags": []
+    },
+    {
+      "pid": 2962540,
+      "rss": 201486336,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2962768,
+      "rss": 201601024,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963179,
+      "rss": 22528000,
+      "flags": []
+    },
+    {
+      "pid": 2963234,
+      "rss": 25341952,
+      "flags": []
+    },
+    {
+      "pid": 2963259,
+      "rss": 200536064,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963612,
+      "rss": 23793664,
+      "flags": []
+    }
+  ],
+  "aggregateClientRSS": 1594310656,
+  "existingRSSAlreadyCountedInMemAvailable": true,
+  "newClientReserveCountedOnce": 268435456,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 1342177280,
+  "ownedAllocatedIncludingLauncherAndPositiveWAL": 167936,
+  "positiveWALConservativeUpperBound": 0,
+  "wal": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 999424,
+    "/home/user/.codex/state_5.sqlite-wal": 4395008,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243456
+  },
+  "projectedBytesIncluding8MiBReserve": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 4061839360,
+  "hostRemainingProjected": 4020064256,
+  "pass": true
+}

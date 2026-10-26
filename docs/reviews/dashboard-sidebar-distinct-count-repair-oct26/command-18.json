@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "git",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "cwd": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/repo",
+  "exitCode": 2,
+  "elapsed": 0.08626362518407404,
+  "gitDataOnly": true,
+  "stdout": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-18.stdout",
+  "stderr": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-18.stderr",
+  "stdoutSHA256": "e07e71b1343d54657b42de9666d404b6769b75458d42cd0fbda8edd7f32dce75",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192"
+}

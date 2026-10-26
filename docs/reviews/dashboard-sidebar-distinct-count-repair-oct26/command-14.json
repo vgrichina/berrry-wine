@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=192",
+    "/tmp/dashboard-sidebar-distinct-count-repair-oct26/repo/ops/dashboard-sidebar-count.test.js"
+  ],
+  "cwd": "None",
+  "exitCode": 0,
+  "elapsed": 0.075594088062644,
+  "gitDataOnly": false,
+  "stdout": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-14.stdout",
+  "stderr": "/tmp/dashboard-sidebar-distinct-count-repair-oct26/command-14.stderr",
+  "stdoutSHA256": "3d0f54c7a03ce167869a202085b285fb14d0bf7032bf93753763c322c129d56a",
+  "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cpuSeconds": 90,
+  "wallSeconds": 120,
+  "fileBytes": 25165824,
+  "outputBytes": 2097152,
+  "nodeOptions": "--max-old-space-size=192"
+}

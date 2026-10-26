@@ -475,7 +475,9 @@ function render() {
   renderApprovals();
   renderChrome();
   $('#task-count').textContent = state.tasks.filter(t=>!['done','deferred','unknown'].includes(t.status)).length; $('#task-count').title='Open tasks; completed, deferred and historical records excluded'; $('#corpus-count').textContent = state.candidates.length; $('#dos-count').textContent = state.dosCorpus?.rows?.length || '';
-  $('#blocker-count').textContent = state.tasks.filter(t => t.status === 'blocked').length || '';
+  const blockerCounts = BlockerModel.countSummary(state);
+  $('#blocker-count').textContent = blockerCounts.rawBlockedRows ? `${blockerCounts.distinctBlockedTaskIds} distinct IDs${blockerCounts.anonymousBlockedRows ? ` + ${blockerCounts.anonymousBlockedRows} anonymous rows` : ''}` : '';
+  $('#blocker-count').title = BlockerModel.countSummaryText(blockerCounts);
   $('#updated').textContent = `Snapshot ${new Date(state.generatedAt).toLocaleTimeString()} · refresh every 5s`;
   const views = { home: homeView, games: gamesView, tasks: tasksBoard, agents: agentsGrouped, activity: activityView, more: moreView, overview, tasklist: tasksView, agentlist: agentsView, blockers: blockersView, corpus: corpusView, dos: dosView, release: desktopView, analytics: analyticsView };
   const classic = ['overview', 'tasklist', 'agentlist', 'blockers', 'corpus', 'dos', 'release', 'analytics'].includes(view);

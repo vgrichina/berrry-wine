@@ -1,0 +1,108 @@
+{
+  "label": "prepublication",
+  "at": 1793042041.693569,
+  "MemAvailable": 3606450176,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 17575936,
+      "flags": []
+    },
+    {
+      "pid": 752162,
+      "rss": 396357632,
+      "flags": []
+    },
+    {
+      "pid": 857107,
+      "rss": 10735616,
+      "flags": []
+    },
+    {
+      "pid": 1789179,
+      "rss": 54845440,
+      "flags": []
+    },
+    {
+      "pid": 2959043,
+      "rss": 176574464,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2959606,
+      "rss": 16130048,
+      "flags": []
+    },
+    {
+      "pid": 2962540,
+      "rss": 171683840,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2962768,
+      "rss": 177463296,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963179,
+      "rss": 15319040,
+      "flags": []
+    },
+    {
+      "pid": 2963234,
+      "rss": 17842176,
+      "flags": []
+    },
+    {
+      "pid": 2963259,
+      "rss": 169541632,
+      "flags": [
+        "model_auto_compact_token_limit=200000",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "gpt-6.1-sol",
+        "model_reasoning_effort=\"medium\""
+      ]
+    },
+    {
+      "pid": 2963612,
+      "rss": 15663104,
+      "flags": []
+    }
+  ],
+  "aggregateClientRSS": 1239732224,
+  "existingRSSAlreadyCountedInMemAvailable": true,
+  "newClientReserveCountedOnce": 268435456,
+  "nodePhysicalAllowance": 268435456,
+  "physicalFloor": 805306368,
+  "requiredAvailable": 1342177280,
+  "ownedAllocatedIncludingLauncherAndPositiveWAL": 2908160,
+  "positiveWALConservativeUpperBound": 102400,
+  "wal": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 1101824,
+    "/home/user/.codex/state_5.sqlite-wal": 4395008,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243456
+  },
+  "projectedBytesIncluding8MiBReserve": 41943040,
+  "hardBytes": 67108864,
+  "hostFree": 4038483968,
+  "hostRemainingProjected": 3999449088,
+  "pass": true
+}

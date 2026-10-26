@@ -1,0 +1,10 @@
+{
+  "base": "938ea5bb01a25c51a9d70db756be3873fefe68f7",
+  "donor": "/tmp/blocker-count-telegram-regression-publication-oct26/repo",
+  "hashes": {
+    "ops/app.js": "7c1c314cfaab858da8a840399b5c9785b0ca1626919304b6069886d119aa4132",
+    "ops/blocker-model.js": "1d3ebcd5e31e1eb2e91eb78e9996da2ae8f12840d1a2c30a11fe61c307fe3f7b"
+  },
+  "rootReadOnly": true,
+  "mainOwnership": false
+}
