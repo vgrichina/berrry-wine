@@ -1,0 +1,7 @@
+{
+  "exit": 0,
+  "stdout": "{\"pass\":true,\"canonicalParserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\",\"fullArgv\":true,\"treeOnlyMaelstrom\":true,\"files\":48,\"mapping\":\"48 hashed mappings retained\",\"brokenCommaRejected\":true,\"wrongRootRejected\":true,\"missingFileRejected\":true,\"schedule\":[{\"batch\":31000,\"action\":\"keydown\"},{\"batch\":31200,\"action\":\"keyup\"},{\"batch\":35000,\"action\":\"keydown\"},{\"batch\":35200,\"action\":\"keydown\"},{\"batch\":35500,\"action\":\"keydown\"},{\"batch\":36000,\"action\":\"keyup\"},{\"batch\":36200,\"action\":\"keyup\"},{\"batch\":36500,\"action\":\"keyup\"}],\"limit\":42000,\"guestInvoked\":false}\n",
+  "stderr": "",
+  "standingSymlinks": true,
+  "incident": "Actual argv mount validation completed after checkout, before conditional execution; original checkpoint ordering deviation retained."
+}

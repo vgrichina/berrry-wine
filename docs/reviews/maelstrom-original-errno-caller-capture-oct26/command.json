@@ -1,0 +1,47 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/maelstrom-original-errno-caller-capture-oct26/runner/test/run.js",
+    "--no-build",
+    "--wasm=/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+    "--exe=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/Maelstrom.exe",
+    "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+    "--cwd=C:\\maelstrom",
+    "--env=MAELSTROM_LIB=.",
+    "--env=HOME=.",
+    "--dlls=/tmp/maelstrom-original-errno-caller-capture-oct26/runtime/system/msvcrt.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL_net.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32",
+    "--maelstrom-select-frozen-record=/tmp/maelstrom-original-errno-caller-capture-oct26/guest/frozen.jsonl"
+  ],
+  "pid": 56058,
+  "pgid": 56058,
+  "startedAt": 1792974855.5083952,
+  "memAvailable": 7325052928,
+  "uid": 1000,
+  "environment": {
+    "removed": [
+      "WINE_RUN_EXTRA_ARGS",
+      "WINE_REGION_MAP",
+      "MAELSTROM_CAPTURE_INSTALL"
+    ]
+  },
+  "limits": {
+    "oldspaceMiB": 512,
+    "arenaMiB": 512,
+    "cpu": 90,
+    "wall": 60,
+    "guestSeconds": 60,
+    "maxBatches": 42000,
+    "outputBytes": 131072
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_y3zyiianixs2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T00:31:09.555Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-26T00:31:09.518Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"transferVerified\": true, \"sha256\": \"596ace984529586a4dbf73b42bbb1c98b8e609096429ed1d26ad288439d22a95\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

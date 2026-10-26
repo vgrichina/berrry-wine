@@ -1,0 +1,43 @@
+{
+  "oldRunnerRoundtrip": true,
+  "originalSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "oldRunnerSHA256": "767a5a89152604f172b29a6bdc4c3e6761c336de8c7783f9444edf7aff90177e",
+  "runnerSHA256": "7db51c1c7b3e21f08e5d9c25dc56d8b4d9de70557c70cf0e99bf366bea3fca59",
+  "helperSHA256": "4c79b429d9b4fcdbb54478e584462fc5b08292ae87eda91db5b3c2666a63cd39",
+  "canonicalSHA256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394",
+  "effective": [
+    {
+      "size": 1000,
+      "trace": [],
+      "breaks": []
+    }
+  ],
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/maelstrom-original-errno-caller-capture-oct26/runner/test/run.js",
+    "--no-build",
+    "--wasm=/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+    "--exe=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/Maelstrom.exe",
+    "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+    "--cwd=C:\\maelstrom",
+    "--env=MAELSTROM_LIB=.",
+    "--env=HOME=.",
+    "--dlls=/tmp/maelstrom-original-errno-caller-capture-oct26/runtime/system/msvcrt.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL_net.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs",
+    "--tick-ms-per-batch=200",
+    "--max-batches=42000",
+    "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32",
+    "--maelstrom-select-frozen-record=/tmp/maelstrom-original-errno-caller-capture-oct26/guest/frozen.jsonl"
+  ],
+  "files": 252,
+  "bytes": 15188579,
+  "guestStarts": 0,
+  "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69"
+}

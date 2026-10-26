@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xdibssgnzipv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T00:32:56.656Z",
+  "launcherFailed": false,
+  "noticedMs": 10,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 11,
+  "startedAt": "2026-10-26T00:32:56.597Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 252, \"allHashesVerified\": true, \"ownedBytes\": 15863808}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

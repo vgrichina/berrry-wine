@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lv2jim4x5avg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T00:33:18.216Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T00:33:12.802Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "[{\"argv\": [\"/home/user/.nvm/versions/node/v24.22.1/bin/node\", \"--max-old-space-size=128\", \"--check\", \"/tmp/maelstrom-original-errno-caller-capture-oct26/runner/test/run.js\"], \"exit\": 0, \"stdout\": \"\", \"stderr\": \"\"}, {\"argv\": [\"/home/user/.nvm/versions/node/v24.22.1/bin/node\", \"--max-old-space-size=128\", \"/tmp/maelstrom-original-errno-caller-capture-oct26/validate-tree.cjs\"], \"exit\": 0, \"stdout\": \"{\\\"pass\\\":true,\\\"canonicalParserSHA256\\\":\\\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\\\",\\\"fullArgv\\\":true,\\\"treeOnlyMaelstrom\\\":true,\\\"files\\\":48,\\\"mapping\\\":\\\"48 hashed mappings retained\\\",\\\"brokenCommaRejected\\\":true,\\\"wrongRootRejected\\\":true,\\\"missingFileRejected\\\":true,\\\"schedule\\\":[{\\\"batch\\\":31000,\\\"action\\\":\\\"keydown\\\"},{\\\"batch\\\":31200,\\\"action\\\":\\\"keyup\\\"},{\\\"batch\\\":35000,\\\"action\\\":\\\"keydown\\\"},{\\\"batch\\\":35200,\\\"action\\\":\\\"keydown\\\"},{\\\"batch\\\":35500,\\\"action\\\":\\\"keydown\\\"},{\\\"batch\\\":36000,\\\"action\\\":\\\"keyup\\\"},{\\\"batch\\\":36200,\\\"action\\\":\\\"keyup\\\"},{\\\"batch\\\":36500,\\\"action\\\":\\\"keyup\\\"}],\\\"limit\\\":42000,\\\"guestInvoked\\\":false}\\n\", \"stderr\": \"\"}, {\"argv\": [\"python3\", \"/tmp/maelstrom-original-errno-caller-capture-oct26/ops/supervise.py\", \"inherited-limit-check\"], \"exit\": 0, \"stdout\": \"{\\\"fileLimit\\\": [131072, 131072], \\\"cpu\\\": [90, 90], \\\"plannedArtifacts\\\": {\\\"output.log\\\": 131072, \\\"command.json\\\": 8192, \\\"terminal.json\\\": 4096, \\\"frozen.jsonl\\\": 65536}}\\n\", \"stderr\": \"\"}, {\"argv\": [\"python3\", \"/tmp/maelstrom-original-errno-caller-capture-oct26/ops/supervise.py\", \"negative-control\"], \"exit\": 0, \"stdout\": \"{\\\"TERM\\\": true, \\\"KILL\\\": true, \\\"returncode\\\": -9, \\\"reaped\\\": [[55481, 9]], \\\"remainingGroup\\\": false}\\n\", \"stderr\": \"\"}, {\"argv\": [\"python3\", \"/tmp/maelstrom-original-errno-caller-capture-oct26/ops/supervise.py\", \"output-control\"], \"exit\": 0, \"stdout\": \"{\\\"TERM\\\": true, \\\"KILL\\\": false, \\\"returncode\\\": -15, \\\"reaped\\\": [], \\\"remainingGroup\\\": false, \\\"reason\\\": \\\"output-guard\\\", \\\"bytes\\\": 131072, \\\"failedOutputRetained\\\": true}\\n\", \"stderr\": \"\"}]\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

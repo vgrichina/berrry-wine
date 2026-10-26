@@ -1,0 +1,9 @@
+[
+  "Initial 74519360B projection rejected before checkout; exact measured closure and reduced bounded overhead admitted at60329344B, first rejection retained.",
+  "Initial instruction/code inspection included an over-8KiB excerpt and truncated combined instruction output; these are capture-limit deviations, not compliant evidence.",
+  "Filename-bearing canonical mount validation passed after checkout rather than before checkout; it passed locally and remotely before runtime.",
+  "CLI --status first used commandId and rejected it; corrected to actual positive process ID, no runtime access denial/retry.",
+  "First supervisor exited before Node launch because stage precreated an empty guest directory; failure retained, empty owned directory removed. One actual Node guest process followed.",
+  "Owned loaded-byte verifier incorrectly compared preferred-base absolute IAT operand at relocated SDL_net RVA12f2. Actual raw mismatching bytes were not captured. Authentic PE HIGHLOW relocation at RVA12f4 independently proves required expected operand. No claim of incompatible production loader.",
+  "First and only Node guest exited before mne_start. Corrected verifier tested offline only; no second guest or latch invocation authorized/performed."
+]

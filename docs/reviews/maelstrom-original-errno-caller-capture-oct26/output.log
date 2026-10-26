@@ -1,0 +1,30 @@
+PE loaded. Entry: 0x00417474
+Guest environment: MAELSTROM_LIB="."
+Guest environment: HOME="."
+DLL: msvcrt.dll at 0x522000, DllMain=0x525428, thunks=1954, origBase=0x78000000
+DLL: SDL.dll at 0x666000, DllMain=0x68f8df, thunks=2069, origBase=0x10000000
+DLL: SDL_net.dll at 0x7a2000, DllMain=0x7a3e4f, thunks=2091, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #1 (SDL.dll)
+Patching EXE imports: SDL_net.dll -> DLL #2 (SDL_net.dll)
+Patching EXE imports: MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_net.dll→SDL.dll -> DLL #1 (SDL.dll)
+Patching DLL imports: SDL_net.dll→MSVCRT.dll -> DLL #0 (MSVCRT.dll)
+After patching: 2094 thunks
+Calling DllMain at 0x525428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x68f8df...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7a3e4f...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0x55dedc] = 0x7ae97c
+Patched __p__environ [0x55cbe4] = 0x7ae95c
+Patched __p___winitenv [0x55e0ec] = 0x7ae97c
+Patched __p___initenv [0x560c9c] = 0x7ae95c
+Calling MSVCRT!_set_sbh_threshold(0) at 0x52e99d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+Error: incompatible authentic loaded bytes at 7a32f2
+    at check (/tmp/maelstrom-original-errno-caller-capture-oct26/runner/tools/maelstrom-original-errno-adapter.cjs:12:13)
+    at verifyLoaded (/tmp/maelstrom-original-errno-caller-capture-oct26/runner/tools/maelstrom-original-errno-adapter.cjs:15:56)
+    at /tmp/maelstrom-original-errno-caller-capture-oct26/runner/test/run.js:5749:19
+    at async withCliFailureCleanup (/tmp/maelstrom-original-errno-caller-capture-oct26/runner/lib/cli-failure-cleanup.js:10:12)

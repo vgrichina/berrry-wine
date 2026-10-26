@@ -1,0 +1,1 @@
+{"command":"python3 /tmp/maelstrom-original-errno-caller-capture-oct26/ops/supervise.py guest","commandId":"cmd_fpukv1vxzqye","cwd":".","errLogPath":"/home/user/.ascii/processes/56054.err.log","logPath":"/home/user/.ascii/processes/56054.log","pid":56054,"processId":56054,"startedAt":"2026-10-26T00:34:15.465Z","success":true}

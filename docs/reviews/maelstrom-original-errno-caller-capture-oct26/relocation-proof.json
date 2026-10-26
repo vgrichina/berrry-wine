@@ -1,0 +1,15 @@
+{
+  "binarySHA256": "46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95",
+  "relocations": [
+    {
+      "rva": "0x12f4",
+      "type": 3
+    }
+  ],
+  "preferredOperand": "0x10002010",
+  "loadedBase": "0x7a2000",
+  "expectedLoadedOperand": "0x7a4010",
+  "expectedLoadedBytes": "8b3d10407a00",
+  "inference": "normal PE HIGHLOW relocation, not measured raw memory; original verifier did not retain actual bytes",
+  "firstBlocker": "owned host verifier compared unrelocated preferred-base operand; no conclusion of incompatible production loader"
+}

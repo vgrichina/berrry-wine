@@ -1,0 +1,113 @@
+{
+  "task": "maelstrom-original-errno-caller-capture-oct26",
+  "status": "BLOCKED_OWNED_HOST_VERIFIER_BEFORE_LATCH_START",
+  "at": 1792974993.8351808,
+  "candidate": "133506c5f61a1b97c9f10ca37dd1db8b34052e31",
+  "candidateTree": "7be2c41284d0f094570484a5b9dce2d5f517106a",
+  "sourceTestedTree": "fa41b35804d458385dced8d149d5f3e17f38cee1",
+  "guestProcesses": 1,
+  "supervisorPrestartFailures": 1,
+  "moduleInstances": 1,
+  "latchInvocations": 0,
+  "originalErrno": null,
+  "originalCaller": null,
+  "gameplayAccepted": false,
+  "firstBlocker": {
+    "address": "0x7a32f2",
+    "message": "incompatible authentic loaded bytes at 7a32f2",
+    "owner": "this task host verifier",
+    "expectedByExecutedVerifier": "8b3d10200010",
+    "actualRawBytes": null,
+    "correctRelocatedExpected": "8b3d10407a00",
+    "classification": "incorrect preferred-base comparison; actual loader incompatibility not established"
+  },
+  "offlineCorrection": {
+    "controlsPassed": 7,
+    "runtimeRetested": false,
+    "productionChanges": false
+  },
+  "runtime": {
+    "box": "bx_k38z8byn",
+    "state": "RUNNING (hydrated idle)",
+    "expiry": "2026-10-26T01:39:12.069Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-26T01:20:00Z",
+    "guestPID": 56058,
+    "supervisorPID": 56054,
+    "modulePath": "/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+    "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69",
+    "moduleBytes": 1882300,
+    "arenaMiB": 512,
+    "nodeHeapMiB": 512,
+    "nativeQualificationReused": "26 accepted cases across2 retained modules; not repeated"
+  },
+  "identities": {
+    "oldRunnerRoundtrip": true,
+    "originalSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "oldRunnerSHA256": "767a5a89152604f172b29a6bdc4c3e6761c336de8c7783f9444edf7aff90177e",
+    "runnerSHA256": "7db51c1c7b3e21f08e5d9c25dc56d8b4d9de70557c70cf0e99bf366bea3fca59",
+    "helperSHA256": "4c79b429d9b4fcdbb54478e584462fc5b08292ae87eda91db5b3c2666a63cd39",
+    "canonicalSHA256": "0ffbfdee6d64f66613731e8a4fbc00883320ee623cdd9bc45c66362b81067394",
+    "effective": [
+      {
+        "size": 1000,
+        "trace": [],
+        "breaks": []
+      }
+    ],
+    "argv": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/maelstrom-original-errno-caller-capture-oct26/runner/test/run.js",
+      "--no-build",
+      "--wasm=/home/user/maelstrom-errno-api-canonical-native-oct25/ops/errno-latch.wasm",
+      "--exe=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/Maelstrom.exe",
+      "--exe-guest-path=C:\\maelstrom\\Maelstrom.exe",
+      "--cwd=C:\\maelstrom",
+      "--env=MAELSTROM_LIB=.",
+      "--env=HOME=.",
+      "--dlls=/tmp/maelstrom-original-errno-caller-capture-oct26/runtime/system/msvcrt.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL.dll,/tmp/maelstrom-original-errno-caller-capture-oct26/vfs/maelstrom/SDL_net.dll",
+      "--quiet-api",
+      "--quiet-blocks",
+      "--no-close",
+      "--max-seconds=60",
+      "--memory-mb=512",
+      "--screen=640x480",
+      "--vfs-tree=/tmp/maelstrom-original-errno-caller-capture-oct26/vfs",
+      "--tick-ms-per-batch=200",
+      "--max-batches=42000",
+      "--input=31000:keydown:80,31200:keyup:80,35000:keydown:37,35200:keydown:38,35500:keydown:32,36000:keyup:37,36200:keyup:38,36500:keyup:32",
+      "--maelstrom-select-frozen-record=/tmp/maelstrom-original-errno-caller-capture-oct26/guest/frozen.jsonl"
+    ],
+    "files": 252,
+    "bytes": 15188579,
+    "guestStarts": 0,
+    "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69"
+  },
+  "cleanup": {
+    "heavyLockAvailable": true,
+    "ownedGuestAbsent": true,
+    "ownedSupervisorAbsent": true,
+    "remoteOwnedBytes": 16027648,
+    "moduleSHA256": "a77709fb784a21e6775771450f54b709373f0cc8ad2d4878012c949eaae88f69"
+  },
+  "sourceOraclesUnchanged": {
+    "tools/maelstrom-native-errno-latch.cjs": "5c54028907a49b602fd330fc888059b26fbfb486a838db58538865470a35641c",
+    "tools/maelstrom-select-completion-hook.cjs": "b7c77c20b12cd582d6fcfbe246e1f0abdcb644266fc3f161bf5d683d93b13930",
+    "test/maelstrom-errno-canonical-native.cjs": "eb61b30e8f9d58d589d9800ea55ef63c3ccccbd7f29c59cdc2cf979aac2de234",
+    "test/maelstrom-errno-independent-native.cjs": "3f2092cf4cf581801781ecf1ae7d2de5718fec0eb2c07f3257528181a0b77f15",
+    "test/maelstrom-errno-independent-foreign-ret.cjs": "be708ae7f291bc9faa14f1b974b7ae0182f8d5c88be4e3770382f27a7d211c4d"
+  },
+  "incidents": [
+    "Initial 74519360B projection rejected before checkout; exact measured closure and reduced bounded overhead admitted at60329344B, first rejection retained.",
+    "Initial instruction/code inspection included an over-8KiB excerpt and truncated combined instruction output; these are capture-limit deviations, not compliant evidence.",
+    "Filename-bearing canonical mount validation passed after checkout rather than before checkout; it passed locally and remotely before runtime.",
+    "CLI --status first used commandId and rejected it; corrected to actual positive process ID, no runtime access denial/retry.",
+    "First supervisor exited before Node launch because stage precreated an empty guest directory; failure retained, empty owned directory removed. One actual Node guest process followed.",
+    "Owned loaded-byte verifier incorrectly compared preferred-base absolute IAT operand at relocated SDL_net RVA12f2. Actual raw mismatching bytes were not captured. Authentic PE HIGHLOW relocation at RVA12f4 independently proves required expected operand. No claim of incompatible production loader.",
+    "First and only Node guest exited before mne_start. Corrected verifier tested offline only; no second guest or latch invocation authorized/performed."
+  ],
+  "remainingScope": "Coordinator must authorize a fresh original guest invocation with corrected host verifier; additional original runtime behavior remains unknown. This worker stops.",
+  "mainIntegration": false,
+  "workersLaunched": 0
+}

@@ -1,0 +1,11 @@
+{
+  "argv": [
+    "node",
+    "--max-old-space-size=128",
+    "/tmp/maelstrom-original-errno-caller-capture-oct26/repo/test/maelstrom-original-errno-adapter.cjs"
+  ],
+  "exit": 0,
+  "stdout": "PASS missing export rejects\nPASS start exactly once; duplicate owner rejects\nPASS nonpristine refuses before invocation\nPASS observation requires start\nPASS rejection persists first state and closes\nPASS native capture remains historical and once, preserves errno zero\nPASS loaded mappings and authentic byte controls\n{\"passed\":7,\"offlineAdapterOnly\":true,\"guestInvoked\":false}\n",
+  "stderr": "",
+  "revision": "corrected offline after first and only guest process"
+}
