@@ -1,0 +1,9 @@
+{
+  "lib/app-files.js": "4c1ce40b92aa990a4bc689bd98d5c0d92ab3af44dafeb93ca52ccbaf2c6124f7",
+  "host.js": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+  "lib/filesystem.js": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1",
+  "lib/browser-shell.js": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890",
+  "test/app-files-persist-url-policy-oct26.test.cjs": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+  "test/app-files-empty-alias-fallback-oct26.test.cjs": "d82afe0a3ccf1fc2c047e2b53a6ff69e94d315985e4772e66d554bd9f6497d1a",
+  "test/test-app-files-policy.js": "e31dcbdba3cc4f897e0e588defd468d6dd7c72cd63969b03bb524ab19b9ac8e8"
+}

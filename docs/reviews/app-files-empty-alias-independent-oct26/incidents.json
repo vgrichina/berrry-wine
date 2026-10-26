@@ -1,0 +1,10 @@
+[
+  {
+    "incident": "Provenance search matched whole prior JSON event lines and tool response was truncated.",
+    "resolution": "Stopped broad search; parsed events in place and retained only finite excerpts under normalization-provenance.json. No test oracle or evidence changed."
+  },
+  {
+    "incident": "Original independent review commit not in candidate donor object closure.",
+    "resolution": "Read its immutable blob directly from existing read-only original-review repository. Exact bytes/hash verified; no fetch or checkout expansion."
+  }
+]
