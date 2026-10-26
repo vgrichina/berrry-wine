@@ -1,0 +1,9 @@
+{
+  "donor": "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/repo",
+  "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "path": "lib/browser-shell.js",
+  "sha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890",
+  "bytes": 211893,
+  "requireClosure": [],
+  "note": "No require() calls in immutable browser-shell.js. Existing tracked fixture recovered only for tests, excluded from change index."
+}

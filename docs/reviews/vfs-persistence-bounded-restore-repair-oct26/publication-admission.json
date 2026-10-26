@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-26T06:35:04.547715+00:00",
+  "measuredBytes": 3098097,
+  "futureEventsAndSinglePositiveWalAllowance": 12582912,
+  "reserve": 8388608,
+  "publicationGrowth": 2097152,
+  "projectedPeak": 26166769,
+  "freeDisk": 4449570816,
+  "freeAfterGrowth": 4426502144,
+  "memAvailable": 2956578816,
+  "memAfterClientAndSmallExecution": 2402930688,
+  "pass": true
+}

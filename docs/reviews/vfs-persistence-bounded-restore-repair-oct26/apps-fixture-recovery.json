@@ -1,0 +1,17 @@
+{
+  "donor": "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/repo",
+  "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "files": [
+    {
+      "path": "lib/apps.js",
+      "sha256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d",
+      "bytes": 413346
+    },
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+      "bytes": 304086
+    }
+  ],
+  "reason": "Remaining Darkstone persistence test needs apps and its optional actual require closure. Recovered unchanged test fixtures excluded from publication."
+}

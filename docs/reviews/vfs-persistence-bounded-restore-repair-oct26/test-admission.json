@@ -1,0 +1,11 @@
+{
+  "taskBytes": 1876911,
+  "launcherBytes": 96558,
+  "futureEventsAndPositiveWalAllowance": 12582912,
+  "reserve": 8388608,
+  "singleWalPolicy": "shared WAL not duplicated across lanes; future allowance only",
+  "memAvailable": 2791325696,
+  "freeDisk": 4470050816,
+  "projectedPeak": 22944989,
+  "pass": true
+}

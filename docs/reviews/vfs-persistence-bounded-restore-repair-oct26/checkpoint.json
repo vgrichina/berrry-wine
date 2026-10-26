@@ -1,0 +1,116 @@
+[
+  {
+    "group": "unchanged-baseline",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/vfs-persistence-bounded-restore-oct26.test.cjs"
+    ],
+    "exitCode": 1,
+    "sourceSha256": "b8a7803f2b0b8880f5b02a673f241f2e6b036c4468b950cf7b43ed38a289dca9",
+    "testSha256": "dcf619fbe4fca841148f7da93225ad0797e34884848c4d397db9be09e9460544"
+  },
+  {
+    "group": "repair",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/vfs-persistence-bounded-restore-oct26.test.cjs"
+    ],
+    "exitCode": 0,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "dcf619fbe4fca841148f7da93225ad0797e34884848c4d397db9be09e9460544"
+  },
+  {
+    "group": "existing-persistence",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-vfs-persistence.js"
+    ],
+    "exitCode": 1,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "6289f389c2097ac3ebc85b51405c663fe4c2ce12804b15b587584100818fa6e7"
+  },
+  {
+    "group": "remaining-test-vfs-persistence.js",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-vfs-persistence.js"
+    ],
+    "exitCode": 0,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "6289f389c2097ac3ebc85b51405c663fe4c2ce12804b15b587584100818fa6e7",
+    "evidence": "closeout-test-vfs-persistence.js.log",
+    "evidenceSha256": "e7558537e8356694e8a1d2f953409ba566412d04110d0946724d35c81720d78f"
+  },
+  {
+    "group": "remaining-test-vfs-persistence-restore.js",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-vfs-persistence-restore.js"
+    ],
+    "exitCode": 0,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "614d021086f8ff19d2f974a4d1149fc9ebf6247e657010e2986319b04e8ea17b",
+    "evidence": "closeout-test-vfs-persistence-restore.js.log",
+    "evidenceSha256": "b432719ae05213090673b72d52ebb3d44bc0fef3c66e4279d6ce06730b925dc2"
+  },
+  {
+    "group": "remaining-test-darkstone-save-persistence.js",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-darkstone-save-persistence.js"
+    ],
+    "exitCode": 1,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "7d6a881957c2d0079b70b9750a14c481aeb4398ef61ab23ba27955a4a93ebe64",
+    "evidence": "closeout-test-darkstone-save-persistence.js.log",
+    "evidenceSha256": "4a22a929c6f1bd75b5e6ecc82b5a53f03eba5dbecfd06febadc672482152b1b6"
+  },
+  {
+    "group": "remaining-darkstone-recovered",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=16",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-darkstone-save-persistence.js"
+    ],
+    "exitCode": -6,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "7d6a881957c2d0079b70b9750a14c481aeb4398ef61ab23ba27955a4a93ebe64",
+    "evidence": "closeout-darkstone-recovered.log",
+    "evidenceSha256": "7397fdde7c496d6a2fb6f7aeb18c46d423e76cf23841585632b9c218517f6586"
+  },
+  {
+    "group": "remaining-darkstone-64m",
+    "command": [
+      "timeout",
+      "45s",
+      "node",
+      "--max-old-space-size=64",
+      "/tmp/vfs-persistence-bounded-restore-repair-oct26/repo/test/test-darkstone-save-persistence.js"
+    ],
+    "exitCode": 0,
+    "sourceSha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e",
+    "testSha256": "7d6a881957c2d0079b70b9750a14c481aeb4398ef61ab23ba27955a4a93ebe64",
+    "evidence": "closeout-darkstone-64m.log",
+    "evidenceSha256": "bcc110923af1f0fed0667a1bccf06d84f23e53f94e80bdd57dc6f6f7c8f404f7"
+  }
+]

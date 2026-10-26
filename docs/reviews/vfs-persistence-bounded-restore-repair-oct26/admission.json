@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-26T06:25:51.739518+00:00",
+  "freeDisk": 4487426048,
+  "memAvailable": 2998747136,
+  "projectedTaskBytes": 58720256,
+  "reserve": 8388608,
+  "hardLimit": 67108864,
+  "launcherBytes": 69625,
+  "fleet": [
+    " 265398 786956 tmux new-session -d -s wine-orchestrator -x 160 -y 45 -c /home/user/wine-assembly exec codex resume 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+    " 265632 15296 /home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server daemon pid-update-loop",
+    " 752162 363792 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex resume --profile wine-coordinator --strict-config 01a0ff91-cf9d-7f42-ba93-f9e7616b35a5 Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task worker",
+    " 857107 11584 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host",
+    "1789179 51820 /home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex app-server --listen unix:// --analytics-default-enabled --managed-daemon",
+    "2187857 13400 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/renderer-side-polling-independent-accept-oct26.task.txt scratch/usage-watch/renderer-side-polling-independent-accept-oct26",
+    "2187858 13228 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/browser-key-focus-release-repair-oct26.task.txt scratch/usage-watch/browser-key-focus-release-repair-oct26",
+    "2187859 13552 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/app-files-persist-url-policy-repair-oct26.task.txt scratch/usage-watch/app-files-persist-url-policy-repair-oct26",
+    "2187861 13380 python3 scratch/usage-watch/start-worker.py scratch/usage-watch/vfs-persistence-bounded-restore-repair-oct26.task.txt scratch/usage-watch/vfs-persistence-bounded-restore-repair-oct26",
+    "2187871 187812 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/browser-key-focus-release-repair-oct26/final.txt",
+    "2187872 194888 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/renderer-side-polling-independent-accept-oct26/f",
+    "2187873 182724 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/vfs-persistence-bounded-restore-repair-oct26/fin",
+    "2187874 187764 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex exec --profile wine-worker -c model_auto_compact_token_limit=200000 -c model_auto_compact_token_limit_scope=\"total\" -m gpt-6.1-sol -c model_reasoning_effort=\"medium\" --json --output-last-message /home/user/wine-assembly/scratch/usage-watch/app-files-persist-url-policy-repair-oct26/final.",
+    "2188483 19304 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host",
+    "2188525 19080 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host",
+    "2188544 19572 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host",
+    "2188578 22356 /opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex-code-mode-host"
+  ],
+  "standingNode": "/usr/local/bin/node",
+  "mountArgv": [],
+  "mountValidation": "N/A offline local Node: no guest or mounts",
+  "sshCommand": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pass": true
+}

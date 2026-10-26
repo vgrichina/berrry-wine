@@ -1,0 +1,50 @@
+{
+  "lib/vfs-persistence.js": {
+    "bytes": 17416,
+    "sha256": "2224f8b74469606696065ea799931bc192982a608dc2a7ec0e9a690d20a4552e"
+  },
+  "lib/apps.js": {
+    "bytes": 413346,
+    "sha256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d"
+  },
+  "lib/app-file-sizes.generated.js": {
+    "bytes": 304086,
+    "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+  },
+  "lib/mem-utils.js": {
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+  },
+  "lib/byte-provider.js": {
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+  },
+  "lib/region-map.generated.js": {
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+  },
+  "lib/filesystem.js": {
+    "bytes": 158109,
+    "sha256": "542ecac68e15882d9f5455e89c2c92198d3e3042b53b599b29706a6668fcb3b1"
+  },
+  "lib/browser-shell.js": {
+    "bytes": 211893,
+    "sha256": "ee958a3b4f7e5d9006a03ce6f4823653e17f6bb48342c59b304d977b79658890"
+  },
+  "test/vfs-persistence-bounded-restore-oct26.test.cjs": {
+    "bytes": 5804,
+    "sha256": "dcf619fbe4fca841148f7da93225ad0797e34884848c4d397db9be09e9460544"
+  },
+  "test/test-vfs-persistence.js": {
+    "bytes": 11924,
+    "sha256": "6289f389c2097ac3ebc85b51405c663fe4c2ce12804b15b587584100818fa6e7"
+  },
+  "test/test-vfs-persistence-restore.js": {
+    "bytes": 2385,
+    "sha256": "614d021086f8ff19d2f974a4d1149fc9ebf6247e657010e2986319b04e8ea17b"
+  },
+  "test/test-darkstone-save-persistence.js": {
+    "bytes": 4659,
+    "sha256": "7d6a881957c2d0079b70b9750a14c481aeb4398ef61ab23ba27955a4a93ebe64"
+  }
+}
