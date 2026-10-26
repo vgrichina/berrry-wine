@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/test-boat-capture-readback.py",
+    "-v"
+  ],
+  "returncode": 0,
+  "reason": "natural",
+  "wall": 2.2099813991226256,
+  "peakTreeRSS": 75321344,
+  "peakTreeCPU": 0.9,
+  "outputBytes": 964,
+  "cap": 134217728,
+  "gitDATAonly": false
+}

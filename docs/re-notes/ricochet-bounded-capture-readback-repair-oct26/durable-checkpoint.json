@@ -1,0 +1,19 @@
+{
+  "parent": "283eb307e139b9deacd6c9921706e4b8427c8f0a",
+  "groups": [
+    "all-eight-focused-tests"
+  ],
+  "passing": true,
+  "results": "final-test-results.json",
+  "sourceHashes": {
+    "tools/boat-capture-readback.py": "d1402b8a3090067cdc3528fd5fb593c87b6bee7f9d6f8935f1ee90c3d6bbf0cd",
+    "test/fixtures/ricochet-serial-controller/read.py": "1979202afd4833abf0a3f00db9692a9b597620fb5bef17941bda96395083b2ae",
+    "test/fixtures/ricochet-serial-controller/work.py": "d4729c96cb6e5451070e128f78cea9368833386ac47d60be1e44c36e37a3afce",
+    "test/fixtures/ricochet-serial-controller/serial.py": "c499348b02f0fe5997d472628675f8630f5f1a49a22395808b9e3ffe7a855a34",
+    "test/fixtures/ricochet-serial-controller/later.png": "9e6b81e080cfa6476fdd76ef4093217b43567e37f9d9f7fcd69cc021d1541d88"
+  },
+  "remaining": [
+    "documentation",
+    "publication"
+  ]
+}

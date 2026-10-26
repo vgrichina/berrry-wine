@@ -1,0 +1,8 @@
+{
+  "firstFailure": "missing launcher author identity in isolated repository",
+  "trustedSource": "/tmp/ricochet-serial-progress-gameplay-api-oct26/repo/.git/config",
+  "name": "Wine Ops",
+  "email": "wine-ops@local",
+  "scope": "own isolated Git config only",
+  "noTrustOrPermissionChange": true
+}

@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/test-boat-capture-readback.py",
+    "ReadbackTests.test_04_owned_blocking_subprocess_is_killed",
+    "ReadbackTests.test_05_transport_subprocess_and_quoting",
+    "ReadbackTests.test_06_limits_empty_and_path",
+    "-v"
+  ],
+  "returncode": 1,
+  "reason": "natural",
+  "wall": 0.5107536700088531,
+  "peakTreeRSS": 53772288,
+  "peakTreeCPU": 0.14,
+  "outputBytes": 2361,
+  "cap": 134217728,
+  "gitDATAonly": false
+}

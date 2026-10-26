@@ -1,0 +1,30 @@
+{
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "parserReceipt": "/tmp/ricochet-retained-module-gameplay-api-oct26/ops/canonical-parser.json",
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/ricochet-current-gameplay-api-oct26/capture-bounds.cjs",
+    "/tmp/ricochet-current-gameplay-api-oct26/runner/test/run.js",
+    "--app=ricochet_xtreme",
+    "--no-build",
+    "--wasm=/tmp/ricochet-current-gameplay-api-oct26/canonical.wasm",
+    "--dll-seed=IFC22.dll",
+    "--no-close",
+    "--stuck-after=0",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=85",
+    "--control=8128",
+    "--frozen"
+  ],
+  "enumeratedFiles": 358,
+  "commaFilenames": [],
+  "mountsThisTask": [],
+  "runtime": false,
+  "reused": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-bounded-capture-readback-repair-oct26/root-ref-digest.json"
+}

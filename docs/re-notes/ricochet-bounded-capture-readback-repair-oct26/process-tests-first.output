@@ -1,0 +1,36 @@
+test_04_owned_blocking_subprocess_is_killed (__main__.ReadbackTests.test_04_owned_blocking_subprocess_is_killed) ... ok
+test_05_transport_subprocess_and_quoting (__main__.ReadbackTests.test_05_transport_subprocess_and_quoting) ... ERROR
+test_06_limits_empty_and_path (__main__.ReadbackTests.test_06_limits_empty_and_path) ... ok
+
+======================================================================
+ERROR: test_05_transport_subprocess_and_quoting (__main__.ReadbackTests.test_05_transport_subprocess_and_quoting)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/test-boat-capture-readback.py", line 241, in test_05_transport_subprocess_and_quoting
+    meta=self.read(ex)
+         ^^^^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/test-boat-capture-readback.py", line 105, in read
+    return adapter.readfile(target,self.dest,executor=ex,concurrency=concurrency,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/test/fixtures/ricochet-serial-controller/read.py", line 18, in readfile
+    return capture.readback(
+           ^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py", line 135, in readback
+    before = _metadata(one(_metadata_code(source)))
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py", line 130, in one
+    raw = finish(job)
+          ^^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py", line 120, in finish
+    raw = job.poll()
+          ^^^^^^^^^^
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py", line 220, in poll
+    _check(status == 0 and not self.buffers[1], 'API process error/denial')
+  File "/tmp/ricochet-bounded-capture-readback-repair-oct26/repo/tools/boat-capture-readback.py", line 33, in _check
+    raise ReadbackError(message)
+boat_capture_readback.ReadbackError: API process error/denial
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.463s
+
+FAILED (errors=1)

@@ -1,0 +1,29 @@
+{
+  "at": 1793051807.8578665,
+  "stage": "initial",
+  "charges": {
+    "ownLocal": 24576,
+    "session": 430080,
+    "events": 135168,
+    "taskDispatch": 16384,
+    "WALpositiveOnce": 0,
+    "publicationAndFuture": 33554432,
+    "reserve": 8388608
+  },
+  "total": 42549248,
+  "cap": 134217728,
+  "memAvailable": 3076468736,
+  "required": 2688335872,
+  "clients": [
+    {
+      "pid": 3195039,
+      "rss": 197345280,
+      "growth": 138199040
+    }
+  ],
+  "standingGLReservation": 1073741824,
+  "hostFree": 3593240576,
+  "projectedFree": 3551297536,
+  "hostFloor": 2982150144,
+  "pass": true
+}

@@ -1,0 +1,13 @@
+test_01_exact_adapter_parallel_and_serial (__main__.ReadbackTests.test_01_exact_adapter_parallel_and_serial) ... ok
+test_02_rejections_preserve_destination (__main__.ReadbackTests.test_02_rejections_preserve_destination) ... ok
+test_03_deadline_and_cancel (__main__.ReadbackTests.test_03_deadline_and_cancel) ... ok
+test_04_owned_blocking_subprocess_is_killed (__main__.ReadbackTests.test_04_owned_blocking_subprocess_is_killed) ... ok
+test_05_transport_subprocess_and_quoting (__main__.ReadbackTests.test_05_transport_subprocess_and_quoting) ... ok
+test_06_limits_empty_and_path (__main__.ReadbackTests.test_06_limits_empty_and_path) ... ok
+test_07_real_immutable_identity_guards (__main__.ReadbackTests.test_07_real_immutable_identity_guards) ... ok
+test_08_real_transport_failures_no_retry (__main__.ReadbackTests.test_08_real_transport_failures_no_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 2.154s
+
+OK
