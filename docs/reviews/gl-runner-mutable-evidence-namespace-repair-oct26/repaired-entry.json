@@ -1,0 +1,83 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 68825088,
+  "sampledPeakRSS": 68825088,
+  "reapedPeakRSS": 28585984,
+  "cpuSeconds": 0.45404799999999995,
+  "wallSeconds": 0.21580778690986335,
+  "owned": [
+    [
+      3335774,
+      "110545795"
+    ],
+    [
+      3335777,
+      "110545802"
+    ],
+    [
+      3335778,
+      "110545807"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/gl-runner-mutable-evidence-namespace-repair-oct26/repo/test/test-gl-runner-output-namespace.py",
+    "Entry.test_full_repaired_entry"
+  ],
+  "limits": {
+    "physical": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  },
+  "admission": {
+    "at": 1793058248.6935673,
+    "charges": {
+      "/tmp/gl-runner-mutable-evidence-namespace-repair-oct26": 6254592,
+      "launcher": 221184,
+      "session": 688128,
+      "positiveWALOnce": 0
+    },
+    "projection": 40718336,
+    "allocation": 67108864,
+    "futureGitPublication": 8388608,
+    "futureEventsSession": 16777216,
+    "reserve": 8388608,
+    "peers": {
+      "alien-controller-terminal-failfast-repair-oct26": 0,
+      "enigma-reconciled-canonical-boat-build-oct26": 83546112
+    },
+    "projectedFree": 3086573568,
+    "floor": 2982150144,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 17604608
+      },
+      {
+        "pid": 752162,
+        "rss": 401231872
+      },
+      {
+        "pid": 1789179,
+        "rss": 54226944
+      },
+      {
+        "pid": 3328536,
+        "rss": 193384448
+      },
+      {
+        "pid": 3331326,
+        "rss": 194580480
+      }
+    ],
+    "clientGrowthOnce": 335544320,
+    "memAvailable": 3696902144,
+    "required": 1409286144,
+    "pass": true
+  }
+}

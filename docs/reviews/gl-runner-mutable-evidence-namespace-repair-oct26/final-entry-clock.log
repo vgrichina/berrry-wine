@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 3.750s
+
+OK
+PASS complete production entry; real supervised fake children, counted atomic temps/logs/results/final outputs
+Completed 40 required ops/source/fixture fault subcases; see unittest verdict
+BASELINE retained exact runner FAIL before Node, own admission output changes ops namespace

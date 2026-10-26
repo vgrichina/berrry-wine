@@ -1,0 +1,299 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 89698304,
+  "sampledPeakRSS": 89698304,
+  "reapedPeakRSS": 33968128,
+  "cpuSeconds": 15.249694000000002,
+  "wallSeconds": 7.175957270897925,
+  "owned": [
+    [
+      3342253,
+      "110559594"
+    ],
+    [
+      3342262,
+      "110559669"
+    ],
+    [
+      3342266,
+      "110559681"
+    ],
+    [
+      3342271,
+      "110559688"
+    ],
+    [
+      3342277,
+      "110559707"
+    ],
+    [
+      3342280,
+      "110559720"
+    ],
+    [
+      3342286,
+      "110559732"
+    ],
+    [
+      3342289,
+      "110559738"
+    ],
+    [
+      3342294,
+      "110559748"
+    ],
+    [
+      3342297,
+      "110559753"
+    ],
+    [
+      3342305,
+      "110559762"
+    ],
+    [
+      3342307,
+      "110559768"
+    ],
+    [
+      3342320,
+      "110559793"
+    ],
+    [
+      3342322,
+      "110559801"
+    ],
+    [
+      3342329,
+      "110559814"
+    ],
+    [
+      3342332,
+      "110559820"
+    ],
+    [
+      3342339,
+      "110559832"
+    ],
+    [
+      3342341,
+      "110559839"
+    ],
+    [
+      3342348,
+      "110559854"
+    ],
+    [
+      3342350,
+      "110559861"
+    ],
+    [
+      3342354,
+      "110559890"
+    ],
+    [
+      3342355,
+      "110559917"
+    ],
+    [
+      3342358,
+      "110559925"
+    ],
+    [
+      3342360,
+      "110559931"
+    ],
+    [
+      3342363,
+      "110559941"
+    ],
+    [
+      3342364,
+      "110559945"
+    ],
+    [
+      3342416,
+      "110559988"
+    ],
+    [
+      3342417,
+      "110559996"
+    ],
+    [
+      3342421,
+      "110560018"
+    ],
+    [
+      3342423,
+      "110560025"
+    ],
+    [
+      3342426,
+      "110560037"
+    ],
+    [
+      3342427,
+      "110560047"
+    ],
+    [
+      3342430,
+      "110560060"
+    ],
+    [
+      3342432,
+      "110560067"
+    ],
+    [
+      3342435,
+      "110560079"
+    ],
+    [
+      3342438,
+      "110560087"
+    ],
+    [
+      3342442,
+      "110560097"
+    ],
+    [
+      3342443,
+      "110560105"
+    ],
+    [
+      3342462,
+      "110560115"
+    ],
+    [
+      3342463,
+      "110560126"
+    ],
+    [
+      3342466,
+      "110560138"
+    ],
+    [
+      3342467,
+      "110560145"
+    ],
+    [
+      3342471,
+      "110560155"
+    ],
+    [
+      3342475,
+      "110560161"
+    ],
+    [
+      3342485,
+      "110560178"
+    ],
+    [
+      3342486,
+      "110560185"
+    ],
+    [
+      3342489,
+      "110560193"
+    ],
+    [
+      3342492,
+      "110560201"
+    ],
+    [
+      3342496,
+      "110560210"
+    ],
+    [
+      3342500,
+      "110560221"
+    ],
+    [
+      3342503,
+      "110560232"
+    ],
+    [
+      3342506,
+      "110560248"
+    ],
+    [
+      3342510,
+      "110560261"
+    ],
+    [
+      3342513,
+      "110560274"
+    ],
+    [
+      3342518,
+      "110560287"
+    ],
+    [
+      3342521,
+      "110560298"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/gl-runner-mutable-evidence-namespace-repair-oct26/repo/test/test-gl-runner-output-namespace-omissions.py"
+  ],
+  "limits": {
+    "physical": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  },
+  "admission": {
+    "at": 1793058386.633636,
+    "charges": {
+      "/tmp/gl-runner-mutable-evidence-namespace-repair-oct26": 6397952,
+      "launcher": 253952,
+      "session": 835584,
+      "positiveWALOnce": 0
+    },
+    "projection": 41041920,
+    "allocation": 67108864,
+    "futureGitPublication": 8388608,
+    "futureEventsSession": 16777216,
+    "reserve": 8388608,
+    "peers": {
+      "alien-controller-terminal-failfast-repair-oct26": 0,
+      "enigma-reconciled-canonical-boat-build-oct26": 75632640
+    },
+    "projectedFree": 3068170240,
+    "floor": 2982150144,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 30404608
+      },
+      {
+        "pid": 752162,
+        "rss": 402952192
+      },
+      {
+        "pid": 1789179,
+        "rss": 57454592
+      },
+      {
+        "pid": 3328536,
+        "rss": 193191936
+      },
+      {
+        "pid": 3331326,
+        "rss": 193769472
+      },
+      {
+        "pid": 3336944,
+        "rss": 193282048
+      }
+    ],
+    "clientGrowthOnce": 402653184,
+    "memAvailable": 3454377984,
+    "required": 1476395008,
+    "pass": true
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+}

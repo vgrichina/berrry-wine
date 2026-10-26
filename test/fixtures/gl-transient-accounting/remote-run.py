@@ -1,7 +1,10 @@
 import pathlib,os,json,hashlib,resource,subprocess,importlib.util,sys,shutil,datetime
 P=pathlib.Path;M=1048576;H=P('/tmp/gl-published-webgl-api-qualification-oct26');O=H/'ops';R=H/'repo';S=H/'source';NODE='/home/user/.nvm/versions/node/v24.22.1/bin/node';CHROME='/opt/google/chrome/chrome'
+# Immutable inputs stay in ops. Only this explicit output subtree may evolve.
+# Create it before the ledger pins the required parent namespace and identity.
+E=O/'output';E.mkdir(exist_ok=True)
 def save(n,j):
- p=O/n;t=p.with_suffix('.new');t.write_text(json.dumps(j,indent=2)+'\n');os.replace(t,p)
+ p=E/n;t=p.with_suffix('.new');t.write_text(json.dumps(j,indent=2)+'\n');os.replace(t,p)
 def sha(p):
  h=hashlib.sha256()
  with P(p).open('rb') as f:
@@ -15,10 +18,10 @@ def integrity():
  for r in pins['source']['files']:assert sha(S/r['path'])==r['sha256'],r['path']
  for p,h in pins['fixture']['files'].items():assert sha(R/p)==h,p
  return dict(source149=True,fixture7=True,sourceSnapshot='0d65e6daf568a2b0104fcaea75801e9fcac6d1ae',fixture=pins['fixture']['head'],tree=pins['fixture']['tree'])
-os.environ.clear();os.environ.update(PATH='/usr/bin:/bin',HOME='/home/user',LANG='C.UTF-8',NODE_PATH=str(H/'deps/node_modules'),CHROME=CHROME,TMPDIR=str(H/'tmp'),PALETTE_GPU_SOURCE_ROOT=str(S),PALETTE_GPU_EVIDENCE=str(O/'test-result.json'),PALETTE_BROWSER_RESOURCE_CONFIG='{"explicitTaskAccounting":"2048MiB physical runtime;1024MiB complete remote task disk"}',PYTHONDONTWRITEBYTECODE='1')
+os.environ.clear();os.environ.update(PATH='/usr/bin:/bin',HOME='/home/user',LANG='C.UTF-8',NODE_PATH=str(H/'deps/node_modules'),CHROME=CHROME,TMPDIR=str(H/'tmp'),PALETTE_GPU_SOURCE_ROOT=str(S),PALETTE_GPU_EVIDENCE=str(E/'test-result.json'),PALETTE_BROWSER_RESOURCE_CONFIG='{"explicitTaskAccounting":"2048MiB physical runtime;1024MiB complete remote task disk"}',PYTHONDONTWRITEBYTECODE='1')
 assert str(R/'test/helpers/palette-browser-supervisor.py') in sys.argv
 spec=importlib.util.spec_from_file_location('accepted',R/'test/helpers/palette-browser-supervisor.py');sup=importlib.util.module_from_spec(spec);spec.loader.exec_module(sup)
-disk=sup.AllocatedDisk([H],transient_roots=[H/'tmp'],ceiling=1024*M)
+disk=sup.AllocatedDisk([H],transient_roots=[H/'tmp',E],ceiling=1024*M)
 future=(256+64+8+16+8)*M
 accounting=dict(samples=0,peakProjected=0,minFree=None,minMem=None)
 def check():
@@ -30,7 +33,7 @@ def check():
  return None
 def execute(argv,name):
  assert check() is None
- os.chdir(R);rec=sup.supervise(argv,rss_limit=2048*M,cpu_limit=90,wall_limit=120,output_limit=2*M,check=check);out=rec.pop('output');(O/(name+'.log')).write_bytes(out);rec.update(argv=argv,limits=dict(physicalRSS=2048*M,CPU=90,wall=120,file=24*M,output=2*M,NodeHeapMiB=512,GitDATAChildOnly=512*M),accounting=accounting.copy());save(name+'-receipt.json',rec)
+ os.chdir(R);rec=sup.supervise(argv,rss_limit=2048*M,cpu_limit=90,wall_limit=120,output_limit=2*M,check=check);out=rec.pop('output');(E/(name+'.log')).write_bytes(out);rec.update(argv=argv,limits=dict(physicalRSS=2048*M,CPU=90,wall=120,file=24*M,output=2*M,NodeHeapMiB=512,GitDATAChildOnly=512*M),accounting=accounting.copy());save(name+'-receipt.json',rec)
  return rec,out
 try:
  save('integrity-before.json',integrity())
@@ -49,7 +52,7 @@ try:
  assert datetime.datetime.now(datetime.timezone.utc)<datetime.datetime.fromisoformat('2026-10-26T22:35:00+00:00')
  save('invocation-start.json',dict(at=datetime.datetime.now(datetime.timezone.utc).isoformat(),soleInvocation=True,integrity=integrity(),envSHA256=hashlib.sha256(json.dumps(dict(os.environ),sort_keys=True).encode()).hexdigest()))
  rec,out=execute([NODE,'--max-old-space-size=512',str(R/'test/test-d3dim-palette-gpu-web.js')],'test')
- j=json.loads((O/'test-result.json').read_text()) if (O/'test-result.json').exists() else {}
+ j=json.loads((E/'test-result.json').read_text()) if (E/'test-result.json').exists() else {}
  assert j.get('wasmSha256')==pins['moduleSHA256'],j.get('wasmSha256')
  success=rec['exit']==0 and rec['stopReason'] is None and rec['cleanupComplete'] and j.get('stage')=='passed' and len(j.get('results',[]))==2
  if success:
@@ -58,5 +61,25 @@ try:
 except BaseException as error:
  save('failure.json',dict(error=repr(error),at=datetime.datetime.now(datetime.timezone.utc).isoformat()));raise
 finally:
- save('integrity-after.json',integrity());save('remote-final-accounting.json',dict(completeBytes=alloc(H),projection=alloc(H)+future,allocation=1024*M,accounting=accounting,boxLeftRunning=True,expiry='2026-10-26T23:02:04.169Z',shutdownOwner='coordinator'))
-print(json.dumps(json.loads((O/'checkpoint.json').read_text())))
+ # An integrity failure must not skip final accounting, or claim known bytes.
+ # Preserve the primary exception while recording both independent outcomes.
+ active=sys.exc_info()[0] is not None;final_error=None
+ try:save('integrity-after.json',integrity())
+ except BaseException as error:
+  final_error=error;save('integrity-after.json',dict(verified=False,error=repr(error)))
+ final=dict(completeBytes=None,projection=None,allocation=1024*M,accounting=accounting,accountingComplete=False,boxLeftRunning=True,expiry='2026-10-26T23:02:04.169Z',shutdownOwner='coordinator')
+ try:
+  assert check() is None
+  # Include the receipt itself, then resample its final replacement. All output
+  # blocks and atomic temporary files remain in the same bounded ledger.
+  save('remote-final-accounting.json',final)
+  for attempt in range(3):
+   measured=alloc(H);final.update(completeBytes=measured,projection=measured+future,accountingComplete=True)
+   save('remote-final-accounting.json',final);assert check() is None
+   if alloc(H)==measured:break
+  else:raise RuntimeError('final accounting receipt allocation did not stabilize')
+ except BaseException as error:
+  final_error=final_error or error
+  final.update(completeBytes=None,projection=None,accountingComplete=False,error=repr(error));save('remote-final-accounting.json',final)
+ if final_error is not None and not active:raise final_error
+print(json.dumps(json.loads((E/'checkpoint.json').read_text())))

@@ -27,7 +27,8 @@ def callback(root, source=None):
     nodes = [n for n in tree.body if
              isinstance(n, ast.FunctionDef) and n.name in ('alloc', 'check') or
              isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'disk' for t in n.targets)]
-    ns = dict(H=root, P=P, M=M, sup=sup, shutil=shutil, future=352*M,
+    evidence=root/'output';evidence.mkdir(exist_ok=True)
+    ns = dict(H=root, E=evidence, P=P, M=M, sup=sup, shutil=shutil, future=352*M,
               accounting=dict(samples=0, peakProjected=0, minFree=None, minMem=None))
     exec(compile(ast.Module(body=nodes, type_ignores=[]), str(WRAPPER), 'exec'), ns)
     return ns
@@ -35,6 +36,10 @@ def callback(root, source=None):
 
 class Accounting(unittest.TestCase):
     def setUp(self):
+        # Remote headroom is a deterministic fixture, independent of the local
+        # source-test host. Explicit below-floor controls override this patch.
+        usage=mock.patch.object(shutil,'disk_usage',return_value=shutil._ntuple_diskusage(16*1024*M,0,16*1024*M))
+        usage.start();self.addCleanup(usage.stop)
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = P(self.temp.name)
@@ -81,7 +86,7 @@ class Accounting(unittest.TestCase):
                     self.assertIsNone(ns['check']())
                 self.assertEqual(len(fired), 1)
                 self.assertEqual(ns['disk'].receipt['retries'], 1)
-                expected = sum(p.lstat().st_blocks*512 for p in [self.root,self.tmp,self.required])
+                expected = sum(p.lstat().st_blocks*512 for p in [self.root,self.tmp,self.required,self.root/'output'])
                 self.assertEqual(ns['accounting']['peakProjected'], expected+352*M)
 
     def test_production_cap_and_headroom(self):
@@ -104,7 +109,7 @@ class Accounting(unittest.TestCase):
         self.assertLess(ns['accounting']['peakProjected'], self.required.stat().st_blocks*512+352*M)
 
     def test_omitted_transient_wiring_rejects_same_reproducer(self):
-        source = WRAPPER.read_text().replace('transient_roots=[H/\'tmp\']', 'transient_roots=[]')
+        source = WRAPPER.read_text().replace('transient_roots=[H/\'tmp\',E]', 'transient_roots=[]')
         v = self.victim('file')
         ns = callback(self.root, source)
         patch, fired = self.disappearing(v)

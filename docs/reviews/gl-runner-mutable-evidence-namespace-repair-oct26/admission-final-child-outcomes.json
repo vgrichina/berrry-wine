@@ -1,0 +1,50 @@
+{
+  "at": 1793058407.3478396,
+  "charges": {
+    "/tmp/gl-runner-mutable-evidence-namespace-repair-oct26": 6418432,
+    "launcher": 258048,
+    "session": 860160,
+    "positiveWALOnce": 0
+  },
+  "projection": 41091072,
+  "allocation": 67108864,
+  "futureGitPublication": 8388608,
+  "futureEventsSession": 16777216,
+  "reserve": 8388608,
+  "peers": {
+    "alien-controller-terminal-failfast-repair-oct26": 0,
+    "enigma-reconciled-canonical-boat-build-oct26": 75632640
+  },
+  "projectedFree": 3066056704,
+  "floor": 2982150144,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 30203904
+    },
+    {
+      "pid": 752162,
+      "rss": 398467072
+    },
+    {
+      "pid": 1789179,
+      "rss": 57384960
+    },
+    {
+      "pid": 3328536,
+      "rss": 190480384
+    },
+    {
+      "pid": 3331326,
+      "rss": 194609152
+    },
+    {
+      "pid": 3336944,
+      "rss": 191741952
+    }
+  ],
+  "clientGrowthOnce": 402653184,
+  "memAvailable": 3864612864,
+  "required": 1476395008,
+  "pass": true
+}

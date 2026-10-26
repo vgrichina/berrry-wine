@@ -11,7 +11,7 @@ t=importlib.util.module_from_spec(spec);spec.loader.exec_module(t)
 original=t.WRAPPER.read_text();read=P.read_text
 cases=[
  ('accounting callback omitted','used=alloc(H);','used=0;','test_production_discovery_races'),
- ('transient root omitted',"transient_roots=[H/'tmp']",'transient_roots=[]','test_production_discovery_races'),
+ ('transient root omitted',"transient_roots=[H/'tmp',E]",'transient_roots=[]','test_production_discovery_races'),
  ('disk cap omitted','if used+future>1024*M:', 'if False:','test_production_cap_and_headroom'),
  ('headroom omitted','if free<2982150144:', 'if False:','test_production_cap_and_headroom')]
 results=[]
