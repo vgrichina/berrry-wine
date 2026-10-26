@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_wcpr7i3yjel5",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:33.933Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:33.789Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7189491712, \"free\": 49187667968, \"allocated\": 7729152, \"passed\": true}\n{\"label\": \"cheap-1792989753872086438\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

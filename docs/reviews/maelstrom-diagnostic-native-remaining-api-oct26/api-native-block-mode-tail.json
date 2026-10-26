@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_a50by5fewxro",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:22.906Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 14,
+  "startedAt": "2026-10-26T04:42:22.759Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7233736704, \"free\": 49189023744, \"allocated\": 6496256, \"passed\": true}\n{\"label\": \"native-1792989742831397106\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

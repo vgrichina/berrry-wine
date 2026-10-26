@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_mwttt5i415zr",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:43:37.896Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-26T04:43:37.666Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7262195712, \"free\": 49187500032, \"allocated\": 7606272, \"passed\": true}\n{\"label\": \"native-1792989817780368997\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

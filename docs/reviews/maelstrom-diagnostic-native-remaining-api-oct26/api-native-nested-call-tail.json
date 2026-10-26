@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_uh8eltdtuxtw",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:30.128Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T04:42:29.977Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7179120640, \"free\": 49188208640, \"allocated\": 7233536, \"passed\": true}\n{\"label\": \"native-1792989750058676260\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

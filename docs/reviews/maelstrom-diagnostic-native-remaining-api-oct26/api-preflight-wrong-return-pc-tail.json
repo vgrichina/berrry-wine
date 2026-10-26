@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_y7agxmzrfglu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:19.043Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:18.909Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7217065984, \"free\": 49189371904, \"allocated\": 6180864, \"passed\": true}\n{\"label\": \"cheap-1792989738990020113\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

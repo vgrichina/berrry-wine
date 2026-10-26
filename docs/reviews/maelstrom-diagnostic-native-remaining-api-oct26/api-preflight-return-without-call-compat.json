@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_h51qqgaijyrl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:36.497Z",
+  "launcherFailed": false,
+  "noticedMs": 25,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 25,
+  "startedAt": "2026-10-26T04:42:36.310Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7225724928, \"free\": 49187270656, \"allocated\": 8089600, \"passed\": true}\n{\"label\": \"cheap-1792989756421538223\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

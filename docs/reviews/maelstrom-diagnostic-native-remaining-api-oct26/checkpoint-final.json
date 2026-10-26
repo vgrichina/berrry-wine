@@ -1,0 +1,42 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "moduleHashes": [
+    {
+      "file": "errno-latch.wasm",
+      "sha256": "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1"
+    },
+    {
+      "file": "errno-latch.compat.wasm",
+      "sha256": "85eaf35e803a55b18992ac6a717ba0fe937e92aa65e71d40f675a5ccec6fa3ab"
+    }
+  ],
+  "fixtureSHA256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2",
+  "driverSHA256": "5e017d86566fc64d7e2f4e0357cfb4e8e54e53152995a6c0317f2a5da9d98b3f",
+  "result": "PARTIAL_NATIVE_QUALIFICATION_FIRST_SUPPLEMENTAL_FIXTURE_FAILURE",
+  "groups": {
+    "canonicalNew39": "PASS",
+    "tailErrno4": "REUSED PASS",
+    "compiledReason4BothBackends": "PASS",
+    "supplementalCode16": "FIXTURE FAIL; STOP"
+  },
+  "remaining": [
+    "compiled completion reasons1/2/3: first supplemental native fixture failed because ready-select route did not invoke the intended socket_event callback; no actual mode transition",
+    "compiled completion reasons5/6/7/8/9: no public private-state setters or direct completion-function export; no native coverage established",
+    "cap exhaustion",
+    "stale token/internal-global mutation after completion",
+    "owner resumption after foreign-thread/regbank hook",
+    "disabled diagnostic getter call inertness: canonical OFF lane intentionally reads zero diagnostic getters; no new call-inertness test",
+    "full original _getptd implementation",
+    "loader-proven original CRT mapping",
+    "original errno/caller/gameplay",
+    "full-memory equivalence outside initialized fixture spans"
+  ],
+  "evidence": [
+    "result.json",
+    "remote-evidence.json.gz",
+    "remote-evidence-manifest.json",
+    "first-failure.json",
+    "earliest-native-failure-excerpt.json"
+  ],
+  "at": 1792989989.396768
+}

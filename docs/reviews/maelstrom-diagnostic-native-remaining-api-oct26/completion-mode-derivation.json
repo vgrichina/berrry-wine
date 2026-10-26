@@ -1,0 +1,13 @@
+{
+  "at": 1792989853.1451287,
+  "baseFixtureSHA256": "ddb0d889541d32dddd881b168d6a69a85610050c1d56679765cec1c1531c65e2",
+  "derivedFixtureSHA256": "6384adbc6e615d2b6a3a952992b7024e424915aa7f56630d34b861f190525ac7",
+  "derivationSHA256": "6c7347e5f463d3075e35c7f03a3fdcbe2016caf22240839a66d4b451e6f80d62",
+  "scope": "only real select socket_event host callback uses existing public mode exports before compiled completion observer; no module/source/ABI/private-global mutation",
+  "cases": [
+    "completion-code16",
+    "completion-block",
+    "completion-uop"
+  ],
+  "preserved": "exact base fixture remains unchanged; disjoint initialized spans/counters and native production dispatch"
+}

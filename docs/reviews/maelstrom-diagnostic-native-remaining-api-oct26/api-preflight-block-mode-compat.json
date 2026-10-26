@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_aaiovgfak3gm",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:37.370Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-26T04:42:37.194Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7256723456, \"free\": 49187139584, \"allocated\": 8216576, \"passed\": true}\n{\"label\": \"cheap-1792989757294519829\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

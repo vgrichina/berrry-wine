@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jsctzcvcytev",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:21.855Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T04:42:21.717Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7222341632, \"free\": 49189146624, \"allocated\": 6385664, \"passed\": true}\n{\"label\": \"cheap-1792989741800263452\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

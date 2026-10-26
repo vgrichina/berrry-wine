@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_noecoh2rb5ny",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:22.644Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:22.524Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7222161408, \"free\": 49189036032, \"allocated\": 6463488, \"passed\": true}\n{\"label\": \"cheap-1792989742596156608\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

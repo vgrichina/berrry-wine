@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ccblbde0mlgj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:44:39.664Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T04:44:39.615Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"native-1792989869197225539.json\": \"{\\n  \\\"argv\\\": [\\n    \\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\",\\n    \\\"--max-old-space-size=512\\\",\\n    \\\"--require\\\",\\n    \\\"/home/user/maelstrom-diagnostic-native-remaining-api-oct26/ops/native-module-bound.cjs\\\",\\n    \\\"--require\\\",\\n    \\\"/home/user/maelstrom-diagnostic-native-remaining-api-oct26/ops/anchor-paths.cjs\\\",\\n    \\\"/home/user/maelstrom-diagnostic-native-remaining-api-oct26/repo/test/maelstrom-diagnostic-completion-modes-native.cjs\\\",\\n    \\\"completion-code16\\\"\\n  ],\\n  \\\"cwd\\\": \\\"/home/user/maelstrom-diagnostic-native-remaining-api-oct26/repo\\\",\\n  \\\"pid\\\": 43945,\\n  \\\"exit\\\": 1,\\n  \\\"reason\\\": null,\\n  \\\"elapsed\\\": 0.08680159499999718,\\n  \\\"streamBytes\\\": {\\n    \\\"stdout\\\": 0,\\n    \\\"stderr\\\": 1024\\n  },\\n  \\\"aggregateLogMax\\\": 131072,\\n  \\\"retained\\\": 1024,\\n  \\\"fileMax\\\": 25165824,\\n  \\\"cpuSeconds\\\": 90,\\n  \\\"wallSeconds\\\": 60,\\n  \\\"termThenKillSeconds\\\": 5,\\n  \\\"subreaper\\\": true,\\n  \\\"reaped\\\": true,\\n  \\\"remainingGroup\\\": [],\\n  \\\"maxChildRSSBytes\\\": 71315456\\n}\\n\", \"native-1792989869197225539.stderr\": \"node:assert:152\\n  throw new AssertionError(obj);\\n  ^\\n\\nAssertionError [ERR_ASSERTION]: one real select host-event transition\\n\\n0 !== 1\\n\\n    at lane (/home/user/maelstrom-diagnostic-native-remaining-api-oct26/repo/test/maelstrom-diagnostic-completion-modes-native.cjs:131:10)\\n    at Object.<anonymous> (/home/user/maelstrom-diagnostic-native-remaining-api-oct26/repo/test/maelstrom-diagnostic-completion-modes-native.cjs:182:32)\\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\\n    at node:internal/main/run_main_module:33:47 {\\n  generatedMessage: false,\\n  code: 'ERR_ASSERTION',\\n  actual: 0,\\n  expected: 1,\\n  operator: 'strictEqual',\\n  diff: 'simple'\\n}\\n\\nNode.js v24.22.1\\n\", \"native-1792989869197225539.stdout\": \"\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

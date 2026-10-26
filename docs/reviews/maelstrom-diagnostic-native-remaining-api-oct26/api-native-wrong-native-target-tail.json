@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_bnlyi2hyiny7",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:18.466Z",
+  "launcherFailed": false,
+  "noticedMs": 11,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 12,
+  "startedAt": "2026-10-26T04:42:18.314Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7208456192, \"free\": 49189429248, \"allocated\": 6144000, \"passed\": true}\n{\"label\": \"native-1792989738393446487\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

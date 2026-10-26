@@ -1,0 +1,21 @@
+[
+  {
+    "at": 1792989618.7576594,
+    "stage": "prestage admission",
+    "observedPeak": 90949762,
+    "limit": 67108864,
+    "reason": "new long symlink object views consumed approximately35MiB beyond precheckout projection",
+    "resolution": "reuse readonly donor flattened dependency-first leaf views in place; only new donor-object leaf view retained",
+    "nativeAttempts": 0,
+    "remoteStaging": 0
+  },
+  {
+    "at": 1792989813.3482904,
+    "stage": "checkpoint unsafe-caller-compat after native PASS",
+    "commandId": "cmd_ble9po5sfxrz",
+    "reason": "aggregate capture gate2168421 exceeds2097152 because full file inventories repeated in admission receipts",
+    "resolution": "lossless gzip prior admission receipts; v2 receipt compression before remaining native groups; no acceptance retry",
+    "nativeCase": "PASS",
+    "preservedBeforeReductionArchiveSHA256": "39d165ea6fd3f1af49de1ff256c6b6f911118d7a943fd18bacfa7bdda4a5c5c1"
+  }
+]

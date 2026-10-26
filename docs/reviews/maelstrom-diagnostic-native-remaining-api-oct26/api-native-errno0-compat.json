@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_4lcqek2xiy80",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:14.975Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:14.827Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7178293248, \"free\": 49189691392, \"allocated\": 5914624, \"passed\": true}\n{\"label\": \"native-1792989734901290891\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

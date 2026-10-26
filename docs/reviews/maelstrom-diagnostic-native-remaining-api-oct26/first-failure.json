@@ -1,0 +1,14 @@
+{
+  "case": "completion-code16-tail",
+  "error": "API failure native-completion-code16-tail: {\"commandId\": \"cmd_su0q8n2mywed\", \"cwd\": \".\", \"exitCode\": 1, \"finishedAt\": \"2026-10-26T04:44:29.298Z\", \"launcherFailed\": false, \"noticedMs\": 22, \"oomKilled\": false, \"signal\": null, \"startMs\": 22, \"startedAt\": \"2026-10-26T04:44:29.061Z\", \"stderr\": \"\", \"stderrTruncated\": false, \"stdout\": \"{\\\"memAvailable\\\": 7286751232, \\\"free\\\": 49187282944, \\\"allocated\\\": 7733248, \\\"passed\\\": true}\\n{\\\"label\\\": \\\"native-1792989869197225539\\\", \\\"exit\\\": 1}\\n\", \"stdoutTruncated\": false, \"success\": false, \"timedOut\": false}",
+  "completed": [],
+  "remaining": [
+    "completion-code16-tail",
+    "completion-block-tail",
+    "completion-uop-tail",
+    "completion-code16-compat",
+    "completion-block-compat",
+    "completion-uop-compat"
+  ],
+  "at": 1792989869.7906563
+}

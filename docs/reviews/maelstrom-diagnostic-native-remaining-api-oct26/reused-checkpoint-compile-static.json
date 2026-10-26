@@ -1,0 +1,21 @@
+{
+  "candidate": "44e344fdb26daab9a07210656597902ba27cb5f7",
+  "group": "compile-and-static-ABI",
+  "status": "PASS",
+  "moduleHashes": [
+    "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1",
+    "85eaf35e803a55b18992ac6a717ba0fe937e92aa65e71d40f675a5ccec6fa3ab"
+  ],
+  "files": {
+    "build-inputs.json": "250d48c7b805eca62afd588461e5b759e4dc1a11ca84285f34fb249326e2626c",
+    "build-outputs.json": "9d016f773cf0957caf1246bf7ff43cd6ee7b6a658c38b34f2a1a0c39b343ff4a",
+    "static-abi.json": "66559b9365dcdd0fc89038b4830228f05f73415f18cd356a69f622a0b4d70f30",
+    "execution-identities.json": "f2d0d9ea439c82c6fda62b36e40803c7b53c0969384e74865ed5df70b60aeffd"
+  },
+  "remaining": [
+    "cheap native isolation/signature preflight",
+    "controlled native both modules",
+    "publication"
+  ],
+  "utc": 1792988823.1463192
+}

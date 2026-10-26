@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_u60xbnutfww4",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:38.234Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T04:42:38.066Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7261790208, \"free\": 49186992128, \"allocated\": 8347648, \"passed\": true}\n{\"label\": \"cheap-1792989758162778099\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

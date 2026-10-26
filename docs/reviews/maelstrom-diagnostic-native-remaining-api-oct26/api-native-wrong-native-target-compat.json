@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gi20a5fgo4vg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:33.403Z",
+  "launcherFailed": false,
+  "noticedMs": 12,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-26T04:42:33.248Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7225757696, \"free\": 49187741696, \"allocated\": 7663616, \"passed\": true}\n{\"label\": \"native-1792989753329951043\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

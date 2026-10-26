@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ygrzr8utlec1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:43:39.574Z",
+  "launcherFailed": false,
+  "noticedMs": 26,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 27,
+  "startedAt": "2026-10-26T04:43:39.225Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7268347904, \"free\": 49187450880, \"allocated\": 7659520, \"passed\": true}\n{\"label\": \"native-1792989819362417042\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

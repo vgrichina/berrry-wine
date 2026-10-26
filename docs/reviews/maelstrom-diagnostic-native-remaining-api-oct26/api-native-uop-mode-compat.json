@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_eeqjoiaavlks",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:43:34.089Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-26T04:43:33.857Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7246086144, \"free\": 49187708928, \"allocated\": 7438336, \"passed\": true}\n{\"label\": \"native-1792989813989778165\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

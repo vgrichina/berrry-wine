@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_gjbndavexdsg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:32.365Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-26T04:42:32.203Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7197835264, \"free\": 49187909632, \"allocated\": 7503872, \"passed\": true}\n{\"label\": \"cheap-1792989752296258208\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,25 @@
+{
+  "at": 1792989597.5414991,
+  "charges": {
+    "owned": 36644994,
+    "launcher": 225280,
+    "session": 647168,
+    "WALSHM": 25112576,
+    "positiveDB": 0,
+    "remoteWithFuture": 10485760,
+    "publicationFuture": 4194304,
+    "evidenceFuture": 1048576,
+    "sessionDBfuture": 4194304,
+    "reserve": 8388608,
+    "board": 8192
+  },
+  "peak": 90949762,
+  "cap": 67108864,
+  "free": 4622446592,
+  "projectedFree": 4531496830,
+  "diskFloor": 2982150144,
+  "memAvailable": 2651639808,
+  "minMem": 805306368,
+  "passed": false,
+  "standing": "readonly donors/installations in place; lstat counts link bytes, never their targets"
+}

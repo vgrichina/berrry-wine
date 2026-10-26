@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_sql7wyexu2ip",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:14.694Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:14.556Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7203790848, \"free\": 49189711872, \"allocated\": 5894144, \"passed\": true}\n{\"label\": \"cheap-1792989734640848258\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_dxgrlocwenmd",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:45:25.878Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:45:25.786Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1792989925.8406887, \"box\": \"bx_7qwjxps7\", \"state\": \"RUNNING inferred from successful APIexec\", \"expiry\": \"2026-10-26T06:06:24.385Z\", \"allocated\": 7761920, \"captureBytes\": 646239, \"captureLimit\": 2097152, \"ownHeavyRemaining\": [], \"supervisedProcesses\": 80, \"allReaped\": true, \"node\": {\"node\": \"v24.22.1\", \"v8\": \"13.6.233.17-node.58\"}, \"moduleHashes\": [{\"file\": \"errno-latch.wasm\", \"sha256\": \"aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1\"}, {\"file\": \"errno-latch.compat.wasm\", \"sha256\": \"85eaf35e803a55b18992ac6a717ba0fe937e92aa65e71d40f675a5ccec6fa3ab\"}], \"coordinatorOwnsShutdown\": true, \"otherProcessesSignalled\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

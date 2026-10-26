@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_il3wjugxovxt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:31.000Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:30.768Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7205117952, \"free\": 49188098048, \"allocated\": 7335936, \"passed\": true}\n{\"label\": \"native-1792989750882361530\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

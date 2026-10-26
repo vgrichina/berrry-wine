@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_nxnuuhx32wpx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:47:22.260Z",
+  "launcherFailed": false,
+  "noticedMs": 20,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 21,
+  "startedAt": "2026-10-26T04:47:22.090Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1792990042.255743, \"sealsPassed\": 15, \"memAvailable\": 7287296000, \"free\": 49187110912, \"projectedFree\": 49120002048, \"passed\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

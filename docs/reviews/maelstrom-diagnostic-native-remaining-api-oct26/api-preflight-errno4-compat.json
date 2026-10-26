@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_lhk76bbywt2t",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:15.561Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:15.425Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7190200320, \"free\": 49189654528, \"allocated\": 5947392, \"passed\": true}\n{\"label\": \"cheap-1792989735503094606\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

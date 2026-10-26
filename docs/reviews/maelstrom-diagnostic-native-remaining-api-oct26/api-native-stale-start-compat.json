@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cfmh5epp47vx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:38.514Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-26T04:42:38.328Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7272329216, \"free\": 49186930688, \"allocated\": 8409088, \"passed\": true}\n{\"label\": \"native-1792989758423506691\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

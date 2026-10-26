@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_tx6utmwnyo3c",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:32.623Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:32.456Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7212965888, \"free\": 49187860480, \"allocated\": 7553024, \"passed\": true}\n{\"label\": \"native-1792989752544392790\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

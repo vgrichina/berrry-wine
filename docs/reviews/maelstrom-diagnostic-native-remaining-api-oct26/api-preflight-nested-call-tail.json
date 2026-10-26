@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_827m8vwmmpan",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T04:42:29.879Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-26T04:42:29.755Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"memAvailable\": 7167365120, \"free\": 49188257792, \"allocated\": 7188480, \"passed\": true}\n{\"label\": \"cheap-1792989749827870206\", \"exit\": 0}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
