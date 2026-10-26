@@ -1,0 +1,65 @@
+✖ large app: string/object URLs follow literal mounted basename, without decoding (1.677324ms)
+✖ literal query/fragment guest names can themselves match persistence patterns (0.673573ms)
+✔ explicit paths own guest identity independently of URL suffixes (0.884748ms)
+✔ explicit loading declarations survive persisted URL aliases (0.18661ms)
+✔ Win16, optout, small app and unknown sizes preserve eager decisions (0.190728ms)
+✔ extension classification strips URL suffixes without changing guest identity (0.198291ms)
+✔ actual host loadFiles and filesystem normalization retain suffixes literally (11.79422ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 5
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 49.177684
+
+✖ failing tests:
+
+test at test/app-files-persist-url-policy-oct26.test.cjs:33:1
+✖ large app: string/object URLs follow literal mounted basename, without decoding (1.677324ms)
+  AssertionError [ERR_ASSERTION]: game/SAVE.DAT?v=1
+  + actual - expected
+
+  + undefined
+  - true
+
+      at TestContext.<anonymous> (/tmp/app-files-persist-url-policy-repair-oct26/repo/test/app-files-persist-url-policy-oct26.test.cjs:39:16)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: true,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/app-files-persist-url-policy-oct26.test.cjs:48:1
+✖ literal query/fragment guest names can themselves match persistence patterns (0.673573ms)
+  AssertionError [ERR_ASSERTION]: c:\save.dat?v=1
+  + actual - expected
+
+  + {
+  +   httpRange: true,
+  +   size: 1,
+  +   url: 'game/SAVE.DAT?v=1'
+  + }
+  - 'game/SAVE.DAT?v=1'
+
+      at TestContext.<anonymous> (/tmp/app-files-persist-url-policy-repair-oct26/repo/test/app-files-persist-url-policy-oct26.test.cjs:51:14)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: { url: 'game/SAVE.DAT?v=1', httpRange: true, size: 1 },
+    expected: 'game/SAVE.DAT?v=1',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

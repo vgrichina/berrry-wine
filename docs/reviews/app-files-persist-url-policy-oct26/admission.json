@@ -1,0 +1,64 @@
+{
+  "revision": "061461fb3e2bd088ccb6ec464ecbe958c83d46ca",
+  "files": [
+    {
+      "path": "lib/app-files.js",
+      "blob": "0bc29903a765046906c218529fe470a8ac221cdc",
+      "bytes": 16089
+    },
+    {
+      "path": "host.js",
+      "blob": "d6edb71e5d2846b8cfda1431e535752d06a751fc",
+      "bytes": 368727
+    },
+    {
+      "path": "lib/browser-shell.js",
+      "blob": "bed0a3aface8d9c7b2e95bd2f046081728b0a02e",
+      "bytes": 211893
+    },
+    {
+      "path": "lib/filesystem.js",
+      "blob": "5cbd60d4ad208898d05d8141607a51d155545790",
+      "bytes": 158109
+    },
+    {
+      "path": "test/test-app-files-policy.js",
+      "blob": "6bd53039d9ba2cab76033d5cfbf82428c4b742eb",
+      "bytes": 8206
+    },
+    {
+      "path": "test/test-app-files-feed.js",
+      "blob": "30c24bc409d2266b48fd82853908ad0f72c3d272",
+      "bytes": 3027
+    },
+    {
+      "path": "test/test-app-files-ini-set.js",
+      "blob": "c01e765a0ee303d744d1e193ac3b6e67086859dd",
+      "bytes": 3983
+    },
+    {
+      "path": "test/run.js",
+      "blob": "4b8461338f4bcddde6b5d5504991523b28d3ac35",
+      "bytes": 687226
+    },
+    {
+      "path": "index.html",
+      "blob": "674b22a39cc2e01749a2643b9c9aea740463d1e6",
+      "bytes": 182430
+    }
+  ],
+  "focusedBytes": 1639690,
+  "projectedTaskBytes": 58720256,
+  "reserveBytes": 8388608,
+  "hardBytes": 67108864,
+  "freeDisk": 4044279808,
+  "freeAfterGrowth": 3985559552,
+  "memAvailable": 2653253632,
+  "memAfterClientAllowanceAndHeap": 2099605504,
+  "node": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "standingDonor": "/tmp/file-bundle-bounded-read-accepted-integrate-oct26/repo",
+  "launcherStandingBytes": 52092,
+  "sharedWal": "charge positive task-attributable growth once; future allowance 12MiB inside projection",
+  "mountValidation": "N/A: offline source/test task; no mount argv or guest execution",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

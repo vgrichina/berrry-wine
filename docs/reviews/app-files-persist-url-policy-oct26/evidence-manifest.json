@@ -1,0 +1,58 @@
+{
+  "README.md": {
+    "bytes": 3133,
+    "sha256": "36898800484bf694922817f120cfa444f206ef6078eba164d524f7d6ddb35a7a"
+  },
+  "admission.json": {
+    "bytes": 2049,
+    "sha256": "6af02401c9c1954285b57a0f38529d3f9d63ca04f0a7679e3178ea44d12800eb"
+  },
+  "baseline-contract-final.txt": {
+    "bytes": 735,
+    "sha256": "52f2c37640283692406ec6f0d47084a718786bdbbb6e0f6976e3565253595162"
+  },
+  "baseline-proposed-expectation.txt": {
+    "bytes": 1949,
+    "sha256": "cdd785aa0e72b2d1310828e101a68ede8853c91813ef45103460246b829a9f48"
+  },
+  "candidate-contract-final.txt": {
+    "bytes": 737,
+    "sha256": "91e5eba4f72172a5217fce36925181b2ec7af388abb00813d3e6a3daf56a0dd9"
+  },
+  "checkpoint-tests.json": {
+    "bytes": 4091,
+    "sha256": "87cdb9ffa6366780106983153c02771298136fac565853c5f289984ecffdb1cb"
+  },
+  "dependency-recovery.json": {
+    "bytes": 219,
+    "sha256": "a36825f8f7e38028720b69d6354b92544e1241b286ed8ccd70a25a78e22a61ed"
+  },
+  "final-source-pins.json": {
+    "bytes": 1093,
+    "sha256": "c40ba8ffd067af1bea15638d2a57d6ba70fecdb30baf1b63f59be0dc0ef6d43e"
+  },
+  "incidents.json": {
+    "bytes": 955,
+    "sha256": "41a14c2fc541fde1ca48666b4f3a5f9f60c46b59a5d930c5a1e854f4f83c5ffc"
+  },
+  "mount-contract.txt": {
+    "bytes": 4248,
+    "sha256": "cfe99cf55453692316c1ed3df90221e105e4884aaf3a821bba8dd27ca7558c11"
+  },
+  "proposed-eager-expectation.cjs": {
+    "bytes": 574,
+    "sha256": "0fe053af68d85e56aa583044f72625dcd515175ea1bcbd186e17fa857b9f909b"
+  },
+  "reject-strip-suffix.txt": {
+    "bytes": 2653,
+    "sha256": "7c25b7800d26a4b37576c51378297a129497c33621564dfbcbfdbc88456a6050"
+  },
+  "test-app-files-ini-set-recovered.txt": {
+    "bytes": 144,
+    "sha256": "67b614c1d1380b96dc2d23c2ab096fa0dbdd8d7c073613b07474e92b951df5ed"
+  },
+  "test-app-files-policy.js.txt": {
+    "bytes": 118,
+    "sha256": "12ccfe6ffe562b2eb4d09d76e89c8d9ac50ddea37d63f7e6cdde78b1ce3b3aac"
+  }
+}

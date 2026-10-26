@@ -1,0 +1,81 @@
+
+061461fb3e2bd088ccb6ec464ecbe958c83d46ca host.js
+4144:     const loadOne = async (item) => {
+4145:       // Accept plain string (flat -> c:\basename), {url, vfsPath}, or
+4146:       // {url, vfsPaths} when one fetched file needs multiple Win32 aliases.
+4147:       const url = (typeof item === 'string') ? item : item.url;
+4148:       const explicit = (typeof item === 'object') ? item.vfsPath : null;
+4149:       const explicitPaths = (typeof item === 'object' && Array.isArray(item.vfsPaths)) ? item.vfsPaths : null;
+4150:       try {
+
+061461fb3e2bd088ccb6ec464ecbe958c83d46ca host.js
+4265:           : null;
+4266:         checkCancelled();
+4267:         const addFile = (rawPath) => {
+4268:           checkCancelled();
+4269:           let vfsPath = String(rawPath).toLowerCase().replace(/\//g, '\\');
+4270:           if (!/^[a-z]:/.test(vfsPath)) vfsPath = 'c:\\' + vfsPath.replace(/^\\+/, '');
+4271:           // Also register the drive root and every parent directory so CD
+4272:           // scans can chdir to D:\ and GetFileAttributes(dir) sees directories.
+4273:           vfs.ensureParentDirs(vfsPath);
+4274:           const name = String(rawPath).replace(/^.*[\\/]/, '');
+4275:           if (asset.provider) vfs.setProviderFile(vfsPath.slice(0, vfsPath.lastIndexOf('\\') + 1) + name, { provider: asset.provider });
+4276:           else vfs.files.set(vfsPath, { data, attrs: 0x20, decodedImage, name });
+4277:         };
+4278:         if (explicitPaths && explicitPaths.length) {
+4279:           for (const p of explicitPaths) addFile(p);
+4280:         } else if (explicit) {
+4281:           addFile(explicit);
+4282:         } else {
+4283:           addFile('c:\\' + url.replace(/^.*[\\\/]/, ''));
+4284:         }
+4285:         // A font an app ships was put in the Windows font directory by its
+
+061461fb3e2bd088ccb6ec464ecbe958c83d46ca lib/browser-shell.js
+3531:           if (window.appFiles && window.byteProvider && !eagerFilesParam) {
+3532:             const isWin16 = wine.hasGuestExport('is_win16') ? !!(await wine.callGuest('is_win16')) : false;
+3533:             const policy = window.appFiles.normalizeLazyFiles(app, app.files, {
+3534:               isWin16,
+3535:               synchronousFaultReads: !!wine.reservedPageFaults && !wine.guestWorker,
+3536:             });
+3537:             files = policy.files;
+3538:             window.__waLoadPolicy = { app: sel, ...policy.summary };
+3539:             log.textContent += `File policy: ${policy.summary.policy}; ${policy.summary.eagerFiles} eager ` +
+
+061461fb3e2bd088ccb6ec464ecbe958c83d46ca lib/browser-shell.js
+3562:           const verifiedObjectUrls = [];
+3563:           try {
+3564:             const mountFiles = app.localManifestIntegrity ? files.map(file => {
+3565:               const url = URL.createObjectURL(new Blob([file.bytes]));
+3566:               verifiedObjectUrls.push(url);
+3567:               return { ...file, url };
+3568:             }) : files;
+3569:             await wine.loadFiles(mountFiles, {
+3570:               required: !!app.requiredFiles,
+3571:               concurrency: app.fileConcurrency || 6,
+
+061461fb3e2bd088ccb6ec464ecbe958c83d46ca lib/filesystem.js
+332:   _normPath(p) {
+333:     let n = p.toLowerCase().replace(/\//g, '\\');
+334:     // Collapse . and .. components, skip empty parts (from double backslashes)
+335:     const parts = n.split('\\');
+336:     const out = [];
+337:     for (let i = 0; i < parts.length; i++) {
+338:       const part = parts[i];
+339:       if (part === '' && i > 0) continue; // skip empty parts (but keep drive root)
+340:       if (part === '.') continue;
+341:       if (part === '..') {
+342:         // Win32 clamps parent traversal at a drive root. Keeping the `..`
+343:         // here turns C:\..\Maps into a literal, unreachable directory; UE1
+344:         // uses that spelling while its executable lives conceptually in
+345:         // C:\System, and an ad-hoc root-mounted executable must still discover
+346:         // the sibling asset directory.
+347:         if (out.length > 1) out.pop();
+348:         continue;
+349:       }
+350:       out.push(part);
+351:     }
+352:     n = out.join('\\');
+353:     if (n.length > 3 && n.endsWith('\\')) n = n.slice(0, -1);
+354:     return n;
+355:   }

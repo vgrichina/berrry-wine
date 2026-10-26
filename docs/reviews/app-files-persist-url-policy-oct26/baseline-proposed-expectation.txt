@@ -1,0 +1,56 @@
+✖ proposed eager expectation ?v=1 (1.031735ms)
+✖ proposed eager expectation #fragment (0.16021ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 35.131913
+
+✖ failing tests:
+
+test at ../ops/proposed-eager-expectation.cjs:5:45
+✖ proposed eager expectation ?v=1 (1.031735ms)
+  AssertionError [ERR_ASSERTION]: proposed suffix-stripping expectation conflicts with literal host mount
+  + actual - expected
+
+  + true
+  - undefined
+
+      at TestContext.<anonymous> (/tmp/app-files-persist-url-policy-repair-oct26/ops/proposed-eager-expectation.cjs:8:8)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.start (node:internal/test_runner/test:1191:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:385:17) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at ../ops/proposed-eager-expectation.cjs:5:45
+✖ proposed eager expectation #fragment (0.16021ms)
+  AssertionError [ERR_ASSERTION]: proposed suffix-stripping expectation conflicts with literal host mount
+  + actual - expected
+
+  + true
+  - undefined
+
+      at TestContext.<anonymous> (/tmp/app-files-persist-url-policy-repair-oct26/ops/proposed-eager-expectation.cjs:8:8)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1325:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:911:18)
+      at Test.postRun (node:internal/test_runner/test:1465:19)
+      at Test.run (node:internal/test_runner/test:1390:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:385:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: true,
+    expected: undefined,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

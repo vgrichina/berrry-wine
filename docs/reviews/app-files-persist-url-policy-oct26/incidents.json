@@ -1,0 +1,20 @@
+[
+  {
+    "incident": "initial sparse working donor lacked app-files.js",
+    "resolution": "read exact immutable Git blob; focused sparse checkout completed"
+  },
+  {
+    "incident": "first fixture browser-call regex named files instead of actual mountFiles",
+    "evidence": "first-harness-failure.txt",
+    "resolution": "corrected fixture to actual source, retained first failure; no production behavior changed"
+  },
+  {
+    "incident": "related INI suite needed missing lib/apps.js",
+    "evidence": "test-app-files-ini-set.js.txt",
+    "resolution": "recovered pinned lib/apps.js through focused sparse checkout; unchanged test passed"
+  },
+  {
+    "incident": "publication preflight found raw Node error-log whitespace and missing local Git identity",
+    "resolution": "keep raw ops logs; normalize whitespace only in committed copies, refresh evidence manifest; set isolated repository identity from existing project identity before retry"
+  }
+]

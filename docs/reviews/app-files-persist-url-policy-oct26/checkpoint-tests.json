@@ -1,0 +1,139 @@
+[
+  {
+    "group": "baseline-contract",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "--test-concurrency=1",
+      "test/app-files-persist-url-policy-oct26.test.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "ae942e5bdfc8ef21bbfcf0efc85b28673dc75f1ecd86c20c73bff8e339d8906d",
+    "sourceSha256": "ee7411a5522b6a84dd2f67f8711fa8ba0ac13c20702bbf6aa7df0e8390bf07f8"
+  },
+  {
+    "group": "baseline-proposed-expectation",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "/tmp/app-files-persist-url-policy-repair-oct26/ops/proposed-eager-expectation.cjs"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "fixtureSha256": "ae942e5bdfc8ef21bbfcf0efc85b28673dc75f1ecd86c20c73bff8e339d8906d",
+    "sourceSha256": "ee7411a5522b6a84dd2f67f8711fa8ba0ac13c20702bbf6aa7df0e8390bf07f8"
+  },
+  {
+    "group": "candidate-contract",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "--test-concurrency=1",
+      "test/app-files-persist-url-policy-oct26.test.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "ae942e5bdfc8ef21bbfcf0efc85b28673dc75f1ecd86c20c73bff8e339d8906d",
+    "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+  },
+  {
+    "group": "test-app-files-policy.js",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "test/test-app-files-policy.js"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "ae942e5bdfc8ef21bbfcf0efc85b28673dc75f1ecd86c20c73bff8e339d8906d",
+    "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+  },
+  {
+    "group": "test-app-files-ini-set.js",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "test/test-app-files-ini-set.js"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 0,
+    "fixtureSha256": "ae942e5bdfc8ef21bbfcf0efc85b28673dc75f1ecd86c20c73bff8e339d8906d",
+    "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+  },
+  {
+    "group": "baseline-contract-final",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "--test-concurrency=1",
+      "test/app-files-persist-url-policy-oct26.test.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+    "sourceSha256": "ee7411a5522b6a84dd2f67f8711fa8ba0ac13c20702bbf6aa7df0e8390bf07f8"
+  },
+  {
+    "group": "candidate-contract-final",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "--test-concurrency=1",
+      "test/app-files-persist-url-policy-oct26.test.cjs"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+    "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+  },
+  {
+    "group": "test-app-files-ini-set-recovered",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "test/test-app-files-ini-set.js"
+    ],
+    "exitCode": 0,
+    "expectedExitCode": 0,
+    "fixtureSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+    "sourceSha256": "b360f892416309bc0f492ff77da5f939ee93af0c53585a7629c035eb8b7ecfc3"
+  },
+  {
+    "group": "reject-strip-suffix",
+    "command": [
+      "timeout",
+      "30s",
+      "node",
+      "--max-old-space-size=16",
+      "--test",
+      "--test-concurrency=1",
+      "test/app-files-persist-url-policy-oct26.test.cjs"
+    ],
+    "exitCode": 1,
+    "expectedExitCode": 1,
+    "fixtureSha256": "05cdb7f21a24110b48f2b5c7ebe3359403c713606195ad1aec378baf8d53cd54",
+    "sourceSha256": "771baac7fa11bc10d8a02cf8f023ee0fc81f5af7ee4246672f541f9ad7f12159"
+  }
+]

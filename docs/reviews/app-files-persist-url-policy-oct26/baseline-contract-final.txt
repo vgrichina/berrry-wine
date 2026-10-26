@@ -1,0 +1,15 @@
+✔ large app: string/object URLs follow literal mounted basename, without decoding (1.103789ms)
+✔ literal query/fragment guest names can themselves match persistence patterns (1.373516ms)
+✔ explicit paths own guest identity independently of URL suffixes (0.33086ms)
+✔ explicit loading declarations survive persisted URL aliases (0.145372ms)
+✔ Win16, optout, small app and unknown sizes preserve eager decisions (0.195948ms)
+✔ extension classification strips URL suffixes without changing guest identity (0.088334ms)
+✔ actual host loadFiles and filesystem normalization retain suffixes literally (8.134351ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 43.283164
