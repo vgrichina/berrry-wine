@@ -1,0 +1,11 @@
+{
+  "receiptPath": "/tmp/maelstrom-retained-native-independent-closeout-oct26/ops/final-receipt.json",
+  "receiptSHA256": "973296aea5e87d535fd82f88a4b90f36c9d85e7a432aacd03b18726471fae1a9",
+  "receiptBytes": 2016,
+  "evidenceMain": "62b15e94e8898bc5d855392cf7ff639229177e7d",
+  "module": "98e136b5e61a0b731e3ecc84fa17eafe1a91fa2a86ba1a4451697abb15c89ad4",
+  "reusedBuilds": 2,
+  "reusedNativeGroups": 30,
+  "reusedOfflineControls": 119,
+  "replayed": 0
+}

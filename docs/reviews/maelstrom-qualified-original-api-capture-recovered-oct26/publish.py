@@ -4,8 +4,10 @@ stage=sys.argv[1]
 account('publication-'+stage,remoteProjection=28000000)
 dest=R/'docs/reviews'/H.name;dest.mkdir(parents=True,exist_ok=True)
 names=['pins-verified.json','checkout.json','schedule.json','incidents.json','closure.json','runner-diff.json','resource-closure-prepared.json','launch-config.json','closure-binding.json','import-closure-review.json','source-closure-correction.json']
+names += ['qualification-reuse.json']
 if stage=='final':
  names += ['final-receipt.json','observation.json','collected-manifest.json','checkpoint-guest-terminal.json','checkpoint-staged.json','transfer-roundtrip.json','remote-before-staging-api.json','remote-preguest-api.json','startup-api.json','mount-api.json','archive-transfer.json','resource-immediate-preguest.json']
+if stage=='staged':names += ['checkpoint-staged.json','transfer-roundtrip.json','remote-before-staging-api.json','startup-api.json','mount-api.json','archive-transfer.json','resource-archive-transfer.json']
 for n in names:
  if (O/n).exists():shutil.copyfile(O/n,dest/n)
 for n in ['common.py','prepare.py','stage.py','supervise.py','remote-inventory.py','capture.py','collect.py','analyze.py','publish.py']:
@@ -17,6 +19,7 @@ if stage=='final' and (O/'collected').exists():
   if p.is_file():q=dest/'raw'/p.relative_to(O/'collected');q.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,q)
 report='Authentic Maelstrom capture using retained accepted guard module98e136b5, source55f9724 and evidence base62b15e94. Original-game acceptance remains false. '
 if stage=='final':report+=json.load(open(O/'final-receipt.json'))['summary']
+elif stage=='staged':report+='All remote input hashes, canonical48-file mount enumeration, chunked transfer roundtrip and exact Node startup pass. GuestAttempts0; one authentic attempt remains.'
 else:report+='Inputs verified; local closure prepared. No guest attempt yet. Shared box lock wait; no build/native/static replay.'
 (dest/'README.md').write_text(report+'\n\nRecipes and exact hashes are retained beside this note. No production repair or main integration. Box lifecycle belongs to coordinator.\n')
 git('add','--','docs/reviews/'+H.name)

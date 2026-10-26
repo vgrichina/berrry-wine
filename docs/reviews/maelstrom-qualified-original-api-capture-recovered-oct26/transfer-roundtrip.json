@@ -1,0 +1,18 @@
+{
+  "passChecks": true,
+  "write": {
+    "target": "/tmp/maelstrom-qualified-original-api-capture-recovered-oct26/ops/transfer-roundtrip.bin",
+    "bytes": 36096,
+    "sha256": "cc26be9b3c198e0ce621b952e54231196e8684bf5feb3b9e0e6d0c96d8d59aee",
+    "readback": "cmd_xhm3k1dqddie"
+  },
+  "readback": {
+    "first": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYX",
+    "middle": "RkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJj",
+    "last": "6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/",
+    "bytes": 36096,
+    "sha256": "cc26be9b3c198e0ce621b952e54231196e8684bf5feb3b9e0e6d0c96d8d59aee"
+  },
+  "chunkBytes": 18000,
+  "maxRequestBytes": 35000
+}

@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_znakb37icupg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-26T18:54:11.375Z",
+  "launcherFailed": false,
+  "noticedMs": 22,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 22,
+  "startedAt": "2026-10-26T18:54:11.293Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"at\": 1793040851.368507, \"node\": \"/home/user/.nvm/versions/node/v24.22.1/bin/node\", \"uid\": 1000, \"memAvailable\": 7256788992, \"nativePhysicalFloor\": 2684354560, \"prospectiveHelperTransient\": 134217728, \"remainingHeadroom\": 805306368, \"required\": 3623878656, \"liveRSSNotDoubleSubtracted\": true, \"aggregateLiveArenasBytes\": 0, \"aggregateLiveNodeHeapCeilingsBytes\": 0, \"helperRSS\": 294871040, \"ownedAllocated\": 49152, \"diskFree\": 48878231552, \"limits\": {\"RLIMIT_DATA\": [-1, -1], \"RLIMIT_AS\": [-1, -1], \"RLIMIT_CPU\": [-1, -1], \"RLIMIT_FSIZE\": [-1, -1]}, \"passChecks\": true, \"externalPositiveGrowthUpperBound\": 0, \"externalBaselineBytes\": 16384, \"standingExternalNotCharged\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

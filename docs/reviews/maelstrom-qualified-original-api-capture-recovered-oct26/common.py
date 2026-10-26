@@ -1,10 +1,11 @@
-import pathlib,subprocess,os,json,hashlib,time,resource,shlex,shutil
+import pathlib,subprocess,os,json,hashlib,time,resource,shlex,shutil,selectors,signal
 H=pathlib.Path('/tmp/maelstrom-qualified-original-api-capture-recovered-oct26');O=H/'ops';R=H/'repo'
 ROOT=pathlib.Path('/home/user/wine-assembly');C=pathlib.Path('/home/user/.codex');BOX='bx_xfbwmcty'
 SOURCE='55f9724ef127100c3bb54aebca73e5cda5472c5f';BASE='62b15e94e8898bc5d855392cf7ff639229177e7d'
 SSH='ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes'
 def sha(b):return hashlib.sha256(b).hexdigest()
-def save(n,j):(O/n).write_text(json.dumps(j,indent=2)+'\n')
+def save(n,j):
+ p=O/n;t=p.with_name(p.name+'.tmp');t.write_text(json.dumps(j,indent=2)+'\n');t.replace(p)
 def alloc(p):
  try:s=p.lstat();return max(s.st_size,s.st_blocks*512)
  except FileNotFoundError:return 0
@@ -12,14 +13,21 @@ def size(p):return alloc(p)+sum(alloc(x) for x in p.rglob('*')) if p.is_dir() an
 def glim():
  for k,v in [(resource.RLIMIT_DATA,536870912),(resource.RLIMIT_CPU,90),(resource.RLIMIT_FSIZE,25165824)]:resource.setrlimit(k,(v,v))
 def git(*args,cwd=R):
- p=subprocess.Popen(['git','-c','pack.threads=1','-c','pack.window=0','-c','pack.windowMemory=16m',*args],cwd=cwd,env=dict(os.environ,GIT_SSH_COMMAND=SSH),preexec_fn=glim,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+ p=subprocess.Popen(['git','-c','pack.threads=1','-c','pack.window=0','-c','pack.windowMemory=16m',*args],cwd=cwd,env=dict(os.environ,GIT_SSH_COMMAND=SSH),preexec_fn=glim,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
  # Internal blob transport is read in bounded chunks and is never dumped to model output.
- out=bytearray()
- while True:
-  b=p.stdout.read(8192)
-  if not b:break
-  out.extend(b);assert len(out)<=25165824
- err=p.stderr.read(8192);p.wait(timeout=120)
+ out=bytearray();err=bytearray();sel=selectors.DefaultSelector();start=time.monotonic()
+ for f,d in [(p.stdout,out),(p.stderr,err)]:os.set_blocking(f.fileno(),False);sel.register(f,selectors.EVENT_READ,d)
+ try:
+  while sel.get_map() or p.poll() is None:
+   assert time.monotonic()-start<120,'Git wall limit'
+   for key,_ in sel.select(.05):
+    b=os.read(key.fileobj.fileno(),8192)
+    if not b:sel.unregister(key.fileobj);continue
+    key.data.extend(b);assert len(key.data)<=25165824 if key.data is out else len(key.data)<=8192
+  p.wait(timeout=1)
+ finally:
+  if p.poll() is None:os.killpg(p.pid,signal.SIGKILL);p.wait()
+  sel.close()
  assert p.returncode==0,(args,p.returncode,err.decode(errors='replace'))
  return bytes(out)
 def remote(cmd,timeout=30):

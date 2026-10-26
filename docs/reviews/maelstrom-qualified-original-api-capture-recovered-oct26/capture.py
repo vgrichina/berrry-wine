@@ -10,7 +10,7 @@ while True:
 assert time.time()+90<1793041800
 save('guest-lock.json',dict(pid=os.getpid(),acquiredAt=time.time(),path=lock.name))
 j=remote('python3 '+shlex.quote(str(O/'remote-inventory.py')));save('remote-preguest-api.json',j);inv=json.loads(j['stdout']);assert inv['passChecks']
-account('immediate-preguest',remoteProjection=inv['ownedAllocated']+2097152)
+account('immediate-preguest',remoteProjection=inv['ownedAllocated']+inv.get('externalPositiveGrowthUpperBound',0)+2097152)
 # Revalidate unchanged small launcher inputs and accepted module immediately before scarce guest.
 s='''import pathlib,hashlib,json
 H=pathlib.Path(%r);m=json.load(open(H/'manifest.json'))

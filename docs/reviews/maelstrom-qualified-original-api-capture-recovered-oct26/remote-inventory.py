@@ -15,6 +15,13 @@ mem=int(next(l.split()[1] for l in open('/proc/meminfo') if l.startswith('MemAva
 required=2684354560+134217728+805306368
 row=dict(at=time.time(),node=shutil.which('node'),uid=os.getuid(),memAvailable=mem,nativePhysicalFloor=2684354560,prospectiveHelperTransient=134217728,remainingHeadroom=805306368,required=required,liveRSSNotDoubleSubtracted=True,processes=procs,aggregateLiveArenasBytes=sum(536870912 for p in procs if p['runner'] and p['arena512']),aggregateLiveNodeHeapCeilingsBytes=sum(536870912 for p in procs if p['heap512']),helperRSS=sum(p['rss'] for p in procs if p['helper']),ownedAllocated=sum(a(p) for p in [H,*H.rglob('*')]) if H.exists() else 0,diskFree=shutil.disk_usage('/tmp').free,limits={k:resource.getrlimit(getattr(resource,k)) for k in ['RLIMIT_DATA','RLIMIT_AS','RLIMIT_CPU','RLIMIT_FSIZE']})
 row['passChecks']=mem>=required and row['diskFree']-67108864>=2982150144 and row['uid']==1000 and row['aggregateLiveArenasBytes']==0
+# Foreground API calls normally keep no detached logs; measure positive external
+# process-artifact growth separately from the standing directory, conservatively.
+ext=pathlib.Path('/home/user/.ascii/processes');baseline=H/'ops/external-process-baseline.json'
+now={str(p):a(p) for p in ext.rglob('*')} if ext.exists() else {}
+if not baseline.exists():baseline.write_text(json.dumps(now))
+old=json.load(open(baseline));row['externalPositiveGrowthUpperBound']=sum(max(0,n-old.get(p,0)) for p,n in now.items())
+row['externalBaselineBytes']=sum(old.values());row['standingExternalNotCharged']=True
 # Detailed inventory stays in owned evidence, API emits a bounded summary.
 (H/'ops/remote-inventory-latest.json').write_text(json.dumps(row,indent=2))
 print(json.dumps({k:v for k,v in row.items() if k!='processes'}))
