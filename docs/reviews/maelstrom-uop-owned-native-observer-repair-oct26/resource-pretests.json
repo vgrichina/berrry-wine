@@ -1,0 +1,16 @@
+{
+  "taskBytes": 23371571,
+  "sessionBytes": 1359364,
+  "futureTestTemps": 2097152,
+  "futureEvidencePublication": 4194304,
+  "futureSessionDBWAL": 12582912,
+  "reserve": 8388608,
+  "memAvailable": 4225748992,
+  "workerClientAllowance": 536870912,
+  "fixtureMemory": 4194304,
+  "nodeHeap": 134217728,
+  "fixtureOnly": true,
+  "projected": 51993911,
+  "free": 4571783168,
+  "pass": true
+}

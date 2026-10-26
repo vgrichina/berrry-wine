@@ -1,0 +1,11 @@
+{"batch":36170,"status":2,"reason":0,"modes":0}
+PASS UOP fixture: unchanged observed completion scalars fail baseline reason3 and pass repair
+PASS UOP fixture: pinned native _errno CALL/ADD/RET executes, stores actual pointer, stops before CMP
+PASS UOP fixture: owner/token/stale/native-target/register/source/frame and mode switches reject
+PASS UOP fixture: nested relative CALL/RET permitted below frame, nested register CALL and early closure reject
+PASS UOP fixture: actual select end rejects foreign/wrong-token/reentrant completions
+PASS UOP fixture: unsupported mode and inactive getter paths remain inert
+PASS UOP fixture: completion guard order, immutable terminal record and non-UOP route persist
+PASS UOP fixture: real terminal Wasm snapshot seals before throwing/reentrant host callbacks
+PASS UOP fixture: generated compiler boundary executes exact unsup records before any guest decode
+{"pass":true,"groups":9,"wasmSHA256":"492df48125fed0a4d3d41fb7db587d4b317323b91d3cfdb17bf7c155cfdd09e2","wasmBytes":13532,"fixtureMemory":4194304,"qualification":"small compiled Wasm fixture; pinned _errno instructions + fixture _getptd; UOP-enabled threaded boundaries; full compiler/canonical/original UNPROVEN"}

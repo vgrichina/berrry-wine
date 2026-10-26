@@ -1,0 +1,17 @@
+[
+  {
+    "incident": "Discovery command overbroad JSON search/read exceeded capture target",
+    "effect": "Tool truncated output; no runtime or source mutation",
+    "correction": "Bound individual reads and omit inventory payloads"
+  },
+  {
+    "incident": "First retained non-UOP attempt used production tree instead of historical pre-transform pinned source",
+    "effect": "Source-pin rejection before execution",
+    "correction": "Reused accepted pinned-source donor with hash verification; retained focused own copies charged explicitly"
+  },
+  {
+    "incident": "Bounded supervisor path expression typo and tiny fixture unsupported inline memory/global exports",
+    "effect": "Python preexecution error / small fixture compiler rejection; no canonical compile or runtime",
+    "correction": "Corrected path expression and used supported top-level exports; passing logs retained"
+  }
+]

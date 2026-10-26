@@ -1,0 +1,13 @@
+{
+  "taskBytes": 11207234,
+  "externalSessionBytes": 1560583,
+  "futureTestsAndPublication": 6291456,
+  "futureSessionPositiveDBWAL": 12582912,
+  "reserve": 8388608,
+  "memAvailable": 3091881984,
+  "workerClientAllowance": 536870912,
+  "floor": 805306368,
+  "free": 4581879808,
+  "projected": 40030793,
+  "pass": true
+}

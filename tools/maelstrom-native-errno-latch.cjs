@@ -13,6 +13,9 @@ const PINS = Object.freeze({ ...select.PINS,
   'src/07c-block-exec.wat': '5c4b4227b656ddcb919825c5942ce109bf6ea21b95b739a7bf5173d032e55e95',
   'src/07d-uop-engine.wat': 'cda6aabb3efd8e8f123887315c71747566c166721564e6a01e090224a6cf5fb3',
 });
+const UOP_PINS = Object.freeze({
+  'src/07e-uop-compiler.wat': 'e8b1a88655d6cf6bf206ef30c5af0e1a710951cc20986d423202eb51784b7fd3',
+});
 const BINARY_PINS = Object.freeze({
   net: '46ccbb7e5982e2c15421af7dd4fa29b26841d9731c31a86cf9554c90be53af95',
   crt: '887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1',
@@ -108,32 +111,50 @@ const eq = (a, b) => `(i32.eq ${a} ${b})`, ne = (a, b) => `(i32.ne ${a} ${b})`;
 const any = xs => xs.reduce((a, b) => `(i32.or ${a} ${b})`, c(0));
 const reject = `${set('status', c(5))} (return)`;
 const check = x => `(if ${x} (then ${reject}))`;
-function storage(a, crtBase) {
+function storage(a, crtBase, uopNativeBoundaries = false) {
   const modeFlags = ['code16', 'block_exec_enabled', 'uop_enabled'].map(n => ne(`(global.get $${n})`, c(0)));
   const modeBits = any(modeFlags.map((flag, i) => `(i32.shl ${flag} ${c(i)})`));
   const completionChecks = [...modeFlags,
     ne(m('ret'), c(a.selectRet)), ne(m('phase'), c(3)), ne(m('completions'), c(1)),
     ne(m('fault'), c(0)), ne(m('active'), c(0)), ne(m('capped'), c(0))];
+  // Preserve the original rejection ABI for every ineligible completion.
+  // Only the exact otherwise-valid UOP=1 route can pass predicate 3.
+  if (uopNativeBoundaries) completionChecks[2] = `(i32.and ${modeFlags[2]} ${any([
+    ne('(global.get $uop_enabled)', c(1)), ...completionChecks.filter((_, i) => i !== 2)])})`;
   const completionReject = reason => [set('rejectReason', c(reason)), set('rejectModes', modeBits),
     set('rejectExpectedRet', c(a.selectRet)), set('rejectObservedRet', m('ret')),
     ...['phase', 'completions', 'fault', 'active', 'capped'].map(n =>
       set('reject' + n[0].toUpperCase() + n.slice(1), m(n))), reject].join('\n  ');
-  const modes = any(['code16', 'block_exec_enabled', 'uop_enabled'].map(n => `(i32.ne (global.get $${n}) ${c(0)})`));
+  const modes = any(['code16', 'block_exec_enabled'].map(n => ne(`(global.get $${n})`, c(0))).concat(
+    uopNativeBoundaries ? [ne('(global.get $uop_enabled)', g('uopMode'))] : [modeFlags[2]]));
+  const startModes = uopNativeBoundaries ? any([modeFlags[0], modeFlags[1],
+    '(i32.gt_u (global.get $uop_enabled) (i32.const 1))']) : modes;
+  const callPC = uopNativeBoundaries ? `(i32.and ${ne('(global.get $eip)', c(a.selectRet))}
+    ${any([ne(g('uopMode'), c(1)), ne('(global.get $eip)', c(a.successor - 2))])})` : ne('(global.get $eip)', c(a.selectRet));
+  const returnPC = uopNativeBoundaries ? `(i32.and ${ne('(local.get $source)', c(crtBase + a.crtTailRva))}
+    ${any([ne(g('uopMode'), c(1)), ne('(local.get $source)', c(crtBase + a.crtRetRva))])})` : ne('(local.get $source)', c(crtBase + a.crtTailRva));
   const owner = any([ne('(global.get $current_thread_id)', g('thread')), ne('(global.get $reg_base)', g('regs'))]);
   const stale = any([ne(m('token'), g('token')), ne(m('phase'), c(3)), ne(m('completions'), c(1)),
     ne(m('active'), c(0)), ne(m('fault'), c(0)), ne(m('capped'), c(0)),
     ne(m('pre'), g('pre')), ne(m('post'), g('post')), ne(m('ret'), g('selectRet')),
     ne(m('result'), g('result')), ne(m('thread'), g('thread')), ne(m('regs'), g('regs'))]);
   const wa = ga => `(call $mne_wa ${ga} ${c(4)})`;
-  return [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
+  return (uopNativeBoundaries ? `(global $mne_uopMode (mut i32) ${c(0)})\n` : '') +
+    [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
     [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(func (export "mne_${n}") (result i32) ${g(n)})`).join('\n') + `
 ;; Status: 0 inert, 1 awaiting select, 2 completed, 3 native call, 4 captured,
 ;; 5 rejected. No reset. Event 3 means completion -> authentic CALL -> RET.
 (func (export "mne_start")
   (if ${ne(g('status'), c(0))} (then (return)))
-  ${check(modes)}
+  ${check(startModes)}
   ${check(any([ne(m('started'), c(0)), ne(m('token'), c(0))]))}
+  ${uopNativeBoundaries ? set('uopMode', '(global.get $uop_enabled)') : ''}
   ${set('status', c(1))} (call $msc_begin_for_mne))
+${uopNativeBoundaries ? `(func $mne_uop_switch (param $on i32)
+  (if (i32.and (i32.and (i32.ge_u ${g('status')} ${c(1)})
+                        (i32.le_u ${g('status')} ${c(3)}))
+                ${ne('(local.get $on)', g('uopMode'))})
+    (then ${set('status', c(5))})))` : ''}
 ;; Direct-window only. NEVER call g2w/gl32: their miss/lazy paths can write,
 ;; raise or execute callbacks. Unsupported mapping is a rejection, not errno 0.
 (func $mne_wa (param $ga i32) (param $len i32) (result i32)
@@ -151,6 +172,7 @@ function storage(a, crtBase) {
   (local.get $wa))
 (func $mne_complete
   (if ${ne(g('status'), c(1))} (then (return)))
+  ${uopNativeBoundaries ? check(ne('(global.get $uop_enabled)', g('uopMode'))) : ''}
   ;; Scalar-only first rejection; status guard makes this immutable after status 5.
   ${completionChecks.map((predicate, i) => `(if ${predicate} (then ${completionReject(i + 1)}))`).join('\n  ')}
   ${['token', 'thread', 'regs', 'pre', 'post', 'parks', 'result'].map(n => set(n, m(n))).join('\n  ')}
@@ -162,7 +184,7 @@ function storage(a, crtBase) {
   ${check(ne(g('status'), c(2)))}
   ${check(any([modes, stale, ne('(local.get $ret)', c(a.successor)),
     ne('(local.get $target)', c(crtBase + a.crtEntryRva)), ne('(local.get $reg)', c(7)),
-    ne('(global.get $eip)', c(a.selectRet)), ne(reg(16), g('post')), ne(reg(20), g('result'))]))}
+    callPC, ne(reg(16), g('post')), ne(reg(20), g('result'))]))}
   ${set('nativeEntry', '(local.get $target)')} ${set('callBlock', '(global.get $eip)')}
   ${set('event', c(2))} ${set('status', c(3))})
 (func $mne_return (param $source i32)
@@ -174,7 +196,7 @@ function storage(a, crtBase) {
   ;; Returning to/releasing this frame without the owned native call rejects.
   (if (i32.lt_u ${reg(16)} ${g('post')}) (then (return)))
   ${check(any([ne(g('status'), c(3)), ne('(global.get $eip)', c(a.successor)),
-    ne('(local.get $source)', c(crtBase + a.crtTailRva)), ne(reg(16), g('post')),
+    returnPC, ne(reg(16), g('post')),
     ne(reg(20), g('result')), ne(reg(28), g('nativeEntry')),
     '(i32.gt_u ' + reg(16) + ' ' + c('0xfffffecf') + ')']))}
   (local.set $errno_wa ${wa(reg(0))})
@@ -191,8 +213,9 @@ function storage(a, crtBase) {
 }
 function transform(sources, options = {}) {
   if (options.enabled !== true) return sources; // Inert: no pins/options inspected.
+  const uopNativeBoundaries = options.uopNativeBoundaries === true;
   const input = {};
-  for (const [p, pin] of Object.entries(PINS)) {
+  for (const [p, pin] of Object.entries({ ...PINS, ...(uopNativeBoundaries ? UOP_PINS : {}) })) {
     // Read once: accessors/proxies may return a different value on every read.
     // Validate and compose precisely this captured, immutable string.
     const source = sources[p];
@@ -204,12 +227,28 @@ function transform(sources, options = {}) {
   if (!Number.isInteger(base) || base < 0x10000 || base % 0x1000 || base > 0x7fff0000)
     throw Error('explicit future native CRT loaded base required');
   const out = { ...input, ...select.transform(input, { enabled: true }) };
+  if (uopNativeBoundaries) {
+    // UOP CALL is push+jump; RET is guarded pop+jump. They bypass th_call_r /
+    // th_ret. Decline just these pinned instructions through uc_unsup BEFORE
+    // lowering, so existing side exits execute real threaded CALL/RET. UOP
+    // stays enabled; no flag, yield, register, stack or budget is modified.
+    // Unconditional within this opt-in generated module, including warmup:
+    // no previously compiled trace can conceal either observation boundary.
+    const anchor = '(i32.store (local.get $R) (local.get $addr))';
+    out['src/07e-uop-compiler.wat'] = once(input['src/07e-uop-compiler.wat'], anchor,
+      anchor + `\n    (if (i32.or (i32.eq (local.get $addr) ${c(a.successor - 2)})
+        (i32.eq (local.get $addr) ${c(base + a.crtRetRva)}))
+      (then (call $uc_unsup (local.get $R)) (return)))`);
+    const switchAnchor = '(global.set $uop_enabled (i32.ne (local.get $on) (i32.const 0)))';
+    out['src/07d-uop-engine.wat'] = once(input['src/07d-uop-engine.wat'], switchAnchor,
+      '(call $mne_uop_switch (i32.ne (local.get $on) (i32.const 0)))\n    ' + switchAnchor);
+  }
   let w = out['src/09d-winsock.wat'];
   // Give the existing start export a callable internal name; behavior unchanged.
   w = once(w, '(func (export "msc_start")', '(func $msc_begin_for_mne (export "msc_start")');
   w = once(w, '(global.set $msc_phase (local.get $phase)))',
     '(global.set $msc_phase (local.get $phase))\n  (if (i32.eq (local.get $phase) (i32.const 3)) (then (call $mne_complete))))');
-  out['src/09d-winsock.wat'] = w + '\n;; Opt-in native errno successor latch.\n' + storage(a, base);
+  out['src/09d-winsock.wat'] = w + '\n;; Opt-in native errno successor latch.\n' + storage(a, base, uopNativeBoundaries);
   let core = out['src/06b-core-handlers.wat'];
   const target = '(local.set $target (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))))';
   core = once(core, target, target + '\n    (call $mne_call (local.get $op) (local.get $target) (local.get $reg))');
@@ -225,7 +264,7 @@ function transform(sources, options = {}) {
   out['src/05-alu.wat'] = alu.slice(0, start) + ret + alu.slice(end);
   return out;
 }
-module.exports = { transform, verifyBinaries, PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, pe, once, storage };
+module.exports = { transform, verifyBinaries, PINS, UOP_PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, pe, once, storage };
 
 if (require.main === module) {
   const fs = require('node:fs'), path = require('node:path');
@@ -233,11 +272,14 @@ if (require.main === module) {
   if (process.argv.length !== 5 || mode !== '--enable-exact-native-latch')
     throw Error('usage: --enable-exact-native-latch CONFIG.json NEW_FRAGMENT_DIRECTORY');
   const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  const sources = Object.fromEntries(Object.keys(PINS).map(p => [p, fs.readFileSync(path.join(config.sourceRoot, p), 'utf8')]));
+  const sources = Object.fromEntries(Object.keys({ ...PINS, ...(config.uopNativeBoundaries === true ? UOP_PINS : {}) })
+    .map(p => [p, fs.readFileSync(path.join(config.sourceRoot, p), 'utf8')]));
   const binaries = { net: fs.readFileSync(path.join(config.originalRoot, 'SDL_net.dll')),
     exe: fs.readFileSync(path.join(config.originalRoot, 'Maelstrom.exe')), crt: fs.readFileSync(config.crt) };
-  const result = transform(sources, { enabled: true, binaries, crtLoadedBase: config.crtLoadedBase });
+  const result = transform(sources, { enabled: true, binaries, crtLoadedBase: config.crtLoadedBase,
+    uopNativeBoundaries: config.uopNativeBoundaries === true });
   fs.mkdirSync(output); // Fail if it exists; never overwrite accepted artifacts.
-  for (const p of ['src/09b-dispatch.wat', 'src/09d-winsock.wat', 'src/05-alu.wat', 'src/06b-core-handlers.wat'])
+  for (const p of ['src/09b-dispatch.wat', 'src/09d-winsock.wat', 'src/05-alu.wat', 'src/06b-core-handlers.wat',
+    ...(config.uopNativeBoundaries === true ? ['src/07d-uop-engine.wat', 'src/07e-uop-compiler.wat'] : [])])
     fs.writeFileSync(path.join(output, path.basename(p)), result[p], { flag: 'wx' });
 }

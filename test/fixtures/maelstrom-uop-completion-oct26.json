@@ -1,0 +1,41 @@
+{
+  "batch": 36170,
+  "firstRejection": {
+    "schema": "maelstrom-native-completion-rejection/v1",
+    "reason": 3,
+    "predicate": "uop",
+    "modeBits": 4,
+    "expectedReturn": 8008546,
+    "observedReturn": 8008546,
+    "phase": 3,
+    "completions": 1,
+    "fault": 0,
+    "active": 0,
+    "capped": 0
+  },
+  "select": {
+    "started": 1,
+    "phase": 3,
+    "token": 7,
+    "entries": 7,
+    "parks": 6,
+    "completions": 1,
+    "fault": 0,
+    "capped": 0,
+    "active": 0,
+    "thread": 1,
+    "regs": 86228992,
+    "pre": 122682136,
+    "post": 122682160,
+    "ret": 8008546,
+    "result": 0
+  },
+  "mode": {
+    "code16": 0,
+    "block_exec_enabled": 0,
+    "uop_enabled": 1
+  },
+  "priorNativeStatus": 1,
+  "sourceCommit": "345dee2cd02b779f87d0ae38071ccb0976631577",
+  "sourceModuleSHA256": "aca2e70da288cea022848e8d4dee7645feebfa9eb106580433841a8527c483a1"
+}

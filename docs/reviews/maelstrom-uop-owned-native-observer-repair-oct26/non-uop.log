@@ -1,0 +1,14 @@
+PASS source/model: byte-bound authentic native errno successor and caller frame
+PASS source/model: actual th_ret hook precedes branch dispatch; call uses actual decoder operands
+PASS source/model: parked select/stale EAX cannot capture; six parks remain pending
+PASS source/model: completed result without actual CALL/RET is insufficient
+PASS source/model: unrelated PC, target, register, source block and frame reject
+PASS source/model: other thread/register bank cannot consume owner event
+PASS source/model: stale completion identity is rejected even with coincident PC/ESP/result
+PASS source/model: invalid errno/caller spans reject without a memory read or sentinel fallback
+PASS source/model: one-shot immutable record and no reset after capture/rejection
+PASS source/model: disabled transform is identity and runtime latch is inert
+PASS source/model: enabled hooks preserve model guest state, flags, budgets and ordinary dispatch
+PASS source/model: unsupported native executors and late start reject without changing settings
+PASS source/model: all exact source and binary pins plus missing/ambiguous anchors reject
+{"pass":true,"groups":13,"qualification":"source AST/model and static byte controls only; compiled/native/original unexecuted"}

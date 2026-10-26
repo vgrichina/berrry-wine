@@ -1,0 +1,9 @@
+{
+  "memAvailable": 3238727680,
+  "allowance": 536870912,
+  "floor": 805306368,
+  "free": 4597518336,
+  "projection": 58720256,
+  "cap": 67108864,
+  "passChecks": true
+}
