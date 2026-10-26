@@ -1,0 +1,47 @@
+{
+  "memAvailable": 3970789376,
+  "required": 3489660928,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 25100288
+    },
+    {
+      "pid": 752162,
+      "rss": 402034688
+    },
+    {
+      "pid": 1789179,
+      "rss": 54853632
+    },
+    {
+      "pid": 3190679,
+      "rss": 196808704
+    },
+    {
+      "pid": 3195039,
+      "rss": 237854720
+    }
+  ],
+  "remainingGrowth": 827559936,
+  "ownRuntimeReservation": 0,
+  "physicalGit": 536870912,
+  "GitDATA": "512MiB Git child only",
+  "ledger": {
+    "charges": {
+      "/tmp/gl-published-webgl-recovered-qualification-oct26": 3801088,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-recovered-qualification-oct26": 241664,
+      "/tmp/gl-palette-current-webgl-qualification-oct26": 30715904,
+      "/tmp/gl-accepted-rss-main-publication-oct26": 4493312,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-51-36-01a17a32-9047-78e1-bd74-23bfa54caf9f.jsonl": 667648,
+      "positiveWALOnce": 16384,
+      "futureLocalRemoteGit": 16777216,
+      "futureProfileOutput": 33554432,
+      "futureSessionPublication": 33554432,
+      "reserve": 8388608
+    },
+    "total": 132210688,
+    "projectedFree": 3502301184
+  },
+  "passAdmission": true
+}

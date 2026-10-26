@@ -1,0 +1,21 @@
+{
+  "candidate": "c57ba2b0d7dc63fb159580772d530db873c28325",
+  "tree": "ef4fa7219aadb4241e9eb20c0d969bbb1cf139ce",
+  "sourcePlan": "/home/user/wine-assembly/scratch/usage-watch/gl-palette-current-webgl-closure-plan-oct26.json",
+  "sourcePlanSHA256": "496156096762b7d0c9f4446124d33373d33b6a921d8f0395e24132275353f59c",
+  "verifiedSourceFiles": 149,
+  "verifiedFixtureFiles": {
+    "test/helpers/palette-browser-launch.js": "9cdb6b2e390e821990beb3e60bcc286ce1a8da21ce0a1600e13c98357ff40547",
+    "test/helpers/palette-browser-supervisor.py": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+    "test/test-d3dim-palette-gpu-web.js": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+    "test/test-palette-browser-launch-controls.js": "770137c984c8baad56d3dc4409dc8981bed28e60bdc9631a23d6ae8ede961da3",
+    "test/test-palette-browser-supervisor.py": "8be3cea926290022ba0e65770d23b0610b75d63c4497fe1067221798b4f34bc6"
+  },
+  "chrome": "/opt/google/chrome/chrome",
+  "chromeSHA256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97",
+  "chromeELF": true,
+  "moduleBytesRetained": false,
+  "expectedCompiledModule": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "priorRuntimeAcceptance": false,
+  "independentAcceptance": "1e19d8c01e5d7e40f1e8ad60df5079ee9d9d4d4e"
+}

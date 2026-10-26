@@ -1,0 +1,34 @@
+{
+  "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "version": "v24.18.1",
+  "execArgv": [
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,puppeteer:require.resolve(\"puppeteer\"),launchConfiguration:require(\"./test/helpers/palette-browser-launch\").launchConfiguration(),env:{NODE_PATH:process.env.NODE_PATH,CHROME:process.env.CHROME,TMPDIR:process.env.TMPDIR,PALETTE_GPU_SOURCE_ROOT:process.env.PALETTE_GPU_SOURCE_ROOT}}))"
+  ],
+  "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "heapLimit": 738197504,
+  "puppeteer": "/tmp/wa-local-runtime-deps/node_modules/puppeteer/lib/puppeteer/puppeteer.js",
+  "launchConfiguration": {
+    "checked": {
+      "executablePath": "/opt/google/chrome/chrome",
+      "executableSha256": "22e4d5ef0c637a87b59a9baad42625aba3284dc03d4a5908748e253556318c97"
+    },
+    "options": {
+      "headless": true,
+      "detached": false,
+      "executablePath": "/opt/google/chrome/chrome",
+      "args": [
+        "--no-sandbox",
+        "--use-angle=swiftshader",
+        "--enable-unsafe-swiftshader"
+      ]
+    }
+  },
+  "env": {
+    "NODE_PATH": "/tmp/wa-local-runtime-deps/node_modules",
+    "CHROME": "/opt/google/chrome/chrome",
+    "TMPDIR": "/tmp/gl-published-webgl-recovered-qualification-oct26/tmp",
+    "PALETTE_GPU_SOURCE_ROOT": "/tmp/gl-palette-current-webgl-qualification-oct26/source"
+  }
+}

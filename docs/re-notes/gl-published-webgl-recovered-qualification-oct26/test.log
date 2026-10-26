@@ -1,0 +1,10 @@
+Error: Failed to launch the browser process:  Code: null
+
+stderr:
+
+
+TROUBLESHOOTING: https://pptr.dev/troubleshooting
+
+    at ChildProcess.onClose (file:///tmp/wa-local-runtime-deps/node_modules/@puppeteer/browsers/lib/launch.js:343:24)
+    at ChildProcess.emit (node:events:521:24)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)

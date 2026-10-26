@@ -1,0 +1,38 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 78200832,
+  "sampledPeakRSS": 78200832,
+  "reapedPeakRSS": 58015744,
+  "cpuSeconds": 2.6704390000000005,
+  "wallSeconds": 2.8084671788383275,
+  "owned": [
+    [
+      3193856,
+      "109886850"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,puppeteer:require.resolve(\"puppeteer\"),launchConfiguration:require(\"./test/helpers/palette-browser-launch\").launchConfiguration(),env:{NODE_PATH:process.env.NODE_PATH,CHROME:process.env.CHROME,TMPDIR:process.env.TMPDIR,PALETTE_GPU_SOURCE_ROOT:process.env.PALETTE_GPU_SOURCE_ROOT}}))"
+  ],
+  "ledger": {
+    "charges": {
+      "/tmp/gl-published-webgl-recovered-qualification-oct26": 2166784,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-recovered-qualification-oct26": 212992,
+      "/tmp/gl-palette-current-webgl-qualification-oct26": 30715904,
+      "/tmp/gl-accepted-rss-main-publication-oct26": 4493312,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-51-36-01a17a32-9047-78e1-bd74-23bfa54caf9f.jsonl": 598016,
+      "positiveWALOnce": 16384,
+      "futureLocalRemoteGit": 16777216,
+      "futureProfileOutput": 33554432,
+      "futureSessionPublication": 33554432,
+      "reserve": 8388608
+    },
+    "total": 130478080,
+    "projectedFree": 3504304128
+  }
+}

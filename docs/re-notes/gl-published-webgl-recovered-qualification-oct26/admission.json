@@ -1,0 +1,116 @@
+{
+  "at": "2026-10-26T21:52:46.248107+00:00",
+  "singleFreshImmediateExecutionAdmission": true,
+  "clients": [
+    {
+      "pid": 3184269,
+      "rss": 195018752,
+      "own": false
+    },
+    {
+      "pid": 3190679,
+      "rss": 197996544,
+      "own": false
+    }
+  ],
+  "physicalProcessesOver64MiB": [
+    {
+      "pid": 265398,
+      "ppid": 1,
+      "rss": 925323264,
+      "exe": "/usr/bin/tmux"
+    },
+    {
+      "pid": 265422,
+      "ppid": 265414,
+      "rss": 247660544,
+      "exe": "/home/user/.nvm/versions/node/v24.18.1/bin/node"
+    },
+    {
+      "pid": 271075,
+      "ppid": 1,
+      "rss": 235749376,
+      "exe": "/home/user/.nvm/versions/node/v24.18.1/bin/node"
+    },
+    {
+      "pid": 752162,
+      "ppid": 265398,
+      "rss": 403668992,
+      "exe": "/opt/ascii-agent/node_modules/@openai/.codex-linux-x64-jR1TST2J/vendor/x86_64-unknown-linux-musl/bin/codex (deleted)"
+    },
+    {
+      "pid": 2896015,
+      "ppid": 1,
+      "rss": 493645824,
+      "exe": "/home/user/.nvm/versions/node/v24.18.1/bin/node"
+    },
+    {
+      "pid": 3184269,
+      "ppid": 3184262,
+      "rss": 195018752,
+      "exe": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex"
+    },
+    {
+      "pid": 3190679,
+      "ppid": 3190676,
+      "rss": 197996544,
+      "exe": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex"
+    }
+  ],
+  "ramComponents": {
+    "host": 805306368,
+    "ownNodeBrowserSupervisor": 1073741824,
+    "otherActualLightGit": 536870912,
+    "remoteControllerHelpers": 134217728,
+    "actualResidentClientRemainingGrowth": 278073344,
+    "completedCivGuest": 0,
+    "completedCivPublication": 0,
+    "prospectiveOwnClient": 0
+  },
+  "memAvailable": 3958185984,
+  "requiredBytes": 3489660928,
+  "clientGrowthChargedOnce": true,
+  "ownClientResident": true,
+  "charges": {
+    "/tmp/gl-published-webgl-recovered-qualification-oct26": 24576,
+    "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-recovered-qualification-oct26": 172032,
+    "/tmp/gl-palette-current-webgl-qualification-oct26": 30715904,
+    "/tmp/gl-accepted-rss-main-publication-oct26": 4493312,
+    "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-51-36-01a17a32-9047-78e1-bd74-23bfa54caf9f.jsonl": 487424,
+    "positiveWALOnce": 16384,
+    "futureSelectiveGitLocalRemote": 16777216,
+    "futureProfileFixtureOutputs": 33554432,
+    "futureSessionEventsPublication": 33554432,
+    "reserve": 8388608
+  },
+  "totalProjected": 128184320,
+  "cap": 201326592,
+  "freeDisk": 3600658432,
+  "projectedFree": 3508383744,
+  "hostDiskFloor": 2982150144,
+  "standingReadonlyExcluded": [
+    "/opt/google/chrome",
+    "/tmp/wa-local-runtime-deps/node_modules"
+  ],
+  "limits": {
+    "physicalSubtree": 1073741824,
+    "NodeHeapMiB": 512,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "GitDATAChildOnly": 536870912,
+    "parentDATA": [
+      -1,
+      -1
+    ],
+    "parentAS": [
+      -1,
+      -1
+    ]
+  },
+  "boxes": [],
+  "noRuntimeStarted": true,
+  "pass": true
+}

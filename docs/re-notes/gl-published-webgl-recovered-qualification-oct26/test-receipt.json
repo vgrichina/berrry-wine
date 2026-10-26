@@ -1,0 +1,81 @@
+{
+  "exit": 1,
+  "stopReason": "aggregate RSS limit",
+  "peakRSS": 1083064320,
+  "sampledPeakRSS": 1083064320,
+  "reapedPeakRSS": 348651520,
+  "cpuSeconds": 19.494622,
+  "wallSeconds": 6.49567437893711,
+  "owned": [
+    [
+      3193875,
+      "109887161"
+    ],
+    [
+      3193950,
+      "109887703"
+    ],
+    [
+      3193951,
+      "109887724"
+    ],
+    [
+      3193952,
+      "109887724"
+    ],
+    [
+      3193954,
+      "109887730"
+    ],
+    [
+      3193956,
+      "109887731"
+    ],
+    [
+      3193959,
+      "109887732"
+    ],
+    [
+      3193960,
+      "109887732"
+    ],
+    [
+      3193982,
+      "109887741"
+    ],
+    [
+      3193985,
+      "109887750"
+    ],
+    [
+      3193994,
+      "109887753"
+    ],
+    [
+      3194024,
+      "109887799"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/gl-published-webgl-recovered-qualification-oct26/repo/test/test-d3dim-palette-gpu-web.js"
+  ],
+  "ledger": {
+    "charges": {
+      "/tmp/gl-published-webgl-recovered-qualification-oct26": 3780608,
+      "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-recovered-qualification-oct26": 212992,
+      "/tmp/gl-palette-current-webgl-qualification-oct26": 30715904,
+      "/tmp/gl-accepted-rss-main-publication-oct26": 4493312,
+      "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-51-36-01a17a32-9047-78e1-bd74-23bfa54caf9f.jsonl": 606208,
+      "positiveWALOnce": 16384,
+      "futureLocalRemoteGit": 16777216,
+      "futureProfileOutput": 33554432,
+      "futureSessionPublication": 33554432,
+      "reserve": 8388608
+    },
+    "total": 132100096,
+    "projectedFree": 3502592000
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "status": "BLOCKED: physical RSS cap exceeded at browser startup",
+  "candidate": "c57ba2b0d7dc63fb159580772d530db873c28325",
+  "tree": "ef4fa7219aadb4241e9eb20c0d969bbb1cf139ce",
+  "sourceVerifiedAfter": 149,
+  "productionPinsVerifiedAfter": 5,
+  "compiledModuleSHA256": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "oracleSHA256": "8007a13de0f0703b1f2f8f668a23eac88ce3231074aae448804ce452889b0c3a",
+  "oracleExtraWatSHA256": "0fd5acd70a154a196cbcc981ad78eb900e42899302773dec5e88d8ae6d7037aa",
+  "runtimeInvocations": 1,
+  "WebGL1Observations": 0,
+  "WebGL2Observations": 0,
+  "expectedObservationsEach": 42,
+  "renderer": null,
+  "backend": null,
+  "fallbacks": null,
+  "errors": [
+    "Error: Failed to launch the browser process:  Code: null\n\nstderr:\n\n\nTROUBLESHOOTING: https://pptr.dev/troubleshooting\n\n    at ChildProcess.onClose (file:///tmp/wa-local-runtime-deps/node_modules/@puppeteer/browsers/lib/launch.js:343:24)\n    at ChildProcess.emit (node:events:521:24)\n    at ChildProcess._handle.onexit (node:internal/child_process:295:12)"
+  ],
+  "supervisor": {
+    "exit": 1,
+    "stopReason": "aggregate RSS limit",
+    "peakRSS": 1083064320,
+    "sampledPeakRSS": 1083064320,
+    "reapedPeakRSS": 348651520,
+    "cpuSeconds": 19.494622,
+    "wallSeconds": 6.49567437893711,
+    "owned": [
+      [
+        3193875,
+        "109887161"
+      ],
+      [
+        3193950,
+        "109887703"
+      ],
+      [
+        3193951,
+        "109887724"
+      ],
+      [
+        3193952,
+        "109887724"
+      ],
+      [
+        3193954,
+        "109887730"
+      ],
+      [
+        3193956,
+        "109887731"
+      ],
+      [
+        3193959,
+        "109887732"
+      ],
+      [
+        3193960,
+        "109887732"
+      ],
+      [
+        3193982,
+        "109887741"
+      ],
+      [
+        3193985,
+        "109887750"
+      ],
+      [
+        3193994,
+        "109887753"
+      ],
+      [
+        3194024,
+        "109887799"
+      ]
+    ],
+    "cleanupComplete": true,
+    "argv": [
+      "/usr/local/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/gl-published-webgl-recovered-qualification-oct26/repo/test/test-d3dim-palette-gpu-web.js"
+    ],
+    "ledger": {
+      "charges": {
+        "/tmp/gl-published-webgl-recovered-qualification-oct26": 3780608,
+        "/home/user/wine-assembly/scratch/usage-watch/gl-published-webgl-recovered-qualification-oct26": 212992,
+        "/tmp/gl-palette-current-webgl-qualification-oct26": 30715904,
+        "/tmp/gl-accepted-rss-main-publication-oct26": 4493312,
+        "/home/user/.codex/sessions/2026/10/26/rollout-2026-10-26T21-51-36-01a17a32-9047-78e1-bd74-23bfa54caf9f.jsonl": 606208,
+        "positiveWALOnce": 16384,
+        "futureLocalRemoteGit": 16777216,
+        "futureProfileOutput": 33554432,
+        "futureSessionPublication": 33554432,
+        "reserve": 8388608
+      },
+      "total": 132100096,
+      "projectedFree": 3502592000
+    }
+  },
+  "remainingOwned": [],
+  "remainingGate": "Coordinator-authorized resource plan or separate suitable box; fresh admission and explicit new bounded invocation required. No retry authorized in this completed task.",
+  "gameplayInference": false,
+  "boxes": [],
+  "boxState": null,
+  "boxExpiry": null,
+  "lifecycle": "No box assigned; coordinator ownership unchanged",
+  "oldIncidentsPreserved": true,
+  "unchangedAcceptedGroupsReused": "1e19d8c01e5d7e40f1e8ad60df5079ee9d9d4d4e; detached/adopted/RSS controls not rerun"
+}

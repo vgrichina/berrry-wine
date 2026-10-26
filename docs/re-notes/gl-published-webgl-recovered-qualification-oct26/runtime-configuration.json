@@ -1,0 +1,19 @@
+{
+  "environmentSHA256": "f34ae45287d3cb46736c74fc845461c5ff3229298b5e8d9ddf1493e740f6fb7c",
+  "nodeExecutableSHA256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+  "nodeFlags": [
+    "--max-old-space-size=512"
+  ],
+  "supervisorSHA256": "e6c3a0eee865c0a227c4833573207927a349abd355058a1b7887ae10780424f3",
+  "physicalRSS": 1073741824,
+  "CPU": 90,
+  "wall": 120,
+  "file": 25165824,
+  "output": 2097152,
+  "GitDATA": "512MiB only Git child",
+  "NodeDATA": "unchanged inherited unlimited",
+  "moduleRequirement": "558b66e4787a2808a89de68efe7b158915e93992f6d4950e9ee11d93b4ba00b6",
+  "loopbackOnly": "unchanged oracle server127.0.0.1 and Puppeteer background-network disabling; explicit actual Chrome ELF, no external wrapper",
+  "acceptedAccountingCallback": "task192MiB explicit roots/future/WALonce+8MiBreserve",
+  "peakCaveat": "max(sampled simultaneous aggregate,waited process/descendant high-water); lower bound, independent peaks never summed"
+}

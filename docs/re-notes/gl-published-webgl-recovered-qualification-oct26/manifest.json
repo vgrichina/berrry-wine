@@ -1,0 +1,82 @@
+{
+  "prepare.py": {
+    "bytes": 1423,
+    "sha256": "f5ef612928a8b730d1ab249f4775d075282b6125434d59baa966adbd1e8a65ea"
+  },
+  "test.log": {
+    "bytes": 355,
+    "sha256": "3a983c937c6b2d51c02969940f2f358d45b413aff1f5f230d5ff4a311e4685e0"
+  },
+  "checkpoint.json": {
+    "bytes": 3482,
+    "sha256": "381328eff78f2b60095d3dc93a7721ae8e43332af4a3b5b909870af1aa805d84"
+  },
+  "work.py": {
+    "bytes": 2904,
+    "sha256": "c20fdc99db9466f104f869824affd87247297f09a93c3cd2eb720b6f6872698d"
+  },
+  "immediate-runtime-admission.json": {
+    "bytes": 1248,
+    "sha256": "493912ab37a4a948387ae5bc0a113d0dd6487a42f795952e0ee4ef9d512096e2"
+  },
+  "root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "execute.py": {
+    "bytes": 3618,
+    "sha256": "3263c2f871617642a77495ef17dc4e3fee8a7444881ce7903bc8399061a46343"
+  },
+  "runtime-configuration.json": {
+    "bytes": 976,
+    "sha256": "1c91d6a62871018de9c70940b57208c63bcbbbd85233b15bf5b0d29d312c2ddb"
+  },
+  "publication-admission.json": {
+    "bytes": 1236,
+    "sha256": "76da86eb7d2c38c0aafd4e119e0ab05b6f6424871aa6ae98445ae768d2aa9a71"
+  },
+  "admit.py": {
+    "bytes": 5783,
+    "sha256": "87a4c9c04c438896fb507e2a52be75b05a59057109fa7aed209d08dc3e0d1f8c"
+  },
+  "admission.json": {
+    "bytes": 3126,
+    "sha256": "5d2c5ca363e78fa41a28db2c3239661b229af9d9404bdae5357c5d06f3df96a8"
+  },
+  "node-startup.json": {
+    "bytes": 2910,
+    "sha256": "289b5d34bbbf01cac9154bcc4c5d1d5d7ba8e8727b1ffa8bfbbdb21b5c2aa65e"
+  },
+  "fixture-overlay.json": {
+    "bytes": 1466,
+    "sha256": "6a27f7504a854fb8b6006940850ae421c4b9f99bae1aecc7e3eacb5a25976897"
+  },
+  "node-startup-receipt.json": {
+    "bytes": 1633,
+    "sha256": "20734d978f27f9e1874b8054d949a26c2320d4516f17fc4a68989b65da1453a4"
+  },
+  "publish.py": {
+    "bytes": 8935,
+    "sha256": "d35453bcf742f6fca73f3325e5e6053b6375ac5f233f9785cfb57223b848e5e2"
+  },
+  "test-result.json": {
+    "bytes": 1789,
+    "sha256": "e6518b5545792ef2ff1cd006a496baf11f875d14e381ca7af6d716f0d4ab3108"
+  },
+  "README.md": {
+    "bytes": 4635,
+    "sha256": "0d79eb82f658cab5bf61cbd7a1f63addb30d30766ae4b3e017fe6d0fa34b103d"
+  },
+  "pinned-inputs.json": {
+    "bytes": 1340,
+    "sha256": "de8752e601824c81d7a18aa37bbc83447c693bfee944bdc3e80dfbaae3f3e98c"
+  },
+  "test-receipt.json": {
+    "bytes": 1695,
+    "sha256": "c6549482fedd6feb58f10388ec5c77076a4cc439f65350aaf979b4fc06908944"
+  },
+  "launch-configuration.json": {
+    "bytes": 872,
+    "sha256": "8f648970ce974017ac9a0e67c47820e413c9aa53875ac5f532a87214e2de4f94"
+  }
+}
