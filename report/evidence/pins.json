@@ -1,0 +1,10 @@
+{
+  "revision": "3b7667ff13bc727ed41d2131a3e063422a7bd66a",
+  "files": 2666,
+  "bytes": 39418082,
+  "receiptSHA256": "fe03f3ce22d21da496489ebbe5d35e5087f5cd6057b91a5e86675c6c033a13c7",
+  "mapSHA256": "cbea2074b290c6fa97e3ce3c710e089a42450b8e3932f4e3fbc58e09ebf880d7",
+  "description": "retained emulator with earlier diagnostic static DLL overlays plus accepted current controllers",
+  "staleCloseoutHashes": 2,
+  "reusedTests": "accepted merged source checks and independent tests; not rerun"
+}

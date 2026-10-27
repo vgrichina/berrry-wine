@@ -1,0 +1,36 @@
+{
+  "at": 1793103119.4929872,
+  "rows": [
+    {
+      "task": "enigma-full-frame-admitted-runtime-oct27",
+      "actual": 987136,
+      "remaining": 200339456
+    },
+    {
+      "task": "generally-census-accepted-main-integration-oct27",
+      "actual": 32960512,
+      "remaining": 0
+    },
+    {
+      "task": "airstrike-self-contained-fixtures-independent-accept-oct27",
+      "actual": 4022272,
+      "remaining": 0
+    }
+  ],
+  "walPositiveOnce": 0,
+  "own": 987136,
+  "reserve": 58720256,
+  "free": 6865276928,
+  "future": 217116672,
+  "projectedFree": 6648160256,
+  "diskFloor": 2982150144,
+  "memAvailable": 3900563456,
+  "requiredRAM": 1484926976,
+  "clients": [
+    {
+      "pid": 35594,
+      "rss": 192794624
+    }
+  ],
+  "pass": true
+}

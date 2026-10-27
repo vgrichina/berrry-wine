@@ -1,0 +1,11 @@
+{
+  "at": 1793103137.6434195,
+  "startedAt": 1793103131.0632899,
+  "elapsed": 6.580129623413086,
+  "frameSHA256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+  "width": 640,
+  "height": 480,
+  "reviewed": true,
+  "decision": "Actual retained Main Menu, Start Game center343,213; timing calibration only, no authorization for a new frame",
+  "durableDecision": true
+}

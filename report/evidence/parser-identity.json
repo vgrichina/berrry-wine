@@ -1,0 +1,28 @@
+{
+  "canonicalSHA256": "0be6705dcd46cd5ec5f7c122a791bd8bf6ec131326a59dc23e29e7453865cce2",
+  "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/enigma-full-frame-admitted-runtime-oct27/repo/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/modules/wine-assembly.wasm",
+    "--exe=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/system/msvcrt.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--frozen",
+    "--max-seconds=110",
+    "--max-batches=2000000"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

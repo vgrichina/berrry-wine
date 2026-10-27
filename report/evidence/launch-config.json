@@ -1,0 +1,68 @@
+{
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/enigma-full-frame-admitted-runtime-oct27/repo/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/modules/wine-assembly.wasm",
+    "--exe=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/system/msvcrt.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/enigma-full-frame-admitted-runtime-oct27/repo/vfs",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--frozen",
+    "--max-seconds=110",
+    "--max-batches=2000000"
+  ],
+  "cwd": "/tmp/enigma-full-frame-admitted-runtime-oct27/repo/runner",
+  "url": "http://127.0.0.1:18127/ctl",
+  "launch_dir": "/tmp/enigma-full-frame-admitted-runtime-oct27/ops/launch",
+  "cutoff_at": 1793104980,
+  "duration_seconds": 110,
+  "ready_seconds": 8,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "physical": 3221225472,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "controller": {
+    "max_batches": 2000000,
+    "checkpoint_batches": 1000000,
+    "after_action_batches": 500000,
+    "cleanup_batches": 256,
+    "max_captures": 3,
+    "capture_bytes": 700000,
+    "width": 640,
+    "height": 480,
+    "checkpoint_seconds": 18,
+    "after_action_seconds": 20,
+    "review_seconds": 52,
+    "request_timeout": 1,
+    "cleanup_seconds": 12,
+    "decision_path": "/tmp/enigma-full-frame-admitted-runtime-oct27/ops/decision.json",
+    "progress": {
+      "max_checkpoints": 2,
+      "total_seconds": 110,
+      "cpu_reserve": 15,
+      "api_bytes": 1048576,
+      "capture_total_bytes": 2100000
+    },
+    "review_plan": {
+      "checkpoint_seconds": [
+        26,
+        26
+      ],
+      "progress_seconds": 18
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "exit": 0,
+  "box": "bx_95a6wxyt",
+  "argv": [
+    "/home/user/.ascii/boat",
+    "info",
+    "--no-update",
+    "--json",
+    "bx_95a6wxyt"
+  ],
+  "at": 1793103217.4771082,
+  "stdoutBytes": 1230,
+  "stderrBytes": 0
+}

@@ -1,0 +1,21 @@
+{
+  "proposedReviewSlots": [
+    26,
+    26
+  ],
+  "reviewTotal": 52,
+  "progress": 18,
+  "nominalControllerRequired": 98,
+  "plusReady": 106,
+  "limit": 110,
+  "priorFetchMax": 16.862725148908794,
+  "measuredInspectionDurableDecision": 6.580129623413086,
+  "extraMetadataDeliveryReserve": 1.5,
+  "safety": 1,
+  "nominalFullPNGWireWorstCase": 4202496,
+  "metadataReserve": 1048576,
+  "cleanupReserve": 1048576,
+  "apiCap": 8388608,
+  "validated": false,
+  "reason": "first production gate refused before review-plan validation; remaining measured plan not established"
+}

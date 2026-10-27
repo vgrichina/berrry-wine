@@ -1,0 +1,17 @@
+{
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-full-frame-admitted-runtime-oct27/root-ref-digest.json",
+  "rootTrackedIndexRefsReadOnly": true,
+  "donorsReadOnly": true,
+  "ownedPaths": [
+    "/tmp/enigma-full-frame-admitted-runtime-oct27/repo",
+    "/tmp/enigma-full-frame-admitted-runtime-oct27/ops"
+  ],
+  "branch": "task/enigma-full-frame-admitted-runtime-oct27",
+  "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "watcherToolSession": 61244,
+  "incidents": [
+    "initial oversized document displays retained",
+    "prepare module inventory StopIteration corrected before production gate; source map excludes separately pinned module",
+    "production validate_launch called locally with remote executable path; absent local executable caused terminal refusal; no retry"
+  ]
+}

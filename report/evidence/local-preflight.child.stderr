@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-full-frame-admitted-runtime-oct27/ops/control.py", line 77, in <module>
+    elif mode in ('script','gitbatch'):exec(pathlib.Path(sys.argv[2]).read_text())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in <module>
+  File "/tmp/enigma-full-frame-admitted-runtime-oct27/repo/runner/tools/enigma-supervised-gameplay.py", line 74, in validate_launch
+    require(Path(c['command'][0]).is_absolute() and Path(c['command'][0]).is_file(), 'absolute-executable-required')
+  File "/tmp/enigma-full-frame-admitted-runtime-oct27/repo/runner/tools/enigma-frozen-gameplay-controller.py", line 28, in require
+    raise Refusal(reason)
+enigma_controller.Refusal: absolute-executable-required

@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-full-frame-admitted-runtime-oct27/ops/control.py", line 77, in <module>
+    elif mode in ('script','gitbatch'):exec(pathlib.Path(sys.argv[2]).read_text())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 14, in <module>
+StopIteration
