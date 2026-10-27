@@ -1,0 +1,20 @@
+'use strict';
+const fs=require('fs'),assert=require('assert'),crypto=require('crypto');
+const out='/tmp/airstrike-accepted-dispatch-quit-oct27/ops';fs.mkdirSync(out,{recursive:true});
+const native=WebAssembly.instantiate;
+WebAssembly.instantiate=async function(module,imports){
+ assert(module instanceof WebAssembly.Module,'expected precompiled exact module');
+ const required=WebAssembly.Module.imports(module);
+ const missing=required.filter(i=>!imports[i.module] || !(i.name in imports[i.module]));
+ assert.deepStrictEqual(missing,[]);
+ const region=require('/tmp/airstrike-accepted-dispatch-quit-oct27/runner/lib/region-map.generated.js');
+ const stamps=WebAssembly.Module.customSections(module,'wine-region-layout').map(b=>Buffer.from(b).toString());
+ assert.deepStrictEqual(stamps,['9a3bc9149d58209c']);assert.strictEqual(stamps[0],region.LAYOUT_HASH);
+ assert.strictEqual(imports.host.memory.buffer.byteLength,512*1024*1024);
+ assert(imports.host.memory.buffer instanceof SharedArrayBuffer);
+ const result={requiredImports:required,missing,stamps,mirror:region.LAYOUT_HASH,arenaBytes:imports.host.memory.buffer.byteLength,shared:true,source:'b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a',stage:'before instantiate'};
+ fs.writeFileSync(out+'/abi-before.json',JSON.stringify(result,null,2));
+ const instance=await native(module,imports);
+ fs.writeFileSync(out+'/abi-instantiated.json',JSON.stringify({...result,stage:'successfully instantiated before guest',at:new Date().toISOString()},null,2));
+ return instance;
+};

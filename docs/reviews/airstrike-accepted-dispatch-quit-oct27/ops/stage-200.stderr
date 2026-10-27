@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 54, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 49, in main
+    print(sendfiles(items,'stage-'+str(start)))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 35, in sendfiles
+    value=api(code.replace('sys.argv[2]',"pathlib.Path(sys.argv[2]).read_text()"),label,[REMOTE,pack]);api('import pathlib,sys;pathlib.Path(sys.argv[1]).unlink();print("removed")',label+'-pack-clean',[pack]);return value
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 20, in api
+    assert len(raw)+len(stderr)<=8192 and p.returncode==0,(label,p.returncode,stderr[:1000])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('stage-200', 1, b'')

@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 46604288,
+  "sampledPeakRSS": 46604288,
+  "reapedPeakRSS": 20316160,
+  "cpuSeconds": 0.344695,
+  "wallSeconds": 0.32319039409048855,
+  "owned": [
+    [
+      4089655,
+      "114380894"
+    ],
+    [
+      4089656,
+      "114380900"
+    ]
+  ],
+  "cleanupComplete": true,
+  "commandSHA256": "666f1903adef2c4ef16d4270076f2f800a618b8c2fee68867ca17c3191113606",
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py",
+    "call",
+    "import pathlib,shutil;H=pathlib.Path(\"/tmp/airstrike-accepted-dispatch-quit-oct27/ops\");D=H/\"failed-startup\";D.mkdir();[(shutil.copy2(H/n,D/n)) for n in (\"startup.stdout\",\"startup.stderr\",\"startup-supervision.json\",\"startup.cjs\",\"remote.py\")];print(\"original failure diagnostics preserved\")",
+    "preserve-startup-failure"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "5c5696df9d46ce6cadffae1590f52611fd1ceaf8c18ef03bcc6754b9051bb7a3",
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/preserve-startup-failure.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/preserve-startup-failure.stderr"
+}

@@ -1,0 +1,1 @@
+{"commandId":"cmd_8negn50r31uy","cwd":".","exitCode":0,"finishedAt":"2026-10-27T10:21:49.289Z","launcherFailed":false,"noticedMs":1,"oomKilled":false,"signal":null,"startMs":1,"startedAt":"2026-10-27T10:21:49.262Z","stderr":"","stderrTruncated":false,"stdout":"{\"files\": 5, \"bytes\": 153097}\n","stdoutTruncated":false,"success":true,"timedOut":false}

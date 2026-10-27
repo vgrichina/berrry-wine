@@ -1,0 +1,75 @@
+{
+  "pass_": true,
+  "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "gitChildOnlyDATA": 536870912,
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "opsPins": {
+    "remote.py": "7e40e09d0256bf9836336a7cf2cf6efd138fa47ddc217e4470dc39434f8ab21a",
+    "task.py": "f2de9eb09ff0577247f107f13135aa8f26b39cd6ae957aa134e2570e0e1b4d4d",
+    "collect.py": "a58c7286b6c1ad243b8978fc4195b9d5ce75cbb44da3d49a58cfe99d18d2a3af",
+    "run.py": "d3ca5237b2392e488a002078e76f2ed6032dafd80073dcaa0b2fed9da0524e0b",
+    "setup.py": "4d40ccab1fe2d0d97e203aeac7932031e671940646779dadc47feab7fd8de71d",
+    "adapt.py": "a19d95a79fe8418a2ca8f37105b7ba54aa9b1eaf46216f5a079d3eae16339302",
+    "startup.cjs": "a65e4a0e30717195cd30a9171848730c8f3094738cef76585dc74acb7e7c3ebd",
+    "abi-preload.cjs": "9800128f951324742fd3bd9b5da4c083fbc284e38537e511555540892f91ed3d"
+  },
+  "ledger": {
+    "charged": 143403,
+    "pending": {},
+    "limit": 8388608,
+    "reserve": 1048576
+  },
+  "plan": {
+    "captures": 16,
+    "perPNG": 300000,
+    "totalPNG": 4800000,
+    "base64Wire": 6400000,
+    "chunkBytes": 5700,
+    "maxChunkCalls": 848,
+    "perEnvelopeOverheadBound": 400,
+    "captureWireMaximum": 6739200,
+    "nonCaptureReserve": 600000,
+    "terminalReserve": 1048576,
+    "totalProjection": 8387776,
+    "apiAllowance": 8388608,
+    "expectedImage": [
+      800,
+      600
+    ],
+    "priorObservedPNG": [
+      198562,
+      261576
+    ],
+    "guestInvocations": 1,
+    "guestRSS": 2147483648,
+    "nodeHeap": 536870912,
+    "cpu": 90,
+    "wall": 120,
+    "cutoff": "2026-10-27T10:48:00Z",
+    "coordinatorShutdown": "2026-10-27T10:52:00Z",
+    "expiry": "2026-10-27T10:59:29Z",
+    "box": "bx_pphjt7jw",
+    "acceptedMain": "c220ffccd69932bb2e5f05189f4845581de0d723",
+    "historicalRunner": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "notCurrentMainEmulator": true,
+    "reusedIndependent": 19,
+    "reusedRegressions": 25
+  }
+}

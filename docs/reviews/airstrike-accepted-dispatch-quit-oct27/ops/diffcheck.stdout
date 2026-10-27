@@ -1,0 +1,25 @@
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/box-closeout.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/detached-diagnostics.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/extras-corrected.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/extras-launcher-corrected.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/extras.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/factual-rejection.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/guest-status.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/init.stderr:4: trailing whitespace.
++hint: 
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/init.stderr:6: trailing whitespace.
++hint: 
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/init.stderr:9: trailing whitespace.
++hint: 
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/preserve-launch-guard.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/preserve-startup-failure.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/remote-startup-corrected.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-0.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-120.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-160.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-200-isolated.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-240-isolated.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-40.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/stage-80.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/startup-diagnostics.stdout:2: new blank line at EOF.
+docs/reviews/airstrike-accepted-dispatch-quit-oct27/ops/terminal-status.stdout:2: new blank line at EOF.

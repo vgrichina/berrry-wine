@@ -1,0 +1,29 @@
+{
+  "at": 1793096930.8876972,
+  "memAvailable": 3574882304,
+  "requiredRemainingRAM": 1482616832,
+  "peers": [
+    {
+      "pid": 4078961,
+      "rss": 196435968
+    },
+    {
+      "pid": 4087668,
+      "rss": 207622144
+    },
+    {
+      "pid": 4092476,
+      "rss": 193699840
+    }
+  ],
+  "free": 7638368256,
+  "future": 469762048,
+  "projectedFree": 7168606208,
+  "sourceGit": 5312512,
+  "ops": 33869824,
+  "events": 2355200,
+  "used": 41537536,
+  "reserve": 41943040,
+  "allocation": 134217728,
+  "pass": true
+}

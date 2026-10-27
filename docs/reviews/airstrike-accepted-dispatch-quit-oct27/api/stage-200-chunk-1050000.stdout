@@ -1,0 +1,1 @@
+{"commandId":"cmd_k6h1eyq2dr2l","cwd":".","exitCode":0,"finishedAt":"2026-10-27T10:20:36.497Z","launcherFailed":false,"noticedMs":7,"oomKilled":false,"signal":null,"startMs":8,"startedAt":"2026-10-27T10:20:36.469Z","stderr":"","stderrTruncated":false,"stdout":"1100000\n","stdoutTruncated":false,"success":true,"timedOut":false}

@@ -1,0 +1,1 @@
+{"commandId":"cmd_k7guraqqdwx0","cwd":".","exitCode":0,"finishedAt":"2026-10-27T10:17:56.766Z","launcherFailed":false,"noticedMs":1,"oomKilled":false,"signal":null,"startMs":1,"startedAt":"2026-10-27T10:17:56.726Z","stderr":"","stderrTruncated":false,"stdout":"{\"files\": 40, \"bytes\": 1707473}\n","stdoutTruncated":false,"success":true,"timedOut":false}

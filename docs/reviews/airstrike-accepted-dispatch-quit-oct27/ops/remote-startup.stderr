@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 54, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 52, in main
+    elif mode=='call':print(api(sys.argv[2],sys.argv[3],sys.argv[4:]))
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 20, in api
+    assert len(raw)+len(stderr)<=8192 and p.returncode==0,(label,p.returncode,stderr[:1000])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('startup', 1, b'')

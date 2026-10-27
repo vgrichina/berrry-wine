@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/setup.py", line 5, in <module>
+    cfg=(donor/'.git/config').read_text();url=cfg.split('[remote "origin"]')[1].split('url = ')[1].splitlines()[0]
+                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+IndexError: list index out of range

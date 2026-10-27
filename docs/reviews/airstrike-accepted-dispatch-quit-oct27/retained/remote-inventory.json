@@ -1,0 +1,152 @@
+[
+  {
+    "path": "startup-supervision.json",
+    "bytes": 1761,
+    "sha256": "963537a8f774d9155f98efe0fddcfbd21cd8514d7487e42c535825eb2fd4ec38"
+  },
+  {
+    "path": "abi-before.json",
+    "bytes": 28018,
+    "sha256": "3a438aebac2708b6baf326eb5a0986162a69a0bd4235defb8d8a6d58c85dbbb2"
+  },
+  {
+    "path": "startup-accepted.json",
+    "bytes": 1233,
+    "sha256": "39ffb7b9967495304fdda37b67033d1795d347893ca3069113737317eb0681b6"
+  },
+  {
+    "path": "startup.supervisor-output",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "planned-argv.json",
+    "bytes": 1265,
+    "sha256": "2e4444bee70135af1b9561445210efac88056f3cd1bbfda7c2efb8d4a131215e"
+  },
+  {
+    "path": "startup.stdout",
+    "bytes": 3575,
+    "sha256": "720591f42150fd25aa5422c45b936ef2bea9ae27f81074c6301454ad78404d3e"
+  },
+  {
+    "path": "guest.supervisor-output",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "guest-admission.json",
+    "bytes": 1425,
+    "sha256": "cc563e5cecfd16b6cd0c7ef48b63b8f1d9c0b4cab5dcc2d91c1d02d867c10b27"
+  },
+  {
+    "path": "guest-supervision.json",
+    "bytes": 1800,
+    "sha256": "2223d45db57a44afd12e604855d17ea0ab813b58ec85253e87032d23cfb10c41"
+  },
+  {
+    "path": "guest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "abi-instantiated.json",
+    "bytes": 28074,
+    "sha256": "4e6d70c5971e8785a37042b1cf49d7f8a76094b7104686d42cfe5b1af587d9ea"
+  },
+  {
+    "path": "remote-closure.json",
+    "bytes": 1400,
+    "sha256": "0217b24b8da46c38d33b99ced7e5834458d747e1ccb7410ee4f62bcee0440cdc"
+  },
+  {
+    "path": "guest.stdout",
+    "bytes": 541,
+    "sha256": "462a702f231016773c05c6f4492eeaea5324a492ed03dfe8eeb836258b14ddd2"
+  },
+  {
+    "path": "failed-startup/startup-supervision.json",
+    "bytes": 1772,
+    "sha256": "f3b906b3484eb1292a480cbe5a21b989cad2a64494e93f62127d504b933de4a6"
+  },
+  {
+    "path": "failed-startup/startup.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "failed-startup/startup.stderr",
+    "bytes": 860,
+    "sha256": "ab303efe1c7f3239f73867cf8c3966795c7af1ef303a07bc941ef4338b3aa074"
+  },
+  {
+    "path": "failed-pre-guest-guard/13007.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "failed-pre-guest-guard/13007.err.log",
+    "bytes": 344,
+    "sha256": "dd154d14f6b504729a5ea6edb6860db8579ab50ab6ee2ae254c2b155974396ad"
+  },
+  {
+    "path": "game-evidence/runner.stdout",
+    "bytes": 6070,
+    "sha256": "eb461cdf59469f093f18fed1c25db520bb215ab83c4f3c1d5bda1245998e124f"
+  },
+  {
+    "path": "game-evidence/review-request.json",
+    "bytes": 1587,
+    "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+  },
+  {
+    "path": "game-evidence/spawn-status.json",
+    "bytes": 1367,
+    "sha256": "32e4ecb861f5bd34336c194bf2f2a737c363b268444a82ab37381407b35a8a02"
+  },
+  {
+    "path": "game-evidence/controller.stderr",
+    "bytes": 269,
+    "sha256": "8d8a1e215539cfe0fd050239b795fcd31ef078cce00a2a293cf2ab5c45f2f72b"
+  },
+  {
+    "path": "game-evidence/events.json",
+    "bytes": 1124,
+    "sha256": "26a8bdf42465aa9f6d548ffc1b75f7a85e6b3afbf6b9f622d1637817ddf873e5"
+  },
+  {
+    "path": "game-evidence/review-9b55685e506a4124abd456510ebaf254.json",
+    "bytes": 605,
+    "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+  },
+  {
+    "path": "game-evidence/capture-9b55685e506a4124abd456510ebaf254.png",
+    "bytes": 144804,
+    "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+  },
+  {
+    "path": "game-evidence/terminal.json",
+    "bytes": 6870,
+    "sha256": "111bd2ee9c2314c13954ed062b4ed4d2733f6dad5ea5544fda30155e8d35764b"
+  },
+  {
+    "path": "game-evidence/result.json",
+    "bytes": 591,
+    "sha256": "9da322eccb980307f81faea95b13c8a4da30b0b0756ddb0a1bcbc7c29c66559f"
+  },
+  {
+    "path": "game-evidence/owned-cleanup.json",
+    "bytes": 95,
+    "sha256": "7c213fdb28772b12ba794d65c7c0bc9bd8b38c9f974572ba0459d2bc39e1249a"
+  },
+  {
+    "path": "game-evidence/runner.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

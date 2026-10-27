@@ -1,0 +1,109 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x0041138e
+DLL: SDL.dll at 0x536000, DllMain=0x5609af, thunks=1941, origBase=0x10000000
+DLL: SDL_image.dll at 0x675000, DllMain=0x6796cb, thunks=1985, origBase=0x10000000
+DLL: SDL_mixer.dll at 0x78e000, DllMain=0x7bc167, thunks=2038, origBase=0x10000000
+DLL: jpeg.dll at 0x8d6000, DllMain=0x8d7000, thunks=2052, origBase=0x64f40000
+DLL: libpng1.dll at 0x9fd000, DllMain=0xa10740, thunks=2076, origBase=0x10000000
+DLL: msvcr70.dll at 0xb18000, DllMain=0xb19357, thunks=2225, origBase=0x5d000000
+DLL: msvcrt.dll at 0xc64000, DllMain=0xc67428, thunks=2369, origBase=0x78000000
+DLL: zlib.dll at 0xda8000, DllMain=0xdb27b0, thunks=2390, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #0 (SDL.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #2 (SDL_mixer.dll)
+Patching EXE imports: SDL_image.dll -> DLL #1 (SDL_image.dll)
+Patching EXE imports: MSVCR70.dll -> DLL #5 (MSVCR70.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #0 (SDL.dll)
+Patching DLL imports: SDL_image.dll→jpeg.dll -> DLL #3 (jpeg.dll)
+Patching DLL imports: SDL_image.dll→libpng1.dll -> DLL #4 (libpng1.dll)
+Patching DLL imports: SDL_image.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #0 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: libpng1.dll→zlib.dll -> DLL #7 (zlib.dll)
+Patching DLL imports: libpng1.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+After patching: 2400 thunks
+Calling DllMain at 0xc67428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x5609af...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x8d7000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xdb27b0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa10740...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x6796cb...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bc167...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb19357...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xc9fedc] = 0xdbf854
+Patched __p__environ [0xc9ebe4] = 0xdbf834
+Patched __p___winitenv [0xca00ec] = 0xdbf854
+Patched __p___initenv [0xca2c9c] = 0xdbf834
+Calling MSVCRT!_set_sbh_threshold(0) at 0xc7099d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[SetWindowText] "Airstrike 1.0 pre6"
+[ShowWindow] hwnd=0x10001 cmd=5
+[waveOut] open: 22050Hz 1ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0x559840 param=0xddc7f4 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x559840 ESP=0x7ec3fff8
+Calling DllMain at 0xc67428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x8d7000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xdb27b0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb19357...
+DllMain returned, EAX=0x1
+[CreateWindow] hwnd=0x10002 title="Console" style=0x10cf0000 pos=0,8 size=648x328 menu=0
+[ctl] {"ok":true,"id":"bridge-1","value":{"batch":5000,"ran":5000,"steps":5000,"frozen":true}}
+[ctl] {"ok":true,"id":"bridge-2","value":{"batch":5000,"eip":"0x55995b","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":5,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":806,"h":608,"visible":true,"isChild":false,"title":"Airstrike 1.0 pre6"},{"hwnd":"0x10002","x":0,"y":8,"w":648,"h":328,"visible":true,"isChild":false,"title":"Console"}]}}
+[ctl] {"ok":true,"id":"bridge-3","value":{"batch":5000,"eip":"0x55995b","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":5,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":806,"h":608,"visible":true,"isChild":false,"title":"Airstrike 1.0 pre6"},{"hwnd":"0x10002","x":0,"y":8,"w":648,"h":328,"visible":true,"isChild":false,"title":"Console"}]}}
+[ctl] {"ok":true,"id":"bridge-4","value":{"batch":5000,"frozen":true,"path":"/tmp/airstrike-accepted-dispatch-quit-oct27/ops/game-evidence/capture-9b55685e506a4124abd456510ebaf254.png","bytes":144804}}
+[ctl] {"ok":true,"id":"bridge-5","value":{"batch":5000,"eip":"0x55995b","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":5,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":806,"h":608,"visible":true,"isChild":false,"title":"Airstrike 1.0 pre6"},{"hwnd":"0x10002","x":0,"y":8,"w":648,"h":328,"visible":true,"isChild":false,"title":"Console"}]}}
+[signal] SIGTERM requested orderly shutdown
+uop: installs=171 kills=8 retired-poor=8 enters=484867 blocks=30148154 head-exits=0 reguards=1744475 rg-pages=27450994 rg-nonadj=0 win-kept=484794 win-reset=73 gen=4 | compiled=171 declined=105 insns=13271 uops=60633 flushes=1 traces=104
+  declines: no-backedge=77 call-indirect=17 head-unsupported=13
+uop nobump: skips=106354
+uop hot: decays=63127 halvings=23
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=3 kills=0 enters=57 blocks=2620
+
+Stats: 19477 API calls, 5000 batches in 28.614s (175 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x546a50 esp=0x7ec3ffa0 ebp=0xdda454 yield=1 waitH=0xe0004 sleepCount=0 csPark/steal=0/0

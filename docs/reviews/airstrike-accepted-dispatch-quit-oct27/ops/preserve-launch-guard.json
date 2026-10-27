@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 46620672,
+  "sampledPeakRSS": 46620672,
+  "reapedPeakRSS": 20316160,
+  "cpuSeconds": 0.323187,
+  "wallSeconds": 0.2567882707808167,
+  "owned": [
+    [
+      4093800,
+      "114394452"
+    ],
+    [
+      4093801,
+      "114394458"
+    ]
+  ],
+  "cleanupComplete": true,
+  "commandSHA256": "6c775b50f8ad43e4a4096df53054659090cd2f32a17c632f3cd5416825a1d8ad",
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py",
+    "call",
+    "import pathlib,shutil,json;H=pathlib.Path(\"/tmp/airstrike-accepted-dispatch-quit-oct27/ops\");D=H/\"failed-pre-guest-guard\";D.mkdir();shutil.copy2(H/\"remote.py\",D/\"remote.py\");[(shutil.copy2(p,D/p.name)) for p in (pathlib.Path(\"/home/user/.ascii/processes/13007.log\"),pathlib.Path(\"/home/user/.ascii/processes/13007.err.log\"))];assert not (H/\"game-evidence\").exists();assert not (H/\"guest.stdout\").exists();print(json.dumps(dict(guestStarts=0,spawnRecordAbsent=True,priorLauncherLive=pathlib.Path(\"/proc/13007\").exists())))",
+    "preserve-launch-guard"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "2bd4d4c8c82bda2905d9ec8128de124c52dbbcee8b421255f089157b8d5a759a",
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/preserve-launch-guard.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/preserve-launch-guard.stderr"
+}

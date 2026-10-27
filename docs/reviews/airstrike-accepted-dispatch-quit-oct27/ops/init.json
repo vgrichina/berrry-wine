@@ -1,0 +1,49 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 23330816,
+  "sampledPeakRSS": 23330816,
+  "reapedPeakRSS": 11821056,
+  "cpuSeconds": 0.023045999999999997,
+  "wallSeconds": 0.025242244824767113,
+  "owned": [
+    [
+      4080722,
+      "114341184"
+    ]
+  ],
+  "cleanupComplete": true,
+  "commandSHA256": "3ecbf22c681b9fdf4966ca09b2c1097a469fc5a8ebdda03dd14f208284311a96",
+  "command": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "init",
+    "--bare",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/repo/.git"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "236f29f1a4629c1874d7f4e663e37649f1f0e78b834c0783443c25d24af66436",
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/init.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/init.stderr"
+}

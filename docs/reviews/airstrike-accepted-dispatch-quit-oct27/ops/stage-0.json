@@ -1,0 +1,135 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50987008,
+  "sampledPeakRSS": 50987008,
+  "reapedPeakRSS": 28094464,
+  "cpuSeconds": 2.353034,
+  "wallSeconds": 3.5032288660295308,
+  "owned": [
+    [
+      4081964,
+      "114348268"
+    ],
+    [
+      4081965,
+      "114348277"
+    ],
+    [
+      4081968,
+      "114348293"
+    ],
+    [
+      4081971,
+      "114348310"
+    ],
+    [
+      4081974,
+      "114348326"
+    ],
+    [
+      4081977,
+      "114348343"
+    ],
+    [
+      4081980,
+      "114348359"
+    ],
+    [
+      4081985,
+      "114348386"
+    ],
+    [
+      4081988,
+      "114348402"
+    ],
+    [
+      4081991,
+      "114348419"
+    ],
+    [
+      4081994,
+      "114348430"
+    ],
+    [
+      4081997,
+      "114348447"
+    ],
+    [
+      4082017,
+      "114348463"
+    ],
+    [
+      4082020,
+      "114348480"
+    ],
+    [
+      4082023,
+      "114348492"
+    ],
+    [
+      4082026,
+      "114348503"
+    ],
+    [
+      4082029,
+      "114348515"
+    ],
+    [
+      4082032,
+      "114348526"
+    ],
+    [
+      4082038,
+      "114348548"
+    ],
+    [
+      4082048,
+      "114348564"
+    ],
+    [
+      4082051,
+      "114348581"
+    ],
+    [
+      4082054,
+      "114348592"
+    ],
+    [
+      4082057,
+      "114348604"
+    ]
+  ],
+  "cleanupComplete": true,
+  "commandSHA256": "092fa94e6bb2e52551d4cbcb3794d140f6a202c901389c9071fb261de4c995d7",
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py",
+    "stage",
+    "0"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "bdb0ba2702a2b9eede20b9174cb941e2dcdda7cd504618394797b1416b715ae7",
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/stage-0.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/stage-0.stderr"
+}

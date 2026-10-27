@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/collect.py", line 16, in <module>
+    b=read(t.REMOTE+'/ops/game-evidence/review-request.json','review-request-'+sys.argv[2]);q=json.loads(b);(D/'review-request.json').write_bytes(b)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/collect.py", line 6, in read
+    q=json.loads(t.api(code,label,[path],terminal=terminal));return base64.b64decode(q['data'])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py", line 20, in api
+    assert len(raw)+len(stderr)<=8192 and p.returncode==0,(label,p.returncode,stderr[:1000])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('review-request-0', 1, b'')

@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 46739456,
+  "sampledPeakRSS": 46739456,
+  "reapedPeakRSS": 20185088,
+  "cpuSeconds": 0.37295700000000004,
+  "wallSeconds": 0.3498054740484804,
+  "owned": [
+    [
+      4095601,
+      "114403502"
+    ],
+    [
+      4095626,
+      "114403511"
+    ]
+  ],
+  "cleanupComplete": true,
+  "commandSHA256": "bd81162f6548488e6ba689703d3c324e628f7e60c9bc4e4b8707c855330b58ca",
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/task.py",
+    "call",
+    "import pathlib,sys,json,shutil,time,hashlib;R=pathlib.Path(\"/tmp/airstrike-accepted-dispatch-quit-oct27\");owned=[]\nfor p in pathlib.Path(\"/proc\").glob(\"[0-9]*/cmdline\"):\n try:\n  a=p.read_bytes()\n  if str(R).encode() in a and p.parent.name!=str(__import__(\"os\").getpid()) and b\"python3\\x00-B\\x00\" in a:owned.append(dict(pid=int(p.parent.name),argvSHA256=hashlib.sha256(a).hexdigest()))\n except OSError:pass\nfiles=[p for p in R.rglob(\"*\") if p.is_file()];print(json.dumps(dict(at=time.time(),box=\"bx_pphjt7jw\",running=True,memAvailable=int(pathlib.Path(\"/proc/meminfo\").read_text().split(\"MemAvailable:\")[1].split()[0])*1024,diskFree=shutil.disk_usage(R).free,logical=sum(p.stat().st_size for p in files),allocated=sum(p.stat().st_blocks*512 for p in files),ownedPython=owned,expiry=\"2026-10-27T10:59:29Z\",shutdownOwner=\"coordinator\",leftRunning=True)))",
+    "box-closeout"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "e87469e28e617708ea2413d0bc39f6b10885913ee3b55f48a6c698529e2a1f77",
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/box-closeout.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/box-closeout.stderr"
+}

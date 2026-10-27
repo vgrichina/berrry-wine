@@ -1,0 +1,9 @@
+{
+  "pass_": true,
+  "originalIndexPaths": 1605,
+  "payloadHashes": 1604,
+  "allIndexedBlobIdentities": true,
+  "noSourceChanges": true,
+  "rawWhitespaceOnly": true,
+  "originalDiffcheck": "ops/diffcheck.json"
+}

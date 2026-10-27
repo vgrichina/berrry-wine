@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/remote.py", line 37, in <module>
+    assert json.loads((H/'startup-accepted.json').read_text())==config,'startup exact config mismatch'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: startup exact config mismatch

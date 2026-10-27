@@ -1,0 +1,1 @@
+{"commandId":"cmd_ab4zktjzoxtw","cwd":".","exitCode":0,"finishedAt":"2026-10-27T10:21:43.165Z","launcherFailed":false,"noticedMs":0,"oomKilled":false,"signal":null,"startMs":0,"startedAt":"2026-10-27T10:21:43.133Z","stderr":"","stderrTruncated":false,"stdout":"{\"files\": 27, \"bytes\": 641544}\n","stdoutTruncated":false,"success":true,"timedOut":false}

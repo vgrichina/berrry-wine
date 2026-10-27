@@ -1,0 +1,171 @@
+{
+  "status": "BLOCKED_ACTUAL_STARTUP_OBSCURED_NO_QUIT",
+  "objectiveMet": false,
+  "actualGuestInvocations": 1,
+  "detachedPreGuestGuards": 1,
+  "keyDispatches": 0,
+  "firstConcreteBlocker": "Human-inspected actual frame shows Console over Airstrike startup Press any key to start. Unobscured gameplay/menu rows0..6 not established; factual observation rejected.",
+  "inspectedFrame": "retained/9b55685e506a4124abd456510ebaf254.png",
+  "inspectedSHA256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+  "frameBytes": 144804,
+  "dimensions": [
+    800,
+    600
+  ],
+  "ordinaryQuit": false,
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": 0,
+    "complete": true
+  },
+  "guestSupervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 254259200,
+    "sampledPeakRSS": 254259200,
+    "reapedPeakRSS": 212578304,
+    "cpuSeconds": 16.095887,
+    "wallSeconds": 28.980218472999923,
+    "owned": [
+      [
+        13807,
+        "72820"
+      ],
+      [
+        13808,
+        "72829"
+      ]
+    ],
+    "cleanupComplete": true,
+    "configuration": {
+      "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+      "base": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--max-old-space-size=512",
+        "--require",
+        "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/abi-preload.cjs"
+      ],
+      "argvSHA256": "e21381e400f80f3b824d778cd69b3dba65e296b2addb1dc49894fcf076bdd334",
+      "environmentSHA256": "d4be93ad3269740f272def95636c3ee2ef0e1834601c6d420fb32d9097d53581",
+      "cwd": "/tmp/airstrike-accepted-dispatch-quit-oct27/runner",
+      "preloadSHA256": "9800128f951324742fd3bd9b5da4c083fbc284e38537e511555540892f91ed3d",
+      "startupSHA256": "a65e4a0e30717195cd30a9171848730c8f3094738cef76585dc74acb7e7c3ebd",
+      "limits": {
+        "rss": 2147483648,
+        "heap": 536870912,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152
+      },
+      "inherited": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/guest.stdout",
+    "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/guest.stderr"
+  },
+  "box": {
+    "at": 1793096825.9833472,
+    "box": "bx_pphjt7jw",
+    "running": true,
+    "memAvailable": 7381258240,
+    "diskFree": 49013460992,
+    "logical": 18470537,
+    "allocated": 19136512,
+    "ownedPython": [],
+    "expiry": "2026-10-27T10:59:29Z",
+    "shutdownOwner": "coordinator",
+    "leftRunning": true
+  },
+  "api": {
+    "charged": 511455,
+    "pending": {},
+    "limit": 8388608,
+    "reserve": 1048576
+  },
+  "accounting": {
+    "at": 1793096930.8876972,
+    "memAvailable": 3574882304,
+    "requiredRemainingRAM": 1482616832,
+    "peers": [
+      {
+        "pid": 4078961,
+        "rss": 196435968
+      },
+      {
+        "pid": 4087668,
+        "rss": 207622144
+      },
+      {
+        "pid": 4092476,
+        "rss": 193699840
+      }
+    ],
+    "free": 7638368256,
+    "future": 469762048,
+    "projectedFree": 7168606208,
+    "sourceGit": 5312512,
+    "ops": 33869824,
+    "events": 2355200,
+    "used": 41537536,
+    "reserve": 41943040,
+    "allocation": 134217728,
+    "pass": true
+  },
+  "reusedIndependentExecutions": 19,
+  "reusedCandidateRegressions": 25,
+  "acceptedMain": "c220ffccd69932bb2e5f05189f4845581de0d723",
+  "historicalRunner": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "controllerSHA256": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+  "bridgeSHA256": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+  "notCurrentMainEmulator": true,
+  "sourceChanges": false,
+  "reportOnlyOrphan": true,
+  "neverMergeWholeTree": true,
+  "mainOwnership": false,
+  "publicDeploy": false,
+  "workerSpawns": 0,
+  "rootAndDonorsReadOnly": true,
+  "initialRootDigestReused": true,
+  "externalPins": {
+    "/tmp/airstrike-accepted-frozen-dispatch-main-integrate-oct27/ops/result.json": "5cd6d2feaccfbb885e3ab271a1f9e671db0b8c82f08a7088bfb0c14f6e06f7c6",
+    "/tmp/airstrike-accepted-frozen-dispatch-main-integrate-oct27/repo/docs/reviews/airstrike-accepted-frozen-dispatch-main-integrate-oct27/receipt.json": "4bc2009ac2c2a78b4ce192e5b4a95edcf12b96b02582115a542f2f90f26b999f",
+    "/home/user/wine-assembly/CLAUDE.md": "305d142328ddc1edfe5e0bb0a972ddb97a149ede0c10cd7683a0fcc08f7786bb",
+    "/home/user/wine-assembly/scratch/usage-watch/coordinator-policy.md": "d9ec37860151a0c78a69749b11f41a1ae8340e505ef799fbdaa001b293b9d78e"
+  },
+  "recipesExternal": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops",
+  "incidents": [
+    "Exploratory tool displays exceeded8192B; original session retained; no retrospective compliance claim.",
+    "Initial setup URL whitespace parser failed; separate stdout/stderr retained; same-task fix.",
+    "Two staging transfers shared transfer.pack and overlapped; raw decompression failures and exact command-body files retained. Distinct packs corrected only failed groups.",
+    "Startup assertion incorrectly required comma filename despite exact manifest having none; original source/stdout/stderr/supervision retained, corrected enumeration passed.",
+    "First detached launcher failed pre-guest tuple/list config equality. Traceback and original source retained; no game evidence or guest stdout existed and launcher PID absent. JSON-normalized comparison corrected wrapper; identical Node receipt reused.",
+    "Actual first frame was visually obscured and startup-only. Rejected with no input; SIGTERM cleanup is NOT ordinary Quit.",
+    "Full staged diffcheck reports only original raw stdout/stderr whitespace (blank EOF / Git init hint spaces). Raw bytes retained, metadata/recipes checked separately; original diffcheck failure retained."
+  ],
+  "stoppingCondition": "One bounded actual game attempt stopped at first factual observation blocker; no replay, source repair, replacement task or box shutdown. Publication only."
+}
