@@ -1,0 +1,26 @@
+{
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "flags": [
+    "--max-old-space-size=512"
+  ],
+  "limits": {
+    "cpu": 150,
+    "wall": 150,
+    "fsize": 4194304,
+    "rss": 2147483648,
+    "data": "unchanged unlimited",
+    "addressSpace": "unchanged unlimited"
+  },
+  "recipeHashes": {
+    "supervisor.py": "9dfcc1121cfd527b370f899227a77930ed31a4daf634570b6084c170c987a613",
+    "controller.js": "9b55c2f7ba3d354fa3c074dae0a360f48dc65bbe55dc0c38a11d6a417846378e",
+    "remote-run.py": "f473c23ef4521b898bb8ca197c761826cb609a07ace296fc1657d9f6ebb5302d"
+  }
+}

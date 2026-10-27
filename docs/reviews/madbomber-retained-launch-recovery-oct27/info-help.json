@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "info",
+    "--help"
+  ],
+  "start": 1793069461.093256,
+  "end": 1793069461.0998933,
+  "exitStatus": 0,
+  "stdout": {
+    "bytes": 571,
+    "sha256": "d8911df7db7edae1ddd8d2e82062a2c97173ca773712d6d5258bf0b098c3af80"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

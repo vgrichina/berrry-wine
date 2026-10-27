@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--json",
+    "--timeout",
+    "30",
+    "bx_auvzp2av",
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport os,json,hashlib,time\np=Path('/home/user/madbomber-restart-oct27')\nnames=['supervisor.py','controller.js','remote-run.py','environment.json','pre-guest.json','startup-supervision.json','run-supervision.json','run-supervision.log']\nfiles={}\nfor n in names:\n f=p/n\n if f.exists():\n  b=f.read_bytes();files[n]={'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}\n  if n in ['environment.json','run-supervision.json','run-supervision.log']:files[n]['text']=b[:8192].decode(errors='replace')\nprocs=[]\nfor q in Path('/proc').glob('[0-9]*'):\n try:\n  c=q.joinpath('cmdline').read_bytes()\n  if b'madbomber-restart-oct27' in c and b'python3\\x00-c' not in c:procs.append({'pid':int(q.name),'cmd':c.decode(errors='replace')[:1024]})\n except OSError:pass\ndirs={}\nfor root in ['/tmp','/home/user/.ascii','/home/user/.local/state','/var/log']:\n d=Path(root)\n if d.is_dir():dirs[root]=[{'name':f.name,'dir':f.is_dir()} for f in d.iterdir() if any(t in f.name.lower() for t in ['boat','exec','command','log'])][:80]\nprint(json.dumps({'at':time.time(),'files':files,'outExists':(p/'out').exists(),'processes':procs,'directories':dirs,'allocated':sum(f.stat().st_blocks*512 for f in p.rglob('*')),'memAvailable':int(Path('/proc/meminfo').read_text().split('MemAvailable:')[1].split()[0])*1024}))\n"
+  ],
+  "start": 1793069478.7500565,
+  "end": 1793069478.9648628,
+  "exitStatus": 0,
+  "stdout": {
+    "bytes": 3341,
+    "sha256": "b7ad8a36c9729161b17e3060efddab5f6d575af1b436419355153be772c75b7b"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

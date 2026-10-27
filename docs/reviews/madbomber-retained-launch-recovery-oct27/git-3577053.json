@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "prlimit",
+    "--data=536870912:536870912",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-c",
+    "pack.windowMemory=16m",
+    "-C",
+    "/tmp/madbomber-retained-launch-recovery-oct27/repo",
+    "remote",
+    "add",
+    "origin",
+    "git@github.com:vgrichina/wine-assembly.git"
+  ],
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 19267584,
+    "sampledPeakRSS": 19267584,
+    "reapedPeakRSS": 11763712,
+    "cpuSeconds": 0.024657,
+    "wallSeconds": 0.030787707073614,
+    "owned": [
+      [
+        3577054,
+        "111674796"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "outputBytes": 0
+}

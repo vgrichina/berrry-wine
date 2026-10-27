@@ -1,0 +1,1 @@
+guest-launch.json intentionally retains zero-byte stdout from the sole failed launch. Return code1 was observed in the launch wrapper. Stderr not retained. No execution or denial cause inferred.

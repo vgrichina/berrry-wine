@@ -1,0 +1,12 @@
+{
+  "pass_": true,
+  "checks": [
+    "prior failure byte preservation",
+    "all new API command identities/status/stdout/stderr",
+    "exact remote helpers and environment unchanged",
+    "canonical mount receipt reused with comma-bearing files",
+    "no guest/outdir/terminal",
+    "local supervised cleanup"
+  ],
+  "noAcceptanceExecution": true
+}

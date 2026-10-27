@@ -1,0 +1,9 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "priorPublicationSHA256": "7557782c96819765af5b9eee8eb3b06e7c38259572a7376845ce75aa6eb272cf",
+  "canonicalMountReceipt": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/mount-check.json",
+  "canonicalMountReceiptSHA256": "75d54df24f42c6b3c2eeebeaabbea479035d72f8c1597c03a72fd3023fb152ef",
+  "reusedUnchanged": true,
+  "conditionalGuestAdmitted": false,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/madbomber-retained-launch-recovery-oct27/root-ref-digest.json"
+}

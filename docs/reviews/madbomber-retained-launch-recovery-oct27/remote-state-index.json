@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--json",
+    "--timeout",
+    "30",
+    "bx_auvzp2av",
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport json,time\np=Path('/home/user/.ascii/state')\nrows=[]\nfor q in p.iterdir():\n r={'name':q.name,'dir':q.is_dir(),'bytes':q.stat().st_size}\n if q.is_dir() and any(x in q.name.lower() for x in ['exec','command','log','process']):r['entries']=[{'name':f.name,'bytes':f.stat().st_size,'dir':f.is_dir()} for f in q.iterdir()][:80]\n rows.append(r)\nprint(json.dumps({'at':time.time(),'stateIndex':rows}))\n"
+  ],
+  "start": 1793069510.988643,
+  "end": 1793069511.3173602,
+  "exitStatus": 0,
+  "stdout": {
+    "bytes": 503,
+    "sha256": "cfab17aa601ccd179ec318ce61e8ebb2915f16fa282a0d157b062f1413785b7d"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

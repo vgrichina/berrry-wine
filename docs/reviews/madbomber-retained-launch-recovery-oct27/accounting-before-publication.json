@@ -1,0 +1,13 @@
+{
+  "at": 1793069639.6015575,
+  "taskBytes": 1380352,
+  "launcherBytes": 245760,
+  "sessionBytes": 708608,
+  "WALPositiveGrowthOnce": 0,
+  "WALBaseline": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/wal-base.json",
+  "WALBaselineSHA256": "de7ead45f6d5fb6c678931495a3e055a95202fd677c130f63c59dda6e1c20744",
+  "used": 2334720,
+  "allocation": 33554432,
+  "reserveAndFuture": 8388608,
+  "pass_": true
+}

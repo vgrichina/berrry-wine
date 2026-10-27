@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/madbomber-retained-launch-recovery-oct27/ops/diagnose.py", line 32, in <module>
+    finish.check()
+  File "/tmp/madbomber-retained-launch-recovery-oct27/ops/finish.py", line 14, in check
+    m=json.loads((prior/'mount-check.json').read_text());assert m['pass'] and m['commaBearingFiles'] and m['files']
+                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

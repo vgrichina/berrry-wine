@@ -1,0 +1,7 @@
+{
+  "incidents": [
+    "Initial verification dispatch had no matching handler and performed no checks; its no-op receipt retained, dispatcher corrected to reject unknown actions, then actual verifier run.",
+    "First real verifier incorrectly required a nonempty comma-bearing-file list; inspected immutable canonical receipt enumerates 149 files with zero commas. Corrected the report and exact receipt assertion; original failed check retained. No parser/runtime replay.",
+    "Initial publication accounting charged whole pre-existing shared WAL and stopped before Git. Corrected to positive growth once against immutable earlier retained baseline (predates this task); initial rejected accounting retained."
+  ]
+}

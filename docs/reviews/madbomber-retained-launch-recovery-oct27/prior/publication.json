@@ -1,0 +1,16 @@
+{
+  "branch": "task/madbomber-gameover-restart-gameplay-oct27",
+  "commit": "498c64f3284fc8625173d4bb5e442b27b8815f0c",
+  "tree": "d7f6b8896bb4fb8ea9b27381201968eb726415e7",
+  "remoteExact": "498c64f3284fc8625173d4bb5e442b27b8815f0c\trefs/heads/task/madbomber-gameover-restart-gameplay-oct27",
+  "verified": true,
+  "evidence": "docs/reviews/madbomber-gameover-restart-gameplay-oct27",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "incidents": [
+    "own repository author identity initially unset; reused donor configured author locally",
+    "second packaging hash list included its own prior checksum file; excluded self-reference",
+    "inherited HTTPS origin cannot use prescribed SSH key; corrected own origin to equivalent git@github.com repository before first SSH push"
+  ],
+  "force": false,
+  "mainMerged": false
+}

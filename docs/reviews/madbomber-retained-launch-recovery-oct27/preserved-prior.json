@@ -1,0 +1,47 @@
+[
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/guest-launch.json",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/guest-launch-empty-stdout.txt",
+    "bytes": 195,
+    "sha256": "19c36e90ce9f212a2218dfc82da14ab9fa4d13237c2e03fc5fe49c4cd8e20bdb"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/launch-failure-readonly-check.json",
+    "bytes": 67,
+    "sha256": "c1132e2bc167445f10a1a821486ba48a4ced26be6a08a24cb256ac86f82bdb5f"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/result.json",
+    "bytes": 3517,
+    "sha256": "9b85d8a0a09d72bffe3794cf081e688b069554d6dce04959fcef20eaa594d66c"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/evidence-manifest.json",
+    "bytes": 17517,
+    "sha256": "7ba2614df71d67d84f527829e40a9119bef75d601ae8d9d6677ecf75c6fa880b"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/publication.json",
+    "bytes": 968,
+    "sha256": "7557782c96819765af5b9eee8eb3b06e7c38259572a7376845ce75aa6eb272cf"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/remote-configuration.json",
+    "bytes": 790,
+    "sha256": "098224cb8c7579df14f4a0523899735a7c95617f8275ab0b6b2d0da4d104cd4d"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/startup-receipt.json",
+    "bytes": 2064,
+    "sha256": "48f04c46ff168c00e05f5d161cf973d7fc8607facd6a68b24ba460b0153f839e"
+  },
+  {
+    "path": "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/box-handback.json",
+    "bytes": 223,
+    "sha256": "291fed343ba6860c69e2bde8e632073ed9414e30d20fac48e9e056407c053777"
+  }
+]

@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "prlimit",
+    "--data=536870912:536870912",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-c",
+    "pack.windowMemory=16m",
+    "-C",
+    "/tmp/madbomber-retained-launch-recovery-oct27/repo",
+    "config",
+    "core.sparseCheckout",
+    "true"
+  ],
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 19398656,
+    "sampledPeakRSS": 19398656,
+    "reapedPeakRSS": 11771904,
+    "cpuSeconds": 0.024009,
+    "wallSeconds": 0.023987622000277042,
+    "owned": [
+      [
+        3577033,
+        "111674726"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "outputSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "outputBytes": 0
+}

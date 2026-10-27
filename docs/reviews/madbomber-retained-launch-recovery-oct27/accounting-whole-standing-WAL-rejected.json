@@ -1,0 +1,11 @@
+{
+  "at": 1793069617.0417955,
+  "taskBytes": 1376256,
+  "launcherBytes": 241664,
+  "sessionBytes": 675840,
+  "WALWholeConservative": 29347840,
+  "used": 31641600,
+  "allocation": 33554432,
+  "reserveAndFuture": 8388608,
+  "pass_": false
+}

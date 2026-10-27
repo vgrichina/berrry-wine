@@ -1,0 +1,24 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--json",
+    "--timeout",
+    "30",
+    "bx_auvzp2av",
+    "python3",
+    "-c",
+    "from pathlib import Path\nimport json,time\nroots=['/home/user/.boat','/home/user/.ascii','/home/user/.local/share/boat','/home/user/.local/state/boat','/tmp/.boat','/tmp/boat','/tmp/boat-exec','/var/lib/boat','/run/boat','/var/log/boat']\nrows=[]\nfor n in roots:\n p=Path(n);r={'path':n,'exists':p.exists()}\n if p.is_dir():r['entries']=[{'name':q.name,'dir':q.is_dir(),'bytes':q.stat().st_size} for q in p.iterdir()][:80]\n rows.append(r)\nprint(json.dumps({'at':time.time(),'locations':rows}))\n"
+  ],
+  "start": 1793069503.6241148,
+  "end": 1793069503.7926557,
+  "exitStatus": 0,
+  "stdout": {
+    "bytes": 1516,
+    "sha256": "5f46e402aec770041fff3e9af1927f510ef87b0ea57daeb279b21a5ad9bb84ba"
+  },
+  "stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
