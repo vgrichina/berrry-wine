@@ -1,0 +1,4 @@
+{
+  "reason": "supervisor-or-controller-failure: [Errno 13] Permission denied: '/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_diagnostic_failed_spawn_retains_files_and_error/spawn-True/node'",
+  "at": 1793097773.1694949
+}

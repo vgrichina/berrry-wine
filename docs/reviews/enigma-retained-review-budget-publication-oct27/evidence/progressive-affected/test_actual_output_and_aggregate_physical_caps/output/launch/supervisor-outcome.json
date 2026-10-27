@@ -1,0 +1,48 @@
+{
+  "status": "terminal-supervisor",
+  "failed": true,
+  "reason": "aggregate-resource-limit",
+  "peakTreeRSS": 55799808,
+  "cpuSeconds": 0.05,
+  "outputBytes": 1025,
+  "outputLimitExceeded": true,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4118549,
+      "114498087"
+    ],
+    [
+      4118551,
+      "114498094"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "51881",
+        "--root",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_actual_output_and_aggregate_physical_caps/output",
+        "--fault",
+        "output"
+      ],
+      "pid": 4118549,
+      "error": "terminal-supervisor"
+    }
+  }
+}

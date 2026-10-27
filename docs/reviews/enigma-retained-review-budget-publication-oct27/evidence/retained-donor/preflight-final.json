@@ -1,0 +1,75 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 76939264,
+  "sampledPeakRSS": 76939264,
+  "reapedPeakRSS": 30146560,
+  "cpuSeconds": 5.162422,
+  "wallSeconds": 1.81481742602773,
+  "owned": [
+    [
+      4120716,
+      "114505046"
+    ],
+    [
+      4120722,
+      "114505068"
+    ],
+    [
+      4120727,
+      "114505089"
+    ],
+    [
+      4120728,
+      "114505105"
+    ],
+    [
+      4120736,
+      "114505125"
+    ],
+    [
+      4120740,
+      "114505155"
+    ],
+    [
+      4120742,
+      "114505172"
+    ],
+    [
+      4120744,
+      "114505192"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py",
+    "ReviewBudgetTests.test_incompatible_plans_reject_at_production_entry_before_child",
+    "ReviewBudgetTests.test_proposed_runtime_budget_fits_unchanged_enforced_caps",
+    "-v"
+  ],
+  "commandSHA256": "ec213964a46bde3a228b551e6433a52f1268d4ccd8c30ef59656dff5bbb7e820",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "fc86a31d97c8299aa9942f9ff5dc77df5afceffce5c3f2894680da61781c5161",
+  "stdout": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/preflight-final.stdout",
+  "stderr": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/preflight-final.stderr"
+}

@@ -1,0 +1,47 @@
+{
+  "status": "exhausted-budget: action-reserve",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57499648,
+  "cpuSeconds": 0.05,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4118995,
+      "114498905"
+    ],
+    [
+      4118998,
+      "114498911"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "51349",
+        "--root",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_failure_no_reconnect_timeout_caps_and_terminal_child/caps",
+        "--fault",
+        ""
+      ],
+      "pid": 4118995
+    }
+  }
+}

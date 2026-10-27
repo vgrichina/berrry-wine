@@ -1,0 +1,16 @@
+test_plan_never_renews_cpu_api_captures_or_original_deadline (__main__.ReviewBudgetTests.test_plan_never_renews_cpu_api_captures_or_original_deadline) ... ok
+test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) ... 
+  test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) (delay=16.1) ... FAIL
+
+======================================================================
+FAIL: test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) (delay=16.1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 248, in test_review_evidence_io_debits_the_same_slot_and_cumulative_guard
+    self.assertGreaterEqual(driver.review_used,delay)
+AssertionError: 16.09999990463257 not greater than or equal to 16.1
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.128s
+
+FAILED (failures=1)

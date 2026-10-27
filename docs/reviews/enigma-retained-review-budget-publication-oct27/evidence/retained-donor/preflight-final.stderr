@@ -1,0 +1,7 @@
+test_incompatible_plans_reject_at_production_entry_before_child (__main__.ReviewBudgetTests.test_incompatible_plans_reject_at_production_entry_before_child) ... ok
+test_proposed_runtime_budget_fits_unchanged_enforced_caps (__main__.ReviewBudgetTests.test_proposed_runtime_budget_fits_unchanged_enforced_caps) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 1.448s
+
+OK

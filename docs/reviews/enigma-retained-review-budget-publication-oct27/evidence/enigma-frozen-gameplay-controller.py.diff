@@ -1,0 +1,137 @@
+--- accepted/tools/enigma-frozen-gameplay-controller.py
++++ candidate/tools/enigma-frozen-gameplay-controller.py
+@@ -200,6 +200,33 @@
+         require(type(p['capture_total_bytes']) is int
+                 and 2*c['capture_bytes'] <= p['capture_total_bytes'] <= c['max_captures']*c['capture_bytes'],
+                 'invalid-progress-capture-bytes')
++        # Optional caller admission, never an extension of an existing run.
++        # Each full-frame transport AND human review fits its own slot, while
++        # their sum still debits the original cumulative review allowance.
++        self.review_plan = c.get('review_plan')
++        self.planned_seconds = None
++        if self.review_plan is not None:
++            plan = self.review_plan
++            require(isinstance(plan, dict) and set(plan) == {'checkpoint_seconds', 'progress_seconds'},
++                    'invalid-review-plan-fields')
++            slots = plan['checkpoint_seconds']
++            require(isinstance(slots, list) and len(slots) == p['max_checkpoints']
++                    and all(type(n) in (int, float) and math.isfinite(n) and n > 0 for n in slots),
++                    'invalid-review-plan-checkpoints')
++            seconds = plan['progress_seconds']
++            require(type(seconds) in (int, float) and math.isfinite(seconds) and seconds > 0,
++                    'invalid-review-plan-progress')
++            require(sum(slots) <= c['review_seconds'], 'insufficient-cumulative-review-allowance')
++            require((len(slots)+1)*c['capture_bytes'] <= p['capture_total_bytes'],
++                    'insufficient-planned-review-after-action-capture-bytes')
++            # Initial snapshot + n1/ACK/frozenzero (3), N captures and N-1
++            # refreshes, then snapshot/input/step/snapshot/capture/quit (6).
++            # Also reserve a final step+snapshot (2) overrun for each advance
++            # window: advance checks its deadline before starting a full step.
++            self.planned_seconds = (seconds + sum(slots) + c['cleanup_seconds']
++                                    + (4*len(slots)+8)*c['request_timeout'])
++            require(self.planned_seconds <= min(p['total_seconds'], self.time_left()),
++                    'insufficient-review-progress-action-wall-allowance')
+ 
+     def save(self, name, value):
+         tmp = self.out / (name + '.tmp')
+@@ -355,12 +382,20 @@
+         decision_path = Path(c['decision_path']) if c.get('decision_path') else None
+         start = self.clock()
+         until = min(start + max(0, c['review_seconds']-self.review_used), c['deadline_at']-action_time)
++        if self.review_plan is not None:
++            until = min(until, start + self.review_plan['checkpoint_seconds'][self.captures-1])
+         try:
+             while decision_path is not None:
+                 self.live()
++                # Do not consume a decision that arrives after its admitted
++                # interval, including time spent reading the decision file.
++                if c['review_seconds'] > 0 and self.clock() > until:
++                    break
+                 if decision_path.exists():
+                     with decision_path.open('rb') as f:
+                         raw = f.read(8193)
++                    if c['review_seconds'] > 0 and self.clock() > until:
++                        break
+                     require(len(raw) <= 8192, 'oversize-review-decision')
+                     decision = json.loads(raw)
+                     # A reviewer replaces one file atomically for each frame.
+@@ -380,7 +415,8 @@
+                     break
+                 self.sleep(min(.05, until-self.clock()))
+         finally:
+-            self.review_used += max(0, self.clock()-start)
++            self.last_review_elapsed = max(0, self.clock()-start)
++            self.review_used += self.last_review_elapsed
+         return None
+ 
+     def drive(self):
+@@ -393,6 +429,9 @@
+         menu_time = rt + action_time         # menu capture + action/evidence
+         menu_batches = c['after_action_batches'] + c['cleanup_batches']
+         self.live()
++        if self.planned_seconds is not None:
++            require(self.time_left() >= self.planned_seconds,
++                    'insufficient-review-progress-action-wall-allowance')
+         self.snapshot()
+         require(self.batch + menu_batches + 1 < c['max_batches'], 'exhausted-budget: action-reserve')
+         require(self.time_left() >= menu_time, 'exhausted-budget: action-time-reserve')
+@@ -404,6 +443,9 @@
+                              c['deadline_at'] - menu_time - 2*rt)
+         window = min(c['checkpoint_seconds'], max(0, progress_until-c['started_at'])
+                      / self.progress['max_checkpoints'])
++        if self.review_plan is not None:
++            window = min(c['checkpoint_seconds'], self.review_plan['progress_seconds']
++                         / self.progress['max_checkpoints'])
+         self.save('budget-plan.json', dict(startedAt=c['started_at'], deadlineAt=c['deadline_at'],
+             supervisorLimits=c['supervisor_limits'], progress=self.progress,
+             progressUntil=progress_until, checkpointWindowSeconds=window,
+@@ -412,6 +454,11 @@
+             captureCountTotal=c['max_captures'], afterActionCaptureReserve=1,
+             apiActionReserveOperations=6, apiOperationCeilingBytes=16384,
+             resources=self.owner.budget()))
++        if self.review_plan is not None:
++            self.save('review-admission.json', dict(plan=self.review_plan,
++                controllerRequiredSeconds=self.planned_seconds,
++                reviewCumulativeAllowance=c['review_seconds'],
++                originalStartedAt=c['started_at'], originalDeadlineAt=c['deadline_at']))
+         stop = 'NO_REVIEWED_ACTION_NO_INPUT'
+         for checkpoint in range(1, self.progress['max_checkpoints']+1):
+             # Subsequent windows may use remaining original time, never renew
+@@ -419,10 +466,22 @@
+             target = min(self.batch + c['checkpoint_batches'], c['max_batches'] - menu_batches - 1)
+             until = min((c['started_at'] if checkpoint == 1 else self.clock()) + window,
+                         progress_until)
+-            self.advance(target, until, menu_batches, menu_time, self.progress['cpu_reserve'])
++            stage_time, future_time = menu_time, action_time
++            if self.review_plan is not None:
++                slots = self.review_plan['checkpoint_seconds'][checkpoint-1:]
++                future_time = action_time + sum(slots[1:]) + 2*rt*(len(slots)-1)
++                stage_time = rt + slots[0] + future_time
++                until = min(until, c['deadline_at']-stage_time-2*rt)
++            self.advance(target, until, menu_batches, stage_time, self.progress['cpu_reserve'])
+             name = 'menu-candidate.png' if checkpoint == 1 else f'menu-candidate-{checkpoint:03}.png'
+-            frame = self.capture(name, 1, action_time)
+-            decision = self.review(frame, action_time)
++            frame = self.capture(name, 1, stage_time-rt)
++            decision = self.review(frame, future_time)
++            if self.review_plan is not None and decision:
++                # Include decision validation and durable review evidence I/O,
++                # not just polling/transport, in the same nonrenewable guards.
++                require(self.last_review_elapsed <= self.review_plan['checkpoint_seconds'][checkpoint-1]
++                        and self.review_used <= c['review_seconds'],
++                        'exhausted-budget: review-reservation')
+             if not decision or decision.get('continueLoading') is not True:
+                 break
+             stop = 'LOADING_REVIEWED_RESERVE_STOP_NO_INPUT'
+@@ -438,6 +497,11 @@
+                     or not self.api_room(10)
+                     or self.owner.budget()['cpu_left'] < self.progress['cpu_reserve'] + 2*rt):
+                 break
++            if self.review_plan is not None:
++                remaining_reviews = sum(self.review_plan['checkpoint_seconds'][checkpoint:])
++                if (self.time_left() < future_time + 2*rt
++                        or c['review_seconds']-self.review_used < remaining_reviews):
++                    break
+             self.snapshot(self.batch)
+         if decision and decision.get('safeStartGame') is True:
+             require(decision.get('reviewed') is True and decision.get('frameSHA256') == frame['sha256']

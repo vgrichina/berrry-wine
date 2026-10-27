@@ -1,0 +1,65 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58093568,
+  "sampledPeakRSS": 58093568,
+  "reapedPeakRSS": 29126656,
+  "cpuSeconds": 2.039912,
+  "wallSeconds": 1.0051731208804995,
+  "owned": [
+    [
+      4125315,
+      "114517541"
+    ],
+    [
+      4125344,
+      "114517553"
+    ],
+    [
+      4125360,
+      "114517580"
+    ],
+    [
+      4125370,
+      "114517609"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller",
+    "-p",
+    "test_progressive.py",
+    "-k",
+    "test_reviewed_menu_still_requires_action_reserves",
+    "-v"
+  ],
+  "commandSHA256": "1a6fca8096255eaaa45f634677c631a340b149d3b87a843b6b67430207dfdb19",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "d38750b2388090596da600d023b5309c6f56e25c2382ac721fca78fa77f45c1a",
+  "stdout": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-action-remainder.stdout",
+  "stderr": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-action-remainder.stderr"
+}

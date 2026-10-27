@@ -1,0 +1,168 @@
+{
+  "status": "PASS_RETAINED_REPAIR_TEST_AND_PACKAGE_PENDING_TASK_PUBLICATION",
+  "at": 1793098928.3621244,
+  "task": "enigma-retained-review-budget-publication-oct27",
+  "canonical": true,
+  "ownedRoot": "/tmp/enigma-retained-review-budget-publication-oct27",
+  "sourceRevision": "0a61c1bc254e3e455607e01d2e29d7f97c2806ef",
+  "inputs": "input-pins.json",
+  "sourcePins": {
+    "tools/enigma-frozen-gameplay-controller.py": "8d110546e5795ba4b092cd76e5d0accb0c7b510b7947cbddd5db8b50fe7b5041",
+    "tools/enigma-supervised-gameplay.py": "8da9bd8dd47ae03dea50c7f55c2f988906f95252a4d8ef95e0cfb62bd6e17858",
+    "test/fixtures/enigma-controller/test_review_budget.py": "14341c8f37c35696365f8c262da2e163439e1affb4875e11e0757f3537150e95"
+  },
+  "wrapperSHA256": "8cc50fe83b3070e97d192e733902eeb02c550882142b9b7d8e9618ea1034d2c6",
+  "repair": {
+    "contract": "Optional explicit per-checkpoint full-image transport/review slots and total progress windows; reject incompatible cumulative review, full capture and wall requirements at production launch preflight before any child; reserve future reviews and action within original nonrenewable guards.",
+    "controllerRequiredSeconds": "progress_seconds + sum(checkpoint_seconds) + cleanup_seconds + (4*N+8)*request_timeout",
+    "launchRequiredSeconds": "ready_seconds + controllerRequiredSeconds",
+    "guards": "Original authority/listener identity, single cumulative review/API/CPU/capture/time guards, serial full ACK then frozen-zero, refreshed snapshot before click, and stop on uncertainty retained; review evidence I/O is charged to the same slot and total. No runtime budget reset."
+  },
+  "retainedFailure": {
+    "receipt": "/tmp/enigma-published-progressive-startgame-oct27/ops/result.json",
+    "receiptReadOnce": true,
+    "actualMenuBatch": 78593,
+    "fullFrame": [
+      640,
+      480
+    ],
+    "menuSHA256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "reviewAllowance": 28,
+    "fetchSeconds": [
+      14.54351074877195,
+      16.862725148908794
+    ],
+    "startGameRequested": [
+      343,
+      213
+    ],
+    "clickDispatched": false,
+    "preservation": "Original receipt and all predecessor evidence unchanged, read-only. This source-only task did not revisit the guest or API."
+  },
+  "firstProductionBoundary": {
+    "entry": "Unchanged pinned production Python main --launch-config, actual offline child/listener/HTTP, full synthetic640x480 images; fake review clock only. No controller or supervisor method reconstruction/replacement.",
+    "originalSupervisorSHA256": "05326027c821b39960e3417c86786d06a8c824b7fcd731d7c3586b59a5ce40a4",
+    "originalControllerSHA256": "2c8d064d21e3d4c86b099591f076115b622450eb76371844324ee8be645f6beb",
+    "reproducer": "original-reproducer.py",
+    "reproducerSHA256": "6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461",
+    "receipt": "original-boundary-v4.json",
+    "result": "PASS reproduction of original28s exhausted, second review unfinished, zero clicks; owned cleanupComplete"
+  },
+  "passingTests": {
+    "adequateExplicitAllowance": "final-adequate-v2.json: final controller source, explicit34s allowance, measured delayed full-image reviews both complete; exactly one click after matching frozen-zero snapshot; all step ACK/snapshot pairs and quit; owned cleanupComplete",
+    "preflightAndSlot": "final-preflight.json: 7 incompatible plan cases reject at actual production entry before child, proposed108s budget accepts and original3s control timeout rejects, insufficient capture bytes rejects; short first slot cannot consume a later slot",
+    "depletedCumulativeGuards": "planned-guards.json: PASS reused unchanged; original final-plan-guards also passed this method before float comparison failure",
+    "evidenceIOBehavior": "corrected-review-evidence-io.json: only assigned corrected method rerun, PASS strict refusal and zero input with five-place elapsed comparison",
+    "affectedReview": "affected-review.json:3 methods PASS",
+    "progressive": "progressive-affected.stderr:6 methods PASS before guarded aggregate RSS stop. Remaining3 methods PASS separately in progressive-reserve-remainder.json, progressive-stale-remainder.json, progressive-action-remainder.json",
+    "unchangedAcceptance": "Reuse accepted unchanged production JS/native/module/source-fixture receipts from pinned donor; no Node/native/build/runtime execution here.",
+    "guardedPackage": "guarded-package.json: PASS all required reusable and followup receipts plus exact candidate pins"
+  },
+  "remainingChecks": [
+    "Independent acceptance in later coordinator assignment; no independent acceptance claimed here.",
+    "Current-main scoped integration and runtime readiness/authorization remain gated; no main/runtime action here."
+  ],
+  "diagnostics": {
+    "supervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "limits": "Python physical128MiB CPU90 wall120 file24MiB output2MiB; cumulative1MiB; Git physical256MiB, DATA512MiB on Git child only, pool2 and production git flock. Parent DATA/AS unlimited retained in each executed operation receipt.",
+    "streams": "Executed supervised operations create distinct owned stdout/stderr from command creation, plus separate fixture CLI streams; exact commands, safe environment hashes and inherited limits in per-operation JSON. Early tool-only inspection/setup streams remain in session, no retrospective separate-stream claim.",
+    "incidents": [
+      "Initial policy/board combined displays exceeded8192B; original transcript retained.",
+      "Unavailable python alias failed exit127 before operation creation; corrected to installed python3. Original diagnostic retained in session.",
+      "First fixture lacked parent mkdir; original-boundary exact separate stdout/stderr retained.",
+      "original-boundary-v2/v3 counted simulated transport completion during cleanup; assertion failures retained. Final fixture stops fake transport advancement after controller terminal and records main-thread review completion only.",
+      "progressive-affected enforced physical RSS stop at141893632B; cleanupComplete. Six completed tests retained; three remaining methods completed in smaller processes without raising caps.",
+      "final-plan-guards float elapsed assertion16.09999990463257 versus16.1 failed after correct input refusal. Corrected comparison to five decimal places only; strict refusal/no-input checks unchanged. Corrected test not admitted.",
+      "package.json failed before writing acceptance/report receipt because the guard test group was not all green. Publication stopped as required; diagnostics preserved.",
+      "This task initial combined inspection displays exceeded8192B; original transcript retained. All supervised operations preserve separate owned stdout/stderr from process creation.",
+      "Initial Git donor-object lookup returned commit with nested-alternate warnings; full stderr retained. Owned alternate now uses a bounded read-only immutable loose donor object view; no donor mutation or fetch. See object-view.json.",
+      "Broad git diff --cached --check rejected trailing spaces in original raw stderr/diff evidence only. Immutable evidence preserved byte-for-byte; scoped source/test/report whitespace check passed. Both receipts retained."
+    ]
+  },
+  "publication": {
+    "branch": "task/enigma-retained-review-budget-publication-oct27",
+    "reportOnlyOrphan": true,
+    "commit": null,
+    "pushed": false,
+    "exactRemoteVerified": false,
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-retained-review-budget-publication-oct27/root-ref-digest.json",
+    "rootRefReceiptReuse": "Supplied initial receipt reused; no root ref operation",
+    "mount": "N/A: no mount/runtime argv authorized"
+  },
+  "nextRuntimeRequirements": {
+    "authorization": "Fresh independently accepted, scoped-integrated coordinator assignment with current fixture/module/worker/import/mount pins, fresh resource/lifecycle readiness and exact Node startup receipt. Never renew the exhausted invocation.",
+    "duration_seconds": 110,
+    "ready_seconds": 8,
+    "cpu": 90,
+    "supervisor_wall": 120,
+    "controller": {
+      "review_seconds": 36,
+      "request_timeout": 1,
+      "cleanup_seconds": 12,
+      "checkpoint_seconds": 18,
+      "review_plan": {
+        "checkpoint_seconds": [
+          17,
+          19
+        ],
+        "progress_seconds": 36
+      },
+      "progress": {
+        "max_checkpoints": 2,
+        "total_seconds": 110,
+        "cpu_reserve": 15,
+        "api_bytes": 1048576,
+        "capture_total_bytes": 2800000
+      },
+      "max_captures": 4,
+      "capture_bytes": 700000,
+      "width": 640,
+      "height": 480
+    },
+    "preflightRequiredSeconds": 108,
+    "qualification": "Feasible static preflight only. One-second control timeout requires explicit fresh caller admission and stops on uncertainty without retry. Future transport latency,36s progress sufficiency, actual new full-image menu review, gameplay and ordinary Quit remain unqualified. Historical coordinates/images never authorize input."
+  },
+  "cleanup": {
+    "boardWatcherToolSession": 22664,
+    "watcherStopped": false,
+    "guestNodeAPIBoatOperations": 0,
+    "workersSpawned": 0,
+    "publicDeployments": 0,
+    "assignedBoxes": [],
+    "existingBox": "bx_pa3bb5zc",
+    "state": "Not queried or touched; coordinator-owned historical running receipt only",
+    "shutdown": "2026-10-27T11:00:00Z",
+    "expiry": "2026-10-27T11:06:11Z",
+    "lifecycleAction": "none",
+    "rootDonorsReadOnly": true
+  },
+  "donorManifest": {
+    "path": "/tmp/enigma-retained-review-budget-publication-oct27/ops/retained-donor/receipt-manifest.json",
+    "sha256": "103bfa441935529c27101c4a2561e791180eb1a77cde0e0d13bd3157c6b99d79"
+  },
+  "historicalResourceBlocker": {
+    "receipt": "admission-blocked.json",
+    "memAvailable": 1363013632,
+    "requiredRemainingRAM": 2037866496,
+    "countedClientPIDsOnce": [
+      4111340,
+      4111341,
+      4114007,
+      4114088
+    ],
+    "clientAllocationEach": 335544320,
+    "sharedChildPool": 268435456,
+    "hostHeadroom": 805306368,
+    "operation": "final-plan-guards-v2",
+    "operationStarted": false,
+    "allocationDisk": 134217728,
+    "reserveDisk": 8388608,
+    "measuredTaskBytes": 5861376,
+    "projectedHostDiskFree": 6123945984,
+    "action": "Stopped dependent Python/tests/Git; no unchanged admission retry, no cap change. Setup rejection retained in session. WIP not committed/pushed because dependent Git admission is also incompatible."
+  },
+  "sourceRecovery": "recovery-pins.json",
+  "accounting": "manifest.admission.json; fresh operation admission receipts include all owned and external bytes with publication peak, margin and reserve"
+}

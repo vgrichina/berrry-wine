@@ -1,0 +1,27 @@
+{
+  "status": "node-startup-requires-explicit-equals-flags",
+  "failed": true,
+  "reason": "supervisor-or-controller-failure: node-startup-requires-explicit-equals-flags",
+  "peakTreeRSS": 24248320,
+  "cpuSeconds": 0,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": null,
+  "owned": [],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "output.log",
+      "stderr": "stderr.log"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "at": 1793098189.3625104,
+  "memAvailable": 1363013632,
+  "requiredRemainingRAM": 2037866496,
+  "peers": [
+    {
+      "pid": 4111340,
+      "rss": 91226112,
+      "argvSHA256": "3c141d2944c276945d0d05a98b3ede73a925ffd9c94ecf343e78fb8c512e99e5"
+    },
+    {
+      "pid": 4111341,
+      "rss": 95272960,
+      "argvSHA256": "cfd85c86f1bdadea5b2a73e3e0280930395c163e3db3b3177476f8b5971fa829"
+    },
+    {
+      "pid": 4114007,
+      "rss": 95920128,
+      "argvSHA256": "c297b4867c536bbb7cce301a1bf58e9b6b4f9623af99157fddc7b3eec6f3688d"
+    },
+    {
+      "pid": 4114088,
+      "rss": 95633408,
+      "argvSHA256": "e5c23a57039f44e7838b8d0c22becb2dc628ac45528b260e6d866a1732d14096"
+    }
+  ],
+  "free": 6526599168,
+  "future": 402653184,
+  "projectedFree": 6123945984,
+  "sourceGit": 1028096,
+  "ops": 3354624,
+  "events": 1478656,
+  "used": 5861376,
+  "reserve": 8388608,
+  "allocation": 134217728,
+  "authoritativeAdmissionSHA256": "618fc4ef72aea949c8e926bb7896f6f99cc77436ea083584c34e0f5304deb31e",
+  "pass": false
+}

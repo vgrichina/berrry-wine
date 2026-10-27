@@ -1,0 +1,6 @@
+test_incompatible_plans_reject_at_production_entry_before_child (__main__.ReviewBudgetTests.test_incompatible_plans_reject_at_production_entry_before_child) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.851s
+
+OK

@@ -1,0 +1,153 @@
+{
+  "status": "PASS_SOURCE_TEST_ONLY_PENDING_INDEPENDENT_ACCEPTANCE",
+  "at": 1793098773.9943445,
+  "task": "enigma-retained-review-budget-publication-oct27",
+  "sourceRevision": "0a61c1bc254e3e455607e01d2e29d7f97c2806ef",
+  "originalPins": {
+    "tools/enigma-frozen-gameplay-controller.py": "2c8d064d21e3d4c86b099591f076115b622450eb76371844324ee8be645f6beb",
+    "tools/enigma-supervised-gameplay.py": "05326027c821b39960e3417c86786d06a8c824b7fcd731d7c3586b59a5ce40a4",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "test/fixtures/enigma-controller/test_progressive.py": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_controller.py": "684dfe81c33deb6b813bf9f362c99479621aedbc4a1066b80a93ea99c53c78e5",
+    "test/fixtures/enigma-controller/child_server.py": "42823513355d78eaff9831fb57d1ccd3409dfb2188ef1ef0907cda37f0cdb1e5",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_supervised.py": "98473ed865fcc004efe709879ecb0c63896f672ef972d73c0814acf09e4b59a2",
+    "test/fixtures/enigma-controller/README.md": "4400965fefd50c5182b04ff88141b57c42ccc2f88e7846525587032ca547f0df"
+  },
+  "candidatePins": {
+    "tools/enigma-frozen-gameplay-controller.py": "8d110546e5795ba4b092cd76e5d0accb0c7b510b7947cbddd5db8b50fe7b5041",
+    "tools/enigma-supervised-gameplay.py": "8da9bd8dd47ae03dea50c7f55c2f988906f95252a4d8ef95e0cfb62bd6e17858",
+    "test/fixtures/enigma-controller/test_review_budget.py": "14341c8f37c35696365f8c262da2e163439e1affb4875e11e0757f3537150e95"
+  },
+  "firstBoundary": {
+    "entry": "unchanged production enigma-supervised-gameplay.py main --launch-config",
+    "productionSupervisorSHA256": "05326027c821b39960e3417c86786d06a8c824b7fcd731d7c3586b59a5ce40a4",
+    "controllerSHA256": "2c8d064d21e3d4c86b099591f076115b622450eb76371844324ee8be645f6beb",
+    "reproducerSHA256": "6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461",
+    "evidence": "original-boundary-v4.json",
+    "delays": [
+      14.54351074877195,
+      16.862725148908794
+    ],
+    "result": "28s exhausted, second review unfinished, zero clicks, cleanupComplete"
+  },
+  "retainedRuntimeFailure": {
+    "receipt": "/tmp/enigma-published-progressive-startgame-oct27/ops/result.json",
+    "readOnce": true,
+    "menuBatch": 78593,
+    "menuSize": [
+      640,
+      480
+    ],
+    "menuSHA256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "requestedStartGame": [
+      343,
+      213
+    ],
+    "clicked": false,
+    "reviewSeconds": 28
+  },
+  "tests": {
+    "delayedAdequate": "final-adequate-v2.json",
+    "preflightAndSlot": "final-preflight.json",
+    "noReset": "planned-guards.json",
+    "reviewEvidenceIO": "corrected-review-evidence-io.json",
+    "affectedReview": "affected-review.json",
+    "progressive": "6 methods passed before guarded RSS stop in progressive-affected.stderr; remaining 3 methods each passed in isolated processes",
+    "remainingProgressive": [
+      "progressive-reserve-remainder.json",
+      "progressive-stale-remainder.json",
+      "progressive-action-remainder.json"
+    ],
+    "unchangedSourceNativeAcceptance": "Reuse pinned accepted source/native/JS runner receipts; no Node/native/build/guest executed"
+  },
+  "nextRuntime": {
+    "authorization": "Fresh coordinator assignment, independent acceptance and scoped integration required; no existing run budget reset",
+    "readiness": "Full exact immutable fixture/module/import/worker/mount closure, fresh admission, lifecycle and exact Node startup receipt required; not tested by source-only fixture",
+    "duration_seconds": 110,
+    "ready_seconds": 8,
+    "supervisorCPU": 90,
+    "supervisorWall": 120,
+    "controller": {
+      "review_seconds": 36,
+      "request_timeout": 1,
+      "cleanup_seconds": 12,
+      "checkpoint_seconds": 18,
+      "review_plan": {
+        "checkpoint_seconds": [
+          17,
+          19
+        ],
+        "progress_seconds": 36
+      },
+      "progress": {
+        "max_checkpoints": 2,
+        "total_seconds": 110,
+        "cpu_reserve": 15,
+        "api_bytes": 1048576,
+        "capture_total_bytes": 2800000
+      },
+      "max_captures": 4,
+      "capture_bytes": 700000,
+      "width": 640,
+      "height": 480
+    },
+    "totalRequiredSeconds": 108,
+    "measuredFetchSecondsTotal": 31.406235897680745,
+    "qualification": "Preflight feasible, not proof of future network latency, 36s progress sufficiency, actual menu, gameplay or Quit. Slower/missing review stops without input. One-second control timeout must be explicitly admitted; any uncertainty stops without replay.",
+    "input": "Only fresh full-image correlated review can authorize StartGame. Historical menu coordinates are not an input authorization."
+  },
+  "resource": {
+    "localAllocation": 134217728,
+    "reserve": 8388608,
+    "gitPhysical": 268435456,
+    "gitData": 536870912,
+    "pythonPhysical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "display": 8192,
+    "cumulativeOutput": 1048576,
+    "controls": "Git child-only DATA via prlimit, two-permit pool+flock; trusted supervisor Python one-permit pool; fresh peer-once admission per operation"
+  },
+  "scope": {
+    "reportOnlyOrphan": true,
+    "neverMergeWholeTree": true,
+    "changedPaths": [
+      "tools/enigma-frozen-gameplay-controller.py",
+      "tools/enigma-supervised-gameplay.py",
+      "test/fixtures/enigma-controller/test_review_budget.py"
+    ],
+    "rootDonorsReadOnly": true,
+    "noMain": true,
+    "noAPI": true,
+    "noGuest": true,
+    "noNode": true,
+    "noBoat": true,
+    "noWorkers": true,
+    "noPublicDeployment": true
+  },
+  "lifecycle": {
+    "assignedBoxes": [],
+    "existingBox": "bx_pa3bb5zc",
+    "state": "Not queried or touched in this source-only task; last supplied runtime receipt RUNNING_API_EXEC_OBSERVED",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T11:00:00Z",
+    "expiry": "2026-10-27T11:06:11Z",
+    "action": "unchanged"
+  },
+  "incidents": [
+    "Initial combined policy and board displays exceeded8192B; preserved transcript, no retrospective compliance claim.",
+    "First shell used unavailable python instead of python3 and failed before operation creation; exit127 retained in session.",
+    "First regression fixture omitted parent mkdir; exact separate child stdout/stderr retained original-boundary.",
+    "Two fixture iterations counted delayed review completion during cleanup; exact failed assertions retained original-boundary-v2/v3. Final fixture stops fake transport advancement after controller outcome and preserves completed flags at terminal.",
+    "Broad progressive run hit enforced aggregate RSS128MiB, peak141893632; stopped and cleanupComplete. Six completed methods retained; three remaining methods ran in smaller isolated processes without changing caps.",
+    "Original final-plan-guards float assertion16.09999990463257 versus16.1 failed after correct strict refusal and zero input. Only comparison corrected to five places; corrected-review-evidence-io passed one method. Original failed packaging receipts preserved under retained-donor.",
+    "Predecessor fresh RAM refusal prevented test followup and publication; no unchanged retry. This task uses new coordinator admission and fresh per-operation gates.",
+    "This task initial combined inspection displays exceeded8192B; original session transcript retained."
+  ],
+  "publication": "pending task branch; no main ownership"
+}

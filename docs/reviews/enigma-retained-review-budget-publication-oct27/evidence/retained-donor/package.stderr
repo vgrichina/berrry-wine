@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/package.py", line 15, in <module>
+    assert q['exit']==0 and q['stopReason'] is None and q['cleanupComplete'],label
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: final-plan-guards

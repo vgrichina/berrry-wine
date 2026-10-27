@@ -1,0 +1,25 @@
+test_original_measured_transport_exhausts_review_without_click (__main__.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click) ... FAIL
+
+======================================================================
+FAIL: test_original_measured_transport_exhausts_review_without_click (__main__.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 107, in test_original_measured_transport_exhausts_review_without_click
+    root,r=self.case('original',28)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 103, in case
+    self.assertEqual(p.returncode,0,p.stderr.decode())
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 117, in <module>
+    boundary(Path(sys.argv[2]),float(sys.argv[3]),json.loads(sys.argv[4]))
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 27, in boundary
+    root.mkdir()
+  File "/usr/lib/python3.12/pathlib.py", line 1313, in mkdir
+    os.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/original-boundary/original'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.200s
+
+FAILED (failures=1)

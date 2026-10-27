@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 38608896,
+  "sampledPeakRSS": 38608896,
+  "reapedPeakRSS": 18948096,
+  "cpuSeconds": 0.68479,
+  "wallSeconds": 0.3701784680597484,
+  "owned": [
+    [
+      4147780,
+      "114595419"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-retained-review-budget-publication-oct27/ops/setup.py"
+  ],
+  "commandSHA256": "3c63d820699af5207815ed0a3567c1a4051b5a3de27f3c41d10e6e0524574b2c",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "4509d48c9a82a4843094dbbe559d5c134e7042b1480f1e965f05016db4fc0102",
+  "stdout": "/tmp/enigma-retained-review-budget-publication-oct27/ops/recovery.stdout",
+  "stderr": "/tmp/enigma-retained-review-budget-publication-oct27/ops/recovery.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

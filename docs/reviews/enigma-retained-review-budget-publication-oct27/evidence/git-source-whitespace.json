@@ -1,0 +1,59 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 21757952,
+  "sampledPeakRSS": 21757952,
+  "reapedPeakRSS": 14258176,
+  "cpuSeconds": 0.08829999999999999,
+  "wallSeconds": 0.1627467260695994,
+  "owned": [
+    [
+      4152603,
+      "114612751"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/enigma-retained-review-budget-publication-oct27/repo",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    "tools",
+    "test",
+    "docs/reviews/enigma-retained-review-budget-publication-oct27/README.md",
+    "docs/reviews/enigma-retained-review-budget-publication-oct27/receipt.json",
+    "docs/reviews/enigma-retained-review-budget-publication-oct27/receipt-manifest.json",
+    "docs/reviews/enigma-retained-review-budget-publication-oct27/evidence-manifest.json"
+  ],
+  "commandSHA256": "9d0d106bac86e29f2a91a9f655b9f14fe573cf077f40494a43fe8da38bd1302a",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "8bb13401d2a71373e3605118ac07f2a999d6b8846cc9d96066c1f3a24efea2cf",
+  "stdout": "/tmp/enigma-retained-review-budget-publication-oct27/ops/git-source-whitespace.stdout",
+  "stderr": "/tmp/enigma-retained-review-budget-publication-oct27/ops/git-source-whitespace.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

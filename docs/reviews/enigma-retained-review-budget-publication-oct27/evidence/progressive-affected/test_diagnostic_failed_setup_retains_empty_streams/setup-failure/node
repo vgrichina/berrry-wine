@@ -1,0 +1,21 @@
+#!/usr/bin/python3
+
+import json,os,resource,sys,threading
+mode='setup-failure'
+preflight='-e' in sys.argv
+if preflight and mode!='startup-failure':
+ print(json.dumps(dict(version='offline-python-fixture',execArgv=sys.argv[1:],
+  sentinel='STARTUP-STDOUT',limits=open('/proc/self/limits').read())))
+ os.write(2,b'STARTUP-STDERR\n'+b'E'*16384)
+ sys.exit(0)
+prefix=b'STARTUP' if preflight else b'COMMAND'
+size=196608 if mode=='simultaneous' else (131072 if mode=='cap' else 0)
+def emit(fd,label,fill):
+ data=prefix+b'-'+label+b'\n'+fill*size
+ while data:
+  data=data[os.write(fd,data):]
+threads=[threading.Thread(target=emit,args=(1,b'STDOUT',b'O')),
+         threading.Thread(target=emit,args=(2,b'STDERR',b'E'))]
+for thread in threads:thread.start()
+for thread in threads:thread.join()
+sys.exit(23 if preflight else 29)

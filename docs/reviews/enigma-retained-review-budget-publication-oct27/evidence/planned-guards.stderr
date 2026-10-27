@@ -1,0 +1,6 @@
+test_plan_never_renews_cpu_api_captures_or_original_deadline (__main__.ReviewBudgetTests.test_plan_never_renews_cpu_api_captures_or_original_deadline) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.374s
+
+OK

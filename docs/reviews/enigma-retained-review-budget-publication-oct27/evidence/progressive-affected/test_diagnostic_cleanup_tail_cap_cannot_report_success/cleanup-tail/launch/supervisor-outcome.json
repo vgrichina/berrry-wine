@@ -1,0 +1,48 @@
+{
+  "status": "NO_REVIEWED_ACTION_NO_INPUT",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57843712,
+  "cpuSeconds": 0.07,
+  "outputBytes": 1025,
+  "outputLimitExceeded": true,
+  "remainingOwnedLive": [],
+  "childReturncode": 0,
+  "owned": [
+    [
+      4118557,
+      "114498124"
+    ],
+    [
+      4118567,
+      "114498132"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": 0,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_diagnostic_cleanup_tail_cap_cannot_report_success/cleanup-tail/cleanup-tail.py",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "55233",
+        "--root",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_diagnostic_cleanup_tail_cap_cannot_report_success/cleanup-tail",
+        "--fault",
+        ""
+      ],
+      "pid": 4118557
+    }
+  }
+}

@@ -1,0 +1,2 @@
+{"at": 1793097778.0168555, "request": {"action": "snapshot"}, "startingBatch": null, "originalResponse": "{\"ok\": true, \"value\": {\"batch\": 0, \"quit\": false, \"yieldReason\": 0, \"frozen\": {\"frozen\": true, \"credits\": 0, \"recording\": false}}}", "ended": 1793097778.0811152}
+{"at": 1793097778.11468, "request": {"action": "step", "n": 1}, "startingBatch": 0, "error": "TimeoutError('timed out')", "ended": 1793097778.2912278}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 117, in <module>
+    boundary(Path(sys.argv[2]),float(sys.argv[3]),json.loads(sys.argv[4]))
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 27, in boundary
+    root.mkdir()
+  File "/usr/lib/python3.12/pathlib.py", line 1313, in mkdir
+    os.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/original-boundary/original'

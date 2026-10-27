@@ -1,0 +1,6 @@
+test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.426s
+
+OK

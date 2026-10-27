@@ -1,0 +1,8 @@
+test_review_terminal_or_consumed_time_no_click (test_controller.ControllerTests.test_review_terminal_or_consumed_time_no_click) ... ok
+test_reviewed_action_then_capture_and_cleanup_reserve (test_controller.ControllerTests.test_reviewed_action_then_capture_and_cleanup_reserve) ... ok
+test_stale_review_refuses_click (test_controller.ControllerTests.test_stale_review_refuses_click) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.845s
+
+OK

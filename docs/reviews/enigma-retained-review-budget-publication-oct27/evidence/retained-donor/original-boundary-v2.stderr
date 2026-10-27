@@ -1,0 +1,21 @@
+test_original_measured_transport_exhausts_review_without_click (__main__.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click) ... FAIL
+
+======================================================================
+FAIL: test_original_measured_transport_exhausts_review_without_click (__main__.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py", line 111, in test_original_measured_transport_exhausts_review_without_click
+    self.assertEqual([x['completed'] for x in r['reviews']],[True,False])
+AssertionError: Lists differ: [True, True] != [True, False]
+
+First differing element 1:
+True
+False
+
+- [True, True]
++ [True, False]
+
+----------------------------------------------------------------------
+Ran 1 test in 7.886s
+
+FAILED (failures=1)

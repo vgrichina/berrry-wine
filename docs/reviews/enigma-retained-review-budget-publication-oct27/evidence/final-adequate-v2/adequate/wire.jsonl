@@ -1,0 +1,16 @@
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4130259, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4130259, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/final-adequate-v2/adequate/launch/controller/menu-candidate.png"}, "pid": 4130259, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4130259, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/final-adequate-v2/adequate/launch/controller/menu-candidate-002.png"}, "pid": 4130259, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 3}
+{"command": {"cmd": "click:10:20"}, "pid": 4130259, "batch": 3}
+{"command": {"action": "step", "n": 1}, "pid": 4130259, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4130259, "batch": 4}
+{"command": {"action": "png", "path": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/final-adequate-v2/adequate/launch/controller/after-action.png"}, "pid": 4130259, "batch": 4}
+{"command": {"action": "quit"}, "pid": 4130259, "batch": 4}

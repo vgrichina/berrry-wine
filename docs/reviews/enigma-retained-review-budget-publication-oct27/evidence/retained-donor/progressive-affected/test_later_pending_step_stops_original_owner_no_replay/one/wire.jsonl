@@ -1,0 +1,8 @@
+{"command": {"action": "snapshot"}, "pid": 4118415, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4118415, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4118415, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4118415, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4118415, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_later_pending_step_stops_original_owner_no_replay/one/launch/controller/menu-candidate.png"}, "pid": 4118415, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4118415, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4118415, "batch": 2}

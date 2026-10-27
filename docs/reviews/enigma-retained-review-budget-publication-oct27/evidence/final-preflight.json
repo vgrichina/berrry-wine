@@ -1,0 +1,88 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 112521216,
+  "sampledPeakRSS": 112521216,
+  "reapedPeakRSS": 31035392,
+  "cpuSeconds": 6.162584,
+  "wallSeconds": 1.9026001070160419,
+  "owned": [
+    [
+      4128380,
+      "114526215"
+    ],
+    [
+      4128381,
+      "114526231"
+    ],
+    [
+      4128385,
+      "114526243"
+    ],
+    [
+      4128389,
+      "114526256"
+    ],
+    [
+      4128393,
+      "114526269"
+    ],
+    [
+      4128394,
+      "114526281"
+    ],
+    [
+      4128395,
+      "114526289"
+    ],
+    [
+      4128399,
+      "114526300"
+    ],
+    [
+      4128403,
+      "114526315"
+    ],
+    [
+      4128404,
+      "114526328"
+    ],
+    [
+      4128409,
+      "114526335"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/test_review_budget.py",
+    "ReviewBudgetTests.test_incompatible_plans_reject_at_production_entry_before_child",
+    "ReviewBudgetTests.test_proposed_runtime_budget_fits_unchanged_enforced_caps",
+    "ReviewBudgetTests.test_slow_first_frame_cannot_spend_later_review_reservation",
+    "-v"
+  ],
+  "commandSHA256": "8d0287cf9afc191eab2250ad43f4dd210d8893f6986c5747cb98a3d26e37b5d8",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "7c39361646214249d2c31c84ef29056f35abbeaaba83d599e4abc38b34f3cdb4",
+  "stdout": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/final-preflight.stdout",
+  "stderr": "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/final-preflight.stderr"
+}

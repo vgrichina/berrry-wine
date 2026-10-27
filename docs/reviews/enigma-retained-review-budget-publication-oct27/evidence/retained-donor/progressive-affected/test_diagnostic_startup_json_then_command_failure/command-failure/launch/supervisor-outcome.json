@@ -1,0 +1,47 @@
+{
+  "status": "terminal-supervisor",
+  "failed": true,
+  "reason": "terminal-owned-child",
+  "peakTreeRSS": 34340864,
+  "cpuSeconds": 0.01,
+  "outputBytes": 18023,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": 29,
+  "owned": [
+    [
+      4118602,
+      "114498307"
+    ],
+    [
+      4118603,
+      "114498312"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "exited",
+      "exit": 0,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log",
+      "argv": [
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_diagnostic_startup_json_then_command_failure/command-failure/node",
+        "-e",
+        "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+      ],
+      "pid": 4118602
+    },
+    "command": {
+      "status": "exited",
+      "exit": 29,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/progressive-affected/test_diagnostic_startup_json_then_command_failure/command-failure/node"
+      ],
+      "pid": 4118603,
+      "error": "terminal-supervisor"
+    }
+  }
+}

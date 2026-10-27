@@ -1,0 +1,47 @@
+{
+  "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 61755392,
+  "cpuSeconds": 0.27,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4116564,
+      "114485666"
+    ],
+    [
+      4116566,
+      "114485679"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "33565",
+        "--root",
+        "/tmp/enigma-reviewed-menu-budget-repair-oct27/ops/original-boundary-v4/original",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4116564
+    }
+  }
+}

@@ -1,0 +1,16 @@
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/enigma-frozen-gameplay-controller.py.diff:34: trailing whitespace.
++ 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/enigma-frozen-gameplay-controller.py.diff:66: trailing whitespace.
++ 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/final-plan-guards.stderr:2: trailing whitespace.
++test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) ... 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/progressive-affected.stderr:21: trailing whitespace.
++test_live_original_competitors_and_changed_outputs_cannot_attach (test_supervised.SupervisedTests.test_live_original_competitors_and_changed_outputs_cannot_attach) ... 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/retained-donor/enigma-frozen-gameplay-controller.py.diff:34: trailing whitespace.
++ 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/retained-donor/enigma-frozen-gameplay-controller.py.diff:66: trailing whitespace.
++ 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/retained-donor/final-plan-guards.stderr:2: trailing whitespace.
++test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (__main__.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) ... 
+docs/reviews/enigma-retained-review-budget-publication-oct27/evidence/retained-donor/progressive-affected.stderr:21: trailing whitespace.
++test_live_original_competitors_and_changed_outputs_cannot_attach (test_supervised.SupervisedTests.test_live_original_competitors_and_changed_outputs_cannot_attach) ... 

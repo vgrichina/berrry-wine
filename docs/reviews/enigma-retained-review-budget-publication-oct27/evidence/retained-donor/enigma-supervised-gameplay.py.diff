@@ -1,0 +1,22 @@
+--- accepted/tools/enigma-supervised-gameplay.py
++++ candidate/tools/enigma-supervised-gameplay.py
+@@ -96,7 +96,8 @@
+     expected = {'max_batches', 'checkpoint_batches', 'after_action_batches', 'cleanup_batches',
+                 'max_captures', 'capture_bytes', 'width', 'height', 'checkpoint_seconds',
+                 'after_action_seconds', 'review_seconds', 'request_timeout', 'cleanup_seconds', 'decision_path'}
+-    require(set(schedule) in (expected, expected | {'progress'}), 'invalid-controller-schedule-no-attach')
++    require(expected <= set(schedule) <= expected | {'progress', 'review_plan'},
++            'invalid-controller-schedule-no-attach')
+     # Validate ALL controller limits before starting any child. Synthetic self
+     # identity is used only for validation, never passed to a running controller.
+     probe = object.__new__(controller.Controller)
+@@ -109,6 +110,9 @@
+     rt = schedule['request_timeout']
+     require(c['duration_seconds'] >= c['ready_seconds'] + 9*rt + schedule['cleanup_seconds'],
+             'initialization-action-cleanup-reserve-required')
++    if probe.planned_seconds is not None:
++        require(c['ready_seconds'] + probe.planned_seconds <= c['duration_seconds'],
++                'insufficient-initialization-review-progress-action-wall-allowance')
+     # Refuse an already occupied endpoint without probing it over HTTP. This
+     # bind is not a race-free reservation; later child/listener checks remain.
+     with socket.socket(socket.AF_INET6 if address.version == 6 else socket.AF_INET) as s:
