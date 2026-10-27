@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/penguin-published-projectile-gameplay-oct27/ops/collect.py", line 4, in <module>
+    while cursor<meta['recordCount'] and time.monotonic()-t<75:
+                 ~~~~^^^^^^^^^^^^^^^
+KeyError: 'recordCount'

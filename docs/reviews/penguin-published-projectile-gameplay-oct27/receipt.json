@@ -1,0 +1,182 @@
+{
+  "status": "BLOCKED_CAPTURE_RESOURCE_GUARD_NO_VISUAL_ACCEPTANCE",
+  "task": "penguin-published-projectile-gameplay-oct27",
+  "historical": true,
+  "scope": "One original Penguin guest on exact historical runner/module; production capture helper at integrated4a2bec145ef34b0d084b96b09a682a16e89703fd. No current-main emulator qualification.",
+  "runtimeManifest": {
+    "path": "/tmp/penguin-postloop-shot-acceptance-oct24/manifest.json",
+    "sha256": "4141f5ff9e95ad35f8891394d79706a9a9a4792fe8dffce8f0f59bc4633ed5fd",
+    "files": 291,
+    "bytes": 15760340,
+    "localPins": "operations/local-pins.json",
+    "remoteRehash": "operations/remote-rehash.json"
+  },
+  "runnerSHA256": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e",
+  "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "exeSHA256": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1",
+  "captureHelperSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+  "startup": "runtime/execution/receipt.json",
+  "mounts": "runtime/startup-mount-receipt.json",
+  "inputReceipt": {
+    "key": "A",
+    "keydownScheduled": 40000,
+    "keydownDispatched": 40032,
+    "keyupScheduled": 40200,
+    "keyupDispatched": 40282,
+    "lines": [
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0x13d018d correlation=unavailable batch=33007 guestMs=6601400 clock=batch lastGuestTick=6601401",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x13d018d correlation=unavailable batch=34004 guestMs=6800800 clock=batch lastGuestTick=6800803",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x13d018d correlation=unavailable batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525801",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x200 wParam=0x0 lParam=0xb100ed correlation=unavailable batch=37629 guestMs=7525800 clock=batch lastGuestTick=7525803",
+      "[input-schedule] scheduledBatch=40000 action=keydown correlation=unavailable batch=40000 guestMs=8000000 clock=batch lastGuestTick=7936810",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x41 lParam=0x1e0001 correlation=unavailable batch=40032 guestMs=8006400 clock=batch lastGuestTick=8006404",
+      "[input-schedule] scheduledBatch=40200 action=keyup correlation=unavailable batch=40200 guestMs=8040000 clock=batch lastGuestTick=8010607",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x41 lParam=0xc01e0001 correlation=unavailable batch=40282 guestMs=8056400 clock=batch lastGuestTick=8056404"
+    ],
+    "originalStdout": "runtime/execution/guest.stdout"
+  },
+  "frames": [
+    {
+      "name": "b40100.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "name": "b40060.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "name": "b40295.png",
+      "bytes": 813208,
+      "sha256": "e07475bcdd75a7947623c06f8ea19ff43269201d2fe76edc2b1ecbaa25d95606"
+    },
+    {
+      "name": "b39999.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    }
+  ],
+  "visual": {
+    "inspected": false,
+    "reason": "First substantive resource guard stopped the four-image lossless capture at379/756 records; production collector cannot finish/expose images. No custom decoder, truncated-image rescue, synthetic state or guest replay.",
+    "projectileAccepted": false
+  },
+  "transport": {
+    "plan": "operations/actual-capture-plan.json",
+    "cursor": {
+      "next": 379,
+      "total": 756,
+      "complete": false
+    },
+    "ledger": "operations/capture-map.jsonl",
+    "rawArchive": "original-api-responses.tar.gz",
+    "rawManifest": "api-manifest.json",
+    "budget": 8388608,
+    "rawUsed": 2481875,
+    "terminalReserve": 1048576,
+    "complete": false
+  },
+  "blocker": {
+    "reason": "Peer client physical RSS exceeded configured320MiB allowance during capture",
+    "pid": 4111341,
+    "rss": 341032960,
+    "cap": 335544320,
+    "receipt": "operations/resource-first-guard.json",
+    "operation": "operations/collect-2.json",
+    "captureStoppedPermanently": true,
+    "publicationOnlyCapacityChange": "operations/publication-capacity-change.txt"
+  },
+  "tests": {
+    "reused": "Accepted16targeted+10independent unchanged; no suite rerun",
+    "freshPassed": [
+      "all291 remote content hashes",
+      "exact Node executable/config/limits startup",
+      "canonical production getArgs + expandIncludePatterns91files7DLLs",
+      "single ordinary input guest exit0,43000batches",
+      "actual A input dispatch receipt",
+      "remote four-frame production capture plan"
+    ],
+    "notPassed": [
+      "full actual four-frame provider restoration",
+      "visual projectile inspection",
+      "current-main emulator qualification",
+      "ordinary Quit"
+    ]
+  },
+  "resources": {
+    "firstGuard": {
+      "at": 1793097475.7756279,
+      "memAvailable": 2814308352,
+      "requiredRemainingRAM": 1441017856,
+      "peers": [
+        {
+          "pid": 4101030,
+          "rss": 159944704
+        },
+        {
+          "pid": 4111334,
+          "rss": 237629440
+        },
+        {
+          "pid": 4111340,
+          "rss": 241782784
+        },
+        {
+          "pid": 4111341,
+          "rss": 341032960
+        }
+      ],
+      "free": 7533981696,
+      "future": 603979776,
+      "projectedFree": 6930001920,
+      "sourceGit": 135168,
+      "ops": 22351872,
+      "events": 1466368,
+      "used": 23953408,
+      "reserve": 41943040,
+      "allocation": 134217728,
+      "pass": false
+    },
+    "guestPeakRSS": 353173504,
+    "startupPeakRSS": 66199552,
+    "localAllocation": 134217728,
+    "remoteAllocation": 268435456,
+    "nodeHeap": 536870912,
+    "guestPhysicalGroupCeiling": 2147483648,
+    "controls": "Git child DATA512MiB physical256MiB,pool2+flock; Python128MiB CPU90wall120file24MiBoutput2MiB underpool1,8192B display/cumulative1MiB ordinary output; rawcapture explicit8MiB."
+  },
+  "cleanup": {
+    "guestOwnedGroupAbsent": true,
+    "startupOwnedGroupAbsent": true,
+    "guestExit": "natural runner max-batches43000 exit0; not ordinary Quit",
+    "collectionSupervisorCleanupComplete": true,
+    "localWatcher": "active through publication; final exact owned cleanup ops/owned-cleanup.json"
+  },
+  "box": {
+    "id": "bx_5pu4jynk",
+    "lastVerifiedRunning": "Actual APIexec capture read at resource guard10:37:55Z",
+    "currentState": "not re-queried after resource stop",
+    "expiry": "2026-10-27T11:14:33.925Z",
+    "shutdown": "2026-10-27T11:07:00Z",
+    "owner": "coordinator",
+    "leaveRunning": true,
+    "noLifecycleMutation": true
+  },
+  "publication": {
+    "branch": "refs/heads/task/penguin-published-projectile-gameplay-oct27",
+    "receipt": "/tmp/penguin-published-projectile-gameplay-oct27/ops/publication.json",
+    "exactRemoteVerification": "/tmp/penguin-published-projectile-gameplay-oct27/ops/remote-verify.stdout",
+    "reportOnlyOrphan": true,
+    "noMain": true
+  },
+  "incidents": [
+    "Initial read-only displays exceeded8192B and later guard-detail display exceeded8192B; original session retained without retrospective compliance.",
+    "Wrong owned box literal bx_5pu4jynk8 returned404 metadata only; raw/err retained. Corrected once from authoritative runtime/live/shutdown receipts before staging; no unchanged retry or restriction bypass.",
+    "Read-only nested donor alternates warnings retained; exact150Git/141file input hashes pass; no fetch/fullcheckout/repack/donor writes.",
+    "Operation label actual-capture-plan overwrote local child plan metadata; operation receipt retained under capture-plan-operation-receipt.json; collect-1 KeyError before API call. Remote unchanged original plan fetched back, no replanning/ledger reset/guest replay.",
+    "First substantive aggregate guard stops capture379/756; no capture retry. Later separately measured peerRSS below cap permits diagnostic publication only."
+  ],
+  "rootRefs": "Initial launcher digest reused; root tracked/index/refs and donors read-only; no full refs listing captured or later comparison claimed",
+  "at": 1793097608.0092616
+}

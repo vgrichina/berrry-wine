@@ -1,0 +1,191 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 47804416,
+  "sampledPeakRSS": 47804416,
+  "reapedPeakRSS": 21626880,
+  "cpuSeconds": 6.588747,
+  "wallSeconds": 5.517218088964,
+  "owned": [
+    [
+      4109437,
+      "114459193"
+    ],
+    [
+      4109438,
+      "114459200"
+    ],
+    [
+      4109441,
+      "114459219"
+    ],
+    [
+      4109444,
+      "114459233"
+    ],
+    [
+      4109447,
+      "114459247"
+    ],
+    [
+      4109450,
+      "114459266"
+    ],
+    [
+      4109453,
+      "114459284"
+    ],
+    [
+      4109460,
+      "114459305"
+    ],
+    [
+      4109470,
+      "114459319"
+    ],
+    [
+      4109473,
+      "114459332"
+    ],
+    [
+      4109476,
+      "114459356"
+    ],
+    [
+      4109479,
+      "114459375"
+    ],
+    [
+      4109482,
+      "114459388"
+    ],
+    [
+      4109485,
+      "114459402"
+    ],
+    [
+      4109488,
+      "114459416"
+    ],
+    [
+      4109491,
+      "114459429"
+    ],
+    [
+      4109494,
+      "114459445"
+    ],
+    [
+      4109497,
+      "114459458"
+    ],
+    [
+      4109517,
+      "114459478"
+    ],
+    [
+      4109520,
+      "114459498"
+    ],
+    [
+      4109523,
+      "114459512"
+    ],
+    [
+      4109526,
+      "114459531"
+    ],
+    [
+      4109531,
+      "114459545"
+    ],
+    [
+      4109539,
+      "114459565"
+    ],
+    [
+      4109542,
+      "114459579"
+    ],
+    [
+      4109545,
+      "114459593"
+    ],
+    [
+      4109548,
+      "114459606"
+    ],
+    [
+      4109551,
+      "114459625"
+    ],
+    [
+      4109554,
+      "114459639"
+    ],
+    [
+      4109557,
+      "114459652"
+    ],
+    [
+      4109560,
+      "114459666"
+    ],
+    [
+      4109563,
+      "114459679"
+    ],
+    [
+      4109566,
+      "114459693"
+    ],
+    [
+      4109569,
+      "114459706"
+    ],
+    [
+      4109572,
+      "114459724"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/runtime-control.py",
+    "fetch-diagnostics"
+  ],
+  "commandSHA256": "cb4382c057505b75b1828aebebf5aabb29873b7df8d574483e6379c7f7cbe1e5",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/penguin-published-projectile-gameplay-oct27/ops/fetch-diagnostics.stdout",
+  "stderr": "/tmp/penguin-published-projectile-gameplay-oct27/ops/fetch-diagnostics.stderr",
+  "safeEnvironment": {
+    "PATH": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0zFoN4I:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "TZ": null,
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_CONFIG_NOSYSTEM": "1"
+  }
+}

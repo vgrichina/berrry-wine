@@ -1,0 +1,35 @@
+{
+  "uid": 1000,
+  "free": 49038688256,
+  "memAvailable": 7380680704,
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "limits": {
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ],
+    "RSS": [
+      -1,
+      -1
+    ],
+    "CPU": [
+      -1,
+      -1
+    ],
+    "FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "allocation": 268435456,
+  "closure": 15760340,
+  "temp": 33554432,
+  "captures": 16777216,
+  "logs": 2097152,
+  "reserve": 8388608,
+  "passAdmission": true
+}
