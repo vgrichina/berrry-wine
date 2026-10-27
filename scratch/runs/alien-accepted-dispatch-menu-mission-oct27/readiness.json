@@ -1,0 +1,16 @@
+{
+  "guestInvocations": 0,
+  "inputs": 610,
+  "canonicalModule": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+  "controller": "a9d65e0459445616d16b7a85fd99c1c93ec992ac",
+  "captures": 8,
+  "eachBytes": 2097152,
+  "dimensions": [
+    640,
+    480
+  ],
+  "wall": 120,
+  "cpu": 90,
+  "plan": "configuration capture -> inspect OK -> title capture -> inspect Enter -> menu -> inspect New Game -> player/campaign -> mission -> action/after -> normal Quit; no uncertain replay",
+  "acceptedGroups": "REUSED exact accepted README+publication no repeated tests"
+}

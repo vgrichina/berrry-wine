@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/qualify.py"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 1.5589913302101195,
+  "cpu": 0.067451,
+  "peakRSS": 59506688,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 321,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/qualify.py": "aa4df2f662bdbbfa59764e9276474743299b21a339c092962ff2eec355a255c7"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

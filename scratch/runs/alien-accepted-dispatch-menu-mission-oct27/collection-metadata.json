@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_jdiiwklhcsev",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T00:31:26.985Z",
+  "launcherFailed": false,
+  "noticedMs": 39,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 40,
+  "startedAt": "2026-10-27T00:31:26.855Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"bytes\": 104722, \"sha256\": \"0530977c8bd090d1259c1f5ba5b92172afea01d84e021560e7bdd64d08235f4b\", \"ownedLive\": [], \"allocated\": 53080064, \"images\": [{\"name\": \"loaded.png\", \"bytes\": 20036, \"sha256\": \"8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8\"}, {\"name\": \"configuration.png\", \"bytes\": 7436, \"sha256\": \"23399c0b338b81b0cfd14d43cfde5a6f772ead69ea88bbf1f938a8f4db16981a\"}, {\"name\": \"title.png\", \"bytes\": 2061, \"sha256\": \"8cc941f9dfaac83bcbc2ddb58618780e5892fec818d76739f6cb558fa35ce46d\"}, {\"name\": \"settled.png\", \"bytes\": 221145, \"sha256\": \"52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5\"}, {\"name\": \"menu.png\", \"bytes\": 221145, \"sha256\": \"52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

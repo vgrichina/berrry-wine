@@ -1,0 +1,17 @@
+{
+  "at": 1793061200.2809787,
+  "charges": {
+    "owned": 2637824,
+    "launcher": 700416,
+    "session": 1961984,
+    "positiveWALOnce": 0,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "total": 30466048,
+  "cap": 67108864,
+  "memAvailable": 3872047104,
+  "required": 1543503872,
+  "free": 3118727168,
+  "projectedFree": 2994003968
+}

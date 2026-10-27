@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=64",
+    "-e",
+    "const fs=require('fs'); console.log(JSON.stringify({execPath:process.execPath,execArgv:process.execArgv,version:process.version,limits:fs.readFileSync('/proc/self/limits','utf8'),environment:Object.fromEntries(Object.entries(process.env).filter(([k])=>/^(NODE|WINE)/.test(k)))}))"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 0.04567541414871812,
+  "cpu": 0.031211999999999997,
+  "peakRSS": 69230592,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 1779,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {},
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

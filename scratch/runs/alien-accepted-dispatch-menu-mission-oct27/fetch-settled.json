@@ -1,0 +1,21 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/drive.py",
+    "fetch",
+    "settled"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 2.5734111310448498,
+  "cpu": 0.373676,
+  "peakRSS": 71221248,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 71,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/drive.py": "90b8c092b326525a59216705fe8f61fa47962378eb1b12179eeda268faab2c73"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

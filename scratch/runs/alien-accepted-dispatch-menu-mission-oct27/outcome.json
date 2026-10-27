@@ -1,0 +1,401 @@
+{
+  "guestInvocations": 1,
+  "terminal": {
+    "reason": "guest-wall-or-cutoff",
+    "returncode": 0,
+    "elapsed": 118.14731606999999,
+    "peakTreeRSS": 517529600,
+    "peakTreeCPU": 61.17,
+    "outputBytes": 791934,
+    "identities": {
+      "28353": {
+        "ppid": 28352,
+        "state": "R",
+        "start": "67930",
+        "cpu": 5.71,
+        "rss": 15335424
+      },
+      "28354": {
+        "ppid": 28353,
+        "state": "S",
+        "start": "67932",
+        "cpu": 55.46,
+        "rss": 467959808
+      }
+    },
+    "remainingOwnedLive": [],
+    "box": "bx_c7m7bu48",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator"
+  },
+  "physicalPeakSampled": 517529600,
+  "cpu": 61.17,
+  "wall": 118.14731606999999,
+  "lastAcknowledgedBatch": 5746,
+  "simulatedMs": 28730,
+  "frames": [
+    {
+      "file": "configuration.png",
+      "sha256": "23399c0b338b81b0cfd14d43cfde5a6f772ead69ea88bbf1f938a8f4db16981a",
+      "bytes": 7436,
+      "review": "Graphics configuration: Wine Assembly D3D8,640x480x32bpp, OK/Cancel. Inspected before dlg-click:1.",
+      "reviewer": "codex:01a17abd-a15a-7d80-a1fe-dce023044cce",
+      "inspection": "view_image"
+    },
+    {
+      "file": "loaded.png",
+      "sha256": "8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8",
+      "bytes": 20036,
+      "review": "ALIEN SHOOTER title at3698, inspected before Enter.",
+      "reviewer": "codex:01a17abd-a15a-7d80-a1fe-dce023044cce",
+      "inspection": "view_image"
+    },
+    {
+      "file": "menu.png",
+      "sha256": "52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5",
+      "bytes": 221145,
+      "review": "Rendered main menu at4722 with New Game, Continue, Options, High Scores, Credits, Exit.",
+      "reviewer": "codex:01a17abd-a15a-7d80-a1fe-dce023044cce",
+      "inspection": "view_image"
+    },
+    {
+      "file": "settled.png",
+      "sha256": "52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5",
+      "bytes": 221145,
+      "review": "Same fully rendered main menu at5746. Duplicate settle consumed time; not gameplay.",
+      "reviewer": "codex:01a17abd-a15a-7d80-a1fe-dce023044cce",
+      "inspection": "view_image"
+    },
+    {
+      "file": "title.png",
+      "sha256": "8cc941f9dfaac83bcbc2ddb58618780e5892fec818d76739f6cb558fa35ce46d",
+      "bytes": 2061,
+      "review": "Black640x480 at2098; filename is prospective, not title qualification.",
+      "reviewer": "codex:01a17abd-a15a-7d80-a1fe-dce023044cce",
+      "inspection": "view_image"
+    }
+  ],
+  "phases": [
+    {
+      "phase": "configuration",
+      "at": 1793060949.437883,
+      "status": "complete",
+      "next": 4,
+      "ack": 50,
+      "frozen": 50,
+      "plan": {
+        "commands": [
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 50
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "png",
+            "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/configuration.png"
+          }
+        ]
+      }
+    },
+    {
+      "phase": "enter",
+      "at": 1793061023.7633371,
+      "status": "complete",
+      "next": 12,
+      "ack": 4722,
+      "frozen": 4722,
+      "plan": {
+        "commands": [
+          {
+            "action": "snapshot"
+          },
+          {
+            "cmd": "keypress:13"
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "png",
+            "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/menu.png"
+          }
+        ]
+      }
+    },
+    {
+      "phase": "loading",
+      "at": 1793061004.2236512,
+      "status": "complete",
+      "next": 16,
+      "ack": 3698,
+      "frozen": 3698,
+      "plan": {
+        "commands": [
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 64
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "png",
+            "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/loaded.png"
+          }
+        ]
+      }
+    },
+    {
+      "phase": "open",
+      "at": 1793060973.5676708,
+      "status": "complete",
+      "next": 20,
+      "ack": 2098,
+      "frozen": 2098,
+      "plan": {
+        "commands": [
+          {
+            "action": "snapshot"
+          },
+          {
+            "cmd": "dlg-click:1"
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "png",
+            "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/title.png"
+          }
+        ]
+      }
+    },
+    {
+      "phase": "settle",
+      "at": 1793061044.0396905,
+      "status": "complete",
+      "next": 10,
+      "ack": 5746,
+      "frozen": 5746,
+      "plan": {
+        "commands": [
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "step",
+            "n": 256
+          },
+          {
+            "action": "snapshot"
+          },
+          {
+            "action": "png",
+            "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/settled.png"
+          }
+        ]
+      }
+    }
+  ],
+  "renderWaitSummary": [
+    "[signal] SIGTERM requested orderly shutdown",
+    "Stats: 92241 API calls, 5746 batches in 117.840s (49 batches/s)",
+    "render park: main waited on 2777 software D3D requests (30478ms wall), 0 batches skipped while parked",
+    "render attribution: 3424 completed, 0 rejected, 0 pending, 0 deadline, 0 stopped, 0 superseded; park 30478ms = bridge-pending 30471ms + ready-to-resume 7ms + unknown 0ms; unknown requests 2910, slow samples dropped 3416; slowest unknown:completed:110ms,unknown:completed:103ms,unknown:completed:101ms,unknown:completed:101ms,unknown:completed:100ms,unknown:completed:99ms,unknown:completed:99ms,unknown:completed:98ms"
+  ],
+  "authenticCrashLines": [],
+  "qualified": [
+    "exact Node24.22.1 heap2048 scrubbed environment inherited-limit startup",
+    "exact full production CLI no-build parser registry imports/mount module-read boundary",
+    "real software-renderer configuration dialog",
+    "Alien Shooter title",
+    "visually inspected main menu",
+    "serial production controller ACK/frozen zero credits through5746",
+    "literal trace-render-wait real summary",
+    "terminal-observed wrapper refusal before New Game send"
+  ],
+  "unqualified": [
+    "New Game accepted by guest",
+    "mission",
+    "gameplay",
+    "movement/aim/combat",
+    "normal guest Quit",
+    "WebGL",
+    "default-off runtime comparison not run"
+  ],
+  "blocker": "ONE guest118.147s wall envelope exhausted after inspected main menu. New Game plan reached wrapper after durable terminal and was refused before production CLI/HTTP. No game/HRESULT fault proven. No second guest or uncertain replay.",
+  "planningLimitations": [
+    "A host snapshot process temporarily reduced local MemAvailable below unchanged1543503872 gate; control operation was refused before execution, then capacity recovered and fresh admission passed.",
+    "Unnecessary1024-batch settle after already inspected menu consumed 19.6748s and one duplicate capture; orderly Quit was not reserved early enough. Runtime ended under supervisor SIGTERM instead of ordinary Quit.",
+    "Five captures of eight permitted; remaining allowance did not permit another invocation after aggregate wall expiration."
+  ],
+  "safety": "All issued production phases completed; zero pending/uncertain input. Newgame blocked before any send by observed terminal. Bounded observation only: independent terminalwriter may race finalcheck/socket; accepted atomicity limitation unchanged.",
+  "lifecycle": {
+    "box": "bx_c7m7bu48",
+    "state": "RUNNING",
+    "expiry": "2026-10-27T01:22:31.959Z",
+    "guestCutoff": "2026-10-27T00:55:00Z",
+    "handback": "2026-10-27T01:00:00Z",
+    "shutdown": "2026-10-27T01:05:00Z",
+    "owner": "coordinator",
+    "ownedLive": [],
+    "watcher": "untouched",
+    "apiState": "idle",
+    "runningAvailable": true
+  }
+}

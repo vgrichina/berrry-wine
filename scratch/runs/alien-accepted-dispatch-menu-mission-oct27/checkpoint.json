@@ -1,0 +1,33 @@
+{
+  "phase": "guest complete collected inspected",
+  "accepted": "a9d65e0459445616d16b7a85fd99c1c93ec992ac",
+  "legacy": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+  "completed": [
+    "exact Node24.22.1 heap2048 scrubbed environment inherited-limit startup",
+    "exact full production CLI no-build parser registry imports/mount module-read boundary",
+    "real software-renderer configuration dialog",
+    "Alien Shooter title",
+    "visually inspected main menu",
+    "serial production controller ACK/frozen zero credits through5746",
+    "literal trace-render-wait real summary",
+    "terminal-observed wrapper refusal before New Game send"
+  ],
+  "remaining": [
+    "New Game accepted by guest",
+    "mission",
+    "gameplay",
+    "movement/aim/combat",
+    "normal guest Quit",
+    "WebGL",
+    "default-off runtime comparison not run"
+  ],
+  "guestInvocations": 1,
+  "budgetSpent": {
+    "cpu": 61.17,
+    "wall": 118.14731606999999,
+    "captures": 5
+  },
+  "blocker": "ONE guest118.147s wall envelope exhausted after inspected main menu. New Game plan reached wrapper after durable terminal and was refused before production CLI/HTTP. No game/HRESULT fault proven. No second guest or uncertain replay.",
+  "next": "Coordinator disposition only, no same-task second invocation",
+  "ownedLive": []
+}

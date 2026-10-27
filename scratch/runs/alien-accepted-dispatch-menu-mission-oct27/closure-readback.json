@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_c82ur6rheodj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T00:28:34.237Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-27T00:28:34.153Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"count\": 610, \"bad\": [], \"expectedSHA256\": \"816dac672bf53068b804d7ae3eed8a9c544b9ae62dbf765ae8214ee005b938d9\", \"allocated\": 51380224, \"memAvailable\": 7211139072, \"free\": 48959356928}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

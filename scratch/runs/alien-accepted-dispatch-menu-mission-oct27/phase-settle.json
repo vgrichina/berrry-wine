@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_5rsc8xhvsgew",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T00:31:03.446Z",
+  "launcherFailed": false,
+  "noticedMs": 14,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 15,
+  "startedAt": "2026-10-27T00:30:44.006Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"status\\\": \\\"complete\\\", \\\"next\\\": 10, \\\"lastAcknowledgedBatch\\\": 5746, \\\"lastFrozenBatch\\\": 5746, \\\"terminalObserved\\\": null, \\\"guestAcceptance\\\": \\\"unqualified\\\"}\\n\", \"status\": \"complete\", \"next\": 10, \"lastAcknowledgedBatch\": 5746, \"lastFrozenBatch\": 5746, \"lastReceipts\": [{\"command\": {\"action\": \"snapshot\"}, \"index\": 8, \"responseBytes\": 327, \"responseExcerpt\": \"{\\\"ok\\\":true,\\\"value\\\":{\\\"batch\\\":5746,\\\"eip\\\":\\\"0x7504868\\\",\\\"quit\\\":false,\\\"yieldReason\\\":16,\\\"focus\\\":\\\"0x10019\\\",\\\"mainHwnd\\\":\\\"0x10019\\\",\\\"screen\\\":{\\\"w\\\":640,\\\"h\\\":480},\\\"frozen\\\":{\\\"frozen\\\":true,\\\"tickMs\\\":5,\\\"credits\\\":0,\\\"recording\\\":false},\\\"windows\\\":[{\\\"hwnd\\\":\\\"0x10019\\\",\\\"x\\\":0,\\\"y\\\":0,\\\"w\", \"responseSHA256\": \"4e9500d0b6de935d1cfbd0f4f4c23643184f71a18328ccca8e7ff7ef904376f9\"}, {\"command\": {\"action\": \"png\", \"path\": \"/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/settled.png\"}, \"index\": 9, \"responseBytes\": 138, \"responseExcerpt\": \"{\\\"ok\\\":true,\\\"value\\\":{\\\"batch\\\":5746,\\\"frozen\\\":true,\\\"path\\\":\\\"/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/settled.png\\\",\\\"bytes\\\":221145}}\", \"responseSHA256\": \"058a201d04cfbba65cdcfc264af0a4f95ff464f1c0b72307d5128b4abb7a1369\"}]}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

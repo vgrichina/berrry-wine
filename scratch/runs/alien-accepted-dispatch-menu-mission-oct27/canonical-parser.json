@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "--require=/tmp/alien-accepted-dispatch-menu-mission-oct27/capture-wrapper.cjs",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/runner/test/run.js",
+    "--app=alien_shooter",
+    "--no-build",
+    "--wasm=/tmp/alien-accepted-dispatch-menu-mission-oct27/current.wasm",
+    "--d3d9-renderer=software",
+    "--trace-render-wait",
+    "--tick-ms-per-batch=5",
+    "--batch-size=200000",
+    "--max-seconds=110",
+    "--no-close",
+    "--quiet-api",
+    "--frozen",
+    "--control=18129"
+  ],
+  "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+  "receipt": {
+    "commandId": "cmd_z3letufpmcoi",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-27T00:28:38.805Z",
+    "launcherFailed": false,
+    "noticedMs": 20,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 21,
+    "startedAt": "2026-10-27T00:28:38.684Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"count\\\":431,\\\"exe\\\":\\\"test/binaries/candidates/reflexive-alien-shooter/game/AlienShooter.exe\\\",\\\"manifest\\\":\\\"test/binaries/candidates/reflexive-alien-shooter/.wine-assembly-browser.json\\\",\\\"commaNames\\\":[],\\\"noCommaSplitForRegisteredManifest\\\":true}\\n\", \"stderr\": \"\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

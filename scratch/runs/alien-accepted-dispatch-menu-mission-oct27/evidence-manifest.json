@@ -1,0 +1,662 @@
+[
+  {
+    "path": "docs/reviews/alien-accepted-dispatch-menu-mission-oct27/README.md",
+    "bytes": 6102,
+    "sha256": "c30fddd8e40e755f6bc86561e7ee105320d3e5aa62fd0ea2346c9e87693e67f0"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/admission-latest.json",
+    "bytes": 343,
+    "sha256": "5fc0d3c0758804bff5bcccb63126da1ae98690939cb534977b1a295f38283dbd"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/api-history.jsonl",
+    "bytes": 252507,
+    "sha256": "14a1469aa64a5017d234719b52d508eef68086d941e4adf0b1d985c4a46dff53"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/canonical-parser.json",
+    "bytes": 1458,
+    "sha256": "5126fe132166b0ea04f6a4cc101d6ae4dc719a1fafcae9fd341432cce9ec589f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/capture-wrapper.cjs",
+    "bytes": 494,
+    "sha256": "0cdc64dfe236dc994bf45bb3b198f3ff7efb26d705df5f17ed3558698d2b5a21"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/checkpoint.json",
+    "bytes": 1309,
+    "sha256": "7bec0f33a8673499d27d7dd80e0d8c269f735284d834fcf4b50b79a0e83483a3"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/closure-readback.json",
+    "bytes": 586,
+    "sha256": "dc1b11f2969109615e29d5bbf5e39f486f726d7ec92aaf40567676390330523d"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collect.json",
+    "bytes": 594,
+    "sha256": "eb1ce17c873d4c5577c7d562dc2ab1c9b99280508fb8adb6a5ef894a6c9b7610"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collect.py",
+    "bytes": 2007,
+    "sha256": "fdc560343f7604a1e4df44d837352d4c7a977200d9ca426dd5e5d434b67f5f32"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/closure.json",
+    "bytes": 183,
+    "sha256": "61fe08c06c7ffbac4f6efe8dfcb21eb1b224c83c4caf991ed1fe1ef8de72b17e"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/config/command.json",
+    "bytes": 837,
+    "sha256": "554a76f37603417060f75251c183adb182f833c43470038f2d393cb18eca4ae4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/config/output.log",
+    "bytes": 41,
+    "sha256": "4ba82fefe9cc915723b6e1d69e3fc46039ed8a68055ffa53fbef3dd000bb3d59"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/config/terminal.json",
+    "bytes": 430,
+    "sha256": "c09ab3af3ed5c0544244eef681df40aa64851178201c037bfdbe3f7adde78600"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/command.json",
+    "bytes": 551,
+    "sha256": "f304a43de9de54310655b273e7259bcad6abc95a57fc718e9f2ff33fd12ab46c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/ledger.json",
+    "bytes": 1853,
+    "sha256": "83948366835ccf0bc000fe68426520984e9aa47e01d302f1ccad75b0d776e41c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/ledger.json.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/plan.json",
+    "bytes": 193,
+    "sha256": "3c5e96cf26bf588225b6c0818543367efc430ce10a08259461ad51cbb077536a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/configuration/stdout.log",
+    "bytes": 146,
+    "sha256": "66828b7222e0d7524fbda1e3e38a509c5e9b422e3b7c1f73745d2a441da4a168"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/command.json",
+    "bytes": 528,
+    "sha256": "b62a1b9315ff23c16cf34828d9afecac1be593c78b82c150d7aa151c915f5c4f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/ledger.json",
+    "bytes": 4777,
+    "sha256": "bcfb778cf8ec75a41b8bd81f39e917da61a1ff7cdb5154b4251d5ab60757dfa6"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/ledger.json.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/plan.json",
+    "bytes": 395,
+    "sha256": "3d52f7cb1bd2f710de2dbe0272ef03765a102c8944b4d69b4c79d617b1a40cdb"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/enter/stdout.log",
+    "bytes": 151,
+    "sha256": "9a3487f03531cc28dcdead7247894e985546ed147aabac561c9881f1d4305935"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/command.json",
+    "bytes": 534,
+    "sha256": "0239f55fc7d59e5f916215fbc83af4796100b11d544fdcd0042fae699329e3c7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/ledger.json",
+    "bytes": 6266,
+    "sha256": "f5cca25d63891c5a5383faf2ce2cc480973005bff5bdbd7ddb3c972ef324d2f5"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/ledger.json.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/plan.json",
+    "bytes": 510,
+    "sha256": "9b90674f85ac00191f202f6536d323cbae8d00bf51659c1bf2c38d828c9dd871"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/loading/stdout.log",
+    "bytes": 151,
+    "sha256": "38395c77d0ab9cad039edd527f62c7c4e3ad0d65eeaf417b27b29ecef2435a20"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/command.json",
+    "bytes": 525,
+    "sha256": "12847f427880de21b38950015c844af4b5e4283d420fb942f40dbb5313b20111"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/ledger.json",
+    "bytes": 7698,
+    "sha256": "c79fb41720551b49e2587982aeb4d824596074df70b3ae5b5371caf066771422"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/ledger.json.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/plan.json",
+    "bytes": 612,
+    "sha256": "7c2bac2aee08ab53655e9afa867c91149c41d764e4822ea2c76e49fc8d7218f1"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/open/stdout.log",
+    "bytes": 151,
+    "sha256": "fbcbaab80385a0786a5d7f9d0578a121904f8225819d7b5db436b94c1e5220a7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/command.json",
+    "bytes": 531,
+    "sha256": "7e5e40b1274573f3c6471a03fb8e5d80936a3c3249446b5ccc88b316aa5ab894"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/ledger.json",
+    "bytes": 4081,
+    "sha256": "3d48775315691b2dcc4a88787aa8efbff750df3fa14fb78784915bce83cd5435"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/ledger.json.lock",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/plan.json",
+    "bytes": 350,
+    "sha256": "03602f88ba61c0531bff28c889138497899255b35757617b44bb9d3109be1c5b"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/stderr.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/control/settle/stdout.log",
+    "bytes": 151,
+    "sha256": "cf59ce74ef121c2961e4a9daa5b6e1c8fd69ad626f2df428f53ce9af746fc47b"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/expected.json",
+    "bytes": 113011,
+    "sha256": "816dac672bf53068b804d7ae3eed8a9c544b9ae62dbf765ae8214ee005b938d9"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/filename-enumeration.json",
+    "bytes": 75085,
+    "sha256": "22cf182e0c5f9595d0e8e4751356cadc2fa8518ba004e3a3dfc1fee6b59437f4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/guest/command.json",
+    "bytes": 761,
+    "sha256": "ecc998bd20808226bb028db698d0cce981503e5457bb6a9f59a16795d67e3671"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/guest/output.log",
+    "bytes": 791934,
+    "sha256": "3223180f1c244a826374a83510dbb382ed27b1cef8c01356324667151d260ca3"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/guest/terminal.json",
+    "bytes": 450,
+    "sha256": "3be3140393c76af224d8ceca8a9894251687ff82d8fc1109b7adab36565c430a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/guest-invocation-once",
+    "bytes": 18,
+    "sha256": "3720d776b7fa89b1586b6ded18817f0ff55866033ce3c23b9cbee35d30946932"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/pre-guest.json",
+    "bytes": 305,
+    "sha256": "89330a3e30acfde51206b247e7845b442e285eb05c764dc3850c9b13c089919c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/startup/command.json",
+    "bytes": 690,
+    "sha256": "372234357e09b8169bcf347e763f4b1f92d0ef34e20640094776c8ce87ab7bff"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/startup/output.log",
+    "bytes": 1860,
+    "sha256": "a8ec0ab24d0418ad83a9879efa5cb1958e76f7a23571d35f59393e4b743966a4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collected/startup/terminal.json",
+    "bytes": 431,
+    "sha256": "4e7c81eeb3078698565ba6ab184fa7c196b424bcc94c94419aa98832d94bebc6"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/collection-metadata.json",
+    "bytes": 1193,
+    "sha256": "37de5e81186d1e9810b245bacafb29d869c565bbd0a6f1dcb19d6c5a3fd7c608"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/config-api.json",
+    "bytes": 387,
+    "sha256": "70fe7087c8097b98c7751a038ba609e9ab3784fecfbc53362c71d6bc3123a2d1"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/config-args.json",
+    "bytes": 596,
+    "sha256": "53419fc294c8e9faf25ac1b9bf5075d21622f2fe189b67d229eb25abf9c4082f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/config-qualification.json",
+    "bytes": 958,
+    "sha256": "2ee0dcfd8d849ea96aa275b773bf9af7bc29e933b14e12e8304aefb665ae1a75"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/config-stop.cjs",
+    "bytes": 251,
+    "sha256": "b96b402d44f1c9c97f01e41c9395ecde4e355cc859d3137e05bcd6e65c5adbbf"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/control.py",
+    "bytes": 4956,
+    "sha256": "c882ab521d49e4833c375317f306203b09e4af91ebedf34b4402db8d0c3cbf23"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/diagnostics.tar.gz",
+    "bytes": 104722,
+    "sha256": "0530977c8bd090d1259c1f5ba5b92172afea01d84e021560e7bdd64d08235f4b"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/drive.py",
+    "bytes": 1798,
+    "sha256": "90b8c092b326525a59216705fe8f61fa47962378eb1b12179eeda268faab2c73"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/enter.json",
+    "bytes": 659,
+    "sha256": "fb6cdfb74c6d86848599f209c41483d0cb9d8fd8e198ad8d414edabeb944e410"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/evidence-check-fixed.json",
+    "bytes": 664,
+    "sha256": "1c7b307313a0e6cd9e5449aed001671819398bbb52fe7f6490382fc8c5ed7c20"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/evidence-check-fixed.out",
+    "bytes": 66,
+    "sha256": "74bf52aff70fe97df3b47ed4f4691c4744f09db65878890c095bc677e28d1cda"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/fetch-loaded.json",
+    "bytes": 627,
+    "sha256": "13fbd9400d21d9036ab977754d9606e556164d85622aa5647ffa59126d40aaf4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/fetch-menu.json",
+    "bytes": 625,
+    "sha256": "232901a6a74a618d0970bd4a228e1f9713338854f824e2dfb49eb76f1d50b72b"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/fetch-settled.json",
+    "bytes": 617,
+    "sha256": "d13bdeca6f37f2f6754ba9d2428eb2c27a746597236395f3b64f73f9cf9236cd"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/fetch-title.json",
+    "bytes": 615,
+    "sha256": "fe2d2151073a527c0299389e978e4534447147418e14284927b91ced4c9a0e03"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first-api-failure.json",
+    "bytes": 714,
+    "sha256": "08e422721faa27385d0d28e3ee7c324598e096348e57f0ba8d7bc27172638dc2"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first-evidence-check.err",
+    "bytes": 89,
+    "sha256": "34a1f6531ffc3a8813ee4d4bd38dd9660129c8fd8fa1d498abbfdcbe91bc2e8c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first-evidence-check.json",
+    "bytes": 664,
+    "sha256": "fa670a4abec0a92a1edb33c7ceec0316051a892ce64115b9a26bc99bdde1381a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first-evidence-check.out",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first.json",
+    "bytes": 591,
+    "sha256": "0062d24700a5f0c532af04282310e9517ba3a3c292eaeaecc6bb57998e5e0745"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first.py",
+    "bytes": 1010,
+    "sha256": "53d171f7af3f74dcc27bf08efda79f713c3175f3feefa77b27d70f3c30d2073f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frame-configuration.json",
+    "bytes": 100,
+    "sha256": "c089ad582fd994480084b5dea3c8103902c4b5aa90b2fa2a783c192cec2e6949"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frame-loaded.json",
+    "bytes": 101,
+    "sha256": "7e5a63696e779ebf67756a4a2c79d5d75079214c2a762444edac5d6d4f3a060b"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frame-menu.json",
+    "bytes": 102,
+    "sha256": "c5847eae5feca166dd685e7d3cd5512b86da8153d9042738abcbac81780d7817"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frame-settled.json",
+    "bytes": 102,
+    "sha256": "c5847eae5feca166dd685e7d3cd5512b86da8153d9042738abcbac81780d7817"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frame-title.json",
+    "bytes": 100,
+    "sha256": "bd296cdf0496fa135d324e1ff12f48fd055671283b844e693f2c5d23c7f84795"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frames/configuration.png",
+    "bytes": 7436,
+    "sha256": "23399c0b338b81b0cfd14d43cfde5a6f772ead69ea88bbf1f938a8f4db16981a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frames/loaded.png",
+    "bytes": 20036,
+    "sha256": "8c55d9a04a17f088b845f7bbed3842c362440e9b103096c980dc27a03a8d1fd8"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frames/menu.png",
+    "bytes": 221145,
+    "sha256": "52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frames/settled.png",
+    "bytes": 221145,
+    "sha256": "52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/frames/title.png",
+    "bytes": 2061,
+    "sha256": "8cc941f9dfaac83bcbc2ddb58618780e5892fec818d76739f6cb558fa35ce46d"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/guest-api-status.json",
+    "bytes": 552,
+    "sha256": "61fd2bac50ac62362b96b8e2389a2d98dc6dcf4acf084071d0d6a5214c69c0b2"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/guest-args.json",
+    "bytes": 519,
+    "sha256": "a5de6db3c33a81cc896b3866c56d0e4dde1fa8a2b8c1c3863ae158c3b2b32d9d"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/guest-detach.json",
+    "bytes": 416,
+    "sha256": "5f558c0ff9bb7b0db6a79b9b94d1f626d16d806986ab1856ee2235ccec4f8457"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/immediate-preguest-readback.json",
+    "bytes": 722,
+    "sha256": "29ba44d502afab4f2f76e46ee8e8415c47176428a7cdf965937a4bc899628215"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/incidents.json",
+    "bytes": 1568,
+    "sha256": "2787cd59df4e7ac6722964083a8bd6f62382028ec6d2a8511c5503e5c4129c2f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/initial-listening.json",
+    "bytes": 438,
+    "sha256": "22517b1b323487d5b9f229f06ec2d3f7c1a060a0ef2fb50b7a7d11ada7565ca3"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/initial-root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/input-map-identity.json",
+    "bytes": 241,
+    "sha256": "c6022d9d2adc02be0ee97aa5c2220dd9ad92f6e6708d6f9b8a420bf4b4a2dc7c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/lifecycle-schedule.json",
+    "bytes": 210,
+    "sha256": "7615d0c7801351cdaf7393579369954947a6a8abb02672923e088d8abd7ece18"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/loading.json",
+    "bytes": 644,
+    "sha256": "e9a1bdaf26960f8d0d6ab378b0a83300bbf33776769e888267655a66ee40aaba"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/local-node-startup.json",
+    "bytes": 729,
+    "sha256": "ccbe1fd19b9bcb69b3706edd756f31aace517cd60e175cac3bdbb2aabdc4787d"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/local-node-startup.out",
+    "bytes": 1779,
+    "sha256": "a7f75ebe247df42abe06e0ef4baeb259918e6b2d5dc1789107e3605b47c35dc7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/newgame.json",
+    "bytes": 606,
+    "sha256": "eaae34cb8c231b0c1435222c6a472f8abc093a13d69c2b7c1619345fb9d871ad"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/newgame.py",
+    "bytes": 175,
+    "sha256": "e9041b8612c7e02fa7bb7a6901d2ce3a14d43d9165e73a876e441b9e36b33170"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/open.json",
+    "bytes": 672,
+    "sha256": "2bd1424fa954c74fbb8d784b203f9fedae3cd951401f321aacddf7d45af19aff"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/outcome.json",
+    "bytes": 10906,
+    "sha256": "7ad555127dbff95c75bcc615b990de916f2aa484bec7747f2af7046fcd3993d3"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/package.json",
+    "bytes": 605,
+    "sha256": "519fbe747702eec5582dd77d7463ee36a4eb404001641d705c66650b76d4944c"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/package.py",
+    "bytes": 8492,
+    "sha256": "09c8758b679dc7837d75fdf4020f345267911c88bad46bcdab0990ebf503fae0"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/parser.cjs",
+    "bytes": 1710,
+    "sha256": "96b2b153781c7a5e84f3baaf70746af1ce0292284bece4278e5847d7da5c152a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase-configuration.json",
+    "bytes": 1800,
+    "sha256": "14e03fddf6959d6998a583ef9c5818c72a413f9449bce1d8a02c5c81d65b39bf"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase-enter.json",
+    "bytes": 1792,
+    "sha256": "9c39bc608a19a705e31683066eeaecee8a7409ac9c469cb883f2643c4e5cb3b6"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase-loading.json",
+    "bytes": 1795,
+    "sha256": "0017c662c6285c3208e953962ab3806d1aa865f95af2e43f58096d0a199f6df4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase-open.json",
+    "bytes": 1792,
+    "sha256": "3aa1a7cf26334b2f6e5bb34356217bb07206cbf79308fae101db29ac326001b5"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase-settle.json",
+    "bytes": 1796,
+    "sha256": "46d71eb93e729ef796dd59ead9b40a47f911a6438a3bf344d9469ae4616e090a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/phase.py",
+    "bytes": 1669,
+    "sha256": "e4749398939e5fad21846bd46b3d377e848301ae61ef5e5c8a77c7ed9f93840a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/qualify.json",
+    "bytes": 594,
+    "sha256": "f3c240421c1e4a87205a7aa04304904fe89501823b8a1112ffef42554e959dee"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/qualify.py",
+    "bytes": 3997,
+    "sha256": "aa4df2f662bdbbfa59764e9276474743299b21a339c092962ff2eec355a255c7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/readback-expected.json",
+    "bytes": 113011,
+    "sha256": "816dac672bf53068b804d7ae3eed8a9c544b9ae62dbf765ae8214ee005b938d9"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/readiness.json",
+    "bytes": 578,
+    "sha256": "71eb77aa841040c23a7791b891b02aabc831567f8c6adfeb1c7774a2566004ca"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/ready.json",
+    "bytes": 602,
+    "sha256": "db877691aee82322887dec9f5d556853c1a5441f663e8b2d7747db2d9274e307"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/ready.py",
+    "bytes": 1705,
+    "sha256": "d6c75b069815842de34eb0cb359f863cbd17f8cff257b6a5f739c8f02f653e34"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/runtime-inputs.json",
+    "bytes": 198598,
+    "sha256": "3c6f4f88880c05c78d93ae436ae611762fb7940e0c5f8ac0fa861847cf74c294"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/settle.json",
+    "bytes": 655,
+    "sha256": "bea0b3d1dce5695a0fb170f40b3ee365d23c303b0ec184f808f5b0b487f4639f"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage-resume-missing-1793060820112833629.json",
+    "bytes": 3181,
+    "sha256": "f903a1b02160b432cdd0fee639e55072ed2eee3b388db787f58e512d93f72d3d"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage-resume-missing-1793060906612775302.json",
+    "bytes": 346,
+    "sha256": "07467a0041645a0521268c7e3c04b4c6ffad47f4f57a3edc5b3aaaaae009cd1a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage-resume.py",
+    "bytes": 2206,
+    "sha256": "4895c0568f34be8751c104f20da443db8a7c7b8a7c3a4e786039eb5f653afb38"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage-resume1.json",
+    "bytes": 612,
+    "sha256": "e3282f9cca15340c3946637bbaa9262e6483bf3ad978f1298906197eb917e7b7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage-resume2.json",
+    "bytes": 603,
+    "sha256": "82aa3932ee13250529726f1e82e27afd1a47f021072f691c518121e68e3605c7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage.json",
+    "bytes": 592,
+    "sha256": "c6061a4f04260ab2d559cfc00818169869135d3c4fa8a8a7156f052bd11af172"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/stage.py",
+    "bytes": 2096,
+    "sha256": "13f80bcaa385526a42ae920b213e2fc200415deb94e3de03ac1efe780bfa8ca4"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/startup-api.json",
+    "bytes": 387,
+    "sha256": "a45a4e81743bc06e51f89bda1c4afe67d3e5212427dbfa31083dd49a20685414"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/startup-args.json",
+    "bytes": 449,
+    "sha256": "dcd7a551973f7248099e53978718a0463a637fff123234f361df54e570d42be7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/startup-qualification.json",
+    "bytes": 2901,
+    "sha256": "212ba1b09e4158aae86e0b42b6090b0c39c4caf571c624c4365a0d5dd7595f5a"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/supervisor.py",
+    "bytes": 4246,
+    "sha256": "3cc1b72724796f3db9aee81639482984b83b930e28adb343fad50a488932da62"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/transfer-probe.json",
+    "bytes": 489,
+    "sha256": "5420135f095d881da229a4ac577d329f7c977f6d5d836ee42a35e49b6f73a5b6"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/trusted-ssh-config.json",
+    "bytes": 206,
+    "sha256": "e05b3df7634a7000fb8c5c8b7698c7a0103cfc91d401c4d01122dcd4ae9dc68e"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/wal-baseline.json",
+    "bytes": 300,
+    "sha256": "172b2059579e18a6fd1731fd3a88e5128ddf4db2b40d39eddb80b74cac7587c7"
+  },
+  {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/work.py",
+    "bytes": 2464,
+    "sha256": "56cd37eccdfafc7d0715c3134b51b6b089920126953852f8d16f7ca1c417194c"
+  }
+]

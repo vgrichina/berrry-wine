@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/stage-resume.py"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 75.46687712101266,
+  "cpu": 3.5666610000000003,
+  "peakRSS": 60407808,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 82,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/stage-resume.py": "4895c0568f34be8751c104f20da443db8a7c7b8a7c3a4e786039eb5f653afb38"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

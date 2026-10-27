@@ -1,0 +1,20 @@
+[
+  {
+    "phase": "local staging wrapper",
+    "issue": "owned empty repo working directory absent before first supervised call",
+    "guestInvocations": 0,
+    "resolution": "created assigned directory; no external input action"
+  },
+  {
+    "phase": "API stage",
+    "issue": "complete closure transfer exceeds single local120s operation; supervisor enforced wall and stopped own process group",
+    "guestInvocations": 0,
+    "evidence": "stage.json",
+    "resolution": "bounded75s transfer chunks; next operation hashes every complete remote file and stages missing/corrupt owned targets only; no guest/control replay"
+  },
+  "A host snapshot process temporarily reduced local MemAvailable below unchanged1543503872 gate; control operation was refused before execution, then capacity recovered and fresh admission passed.",
+  "Unnecessary1024-batch settle after already inspected menu consumed roughly17s and one duplicate capture; orderly Quit was not reserved early enough. Runtime ended under supervisor SIGTERM instead of ordinary Quit.",
+  "Five captures of eight permitted; remaining allowance did not permit another invocation after aggregate wall expiration.",
+  "Diagnostic ps command unexpectedly included platform snapshot command arguments. No raw process listing retained or published; subsequent resource evidence records PID/comm/RSS only.",
+  "First evidence checker failed because bundle was initially under ops/runs while installed checker traverses scratch/runs only. Moved own bundle into required scratch/runs; rerun affected checker only."
+]

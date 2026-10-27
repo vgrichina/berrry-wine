@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/ready.py"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 0.3722997549921274,
+  "cpu": 0.061682999999999995,
+  "peakRSS": 57315328,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 307,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/ready.py": "d6c75b069815842de34eb0cb359f863cbd17f8cff257b6a5f739c8f02f653e34"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

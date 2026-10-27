@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/newgame.py"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 1,
+  "wall": 0.33288945513777435,
+  "cpu": 0.10932099999999999,
+  "peakRSS": 65142784,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 939,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/newgame.py": "e9041b8612c7e02fa7bb7a6901d2ce3a14d43d9165e73a876e441b9e36b33170"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

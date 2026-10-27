@@ -1,0 +1,19 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/collect.py"
+  ],
+  "cwd": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo",
+  "exit": 0,
+  "wall": 1.9606750321108848,
+  "cpu": 0.201836,
+  "peakRSS": 71254016,
+  "cap": 134217728,
+  "reason": null,
+  "outputBytes": 743,
+  "gitDATAChildOnly": false,
+  "fixtureHashes": {
+    "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/collect.py": "fdc560343f7604a1e4df44d837352d4c7a977200d9ca426dd5e5d434b67f5f32"
+  },
+  "supervision": "sampled process tree + supervisor + execution-pool wrapper"
+}

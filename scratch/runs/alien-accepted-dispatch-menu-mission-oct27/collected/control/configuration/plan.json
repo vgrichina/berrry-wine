@@ -1,0 +1,1 @@
+{"commands": [{"action": "snapshot"}, {"action": "step", "n": 50}, {"action": "snapshot"}, {"action": "png", "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/guest/configuration.png"}]}

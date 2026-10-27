@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xpmuzc9ztakl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T00:28:39.256Z",
+  "launcherFailed": false,
+  "noticedMs": 16,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 16,
+  "startedAt": "2026-10-27T00:28:39.031Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}
