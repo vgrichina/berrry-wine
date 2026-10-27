@@ -1,0 +1,23 @@
+{
+  "at": 1793098749.9043384,
+  "session": "01a17cfd-dfe3-7b23-aedc-25bab4889d03",
+  "parts": {
+    "ownedRepoOps": 1212416,
+    "externalLaunchEvents": 331776,
+    "session": 884736,
+    "conservativeEntireWAL": 4612096
+  },
+  "walAccounting": "Baseline unknown; conservative full current WAL charged once rather than claiming only incremental growth",
+  "allocation": 134217728,
+  "controlReserve": 25165824,
+  "localReserve": 8388608,
+  "futureGrowth": 41943040,
+  "accounted": 82538496,
+  "projectedFree": 7267586048,
+  "diskFloor": 2982150144,
+  "sessionFiles": [
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T10-52-55-01a17cfd-dfe3-7b23-aedc-25bab4889d03.jsonl"
+  ],
+  "standingInputs": "12 donor source/test files verified in input-pins.json; immutable alternate graph in git-configuration.json; no copied object store, checkout or repack",
+  "passed": true
+}

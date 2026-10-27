@@ -1,0 +1,25 @@
+{
+  "sources": {
+    "1793092826212634802": "e7a77bc25fb6127b0d132ac58bad80a5f8df48ee10919b0c6d238f5665fec498",
+    "1793092833026763786": "762123ede3ae0a881d14d187af4441d7e04763d9a98cd199a7dbfffd7d4343e4",
+    "1793092841347248549": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff",
+    "1793092867150456577": "907fb832c2aa80c111093287dd1154295792307acddc96110be05c902d160213"
+  },
+  "helperSHA256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+  "transformedSources": {
+    "1793092826212634802": "ee0406aeb78cb95ce6f1579fb9b654c6424fbe808a2936d06bd74bed03875957",
+    "1793092833026763786": "fc0cd57b3c57da926e40d0c1eeed7ddb2b83e48abb68256a4f039f7e88b30bd9",
+    "1793092841347248549": "5d7b7adfa145ecb1284a1ddf26946fdbadd04e8b0fbef2df011cd750ac2cb1f0",
+    "1793092867150456577": "a5726bd4ba1e171f8d87d473d4bd1f9532271cc8ffa58486c410300582c3c5e4"
+  },
+  "historicalPayloadManifestSHA256": "a3602a66d9d7a6886bce07ff17911840d3049349ab2180dddad2515896997cb8",
+  "allManifestCommandSourcesVerified": true,
+  "observedHistoricalPublishers": [
+    "api-1793092841347248549-command.json",
+    "api-1793092826212634802-command.json",
+    "api-1793092867150456577-command.json",
+    "api-1793092833026763786-command.json"
+  ],
+  "closure": "all four API control producers in measured-cpu-round report; serial.py consumes and does not publish continue.json",
+  "caller": "python3 -B tools/ricochet/production-commands.py PRODUCER --bundle /tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27"
+}

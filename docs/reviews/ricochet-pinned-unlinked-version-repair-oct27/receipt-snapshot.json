@@ -1,0 +1,136 @@
+{
+  "status": "SOURCE_TEST_PASS_PENDING_PUBLICATION_AND_INDEPENDENT_ACCEPTANCE",
+  "task": "ricochet-pinned-unlinked-version-repair-oct27",
+  "donorCommit": "ee9f80d87a36256ed1d5d3e37635ff4d5d09e570",
+  "source": {
+    "bytes": 14705,
+    "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4"
+  },
+  "test": {
+    "bytes": 5229,
+    "sha256": "4c58a3d483aa8349bd717af39e5e06a5d92f0a860707aef9abae0804c8e6a186"
+  },
+  "inputPins": {
+    "bytes": 2772,
+    "sha256": "b0449eef5e7c76584614701c12a8ad52344cd4fef4f02c1784e02f6cce96a42f"
+  },
+  "unchangedReproducer": {
+    "bytes": 4002,
+    "sha256": "7662740500f056178a7b8c993c7d75bba9401535ae564ce73581b6c65710620f"
+  },
+  "pinOnlyRetarget": {
+    "bytes": 4002,
+    "sha256": "d3efea677471f39c7af23e7332d5bc80dd539f17c6fdd1bad3250db69013cab7"
+  },
+  "originalCounterexample": {
+    "bytes": 19564,
+    "sha256": "0e20ddadfe1a915a7b7f478fe5bd3bc8810b35e25ce34ace8873571d647fb564"
+  },
+  "repairedBoundary": {
+    "bytes": 19581,
+    "sha256": "aa2540b18bb24026f5cffdda4ded6b9de6798bc54abe9d6e43c2dbe024b061bb"
+  },
+  "results": {
+    "boundary": 12,
+    "targeted": 11,
+    "reopen": 8,
+    "affectedOriginal": 6,
+    "affectedConsumed": 9,
+    "originalNegative": "7 mutation rejection failures;4 legitimate passes"
+  },
+  "reusedReceipts": {
+    "finalWriter16": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.command.json": {
+          "bytes": 1152,
+          "sha256": "e764aa052da3866abe58744ff0d74495cf98f882ba28da16c291e4bf24382be6"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.result.json": {
+          "bytes": 785,
+          "sha256": "e7e4d4f933bc62e7ee6fc9762459cb3ec0a3c01e0338f57fd95542dcb3a0f0c0"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stderr": {
+          "bytes": 115,
+          "sha256": "86f4d6bcb0a5fce7c6fad3be1a66a077e94338826c194033651cd123f24dd8c8"
+        }
+      }
+    },
+    "finalProducerCommandsMetadataAndWiring": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.command.json": {
+          "bytes": 1232,
+          "sha256": "05967a20544163a625667c6cd20f725e41adedba2249d443ac4b85e1a7486e13"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.result.json": {
+          "bytes": 566,
+          "sha256": "8470e843bfb5e96c74cb4a727c78d23512c76921b2630db984177f4b841f411d"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stderr": {
+          "bytes": 98,
+          "sha256": "8c48a33d2c359464395f74f0b2034ed8bf3608b2775d4035d227ae6fba0e0ce0"
+        }
+      }
+    },
+    "actualProductionCLI4": {
+      "reportCommit": "3bec7b92972e580c2cf35813cbfeb40c5d9cb29e",
+      "checkpoint": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/docs/reviews/ricochet-final-writer-independent-accept-oct27/evidence/boundary-checkpoint.json",
+      "bytes": 2182,
+      "sha256": "4ab3c10290fb0143e418a7f81a4213a22cfbdcc0dc479f576b0bc445ceeb65a1",
+      "reason": "all four actual production writer CLI dispatch/prefix/payload/tail gates and original-writer negative controls unchanged; accounting helper not used by these intercepted writer prefixes"
+    }
+  },
+  "predecessorManifest": {
+    "path": "/tmp/ricochet-final-reopen-version-repair-oct27/ops/receipt-manifest.json",
+    "bytes": 48423,
+    "sha256": "c15745359e8e05256ed211c63e4ed6a776d3b90df5697e07da2160b49751c9b3"
+  },
+  "rejectionManifest": {
+    "path": "/tmp/ricochet-pinned-unlinked-version-repair-oct27/ops/original-receipt-manifest.json",
+    "bytes": 9443,
+    "sha256": "659cdfb42d35c61103c3f877ab198394e41de7c0bcdeb1e4689d8c4bfa375b61"
+  },
+  "controlReserve": 25165824,
+  "ceiling": 268435456,
+  "resourcePolicy": {
+    "localAllocation": 134217728,
+    "localReserve": 8388608,
+    "gitRSS": 268435456,
+    "gitChildOnlyDATA": 536870912,
+    "pythonRSS": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitPool": 2,
+    "pythonPool": 1,
+    "gitLock": "/tmp/wine-ops-production-git.lock",
+    "admission": "Prospective growth counted once; live RSS already reduces MemAvailable; shared pool/headroom once"
+  },
+  "publication": {
+    "branch": "refs/heads/task/ricochet-pinned-unlinked-version-repair-oct27",
+    "commit": null,
+    "exactRemoteVerified": false,
+    "strategy": "Sparse orphan report; select source/test patch only, never whole-tree merge"
+  },
+  "incidents": [
+    "Initial policy/log outputs exceeded 8192B display target and were truncated by tool. Preliminary shell reads/bootstrap did not retain distinct disk streams; tool transcript retained. Supervised operations retain distinct stdout/stderr from process creation. No retrospective compliance claim.",
+    "Predecessor rejection manifest preserves original three-diagnostic overwrite and admission/init sequencing incidents; no donor wrapper executed or evidence modified.",
+    "Own init waited on two-slot pool and yielded a shell session; git-setup mistakenly ran before init completed, failing missing HEAD; premature donor-source cat-file failed without configured alternates. Both distinct diagnostics preserved. Waited for successful init before subsequent setup.",
+    "Own alternate graph validator initially rejected a repeated node in existing donor graph. Preserved git-setup-v1.py and failure, deduplicated traversal locally; no donor edits, fetch, repack, trust change or denied-access retry."
+  ],
+  "remainingGate": "Separate independent acceptance of this candidate, scoped integration with ownership, and separately admitted exact production startup/gameplay/ordinary Quit. No runtime/gameplay/Quit qualification.",
+  "boxes": [],
+  "lifecycleOwner": "coordinator",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-pinned-unlinked-version-repair-oct27/root-ref-digest.json",
+  "rootAndDonors": "Read only tracked/index/refs; initial digest reused; no later comparison required"
+}
