@@ -1,0 +1,41 @@
+{
+  "at": 1793104158.2227826,
+  "memAvailable": 3008454656,
+  "requiredRemainingRAM": 2093027328,
+  "livePeers": [
+    {
+      "pid": 43362,
+      "rss": 145715200,
+      "argvSHA256": "0d097a624fb34869efbc86f7b56c9083c4e61d22f8bc424d55701d35a563972d"
+    },
+    {
+      "pid": 49453,
+      "rss": 148344832,
+      "argvSHA256": "e465e8d2040b2fc04eb22068a72c2ac60b1bb8d7194a83055f62afb48a9cd4e6"
+    },
+    {
+      "pid": 49566,
+      "rss": 150544384,
+      "argvSHA256": "ff48c690a6b73b8901310425c18935b01b539bd9f4d0beddb081ed257def025a"
+    },
+    {
+      "pid": 56039,
+      "rss": 146722816,
+      "argvSHA256": "6b504b4a90628bba68f7b7b8b4530fd81d1d1306cf20101f4e460f39665f6a58"
+    }
+  ],
+  "remainingClientGrowth": 750850048,
+  "prospectiveClients": 0,
+  "ramAccounting": "MemAvailable already includes live RSS; remaining growth only, prospective clients once, shared pool once",
+  "free": 6515216384,
+  "projectedFree": 6473273344,
+  "sourceGit": 4096,
+  "ops": 49152,
+  "external": 1093632,
+  "used": 1146880,
+  "publicationPeakAndGrowth": 41943040,
+  "margin": 8388608,
+  "reserve": 8388608,
+  "allocation": 201326592,
+  "pass": true
+}

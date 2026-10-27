@@ -1,0 +1,15 @@
+{
+  "at": 1793104261.9360557,
+  "checks": [
+    "canonical accepted receipt SHA256 exact",
+    "two accepted production source SHA256 exact",
+    "six historical fixture pins exact",
+    "static source path inspected; no fixture executed",
+    "18 minimum >16 capture plan arithmetic",
+    "historical fullPNG model inspected",
+    "zero guest/API/input/capture",
+    "sparse report checkout preserves parent tree"
+  ],
+  "result": "PASS",
+  "notClaimed": "gameplay/focus/menu/ordinaryQuit/remoteStartup"
+}

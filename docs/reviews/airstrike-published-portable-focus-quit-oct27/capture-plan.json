@@ -1,0 +1,271 @@
+{
+  "status": "BLOCKED_CAPTURE_PLAN_BEFORE_GUEST",
+  "at": 1793104158.163757,
+  "revision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+  "pins": {
+    "airstrike-menu-controller.py": {
+      "path": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/repo/tools/airstrike-menu-controller.py",
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+      "definitions": {
+        "Refusal": {
+          "line": 20,
+          "endLine": 21
+        },
+        "Terminal": {
+          "line": 24,
+          "endLine": 26
+        },
+        "console_target": {
+          "line": 29,
+          "endLine": 67
+        },
+        "activation_command": {
+          "line": 70,
+          "endLine": 93
+        },
+        "execution_log": {
+          "line": 96,
+          "endLine": 101
+        },
+        "Controller": {
+          "line": 104,
+          "endLine": 221
+        },
+        "main": {
+          "line": 224,
+          "endLine": 249
+        },
+        "__init__": {
+          "line": 105,
+          "endLine": 109
+        },
+        "read": {
+          "line": 111,
+          "endLine": 118
+        },
+        "observe": {
+          "line": 120,
+          "endLine": 140
+        },
+        "key": {
+          "line": 142,
+          "endLine": 143
+        },
+        "dispatch": {
+          "line": 145,
+          "endLine": 181
+        },
+        "press": {
+          "line": 183,
+          "endLine": 185
+        },
+        "run": {
+          "line": 187,
+          "endLine": 221
+        },
+        "receive": {
+          "line": 226,
+          "endLine": 239
+        }
+      }
+    },
+    "airstrike-observation-bridge.py": {
+      "path": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/repo/tools/airstrike-observation-bridge.py",
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+      "definitions": {
+        "Stop": {
+          "line": 36,
+          "endLine": 37
+        },
+        "save": {
+          "line": 40,
+          "endLine": 43
+        },
+        "load_controller": {
+          "line": 46,
+          "endLine": 52
+        },
+        "child_limits": {
+          "line": 55,
+          "endLine": 61
+        },
+        "Bridge": {
+          "line": 64,
+          "endLine": 467
+        },
+        "__init__": {
+          "line": 65,
+          "endLine": 92
+        },
+        "event": {
+          "line": 94,
+          "endLine": 98
+        },
+        "check": {
+          "line": 100,
+          "endLine": 107
+        },
+        "pump": {
+          "line": 109,
+          "endLine": 142
+        },
+        "write": {
+          "line": 144,
+          "endLine": 151
+        },
+        "ack": {
+          "line": 153,
+          "endLine": 172
+        },
+        "request": {
+          "line": 174,
+          "endLine": 175
+        },
+        "request_ack": {
+          "line": 177,
+          "endLine": 184
+        },
+        "focus": {
+          "line": 187,
+          "endLine": 194
+        },
+        "capture": {
+          "line": 196,
+          "endLine": 211
+        },
+        "observation": {
+          "line": 213,
+          "endLine": 249
+        },
+        "send": {
+          "line": 251,
+          "endLine": 297
+        },
+        "receive": {
+          "line": 299,
+          "endLine": 316
+        },
+        "complete_frozen": {
+          "line": 318,
+          "endLine": 347
+        },
+        "group": {
+          "line": 349,
+          "endLine": 360
+        },
+        "finish_terminal": {
+          "line": 362,
+          "endLine": 384
+        },
+        "run": {
+          "line": 386,
+          "endLine": 467
+        }
+      }
+    }
+  },
+  "acceptedReceipt": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/ops/receipt-manifest.json",
+  "acceptedReceiptSHA256": "63b146fe860bfb21603f1eba79df4de27f164ce3023e2dc80e74c6008a0a00c9",
+  "reuse": "32 merged tests and unchanged independent acceptance; no offline replay",
+  "ledger": [
+    {
+      "boundary": "initial Console obstruction -> caption activation",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "new unobscured startup -> Space",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 0 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 1 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 2 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 3 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 4 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 5 -> Down",
+      "review": 1,
+      "freshBeforeInput": 1
+    },
+    {
+      "boundary": "menu selected row 6 -> Enter",
+      "review": 1,
+      "freshBeforeInput": 1
+    }
+  ],
+  "minimumCaptures": 18,
+  "gameplayBeforeEscAdditionalCaptures": 2,
+  "expectedGameplayPathCaptures": 20,
+  "authorizedMaximumCaptures": 16,
+  "individualCap": 2097152,
+  "apiAllowance": 8388608,
+  "terminalCleanupReserve": 1048576,
+  "actualGuestInvocations": 0,
+  "actualAPIResponses": 0,
+  "actualCaptures": 0,
+  "actualInputs": 0,
+  "unproven": [
+    "fresh Boat Node executable/version/env/startup",
+    "fresh Boat parser/mount enumeration",
+    "actual Console focus activation",
+    "actual menu rows0..6",
+    "ordinary Quit",
+    "normal guest Exit0 and runner exit"
+  ],
+  "reason": "Known Console/startup route needs at least18 captures under unchanged accepted observation+freshness guard; no compliant <=16 plan. With separately observed gameplay before Esc,20. Do not consume guest invocation or weaken guard.",
+  "resumePrerequisite": "Coordinator-authorized reconciled capture/time/full-wire plan for unchanged controller, or a separately independently accepted controller change. This task does not authorize either change.",
+  "lifecycle": {
+    "box": "bx_ffsw74qe",
+    "owner": "coordinator",
+    "guestCutoff": "2026-10-27T12:59:00Z",
+    "handback": "2026-10-27T13:02:00Z",
+    "shutdown": "2026-10-27T13:05:00Z",
+    "expiry": "2026-10-27T13:11:07.294Z",
+    "state": "assigned running at dispatch; not queried or mutated by this worker"
+  },
+  "cleanup": {
+    "guestStarted": false,
+    "remoteStagedFiles": 0,
+    "ownedGuestProcesses": 0,
+    "shutdownWatcherUntouched": true
+  },
+  "incidents": [
+    "Initial combined policy and skill displays exceeded8192bytes; original tool transcript retained.",
+    "Attempted reads confirmed predecessor task.py references missing remote.py/proxy.py; no predecessor write or launch.",
+    "Read-only broad /tmp filename search was unnecessary and encountered permission-denied paths; no retry or access bypass."
+  ],
+  "rootRefs": "Launcher digest reused, capturedListingBytes0; root/donor tracked/index/refs read-only",
+  "historicalFrameInspection": {
+    "at": 1793104196.0380874,
+    "path": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/repo/test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png",
+    "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+    "dimensions": [
+      800,
+      600
+    ],
+    "inspection": "Viewed full lossless historical frame: Console overlays Airstrike; Press any key to start and In the game press ESC for a menu are readable. No menu rows visible. Historical frame only, no current-frame/focus/activation claim."
+  }
+}
