@@ -1,0 +1,15 @@
+{
+  "watcher": {
+    "pid": 3675891,
+    "start": "112161756",
+    "parent": 3674717,
+    "command": "tail -f messageboard.txt"
+  },
+  "before": {
+    "start": "112161756",
+    "state": "S"
+  },
+  "after": null,
+  "live": false,
+  "signal": "SIGTERM pidfd to exact owned tail only"
+}

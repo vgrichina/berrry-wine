@@ -1,0 +1,103 @@
+PE loaded. Entry: 0x004012a0
+DLL: msvcrt.dll at 0xb0b000, DllMain=0xb0e428, thunks=2187, origBase=0x78000000
+DLL: zlib1.dll at 0xc4f000, DllMain=0xc50060, thunks=2190, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xd68000, DllMain=0xd69060, thunks=2193, origBase=0x69c80000
+DLL: SDL.dll at 0xe8e000, DllMain=0xe8f000, thunks=2341, origBase=0x68100000
+DLL: SDL_image.dll at 0xfe9000, DllMain=0xfea060, thunks=2344, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0x110a000, DllMain=0x110b060, thunks=2356, origBase=0x61700000
+DLL: libfreetype-6.dll at 0x1255000, DllMain=0x1256060, thunks=2359, origBase=0x6fbc0000
+DLL: SDL_ttf.dll at 0x13c7000, DllMain=0x13c8060, thunks=2362, origBase=0x6f4c0000
+Patching EXE imports: libpng12-0.dll -> DLL #2 (libpng12-0.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #3 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #4 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #5 (SDL_mixer.dll)
+Patching EXE imports: SDL_ttf.dll -> DLL #7 (SDL_ttf.dll)
+Patching EXE imports: zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: libfreetype-6.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libfreetype-6.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL_ttf.dll→libfreetype-6.dll -> DLL #6 (libfreetype-6.dll)
+Patching DLL imports: SDL_ttf.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_ttf.dll→SDL.dll -> DLL #3 (SDL.dll)
+After patching: 2382 thunks
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xb46edc] = 0x13d557c
+Patched __p__environ [0xb45be4] = 0x13d555c
+Patched __p___winitenv [0xb470ec] = 0x13d557c
+Patched __p___initenv [0xb49c9c] = 0x13d555c
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb1799d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\enigma-1.01
+[control] listening on http://127.0.0.1:18127/ctl
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+[SetWindowText] ""
+[SetWindowText] "Enigma v1.01"
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xb0e7c5 param=0x14c1b1c flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb0e7c5 ESP=0x7efffff8
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[SetWindowText] "Enigma - Main Menu"
+uop: installs=1739 kills=125 retired-poor=125 enters=16788752 blocks=128204487 head-exits=5 reguards=15107375 rg-pages=241710000 rg-nonadj=0 win-kept=16783472 win-reset=5280 gen=13 | compiled=1739 declined=839 insns=116695 uops=549934 flushes=10 traces=976
+  declines: no-backedge=641 head-unsupported=100 call-indirect=71 loop-too-big=51
+uop nobump: skips=43450982
+uop hot: decays=21612976 halvings=2341
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=24 kills=4 enters=7222267 blocks=38133230
+
+Stats: 2235641 API calls, 68865 batches in 60.490s (1138 batches/s)
+MMX: 21656 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x171f7e8 esp=0x7efffb98 ebp=0x7efffe90 yield=0 waitH=0xe0004 sleepCount=0 csPark/steal=0/0

@@ -1,0 +1,30 @@
+{
+  "at": 1793074877.6578243,
+  "identities": [
+    {
+      "pid": 25293,
+      "start": "51783",
+      "live": false,
+      "observed": null
+    },
+    {
+      "pid": 25300,
+      "start": "51786",
+      "live": false,
+      "observed": null
+    },
+    {
+      "pid": 25292,
+      "start": "51778",
+      "live": false,
+      "observed": null
+    }
+  ],
+  "ownedProcessAbsence": true,
+  "box": "bx_nmvbu5c7",
+  "boxState": "RUNNING (successful API exec)",
+  "shutdownOwner": "coordinator",
+  "expiry": "2026-10-27T05:12:05Z",
+  "used": 48418816,
+  "free": 48972533760
+}

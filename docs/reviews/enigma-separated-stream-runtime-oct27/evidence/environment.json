@@ -1,0 +1,11 @@
+{
+  "environment": {
+    "HOME": "/home/user",
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "sha256": "19f73df0f52f73f5141a4b45fe09e1ccd95c212a2b3ca00c43c63f64b745e9ed",
+  "sanitized": true
+}

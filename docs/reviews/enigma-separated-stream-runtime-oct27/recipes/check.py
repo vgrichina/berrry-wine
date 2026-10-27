@@ -1,0 +1,14 @@
+from work import *
+if sys.argv[1]=='parser':
+ gate('mount-parser')
+ j=remote(shlex.quote(NODE)+' --max-old-space-size=64 '+shlex.quote(R+'/ops/parser-check.cjs'))
+ save('mount-check.json',json.loads(j['stdout']));print(j['stdout'])
+ j=py('import pathlib,json,hashlib;h=pathlib.Path('+repr(R)+');expected=json.loads((h/"ops/expected-modes.json").read_text());bad=[r["target"] for r in expected if (h/r["target"]).stat().st_mode&0o777!=r["mode"]];v=dict(modeRows=len(expected),mismatches=bad);(h/"ops/mode-check.json").write_text(json.dumps(v));assert not bad;print(json.dumps(v))');save('mode-check.json',json.loads(j['stdout']));print(j['stdout'])
+ transfer([('ops/mount-check.json',O/'mount-check.json')])
+elif sys.argv[1]=='validate':
+ j=py('import importlib.util,json,pathlib;h=pathlib.Path('+repr(R)+');s=importlib.util.spec_from_file_location("supervisor",h/"runner/tools/enigma-supervised-gameplay.py");m=importlib.util.module_from_spec(s);s.loader.exec_module(m);c=json.loads((h/"ops/launch-config.json").read_text());m.validate_launch(c);print(json.dumps(dict(PASS=True,guestStarted=False,configSHA256=__import__("hashlib").sha256((h/"ops/launch-config.json").read_bytes()).hexdigest())))');save('config-validated.json',json.loads(j['stdout']));print(j['stdout'])
+elif sys.argv[1]=='launch':
+ gate('preguest');j=py('import pathlib,shutil,json,time;h=pathlib.Path('+repr(R)+');used=sum(p.stat().st_blocks*512 for p in h.rglob("*") if p.is_file());v=dict(at=time.time(),used=used,allocation=268435456,reserve=8388608,remaining=268435456-used,free=shutil.disk_usage(h).free,memAvailable=int(pathlib.Path("/proc/meminfo").read_text().split("MemAvailable:")[1].split()[0])*1024);assert used+8388608<268435456 and v["memAvailable"]>=3758096384;(h/"ops/preguest-admission.json").write_text(json.dumps(v,indent=2));print(json.dumps(v))');save('remote-preguest-admission.json',json.loads(j['stdout']));print(j['stdout'])
+ j=remote('/usr/bin/python3 '+shlex.quote(R+'/ops/launch.py'),detach=True);save('api-launch.json',j);print(json.dumps(j))
+elif sys.argv[1]=='phase':
+ j=py('import pathlib,json;h=pathlib.Path('+repr(R+'/ops')+');v={}\nfor n in ["cli-exit.json","launch/controller/phase.json","launch/controller/outcome.json","launch/controller/first-n1-completion-gate.json"]:\n p=h/n\n if p.exists():v[n]=json.loads(p.read_text())\np=h/"launch/supervisor-outcome.json"\nif p.exists():\n s=json.loads(p.read_text());v["supervisor"]={k:s[k] for k in ["status","failed","reason","peakTreeRSS","cpuSeconds","outputBytes","remainingOwnedLive","childReturncode","delegated"]}\np=h/"launch/node-startup.json"\nif p.exists():\n s=json.loads(p.read_text());v["nodeStartup"]={k:s[k] for k in ["status","exit","sameEnvironment"]}\nprint(json.dumps(v))');save('phase-latest.json',json.loads(j['stdout']));print(j['stdout'])

@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "response": {
+    "command": "timeout 120 /usr/bin/python3 /tmp/enigma-separated-stream-runtime-oct27/ops/launch.py",
+    "cwd": ".",
+    "errLogPath": "/home/user/.ascii/processes/25287.err.log",
+    "exitCode": 0,
+    "finishedAt": "2026-10-27T04:19:52.643Z",
+    "known": true,
+    "logPath": "/home/user/.ascii/processes/25287.log",
+    "oomKilled": false,
+    "pid": 25287,
+    "processId": 25287,
+    "running": false,
+    "signal": null,
+    "startedAt": "2026-10-27T04:18:51.738Z",
+    "status": "exited",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"supervisorExit\": 0}\n",
+    "stdoutTruncated": false,
+    "success": true
+  },
+  "stderr": ""
+}

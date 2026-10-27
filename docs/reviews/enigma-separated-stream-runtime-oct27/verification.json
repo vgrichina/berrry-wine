@@ -1,0 +1,19 @@
+{
+  "at": 1793074963.6940067,
+  "PASS": true,
+  "steps": 270,
+  "acknowledgedBatches": 68865,
+  "serialPairs": true,
+  "allStepsAtMost256": true,
+  "allFollowingSnapshotsFrozenZero": true,
+  "noInput": true,
+  "captures": 1,
+  "startupVersion": "v24.22.1",
+  "DATAandAS": "unlimited",
+  "stdoutStderrDistinctFromCreation": true,
+  "aggregateOutputBytes": 6744,
+  "supervisorExit": 0,
+  "ownedProcessAbsence": true,
+  "testsReplayed": false,
+  "builds": 0
+}

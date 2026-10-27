@@ -1,0 +1,13 @@
+{
+  "at": 1793074963.693743,
+  "tool": "view_image",
+  "image": "evidence/launch/controller/menu-candidate.png",
+  "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+  "width": 640,
+  "height": 480,
+  "reviewed": true,
+  "visual": "Actual Enigma main menu: Start Game, Level Pack, Options, Credits, Quit; background logo and stone-ball art. No gameplay field shown.",
+  "safeStartGameVisible": true,
+  "reviewWasAfterControllerExit": true,
+  "actionDispatched": false
+}

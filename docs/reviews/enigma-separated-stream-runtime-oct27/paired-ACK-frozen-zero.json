@@ -1,0 +1,57 @@
+{
+  "requests": [
+    {
+      "at": 1793074732.144394,
+      "request": {
+        "action": "snapshot"
+      },
+      "startingBatch": null,
+      "originalResponse": "{\"ok\":true,\"value\":{\"batch\":0,\"eip\":\"0x4012a0\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x0\",\"mainHwnd\":\"0x0\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[]}}",
+      "ended": 1793074732.161932
+    },
+    {
+      "at": 1793074732.1714501,
+      "request": {
+        "action": "step",
+        "n": 1
+      },
+      "startingBatch": 0,
+      "originalResponse": "{\"ok\":true,\"value\":{\"batch\":1,\"ran\":1,\"steps\":1,\"frozen\":true}}",
+      "ended": 1793074732.1848328
+    },
+    {
+      "at": 1793074732.1899161,
+      "request": {
+        "action": "snapshot"
+      },
+      "startingBatch": 0,
+      "originalResponse": "{\"ok\":true,\"value\":{\"batch\":1,\"eip\":\"0xb0de5c\",\"quit\":false,\"yieldReason\":0,\"focus\":\"0x0\",\"mainHwnd\":\"0x0\",\"screen\":{\"w\":640,\"h\":480},\"frozen\":{\"frozen\":true,\"tickMs\":200,\"credits\":0,\"recording\":false},\"windows\":[]}}",
+      "ended": 1793074732.202412
+    }
+  ],
+  "firstStepACK": {
+    "batch": 1,
+    "ran": 1,
+    "steps": 1,
+    "frozen": true
+  },
+  "followingSnapshot": {
+    "batch": 1,
+    "eip": "0xb0de5c",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x0",
+    "mainHwnd": "0x0",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 200,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": []
+  }
+}

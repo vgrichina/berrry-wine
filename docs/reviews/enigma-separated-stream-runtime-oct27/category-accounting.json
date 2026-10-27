@@ -1,0 +1,12 @@
+{
+  "at": 1793074996.9768765,
+  "captures": 786432,
+  "captureCeiling": 8388608,
+  "eventsPositiveWAL": 2236416,
+  "eventCeiling": 8388608,
+  "remainingLocalNonCapture": 3170304,
+  "nonCaptureCeiling": 8388608,
+  "reserve": 8388608,
+  "allocation": 33554432,
+  "allWithin": true
+}
