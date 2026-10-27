@@ -1,0 +1,1217 @@
+{
+  "pass": true,
+  "victim": {
+    "name": "TITLE_TABLE",
+    "base": "0x3c92000"
+  },
+  "commands": [
+    "node tools/region-census.js --gate",
+    "node tools/gen-region-map.js --check",
+    "node tools/region-census.js --build-gates"
+  ],
+  "invocations": [
+    {
+      "id": "0001",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0002",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0003",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0004",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0005",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0006",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0007",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0008",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0009",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0010",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0011",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0012",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0013",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0014",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0015",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0016",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0017",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0018",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0019",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0020",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0021",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0022",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0023",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0024",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0025",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0026",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0027",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0028",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0029",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0030",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0031",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0032",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0033",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0034",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0035",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0036",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0037",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0038",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0039",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0040",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0041",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0042",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0043",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0044",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0045",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0046",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0047",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0048",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0049",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0050",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0051",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0052",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0053",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0054",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0055",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0056",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0057",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0058",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0059",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0060",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0061",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0062",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0063",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0064",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0065",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0066",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0067",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0068",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0069",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0070",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0071",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0072",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0073",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0074",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0075",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0076",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0077",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0078",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0079",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0080",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0081",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0082",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0083",
+      "root": "candidate",
+      "args": [],
+      "status": 0
+    },
+    {
+      "id": "0084",
+      "root": "original",
+      "args": [],
+      "status": 0
+    },
+    {
+      "id": "0085",
+      "root": "candidate",
+      "args": [
+        "--gate"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0086",
+      "root": "original",
+      "args": [
+        "--gate"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0087",
+      "root": "candidate",
+      "args": [
+        "--json"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0088",
+      "root": "original",
+      "args": [
+        "--json"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0089",
+      "root": "candidate",
+      "args": [
+        "--loose",
+        "--json"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0090",
+      "root": "original",
+      "args": [
+        "--loose",
+        "--json"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0091",
+      "root": "candidate",
+      "args": [
+        "--region=TITLE_TABLE"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0092",
+      "root": "original",
+      "args": [
+        "--region=TITLE_TABLE"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0093",
+      "root": "candidate",
+      "args": [
+        "--file=src/01-header.wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0094",
+      "root": "original",
+      "args": [
+        "--file=src/01-header.wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0095",
+      "root": "candidate",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0096",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0097",
+      "root": "candidate",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0098",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0099",
+      "root": "candidate",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0100",
+      "root": "original",
+      "args": [
+        "--dup-payloads"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0101",
+      "root": "candidate",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0102",
+      "root": "original",
+      "args": [
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0103",
+      "root": "candidate",
+      "args": [
+        "--js-copies",
+        "--embedded-wat",
+        "--dup-payloads",
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0104",
+      "root": "original",
+      "args": [
+        "--js-copies",
+        "--embedded-wat",
+        "--dup-payloads",
+        "--hand-rolled"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0105",
+      "root": "candidate",
+      "args": [
+        "--unknown"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0106",
+      "root": "original",
+      "args": [
+        "--unknown"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0107",
+      "root": "candidate",
+      "args": [
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0108",
+      "root": "original",
+      "args": [
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0109",
+      "root": "candidate",
+      "args": [
+        "--hand-rolled",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0110",
+      "root": "original",
+      "args": [
+        "--hand-rolled",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0111",
+      "root": "candidate",
+      "args": [
+        "--dup-payloads",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0112",
+      "root": "original",
+      "args": [
+        "--dup-payloads",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0113",
+      "root": "candidate",
+      "args": [
+        "--js-copies",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0114",
+      "root": "original",
+      "args": [
+        "--js-copies",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0115",
+      "root": "candidate",
+      "args": [
+        "--embedded-wat",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0116",
+      "root": "original",
+      "args": [
+        "--embedded-wat",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0117",
+      "root": "candidate",
+      "args": [
+        "--gate",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0118",
+      "root": "original",
+      "args": [
+        "--gate",
+        "--record"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0119",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--record"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0120",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--gate"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0121",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--json"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0122",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--loose"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0123",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--region=X"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0124",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--file=X"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0125",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--unknown"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0126",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--js-copies"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0127",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0128",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--dup-payloads"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0129",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--hand-rolled"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0130",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0131",
+      "root": "candidate",
+      "args": [
+        "--build-gates",
+        "extra"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0132",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0133",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0134",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0135",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0136",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0137",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0138",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0139",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0140",
+      "root": "original",
+      "args": [
+        "--js-copies"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0141",
+      "root": "original",
+      "args": [
+        "--embedded-wat"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0142",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0143",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0144",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0145",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    },
+    {
+      "id": "0146",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 0
+    },
+    {
+      "id": "0147",
+      "root": "candidate",
+      "args": [
+        "--build-gates"
+      ],
+      "status": 1
+    }
+  ]
+}

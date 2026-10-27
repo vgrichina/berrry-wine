@@ -1,0 +1,40 @@
+{
+  "candidate": "13f1c27963df0037bba47acf035faec77f53898b",
+  "parentReceipt": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-census-between-gates-repair-oct27/receipt.json",
+    "sha256": "914261c02793047daccddc2ea34dd8f8290d78e36b7ef5cf7a59eecedbc22332"
+  },
+  "delta": [
+    {
+      "path": "docs/re-notes/region-census-between-gates-repair-20261027.md",
+      "sha256": "10425eef715ad3334e8aecbda862adf20bb58e85fbf31edb08763a9dba353631",
+      "bytes": 8446
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/boundary-results.json",
+      "sha256": "cbe06b3898fdc3d7ac9fa792190e757222d9332fc6b011f5cb7a5e55ac082746",
+      "bytes": 20348
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/repair.cjs",
+      "sha256": "0c4a6094fa4210a1b0782c204b0d588fdd4d3b4cc29a7d1e8f837ee4aceb9a11",
+      "bytes": 9438
+    },
+    {
+      "path": "tools/check-region-decls.js",
+      "sha256": "1c8c9ad097dbfdcbcda9327e144371e921f9868e6631491e7f3e229a10132919",
+      "bytes": 22234
+    },
+    {
+      "path": "tools/region-census.js",
+      "sha256": "7fc8f6fa42485b1d0973708ff9ebe61c0bcaf074b47e97f6847fdb9e940acc8b",
+      "bytes": 44810
+    },
+    {
+      "path": "tools/region-layout.js",
+      "sha256": "c781bbb5b3b5d31412bac1d6cb60329ca9612ba2a06d09e52d2c1854b62a8e30",
+      "bytes": 8616
+    }
+  ],
+  "inheritedVerification": "reuse coordinator verified archive and inherited pins; no full payload sweep"
+}
