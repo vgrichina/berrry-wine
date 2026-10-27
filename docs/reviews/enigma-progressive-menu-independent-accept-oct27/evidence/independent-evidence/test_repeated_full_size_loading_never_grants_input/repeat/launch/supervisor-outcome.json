@@ -1,0 +1,47 @@
+{
+  "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57102336,
+  "cpuSeconds": 0.03,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4063766,
+      "114253334"
+    ],
+    [
+      4063774,
+      "114253337"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "41899",
+        "--root",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_repeated_full_size_loading_never_grants_input/repeat",
+        "--fault",
+        "never-ready"
+      ],
+      "pid": 4063766
+    }
+  }
+}

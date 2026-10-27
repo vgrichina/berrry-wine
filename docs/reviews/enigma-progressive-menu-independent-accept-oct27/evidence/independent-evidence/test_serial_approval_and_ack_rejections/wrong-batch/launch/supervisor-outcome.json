@@ -1,0 +1,47 @@
+{
+  "status": "step-ack-mismatch",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57237504,
+  "cpuSeconds": 0.02,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4063904,
+      "114253435"
+    ],
+    [
+      4063906,
+      "114253439"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/wrong-batch/controlled-child.py",
+        "--port",
+        "41711",
+        "--root",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/wrong-batch",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4063904
+    }
+  }
+}

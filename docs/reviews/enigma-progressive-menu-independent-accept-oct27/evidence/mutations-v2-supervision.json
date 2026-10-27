@@ -1,0 +1,40 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 61943808,
+  "sampledPeakRSS": 61943808,
+  "reapedPeakRSS": 33239040,
+  "cpuSeconds": 0.908809,
+  "wallSeconds": 0.47708435892127454,
+  "owned": [
+    [
+      4064434,
+      "114257342"
+    ],
+    [
+      4064435,
+      "114257350"
+    ],
+    [
+      4064437,
+      "114257358"
+    ],
+    [
+      4064439,
+      "114257366"
+    ],
+    [
+      4064441,
+      "114257373"
+    ],
+    [
+      4064443,
+      "114257380"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "taskBytes": 4358144,
+  "eventBytes": 430080,
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

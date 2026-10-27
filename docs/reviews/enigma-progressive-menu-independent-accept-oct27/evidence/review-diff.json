@@ -1,0 +1,1 @@
+{"name":"review-diff","git":true,"cwd":"/tmp/enigma-progressive-menu-independent-accept-oct27/repo","argv":["git","diff","--stat","b160b5403e69f28e92e218849cc8165c67776bd2","9fb63a8ca3b56880321aabfa507a2c0aee61cb4a","--","tools/enigma-supervised-gameplay.py","tools/enigma-frozen-gameplay-controller.py","test/fixtures/enigma-controller"]}

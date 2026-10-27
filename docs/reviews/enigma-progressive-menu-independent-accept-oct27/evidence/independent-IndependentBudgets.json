@@ -1,0 +1,545 @@
+{
+  "success": true,
+  "testsRun": 5,
+  "observations": [
+    {
+      "case": "budget-hash",
+      "status": "unreviewed-or-stale-frame",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 1766,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp00elnw4z/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp00elnw4z/evidence/menu-candidate-002.png"
+        }
+      ]
+    },
+    {
+      "case": "budget-batch",
+      "status": "unreviewed-or-stale-frame",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 1766,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpyzbenpvp/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpyzbenpvp/evidence/menu-candidate-002.png"
+        }
+      ]
+    },
+    {
+      "case": "budget-cpu",
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 1825,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpymthj7qm/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpymthj7qm/evidence/menu-candidate-002.png"
+        },
+        {
+          "action": "quit"
+        }
+      ]
+    },
+    {
+      "case": "budget-api",
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 948945,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp3yhkzm_n/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp3yhkzm_n/evidence/menu-candidate-002.png"
+        },
+        {
+          "action": "quit"
+        }
+      ]
+    },
+    {
+      "case": "budget-bytes",
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 1825,
+      "captureBytes": 8389580,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp6s_lr8wz/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp6s_lr8wz/evidence/menu-candidate-002.png"
+        },
+        {
+          "action": "quit"
+        }
+      ]
+    },
+    {
+      "case": "budget-wall",
+      "status": "exhausted-budget: cleanup-time",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0,
+      "apiBytes": 1766,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpww4o2g9b/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmpww4o2g9b/evidence/menu-candidate-002.png"
+        }
+      ]
+    },
+    {
+      "case": "budget-old-approval",
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0.15000009536743164,
+      "apiBytes": 1825,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp0xrxet68/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp0xrxet68/evidence/menu-candidate-002.png"
+        },
+        {
+          "action": "quit"
+        }
+      ]
+    },
+    {
+      "case": "budget-review",
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+      "frames": [
+        257,
+        513
+      ],
+      "reviewSeconds": 0.15000009536743164,
+      "apiBytes": 1825,
+      "captureBytes": 1944,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp9yoy0jb4/evidence/menu-candidate.png"
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 256
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/tmp9yoy0jb4/evidence/menu-candidate-002.png"
+        },
+        {
+          "action": "quit"
+        }
+      ]
+    },
+    {
+      "case": "serial-wrong-ack",
+      "status": "step-ack-mismatch",
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "serial-wrong-ack-batch",
+      "status": "step-ack-mismatch",
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "serial-wrong-snapshot-batch",
+      "status": "snapshot-batch-mismatch",
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        }
+      ]
+    },
+    {
+      "case": "serial-wrong-frozen",
+      "status": "snapshot-not-frozen-zero",
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        }
+      ]
+    },
+    {
+      "case": "serial-disconnect",
+      "status": "uncertain-request-or-evidence-failure: RemoteDisconnected('Remote end closed connection without response')",
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "cumulative-delayed-review",
+      "frames": [
+        2,
+        3
+      ],
+      "waits": [
+        0.05,
+        0.05,
+        0.05,
+        2.384185791015625e-07
+      ],
+      "cumulative": 0.15000009536743164,
+      "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT"
+    },
+    {
+      "case": "mutation-hash",
+      "rejected": true,
+      "method": "review",
+      "removed": "decision.get('frameSHA256') == frame['sha256']"
+    },
+    {
+      "case": "mutation-batch",
+      "rejected": true,
+      "method": "review",
+      "removed": "decision['batch'] == self.batch"
+    },
+    {
+      "case": "mutation-cpu",
+      "rejected": true,
+      "method": "drive",
+      "removed": "self.owner.budget()['cpu_left'] < self.progress['cpu_reserve'] + 2*rt"
+    },
+    {
+      "case": "mutation-api",
+      "rejected": true,
+      "method": "drive",
+      "removed": "not self.api_room(10)"
+    },
+    {
+      "case": "mutation-bytes",
+      "rejected": true,
+      "method": "drive",
+      "removed": "self.capture_bytes + 2*c['capture_bytes'] > self.progress['capture_total_bytes']"
+    },
+    {
+      "case": "mutation-wrong-ack",
+      "rejected": true,
+      "method": "step",
+      "removed": "type(ack.get('ran')) is int and ack['ran'] == n"
+    },
+    {
+      "case": "mutation-wrong-snapshot-batch",
+      "rejected": true,
+      "method": "snapshot",
+      "removed": "s['batch'] == expected"
+    },
+    {
+      "case": "mutation-wrong-frozen",
+      "rejected": true,
+      "method": "snapshot",
+      "removed": "f['credits'] == 0"
+    },
+    {
+      "case": "mutation-delayed-review",
+      "rejected": true,
+      "method": "review",
+      "removed": "start = self.clock()"
+    }
+  ]
+}

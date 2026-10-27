@@ -1,0 +1,45 @@
+{
+  "status": "ACCEPT_SOURCE_ONLY",
+  "candidate": "9fb63a8ca3b56880321aabfa507a2c0aee61cb4a",
+  "sourceBaseline": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "pins": {
+    "tools/enigma-supervised-gameplay.py": "05326027c821b39960e3417c86786d06a8c824b7fcd731d7c3586b59a5ce40a4",
+    "tools/enigma-frozen-gameplay-controller.py": "2c8d064d21e3d4c86b099591f076115b622450eb76371844324ee8be645f6beb",
+    "test/fixtures/enigma-controller/test_progressive.py": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_controller.py": "684dfe81c33deb6b813bf9f362c99479621aedbc4a1066b80a93ea99c53c78e5",
+    "test/fixtures/enigma-controller/child_server.py": "42823513355d78eaff9831fb57d1ccd3409dfb2188ef1ef0907cda37f0cdb1e5",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_supervised.py": "98473ed865fcc004efe709879ecb0c63896f672ef972d73c0814acf09e4b59a2",
+    "test/fixtures/enigma-controller/README.md": "4400965fefd50c5182b04ff88141b57c42ccc2f88e7846525587032ca547f0df",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+  },
+  "unchangedProductionBoundary": "test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary",
+  "firstBehavioralOperation": "boundary",
+  "passingOperations": [
+    "boundary",
+    "adversaries",
+    "ownership",
+    "budgets",
+    "mutations-v2",
+    "final-fresh",
+    "measured-cpu"
+  ],
+  "reusedAffectedMethods": 44,
+  "reusedReceipt": "candidate docs/reviews/enigma-progressive-menu-corrected-source-repair-oct27/evidence/acceptance-checkpoint.json and evidence manifest 1bf93b85073662bcebe3b8a1f6c28e589c2335af775994b700e329c94b4d5abb; coordinator verified all802 payloads",
+  "freshMethods": 10,
+  "rejectingMutations": 9,
+  "remaining": [
+    "actual Enigma menu",
+    "Start Game with actual externally reviewed image",
+    "gameplay",
+    "ordinary in-game Quit",
+    "coordinator-owned scoped integration"
+  ],
+  "guestInvocations": 0,
+  "nodeExecutions": 0,
+  "boxes": [],
+  "main": false,
+  "deploy": false
+}

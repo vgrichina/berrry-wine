@@ -1,0 +1,24 @@
+test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) ... 
+  test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) (method='review', mode='hash') ... FAIL
+  test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) (method='review', mode='batch') ... FAIL
+
+======================================================================
+FAIL: test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) (method='review', mode='hash')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent.py", line 123, in test_new_approval_cpu_api_capture_guards_are_sensitive
+    with self.assertRaises(AssertionError):IndependentBudgets().scenario(mode)
+AssertionError: AssertionError not raised
+
+======================================================================
+FAIL: test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) (method='review', mode='batch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent.py", line 123, in test_new_approval_cpu_api_capture_guards_are_sensitive
+    with self.assertRaises(AssertionError):IndependentBudgets().scenario(mode)
+AssertionError: AssertionError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.310s
+
+FAILED (failures=2)

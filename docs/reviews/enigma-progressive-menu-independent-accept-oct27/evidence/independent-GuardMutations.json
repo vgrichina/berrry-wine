@@ -1,0 +1,36 @@
+{
+  "success": true,
+  "testsRun": 1,
+  "observations": [
+    {
+      "case": "mutation-hash",
+      "rejected": true,
+      "method": "review",
+      "removed": "decision.get('frameSHA256') == frame['sha256']"
+    },
+    {
+      "case": "mutation-batch",
+      "rejected": true,
+      "method": "review",
+      "removed": "decision['batch'] == self.batch"
+    },
+    {
+      "case": "mutation-cpu",
+      "rejected": true,
+      "method": "drive",
+      "removed": "self.owner.budget()['cpu_left'] < self.progress['cpu_reserve'] + 2*rt"
+    },
+    {
+      "case": "mutation-api",
+      "rejected": true,
+      "method": "drive",
+      "removed": "not self.api_room(10)"
+    },
+    {
+      "case": "mutation-bytes",
+      "rejected": true,
+      "method": "drive",
+      "removed": "self.capture_bytes + 2*c['capture_bytes'] > self.progress['capture_total_bytes']"
+    }
+  ]
+}

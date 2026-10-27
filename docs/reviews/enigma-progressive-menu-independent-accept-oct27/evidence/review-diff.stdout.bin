@@ -1,0 +1,7 @@
+ test/fixtures/enigma-controller/README.md          |  49 ++++++
+ test/fixtures/enigma-controller/child_server.py    |  21 ++-
+ test/fixtures/enigma-controller/test_controller.py |   2 +
+ .../fixtures/enigma-controller/test_progressive.py | 168 +++++++++++++++++++++
+ tools/enigma-frozen-gameplay-controller.py         | 157 ++++++++++++++++---
+ tools/enigma-supervised-gameplay.py                |   9 +-
+ 6 files changed, 382 insertions(+), 24 deletions(-)

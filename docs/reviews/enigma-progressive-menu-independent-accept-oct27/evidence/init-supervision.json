@@ -1,0 +1,20 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 37093376,
+  "sampledPeakRSS": 37093376,
+  "reapedPeakRSS": 17825792,
+  "cpuSeconds": 0.069924,
+  "wallSeconds": 0.057560042943805456,
+  "owned": [
+    [
+      4061960,
+      "114242477"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "taskBytes": 163840,
+  "eventBytes": 327680,
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

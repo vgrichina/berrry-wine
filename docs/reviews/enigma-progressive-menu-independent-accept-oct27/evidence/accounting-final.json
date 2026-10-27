@@ -1,0 +1,27 @@
+{
+  "at": 1793095563.698801,
+  "sourceGit": 6500352,
+  "ops": 1634304,
+  "events": 479232,
+  "walUpperBound": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1458512,
+    "/home/user/.codex/state_5.sqlite-wal": 4606192,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243632
+  },
+  "walCharge": 26706000,
+  "reserve": 41943040,
+  "futureGrowth": 8388608,
+  "memAvailable": 3576188928,
+  "diskFree": 7769690112,
+  "hostHeadroom": 805306368,
+  "sharedChildPool": 268435456,
+  "futureClientReservation": 0,
+  "existingPeersAlreadyCounted": true,
+  "chargedOps": 28340304,
+  "projectedTotal": 85651536,
+  "projectedFree": 7341871104,
+  "pass": true
+}

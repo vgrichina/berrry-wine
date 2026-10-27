@@ -1,0 +1,10 @@
+test_cumulative_limits_and_new_frame_binding (__main__.IndependentBudgets.test_cumulative_limits_and_new_frame_binding) ... ok
+test_serial_partial_duplicate_frozen_uncertainty (__main__.IndependentBudgets.test_serial_partial_duplicate_frozen_uncertainty) ... ok
+test_wait_consumes_one_aggregate_review_allowance (__main__.IndependentBudgets.test_wait_consumes_one_aggregate_review_allowance) ... ok
+test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) ... ok
+test_serial_boundary_and_review_budget_mutations_reject (__main__.GuardMutations.test_serial_boundary_and_review_budget_mutations_reject) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.313s
+
+OK

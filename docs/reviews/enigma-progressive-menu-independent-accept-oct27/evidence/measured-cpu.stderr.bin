@@ -1,0 +1,6 @@
+test_original_supervisor_measures_waited_descendant_cpu_and_keeps_streams (__main__.ProductionAdversaries.test_original_supervisor_measures_waited_descendant_cpu_and_keeps_streams) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.657s
+
+OK

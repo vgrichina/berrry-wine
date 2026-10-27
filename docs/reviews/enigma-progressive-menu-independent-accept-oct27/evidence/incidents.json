@@ -1,0 +1,8 @@
+{
+  "retained": [
+    "Original candidate failed setup/RSS/verification receipts remain in immutable candidate report, not reinterpreted",
+    "Optional absent git.py/run.py, .gitattributes reads returned1; initial discovery output truncated; narrowed subsequent output",
+    "Initial mutation meta-tests failed because redundant pre-input guard remained. First source/failed output retained; compound removal detects forgery with unchanged oracle",
+    "Initial git whitespace check2 on raw git hints/unittest trailing spaces. Scoped .gitattributes marks raw .bin as binary; raw bytes preserved. No test/source assertions changed"
+  ]
+}

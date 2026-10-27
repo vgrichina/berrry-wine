@@ -1,0 +1,19 @@
+{
+  "status": "unreviewed-or-stale-frame",
+  "batch": 2,
+  "captures": 1,
+  "clicked": false,
+  "pending": false,
+  "failed": true,
+  "at": 1793095325.8506808,
+  "apiBytes": 1092,
+  "captureBytes": 997,
+  "reviewSecondsUsed": 0.0047550201416015625,
+  "progress": {
+    "max_checkpoints": 2,
+    "total_seconds": 12.0,
+    "cpu_reserve": 6.666666666666667,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 6291456
+  }
+}

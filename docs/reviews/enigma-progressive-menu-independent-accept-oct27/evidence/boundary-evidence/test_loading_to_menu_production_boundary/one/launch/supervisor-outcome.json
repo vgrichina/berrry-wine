@@ -1,0 +1,47 @@
+{
+  "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 56975360,
+  "cpuSeconds": 0.03,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4062294,
+      "114244978"
+    ],
+    [
+      4062296,
+      "114244981"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "51989",
+        "--root",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/boundary-evidence/test_loading_to_menu_production_boundary/one",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4062294
+    }
+  }
+}

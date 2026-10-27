@@ -1,0 +1,6 @@
+{"command": {"action": "snapshot"}, "pid": 4063947, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4063947, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4063947, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4063947, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4063947, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/wrong-review-batch/launch/controller/menu-candidate.png"}, "pid": 4063947, "batch": 2}

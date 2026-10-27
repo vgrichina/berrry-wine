@@ -1,0 +1,19 @@
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4063766, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4063766, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_repeated_full_size_loading_never_grants_input/repeat/launch/controller/menu-candidate.png"}, "pid": 4063766, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4063766, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_repeated_full_size_loading_never_grants_input/repeat/launch/controller/menu-candidate-002.png"}, "pid": 4063766, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 3}
+{"command": {"action": "step", "n": 1}, "pid": 4063766, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 4}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_repeated_full_size_loading_never_grants_input/repeat/launch/controller/menu-candidate-003.png"}, "pid": 4063766, "batch": 4}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 4}
+{"command": {"action": "step", "n": 1}, "pid": 4063766, "batch": 4}
+{"command": {"action": "snapshot"}, "pid": 4063766, "batch": 5}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_repeated_full_size_loading_never_grants_input/repeat/launch/controller/menu-candidate-004.png"}, "pid": 4063766, "batch": 5}
+{"command": {"action": "quit"}, "pid": 4063766, "batch": 5}

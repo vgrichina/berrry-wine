@@ -1,0 +1,32 @@
+{
+  "startedAt": 1793095325.9078367,
+  "deadlineAt": 1793095337.9078367,
+  "supervisorLimits": {
+    "cpu": 20,
+    "wall": 15,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "progress": {
+    "max_checkpoints": 2,
+    "total_seconds": 12.0,
+    "cpu_reserve": 6.666666666666667,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 6291456
+  },
+  "progressUntil": 1793095336.0578368,
+  "checkpointWindowSeconds": 3,
+  "reviewTotalSeconds": 0,
+  "actionReserveSeconds": 1.4000000000000001,
+  "cleanupReserveSeconds": 0.65,
+  "actionCleanupReserveBatches": 2,
+  "captureCountTotal": 3,
+  "afterActionCaptureReserve": 1,
+  "apiActionReserveOperations": 6,
+  "apiOperationCeilingBytes": 16384,
+  "resources": {
+    "cpu_left": 19.9,
+    "wall_left": 11.874467372894287
+  }
+}

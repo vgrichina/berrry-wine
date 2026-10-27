@@ -1,0 +1,8 @@
+docs/reviews/enigma-progressive-menu-independent-accept-oct27/evidence/init.stderr.bin:4: trailing whitespace.
++hint: 
+docs/reviews/enigma-progressive-menu-independent-accept-oct27/evidence/init.stderr.bin:6: trailing whitespace.
++hint: 
+docs/reviews/enigma-progressive-menu-independent-accept-oct27/evidence/init.stderr.bin:9: trailing whitespace.
++hint: 
+docs/reviews/enigma-progressive-menu-independent-accept-oct27/evidence/mutations.stderr.bin:1: trailing whitespace.
++test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) ... 

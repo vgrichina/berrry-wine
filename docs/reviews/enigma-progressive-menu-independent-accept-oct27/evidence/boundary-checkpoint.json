@@ -1,0 +1,9 @@
+{
+  "candidate": "9fb63a8ca3b56880321aabfa507a2c0aee61cb4a",
+  "passBoundary": true,
+  "testsRun": 1,
+  "unchangedFixtureSHA256": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+  "remaining": [
+    "independent approval/budget/ownership adversaries and rejecting mutations"
+  ]
+}

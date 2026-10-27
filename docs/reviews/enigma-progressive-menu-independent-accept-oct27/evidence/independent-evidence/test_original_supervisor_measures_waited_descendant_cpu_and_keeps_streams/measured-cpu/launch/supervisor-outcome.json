@@ -1,0 +1,51 @@
+{
+  "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57122816,
+  "cpuSeconds": 0.24000000000000002,
+  "outputBytes": 38,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4066179,
+      "114265297"
+    ],
+    [
+      4066213,
+      "114265300"
+    ],
+    [
+      4066289,
+      "114265313"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_original_supervisor_measures_waited_descendant_cpu_and_keeps_streams/measured-cpu/cpu-child.py",
+        "--port",
+        "40525",
+        "--root",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_original_supervisor_measures_waited_descendant_cpu_and_keeps_streams/measured-cpu",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4066179
+    }
+  }
+}

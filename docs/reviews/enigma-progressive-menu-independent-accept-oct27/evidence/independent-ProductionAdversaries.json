@@ -1,0 +1,175 @@
+{
+  "success": true,
+  "testsRun": 2,
+  "observations": [
+    {
+      "case": "repeat-loading",
+      "captures": 4,
+      "inputCount": 0,
+      "cleanup": "transport quit only"
+    },
+    {
+      "case": "partial-ack",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "duplicate-ack",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "wrong-batch",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        }
+      ]
+    },
+    {
+      "case": "wrong-frozen",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        }
+      ]
+    },
+    {
+      "case": "wrong-dimensions",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/wrong-dimensions/launch/controller/menu-candidate.png"
+        }
+      ]
+    },
+    {
+      "case": "stale-hash",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/stale-hash/launch/controller/menu-candidate.png"
+        }
+      ]
+    },
+    {
+      "case": "wrong-review-batch",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/wrong-review-batch/launch/controller/menu-candidate.png"
+        }
+      ]
+    },
+    {
+      "case": "missing-review",
+      "exit": 1,
+      "commands": [
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "step",
+          "n": 1
+        },
+        {
+          "action": "snapshot"
+        },
+        {
+          "action": "png",
+          "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/missing-review/launch/controller/menu-candidate.png"
+        }
+      ]
+    }
+  ]
+}

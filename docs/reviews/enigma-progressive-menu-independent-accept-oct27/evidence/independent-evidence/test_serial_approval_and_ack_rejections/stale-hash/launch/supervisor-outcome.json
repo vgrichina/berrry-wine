@@ -1,0 +1,47 @@
+{
+  "status": "unreviewed-or-stale-frame",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 56979456,
+  "cpuSeconds": 0.02,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4063939,
+      "114253494"
+    ],
+    [
+      4063941,
+      "114253496"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/stale-hash/controlled-child.py",
+        "--port",
+        "48481",
+        "--root",
+        "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/stale-hash",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4063939
+    }
+  }
+}

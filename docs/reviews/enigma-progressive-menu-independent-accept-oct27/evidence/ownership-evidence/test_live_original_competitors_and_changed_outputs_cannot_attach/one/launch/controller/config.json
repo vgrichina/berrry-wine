@@ -1,0 +1,30 @@
+{
+  "max_batches": 100,
+  "checkpoint_batches": 1,
+  "after_action_batches": 1,
+  "cleanup_batches": 1,
+  "max_captures": 2,
+  "capture_bytes": 2097152,
+  "width": 640,
+  "height": 480,
+  "checkpoint_seconds": 3,
+  "after_action_seconds": 1,
+  "review_seconds": 4,
+  "request_timeout": 0.15,
+  "cleanup_seconds": 0.5,
+  "decision_path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/ownership-evidence/test_live_original_competitors_and_changed_outputs_cannot_attach/one/decision.json",
+  "url": "http://127.0.0.1:50125/ctl",
+  "pid": 4064087,
+  "process_start_ticks": "114254225",
+  "started_at": 1793095333.005909,
+  "deadline_at": 1793095345.005909,
+  "supervisor_limits": {
+    "cpu": 20,
+    "wall": 15,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "terminal_path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/ownership-evidence/test_live_original_competitors_and_changed_outputs_cannot_attach/one/launch/terminal.json",
+  "evidence_dir": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/ownership-evidence/test_live_original_competitors_and_changed_outputs_cannot_attach/one/launch/controller"
+}

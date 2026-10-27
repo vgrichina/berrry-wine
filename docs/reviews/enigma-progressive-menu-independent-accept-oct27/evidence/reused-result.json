@@ -1,0 +1,83 @@
+{
+  "status": "PASS_SOURCE_ONLY_PUBLISHED_STOP",
+  "methodCount": 44,
+  "manifestPayloads": 802,
+  "manifestSHA256": "1bf93b85073662bcebe3b8a1f6c28e589c2335af775994b700e329c94b4d5abb",
+  "sourceBaseline": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "sourceTree": "a5e301efefcdc881816f5686e9e12cc57252b764",
+  "historicalReport": "96cac00c07a4c54cd0c39c0f84455148ebedc151",
+  "guestInvocations": 0,
+  "nodeExecutions": 0,
+  "boxesAssigned": [],
+  "boxesTouched": [],
+  "main": false,
+  "deploy": false,
+  "workersLaunched": 0,
+  "publication": {
+    "at": 1793094918.7051377,
+    "commit": "9fb63a8ca3b56880321aabfa507a2c0aee61cb4a",
+    "remoteRef": "refs/heads/task/enigma-progressive-menu-corrected-source-repair-oct27",
+    "remoteCommit": "9fb63a8ca3b56880321aabfa507a2c0aee61cb4a",
+    "exactRemoteVerified": true,
+    "clean": true,
+    "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "sourceBaseline": "b160b5403e69f28e92e218849cc8165c67776bd2",
+    "tree": "a5e301efefcdc881816f5686e9e12cc57252b764",
+    "integration": false,
+    "main": false
+  },
+  "rootRefReceiptReused": true,
+  "rootFinalRefComparison": "not required; no root mutation",
+  "ownedBoardWatcher": {
+    "pid": 4054110,
+    "parent": 4038018,
+    "startTicks": "114205332"
+  },
+  "admission": {
+    "at": 1793094686.6312249,
+    "sourceGit": 6942720,
+    "ops": 3846144,
+    "events": 1478656,
+    "session": 1208320,
+    "sharedWALCurrentUpperBound": 26406912,
+    "walFiles": {
+      "/home/user/.codex/memories_1.sqlite-wal": 0,
+      "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+      "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+      "/home/user/.codex/goals_1.sqlite-wal": 1134592,
+      "/home/user/.codex/state_5.sqlite-wal": 4612096,
+      "/home/user/.codex/thread_history_1.sqlite-wal": 4251648
+    },
+    "walBaseline": "unknown; charge entire current shared WAL once conservatively, no exact growth attribution",
+    "reserve": 41943040,
+    "futureGrowth": 8388608,
+    "free": 7811137536,
+    "memAvailable": 3514970112,
+    "chargedOps": 30253056,
+    "chargedEvents": 2686976,
+    "totalProjected": 90214400,
+    "projectedFree": 7760805888,
+    "futureClientReservation": 0,
+    "actualPeerRSSAlreadyIncludedInMemAvailable": true,
+    "pass": true
+  },
+  "remaining": [
+    "independent review",
+    "scoped integration by coordinator",
+    "separately admitted actual menu/runtime acceptance"
+  ],
+  "ownedCleanup": "owned-cleanup.json",
+  "accountingFinal": "accounting-final.json",
+  "workerStopped": true,
+  "committedClosure": {
+    "commit": "9fb63a8ca3b56880321aabfa507a2c0aee61cb4a",
+    "reportPaths": 803,
+    "payloads": 802,
+    "allReportAndSourceBlobsMatchGitObjects": true,
+    "acceptedSourceFixtureSHA256Match": true,
+    "previousMissingSyntheticPNGs": 36,
+    "syntheticEvidenceOnly": true
+  },
+  "priorCleanup": "owned-cleanup-first.json",
+  "publicationCorrection": "36 ignored synthetic PNGs added in follow-up commit; all803 report paths Git blob+SHA256 verified; no behavioral rerun/source change"
+}

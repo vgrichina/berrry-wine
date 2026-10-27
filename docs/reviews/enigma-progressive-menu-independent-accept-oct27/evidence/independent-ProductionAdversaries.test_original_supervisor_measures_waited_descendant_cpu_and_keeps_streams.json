@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "testsRun": 1,
+  "observations": [
+    {
+      "case": "original-measured-cpu",
+      "cpuBudget": {
+        "cpu_left": 19.63,
+        "wall_left": 11.720229625701904
+      },
+      "retainedDescendantCPU": 0.24000000000000002,
+      "owned": [
+        [
+          4066179,
+          "114265297"
+        ],
+        [
+          4066213,
+          "114265300"
+        ],
+        [
+          4066289,
+          "114265313"
+        ]
+      ],
+      "distinctStreams": true,
+      "cleanup": []
+    }
+  ]
+}

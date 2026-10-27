@@ -1,0 +1,7 @@
+{"command": {"action": "snapshot"}, "pid": 4064087, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4064087, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4064087, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4064087, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4064087, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/ownership-evidence/test_live_original_competitors_and_changed_outputs_cannot_attach/one/launch/controller/menu-candidate.png"}, "pid": 4064087, "batch": 2}
+{"command": {"action": "quit"}, "pid": 4064087, "batch": 2}

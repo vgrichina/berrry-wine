@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/boundary.py"
+  ],
+  "cwd": null,
+  "envSHA256": "9c638a2503f172d0f8fd550468dcad6bf4b47eea814ad8ecfb8194b02c14a5a1",
+  "inheritedLimits": {
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

@@ -1,0 +1,6 @@
+test_new_approval_cpu_api_capture_guards_are_sensitive (__main__.GuardMutations.test_new_approval_cpu_api_capture_guards_are_sensitive) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.372s
+
+OK

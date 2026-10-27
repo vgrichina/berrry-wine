@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-27T09:59:15.432030+00:00",
+  "task": "enigma-progressive-menu-independent-accept-oct27",
+  "memAvailable": 2767159296,
+  "required": 1409286144,
+  "diskFree": 7793983488,
+  "prospectiveBytes": 469762048,
+  "floor": 2982150144,
+  "taskAllocation": 134217728,
+  "client": 335544320,
+  "sharedChildPool": 268435456,
+  "hostHeadroom": 805306368,
+  "existingPeers": "actual RSS counted in MemAvailable; future client/task counted once; shared pool counted once",
+  "pass": true
+}

@@ -1,0 +1,19 @@
+{
+  "finalTestSHA256": "58359be655f72c3ebeb3c56e94efb5ff78a0997b1dce37da3a6ce0460e23b551",
+  "initialTestSHA256": "373b267671ecc9c79905dd1b8b9e293c1a9dd240c3446f7a972205f10780495c",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "candidatePins": {
+    "tools/enigma-supervised-gameplay.py": "05326027c821b39960e3417c86786d06a8c824b7fcd731d7c3586b59a5ce40a4",
+    "tools/enigma-frozen-gameplay-controller.py": "2c8d064d21e3d4c86b099591f076115b622450eb76371844324ee8be645f6beb",
+    "test/fixtures/enigma-controller/test_progressive.py": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_controller.py": "684dfe81c33deb6b813bf9f362c99479621aedbc4a1066b80a93ea99c53c78e5",
+    "test/fixtures/enigma-controller/child_server.py": "42823513355d78eaff9831fb57d1ccd3409dfb2188ef1ef0907cda37f0cdb1e5",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_supervised.py": "98473ed865fcc004efe709879ecb0c63896f672ef972d73c0814acf09e4b59a2",
+    "test/fixtures/enigma-controller/README.md": "4400965fefd50c5182b04ff88141b57c42ccc2f88e7846525587032ca547f0df",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+  },
+  "description": "Production method receipts remain valid: subsequent test-file edits only add fresh test methods or mutation harness handling. Candidate implementation and all11fixtures unchanged. Initial failing mutations retained as redundant-guard oracle setup incident; final compound approval mutants remove both guards, never weaken assertions. Commands/config/env-safe hashes/inherited limits in per-operation JSON. No Node configuration executed."
+}

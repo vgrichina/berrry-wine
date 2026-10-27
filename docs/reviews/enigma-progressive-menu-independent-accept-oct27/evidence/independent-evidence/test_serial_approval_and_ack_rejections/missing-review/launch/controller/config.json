@@ -1,0 +1,30 @@
+{
+  "max_batches": 100,
+  "checkpoint_batches": 1,
+  "after_action_batches": 1,
+  "cleanup_batches": 1,
+  "max_captures": 3,
+  "capture_bytes": 2097152,
+  "width": 640,
+  "height": 480,
+  "checkpoint_seconds": 3,
+  "after_action_seconds": 1,
+  "review_seconds": 0,
+  "request_timeout": 0.15,
+  "cleanup_seconds": 0.5,
+  "decision_path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/missing-review/decision.json",
+  "url": "http://127.0.0.1:37003/ctl",
+  "pid": 4063975,
+  "process_start_ticks": "114253539",
+  "started_at": 1793095326.14135,
+  "deadline_at": 1793095338.14135,
+  "supervisor_limits": {
+    "cpu": 20,
+    "wall": 15,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "terminal_path": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/missing-review/launch/terminal.json",
+  "evidence_dir": "/tmp/enigma-progressive-menu-independent-accept-oct27/ops/independent-evidence/test_serial_approval_and_ack_rejections/missing-review/launch/controller"
+}

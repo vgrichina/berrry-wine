@@ -1,0 +1,7 @@
+test_repeated_full_size_loading_never_grants_input (__main__.ProductionAdversaries.test_repeated_full_size_loading_never_grants_input) ... ok
+test_serial_approval_and_ack_rejections (__main__.ProductionAdversaries.test_serial_approval_and_ack_rejections) ... ok
+
+----------------------------------------------------------------------
+Ran 2 tests in 2.284s
+
+OK
