@@ -1,0 +1,48 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 124993536,
+  "sampledPeakRSS": 124993536,
+  "reapedPeakRSS": 74661888,
+  "cpuSeconds": 0.806972,
+  "wallSeconds": 0.261844655033201,
+  "owned": [
+    [
+      425153,
+      "117082601"
+    ],
+    [
+      425154,
+      "117082603"
+    ],
+    [
+      425155,
+      "117082607"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-buffered-keyboard.js"
+  ],
+  "cwd": "/tmp/airstrike-directinput-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-independent-accept-oct27/ops/production-boundary-first.stdout",
+    "bytes": 9716,
+    "sha256": "fb49c5d591266af27918ce507f1220e0212e141826feaadbd7b781d9c8157a82"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-independent-accept-oct27/ops/production-boundary-first.stderr",
+    "bytes": 1734,
+    "sha256": "ede8e1d250046fbebed2a2f175044ebba5dfcb0f401d8bdc2cd87194cedc6fb3"
+  }
+}
