@@ -57,7 +57,9 @@ node tools/gen-region-map.js --check
 # the address a JS file must never hold, since it MOVES on the next size change
 # with no error anywhere — see d59ce229, a copied base that was zeroing 32KB of
 # $PE_STAGING per worker spawn. Hard gate, not a ratchet: the answer is zero.
-node tools/region-census.js --js-copies
+# Run these four read-only gates in one process, in the order documented below.
+# --gate stays BEFORE gen-region-map.js --check; neither belongs in this group.
+node tools/region-census.js --build-gates
 # ...and neither may a WAT fragment a JS test splices into our sources. That
 # fragment is compiled by our own compiler, so region.addr resolves inside it,
 # which makes a bare (i32.const N) in a MEMORY-OPERAND position a copy of the
@@ -66,21 +68,18 @@ node tools/region-census.js --js-copies
 # STALE copy never equals. test-wave-out-get-id stored a waveOut handle at
 # 0xD160 — $WAVE_OUT_SHARED before the map moved, and by then 0x1010 into
 # $SCROLL_TABLE — and answered MMSYSERR_INVALHANDLE to a valid handle for it.
-node tools/region-census.js --embedded-wat
 # The same bytes written twice inside ONE region: one block, one lifetime, one
 # set of readers, and a second copy that can only ever drift out of step with
 # the first. Cross-region duplicates are deliberately NOT flagged — the low
 # $STRING_CONSTANTS copies exist because an app can disturb that page, and
 # 01-header.wat:1120-1129 says so. Ratchet; the recorded pair is in
 # region-census.baseline.json dupPayloads.
-node tools/region-census.js --dup-payloads
 # ...and the fourth form, which uses no literal address at all and is therefore
 # invisible to all three gates above: (i32.add (global.get $REGION) (i32.const N))
 # is (region.addr $REGION N) with the compile-time in-region check REMOVED. The
 # offset that walks off the end of a table is the bug the region family exists
 # to catch, and this spelling is the one that cannot catch it. Ratcheted per
 # file, not a wall: 17 sites remain in four files other lanes hold.
-node tools/region-census.js --hand-rolled
 # Every gate above proves nothing in the tree has MEMORIZED an allocated base.
 # The instrument that proves it end to end is §8's shake — build the whole wasm
 # with the map permuted and check the picture is identical — and that instrument
