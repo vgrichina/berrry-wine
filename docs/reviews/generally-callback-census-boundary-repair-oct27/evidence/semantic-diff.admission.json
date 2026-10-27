@@ -1,0 +1,11 @@
+{
+  "taskEventsSessionPositiveWALBytes": 50307072,
+  "future": 33554432,
+  "reserve": 8388608,
+  "margin": 8388608,
+  "allocation": 201326592,
+  "memAvailable": 3649019904,
+  "requiredMem": 1434451968,
+  "free": 7208607744,
+  "projectedFree": 7158276096
+}

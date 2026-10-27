@@ -1,0 +1,235 @@
+diff --git a/host.js b/host.js
+index d6edb71e5..7b45ddcdc 100644
+--- a/host.js
++++ b/host.js
+@@ -803,13 +803,27 @@ class WineAssembly {
+     const headerLength = new DataView(bytes.buffer, bytes.byteOffset, 8).getUint32(4, true);
+     if (8 + headerLength > bytes.length) return null;
+     let header;
+-    try { header = JSON.parse(new TextDecoder().decode(bytes.subarray(8, 8 + headerLength))); } catch (_) { return null; }
++    try { header = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(8, 8 + headerLength))); } catch (_) { return null; }
+     if (!Array.isArray(header)) return null;
+     const out = new Map();
++    const names = new Set();
+     let at = 8 + headerLength;
+     for (const entry of header) {
+-      if (!entry || typeof entry.f !== 'string' || !Number.isSafeInteger(entry.size)) continue;
+-      if (entry.size < 0 || at + entry.size > bytes.length) return null;
++      // Every descriptor is exactly one of {f, size} or {f, status}.
++      // Errors reserve their names too: no descriptor may shadow another.
++      if (!entry || typeof entry !== 'object' || Array.isArray(entry) ||
++          !Object.prototype.hasOwnProperty.call(entry, 'f') ||
++          typeof entry.f !== 'string' || names.has(entry.f)) return null;
++      names.add(entry.f);
++      const keys = Object.keys(entry);
++      if (keys.length !== 2) return null;
++      if (Object.prototype.hasOwnProperty.call(entry, 'status')) {
++        if (entry.status !== 404 && entry.status !== 413) return null;
++        continue;
++      }
++      if (!Object.prototype.hasOwnProperty.call(entry, 'size') ||
++          !Number.isSafeInteger(entry.size) || entry.size < 0 ||
++          entry.size > bytes.length - at) return null;
+       // A view, not a copy: every file of an eager list stays mounted, so the
+       // one response buffer lives as long as its files anyway.
+       out.set(entry.f, bytes.subarray(at, at + entry.size));
+diff --git a/lib/renderer-input.js b/lib/renderer-input.js
+index 7da1e2f5c..d2fab5556 100644
+--- a/lib/renderer-input.js
++++ b/lib/renderer-input.js
+@@ -429,6 +429,11 @@ function installInputHandlers(R) {
+     if (vkCode === 18) sys = !keyUp || !!this._altTapped;
+     else sys = !!k[18] && !k[17];
+     return {
++      // handleKeyDown already published this event's async press. Delivery
++      // must update the message snapshot without publishing that press again.
++      ...(!keyUp ? { asyncPressPublished: true } : {}),
++      ...((vkCode === 16 || vkCode === 17 || vkCode === 18)
++        ? { modifierSides: this._modifierSideSnapshot(vkCode) } : {}),
+       msg: (keyUp ? 0x0101 : 0x0100) | (sys ? 0x0004 : 0),
+       lParam: (sys && !(keyUp && vkCode === 18) ? (lParam | (1 << 29)) /* KF_ALTDOWN context bit */ : lParam) >>> 0,
+     };
+@@ -833,6 +838,11 @@ function installInputHandlers(R) {
+     if (key === 0x04) return (this._mouseButtonsMask & 0x0010) ? 0x8000 : 0;
+     if (key === 0x05) return (this._mouseButtonsMask & 0x0020) ? 0x8000 : 0;
+     if (key === 0x06) return (this._mouseButtonsMask & 0x0040) ? 0x8000 : 0;
++    // Once physical input exists, an absent side is up, including after a
++    // physical-map reset. Never infer a side from the aggregate async VK.
++    if (key >= 160 && key <= 165 && this._physicalKeys) {
++      return this._physicalKeys[key] ? 0x8000 : 0;
++    }
+     if (this._physicalKeys && Object.prototype.hasOwnProperty.call(this._physicalKeys, key)) {
+       return this._physicalKeys[key] ? 0x8000 : 0;
+     }
+@@ -841,9 +851,51 @@ function installInputHandlers(R) {
+     return this._asyncKeys && this._asyncKeys[key] ? 0x8000 : 0;
+   };
+ 
+-  P.pokeKeyDownState = function(vKey, down) {
++  // A DOM modifier's two physical sides share a VK. Numeric callers have no
++  // side identity: a numeric release remains the existing all-sides reset.
++  // Keep ownership with the physical map so replacing that map on reset
++  // cannot leave a second, stale collection of held keys behind.
++  P.pokeKeyDownState = function(vKey, down, keyInfo) {
+     if (!this._physicalKeys) this._physicalKeys = Object.create(null);
+-    this._physicalKeys[vKey & 0xFF] = !!down;
++    const vk = vKey & 0xFF;
++    let wasDown = !!this._physicalKeys[vk];
++    if (vk === 16 || vk === 17 || vk === 18) {
++      const name = vk === 16 ? 'Shift' : vk === 17 ? 'Control' : 'Alt';
++      const meta = keyInfo || {};
++      const side = meta.code === name + 'Left' ? 'left'
++        : meta.code === name + 'Right' ? 'right'
++        : meta.location === 1 ? 'left' : meta.location === 2 ? 'right' : '';
++      if (this._modifierPhysicalMap !== this._physicalKeys) {
++        this._modifierPhysicalMap = this._physicalKeys;
++        this._modifierOwners = Object.create(null);
++      }
++      const owners = this._modifierOwners[vk] || (this._modifierOwners[vk] = new Set());
++      // Bare VK injection retains the legacy async previous-state fallback.
++      wasDown = side ? owners.has(side) : undefined;
++      if (down) owners.add(side);
++      else if (side) owners.delete(side);
++      else owners.clear();
++      this._physicalKeys[vk] = owners.size > 0;
++      const left = 160 + (vk - 16) * 2;
++      this._physicalKeys[left] = owners.has('left');
++      this._physicalKeys[left + 1] = owners.has('right');
++    } else this._physicalKeys[vk] = !!down;
++    return wasDown;
++  };
++
++  // Capture both sides at this event's queue position. Numeric aggregate
++  // owners hold neither side; their release clears both through poke above.
++  P._modifierSideSnapshot = function(vk) {
++    const left = 160 + (vk - 16) * 2;
++    const physical = this._physicalKeys || {};
++    return { left, leftDown: !!physical[left], rightDown: !!physical[left + 1] };
++  };
++
++  P._applyModifierSides = function(sides) {
++    if (!sides) return;
++    if (!this._asyncKeys) this._asyncKeys = Object.create(null);
++    this._asyncKeys[sides.left] = sides.leftDown;
++    this._asyncKeys[sides.left + 1] = sides.rightDown;
+   };
+ 
+   // SetKeyboardState's backing. An app that clears a key it has just handled
+@@ -3294,14 +3346,36 @@ function installInputHandlers(R) {
+     // chords issued in the same batch.
+     if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+     if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+-    this.pokeKeyDownState(vkCode, true);
+-    const wasDown = !!this._asyncKeys[vkCode & 0xFF];
++    const modifier = vkCode === 16 || vkCode === 17 || vkCode === 18;
++    const modifierWasDown = modifier && !!this.peekKeyDownState(vkCode);
++    const previousSides = modifier && this._modifierSideSnapshot(vkCode);
++    const physicalWasDown = this.pokeKeyDownState(vkCode, true, keyInfo);
++    if (modifier) {
++      const sides = this._modifierSideSnapshot(vkCode);
++      // Only the newly pressed side is published up-front. Other sides may
++      // still have releases pending in the message queue. A repeat or later
++      // dispatch must not recreate a consumed pressed-since-query bit.
++      for (const [side, held, wasHeld] of [[sides.left, sides.leftDown, previousSides.leftDown],
++        [sides.left + 1, sides.rightDown, previousSides.rightDown]]) {
++        if (held && !wasHeld) {
++          this._asyncKeys[side] = true;
++          this._asyncPressedKeys[side] = true;
++        }
++      }
++    }
++    const wasDown = modifier && physicalWasDown !== undefined
++      ? physicalWasDown : !!this._asyncKeys[vkCode & 0xFF];
+     const keyLParam = keyboardMessageLParam(vkCode, keyInfo, false, wasDown);
+     // TranslateMessage gives the WM_CHAR its keystroke's lParam; the char the
+     // browser reports for this key next takes it from here (handleKeyPress).
+     this._charLParam = keyLParam;
+     this._asyncKeys[vkCode & 0xFF] = true;
+-    this._asyncPressedKeys[vkCode & 0xFF] = true;
++    // Each modifier side is a physical press, including the second side
++    // while the aggregate is held. Typematic of that same side is not one.
++    // Ordinary keys retain their existing per-keydown repeat behavior.
++    if (!modifier || !(physicalWasDown === undefined ? modifierWasDown : physicalWasDown)) {
++      this._asyncPressedKeys[vkCode & 0xFF] = true;
++    }
+     this._signalDirectInputDevice(1);
+     // The browser-side instance is only an ownership token when slot 0 runs
+     // in a Worker. Calling its edit/dialog exports would update a different
+@@ -3337,7 +3411,7 @@ function installInputHandlers(R) {
+ 
+     if (vkCode === 18) { // Alt: the renderer's menu-mode tap, and WM_SYSKEYDOWN for the app
+       this._altDown = true;
+-      this._altTapped = true;
++      if (!modifierWasDown) this._altTapped = true;
+       this.inputQueue.push({
+         type: 'key', hwnd: 0, wParam: vkCode, ...this._keyMessage(vkCode, false, keyLParam),
+       });
+@@ -3410,6 +3484,7 @@ function installInputHandlers(R) {
+         this._f10ToGuest = true;
+         this.inputQueue.push({
+           type: 'key', hwnd: 0, msg: 0x0104, wParam: vkCode, lParam: keyLParam,
++          asyncPressPublished: true,
+         });
+         this._wakeMessageWait(true);
+         return;
+@@ -3498,7 +3573,9 @@ function installInputHandlers(R) {
+ 
+   P.handleKeyUp = function(vkCode, keyInfo) {
+     this._restoreKeyboardInputOwner();
+-    this.pokeKeyDownState(vkCode, false);
++    this.pokeKeyDownState(vkCode, false, keyInfo);
++    const modifier = vkCode === 16 || vkCode === 17 || vkCode === 18;
++    const stillDown = modifier && !!this.peekKeyDownState(vkCode);
+     const upMessage = this._keyMessage(vkCode, true,
+       keyboardMessageLParam(vkCode, keyInfo, true, true));
+     // A release only takes effect where it lands in the queue. Clearing the
+@@ -3508,11 +3585,12 @@ function installInputHandlers(R) {
+     // TranslateAccelerator, which reads this state, would see a bare Z.
+     // takeInput clears it when the WM_KEYUP is actually dispatched.
+     const keyInFlight = this.inputQueue.some(e => e && e.type === 'key');
+-    if (!keyInFlight && this._asyncKeys) this._asyncKeys[vkCode & 0xFF] = false;
++    if (!keyInFlight && this._asyncKeys) this._asyncKeys[vkCode & 0xFF] = stillDown;
++    if (!keyInFlight) this._applyModifierSides(upMessage.modifierSides);
+     this._signalDirectInputDevice(1);
+-    if (vkCode === 16) this._shiftDown = false;
+-    if (vkCode === 17) this._ctrlDown = false;
+-    if (vkCode === 18) {
++    if (vkCode === 16) this._shiftDown = stillDown;
++    if (vkCode === 17) this._ctrlDown = stillDown;
++    if (vkCode === 18 && !stillDown) {
+       this._altDown = false;
+       // Alt tap (press and release without other keys) activates menu mode
+       if (this._altTapped) {
+@@ -3524,6 +3602,10 @@ function installInputHandlers(R) {
+     if (vkCode === 121) this._f10ToGuest = false;
+     this.inputQueue.push({
+       type: 'key', hwnd: 0, wParam: vkCode,
++      // Snapshot this release's position in the message timeline. Reading
++      // today's physical map in takeInput would lose buffered chords.
++      ...(modifier ? { modifierDown: stillDown } : {}),
++      ...(modifier ? { modifierSides: upMessage.modifierSides } : {}),
+       msg: sysF10 ? 0x0105 : upMessage.msg, lParam: upMessage.lParam,
+     });
+     this._wakeMessageWait(true);
+@@ -3728,15 +3810,18 @@ function installInputHandlers(R) {
+     // Track async key state for GetAsyncKeyState. The press bit is the half
+     // that is easy to forget -- GetAsyncKeyState's low bit reports "pressed
+     // since you last asked", so a game that polls it misses the keystroke
+-    // entirely if only _asyncKeys is updated here.
++    // entirely if only _asyncKeys is updated here. Raw queue-only callers
++    // publish here; handleKeyDown events already published at enqueue, even
++    // if polling has since consumed the bit or another press is now queued.
+     if (evt.msg === 0x0100 || evt.msg === 0x0104) { // WM_KEYDOWN, WM_SYSKEYDOWN
+       if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+       if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+       this._asyncKeys[evt.wParam & 0xFF] = true;
+-      this._asyncPressedKeys[evt.wParam & 0xFF] = true;
++      if (!evt.asyncPressPublished) this._asyncPressedKeys[evt.wParam & 0xFF] = true;
+     } else if (evt.msg === 0x0101 || evt.msg === 0x0105) { // WM_KEYUP, WM_SYSKEYUP
+-      if (this._asyncKeys) this._asyncKeys[evt.wParam & 0xFF] = false;
++      if (this._asyncKeys) this._asyncKeys[evt.wParam & 0xFF] = !!evt.modifierDown;
+     }
++    this._applyModifierSides(evt.modifierSides);
+     return evt;
+   }
+ 

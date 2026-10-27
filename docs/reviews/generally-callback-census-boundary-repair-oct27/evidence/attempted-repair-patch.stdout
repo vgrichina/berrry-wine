@@ -1,0 +1,59 @@
+diff --git a/tools/callback-ownership-census.js b/tools/callback-ownership-census.js
+index 8da32d157..a523f3569 100644
+--- a/tools/callback-ownership-census.js
++++ b/tools/callback-ownership-census.js
+@@ -21,8 +21,11 @@ function walk(node, visit) {
+ // Drop parser source positions, retaining strings, operands and ordering.
+ const canonical = node => Array.isArray(node) ? node.slice(1).map(canonical) : node;
+ function scanWat(src, file) {
++  return scanWatForms(parseSource(src, file), file);
++}
++function scanWatForms(forms, file) {
+   const entries = [];
+-  for (const form of parseSource(src, file)) {
++  for (const form of forms) {
+     const writes = [];
+     const calls = [];
+     const exports = [];
+@@ -70,15 +73,14 @@ function sourceFiles(root) {
+ // begin/end or exception path cannot pass merely by keeping the same count.
+ function scanSources(sources) {
+   const entries = [];
+-  for (const { file, src } of sources.filter(s => /\.watx?$/.test(s.file))) {
+-    entries.push(...scanWat(src, file));
+-  }
+   // Exports can inject a context by calling a helper without spelling an EIP
+   // write themselves. Compute direct-call reachability to all inventoried
+   // boundaries, including recursive call graphs; pin each such wrapper too.
+   const functions = new Map();
+   for (const { file, src } of sources.filter(s => /\.watx?$/.test(s.file))) {
+-    for (const form of parseSource(src, file)) {
++    const forms = parseSource(src, file);
++    entries.push(...scanWatForms(forms, file));
++    for (const form of forms) {
+       if (head(form) !== 'func') continue;
+       const calls = [], exports = [];
+       walk(form, node => {
+@@ -86,7 +88,12 @@ function scanSources(sources) {
+         if (head(node) === 'export') exports.push(JSON.parse(node[2]));
+       });
+       const name = typeof form[2] === 'string' ? form[2] : `export:${exports[0]}`;
+-      functions.set(name, { file, name, calls, exports, form });
++      // Reachability needs only names and edges. Retaining every AST until
++      // the end makes a source-only build gate hold the entire WAT tree.
++      // Export wrappers still seal the exact same canonical form, now while
++      // its file is live; unexported nodes never need a second hash.
++      functions.set(name, { file, name, calls, exports,
++        sha256: exports.length ? hash(JSON.stringify(canonical(form))) : undefined });
+     }
+   }
+   const reaches = new Set(entries.map(entry => entry.name));
+@@ -103,7 +110,7 @@ function scanSources(sources) {
+   for (const fn of functions.values()) {
+     if (!fn.exports.length || !reaches.has(fn.name) || inventoried.has(key(fn))) continue;
+     entries.push({ file: fn.file, name: fn.name, writes: 0, boundaryCalls: fn.calls,
+-      exports: fn.exports, targets: [], sha256: hash(JSON.stringify(canonical(fn.form))) });
++      exports: fn.exports, targets: [], sha256: fn.sha256 });
+   }
+   const names = new Set(['init_thread', 'load_pe', 'load_ne', 'run']);
+   for (const entry of entries) for (const name of entry.exports) {

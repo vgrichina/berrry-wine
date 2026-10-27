@@ -1,0 +1,56 @@
+{
+  "exit": -15,
+  "stopReason": "aggregate RSS limit",
+  "peakRSS": 288690176,
+  "sampledPeakRSS": 288690176,
+  "reapedPeakRSS": 261951488,
+  "cpuSeconds": 1.968832,
+  "wallSeconds": 0.822334811091423,
+  "owned": [
+    [
+      4168964,
+      "114697932"
+    ],
+    [
+      4168965,
+      "114697934"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=96",
+    "/tmp/generally-callback-census-boundary-repair-oct27/repo/tools/callback-ownership-census.js"
+  ],
+  "commandSHA256": "854eb3b7d0cd25cd9ca27cb3632d046e12dbb26e99d663a722f0d2ee694cf6a7",
+  "environmentSafeSHA256": "4ccce5b48739a71bb6ba2000200ef2c617c845647fd75bfe4e672237d6ab6fb6",
+  "parentLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "finalAccounting": {
+    "taskEventsSessionPositiveWALBytes": 51638272,
+    "future": 33554432,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "allocation": 201326592,
+    "memAvailable": 3046674432,
+    "requiredMem": 1434451968,
+    "free": 7203684352,
+    "projectedFree": 7153352704
+  }
+}

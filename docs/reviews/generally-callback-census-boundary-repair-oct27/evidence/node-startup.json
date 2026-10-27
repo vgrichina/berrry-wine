@@ -1,0 +1,56 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 201416704,
+  "sampledPeakRSS": 201416704,
+  "reapedPeakRSS": 170352640,
+  "cpuSeconds": 0.956388,
+  "wallSeconds": 0.40571334585547447,
+  "owned": [
+    [
+      4168425,
+      "114696922"
+    ],
+    [
+      4168426,
+      "114696925"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=96",
+    "/tmp/generally-callback-census-boundary-repair-oct27/ops/startup.cjs"
+  ],
+  "commandSHA256": "aa40939880cf223db68128ae25d66139c441821892d9979a92e8265296b38905",
+  "environmentSafeSHA256": "999e86e7f66889501aea06873dbe924582ceb9b9ea1b851548fd6c45c7c5eec7",
+  "parentLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "finalAccounting": {
+    "taskEventsSessionPositiveWALBytes": 51580928,
+    "future": 33554432,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "allocation": 201326592,
+    "memAvailable": 3494100992,
+    "requiredMem": 1434451968,
+    "free": 7203819520,
+    "projectedFree": 7153487872
+  }
+}

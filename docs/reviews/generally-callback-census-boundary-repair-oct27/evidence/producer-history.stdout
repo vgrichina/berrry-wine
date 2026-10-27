@@ -1,0 +1,18 @@
+0ebb852e3 Fix aggregate async press consumption across queued key delivery
+c3d394149 Integrate accepted renderer side-modifier polling repair
+12e2dccc0 Integrate accepted file-bundle parser framing and own descriptors
+49afee82c Merge commit '4efa0599fee900a22770c40659e65c3a2e1c9a64' into task/seh-census-independent-combined-oct25
+4efa0599f Reconcile four inherited host census identities after lifetime review
+bedb87f02 Retain synchronous SEH fault invocation ownership
+58e90870a Load genuine DSETUP and preserve truthful DirectX version absence
+42c676fa9 Integrate qualified AoE3 OLEAUT32 ordinal repair
+a6c68f456 Merge remote-tracking branch 'origin/main' into integrate/wc3-512-20261022
+8b6d676ce Merge WC3 rendering queue and 512 KiB dispatch default
+ce4ce4f95 Retain and validate multimedia callback return ownership
+30a2c3fb1 Reconcile reviewed host launch census seals and lifetime controls
+d2034ccf7 Fix placement notifications and retain startup callback lifetime
+2ae81e402 Reconcile callback census with accepted startup producer semantics
+71d9c29ae Complete startup show delivery and creation activation paths
+1c574134b Correct ShellExecuteEx expansion, error mapping and launch option transport
+fccc344c7 Share packet ownership across GL, legacy D3D and Glide
+80fc118a4 Expand Warcraft III worker code indexes without shrinking main

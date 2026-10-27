@@ -1,0 +1,55 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 44486656,
+  "sampledPeakRSS": 44486656,
+  "reapedPeakRSS": 13287424,
+  "cpuSeconds": 0.266364,
+  "wallSeconds": 0.14589134184643626,
+  "owned": [
+    [
+      4168317,
+      "114695646"
+    ],
+    [
+      4168318,
+      "114695649"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-callback-census-boundary-repair-oct27/ops/extend.py"
+  ],
+  "commandSHA256": "8aa525fa36051e6af437938470ef7aefb6d0b47d6f3b1ff07a381c96efb784b9",
+  "environmentSafeSHA256": "f734d78aa1625dfb6e7df021a94f0aa928bb61f13a0e41038ea6491a6e48b678",
+  "parentLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "finalAccounting": {
+    "taskEventsSessionPositiveWALBytes": 50487296,
+    "future": 33554432,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "allocation": 201326592,
+    "memAvailable": 3487502336,
+    "requiredMem": 1434451968,
+    "free": 7205298176,
+    "projectedFree": 7154966528
+  }
+}

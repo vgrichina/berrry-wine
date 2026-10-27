@@ -1,0 +1,63 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 31326208,
+  "sampledPeakRSS": 31326208,
+  "reapedPeakRSS": 12189696,
+  "cpuSeconds": 0.19266100000000003,
+  "wallSeconds": 0.15535989217460155,
+  "owned": [
+    [
+      4168006,
+      "114692984"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/generally-callback-census-boundary-repair-oct27/repo",
+    "ls-tree",
+    "-rl",
+    "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+    "--",
+    "tools/watx-src/compiler-parser.js",
+    "tools/watx-src/compiler-stages.js",
+    "tools/watx-src/compiler-codegen.js",
+    "tools/watx-src/compiler.js"
+  ],
+  "commandSHA256": "eb6bd0049a1923fa2b5c3a655926101828f1f67e457c42ef39dd4a9c41269416",
+  "environmentSafeSHA256": "bf7a65632a2134b0ba8c02f081ea169bc11694cb1852a217e1b945d7f6345ff7",
+  "parentLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "finalAccounting": {
+    "taskEventsSessionPositiveWALBytes": 50438144,
+    "future": 33554432,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "allocation": 201326592,
+    "memAvailable": 3435839488,
+    "requiredMem": 1434451968,
+    "free": 7207419904,
+    "projectedFree": 7157088256
+  }
+}

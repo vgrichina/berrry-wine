@@ -1,0 +1,68 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 42205184,
+  "sampledPeakRSS": 42205184,
+  "reapedPeakRSS": 12320768,
+  "cpuSeconds": 0.326673,
+  "wallSeconds": 0.18632609420455992,
+  "owned": [
+    [
+      4167308,
+      "114690892"
+    ],
+    [
+      4167309,
+      "114690897"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/generally-callback-census-boundary-repair-oct27/repo",
+    "log",
+    "-n",
+    "18",
+    "--format=%h%x20%s",
+    "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+    "--",
+    "host.js",
+    "lib/renderer-input.js",
+    "tools/callback-ownership-census.json"
+  ],
+  "commandSHA256": "4efd1ccf58118e1301ed350541f4909573dd3caa89eea65559579301dd71c426",
+  "environmentSafeSHA256": "3da9d887906ab3583bc25dd5261417ad187264fc4b50515192fd817c9244debe",
+  "parentLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ]
+  },
+  "finalAccounting": {
+    "taskEventsSessionPositiveWALBytes": 50270208,
+    "future": 33554432,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "allocation": 201326592,
+    "memAvailable": 3653832704,
+    "requiredMem": 1434451968,
+    "free": 7208685568,
+    "projectedFree": 7158353920
+  }
+}

@@ -1,0 +1,1472 @@
+[
+  {
+    "path": "host.js",
+    "oid": "7b45ddcdcbee67528af6333aad36f6bd05e28386",
+    "bytes": 369423
+  },
+  {
+    "path": "lib/agent-connect-ui.js",
+    "oid": "a75f181d75beb5ab128165d415bf3c364f028690",
+    "bytes": 19998
+  },
+  {
+    "path": "lib/agent-connect.js",
+    "oid": "8d754d785779d823940e571209355c0cc13132cd",
+    "bytes": 10563
+  },
+  {
+    "path": "lib/agent-pair.js",
+    "oid": "8b4412d97a103deec40f7d4c832833f6f55f5c2c",
+    "bytes": 15985
+  },
+  {
+    "path": "lib/agent-remote.js",
+    "oid": "2c9c7e07f8443a6fe4d9314095e6a59df7514c02",
+    "bytes": 25007
+  },
+  {
+    "path": "lib/api-format.js",
+    "oid": "281395f6bd7edb0c7ca76a8ad9de0e6f68d22fbb",
+    "bytes": 34699
+  },
+  {
+    "path": "lib/app-file-sizes.generated.js",
+    "oid": "4712529d993b794503a3def95eb6adf89cf7daf1",
+    "bytes": 304086
+  },
+  {
+    "path": "lib/app-files.js",
+    "oid": "1147b98d937b8d36125cb3406f43d44577d61cb4",
+    "bytes": 16426
+  },
+  {
+    "path": "lib/app-profiles.js",
+    "oid": "9873b089a4cbd3dd343fbd964ac936f30d01da1e",
+    "bytes": 18930
+  },
+  {
+    "path": "lib/apps.js",
+    "oid": "5a6de7592d32866f26a78cf2d0151e7809341c03",
+    "bytes": 413346
+  },
+  {
+    "path": "lib/audio-voice-worklet.js",
+    "oid": "30471972c437d350931fa3510c0439a3f388d4b5",
+    "bytes": 10257
+  },
+  {
+    "path": "lib/audio-worklet-host.js",
+    "oid": "48de5d91f00d558c1cace48168c16c4adc82cf6c",
+    "bytes": 14592
+  },
+  {
+    "path": "lib/batch-clock.js",
+    "oid": "0c8c1a635b74df26d139a392baaee340895466a8",
+    "bytes": 2726
+  },
+  {
+    "path": "lib/browser-input.js",
+    "oid": "af4bffdf413e1973ad540db30d78e36962278435",
+    "bytes": 63151
+  },
+  {
+    "path": "lib/browser-shell.js",
+    "oid": "bed0a3aface8d9c7b2e95bd2f046081728b0a02e",
+    "bytes": 211893
+  },
+  {
+    "path": "lib/byte-provider.js",
+    "oid": "41429025933c92d3b907e2ecc60213b9430028d2",
+    "bytes": 35492
+  },
+  {
+    "path": "lib/candidate-cli.js",
+    "oid": "aa8a8cad191793ec7c446e97bd9079017c7ed4f3",
+    "bytes": 7985
+  },
+  {
+    "path": "lib/canvas-compat.js",
+    "oid": "09eca6da02260e074b5206a4f6a5835b352ae28a",
+    "bytes": 984
+  },
+  {
+    "path": "lib/cdrom.js",
+    "oid": "30e8e10dae949fce468da5ff48782fac169dfce3",
+    "bytes": 14034
+  },
+  {
+    "path": "lib/cli-failure-cleanup.js",
+    "oid": "3251c2286106b8fa9d6310c051f489564ae5b21a",
+    "bytes": 717
+  },
+  {
+    "path": "lib/cli-recorder.js",
+    "oid": "84db9ae697d3632cad69d04a1252bbc9b69f01db",
+    "bytes": 9287
+  },
+  {
+    "path": "lib/compile-wat.js",
+    "oid": "8bff0db6ca3e47d2568512b874d48536fb38e135",
+    "bytes": 72471
+  },
+  {
+    "path": "lib/control-server.js",
+    "oid": "e6ce417ae1a823635f57585bd107f6c502e26ff6",
+    "bytes": 7126
+  },
+  {
+    "path": "lib/d3d-command-stream.js",
+    "oid": "1af9d8eb5f9cc476de30c9097452ae6870cf79cc",
+    "bytes": 47664
+  },
+  {
+    "path": "lib/d3d-geometry-batches.js",
+    "oid": "8d6c8d82bc7cc0a65bf24e0434942719f081f2ef",
+    "bytes": 3149
+  },
+  {
+    "path": "lib/d3d-render-worker.js",
+    "oid": "0b9a95c14242761ad4e429fdb92387d9ad92d622",
+    "bytes": 27983
+  },
+  {
+    "path": "lib/d3d-shader-ir.js",
+    "oid": "c2aee907f11b94e7e3bf79ddb5480fc14ef5b67f",
+    "bytes": 15243
+  },
+  {
+    "path": "lib/d3d9-backend.js",
+    "oid": "cf84c8823d3ed75ae11204537a4bda22489d1469",
+    "bytes": 65687
+  },
+  {
+    "path": "lib/d3d9-fixed.js",
+    "oid": "25110ececff58dba940ca0278ea5601f0b733287",
+    "bytes": 29976
+  },
+  {
+    "path": "lib/d3d9-host.js",
+    "oid": "fd4a1b4b22ef769a64db88338545bb10c34acf32",
+    "bytes": 87629
+  },
+  {
+    "path": "lib/d3d9-render-worker.js",
+    "oid": "7d6fc35d60820fc7c8d18ae4a994c0adac05120e",
+    "bytes": 4746
+  },
+  {
+    "path": "lib/d3d9-shader.js",
+    "oid": "b31e4081b43d8e2262fafe60a14f8d7157ee7d1a",
+    "bytes": 47578
+  },
+  {
+    "path": "lib/d3d9-software-backend.js",
+    "oid": "25c1228f8e44668e57701fc83aff1db26f67bc0b",
+    "bytes": 87802
+  },
+  {
+    "path": "lib/d3d9-texture.js",
+    "oid": "5778708085bb57c392e0f6611a7f5d76ae05c00c",
+    "bytes": 3107
+  },
+  {
+    "path": "lib/d3dim-draw-trace.js",
+    "oid": "1e03daa958110ee9888228cdccf722f37f107041",
+    "bytes": 3255
+  },
+  {
+    "path": "lib/d3dim-gpu.js",
+    "oid": "78174d94a76561441e7927b25e01ef2096c9c69a",
+    "bytes": 53302
+  },
+  {
+    "path": "lib/d3dim-render-worker.js",
+    "oid": "2cfc10b2de1b3ba4c697242551bf93c68e4e03d8",
+    "bytes": 3080
+  },
+  {
+    "path": "lib/debug-app-picker.js",
+    "oid": "ad3722db058afc7c2848d723be8a64afcb081dcd",
+    "bytes": 15387
+  },
+  {
+    "path": "lib/debug-midi.js",
+    "oid": "9745340aeaf54a689b1ae63220dbe4162d055617",
+    "bytes": 7275
+  },
+  {
+    "path": "lib/debug-thread-state.js",
+    "oid": "3d00b4d495802052e617711ac6ae74657c9215bf",
+    "bytes": 24222
+  },
+  {
+    "path": "lib/dib.js",
+    "oid": "a6cdbb978c8e52bd70e766e417d0a65ebc700c48",
+    "bytes": 12071
+  },
+  {
+    "path": "lib/dispatch-trampoline.js",
+    "oid": "515288aaa411d60a5a15766e0f7b7bd793b491ae",
+    "bytes": 5332
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "oid": "b3964ba0ec83ac447b1fd8db0b38f33485198928",
+    "bytes": 98961
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "oid": "72b18b089b262b752112ff2b10789bb1e2ccaae9",
+    "bytes": 6443
+  },
+  {
+    "path": "lib/file-bundle.js",
+    "oid": "62d9b8b59c1e3d4b58c16703d9ae409e5e3e9278",
+    "bytes": 3984
+  },
+  {
+    "path": "lib/filesystem.js",
+    "oid": "5cbd60d4ad208898d05d8141607a51d155545790",
+    "bytes": 158109
+  },
+  {
+    "path": "lib/font-substitutions.js",
+    "oid": "9428ad023497a227277a72a07c9cff8c8fed59f1",
+    "bytes": 2966
+  },
+  {
+    "path": "lib/frame-intervals.js",
+    "oid": "6b4123f6027ad3d974e31cb0ece5f8cc9e12af5b",
+    "bytes": 5466
+  },
+  {
+    "path": "lib/game-wait.js",
+    "oid": "be4acd113274f067d90fd667b76d700b6495e04f",
+    "bytes": 10829
+  },
+  {
+    "path": "lib/gdi-surface.js",
+    "oid": "5c1b359e0187196b3ba3f5513c88aec3766619f5",
+    "bytes": 20152
+  },
+  {
+    "path": "lib/gl-command-stream.js",
+    "oid": "cb88ac02d5feace1b1b90082fd60d91f33f7366d",
+    "bytes": 7766
+  },
+  {
+    "path": "lib/gl-compat.js",
+    "oid": "04e4a07623f3694ba0cd36823c41f7ea9316431a",
+    "bytes": 106632
+  },
+  {
+    "path": "lib/gl-render-host.js",
+    "oid": "e4f57f14f657199dac192817b17b538456ab071f",
+    "bytes": 15356
+  },
+  {
+    "path": "lib/gl-render-worker.js",
+    "oid": "7c59062048a3ec56c463686ea0d0bb38ff628a73",
+    "bytes": 4940
+  },
+  {
+    "path": "lib/gl-software-producer.js",
+    "oid": "09e8dfc75ef5f2d17f04b6b6594bfd4989df19c9",
+    "bytes": 1712
+  },
+  {
+    "path": "lib/glide-backend.js",
+    "oid": "05e53a8f31a791d44e4895f84099d91c0ebc09f1",
+    "bytes": 41345
+  },
+  {
+    "path": "lib/glide-host.js",
+    "oid": "90c541484c8156d07f9e11c997fc75e58da1c714",
+    "bytes": 17374
+  },
+  {
+    "path": "lib/glide-render-worker.js",
+    "oid": "50ba6910f278cdac5f7773c73b19503166500b2c",
+    "bytes": 4430
+  },
+  {
+    "path": "lib/glide-software.js",
+    "oid": "89a4cb51d9c5e4255fd5d3e03a847778ab730686",
+    "bytes": 27955
+  },
+  {
+    "path": "lib/gpu-backend.js",
+    "oid": "e5e4de52c838dcdfaaa5a90f84a65ca9ba138d63",
+    "bytes": 49276
+  },
+  {
+    "path": "lib/guest-clock.js",
+    "oid": "368a861b1fd64be4e01b37fdc68c017d5170dea9",
+    "bytes": 3204
+  },
+  {
+    "path": "lib/guest-rpc.js",
+    "oid": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+    "bytes": 59680
+  },
+  {
+    "path": "lib/guest-thread-host.js",
+    "oid": "1fe45805ae25e2deee22f6b0da79a4b294f7aeea",
+    "bytes": 73126
+  },
+  {
+    "path": "lib/guest-worker.js",
+    "oid": "97decebbd65841413c69241cafa28dcd1c7c1452",
+    "bytes": 65691
+  },
+  {
+    "path": "lib/headless-gl.js",
+    "oid": "f48e1f8f86b8f7ff057b9bd315480a0c99a0ae6c",
+    "bytes": 14928
+  },
+  {
+    "path": "lib/hlp-parser.js",
+    "oid": "7a20dee1697299cf619b6534f32963a60987beb8",
+    "bytes": 9209
+  },
+  {
+    "path": "lib/host-audio.js",
+    "oid": "b5a0ffc5d8afa6102c497a23629d33a72cd50721",
+    "bytes": 207077
+  },
+  {
+    "path": "lib/host-imports.js",
+    "oid": "d2334524d59b0326c8679037149f02bc537c4432",
+    "bytes": 197066
+  },
+  {
+    "path": "lib/host-window.js",
+    "oid": "1d071ccf086fb6b2e05258eb778c6c6678fa57ad",
+    "bytes": 63752
+  },
+  {
+    "path": "lib/installed-shortcuts.js",
+    "oid": "21f34a1dee143a1f8b23bcddb2c77083cb5aceb6",
+    "bytes": 5423
+  },
+  {
+    "path": "lib/iso9660.js",
+    "oid": "773f4c1cbcfa32288ec58ff7e563e438b1bcb637",
+    "bytes": 23867
+  },
+  {
+    "path": "lib/launch-progress.js",
+    "oid": "793889ec6178632052e4f39f9ae79b9f434d3a4a",
+    "bytes": 39200
+  },
+  {
+    "path": "lib/main-io-wait.js",
+    "oid": "655d28901a6c87eab807c410753c341b0b6a489f",
+    "bytes": 3133
+  },
+  {
+    "path": "lib/media-cli.js",
+    "oid": "9fd45cc68a0a8348981cc988e7337b3c1c21b74d",
+    "bytes": 3730
+  },
+  {
+    "path": "lib/media-import-ui.js",
+    "oid": "f148f3162b8907805f6b1513abdbad53243b2c83",
+    "bytes": 50466
+  },
+  {
+    "path": "lib/media-import.js",
+    "oid": "efb3ea05b39139895237d744876f8bb2cf5b38f4",
+    "bytes": 37173
+  },
+  {
+    "path": "lib/media-library.js",
+    "oid": "b0de1315dcb6b1bc9cdffce74d534f8685b8c0eb",
+    "bytes": 24163
+  },
+  {
+    "path": "lib/media-sniff.js",
+    "oid": "ad084a143fe84800044c51e839fdcbe3c35ed1ac",
+    "bytes": 7648
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "oid": "ff0e01baeb650f9d1b3c34fc98d05f5ef53863e1",
+    "bytes": 13470
+  },
+  {
+    "path": "lib/mobile-keyboard.js",
+    "oid": "e98a7d3fbfa542a32731e6b080f8a5131c69660b",
+    "bytes": 11915
+  },
+  {
+    "path": "lib/named-event-authority.js",
+    "oid": "14b8b2426a2114970c2604f7deb300cebc7710b8",
+    "bytes": 15058
+  },
+  {
+    "path": "lib/ne-guest-bridge.js",
+    "oid": "70f6ec921ddc0959ed12f00b806eb93befa8515f",
+    "bytes": 4652
+  },
+  {
+    "path": "lib/ne-image.js",
+    "oid": "7dcd4a208fb27c7328d7e343a657caecf60bbcd5",
+    "bytes": 7091
+  },
+  {
+    "path": "lib/ne-invoke.js",
+    "oid": "a19ad084a67d9a0e28af9c50d3ebecbb4aa4b971",
+    "bytes": 5358
+  },
+  {
+    "path": "lib/ne-lifecycle.js",
+    "oid": "482469b47011c01ab47e22ec283775cbbf75d83a",
+    "bytes": 12104
+  },
+  {
+    "path": "lib/ne-load-error.js",
+    "oid": "ebd1a9fed3fc6427cd43ab2732a2f80d43e302bc",
+    "bytes": 676
+  },
+  {
+    "path": "lib/ne-qt-stack.js",
+    "oid": "be5310bdb3b311fb211983d80664a0d40a5d49a4",
+    "bytes": 2551
+  },
+  {
+    "path": "lib/ne-sources.js",
+    "oid": "e2bd23270598297a43a77ae03abf5ff09487b144",
+    "bytes": 3473
+  },
+  {
+    "path": "lib/overlay-store.js",
+    "oid": "593008fde16e2c91aac48e5eb0ab470692fefb11",
+    "bytes": 22883
+  },
+  {
+    "path": "lib/page-settings.js",
+    "oid": "2e37106af6115d97f7ca6b2686a4faba384f516e",
+    "bytes": 7161
+  },
+  {
+    "path": "lib/page-viewport.js",
+    "oid": "ecf0f4bd43251df8a114355313278c0ed61e7549",
+    "bytes": 14609
+  },
+  {
+    "path": "lib/pe.js",
+    "oid": "e0bd3181a9599f47c0af0b77718f0c136694fd95",
+    "bytes": 4787
+  },
+  {
+    "path": "lib/perf-hud.js",
+    "oid": "985fa8320fb510dfb5e55cf20ad9b89ab9f0db39",
+    "bytes": 38796
+  },
+  {
+    "path": "lib/phone-diag.js",
+    "oid": "bd41a8259f200e9a34d7a5fe6ecd0076b400995e",
+    "bytes": 25484
+  },
+  {
+    "path": "lib/present-frame-audit.js",
+    "oid": "e8849d4f5efd94c328b61897b375aaf32263f250",
+    "bytes": 6506
+  },
+  {
+    "path": "lib/presentation-filter.js",
+    "oid": "6f8ab8868914116d6ac73bd07926b4488ab91dc9",
+    "bytes": 53087
+  },
+  {
+    "path": "lib/process-boot.js",
+    "oid": "2c8bc8c70a0297c842bf2d504f329d795e51c970",
+    "bytes": 52033
+  },
+  {
+    "path": "lib/process-send-broker.js",
+    "oid": "f0666c9f8ef59410e628c17db993d0fc49194879",
+    "bytes": 11076
+  },
+  {
+    "path": "lib/raster-canvas.js",
+    "oid": "7682d2668a38820975fa6b8a1008eb29c5fbae86",
+    "bytes": 17590
+  },
+  {
+    "path": "lib/recorder.js",
+    "oid": "50c86b259f0e0f83982adc991541d265d1352f2c",
+    "bytes": 19878
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "oid": "7f96dd1a81886946eb5fccefd5676c24e9016349",
+    "bytes": 36089
+  },
+  {
+    "path": "lib/registry-snapshot.js",
+    "oid": "b9a5d2de986d357e06c0c74557f138989f5a41c7",
+    "bytes": 2595
+  },
+  {
+    "path": "lib/render-clear.js",
+    "oid": "3b5f9022615e2fcf6b48ff088e0ee37dd2e9b1ff",
+    "bytes": 4377
+  },
+  {
+    "path": "lib/render-wait-attribution.js",
+    "oid": "aaf6fa5cad7b01bb35a0d1b124a28b26f89897df",
+    "bytes": 4614
+  },
+  {
+    "path": "lib/render-worker.js",
+    "oid": "114d05234a910294299d0193d716d06bb6e4cbcd",
+    "bytes": 17410
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "oid": "d2fab5556291146f9b4fb6ccc586d4be9485d3cc",
+    "bytes": 181810
+  },
+  {
+    "path": "lib/renderer.js",
+    "oid": "a82e1e8731e7622f9e9529ae8f83ea461dfc68be",
+    "bytes": 214846
+  },
+  {
+    "path": "lib/resources-icon.js",
+    "oid": "2d7f622b9dc8d42e5d70df6833bc87e002eea3f3",
+    "bytes": 20791
+  },
+  {
+    "path": "lib/save-bundle.js",
+    "oid": "b6bf55a0dd8750c75e3fab524841275fdca7e259",
+    "bytes": 29124
+  },
+  {
+    "path": "lib/save-sync.js",
+    "oid": "3168327d3079b7552093384bbba89d44de75574d",
+    "bytes": 13133
+  },
+  {
+    "path": "lib/session-chips.js",
+    "oid": "7554dfe3bf066ea9e1ec64adbb4b2085a4065dc1",
+    "bytes": 17448
+  },
+  {
+    "path": "lib/shell-link.js",
+    "oid": "606ec5314e6a9b3ea9408b40c14232e23004f4e2",
+    "bytes": 3388
+  },
+  {
+    "path": "lib/shutdown.js",
+    "oid": "cc1f8a8d935ac2f29de0e81bf329d2c4d3ad313c",
+    "bytes": 26778
+  },
+  {
+    "path": "lib/startup-clock.js",
+    "oid": "02390a041e8b4d9982033da012eb184a1d098925",
+    "bytes": 3363
+  },
+  {
+    "path": "lib/storage.js",
+    "oid": "0ce0b10f3128b5d6bc6cdf1cafb1d3e2f141d72a",
+    "bytes": 79616
+  },
+  {
+    "path": "lib/surface.js",
+    "oid": "e8bac78314e2e4b85bf4ef75e75a0262ad26eafa",
+    "bytes": 14312
+  },
+  {
+    "path": "lib/thread-manager.js",
+    "oid": "c32dec0085065134a06761de4533139eb220f830",
+    "bytes": 226864
+  },
+  {
+    "path": "lib/thread-send-waits.js",
+    "oid": "fb4620398d0d0ceef891a5ca2964e7dc87ac2854",
+    "bytes": 14963
+  },
+  {
+    "path": "lib/tinysynth-offline.js",
+    "oid": "b12e08412ece7cb1eb509d5b1ec96b4dcef1ddf9",
+    "bytes": 11712
+  },
+  {
+    "path": "lib/touch-controls.js",
+    "oid": "e4c402bec85b5d9b0feebd8f62507feffe8d3888",
+    "bytes": 116287
+  },
+  {
+    "path": "lib/touch-cursor.js",
+    "oid": "86b1eb461c591f898df49a5696052c767c18a13e",
+    "bytes": 26289
+  },
+  {
+    "path": "lib/vendor/tweetnacl.js",
+    "oid": "095dec7e4bb10678f0ec890f11e95d74814d747b",
+    "bytes": 62737
+  },
+  {
+    "path": "lib/vendor/webaudio-tinysynth.js",
+    "oid": "255abca4658781812e272f7b11861a095d8d2d8a",
+    "bytes": 62376
+  },
+  {
+    "path": "lib/vfs-export.js",
+    "oid": "8ce50f378dd279209ee917437744e1c7b7ea3839",
+    "bytes": 4975
+  },
+  {
+    "path": "lib/vfs-host-files.js",
+    "oid": "a32934093bd92d14ed5ba5821d406a55092595a8",
+    "bytes": 3689
+  },
+  {
+    "path": "lib/vfs-overlay.js",
+    "oid": "504627a0ed36c34fa5a44449a58f1893c669d47f",
+    "bytes": 14961
+  },
+  {
+    "path": "lib/vfs-persistence.js",
+    "oid": "f3d94d3b1586209337a8935e04bd75295d3f2f35",
+    "bytes": 17509
+  },
+  {
+    "path": "lib/vfs-seed.js",
+    "oid": "410596f8133cbc87b49f3c9d8fadab1908879313",
+    "bytes": 8258
+  },
+  {
+    "path": "lib/vlan-lobby.js",
+    "oid": "b3c71fc5bdc7e029ec928495eb45835c5c18633f",
+    "bytes": 12355
+  },
+  {
+    "path": "lib/vlan-room.js",
+    "oid": "590811a60c27a3a26451c6148cbde67942c4aa0b",
+    "bytes": 12461
+  },
+  {
+    "path": "lib/vlan-rtc.js",
+    "oid": "9af2e81ecccc441835dfd785f8c4292c36a3fe0b",
+    "bytes": 47377
+  },
+  {
+    "path": "lib/vlan-star.js",
+    "oid": "6eb92162a87e34c1f043581f150bd8ec862e5667",
+    "bytes": 19399
+  },
+  {
+    "path": "lib/vlan-wire.js",
+    "oid": "617f9a9fe40eff40353ef057727b5e31806b1c2c",
+    "bytes": 13050
+  },
+  {
+    "path": "lib/wat-manifest.js",
+    "oid": "9f615db16fe84a8a274dbae4578aa2c2ecb7e513",
+    "bytes": 2995
+  },
+  {
+    "path": "lib/watx-compile-worker.js",
+    "oid": "5b6e18e7e130440c9e248a53ad83ea9da141a659",
+    "bytes": 17721
+  },
+  {
+    "path": "lib/watx-launcher.js",
+    "oid": "b12c642800f6b2ce0cdd98d8bb94bdfc3bd33485",
+    "bytes": 34797
+  },
+  {
+    "path": "lib/worker-imports.js",
+    "oid": "b045ab80f2f57a166d43076b869fe00322572926",
+    "bytes": 22458
+  },
+  {
+    "path": "lib/x87-semantics.js",
+    "oid": "ddd7ea154d7cd92ff526a3792722f23a0cc20eaa",
+    "bytes": 14191
+  },
+  {
+    "path": "lib/zip-mount.js",
+    "oid": "20aa9dc43de71db293f9f7646e6efabcf23aba17",
+    "bytes": 32525
+  },
+  {
+    "path": "src/00-regions.wat",
+    "oid": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+    "bytes": 68743
+  },
+  {
+    "path": "src/01-header.wat",
+    "oid": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+    "bytes": 297934
+  },
+  {
+    "path": "src/01b-api-hashes.generated.wat",
+    "oid": "fb02b09a162e0f9db92a0c11576e3090cb1edb1a",
+    "bytes": 289426
+  },
+  {
+    "path": "src/02-thread-table.wat",
+    "oid": "443f13037bdf53cb82aaaeceb257641bca543ce2",
+    "bytes": 33956
+  },
+  {
+    "path": "src/03-registers.wat",
+    "oid": "db1b5b62825b251432e094891ed09d76e2e81f69",
+    "bytes": 61869
+  },
+  {
+    "path": "src/03a-page-watch.wat",
+    "oid": "08c4dd1da792c630d2d5e77940780b107ce66ff1",
+    "bytes": 8175
+  },
+  {
+    "path": "src/04-cache.wat",
+    "oid": "8bdc18b56ef54388d6d33497930b36eacf8900dd",
+    "bytes": 162508
+  },
+  {
+    "path": "src/05-alu.wat",
+    "oid": "1d5bba26637b4099baa8edaa08f9708be347c4dc",
+    "bytes": 256723
+  },
+  {
+    "path": "src/05b-string-ops.wat",
+    "oid": "69e5174fefbca016cabd187f054206f4f43d3bbe",
+    "bytes": 27980
+  },
+  {
+    "path": "src/05c-seg16-ops.wat",
+    "oid": "db53302ec9c810bc953f4d2b0d0dc473584ae151",
+    "bytes": 51895
+  },
+  {
+    "path": "src/06-fpu.wat",
+    "oid": "60e764c01ce6a0af1abdf7986e8bc20a6f620b22",
+    "bytes": 72331
+  },
+  {
+    "path": "src/06b-core-handlers.wat",
+    "oid": "b84716b91caf51cf3e889973c99fdf6fe9cabfcd",
+    "bytes": 103298
+  },
+  {
+    "path": "src/06c-mmx.wat",
+    "oid": "45eb623a46207f1ecc4d55ffa1ab7a9729914c08",
+    "bytes": 60242
+  },
+  {
+    "path": "src/07-decoder.wat",
+    "oid": "40d54f194eb3ac1e235aae416d0834b54e1961c8",
+    "bytes": 321708
+  },
+  {
+    "path": "src/07b-loop-match.wat",
+    "oid": "efccc9f678323f51a53c2d743736b5e3d98f032e",
+    "bytes": 433017
+  },
+  {
+    "path": "src/07c-block-exec.wat",
+    "oid": "f158eccd6d552ecc326d25b3610657e67f613337",
+    "bytes": 444010
+  },
+  {
+    "path": "src/07d-uop-engine.wat",
+    "oid": "8047b8abade16b91731c16d816cb0a48e93e0d31",
+    "bytes": 164570
+  },
+  {
+    "path": "src/07e-uop-compiler.wat",
+    "oid": "edfb3a323b323917385b5eae92497796351dc868",
+    "bytes": 315991
+  },
+  {
+    "path": "src/08-pe-loader.wat",
+    "oid": "ee1fd6523c6a02852402893b0c0498752c6420ab",
+    "bytes": 392432
+  },
+  {
+    "path": "src/08b-dll-loader.wat",
+    "oid": "9a1c9fea07e4daf9300dc0d37a6c501e4b18397d",
+    "bytes": 108860
+  },
+  {
+    "path": "src/08c-ne-loader.wat",
+    "oid": "60f9c4106b7d69f4906908da3c77b962c8f6b17a",
+    "bytes": 143883
+  },
+  {
+    "path": "src/09a-handlers.wat",
+    "oid": "e836bc8bed8c18daef4d94283744d29494284b97",
+    "bytes": 63111
+  },
+  {
+    "path": "src/09a-handlers0-sound.wat",
+    "oid": "97c2dda860d8cd4cd141126b20a95323bb54f482",
+    "bytes": 13322
+  },
+  {
+    "path": "src/09a-handlers1-user.wat",
+    "oid": "f5532c0b4b68ed59e34f1302fc0ab8c3aa0e7313",
+    "bytes": 203362
+  },
+  {
+    "path": "src/09a-handlers2-runtime.wat",
+    "oid": "369c6b0cdc0d169c58f8da31f4a6212914b37dbf",
+    "bytes": 93022
+  },
+  {
+    "path": "src/09a-handlers3-sync.wat",
+    "oid": "0e8b815674e4fa8478f6cb18e39af06599031ab7",
+    "bytes": 84580
+  },
+  {
+    "path": "src/09a-handlers4-late.wat",
+    "oid": "7fdf60ea294f7d25933eb0628b77b04be18d2378",
+    "bytes": 144723
+  },
+  {
+    "path": "src/09a0-handlers-base.wat",
+    "oid": "06c9f8fad18d5a3eb6f352a20187236e0036b435",
+    "bytes": 399740
+  },
+  {
+    "path": "src/09a0b-handlers-base-late.wat",
+    "oid": "dfb2a07dca187f3906a8169566906e321498594e",
+    "bytes": 234519
+  },
+  {
+    "path": "src/09a0c-handlers-device-io.wat",
+    "oid": "e5246f49200e443e669b624ae4fbcf8bbfe265cc",
+    "bytes": 15060
+  },
+  {
+    "path": "src/09a0d-toolhelp.wat",
+    "oid": "004e7545e262d922ea67c5cfb49255c60fd6a1b0",
+    "bytes": 23440
+  },
+  {
+    "path": "src/09a0e-process-memory.wat",
+    "oid": "d16a1c3a95852e0431cc9b8d928f6d8f38412589",
+    "bytes": 4885
+  },
+  {
+    "path": "src/09a1-comctl-handlers.wat",
+    "oid": "ab9630e34b4d6519c393928681152f124a4fde05",
+    "bytes": 165456
+  },
+  {
+    "path": "src/09a2-handlers-console.wat",
+    "oid": "dc19af74de2a3d61b381677704df241c69ece664",
+    "bytes": 167752
+  },
+  {
+    "path": "src/09a3-handlers-audio.wat",
+    "oid": "1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f",
+    "bytes": 277811
+  },
+  {
+    "path": "src/09a4-handlers-gdi.wat",
+    "oid": "859bb0d65969316b08d1f151dbcd0978e77e1ce0",
+    "bytes": 283062
+  },
+  {
+    "path": "src/09a4b-handlers-cursor-icon.wat",
+    "oid": "ebab91ffa9dd224ef6a35292ee18ee9f09885a12",
+    "bytes": 40075
+  },
+  {
+    "path": "src/09a5-handlers-window.wat",
+    "oid": "360dde8c5eccfed9bd8f5efb7029b6e4a1305c52",
+    "bytes": 292766
+  },
+  {
+    "path": "src/09a5b-handlers-window-late.wat",
+    "oid": "add268a6c7203d3ac56b2e10c7fe910ab6e93e44",
+    "bytes": 202108
+  },
+  {
+    "path": "src/09a5c-handlers-wide.wat",
+    "oid": "51d50d661b28afdb7d7d27d65cf3c94995f59d7f",
+    "bytes": 27621
+  },
+  {
+    "path": "src/09a5d-handlers-windowpos.wat",
+    "oid": "a53eedff407fd09e00e3610e5b6d7c8f37942ad5",
+    "bytes": 37599
+  },
+  {
+    "path": "src/09a6-handlers-crt.wat",
+    "oid": "634498d5550f0d751148e071ff5ef9dd97364ddd",
+    "bytes": 246055
+  },
+  {
+    "path": "src/09a7-handlers-dispatch.wat",
+    "oid": "6d831b370e9465e741bf6549b6a926a4ab66ec66",
+    "bytes": 416616
+  },
+  {
+    "path": "src/09a7b-ole.wat",
+    "oid": "dc71e2f1fa350471846321c2ced6935785111fad",
+    "bytes": 806484
+  },
+  {
+    "path": "src/09a7c-mixer.wat",
+    "oid": "6ade7c9a5892bfb81546277b3b0b019e2710525d",
+    "bytes": 35586
+  },
+  {
+    "path": "src/09a7d-handlers-shell-file.wat",
+    "oid": "ad05e0760c18eaac79dba7d57237509af92fb7fe",
+    "bytes": 236729
+  },
+  {
+    "path": "src/09a7e-video-codecs.wat",
+    "oid": "7049acb242d661cb34f981b325f6063e547244c3",
+    "bytes": 32639
+  },
+  {
+    "path": "src/09a7f-video-avi.wat",
+    "oid": "d1f756f9f36539ac529829afcc5a0dc68bb4f0ca",
+    "bytes": 64048
+  },
+  {
+    "path": "src/09a7g-video-icm.wat",
+    "oid": "1a353e243242a190ca360c20a876b6bf03b8cb57",
+    "bytes": 78590
+  },
+  {
+    "path": "src/09a7h-video-mciavi.wat",
+    "oid": "10292cc7790e9936890654e60b0cfaba3aa295f3",
+    "bytes": 67211
+  },
+  {
+    "path": "src/09a7i-video-mciwnd.wat",
+    "oid": "aa194b9eba3d52f39b5bf19dbf1252319d271d30",
+    "bytes": 22042
+  },
+  {
+    "path": "src/09a8-handlers-directx.wat",
+    "oid": "262805db23c10088ff2afa7c857b0192cc3594eb",
+    "bytes": 1057680
+  },
+  {
+    "path": "src/09a8b-handlers-opengl.wat",
+    "oid": "f649302f6dce1f6bcf872e6e57d81ca557d65053",
+    "bytes": 16197
+  },
+  {
+    "path": "src/09a8c-gl-encoder.wat",
+    "oid": "05fdef0750ada77079ffb5d67c3f92dbca762f2a",
+    "bytes": 44718
+  },
+  {
+    "path": "src/09a8ca-gl-lists.wat",
+    "oid": "b0e6603c3e078c44ebeb2fc7a697d8d465cf7033",
+    "bytes": 19850
+  },
+  {
+    "path": "src/09a8cb-gl-bitmap.wat",
+    "oid": "bdcfd9a97ebfa18b9028759a7f4a8f2577629365",
+    "bytes": 35279
+  },
+  {
+    "path": "src/09a8cc-gl-stencil.wat",
+    "oid": "a054fb1edee00e9a2c24e7a8c4d93abb41917ee5",
+    "bytes": 12683
+  },
+  {
+    "path": "src/09a8cd-gl-color-mask.wat",
+    "oid": "0dccfdf9ab8b24a4f9bcb38e2a90ed922dc22951",
+    "bytes": 5239
+  },
+  {
+    "path": "src/09a8d-gl-abi.generated.wat",
+    "oid": "c26c5ea4b3eaa6cf46748d7a1c995022e4fadb22",
+    "bytes": 2713
+  },
+  {
+    "path": "src/09a8e-gl-state.wat",
+    "oid": "7e4e67d325adf57b511ad89b78aa9a4547e2e9bc",
+    "bytes": 45583
+  },
+  {
+    "path": "src/09a8f-gl-matrix.wat",
+    "oid": "f55629d9e04397e5ac47ec94b5c4dd05f8bb93e6",
+    "bytes": 74365
+  },
+  {
+    "path": "src/09a8g-gl-raster.wat",
+    "oid": "b8685bd7403a436f3c19414698dd087ec0668a76",
+    "bytes": 205774
+  },
+  {
+    "path": "src/09a8h-glide.wat",
+    "oid": "9f7c85fa99e1b2b1b0283f9865ef66736427e969",
+    "bytes": 168750
+  },
+  {
+    "path": "src/09a9-comctl32.wat",
+    "oid": "78008a54af39cb4c1e44ea00dee9a3342484fdcb",
+    "bytes": 160197
+  },
+  {
+    "path": "src/09aa-handlers-d3dim.wat",
+    "oid": "a0058e08dd2b07aff3209fe45426685c3f294745",
+    "bytes": 140876
+  },
+  {
+    "path": "src/09ab-handlers-d3dim-core.wat",
+    "oid": "e7e6baa0c6dc906d5e1517fc57de573df81dcd65",
+    "bytes": 544499
+  },
+  {
+    "path": "src/09ac-handlers-d3d8.wat",
+    "oid": "4bb1eb5a1246c0a6cd64a760a733b2f41818ce2c",
+    "bytes": 117905
+  },
+  {
+    "path": "src/09ad-handlers-d3d9.wat",
+    "oid": "323133e0a80e8fa5b46c702c0ee8b44b466937c1",
+    "bytes": 209009
+  },
+  {
+    "path": "src/09ae-d3d9-resources.wat",
+    "oid": "8554598ff15d677c4e505663828592c14ccda7c0",
+    "bytes": 151936
+  },
+  {
+    "path": "src/09af-d3d-shader-ir.wat",
+    "oid": "e82caff970a481a64389e38d6fc9a443e6c9bed5",
+    "bytes": 122718
+  },
+  {
+    "path": "src/09ag-d3d-shader-vm.wat",
+    "oid": "7711f22203101748665bee33013edd8db4a6254b",
+    "bytes": 194436
+  },
+  {
+    "path": "src/09ah-d3d-software.wat",
+    "oid": "538290c4241f9112ff5e16f5cd71735ab38edea9",
+    "bytes": 143023
+  },
+  {
+    "path": "src/09ai-d3d-render-lifetime.wat",
+    "oid": "0b4800ffc59971ac83aff54e11db854ad5383b1c",
+    "bytes": 16092
+  },
+  {
+    "path": "src/09aj-d3d-fixed.wat",
+    "oid": "5043f03f08b024535e55985b8d60db6643032d2f",
+    "bytes": 115132
+  },
+  {
+    "path": "src/09ak-d3d-depth.wat",
+    "oid": "febdcea8b726ec2751f8a5e66c791e65c0e14214",
+    "bytes": 14458
+  },
+  {
+    "path": "src/09al-d3d-reset.wat",
+    "oid": "531c2ad4a5a670dce922af9b8fd34789f8321984",
+    "bytes": 15239
+  },
+  {
+    "path": "src/09am-d3d-color.wat",
+    "oid": "85c9103094e53665c2a171ff7c3a182e46639fe1",
+    "bytes": 57053
+  },
+  {
+    "path": "src/09b-dispatch.wat",
+    "oid": "6f4df6673a7117ed50e0a4d1960d36693697882b",
+    "bytes": 113594
+  },
+  {
+    "path": "src/09b2-dispatch-table.generated.wat",
+    "oid": "e071a96aaa151b4920431f07ac3c74a88ca88e9d",
+    "bytes": 1375748
+  },
+  {
+    "path": "src/09c-help.wat",
+    "oid": "f4d911a1d8e951ace1cd79ac179604ef818f6707",
+    "bytes": 54709
+  },
+  {
+    "path": "src/09c0-window-table.wat",
+    "oid": "364d6c267ceb266875e1900f3cc48c6056109c96",
+    "bytes": 113491
+  },
+  {
+    "path": "src/09c2-treeview.wat",
+    "oid": "cdf811edca5bd0df4fd7734b3381c8f4d5a9a428",
+    "bytes": 109358
+  },
+  {
+    "path": "src/09c3-controls.wat",
+    "oid": "c1685539398f2bd2549d8b2629aa69ddd2288cd1",
+    "bytes": 180044
+  },
+  {
+    "path": "src/09c3-controls0-basic-wndprocs.wat",
+    "oid": "f5821b1ea240ae671fa53d035214e8c10800fbd6",
+    "bytes": 142302
+  },
+  {
+    "path": "src/09c3-controls1-browse-dialog.wat",
+    "oid": "524ed842e65b472d999fe4e08016a53ded633acc",
+    "bytes": 30207
+  },
+  {
+    "path": "src/09c3-controls2-open-save-dialog.wat",
+    "oid": "294fda5c3f3cfe0af515319da465232c772d0438",
+    "bytes": 49631
+  },
+  {
+    "path": "src/09c3-controls3-color-dialog.wat",
+    "oid": "d0f500c749d53a950d6660aaebedaf520e8171ed",
+    "bytes": 61169
+  },
+  {
+    "path": "src/09c3-controls4-shell-dialogs.wat",
+    "oid": "2ed6c96bc6507d31a8f0943a08995c815397d5dc",
+    "bytes": 33889
+  },
+  {
+    "path": "src/09c3-wndprocs.wat",
+    "oid": "45f8e1142c4758deb30b480cd1e40f191e537c41",
+    "bytes": 138167
+  },
+  {
+    "path": "src/09c3-wndprocs1-toolbar.wat",
+    "oid": "f24d6f68c44b8c98f05d27bc6869d3689dd469dd",
+    "bytes": 70465
+  },
+  {
+    "path": "src/09c3-wndprocs2-tooltip-trackbar.wat",
+    "oid": "638e9a7716a9a920ae3962f2ca012d607a0060a4",
+    "bytes": 39555
+  },
+  {
+    "path": "src/09c3-wndprocs3-listbox.wat",
+    "oid": "54842ed5886fae8b701ae6d5489236b7f794c48e",
+    "bytes": 66500
+  },
+  {
+    "path": "src/09c3-wndprocs4-combobox.wat",
+    "oid": "e68fb7bef75fc36789dea0787f487b44be9a5b63",
+    "bytes": 70077
+  },
+  {
+    "path": "src/09c3-wndprocs5-edit.wat",
+    "oid": "6e07d34aedf6199a419fcbe0bd79b7b6a409dd8f",
+    "bytes": 159239
+  },
+  {
+    "path": "src/09c3-wndprocs6-animate.wat",
+    "oid": "72238b2ebb406d615d10cfd6c3ff36afbcdc9304",
+    "bytes": 42576
+  },
+  {
+    "path": "src/09c3a-dialog-runtime.wat",
+    "oid": "76614b37dfb57a37a5931774eb1f93a54db5ad92",
+    "bytes": 91320
+  },
+  {
+    "path": "src/09c3b-scrollbar.wat",
+    "oid": "3343e96a712a30271ab1b771384b2fa1c1edf02c",
+    "bytes": 40193
+  },
+  {
+    "path": "src/09c4-defwndproc.wat",
+    "oid": "a25c2e1cb61a3c2d28f7212c84bb24232e3cf6eb",
+    "bytes": 73568
+  },
+  {
+    "path": "src/09c5-menu.wat",
+    "oid": "00d639149b3fb2f741188af20612d3b4b60def8c",
+    "bytes": 316366
+  },
+  {
+    "path": "src/09c6-winhelp-core.wat",
+    "oid": "f33cfaaaa21f2248f111653ef88459a07e7f32c2",
+    "bytes": 98628
+  },
+  {
+    "path": "src/09c7-winhelp-hlp.wat",
+    "oid": "3bab9a56984aa1e5be0f1fc7fb3e8161dff5f127",
+    "bytes": 290855
+  },
+  {
+    "path": "src/09c8-winhelp-cnt.wat",
+    "oid": "e0f679b5e51f73fa2846871197e5fd31565fa8cb",
+    "bytes": 44754
+  },
+  {
+    "path": "src/09c9-winhelp-ui.wat",
+    "oid": "87ab0d9c77aa2ab2e83fc3f4037769604d6c706c",
+    "bytes": 184800
+  },
+  {
+    "path": "src/09d-winsock.wat",
+    "oid": "b7873de94482772e53ffafa50acae029052a14e4",
+    "bytes": 262420
+  },
+  {
+    "path": "src/09d1-mpr.wat",
+    "oid": "5068c9a2365b438b8054daf6f1a6c2da98c74369",
+    "bytes": 7722
+  },
+  {
+    "path": "src/09d2-tapi.wat",
+    "oid": "3f9aacac3e602051575c944fe1dfed9361ad36f5",
+    "bytes": 17304
+  },
+  {
+    "path": "src/09d3-spooler.wat",
+    "oid": "938208d0e765453e7b25c66cd48351b9227818ef",
+    "bytes": 6858
+  },
+  {
+    "path": "src/09d4-dplay-net.wat",
+    "oid": "a701f33be01e2db827981683e04bfd930d66ac51",
+    "bytes": 62636
+  },
+  {
+    "path": "src/09d5-dispdib.wat",
+    "oid": "5000b138206e19ab9ef66f2917c282db1751cc3f",
+    "bytes": 13045
+  },
+  {
+    "path": "src/09d6-wininet.wat",
+    "oid": "b2d978ee42045875792092c3a3d470b9e0549d25",
+    "bytes": 7743
+  },
+  {
+    "path": "src/09d7-pipes.wat",
+    "oid": "e0269a9b2f73f8a9e8f1bd4f6f63f857061f5fce",
+    "bytes": 39148
+  },
+  {
+    "path": "src/09e-win16-api.wat",
+    "oid": "631e1989a7fad868e6e945a556086aaee758107e",
+    "bytes": 1085539
+  },
+  {
+    "path": "src/09e2-win16-dialog.wat",
+    "oid": "3467f75c3134b217001a7c7788f5c4aa98cc5c99",
+    "bytes": 75116
+  },
+  {
+    "path": "src/09f-win16-ddeml.wat",
+    "oid": "e0dd071b1547493cf62f7614986458fe1701aa74",
+    "bytes": 110263
+  },
+  {
+    "path": "src/10-helpers.wat",
+    "oid": "1c02e670575f60ed0170abb02d9973cc2cab2d29",
+    "bytes": 533986
+  },
+  {
+    "path": "src/10a-gdi-bitmap.wat",
+    "oid": "a6f9d1fc0b6903b32a4ab44cece865068a310a01",
+    "bytes": 111220
+  },
+  {
+    "path": "src/10b-gdi-font.wat",
+    "oid": "c1c2f2a16c356b5bc32cce89c1a3daba0c2fd926",
+    "bytes": 206760
+  },
+  {
+    "path": "src/10c-truetype.wat",
+    "oid": "f612273cccb3c86511a844121cc34a26e1b0cdd7",
+    "bytes": 284451
+  },
+  {
+    "path": "src/10c1-truetype-hint.wat",
+    "oid": "e02d5e9d92c328ca072e02425af44142c20359db",
+    "bytes": 160145
+  },
+  {
+    "path": "src/10d-gdi-region-path.wat",
+    "oid": "927b555037e514a1491073e395fecf66b29e9275",
+    "bytes": 251697
+  },
+  {
+    "path": "src/10e-gdi-metafile.wat",
+    "oid": "d967cc18cbd85db4751f7b022705aa11c88ef491",
+    "bytes": 169044
+  },
+  {
+    "path": "src/10f-gdi-dc.wat",
+    "oid": "bf8e54a17140adf04edc471c73ef9e92d0442df9",
+    "bytes": 125719
+  },
+  {
+    "path": "src/10g-gdi-raster.wat",
+    "oid": "a597b2f5b17ad35e08b0acc793c72f1f128be9c7",
+    "bytes": 456636
+  },
+  {
+    "path": "src/10h-gdi-adapters.wat",
+    "oid": "b483e027498038c8a35ecd1263a52fb5e2567335",
+    "bytes": 16190
+  },
+  {
+    "path": "src/11-seh.wat",
+    "oid": "d49bd7e13850219b0420d0481193a8759e9517b7",
+    "bytes": 58449
+  },
+  {
+    "path": "src/12-wsprintf.wat",
+    "oid": "a58f7b24a1cbd7a4617341fe778c903bb2431c37",
+    "bytes": 21194
+  },
+  {
+    "path": "src/13-exports.wat",
+    "oid": "e775571b6c5fda3820de5446d3f69cdf35485fb2",
+    "bytes": 342381
+  },
+  {
+    "path": "src/api_table.json",
+    "oid": "285f81e4b392839549bc2cf549b4826890c1e18f",
+    "bytes": 723350
+  },
+  {
+    "path": "src/main.watx",
+    "oid": "40594738b9ba200821c3bb44442e89067353f380",
+    "bytes": 5893
+  },
+  {
+    "path": "test/test-callback-ownership-census.js",
+    "oid": "86f1d7d18dc9ce55890debdc8adcf2f247c5c5ff",
+    "bytes": 13608
+  },
+  {
+    "path": "test/test-host-census-independent-combined.js",
+    "oid": "2c0abb18deb49f2338325694d98e13c87cfd19f3",
+    "bytes": 7343
+  },
+  {
+    "path": "test/test-host-raf-present.js",
+    "oid": "a749c3e4889d86e11ca8e551412342f1d9374311",
+    "bytes": 15174
+  },
+  {
+    "path": "test/test-host-worker-lifecycle-independent.js",
+    "oid": "b74211aec322e79dfacbd8520702aea465810717",
+    "bytes": 6578
+  },
+  {
+    "path": "test/test-host-worker-lifecycle.js",
+    "oid": "81d70d84a041d9f401795e575a91d838cef8a451",
+    "bytes": 12565
+  },
+  {
+    "path": "test/test-js-com-callback-ownership.js",
+    "oid": "f941129c69d017b41094b8481373a27705195391",
+    "bytes": 15872
+  },
+  {
+    "path": "test/test-renderer-dialog-button-queue.js",
+    "oid": "7e63b9b000096740554c7f357f3f44df39916e20",
+    "bytes": 3715
+  },
+  {
+    "path": "test/test-renderer-dialog-caption-drag.js",
+    "oid": "2404db8235ae4d0b7f30c99469d88bca1419a559",
+    "bytes": 8993
+  },
+  {
+    "path": "test/test-renderer-input-button-hold.js",
+    "oid": "20f6485719eca40eda4776e77f40250a5ed63b44",
+    "bytes": 9662
+  },
+  {
+    "path": "test/test-renderer-mouse-drag-mask.js",
+    "oid": "304064d21b6330021750e3a9197f86af67893947",
+    "bytes": 22179
+  },
+  {
+    "path": "tools/callback-ownership-census.json",
+    "oid": "7228b1eaeac5b8bb19dbd3f6f535bd11f3b98c20",
+    "bytes": 276711
+  },
+  {
+    "path": "sw-coi.js",
+    "oid": "b89b5a1974ed33f2a9192babb73dbe6b138e10e6",
+    "bytes": 2291
+  },
+  {
+    "path": "threads-probe-worker.js",
+    "oid": "72ffb8412c411e47c10a01e98356ed101271c625",
+    "bytes": 6137
+  },
+  {
+    "path": "tools/build.sh",
+    "oid": "5407cb296ee6cdab2e30a226d1188206beb852af",
+    "bytes": 38494
+  },
+  {
+    "path": "tools/callback-ownership-census.js",
+    "oid": "8da32d1573f6e81c8e2715f59b04200ed734cc6a",
+    "bytes": 9047
+  },
+  {
+    "path": "tools/test-tiers.js",
+    "oid": "15e23d1ef41f52def7841cf6510a85464cb57af2",
+    "bytes": 7763
+  },
+  {
+    "path": "tools/watx.js",
+    "oid": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+    "bytes": 2663
+  },
+  {
+    "path": "test/renderer-physical-modifiers.test.cjs",
+    "oid": "6adb913d91ca0c7cb0fc620ec5fc14b2dc12d770",
+    "bytes": 7972
+  },
+  {
+    "path": "test/renderer-side-modifier-polling.test.cjs",
+    "oid": "118eaa5b8e6c61bb4522575b10daebb9dd4d9307",
+    "bytes": 7458
+  },
+  {
+    "path": "test/test-file-bundle.js",
+    "oid": "e90f98732ae2a565a64218b08da8f13af01934fc",
+    "bytes": 6675
+  },
+  {
+    "path": "test/test-keyboard-message-lparam.js",
+    "oid": "a559ed1b60727d9227f341f0dd9a898f3d77bfdf",
+    "bytes": 4342
+  },
+  {
+    "path": "test/test-set-keyboard-state.js",
+    "oid": "4b92adf4898e77cb1a335102b96b6c39a543ec89",
+    "bytes": 2844
+  },
+  {
+    "path": "tools/watx-src/compiler-codegen.js",
+    "oid": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+    "bytes": 302257
+  },
+  {
+    "path": "tools/watx-src/compiler-parser.js",
+    "oid": "678b529d637f5c0ab4482570a55f85514cd682ac",
+    "bytes": 38100
+  },
+  {
+    "path": "tools/watx-src/compiler-stages.js",
+    "oid": "5e0b3e9cf7020e773ceafe9841657c2925c9dff3",
+    "bytes": 31195
+  },
+  {
+    "path": "tools/watx-src/compiler.js",
+    "oid": "29d724bec5888623d9a0a9466301d0001bd30438",
+    "bytes": 18610
+  }
+]
