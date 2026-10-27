@@ -1,0 +1,62 @@
+
+/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/airstrike-pre6a.exe:     file format pei-i386
+
+
+Disassembly of section .text:
+
+00412750 <.text+0x1750>:
+  412750:	55                   	push   ebp
+  412751:	8b ec                	mov    ebp,esp
+  412753:	81 ec e0 00 00 00    	sub    esp,0xe0
+  412759:	53                   	push   ebx
+  41275a:	56                   	push   esi
+  41275b:	57                   	push   edi
+  41275c:	8d bd 20 ff ff ff    	lea    edi,[ebp-0xe0]
+  412762:	b9 38 00 00 00       	mov    ecx,0x38
+  412767:	b8 cc cc cc cc       	mov    eax,0xcccccccc
+  41276c:	f3 ab                	rep stos DWORD PTR es:[edi],eax
+  41276e:	b8 01 00 00 00       	mov    eax,0x1
+  412773:	85 c0                	test   eax,eax
+  412775:	74 56                	je     0x4127cd
+  412777:	8d 45 e8             	lea    eax,[ebp-0x18]
+  41277a:	50                   	push   eax
+  41277b:	e8 ff eb ff ff       	call   0x41137f
+  412780:	83 c4 04             	add    esp,0x4
+  412783:	83 f8 01             	cmp    eax,0x1
+  412786:	7c 35                	jl     0x4127bd
+  412788:	8a 45 e8             	mov    al,BYTE PTR [ebp-0x18]
+  41278b:	88 85 20 ff ff ff    	mov    BYTE PTR [ebp-0xe0],al
+  412791:	80 bd 20 ff ff ff 02 	cmp    BYTE PTR [ebp-0xe0],0x2
+  412798:	74 1c                	je     0x4127b6
+  41279a:	80 bd 20 ff ff ff 0c 	cmp    BYTE PTR [ebp-0xe0],0xc
+  4127a1:	74 02                	je     0x4127a5
+  4127a3:	eb 16                	jmp    0x4127bb
+  4127a5:	8b f4                	mov    esi,esp
+  4127a7:	6a 00                	push   0x0
+  4127a9:	ff 15 08 54 43 00    	call   DWORD PTR ds:0x435408
+  4127af:	3b f4                	cmp    esi,esp
+  4127b1:	e8 23 ec ff ff       	call   0x4113d9
+  4127b6:	8b 45 f0             	mov    eax,DWORD PTR [ebp-0x10]
+  4127b9:	eb 12                	jmp    0x4127cd
+  4127bb:	eb ba                	jmp    0x412777
+  4127bd:	a1 14 16 43 00       	mov    eax,ds:0x431614
+  4127c2:	50                   	push   eax
+  4127c3:	e8 8d ed ff ff       	call   0x411555
+  4127c8:	83 c4 04             	add    esp,0x4
+  4127cb:	eb a1                	jmp    0x41276e
+  4127cd:	52                   	push   edx
+  4127ce:	8b cd                	mov    ecx,ebp
+  4127d0:	50                   	push   eax
+  4127d1:	8d 15 f2 27 41 00    	lea    edx,ds:0x4127f2
+  4127d7:	e8 ff e9 ff ff       	call   0x4111db
+  4127dc:	58                   	pop    eax
+  4127dd:	5a                   	pop    edx
+  4127de:	5f                   	pop    edi
+  4127df:	5e                   	pop    esi
+  4127e0:	5b                   	pop    ebx
+  4127e1:	81 c4 e0 00 00 00    	add    esp,0xe0
+  4127e7:	3b ec                	cmp    ebp,esp
+  4127e9:	e8 eb eb ff ff       	call   0x4113d9
+  4127ee:	8b e5                	mov    esp,ebp
+  4127f0:	5d                   	pop    ebp
+  4127f1:	c3                   	ret

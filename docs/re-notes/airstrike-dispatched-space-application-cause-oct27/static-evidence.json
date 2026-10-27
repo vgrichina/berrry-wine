@@ -1,0 +1,269 @@
+{
+  "status": "STATIC_BOUNDARY_MAPPED_RUNTIME_SDL_CONSUMPTION_UNRESOLVED",
+  "pins": [
+    {
+      "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/airstrike-pre6a.exe",
+      "bytes": 143360,
+      "allocated": 143360,
+      "sha256": "0e6f5450109c4c83e97bcf263bc90dc2d64dd83587356dd8a87994cc4246b474"
+    },
+    {
+      "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL.dll",
+      "bytes": 229376,
+      "allocated": 229376,
+      "sha256": "7644c783c600b821f84e25b6ade44217e53e2bbae85fcc59e6296a0363a5a0a9"
+    },
+    {
+      "path": "/tmp/airstrike-accepted-scheduler-main-integration-oct27/repo/test/run.js",
+      "bytes": 690638,
+      "allocated": 692224,
+      "sha256": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7"
+    },
+    {
+      "path": "/tmp/airstrike-accepted-scheduler-main-integration-oct27/repo/lib/thread-manager.js",
+      "bytes": 227263,
+      "allocated": 229376,
+      "sha256": "f4ba190b2dbf5e2cf2dac82398577bedfb13aa26d332fb7480b4d9d7e4ea2f78"
+    },
+    {
+      "path": "/tmp/generally-census-cleared-driving-oct27/ops/wine-assembly.wasm",
+      "bytes": 1880317,
+      "allocated": 1884160,
+      "sha256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9"
+    },
+    {
+      "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/source-inspection/src/airstrike.c",
+      "bytes": 15877,
+      "allocated": 16384,
+      "sha256": "290454b9082bf3bda46be94533670a5ec604da38fde68b87cbe7c3460c72f46a"
+    },
+    {
+      "path": "/tmp/airstrike-dispatched-space-application-cause-oct27/ops/compiled-source.stdout",
+      "bytes": 1057680,
+      "allocated": 1060864,
+      "sha256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e"
+    },
+    {
+      "path": "/tmp/airstrike-dispatched-space-application-cause-oct27/ops/compiled-window.stdout",
+      "bytes": 292766,
+      "allocated": 294912,
+      "sha256": "969b062a5488fd4049e9daa6820193c81ae2d6ef5bc303760ce9bf8f952fad33"
+    },
+    {
+      "path": "/tmp/airstrike-dispatched-space-application-cause-oct27/ops/renderer-input-source.stdout",
+      "bytes": 181810,
+      "allocated": 184320,
+      "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+    }
+  ],
+  "reused": {
+    "receipt": "/tmp/airstrike-post-deadline-consumption-oct27/ops/receipt-manifest.json",
+    "coordinatorVerification": "/tmp/completions-1526-readiness-oct27/ops/air-postdeadline-verified.json",
+    "reports": 4,
+    "payloads": 1802,
+    "reverification": false
+  },
+  "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "runnerRevision": "be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c",
+  "runtimeSDLBase": "0x536000",
+  "keyJumpTable": [
+    {
+      "msg": "0x100",
+      "index": 2,
+      "target": "0x10013a51"
+    },
+    {
+      "msg": "0x101",
+      "index": 2,
+      "target": "0x10013a51"
+    },
+    {
+      "msg": "0x104",
+      "index": 2,
+      "target": "0x10013a51"
+    },
+    {
+      "msg": "0x105",
+      "index": 2,
+      "target": "0x10013a51"
+    }
+  ],
+  "staticChecks": [
+    "all supplied binary/runner/module SHA pins match",
+    "four DX keyboard cases map to exact zero-return bytes",
+    "saved final EIP maps exactly to DX pump after WaitForMultipleObjects",
+    "compiled source shows state-difference keyboard collection, not edge FIFO"
+  ],
+  "disassembly": [
+    {
+      "file": "SDL.dll",
+      "start": "0x10022ed7",
+      "stopExclusive": "0x10022f09",
+      "text": "10022ed7:\t8d 44 24 08          \tlea    eax,[esp+0x8]\n10022edb:\t83 ca 20             \tor     edx,0x20\n10022ede:\t50                   \tpush   eax\n10022edf:\t89 5c 24 2c          \tmov    DWORD PTR [esp+0x2c],ebx\n10022ee3:\t89 4c 24 30          \tmov    DWORD PTR [esp+0x30],ecx\n10022ee7:\t89 5c 24 28          \tmov    DWORD PTR [esp+0x28],ebx\n10022eeb:\t89 6c 24 1c          \tmov    DWORD PTR [esp+0x1c],ebp\n10022eef:\t89 54 24 0c          \tmov    DWORD PTR [esp+0xc],edx\n10022ef3:\tc7 44 24 10 80 24 02 \tmov    DWORD PTR [esp+0x10],0x10022480\n10022efa:\t10 \n10022efb:\t89 5c 24 18          \tmov    DWORD PTR [esp+0x18],ebx\n10022eff:\t89 5c 24 14          \tmov    DWORD PTR [esp+0x14],ebx\n10022f03:\tff 15 4c b1 02 10    \tcall   DWORD PTR ds:0x1002b14c"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10022480",
+      "stopExclusive": "0x100224b8",
+      "text": "10022480:\t83 ec 50             \tsub    esp,0x50\n10022483:\t53                   \tpush   ebx\n10022484:\t8b 5c 24 5c          \tmov    ebx,DWORD PTR [esp+0x5c]\n10022488:\t55                   \tpush   ebp\n10022489:\t8b 2d 8c a2 03 10    \tmov    ebp,DWORD PTR ds:0x1003a28c\n1002248f:\t56                   \tpush   esi\n10022490:\t81 fb 00 02 00 00    \tcmp    ebx,0x200\n10022496:\t57                   \tpush   edi\n10022497:\t0f 87 42 05 00 00    \tja     0x100229df\n1002249d:\t0f 84 06 04 00 00    \tje     0x100228a9\n100224a3:\t8d 43 fe             \tlea    eax,[ebx-0x2]\n100224a6:\t83 f8 45             \tcmp    eax,0x45\n100224a9:\t0f 87 15 07 00 00    \tja     0x10022bc4\n100224af:\t33 c9                \txor    ecx,ecx\n100224b1:\t8a 88 b8 2c 02 10    \tmov    cl,BYTE PTR [eax+0x10022cb8]\n100224b7:\tff 24 8d 94 2c 02 10 \tjmp    DWORD PTR [ecx*4+0x10022c94]"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10022bc4",
+      "stopExclusive": "0x10022c1a",
+      "text": "10022bc4:\ta1 0c 9f 03 10       \tmov    eax,ds:0x10039f0c\n10022bc9:\t85 c0                \ttest   eax,eax\n10022bcb:\t74 2f                \tje     0x10022bfc\n10022bcd:\t8b 54 24 70          \tmov    edx,DWORD PTR [esp+0x70]\n10022bd1:\t8b 4c 24 6c          \tmov    ecx,DWORD PTR [esp+0x6c]\n10022bd5:\t52                   \tpush   edx\n10022bd6:\t8b 54 24 68          \tmov    edx,DWORD PTR [esp+0x68]\n10022bda:\t51                   \tpush   ecx\n10022bdb:\t53                   \tpush   ebx\n10022bdc:\t52                   \tpush   edx\n10022bdd:\t55                   \tpush   ebp\n10022bde:\tff d0                \tcall   eax\n10022be0:\t83 c4 14             \tadd    esp,0x14\n10022be3:\t5f                   \tpop    edi\n10022be4:\t5e                   \tpop    esi\n10022be5:\t5d                   \tpop    ebp\n10022be6:\t5b                   \tpop    ebx\n10022be7:\t83 c4 50             \tadd    esp,0x50\n10022bea:\tc2 10 00             \tret    0x10\n10022bed:\t8b 44 24 6c          \tmov    eax,DWORD PTR [esp+0x6c]\n10022bf1:\t50                   \tpush   eax\n10022bf2:\t55                   \tpush   ebp\n10022bf3:\tff 15 bc a3 03 10    \tcall   DWORD PTR ds:0x1003a3bc\n10022bf9:\t83 c4 08             \tadd    esp,0x8\n10022bfc:\t8b 4c 24 70          \tmov    ecx,DWORD PTR [esp+0x70]\n10022c00:\t8b 54 24 6c          \tmov    edx,DWORD PTR [esp+0x6c]\n10022c04:\t8b 44 24 64          \tmov    eax,DWORD PTR [esp+0x64]\n10022c08:\t51                   \tpush   ecx\n10022c09:\t52                   \tpush   edx\n10022c0a:\t53                   \tpush   ebx\n10022c0b:\t50                   \tpush   eax\n10022c0c:\tff 15 08 b2 02 10    \tcall   DWORD PTR ds:0x1002b208\n10022c12:\t5f                   \tpop    edi\n10022c13:\t5e                   \tpop    esi\n10022c14:\t5d                   \tpop    ebp\n10022c15:\t5b                   \tpop    ebx\n10022c16:\t83 c4 50             \tadd    esp,0x50\n10022c19:\tc2 10 00             \tret    0x10"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10014a20",
+      "stopExclusive": "0x10014a60",
+      "text": "10014a20:\t35 02 10 \n10014a23:\tc7 86 24 01 00 00 d0 \tmov    DWORD PTR [esi+0x124],0x10013ed0\n10014a2a:\t3e 01 10 \n10014a2d:\tc7 86 28 01 00 00 b0 \tmov    DWORD PTR [esi+0x128],0x10013eb0\n10014a34:\t3e 01 10 \n10014a37:\tc7 05 c0 a3 03 10 60 \tmov    DWORD PTR ds:0x1003a3c0,0x10017360\n10014a3e:\t73 01 10 \n10014a41:\tc7 05 bc a3 03 10 80 \tmov    DWORD PTR ds:0x1003a3bc,0x10017380\n10014a48:\t73 01 10 \n10014a4b:\tc7 05 04 a3 03 10 d0 \tmov    DWORD PTR ds:0x1003a304,0x100175d0\n10014a52:\t75 01 10 \n10014a55:\tc7 05 0c 9f 03 10 a0 \tmov    DWORD PTR ds:0x10039f0c,0x100139a0\n10014a5c:\t39 01 10 \n10014a5f:\tc7 86 a4 02 00 00 60 \tmov    DWORD PTR [esi+0x2a4],0x10014b60"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x100139a0",
+      "stopExclusive": "0x100139d0",
+      "text": "100139a0:\t83 ec 14             \tsub    esp,0x14\n100139a3:\t53                   \tpush   ebx\n100139a4:\t8b 5c 24 24          \tmov    ebx,DWORD PTR [esp+0x24]\n100139a8:\t55                   \tpush   ebp\n100139a9:\t8b 6c 24 24          \tmov    ebp,DWORD PTR [esp+0x24]\n100139ad:\t8d 43 e4             \tlea    eax,[ebx-0x1c]\n100139b0:\t56                   \tpush   esi\n100139b1:\t57                   \tpush   edi\n100139b2:\t8b 7c 24 34          \tmov    edi,DWORD PTR [esp+0x34]\n100139b6:\t3d f6 00 00 00       \tcmp    eax,0xf6\n100139bb:\t0f 87 9a 00 00 00    \tja     0x10013a5b\n100139c1:\t33 c9                \txor    ecx,ecx\n100139c3:\t8a 88 dc 3a 01 10    \tmov    cl,BYTE PTR [eax+0x10013adc]\n100139c9:\tff 24 8d c8 3a 01 10 \tjmp    DWORD PTR [ecx*4+0x10013ac8]"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10013a51",
+      "stopExclusive": "0x10013a5b",
+      "text": "10013a51:\t5f                   \tpop    edi\n10013a52:\t5e                   \tpop    esi\n10013a53:\t5d                   \tpop    ebp\n10013a54:\t33 c0                \txor    eax,eax\n10013a56:\t5b                   \tpop    ebx\n10013a57:\t83 c4 14             \tadd    esp,0x14\n10013a5a:\tc3                   \tret"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10013c70",
+      "stopExclusive": "0x10013cc1",
+      "text": "10013c70:\tb8 20 20 00 00       \tmov    eax,0x2020\n10013c75:\te8 66 6b 01 00       \tcall   0x1002a7e0\n10013c7a:\t53                   \tpush   ebx\n10013c7b:\t33 db                \txor    ebx,ebx\n10013c7d:\t56                   \tpush   esi\n10013c7e:\t57                   \tpush   edi\n10013c7f:\t89 1d 28 4f 03 10    \tmov    DWORD PTR ds:0x10034f28,ebx\n10013c85:\t53                   \tpush   ebx\n10013c86:\t53                   \tpush   ebx\n10013c87:\t53                   \tpush   ebx\n10013c88:\t8d 44 24 1c          \tlea    eax,[esp+0x1c]\n10013c8c:\t53                   \tpush   ebx\n10013c8d:\t50                   \tpush   eax\n10013c8e:\tff 15 f8 b1 02 10    \tcall   DWORD PTR ds:0x1002b1f8\n10013c94:\t85 c0                \ttest   eax,eax\n10013c96:\t74 38                \tje     0x10013cd0\n10013c98:\t53                   \tpush   ebx\n10013c99:\t53                   \tpush   ebx\n10013c9a:\t8d 4c 24 18          \tlea    ecx,[esp+0x18]\n10013c9e:\t53                   \tpush   ebx\n10013c9f:\t51                   \tpush   ecx\n10013ca0:\tff 15 00 b2 02 10    \tcall   DWORD PTR ds:0x1002b200\n10013ca6:\t85 c0                \ttest   eax,eax\n10013ca8:\t0f 8e dd 01 00 00    \tjle    0x10013e8b\n10013cae:\t8d 54 24 10          \tlea    edx,[esp+0x10]\n10013cb2:\t52                   \tpush   edx\n10013cb3:\tff 15 fc b1 02 10    \tcall   DWORD PTR ds:0x1002b1fc\n10013cb9:\t39 1d 28 4f 03 10    \tcmp    DWORD PTR ds:0x10034f28,ebx\n10013cbf:\t74 c4                \tje     0x10013c85"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10013d5e",
+      "stopExclusive": "0x10013dbf",
+      "text": "10013d5e:\t8b 84 24 34 20 00 00 \tmov    eax,DWORD PTR [esp+0x2034]\n10013d65:\t8b 0d 1c 4f 03 10    \tmov    ecx,DWORD PTR ds:0x10034f1c\n10013d6b:\t68 bf 00 00 00       \tpush   0xbf\n10013d70:\t50                   \tpush   eax\n10013d71:\t6a 00                \tpush   0x0\n10013d73:\t68 98 4e 03 10       \tpush   0x10034e98\n10013d78:\t51                   \tpush   ecx\n10013d79:\tff 15 94 b1 02 10    \tcall   DWORD PTR ds:0x1002b194\n10013d7f:\t8b d8                \tmov    ebx,eax\n10013d81:\ta1 1c 4f 03 10       \tmov    eax,ds:0x10034f1c\n10013d86:\t3b d8                \tcmp    ebx,eax\n10013d88:\t0f 83 af 00 00 00    \tjae    0x10013e3d\n10013d8e:\t8b 04 9d d8 4e 03 10 \tmov    eax,DWORD PTR [ebx*4+0x10034ed8]\n10013d95:\t8d 4c 24 0c          \tlea    ecx,[esp+0xc]\n10013d99:\t6a 00                \tpush   0x0\n10013d9b:\t51                   \tpush   ecx\n10013d9c:\t8d 4c 24 34          \tlea    ecx,[esp+0x34]\n10013da0:\tc7 44 24 14 00 02 00 \tmov    DWORD PTR [esp+0x14],0x200\n10013da7:\t00 \n10013da8:\t8b 10                \tmov    edx,DWORD PTR [eax]\n10013daa:\t51                   \tpush   ecx\n10013dab:\t6a 10                \tpush   0x10\n10013dad:\t50                   \tpush   eax\n10013dae:\tff 52 28             \tcall   DWORD PTR [edx+0x28]\n10013db1:\t3d 1e 00 07 80       \tcmp    eax,0x8007001e\n10013db6:\t74 07                \tje     0x10013dbf\n10013db8:\t3d 0c 00 07 80       \tcmp    eax,0x8007000c\n10013dbd:\t75 4c                \tjne    0x10013e0b"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10013e0b",
+      "stopExclusive": "0x10013e3d",
+      "text": "10013e0b:\t85 c0                \ttest   eax,eax\n10013e0d:\t75 2e                \tjne    0x10013e3d\n10013e0f:\t8b 84 24 38 20 00 00 \tmov    eax,DWORD PTR [esp+0x2038]\n10013e16:\t85 c0                \ttest   eax,eax\n10013e18:\t74 23                \tje     0x10013e3d\n10013e1a:\t8b 44 24 0c          \tmov    eax,DWORD PTR [esp+0xc]\n10013e1e:\t8d 54 24 2c          \tlea    edx,[esp+0x2c]\n10013e22:\t52                   \tpush   edx\n10013e23:\t50                   \tpush   eax\n10013e24:\tff 14 9d 58 4e 03 10 \tcall   DWORD PTR [ebx*4+0x10034e58]\n10013e2b:\t83 c4 08             \tadd    esp,0x8\n10013e2e:\tb8 01 00 00 00       \tmov    eax,0x1\n10013e33:\t5f                   \tpop    edi\n10013e34:\t5e                   \tpop    esi\n10013e35:\t5b                   \tpop    ebx\n10013e36:\t81 c4 20 20 00 00    \tadd    esp,0x2020\n10013e3c:\tc3                   \tret"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x100145ed",
+      "stopExclusive": "0x10014613",
+      "text": "100145f0:\t8b 47 08             \tmov    eax,DWORD PTR [edi+0x8]\n100145f3:\t8b 36                \tmov    esi,DWORD PTR [esi]\n100145f5:\t89 85 58 4e 03 10    \tmov    DWORD PTR [ebp+0x10034e58],eax\n100145fb:\t56                   \tpush   esi\n100145fc:\t8b 0e                \tmov    ecx,DWORD PTR [esi]\n100145fe:\tff 51 1c             \tcall   DWORD PTR [ecx+0x1c]\n10014601:\t8b 35 1c 4f 03 10    \tmov    esi,DWORD PTR ds:0x10034f1c\n10014607:\t8b 47 0c             \tmov    eax,DWORD PTR [edi+0xc]\n1001460a:\t83 c7 18             \tadd    edi,0x18\n1001460d:\t46                   \tinc    esi\n1001460e:\t83 c5 04             \tadd    ebp,0x4\n10014611:\t3b c3                \tcmp    eax,ebx"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x10013420",
+      "stopExclusive": "0x10013479",
+      "text": "10013420:\t8b 44 24 04          \tmov    eax,DWORD PTR [esp+0x4]\n10013424:\t83 ec 10             \tsub    esp,0x10\n10013427:\t85 c0                \ttest   eax,eax\n10013429:\t7e 4a                \tjle    0x10013475\n1001342b:\t56                   \tpush   esi\n1001342c:\t8b 74 24 1c          \tmov    esi,DWORD PTR [esp+0x1c]\n10013430:\t57                   \tpush   edi\n10013431:\t8b f8                \tmov    edi,eax\n10013433:\t8a 46 04             \tmov    al,BYTE PTR [esi+0x4]\n10013436:\t84 c0                \ttest   al,al\n10013438:\t79 14                \tjns    0x1001344e\n1001343a:\t8b 0e                \tmov    ecx,DWORD PTR [esi]\n1001343c:\t8d 44 24 08          \tlea    eax,[esp+0x8]\n10013440:\t6a 01                \tpush   0x1\n10013442:\t50                   \tpush   eax\n10013443:\t51                   \tpush   ecx\n10013444:\te8 d7 0e 00 00       \tcall   0x10014320\n10013449:\t50                   \tpush   eax\n1001344a:\t6a 01                \tpush   0x1\n1001344c:\teb 12                \tjmp    0x10013460\n1001344e:\t8b 06                \tmov    eax,DWORD PTR [esi]\n10013450:\t8d 54 24 08          \tlea    edx,[esp+0x8]\n10013454:\t6a 00                \tpush   0x0\n10013456:\t52                   \tpush   edx\n10013457:\t50                   \tpush   eax\n10013458:\te8 c3 0e 00 00       \tcall   0x10014320\n1001345d:\t50                   \tpush   eax\n1001345e:\t6a 00                \tpush   0x0\n10013460:\te8 cb 6d 00 00       \tcall   0x1001a230\n10013465:\t83 c4 14             \tadd    esp,0x14\n10013468:\t83 c6 10             \tadd    esi,0x10\n1001346b:\t4f                   \tdec    edi\n1001346c:\ta3 28 4f 03 10       \tmov    ds:0x10034f28,eax\n10013471:\t75 c0                \tjne    0x10013433\n10013473:\t5f                   \tpop    edi\n10013474:\t5e                   \tpop    esi\n10013475:\t83 c4 10             \tadd    esp,0x10\n10013478:\tc3                   \tret"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x1001a354",
+      "stopExclusive": "0x1001a3e8",
+      "text": "1001a354:\t8b 44 24 28          \tmov    eax,DWORD PTR [esp+0x28]\n1001a358:\t25 ff 00 00 00       \tand    eax,0xff\n1001a35d:\t2b c5                \tsub    eax,ebp\n1001a35f:\t74 14                \tje     0x1001a375\n1001a361:\t48                   \tdec    eax\n1001a362:\t74 0a                \tje     0x1001a36e\n1001a364:\t5f                   \tpop    edi\n1001a365:\t5e                   \tpop    esi\n1001a366:\t5d                   \tpop    ebp\n1001a367:\t33 c0                \txor    eax,eax\n1001a369:\t5b                   \tpop    ebx\n1001a36a:\t83 c4 14             \tadd    esp,0x14\n1001a36d:\tc3                   \tret\n1001a36e:\tc6 44 24 10 02       \tmov    BYTE PTR [esp+0x10],0x2\n1001a373:\teb 14                \tjmp    0x1001a389\n1001a375:\ta1 ec a3 03 10       \tmov    eax,ds:0x1003a3ec\n1001a37a:\tc6 44 24 10 03       \tmov    BYTE PTR [esp+0x10],0x3\n1001a37f:\t3b c5                \tcmp    eax,ebp\n1001a381:\t74 06                \tje     0x1001a389\n1001a383:\t89 2d ec a3 03 10    \tmov    DWORD PTR ds:0x1003a3ec,ebp\n1001a389:\t8b 42 04             \tmov    eax,DWORD PTR [edx+0x4]\n1001a38c:\t38 98 88 6b 03 10    \tcmp    BYTE PTR [eax+0x10036b88],bl\n1001a392:\t75 0a                \tjne    0x1001a39e\n1001a394:\t5f                   \tpop    edi\n1001a395:\t5e                   \tpop    esi\n1001a396:\t5d                   \tpop    ebp\n1001a397:\t33 c0                \txor    eax,eax\n1001a399:\t5b                   \tpop    ebx\n1001a39a:\t83 c4 14             \tadd    esp,0x14\n1001a39d:\tc3                   \tret\n1001a39e:\t8b 44 24 10          \tmov    eax,DWORD PTR [esp+0x10]\n1001a3a2:\t81 e1 ff ff 00 00    \tand    ecx,0xffff\n1001a3a8:\t89 0d dc 71 03 10    \tmov    DWORD PTR ds:0x100371dc,ecx\n1001a3ae:\t8b 4a 04             \tmov    ecx,DWORD PTR [edx+0x4]\n1001a3b1:\t25 ff 00 00 00       \tand    eax,0xff\n1001a3b6:\t88 99 88 6b 03 10    \tmov    BYTE PTR [ecx+0x10036b88],bl\n1001a3bc:\t80 b8 20 a4 03 10 01 \tcmp    BYTE PTR [eax+0x1003a420],0x1\n1001a3c3:\t75 79                \tjne    0x1001a43e\n1001a3c5:\t8b 0a                \tmov    ecx,DWORD PTR [edx]\n1001a3c7:\t8b 42 04             \tmov    eax,DWORD PTR [edx+0x4]\n1001a3ca:\t89 4c 24 14          \tmov    DWORD PTR [esp+0x14],ecx\n1001a3ce:\t8b 4a 08             \tmov    ecx,DWORD PTR [edx+0x8]\n1001a3d1:\t8b 52 0c             \tmov    edx,DWORD PTR [edx+0xc]\n1001a3d4:\t88 5c 24 12          \tmov    BYTE PTR [esp+0x12],bl\n1001a3d8:\t85 ff                \ttest   edi,edi\n1001a3da:\t89 44 24 18          \tmov    DWORD PTR [esp+0x18],eax\n1001a3de:\t89 4c 24 1c          \tmov    DWORD PTR [esp+0x1c],ecx\n1001a3e2:\t89 54 24 20          \tmov    DWORD PTR [esp+0x20],edx\n1001a3e6:\t74 2d                \tje     0x1001a415"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x1001a415",
+      "stopExclusive": "0x1001a43e",
+      "text": "1001a415:\ta1 70 6b 03 10       \tmov    eax,ds:0x10036b70\n1001a41a:\t85 c0                \ttest   eax,eax\n1001a41c:\t74 0e                \tje     0x1001a42c\n1001a41e:\t8d 4c 24 10          \tlea    ecx,[esp+0x10]\n1001a422:\t51                   \tpush   ecx\n1001a423:\tff d0                \tcall   eax\n1001a425:\t83 c4 04             \tadd    esp,0x4\n1001a428:\t85 c0                \ttest   eax,eax\n1001a42a:\t74 12                \tje     0x1001a43e\n1001a42c:\t8d 54 24 10          \tlea    edx,[esp+0x10]\n1001a430:\tbd 01 00 00 00       \tmov    ebp,0x1\n1001a435:\t52                   \tpush   edx\n1001a436:\te8 35 e5 ff ff       \tcall   0x10018970\n1001a43b:\t83 c4 04             \tadd    esp,0x4"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x100188c0",
+      "stopExclusive": "0x10018922",
+      "text": "100188c0:\ta1 78 6b 03 10       \tmov    eax,ds:0x10036b78\n100188c5:\t85 c0                \ttest   eax,eax\n100188c7:\t75 32                \tjne    0x100188fb\n100188c9:\ta1 8c a2 03 10       \tmov    eax,ds:0x1003a28c\n100188ce:\t85 c0                \ttest   eax,eax\n100188d0:\t74 0a                \tje     0x100188dc\n100188d2:\t50                   \tpush   eax\n100188d3:\tff 90 28 01 00 00    \tcall   DWORD PTR [eax+0x128]\n100188d9:\t83 c4 04             \tadd    esp,0x4\n100188dc:\te8 df 1b 00 00       \tcall   0x1001a4c0\n100188e1:\ta0 7c 6b 03 10       \tmov    al,ds:0x10036b7c\n100188e6:\t84 c0                \ttest   al,al\n100188e8:\t74 11                \tje     0x100188fb\n100188ea:\tf7 05 74 6b 03 10 80 \ttest   DWORD PTR ds:0x10036b74,0xf80\n100188f1:\t0f 00 00 \n100188f4:\t74 05                \tje     0x100188fb\n100188f6:\te9 65 0e 00 00       \tjmp    0x10019760\n100188fb:\tc3                   \tret\n100188fc:\t90                   \tnop\n100188fd:\t90                   \tnop\n100188fe:\t90                   \tnop\n100188ff:\t90                   \tnop\n10018900:\te8 bb ff ff ff       \tcall   0x100188c0\n10018905:\t8b 44 24 04          \tmov    eax,DWORD PTR [esp+0x4]\n10018909:\t6a ff                \tpush   0xffffffff\n1001890b:\t6a 02                \tpush   0x2\n1001890d:\t6a 01                \tpush   0x1\n1001890f:\t50                   \tpush   eax\n10018910:\te8 5b fd ff ff       \tcall   0x10018670\n10018915:\t83 c4 10             \tadd    esp,0x10\n10018918:\t33 c9                \txor    ecx,ecx\n1001891a:\t85 c0                \ttest   eax,eax\n1001891c:\t0f 9f c1             \tsetg   cl\n1001891f:\t8b c1                \tmov    eax,ecx\n10018921:\tc3                   \tret"
+    },
+    {
+      "file": "SDL.dll",
+      "start": "0x100186e6",
+      "stopExclusive": "0x1001873c",
+      "text": "100186e6:\t8b 4c 24 2c          \tmov    ecx,DWORD PTR [esp+0x2c]\n100186ea:\ta1 60 57 03 10       \tmov    eax,ds:0x10035760\n100186ef:\t85 c9                \ttest   ecx,ecx\n100186f1:\t7e 5c                \tjle    0x1001874f\n100186f3:\t3b 05 64 57 03 10    \tcmp    eax,DWORD PTR ds:0x10035764\n100186f9:\t74 54                \tje     0x1001874f\n100186fb:\t8d 0c 80             \tlea    ecx,[eax+eax*4]\n100186fe:\tba 01 00 00 00       \tmov    edx,0x1\n10018703:\t8d 34 8d 68 57 03 10 \tlea    esi,[ecx*4+0x10035768]\n1001870a:\t8a 0c 8d 68 57 03 10 \tmov    cl,BYTE PTR [ecx*4+0x10035768]\n10018711:\td3 e2                \tshl    edx,cl\n10018713:\t8b 4c 24 34          \tmov    ecx,DWORD PTR [esp+0x34]\n10018717:\t85 d1                \ttest   ecx,edx\n10018719:\t74 21                \tje     0x1001873c\n1001871b:\tb9 05 00 00 00       \tmov    ecx,0x5\n10018720:\t8b fb                \tmov    edi,ebx\n10018722:\tf3 a5                \trep movs DWORD PTR es:[edi],DWORD PTR ds:[esi]\n10018724:\t8b 4c 24 30          \tmov    ecx,DWORD PTR [esp+0x30]\n10018728:\t45                   \tinc    ebp\n10018729:\t83 c3 14             \tadd    ebx,0x14\n1001872c:\t83 f9 02             \tcmp    ecx,0x2\n1001872f:\t75 0b                \tjne    0x1001873c\n10018731:\t50                   \tpush   eax\n10018732:\te8 e9 00 00 00       \tcall   0x10018820\n10018737:\t83 c4 04             \tadd    esp,0x4\n1001873a:\teb 0d                \tjmp    0x10018749"
+    },
+    {
+      "file": "airstrike-pre6a.exe",
+      "start": "0x413a34",
+      "stopExclusive": "0x413a6e",
+      "text": "  413a34:\te8 32 d9 ff ff       \tcall   0x41136b\n  413a39:\t68 b8 d3 42 00       \tpush   0x42d3b8\n  413a3e:\te8 8f d6 ff ff       \tcall   0x4110d2\n  413a43:\t83 c4 04             \tadd    esp,0x4\n  413a46:\te8 8f d8 ff ff       \tcall   0x4112da\n  413a4b:\te8 07 d9 ff ff       \tcall   0x411357\n  413a50:\t8b f4                \tmov    esi,esp\n  413a52:\t68 98 d3 42 00       \tpush   0x42d398\n  413a57:\ta1 1c 54 43 00       \tmov    eax,ds:0x43541c\n  413a5c:\t83 c0 40             \tadd    eax,0x40\n  413a5f:\t50                   \tpush   eax\n  413a60:\tff 15 18 54 43 00    \tcall   DWORD PTR ds:0x435418\n  413a66:\t83 c4 08             \tadd    esp,0x8\n  413a69:\t3b f4                \tcmp    esi,esp\n  413a6b:\te8 69 d9 ff ff       \tcall   0x4113d9"
+    },
+    {
+      "file": "airstrike-pre6a.exe",
+      "start": "0x412bf0",
+      "stopExclusive": "0x412cb0",
+      "text": "  412bf0:\t55                   \tpush   ebp\n  412bf1:\t8b ec                \tmov    ebp,esp\n  412bf3:\t81 ec c0 00 00 00    \tsub    esp,0xc0\n  412bf9:\t53                   \tpush   ebx\n  412bfa:\t56                   \tpush   esi\n  412bfb:\t57                   \tpush   edi\n  412bfc:\t8d bd 40 ff ff ff    \tlea    edi,[ebp-0xc0]\n  412c02:\tb9 30 00 00 00       \tmov    ecx,0x30\n  412c07:\tb8 cc cc cc cc       \tmov    eax,0xcccccccc\n  412c0c:\tf3 ab                \trep stos DWORD PTR es:[edi],eax\n  412c0e:\te8 e9 e7 ff ff       \tcall   0x4113fc\n  412c13:\ta1 d8 1d 43 00       \tmov    eax,ds:0x431dd8\n  412c18:\t50                   \tpush   eax\n  412c19:\te8 2c e5 ff ff       \tcall   0x41114a\n  412c1e:\t83 c4 04             \tadd    esp,0x4\n  412c21:\ta1 d4 1d 43 00       \tmov    eax,ds:0x431dd4\n  412c26:\t50                   \tpush   eax\n  412c27:\te8 1e e5 ff ff       \tcall   0x41114a\n  412c2c:\t83 c4 04             \tadd    esp,0x4\n  412c2f:\ta1 64 1e 43 00       \tmov    eax,ds:0x431e64\n  412c34:\t50                   \tpush   eax\n  412c35:\te8 10 e5 ff ff       \tcall   0x41114a\n  412c3a:\t83 c4 04             \tadd    esp,0x4\n  412c3d:\ta1 68 1e 43 00       \tmov    eax,ds:0x431e68\n  412c42:\t50                   \tpush   eax\n  412c43:\te8 02 e5 ff ff       \tcall   0x41114a\n  412c48:\t83 c4 04             \tadd    esp,0x4\n  412c4b:\ta1 60 1e 43 00       \tmov    eax,ds:0x431e60\n  412c50:\t50                   \tpush   eax\n  412c51:\te8 f4 e4 ff ff       \tcall   0x41114a\n  412c56:\t83 c4 04             \tadd    esp,0x4\n  412c59:\t8b 45 08             \tmov    eax,DWORD PTR [ebp+0x8]\n  412c5c:\t50                   \tpush   eax\n  412c5d:\t6a 00                \tpush   0x0\n  412c5f:\t6a 00                \tpush   0x0\n  412c61:\t8b 0d fc 15 43 00    \tmov    ecx,DWORD PTR ds:0x4315fc\n  412c67:\t8b 41 0c             \tmov    eax,DWORD PTR [ecx+0xc]\n  412c6a:\t99                   \tcdq\n  412c6b:\t2b c2                \tsub    eax,edx\n  412c6d:\td1 f8                \tsar    eax,1\n  412c6f:\t50                   \tpush   eax\n  412c70:\t8b 15 fc 15 43 00    \tmov    edx,DWORD PTR ds:0x4315fc\n  412c76:\t8b 42 08             \tmov    eax,DWORD PTR [edx+0x8]\n  412c79:\t99                   \tcdq\n  412c7a:\t2b c2                \tsub    eax,edx\n  412c7c:\td1 f8                \tsar    eax,1\n  412c7e:\t50                   \tpush   eax\n  412c7f:\ta1 f8 3d 43 00       \tmov    eax,ds:0x433df8\n  412c84:\t50                   \tpush   eax\n  412c85:\t6a 00                \tpush   0x0\n  412c87:\t8b 0d fc 15 43 00    \tmov    ecx,DWORD PTR ds:0x4315fc\n  412c8d:\t51                   \tpush   ecx\n  412c8e:\te8 2e e6 ff ff       \tcall   0x4112c1\n  412c93:\t83 c4 20             \tadd    esp,0x20\n  412c96:\te8 f2 e7 ff ff       \tcall   0x41148d\n  412c9b:\te8 b5 e3 ff ff       \tcall   0x411055\n  412ca0:\te8 ab fa ff ff       \tcall   0x412750\n  412ca5:\t5f                   \tpop    edi\n  412ca6:\t5e                   \tpop    esi\n  412ca7:\t5b                   \tpop    ebx\n  412ca8:\t81 c4 c0 00 00 00    \tadd    esp,0xc0\n  412cae:\t3b ec                \tcmp    ebp,esp"
+    },
+    {
+      "file": "airstrike-pre6a.exe",
+      "start": "0x41137f",
+      "stopExclusive": "0x411384",
+      "text": "  41137f:\te9 56 7f 01 00       \tjmp    0x4292da"
+    }
+  ],
+  "sourceExcerpts": [
+    {
+      "name": "accepted lib/renderer-input.js",
+      "lineStart": 814,
+      "lineEnd": 827,
+      "text": "  P.peekAsyncKeyState = function(vKey) {\n    const key = vKey & 0xFF;\n    const active = this._activeInputEvent;\n    const buttons = active && active.type === 'mouse' && active.mouseButtons !== undefined\n      ? active.mouseButtons\n      : (this._mouseButtonsMask || 0);\n    if (key === 0x01) return (buttons & 0x0001) ? 0x8000 : 0;\n    if (key === 0x02) return (buttons & 0x0002) ? 0x8000 : 0;\n    if (key === 0x04) return (buttons & 0x0010) ? 0x8000 : 0;\n    if (key === 0x05) return (buttons & 0x0020) ? 0x8000 : 0;\n    if (key === 0x06) return (buttons & 0x0040) ? 0x8000 : 0;\n    if (!this._asyncKeys) return 0;\n    return this._asyncKeys[key] ? 0x8000 : 0;\n  };"
+    },
+    {
+      "name": "accepted test/run.js",
+      "lineStart": 3381,
+      "lineEnd": 3398,
+      "text": "    if (TRACE_INPUT_DISPATCH && (t === 'DispatchMessageA' || t === 'DispatchMessageW')) {\n      try {\n        const e = instance.exports;\n        const esp = e.get_esp();\n        const imageBase = e.get_image_base();\n        const dv = new DataView(memory.buffer);\n        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);\n        const msgPtr = dv.getUint32(g2w(esp + 4), true);\n        const msgHwnd = dv.getUint32(g2w(msgPtr), true);\n        const msgMsg = dv.getUint32(g2w(msgPtr + 4), true);\n        const msgWP = dv.getUint32(g2w(msgPtr + 8), true);\n        const msgLP = dv.getUint32(g2w(msgPtr + 12), true);\n        if ((msgMsg >= 0x0100 && msgMsg <= 0x0108) ||\n            (msgMsg >= 0x0200 && msgMsg <= 0x020D) ||\n            (msgMsg >= 0x00A0 && msgMsg <= 0x00AD)) {\n          inputConsumptionTrace.dispatch(t, msgHwnd, msgMsg, msgWP, msgLP);\n        }\n      } catch (_) {}"
+    },
+    {
+      "name": "accepted test/run.js",
+      "lineStart": 4613,
+      "lineEnd": 4617,
+      "text": "    (renderer && renderer.getMouseButtons ? renderer.getMouseButtons() : 0);\n  // GetAsyncKeyState backing \u2014 delegate to renderer's stateful key map\n  h.get_async_key_state = (vKey) => (renderer ? renderer.getAsyncKeyState(vKey) : 0);\n  h.get_key_down_state = (vKey) =>\n    (renderer && renderer.peekAsyncKeyState ? renderer.peekAsyncKeyState(vKey) : 0);"
+    },
+    {
+      "name": "compiledrev DirectX",
+      "lineStart": 10720,
+      "lineEnd": 10730,
+      "text": "              (i32.eq (local.get $dik) (i32.const 0xB8))))) ;; RMENU -> VK_MENU\n\n  ;; Live host state for one scan code, as 0 or 1.\n  (func $di_kbd_live (param $dik i32) (result i32)\n    (local $vk i32)\n    (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))\n    (if (i32.eqz (local.get $vk)) (then (return (i32.const 0))))\n    (i32.ne\n      (i32.and (call $host_get_key_down_state (local.get $vk)) (i32.const 0x8000))\n      (i32.const 0)))\n"
+    },
+    {
+      "name": "compiledrev DirectX",
+      "lineStart": 10773,
+      "lineEnd": 10814,
+      "text": "  (func $di_kbd_collect (param $entry i32) (param $rgdod i32) (param $cb i32) (param $max i32)\n                        (param $commit i32) (result i32)\n    (local $dik i32) (local $count i32) (local $live i32) (local $rec i32) (local $ofs i32)\n    (local.set $dik (i32.const 0))\n    (local.set $count (i32.const 0))\n    ;; A DX5 DIDEVICEOBJECTDATA is 16 bytes. A caller that understates the\n    ;; stride would otherwise stack every record on the first one.\n    (if (i32.lt_u (local.get $cb) (i32.const 16))\n      (then (local.set $cb (i32.const 16))))\n    (block $done (loop $scan\n      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))\n      (br_if $done (i32.ge_u (local.get $count) (local.get $max)))\n      (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))\n      (if (i32.and\n            (i32.and (i32.eqz (call $di_kbd_scan_skip (local.get $dik)))\n                     (i32.ge_s (local.get $ofs) (i32.const 0)))\n            (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0)))\n        (then\n          (local.set $live (call $di_kbd_live (local.get $dik)))\n          (if (i32.ne (local.get $live) (call $di_kbd_prev_bit (local.get $dik)))\n            (then\n              (if (local.get $rgdod)\n                (then\n                  ;; DIDEVICEOBJECTDATA: dwOfs, dwData, dwTimeStamp, dwSequence.\n                  (local.set $rec (i32.add (local.get $rgdod)\n                    (i32.mul (local.get $count) (local.get $cb))))\n                  (call $gs32 (local.get $rec) (local.get $ofs))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 4))\n                    (select (i32.const 0x80) (i32.const 0) (local.get $live)))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 8)) (call $host_get_ticks))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 12))\n                    (global.get $di_kbd_data_sequence))))\n              (if (local.get $commit)\n                (then\n                  (call $di_kbd_prev_set (local.get $dik) (local.get $live))\n                  (global.set $di_kbd_data_sequence\n                    (i32.add (global.get $di_kbd_data_sequence) (i32.const 1)))))\n              (local.set $count (i32.add (local.get $count) (i32.const 1)))))))\n      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))\n      (br $scan)))\n    (local.get $count))\n"
+    },
+    {
+      "name": "compiledrev DirectX",
+      "lineStart": 11026,
+      "lineEnd": 11093,
+      "text": "  ;; GetDeviceData(this, cbObjectData, rgdod, pdwInOut, dwFlags)\n  ;; Buffered mouse and keyboard. MCM peeks with rgdod=NULL/DIGDD_PEEK, then\n  ;; reads one DIDEVICEOBJECTDATA record. Physical motion and button edges\n  ;; share one FIFO, preserving the position-before-click ordering. The dx/dy\n  ;; accumulators above independently serve GetDeviceState callers.\n  (func $handle_IDirectInputDevice_GetDeviceData (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n    (local $entry i32) (local $dev_type i32)\n    (local $buttons i32) (local $diff i32) (local $ofs i32)\n    (local $data i32) (local $requested i32) (local $available i32) (local $capacity i32)\n    (local $delivered i32) (local $commit i32)\n    (local $queued i32) (local $button_index i32) (local $event i32) (local $event_type i32)\n    (local $abs i32) (local $ax i32) (local $ay i32)\n    (local.set $entry (call $dx_from_this (local.get $arg0)))\n    (if (i32.eqz (call $di_device_is_acquired (local.get $entry)))\n      (then\n        (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000C)) ;; DIERR_NOTACQUIRED\n        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))\n        (return)))\n    ;; An absolute-axis mouse reports each X/Y event as the position after it;\n    ;; a peek (DIGDD_PEEK) leaves the accumulated position untouched.\n    (local.set $abs (i32.ne (i32.and (load.field DxObject flags (local.get $entry))\n                                     (global.get $DIDEV_AXIS_ABSOLUTE)) (i32.const 0)))\n    (local.set $ax (global.get $di_mouse_abs_x))\n    (local.set $ay (global.get $di_mouse_abs_y))\n    (if (i32.or\n          (i32.eqz (local.get $arg3))\n          (i32.lt_u (local.get $arg1) (i32.const 16)))\n      (then\n        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM\n        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))\n        (return)))\n    (local.set $dev_type (load.field DxObject misc0 (local.get $entry)))\n    (local.set $capacity (i32.load offset=12 (local.get $entry)))\n    (if (i32.eq (local.get $dev_type) (i32.const 1))\n      (then\n        ;; Keyboard. Allegro-based games read keys only through this buffer,\n        ;; never through GetDeviceState, so an empty buffer freezes them.\n        (local.set $requested\n          (if (result i32) (local.get $arg3)\n            (then (call $gl32 (local.get $arg3)))\n            (else (i32.const 0))))\n        (if (i32.and (i32.ne (local.get $capacity) (i32.const 0))\n                     (i32.gt_u (local.get $requested) (local.get $capacity)))\n          (then (local.set $requested (local.get $capacity))))\n        (if (i32.eqz (local.get $arg2))\n          (then\n            ;; rgdod == NULL asks only how many records are pending. A count\n            ;; query must not consume them, whatever DIGDD_PEEK says.\n            (if (local.get $arg3)\n              (then (call $gs32 (local.get $arg3)\n                (call $di_kbd_collect (local.get $entry) (i32.const 0) (local.get $arg1)\n                  (local.get $requested) (i32.const 0)))))\n            (i32.store offset=0 (global.get $reg_base) (i32.const 0))\n            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))\n            (return)))\n        (local.set $data (call $di_kbd_collect (local.get $entry) (local.get $arg2)\n          (local.get $arg1) (local.get $requested)\n          (i32.eqz (i32.and (local.get $arg4) (i32.const 1)))))\n        (if (local.get $arg3) (then (call $gs32 (local.get $arg3) (local.get $data))))\n        (i32.store offset=0 (global.get $reg_base) (i32.const 0))\n        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))\n        (return)))\n    (if (i32.eq (local.get $dev_type) (i32.const 2))\n      (then\n        (local.set $buttons (call $host_get_mouse_buttons_live))\n        (if (i32.eqz (global.get $di_mouse_data_initialized))\n          (then\n            (global.set $di_mouse_data_initialized (i32.const 1))"
+    },
+    {
+      "name": "release src/airstrike.c",
+      "lineStart": 203,
+      "lineEnd": 227,
+      "text": "static int wait_for_key(void)\n{\n  SDL_Event event;\n  while (1)\n    {\n      while ( SDL_PollEvent(&event) >= 1 ) \n\t{\n\t  switch (event.type) \n\t    {\n\t    case SDL_QUIT: \n\t      exit(EXIT_SUCCESS);\n\t      break;\n\t    case SDL_KEYDOWN:\n\t      return event.key.keysym.sym;\n\t      break;\n\t    default:\n\t      break;\n\t    }\n\t}\n      SDL_Delay(sprite_global.display_dt);\n    }\n}\n\nvoid draw_ui(void)\n{"
+    },
+    {
+      "name": "release src/airstrike.c",
+      "lineStart": 416,
+      "lineEnd": 431,
+      "text": "void message_mode(char *message)\n{\n  sprite_start_frame();     \n  sprite_group_draw(mech_group);\n  sprite_group_draw(bullet_group);\n  sprite_group_draw(effects_group);\n  sprite_group_draw(foreground_group);\n  sprite_group_draw(ui_group);\n  text_render(sprite_global.display, 0, big_font,\n\t      sprite_global.display->w/2, sprite_global.display->h/2,\n\t      ALIGN_CENTER, ALIGN_CENTER, message);  \n  sprite_end_frame();\n  sprite_dirty_all();\n  wait_for_key();\n}\n"
+    },
+    {
+      "name": "release src/airstrike.c",
+      "lineStart": 651,
+      "lineEnd": 676,
+      "text": "int main(int argc, char *argv[])\n{\n  int res;\n  if (argc > 1)\n    {\n      printf(\"All options are currently given in the config files, located at $HOME/.airstrikerc and $PWD/airstrikerc. Quitting.\\n\");\n      exit(EXIT_SUCCESS);\n    }\n  res = general_setup() == 0;\n  assert(res);\n  engine_setup(); \n  message_mode(\"      Airstrike 1.0 pre 6\\n\\nIn the game press ESC for a menu\\n  Winner is first to 5 points\\n     Press any key to start\");\n  objects_setup();\n  players_setup();  \n  fprintf(stderr,\"Entering main loop.\\n\");\n  while(process_events()) \n    {\n      if (!paused)\n\t{\n\t  game_frame();\n\t}\n      else\n\t{\n\t  console_mode();\n\t  paused = 0;\n\t}"
+    }
+  ],
+  "qualifications": [
+    "full linear EXE disassembly desynchronizes at embedded data before wait loop; targeted objdump wait-aligned.stdout recovers instructions at known branch boundary",
+    "no runtime or tests executed; static checks are not behavioral acceptance",
+    "registered SDL WndProc and backend inferred statically; retained trace does not capture actual window-table procedure pointer/callback entry or return",
+    "live-key-state collapse is conditional until actual GetDeviceData samples/results and SDL queue observations exist"
+  ]
+}
