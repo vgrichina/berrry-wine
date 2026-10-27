@@ -1,0 +1,17 @@
+{
+  "at": 1793087516.6008935,
+  "tests": [
+    "test_stream_open_failures_preserve_every_writable_channel",
+    "test_spawn_failures_have_diagnostics_without_invented_pid",
+    "test_initial_pipe_setup_failure_has_owned_streams_and_receipt",
+    "test_preexec_setup_failure_retains_child_cause_without_pid",
+    "test_combined_stream_budget_exact_boundary_and_failure_paths",
+    "test_final_cleanup_writes_are_charged_before_guest"
+  ],
+  "run": 6,
+  "failures": 0,
+  "errors": 0,
+  "sourceSHA256": "9ec154496d10053252701d786f26e821fc226db3bdcb0e948f45e68ab0045cb0",
+  "testSHA256": "783ff14a5ed1c6fa31ba7074dd1ae795c660df19dc377c58a72bfeb230bafdce",
+  "reason": "Stream creation and failed-setup diagnostics changed; check opens, pipe/preexec/exec, combined diagnostic boundary and final cleanup accounting. Unchanged identity/resource/transport acceptance reused; no whole-suite rerun."
+}

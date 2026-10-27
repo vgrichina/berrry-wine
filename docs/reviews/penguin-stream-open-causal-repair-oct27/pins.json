@@ -1,0 +1,40 @@
+{
+  "candidate": "78d07ec6bf356764001fbfdcf89b27fab5c45934",
+  "tree": "8af1b2c54caff6c02fceb36c9f59416faf6d8244",
+  "pins": {
+    "tools/penguin_capture_contract.py": "93e192ef2512a62ca00102d6a90d9d9999dec4e2989a53e89c8458dca29711eb",
+    "test/test_penguin_capture_contract.py": "82adfd104c8bd3fdfa42c7239cf253ef4f8fe1778619c74d0f918c66444fd735"
+  },
+  "origin": "git@github.com:vgrichina/wine-assembly.git",
+  "objectClosureCount": 83317,
+  "executable": "/usr/bin/python3.12",
+  "limits": {
+    "AS": [
+      -1,
+      -1
+    ],
+    "DATA": [
+      -1,
+      -1
+    ],
+    "CPU": [
+      90,
+      90
+    ],
+    "FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RSS": [
+      -1,
+      -1
+    ]
+  },
+  "environmentIdentity": {
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "GIT_NO_LAZY_FETCH": "1",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "mount": "N/A: no mount or runtime",
+  "at": 1793087424.2456186
+}

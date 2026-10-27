@@ -1,0 +1,1 @@
+Original unchanged fault_cli.py/main/runpy failure reproduced: no stderr, empty streams, zero child/PID

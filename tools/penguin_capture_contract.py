@@ -175,12 +175,23 @@ def supervise(profile_path, expected_sha, output_dir):
             proc = None
             read_fd = write_fd = None
             peak, applied, reason = 0, None, 'setup'
+            opened, stream_errors = set(), {}
             phase_start = time.monotonic()
             try:
                 with contextlib.ExitStack() as files:
-                    # Both files exist before any pipe/pre-exec/spawn attempt.
-                    stdout = files.enter_context(paths['stdout'].open('wb'))
-                    stderr = files.enter_context(paths['stderr'].open('wb'))
+                    # Attempt each channel independently before rejecting setup.
+                    # In particular stdout failure must not hide writable stderr.
+                    handles, failures = {}, []
+                    for name, path in paths.items():
+                        try:
+                            handles[name] = files.enter_context(path.open('wb'))
+                            opened.add(name)
+                        except Exception as exc:
+                            stream_errors[name] = type(exc).__name__ + ': ' + str(exc)
+                            failures.append(exc)
+                    if failures:
+                        raise failures[0]
+                    stdout, stderr = handles['stdout'], handles['stderr']
                     read_fd, write_fd = os.pipe()
 
                     def child_limits():
@@ -228,13 +239,22 @@ def supervise(profile_path, expected_sha, output_dir):
                         time.sleep(.01)
             except Exception as exc:
                 phase.update(status='failed', error=str(exc))
-                if proc is None and paths['stderr'].exists():
-                    # Popen failures have no returned PID. Keep their causal
-                    # diagnostic within the same combined text budget.
-                    used = text_used + sum(x.stat().st_size for x in paths.values() if x.exists())
+                if proc is None:
+                    # Prefer stderr, but retain stdout if it is the only usable
+                    # channel. No diagnostic write may duplicate the budget.
+                    used = text_used + sum(paths[n].stat().st_size for n in opened)
                     diagnostic = (type(exc).__name__ + ': ' + str(exc) + '\n').encode()
-                    with paths['stderr'].open('ab') as stderr:
-                        stderr.write(diagnostic[:min(8192, max(0, p['resources']['text'] - used))])
+                    for name in ('stderr', 'stdout'):
+                        if name not in opened:
+                            continue
+                        try:
+                            with paths[name].open('ab') as stream:
+                                stream.write(diagnostic[:min(8192, max(0, p['resources']['text'] - used))])
+                            phase['diagnostic_stream'] = name
+                            break
+                        except Exception as diagnostic_error:
+                            phase.setdefault('diagnostic_errors', {})[name] = (
+                                type(diagnostic_error).__name__ + ': ' + str(diagnostic_error))
                 raise
             finally:
                 for fd in (read_fd, write_fd):
@@ -244,9 +264,12 @@ def supervise(profile_path, expected_sha, output_dir):
                     cleaned = reap_group(proc)
                     phase.update(returncode=proc.returncode, peak_rss=peak,
                                  actual_limits=applied, owned_group_absent=cleaned)
-                phase['streams'] = {name: dict(path=str(path), bytes=path.stat().st_size,
-                                               sha256=sha(path.read_bytes()))
-                                    for name, path in paths.items() if path.exists()}
+                phase['streams'] = {
+                    name: (dict(path=str(path), bytes=path.stat().st_size,
+                                sha256=sha(path.read_bytes())) if name in opened else
+                           dict(path=str(path), bytes=0, sha256=None, status='unavailable',
+                                error=stream_errors[name]))
+                    for name, path in paths.items()}
                 text_used += sum(x['bytes'] for x in phase['streams'].values())
                 phase['reason'] = reason
                 # Include final descendant writes and failed-spawn diagnostics,

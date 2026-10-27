@@ -1,0 +1,11 @@
+test_stream_open_failures_preserve_every_writable_channel (affected.LaunchTests.test_stream_open_failures_preserve_every_writable_channel) ... ok
+test_spawn_failures_have_diagnostics_without_invented_pid (affected.LaunchTests.test_spawn_failures_have_diagnostics_without_invented_pid) ... ok
+test_initial_pipe_setup_failure_has_owned_streams_and_receipt (affected.LaunchTests.test_initial_pipe_setup_failure_has_owned_streams_and_receipt) ... ok
+test_preexec_setup_failure_retains_child_cause_without_pid (affected.LaunchTests.test_preexec_setup_failure_retains_child_cause_without_pid) ... ok
+test_combined_stream_budget_exact_boundary_and_failure_paths (affected.LaunchTests.test_combined_stream_budget_exact_boundary_and_failure_paths) ... ok
+test_final_cleanup_writes_are_charged_before_guest (affected.LaunchTests.test_final_cleanup_writes_are_charged_before_guest) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 1.334s
+
+OK

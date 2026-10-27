@@ -1,0 +1,57 @@
+{
+  "at": 1793087611.5045352,
+  "status": "TESTED_REPAIR_PENDING_TASK_PUBLICATION",
+  "candidate": "78d07ec6bf356764001fbfdcf89b27fab5c45934",
+  "candidateTree": "8af1b2c54caff6c02fceb36c9f59416faf6d8244",
+  "sourceSHA256": "9ec154496d10053252701d786f26e821fc226db3bdcb0e948f45e68ab0045cb0",
+  "sourceBytes": 30166,
+  "testSHA256": "ae9827feb0a5da2a8657b14fa0d2b1c9300aebf6340f504f5c9e23b692b032f5",
+  "testBytes": 39013,
+  "changedFunctions": [
+    "supervise"
+  ],
+  "unchangedFunctions": [
+    "ContractError",
+    "require",
+    "wire",
+    "sha",
+    "limits_now",
+    "exact_keys",
+    "validate_profile",
+    "check_files",
+    "group_rss",
+    "kill_group",
+    "reap_group",
+    "response",
+    "plan_images",
+    "restore_images",
+    "restore_records",
+    "strict_json",
+    "provider_stdout",
+    "plan_provider_images",
+    "ProviderCapture",
+    "restore_provider_transcript",
+    "main"
+  ],
+  "groups": [
+    "unchanged independent production CLI original rejection reproduced first",
+    "same fault replay after repair PASS with source path/hash rebound only",
+    "6 affected methods PASS including 13 stream fault subcases",
+    "1 additional combined diagnostic boundary method/3 subcases PASS"
+  ],
+  "reused": [
+    "independent original4 CLI and7 binary boundary cases",
+    "5 receipt rejecting controls and pipefault",
+    "prior10 LaunchTests and2 omission controls except specifically affected methods rerun",
+    "transport31 challenges4 multichunk5 decoder2 guard controls and10prior: unchanged AST"
+  ],
+  "remaining": [
+    "independent late-descendant/resource acceptance remains INCOMPLETE",
+    "coordinator independent acceptance decision",
+    "both largePNGs unsupported at provider1MiB",
+    "mount/runtime/projectile/gameplay OPEN"
+  ],
+  "preservedLocalUncommitted": "Entire independent repo135 staged docs and ops158 payloads remain read-only and UNCOMMITTED; compact backup is not backup of entire collection",
+  "mount": "N/A no mount/runtime/Boat",
+  "publication": "task branch only; no main integration"
+}

@@ -1,0 +1,195 @@
+{
+  "status": "REPAIR_PUSHED_STOP",
+  "at": 1793086123.5599859,
+  "session": "01a17c3b-23cd-7b10-a425-369b3feb34d0",
+  "base": "8b3990f6272972ab301ab990fbc76a75bdf5ea2e",
+  "publication": {
+    "at": 1793086043.7416573,
+    "commit": "78d07ec6bf356764001fbfdcf89b27fab5c45934",
+    "tree": "8af1b2c54caff6c02fceb36c9f59416faf6d8244",
+    "branch": "task/penguin-streams-retained-recovery-oct27",
+    "remote": "78d07ec6bf356764001fbfdcf89b27fab5c45934\trefs/heads/task/penguin-streams-retained-recovery-oct27",
+    "clean": true,
+    "mainPublication": false
+  },
+  "sourcePins": {
+    "tools/penguin_capture_contract.py": {
+      "bytes": 28974,
+      "sha256": "93e192ef2512a62ca00102d6a90d9d9999dec4e2989a53e89c8458dca29711eb"
+    },
+    "test/test_penguin_capture_contract.py": {
+      "bytes": 33637,
+      "sha256": "82adfd104c8bd3fdfa42c7239cf253ef4f8fe1778619c74d0f918c66444fd735"
+    }
+  },
+  "originalFailure": "First behavior: exact base production supervise CLI merged stdout/stderr in phase.log; spawn/CWD failures had no phase record or retained diagnostic. Four original cases in before/; unchanged marker programs used after repair.",
+  "before": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/before-probe.json",
+    "bytes": 5300,
+    "sha256": "95566fa415b39c0a39ee1ca7904b6e18e1d4298efa527663a41109cec7646fde"
+  },
+  "after": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/after-probe.json",
+    "bytes": 8896,
+    "sha256": "b80bd64f1af3e5d8833ad8fab05a816977b41da628c8bc77ac2800f27baaa0ae"
+  },
+  "tests": {
+    "tests": 10,
+    "errors": 0,
+    "failures": 0,
+    "sourceSHA256": "93e192ef2512a62ca00102d6a90d9d9999dec4e2989a53e89c8458dca29711eb",
+    "testSHA256": "82adfd104c8bd3fdfa42c7239cf253ef4f8fe1778619c74d0f918c66444fd735"
+  },
+  "controls": {
+    "unchangedFunctions": [
+      "ContractError",
+      "require",
+      "wire",
+      "sha",
+      "limits_now",
+      "exact_keys",
+      "validate_profile",
+      "check_files",
+      "group_rss",
+      "kill_group",
+      "reap_group",
+      "response",
+      "plan_images",
+      "restore_images",
+      "restore_records",
+      "strict_json",
+      "provider_stdout",
+      "plan_provider_images",
+      "ProviderCapture",
+      "restore_provider_transcript",
+      "main"
+    ],
+    "controls": [
+      {
+        "name": "merged_stderr",
+        "sourceSHA256": "54147be35065fc860cf72cbf354bd242e5ee082388c8e36be3106bc8bd4fc136",
+        "test": "test_distinct_streams_from_production_cli_and_startup_failure",
+        "failures": 2,
+        "errors": 0,
+        "status": "REJECTED_OMISSION"
+      },
+      {
+        "name": "omitted_stderr_budget",
+        "sourceSHA256": "622ddbedee1df8759b290e8166fbca9297521a41b387c5b8a0d795085d601c85",
+        "test": "test_combined_stream_budget_exact_boundary_and_failure_paths",
+        "failures": 5,
+        "errors": 0,
+        "status": "REJECTED_OMISSION"
+      }
+    ]
+  },
+  "manifest": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/evidence-manifest.json",
+    "bytes": 43012,
+    "sha256": "c1e03e0ff0a89e159e8643a80504235661e4e62b42d751e2b5211ae3b425d51e",
+    "payloads": 214,
+    "mismatches": 0
+  },
+  "resource": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/accounting-final.json",
+    "bytes": 1479,
+    "sha256": "d7360a55b26f5456f42fb136be9f8ce555df8d08dab66a7bc37d46791975813b",
+    "projection": {
+      "at": 1793086123.5501084,
+      "sourceGit": 2891776,
+      "evidenceOps": 839680,
+      "eventsSessionsWal": 4296704,
+      "positiveWalGrowth": 3289088,
+      "used": 8028160,
+      "taskAllocation": 23068672,
+      "reserve": 8388608,
+      "peerWorkers": 0,
+      "peerFuture": 0,
+      "coordinatorReserve": 8388608,
+      "future": 23429120,
+      "free": 3024654336,
+      "projectedFree": 3001225216,
+      "floor": 2982150144,
+      "memAvailable": 3802124288,
+      "memoryRequired": 1275068416,
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "mount": "N/A offline integration: no filename-bearing runtime argv",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "clientAncestors": [
+        {
+          "pid": 3884688,
+          "comm": "python3",
+          "rss": 19398656
+        },
+        {
+          "pid": 3884687,
+          "comm": "python3",
+          "rss": 19398656
+        },
+        {
+          "pid": 3884686,
+          "comm": "python3",
+          "rss": 13762560
+        },
+        {
+          "pid": 3875250,
+          "comm": "codex",
+          "rss": 167051264
+        },
+        {
+          "pid": 3875247,
+          "comm": "python3",
+          "rss": 13631488
+        },
+        {
+          "pid": 752162,
+          "comm": "codex",
+          "rss": 467550208
+        },
+        {
+          "pid": 265398,
+          "comm": "tmux: server",
+          "rss": 1040830464
+        }
+      ],
+      "clientRSS": 167051264,
+      "standingCoordinatorRSS": 467550208,
+      "pass": true
+    }
+  },
+  "cleanup": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/owned-cleanup.json",
+    "bytes": 2876,
+    "sha256": "4090b2cdbcac2941328d630ee0dae0053d492ec3310d2ccfa894d14eafdcb94f"
+  },
+  "rootRefs": {
+    "path": "/tmp/penguin-streams-retained-recovery-oct27/ops/root-ref-comparison.json",
+    "bytes": 498,
+    "sha256": "0d4c96a91a7e5064a60534c1004d121013c2fd47be1611f8049e51fa5399101a"
+  },
+  "incidents": [
+    "Historical disk admission rejection preserved at /tmp/penguin-distinct-launch-streams-repair-oct27/ops/result.json; no execution there.",
+    "Initial combined policy read exceeded requested operation output; no manifests or credentials dumped. Initial source diff display truncated; full bounded supervisor log retained. Wrapper later capped displayed data6000B and compact metadata.",
+    "Initial origin setup typo corrected from read-only donor before network operations; supplied trusted SSH preserved.",
+    "Initial git add exited1 for sparse paths; Python did not forward captured diagnostic (unavailable). Corrected owned wrapper to git add --sparse and retained initial traceback. No resource/access denial occurred; commit/push then succeeded.",
+    "After adding two extra meaningful launch fault tests, final10-test LaunchTests group reran the earlier8 tests; no unrelated transport/capture groups executed."
+  ],
+  "preserved": "Exact validation/env allowlist/executable-artifact-profile hashes/resource ceilings/cleanup and provider transport functions+CLI unchanged outside supervise. Reuse base31challenges/4multichunk/5decoder/2missingguard controls and10 prior exact-source tests.",
+  "remaining": [
+    "Coordinator independent acceptance and any separately authorized integration",
+    "Both retained large PNGs unsupported at provider1MiB; provider-aware sizing OPEN",
+    "Actual startup/mount/runtime/visible-projectile/gameplay qualification OPEN"
+  ],
+  "scope": "Only task-owned repo/ops and append-only root messageboard; root tracked/index/refs and donors read-only. No workers/Node/build/browser/game/guest/Boat/runtime/public deploy/main integration.",
+  "allocation": {
+    "total": 23068672,
+    "sourceGit": 4194304,
+    "launcherEventsSession": 6291456,
+    "opsTestsPublication": 4194304,
+    "reserve": 8388608,
+    "coordinatorSeparate": 8388608
+  },
+  "limits": "Python pool1/128MiB physical/CPU90/wall120/file24MiB; Git pool2/flock/256MiB physical/DATA512MiB on Git subprocess only. Task client320MiB + light128MiB +805306368B host headroom. No runtime mounts N/A. Trusted SSH exact config retained in resource receipt.",
+  "finalizer": "Current supervise receipt written after this result is outside stable manifest; check its cleanupComplete too.",
+  "boxes": "None assigned/created/resumed/stopped; coordinator lifecycle unchanged"
+}

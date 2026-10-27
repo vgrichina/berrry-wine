@@ -1,0 +1,8 @@
+{
+  "at": 1793087549.3412633,
+  "tests": 1,
+  "subcases": 3,
+  "result": "PASS",
+  "testSHA256": "ae9827feb0a5da2a8657b14fa0d2b1c9300aebf6340f504f5c9e23b692b032f5",
+  "reason": "Only new cumulative diagnostic boundary method; prior affected group reused"
+}

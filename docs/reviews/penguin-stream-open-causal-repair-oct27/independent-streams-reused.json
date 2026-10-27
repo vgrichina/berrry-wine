@@ -1,0 +1,54 @@
+{
+  "cases": [
+    {
+      "case": "binary-four",
+      "exit": 0,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/binary-four/out/receipt.json",
+      "profileSHA256": "81f817f5ad8e44ff0056c0b9c5c0b661c7f59e4e2e1bea30ececd7935b52698b"
+    },
+    {
+      "case": "all-exact",
+      "exit": 0,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/all-exact/out/receipt.json",
+      "profileSHA256": "9733947dd61d77ce889bbc8f8e05686cdf870b4382eab3f71876b078680d88f3"
+    },
+    {
+      "case": "all-over",
+      "exit": 2,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/all-over/out/receipt.json",
+      "profileSHA256": "3215a874e965e2160156969a6ea3eb13b4b45ddc4c2b5fa648175d578c367d82"
+    },
+    {
+      "case": "startup-exact-then-guest-over",
+      "exit": 2,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/startup-exact-then-guest-over/out/receipt.json",
+      "profileSHA256": "0cecc3c999860c694b91be00c94768e623f3c149b8f1384aa28c9cd343174f6f"
+    },
+    {
+      "case": "startup-over",
+      "exit": 2,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/startup-over/out/receipt.json",
+      "profileSHA256": "76e45d6ea6770809a3793a0674caa49e52cc3372d23d319d391352c23b46e638"
+    },
+    {
+      "case": "nonzero-exact",
+      "exit": 2,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/nonzero-exact/out/receipt.json",
+      "profileSHA256": "d129359731f5fb2426e5fc24bfcb33d48e39b1f0f7045057a7b3eceaecf83fa3"
+    },
+    {
+      "case": "nonzero-over",
+      "exit": 2,
+      "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/nonzero-over/out/receipt.json",
+      "profileSHA256": "b0d48f0b2e826577be35c2317012ad761a9fa7d6f00049e8f3c89f640df61c2a"
+    }
+  ],
+  "controls": [
+    "reject forged path",
+    "reject forged bytes",
+    "reject forged sha256",
+    "reject double/omitted cumulative text 52",
+    "reject double/omitted cumulative text 21"
+  ],
+  "total": 26
+}

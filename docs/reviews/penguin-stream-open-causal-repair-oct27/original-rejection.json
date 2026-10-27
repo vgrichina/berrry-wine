@@ -1,0 +1,38 @@
+{
+  "at": 1793086494.4337716,
+  "status": "REJECT_CANDIDATE",
+  "candidate": "78d07ec6bf356764001fbfdcf89b27fab5c45934",
+  "sourceSHA256": "93e192ef2512a62ca00102d6a90d9d9999dec4e2989a53e89c8458dca29711eb",
+  "fixtureSHA256": "c11789f67ba6918ea3ea7617c85c077dcced4fa3de8fa51cb7355ba6fe4081e0",
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/penguin-streams-independent-accept-oct27/ops/fault_cli.py",
+    "open",
+    "supervise",
+    "/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/profile.json",
+    "--sha256",
+    "0837d6f1f7abb3ca1423d20fd3a967577d7da110671c20aa7d9352a7b94348db",
+    "--output",
+    "/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/out"
+  ],
+  "expected": "When opening stdout fails before spawn, persist the causal error to the distinct writable startup.stderr and record that stream in receipt; no invented PID or child start.",
+  "actual": {
+    "stdoutExists": false,
+    "stderrExists": false,
+    "phaseStreams": {},
+    "textBytes": 0
+  },
+  "error": "[Errno 13] INDEPENDENT_STDOUT_OPEN_EACCES: '/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/out/startup.stdout'",
+  "receipt": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/out/receipt.json",
+  "stdout": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/cli.stdout",
+  "stderr": "/tmp/penguin-streams-independent-accept-oct27/ops/independent/fault-open/cli.stderr",
+  "guestStarts": 0,
+  "publication": "STOPPED: no acceptance publication or main integration",
+  "remainingUntested": [
+    "exec/open stderr fault variants",
+    "late descendant output",
+    "independent resource guards"
+  ],
+  "reused": "Unchanged prior launch10/omission2 and provider transport receipts; no replay"
+}

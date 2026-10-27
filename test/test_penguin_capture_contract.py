@@ -32,6 +32,80 @@ def retain(name, value):
 
 
 class LaunchTests(unittest.TestCase):
+    def test_open_diagnostic_spends_only_remaining_combined_budget(self):
+        from unittest import mock
+        for remaining in (0, 1, 8192):
+            with self.subTest(remaining=remaining), tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+                root=Path(d);path,p=self.stream_fixture(root, (b'abc', b'defg'))
+                p['resources']['text']=7+remaining;path.write_bytes(c.wire(p))
+                error=PermissionError(13,'CAUSAL_GUEST_OPEN',str(root/'out/guest.stdout'))
+                original_open=Path.open
+                def opened(target,*args,**kwargs):
+                    if target.name=='guest.stdout' and args and args[0]=='wb':raise error
+                    return original_open(target,*args,**kwargs)
+                with mock.patch.object(Path,'open',opened):
+                    with self.assertRaises(PermissionError):c.supervise(path,c.sha(path.read_bytes()),root/'out')
+                receipt=json.loads((root/'out/receipt.json').read_bytes())
+                expected=(type(error).__name__+': '+str(error)+'\n').encode()[:min(8192,remaining)]
+                self.assertEqual((root/'out/guest.stderr').read_bytes(),expected)
+                self.assertEqual(receipt['text_bytes'],7+len(expected))
+                self.assertEqual(receipt['guest_starts'],0)
+                self.assertTrue(receipt['phases'][0]['owned_group_absent'])
+                self.assertNotIn('pid',receipt['phases'][1])
+                retain(f'diagnostic-remaining-{remaining}.json',receipt)
+
+    def test_stream_open_failures_preserve_every_writable_channel(self):
+        from unittest import mock
+        cases = [(stage, failed, cap, append_failure)
+                 for stage in ('startup', 'guest')
+                 for failed in (('stdout',), ('stderr',), ('stdout', 'stderr'))
+                 for cap in (1, 4096) for append_failure in (False,)]
+        cases += [('startup', (), 4096, True)]
+        for stage, failed, cap, append_failure in cases:
+            with self.subTest(stage=stage, failed=failed, cap=cap, append=append_failure), tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+                root=Path(d);path,p=self.stream_fixture(root, (b'', b''), (b'', b''))
+                p['resources']['text']=cap;path.write_bytes(c.wire(p))
+                original_open=Path.open
+                def opened(target, *args, **kwargs):
+                    if args and args[0]=='wb' and target.name in [stage+'.'+n for n in failed]:
+                        raise PermissionError(13, 'CAUSAL_OPEN_EACCES', str(target))
+                    if append_failure and target.name==stage+'.stderr' and args and args[0]=='ab':
+                        raise PermissionError('CAUSAL_APPEND_EACCES')
+                    return original_open(target,*args,**kwargs)
+                popen=c.subprocess.Popen
+                with mock.patch.object(Path,'open',opened), mock.patch.object(c.subprocess,'Popen',wraps=popen) as spawn:
+                    if append_failure:
+                        with mock.patch.object(c.os,'pipe',side_effect=OSError('CAUSAL_PIPE_FAILURE')):
+                            with self.assertRaises(OSError):c.supervise(path,c.sha(path.read_bytes()),root/'out')
+                    else:
+                        with self.assertRaises(PermissionError):c.supervise(path,c.sha(path.read_bytes()),root/'out')
+                    self.assertEqual(spawn.call_count, int(stage=='guest'))
+                receipt=json.loads((root/'out/receipt.json').read_bytes());phase=receipt['phases'][-1]
+                self.assertEqual(receipt['guest_starts'],0);self.assertNotIn('pid',phase)
+                self.assertEqual(phase['stage'],stage);self.assertEqual(phase['reason'],'setup')
+                self.assertEqual(phase['status'],'failed');self.assertEqual(receipt['status'],'REJECT')
+                total=0
+                for name,record in phase['streams'].items():
+                    target=root/'out'/f'{stage}.{name}'
+                    self.assertEqual(record['path'],str(target))
+                    if name in failed:
+                        self.assertFalse(target.exists());self.assertEqual(record['status'],'unavailable')
+                        self.assertEqual(record['bytes'],0);self.assertIsNone(record['sha256'])
+                        self.assertIn('CAUSAL_OPEN_EACCES',record['error'])
+                    else:
+                        data=target.read_bytes();total+=len(data)
+                        self.assertEqual(record['bytes'],len(data));self.assertEqual(record['sha256'],c.sha(data))
+                self.assertEqual(receipt['text_bytes'],total);self.assertLessEqual(total,cap)
+                if len(failed)<2:
+                    channel='stdout' if 'stderr' in failed or append_failure else 'stderr'
+                    self.assertEqual(phase['diagnostic_stream'],channel)
+                    data=(root/'out'/f'{stage}.{channel}').read_bytes()
+                    self.assertEqual(len(data),cap if cap==1 else len(data))
+                    self.assertIn(b'P' if cap==1 else b'CAUSAL_',data)
+                if append_failure:self.assertIn('stderr',phase['diagnostic_errors'])
+                self.assertTrue(all(x['owned_group_absent'] for x in receipt['phases'][:-1]))
+                retain(f'open-{stage}-{"-".join(failed)}-{cap}-{append_failure}.json',receipt)
+
     def stream_fixture(self, root, startup=(b'startup-OUT\n', b'startup-ERR\n'),
                        guest=(b'guest-OUT\n', b'guest-ERR\n'), fail=0, remove_cwd=False):
         path, p = self.fixture(root)
