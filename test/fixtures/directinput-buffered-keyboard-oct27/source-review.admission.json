@@ -1,0 +1,66 @@
+{
+  "at": 1793122613.5848017,
+  "ownAllocated": 32296960,
+  "launcherAllocated": 921600,
+  "sessionAndConservativeFullWAL": 31621120,
+  "externalFiles": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T17-16-14-01a17e5c-ce65-7823-8b87-d94a448515a5.jsonl",
+      "logical": 2059663,
+      "allocated": 2060288
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "logical": 12244672,
+      "allocated": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "logical": 4280712,
+      "allocated": 4288512
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "logical": 4606192,
+      "allocated": 4612096
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "logical": 4243632,
+      "allocated": 4251648
+    }
+  ],
+  "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+  "clients": [
+    {
+      "pid": 388335,
+      "rss": 115077120
+    }
+  ],
+  "memAvailable": 3540566016,
+  "remainingClientGrowth": 220467200,
+  "sharedChild": 805306368,
+  "hostHeadroom": 805306368,
+  "requiredRemaining": 1831079936,
+  "allocation": 536870912,
+  "futureBreakdown": {
+    "sourceReportsGitSessionEvents": 100663296,
+    "controls": 25165824,
+    "publication": 16777216,
+    "reserve": 33554432,
+    "margin": 8388608
+  },
+  "projectedTask": 249389056,
+  "freeDisk": 5600514048,
+  "projectedDisk": 4728098816,
+  "diskFloor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountExecution": "no guest/mount invocation authorized",
+  "pass": true
+}

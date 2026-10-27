@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 117055488,
+  "sampledPeakRSS": 117055488,
+  "reapedPeakRSS": 82321408,
+  "cpuSeconds": 0.26613600000000004,
+  "wallSeconds": 0.09562341100536287,
+  "owned": [
+    [
+      407973,
+      "116977644"
+    ],
+    [
+      407974,
+      "116977646"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "tools/check-wat-fragments.js",
+    "src/09a8-handlers-directx.wat"
+  ],
+  "cwd": "/tmp/airstrike-directinput-buffered-key-regression-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/fragment-gate.stdout",
+    "bytes": 71,
+    "sha256": "21557cfa60b03aed0461e2a4d9fc0e36d916514f7b2c1307b686d44f75c1c529"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/fragment-gate.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

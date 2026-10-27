@@ -1,0 +1,74 @@
+[watx] [WATX] Compiled successfully: 4577 bytes, 5 imports, 58 user funcs
+[watx] [WATX] Function index map: imports[0..4] builtins=0 user[5..62]
+[watx] [WATX] User functions:   [5] $handle_IDirectInputDevice_GetDeviceData
+  [6] $dx_from_this
+  [7] $g2w
+  [8] $di_device_is_acquired
+  [9] $gs32
+  [10] $page_watch_write_one
+  [11] $page_watch_cell
+  [12] $page_watch_write
+  [13] $page_watch_valid
+  [14] $gl32
+  [15] $di_kbd_collect
+  [16] $di_kbd_scan_skip
+  [17] $di_dik_to_vk_strict
+  [18] $di_format_offset
+  [19] $di_format_map
+  [20] $dx_surf_state_ptr
+  [21] $dx_slot_of
+  [22] $di_format_map_get
+  [23] $di_object_offset
+  [24] $handle_IDirectInputDevice_Acquire
+  [25] $handle_IDirectInputDevice_Unacquire
+  [26] $di_kbd_live
+  [27] $di_dik_to_vk
+  [28] $handle_IDirectInputDevice_GetDeviceState
+  [29] $g2w_affine_span
+  [30] $zero_memory
+  [31] $handle_IDirectInputDevice_SetProperty
+  [32] $di_valid_device_dword_property
+  [33] $handle_IDirectInputDevice_GetProperty
+  [34] $g2w_slow
+  [35] $code_write_hit
+  [36] $page_watch_bump
+  [37] $invalidate_code_write
+  [38] $di_mouse_event_count
+  [39] $di_mouse_event_take
+  [40] $di_mouse_event_peek
+  [41] $di_mouse_event_is_button
+  [42] $di_mouse_object_index
+  [43] $di_mouse_data_write
+  [44] $di_mouse_event_stamp
+  [45] $di_mouse_button_commit_state
+  [46] $d3dim_lazy_access
+  [47] $guest_page_affine_span
+  [48] $uwc_bulk_note
+  [49] $di_custom_device_state
+  [50] $di_mouse_delta_take_x
+  [51] $di_mouse_delta_take_y
+  [52] $di_mouse_wheel_take
+  [53] $__anonymous_0
+  [54] $__anonymous_1
+  [55] $__anonymous_2
+  [56] $__anonymous_3
+  [57] $__anonymous_4
+  [58] $__anonymous_5
+  [59] $__anonymous_6
+  [60] $__anonymous_7
+  [61] $__anonymous_8
+  [62] $__anonymous_9
+/tmp/airstrike-directinput-buffered-key-regression-oct27/repo/test/test-directinput-buffered-keyboard.js:103
+for(const imp of WebAssembly.Module.imports(module_))if(!(imp.name in imports.host))throw Error('unbound import '+imp.name);
+                                                                                    ^
+
+Error: unbound import di_keyboard_buffer
+    at Object.<anonymous> (/tmp/airstrike-directinput-buffered-key-regression-oct27/repo/test/test-directinput-buffered-keyboard.js:103:91)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49
+
+Node.js v20.20.2

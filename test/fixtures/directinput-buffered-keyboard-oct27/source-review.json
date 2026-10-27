@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 90787840,
+  "sampledPeakRSS": 90787840,
+  "reapedPeakRSS": 55267328,
+  "cpuSeconds": 0.280404,
+  "wallSeconds": 0.12112104496918619,
+  "owned": [
+    [
+      408373,
+      "116982283"
+    ],
+    [
+      408375,
+      "116982285"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "../ops/source-review.js"
+  ],
+  "cwd": "/tmp/airstrike-directinput-buffered-key-regression-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/source-review.stdout",
+    "bytes": 822,
+    "sha256": "bf3633d6209c33c74f3d43aa11fa898270f36bf2a3b022022fb9bdfddcef12a0"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/source-review.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

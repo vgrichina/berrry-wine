@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 109592576,
+  "sampledPeakRSS": 109592576,
+  "reapedPeakRSS": 74268672,
+  "cpuSeconds": 0.496479,
+  "wallSeconds": 0.15706912009045482,
+  "owned": [
+    [
+      407953,
+      "116977601"
+    ],
+    [
+      407954,
+      "116977603"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-buffered-keyboard.js"
+  ],
+  "cwd": "/tmp/airstrike-directinput-buffered-key-regression-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/accepted-direct.stdout",
+    "bytes": 9712,
+    "sha256": "034c7534a48ff319705677277da2cfe949a1f46ed2cf6a89e8ee4c76f30c4547"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/accepted-direct.stderr",
+    "bytes": 1734,
+    "sha256": "ede8e1d250046fbebed2a2f175044ebba5dfcb0f401d8bdc2cd87194cedc6fb3"
+  }
+}

@@ -7,6 +7,12 @@
   (import "host" "voice_notify_set" (func $host_voice_notify_set
     (param i32 i32 i32 i32) (result i32)))
 
+  ;; Buffered keyboard transitions live at the renderer, before Win32 message
+  ;; dispatch can overwrite the current state. Per-context/device FIFO; explicit
+  ;; lifecycle calls are synchronous through the normal Worker host broker.
+  (import "host" "di_keyboard_buffer" (func $host_di_keyboard_buffer
+    (param i32 i32 i32) (result i32)))
+
   ;; ── DX_OBJECTS table ─────────────────────────────────────────
   ;; 4096 entries × 32 bytes at 0x07F60000 (high memory, safe from guest writes)
   ;; +0  type: 0=free,1=DDraw,2=DDSurface,3=DDPalette,4=DSound,5=DSBuffer,6=DInput,7=DIDev,26=DPlay3,27=DPlayLobby2,28=DAView,29=DAStatics,30=IMalloc,31=DABehavior/node
@@ -576,22 +582,6 @@
   (global $di_mouse_data_last_buttons (mut i32) (i32.const 0))
   (global $di_mouse_data_initialized (mut i32) (i32.const 0))
   (global $di_mouse_data_sequence (mut i32) (i32.const 0))
-  ;; DirectInput buffered keyboard data for GetDeviceData. The last state
-  ;; reported to the guest is a 256-bit map (one bit per DIK scancode) held in
-  ;; eight globals, so buffered keys need no memory region of their own.
-  ;; GetDeviceData diffs the live host key state against this map and reports
-  ;; one DIDEVICEOBJECTDATA record per edge, which is how Allegro-based games
-  ;; (Liquid War) learn about key presses — they never call GetDeviceState.
-  (global $di_kbd_prev0 (mut i32) (i32.const 0))
-  (global $di_kbd_prev1 (mut i32) (i32.const 0))
-  (global $di_kbd_prev2 (mut i32) (i32.const 0))
-  (global $di_kbd_prev3 (mut i32) (i32.const 0))
-  (global $di_kbd_prev4 (mut i32) (i32.const 0))
-  (global $di_kbd_prev5 (mut i32) (i32.const 0))
-  (global $di_kbd_prev6 (mut i32) (i32.const 0))
-  (global $di_kbd_prev7 (mut i32) (i32.const 0))
-  (global $di_kbd_data_sequence (mut i32) (i32.const 0))
-
   ;; WASM address of the palette data for the primary surface (256 RGBQUAD entries)
   ;; Set by IDirectDrawSurface::SetPalette
 
@@ -1459,6 +1449,9 @@
     (if (i32.eq (local.get $type) (i32.const 2))
       (then (call $dx_surf_note_write (local.get $entry_wa))
         (call $dx_surf_pal_detach (local.get $entry_wa))))
+    (if (i32.and (i32.eq (local.get $type) (i32.const 7))
+          (i32.eq (load.field DxObject misc0 (local.get $entry_wa)) (i32.const 1)))
+      (then (drop (call $host_di_keyboard_buffer (local.get $entry_wa) (i32.const 1) (i32.const 0)))))
     ;; A DirectInput device's custom data-format map is a guest-heap block.
     (if (i32.eq (local.get $type) (i32.const 7))
       (then (call $di_format_map_drop (local.get $entry_wa))))
@@ -10343,7 +10336,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_IDirectInputDevice_SetProperty (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32)
+    (local $entry i32) (local $value i32)
     (if (i32.eqz (call $di_valid_device_dword_property (local.get $arg2)))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM
@@ -10357,10 +10350,21 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (if (i32.and (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
+          (i32.ne (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x400)) (i32.const 0)))
+      (then
+        (i32.store (global.get $reg_base) (i32.const 0x800700AA)) ;; DIERR_ACQUIRED
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+        (return)))
     (if (i32.eq (local.get $arg1) (i32.const 1))
       (then
-        (i32.store offset=12 (local.get $entry)
-          (call $gl32 (i32.add (local.get $arg2) (i32.const 16)))))
+        (local.set $value (call $gl32 (i32.add (local.get $arg2) (i32.const 16))))
+        ;; DirectInput sets its largest supported buffer for an oversized
+        ;; request. GetProperty reports the effective size, not the request.
+        (if (i32.and (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
+                     (i32.gt_u (local.get $value) (i32.const 4096)))
+          (then (local.set $value (i32.const 4096))))
+        (i32.store offset=12 (local.get $entry) (local.get $value)))
       (else
         (if (i32.gt_u
               (call $gl32 (i32.add (local.get $arg2) (i32.const 16)))
@@ -10657,6 +10661,14 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
+    (if (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
+      (then
+        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 0)
+              (i32.load offset=12 (local.get $entry)))
+          (then
+            (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (return)))))
     (store.field DxObject flags (local.get $entry)
       (i32.or (local.get $flags) (global.get $DIDEV_ACQUIRED)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
@@ -10672,6 +10684,8 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1)) ;; DI_NOEFFECT / S_FALSE
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
+    (if (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
+      (then (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 1) (i32.const 0)))))
     (store.field DxObject flags (local.get $entry)
       (i32.and (local.get $flags) (i32.const 0xFFFFFBFF)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
@@ -10728,88 +10742,46 @@
       (i32.and (call $host_get_key_down_state (local.get $vk)) (i32.const 0x8000))
       (i32.const 0)))
 
-  ;; Last state reported to the guest, as a 256-bit map across eight globals.
-  (func $di_kbd_prev_word (param $idx i32) (result i32)
-    (if (i32.eq (local.get $idx) (i32.const 0)) (then (return (global.get $di_kbd_prev0))))
-    (if (i32.eq (local.get $idx) (i32.const 1)) (then (return (global.get $di_kbd_prev1))))
-    (if (i32.eq (local.get $idx) (i32.const 2)) (then (return (global.get $di_kbd_prev2))))
-    (if (i32.eq (local.get $idx) (i32.const 3)) (then (return (global.get $di_kbd_prev3))))
-    (if (i32.eq (local.get $idx) (i32.const 4)) (then (return (global.get $di_kbd_prev4))))
-    (if (i32.eq (local.get $idx) (i32.const 5)) (then (return (global.get $di_kbd_prev5))))
-    (if (i32.eq (local.get $idx) (i32.const 6)) (then (return (global.get $di_kbd_prev6))))
-    (global.get $di_kbd_prev7))
-
-  (func $di_kbd_prev_store (param $idx i32) (param $word i32)
-    (if (i32.eq (local.get $idx) (i32.const 0)) (then (global.set $di_kbd_prev0 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 1)) (then (global.set $di_kbd_prev1 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 2)) (then (global.set $di_kbd_prev2 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 3)) (then (global.set $di_kbd_prev3 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 4)) (then (global.set $di_kbd_prev4 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 5)) (then (global.set $di_kbd_prev5 (local.get $word)) (return)))
-    (if (i32.eq (local.get $idx) (i32.const 6)) (then (global.set $di_kbd_prev6 (local.get $word)) (return)))
-    (global.set $di_kbd_prev7 (local.get $word)))
-
-  (func $di_kbd_prev_bit (param $dik i32) (result i32)
-    (i32.and
-      (i32.shr_u (call $di_kbd_prev_word (i32.shr_u (local.get $dik) (i32.const 5)))
-                 (i32.and (local.get $dik) (i32.const 31)))
-      (i32.const 1)))
-
-  (func $di_kbd_prev_set (param $dik i32) (param $down i32)
-    (local $idx i32) (local $mask i32) (local $word i32)
-    (local.set $idx (i32.shr_u (local.get $dik) (i32.const 5)))
-    (local.set $mask (i32.shl (i32.const 1) (i32.and (local.get $dik) (i32.const 31))))
-    (local.set $word (call $di_kbd_prev_word (local.get $idx)))
-    (call $di_kbd_prev_store (local.get $idx)
-      (if (result i32) (local.get $down)
-        (then (i32.or (local.get $word) (local.get $mask)))
-        (else (i32.and (local.get $word) (i32.xor (local.get $mask) (i32.const -1)))))))
-
-  ;; Fill up to $max buffered keyboard records at $rgdod (0 to count only) and
-  ;; return how many edges were reported. When $commit is 0 the caller peeked,
-  ;; so the reported state is left in place for the next read. Each record
-  ;; carries the offset $entry's data format gives the key; a key the format
-  ;; leaves out is not reported.
-  (func $di_kbd_collect (param $entry i32) (param $rgdod i32) (param $cb i32) (param $max i32)
-                        (param $commit i32) (result i32)
-    (local $dik i32) (local $count i32) (local $live i32) (local $rec i32) (local $ofs i32)
-    (local.set $dik (i32.const 0))
-    (local.set $count (i32.const 0))
-    ;; A DX5 DIDEVICEOBJECTDATA is 16 bytes. A caller that understates the
-    ;; stride would otherwise stack every record on the first one.
-    (if (i32.lt_u (local.get $cb) (i32.const 16))
-      (then (local.set $cb (i32.const 16))))
-    (block $done (loop $scan
-      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))
+  ;; Read the arrival FIFO in order, mapping VK through the existing strict
+  ;; DIK table. Skipped/custom-format objects advance only on consuming reads.
+  (func $di_kbd_collect (param $entry i32) (param $rgdod i32) (param $cb i32)
+                        (param $max i32) (param $commit i32) (result i32)
+    (local $index i32) (local $count i32) (local $available i32)
+    (local $event i32) (local $dik i32) (local $ofs i32) (local $rec i32)
+    (local.set $available (call $host_di_keyboard_buffer (local.get $entry) (i32.const 2) (i32.const 0)))
+    (block $done (loop $events
+      (br_if $done (i32.ge_u (local.get $index) (local.get $available)))
       (br_if $done (i32.ge_u (local.get $count) (local.get $max)))
-      (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))
-      (if (i32.and
-            (i32.and (i32.eqz (call $di_kbd_scan_skip (local.get $dik)))
-                     (i32.ge_s (local.get $ofs) (i32.const 0)))
-            (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0)))
-        (then
-          (local.set $live (call $di_kbd_live (local.get $dik)))
-          (if (i32.ne (local.get $live) (call $di_kbd_prev_bit (local.get $dik)))
-            (then
-              (if (local.get $rgdod)
-                (then
-                  ;; DIDEVICEOBJECTDATA: dwOfs, dwData, dwTimeStamp, dwSequence.
-                  (local.set $rec (i32.add (local.get $rgdod)
-                    (i32.mul (local.get $count) (local.get $cb))))
+      (local.set $event (call $host_di_keyboard_buffer (local.get $entry) (i32.const 3) (local.get $index)))
+      (local.set $dik (i32.const 0))
+      (block $mapped (loop $keys
+        (br_if $mapped (i32.ge_u (local.get $dik) (i32.const 256)))
+        (if (i32.and
+              (i32.eqz (call $di_kbd_scan_skip (local.get $dik)))
+              (i32.and (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0))
+                       (i32.eq (call $di_dik_to_vk_strict (local.get $dik))
+                               (i32.and (local.get $event) (i32.const 255)))))
+          (then
+            (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))
+            (if (i32.ge_s (local.get $ofs) (i32.const 0))
+              (then
+                (if (local.get $rgdod) (then
+                  (local.set $rec (i32.add (local.get $rgdod) (i32.mul (local.get $count) (local.get $cb))))
                   (call $gs32 (local.get $rec) (local.get $ofs))
                   (call $gs32 (i32.add (local.get $rec) (i32.const 4))
-                    (select (i32.const 0x80) (i32.const 0) (local.get $live)))
-                  (call $gs32 (i32.add (local.get $rec) (i32.const 8)) (call $host_get_ticks))
+                    (i32.and (i32.shr_u (local.get $event) (i32.const 1)) (i32.const 128)))
+                  (call $gs32 (i32.add (local.get $rec) (i32.const 8))
+                    (call $host_di_keyboard_buffer (local.get $entry) (i32.const 4) (local.get $index)))
                   (call $gs32 (i32.add (local.get $rec) (i32.const 12))
-                    (global.get $di_kbd_data_sequence))))
-              (if (local.get $commit)
-                (then
-                  (call $di_kbd_prev_set (local.get $dik) (local.get $live))
-                  (global.set $di_kbd_data_sequence
-                    (i32.add (global.get $di_kbd_data_sequence) (i32.const 1)))))
-              (local.set $count (i32.add (local.get $count) (i32.const 1)))))))
-      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
-      (br $scan)))
+                    (call $host_di_keyboard_buffer (local.get $entry) (i32.const 5) (local.get $index)))))
+                (local.set $count (i32.add (local.get $count) (i32.const 1)))))
+            (br $mapped)))
+        (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
+        (br $keys)))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br $events)))
+    (if (local.get $commit) (then
+      (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 6) (local.get $index)))))
     (local.get $count))
 
   ;; DirectInput keyboard state is indexed by DIK scan codes, while the host
@@ -11058,31 +11030,19 @@
     (local.set $capacity (i32.load offset=12 (local.get $entry)))
     (if (i32.eq (local.get $dev_type) (i32.const 1))
       (then
-        ;; Keyboard. Allegro-based games read keys only through this buffer,
-        ;; never through GetDeviceState, so an empty buffer freezes them.
-        (local.set $requested
-          (if (result i32) (local.get $arg3)
-            (then (call $gl32 (local.get $arg3)))
-            (else (i32.const 0))))
-        (if (i32.and (i32.ne (local.get $capacity) (i32.const 0))
-                     (i32.gt_u (local.get $requested) (local.get $capacity)))
-          (then (local.set $requested (local.get $capacity))))
-        (if (i32.eqz (local.get $arg2))
+        (if (i32.eqz (local.get $capacity))
           (then
-            ;; rgdod == NULL asks only how many records are pending. A count
-            ;; query must not consume them, whatever DIGDD_PEEK says.
-            (if (local.get $arg3)
-              (then (call $gs32 (local.get $arg3)
-                (call $di_kbd_collect (local.get $entry) (i32.const 0) (local.get $arg1)
-                  (local.get $requested) (i32.const 0)))))
-            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (call $gs32 (local.get $arg3) (i32.const 0))
+            (i32.store (global.get $reg_base) (i32.const 0x80040207)) ;; DIERR_NOTBUFFERED
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
             (return)))
+        (local.set $requested (call $gl32 (local.get $arg3)))
+        (local.set $available (call $host_di_keyboard_buffer (local.get $entry) (i32.const 7) (i32.const 0)))
         (local.set $data (call $di_kbd_collect (local.get $entry) (local.get $arg2)
           (local.get $arg1) (local.get $requested)
           (i32.eqz (i32.and (local.get $arg4) (i32.const 1)))))
-        (if (local.get $arg3) (then (call $gs32 (local.get $arg3) (local.get $data))))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (call $gs32 (local.get $arg3) (local.get $data))
+        (i32.store (global.get $reg_base) (local.get $available)) ;; DI_OK / DI_BUFFEROVERFLOW
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (return)))
     (if (i32.eq (local.get $dev_type) (i32.const 2))

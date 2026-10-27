@@ -1,0 +1,175 @@
+{
+  "task": "airstrike-directinput-buffered-key-regression-oct27",
+  "base": "be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c",
+  "branch": "task/airstrike-directinput-buffered-key-regression-oct27",
+  "finding": "Reproduced production-path buffered-keyboard loss: actual Space down and up delivered before GetDeviceData return DI_OK with count 0 before repair; repaired handler returns count 2, DIK 0x39 down 0x80 then up 0. Sampling current state between polls loses both transitions.",
+  "observedBefore": {
+    "hr": 0,
+    "count": 0,
+    "records": [],
+    "deliveredMessages": [
+      256,
+      257
+    ],
+    "VK": 32,
+    "lParams": [
+      3735553,
+      3224961025
+    ]
+  },
+  "observedAfter": {
+    "hr": 0,
+    "count": 2,
+    "records": [
+      [
+        57,
+        128
+      ],
+      [
+        57,
+        0
+      ]
+    ]
+  },
+  "causeBoundary": "Production renderer/checkInput, exact pinned test/run.js host override, createWindowHost import, actual extracted WAT GetDeviceData and dependencies compiled by vendored WATX. Synthetic input and memory fixture; not original-game evidence.",
+  "repair": "Record physical transitions in bounded per-host-context/per-device renderer FIFOs before message dispatch; synchronous host import reads ordered records through existing strict DIK/custom-format mapping. No held-key repeat. Acquire/Unacquire/release lifecycle; buffer size minus one, sticky overflow until consume, peek and null-buffer flush semantics; supported requested size capped at 4096 with aggregate 65536 effective slots. Immediate GetDeviceState, DIK table, mouse arm byte-identical.",
+  "tests": {
+    "contractChecksPerMode": 14,
+    "modes": [
+      "direct production host",
+      "production synchronous GuestRpc bridge in process"
+    ],
+    "affectedExistingGroups": 9,
+    "negativeControls": [
+      "unchanged production WAT rapid tap rejects with count 0",
+      "missing actual host bridge rejects unbound import",
+      "out-of-scope dependency stubs trap"
+    ],
+    "gates": [
+      "fragment balance",
+      "logical boolean i32.and",
+      "official generated import-signatures check: 291 imports"
+    ]
+  },
+  "recovery": {
+    "candidate": [
+      "/usr/bin/node --max-old-space-size=512 test/test-directinput-buffered-keyboard.js",
+      "/usr/bin/node --max-old-space-size=512 test/test-directinput-buffered-keyboard.js --rpc"
+    ],
+    "original": "At the pinned base, copy unchanged-reproducer.js.txt into test/unchanged-reproducer.js and execute under the recorded supervised Node configuration. It intentionally fails with actual count 0. The final fixture can also reject the pinned old WAT using --baseline --control-source=PATH. No full engine compilation is required.",
+    "controls": "Original failures and intermediate fixture errors remain under owned ops; they are not passing evidence. affected-regressions-separated is the complete nine-child result; affected-regressions was incomplete because a child exited its parent."
+  },
+  "primaryContractSources": [
+    {
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee416238(v=vs.85)",
+      "supports": "Buffered keyboard records distinguish presses and releases; typematic is not buffered."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417894(v=vs.85)",
+      "supports": "GetDeviceData records, peek/consume, null-buffer side effects, size-minus-one capacity and overflow."
+    },
+    {
+      "url": "https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ee417929(v=vs.85)",
+      "supports": "SetProperty buffer size and clamp to largest supported buffer."
+    }
+  ],
+  "limits": [
+    "No observed Airstrike GetDeviceData/SDL/application consumption; this is not an observed Airstrike runtime cause or gameplay claim.",
+    "No original-game invocation, runtime allowance reset, full canonical build, browser/native qualification, main integration or public deployment.",
+    "Accepted prior binary is unchanged and has not been rebuilt with the new import. Future full module rebuild and independent acceptance remain coordinator decisions.",
+    "RPC uses the actual synchronous production broker in-process, not an OS Worker/browser. Concurrent cross-thread consumers of a single device are not qualified.",
+    "Release unregister hook verified statically; Acquire/Unacquire/reset behavior verified dynamically. Unrelated dependencies are trap-only, never fake success."
+  ],
+  "pins": {
+    "originalDirectInputSHA256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e",
+    "originalRendererInputBlob": "d2fab5556291146f9b4fb6ccc586d4be9485d3cc",
+    "originalRendererBlob": "a82e1e8731e7622f9e9529ae8f83ea461dfc68be",
+    "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-buffered-key-regression-oct27/root-ref-digest.json",
+    "sourceAndFixtureSHA256": {
+      "src/09a8-handlers-directx.wat": "23b1313996351b3acb9b3b78f9d685fc4f0e73a2d3b5198a9e6d37b0caf21156",
+      "lib/renderer-input.js": "429c476020c1c3cc274b587bdf48f5cb95cc579be62c18ec9bc66bf3f3d23dc8",
+      "lib/host-window.js": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9",
+      "lib/host-import-sigs.generated.json": "70380887a9966be790debcfe736d49e733f90f0362bcf5e20867053ffd295141",
+      "test/test-directinput-buffered-keyboard.js": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+      "lib/renderer.js": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03",
+      "lib/guest-rpc.js": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+      "test/run.js": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+      "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    }
+  },
+  "resources": {
+    "nodeExecutable": "/usr/bin/node",
+    "nodeFlags": [
+      "--max-old-space-size=512"
+    ],
+    "nodeRSSCap": 805306368,
+    "nodeDataAndAS": "unlimited, startup receipt records inherited limits",
+    "gitRSSCap": 268435456,
+    "gitChildDataCap": 536870912,
+    "pythonRSSCap": 134217728,
+    "cpuSecondsPerOperation": 90,
+    "wallSecondsPerOperation": 120,
+    "taskAllocation": 536870912,
+    "reserve": 33554432,
+    "allocationAccounting": "Owned repo/ops + launcher + session + full current shared WAL conservatively once + 176MiB projected growth including 32MiB reserve; every dependent operation admitted. MemAvailable already excludes current RSS.",
+    "peakMeasuredAcceptedNodeRSS": 419647488
+  },
+  "lifecycle": {
+    "boxesAssigned": [],
+    "boatOperations": 0,
+    "originalGameInvocations": 0,
+    "rootTrackedTreeIndexRefs": "read only",
+    "sharedMessageboard": "append-only claim/watch/release",
+    "taskWorktree": "isolated with immutable read-only Git object alternates"
+  },
+  "evidenceSHA256": {
+    "accepted-direct.admission.json": "3887447466536798b0abf44da785c5cdbef0fa269a24f0d8b4ac192ba11c1728",
+    "accepted-direct.json": "4c30ff318d610dc9741c292242863384cdc208ee6b6a4804722f2e60286d9fa2",
+    "accepted-direct.stderr": "ede8e1d250046fbebed2a2f175044ebba5dfcb0f401d8bdc2cd87194cedc6fb3",
+    "accepted-direct.stdout": "034c7534a48ff319705677277da2cfe949a1f46ed2cf6a89e8ee4c76f30c4547",
+    "accepted-rpc.admission.json": "cf932662b4bb8c0971f11c9acbf0af6838941e97f8efeeb37f5851e219bc7d66",
+    "accepted-rpc.json": "f2a3418ce025e6dd048cc1939165009803788aab7e7f3b182176cbff5b655414",
+    "accepted-rpc.stderr": "ede8e1d250046fbebed2a2f175044ebba5dfcb0f401d8bdc2cd87194cedc6fb3",
+    "accepted-rpc.stdout": "c7a8893a5d3bc735461a902f8cb4ea484f2385f7872f2ba7cf454883e324114d",
+    "affected-regressions-separated.admission.json": "38ec9ffc7b6d13b30287a7d19ba382464819cb4ec2495ec28c886e4e3d630d52",
+    "affected-regressions-separated.json": "3e9ea2de6884cdc328bb8f8c998c6aa43a25175d12ee9b62daad0bb6b78423c9",
+    "affected-regressions-separated.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "affected-regressions-separated.stdout": "44e1257bf03ea6bce60ded6990959bd408b5bc17a9c28f0b42e3808cab4d226a",
+    "boolean-gate.admission.json": "083535ef4c60eb520e280921ca7bc243f94f356d4f1a08e223de6f994dddb0d6",
+    "boolean-gate.json": "a6cb1c0e39241c9c988abe0c8a25c56b917cac273fb8e4bd500b8c3dca1d0b59",
+    "boolean-gate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "boolean-gate.stdout": "987a2e65c399693ec3090f487d9d77ed5ee2134528ace1a2ff6902cdd14284e6",
+    "final-reject-bridge.admission.json": "49c7afdfe91bdbc7d9191f2401845bc188085a555dd78c7e033793841041a765",
+    "final-reject-bridge.json": "9434fd445958baf9fd9859a2dde1fb042f6ccb91f8e6b0d7b5b06cd26715ee28",
+    "final-reject-bridge.stderr": "c5776ea1a4a1043ca33f349e02d4cab489e0c85bc6f9d44594854a7a1c9700df",
+    "final-reject-bridge.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "final-reject-old.admission.json": "4a100d7c8785457938b41d779a440a6ed53d086a38ef9322e282d4f9c471b434",
+    "final-reject-old.json": "d48f29bbfd13aa26da7d39048c5df2beeca259a0fb62808ba8c7151f168fe74b",
+    "final-reject-old.stderr": "cf138908732232d1432d2af84c4d079bdb4cb52129864e1f45a5316200fe6a79",
+    "final-reject-old.stdout": "da03f604323d3570c55f8b6fb5aeb30a80801fd4e86ac0770cc3e3da37f76b69",
+    "fragment-gate.admission.json": "cb09529a386185b07cbd5b0df944478b672744f1ff7f9ae61f6d8a4fca214e19",
+    "fragment-gate.json": "e44095c5df4c9ce75298774735c66028f38ffed344feb42fbd5ece42cfb629df",
+    "fragment-gate.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fragment-gate.stdout": "21557cfa60b03aed0461e2a4d9fc0e36d916514f7b2c1307b686d44f75c1c529",
+    "node-startup.admission.json": "29687e550ef855bd2a9976787a4b3ca8c0cac808e9db94576d0b6222842930a1",
+    "node-startup.json": "f894516fdf647ba2c12d20f797318dd7c951cc2dabe1e59dc36e86051ee7908c",
+    "node-startup.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "node-startup.stdout": "5a117170527f05f1b6d7335d313b185401832ee16d5861d9ff8f2c471ef5407d",
+    "signatures-full-check.admission.json": "966a6ee8aa42c08a36928d98b28a86c5e3f70ff277ccde8fe6be34528ba8230c",
+    "signatures-full-check.json": "5b0111a3673aee0bd369600c7e7182fdb6aa2f25be91109a971858fb57e642e9",
+    "signatures-full-check.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "signatures-full-check.stdout": "bdce2c48e775f7a5aa5856bf5d63ac8e438f6eda9f62846bff1a2fb49a08193e",
+    "source-review.admission.json": "b6deb3ffdacd45b45e78ff47b2c5a26bd03b0e01dee4a2bcc7dc32ad2852c32b",
+    "source-review.json": "f6c9f96e04e62079e21dbcde1df6dba5d57b76a4deb2ec5f91e67aa86e063113",
+    "source-review.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "source-review.stdout": "bf3633d6209c33c74f3d43aa11fa898270f36bf2a3b022022fb9bdfddcef12a0",
+    "supervision-recipe.py.txt": "384904c95779c4dde892aab445b8b2f8f61d1c4148fe969943b924145c3559a7",
+    "unchanged-production-regression.admission.json": "4ea53040805fa5c1fc410f35bc668a54143aab912ab0e4a6137f98ab18c82d3e",
+    "unchanged-production-regression.json": "a47adc48de8df75f785c48603ca95594baf6e3421b627b276473ce70f724abfa",
+    "unchanged-production-regression.stderr": "3e3de9f33a9075f90960b986b6741921779e15030d0afaa5820e35bb74deca6d",
+    "unchanged-production-regression.stdout": "90a1eff84071f81ad2184be4472205f5facd6b9b579ac53772fa35476de9c0e4",
+    "unchanged-reproducer.js.txt": "793aa3175992cafb2440addc48775d4de1456030b4663ff2243d3886f95872fe"
+  },
+  "canonical": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/receipt-manifest.json",
+  "publication": "Final canonical manifest binds actual commit and exact verified remote SHA after push; this artifact intentionally avoids a self-referential commit hash."
+}

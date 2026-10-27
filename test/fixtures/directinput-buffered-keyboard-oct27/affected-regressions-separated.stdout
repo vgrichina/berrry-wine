@@ -1,0 +1,579 @@
+GROUP test-renderer-input-button-hold.js EXIT 0
+PASS  the press is delivered at once
+PASS  the release is withheld: the pump that took the press ends
+PASS  nothing behind the release jumps ahead of it
+PASS  a wake is scheduled so a parked GetMessage polls again: 30ms
+PASS  the wake reaches the host step hooks
+PASS  still withheld before the 30ms floor
+PASS  after an empty poll and the floor the release is delivered
+PASS  then the move
+PASS  a late release with no poll in between waits one poll
+PASS  and is delivered on the next one
+PASS  an empty queue poll while held
+PASS  a slow click (an empty poll while held) is not delayed at all
+PASS  and schedules nothing
+PASS  an unmatched release passes straight through
+PASS  a left release is not held by a right press
+PASS  __waMinButtonHoldMs < 0 turns the hold off (A/B)
+PASS  host clock: release withheld in the press pump
+PASS  host clock: release delivered once guest time passes the floor, wall clock frozen
+PASS  host clock: the queued move follows it
+PASS  floor 0: release still withheld in the press pump
+PASS  floor 0: delivered on the next poll with the batch clock frozen
+PASS  floor 0: the next press keeps its place behind the release
+PASS  negative host floor: the hold is off for that host
+PASS  tap: the move onto the button is delivered first
+PASS  tap: the press waits: the pump that took the move ends
+PASS  tap: press and release keep their order behind it
+PASS  tap: a wake is scheduled for the held press: 30ms
+PASS  tap: still held before the floor
+PASS  tap: after an empty poll and the floor the press is delivered
+PASS  tap: and the release is then held as before
+PASS  tap: then the release
+PASS  rest: an empty poll after the move
+PASS  rest: a press on a spot the guest has seen is not delayed
+PASS  same spot: a repeated move does not hold the press
+PASS  negative host floor: no press hold either
+
+35 passed, 0 failed
+GROUP test-renderer-input-cursor.js EXIT 0
+PASS  client entry clears stale resize cursor: default
+PASS  app-selected client cursor is preserved: crosshair
+PASS  cursor remains while pointer is on resize edge: nwse-resize
+PASS  right-edge hover applies resize cursor immediately: ew-resize
+PASS  moving between edges synchronizes resize cursor: ns-resize
+PASS  child hover targets deepest hwnd: 65539
+PASS  child hover uses child-local coordinates: 7209030
+PASS  child hover first sends WM_NCHITTEST to child: 132
+PASS  WM_NCHITTEST keeps screen coordinates: 13107350
+PASS  child hover sends WM_SETCURSOR to child: 65539
+PASS  WM_SETCURSOR follows WM_NCHITTEST: 32
+PASS  child's HTVSCROLL reaches WM_SETCURSOR: 7
+PASS  child's HTHSCROLL reaches WM_SETCURSOR: 6
+PASS  child sizing box reaches WM_SETCURSOR: 4
+PASS  other child codes stay HTCLIENT: 1
+PASS  unresolved child rect stays HTCLIENT: 1
+PASS  overlapping hover targets the frontmost top-level window: 65538
+PASS  leaving every window restores the desktop arrow: default
+
+18/18 checks passed
+GROUP test-renderer-input-resize.js EXIT 0
+PASS  window geometry remains stable during drag: 20,20 275x400
+PASS  old backing canvas remains attached during drag
+PASS  resize outline follows proposed rectangle: {"x":20,"y":20,"w":341,"h":436}
+PASS  geometry changes once on release: 20,20 341x436
+PASS  guest receives one final resize commit: [65537,20,20,341,436]
+PASS  outline is removed after commit
+PASS  old-size backing canvas is released only at commit
+
+7/7 checks passed
+GROUP renderer-physical-modifiers.test.cjs EXIT 0
+TAP version 13
+# Subtest: Shift left first worker=false buffered=false
+ok 1 - Shift left first worker=false buffered=false
+  ---
+  duration_ms: 2.8149
+  ...
+# Subtest: Shift left first worker=false buffered=true
+ok 2 - Shift left first worker=false buffered=true
+  ---
+  duration_ms: 0.182021
+  ...
+# Subtest: Shift left first worker=true buffered=false
+ok 3 - Shift left first worker=true buffered=false
+  ---
+  duration_ms: 0.249098
+  ...
+# Subtest: Shift left first worker=true buffered=true
+ok 4 - Shift left first worker=true buffered=true
+  ---
+  duration_ms: 0.215013
+  ...
+# Subtest: Shift right first worker=false buffered=false
+ok 5 - Shift right first worker=false buffered=false
+  ---
+  duration_ms: 0.189124
+  ...
+# Subtest: Shift right first worker=false buffered=true
+ok 6 - Shift right first worker=false buffered=true
+  ---
+  duration_ms: 0.160591
+  ...
+# Subtest: Shift right first worker=true buffered=false
+ok 7 - Shift right first worker=true buffered=false
+  ---
+  duration_ms: 0.130084
+  ...
+# Subtest: Shift right first worker=true buffered=true
+ok 8 - Shift right first worker=true buffered=true
+  ---
+  duration_ms: 0.107932
+  ...
+# Subtest: Shift autorepeat is owned once and unmatched release is harmless
+ok 9 - Shift autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.323757
+  ...
+# Subtest: Shift numeric lifecycle release clears both owners and permits fresh input
+ok 10 - Shift numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.470402
+  ...
+# Subtest: Shift numeric-only CLI repeat/release and location-only ownership
+ok 11 - Shift numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.29894
+  ...
+# Subtest: Control left first worker=false buffered=false
+ok 12 - Control left first worker=false buffered=false
+  ---
+  duration_ms: 0.238186
+  ...
+# Subtest: Control left first worker=false buffered=true
+ok 13 - Control left first worker=false buffered=true
+  ---
+  duration_ms: 0.131718
+  ...
+# Subtest: Control left first worker=true buffered=false
+ok 14 - Control left first worker=true buffered=false
+  ---
+  duration_ms: 0.655058
+  ...
+# Subtest: Control left first worker=true buffered=true
+ok 15 - Control left first worker=true buffered=true
+  ---
+  duration_ms: 0.176091
+  ...
+# Subtest: Control right first worker=false buffered=false
+ok 16 - Control right first worker=false buffered=false
+  ---
+  duration_ms: 0.117911
+  ...
+# Subtest: Control right first worker=false buffered=true
+ok 17 - Control right first worker=false buffered=true
+  ---
+  duration_ms: 0.070542
+  ...
+# Subtest: Control right first worker=true buffered=false
+ok 18 - Control right first worker=true buffered=false
+  ---
+  duration_ms: 0.133801
+  ...
+# Subtest: Control right first worker=true buffered=true
+ok 19 - Control right first worker=true buffered=true
+  ---
+  duration_ms: 0.119836
+  ...
+# Subtest: Control autorepeat is owned once and unmatched release is harmless
+ok 20 - Control autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.119534
+  ...
+# Subtest: Control numeric lifecycle release clears both owners and permits fresh input
+ok 21 - Control numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.161042
+  ...
+# Subtest: Control numeric-only CLI repeat/release and location-only ownership
+ok 22 - Control numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.115818
+  ...
+# Subtest: Alt left first worker=false buffered=false
+ok 23 - Alt left first worker=false buffered=false
+  ---
+  duration_ms: 0.105958
+  ...
+# Subtest: Alt left first worker=false buffered=true
+ok 24 - Alt left first worker=false buffered=true
+  ---
+  duration_ms: 0.075132
+  ...
+# Subtest: Alt left first worker=true buffered=false
+ok 25 - Alt left first worker=true buffered=false
+  ---
+  duration_ms: 0.056826
+  ...
+# Subtest: Alt left first worker=true buffered=true
+ok 26 - Alt left first worker=true buffered=true
+  ---
+  duration_ms: 0.058599
+  ...
+# Subtest: Alt right first worker=false buffered=false
+ok 27 - Alt right first worker=false buffered=false
+  ---
+  duration_ms: 0.055704
+  ...
+# Subtest: Alt right first worker=false buffered=true
+ok 28 - Alt right first worker=false buffered=true
+  ---
+  duration_ms: 0.046427
+  ...
+# Subtest: Alt right first worker=true buffered=false
+ok 29 - Alt right first worker=true buffered=false
+  ---
+  duration_ms: 0.04827
+  ...
+# Subtest: Alt right first worker=true buffered=true
+ok 30 - Alt right first worker=true buffered=true
+  ---
+  duration_ms: 0.05866
+  ...
+# Subtest: Alt autorepeat is owned once and unmatched release is harmless
+ok 31 - Alt autorepeat is owned once and unmatched release is harmless
+  ---
+  duration_ms: 0.06468
+  ...
+# Subtest: Alt numeric lifecycle release clears both owners and permits fresh input
+ok 32 - Alt numeric lifecycle release clears both owners and permits fresh input
+  ---
+  duration_ms: 0.103664
+  ...
+# Subtest: Alt numeric-only CLI repeat/release and location-only ownership
+ok 33 - Alt numeric-only CLI repeat/release and location-only ownership
+  ---
+  duration_ms: 0.238416
+  ...
+# Subtest: Alt ownership preserves system-key context and Ctrl+Alt suppression
+ok 34 - Alt ownership preserves system-key context and Ctrl+Alt suppression
+  ---
+  duration_ms: 0.175469
+  ...
+# Subtest: Alt alone toggles menu once on last release; F10 family is unchanged
+ok 35 - Alt alone toggles menu once on last release; F10 family is unchanged
+  ---
+  duration_ms: 0.15937
+  ...
+# Subtest: resetting the physical map retires ownership without changing SetKeyboardState
+ok 36 - resetting the physical map retires ownership without changing SetKeyboardState
+  ---
+  duration_ms: 0.108103
+  ...
+# Subtest: press latch, ordinary repeat and release ordering remain intact
+ok 37 - press latch, ordinary repeat and release ordering remain intact
+  ---
+  duration_ms: 0.144111
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 37
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23.242755
+GROUP renderer-side-modifier-polling.test.cjs EXIT 0
+TAP version 13
+# Subtest: Shift side ownership public Left down / Left up first
+ok 1 - Shift side ownership public Left down / Left up first
+  ---
+  duration_ms: 2.675266
+  ...
+# Subtest: Shift side ownership public Left down / Right up first
+ok 2 - Shift side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.24572
+  ...
+# Subtest: Shift side ownership public Right down / Left up first
+ok 3 - Shift side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.167052
+  ...
+# Subtest: Shift side ownership public Right down / Right up first
+ok 4 - Shift side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.145553
+  ...
+# Subtest: Shift peek, repeated query, repeat and fresh repress latches
+ok 5 - Shift peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.248847
+  ...
+# Subtest: Shift buffered side release follows message timeline, physical is immediate
+ok 6 - Shift buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.276539
+  ...
+# Subtest: Shift generic numeric owner never invents side identity
+ok 7 - Shift generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.412513
+  ...
+# Subtest: Shift public numeric focus release resets queued sides and allows fresh press
+ok 8 - Shift public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.314049
+  ...
+# Subtest: Shift device reset and async override retain separate ownership
+ok 9 - Shift device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.271159
+  ...
+# Subtest: Control side ownership public Left down / Left up first
+ok 10 - Control side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.292709
+  ...
+# Subtest: Control side ownership public Left down / Right up first
+ok 11 - Control side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.253104
+  ...
+# Subtest: Control side ownership public Right down / Left up first
+ok 12 - Control side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.121898
+  ...
+# Subtest: Control side ownership public Right down / Right up first
+ok 13 - Control side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.168316
+  ...
+# Subtest: Control peek, repeated query, repeat and fresh repress latches
+ok 14 - Control peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.134942
+  ...
+# Subtest: Control buffered side release follows message timeline, physical is immediate
+ok 15 - Control buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.27212
+  ...
+# Subtest: Control generic numeric owner never invents side identity
+ok 16 - Control generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.207819
+  ...
+# Subtest: Control public numeric focus release resets queued sides and allows fresh press
+ok 17 - Control public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.59646
+  ...
+# Subtest: Control device reset and async override retain separate ownership
+ok 18 - Control device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.15456
+  ...
+# Subtest: Alt side ownership public Left down / Left up first
+ok 19 - Alt side ownership public Left down / Left up first
+  ---
+  duration_ms: 0.205796
+  ...
+# Subtest: Alt side ownership public Left down / Right up first
+ok 20 - Alt side ownership public Left down / Right up first
+  ---
+  duration_ms: 0.106058
+  ...
+# Subtest: Alt side ownership public Right down / Left up first
+ok 21 - Alt side ownership public Right down / Left up first
+  ---
+  duration_ms: 0.07477
+  ...
+# Subtest: Alt side ownership public Right down / Right up first
+ok 22 - Alt side ownership public Right down / Right up first
+  ---
+  duration_ms: 0.048451
+  ...
+# Subtest: Alt peek, repeated query, repeat and fresh repress latches
+ok 23 - Alt peek, repeated query, repeat and fresh repress latches
+  ---
+  duration_ms: 0.068138
+  ...
+# Subtest: Alt buffered side release follows message timeline, physical is immediate
+ok 24 - Alt buffered side release follows message timeline, physical is immediate
+  ---
+  duration_ms: 0.094748
+  ...
+# Subtest: Alt generic numeric owner never invents side identity
+ok 25 - Alt generic numeric owner never invents side identity
+  ---
+  duration_ms: 0.055455
+  ...
+# Subtest: Alt public numeric focus release resets queued sides and allows fresh press
+ok 26 - Alt public numeric focus release resets queued sides and allows fresh press
+  ---
+  duration_ms: 0.080421
+  ...
+# Subtest: Alt device reset and async override retain separate ownership
+ok 27 - Alt device reset and async override retain separate ownership
+  ---
+  duration_ms: 0.063258
+  ...
+# Subtest: nonmodifier physical and async polling retain numeric key and latch
+ok 28 - nonmodifier physical and async polling retain numeric key and latch
+  ---
+  duration_ms: 0.245991
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 21.396362
+GROUP renderer-modifier-independent-accept.test.cjs EXIT 0
+TAP version 13
+# Subtest: Shift public aggregate both press/release orders Left/Left
+ok 1 - Shift public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 2.236545
+  ...
+# Subtest: Shift public aggregate both press/release orders Left/Right
+ok 2 - Shift public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.224941
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Left
+ok 3 - Shift public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.189124
+  ...
+# Subtest: Shift public aggregate both press/release orders Right/Right
+ok 4 - Shift public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.211917
+  ...
+# Subtest: Shift side-specific public physical and async polling
+ok 5 - Shift side-specific public physical and async polling
+  ---
+  duration_ms: 0.679135
+  ...
+# Subtest: Shift side-specific async alone through public input
+ok 6 - Shift side-specific async alone through public input
+  ---
+  duration_ms: 0.134561
+  ...
+# Subtest: Shift repeat, unmatched release, contradictory location and reset
+ok 7 - Shift repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.519074
+  ...
+# Subtest: Shift CLI numeric ownership mixed with physical and focus release
+ok 8 - Shift CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.208883
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Left
+ok 9 - Control public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.242655
+  ...
+# Subtest: Control public aggregate both press/release orders Left/Right
+ok 10 - Control public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.12864
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Left
+ok 11 - Control public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.136857
+  ...
+# Subtest: Control public aggregate both press/release orders Right/Right
+ok 12 - Control public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.084278
+  ...
+# Subtest: Control side-specific public physical and async polling
+ok 13 - Control side-specific public physical and async polling
+  ---
+  duration_ms: 0.114955
+  ...
+# Subtest: Control side-specific async alone through public input
+ok 14 - Control side-specific async alone through public input
+  ---
+  duration_ms: 0.077415
+  ...
+# Subtest: Control repeat, unmatched release, contradictory location and reset
+ok 15 - Control repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.392354
+  ...
+# Subtest: Control CLI numeric ownership mixed with physical and focus release
+ok 16 - Control CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.163306
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Left
+ok 17 - Alt public aggregate both press/release orders Left/Left
+  ---
+  duration_ms: 0.147197
+  ...
+# Subtest: Alt public aggregate both press/release orders Left/Right
+ok 18 - Alt public aggregate both press/release orders Left/Right
+  ---
+  duration_ms: 0.12273
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Left
+ok 19 - Alt public aggregate both press/release orders Right/Left
+  ---
+  duration_ms: 0.076664
+  ...
+# Subtest: Alt public aggregate both press/release orders Right/Right
+ok 20 - Alt public aggregate both press/release orders Right/Right
+  ---
+  duration_ms: 0.100689
+  ...
+# Subtest: Alt side-specific public physical and async polling
+ok 21 - Alt side-specific public physical and async polling
+  ---
+  duration_ms: 0.242395
+  ...
+# Subtest: Alt side-specific async alone through public input
+ok 22 - Alt side-specific async alone through public input
+  ---
+  duration_ms: 0.054974
+  ...
+# Subtest: Alt repeat, unmatched release, contradictory location and reset
+ok 23 - Alt repeat, unmatched release, contradictory location and reset
+  ---
+  duration_ms: 0.10122
+  ...
+# Subtest: Alt CLI numeric ownership mixed with physical and focus release
+ok 24 - Alt CLI numeric ownership mixed with physical and focus release
+  ---
+  duration_ms: 0.072777
+  ...
+# Subtest: numeric browser key codes and nonmodifier message bits remain unchanged
+ok 25 - numeric browser key codes and nonmodifier message bits remain unchanged
+  ---
+  duration_ms: 0.279274
+  ...
+# Subtest: Alt chord context survives opposite-side release; Ctrl suppresses system family
+ok 26 - Alt chord context survives opposite-side release; Ctrl suppresses system family
+  ---
+  duration_ms: 0.138649
+  ...
+# Subtest: Alt tap final release and F10 system messages
+ok 27 - Alt tap final release and F10 system messages
+  ---
+  duration_ms: 0.160943
+  ...
+# Subtest: Alt+Space and Alt+F4 system menu/close hotkeys retain context after side release
+ok 28 - Alt+Space and Alt+F4 system menu/close hotkeys retain context after side release
+  ---
+  duration_ms: 0.161442
+  ...
+# Subtest: Shift+F10 context menu survives first-side release
+ok 29 - Shift+F10 context menu survives first-side release
+  ---
+  duration_ms: 0.131757
+  ...
+1..29
+# tests 29
+# suites 0
+# pass 29
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 19.6523
+GROUP test-keyboard-message-lparam.js EXIT 0
+PASS Win32 keyboard messages preserve ordering while DirectInput tracks physical key release
+GROUP test-keyboard-focus-seed.js EXIT 0
+PASS  keyboard focus seed, guest-selected focus and Worker shadow isolation
+GROUP test-guest-rpc-import-throw.js EXIT 0
+PASS  a host import that throws in Worker mode stops its caller, not returns 0
+PASS D3D9 format capability query reaches the page broker
