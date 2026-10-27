@@ -1,0 +1,7 @@
+{
+  "tools/alien-menu-gameplay-controller.py": "419498ad06d5e0f20a269161aa92b36bb266148191dbd065bf40c41febd8e76f",
+  "test/fixtures/alien-menu-controller/test_controller.py": "dc3eceb882b79549dcab33d4fb5a894d65120d71dedf6c24a35edc6a7545819f",
+  "test/fixtures/alien-menu-controller/test_process_owner.py": "8c54c9d083ad7b943990fe3ddc247ee87501bda52aa1ed5f1ce2d84d204a1411",
+  "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+  "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39"
+}

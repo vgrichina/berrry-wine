@@ -119,26 +119,24 @@ def review(home, budget):
     return approval, frame
 
 
-@contextlib.contextmanager
-def process_owner(home, endpoint, budget):
-    """One durable owner per actual listening process, across evidence dirs.
-
-    Verify the supervisor's PID/start identity and its loopback listening socket
-    through readonly procfs. No control connection is made for identification.
-    The supervisor must retain these same-UID records, just like the ledger.
-    """
+def verified_process_identity(process, endpoint):
+    """Bind the endpoint to a live original process without sending HTTP."""
     from urllib.parse import urlsplit
-    process = control.read_json(home / 'process.json', 8192)
     pid = process.get('pid')
     if type(pid) is not int or pid <= 0 or process.get('endpoint') != endpoint:
         raise control.ControlStopped('ownership blocker: explicit matching control process required')
     proc = Path('/proc') / str(pid)
-    start = proc.joinpath('stat').read_text().rsplit(') ', 1)[1].split()[19]
-    if process.get('startTicks') != start:
-        raise control.ControlStopped('ownership blocker: control process identity changed')
+    def live_start():
+        fields = proc.joinpath('stat').read_text().rsplit(') ', 1)[1].split()
+        if fields[0] in ('Z', 'X') or process.get('startTicks') != fields[19]:
+            raise control.ControlStopped('ownership blocker: control process identity changed')
+        return fields[19]
+    start = live_start()
+    namespace = os.readlink(proc / 'ns/pid')
+    boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
     port = urlsplit(endpoint).port
     listening = set()
-    for line in Path('/proc/net/tcp').read_text().splitlines()[1:]:
+    for line in proc.joinpath('net/tcp').read_text().splitlines()[1:]:
         row = line.split()
         if row[1] == '0100007F:%04X' % port and row[3] == '0A':
             listening.add('socket:[' + row[9] + ']')
@@ -150,11 +148,23 @@ def process_owner(home, endpoint, budget):
             pass
     if not found:
         raise control.ControlStopped('ownership blocker: endpoint listener not owned by control process')
-    boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip()
-    # Endpoint is verified against that process's actual listener. runId,
-    # evidence directory, terminal path and caller PID cannot split ownership.
-    identity = dict(bootId=boot, pid=pid, startTicks=start,
-                    endpoint='http://127.0.0.1:%d/ctl' % port)
+    # Recheck after socket enumeration; never identify a replacement PID as the
+    # original. Listener/URL spelling is evidence, never an authority key.
+    live_start()
+    if os.readlink(proc / 'ns/pid') != namespace:
+        raise control.ControlStopped('ownership blocker: control process namespace changed')
+    return dict(bootId=boot, pidNamespace=namespace, pid=pid, startTicks=start)
+
+
+@contextlib.contextmanager
+def process_owner(home, endpoint, budget):
+    """Durable exclusive authority for one original process across all listeners.
+
+    Claims survive refusal, controller exit, uncertain sends and terminal state.
+    No alternate endpoint/configuration may renew that process's original budget.
+    """
+    process = control.read_json(home / 'process.json', 8192)
+    identity = verified_process_identity(process, endpoint)
     key = control.digest(control.encoded(identity))
     directory = Path('/tmp') / ('wine-ops-alien-menu-owners-' + str(os.getuid()))
     directory.mkdir(mode=0o700, exist_ok=True)
@@ -171,11 +181,18 @@ def process_owner(home, endpoint, budget):
             raise control.ControlStopped('existing control process owner; no replay/reconnect') from error
         if path.exists():
             raise control.ControlStopped('existing control process owner; no replay/reconnect')
+        # Prior published controllers used a listener-specific key. Retain their
+        # consumed authority too: upgrading the key must not renew a live guest.
+        for previous in directory.glob('*.json'):
+            prior = control.read_json(previous, 8192).get('identity', {})
+            if (all(prior.get(k) == identity[k] for k in ('bootId', 'pid', 'startTicks'))
+                    and prior.get('pidNamespace', identity['pidNamespace']) == identity['pidNamespace']):
+                raise control.ControlStopped('existing control process owner; no replay/reconnect')
         # Pin even a refused time/capture allowance before any control. A
         # second directory cannot change the deadline and try this guest again.
         atomic(path, dict(identity=identity, invocation=str(home), budget=budget.value,
-                          budgetSHA256=budget.hash, guestAcceptance='unqualified'))
-        yield path, process
+                          budgetSHA256=budget.hash, verifiedEndpoint=endpoint, guestAcceptance='unqualified'))
+        yield path, dict(process, verifiedIdentity=identity)
 
 
 class BudgetTransport(control.HttpTransport):
@@ -213,8 +230,7 @@ class BudgetTransport(control.HttpTransport):
 
         def guarded():
             before_send()  # accepted durable-terminal check at socket send
-            current = Path('/proc/%d/stat' % self.process['pid']).read_text().rsplit(') ', 1)[1].split()
-            if current[19] != self.process['startTicks'] or current[0] in ('Z', 'X'):
+            if verified_process_identity(self.process, self.endpoint) != self.process['verifiedIdentity']:
                 raise control.ControlStopped('ownership blocker: control process ended/changed')
             # Input was charged above, but still needs the full menu reserve
             # at the actual header/body boundary, including connection latency.

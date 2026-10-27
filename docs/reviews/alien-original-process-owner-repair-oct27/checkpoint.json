@@ -1,0 +1,32 @@
+{
+  "group": "all-required-final-source-checks",
+  "pins": {
+    "tools/alien-menu-gameplay-controller.py": "419498ad06d5e0f20a269161aa92b36bb266148191dbd065bf40c41febd8e76f",
+    "test/fixtures/alien-menu-controller/test_controller.py": "dc3eceb882b79549dcab33d4fb5a894d65120d71dedf6c24a35edc6a7545819f",
+    "test/fixtures/alien-menu-controller/test_process_owner.py": "8c54c9d083ad7b943990fe3ddc247ee87501bda52aa1ed5f1ce2d84d204a1411",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39"
+  },
+  "result": "PASS correctedCLI + affected29",
+  "evidence": [
+    "corrected-final-execution.json",
+    "affected-final-results.json",
+    "affected-remaining-results.json",
+    "diagnose-timeout-execution.json"
+  ],
+  "remaining": [
+    "independent exact-source acceptance",
+    "separately authorized integration",
+    "separately admitted runtime menu/NewGame/mission/gameplay/Quit verification",
+    "task commit/push/exact remote verification"
+  ],
+  "incidents": {
+    "prior": "/tmp/alien-original-process-owner-repair-oct27/ops/incidents.json",
+    "historicalShortfallBytes": 7884800,
+    "mixedSourceFirstAffected": "retained; invalid final-source evidence",
+    "priorDistinctProcessTimeout": "retained raw timeout5; did not recur on final frozen source",
+    "newCleanupTimeout": "affected-final failed at case16 after15PASS; 5s subprocess timeout after11 acknowledged commands; original raw traceback/http/ledger preserved",
+    "diagnosis": "isolated strace same case PASS; fsync observed 0.667170s,0.098047s,0.048245s. Variable filesystem latency is a plausible cause, not proven location of original stall.",
+    "resolution": "no code/test timeouts or whole limits changed; same cleanup fixture passed traced diagnostic and untraced affected-remaining; first15 exact-input passes reused"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "verdict": "PASS",
+  "reason": "one original control process/state can acquire a second owner through alternate listening port",
+  "firstCLIAlive": true,
+  "listenerPID": 3499494,
+  "startTicks": "111303295",
+  "firstPort": 39473,
+  "alternatePort": 39413,
+  "expectedSecondHTTP": 0,
+  "actualSecondHTTP": 0,
+  "secondExit": 1,
+  "secondStdout": "{\"error\": \"existing control process owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+  "secondCommands": [],
+  "baseCandidate": "91762ab7d9729b34d8ce4fdc70ad32406f1d4dfc",
+  "sourceUnmodified": false,
+  "offlineOnly": true
+}

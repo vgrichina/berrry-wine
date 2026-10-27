@@ -1,0 +1,156 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_cleanup_reserved_with_last_three_capture_credits",
+      "Case.test_cleanup_reserved_with_last_three_capture_credits"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_cleanup_reserved_with_last_three_capture_credits (__main__.Case.test_cleanup_reserved_with_last_three_capture_credits) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.669s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_allowance_cannot_be_renewed_after_refusal",
+      "Case.test_allowance_cannot_be_renewed_after_refusal"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_allowance_cannot_be_renewed_after_refusal (__main__.Case.test_allowance_cannot_be_renewed_after_refusal) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.506s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_second_directory_cannot_replay_issued_input",
+      "Case.test_second_directory_cannot_replay_issued_input"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_second_directory_cannot_replay_issued_input (__main__.Case.test_second_directory_cannot_replay_issued_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.692s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_second_directory_cannot_control_live_owner",
+      "Case.test_second_directory_cannot_control_live_owner"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_second_directory_cannot_control_live_owner (__main__.Case.test_second_directory_cannot_control_live_owner) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.357s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_endpoint_spelling_cannot_split_process_ownership",
+      "Case.test_endpoint_spelling_cannot_split_process_ownership"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_endpoint_spelling_cannot_split_process_ownership (__main__.Case.test_endpoint_spelling_cannot_split_process_ownership) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.384s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_wrong_process_start_identity_stops_before_control",
+      "Case.test_wrong_process_start_identity_stops_before_control"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_wrong_process_start_identity_stops_before_control (__main__.Case.test_wrong_process_start_identity_stops_before_control) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.505s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/Case.test_live_unrelated_process_cannot_claim_endpoint",
+      "Case.test_live_unrelated_process_cannot_claim_endpoint"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_live_unrelated_process_cannot_claim_endpoint (__main__.Case.test_live_unrelated_process_cannot_claim_endpoint) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.102s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_simultaneous_ports_one_owner",
+      "OwnerCase.test_simultaneous_ports_one_owner"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_simultaneous_ports_one_owner (__main__.OwnerCase.test_simultaneous_ports_one_owner) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.007s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_exit_cannot_renew",
+      "OwnerCase.test_exit_cannot_renew"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_exit_cannot_renew (__main__.OwnerCase.test_exit_cannot_renew) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.710s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_uncertainty_cannot_renew",
+      "OwnerCase.test_uncertainty_cannot_renew"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_uncertainty_cannot_renew (__main__.OwnerCase.test_uncertainty_cannot_renew) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.813s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_terminal_cannot_renew",
+      "OwnerCase.test_terminal_cannot_renew"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_terminal_cannot_renew (__main__.OwnerCase.test_terminal_cannot_renew) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.017s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_budget_refusal_cannot_renew",
+      "OwnerCase.test_budget_refusal_cannot_renew"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_budget_refusal_cannot_renew (__main__.OwnerCase.test_budget_refusal_cannot_renew) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.005s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_alias_path_address_fail_closed",
+      "OwnerCase.test_alias_path_address_fail_closed"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_alias_path_address_fail_closed (__main__.OwnerCase.test_alias_path_address_fail_closed) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.426s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-remaining/OwnerCase.test_distinct_original_process_allowed",
+      "OwnerCase.test_distinct_original_process_allowed"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_distinct_original_process_allowed (__main__.OwnerCase.test_distinct_original_process_allowed) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.448s\n\nOK\n"
+  }
+]

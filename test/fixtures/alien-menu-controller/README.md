@@ -48,9 +48,13 @@ The supervisor supplies the PID and start ticks of the existing control server.
 The CLI verifies that process owns the loopback listener through readonly procfs,
 then checks its identity again at each socket send. Missing/inaccessible identity
 stops control. A persistent flock and receipt under
-`/tmp/wine-ops-alien-menu-owners-UID/` bind boot ID, PID, start ticks and canonical
-endpoint. Alternate evidence directories, run IDs, terminal paths and endpoint
-spellings cannot obtain a second owner for that listener. Preserve these receipts
+`/tmp/wine-ops-alien-menu-owners-UID/` bind boot ID, PID namespace, PID and start
+ticks. The verified endpoint is evidence, not part of the authority key. Alternate
+listeners of that process, evidence directories, run IDs, terminal paths and
+endpoint spellings cannot obtain a second owner for that process. Legacy
+listener-specific claims for the same boot/PID/start identity also remain consumed.
+The listener and live process identity are checked again before each socket write.
+Preserve these receipts
 with invocation evidence; do not delete them to retry.
 
 After a real frozen menu capture, the supervisor stores `menu-frame.json`:

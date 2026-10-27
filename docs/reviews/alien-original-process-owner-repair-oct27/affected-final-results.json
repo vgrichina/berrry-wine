@@ -1,0 +1,178 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/OwnerCase.test_legacy_listener_claim_cannot_renew",
+      "OwnerCase.test_legacy_listener_claim_cannot_renew"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_legacy_listener_claim_cannot_renew (__main__.OwnerCase.test_legacy_listener_claim_cannot_renew) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.017s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_process_owner.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/OwnerCase.test_reused_pid_old_start_does_not_block_new_process",
+      "OwnerCase.test_reused_pid_old_start_does_not_block_new_process"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_reused_pid_old_start_does_not_block_new_process (__main__.OwnerCase.test_reused_pid_old_start_does_not_block_new_process) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.432s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_approved_menu_action_then_reserved_evidence_and_quit",
+      "Case.test_approved_menu_action_then_reserved_evidence_and_quit"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_approved_menu_action_then_reserved_evidence_and_quit (__main__.Case.test_approved_menu_action_then_reserved_evidence_and_quit) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.862s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_slow_startup_stops_before_any_control",
+      "Case.test_slow_startup_stops_before_any_control"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_slow_startup_stops_before_any_control (__main__.Case.test_slow_startup_stops_before_any_control) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.005s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_insufficient_action_time_stops_before_any_control",
+      "Case.test_insufficient_action_time_stops_before_any_control"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_insufficient_action_time_stops_before_any_control (__main__.Case.test_insufficient_action_time_stops_before_any_control) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.503s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_insufficient_capture_credits_stops_before_any_control",
+      "Case.test_insufficient_capture_credits_stops_before_any_control"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_insufficient_capture_credits_stops_before_any_control (__main__.Case.test_insufficient_capture_credits_stops_before_any_control) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.507s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_wrong_frozen_snapshot_stops_before_input",
+      "Case.test_wrong_frozen_snapshot_stops_before_input"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_wrong_frozen_snapshot_stops_before_input (__main__.Case.test_wrong_frozen_snapshot_stops_before_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.549s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_wrong_step_ack_stops_before_capture_and_quit",
+      "Case.test_wrong_step_ack_stops_before_capture_and_quit"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_wrong_step_ack_stops_before_capture_and_quit (__main__.Case.test_wrong_step_ack_stops_before_capture_and_quit) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 2.722s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_uncertain_input_is_durable_and_never_replayed",
+      "Case.test_uncertain_input_is_durable_and_never_replayed"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_uncertain_input_is_durable_and_never_replayed (__main__.Case.test_uncertain_input_is_durable_and_never_replayed) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.469s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_terminal_before_control",
+      "Case.test_terminal_before_control"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_terminal_before_control (__main__.Case.test_terminal_before_control) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.006s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_terminal_during_connection_stops_at_actual_send_boundary",
+      "Case.test_terminal_during_connection_stops_at_actual_send_boundary"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_terminal_during_connection_stops_at_actual_send_boundary (__main__.Case.test_terminal_during_connection_stops_at_actual_send_boundary) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.398s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_time_exhausted_during_connection_stops_before_input",
+      "Case.test_time_exhausted_during_connection_stops_before_input"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_time_exhausted_during_connection_stops_before_input (__main__.Case.test_time_exhausted_during_connection_stops_before_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.723s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_action_reserve_checked_again_at_socket_send",
+      "Case.test_action_reserve_checked_again_at_socket_send"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_action_reserve_checked_again_at_socket_send (__main__.Case.test_action_reserve_checked_again_at_socket_send) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.741s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_slow_initial_snapshot_stops_before_input",
+      "Case.test_slow_initial_snapshot_stops_before_input"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_slow_initial_snapshot_stops_before_input (__main__.Case.test_slow_initial_snapshot_stops_before_input) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.852s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_slow_action_stops_without_spending_cleanup_reserve",
+      "Case.test_slow_action_stops_without_spending_cleanup_reserve"
+    ],
+    "exit": 0,
+    "stdout": "",
+    "stderr": "test_slow_action_stops_without_spending_cleanup_reserve (__main__.Case.test_slow_action_stops_without_spending_cleanup_reserve) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 1.111s\n\nOK\n"
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_cleanup_reserved_with_last_three_capture_credits",
+      "Case.test_cleanup_reserved_with_last_three_capture_credits"
+    ],
+    "exit": 1,
+    "stdout": "",
+    "stderr": "test_cleanup_reserved_with_last_three_capture_credits (__main__.Case.test_cleanup_reserved_with_last_three_capture_credits) ... ERROR\n\n======================================================================\nERROR: test_cleanup_reserved_with_last_three_capture_credits (__main__.Case.test_cleanup_reserved_with_last_three_capture_credits)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py\", line 243, in test_cleanup_reserved_with_last_three_capture_credits\n    self.assertEqual(self.run_cli().returncode, 0)\n                     ^^^^^^^^^^^^^^\n  File \"/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py\", line 126, in run_cli\n    result = subprocess.run(argv, env=env, capture_output=True, text=True, timeout=5)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 550, in run\n    stdout, stderr = process.communicate(input, timeout=timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 1209, in communicate\n    stdout, stderr = self._communicate(input, endtime, timeout)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/subprocess.py\", line 2116, in _communicate\n    self._check_timeout(endtime, orig_timeout, stdout, stderr)\n  File \"/usr/lib/python3.12/subprocess.py\", line 1253, in _check_timeout\n    raise TimeoutExpired(\nsubprocess.TimeoutExpired: Command '['/usr/bin/python3', '/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py', '--invocation', '/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_cleanup_reserved_with_last_three_capture_credits/test_cleanup_reserved_with_last_three_capture_credits', '--endpoint', 'http://127.0.0.1:42161/ctl', '--terminal-file', '/tmp/alien-original-owner-retained-final-publication-oct27/ops/affected-final/Case.test_cleanup_reserved_with_last_three_capture_credits/test_cleanup_reserved_with_last_three_capture_credits/terminal.json', '--after-batches', '128', '--approve-new-game']' timed out after 5 seconds\n\n----------------------------------------------------------------------\nRan 1 test in 6.176s\n\nFAILED (errors=1)\n"
+  }
+]

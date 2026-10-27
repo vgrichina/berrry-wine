@@ -1,0 +1,65 @@
+{
+  "revalidatedAt": 1793065823.4076738,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountFiles": [],
+  "reusedExactConfiguration": {
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "intendedMountFiles": [],
+    "mounts": "offline HTTP only; no guest/mount invocation",
+    "pins": [
+      {
+        "path": "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/test/alien-gameplay-sequence.py",
+        "bytes": 2374,
+        "sha256": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f"
+      },
+      {
+        "path": "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/test/helpers/alien-control-sequence.py",
+        "bytes": 14836,
+        "sha256": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39"
+      },
+      {
+        "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/drive.py",
+        "bytes": 1798,
+        "sha256": "90b8c092b326525a59216705fe8f61fa47962378eb1b12179eeda268faab2c73"
+      },
+      {
+        "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/phase.py",
+        "bytes": 1669,
+        "sha256": "e4749398939e5fad21846bd46b3d377e848301ae61ef5e5c8a77c7ed9f93840a"
+      },
+      {
+        "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/newgame.py",
+        "bytes": 175,
+        "sha256": "e9041b8612c7e02fa7bb7a6901d2ce3a14d43d9165e73a876e441b9e36b33170"
+      },
+      {
+        "path": "/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/package.py",
+        "bytes": 8496,
+        "sha256": "1744f00cdc52c4c1705cc78fe4586bc076a3adaa262310d51a58ba44247786ba"
+      }
+    ],
+    "rootRefReceipt": {
+      "command": "git show-ref",
+      "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+      "streamedBytes": 148965,
+      "capturedListingBytes": 0,
+      "maxChunkBytes": 8192,
+      "exitCode": 0
+    },
+    "canonicalEmptyMountReceiptReused": "/tmp/alien-dispatch-boundary-independent-publication-oct27/ops/empty-mount-parser-output.log",
+    "canonicalEmptyMountReceipt": {
+      "argv": [],
+      "intendedFiles": [],
+      "mounts": [],
+      "offline": true
+    },
+    "canonicalParser": "/tmp/alien-controller-terminal-failfast-repair-oct26/repo/docs/reviews/alien-controller-terminal-failfast-repair-oct26/offline-mount-parser.cjs",
+    "canonicalParserSHA256": "be180a67186ceefc7efc0d0b31391ab479a0d9b90e73eb5680eaf64972c44955",
+    "canonicalReceiptSHA256": "4dbcea86c03f335817fad33d38150f6a26ed36629e650f8b5b9fd2618ef3d2b2",
+    "validation": "same-task actual offline mount argv empty, unchanged receipt verified; no runtime or Node executed"
+  },
+  "noCheckout": true,
+  "noRuntime": true
+}
