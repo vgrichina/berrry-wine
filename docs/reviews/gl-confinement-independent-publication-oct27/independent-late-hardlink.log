@@ -1,0 +1,6 @@
+{"acceptance": "REJECT", "externalContentBytes": 2358, "externalAllocatedBytes": 4096, "runnerError": "RuntimeError('output must be a single-link regular file')", "collectorError": "RuntimeError('output must be a single-link regular file')", "children": ["startup"], "rootRelocated": false}
+Traceback (most recent call last):
+  File "/tmp/gl-confinement-independent-publication-oct27/ops/hardlink-race.py", line 29, in <module>
+    assert n==0,'REJECT: production descriptor write filled an outside hardlink before post-write refusal'
+           ^^^^
+AssertionError: REJECT: production descriptor write filled an outside hardlink before post-write refusal

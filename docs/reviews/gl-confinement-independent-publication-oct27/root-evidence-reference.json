@@ -1,0 +1,6 @@
+{
+  "rootReceipt": "/home/user/wine-assembly/scratch/usage-watch/gl-confinement-root-closeout-oct27.json",
+  "sha256": "dc965d1e3f3dd57a5e5a99898e70342e4ce50c8780e3caffe028f817641bd88d",
+  "manifestPayloadsRehashedByCoordinator": 55,
+  "acceptanceNotInferredFromHashAudit": true
+}

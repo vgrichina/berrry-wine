@@ -1,0 +1,11 @@
+[
+  {
+    "incident": "Initial tail -f watcher held pool slot and blocked a subsequent read; stopped exact tail process with administrative pkill outside pool to release permits. No acceptance execution or limits changed.",
+    "watcher": "started then stopped; board will be checked at each group boundary"
+  },
+  {
+    "incident": "Initial Node preflight admission denied at MemAvailable1535066112 <1610612736; no Node execution occurred. Diagnostic later measured actual MemAvailable1653882880, an actual capacity change; fresh unchanged gate and exact startup then passed.",
+    "denial": "admission-node-preflight.json",
+    "diagnostic": "external ops/memory-denial-diagnostic.json"
+  }
+]

@@ -1,0 +1,130 @@
+{
+  "result": {
+    "error": "RuntimeError('output must be a single-link regular file')",
+    "collectorError": "RuntimeError('output must be a single-link regular file')",
+    "events": [
+      "admission-saved"
+    ],
+    "children": [],
+    "samples": [
+      {
+        "bytes": 102400,
+        "actual": 102400
+      },
+      {
+        "bytes": 102400,
+        "actual": 102400
+      },
+      {
+        "bytes": 102400,
+        "actual": 102400
+      },
+      {
+        "bytes": 106496,
+        "actual": 106496
+      }
+    ],
+    "writes": [
+      {
+        "temp": "ops/output/integrity-before.json.new",
+        "output": "ops/output/integrity-before.json",
+        "bytes": 98304
+      },
+      {
+        "temp": "ops/output/executables.json.new",
+        "output": "ops/output/executables.json",
+        "bytes": 102400
+      },
+      {
+        "temp": "ops/output/remote-admission.json.new",
+        "output": "ops/output/remote-admission.json",
+        "bytes": 106496
+      }
+    ],
+    "artifacts": {
+      "executables.json": {
+        "node": {
+          "path": "/usr/bin/true",
+          "sha256": "4b5a5694e3c0e8b1d58fc52ac6ef076e55e72c2f53195243ac86d5ff517cc2f6",
+          "version": "true (GNU coreutils) 9.4\nCopyright (C) 2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Jim Meyering.",
+          "standingBytes": 26936
+        },
+        "chrome": {
+          "path": "/usr/bin/true",
+          "sha256": "4b5a5694e3c0e8b1d58fc52ac6ef076e55e72c2f53195243ac86d5ff517cc2f6",
+          "version": "true (GNU coreutils) 9.4\nCopyright (C) 2023 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Jim Meyering.",
+          "standingBytes": 26936
+        }
+      },
+      "integrity-before.json": {
+        "source149": true,
+        "fixture7": true,
+        "sourceSnapshot": "0d65e6daf568a2b0104fcaea75801e9fcac6d1ae",
+        "fixture": "local-fixture",
+        "tree": "local-tree"
+      },
+      "remote-admission.json": {
+        "memAvailable": 8589934592,
+        "required": 3087007744,
+        "measuredCompleteDisk": 102400,
+        "prospectiveProfile": 268435456,
+        "prospectiveTemporary": 67108864,
+        "prospectiveEvidence": 8388608,
+        "prospectivePublication": 16777216,
+        "reserve": 8388608,
+        "projectedDisk": 369201152,
+        "diskCap": 1073741824,
+        "projectedFree": 16810770432,
+        "accounting": {
+          "samples": 1,
+          "peakProjected": 369201152,
+          "minFree": 16810770432,
+          "minMem": 8589934592
+        },
+        "environment": {
+          "PATH": "/usr/bin:/bin",
+          "HOME": "/home/user",
+          "LANG": "C.UTF-8",
+          "NODE_PATH": "/tmp/gl-entry-rnxq8c0q/deps/node_modules",
+          "CHROME": "/usr/bin/true",
+          "TMPDIR": "/tmp/gl-entry-rnxq8c0q/tmp",
+          "PALETTE_GPU_SOURCE_ROOT": "/tmp/gl-entry-rnxq8c0q/source",
+          "PALETTE_GPU_EVIDENCE": "/tmp/gl-entry-rnxq8c0q/ops/output/test-result.json",
+          "PALETTE_BROWSER_RESOURCE_CONFIG": "{\"explicitTaskAccounting\":\"2048MiB physical runtime;1024MiB complete remote task disk\"}",
+          "PYTHONDONTWRITEBYTECODE": "1"
+        },
+        "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+        "passAdmission": true
+      }
+    },
+    "collected": null,
+    "outputRelative": "ops/output",
+    "actualBytes": 110592,
+    "files": [
+      "ops/pins.json",
+      "ops/remote-run.py",
+      "ops/inputs-manifest.json",
+      "source/input.wat",
+      "ops/output/executables.json",
+      "ops/output/integrity-before.json",
+      "ops/output/node-startup.log",
+      "ops/output/remote-admission.json",
+      "repo/test/fixture.js",
+      "repo/test/test-d3dim-palette-gpu-web.js",
+      "repo/test/helpers/palette-browser-supervisor.py"
+    ],
+    "lastLedger": {
+      "samples": 4,
+      "retries": 0,
+      "unknown": 0,
+      "lastBytes": 106496
+    }
+  },
+  "externalBytes": 0,
+  "externalAllocated": 0,
+  "historicalAssertionException": "'NoneType' object is not subscriptable",
+  "originalInjectionUnchanged": true,
+  "runnerSHA256": "3f08d9ec7528af2df5057e66481b9e44861492b8122a65a20e2fef57b4d85c3b",
+  "reproducerSHA256": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+  "interpretation": "Safe refusal before child execution; no collected bytes; external target empty. Historical main expects success so its None indexing raises."
+}

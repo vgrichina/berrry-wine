@@ -1,0 +1,23 @@
+{
+  "timestamp": 1793060995.8955057,
+  "charges": {
+    "task": 2203648,
+    "launcher": 225280,
+    "session": 671744,
+    "positiveWALOnce": 0
+  },
+  "projection": 36655104,
+  "allocation": 62914560,
+  "sourceGitTempEvidence": 29360128,
+  "sessionEventsPositiveWAL": 16777216,
+  "publication": 8388608,
+  "reserve": 8388608,
+  "peerRemaining": 65773568,
+  "projectedFree": 2998816768,
+  "floor": 2982150144,
+  "memAvailable": 1848836096,
+  "requiredFutureRAM": 1610612736,
+  "standingSupervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+  "standingSupervisorBytes": 24576,
+  "pass": true
+}

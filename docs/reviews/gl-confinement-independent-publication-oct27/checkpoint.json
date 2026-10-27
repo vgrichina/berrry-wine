@@ -1,0 +1,42 @@
+{
+  "candidate": "2b825a30d178a34aca28b50307d87049693ba529",
+  "groups": {
+    "prepare": {
+      "receipt": "/tmp/gl-confinement-independent-publication-oct27/ops/prepare.json",
+      "pass": true
+    },
+    "node-preflight-after-capacity-change": {
+      "receipt": "/tmp/gl-confinement-independent-publication-oct27/ops/node-preflight-after-capacity-change.json",
+      "pass": true
+    },
+    "first-unchanged-production": {
+      "receipt": "/tmp/gl-confinement-independent-publication-oct27/ops/first-unchanged-production.json",
+      "pass": true
+    },
+    "independent-late-hardlink": {
+      "receipt": "/tmp/gl-confinement-independent-publication-oct27/ops/independent-late-hardlink.json",
+      "pass": false
+    }
+  },
+  "remaining": [
+    "production confinement/threat-boundary resolution by coordinator",
+    "renewed independent acceptance before any integration",
+    "separately admitted real-browser42+42"
+  ],
+  "sourceFixtureHashes": {
+    "test/test-gl-output-namespace-independent.py": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+    "test/test-gl-runner-output-namespace.py": "2e978fe4c0d7930a015c9acd96c2f0107e52bcc4621e2c59b1a564c53666bc1a",
+    "test/test-gl-output-file-confinement.py": "3585215696a92b6b4b0fea9f90abcd333b0e0475c911f1d6cf761434cb39bc09",
+    "test/test-gl-runner-output-namespace-omissions.py": "9254046bca2358b87a5d702ee869428040d33b4a9580210885846c44a4c838d4",
+    "test/test-palette-disk-accounting.py": "ec251f5e44a6727d1f9ba705837a5ff0de24f14944ad6bb27322be6772e48597",
+    "test/test-gl-output-namespace-controls.py": "fcaede8c1de2ab95914b6cdd327addf28c319bb5ba0762861541602a11922d52",
+    "test/test-palette-disk-accounting-omissions.py": "746af4f664a910b1713a03228fd9280e155c8d8164837442aa15e2499f5447d3",
+    "test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "87ea3ddec16baf2ba1bf94347160de6e589282ccd1265ed76f16537e04da3989",
+    "test/fixtures/gl-transient-accounting/remote-run-before.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "3f08d9ec7528af2df5057e66481b9e44861492b8122a65a20e2fef57b4d85c3b"
+  },
+  "outcome": "REJECT_EXTERNAL_HARDLINK_WRITE",
+  "integrationStopped": true,
+  "mainWrites": false
+}
