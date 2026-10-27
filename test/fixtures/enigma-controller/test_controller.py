@@ -33,7 +33,8 @@ def png():
 
 
 class FakeProduction:
-    def __init__(self, *, batch=0, cap=20000, rate=5000, latency=0, fault=None, real_delay=False):
+    def __init__(self, *, batch=0, cap=20000, rate=5000, latency=0, fault=None, real_delay=False,
+                 host='127.0.0.1'):
         self.batch, self.cap, self.rate = batch, cap, rate
         self.latency, self.fault, self.real_delay = latency, fault, real_delay
         self.now = time.time()
@@ -119,10 +120,21 @@ class FakeProduction:
                 except BrokenPipeError:
                     pass
 
-        self.server = http.server.HTTPServer(('127.0.0.1', 0), Handler)
+        class Server(http.server.HTTPServer):
+            address_family = socket.AF_INET6 if ':' in host else socket.AF_INET
+        self.server = Server((host, 0), Handler)
+        self.host = host
         self.thread = threading.Thread(target=self.server.serve_forever, kwargs={'poll_interval': .01}, daemon=True)
 
     def __enter__(self):
+        # Each distinct process really holds this listening socket through an
+        # inherited FD. The parent services HTTP and records wire evidence.
+        # This models listener ownership, not execution of a production guest.
+        # Do not substitute an unrelated idle PID: that was the rejected fixture.
+        self.process = subprocess.Popen([sys.executable, '-S', '-c', 'import time; time.sleep(120)'],
+                                        pass_fds=(self.server.fileno(),),
+                                        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                        stderr=subprocess.DEVNULL)
         self.thread.start()
         return self
 
@@ -130,11 +142,15 @@ class FakeProduction:
         self.server.shutdown()
         self.server.server_close()
         self.thread.join()
+        if self.process.poll() is None:
+            self.process.terminate()
+        self.process.wait(timeout=5)
 
     def config(self, directory, **updates):
-        c = dict(url=f'http://127.0.0.1:{self.server.server_port}/ctl',
+        host = self.host if ':' not in self.host else '[' + self.host + ']'
+        c = dict(url=f'http://{host}:{self.server.server_port}/ctl',
                  evidence_dir=str(directory / 'evidence'), terminal_path=str(directory / 'terminal.json'),
-                 pid=os.getpid(), process_start_ticks=ctl.process_identity(os.getpid()),
+                 pid=self.process.pid, process_start_ticks=ctl.process_identity(self.process.pid),
                  started_at=self.now, deadline_at=self.now + 110, max_batches=self.cap,
                  checkpoint_batches=4096, checkpoint_seconds=35, after_action_batches=256,
                  after_action_seconds=8, cleanup_batches=1, cleanup_seconds=1,
@@ -190,6 +206,27 @@ def legacy_drive(fake, source):
     raise AssertionError('original unexpectedly reached capture checkpoint')
 
 
+def scheduler_unit_controller(config, *, clock=time.time, sleep=time.sleep):
+    """Private scheduler unit harness, NOT production authority/entry evidence.
+
+    The public constructor refuses attachment. Production handoff correctness
+    is tested separately by test_supervised.py with real launched child state.
+    """
+    class UnitOwner:
+        def __init__(self):
+            self.config = config
+            self.listener = ctl.ListenerIdentity(config)
+        def live(self):
+            ctl.require(not Path(config['terminal_path']).exists(), 'terminal-supervisor')
+        def record(self, row):
+            pass
+        def close(self):
+            pass
+    driver = object.__new__(ctl.Controller)
+    driver._initialize(UnitOwner(), clock=clock, sleep=sleep)
+    return driver
+
+
 class ControllerTests(unittest.TestCase):
     def retain(self, directory):
         root = os.environ.get('ENIGMA_TEST_EVIDENCE_DIR')
@@ -202,7 +239,7 @@ class ControllerTests(unittest.TestCase):
         self.addCleanup(tmp.cleanup)
         directory = Path(tmp.name)
         config = fake.config(directory, **kw)
-        driver = ctl.Controller(config, clock=lambda: fake.now, sleep=lambda n: setattr(fake, 'now', fake.now + n))
+        driver = scheduler_unit_controller(config, clock=lambda: fake.now, sleep=lambda n: setattr(fake, 'now', fake.now + n))
         result = driver.run()
         return driver, result, directory
 
@@ -262,7 +299,7 @@ class ControllerTests(unittest.TestCase):
                 before = len(fake.commands)
                 with self.assertRaises(ctl.Refusal):
                     d.request({'action': 'step', 'n': 1})
-                with self.assertRaises(FileExistsError):
+                with self.assertRaisesRegex(ctl.Refusal, 'existing-guest-attachment-retired'):
                     ctl.Controller(d.c, clock=lambda: fake.now)
                 self.assertEqual(before, len(fake.commands))
                 if fault == 'disconnect':
@@ -273,8 +310,8 @@ class ControllerTests(unittest.TestCase):
             with tempfile.TemporaryDirectory() as tmp:
                 config = fake.config(Path(tmp))
                 Path(config['terminal_path']).write_text('{}')
-                d = ctl.Controller(config, clock=lambda: fake.now)
-                self.assertEqual(d.run(), 'terminal-supervisor')
+                with self.assertRaisesRegex(ctl.Refusal, 'terminal-supervisor'):
+                    scheduler_unit_controller(config, clock=lambda: fake.now)
                 self.assertEqual(fake.commands, [])
 
     def test_reviewed_action_then_capture_and_cleanup_reserve(self):
@@ -287,7 +324,7 @@ class ControllerTests(unittest.TestCase):
                         frameSHA256=hashlib.sha256(raw).hexdigest(), batch=batch, x=10, y=20)))
             fake.on_capture = authorize
             config = fake.config(directory, after_action_batches=2, decision_path=str(decision))
-            d = ctl.Controller(config, clock=lambda: fake.now)
+            d = scheduler_unit_controller(config, clock=lambda: fake.now)
             self.assertEqual(d.run(), 'ACTION_ACKNOWLEDGED_REQUIRES_REVIEW')
             self.assertEqual(len(fake.frames), 2)
             self.assertEqual(fake.frames[0][0], 19996)
@@ -303,7 +340,7 @@ class ControllerTests(unittest.TestCase):
         with FakeProduction() as fake, tempfile.TemporaryDirectory() as tmp:
             decision = Path(tmp)/'decision.json'
             decision.write_text(json.dumps(dict(safeStartGame=True, reviewed=True, frameSHA256='stale', batch=4097, x=1, y=2)))
-            d = ctl.Controller(fake.config(Path(tmp), decision_path=str(decision)), clock=lambda: fake.now)
+            d = scheduler_unit_controller(fake.config(Path(tmp), decision_path=str(decision)), clock=lambda: fake.now)
             self.assertEqual(d.run(), 'unreviewed-or-stale-frame')
             self.assertFalse(any('cmd' in c for c in fake.commands))
 
@@ -314,27 +351,24 @@ class ControllerTests(unittest.TestCase):
             self.assertFalse(any(c.get('action') == 'step' for c in fake.commands))
         with FakeProduction() as fake, tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(ctl.Refusal, 'before-after-captures'):
-                ctl.Controller(fake.config(Path(tmp), max_captures=1), clock=lambda: fake.now)
+                scheduler_unit_controller(fake.config(Path(tmp), max_captures=1), clock=lambda: fake.now)
             self.assertEqual(fake.commands, [])
 
-    def test_cli_config_real_scheduling_no_input(self):
+    def test_cli_config_attachment_retired(self):
         with FakeProduction(real_delay=True) as fake, tempfile.TemporaryDirectory() as tmp:
-            directory = Path(tmp)
-            config = fake.config(directory, checkpoint_batches=511, request_timeout=1)
-            path = directory/'config.json'
+            config = fake.config(Path(tmp))
+            path = Path(tmp)/'config.json'
             path.write_text(json.dumps(config))
-            p = subprocess.run([sys.executable, str(TOOL), '--config', str(path)], capture_output=True, text=True, timeout=10)
-            self.assertEqual(p.returncode, 0, p.stderr + p.stdout)
-            self.assertEqual(fake.frames[0][0], 512)
-            self.assertFalse(any('cmd' in c for c in fake.commands))
-            outcome = json.loads((directory/'evidence/outcome.json').read_text())
-            self.assertEqual(outcome['status'], 'NO_REVIEWED_ACTION_NO_INPUT')
-            self.retain(directory)
+            p = subprocess.run([sys.executable, str(TOOL), '--config', str(path)], capture_output=True, text=True, timeout=5)
+            self.assertEqual(p.returncode, 1, p.stderr+p.stdout)
+            self.assertIn('existing-guest-attachment-retired', p.stdout)
+            self.assertEqual(fake.commands, [])
+            self.assertFalse(Path(config['evidence_dir']).exists())
 
     def test_actual_slow_http_reaches_time_checkpoint_before_batch_checkpoint(self):
         with FakeProduction(rate=100000, latency=.02, real_delay=True) as fake, tempfile.TemporaryDirectory() as tmp:
             config = fake.config(Path(tmp), checkpoint_batches=10000, checkpoint_seconds=.03, request_timeout=.2)
-            d = ctl.Controller(config)
+            d = scheduler_unit_controller(config)
             self.assertEqual(d.run(), 'NO_REVIEWED_ACTION_NO_INPUT')
             self.assertEqual(fake.frames[0][0], 1)
             self.assertLess(fake.frames[0][0], 10001)
@@ -342,7 +376,7 @@ class ControllerTests(unittest.TestCase):
     def test_expired_aggregate_and_past_checkpoint_do_not_reset_allowance(self):
         with FakeProduction() as fake, tempfile.TemporaryDirectory() as tmp:
             with self.assertRaisesRegex(ctl.Refusal, 'aggregate-time'):
-                ctl.Controller(fake.config(Path(tmp), started_at=fake.now-110, deadline_at=fake.now), clock=lambda: fake.now)
+                scheduler_unit_controller(fake.config(Path(tmp), started_at=fake.now-110, deadline_at=fake.now), clock=lambda: fake.now)
             self.assertEqual(fake.commands, [])
         with FakeProduction() as fake:
             d, status, _ = self.run_driver(fake, started_at=fake.now-40, deadline_at=fake.now+70)
@@ -363,7 +397,7 @@ class ControllerTests(unittest.TestCase):
                     else:
                         fake.now = config['deadline_at'] - .1
                 fake.on_capture = authorize
-                d = ctl.Controller(config, clock=lambda: fake.now)
+                d = scheduler_unit_controller(config, clock=lambda: fake.now)
                 d.run()
                 self.assertTrue(d.failed)
                 self.assertFalse(any('cmd' in c for c in fake.commands))
@@ -376,7 +410,7 @@ class ControllerTests(unittest.TestCase):
                 decision.write_text(json.dumps(dict(safeStartGame=True, reviewed=True,
                     frameSHA256=hashlib.sha256(raw).hexdigest(), batch=batch, x=1, y=2)))
             fake.on_capture = authorize
-            d = ctl.Controller(fake.config(directory, decision_path=str(decision)), clock=lambda: fake.now)
+            d = scheduler_unit_controller(fake.config(directory, decision_path=str(decision)), clock=lambda: fake.now)
             d.run()
             self.assertTrue(d.pending)
             self.assertTrue(d.failed)

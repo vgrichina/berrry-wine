@@ -1,18 +1,22 @@
 #!/usr/bin/env python3
-"""Serial, budget-aware client for an already supervised frozen production runner.
+"""Serial frozen-runner controller, delegated only by its launching supervisor.
 
-No guest is launched here. The owner must keep the original aggregate supervisor
-and admission in force. A fresh exclusive evidence directory is the no-replay
-latch: never remove it to retry an uncertain request against the same guest.
+Standalone existing-guest attachment is retired. Start a NEW guest with
+ enigma-supervised-gameplay.py --launch-config. Cooperative local orchestration,
+not isolation against arbitrary same-UID code modifying Python internals.
 """
 import argparse
 import hashlib
 import json
 import math
 import os
+import ipaddress
+import socket
 from pathlib import Path
+import stat
 import time
 import urllib.request
+from urllib.parse import urlsplit, urlunsplit
 
 
 class Refusal(RuntimeError):
@@ -25,20 +29,119 @@ def require(condition, reason):
 
 
 def process_identity(pid):
-    text = Path(f'/proc/{pid}/stat').read_text()
+    try:
+        text = Path(f'/proc/{pid}/stat').read_text()
+    except OSError as ex:
+        raise Refusal('terminal-process') from ex
     fields = text[text.rfind(')') + 2:].split()
     require(fields[0] not in ('Z', 'X'), 'terminal-process')
     return fields[19]
 
 
+class ListenerIdentity:
+    """Read-only Linux listener proof; never contact an endpoint to identify it.
+
+    Exact loopback bindings only. Pin a numeric destination so DNS/proxy/redirect
+    behavior cannot send a verified request elsewhere. This is a local procfs
+    observation, not OS isolation or an atomic check-and-connect primitive.
+    """
+    def __init__(self, config):
+        self.pid = config['pid']
+        self.ticks = str(config['process_start_ticks'])
+        try:
+            u = urlsplit(config['url'])
+            require(u.scheme == 'http' and u.hostname and u.port
+                    and u.username is None and u.password is None
+                    and u.path == '/ctl' and not u.fragment, 'loopback-control-required')
+            host = u.hostname
+            if host.lower() == 'localhost':
+                addresses = {ipaddress.ip_address(x[4][0]) for x in
+                             socket.getaddrinfo(host, u.port, type=socket.SOCK_STREAM)}
+            else:
+                addresses = {ipaddress.ip_address(host)}
+            require(addresses and all(a.is_loopback for a in addresses), 'loopback-control-required')
+            self.port = u.port
+            self.process = self.process_proof()
+            found = []
+            for address in sorted(addresses, key=lambda a: (a.version, int(a))):
+                inodes = self.listeners(address)
+                if inodes:
+                    require(inodes <= self.sockets(), 'control-listener-process-mismatch')
+                    found.append((address, inodes))
+            require(found, 'control-listener-unproven')
+            self.address, self.inodes = found[0]
+            host = str(self.address) if self.address.version == 4 else '[' + str(self.address) + ']'
+            self.url = urlunsplit(('http', f'{host}:{self.port}', u.path, u.query, ''))
+            self.verify()
+        except (OSError, ValueError, IndexError) as ex:
+            raise Refusal('control-listener-unproven') from ex
+
+    def process_proof(self):
+        require(process_identity(self.pid) == self.ticks, 'terminal-process-identity')
+        proc = Path('/proc') / str(self.pid)
+        pid_ns = os.stat(proc / 'ns/pid').st_ino
+        net_ns = os.stat(proc / 'ns/net').st_ino
+        require(pid_ns == os.stat('/proc/self/ns/pid').st_ino
+                and net_ns == os.stat('/proc/self/ns/net').st_ino, 'control-process-namespace-mismatch')
+        return (Path('/proc/sys/kernel/random/boot_id').read_text().strip(), pid_ns, net_ns, self.ticks)
+
+    def sockets(self):
+        result = set()
+        for fd in (Path('/proc') / str(self.pid) / 'fd').iterdir():
+            try:
+                target = os.readlink(fd)
+            except FileNotFoundError:
+                continue
+            if target.startswith('socket:['):
+                result.add(target[8:-1])
+        return result
+
+    def listeners(self, address):
+        table = '/proc/self/net/tcp' + ('6' if address.version == 6 else '')
+        packed = address.packed
+        # Linux procfs prints each native-endian 32-bit address word.
+        import sys
+        encoded = ''.join(int.from_bytes(packed[i:i+4], sys.byteorder).to_bytes(4, 'big').hex()
+                          for i in range(0, len(packed), 4)).upper()
+        local = f'{encoded}:{self.port:04X}'
+        result = set()
+        for line in Path(table).read_text().splitlines()[1:]:
+            row = line.split()
+            if row[1] == local and row[3] == '0A':
+                result.add(row[9])
+        return result
+
+    def verify(self):
+        try:
+            require(self.process_proof() == self.process, 'control-process-identity-changed')
+            require(self.listeners(self.address) == self.inodes and self.inodes <= self.sockets(),
+                    'control-listener-identity-changed')
+            require(self.process_proof() == self.process, 'control-process-identity-changed')
+        except (OSError, ValueError, IndexError) as ex:
+            raise Refusal('control-listener-unproven') from ex
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        raise Refusal('control-redirect-refused')
+
+
 class Controller:
-    def __init__(self, config, *, clock=time.time, sleep=time.sleep):
-        self.c = dict(config)
+    def __init__(self, *args, **kwargs):
+        raise Refusal('existing-guest-attachment-retired: use enigma-supervised-gameplay.py --launch-config for a NEW guest')
+
+    def _initialize(self, owner, *, clock=time.time, sleep=time.sleep):
+        # Private in-process handoff from the supervisor which just launched its
+        # child. JSON, PID, paths and inherited FDs never enter this path.
+        self.owner = owner
+        self.c = owner.config
         self.clock, self.sleep = clock, sleep
         self.validate()
+        owner.live()
+        self.listener = owner.listener
+        self.ownership = owner
+        self.http = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
         self.out = Path(self.c['evidence_dir'])
-        # O_EXCL equivalent for the whole session; even a completed invocation
-        # cannot be silently restarted with refreshed allowance.
         self.out.mkdir(parents=False, exist_ok=False)
         self.trace = (self.out / 'requests.jsonl').open('x')
         self.batch = None
@@ -46,7 +149,7 @@ class Controller:
         self.failed = False
         self.captures = 0
         self.clicked = False
-        self.save('config.json', self.c)
+        self.save('config.json', dict(self.c))
 
     def validate(self):
         c = self.c
@@ -68,7 +171,6 @@ class Controller:
         require(0 < limits['cpu'] <= 90 and 0 < limits['wall'] <= 120
                 and 0 < limits['file'] <= 25165824 and 0 < limits['output'] <= 2097152
                 and 0 < limits['physical'] <= 3221225472, 'invalid-supervisor-limits')
-        require(c['url'].startswith('http://127.0.0.1:'), 'loopback-control-required')
         require(Path(c['terminal_path']).is_absolute() and Path(c['evidence_dir']).is_absolute(), 'absolute-evidence-path-required')
         require(str(c['process_start_ticks']) == process_identity(c['pid']), 'terminal-process-identity')
 
@@ -83,12 +185,14 @@ class Controller:
 
     def live(self):
         require(not self.failed, 'latched-failure-no-replay')
+        self.owner.live()
         require(not Path(self.c['terminal_path']).exists(), 'terminal-supervisor')
         try:
             require(process_identity(self.c['pid']) == str(self.c['process_start_ticks']), 'terminal-process-identity')
         except OSError as ex:
             raise Refusal('terminal-process') from ex
         require(self.clock() < self.c['deadline_at'], 'exhausted-budget: aggregate-time')
+        self.listener.verify()
 
     def time_left(self):
         return self.c['deadline_at'] - self.clock()
@@ -100,16 +204,23 @@ class Controller:
         require(timeout > 0, 'exhausted-budget: request-time')
         row = dict(at=self.clock(), request=command, startingBatch=self.batch)
         # Persist intent BEFORE the socket. A disconnect or validation failure
-        # poisons this controller; the exclusive directory poisons CLI restart.
+        # poisons this controller; process ownership poisons every CLI restart.
         self.pending = True
+        self.ownership.record(dict(event='request-intent', **row,
+                                   captures=self.captures, clicked=self.clicked))
         self.save('request-intent.json', row)
         try:
-            req = urllib.request.Request(self.c['url'], data=json.dumps(command).encode(),
+            req = urllib.request.Request(self.listener.url, data=json.dumps(command).encode(),
                                          headers={'Content-Type': 'application/json'})
-            with urllib.request.urlopen(req, timeout=timeout) as response:
+            # Evidence/intent I/O may take time. Recheck at the send boundary;
+            # failure leaves the intent latched and cannot buy another claim.
+            self.live()
+            with self.http.open(req, timeout=timeout) as response:
                 raw = response.read(8193)
             require(len(raw) <= 8192, 'oversize-response')
             row['originalResponse'] = raw.decode()
+            if command.get('action') != 'quit':
+                self.live()
             value = json.loads(raw)
             require(value.get('ok') is True and isinstance(value.get('value'), dict), 'rejected-control')
             self.pending = False
@@ -120,6 +231,7 @@ class Controller:
             raise
         finally:
             row['ended'] = self.clock()
+            self.ownership.record(dict(event='response', **row))
             self.trace.write(json.dumps(row) + '\n')
             self.trace.flush()
             os.fsync(self.trace.fileno())
@@ -244,14 +356,19 @@ class Controller:
     def run(self):
         try:
             status = self.drive()
-        except Exception as ex:
+        except BaseException as ex:
             self.failed = True
             status = str(ex) if isinstance(ex, Refusal) else 'uncertain-request-or-evidence-failure: ' + repr(ex)
         finally:
-            self.save('outcome.json', dict(status=locals().get('status', 'controller-failure'),
+            outcome = dict(status=locals().get('status', 'controller-failure'),
                       batch=self.batch, captures=self.captures, clicked=self.clicked,
-                      pending=self.pending, failed=self.failed, at=self.clock()))
-            self.trace.close()
+                      pending=self.pending, failed=self.failed, at=self.clock())
+            try:
+                self.ownership.record(dict(event='closed', **outcome))
+                self.save('outcome.json', outcome)
+            finally:
+                self.trace.close()
+                self.ownership.close()
         return status
 
 
@@ -259,7 +376,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', required=True, type=Path)
     args = parser.parse_args()
-    controller = Controller(json.loads(args.config.read_text()))
+    try:
+        controller = Controller()
+    except Refusal as ex:
+        print(str(ex))
+        return 1
     status = controller.run()
     print(status)
     return 1 if controller.failed else 0

@@ -1,0 +1,690 @@
+{
+  "scope": "Implementation candidate; offline actual production Python entry only",
+  "baseCommit": "36723a46880442a4e04a9ca31f23ec0f4ebb6340",
+  "baseTree": "cba7cd2b83c5d5bf4da8394471ddee833c3f5cf0",
+  "branch": "task/enigma-process-ownership-controller-repair-oct27",
+  "sourceAndFixtureSHA256": {
+    "tools/enigma-frozen-gameplay-controller.py": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+    "tools/enigma-supervised-gameplay.py": "6f00afae565b32114cc6b78d9b806348d2195ff69122e345aabaf09493b5960c",
+    "test/fixtures/enigma-controller/child_server.py": "aec2de6694a5979ea90831bbb8b9b4756e043bda3d785a55979777314edb285a",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_controller.py": "70187afa1e763b996e80f3f9b0881ffa00ddc4c9afeba7eaed34fafad4d0c1dd",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_supervised.py": "a76bb50eb8e4d29731b8e0c368b02a2c4806df68a50d95e4acf173c6871d9130"
+  },
+  "productionRunner": {
+    "path": "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo/test/run.js",
+    "sha256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+    "readonly": true,
+    "executed": false
+  },
+  "groups": {
+    "first-boundary": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 75816960,
+      "sampledPeakRSS": 75816960,
+      "reapedPeakRSS": 26476544,
+      "cpuSeconds": 0.6158509999999999,
+      "wallSeconds": 0.3560902480967343,
+      "owned": [
+        [
+          3522690,
+          "111428950"
+        ],
+        [
+          3522691,
+          "111428967"
+        ],
+        [
+          3522693,
+          "111428975"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "production-entry-corrected": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 97337344,
+      "sampledPeakRSS": 97337344,
+      "reapedPeakRSS": 25165824,
+      "cpuSeconds": 2.733385,
+      "wallSeconds": 1.2836891340557486,
+      "owned": [
+        [
+          3526113,
+          "111446757"
+        ],
+        [
+          3526114,
+          "111446763"
+        ],
+        [
+          3526115,
+          "111446772"
+        ],
+        [
+          3526117,
+          "111446778"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "production-final": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 119058432,
+      "sampledPeakRSS": 119058432,
+      "reapedPeakRSS": 25427968,
+      "cpuSeconds": 34.657641,
+      "wallSeconds": 18.498548679985106,
+      "owned": [
+        [
+          3531612,
+          "111474439"
+        ],
+        [
+          3531615,
+          "111474447"
+        ],
+        [
+          3531621,
+          "111474554"
+        ],
+        [
+          3531637,
+          "111474559"
+        ],
+        [
+          3531658,
+          "111474806"
+        ],
+        [
+          3531661,
+          "111474824"
+        ],
+        [
+          3531663,
+          "111474832"
+        ],
+        [
+          3531703,
+          "111475009"
+        ],
+        [
+          3531710,
+          "111475033"
+        ],
+        [
+          3531715,
+          "111475057"
+        ],
+        [
+          3531720,
+          "111475114"
+        ],
+        [
+          3531721,
+          "111475124"
+        ],
+        [
+          3531723,
+          "111475134"
+        ],
+        [
+          3531725,
+          "111475140"
+        ],
+        [
+          3531740,
+          "111475166"
+        ],
+        [
+          3531745,
+          "111475172"
+        ],
+        [
+          3531749,
+          "111475216"
+        ],
+        [
+          3531751,
+          "111475230"
+        ],
+        [
+          3531762,
+          "111475333"
+        ],
+        [
+          3531763,
+          "111475342"
+        ],
+        [
+          3531783,
+          "111475379"
+        ],
+        [
+          3531784,
+          "111475387"
+        ],
+        [
+          3531788,
+          "111475454"
+        ],
+        [
+          3531789,
+          "111475462"
+        ],
+        [
+          3531790,
+          "111475468"
+        ],
+        [
+          3531792,
+          "111475474"
+        ],
+        [
+          3531794,
+          "111475523"
+        ],
+        [
+          3531795,
+          "111475530"
+        ],
+        [
+          3531796,
+          "111475538"
+        ],
+        [
+          3531798,
+          "111475543"
+        ],
+        [
+          3531800,
+          "111475557"
+        ],
+        [
+          3531802,
+          "111475563"
+        ],
+        [
+          3531808,
+          "111475569"
+        ],
+        [
+          3531809,
+          "111475575"
+        ],
+        [
+          3531810,
+          "111475581"
+        ],
+        [
+          3531812,
+          "111475586"
+        ],
+        [
+          3531814,
+          "111475613"
+        ],
+        [
+          3531815,
+          "111475619"
+        ],
+        [
+          3531816,
+          "111475624"
+        ],
+        [
+          3531845,
+          "111476019"
+        ],
+        [
+          3531846,
+          "111476025"
+        ],
+        [
+          3531847,
+          "111476030"
+        ],
+        [
+          3531849,
+          "111476035"
+        ],
+        [
+          3531851,
+          "111476104"
+        ],
+        [
+          3531852,
+          "111476112"
+        ],
+        [
+          3531854,
+          "111476117"
+        ],
+        [
+          3531856,
+          "111476134"
+        ],
+        [
+          3531857,
+          "111476139"
+        ],
+        [
+          3531858,
+          "111476145"
+        ],
+        [
+          3531860,
+          "111476150"
+        ],
+        [
+          3531862,
+          "111476175"
+        ],
+        [
+          3531863,
+          "111476180"
+        ],
+        [
+          3531864,
+          "111476188"
+        ],
+        [
+          3531866,
+          "111476195"
+        ],
+        [
+          3531871,
+          "111476223"
+        ],
+        [
+          3531877,
+          "111476230"
+        ],
+        [
+          3531888,
+          "111476241"
+        ],
+        [
+          3531890,
+          "111476248"
+        ],
+        [
+          3531892,
+          "111476276"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "scheduler-and-retired-api": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 107106304,
+      "sampledPeakRSS": 107106304,
+      "reapedPeakRSS": 35803136,
+      "cpuSeconds": 16.924789,
+      "wallSeconds": 20.01076606893912,
+      "owned": [
+        [
+          3532823,
+          "111480107"
+        ],
+        [
+          3532825,
+          "111480129"
+        ],
+        [
+          3532832,
+          "111480190"
+        ],
+        [
+          3532878,
+          "111480432"
+        ],
+        [
+          3532889,
+          "111480672"
+        ],
+        [
+          3532892,
+          "111480672"
+        ],
+        [
+          3532895,
+          "111480684"
+        ],
+        [
+          3532898,
+          "111480699"
+        ],
+        [
+          3532912,
+          "111480775"
+        ],
+        [
+          3532936,
+          "111480904"
+        ],
+        [
+          3532950,
+          "111480938"
+        ],
+        [
+          3532974,
+          "111481059"
+        ],
+        [
+          3533010,
+          "111481188"
+        ],
+        [
+          3533037,
+          "111481250"
+        ],
+        [
+          3533041,
+          "111481332"
+        ],
+        [
+          3533077,
+          "111481650"
+        ],
+        [
+          3533079,
+          "111481657"
+        ],
+        [
+          3533081,
+          "111481658"
+        ],
+        [
+          3533145,
+          "111481914"
+        ],
+        [
+          3533149,
+          "111481927"
+        ],
+        [
+          3533152,
+          "111481967"
+        ],
+        [
+          3533157,
+          "111481995"
+        ],
+        [
+          3533161,
+          "111482011"
+        ],
+        [
+          3533167,
+          "111482021"
+        ],
+        [
+          3533169,
+          "111482029"
+        ],
+        [
+          3533171,
+          "111482036"
+        ],
+        [
+          3533173,
+          "111482042"
+        ],
+        [
+          3533175,
+          "111482056"
+        ],
+        [
+          3533178,
+          "111482057"
+        ],
+        [
+          3533180,
+          "111482057"
+        ],
+        [
+          3533181,
+          "111482070"
+        ],
+        [
+          3533185,
+          "111482080"
+        ],
+        [
+          3533187,
+          "111482080"
+        ],
+        [
+          3533189,
+          "111482081"
+        ],
+        [
+          3533190,
+          "111482088"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "resource-caps": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 95080448,
+      "sampledPeakRSS": 95080448,
+      "reapedPeakRSS": 23068672,
+      "cpuSeconds": 1.269708,
+      "wallSeconds": 0.8320979450363666,
+      "owned": [
+        [
+          3534260,
+          "111488296"
+        ],
+        [
+          3534261,
+          "111488310"
+        ],
+        [
+          3534262,
+          "111488323"
+        ],
+        [
+          3534266,
+          "111488327"
+        ],
+        [
+          3534269,
+          "111488345"
+        ],
+        [
+          3534270,
+          "111488369"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "final-failure-latch": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 97820672,
+      "sampledPeakRSS": 97820672,
+      "reapedPeakRSS": 25690112,
+      "cpuSeconds": 11.972239,
+      "wallSeconds": 5.273068067850545,
+      "owned": [
+        [
+          3536381,
+          "111498590"
+        ],
+        [
+          3536384,
+          "111498599"
+        ],
+        [
+          3536386,
+          "111498610"
+        ],
+        [
+          3536388,
+          "111498618"
+        ],
+        [
+          3536394,
+          "111498681"
+        ],
+        [
+          3536397,
+          "111498692"
+        ],
+        [
+          3536400,
+          "111498720"
+        ],
+        [
+          3536402,
+          "111498726"
+        ],
+        [
+          3536405,
+          "111498779"
+        ],
+        [
+          3536406,
+          "111498787"
+        ],
+        [
+          3536407,
+          "111498839"
+        ],
+        [
+          3536409,
+          "111498846"
+        ],
+        [
+          3536428,
+          "111498929"
+        ],
+        [
+          3536429,
+          "111498938"
+        ],
+        [
+          3536430,
+          "111498970"
+        ],
+        [
+          3536432,
+          "111498976"
+        ],
+        [
+          3536445,
+          "111499007"
+        ],
+        [
+          3536446,
+          "111499013"
+        ],
+        [
+          3536447,
+          "111499021"
+        ],
+        [
+          3536449,
+          "111499027"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "original-lifetime": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 128028672,
+      "sampledPeakRSS": 128028672,
+      "reapedPeakRSS": 25296896,
+      "cpuSeconds": 11.412925,
+      "wallSeconds": 6.878073523053899,
+      "owned": [
+        [
+          3536948,
+          "111503246"
+        ],
+        [
+          3536949,
+          "111503252"
+        ],
+        [
+          3536950,
+          "111503252"
+        ],
+        [
+          3536987,
+          "111503397"
+        ],
+        [
+          3536996,
+          "111503406"
+        ],
+        [
+          3537156,
+          "111503463"
+        ],
+        [
+          3537170,
+          "111503470"
+        ],
+        [
+          3537181,
+          "111503477"
+        ],
+        [
+          3537380,
+          "111503874"
+        ],
+        [
+          3537381,
+          "111503881"
+        ],
+        [
+          3537382,
+          "111503889"
+        ],
+        [
+          3537384,
+          "111503893"
+        ]
+      ],
+      "cleanupComplete": true
+    }
+  },
+  "passingDistinctMethods": {
+    "production": 8,
+    "scheduler": 15,
+    "retiredAPI": 5
+  },
+  "reuseProofPath": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/reused-checks.json",
+  "historicalEvidence": [
+    "/tmp/enigma-listener-retained-independent-publication-oct27/ops/inherited-identity-outcome.json",
+    "/tmp/enigma-original-authority-binding-repair-oct27/ops/contract-analysis.json"
+  ],
+  "qualifications": [
+    "No actual Node/Enigma runtime",
+    "Synthetic identity-change observation at send; no actual PID reuse claim",
+    "Distinct supervised children sequential under128MiB whole-tree cap",
+    "Historical inherited-FD/shared-parent fixture used only for attach refusal",
+    "Private unit harness tests scheduler, not production authority",
+    "No OS isolation or atomic procfs check-and-send claim"
+  ],
+  "remaining": [
+    "Independent exact-candidate acceptance",
+    "Separate main integration authorization/ownership",
+    "Separately admitted real Enigma runtime and Node startup qualification"
+  ],
+  "recovery": "Reuse exact-source per-group checkpoints; run only affected checks. Never delete a terminal/delegation journal to attach to an old child. New launch means new supervisor and child.",
+  "evidenceRoot": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops",
+  "publicationReceipt": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/publication.json"
+}
