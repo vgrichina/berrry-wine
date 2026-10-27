@@ -1,0 +1,162 @@
+{
+  "result": "blocked before guest",
+  "source": {
+    "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "donor": "/tmp/generally-census-accepted-main-integration-oct27/repo",
+    "donorReadOnly": true,
+    "sourceReceiptSHA256": "2a48d2ba62064a4c3540c0d451663ede04c8c036dbfb02bb5d84d948c440ec5d"
+  },
+  "reportPayloads": [
+    {
+      "path": "README.md",
+      "bytes": 1712,
+      "sha256": "fdb69c6dafbf624f8852a093cc6bb71432588c764a58661e7231fcd6182e9c06"
+    },
+    {
+      "path": "admission-closeout.json",
+      "bytes": 1047,
+      "sha256": "b88d4a5a300502c8cd68f12c764b9e3649f62e622512d2e8189c62bd629b5232"
+    },
+    {
+      "path": "aux-stage.py",
+      "bytes": 1288,
+      "sha256": "3a1bc3562e727a1b75e753b2b808844a02f124d8fcdb2124c59971ac97e54e2b"
+    },
+    {
+      "path": "box-info.json",
+      "bytes": 1530,
+      "sha256": "e39a221221e0b8918e5c9cb45f71baba22d0b401ae0dd1903ce30bac00b07e97"
+    },
+    {
+      "path": "commit.json",
+      "bytes": 507,
+      "sha256": "0fb50344ecdc54c4e223ef055b1d828b2038d8915eeaaf396ac56ee5e3a0a8c0"
+    },
+    {
+      "path": "commit.stderr",
+      "bytes": 348,
+      "sha256": "a94cb3bb64d4cd7cf40053b4e5da610a9ea0221329b5a2202df5cfa8599e2a79"
+    },
+    {
+      "path": "completed-pins.json",
+      "bytes": 73334,
+      "sha256": "fc855df42b3e2cd7fe666716eff2fcc6a72321ac99a54210154ebe847339d8d3"
+    },
+    {
+      "path": "control.py",
+      "bytes": 6521,
+      "sha256": "9aff569dcd52c474bfd9b2a3fb485a8a38ff1d2623c053128603a454e3876a74"
+    },
+    {
+      "path": "inspect.child.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "inspect.child.stdout",
+      "bytes": 2410,
+      "sha256": "35aa52db5b53e5fdaa884df1071907164a315efed3b04fe85c0d430496c8b573"
+    },
+    {
+      "path": "inspect.execution.json",
+      "bytes": 370,
+      "sha256": "87c396f1773a9d99dad9a0ec6c5fa9747678228b606872c25f1e5c4c58c3b22d"
+    },
+    {
+      "path": "preflight-inspection.py",
+      "bytes": 640,
+      "sha256": "f68904b511f7b3d8205c8d4dfacf6329ca45185e47bf0b87727946cb35461b5d"
+    },
+    {
+      "path": "publication-tests.json",
+      "bytes": 180,
+      "sha256": "99508b69437413b2fe54ac8312b704b1a5c565aa6ba759f3095b66e11a449c38"
+    },
+    {
+      "path": "publish.child.stderr",
+      "bytes": 628,
+      "sha256": "2c527f7107b0d5fc79d3351c3dd78ec4d20ceac52cd3dc8973806295052d03b0"
+    },
+    {
+      "path": "publish.execution.json",
+      "bytes": 489,
+      "sha256": "0294df53c0b2dde6975d4c26a7d82b6076343be7e162a1fc95677f41c109aa19"
+    },
+    {
+      "path": "remote-job.py",
+      "bytes": 2679,
+      "sha256": "d23caf2825d4bf22e4ccce97e92ab84f27b0d7a135585fbd4dbfbf66beef8afe"
+    },
+    {
+      "path": "request-ledger.json",
+      "bytes": 217030,
+      "sha256": "ae4099abd5442bb9db85697df48c946c2cd0ed24607cb26b1e334a44ed31607f"
+    },
+    {
+      "path": "result.json",
+      "bytes": 24890,
+      "sha256": "0a59dd0382b298ad82ecf01098a0ec65f40c3e85b49a9a4e43d177caee8ff51d"
+    },
+    {
+      "path": "setup.child.stderr",
+      "bytes": 345,
+      "sha256": "cef6feb632d71e8703ef917bb672d8dbe9aaa99aa0e42f70ccb7c901e64b4cf1"
+    },
+    {
+      "path": "setup.execution.json",
+      "bytes": 404,
+      "sha256": "4d411621c5d15956844a9dcafd2adb0f4eed31dedfa0e9a418bcd99129183de6"
+    },
+    {
+      "path": "setup.py",
+      "bytes": 1469,
+      "sha256": "34433a5ada79ab94c00c273ac0d805e3c7834e4f2405a2ade4dc2c79a4197f3f"
+    },
+    {
+      "path": "ssh-check.json",
+      "bytes": 308,
+      "sha256": "7bc9c1aeb3e4c7b8d1ab02c393389ff73f82953c347db9af3c2bf575eb4c6b8d"
+    },
+    {
+      "path": "stage-0.child.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "stage-0.child.stdout",
+      "bytes": 159,
+      "sha256": "e4658c1c027413c3cebf1739d3caeb13a9b7c9a2751d3830e6190104ed7906d9"
+    },
+    {
+      "path": "stage-0.execution.json",
+      "bytes": 18818,
+      "sha256": "ce8c0c11dc0e1f696ca51c9269556453cb90815a886c71893a996d2afba1d0b9"
+    },
+    {
+      "path": "stage.py",
+      "bytes": 2468,
+      "sha256": "6d44fb1f4934bac434817aac17d389d61370b7b9389d00cb5afa79daca6bf5e9"
+    },
+    {
+      "path": "stream-wrapper.py",
+      "bytes": 485,
+      "sha256": "69dd9990b219f82660d7695a26892836d6035110b9026af794da5db7beab2d2b"
+    }
+  ],
+  "evidenceDirectory": "/tmp/gta2-census-cleared-driving-oct27/ops",
+  "publication": "pending task-branch commit and exact remote ref verification; recorded separately",
+  "resourceGuard": "wall deadline",
+  "cleanup": true,
+  "box": {
+    "id": "bx_c35ty8f8",
+    "lifecycleActions": [],
+    "lastVerified": "API exec success; no runtime start requested",
+    "expiry": "2026-10-27T13:21:00.618Z",
+    "guestCutoff": "2026-10-27T13:08:00Z",
+    "handback": "2026-10-27T13:11:00Z",
+    "shutdown": "2026-10-27T13:14:00Z",
+    "shutdownOwner": "coordinator",
+    "workerHandback": "immediate; leave running; no stop/delete/resume"
+  },
+  "publicationSetupIncident": "Initial commit failed128 because isolated repo lacked author identity; no commit/push occurred. Set repository-local Wine Ops Worker identity matching donor and resume publication."
+}

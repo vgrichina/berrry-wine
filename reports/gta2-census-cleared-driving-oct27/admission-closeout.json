@@ -1,0 +1,53 @@
+{
+  "at": 1793104067.3618987,
+  "rows": [
+    {
+      "task": "gta2-census-cleared-driving-oct27",
+      "actual": 23924736,
+      "remaining": 177401856
+    },
+    {
+      "task": "airstrike-portable-fixtures-accepted-main-integration-oct27",
+      "actual": 7839744,
+      "remaining": 0
+    },
+    {
+      "task": "enigma-remote-host-validated-startgame-oct27",
+      "actual": 87117824,
+      "remaining": 114208768
+    },
+    {
+      "task": "generally-census-cleared-driving-oct27",
+      "actual": 166391808,
+      "remaining": 34934784
+    }
+  ],
+  "walPositiveOnce": 86016,
+  "own": 23924736,
+  "reserve": 58720256,
+  "free": 6518022144,
+  "future": 343322624,
+  "projectedFree": 6174699520,
+  "diskFloor": 2982150144,
+  "memAvailable": 2894602240,
+  "requiredRAM": 1867517952,
+  "clients": [
+    {
+      "pid": 43362,
+      "rss": 196005888
+    },
+    {
+      "pid": 49453,
+      "rss": 194670592
+    },
+    {
+      "pid": 49566,
+      "rss": 196386816
+    },
+    {
+      "pid": 56039,
+      "rss": 229773312
+    }
+  ],
+  "pass": true
+}
