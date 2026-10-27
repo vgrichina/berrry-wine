@@ -1,0 +1,18 @@
+{
+  "status": "EXACT_REMOTE_REF_VERIFIED_ARTIFACT_PRESERVATION_ONLY",
+  "artifactCommit": "44fa10e1de03032ac3a534f46fc1cce06c473c0a",
+  "ref": "refs/heads/task/penguin-retained-raw-publication-oct27",
+  "remote": "git@github.com:vgrichina/wine-assembly.git",
+  "serverRedirect": "git@github.com:vgrichina/berrry-wine.git (reported by server, trusted configuration unchanged)",
+  "remoteVerified": true,
+  "mainTouched": false,
+  "reportOnlyOrphan": true,
+  "neverMergeOrphanTree": true,
+  "publicDeployment": false,
+  "completedAt": 1793099038.1346526,
+  "pushReceipt": "publication-preflight/push-report.json",
+  "exactRemoteReceipt": "publication-preflight/verify-remote.json",
+  "cleanup": "publication-preflight/owned-cleanup.json",
+  "finalReceipt": "/tmp/penguin-retained-raw-publication-oct27/ops/result.json",
+  "note": "A follow-up receipt commit preserves this verified artifact-publication checkpoint; final tip identity is independently verified and recorded in finalReceipt."
+}
