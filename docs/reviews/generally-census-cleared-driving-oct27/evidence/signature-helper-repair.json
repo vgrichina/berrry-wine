@@ -1,0 +1,8 @@
+{
+  "reason": "generated JSON has metadata plus sigs map; helper previously addressed top-level document as map",
+  "originalHelper": "aba2317bfc361c7662e3dea2e03798385ae97938c72c35c5106243358553f33e",
+  "correctedHelper": "9d1beb78ab72c6554ee5fb0265a534ad305b9d35a7c050788283d5df11bbac02",
+  "moduleRebuilt": false,
+  "canonicalBuildPass": "retained-compile-continuation-two-supervision.json",
+  "sourceChanged": false
+}

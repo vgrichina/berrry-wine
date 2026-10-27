@@ -1,0 +1,17 @@
+{
+  "at": 1793104424.429172,
+  "files": 3887,
+  "bytes": 85911107,
+  "manifestSHA256": "6ae636b958d26811cdfdd592f47da5cc799a9d7635757abdfff31e527c918b36",
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "rootAppsSHA256": "456d3d932dcd851e82182d1674cff6b25468fde6b968e24527d3dc667f6d2344",
+  "selectedAppsSHA256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d",
+  "generallyRouteSHA256": "a920288d94d4d2bdc61474596505079bcd7a66aba1ba2a7f77a2ed5fa0bdc4e4",
+  "syntaxPass": true,
+  "actualMountArgv": [
+    "--app=generally",
+    "--vfs-tree=/tmp/generally-census-cleared-driving-oct27/runner/test/binaries/candidates/generally"
+  ],
+  "mountValidation": "canonical parser on assigned Boat before build and guest; checkout preceded this checkpoint (ordering incident retained)",
+  "allPinsPass": true
+}

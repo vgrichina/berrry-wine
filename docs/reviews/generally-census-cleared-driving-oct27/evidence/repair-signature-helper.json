@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 28442624,
+  "sampledPeakRSS": 28442624,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.212242,
+  "wallSeconds": 0.21289456612430513,
+  "owned": [
+    [
+      77909,
+      "115221926"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/repair-signature-helper.py"
+  ],
+  "commandSHA256": "f8e3866a97ee2e67523bd37f66c9494632e06337c67ce11439303559615702e5"
+}

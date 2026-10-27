@@ -1,0 +1,26 @@
+{
+  "at": 1793105104.7594337,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/generally-census-cleared-driving-oct27/runner/test/run.js",
+    "--app=generally",
+    "--vfs-tree=/tmp/generally-census-cleared-driving-oct27/runner/test/binaries/candidates/generally",
+    "--no-build",
+    "--wasm=/tmp/generally-census-cleared-driving-oct27/runner/build/wine-assembly.wasm",
+    "--screen=800x600",
+    "--control-stdin",
+    "--frozen",
+    "--max-seconds=235",
+    "--max-batches=10000000",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--trace-input",
+    "--trace-input-dispatch",
+    "--repaint-every=1000",
+    "--batch-size=20000",
+    "--tick-ms-per-batch=2",
+    "--stuck-after=0",
+    "--no-close"
+  ]
+}

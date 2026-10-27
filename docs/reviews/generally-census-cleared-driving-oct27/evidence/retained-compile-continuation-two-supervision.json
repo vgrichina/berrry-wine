@@ -1,0 +1,139 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 787017728,
+  "sampledPeakRSS": 787017728,
+  "reapedPeakRSS": 761458688,
+  "cpuSeconds": 77.161231,
+  "wallSeconds": 15.1559292930001,
+  "owned": [
+    [
+      29162,
+      "132719"
+    ],
+    [
+      29163,
+      "132719"
+    ],
+    [
+      29170,
+      "132755"
+    ],
+    [
+      29177,
+      "132828"
+    ],
+    [
+      29184,
+      "132863"
+    ],
+    [
+      29208,
+      "132867"
+    ],
+    [
+      29215,
+      "132871"
+    ],
+    [
+      29222,
+      "132883"
+    ],
+    [
+      29229,
+      "132890"
+    ],
+    [
+      29237,
+      "133024"
+    ],
+    [
+      29244,
+      "133105"
+    ],
+    [
+      29251,
+      "133207"
+    ],
+    [
+      29258,
+      "133211"
+    ],
+    [
+      29265,
+      "133218"
+    ],
+    [
+      29272,
+      "133221"
+    ],
+    [
+      29279,
+      "133231"
+    ],
+    [
+      29286,
+      "133235"
+    ],
+    [
+      29293,
+      "133238"
+    ],
+    [
+      29300,
+      "133246"
+    ],
+    [
+      29338,
+      "133374"
+    ],
+    [
+      29345,
+      "133380"
+    ],
+    [
+      29352,
+      "133569"
+    ],
+    [
+      29383,
+      "134230"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "NODE_OPTIONS=--max-old-space-size=2048",
+    "bash",
+    "/tmp/generally-census-cleared-driving-oct27/ops/canonical-build-remaining.sh"
+  ],
+  "commandSHA256": "05c986b6bdf4307285c3e1751a8b2cfec322c5fe97d24a6d4b404e41758c2251",
+  "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "argvSHA256": "88f2fd8155618add79d0233a54722902f874fb4148ad3b5fdb6f0afe18637ee4",
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+}

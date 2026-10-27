@@ -1,0 +1,36 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58929152,
+  "sampledPeakRSS": 58929152,
+  "reapedPeakRSS": 19922944,
+  "cpuSeconds": 0.48697499999999994,
+  "wallSeconds": 0.4789340428542346,
+  "owned": [
+    [
+      84037,
+      "115246750"
+    ],
+    [
+      84038,
+      "115246751"
+    ],
+    [
+      84039,
+      "115246753"
+    ],
+    [
+      84046,
+      "115246766"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/collect-large.py",
+    "launch.stdout",
+    "/tmp/generally-census-cleared-driving-oct27/ops/launch.stdout"
+  ],
+  "commandSHA256": "61bad3b1afe1d4f371f874f603c02a5bf21220a66d37f8550e1e6f08a288d721"
+}

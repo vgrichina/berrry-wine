@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_ibpy5bnws2g4",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T12:34:51.401Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T12:34:51.009Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"exit\": 0, \"stopReason\": null, \"peakRSS\": 108412928, \"sampledPeakRSS\": 108412928, \"reapedPeakRSS\": 87900160, \"cpuSeconds\": 0.318076, \"wallSeconds\": 0.12950660900003186, \"cleanupComplete\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

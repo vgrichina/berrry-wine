@@ -1,0 +1,21 @@
+{
+  "at": 1793104905.0418177,
+  "peers": [
+    {
+      "pid": 49453,
+      "rss": 112070656
+    },
+    {
+      "pid": 752162,
+      "rss": 447074304
+    }
+  ],
+  "MemAvailable": 3809411072,
+  "required": 1565650944,
+  "sharedPoolCountedOnce": 536870912,
+  "localAllocated": 115175424,
+  "localLimit": 201326592,
+  "reserve": 8388608,
+  "free": 6548930560,
+  "passGate": true
+}

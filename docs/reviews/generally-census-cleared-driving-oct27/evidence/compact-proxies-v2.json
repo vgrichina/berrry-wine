@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50724864,
+  "sampledPeakRSS": 50724864,
+  "reapedPeakRSS": 18358272,
+  "cpuSeconds": 6.673328,
+  "wallSeconds": 2.2887695219833404,
+  "owned": [
+    [
+      62061,
+      "115142214"
+    ],
+    [
+      62063,
+      "115142216"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/compact-proxies-v2.py"
+  ],
+  "commandSHA256": "3983324b9ba92acdeb91a4d3783c8a85b3c9bbd6014b41045b1812b0b0a03afb"
+}

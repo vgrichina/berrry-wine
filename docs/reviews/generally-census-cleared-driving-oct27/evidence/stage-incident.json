@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 29097984,
+  "sampledPeakRSS": 29097984,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.144175,
+  "wallSeconds": 0.17532274988479912,
+  "owned": [
+    [
+      57396,
+      "115127273"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/stage-incident.py"
+  ],
+  "commandSHA256": "7260b5a969c5ea9cb02a3370a08795ff77d2825697861742a5eaa28e59a7598d"
+}

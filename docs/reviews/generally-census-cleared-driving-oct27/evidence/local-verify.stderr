@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/local-verify.py", line 8, in <module>
+    route=sha((ROOT/'lib/apps.js').read_bytes());selected=sha((R/'lib/apps.js').read_bytes());assert route==selected,'registered route changed'
+                                                                                                     ^^^^^^^^^^^^^^^
+AssertionError: registered route changed

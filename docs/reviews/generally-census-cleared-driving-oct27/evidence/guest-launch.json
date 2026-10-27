@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58675200,
+  "sampledPeakRSS": 58675200,
+  "reapedPeakRSS": 19922944,
+  "cpuSeconds": 0.6143109999999999,
+  "wallSeconds": 0.38807343295775354,
+  "owned": [
+    [
+      79356,
+      "115231376"
+    ],
+    [
+      79357,
+      "115231378"
+    ],
+    [
+      79360,
+      "115231388"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/remote-command.py",
+    "detach",
+    "guest-launch",
+    "python3 -B /tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py run > /tmp/generally-census-cleared-driving-oct27/ops/guest-launch.stdout 2> /tmp/generally-census-cleared-driving-oct27/ops/guest-launch.stderr"
+  ],
+  "commandSHA256": "54ba773e9eecae6f47b634f6cdd2bcdf37ba1c7c7097cf4410a69589955b6d8a"
+}

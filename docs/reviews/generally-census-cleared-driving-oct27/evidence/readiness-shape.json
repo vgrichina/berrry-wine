@@ -1,0 +1,19 @@
+{
+  "at": 1793103677.6906416,
+  "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "sourceDonor": "/tmp/generally-census-accepted-main-integration-oct27/repo",
+  "sourceFiles": 3804,
+  "sourceBytes": 83238414,
+  "gameReceipt": "scratch/usage-watch/generally-driving-input-readiness-oct27.json",
+  "gameFiles": 56,
+  "gameBytes": 2570743,
+  "sourceObjectsAvailable": true,
+  "gamePinsVerified": true,
+  "nextGate": "one canonical build then conditional ordinary driving in same task; previous census failure fixed on accepted main; no passed build/guest replay",
+  "localAllocation": 201326592,
+  "remoteAllocation": 1073741824,
+  "captureCount": 4,
+  "captureEachBytes": 4194304,
+  "wireTotal": 8388608,
+  "terminalWireReserve": 1048576
+}

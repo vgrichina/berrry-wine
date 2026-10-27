@@ -1,0 +1,30 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58916864,
+  "sampledPeakRSS": 58916864,
+  "reapedPeakRSS": 20357120,
+  "cpuSeconds": 0.40038199999999996,
+  "wallSeconds": 0.3498486620374024,
+  "owned": [
+    [
+      91423,
+      "115266923"
+    ],
+    [
+      91424,
+      "115266925"
+    ],
+    [
+      91425,
+      "115266929"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/cleanup.py"
+  ],
+  "commandSHA256": "48ca7deabebb7ed5f7d2eb040759850c6e0531a1251e87447e4c0fd41043e032"
+}

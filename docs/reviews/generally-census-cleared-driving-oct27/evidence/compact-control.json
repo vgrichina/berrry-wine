@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50987008,
+  "sampledPeakRSS": 50987008,
+  "reapedPeakRSS": 18743296,
+  "cpuSeconds": 0.474479,
+  "wallSeconds": 0.25730050285346806,
+  "owned": [
+    [
+      59752,
+      "115133594"
+    ],
+    [
+      59753,
+      "115133596"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/compact-control.py"
+  ],
+  "commandSHA256": "a9a847721c8c498ba708c497dc322e4746609a340a70fc796a2ce56f0e45e519"
+}

@@ -1,0 +1,104 @@
+PE loaded. Entry: 0x00471218
+[files] policy lazy: 56 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[CreateWindow] hwnd=0x10001 title="GeneRally" style=0x-70000000 pos=0,0 size=850x640 menu=0
+[ShowWindow] hwnd=0x10001 cmd=1
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[ShowWindow] hwnd=0x10001 cmd=5
+[ctl] {"ok":true,"id":1,"value":{"batch":13000,"ran":13000,"steps":13000,"frozen":true}}
+[ctl] {"ok":true,"id":2,"value":{"batch":13000,"eip":"0x7500298","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":2,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"GeneRally"}]}}
+[ctl] {"ok":true,"id":3,"value":{"batch":13000,"eip":"0x7500298","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":2,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"GeneRally"}]}}
+[ctl] {"ok":true,"id":4,"value":{"batch":13000,"frozen":true,"path":"/tmp/generally-census-cleared-driving-oct27/ops/intro.png","bytes":19409}}
+[ctl] {"ok":true,"id":5,"value":{"queued":true,"batch":13000}}
+[input-route] down 432,100 candidates: 0x10001@0,0 640x480
+[input-route] down 432,100 -> child 0x10001 of 0x10001 dispatched=1
+[input-route] up 540,125 enter: outside=0 directDown=0x10001 btnDrag=none resizing=0 dragging=0
+[input-route] up 432,100 -> native child 0x10001 (matching its DOWN)
+[input-schedule] scheduledBatch=13000 action=click correlation=unavailable batch=13000 guestMs=26084 clock=batch lastGuestTick=26083
+[input] click 540,125 at batch 13000
+[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x84 wParam=0x0 lParam=0x6401b0 batch=13000 guestMs=26084 clock=batch lastGuestTick=26085
+[check_input] msg=0x84 wParam=0x0 lParam=0x6401b0 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=13000 guestMs=26084 clock=batch lastGuestTick=26085
+[input-dequeue] dequeueId=2 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x6401b0 batch=13001 guestMs=26103 clock=batch lastGuestTick=26103
+[check_input] msg=0x201 wParam=0x1 lParam=0x6401b0 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=13001 guestMs=26103 clock=batch lastGuestTick=26103
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x6401b0 correlation=unavailable batch=13001 guestMs=26103 clock=batch lastGuestTick=26104
+[input-dequeue] dequeueId=3 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x6401b0 batch=13002 guestMs=26120 clock=batch lastGuestTick=26120
+[check_input] msg=0x202 wParam=0x0 lParam=0x6401b0 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=3 focusHwnd=0x10001 hwnd=0x10001 batch=13002 guestMs=26120 clock=batch lastGuestTick=26120
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x6401b0 correlation=unavailable batch=13002 guestMs=26120 clock=batch lastGuestTick=26121
+[ctl] {"ok":true,"id":6,"value":{"batch":13300,"ran":300,"steps":300,"frozen":true}}
+[ctl] {"ok":true,"id":7,"value":{"batch":13300,"eip":"0x7500298","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":2,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"GeneRally"}]}}
+[ctl] {"ok":true,"id":8,"value":{"queued":true,"batch":13300}}
+[input-route] down 116,288 candidates: 0x10001@0,0 640x480
+[input-route] down 116,288 -> child 0x10001 of 0x10001 dispatched=1
+[input-route] up 145,360 enter: outside=0 directDown=0x10001 btnDrag=none resizing=0 dragging=0
+[input-route] up 116,288 -> native child 0x10001 (matching its DOWN)
+[input-schedule] scheduledBatch=13300 action=click correlation=unavailable batch=13300 guestMs=26731 clock=batch lastGuestTick=26730
+[input] click 145,360 at batch 13300
+[input-dequeue] dequeueId=4 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x84 wParam=0x0 lParam=0x1200074 batch=13300 guestMs=26731 clock=batch lastGuestTick=26732
+[check_input] msg=0x84 wParam=0x0 lParam=0x1200074 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=4 focusHwnd=0x10001 hwnd=0x10001 batch=13300 guestMs=26731 clock=batch lastGuestTick=26732
+[input-dequeue] dequeueId=5 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1200074 batch=13301 guestMs=26737 clock=batch lastGuestTick=26737
+[check_input] msg=0x201 wParam=0x1 lParam=0x1200074 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=5 focusHwnd=0x10001 hwnd=0x10001 batch=13301 guestMs=26737 clock=batch lastGuestTick=26737
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1200074 correlation=unavailable batch=13301 guestMs=26737 clock=batch lastGuestTick=26738
+[input-dequeue] dequeueId=6 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1200074 batch=13316 guestMs=26770 clock=batch lastGuestTick=26770
+[check_input] msg=0x202 wParam=0x0 lParam=0x1200074 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=6 focusHwnd=0x10001 hwnd=0x10001 batch=13316 guestMs=26770 clock=batch lastGuestTick=26770
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1200074 correlation=unavailable batch=13316 guestMs=26770 clock=batch lastGuestTick=26771
+[ctl] {"ok":true,"id":9,"value":{"batch":13600,"ran":300,"steps":300,"frozen":true}}
+[ctl] {"ok":true,"id":10,"value":{"batch":13600,"eip":"0x7500298","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":2,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":640,"h":480,"visible":true,"isChild":false,"title":"GeneRally"}]}}
+[ctl] {"ok":true,"id":11,"value":{"queued":true,"batch":13600}}
+[input-route] down 560,464 candidates: 0x10001@0,0 640x480
+[input-route] down 560,464 -> child 0x10001 of 0x10001 dispatched=1
+[input-route] up 700,580 enter: outside=0 directDown=0x10001 btnDrag=none resizing=0 dragging=0
+[input-route] up 560,464 -> native child 0x10001 (matching its DOWN)
+[input-schedule] scheduledBatch=13600 action=click correlation=unavailable batch=13600 guestMs=27341 clock=batch lastGuestTick=27340
+[input] click 700,580 at batch 13600
+[input-dequeue] dequeueId=7 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x84 wParam=0x0 lParam=0x1d00230 batch=13600 guestMs=27341 clock=batch lastGuestTick=27342
+[check_input] msg=0x84 wParam=0x0 lParam=0x1d00230 packed=0x84
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=7 focusHwnd=0x10001 hwnd=0x10001 batch=13600 guestMs=27341 clock=batch lastGuestTick=27342
+[input-dequeue] dequeueId=8 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1d00230 batch=13601 guestMs=27353 clock=batch lastGuestTick=27353
+[check_input] msg=0x201 wParam=0x1 lParam=0x1d00230 packed=0x10201
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=8 focusHwnd=0x10001 hwnd=0x10001 batch=13601 guestMs=27353 clock=batch lastGuestTick=27353
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x201 wParam=0x1 lParam=0x1d00230 correlation=unavailable batch=13601 guestMs=27353 clock=batch lastGuestTick=27354
+[input-dequeue] dequeueId=9 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1d00230 batch=13609 guestMs=27387 clock=batch lastGuestTick=27387
+[check_input] msg=0x202 wParam=0x0 lParam=0x1d00230 packed=0x202
+[check_input_hwnd] explicit hwnd=0x10001
+[input-dequeue-route] dequeueId=9 focusHwnd=0x10001 hwnd=0x10001 batch=13609 guestMs=27387 clock=batch lastGuestTick=27387
+[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x202 wParam=0x0 lParam=0x1d00230 correlation=unavailable batch=13609 guestMs=27387 clock=batch lastGuestTick=27388

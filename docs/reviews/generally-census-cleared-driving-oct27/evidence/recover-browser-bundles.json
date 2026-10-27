@@ -1,0 +1,32 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27656192,
+  "sampledPeakRSS": 27656192,
+  "reapedPeakRSS": 21987328,
+  "cpuSeconds": 0.189094,
+  "wallSeconds": 0.18857193202711642,
+  "owned": [
+    [
+      74383,
+      "115205654"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/generally-census-cleared-driving-oct27/repo",
+    "restore",
+    "--source=1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "--worktree",
+    "--ignore-skip-worktree-bits",
+    "--",
+    "docs/dos-corpus/live/toyvm-bundle.js",
+    "docs/dos-corpus/live/toyvm-jit-bundle.js"
+  ],
+  "commandSHA256": "d7e010653dad031e917d1027346c4476b30c83cf3ebf0926a50257e8b629e375"
+}

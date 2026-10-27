@@ -1,0 +1,15 @@
+{
+  "at": 1793105156.8631103,
+  "request": {
+    "cmd": "click:700:580",
+    "id": 11
+  },
+  "reply": {
+    "ok": true,
+    "id": 11,
+    "value": {
+      "queued": true,
+      "batch": 13600
+    }
+  }
+}

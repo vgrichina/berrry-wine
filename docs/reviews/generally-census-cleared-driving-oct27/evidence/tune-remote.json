@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27656192,
+  "sampledPeakRSS": 27656192,
+  "reapedPeakRSS": 25268224,
+  "cpuSeconds": 0.29471,
+  "wallSeconds": 0.21232227189466357,
+  "owned": [
+    [
+      63990,
+      "115149504"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/tune-remote.py"
+  ],
+  "commandSHA256": "3fad81072ea4a5c216220ce8f42183ac3b52dec4794544a47472428876b090dc"
+}

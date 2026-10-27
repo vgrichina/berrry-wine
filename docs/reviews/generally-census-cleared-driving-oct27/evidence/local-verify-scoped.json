@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 55836672,
+  "sampledPeakRSS": 55836672,
+  "reapedPeakRSS": 25260032,
+  "cpuSeconds": 1.0387979999999999,
+  "wallSeconds": 0.421135731972754,
+  "owned": [
+    [
+      67449,
+      "115163342"
+    ],
+    [
+      67450,
+      "115163345"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/local-verify.py"
+  ],
+  "commandSHA256": "740c54df09b9e6d3a3766adbea38ae464fb564bad5669a7da58efd369188e68e"
+}

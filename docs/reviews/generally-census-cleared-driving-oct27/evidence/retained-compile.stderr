@@ -1,0 +1,22 @@
+node:fs:483
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/tmp/generally-census-cleared-driving-oct27/runner/index.html'
+    at Object.readFileSync (node:fs:483:20)
+    at readRuntimeFiles (/tmp/generally-census-cleared-driving-oct27/runner/tools/check-browser-cache-versions.js:33:24)
+    at main (/tmp/generally-census-cleared-driving-oct27/runner/tools/check-browser-cache-versions.js:231:40)
+    at Object.<anonymous> (/tmp/generally-census-cleared-driving-oct27/runner/tools/check-browser-cache-versions.js:241:30)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/tmp/generally-census-cleared-driving-oct27/runner/index.html'
+}
+
+Node.js v24.22.1

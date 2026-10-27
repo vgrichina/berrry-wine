@@ -1,0 +1,13 @@
+{
+  "at": 1793105258.4123704,
+  "used": 593101,
+  "envelope": 8192,
+  "terminalReserve": 1048576,
+  "metadata": {
+    "bytes": 8722,
+    "sha256": "ca8ff686910186d0e40184dd2c25e384ed499380fbcbde1382a5d42ee02962a7",
+    "compressedBytes": 1395,
+    "compressedSHA256": "690f36e0952e8c6f590f39304ae0bafb0cb9883f981cea4b4a7320a3520a82ec",
+    "path": "/tmp/generally-census-cleared-driving-oct27/ops/launch.stdout.z"
+  }
+}

@@ -1,0 +1,5 @@
+error: the argument '--timeout <SECS>' cannot be used with '--detach'
+
+Usage: boat exec --timeout <SECS> --json --no-update <ID> <COMMAND>...
+
+For more information, try '--help'.

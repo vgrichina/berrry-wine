@@ -1,0 +1,14 @@
+{
+  "cause": "exec stage script in shared globals replaced loop code with final remote-upload snippet; groups1..9 therefore executed snippet locally",
+  "actualRemoteGroups": [
+    0
+  ],
+  "notGuest": true,
+  "artifact": {
+    "path": "/tmp/generally-census-cleared-driving-oct27/stage-0.tgz",
+    "exists": true,
+    "bytes": 164277,
+    "sha256": "5c5fa3cc030dbb2bf38d60c572b87fdc0646d7232242eb4cf533eaba08f5fd45"
+  },
+  "repair": "isolated exec namespace; no uncertain remote command replay; continue group1"
+}

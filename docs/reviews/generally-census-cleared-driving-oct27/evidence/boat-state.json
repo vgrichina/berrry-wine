@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 28573696,
+  "sampledPeakRSS": 28573696,
+  "reapedPeakRSS": 12529664,
+  "cpuSeconds": 0.12266099999999999,
+  "wallSeconds": 0.19118998805060983,
+  "owned": [
+    [
+      91399,
+      "115266824"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/home/user/.ascii/boat",
+    "info",
+    "bx_kx2vf4s8",
+    "--json",
+    "--no-update"
+  ],
+  "commandSHA256": "a112ad8ed6454def980055d765df6b0d24f2568ab8e8dd3d5aa95153fb2c5a80"
+}

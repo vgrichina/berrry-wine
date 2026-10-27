@@ -1,0 +1,26 @@
+{
+  "exit": -15,
+  "stopReason": "accounting check failed: [Errno 2] No such file or directory: '/tmp/generally-census-cleared-driving-oct27/ops/readonly-object-proxies/39/df'",
+  "peakRSS": 51249152,
+  "sampledPeakRSS": 51249152,
+  "reapedPeakRSS": 18874368,
+  "cpuSeconds": 0.6022989999999999,
+  "wallSeconds": 0.31667785183526576,
+  "owned": [
+    [
+      61669,
+      "115140160"
+    ],
+    [
+      61670,
+      "115140162"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/compact-proxies.py"
+  ],
+  "commandSHA256": "9082cf6400f3f0e0f2babf23579e25bf47a599efdc2e9a618649bba9dbe5a4f1"
+}

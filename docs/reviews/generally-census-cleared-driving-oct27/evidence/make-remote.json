@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 54947840,
+  "sampledPeakRSS": 54947840,
+  "reapedPeakRSS": 24801280,
+  "cpuSeconds": 0.398032,
+  "wallSeconds": 0.25331009994260967,
+  "owned": [
+    [
+      55715,
+      "115120639"
+    ],
+    [
+      55716,
+      "115120642"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/make-remote.py"
+  ],
+  "commandSHA256": "5d63d9e56a4ea8cedbf5c3752b30745eb06456bf39d800e3482bbaf91cb87ea8"
+}

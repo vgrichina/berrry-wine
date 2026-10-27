@@ -1,0 +1,10 @@
+{
+  "pin": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "strictSSH": "as pinned in run.py",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/generally-census-cleared-driving-oct27/root-ref-digest.json",
+  "watcher": 17923,
+  "incidents": [
+    "initial oversized document/readiness display",
+    "missing aggregate-admission.json path; actual coordinator admission supplied separately"
+  ]
+}

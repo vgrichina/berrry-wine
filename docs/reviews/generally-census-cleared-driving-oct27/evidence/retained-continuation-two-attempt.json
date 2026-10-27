@@ -1,0 +1,11 @@
+{
+  "at": 1793104905.2147365,
+  "canonicalSourceSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "suffixSHA256": "01ef14fe6dc7ef3dbd16f20567fb9df97140032c357e267477b3b918ba1053d8",
+  "firstLine": 161,
+  "alreadyChargedCPU": 49.259457999999995,
+  "alreadyChargedWall": 12.73093736899989,
+  "alreadyChargedOutput": 5483,
+  "compilerInvocationsBefore": 0,
+  "reason": "coordinator closure also omitted committed toyvm bundles; restore exact pinned blobs then continue remaining canonical script without replaying passed prefix or resetting budget"
+}

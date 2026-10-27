@@ -1,0 +1,24 @@
+{
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "canonicalOriginal": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "recovered": [
+    {
+      "source": "/tmp/generally-census-cleared-driving-oct27/repo/docs/dos-corpus/live/toyvm-bundle.js",
+      "target": "runner/docs/dos-corpus/live/toyvm-bundle.js",
+      "bytes": 2354086,
+      "sha256": "881080a4598991119cd11c0dd1daf71b45d0c33198d70abc389b93a7a97a2c99",
+      "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba"
+    },
+    {
+      "source": "/tmp/generally-census-cleared-driving-oct27/repo/docs/dos-corpus/live/toyvm-jit-bundle.js",
+      "target": "runner/docs/dos-corpus/live/toyvm-jit-bundle.js",
+      "bytes": 2316998,
+      "sha256": "149c92ffcb33c5983cb5f6cc0105801543f661f0dda312cc2fd363e0803f327e",
+      "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba"
+    }
+  ],
+  "wrapper": "117548a4d566021ebaf974ccd4079a19e225f6b8464f5867e6b1cbb5edb19cd5",
+  "originalFailuresPreserved": true,
+  "compilerInvocationsBefore": 0,
+  "cumulativeBudgetUnchanged": true
+}

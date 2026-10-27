@@ -1,0 +1,82 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58941440,
+  "sampledPeakRSS": 58941440,
+  "reapedPeakRSS": 20054016,
+  "cpuSeconds": 2.572137,
+  "wallSeconds": 2.0734600271098316,
+  "owned": [
+    [
+      83691,
+      "115244899"
+    ],
+    [
+      83692,
+      "115244900"
+    ],
+    [
+      83695,
+      "115244905"
+    ],
+    [
+      83704,
+      "115244917"
+    ],
+    [
+      83707,
+      "115244930"
+    ],
+    [
+      83711,
+      "115244943"
+    ],
+    [
+      83714,
+      "115244954"
+    ],
+    [
+      83717,
+      "115244967"
+    ],
+    [
+      83720,
+      "115244979"
+    ],
+    [
+      83723,
+      "115245000"
+    ],
+    [
+      83729,
+      "115245011"
+    ],
+    [
+      83732,
+      "115245023"
+    ],
+    [
+      83735,
+      "115245047"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/remote-command.py",
+    "collect",
+    "guest-attempt.json",
+    "guest-supervision.json",
+    "guest.stdout",
+    "guest.stderr",
+    "guest-launch.stdout",
+    "guest-launch.stderr",
+    "terminal.json",
+    "launch.json",
+    "launch.stdout",
+    "launch.stderr",
+    "replies/0012.json"
+  ],
+  "commandSHA256": "e46660ed11a4f7cdee50902e6a5ae9076418b6cc4ae0017c002465a911e93eca"
+}

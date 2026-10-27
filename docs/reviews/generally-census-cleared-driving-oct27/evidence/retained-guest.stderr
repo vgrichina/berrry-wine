@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py", line 77, in <module>
+    if time.monotonic()>deadline:raise RuntimeError('uncertain ACK timeout '+p.name)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: uncertain ACK timeout 0012.json

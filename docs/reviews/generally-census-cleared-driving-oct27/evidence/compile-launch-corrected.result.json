@@ -1,0 +1,11 @@
+{
+  "command": "bash -lc 'python3 -B /tmp/generally-census-cleared-driving-oct27/ops/remote-v4.py compile > /tmp/generally-census-cleared-driving-oct27/ops/compile-launch.stdout 2> /tmp/generally-census-cleared-driving-oct27/ops/compile-launch.stderr'",
+  "commandId": "cmd_hcubqrllyuvg",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/24082.err.log",
+  "logPath": "/home/user/.ascii/processes/24082.log",
+  "pid": 24082,
+  "processId": 24082,
+  "startedAt": "2026-10-27T12:35:50.053Z",
+  "success": true
+}

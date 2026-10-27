@@ -1,0 +1,56 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58667008,
+  "sampledPeakRSS": 58667008,
+  "reapedPeakRSS": 20054016,
+  "cpuSeconds": 2.179411,
+  "wallSeconds": 2.0580428899265826,
+  "owned": [
+    [
+      80081,
+      "115232975"
+    ],
+    [
+      80083,
+      "115232979"
+    ],
+    [
+      80088,
+      "115232983"
+    ],
+    [
+      80092,
+      "115233000"
+    ],
+    [
+      80104,
+      "115233075"
+    ],
+    [
+      80123,
+      "115233109"
+    ],
+    [
+      80129,
+      "115233121"
+    ],
+    [
+      80139,
+      "115233133"
+    ],
+    [
+      80149,
+      "115233148"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/ctl.py",
+    "frame",
+    "intro"
+  ],
+  "commandSHA256": "cf2c99843e3b24b70d94802f53640bfd071893729dc6c14749caf748205a1367"
+}

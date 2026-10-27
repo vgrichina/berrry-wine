@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-command.py", line 5, in <module>
+    label=sys.argv[2];command=sys.argv[3];x=api(label,command,timeout=60);save(label+'.result.json',x);print(x['stdout'][:3500],x['stderr'][:2000])
+                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-census-cleared-driving-oct27/ops/common.py", line 13, in api
+    assert q.returncode==0,(label,'provider exit',q.returncode,(H/(label+'.api.stderr')).read_text()[:1000])
+           ^^^^^^^^^^^^^^^
+AssertionError: ('prebuild', 'provider exit', 1, '')

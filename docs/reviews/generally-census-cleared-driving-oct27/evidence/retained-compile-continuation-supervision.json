@@ -1,0 +1,59 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 198885376,
+  "sampledPeakRSS": 198885376,
+  "reapedPeakRSS": 173981696,
+  "cpuSeconds": 2.3330089999999997,
+  "wallSeconds": 0.5190239859998655,
+  "owned": [
+    [
+      27115,
+      "118053"
+    ],
+    [
+      27116,
+      "118054"
+    ],
+    [
+      27123,
+      "118064"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "NODE_OPTIONS=--max-old-space-size=2048",
+    "bash",
+    "/tmp/generally-census-cleared-driving-oct27/ops/canonical-build-remaining.sh"
+  ],
+  "commandSHA256": "05c986b6bdf4307285c3e1751a8b2cfec322c5fe97d24a6d4b404e41758c2251",
+  "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "argvSHA256": "88f2fd8155618add79d0233a54722902f874fb4148ad3b5fdb6f0afe18637ee4",
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+}

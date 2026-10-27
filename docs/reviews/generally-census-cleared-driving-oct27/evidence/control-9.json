@@ -1,0 +1,18 @@
+{
+  "at": 1793105156.2357535,
+  "request": {
+    "action": "step",
+    "n": 300,
+    "id": 9
+  },
+  "reply": {
+    "ok": true,
+    "id": 9,
+    "value": {
+      "batch": 13600,
+      "ran": 300,
+      "steps": 300,
+      "frozen": true
+    }
+  }
+}

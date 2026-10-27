@@ -1,0 +1,13 @@
+{
+  "at": 1793105257.3587542,
+  "used": 546194,
+  "envelope": 1384448,
+  "terminalReserve": 1048576,
+  "metadata": {
+    "bytes": 1880317,
+    "sha256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+    "compressedBytes": 692111,
+    "compressedSHA256": "be14bf7c35ceacc86c0fe4364a5c4dd83749a0c8f27269dc844db76010d393e5",
+    "path": "/tmp/generally-census-cleared-driving-oct27/ops/wine-assembly.wasm.z"
+  }
+}

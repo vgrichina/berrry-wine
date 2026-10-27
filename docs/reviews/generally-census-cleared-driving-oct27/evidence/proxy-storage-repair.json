@@ -1,0 +1,9 @@
+{
+  "before": 57503744,
+  "after": 2031616,
+  "links": 15081,
+  "allResolvedTargetsUnchanged": true,
+  "donorsReadOnly": true,
+  "originalIncident": "compact-proxies supervisor accounting raced transient unlink; no physical cap exceeded; partial owned links repaired atomically",
+  "reason": "short relative symlinks avoid long-symlink blocks"
+}

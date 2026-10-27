@@ -1,0 +1,64 @@
+{
+  "at": 1793105078.8383799,
+  "pin": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "sourceClosure": "/tmp/generally-census-cleared-driving-oct27/ops/stage-manifest.json",
+  "startup": "/tmp/generally-census-cleared-driving-oct27/ops/retained-startup-prebuild-v4-supervision.json",
+  "localAllocation": 201326592,
+  "localReserve": 8388608,
+  "remoteAllocation": 1073741824,
+  "remoteReserve": 67108864,
+  "compile": {
+    "physical": 6442450944,
+    "cpu": 180,
+    "wall": 240,
+    "output": 4194304,
+    "file": 25165824,
+    "attempts": 1
+  },
+  "guest": {
+    "physical": 4294967296,
+    "nodeHeap": 2147483648,
+    "cpu": 180,
+    "wall": 240,
+    "file": 25165824,
+    "output": 2097152,
+    "attempts": 1
+  },
+  "captures": {
+    "dimensions": [
+      800,
+      600
+    ],
+    "remoteCountReserved": 4,
+    "remoteEach": 4194304,
+    "remoteTotal": 16777216,
+    "rawAPI": 8388608,
+    "alreadyUsed": 496602,
+    "terminalReserve": 1048576,
+    "perAcceptanceFrameFullWireReserve": 1048576,
+    "decodedTransferCeiling": 524288,
+    "optionalLoadingFrameReserve": 1048576,
+    "moduleCompressedTransferReserve": 1048576,
+    "otherControlReserve": 524288,
+    "policy": "Before each whole frame, measure full native PNG, reserve complete wire envelope before fetching. Four primary acceptance frame envelopes retained; oversized frame stops before partial transfer. Remote4MiB file ceiling independent of smaller wire envelope."
+  },
+  "timePlan": {
+    "totalWall": 240,
+    "bootAndLoading": 110,
+    "review": 48,
+    "beforeAfterTransfer": 24,
+    "ordinaryActions": 30,
+    "cleanupReserve": 28
+  },
+  "lifecycle": {
+    "box": "bx_kx2vf4s8",
+    "guestCutoff": "2026-10-27T13:08:00Z",
+    "handback": "2026-10-27T13:11:00Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T13:14:00Z",
+    "expiry": "2026-10-27T13:20:39.001Z",
+    "leaveRunning": true
+  },
+  "wireProjected": 8360922,
+  "passGate": true
+}

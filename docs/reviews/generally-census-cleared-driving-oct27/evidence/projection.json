@@ -1,0 +1,26 @@
+{
+  "sourceBytes": 85878755,
+  "localLimit": 201326592,
+  "localReserve": 8388608,
+  "remoteLimit": 1073741824,
+  "remoteReserve": 67108864,
+  "remotePeak": {
+    "source": 85878755,
+    "stageChunk": 4194304,
+    "generatedAndModule": 67108864,
+    "captures": 16777216,
+    "logs": 8388608,
+    "publication": 8388608,
+    "growth": 33554432,
+    "reserve": 67108864
+  },
+  "wire": {
+    "total": 8388608,
+    "terminal": 1048576,
+    "captures": 4,
+    "eachRemote": 4194304,
+    "transport": "base64 <=4096 decoded bytes per response; prefetch full-envelope admission",
+    "expectedDimensions": "800x600",
+    "expectedPNG": "measured before full transfer; allocation does not imply4MiB frames can all transfer"
+  }
+}

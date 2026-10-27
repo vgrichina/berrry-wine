@@ -1,0 +1,125 @@
+{
+  "sourceRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "module": {
+    "sha256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+    "bytes": 1880317
+  },
+  "canonicalBuild": {
+    "invocations": 1,
+    "compilerInvocations": 1,
+    "setupContinuations": 2,
+    "CPU": 126.420689,
+    "wall": 27.88686666199999,
+    "finalPass": true,
+    "missingInputs": [
+      "index.html",
+      "docs/dos-corpus/live/toyvm-bundle.js",
+      "docs/dos-corpus/live/toyvm-jit-bundle.js"
+    ],
+    "passedPrefixNotRepeated": true
+  },
+  "startup": "PASS exact remote Node v24.22.1 flags/environment/limits, production mount parser, actual named+ordinal API resolution, compiled module/import-signature presence",
+  "guest": {
+    "attempts": 1,
+    "firstBlocker": "100000-batch loading step0012 did not ACK within client38s / bridge40s; no overlap/replay",
+    "reviewedFrame": "intro.png",
+    "reviewedScene": "Main Menu",
+    "menuClicksDispatched": [
+      "Player540,125",
+      "Agari145,360",
+      "Start700,580"
+    ],
+    "pendingStep": 100000,
+    "drivingUpDispatched": false,
+    "drivingReleased": "not applicable: no driving key dispatched",
+    "timeTrialEnter": false,
+    "countdown": false,
+    "beforeAfterTrackFrames": false,
+    "gameplayQualified": false,
+    "ordinaryQuit": false,
+    "terminal": {
+      "exit": 1,
+      "stopReason": null,
+      "peakRSS": 295960576,
+      "sampledPeakRSS": 295960576,
+      "reapedPeakRSS": 243662848,
+      "cpuSeconds": 113.939499,
+      "wallSeconds": 92.69101055600004,
+      "owned": [
+        [
+          31524,
+          "152673"
+        ],
+        [
+          31525,
+          "152676"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+        "HOME=/home/user",
+        "LANG=C.UTF-8",
+        "TZ=UTC",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "NODE_OPTIONS=--max-old-space-size=2048",
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py",
+        "bridge"
+      ],
+      "commandSHA256": "a3f3e709183bd3545b7dad5d2d5f783bf7c7e07f3857495125ef091c80d4a6fe",
+      "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+      "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+      "argvSHA256": "88f2fd8155618add79d0233a54722902f874fb4148ad3b5fdb6f0afe18637ee4",
+      "inherited": {
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ],
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ]
+      },
+      "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+    }
+  },
+  "cleanup": "owned-cleanup.json",
+  "lifecycle": {
+    "box": "bx_kx2vf4s8",
+    "expiry": "2026-10-27T13:20:39.001Z",
+    "leaveRunning": true,
+    "owner": "coordinator",
+    "cutoff": "13:08UTC",
+    "handback": "13:11UTC",
+    "shutdown": "13:14UTC"
+  },
+  "historicalProof": "docs/re-notes/generally.md links prior reviewed race proof; preserved, not replayed or represented as new evidence",
+  "remainingGates": [
+    "Bound loading requests to measured completion latency or accept a controller that reports progress without closing the guest pipe",
+    "Fresh coordinator-assigned attempt: inspect ordinary intro, Enter, countdown, before/after Up dispatch+release",
+    "Ordinary game Quit; no FPS qualification"
+  ],
+  "incidents": [
+    "Initial oversized displays retained in launcher/session",
+    "Mount parser validation occurred after sparse checkout, before build/guest",
+    "Stage exec shared namespace caused incidental owned local upload fragment; fixed namespace",
+    "Long donor-view symlinks consumed60MiB; short links preserve all targets; first compaction supervisor raced unlink, atomic replacement fixed without physical-cap violation",
+    "Whole root apps.js differed after concurrent integration; GeneRally route declaration and root string match exact selected pin",
+    "Startup helper incorrectly rejected ordinals, then addressed signature document outside .sigs; both repaired without modifying production source",
+    "Detached CLI initially rejected timeout+detach locally before remote execution",
+    "Coordinator source closure omitted3 canonical build paths; restored same-pin blobs; continued exact remaining canonical commands under cumulative unchanged budget",
+    "Module compressed transfer692111B exceeded preliminary1MiB envelope estimate; complete actual transfer separately admitted after guest stopped, total raw wire remained within8MiB; no accepted track capture claimed"
+  ]
+}

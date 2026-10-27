@@ -1,0 +1,11 @@
+{
+  "command": "bash -lc 'python3 -B /tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py run > /tmp/generally-census-cleared-driving-oct27/ops/guest-launch.stdout 2> /tmp/generally-census-cleared-driving-oct27/ops/guest-launch.stderr'",
+  "commandId": "cmd_xwqbeflj6arn",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/31516.err.log",
+  "logPath": "/home/user/.ascii/processes/31516.log",
+  "pid": 31516,
+  "processId": 31516,
+  "startedAt": "2026-10-27T12:45:04.719Z",
+  "success": true
+}

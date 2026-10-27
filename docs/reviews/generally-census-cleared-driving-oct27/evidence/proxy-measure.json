@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50200576,
+  "sampledPeakRSS": 50200576,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.578179,
+  "wallSeconds": 0.3837763669434935,
+  "owned": [
+    [
+      60788,
+      "115136947"
+    ],
+    [
+      60789,
+      "115136949"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/proxy-measure.py"
+  ],
+  "commandSHA256": "6f49d7097bc409d60f54c37c2a15aa5d4877ce5c8a14b2112237ad053b1e4340"
+}

@@ -1,0 +1,20 @@
+{
+  "argvPrefix": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_kx2vf4s8",
+    "--json",
+    "--no-update",
+    "--timeout",
+    "42",
+    "--",
+    "bash",
+    "-lc"
+  ],
+  "commandBytes": 594,
+  "commandSHA256": "47f1841fa684bd8c4c3e7d0248934ca13d58b0f7be800e24b420af59b47f9c24",
+  "sha256": "b03461a16f6bed7a82b02ab831bee0e7f950ee5cb7941748feddbdaae3e90292",
+  "exit": 0,
+  "rawBytes": 493,
+  "recovery": "stage-manifest source pins plus stage.py deterministic tar/chunk recipe; API command hash binds actual argv"
+}

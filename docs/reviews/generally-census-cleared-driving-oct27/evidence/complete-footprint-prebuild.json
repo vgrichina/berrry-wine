@@ -1,0 +1,17 @@
+{
+  "at": 1793104431.472335,
+  "owned": 109006848,
+  "launcher": 983040,
+  "sessions": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T12-22-06-01a17d4f-8754-71d1-bbed-a1c9e3756588.jsonl",
+      "bytes": 1318912
+    }
+  ],
+  "positiveWalOnce": 16384,
+  "total": 111325184,
+  "localLimit": 201326592,
+  "reserve": 8388608,
+  "publicationAndControlGrowth": 25165824,
+  "passGate": true
+}

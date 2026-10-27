@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py", line 58, in <module>
+    supervise(['/usr/bin/python3','-B',__file__,'bridge'],'guest',4*1024**3)
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-v7.py", line 30, in supervise
+    assert q['exit']==0 and not q['stopReason'] and q['cleanupComplete'],q
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'exit': 1, 'stopReason': None, 'peakRSS': 295960576, 'sampledPeakRSS': 295960576, 'reapedPeakRSS': 243662848, 'cpuSeconds': 113.939499, 'wallSeconds': 92.69101055600004, 'owned': [[31524, '152673'], [31525, '152676']], 'cleanupComplete': True}

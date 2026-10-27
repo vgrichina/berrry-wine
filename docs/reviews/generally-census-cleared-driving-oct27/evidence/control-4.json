@@ -1,0 +1,18 @@
+{
+  "at": 1793105121.499847,
+  "request": {
+    "action": "png",
+    "path": "/tmp/generally-census-cleared-driving-oct27/ops/intro.png",
+    "id": 4
+  },
+  "reply": {
+    "ok": true,
+    "id": 4,
+    "value": {
+      "batch": 13000,
+      "frozen": true,
+      "path": "/tmp/generally-census-cleared-driving-oct27/ops/intro.png",
+      "bytes": 19409
+    }
+  }
+}

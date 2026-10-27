@@ -1,0 +1,53 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 109219840,
+  "sampledPeakRSS": 109219840,
+  "reapedPeakRSS": 90869760,
+  "cpuSeconds": 0.317447,
+  "wallSeconds": 0.12441950899983567,
+  "owned": [
+    [
+      30192,
+      "140369"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "NODE_OPTIONS=--max-old-space-size=2048",
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/generally-census-cleared-driving-oct27/ops/remote-startup-v4.cjs",
+    "--module"
+  ],
+  "commandSHA256": "f8223bb33fcf6d231ed759be5f48e33553b2e546101a1854dc6d444780b644e2",
+  "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "argvSHA256": "88f2fd8155618add79d0233a54722902f874fb4148ad3b5fdb6f0afe18637ee4",
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+}

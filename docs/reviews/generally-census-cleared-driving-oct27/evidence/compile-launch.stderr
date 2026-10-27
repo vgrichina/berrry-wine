@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-command.py", line 10, in <module>
+    label=sys.argv[2];command=sys.argv[3];admission(label+'-admission');x=api(label,command,detach=True);save(label+'.result.json',x);print(x)
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-census-cleared-driving-oct27/ops/common.py", line 13, in api
+    assert q.returncode==0,(label,'provider exit',q.returncode,(H/(label+'.api.stderr')).read_text()[:1000])
+           ^^^^^^^^^^^^^^^
+AssertionError: ('compile-launch', 'provider exit', 2, "error: the argument '--timeout <SECS>' cannot be used with '--detach'\n\nUsage: boat exec --timeout <SECS> --json --no-update <ID> <COMMAND>...\n\nFor more information, try '--help'.\n")

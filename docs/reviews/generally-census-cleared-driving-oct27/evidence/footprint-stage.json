@@ -1,0 +1,27 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 61595648,
+  "sampledPeakRSS": 61595648,
+  "reapedPeakRSS": 29229056,
+  "cpuSeconds": 0.8301829999999999,
+  "wallSeconds": 0.3480920640286058,
+  "owned": [
+    [
+      60021,
+      "115135712"
+    ],
+    [
+      60022,
+      "115135714"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/footprint.py",
+    "staging"
+  ],
+  "commandSHA256": "9025cb7081b473791015ed17c34d243509ff14adda2e91fa1b8d640d43b54e3a"
+}

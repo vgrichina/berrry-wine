@@ -1,0 +1,62 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 59072512,
+  "sampledPeakRSS": 59072512,
+  "reapedPeakRSS": 19791872,
+  "cpuSeconds": 1.729199,
+  "wallSeconds": 1.5403226239141077,
+  "owned": [
+    [
+      72101,
+      "115191058"
+    ],
+    [
+      72102,
+      "115191059"
+    ],
+    [
+      72109,
+      "115191062"
+    ],
+    [
+      72113,
+      "115191081"
+    ],
+    [
+      72116,
+      "115191096"
+    ],
+    [
+      72119,
+      "115191108"
+    ],
+    [
+      72132,
+      "115191121"
+    ],
+    [
+      72135,
+      "115191132"
+    ],
+    [
+      72138,
+      "115191146"
+    ],
+    [
+      72141,
+      "115191159"
+    ],
+    [
+      72171,
+      "115191173"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/build-continuation-prepare.py"
+  ],
+  "commandSHA256": "5b1697abde21e3e7209b887c66d2fc7af23868c5bb55f93a4a661c6991a0c2db"
+}

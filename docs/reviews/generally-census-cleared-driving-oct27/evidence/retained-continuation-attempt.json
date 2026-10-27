@@ -1,0 +1,11 @@
+{
+  "at": 1793104758.558718,
+  "canonicalSourceSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "suffixSHA256": "e9c297333de68c77631a342f6798fc617d50bb837c9bc5c393d9aa4f63c5a74d",
+  "firstLine": 156,
+  "alreadyChargedCPU": 46.926449,
+  "alreadyChargedWall": 12.211913383000024,
+  "alreadyChargedOutput": 5187,
+  "compilerInvocationsBefore": 0,
+  "reason": "coordinator closure omitted index.html; restore exact pinned blob then continue remaining canonical script without replaying passed prefix or resetting budget"
+}

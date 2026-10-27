@@ -1,0 +1,13 @@
+{
+  "at": 1793105274.9921868,
+  "used": 1377028,
+  "envelope": 8192,
+  "terminalReserve": 1048576,
+  "metadata": {
+    "bytes": 22138,
+    "sha256": "e532b3bbd4742186a50672ed2279a9373eb536fd688c13ffb4525c2c8cdeb7f8",
+    "compressedBytes": 3610,
+    "compressedSHA256": "b9d32126508a4c8031da428c99743f089bcce9f97e0deb91e1a08bc4226c97b5",
+    "path": "/tmp/generally-census-cleared-driving-oct27/ops/startup-preguest-v5.stdout.z"
+  }
+}

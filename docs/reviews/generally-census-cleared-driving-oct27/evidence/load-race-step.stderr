@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/ctl.py", line 22, in <module>
+    command=json.loads(sys.argv[2]);r=request(command)
+                                      ^^^^^^^^^^^^^^^^
+  File "/tmp/generally-census-cleared-driving-oct27/ops/ctl.py", line 15, in request
+    r=json.loads(py('control-'+str(i),code,timeout=42)['stdout']);assert r['reply']['ok'];save('control-'+str(i)+'.json',r)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-census-cleared-driving-oct27/ops/common.py", line 17, in py
+    def py(label,code,**kw):return api(label,'python3 -B -c '+shlex.quote(code),**kw)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-census-cleared-driving-oct27/ops/common.py", line 13, in api
+    assert q.returncode==0,(label,'provider exit',q.returncode,(H/(label+'.api.stderr')).read_text()[:1000])
+           ^^^^^^^^^^^^^^^
+AssertionError: ('control-12', 'provider exit', 1, '')

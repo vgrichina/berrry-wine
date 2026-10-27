@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-v4.py", line 41, in <module>
+    supervise(['bash','tools/build.sh'],'compile',6*1024**3,output=4*M)
+  File "/tmp/generally-census-cleared-driving-oct27/ops/remote-v4.py", line 29, in supervise
+    assert q['exit']==0 and not q['stopReason'] and q['cleanupComplete'],q
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'exit': 1, 'stopReason': None, 'peakRSS': 483512320, 'sampledPeakRSS': 483512320, 'reapedPeakRSS': 460181504, 'cpuSeconds': 46.926449, 'wallSeconds': 12.211913383000024, 'owned': [[24090, '97207'], [24100, '97210'], [24107, '97212'], [24114, '97263'], [24150, '97397'], [24157, '97417'], [24164, '97438'], [24171, '97676'], [24178, '97688'], [24211, '97880'], [24218, '97927'], [24225, '97947'], [24232, '97977'], [24239, '97997'], [24246, '98006'], [24253, '98026'], [24260, '98059'], [24267, '98074'], [24274, '98098'], [24276, '98098'], [24283, '98101'], [24290, '98127'], [24299, '98130'], [24306, '98140'], [24313, '98146'], [24320, '98150'], [24327, '98153'], [24334, '98166'], [24341, '98183'], [24348, '98210'], [24355, '98350'], [24363, '98361'], [24370, '98363'], [24397, '98424']], 'cleanupComplete': True}

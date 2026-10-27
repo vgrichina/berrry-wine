@@ -1,0 +1,33 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 58011648,
+  "sampledPeakRSS": 58011648,
+  "reapedPeakRSS": 32264192,
+  "cpuSeconds": 1.35622,
+  "wallSeconds": 1.2334708999842405,
+  "owned": [
+    [
+      67519,
+      "115163930"
+    ],
+    [
+      67520,
+      "115163933"
+    ],
+    [
+      67522,
+      "115163937"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/remote-command.py",
+    "exec",
+    "prebuild",
+    "python3 -B /tmp/generally-census-cleared-driving-oct27/ops/remote.py prebuild"
+  ],
+  "commandSHA256": "ec8386e8acc01145fa5e9e50cf38d177604651519d2de494ed56e4d6989602b6"
+}

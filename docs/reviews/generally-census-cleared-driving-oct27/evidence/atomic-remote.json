@@ -1,0 +1,22 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27787264,
+  "sampledPeakRSS": 27787264,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.17963600000000002,
+  "wallSeconds": 0.1856644619256258,
+  "owned": [
+    [
+      72623,
+      "115195880"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-census-cleared-driving-oct27/ops/atomic-remote.py"
+  ],
+  "commandSHA256": "c5008e7616edd3ca3f25a887fc801f5bedc7a36da5f0c959069768bd4be114ff"
+}

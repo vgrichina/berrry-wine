@@ -1,0 +1,41 @@
+{
+  "at": 1793105155.388915,
+  "request": {
+    "action": "snapshot",
+    "id": 7
+  },
+  "reply": {
+    "ok": true,
+    "id": 7,
+    "value": {
+      "batch": 13300,
+      "eip": "0x7500298",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 800,
+        "h": 600
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 2,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 0,
+          "y": 0,
+          "w": 640,
+          "h": 480,
+          "visible": true,
+          "isChild": false,
+          "title": "GeneRally"
+        }
+      ]
+    }
+  }
+}
