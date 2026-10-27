@@ -1,0 +1,2821 @@
+{
+  "status": "OBSERVED_SPACE_RETAINED_BEFORE_HOST_DEQUEUE",
+  "conclusion": "Both Space edges reached renderer.inputQueue; neither dequeued by host_check_input during this bounded run. No route/DispatchMessage observed.",
+  "scope": "One corrected invocation plus one inherited zero-input invocation; no longer-hold inference or permanent stall claim",
+  "newGuestInvocations": 1,
+  "totalGuestInvocations": 2,
+  "guestInputCommands": [
+    {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    },
+    {
+      "id": "airstrike-2",
+      "cmd": "keydown:32"
+    },
+    {
+      "id": "airstrike-3",
+      "cmd": "keyup:32"
+    }
+  ],
+  "controlRequests": 34,
+  "frozenStates": {
+    "startup": {
+      "ok": true,
+      "id": "corrected-bridge-3",
+      "value": {
+        "requestId": "corrected-bridge-3",
+        "batch": 5000,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "before-airstrike-1": {
+      "ok": true,
+      "id": "corrected-bridge-7",
+      "value": {
+        "requestId": "corrected-bridge-7",
+        "batch": 5000,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "after-airstrike-1": {
+      "ok": true,
+      "id": "corrected-bridge-13",
+      "value": {
+        "requestId": "corrected-bridge-13",
+        "batch": 5001,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 1,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 1,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "before-airstrike-2": {
+      "ok": true,
+      "id": "corrected-bridge-17",
+      "value": {
+        "requestId": "corrected-bridge-17",
+        "batch": 5001,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 1,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 1,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "after-airstrike-2": {
+      "ok": true,
+      "id": "corrected-bridge-23",
+      "value": {
+        "requestId": "corrected-bridge-23",
+        "batch": 5002,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 2,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 2,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": true,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "before-airstrike-3": {
+      "ok": true,
+      "id": "corrected-bridge-24",
+      "value": {
+        "requestId": "corrected-bridge-24",
+        "batch": 5002,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 2,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 2,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": true,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    "after-airstrike-3": {
+      "ok": true,
+      "id": "corrected-bridge-28",
+      "value": {
+        "requestId": "corrected-bridge-28",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 3,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 3,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 257,
+                "wParam": 32,
+                "lParam": 3224961025
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    }
+  },
+  "matchedRequests": [
+    {
+      "id": "corrected-bridge-1",
+      "action": "step",
+      "n": 5000
+    },
+    {
+      "id": "corrected-bridge-2",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-3",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-4",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-5",
+      "action": "png",
+      "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-4c33b8e608bc45dbbbb0b7cf70d189dc.png"
+    },
+    {
+      "id": "corrected-bridge-6",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-7",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-8",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-9",
+      "action": "png",
+      "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-4c33b8e608bc45dbbbb0b7cf70d189dc-fresh.png"
+    },
+    {
+      "id": "corrected-bridge-10",
+      "action": "snapshot"
+    },
+    {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    },
+    {
+      "id": "corrected-bridge-11",
+      "action": "step",
+      "n": 1
+    },
+    {
+      "id": "corrected-bridge-12",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-13",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-14",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-15",
+      "action": "png",
+      "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-47fadd34d4cc43859881d27066dbcf88.png"
+    },
+    {
+      "id": "corrected-bridge-16",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-17",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-18",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-19",
+      "action": "png",
+      "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-47fadd34d4cc43859881d27066dbcf88-fresh.png"
+    },
+    {
+      "id": "corrected-bridge-20",
+      "action": "snapshot"
+    },
+    {
+      "id": "airstrike-2",
+      "cmd": "keydown:32"
+    },
+    {
+      "id": "corrected-bridge-21",
+      "action": "step",
+      "n": 1
+    },
+    {
+      "id": "corrected-bridge-22",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-23",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-24",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-25",
+      "action": "snapshot"
+    },
+    {
+      "id": "airstrike-3",
+      "cmd": "keyup:32"
+    },
+    {
+      "id": "corrected-bridge-26",
+      "action": "step",
+      "n": 1
+    },
+    {
+      "id": "corrected-bridge-27",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-28",
+      "action": "input-state"
+    },
+    {
+      "id": "corrected-bridge-29",
+      "action": "snapshot"
+    },
+    {
+      "id": "corrected-bridge-30",
+      "action": "png",
+      "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-post-space.png"
+    },
+    {
+      "id": "corrected-bridge-31",
+      "action": "snapshot"
+    }
+  ],
+  "matchedResponses": [
+    {
+      "ok": true,
+      "id": "corrected-bridge-1",
+      "value": {
+        "batch": 5000,
+        "ran": 5000,
+        "steps": 5000,
+        "frozen": true
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-2",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-3",
+      "value": {
+        "requestId": "corrected-bridge-3",
+        "batch": 5000,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-4",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-5",
+      "value": {
+        "batch": 5000,
+        "frozen": true,
+        "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-4c33b8e608bc45dbbbb0b7cf70d189dc.png",
+        "bytes": 144804
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-6",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-7",
+      "value": {
+        "requestId": "corrected-bridge-7",
+        "batch": 5000,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-8",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-9",
+      "value": {
+        "batch": 5000,
+        "frozen": true,
+        "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-4c33b8e608bc45dbbbb0b7cf70d189dc-fresh.png",
+        "bytes": 144804
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-10",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "airstrike-1",
+      "value": {
+        "queued": true,
+        "batch": 5000
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-11",
+      "value": {
+        "batch": 5001,
+        "ran": 1,
+        "steps": 1,
+        "frozen": true
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-12",
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-13",
+      "value": {
+        "requestId": "corrected-bridge-13",
+        "batch": 5001,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 1,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 1,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-14",
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-15",
+      "value": {
+        "batch": 5001,
+        "frozen": true,
+        "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-47fadd34d4cc43859881d27066dbcf88.png",
+        "bytes": 184247
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-16",
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-17",
+      "value": {
+        "requestId": "corrected-bridge-17",
+        "batch": 5001,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 1,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 1,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": false
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-18",
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-19",
+      "value": {
+        "batch": 5001,
+        "frozen": true,
+        "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-47fadd34d4cc43859881d27066dbcf88-fresh.png",
+        "bytes": 184247
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-20",
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "airstrike-2",
+      "value": {
+        "queued": true,
+        "batch": 5001
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-21",
+      "value": {
+        "batch": 5002,
+        "ran": 1,
+        "steps": 1,
+        "frozen": true
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-22",
+      "value": {
+        "batch": 5002,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-23",
+      "value": {
+        "requestId": "corrected-bridge-23",
+        "batch": 5002,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 2,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 2,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": true,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-24",
+      "value": {
+        "requestId": "corrected-bridge-24",
+        "batch": 5002,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 2,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 2,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": true,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-25",
+      "value": {
+        "batch": 5002,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "airstrike-3",
+      "value": {
+        "queued": true,
+        "batch": 5002
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-26",
+      "value": {
+        "batch": 5003,
+        "ran": 1,
+        "steps": 1,
+        "frozen": true
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-27",
+      "value": {
+        "batch": 5003,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-28",
+      "value": {
+        "requestId": "corrected-bridge-28",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 3,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "renderer": {
+            "count": 3,
+            "truncated": false,
+            "head": [
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 65537,
+                "msg": 15,
+                "wParam": 0,
+                "lParam": 0
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 256,
+                "wParam": 32,
+                "lParam": 3735553
+              },
+              {
+                "action": "unknown",
+                "batch": "unknown",
+                "hwnd": 0,
+                "msg": 257,
+                "wParam": 32,
+                "lParam": 3224961025
+              }
+            ]
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": 0,
+            "waitHandle": 917509,
+            "waitTimeout": -1,
+            "sleepUntil": 25021,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 921600,
+              "tid": 1,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 5532240,
+              "yieldReason": 1,
+              "waitHandle": 917508,
+              "waitTimeout": -1,
+              "sleepUntil": 0,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-29",
+      "value": {
+        "batch": 5003,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-30",
+      "value": {
+        "batch": 5003,
+        "frozen": true,
+        "path": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/game-evidence/capture-post-space.png",
+        "bytes": 184247
+      }
+    },
+    {
+      "ok": true,
+      "id": "corrected-bridge-31",
+      "value": {
+        "batch": 5003,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    }
+  ],
+  "traceCounterCaveat": "enqueue counter only wraps raw numeric-message injection; renderer.handleKeyDown/Up enqueue directly. Zero enqueued is not evidence of failed enqueue.",
+  "remainingUnknowns": [
+    "why guest did not poll input during measured interval",
+    "SDL consumption",
+    "guestPostQueue",
+    "sleepActive",
+    "menu",
+    "gameplay",
+    "ordinary Quit"
+  ],
+  "runnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+  "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+  "helperSHA256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe",
+  "helperContract": {
+    "helperPath": "/tmp/airstrike-observed-space-consumption-oct27/runner/test/input-consumption-trace.js",
+    "helperSHA256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe",
+    "exports": [
+      "createInputConsumptionTrace"
+    ],
+    "factory": "createInputConsumptionTrace",
+    "called": "frozenState(request,boundary,read)",
+    "request": {
+      "id": "corrected-contract-check",
+      "action": "input-state"
+    },
+    "boundary": {
+      "frozen": true,
+      "credits": 0,
+      "batch": 0
+    },
+    "result": {
+      "requestId": "corrected-contract-check",
+      "batch": 0,
+      "frozen": true,
+      "credits": 0,
+      "counters": {
+        "scheduled": 0,
+        "enqueued": 0,
+        "dequeued": 0,
+        "routed": 0,
+        "dispatched": 0
+      },
+      "counterLimit": 4294967295,
+      "saturated": false,
+      "last": {
+        "dequeue": null,
+        "route": null,
+        "dispatch": null
+      },
+      "queues": {
+        "scheduled": {
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "pending": {
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "crossThread": {
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "buttons": {
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "renderer": {
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "guestPostQueue": "unknown"
+      },
+      "keys": {
+        "16": {
+          "_physicalKeys": "unknown",
+          "_asyncKeys": "unknown",
+          "_asyncPressedKeys": "unknown"
+        },
+        "17": {
+          "_physicalKeys": "unknown",
+          "_asyncKeys": "unknown",
+          "_asyncPressedKeys": "unknown"
+        },
+        "18": {
+          "_physicalKeys": "unknown",
+          "_asyncKeys": "unknown",
+          "_asyncPressedKeys": "unknown"
+        },
+        "32": {
+          "_physicalKeys": "unknown",
+          "_asyncKeys": "unknown",
+          "_asyncPressedKeys": "unknown"
+        }
+      },
+      "threads": {
+        "backend": "unknown",
+        "main": {
+          "state": "unknown",
+          "suspendCount": "unknown",
+          "eip": "unknown",
+          "yieldReason": "unknown",
+          "waitHandle": "unknown",
+          "waitTimeout": "unknown",
+          "sleepUntil": "unknown",
+          "sleepActive": "unknown"
+        },
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "sdlConsumption": "unknown"
+    },
+    "readCalls": 1,
+    "clockProbes": 0,
+    "productionRunnerWiring": true,
+    "pass": true
+  },
+  "supervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 261357568,
+    "sampledPeakRSS": 261357568,
+    "reapedPeakRSS": 219283456,
+    "cpuSeconds": 27.559643,
+    "wallSeconds": 50.308166335999886,
+    "owned": [
+      [
+        17985,
+        "166959"
+      ],
+      [
+        17986,
+        "166968"
+      ]
+    ],
+    "cleanupComplete": true,
+    "configuration": {
+      "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+      "base": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--max-old-space-size=512",
+        "--require",
+        "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/abi-preload.cjs"
+      ],
+      "argvSHA256": "bd09d9ad10d63d16894b145f912a8a0c1efb84d501669623d3cb0f00a28650a1",
+      "environmentSHA256": "d4be93ad3269740f272def95636c3ee2ef0e1834601c6d420fb32d9097d53581",
+      "cwd": "/tmp/airstrike-observed-space-consumption-oct27/runner",
+      "preloadSHA256": "83de93f6c9899f02fbd8e5fdd29f6d2a1c2625ef9b7bfaeb8738fc590c7c0857",
+      "startupSHA256": "c12f27b8abccbf08c6413ca99133e6a39f4e89481e2888e83cf24fa63b8e88a3",
+      "limits": {
+        "rss": 2147483648,
+        "heap": 536870912,
+        "cpu": 86.521821,
+        "wall": 119.048362,
+        "file": 25165824,
+        "output": 2097152
+      },
+      "inherited": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "runnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+      "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9"
+    },
+    "stdout": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/guest.stdout",
+    "stderr": "/tmp/airstrike-observed-space-consumption-oct27/corrected-ops/guest.stderr"
+  },
+  "cumulativeCPU": 31.037822000000002,
+  "cumulativeWall": 51.25980433599989,
+  "captures": [
+    {
+      "path": "capture-post-space.png",
+      "bytes": 184247,
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "review": "full original inspected with image tool; startup Console overlay, then unobscured Airstrike startup; post-Space unchanged"
+    },
+    {
+      "path": "capture-4c33b8e608bc45dbbbb0b7cf70d189dc.png",
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "review": "full original inspected with image tool; startup Console overlay, then unobscured Airstrike startup; post-Space unchanged"
+    },
+    {
+      "path": "capture-4c33b8e608bc45dbbbb0b7cf70d189dc-fresh.png",
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "review": "full original inspected with image tool; startup Console overlay, then unobscured Airstrike startup; post-Space unchanged"
+    },
+    {
+      "path": "capture-47fadd34d4cc43859881d27066dbcf88-fresh.png",
+      "bytes": 184247,
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "review": "full original inspected with image tool; startup Console overlay, then unobscured Airstrike startup; post-Space unchanged"
+    },
+    {
+      "path": "capture-47fadd34d4cc43859881d27066dbcf88.png",
+      "bytes": 184247,
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "review": "full original inspected with image tool; startup Console overlay, then unobscured Airstrike startup; post-Space unchanged"
+    }
+  ],
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": 0,
+    "complete": true
+  },
+  "boatHandback": {
+    "at": 1793113059.4398391,
+    "box": "bx_hqd5add8",
+    "state": "RUNNING supported API exec",
+    "expiry": "2026-10-27T15:26:23.439Z",
+    "handback": "2026-10-27T15:17:00Z",
+    "coordinatorShutdown": "2026-10-27T15:20:00Z",
+    "remainingOwned": [],
+    "ownedIdentities": [
+      [
+        17985,
+        "166959"
+      ],
+      [
+        17986,
+        "166968"
+      ]
+    ],
+    "remoteLogicalBytes": 20279258,
+    "watcher": "coordinator PID218646 untouched",
+    "lifecycleMutation": false
+  },
+  "API": {
+    "charged": 1709406,
+    "pending": {},
+    "limit": 8388608,
+    "reserve": 1048576,
+    "priorProbeCharged": true
+  },
+  "unchangedTestsRerun": false,
+  "incidents": [
+    "Initial policy/donor reads exceeded intended display8192 bound; later reads narrowed. No capture limit lifted.",
+    "One isolated git read-tree -i rejected as meaningless; corrected to retained read-tree recipe, no root/donor mutation."
+  ]
+}
