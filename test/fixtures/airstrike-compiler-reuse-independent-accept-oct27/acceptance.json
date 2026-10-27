@@ -1,0 +1,295 @@
+{
+  "candidate": "1cf9788cc3ac807027206c39fcbf1d2771599845",
+  "baseline": "0bbff116aa79f55e7a8ba9afaf3122e5f0a0a110",
+  "verdict": "ACCEPT bounded source reduction only",
+  "productionFirst": {
+    "checks": 68,
+    "cli": "exact bytes tail/compat/names + exact failure stderr",
+    "cases": [
+      "changed include",
+      "alias",
+      "independent alias text",
+      "missing include",
+      "duplicate",
+      "macro",
+      "syntax",
+      "same bad text different filename",
+      "location after comment",
+      "type error"
+    ],
+    "work": {
+      "coldScans": 20,
+      "coldUnits": 4460,
+      "warm": {
+        "scans": 8,
+        "hits": 12,
+        "codeUnits": 1866,
+        "entries": 8
+      }
+    },
+    "bench": [
+      {
+        "enabled": false,
+        "cpu": {
+          "user": 14781,
+          "system": 8188
+        },
+        "wallMs": 12.252,
+        "memory": {
+          "rss": 78200832,
+          "heapTotal": 11210752,
+          "heapUsed": 8522960,
+          "external": 22607331,
+          "arrayBuffers": 21026967
+        },
+        "maxRSSKiB": 87812
+      },
+      {
+        "enabled": true,
+        "cpu": {
+          "user": 15848,
+          "system": 945
+        },
+        "wallMs": 9.962528,
+        "memory": {
+          "rss": 72400896,
+          "heapTotal": 11210752,
+          "heapUsed": 7278320,
+          "external": 9998609,
+          "arrayBuffers": 8418205
+        },
+        "maxRSSKiB": 87812
+      },
+      {
+        "enabled": true,
+        "cpu": {
+          "user": 18268,
+          "system": 845
+        },
+        "wallMs": 10.964866,
+        "memory": {
+          "rss": 71741440,
+          "heapTotal": 11210752,
+          "heapUsed": 7940536,
+          "external": 16303668,
+          "arrayBuffers": 14723264
+        },
+        "maxRSSKiB": 87812
+      },
+      {
+        "enabled": false,
+        "cpu": {
+          "user": 32623,
+          "system": 4453
+        },
+        "wallMs": 13.554623,
+        "memory": {
+          "rss": 84307968,
+          "heapTotal": 11472896,
+          "heapUsed": 7578200,
+          "external": 18404069,
+          "arrayBuffers": 16823665
+        },
+        "maxRSSKiB": 87812
+      }
+    ],
+    "limitations": "Tiny fixtures only; in-process memory samples/cumulative peak; no full build savings established."
+  },
+  "independent": {
+    "pass": true,
+    "comparisons": 125,
+    "mutationDetected": true,
+    "scope": {
+      "scans": 2,
+      "hits": 1,
+      "codeUnits": 20,
+      "entries": 2
+    },
+    "observed": {
+      "after": 0,
+      "before": 0,
+      "duplicates": 0,
+      "first": {
+        "contexts": 2,
+        "heads": 2,
+        "scans": 1
+      },
+      "second": {
+        "contexts": 4,
+        "heads": 3,
+        "scans": 1
+      }
+    },
+    "limitations": "Small fixtures; no full module, instantiation or full-tree savings claim."
+  },
+  "locations": {
+    "pass": true,
+    "result": {
+      "positions": [
+        [
+          "alpha",
+          3,
+          1
+        ],
+        [
+          "beta",
+          3,
+          1
+        ]
+      ],
+      "fresh": true,
+      "mutationIsolated": true,
+      "errors": [
+        {
+          "message": "Unmatched ( at end of input",
+          "file": "broken-alpha",
+          "line": 3,
+          "col": 1
+        },
+        {
+          "message": "Unmatched ( at end of input",
+          "file": "broken-beta",
+          "line": 3,
+          "col": 1
+        },
+        {
+          "message": "Unmatched ( at end of input",
+          "file": "broken-alpha",
+          "line": 3,
+          "col": 1
+        }
+      ],
+      "errorsNotRetained": true,
+      "movedPosition": [
+        "alpha",
+        4,
+        1
+      ],
+      "primitiveDecoded": "string",
+      "stats": {
+        "scans": 8,
+        "hits": 4,
+        "codeUnits": 144,
+        "entries": 4
+      }
+    }
+  },
+  "groups": [
+    {
+      "group": "unchanged portable production-first",
+      "receipt": "production-first.json",
+      "results": "production-first/acceptance.json",
+      "status": "PASS",
+      "fixtureSHA256": "740847bd64b841032e8c6c213fa00f0e9f6c937cdf154716cd2a7995a7992e5a"
+    },
+    {
+      "group": "independent actual-baseline comparisons",
+      "status": "PASS",
+      "comparisons": 125,
+      "receipt": "independent-adversarial.json",
+      "evidence": "independent/failure.json",
+      "sha256": "bc8dfdc475d684a8b20ca642184e06505b0ed8bf6e3983b621e04fe352a66297",
+      "incident": "post-comparison cross-realm TypeError oracle mismatch; candidate freeze correctly rejected push"
+    },
+    {
+      "group": "independent controls/context observation",
+      "receipt": "independent-controls-final.json",
+      "status": "PASS",
+      "results": "independent-final/acceptance.json"
+    },
+    {
+      "group": "actual-baseline CLI names/plain default/off repeated invocation",
+      "receipt": "cli-isolation.json",
+      "status": "PASS before optional shake harness rejection",
+      "evidence": "cli-isolation/*.trace.json and bytes/status/stdout/stderr"
+    },
+    {
+      "group": "CLI optional shake and full error",
+      "status": "PASS",
+      "receipt": "cli-shake-error.json",
+      "results": "cli-shake-error/acceptance.json"
+    },
+    {
+      "group": "direct descriptor/location/type contract",
+      "status": "PASS",
+      "receipt": "location-contract.json",
+      "results": "location-contract/acceptance.json"
+    },
+    {
+      "group": "provenance seal",
+      "status": "PASS",
+      "receipt": "provenance.json",
+      "results": "provenance.stdout"
+    },
+    {
+      "group": "affected production",
+      "status": "PASS",
+      "receipt": "affected-production.json",
+      "results": "affected-production.stdout"
+    },
+    {
+      "group": "affected multi-form macro",
+      "status": "PASS",
+      "receipt": "affected-macro.json",
+      "results": "affected-macro.stdout"
+    }
+  ],
+  "pins": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 70385664,
+    "sampledPeakRSS": 70385664,
+    "reapedPeakRSS": 17825792,
+    "cpuSeconds": 0.418505,
+    "wallSeconds": 0.22312330803833902,
+    "owned": [
+      [
+        620055,
+        "118248584"
+      ],
+      [
+        620056,
+        "118248586"
+      ],
+      [
+        620057,
+        "118248588"
+      ],
+      [
+        620058,
+        "118248588"
+      ]
+    ],
+    "cleanupComplete": true,
+    "command": [
+      "flock",
+      "/tmp/wine-ops-production-git.lock",
+      "python3",
+      "/tmp/airstrike-compiler-reuse-independent-accept-oct27/ops/pin.py"
+    ],
+    "cwd": "/tmp/airstrike-compiler-reuse-independent-accept-oct27/repo",
+    "limits": {
+      "rss": 134217728,
+      "cpu": 90,
+      "wall": 120,
+      "file": 25165824,
+      "output": 2097152,
+      "gitDataOnly": false
+    },
+    "stdout": {
+      "path": "/tmp/airstrike-compiler-reuse-independent-accept-oct27/ops/pins.stdout",
+      "bytes": 72,
+      "sha256": "718ca7a623e4cb7251b4b04025c40af85cbbcd6d87e2482f9d862cb06a614d1d"
+    },
+    "stderr": {
+      "path": "/tmp/airstrike-compiler-reuse-independent-accept-oct27/ops/pins.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "history": {
+    "canonicalCPU105.48018": "REJECTED by unchanged90CPU guard",
+    "completeInvocationCPU": "UNKNOWN",
+    "modules": "UNQUALIFIED"
+  }
+}

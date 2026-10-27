@@ -1,0 +1,54 @@
+{
+  "entry": "fixture.watx",
+  "source": "(include \"common.wat\")\n(include \"04-cache.wat\")\n(include \"13-exports.wat\")\n(include \"07c-block-exec.wat\")\n;; ?????? banner ??????\n(func $f (export \"f\") (result i32) (effects) (i32.const 7))\n",
+  "vfs": [
+    [
+      "common.wat",
+      "(type $handler_t (func (param i32)))\n(table 1 funcref)\n(memory 1)\n(region.declare-fixed $A (base 0x1000) (size 64))\n(func $value (export \"value\") (result i32) (i32.const 11))"
+    ],
+    [
+      "src/common.wat",
+      "(type $handler_t (func (param i32)))\n(table 1 funcref)\n(memory 1)\n(region.declare-fixed $A (base 0x1000) (size 64))\n(func $value (export \"value\") (result i32) (i32.const 11))"
+    ],
+    [
+      "./common.wat",
+      "(type $handler_t (func (param i32)))\n(table 1 funcref)\n(memory 1)\n(region.declare-fixed $A (base 0x1000) (size 64))\n(func $value (export \"value\") (result i32) (i32.const 11))"
+    ],
+    [
+      "04-cache.wat",
+      "(defmacro (dispatch-next)\n(return_call_indirect (type $handler_t) (local.get $nx_op) (local.get $nx_fn)))\n  (func $next\n    (local $nx_fn i32) (local $nx_op i32)\n    (dispatch-next))\n"
+    ],
+    [
+      "src/04-cache.wat",
+      "(defmacro (dispatch-next)\n(return_call_indirect (type $handler_t) (local.get $nx_op) (local.get $nx_fn)))\n  (func $next\n    (local $nx_fn i32) (local $nx_op i32)\n    (dispatch-next))\n"
+    ],
+    [
+      "./04-cache.wat",
+      "(defmacro (dispatch-next)\n(return_call_indirect (type $handler_t) (local.get $nx_op) (local.get $nx_fn)))\n  (func $next\n    (local $nx_fn i32) (local $nx_op i32)\n    (dispatch-next))\n"
+    ],
+    [
+      "13-exports.wat",
+      "(func $run (call $next)\n)\n(func $run2 (call $next)\n)"
+    ],
+    [
+      "src/13-exports.wat",
+      "(func $run (call $next)\n)\n(func $run2 (call $next)\n)"
+    ],
+    [
+      "./13-exports.wat",
+      "(func $run (call $next)\n)\n(func $run2 (call $next)\n)"
+    ],
+    [
+      "07c-block-exec.wat",
+      "(func $block (param $imm i32) (param $a i32)\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a))\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a)))"
+    ],
+    [
+      "src/07c-block-exec.wat",
+      "(func $block (param $imm i32) (param $a i32)\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a))\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a)))"
+    ],
+    [
+      "./07c-block-exec.wat",
+      "(func $block (param $imm i32) (param $a i32)\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a))\n(call_indirect (type $handler_t)\n                (local.get $imm) (local.get $a)))"
+    ]
+  ]
+}
