@@ -1,0 +1,342 @@
+{
+  "candidate": "ed8d8279793fbf076335e42120dd00c676f25d9e",
+  "files": [
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial-summary.json",
+      "sha256": "0a584185bbeb15f6faeedd83be491571279323b2ccc702a90ce5ecc827eee2c0",
+      "bytes": 1228
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.admission.json",
+      "sha256": "5afd5e2c58f8409f73734367984c718e19edbd9981a45924d7a83e20a338701f",
+      "bytes": 2013
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.json",
+      "sha256": "33e27d1afb13f2f0d9fa2bb5117041af646bd6a17e53fd4370b680ce992f7815",
+      "bytes": 1150
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.py",
+      "sha256": "f89125d5af8d1a94bdd495668e3af2289b2c4b6c9b9894d7d5515dc964d8868d",
+      "bytes": 4670
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.stdout",
+      "sha256": "143d563a8bbe80b67d98f7fadeb9821e69de4a1bfe1fd346c6abeaeaec7cf7b2",
+      "bytes": 220
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/auto-kernel.py",
+      "sha256": "fd5f1c8522cbc2418adc3ddc89e3e2a9f74b8711792dfe5aa9ede74a7437940f",
+      "bytes": 976
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.admission.json",
+      "sha256": "e1453d51a7e6872ac751a72b98b1e867b46ced55222e48278a0cb28d7847d397",
+      "bytes": 2013
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.json",
+      "sha256": "ebe5c49885f6b65c8ebcbea5b318cdcaf6c3231cfe7ee1c1a0dfd15abbdd55ca",
+      "bytes": 1141
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.stderr",
+      "sha256": "036d05729f19c3059dcf91c9da706f1db9f74274117d896420395b90c58cb6ff",
+      "bytes": 1399
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checks-checkpoint.json",
+      "sha256": "f74c7a3835894fe28b5911b130eea39f758b23e2321220896909c5642db9aa18",
+      "bytes": 2444
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/compare-source.py",
+      "sha256": "dc3c094ad694a911b75ca1417919dc20541a080ed1e76beff34e7a76018cdc90",
+      "bytes": 2345
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/denied-migration.kernel.json",
+      "sha256": "95c4023474f7ea6a9ce483cede15d48a4b2f4db0eb29eb56a6ffde2c31394e98",
+      "bytes": 1639
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/escape.kernel.json",
+      "sha256": "dffb3c97c82e45898f6275dda8e5c30cda26917a1726e4511239b479f6b24316",
+      "bytes": 3586
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/finalize.py",
+      "sha256": "769cbed7cb072b62eab8da9a51c0e242f3a35c5eacf41686a034f41ace9570fa",
+      "bytes": 2778
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.admission.json",
+      "sha256": "083442ea01a437fc8490dcc6313690adece4f5e126aed4c4e0ccd0756486f9cb",
+      "bytes": 2013
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.json",
+      "sha256": "7bcf1adb6c27c563559f0268e6b9c2fdcba4e2eea0a68a47fe51444deeb329ce",
+      "bytes": 993
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.py",
+      "sha256": "68af1f16db42120de3b14214aae73106635b46cb2499920d165b47413c6c6fff",
+      "bytes": 485
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.stdout",
+      "sha256": "ec3d41e1549ab7002e752c10e60c76d6c1e0286737dbd7246588a264f5309ac4",
+      "bytes": 28
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-kernel.admission.json",
+      "sha256": "3e88b2284481a1c8225552c7caaa2ab3d58a2f7f44a0e120e485477e833a0a07",
+      "bytes": 2014
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-kernel.json",
+      "sha256": "77bafd46abcee4ece0b3758abc83b7a3f5dbd8bde32e33f022a2b35e59469cc8",
+      "bytes": 1154
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-kernel.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-kernel.stdout",
+      "sha256": "5387b37f2bc68eef3cf9f1bdd0d8c2de8458da70b870fcc9c417a551d0cf07eb",
+      "bytes": 199
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-kernel.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/fresh-auto-reap.kernel.json",
+      "sha256": "12ce2090543bc1d960d5f2d3e66b61d67ea4ca532928763e23a915d6f9a98d78",
+      "bytes": 3456
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/persistence-source.diff",
+      "sha256": "8c90c89553387d4ac66b9f3d997a2a5436e53edc323b60031fc81f4228232df3",
+      "bytes": 935
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/pre-persistence-helper.py",
+      "sha256": "475c804bff9feeeeb3dbb90d79c486616e44628825a35ecffb703e93ff1ae817",
+      "bytes": 9638
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/run.py",
+      "sha256": "7e341c4e16431da2a24604d0a46ea73524a62d3892fc9e1687a0437a11d1029f",
+      "bytes": 5384
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.admission.json",
+      "sha256": "d05a82ce630e0f59f62e67bc3d8fd27ebcf38cfeb061cfdd7f25f275e922e670",
+      "bytes": 2011
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.json",
+      "sha256": "ed89fa91b53e5846d83492ede1689238c58d52eae224d517ca8b05b3cea91f05",
+      "bytes": 988
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.py",
+      "sha256": "f052d8769d62218fbbcd9cc088f36e48eecdcb09de3434017aa42d8c798993c1",
+      "bytes": 1772
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.stderr",
+      "sha256": "f2ab7406e760c9b9f3d3a2820c6cbbd8ce6d6d5b07f1f1fb9b2fef34d643bedc",
+      "bytes": 1772
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison-corrected.admission.json",
+      "sha256": "3d1c47973074a258ba58ac3f57ceff96e49bb5a550d86e780c4d397bf81e8c47",
+      "bytes": 2013
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison-corrected.json",
+      "sha256": "481c0beba9b1562c8a8d161713a694c0574832cea91c13a61faccc2444c21b69",
+      "bytes": 1041
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison-corrected.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison-corrected.stdout",
+      "sha256": "703aa13d89c7b0f793341a4e192be04a134b6a64f0b558960616953f1ed72ea4",
+      "bytes": 424
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison-corrected.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison.admission.json",
+      "sha256": "8fb5181cba889bff105ae32b2997fd22af892a3bcd5bc049b4fb7a74033873ea",
+      "bytes": 2014
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison.json",
+      "sha256": "601233b2089332ce7ed98a211d8067b17776fcf336da41543dc7772db2ed18b9",
+      "bytes": 1021
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison.stderr",
+      "sha256": "64e9d0f1f4f15a31e053d3828003cc80dc956902884e5a24cf56f71941a342bf",
+      "bytes": 269
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/source-comparison.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.admission.json",
+      "sha256": "4983082f4fac2fbd2f47bab54a14d0d6c7ae0d06cf2af104f775da883640fa2c",
+      "bytes": 2014
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.json",
+      "sha256": "28686296569a28209b9483b9eda8fd208a36d726eb252f3ef51965b159f15749",
+      "bytes": 1111
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.stderr",
+      "sha256": "f917145fe7a269ff86c45ece187daa69ec49811a58f0c14880631a9c50cf9ce6",
+      "bytes": 1321
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap-complete.admission.json",
+      "sha256": "67229f54d6c4e9c7eec03516bca9aee47150c4c3fa64e1d5b1be124bc3d3b4c8",
+      "bytes": 2014
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap-complete.json",
+      "sha256": "6e3d4b1d31aeae27a54b09c069e0292ac853ce5367e7ffc559dac50b0e6dae29",
+      "bytes": 1218
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap-complete.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap-complete.stdout",
+      "sha256": "de632507654a6dfbfa0e9ea47a28d5c08a3f080fe24863899aa0c0f36aec5ca6",
+      "bytes": 2173
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap-complete.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.admission.json",
+      "sha256": "39d841393ed34379ffb76f4871d60f7e51c370b9638af87cf7bed43ff733ff7d",
+      "bytes": 2014
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.json",
+      "sha256": "9da5b4dd088b78567393ed0011ec3f21bc66625b93cd7287ed525a4e82d19212",
+      "bytes": 1109
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.stderr",
+      "sha256": "8d77b679d6cb60168a3d85ef06d0c3f38a3cb5a6e7c517ec880435e09be524b3",
+      "bytes": 1489
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/wrong-owned-group.kernel.json",
+      "sha256": "e640c1b1ebe329497860c5c0cbc75547c3c58c59a8a1595d4e2341c624c43949",
+      "bytes": 1839
+    },
+    {
+      "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/airstrike-kernel-cpu-independent-accept-oct27.md",
+      "sha256": "6a1bd95245298b6b9b25b2f0124337e0356ded66c9dffd5812ab912e83f86a10",
+      "bytes": 8776
+    }
+  ],
+  "coordinatorManifest": {
+    "path": "/tmp/airstrike-cgroup-cpu-receipt-oct27/ops/receipt-manifest.json",
+    "sha256": "8edae8128dcfb84b171ee5b7596814d4d1a2e8084abd744d2dd6bd69f1cf9dff",
+    "payloads": 161,
+    "verification": "coordinator verified once; unchanged reuse, no payload sweep"
+  },
+  "publication": "separate final publication receipt; this manifest avoids recursive self hashes"
+}

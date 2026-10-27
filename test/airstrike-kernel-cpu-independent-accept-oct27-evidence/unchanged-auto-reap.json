@@ -1,0 +1,49 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 88211456,
+  "sampledPeakRSS": 88211456,
+  "reapedPeakRSS": 32059392,
+  "cpuSeconds": 0.535289,
+  "wallSeconds": 0.22106294706463814,
+  "owned": [
+    [
+      593045,
+      "118091019"
+    ],
+    [
+      593046,
+      "118091020"
+    ],
+    [
+      593047,
+      "118091023"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "test/unique-cpu-receipt-oct27.py",
+    "measure",
+    "auto-reap"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/unchanged-auto-reap.stderr",
+    "bytes": 1489,
+    "sha256": "8d77b679d6cb60168a3d85ef06d0c3f38a3cb5a6e7c517ec880435e09be524b3"
+  }
+}

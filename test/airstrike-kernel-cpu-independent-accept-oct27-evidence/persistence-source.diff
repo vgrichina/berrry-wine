@@ -1,0 +1,18 @@
+--- measured-before-persistence
++++ final-pinned-helper
+@@ -97,6 +97,7 @@
+     # mkdir must be exclusive; never adopt/remove an existing group.
+     group.mkdir()
+     r.update(exclusiveFreshCreation=True, ownership=identity(group))
++    Path(evidence_path).write_text(json.dumps(r, indent=2)+'\n')
+     pid = None
+     gate_r, gate_w = os.pipe()
+     ready_r, ready_w = os.pipe()
+@@ -136,6 +137,7 @@
+             (group/'cgroup.procs').write_text(str(pid))
+             r['attachedMembership'] = membership(pid)
+             r['attachedBeforeRelease'] = r['attachedMembership'] == '/' + str(group.relative_to('/sys/fs/cgroup')) and (group/'cgroup.procs').read_text().split() == [str(pid)]
++            Path(evidence_path).write_text(json.dumps(r, indent=2)+'\n')
+             assert r['attachedBeforeRelease']
+             os.write(gate_w, b'G'); os.close(gate_w); gate_w = -1
+             _, status, u = os.wait4(pid, 0); pid = None

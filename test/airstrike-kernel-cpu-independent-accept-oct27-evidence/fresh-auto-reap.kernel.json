@@ -1,0 +1,90 @@
+{
+  "boundary": "Additive cooperative-workload diagnostic; never an enforcing supervisor.\n\nBoundary: fresh group's initial cpu.stat through verified populated=0. Includes\npost-attachment bootstrap, exec/imports, invoked trusted supervisor and descendants.\nPre-attachment bootstrap and outside observer CPU are separate, not covered.\nSame-UID migration is possible: arbitrary invocation completeness stays UNKNOWN.\n",
+  "authoritativeGuardSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "command": [
+    "/usr/bin/python3",
+    "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/unique-cpu-receipt-oct27.py",
+    "fixture",
+    "auto-reap"
+  ],
+  "parent": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope",
+  "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-e03a329b3f9d41aab86a25e282f16699",
+  "parentControlsBefore": "",
+  "exclusiveFreshCreation": true,
+  "ownership": [
+    28,
+    3656513,
+    1000
+  ],
+  "initialStat": "usage_usec 0\nuser_usec 0\nsystem_usec 0\ncore_sched.force_idle_usec 0\n",
+  "initialEvents": {
+    "populated": 0,
+    "frozen": 0
+  },
+  "emptyInitially": true,
+  "bootstrap": {
+    "pid": 593385,
+    "preBarrierOwnCPU": 0.00033099999999999997
+  },
+  "beforeAttachmentMembership": "/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope",
+  "preAttachmentNoExecOutput": true,
+  "bootstrapIdentity": [
+    593385,
+    "118094664"
+  ],
+  "attachedMembership": "/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-e03a329b3f9d41aab86a25e282f16699",
+  "attachedBeforeRelease": true,
+  "outerExit": 0,
+  "outerWait4CPUSeconds": 0.241779,
+  "stderr": "",
+  "supervisor": {
+    "result": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 51527680,
+      "sampledPeakRSS": 51527680,
+      "reapedPeakRSS": 19398656,
+      "cpuSeconds": 0.476682,
+      "wallSeconds": 0.6571901510469615,
+      "owned": [
+        [
+          593386,
+          "118094668"
+        ],
+        [
+          593387,
+          "118094671"
+        ]
+      ],
+      "output": "LOSTCPU 0.250154459\n",
+      "cleanupComplete": true
+    },
+    "membership": "/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-e03a329b3f9d41aab86a25e282f16699",
+    "guardSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "supervisorOwnAtPrint": 0.19963199999999998
+  },
+  "childConfirmedMembership": true,
+  "supervisorIncluded": true,
+  "finalEvents": {
+    "populated": 0,
+    "frozen": 0
+  },
+  "quiescent": true,
+  "ownershipFinal": [
+    28,
+    3656513,
+    1000
+  ],
+  "finalStat": "usage_usec 491926\nuser_usec 285974\nsystem_usec 205951\ncore_sched.force_idle_usec 0\n",
+  "cleanupRemoved": true,
+  "parentControlsAfter": "",
+  "observerOwnCPUSeconds": 0.002800937,
+  "outsideBoundaryAccounting": "observer measured separately; preBarrierOwnCPU excludes pipe/report/blocking tail; exact preattachment lifetime UNKNOWN, not added to kernel total",
+  "diagnostic": {
+    "status": "finalized-kernel-boundary",
+    "kernelCPUSeconds": 0.491926,
+    "problems": [],
+    "invocationCompleteness": "UNKNOWN",
+    "diagnosticOnly": true
+  }
+}

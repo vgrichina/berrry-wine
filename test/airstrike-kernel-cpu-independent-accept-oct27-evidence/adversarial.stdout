@@ -1,0 +1,1 @@
+{"cases": 3, "mutationsRejected": ["changed-inode", "nonempty-final", "cleanup-failed", "counter-duplicate", "counter-regression", "supervisor-missing"], "result": "PASS bounded group; escape proves invocation UNKNOWN"}

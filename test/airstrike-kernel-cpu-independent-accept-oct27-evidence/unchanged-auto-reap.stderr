@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/unique-cpu-receipt-oct27.py", line 204, in <module>
+    print(json.dumps(measured(sys.argv[2]), indent=2))
+                     ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/unique-cpu-receipt-oct27.py", line 108, in measured
+    assert p.returncode == 0, (mode, stderr, out.read().decode())
+           ^^^^^^^^^^^^^^^^^
+AssertionError: ('auto-reap', 'Traceback (most recent call last):\n  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/unique-cpu-receipt-oct27.py", line 202, in <module>\n    inner(sys.argv[2])\n  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/unique-cpu-receipt-oct27.py", line 93, in inner\n    result = m.supervise(cmd, rss_limit=128 * 1024**2)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/helpers/palette-browser-supervisor-candidate-oct27.py", line 92, in supervise\n    spec.loader.exec_module(diagnostic)\n  File "<frozen importlib._bootstrap_external>", line 991, in exec_module\n  File "<frozen importlib._bootstrap_external>", line 1128, in get_code\n  File "<frozen importlib._bootstrap_external>", line 1186, in get_data\nFileNotFoundError: [Errno 2] No such file or directory: \'/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo/test/helpers/unique-cpu-evidence-oct27.py\'\n', '')

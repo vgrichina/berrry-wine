@@ -1,0 +1,50 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 58851328,
+  "sampledPeakRSS": 58851328,
+  "reapedPeakRSS": 20185088,
+  "cpuSeconds": 1.761544,
+  "wallSeconds": 1.2787943938747048,
+  "owned": [
+    [
+      593002,
+      "118090554"
+    ],
+    [
+      593003,
+      "118090554"
+    ],
+    [
+      593004,
+      "118090555"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "checkout",
+    "-b",
+    "task/airstrike-kernel-cpu-independent-accept-oct27",
+    "ed8d8279793fbf076335e42120dd00c676f25d9e"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/checkout.stderr",
+    "bytes": 1399,
+    "sha256": "036d05729f19c3059dcf91c9da706f1db9f74274117d896420395b90c58cb6ff"
+  }
+}

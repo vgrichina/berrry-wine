@@ -1,0 +1,44 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 53346304,
+  "sampledPeakRSS": 53346304,
+  "reapedPeakRSS": 17694720,
+  "cpuSeconds": 0.118633,
+  "wallSeconds": 0.0703269550576806,
+  "owned": [
+    [
+      592465,
+      "118089612"
+    ],
+    [
+      592466,
+      "118089614"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-S",
+    "setup.py"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.stderr",
+    "bytes": 1772,
+    "sha256": "f2ab7406e760c9b9f3d3a2820c6cbbd8ce6d6d5b07f1f1fb9b2fef34d643bedc"
+  }
+}

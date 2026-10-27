@@ -1,0 +1,37 @@
+{
+  "boundary": "Additive cooperative-workload diagnostic; never an enforcing supervisor.\n\nBoundary: fresh group's initial cpu.stat through verified populated=0. Includes\npost-attachment bootstrap, exec/imports, invoked trusted supervisor and descendants.\nPre-attachment bootstrap and outside observer CPU are separate, not covered.\nSame-UID migration is possible: arbitrary invocation completeness stays UNKNOWN.\n",
+  "authoritativeGuardSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "command": [
+    "/usr/bin/python3",
+    "-S",
+    "-c",
+    "open('/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/wrong-owned-group.UNEXPECTED-EXEC',\"w\").write(\"executed\")"
+  ],
+  "parent": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope",
+  "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-8732a5be784c4009819546e77fcd1769",
+  "parentControlsBefore": "",
+  "exclusiveFreshCreation": true,
+  "ownership": [
+    28,
+    3656843,
+    1000
+  ],
+  "initialStat": "usage_usec 0\nuser_usec 0\nsystem_usec 0\ncore_sched.force_idle_usec 0\n",
+  "initialEvents": {
+    "populated": 0,
+    "frozen": 0
+  },
+  "emptyInitially": true,
+  "bootstrap": {
+    "pid": 594413,
+    "preBarrierOwnCPU": 0.00039
+  },
+  "beforeAttachmentMembership": "/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope",
+  "preAttachmentNoExecOutput": true,
+  "bootstrapIdentity": [
+    594413,
+    "118101275"
+  ],
+  "attachedMembership": "/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/independent-barrier-a5aac8c5bcfe4f67b7cdb5e6aed1ee98",
+  "attachedBeforeRelease": false
+}

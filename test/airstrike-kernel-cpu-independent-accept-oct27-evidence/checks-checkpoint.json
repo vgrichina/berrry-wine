@@ -1,0 +1,46 @@
+{
+  "candidate": "ed8d8279793fbf076335e42120dd00c676f25d9e",
+  "result": "ACCEPT bounded kernel group diagnostic; invocation UNKNOWN; no build authority",
+  "sourcePins": {
+    "test/cgroup-cpu-receipt-oct27.py": "1e179c6316850960a5fccfe9d653c7b0a6869165adb6a3831541085e70e8ef15",
+    "test/unique-cpu-receipt-oct27.py": "6a928efe971b00739f4550c756ee9b87b4a0fb588dac9bfb839957b698a536b0",
+    "test/helpers/unique-cpu-evidence-oct27.py": "b82ffdd4330bebe1b2f7e02f82f883fe0b1edb84a93b5b3675e3e58f4f047e41",
+    "test/helpers/cgroup-cpu-evidence-oct27.py": "ddd770715ff69dea7e42c14f8760553da5403dc81105310622710b07c5229ac3",
+    "test/helpers/palette-browser-supervisor-candidate-oct27.py": "ae54468b3b931d6fb8d59456d62bbd94d1886cb53ee55d7e13cd39fc65460d74"
+  },
+  "reusedManifest": {
+    "path": "/tmp/airstrike-cgroup-cpu-receipt-oct27/ops/receipt-manifest.json",
+    "sha256": "8edae8128dcfb84b171ee5b7596814d4d1a2e8084abd744d2dd6bd69f1cf9dff",
+    "payloads": 161,
+    "verification": "coordinator verified once; unchanged reuse, no payload sweep"
+  },
+  "groups": {
+    "unchanged-auto-reap": "unchanged-auto-reap-complete.json",
+    "fresh-final-helper-auto-reap": "fresh-auto-kernel.json",
+    "exact-source-transform": "source-comparison-corrected.json",
+    "escape-and-failed-attachments": "adversarial.json"
+  },
+  "remainingChecks": [],
+  "blockers": [
+    "whole invocation CPU incomplete; outside observer/bootstrap and cooperative escape",
+    "unchanged conservative CPU90 guard still binding; historical105.48018 rejection"
+  ],
+  "cleanup": [
+    {
+      "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-e03a329b3f9d41aab86a25e282f16699",
+      "removed": true
+    },
+    {
+      "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-8732a5be784c4009819546e77fcd1769",
+      "removed": true
+    },
+    {
+      "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-3096a6b433c14c61928449ba193ae2f0",
+      "removed": true
+    },
+    {
+      "group": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/airstrike-cpu-oct27-4d9f43f2170f4bb3b68b19e1ea9cef84",
+      "removed": true
+    }
+  ]
+}

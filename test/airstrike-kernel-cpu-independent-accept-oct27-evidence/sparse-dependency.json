@@ -1,0 +1,49 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 49819648,
+  "sampledPeakRSS": 49819648,
+  "reapedPeakRSS": 17825792,
+  "cpuSeconds": 0.086142,
+  "wallSeconds": 0.0550373091828078,
+  "owned": [
+    [
+      593172,
+      "118092518"
+    ],
+    [
+      593173,
+      "118092518"
+    ],
+    [
+      593174,
+      "118092520"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "sparse-checkout",
+    "add",
+    "/test/helpers/unique-cpu-evidence-oct27.py"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/sparse-dependency.stderr",
+    "bytes": 1321,
+    "sha256": "f917145fe7a269ff86c45ece187daa69ec49811a58f0c14880631a9c50cf9ce6"
+  }
+}

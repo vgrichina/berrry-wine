@@ -1,0 +1,45 @@
+{
+  "rows": [
+    {
+      "case": "cooperative escape",
+      "kernel": {
+        "status": "finalized-kernel-boundary",
+        "kernelCPUSeconds": 0.136615,
+        "problems": [],
+        "invocationCompleteness": "UNKNOWN",
+        "diagnosticOnly": true
+      },
+      "outsideOwnedSiblingCPU": 0.255189,
+      "outerWait4": 0.392293,
+      "measuredBurn": 0.250992222,
+      "sibling": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/tmux-spawn-9ebae5f6-e522-47d9-ae85-73d90a3d3284.scope/independent-escape-3c603b08d5ff44d49bc2acbcce301c74",
+      "removed": true
+    },
+    {
+      "case": "denied-migration",
+      "exception": "PermissionError",
+      "childExit": 124,
+      "fixtureExecuted": false,
+      "finalized": false,
+      "ownedGroupsRemoved": true
+    },
+    {
+      "case": "wrong-owned-group",
+      "exception": "AssertionError",
+      "childExit": 124,
+      "fixtureExecuted": false,
+      "finalized": false,
+      "ownedGroupsRemoved": true
+    }
+  ],
+  "mutationsRejected": [
+    "changed-inode",
+    "nonempty-final",
+    "cleanup-failed",
+    "counter-duplicate",
+    "counter-regression",
+    "supervisor-missing"
+  ],
+  "symlinkRejected": true,
+  "parentControlsUnchanged": true
+}

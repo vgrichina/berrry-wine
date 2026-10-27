@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 48889856,
+  "sampledPeakRSS": 48889856,
+  "reapedPeakRSS": 17694720,
+  "cpuSeconds": 0.161578,
+  "wallSeconds": 0.08797247312031686,
+  "owned": [
+    [
+      592997,
+      "118090539"
+    ],
+    [
+      592998,
+      "118090540"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-S",
+    "flatten.py"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.stdout",
+    "bytes": 28,
+    "sha256": "ec3d41e1549ab7002e752c10e60c76d6c1e0286737dbd7246588a264f5309ac4"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/flatten.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

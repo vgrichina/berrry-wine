@@ -1,0 +1,56 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 91357184,
+  "sampledPeakRSS": 91357184,
+  "reapedPeakRSS": 19660800,
+  "cpuSeconds": 2.0046019999999998,
+  "wallSeconds": 0.4401371800340712,
+  "owned": [
+    [
+      594403,
+      "118101236"
+    ],
+    [
+      594405,
+      "118101238"
+    ],
+    [
+      594406,
+      "118101239"
+    ],
+    [
+      594407,
+      "118101244"
+    ],
+    [
+      594413,
+      "118101275"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-S",
+    "adversarial.py"
+  ],
+  "cwd": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.stdout",
+    "bytes": 220,
+    "sha256": "143d563a8bbe80b67d98f7fadeb9821e69de4a1bfe1fd346c6abeaeaec7cf7b2"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/adversarial.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

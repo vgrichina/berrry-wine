@@ -1,0 +1,24 @@
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+error: /tmp/airstrike-directinput-atomic-independent-accept-oct27/repo/.git/objects: ignoring alternate object stores, nesting too deep
+fatal: unable to read tree 8663a5104894c525ff9768ff8cee86f3efa91b2c
+Traceback (most recent call last):
+  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.py", line 14, in <module>
+    git('checkout','-b','task/airstrike-kernel-cpu-independent-accept-oct27','ed8d8279793fbf076335e42120dd00c676f25d9e')
+  File "/tmp/airstrike-kernel-cpu-independent-accept-oct27/ops/setup.py", line 8, in git
+    return subprocess.check_output(['git','-C',str(r),*a],preexec_fn=lim).decode()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 466, in check_output
+    return run(*popenargs, stdout=PIPE, timeout=timeout, check=True,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 571, in run
+    raise CalledProcessError(retcode, process.args,
+subprocess.CalledProcessError: Command '['git', '-C', '/tmp/airstrike-kernel-cpu-independent-accept-oct27/repo', 'checkout', '-b', 'task/airstrike-kernel-cpu-independent-accept-oct27', 'ed8d8279793fbf076335e42120dd00c676f25d9e']' returned non-zero exit status 128.

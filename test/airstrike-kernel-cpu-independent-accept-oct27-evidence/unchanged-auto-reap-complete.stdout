@@ -1,0 +1,61 @@
+{
+  "receipt": {
+    "uniqueCPUReceipt": {
+      "status": "incomplete",
+      "uniqueCPUSeconds": null,
+      "diagnosticOnly": true,
+      "authoritativeMetric": "cpuSeconds",
+      "authoritativeDefaultLimitSeconds": 90,
+      "observedReapCPUSeconds": 0.027838999999999996,
+      "supervisorOwnIntervalSeconds": 0.146086,
+      "observedIntervalSubtotalSeconds": 0.173925,
+      "reapConsistency": "consistent-but-not-complete",
+      "consistencyProblems": [],
+      "reapEvents": [
+        {
+          "identity": [
+            593179,
+            "118092535"
+          ],
+          "userSeconds": 0.018890999999999998,
+          "systemSeconds": 0.008948
+        }
+      ],
+      "childrenRusageDeltaSeconds": 0.027838999999999996,
+      "completenessBlocker": "Descendant auto-reaping/SA_NOCLDWAIT can discard CPU usage; exclusive ownership and complete wait propagation cannot be established for arbitrary commands from proc samples and wait4.",
+      "assumptionsRequired": [
+        "single exclusive reaper, no concurrent unrelated children or waits",
+        "every descendant is waited with usage propagation or adopted and reaped here",
+        "no auto-reaping, external reaper or ownership escape",
+        "complete cleanup and identity-pinned reaps",
+        "separately finalized supervisor/bootstrap own-only lifetime overhead"
+      ],
+      "scope": "Observed disjoint direct/adopted reaps plus supervisor own-only interval; not a complete unique subtree total or an alternate pass criterion."
+    },
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 52338688,
+    "sampledPeakRSS": 52338688,
+    "reapedPeakRSS": 19267584,
+    "cpuSeconds": 0.417839,
+    "wallSeconds": 0.6497479169629514,
+    "owned": [
+      [
+        593179,
+        "118092535"
+      ],
+      [
+        593180,
+        "118092537"
+      ]
+    ],
+    "output": "LOSTCPU 0.250986561\n",
+    "cleanupComplete": true
+  },
+  "monitorOwnLifetimeAtPrint": 0.17304999999999998,
+  "independentlyReportedLostOwnCPUSeconds": 0.250986561,
+  "mode": "auto-reap",
+  "outerWait4CPUSeconds": 0.20701399999999998,
+  "separatedMonitorResidualSeconds": 0.0061249999999999985,
+  "stderr": ""
+}
