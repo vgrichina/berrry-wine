@@ -1,0 +1,1 @@
+{"request": {"action": "snapshot", "id": 14}, "reply": {"ok": true, "id": 14, "value": {"batch": 1, "eip": "0x0", "quit": false, "yieldReason": 0, "focus": "0x0", "mainHwnd": "0x0", "screen": {"w": 800, "h": 600}, "frozen": {"frozen": true, "tickMs": 2, "credits": 0, "recording": false}, "windows": []}}}

@@ -30,6 +30,11 @@ def atomic(path, value):
         stream.flush()
         os.fsync(stream.fileno())
     os.replace(tmp, path)
+    directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        os.fsync(directory)
+    finally:
+        os.close(directory)
 
 
 def integer(value):
@@ -39,13 +44,113 @@ def integer(value):
 class Mailbox:
     """Compatible with retained remote-v7.py request/reply files, unchanged."""
     def __init__(self, root):
-        self.root = Path(root)
+        self.root = Path(root).resolve(strict=True)
         self.consumed = {}
+        self.journal = None
+        self.started = False
         (self.root / 'requests').mkdir(exist_ok=True)
+        (self.root / 'replies').mkdir(exist_ok=True)
+        # The actual requests directory owns the lock, even when two mailbox
+        # roots (or their requests directories) are symlink aliases.
+        self.requests = (self.root / 'requests').resolve(strict=True)
+        self.replies = (self.root / 'replies').resolve(strict=True)
+        self.lock = os.open(self.requests, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            fcntl.flock(self.lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except Exception:
+            os.close(self.lock)
+            raise
+        stat = self.requests.stat()
+        self.journal_path = self.requests.parent / f'.generally-loading-{stat.st_dev}-{stat.st_ino}.journal'
+
+    def close(self):
+        os.close(self.lock)
+
+    def save(self):
+        atomic(self.journal_path, self.journal)
+
+    def inventory(self, directory):
+        names = set()
+        for count, path in enumerate(directory.iterdir(), 1):
+            if count > 8192:
+                raise Refusal('mailbox inventory bound; no dispatch')
+            if path.suffix == '.json':
+                names.add(path.name)
+        return names
+
+    def begin(self, cursor):
+        identity = {name: [path.stat().st_dev, path.stat().st_ino]
+                    for name, path in (('requests', self.requests), ('replies', self.replies),
+                                       ('terminalRoot', self.root))}
+        if self.journal_path.exists():
+            if self.journal_path.stat().st_size > MAX_LINE:
+                raise Refusal('oversized mailbox journal; no handoff')
+            self.journal = json.loads(self.journal_path.read_bytes())
+            if (self.journal.get('version') != 1 or self.journal.get('identity') != identity
+                    or self.journal.get('status') != 'clean'):
+                raise Refusal('uncertain/poisoned mailbox ownership; no replay or handoff')
+            if self.journal.get('next') != cursor['next']:
+                raise Refusal('clean handoff requires exact mailbox next ID')
+            history = self.journal.get('history')
+            if type(history) is not dict or len(history) > 4096:
+                raise Refusal('invalid/bounded mailbox history')
+            for name, entry in history.items():
+                if (not name.endswith('.json') or not name[:-5].isdigit()
+                        or name != f"{int(name[:-5]):04}.json" or type(entry) is not dict):
+                    raise Refusal('invalid mailbox history entry')
+                for directory, key in ((self.requests, 'request'), (self.replies, 'reply')):
+                    path = directory / name
+                    if hashlib.sha256(path.read_bytes()).hexdigest() != entry.get(key):
+                        raise Refusal('acknowledged mailbox history changed; no handoff')
+                self.consumed[self.replies / name] = entry['reply']
+        else:
+            # No inference from old files, ACKs or dead processes. Only a fresh,
+            # empty transport may adopt an explicit initial cursor.
+            if self.inventory(self.requests) or self.inventory(self.replies):
+                raise Refusal('unjournaled mailbox history; no adoption or replay')
+            self.journal = dict(version=1, identity=identity, status='clean',
+                                next=cursor['next'], history={})
+        expected = set(self.journal['history'])
+        if self.inventory(self.requests) != expected or self.inventory(self.replies) != expected:
+            raise Refusal('unexpected mailbox request/reply; no handoff')
+        self.journal['status'] = 'active'
+        self.save()  # active before any cursor mutation; death is never clean
+        self.started = True
+
+    def accepted(self, cursor):
+        name = f"{cursor['last']['id']:04}.json"
+        self.journal['history'][name] = dict(
+            request=hashlib.sha256((self.requests / name).read_bytes()).hexdigest(),
+            reply=self.consumed[self.replies / name])
+        self.journal.update(status='active', next=cursor['next'])
+        self.journal.pop('pending', None)
+        self.save()  # still active until ALL semantic/frozen-zero checks pass
+
+    def finish(self, cursor):
+        self.check()
+        if cursor.get('pending') is not False or cursor.get('failed'):
+            raise Refusal('uncertain cursor cannot release mailbox')
+        self.journal.update(status='clean', next=cursor['next'])
+        self.save()
+
+    def poison(self):
+        if self.started:
+            self.journal['status'] = 'poisoned'
+            self.save()
 
     def check(self):
         if (self.root / 'terminal.json').exists():
             raise Refusal('guest exited/bridge terminal; no later request')
+        if self.started:
+            expected = set(self.journal['history'])
+            pending = self.journal.get('pending')
+            allowed = expected | ({f"{pending['id']:04}.json"} if pending else set())
+            if (not self.inventory(self.requests).issubset(allowed)
+                    or not self.inventory(self.replies).issubset(allowed)):
+                raise Refusal('unexpected mailbox request/reply')
+            for name, entry in self.journal['history'].items():
+                if hashlib.sha256((self.requests / name).read_bytes()).hexdigest() != entry['request']:
+                    raise Refusal('acknowledged request changed or removed')
         # Consumed ACKs are immutable; a changed/duplicate reply poisons the lane.
         for path, digest in self.consumed.items():
             if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
@@ -54,10 +159,16 @@ class Mailbox:
     def exchange(self, request, deadline):
         self.check()
         name = f"{request['id']:04}.json"
-        dest = self.root / 'requests' / name
-        reply = self.root / 'replies' / name
+        if not self.started or self.journal['status'] != 'active':
+            raise Refusal('mailbox ownership not active')
+        if request['id'] != self.journal['next'] or len(self.journal['history']) >= 4096:
+            raise Refusal('mailbox next ID/history bound; no dispatch')
+        dest = self.requests / name
+        reply = self.replies / name
         if dest.exists() or reply.exists():
             raise Refusal('existing request/reply: no replay')
+        self.journal.update(status='pending', pending=request)
+        self.save()  # durable transport uncertainty BEFORE dispatch
         atomic(dest, request)
         while not reply.exists():
             if time.monotonic() >= deadline:
@@ -119,6 +230,8 @@ class LoadingController:
         if not integer(self.cursor.get('next')) or self.cursor['next'] < 1:
             raise Refusal('invalid next request ID')
         self.events = []
+        if isinstance(self.transport, Mailbox):
+            self.transport.begin(self.cursor)
 
     def request(self, command):
         if self.cursor.get('pending') or self.cursor.get('failed'):
@@ -137,6 +250,8 @@ class LoadingController:
                 raise Refusal('negative/wrong-ID/invalid ACK: ' + repr(reply)[:512])
             self.cursor = dict(next=request['id'] + 1, pending=False, last=request, reply=reply)
             atomic(self.path, self.cursor)
+            if isinstance(self.transport, Mailbox):
+                self.transport.accepted(self.cursor)
             self.events.append(dict(request=request, reply=reply))
             return reply['value']
         except Exception:
@@ -213,20 +328,28 @@ def main():
     deadline = time.monotonic() + args.deadline_seconds
     lock = Path(args.state + '.lock').open('a')
     controller = None
+    channel = None
     try:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        controller = LoadingController(Mailbox(args.mailbox) if args.mailbox else Stdio(),
+        channel = Mailbox(args.mailbox) if args.mailbox else Stdio()
+        controller = LoadingController(channel,
                                        args.state, deadline=deadline, timeout=args.timeout_seconds)
         result = controller.run(args.total, args.chunk, args.after)
+        if isinstance(channel, Mailbox):
+            channel.finish(controller.cursor)
         atomic(args.receipt, dict(ok=True, **result))
         return 0
     except Exception as error:
+        if isinstance(channel, Mailbox):
+            channel.poison()
         atomic(args.receipt, dict(ok=False, error=str(error),
                                  events=controller.events if controller else [],
                                  gameplay='unknown; protocol-only controller'))
         print(str(error), file=sys.stderr)
         return 1
     finally:
+        if isinstance(channel, Mailbox):
+            channel.close()
         lock.close()
 
 

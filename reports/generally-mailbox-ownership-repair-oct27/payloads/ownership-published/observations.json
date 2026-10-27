@@ -1,0 +1,45 @@
+[
+  {
+    "name": "same-state",
+    "refused": true,
+    "noRequest13": true,
+    "error": "[Errno 11] Resource temporarily unavailable"
+  },
+  {
+    "name": "symlink-root",
+    "refused": true,
+    "noRequest13": true,
+    "error": "[Errno 11] Resource temporarily unavailable"
+  },
+  {
+    "name": "symlink-requests",
+    "refused": true,
+    "noRequest13": true,
+    "error": "[Errno 11] Resource temporarily unavailable"
+  },
+  {
+    "name": "dead-owner-new-cursor",
+    "refused": true,
+    "noRequest13": true,
+    "error": "uncertain/poisoned mailbox ownership; no replay or handoff"
+  },
+  {
+    "name": "death-remains-pending",
+    "status": "pending",
+    "repliesWritten": 0
+  },
+  {
+    "name": "timeout-new-cursor",
+    "refused": true,
+    "noRequest13": true,
+    "error": "uncertain/poisoned mailbox ownership; no replay or handoff"
+  },
+  {
+    "name": "timeout-remains-poisoned",
+    "pending": {
+      "action": "snapshot",
+      "id": 12
+    },
+    "repliesWritten": 0
+  }
+]

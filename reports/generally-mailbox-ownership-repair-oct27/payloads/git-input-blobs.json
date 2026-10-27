@@ -1,0 +1,57 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 30015488,
+  "sampledPeakRSS": 30015488,
+  "reapedPeakRSS": 11583488,
+  "cpuSeconds": 0.203573,
+  "wallSeconds": 0.19522796687670052,
+  "owned": [
+    [
+      171955,
+      "115673152"
+    ],
+    [
+      171956,
+      "115673152"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/flock",
+    "/tmp/wine-ops-production-git.lock",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,resource,sys;resource.setrlimit(resource.RLIMIT_DATA,(536870912,536870912));os.execvp(sys.argv[1],sys.argv[1:])",
+    "git",
+    "-C",
+    "/tmp/generally-mailbox-ownership-repair-oct27/repo",
+    "ls-tree",
+    "-r",
+    "6ce937929729b3ab6fabb46107cb6e1fc13dfeff",
+    "--",
+    "tools/generally-loading-controller.py",
+    "test/independent-generally-bounded-acceptance.py",
+    "docs/generally-bounded-independent-rejection.md",
+    "test/run.js",
+    "test/fixtures/generally-loading-protocol.cjs"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/git-input-blobs.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/git-input-blobs.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

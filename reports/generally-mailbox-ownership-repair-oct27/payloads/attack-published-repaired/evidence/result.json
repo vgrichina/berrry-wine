@@ -1,0 +1,12 @@
+{
+  "candidate": "e954f74d815795fbb715f54a312746f47f8e7157",
+  "helperSHA256": "e41251b8e976a28957cb44c9b5398bf90aa9cd74b6fcb504301e6dbc89bbbe2b",
+  "accepted": true,
+  "error": null,
+  "noACKsFabricated": true,
+  "guestInvocations": 0,
+  "oracle": "one live owner per actual mailbox regardless of state pathname",
+  "guardPresentControl": "same cursor refused; no new mailbox request",
+  "omittedGuardControl": "alternate cursor bypasses state-only lock; oracle rejects",
+  "cleanupComplete": true
+}

@@ -1,0 +1,149 @@
+[
+  {
+    "name": "owner",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/owner.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/owner.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170168
+  },
+  {
+    "name": "same-state",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/owner.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/same-state.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170169
+  },
+  {
+    "name": "symlink-root",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/mailbox-alias",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/alias.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/symlink-root.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170170
+  },
+  {
+    "name": "symlink-requests",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/different-mailbox-root",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/linked.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/symlink-requests.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170171
+  },
+  {
+    "name": "dead-owner-new-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/mailbox-alias",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/dead.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/dead-owner-new-cursor.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170172
+  },
+  {
+    "name": "timed-owner",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timed-mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timed-owner.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timed-owner.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "0.1",
+      "--deadline-seconds",
+      "0.2"
+    ],
+    "pid": 170173
+  },
+  {
+    "name": "timeout-new-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timed-mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timeout-new.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-final/timeout-new-cursor.receipt",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20"
+    ],
+    "pid": 170191
+  }
+]

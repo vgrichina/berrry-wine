@@ -1,0 +1,27 @@
+[
+  {
+    "pid": 169293,
+    "exit": -15,
+    "alive": false
+  },
+  {
+    "pid": 169296,
+    "exit": 0,
+    "alive": false
+  },
+  {
+    "pid": 169303,
+    "exit": 1,
+    "alive": false
+  },
+  {
+    "pid": 169304,
+    "exit": 0,
+    "alive": false
+  },
+  {
+    "pid": 169305,
+    "exit": 0,
+    "alive": false
+  }
+]

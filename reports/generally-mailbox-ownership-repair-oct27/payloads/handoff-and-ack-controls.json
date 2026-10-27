@@ -1,0 +1,112 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 105746432,
+  "sampledPeakRSS": 105746432,
+  "reapedPeakRSS": 50765824,
+  "cpuSeconds": 1.5390629999999998,
+  "wallSeconds": 0.9046261140611023,
+  "owned": [
+    [
+      169290,
+      "115655487"
+    ],
+    [
+      169293,
+      "115655489"
+    ],
+    [
+      169296,
+      "115655489"
+    ],
+    [
+      169303,
+      "115655501"
+    ],
+    [
+      169304,
+      "115655504"
+    ],
+    [
+      169305,
+      "115655515"
+    ],
+    [
+      169306,
+      "115655527"
+    ],
+    [
+      169309,
+      "115655527"
+    ],
+    [
+      169316,
+      "115655539"
+    ],
+    [
+      169317,
+      "115655542"
+    ],
+    [
+      169318,
+      "115655545"
+    ],
+    [
+      169321,
+      "115655545"
+    ],
+    [
+      169328,
+      "115655552"
+    ],
+    [
+      169329,
+      "115655555"
+    ],
+    [
+      169332,
+      "115655555"
+    ],
+    [
+      169339,
+      "115655562"
+    ],
+    [
+      169340,
+      "115655565"
+    ],
+    [
+      169343,
+      "115655565"
+    ],
+    [
+      169350,
+      "115655572"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-mailbox-ownership-repair-oct27/repo/test/test-generally-mailbox-handoff.py",
+    "--evidence",
+    "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-and-ack-controls"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-and-ack-controls.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-and-ack-controls.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

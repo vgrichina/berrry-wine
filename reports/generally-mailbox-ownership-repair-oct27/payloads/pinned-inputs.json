@@ -1,0 +1,6 @@
+{
+  "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+  "test/test-generally-loading-controller.py": "ae2654cf7131075a51ebf2229416cb47d8c3a6d116948d6ead83295439f7f7d9",
+  "test/independent-generally-bounded-acceptance.py": "af356e5301e50aefa5800e3cf7a4ad6b05be20b39521aa2d3709a6411daf90b6",
+  "docs/generally-bounded-independent-rejection.md": "7096d909d5ce3713fec8ca2d2454291247072da635497664922517b7b46bd7dc"
+}

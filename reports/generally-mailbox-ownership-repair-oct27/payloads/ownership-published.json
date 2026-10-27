@@ -1,0 +1,68 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 73924608,
+  "sampledPeakRSS": 73924608,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.965506,
+  "wallSeconds": 0.7472044939640909,
+  "owned": [
+    [
+      171027,
+      "115670841"
+    ],
+    [
+      171028,
+      "115670844"
+    ],
+    [
+      171030,
+      "115670849"
+    ],
+    [
+      171031,
+      "115670856"
+    ],
+    [
+      171032,
+      "115670867"
+    ],
+    [
+      171033,
+      "115670874"
+    ],
+    [
+      171034,
+      "115670880"
+    ],
+    [
+      171035,
+      "115670907"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-mailbox-ownership-repair-oct27/repo/test/test-generally-mailbox-ownership.py",
+    "--evidence",
+    "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-published"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-published.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/ownership-published.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

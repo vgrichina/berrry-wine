@@ -1,0 +1,77 @@
+[
+  {
+    "request": {
+      "action": "snapshot",
+      "id": 12
+    },
+    "originalACK": {
+      "ok": true,
+      "id": 12,
+      "value": {
+        "batch": 0,
+        "eip": "0x0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 2,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "step",
+      "id": 13,
+      "n": 1
+    },
+    "originalACK": {
+      "ok": true,
+      "id": 13,
+      "value": {
+        "batch": 1,
+        "ran": 1,
+        "steps": 1,
+        "frozen": true
+      }
+    }
+  },
+  {
+    "request": {
+      "action": "snapshot",
+      "id": 14
+    },
+    "originalACK": {
+      "ok": true,
+      "id": 14,
+      "value": {
+        "batch": 1,
+        "eip": "0x0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 2,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    }
+  }
+]

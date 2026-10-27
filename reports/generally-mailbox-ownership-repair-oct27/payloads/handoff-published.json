@@ -1,0 +1,144 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 105893888,
+  "sampledPeakRSS": 105893888,
+  "reapedPeakRSS": 50761728,
+  "cpuSeconds": 4.708225,
+  "wallSeconds": 3.7117654061876237,
+  "owned": [
+    [
+      171355,
+      "115671842"
+    ],
+    [
+      171356,
+      "115671844"
+    ],
+    [
+      171359,
+      "115671845"
+    ],
+    [
+      171366,
+      "115671866"
+    ],
+    [
+      171367,
+      "115671873"
+    ],
+    [
+      171368,
+      "115671899"
+    ],
+    [
+      171369,
+      "115671941"
+    ],
+    [
+      171372,
+      "115671941"
+    ],
+    [
+      171382,
+      "115671953"
+    ],
+    [
+      171383,
+      "115671959"
+    ],
+    [
+      171384,
+      "115671963"
+    ],
+    [
+      171387,
+      "115671963"
+    ],
+    [
+      171394,
+      "115671975"
+    ],
+    [
+      171395,
+      "115671987"
+    ],
+    [
+      171398,
+      "115671987"
+    ],
+    [
+      171425,
+      "115671998"
+    ],
+    [
+      171461,
+      "115672005"
+    ],
+    [
+      171466,
+      "115672005"
+    ],
+    [
+      171512,
+      "115672017"
+    ],
+    [
+      171539,
+      "115672024"
+    ],
+    [
+      171542,
+      "115672024"
+    ],
+    [
+      171575,
+      "115672036"
+    ],
+    [
+      171674,
+      "115672068"
+    ],
+    [
+      171678,
+      "115672105"
+    ],
+    [
+      171681,
+      "115672105"
+    ],
+    [
+      171690,
+      "115672196"
+    ],
+    [
+      171691,
+      "115672203"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-mailbox-ownership-repair-oct27/repo/test/test-generally-mailbox-handoff.py",
+    "--evidence",
+    "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

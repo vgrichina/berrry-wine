@@ -1,0 +1,14 @@
+{
+  "group": "mailbox",
+  "pass_": true,
+  "tests": 4,
+  "failures": 0,
+  "errors": 0,
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "pins": {
+    "tools/generally-loading-controller.py": "a42cd1e7f28131e0a9b8461b93855e618b3015b5fb0b6c4e84c9ea64d22ae339",
+    "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+    "test/test-generally-loading-controller.py": "00f560667907b7359f560e3c9e7584c30a1c9786467aedd085653c47b1a1cd69",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+  }
+}

@@ -19,10 +19,10 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 HELPER = ROOT / 'tools/generally-loading-controller.py'
 FIXTURE = ROOT / 'test/fixtures/generally-loading-protocol.cjs'
-NODE = '/usr/local/bin/node'
+NODE = '/home/user/.nvm/versions/node/v24.18.1/bin/node'
 parser = argparse.ArgumentParser()
 parser.add_argument('--evidence', required=True)
-parser.add_argument('--group', choices=('repro', 'acceptance', 'hardening', 'total'), required=True)
+parser.add_argument('--group', choices=('repro', 'acceptance', 'hardening', 'total', 'mailbox'), required=True)
 args = parser.parse_args()
 EVIDENCE = Path(args.evidence)
 EVIDENCE.mkdir(parents=True, exist_ok=True)
@@ -303,7 +303,27 @@ class Hardening(unittest.TestCase):
                 self.assertIsNone(outstanding)
 
 
-suite = (unittest.TestSuite([Acceptance('test_03_stdio_preserves_original_requested_total100000')])
+class MailboxRegression(Acceptance):
+    def test_mailbox_ack_and_frozen_faults(self):
+        for mode in ('missing', 'wrong-id', 'negative', 'wrong-count', 'wrong-steps',
+                     'wrong-batch', 'not-frozen', 'credits', 'quit', 'snapshot-batch', 'exit'):
+            with self.subTest(mode=mode):
+                directory, requests = self.assert_stopped('mailbox-' + mode, mode, mailbox=True)
+                journal = read_json(next(directory.glob('.generally-loading-*.journal')))
+                self.assertIn(journal['status'], ('pending', 'poisoned'))
+
+    def test_mailbox_global_deadline(self):
+        directory, requests = self.assert_stopped('mailbox-global', 'missing', mailbox=True,
+                                                  total=2501, timeout=38, deadline=.2)
+        self.assertIn('timeout', read_json(directory / 'receipt.json')['error'])
+
+
+suite = (unittest.TestSuite([Acceptance('test_02_mailbox_production_entry_and_nonmultiple_total'),
+                            Acceptance('test_06_historical_uncertain_request12_cannot_be_replayed'),
+                            Hardening('test_08a_mailbox_terminal_blocks_dispatch'),
+                            MailboxRegression('test_mailbox_ack_and_frozen_faults'),
+                            MailboxRegression('test_mailbox_global_deadline')])
+         if args.group == 'mailbox' else unittest.TestSuite([Acceptance('test_03_stdio_preserves_original_requested_total100000')])
          if args.group == 'total' else unittest.defaultTestLoader.loadTestsFromTestCase(
              {'repro': Reproducer, 'acceptance': Acceptance, 'hardening': Hardening}[args.group]))
 result = unittest.TextTestRunner(verbosity=2).run(suite)

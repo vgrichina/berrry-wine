@@ -1,0 +1,71 @@
+[
+  {
+    "name": "owner",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/cursor.json",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/owner.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 170867
+  },
+  {
+    "name": "same-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/cursor.json",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/same-cursor.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 170868
+  },
+  {
+    "name": "alternate-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/alternate-cursor.json",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/alternate-cursor.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-published-guard-omitted/evidence/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 170869
+  }
+]

@@ -1,0 +1,50 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 90439680,
+  "sampledPeakRSS": 90439680,
+  "reapedPeakRSS": 31870976,
+  "cpuSeconds": 0.891401,
+  "wallSeconds": 0.43492062599398196,
+  "owned": [
+    [
+      167390,
+      "115641665"
+    ],
+    [
+      167392,
+      "115641668"
+    ],
+    [
+      167393,
+      "115641671"
+    ],
+    [
+      167394,
+      "115641677"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-variants.py"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-variants.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/attack-variants.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

@@ -1,0 +1,78 @@
+[
+  {
+    "name": "first",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/first.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/first.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171359
+  },
+  {
+    "name": "wrong-next",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/wrong-next.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/wrong-next.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171366
+  },
+  {
+    "name": "clean-alternate",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/clean-alternate.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/clean-alternate.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171367
+  },
+  {
+    "name": "same-clean-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/clean-alternate.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/clean/same-restart.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171368
+  }
+]

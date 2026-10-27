@@ -1,0 +1,20 @@
+[
+  {
+    "name": "owner",
+    "pid": 167730,
+    "exit": -15,
+    "alive": false
+  },
+  {
+    "name": "same-cursor",
+    "pid": 167731,
+    "exit": 1,
+    "alive": false
+  },
+  {
+    "name": "alternate-cursor",
+    "pid": 167732,
+    "exit": -15,
+    "alive": false
+  }
+]

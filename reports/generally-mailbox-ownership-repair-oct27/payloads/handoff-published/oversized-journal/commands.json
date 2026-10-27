@@ -1,0 +1,59 @@
+[
+  {
+    "name": "first",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/first.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/first.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171681
+  },
+  {
+    "name": "wrong-next",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/wrong-next.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/wrong-next.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171690
+  },
+  {
+    "name": "oversized-journal",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-mailbox-ownership-repair-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/mailbox",
+      "--state",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/oversized-journal.cursor",
+      "--receipt",
+      "/tmp/generally-mailbox-ownership-repair-oct27/ops/handoff-published/oversized-journal/oversized-journal.receipt",
+      "--total",
+      "1",
+      "--deadline-seconds",
+      "10"
+    ],
+    "pid": 171691
+  }
+]

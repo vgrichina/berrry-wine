@@ -1,0 +1,55 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 30146560,
+  "sampledPeakRSS": 30146560,
+  "reapedPeakRSS": 11563008,
+  "cpuSeconds": 0.27377,
+  "wallSeconds": 0.28216614690609276,
+  "owned": [
+    [
+      163821,
+      "115623824"
+    ],
+    [
+      163822,
+      "115623824"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/flock",
+    "/tmp/wine-ops-production-git.lock",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,resource,sys;resource.setrlimit(resource.RLIMIT_DATA,(536870912,536870912));os.execvp(sys.argv[1],sys.argv[1:])",
+    "git",
+    "-C",
+    "/tmp/generally-mailbox-ownership-repair-oct27/repo",
+    "log",
+    "--no-walk",
+    "--format=%H",
+    "e954f74d815795fbb715f54a312746f47f8e7157",
+    "6ce937929729b3ab6fabb46107cb6e1fc13dfeff",
+    "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "097f3b2904d833ca8fb152e686032c156c16e39a"
+  ],
+  "stdout": "/tmp/generally-mailbox-ownership-repair-oct27/ops/git-pins.stdout",
+  "stderr": "/tmp/generally-mailbox-ownership-repair-oct27/ops/git-pins.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}
