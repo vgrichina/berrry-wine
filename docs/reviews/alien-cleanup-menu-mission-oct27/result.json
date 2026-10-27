@@ -1,0 +1,53 @@
+{
+  "status": "BLOCKED_STAGING_WALL_LIMIT_STOP",
+  "task": "alien-cleanup-menu-mission-oct27",
+  "session": "01a17c8c-e988-7172-813e-0215c39e2a16",
+  "branch": "task/alien-cleanup-menu-mission-oct27",
+  "source": "ebf70036c96e0c3267b4943822a446a0b13e8336",
+  "runtimeMapSHA256": "d8c670ba75041e084e2be480ee17238ce41832fc721bc5ee1d54053c95ac4ca4",
+  "guestInvocations": 0,
+  "guestControlCommands": 0,
+  "staging": {
+    "at": 1793091403.582729,
+    "box": "bx_yydnx5av",
+    "state": "RUNNING_API_EXEC_OBSERVED",
+    "files": 267,
+    "logicalBytes": 31705751,
+    "allocated": 32468992,
+    "guestInvocationMarker": false,
+    "guestDirectory": false,
+    "startupReceipt": false,
+    "memAvailable": 7394697216,
+    "free": 49006563328
+  },
+  "blocker": "Local supervised 100..300 transfer group exhausted wall120 at120.037s. No API timeout/denial returned; final API/local receipt boundary retained, not replayed. Task stops before exact startup/mount/guest.",
+  "incidents": [
+    "Transfer command payload retention exceeded ops20MiB bucket historically (~31MiB); completed bodies replaced with byte-exact tested pinned-source reconstruction recipes; no retrospective compliance claim.",
+    "Broad read-only rg --files /tmp scan emitted permission-denied diagnostics for unrelated protected paths; no denied-access retries or file reads.",
+    "Optional accepted donor fixture README missing in sparse checkout; launch/controller source and accepted ops result/checkpoint read directly."
+  ],
+  "sourceEdits": false,
+  "mainWrite": false,
+  "publicDeployment": false,
+  "workersSpawned": false,
+  "remainingGates": [
+    "Complete617-file exact remote hash/size/mode readback",
+    "Fresh exact Node startup with intended flags/environment/inheritedlimits and distinct stdout/stderr",
+    "Canonical filename-bearing registered mount parser; full production no-build module-read boundary",
+    "Original supervised process startup, serial step ACK and following frozen zero",
+    "Same-run inspected actual menu and matching approval before New Game",
+    "Mission/gameplay inspected evidence and ordinary Quit/terminal proof"
+  ],
+  "lifecycle": {
+    "box": "bx_yydnx5av",
+    "state": "RUNNING_API_EXEC_OBSERVED",
+    "owner": "coordinator",
+    "guestCutoff": "2026-10-27T09:15:00Z",
+    "handback": "2026-10-27T09:20:00Z",
+    "shutdown": "2026-10-27T09:25:00Z",
+    "expiry": "2026-10-27T09:43:30Z",
+    "workerStopAction": false
+  },
+  "noComplianceClaimForHistoricalOpsOverage": true,
+  "cleanup": "All supervised local operations cleanupComplete=true; owned board watcher to stop at final handoff; staged remote files retained, no guest to clean"
+}

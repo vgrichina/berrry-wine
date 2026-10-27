@@ -1,0 +1,15 @@
+# Alien menu-to-mission attempt: staging blocked
+
+No guest was launched and no gameplay input was sent. The assigned Boat bx_yydnx5av remains running for coordinator handback.
+
+The first 100 pinned files transferred successfully. The next supervised transfer operation (file range100..300) exhausted its unchanged120-second wall allowance at120.037 seconds, sampled peak49,299,456 bytes and68.227 CPU seconds. It was not replayed. Final read-only API execution observed267 staged files (31,705,751 logical bytes,32,468,992 allocated bytes), no guest invocation marker/directory, and no startup receipt. API stdout/stderr and each response remain distinct. Incomplete local post-response receipts are listed in staging-checkpoint.json; this is not a617-file closure verification.
+
+The worker mistakenly retained encoded request payload bodies, historically exceeding the20MiB ops bucket at roughly31MiB. This is an accounting failure, not a compliant run.716 completed request bodies were replaced with byte-exact reconstruction recipes from immutable pinned sources. Each recipe was reconstructed and checked against its original command hash before the owned redundant body was removed. Unacknowledged/failed request bodies were preserved. All original failed supervisor receipts remain. Local data returned below its bucket; this does not erase the historical overage.
+
+Accepted original-supervisor source ebf70036c96e0c3267b4943822a446a0b13e8336 and four original-live groups/five child lifetimes/45 controls were reused without replay. The retired attachment reproducer remains incompatible; the supported new original-process launch is accepted, not same-UID security isolation. No semantic source edits, main ownership, public deployment, other box access or worker launch occurred.
+
+The prepared launch configuration was transferred but never executed: original production CLI with setup/title initializers, retained module, software D3D9, frozen control and opt-in render-wait tracing; exec wrapper planned distinct process logs while preserving original PID through exec. Neither its startup nor canonical mount/parser check is qualified by preparing it.
+
+Next gate: coordinator-owned continuation must first inventory/hash staged files and admit only remaining exact chunks, preserving any uncertain write. Then fresh full617-file readback, exact Node startup/inherited limits/environment, canonical filename-bearing mounts and production boundary must pass before one admitted original guest. A fresh same-run menu inspection must authorize New Game. Mission, gameplay, ordinary Quit and terminal evidence remain entirely open.
+
+Evidence archive contains exact local scripts/commands or reconstruction recipes, distinct API stdout/stderr, source/config pins, accepted evidence references, admissions, supervisor failures and cleanup receipts. manifest.json records every archived payload; archive roundtrip was verified once without replaying accepted suites. Runtime deadlines are09:15 cutoff,09:20 handback,09:25 coordinator snapshot-stop,09:43:30 expiry UTC. Remote staged files are retained for recovery; worker never stops the box.
