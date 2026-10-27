@@ -1,0 +1,242 @@
+{
+  "at": 1793116146.2184784,
+  "outcome": "BLOCKED_GUEST_CPU_GUARD_DURING_LOADING",
+  "source": "3afff4f4e7fd50ee8ba25e01b01bd3c6c4b11af3",
+  "runnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+  "controllerSHA256": "2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5",
+  "compiledSource": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+  "guest": {
+    "exit": -15,
+    "stopReason": "aggregate CPU limit",
+    "peakRSS": 282480640,
+    "sampledPeakRSS": 282480640,
+    "reapedPeakRSS": 243191808,
+    "cpuSeconds": 297.470117,
+    "wallSeconds": 184.23479396699986,
+    "owned": [
+      [
+        29521,
+        "209818"
+      ],
+      [
+        29522,
+        "209820"
+      ]
+    ],
+    "cleanupComplete": true,
+    "command": [
+      "/usr/bin/env",
+      "-i",
+      "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+      "HOME=/home/user",
+      "LANG=C.UTF-8",
+      "TZ=UTC",
+      "PYTHONDONTWRITEBYTECODE=1",
+      "NODE_OPTIONS=--max-old-space-size=2048",
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-accepted-loading-driving-oct27/ops/remote.py",
+      "bridge"
+    ],
+    "commandSHA256": "4d75de055dec87db4a2e464346b7f7390c4b27a3526271351e77ff6bc497f0fb",
+    "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+    "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+    "argvSHA256": "fb0e403630855aa8709823df0b0aa4c95fd8170aebcdd818484acc380c73448a",
+    "inherited": {
+      "0": [
+        -1,
+        -1
+      ],
+      "1": [
+        -1,
+        -1
+      ],
+      "2": [
+        -1,
+        -1
+      ],
+      "9": [
+        -1,
+        -1
+      ]
+    },
+    "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+  },
+  "lastACK": {
+    "at": 1793115933.1929786,
+    "request": {
+      "action": "snapshot",
+      "id": 225
+    },
+    "reply": {
+      "ok": true,
+      "id": 225,
+      "value": {
+        "batch": 101900,
+        "eip": "0x4011ad",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 2,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 0,
+            "y": 0,
+            "w": 640,
+            "h": 480,
+            "visible": true,
+            "isChild": false,
+            "title": "GeneRally"
+          }
+        ]
+      }
+    }
+  },
+  "cursor": {
+    "next": 227,
+    "pending": true,
+    "request": {
+      "action": "step",
+      "id": 226,
+      "n": 1000
+    }
+  },
+  "guestInvocations": 1,
+  "captures": {
+    "actual": 1,
+    "reserved": 4,
+    "menu": {
+      "path": "acceptance-menu.png",
+      "bytes": 19409,
+      "sha256": "fe5d81b9267c076614aa7cb34284b1924c049e296bbe3ae5d3dc029bdf3b0630",
+      "visuallyReviewed": true,
+      "dimensions": [
+        800,
+        600
+      ]
+    },
+    "beforeDriving": null,
+    "afterDriving": null
+  },
+  "wire": {
+    "actual": 961524,
+    "ceiling": 8388608,
+    "terminalReserve": 1048576
+  },
+  "gates": {
+    "sourceStage": true,
+    "actualFilenameParser": true,
+    "moduleABIImports": true,
+    "nodeStartup": true,
+    "currentMenuInspected": true,
+    "driverTrackStartDispatched": true,
+    "raceIntroReviewed": false,
+    "EnterAcknowledged": false,
+    "countdownQualified": false,
+    "UpDispatched": false,
+    "UpReleased": false,
+    "drivingQualified": false,
+    "ordinaryQuit": false,
+    "FPS": null
+  },
+  "cleanup": {
+    "box": "bx_eggqardq",
+    "supportedExecAlive": true,
+    "guestSupervision": {
+      "exit": -15,
+      "stopReason": "aggregate CPU limit",
+      "peakRSS": 282480640,
+      "sampledPeakRSS": 282480640,
+      "reapedPeakRSS": 243191808,
+      "cpuSeconds": 297.470117,
+      "wallSeconds": 184.23479396699986,
+      "owned": [
+        [
+          29521,
+          "209818"
+        ],
+        [
+          29522,
+          "209820"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+        "HOME=/home/user",
+        "LANG=C.UTF-8",
+        "TZ=UTC",
+        "PYTHONDONTWRITEBYTECODE=1",
+        "NODE_OPTIONS=--max-old-space-size=2048",
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/generally-accepted-loading-driving-oct27/ops/remote.py",
+        "bridge"
+      ],
+      "commandSHA256": "4d75de055dec87db4a2e464346b7f7390c4b27a3526271351e77ff6bc497f0fb",
+      "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+      "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+      "argvSHA256": "fb0e403630855aa8709823df0b0aa4c95fd8170aebcdd818484acc380c73448a",
+      "inherited": {
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ],
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ]
+      },
+      "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+    },
+    "ownedSurvivors": [],
+    "terminalPresent": false,
+    "boxLeftRunning": true,
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T16:20:00Z",
+    "expiry": "2026-10-27T16:31:01.612Z"
+  },
+  "incidents": [
+    "Read-only initial instruction inspection exceeded8192B per operation; no gate raised.",
+    "Initial init wrapped Python in Git DATA and nested flock; interrupted cleanly before checkout; fixed Git DATA child-only in gitbatch.",
+    "Exclusive output/source collisions corrected with original diagnostics preserved.",
+    "Sparse report checkout preceded actual filename parser check; parser passed before Node guest, ordering limitation retained.",
+    "Initial remote preflight used overwritten predecessor wrapper and failed CWD; no Node/guest; final overlay hash-checked then startup passed.",
+    "Intro frame operation was submitted after loading command failure in a tool batch; accepted controller refused pending cursor with zero events, no frame or new guest request."
+  ],
+  "cpuInterpretation": "Configured180 CPU, final conservative charged297.470117 after cleanup; supervisor may double-charge own/waited CPU. Do not treat charged value as measured physical guest CPU.",
+  "startupInterpretation": "Same Node executable/heap/environment/physical cap180CPU24MiBfile2MiBoutput; startup used stricter30s wall versus guest240s. Inherited DATA/AS unlimited.",
+  "publication": {
+    "branch": "refs/heads/task/generally-accepted-loading-driving-oct27",
+    "mainOwnership": false,
+    "publicDeployment": false,
+    "exactVerification": "external canonical receipt after publication"
+  },
+  "remaining": [
+    "Fresh authorized runtime with a demonstrated CPU-budget readiness solution; no retry/reset authorized here.",
+    "Review actual race intro then ordinary Enter, countdown, before/after Up dispatch and release.",
+    "Ordinary Quit remains unqualified."
+  ]
+}
