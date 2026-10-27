@@ -1,0 +1,58 @@
+{
+  "at": 1793109017.3694386,
+  "preflight": {
+    "ok": true,
+    "app": "gta2_demo",
+    "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "apiTableSHA256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "apiCount": 4594,
+    "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+    "moduleBytes": 1880317
+  },
+  "files": 71,
+  "imports": 291,
+  "modules": {
+    "wine-assembly.wasm": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+    "wine-assembly.compat.wasm": "ff495de2b12c308013fa489b9fb291ca836171929655ca20df03440946c54dbc"
+  },
+  "node": {
+    "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+    "env": {
+      "HOME": "/home/user",
+      "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+      "LANG": "C.UTF-8",
+      "TZ": "UTC",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "NODE_OPTIONS": "--max-old-space-size=2048"
+    },
+    "cwd": "/home/user/wineops-gta2-causal-trace-oct27/repo",
+    "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              180                  180                  seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             63749                63749                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       63749                63749                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "at": 1793108975.1694376
+  },
+  "startup": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 46854144,
+    "sampledPeakRSS": 38797312,
+    "reapedPeakRSS": 46854144,
+    "cpuSeconds": 1.657409,
+    "wallSeconds": 0.6491339879999032,
+    "owned": [
+      [
+        29040,
+        "150628"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "startupOutput": "{\"ok\":true,\"version\":\"v24.22.1\",\"execPath\":\"/home/user/.nvm/versions/node/v24.22.1/bin/node\",\"limits\":\"Limit                     Soft Limit           Hard Limit           Units     \\nMax cpu time              180                  180                  seconds   \\nMax file size             25165824             25165824             bytes     \\nMax data size             unlimited            unlimited            bytes     \\nMax stack size            8388608              unlimited            bytes     \\nMax core file size        0                    unlimited            bytes     \\nMax resident set          unlimited            unlimited            bytes     \\nMax processes             63749                63749                processes \\nMax open files            524288               524288               files     \\nMax locked memory         8388608              8388608              bytes     \\nMax address space         unlimited            unlimited            bytes     \\nMax file locks            unlimited            unlimited            locks     \\nMax pending signals       63749                63749                signals   \\nMax msgqueue size         819200               819200               bytes     \\nMax nice priority         0                    0                    \\nMax realtime priority     0                    0                    \\nMax realtime timeout      unlimited            unlimited            us        \\n\",\"heap\":2348810240}\n",
+  "used": 113721344,
+  "projection": 466042880,
+  "allocation": 1073741824,
+  "preflightSHA256": "984c3439bf7ca8e428fee7856f64a07e50e707565dd050e00f423a3f42b016fa",
+  "free": 129032822784,
+  "stagingCompleteBefore15MinuteMargin": true,
+  "stagingDeadline": "2026-10-27T13:53:00Z",
+  "PNGTransfersPlanned": 0
+}

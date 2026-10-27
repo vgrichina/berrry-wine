@@ -1,0 +1,14 @@
+{
+  "exe": {
+    "loadAddr": 4194304,
+    "origBase": 4194304
+  },
+  "gta2": {
+    "loadAddr": 4194304,
+    "origBase": 4194304
+  },
+  "mss32": {
+    "loadAddr": 8368128,
+    "origBase": 553648128
+  }
+}

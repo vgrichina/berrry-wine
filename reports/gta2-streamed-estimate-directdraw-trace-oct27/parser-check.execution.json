@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/env",
+    "-u",
+    "NODE_OPTIONS",
+    "node",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/parser-check.cjs"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 65011712,
+    "sampledPeakRSS": 65011712,
+    "reapedPeakRSS": 45559808,
+    "cpuSeconds": 0.074597,
+    "wallSeconds": 0.06722484203055501,
+    "owned": [
+      [
+        148976,
+        "115569728"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

@@ -1,0 +1,19 @@
+[
+  "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "test/run.js",
+  "--app=gta2_demo",
+  "--no-build",
+  "--control-stdin",
+  "--frozen",
+  "--batch-size=1000",
+  "--max-batches=200000",
+  "--max-seconds=230",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--trace-api=DirectDrawCreate,IDirectDraw_QueryInterface,IDirectDraw_SetCooperativeLevel,IDirectDraw_SetDisplayMode,IDirectDraw_CreateSurface,IDirectDrawSurface_GetAttachedSurface",
+  "--trace-api-mem=IDirectDraw_QueryInterface:1:16,IDirectDraw_CreateSurface:1:124,IDirectDrawSurface_GetAttachedSurface:1:16,IDirectDraw_QueryInterface:0:16,IDirectDraw_SetCooperativeLevel:0:16,IDirectDraw_SetDisplayMode:0:16,IDirectDraw_CreateSurface:0:16,IDirectDrawSurface_GetAttachedSurface:0:16",
+  "--trace-stack=DirectDrawCreate,IDirectDraw_QueryInterface,IDirectDraw_SetCooperativeLevel,IDirectDraw_SetDisplayMode,IDirectDraw_CreateSurface,IDirectDrawSurface_GetAttachedSurface",
+  "--trace-at=0x5ca69b",
+  "--trace-at-limit=1",
+  "--trace-dx"
+]

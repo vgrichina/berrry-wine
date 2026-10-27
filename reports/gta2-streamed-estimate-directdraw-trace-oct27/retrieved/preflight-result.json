@@ -1,0 +1,1866 @@
+{
+  "ok": true,
+  "app": "gta2_demo",
+  "requiredFiles": true,
+  "actualGuestArgv": [
+    "--app=gta2_demo"
+  ],
+  "treeParserValidation": {
+    "argv": [
+      "--app=gta2_demo",
+      "--vfs-tree=/home/user/wineops-gta2-causal-trace-oct27/repo/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files"
+    ],
+    "parsed": {
+      "trees": [
+        "/home/user/wineops-gta2-causal-trace-oct27/repo/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files"
+      ],
+      "app": "gta2_demo"
+    },
+    "parserSHA256": "0be6705dcd46cd5ec5f7c122a791bd8bf6ec131326a59dc23e29e7453865cce2",
+    "commaFiles": []
+  },
+  "files": [
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2.exe",
+      "bytes": 2893824,
+      "sha256": "97ad743b6ec9ea1be95282053c3127084acd764a7f37a3e57e2268af52d02ae3"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/mss32.dll",
+      "bytes": 331776,
+      "sha256": "0974b244354a5d13e0711db15430c05f7949dc279b63897146f304d1401153fc"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/3dfx.dll",
+      "bytes": 62976,
+      "sha256": "6577aa93383660eca8085246f5418235710ae9f1e4b7192f2db6b2870a39122e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/D3DPoly.dll",
+      "bytes": 56832,
+      "sha256": "0bdc23be6f02399ec62455bec93c5e9d1d7dcb40d82d4c1cac92f05001b2a37e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/DMAGlide.dll",
+      "bytes": 66048,
+      "sha256": "dd905fcad047946dd00c7672edfb4830d8e237201a3121c827f4f6f0b41bb2fa"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/Dmavideo.dll",
+      "bytes": 60416,
+      "sha256": "f5eb2e2f8904d47bba0c095bcdc6764a53e186c3297338898c57e907c395ce1d"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/Polygon.dll",
+      "bytes": 452188,
+      "sha256": "ff0e3275c77f42d75f37537f6af703d3d6aca729613170508f47708f2a5732cf"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/d3ddll.dll",
+      "bytes": 80896,
+      "sha256": "7cbc6638eca7a50ed4d25449e3708eb71673fb8bfa17f3c40e2414c3286d42f6"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/FSTYLE.RAW",
+      "bytes": 411876,
+      "sha256": "a5351f129301675006a8eb627702bbfe3a8f638049fe745908558f57d9128082"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/FSTYLE.SDT",
+      "bytes": 384,
+      "sha256": "2868633b498bca306478575d882cf73b87adca83a7f765356b6cce468e77f0d8"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.lst",
+      "bytes": 16204,
+      "sha256": "eb69d9cf9c16b534d2f2dc70a411b57e23cecce2ac60ceb8ddcbcfd53e25411e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.raw",
+      "bytes": 3680608,
+      "sha256": "9ddcb3b3472264666561c6dc496c1130f4cb1d6ca4a1b7e35e63312cf37b96dd"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.sdt",
+      "bytes": 5136,
+      "sha256": "ae395db82ea9420e3a600c99f2b6b857cdc4127672f949eec7fcbdbf42021908"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/dmaudio.dma",
+      "bytes": 317,
+      "sha256": "29672055a02f827352445deeedd8a01b58d23f88e488591637191157e225043a"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/fstyle.lst",
+      "bytes": 1157,
+      "sha256": "7d951af48cc158a855fa85c8c681db2900f70c57ab85e6775ebe12872eda100b"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/ENG_KB.cfg",
+      "bytes": 2056,
+      "sha256": "79eb33932d60402740df3bc8a05e0d10408acf336e1272af5cea68863735f182"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/FRE_KB.cfg",
+      "bytes": 2055,
+      "sha256": "e92771c3ee4248c98fa12df9c03397bb89e126d1083b914021954c87501ae1ee"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/GER_KB.cfg",
+      "bytes": 2053,
+      "sha256": "05fb62b9d787b274d43fd5c22ec5c3e18eaccda6ae1cae2cd6cb93607eabb77b"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/ITA_KB.cfg",
+      "bytes": 2051,
+      "sha256": "010a1c54aeaa814f404470d35224b68abe76dd324fce0f3b403635f63980203f"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/POR_KB.cfg",
+      "bytes": 2050,
+      "sha256": "f0cedae2a0e1836280d5d296ad4703f66e681d1b616984fcf1b30084ad4bfdc4"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/SPA_KB.cfg",
+      "bytes": 2053,
+      "sha256": "d01adc535fe9d0f62238a75788823d76416f0c48c6639ed9c9424eb0939bce3b"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/bob_e.gxt",
+      "bytes": 5740,
+      "sha256": "4d984f76a42775a62b257cae5a101f900043d3948bd46bc9a0f36728e5a7cfa7"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/e.gxt",
+      "bytes": 140138,
+      "sha256": "449e2fc3f454db2eef07852e81bfd9b1395073c7803c72a3bbcccc9c2a3af009"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1.tga",
+      "bytes": 347564,
+      "sha256": "9542d7e59ea993f9a470d3b496840d658996b2343e61685daac2585e134c6ddc"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Options.tga",
+      "bytes": 266924,
+      "sha256": "552d593834205cdba1abdd6c76b8a41c5abbd7ebd772e32f1640ff76894820db"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Play.tga",
+      "bytes": 266924,
+      "sha256": "aa79fdeb9bd35c1d400182f1f15496bddf84c730b23347bb48c29cbb8d6cb752"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Quit.tga",
+      "bytes": 266924,
+      "sha256": "ef15d106f822dabffe577c2b858abc9a6006c0703909d1851ba95af7a35e20e9"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2.tga",
+      "bytes": 347564,
+      "sha256": "3cef01514e883fb719d186b7bd7369756987822ab1f3d5dd707ca7fa40b1ec1c"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus1.tga",
+      "bytes": 266924,
+      "sha256": "6a4cd5c632656504302ffdfcc03cea6f0389611ebd851ea701f38ba58a7b815d"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus2.tga",
+      "bytes": 266924,
+      "sha256": "fde4188fee6491bf2dc117d1cb610e7182b324faf461fb13f0cf1ad588f385d0"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus3.tga",
+      "bytes": 266924,
+      "sha256": "5dca4e6a584f8d8add7e6f8cef369742e26dbb08f5743e774614624469148587"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_League.tga",
+      "bytes": 266924,
+      "sha256": "63b8cd2b5f0c62d31d8cc1b2ef461148f726411648b1ad3fac98d1585c8de8fe"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level1.tga",
+      "bytes": 266924,
+      "sha256": "f3a65733dc2439ef3a58c631905fd3123931ff44811e4994033cd282cf44e025"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level2.tga",
+      "bytes": 266924,
+      "sha256": "1dc32a651f962025969da744c40d45f580a75de77fdfe08e5eef0ef0fb1806e6"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level3.tga",
+      "bytes": 266924,
+      "sha256": "e2beedc7ed905943af1530aa963a36ac2db810cfd7932086ac33f54a55a9ea55"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Name.tga",
+      "bytes": 266924,
+      "sha256": "cda8ff6221b887196335aa6b4a02460f1efed48b210191da0249f7f0667ebe88"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Restart.tga",
+      "bytes": 266924,
+      "sha256": "cfb8ca4b62cabcfa67d3a2d9024224c223b12b0140dc4ad058c161ae0f5ca375"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/3.tga",
+      "bytes": 347564,
+      "sha256": "55d493cb532492da2e709f980f6e6abaa14d6d0486df641c3c600427b93d5448"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/3_Tables.tga",
+      "bytes": 614444,
+      "sha256": "74f5c8d16f6de93848547ded40300d5f924753dac051e7cbfa0c1fac04706a1a"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Credits.tga",
+      "bytes": 614444,
+      "sha256": "fdaaf0f6fc4d68fc0343ec434efbfc1245fc5fa5cd8b71a9885ba08a4cc0d0b8"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/DemoInfo.tga",
+      "bytes": 614939,
+      "sha256": "0822df211fed60f3d083cba9ce5b5289b8b45bb4b60672e77d0c8c8911467f42"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/GameComplete.tga",
+      "bytes": 614444,
+      "sha256": "1a1a779537536c93cac0b4542cb0f754cd4c066ffc8552f3dd44f280de916eae"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/LevelComplete.tga",
+      "bytes": 614444,
+      "sha256": "247cb442a22f368ca02d3cd3fed420089066221b279336c1cb5ab99e86630847"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/MPLose.tga",
+      "bytes": 614444,
+      "sha256": "50e81db09ad2d7dbf9003932da88c14a27ba7d21f45504066c6e7ccd042d1397"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask.tga",
+      "bytes": 104300,
+      "sha256": "3a17d2c2ecab19e34d7e082f89012d39ec5eed60b5cdad0b6e529d3350e6587b"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask2.tga",
+      "bytes": 53594,
+      "sha256": "a464bb952531bb4e0fef72a7a036df46637b63ba9b7fefb481feb16f5c18fec1"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask3.tga",
+      "bytes": 130427,
+      "sha256": "c11967b9e877962c3494a75219293ddb1b3945bf6da1b93bfb236a012686003e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/PlayerDead.tga",
+      "bytes": 614444,
+      "sha256": "9861a6d9a78e526013e93f286c1af9cfdd37e4efe28e50e9e7968e4a03e49d7e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/fstyle.sty",
+      "bytes": 767912,
+      "sha256": "1b8c4389d8b568252464b0765b317dedbd50458dff65d5a669922b18f1c6aa4e"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/nyc.gci",
+      "bytes": 38669,
+      "sha256": "02645a7ba1fa171e2873a03874dbe664e817dec186ca3bb9488ae6940cda628a"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/test1.seq",
+      "bytes": 1418,
+      "sha256": "1854801d621c8760952ef56a52900e01d81f5d77236b6a22b31333d27fab4fb8"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wil.sty",
+      "bytes": 6483078,
+      "sha256": "56afd614318f4198a768329380dd94b01154e04dcac2677c851a117ad2d907bd"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo.SCR",
+      "bytes": 84156,
+      "sha256": "01b1e71a8c32c1feb81f4e3d036ddb2399b4118c63dc1f04a2ff0440aff3d744"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo.gmp",
+      "bytes": 1175441,
+      "sha256": "87ce0052d70b74f511f6725f2820809e86ea56c99af2650d66cb8b57600b19e5"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_le1.SCR",
+      "bytes": 6048,
+      "sha256": "3540cc277a894b0bc4312e1ad4aa27401c53e9944e1067d73c1bb67fdfc4737a"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_le2.SCR",
+      "bytes": 5260,
+      "sha256": "4628dafb125afb0f03737a857fd6965e88eafe3bdb3b6c3b68ed4addbf3e205f"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ye1.SCR",
+      "bytes": 7340,
+      "sha256": "2a0c1f217af999c5b8ee548afe42c1e98938d78042803d0d0096c16510ef1e91"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ye2.SCR",
+      "bytes": 9916,
+      "sha256": "fb777af836a541533ed3599f6acf17b975792d0edf263ffc58db6ccca4c1e050"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ze1.SCR",
+      "bytes": 7844,
+      "sha256": "90841bfae759f61fccd6bab46518b87f33776bb4f0c1adaedda0ff29dcef1ea1"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ze2.SCR",
+      "bytes": 5656,
+      "sha256": "a8879e92896bc0d18174bca6ea02619861252072f60ede95f2eaa1f6c3f26bc2"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2 manager.exe",
+      "bytes": 492544,
+      "sha256": "db15b5e412446508f29c1e66893076bee01c35691933947058bdbe9b159017d4"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/hiscores.hsc",
+      "bytes": 3264,
+      "sha256": "e01fcc5120bacbdf26cb6131e4d34da77e1831f1eeb18ef7d900c397a3db6dcf"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot0.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot1.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot2.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot3.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot4.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot5.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot6.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot7.dat",
+      "bytes": 126,
+      "sha256": "7f487328e03a65d38695e4f3f1de8bdf1aec87e08a5e4742a29f1621e5712669"
+    },
+    {
+      "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/readme.txt",
+      "bytes": 3714,
+      "sha256": "c61d82d649523ef59fcc88f3eaf260d1f8da15c802fa5478b17ffb1424d659c4"
+    }
+  ],
+  "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "appsSHA256": "25c20e4468e55ae997f4d13b4efc08226efe3f7fac6899d72f90d236645a8a0d",
+  "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+  "moduleBytes": 1880317,
+  "apiTableSHA256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+  "apiCount": 4594,
+  "imports": [
+    {
+      "module": "host",
+      "name": "log",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "log_i32",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "log_api_exit",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "log_block",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "log_eip",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "crash_unimplemented",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "unhandled_exception",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "cxx_throw",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "message_box",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "exit",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "draw_rect",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "read_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "shell_extract_icon_resource",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_ticks",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "real_time_ms",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wall_clock",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "cmos_io",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "yield",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "cs_pump",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "io_fill_sync",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "resolve_ordinal",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "create_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "show_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_cursor",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_cursor_image",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "sys_command",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "dialog_loaded",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_window_text",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "invalidate",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "invalidate_frame",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "paint_begin",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "paint_end",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "move_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_window_zorder",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "sync_window_client",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_rect",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "draw_animated_rects",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "destroy_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "draw_text",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "check_input",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "check_input_lparam",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "check_input_wparam",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "check_input_hwnd",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "queue_keyboard_input",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "queue_mouse_input",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_position",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_mouse_position",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_buttons",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_mouse_buttons_live",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_window_class",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_class",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_parent",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_menu",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "menu_create",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "menu_destroy",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "menu_append",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "menu_remove",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "shell_about",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "register_dialog_frame",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "pick_file_upload",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "file_download",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "shell_execute",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "notify_icon",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "exit_windows",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "has_dom",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "richedit_stream",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "send_ctrl_msg",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_text",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_text_length",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_related",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "find_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_info",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "post_window_message",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "broadcast_registered_message",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "activate_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "foreground_window",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "arrange_windows",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_screen_size",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_wallpaper",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gpu_gl_call",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "glide_submit",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "note_richedit_charformat_size",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_set_region_bands",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_set_window_rgn",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_create",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_upload",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_delete",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_surface_attach",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "gdi_screen_readback",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "show_find_dialog",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "dx_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "da_image_resolve",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "da_image_blit",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ctrl_paint_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "erase_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "unmapped_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "heap_oom_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ctrl_sb_trace",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_open_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_create_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_query_value",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_set_value",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_close_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_flush_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_enum_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_enum_value",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_query_info",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_delete_key",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reg_delete_value",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_process_begin",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_thread_begin",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_retire_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_shutdown",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_start",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_status",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "beep_cancel",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "message_beep",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "play_sound",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "mci_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "mci_open_w",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "mci_command",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "mci_string",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "mci_get_device_id",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_num_devs",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_control",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_property",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_stream_service",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_header",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_close",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_short_msg",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_reset",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_get_volume",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "midi_out_set_volume",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_volume",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_set_volume",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_mute",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_set_mute",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "audio_mixer_get_peak",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ini_get_string",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ini_get_section",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ini_get_int",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ini_write_string",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "ini_write_section",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_window_client_size",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_async_key_state",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_key_down_state",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_keyboard_state",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_key_down_state",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "win16_stage_module",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "di_set_event_notification",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_sin",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_cos",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_tan",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_atan2",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_log2",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_pow",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "math_pow2",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_legacy_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file_at",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_read_pending",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_read_file_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_write_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_write_file_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_flush_file_buffers",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_close_handle",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_duplicate_handle",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_lock_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_descriptor_query",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_crt_descriptor_adopt",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_duplicate_mapping_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_file_pointer",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_seek_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_end_of_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_end_of_file_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_file_size",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_file_size_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_file_information",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_file_time",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_file_attributes",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_file_attributes",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_delete_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_directory",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_remove_directory",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_move_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_copy_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_shell_file_operation",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_find_first_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_find_next_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_find_close",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_register_change_notification",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_next_change_notification",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_close_change_notification",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_temp_path",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_temp_file_name",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_current_directory",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_current_directory",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_full_path_name",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_file_api_ansi",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_logical_drive_mask",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_drive_type",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_label",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_set_volume_label",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_serial",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_volume_size",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_search_path",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_get_short_path_name",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_mapping",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_create_file_mapping_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_open_file_mapping",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_open_file_mapping_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_map_view_of_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_map_view_of_file_result",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_unmap_view",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_flush_view",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "fs_filetime_to_systemtime",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "has_dll_file",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "service_load_library",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_create_instance",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_register_class_object",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_revoke_class_object",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_get_pending_dll",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_initialize_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "com_uninitialize_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "create_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "duplicate_current_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "suspend_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "resume_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "thread_apc_target",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "thread_alert",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "process_spawn",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "process_ctl",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_thread_priority",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "snapshot_threads",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_thread_priority",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_thread_locale",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_thread_locale",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "exit_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "get_exit_code_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "terminate_thread",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "create_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "open_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "set_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "socket_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "close_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "reset_event",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wait_single",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wait_multiple",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "create_semaphore",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "open_semaphore",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "release_semaphore",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_error_text",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_write",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_schedule_done",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_reset",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_pause",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_restart",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_close",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_close",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_start",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_stop",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_reset",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_in_add_buffer",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_get_pos",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "wave_out_set_volume",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_write_stream",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_play_ring",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_stop",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_close",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_get_pos",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_is_playing",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_set_volume_linear",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_set_volume_db",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_set_pan",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_set_freq",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_3d_set",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "voice_3d_get",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "net_frame_send",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "net_frame_peek",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "net_frame_commit",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "net_link_open",
+      "kind": "function"
+    },
+    {
+      "module": "host",
+      "name": "memory",
+      "kind": "memory"
+    },
+    {
+      "module": "host",
+      "name": "voice_notify_set",
+      "kind": "function"
+    }
+  ],
+  "workers": [
+    {
+      "path": "lib/guest-worker.js",
+      "sha256": "d1ae471298f667510b5fb3fbec56157e50f706896ededd4ca3450429f48af062"
+    },
+    {
+      "path": "lib/worker-imports.js",
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+    }
+  ],
+  "generated": [
+    {
+      "path": "lib/app-file-sizes.generated.js",
+      "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+    },
+    {
+      "path": "lib/host-import-sigs.generated.json",
+      "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069"
+    },
+    {
+      "path": "lib/region-map.generated.js",
+      "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968"
+    }
+  ]
+}

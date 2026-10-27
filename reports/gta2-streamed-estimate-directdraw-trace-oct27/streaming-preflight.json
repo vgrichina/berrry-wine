@@ -1,0 +1,21 @@
+{
+ "status":"PASS_BEFORE_BOAT",
+ "predecessorPeakRSS":134397952,
+ "streamingPeakRSS":132677632,
+ "measuredReductionBytes":1720320,
+ "capBytes":134217728,
+ "marginBytes":1540096,
+ "sourceAndArchiveWholeBuffers":false,
+ "readChunkBytes":65536,
+ "files":3828,
+ "inputBytes":105513902,
+ "gzipBytes":32780629,
+ "requests":1516,
+ "estimatorWallSeconds":2.8968002879992127,
+ "estimatorCPUSeconds":6.809902,
+ "supervisorOwnedChildren":[148105,148106],
+ "accounting":"Unchanged trusted supervisor tracks all descendants and itself; pool parent counted by PALETTE_BROWSER_BOOTSTRAP. Shell exec replaces the wrapper. Git child DATA512MiB only, operation aggregate128MiB. Pool2 and Git flock retained. No nested controller/streams.py processes.",
+ "priorIncident":"/tmp/gta2-retained-directdraw-causal-trace-oct27/ops/prepare.execution.json",
+ "parser":"parser-check.execution.json",
+ "nextGate":"First actual group API throughput; staging must finish by13:53UTC. No guest before full availability/startup."
+}

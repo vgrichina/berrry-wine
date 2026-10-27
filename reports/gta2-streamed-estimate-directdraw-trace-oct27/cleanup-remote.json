@@ -1,0 +1,38 @@
+{
+  "at": 1793109207.4909086,
+  "ownedSurvivors": [],
+  "supervisor": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 174014464,
+    "sampledPeakRSS": 174014464,
+    "reapedPeakRSS": 142557184,
+    "cpuSeconds": 1.4401819999999999,
+    "wallSeconds": 0.4091127990000132,
+    "owned": [
+      [
+        29802,
+        "156157"
+      ],
+      [
+        29803,
+        "156165"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "controllerPending": null,
+  "guestExit": {
+    "exit": 0,
+    "at": 1793109030.260271
+  },
+  "remoteUsed": 113778688,
+  "box": "bx_cqss3x42",
+  "state": "RUNNING: supported exec succeeded",
+  "lifecycleMutations": 0,
+  "expiry": "2026-10-27T14:27:50.265Z",
+  "shutdownOwner": "coordinator",
+  "cutoff": "14:08Z",
+  "handback": "14:12Z",
+  "shutdown": "14:15Z"
+}

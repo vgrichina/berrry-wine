@@ -1,0 +1,12 @@
+{
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gta2-streamed-estimate-directdraw-trace-oct27/root-ref-digest.json",
+  "parser": "parser-check.execution.json",
+  "box": "bx_cqss3x42",
+  "cutoff": "2026-10-27T14:08Z",
+  "handback": "14:12Z",
+  "shutdown": "14:15Z",
+  "expiry": "2026-10-27T14:27:50.265Z"
+}

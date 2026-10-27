@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/repo",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 2,
+    "stopReason": null,
+    "peakRSS": 38404096,
+    "sampledPeakRSS": 38404096,
+    "reapedPeakRSS": 15654912,
+    "cpuSeconds": 0.034905,
+    "wallSeconds": 0.03280512196943164,
+    "owned": [
+      [
+        169526,
+        "115657328"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

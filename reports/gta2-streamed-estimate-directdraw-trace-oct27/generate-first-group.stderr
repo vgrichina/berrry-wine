@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/estimate.py", line 37, in <module>
+    with (O/'estimate-git.stderr').open('xb') as err:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileExistsError: [Errno 17] File exists: '/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/estimate-git.stderr'

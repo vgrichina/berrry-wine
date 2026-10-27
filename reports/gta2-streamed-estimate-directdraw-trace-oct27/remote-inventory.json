@@ -1,0 +1,172 @@
+[
+  {
+    "name": "terminal-registers.json",
+    "bytes": 56,
+    "sha256": "cb2ee586e7505ada64b364c45cfa3440421d4b1ac910444f79e5d9ee0e80d838"
+  },
+  {
+    "name": "initial-modules.json",
+    "bytes": 203,
+    "sha256": "4c61dbdc4a6f4f36be7e4d8d37f3ec77e193445ac36e6073c6ccc931856f3a59"
+  },
+  {
+    "name": "game-pins.json",
+    "bytes": 24387,
+    "sha256": "9ead2356b76a01ad7828aa5dff6af4b231a1e0e93f7aafba60339564f7cf2d91"
+  },
+  {
+    "name": "guest-identity.json",
+    "bytes": 1845,
+    "sha256": "03339553eebfbaf5ff41739eba47f24e50ec2238c5bd18a0baa211d3a66c386c"
+  },
+  {
+    "name": "preflight-argv.json",
+    "bytes": 121,
+    "sha256": "c961945fbfd4cd8295b26a0fc26ecfc93579ced47d9d6584edb5ed0847401510"
+  },
+  {
+    "name": "remote-trace.py",
+    "bytes": 5836,
+    "sha256": "fdeb60d8e409706fb95be12a0b05cbb0c6b1a975f95db574ec9ac21a9182d52f"
+  },
+  {
+    "name": "guest-argv.json",
+    "bytes": 992,
+    "sha256": "78f84bb42a470379a1d5a97348f93879738554c4304559a38a1f2f66d4a73a12"
+  },
+  {
+    "name": "preflight-exit.json",
+    "bytes": 43,
+    "sha256": "263cead15c37d5ad8a9b0a2fc96b6f1473654391d6d339f597807ff88ca755ec"
+  },
+  {
+    "name": "startup-start.json",
+    "bytes": 66,
+    "sha256": "34a73ae16d15bd41c89eddb6062009e8c8784d83519c0d7e7234648a237f532e"
+  },
+  {
+    "name": "preflight-result.json",
+    "bytes": 45636,
+    "sha256": "984c3439bf7ca8e428fee7856f64a07e50e707565dd050e00f423a3f42b016fa"
+  },
+  {
+    "name": "controller-terminal.json",
+    "bytes": 821,
+    "sha256": "4d83f996f12b6fe61212b93e5e011c22c97ade0276542bb41de9fcde7401212f"
+  },
+  {
+    "name": "preflight.supervisor.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "terminal-modules.json",
+    "bytes": 274,
+    "sha256": "18174e991bebff1fb4aaaf93afebb1cc3ee9e6e23a54569b5aa30cf59badba9c"
+  },
+  {
+    "name": "preflight.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "preflight.stdout",
+    "bytes": 157,
+    "sha256": "2a297d2b40f50e39b6e3cc659482178b79d7d1f799aa579e2f116b3bbb63ffa2"
+  },
+  {
+    "name": "startup.stdout",
+    "bytes": 1464,
+    "sha256": "7b26d5326e16e5eed5ae70352b067c5ab4cb81465668880527469cec508e79bc"
+  },
+  {
+    "name": "preflight-start.json",
+    "bytes": 66,
+    "sha256": "c5f273b723faf69518969ba4b409c5f633a572ba245aae4083d4c07064274744"
+  },
+  {
+    "name": "preflight-supervisor.json",
+    "bytes": 312,
+    "sha256": "5ab6441ce2c0db95dce1d17c298577f6463b9f922c59d39e4e7a0b5cbd1b78bf"
+  },
+  {
+    "name": "guest.supervisor.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "startup.supervisor.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "guest.stderr",
+    "bytes": 658,
+    "sha256": "0f4bbc2c2767b6c5fd504bfc9b306f02e682457de37b7cf1d4ca3a5d885c2cd2"
+  },
+  {
+    "name": "guest-supervisor.json",
+    "bytes": 322,
+    "sha256": "814f3c19ad5d305d681129c5137cc62db8ebe9d8e6e1ce54596a5f1af4d3d11d"
+  },
+  {
+    "name": "preflight.js",
+    "bytes": 3028,
+    "sha256": "7cdcd653ae86783f5f21122bc0dc38bf4f7e20eb7a871c5680a289daf833fed7"
+  },
+  {
+    "name": "startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "startup-supervisor.json",
+    "bytes": 268,
+    "sha256": "e181a92e2a5e83ca7977fa8ae02ca98e4c158ef8c454115ae91c9c8631d20a4e"
+  },
+  {
+    "name": "guest-start.json",
+    "bytes": 66,
+    "sha256": "c25dba42032f9d6afc67840e5ba02f5d83bc9a2558415a5c454b5882f8f085c9"
+  },
+  {
+    "name": "remote-supervisor.py",
+    "bytes": 23269,
+    "sha256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+  },
+  {
+    "name": "preflight-identity.json",
+    "bytes": 1845,
+    "sha256": "1604ec3911eacf8b578bc6e7633a6a5e8f84ea2e72333839674ba1666f40bc16"
+  },
+  {
+    "name": "startup-identity.json",
+    "bytes": 1845,
+    "sha256": "51f5d79b00376e2686d7dd247332b4bdc2f5bef367289c6206bc6382eed83c18"
+  },
+  {
+    "name": "startup-argv.json",
+    "bytes": 283,
+    "sha256": "f2e2d636784cf5379a3aaa77d0c537dc53166bf644f58df59384a2f5a8d90c24"
+  },
+  {
+    "name": "guest-exit.json",
+    "bytes": 43,
+    "sha256": "e8d138c732cd8f1f7dcb780679241476a5c06b9a12b88a32e407eb7f1b4fdaf8"
+  },
+  {
+    "name": "guest.stdout",
+    "bytes": 10344,
+    "sha256": "4cb2b8b8691838f1b0e44af7258224391921fd3afef7fee2317d3d8ec746e324"
+  },
+  {
+    "name": "controls.json",
+    "bytes": 3746,
+    "sha256": "9bb1b7ae440c5a0a53eb9f5d988d0d5484cf93033cd24d881d41e23493a6049a"
+  },
+  {
+    "name": "startup-exit.json",
+    "bytes": 44,
+    "sha256": "2132a20fcd88191299f5e8eb708a993feabd5a85954492044ee5b9d666e0e5e0"
+  }
+]

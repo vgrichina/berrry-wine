@@ -1,0 +1,19 @@
+{
+  "at": 1793108771.1996417,
+  "clients": [
+    {
+      "pid": 138959,
+      "rss": 197791744
+    },
+    {
+      "pid": 146689,
+      "rss": 196657152
+    }
+  ],
+  "memAvailable": 3676381184,
+  "requiredRAM": 2222796800,
+  "freeDisk": 6267404288,
+  "projectedFree": 5260771328,
+  "diskFloor": 2982150144,
+  "pass": true
+}

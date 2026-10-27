@@ -1,0 +1,12 @@
+{
+  "group": 77,
+  "seconds": 1.0823171050287783,
+  "requests": 7,
+  "bytes": 123576,
+  "secondsPerRequest": 0.15461672928982548,
+  "remainingRequests": 1629,
+  "at": 1793108800.2685099,
+  "projectedRemainingSeconds": 251.8706520131257,
+  "stagingDeadline": 1793109180,
+  "timePass": true
+}

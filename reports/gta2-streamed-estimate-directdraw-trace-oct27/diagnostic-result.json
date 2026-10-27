@@ -1,0 +1,53 @@
+{
+  "status": "BLOCKED_RAW_CAUSAL_HRESULT_NOT_OBSERVED",
+  "changedCause": "Streaming staging fixes predecessor aggregate RSS admission failure; one materially instrumented guest now identifies GetAttachedSurface failure path and live input bytes, but production untyped return formatting omits its raw EAX.",
+  "guestInvocations": 1,
+  "compilerInvocations": 0,
+  "box": "bx_cqss3x42",
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "dll": {
+    "sha256": "f5eb2e2f8904d47bba0c095bcdc6764a53e186c3297338898c57e907c395ce1d",
+    "actualBase": "0x951000",
+    "preferredBase": "0x01000000"
+  },
+  "observed": {
+    "apiSequence": 672,
+    "api": "IDirectDrawSurface_GetAttachedSurface",
+    "callerReturn": "0x00953275",
+    "callerPreferredReturn": "0x01002275",
+    "this": "0x08221038",
+    "vtable": "0x006fd7fc",
+    "capsPointer": "0x074ffe34",
+    "capsBytes": "040000000100010030e1950000008f08",
+    "capsDWORDs": [
+      "0x00000004",
+      "0x00010001",
+      "0x0095e130",
+      "0x088f0000"
+    ],
+    "outPointer": "0x0087addc",
+    "rawReturnedEAX": null,
+    "vidSetModeReturnEAX": "0x00000001",
+    "requestedModeESI": "0x00000002",
+    "returnTraceAddress": "0x005ca69b",
+    "previousGuestBlock": "0x00953279",
+    "displayMode": [
+      640,
+      480,
+      16
+    ],
+    "cooperativeFlags": "0x51",
+    "createdSurfaceDescriptorBytes": 124,
+    "createdSurfaceDescriptorFlags": "0x21",
+    "createdSurfaceCaps": "0x6218",
+    "createdSurfaceBackbuffers": 1,
+    "createSurfaceCallerReturn": "0x009531ee"
+  },
+  "inference": "Unchanged PE branch at preferred0x01002275/0x01002277 selects nonzero-return failure block0x01002279. Extra DDSCAPS2 words are observed nonzero. Source suggests0x887600ff in the native124-byte caps guard, but neither rawHRESULT nor native surface-version selection was directly captured; do not promote source inference to observed return.",
+  "nextGate": "No unchanged runtime is justified. Smallest missing observation: raw EAX at actual GetAttachedSurface continuation (this run0x00953275 / preferred0x01002275) before TEST/movEAX1, correlated to API#672 and the retained inputs. Coordinator must assign/qualify an observation path; no runner implementation or additional guest is authorized here.",
+  "gameplay": false,
+  "fullscreenFixed": false,
+  "ordinaryGameQuit": false,
+  "cleanup": "cleanup-remote.json",
+  "checks": "Retained trace/source/protocol consistency assertions passed; these are evidence checks, not API behavior acceptance; no build repeated"
+}

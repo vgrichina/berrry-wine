@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/api.py",
+    "python3 -c 'import pathlib,shutil,os,json; p=pathlib.Path(\"/home/user/wineops-gta2-causal-trace-oct27\"); assert not p.exists(); p.mkdir(); print(json.dumps(dict(node=shutil.which(\"node\"),cwd=os.getcwd(),free=shutil.disk_usage(p).free,created=str(p))))'"
+  ],
+  "kind": "api",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 56082432,
+    "sampledPeakRSS": 56082432,
+    "reapedPeakRSS": 17039360,
+    "cpuSeconds": 0.138308,
+    "wallSeconds": 0.2131838130299002,
+    "owned": [
+      [
+        149210,
+        "115571652"
+      ],
+      [
+        149211,
+        "115571654"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

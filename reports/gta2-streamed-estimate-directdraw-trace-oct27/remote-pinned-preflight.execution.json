@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/api.py",
+    "python3 /home/user/wineops-gta2-causal-trace-oct27/ops/remote-trace.py preflight"
+  ],
+  "kind": "api",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 57106432,
+    "sampledPeakRSS": 57106432,
+    "reapedPeakRSS": 17694720,
+    "cpuSeconds": 0.225993,
+    "wallSeconds": 0.3864928490947932,
+    "owned": [
+      [
+        162848,
+        "115619249"
+      ],
+      [
+        162849,
+        "115619253"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "groups": 120,
+  "files": 3828,
+  "bytes": 105513902,
+  "gzipBytes": 32780629,
+  "archiveRequests": 1636,
+  "sumMeasuredTransferSeconds": 299.82190443528816,
+  "lastGroupCompletedAt": 1793108956.8492284,
+  "readinessAt": 1793109017.3694386,
+  "stagingDeadline": 1793109180,
+  "rawAPIBytes": 738123,
+  "rawAllowance": 8388608,
+  "terminalReserve": 1048576,
+  "PNGTransfers": 0,
+  "localNewSourceCopies": 0,
+  "localNewModuleCopies": 0
+}

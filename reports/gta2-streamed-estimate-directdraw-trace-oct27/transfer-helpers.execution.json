@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/transfer-helpers.py"
+  ],
+  "kind": "api",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 57643008,
+    "sampledPeakRSS": 57643008,
+    "reapedPeakRSS": 18087936,
+    "cpuSeconds": 0.4211170000000001,
+    "wallSeconds": 0.6085199329536408,
+    "owned": [
+      [
+        162633,
+        "115617771"
+      ],
+      [
+        162635,
+        "115617775"
+      ],
+      [
+        162638,
+        "115617794"
+      ],
+      [
+        162641,
+        "115617812"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

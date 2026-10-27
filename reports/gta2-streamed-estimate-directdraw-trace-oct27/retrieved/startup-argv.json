@@ -1,0 +1,5 @@
+[
+  "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "-e",
+  "console.log(JSON.stringify({ok:true,version:process.version,execPath:process.execPath,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),heap:require(\"v8\").getHeapStatistics().heap_size_limit}))"
+]

@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/estimate.py",
+    "all"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 130633728,
+    "sampledPeakRSS": 130633728,
+    "reapedPeakRSS": 73265152,
+    "cpuSeconds": 7.159507,
+    "wallSeconds": 2.935526644811034,
+    "owned": [
+      [
+        150639,
+        "115579135"
+      ],
+      [
+        150640,
+        "115579139"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}
