@@ -1,0 +1,53 @@
+{
+  "method": "Replay own retained tool-call text edits in virtual Path store; no behavioral execution or predecessor wrapper runs",
+  "snapshots": [
+    {
+      "group": "boundary-controls",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/boundary-controls.js",
+      "sha256": "92ed655acf050af74c6df566473c1b0b80c7c7ebe80c6a955494af8929a32075",
+      "bytes": 6262
+    },
+    {
+      "group": "boundary-controls-fixed",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/boundary-controls-fixed.js",
+      "sha256": "32173dad4cdd1eecae213223f7b5bc4418f77fab2d164a43d6ebc894ef97860c",
+      "bytes": 6268
+    },
+    {
+      "group": "validation",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/validation.js",
+      "sha256": "d62a7529389bd033690f1cf8ff65e53cc762804fcafecc5938b2e9e361da8237",
+      "bytes": 8917
+    },
+    {
+      "group": "remaining",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/remaining.js",
+      "sha256": "2faf3232828719746697bb0c85668c8a516d5a45fb0bbbc46616d3af515fc8c9",
+      "bytes": 17505
+    },
+    {
+      "group": "remaining-thread-resume",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/remaining-thread-resume.js",
+      "sha256": "6c2c3bf775881460f2076040dd0dcecd2f34cb0465c4f0884d7599a16394d630",
+      "bytes": 17752
+    },
+    {
+      "group": "remaining-bounds-resume",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/remaining-bounds-resume.js",
+      "sha256": "65b0e4a9a67a0c4d020a4c4c13db4c9318b2b8337006ac9923ca81021a48029b",
+      "bytes": 17956
+    },
+    {
+      "group": "edges",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/edges.js",
+      "sha256": "26535e26fee39611d68b00429d61968d4cd2e84b7ba35b07dc3aff363d479ea0",
+      "bytes": 20232
+    },
+    {
+      "group": "edges-corrected",
+      "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/fixture-lineage/edges-corrected.js",
+      "sha256": "d143ab06877e8416c7739b1f13d6305589c7687296ee87fa416180dd243c4950",
+      "bytes": 20239
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 90406912,
+  "sampledPeakRSS": 90406912,
+  "reapedPeakRSS": 53444608,
+  "cpuSeconds": 0.176863,
+  "wallSeconds": 0.09841642202809453,
+  "owned": [
+    [
+      166772,
+      "115640332"
+    ],
+    [
+      166773,
+      "115640334"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/airstrike-input-observer-independent-accept-oct27/ops/independent-boundary.js",
+    "--controls-only"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/boundary-controls.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/boundary-controls.stderr",
+    "bytes": 1057,
+    "sha256": "dc5ac0373d76be38bd5df8b3d2ffe3e7218ca3a650859554f3019d2d8358db11"
+  }
+}

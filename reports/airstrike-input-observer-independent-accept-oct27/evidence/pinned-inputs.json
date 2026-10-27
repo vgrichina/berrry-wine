@@ -1,0 +1,26 @@
+{
+  "candidate": "229f420238644feb368d8b2cc4975a790af0534a",
+  "base": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "pins": [
+    {
+      "path": "test/run.js",
+      "sha256": "f81747fefe987ff85bbe1e34d37d7ba86649e0930a788c401a534331f99208c4",
+      "bytes": 688604
+    },
+    {
+      "path": "test/input-consumption-trace.js",
+      "sha256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe",
+      "bytes": 7361
+    },
+    {
+      "path": "test/test-input-consumption-state.js",
+      "sha256": "d203f45fa5bc41cf2873172aa6de4a013c78110ef2ba37a13c783da2c6393cee",
+      "bytes": 14600
+    }
+  ],
+  "predecessorManifest": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/receipt-manifest.json",
+  "reuse": "Coordinator verified99 published payloads; original package-final.stdout later188B differs from original empty hash; published0B copy remains matching. No re-audit.",
+  "mountArgv": [],
+  "mountValidation": "No filename-bearing mount invocation; no guest/runtime authorized.",
+  "rootRefs": "Reuse launcher root-ref-digest.json"
+}

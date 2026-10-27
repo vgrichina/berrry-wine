@@ -1,0 +1,36 @@
+{
+  "request": {
+    "action": "input-state",
+    "id": "printable-prefix\n"
+  },
+  "requestIdBytes": [
+    112,
+    114,
+    105,
+    110,
+    116,
+    97,
+    98,
+    108,
+    101,
+    45,
+    112,
+    114,
+    101,
+    102,
+    105,
+    120,
+    10
+  ],
+  "response": null,
+  "error": "input-state needs only action and a printable id (1..128 bytes)",
+  "stateUnchanged": true,
+  "calls": {
+    "ticks": 0,
+    "publish": 0,
+    "guest": 0,
+    "poll": 0,
+    "scheduler": 0,
+    "worker": 0
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 37486592,
+  "sampledPeakRSS": 37486592,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.077096,
+  "wallSeconds": 0.04433118202723563,
+  "owned": [
+    [
+      170378,
+      "115664024"
+    ],
+    [
+      170379,
+      "115664024"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "ls-tree",
+    "229f420238644feb368d8b2cc4975a790af0534a",
+    "test/run.js",
+    "test/input-consumption-trace.js",
+    "test/test-input-consumption-state.js",
+    "lib/host-window.js",
+    "lib/renderer.js",
+    "lib/renderer-input.js",
+    "lib/thread-manager.js",
+    "lib/batch-clock.js",
+    "lib/guest-clock.js",
+    "lib/startup-clock.js"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/source-blobs.stdout",
+    "bytes": 749,
+    "sha256": "40733791a3d23a31c720cdc0dce2f0447917bf30433b2cfc48aa8b09de14e100"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/source-blobs.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

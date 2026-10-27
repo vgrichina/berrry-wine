@@ -1,0 +1,55 @@
+{
+  "candidate": "229f420238644feb368d8b2cc4975a790af0534a",
+  "verdict": "ACCEPT_SOURCE_ONLY",
+  "passing": [
+    "boundary-controls-fixed",
+    "validation",
+    "remaining (first two completed groups)",
+    "remaining-thread-resume (thread group completed before fixture serialization failure)",
+    "remaining-bounds-resume",
+    "edges-corrected"
+  ],
+  "source": [
+    {
+      "path": "test/run.js",
+      "sha256": "f81747fefe987ff85bbe1e34d37d7ba86649e0930a788c401a534331f99208c4"
+    },
+    {
+      "path": "test/input-consumption-trace.js",
+      "sha256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe"
+    },
+    {
+      "path": "test/test-input-consumption-state.js",
+      "sha256": "d203f45fa5bc41cf2873172aa6de4a013c78110ef2ba37a13c783da2c6393cee"
+    },
+    {
+      "path": "lib/host-window.js",
+      "sha256": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d"
+    },
+    {
+      "path": "lib/batch-clock.js",
+      "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+    },
+    {
+      "path": "lib/guest-clock.js",
+      "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+    },
+    {
+      "path": "lib/startup-clock.js",
+      "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+    }
+  ],
+  "incidents": [
+    "initial environment drift before behavioral work; fixed explicit child environment and new startup receipt",
+    "own worker Proxy serializer touched toJSON; narrowed proxy to exports trap and resumed",
+    "own full hostile-input serialization hit Invalid string length; changed bounded-response checks to avoid serializing full source input; resumed remaining group",
+    "edge assertion sorted only actual key list; sorted expected as well; corrected edge group passed"
+  ],
+  "remaining": [
+    "independent current-main reconciliation/integration",
+    "fresh admission/coordinator assignment before diagnostic runtime"
+  ],
+  "noGuest": true,
+  "noCompiler": true,
+  "noModuleInstantiation": true
+}

@@ -1,0 +1,56 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 39714816,
+  "sampledPeakRSS": 39714816,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.093855,
+  "wallSeconds": 0.06019160896539688,
+  "owned": [
+    [
+      170352,
+      "115664009"
+    ],
+    [
+      170353,
+      "115664009"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "diff",
+    "--exit-code",
+    "229f420238644feb368d8b2cc4975a790af0534a",
+    "--",
+    "test/run.js",
+    "test/input-consumption-trace.js",
+    "test/test-input-consumption-state.js",
+    "lib/host-window.js",
+    "lib/renderer.js",
+    "lib/renderer-input.js",
+    "lib/thread-manager.js",
+    "lib/batch-clock.js",
+    "lib/guest-clock.js",
+    "lib/startup-clock.js"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/source-unchanged.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/source-unchanged.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

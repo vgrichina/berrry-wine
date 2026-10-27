@@ -1,0 +1,44 @@
+{
+  "exit": 128,
+  "stopReason": null,
+  "peakRSS": 39583744,
+  "sampledPeakRSS": 39583744,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.159816,
+  "wallSeconds": 0.07251146505586803,
+  "owned": [
+    [
+      172035,
+      "115673799"
+    ],
+    [
+      172036,
+      "115673799"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "var",
+    "GIT_AUTHOR_IDENT"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/identity.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/identity.stderr",
+    "bytes": 348,
+    "sha256": "a94cb3bb64d4cd7cf40053b4e5da610a9ea0221329b5a2202df5cfa8599e2a79"
+  }
+}

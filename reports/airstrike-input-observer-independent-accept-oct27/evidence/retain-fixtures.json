@@ -1,0 +1,43 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50331648,
+  "sampledPeakRSS": 50331648,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.173164,
+  "wallSeconds": 0.09707394591532648,
+  "owned": [
+    [
+      171284,
+      "115671515"
+    ],
+    [
+      171285,
+      "115671517"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/airstrike-input-observer-independent-accept-oct27/ops/retain-fixtures.py"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/retain-fixtures.stdout",
+    "bytes": 102,
+    "sha256": "777c415b66f01de290b00713be81679dbf67453f9b4228d8c41f7190e9a880b6"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/retain-fixtures.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

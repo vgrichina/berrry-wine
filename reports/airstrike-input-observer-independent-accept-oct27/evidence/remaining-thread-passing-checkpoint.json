@@ -1,0 +1,848 @@
+{
+  "candidate": "229f420238644feb368d8b2cc4975a790af0534a",
+  "completed": [
+    "five frozen populated queues: zero mutation, execution, poll, clock probes, log writes",
+    "actual enqueue/ACK, renderer/pending/cross-thread/button dequeue, route and DispatchMessage distinguish stages; SDL unknown",
+    "unavailable/throwing exports unknown; worker exports untouched, host scheduler metadata only; absent renderer/maps unknown"
+  ],
+  "excerpts": [
+    {
+      "label": "init",
+      "startByte": 252207,
+      "endByte": 252584,
+      "bytes": 377,
+      "sha256": "f0dcb73e4597862e719029fb95610c4466e9e65a2baf9051b75547a777f377ff"
+    },
+    {
+      "label": "host-input",
+      "startByte": 255591,
+      "endByte": 258085,
+      "bytes": 2494,
+      "sha256": "954cf2408c6f4dc3f06652e65bbb5aa159f88ff3f4b6fc80da5ab7d72a1d98c3"
+    },
+    {
+      "label": "request-handler",
+      "startByte": 391003,
+      "endByte": 403166,
+      "bytes": 12163,
+      "sha256": "2fbb4b1dbf5e5a91438445611af9925c45ff8c7aa4ccfe531e6852abf93fd830"
+    },
+    {
+      "label": "flag-parser",
+      "startByte": 7437,
+      "endByte": 7489,
+      "bytes": 52,
+      "sha256": "9e78f15b563d1436f64e3a570bbd9179d066bb0c4438bcfdb5e49613d822efeb"
+    },
+    {
+      "label": "flag-declaration",
+      "startByte": 18274,
+      "endByte": 18392,
+      "bytes": 118,
+      "sha256": "99a08bc4454cda6de00959fa36388dc0ba55ae15876dfd329e201fc49eaaed6e"
+    }
+  ],
+  "responses": [
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 0,
+          "truncated": false,
+          "head": []
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 9,
+              "tid": 9,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 99,
+              "yieldReason": 1,
+              "waitHandle": 8,
+              "waitTimeout": 15,
+              "sleepUntil": 200,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "cooperative",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 9,
+              "tid": 9,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": 99,
+              "yieldReason": 1,
+              "waitHandle": 8,
+              "waitTimeout": 15,
+              "sleepUntil": 200,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "worker",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 10,
+              "tid": 10,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": "unknown",
+              "yieldReason": "unknown",
+              "waitHandle": "unknown",
+              "waitTimeout": "unknown",
+              "sleepUntil": 200,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "17": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "18": {
+            "_physicalKeys": false,
+            "_asyncKeys": false,
+            "_asyncPressedKeys": false
+          },
+          "32": {
+            "_physicalKeys": false,
+            "_asyncKeys": true,
+            "_asyncPressedKeys": true
+          }
+        },
+        "threads": {
+          "backend": "worker",
+          "main": {
+            "state": "active",
+            "suspendCount": 0,
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": 150,
+            "sleepActive": "unknown"
+          },
+          "count": 1,
+          "truncated": false,
+          "head": [
+            {
+              "handle": 10,
+              "tid": 10,
+              "state": "active",
+              "suspendCount": 0,
+              "eip": "unknown",
+              "yieldReason": "unknown",
+              "waitHandle": "unknown",
+              "waitTimeout": "unknown",
+              "sleepUntil": 200,
+              "sleepActive": "unknown"
+            }
+          ]
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "unknown",
+          "main": {
+            "state": "unknown",
+            "suspendCount": "unknown",
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": "unknown",
+            "sleepActive": "unknown"
+          },
+          "count": "unknown",
+          "truncated": false,
+          "head": []
+        },
+        "sdlConsumption": "unknown"
+      }
+    },
+    {
+      "request": {
+        "action": "input-state",
+        "id": "stable"
+      },
+      "response": {
+        "requestId": "stable",
+        "batch": 5003,
+        "frozen": true,
+        "credits": 0,
+        "counters": {
+          "scheduled": 0,
+          "enqueued": 0,
+          "dequeued": 0,
+          "routed": 0,
+          "dispatched": 0
+        },
+        "counterLimit": 4294967295,
+        "saturated": false,
+        "last": {
+          "dequeue": null,
+          "route": null,
+          "dispatch": null
+        },
+        "queues": {
+          "scheduled": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "pending": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "crossThread": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "buttons": {
+            "count": 0,
+            "truncated": false,
+            "head": []
+          },
+          "renderer": {
+            "count": "unknown",
+            "head": [],
+            "truncated": false
+          },
+          "guestPostQueue": "unknown"
+        },
+        "keys": {
+          "16": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "17": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "18": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          },
+          "32": {
+            "_physicalKeys": "unknown",
+            "_asyncKeys": "unknown",
+            "_asyncPressedKeys": "unknown"
+          }
+        },
+        "threads": {
+          "backend": "unknown",
+          "main": {
+            "state": "unknown",
+            "suspendCount": "unknown",
+            "eip": 5609819,
+            "yieldReason": "unknown",
+            "waitHandle": "unknown",
+            "waitTimeout": "unknown",
+            "sleepUntil": "unknown",
+            "sleepActive": "unknown"
+          },
+          "count": "unknown",
+          "truncated": false,
+          "head": []
+        },
+        "sdlConsumption": "unknown"
+      }
+    }
+  ],
+  "remaining": [
+    "integration on reconciled current main",
+    "fresh independently admitted runtime assignment"
+  ],
+  "qualification": "JS guest getters/MSG ArrayBuffer and worker links are stubs; no module instantiation, compiler, browser or guest; real production hook bytes/helper/host routing"
+}

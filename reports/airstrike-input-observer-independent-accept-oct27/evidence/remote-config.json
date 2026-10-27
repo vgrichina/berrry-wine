@@ -1,0 +1,46 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 39714816,
+  "sampledPeakRSS": 39714816,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.21864599999999998,
+  "wallSeconds": 0.09947459888644516,
+  "owned": [
+    [
+      172025,
+      "115673759"
+    ],
+    [
+      172026,
+      "115673759"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "remote",
+    "add",
+    "origin",
+    "git@github.com:vgrichina/wine-assembly.git"
+  ],
+  "cwd": "/tmp/airstrike-input-observer-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/remote-config.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-observer-independent-accept-oct27/ops/remote-config.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
