@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/usr/bin:/bin",
+    "LC_ALL=C",
+    "TZ=UTC",
+    "TMPDIR=/tmp/enigma-native-corpus-independent-accept-oct27/ops",
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=32",
+    "/tmp/enigma-native-corpus-independent-accept-oct27/repo/test/enigma-corpus-production-helper-replay.js",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26",
+    "/tmp/enigma-native-corpus-independent-accept-oct27/ops/helper-replay.json"
+  ],
+  "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 84762624,
+  "physicalCap": 134217728,
+  "cpu": 0.04,
+  "wall": 0.08431060495786369,
+  "outputBytes": 87,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

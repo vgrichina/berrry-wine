@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-native-corpus-independent-accept-oct27/ops/setup.py"
+  ],
+  "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 48758784,
+  "physicalCap": 134217728,
+  "cpu": 0.22,
+  "wall": 0.5238145471084863,
+  "outputBytes": 11,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

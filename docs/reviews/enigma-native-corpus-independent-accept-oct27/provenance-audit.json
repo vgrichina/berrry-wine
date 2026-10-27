@@ -1,0 +1,252 @@
+{
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "candidateTree": "fb1ef0832eb9e0229cd272c67b8465c4fcbf4396",
+  "donor": "291e4b03f77c3957c0e14fe0077fe5d301882964",
+  "donorTree": "f00667622b73b2d52f7ae1f7bf5309514db0c111",
+  "sourceAcceptance": "facebcb2e6d04b84e80211a7814654e528566b0f",
+  "sourceTimingReceipts": {
+    "production-boundary-result.json": {
+      "bytes": 1413,
+      "sha256": "b9bb4fdbd7745a072944a2fa769ee7a502171ab79ca8aacda20234646fc5c336"
+    },
+    "independent-runner-result.json": {
+      "bytes": 1417,
+      "sha256": "37061229daf358461bc5789b4ac85baaaf6a39f57ceb31ebcb2589095c4533e1"
+    },
+    "source-review-result.json": {
+      "bytes": 32451,
+      "sha256": "e6d197317431673cbfb3ad7fe5efe371df911ffa1ccab68ce941dcc0085306af"
+    },
+    "reuse-verified.json": {
+      "bytes": 28052,
+      "sha256": "73a5603a323c417b8d56c8e0d157243aa8c827791579455c830710fe32bff1d2"
+    }
+  },
+  "productionRunnerSHA": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "runnerSourceOffsets": {
+    "installation": 252541,
+    "const instance = await WebAssembly.instantiate(wasmModule, imports);": 274921,
+    "qualification": 274990,
+    "stageAndLoadPe(instance.exports": 309750,
+    "instance.exports.init_dx_com_thunks();": 311958
+  },
+  "productionRunnerExecuted": false,
+  "sourceOnlyHostLoaderSubstitution": true,
+  "syntheticHarnessInstanceProxy": true,
+  "versions": [
+    {
+      "group": "core",
+      "bytes": 8943,
+      "sha256": "0f45d951978a59e9923a116459d5ac00a38c807f3d999fe7c5fc1b821fb27f54",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "hooks-thread",
+      "bytes": 11313,
+      "sha256": "f9fac7abd314000427349714f79bda6b70c6aabbe51c07e1688ca93634c9021a",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "hardware",
+      "bytes": 13846,
+      "sha256": "0f417592c42115a0a2bf494be2d906124d4779df201d02fd09c3548694f04b86",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "unrelated",
+      "bytes": 15527,
+      "sha256": "b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    }
+  ],
+  "reusedNativeGroups": [
+    {
+      "backend": "tail",
+      "group": "core",
+      "resultSHA": "44c77ccca32304f21d2a5e30533bd482e7fa73ac19fa67e6804b2c338404fec7",
+      "harnessSHA": "0f45d951978a59e9923a116459d5ac00a38c807f3d999fe7c5fc1b821fb27f54",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/harness.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/tail-result.json"
+      ],
+      "receiptSHA": "26fb79767e0e250799cc55fbf79db2bec7483e6be0b3db14b09a8a3921aff83e"
+    },
+    {
+      "backend": "compat",
+      "group": "core",
+      "resultSHA": "8f825118d59004947309b76ec9d174859e17646a92d8f7d5058ccf8831aef48b",
+      "harnessSHA": "0f45d951978a59e9923a116459d5ac00a38c807f3d999fe7c5fc1b821fb27f54",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/harness.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-result.json"
+      ],
+      "receiptSHA": "eb09204e686b7695cd9f721537a36c765fddba60028f68a139f805826e24b8f9"
+    },
+    {
+      "backend": "tail",
+      "group": "hooks-thread",
+      "resultSHA": "14a4fd8a1c6893fdee2f92e25788885235ef6e0992f6abf84e314810b9b13f1c",
+      "harnessSHA": "f9fac7abd314000427349714f79bda6b70c6aabbe51c07e1688ca93634c9021a",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-hooks-thread.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/tail-hooks-thread-result.json",
+        "hooks"
+      ],
+      "receiptSHA": "35773dc1276772cc0d094272c33fe08555c31f5cda1141c032a3709b3dde8e19"
+    },
+    {
+      "backend": "compat",
+      "group": "hooks-thread",
+      "resultSHA": "ec54c2edbc8270d5580359a99de04181c6c6a779bd2f00dfc1a9fa65ac9b0f63",
+      "harnessSHA": "f9fac7abd314000427349714f79bda6b70c6aabbe51c07e1688ca93634c9021a",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-hooks-thread.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-hooks-thread-result.json",
+        "hooks"
+      ],
+      "receiptSHA": "3358fc501d196b7b53a40338adc1943c7afdfde75ee3230b8c6021d2c13b69a6"
+    },
+    {
+      "backend": "tail",
+      "group": "hardware",
+      "resultSHA": "0c04d7b9a126d805c5278e6f25846c317cae28561d05e065eae6678622c24369",
+      "harnessSHA": "0f417592c42115a0a2bf494be2d906124d4779df201d02fd09c3548694f04b86",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-hardware.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/tail-hardware-result.json",
+        "extra"
+      ],
+      "receiptSHA": "fd882db1dafc4b0c7f4d06b294ce3e3c527413a43d368363c80620f8713de408"
+    },
+    {
+      "backend": "compat",
+      "group": "hardware",
+      "resultSHA": "2e9661553d206189a33b3a62242e7d87254642404f52e84f297650cfa644f7a9",
+      "harnessSHA": "0f417592c42115a0a2bf494be2d906124d4779df201d02fd09c3548694f04b86",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-hardware.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-hardware-result.json",
+        "extra"
+      ],
+      "receiptSHA": "85902c73ff105acc1e558f35fe10e5d7277c255846272d8c2410d499f6acfd94"
+    },
+    {
+      "backend": "tail",
+      "group": "unrelated",
+      "resultSHA": "ad4d1b533786ed7926b9395df02f7ce186a8efa5d9d50e92aa6bc2af9f095c40",
+      "harnessSHA": "b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-unrelated.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/tail-unrelated-result.json",
+        "unrelated"
+      ],
+      "receiptSHA": "6f0ee47a30053a62edd7196c2ade5456f274bdfd17fdb25505b2b4a222f86d46"
+    },
+    {
+      "backend": "compat",
+      "group": "unrelated",
+      "resultSHA": "84fd92858fe5e9975f2a10fb0d39f867eca5d681c20dee2c1ec9d6663bb2ab5f",
+      "harnessSHA": "b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--expose-gc",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-unrelated.js",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+        "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-unrelated-result.json",
+        "unrelated"
+      ],
+      "receiptSHA": "482c4ecf4f14747569653b2a1993857ea9a2b76a85442d9bab1ce567cc6f1aca"
+    }
+  ],
+  "rootManifestAdmissionReused": {
+    "at": "2026-10-27T00:07:31.543916+00:00",
+    "manifest": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/repo/docs/reviews/enigma-retained-canonical-native-msg-qualification-oct26/evidence-manifest.json",
+    "verifiedFiles": 276,
+    "hashFailures": [],
+    "modules": {
+      "wine-assembly.wasm": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+      "wine-assembly.compat.wasm": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+    },
+    "harnessPin": {
+      "bytes": 15527,
+      "sha256": "b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8"
+    },
+    "memAvailable": 4055228416,
+    "requiredRAM": 1543503872,
+    "free": 3156594688,
+    "peers": {
+      "gl-output-file-confinement-repair-oct27": {
+        "measuredLowerBound": 2326528,
+        "remainingUpperBound": 60588032
+      },
+      "alien-terminal-dispatch-boundary-repair-oct26": {
+        "measuredLowerBound": 10530816,
+        "remainingUpperBound": 56578048
+      }
+    },
+    "completeAllocation": 50331648,
+    "plan": {
+      "sourceMinimalGitTestsEvidence": 16777216,
+      "sessionEventsPositiveWALOnce": 16777216,
+      "publicationGrowth": 8388608,
+      "reserve": 8388608
+    },
+    "projectedFree": 2989096960,
+    "diskFloor": 2982150144,
+    "pass": true
+  },
+  "scope": "synthetic canonical native corpus only; new execution OFFLINE",
+  "modules": {
+    "wine-assembly.wasm": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+    "wine-assembly.compat.wasm": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+  },
+  "limitations": [
+    "full production runner/native game initializers unqualified",
+    "generic unrelated signature-correct zero stubs",
+    "synthetic unrelated callback scheduling",
+    "records/calls lack unified phase timestamps and begin return values; matching owner oracle and unchanged harness assertions reused",
+    "no proof of arbitrary host scheduling or concurrency",
+    "step ACK all batches then frozen zero before input and original game remain open"
+  ]
+}

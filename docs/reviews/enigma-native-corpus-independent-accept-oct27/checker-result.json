@@ -1,0 +1,30 @@
+{
+  "baseline": {
+    "verdict": "ACCEPT_SYNTHETIC_CANONICAL_CORPUS",
+    "pairs": 120,
+    "primaryExecutions": 240,
+    "completionRecords": 136,
+    "omissionControls": [
+      "tail",
+      "compat"
+    ],
+    "groups": {
+      "tail:core": 20,
+      "tail:hooks-thread": 16,
+      "tail:hardware": 20,
+      "tail:unrelated": 4,
+      "compat:core": 20,
+      "compat:hooks-thread": 16,
+      "compat:hardware": 20,
+      "compat:unrelated": 4
+    },
+    "productionRunnerQualified": false,
+    "originalGame": false
+  },
+  "adversarialControls": 86,
+  "rejected": 86,
+  "checkerGuardMutantsKilled": 4,
+  "summaryFlagsIgnored": true,
+  "donorFilesEdited": false,
+  "nativeExecuted": false
+}

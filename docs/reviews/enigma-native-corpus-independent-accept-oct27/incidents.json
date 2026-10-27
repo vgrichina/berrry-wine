@@ -1,0 +1,208 @@
+[
+  {
+    "group": "compact-inspect",
+    "cause": "nonexistent raw log glob; inspect.py shadowed stdlib during exception handling",
+    "resolution": "renamed boundary-inspection.py; later targeted raw envelopes verified",
+    "receipt": {
+      "argv": [
+        "python3",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops/compact-inspect.py"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": 1,
+      "reason": "natural",
+      "peakSampledRSS": 65064960,
+      "physicalCap": 134217728,
+      "cpu": 0.15,
+      "wall": 0.28693251102231443,
+      "outputBytes": 34059,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "compact-inspect-output.log.raw.json"
+  },
+  {
+    "group": "corpus",
+    "cause": "owned oracle used entry ESP as Peek continuation context",
+    "resolution": "unchanged WAT callback frame is stack-20; corrected own oracle only",
+    "receipt": {
+      "argv": [
+        "python3",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/repo/test/enigma-native-corpus-check.py",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/repo/docs/reviews/enigma-retained-canonical-native-msg-qualification-oct26/remote"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": 1,
+      "reason": "natural",
+      "peakSampledRSS": 51511296,
+      "physicalCap": 134217728,
+      "cpu": 0.03,
+      "wall": 0.06358993402682245,
+      "outputBytes": 434,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "corpus-output.log.raw.json"
+  },
+  {
+    "group": "challenges",
+    "cause": "guard-mutant test wrong edge initially changed only outer identity",
+    "resolution": "coordinated outer/OFF/ON identity challenge; final 86 controls and four mutants pass",
+    "receipt": {
+      "argv": [
+        "python3",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/repo/test/test-enigma-native-corpus-check.py",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/repo/docs/reviews/enigma-retained-canonical-native-msg-qualification-oct26/remote",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": 1,
+      "reason": "natural",
+      "peakSampledRSS": 66060288,
+      "physicalCap": 134217728,
+      "cpu": 0.95,
+      "wall": 0.9748731008730829,
+      "outputBytes": 515,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "challenges-output.log.raw.json"
+  },
+  {
+    "group": "node-startup",
+    "cause": "whole executable Buffer hashing exceeded physical cap",
+    "resolution": "streaming64KiB hash; unchanged limits; passing node-startup-streaming receipt",
+    "receipt": {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "LC_ALL=C",
+        "TZ=UTC",
+        "TMPDIR=/tmp/enigma-native-corpus-independent-accept-oct27/ops",
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=32",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops/node-startup.js",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops/node-startup.json"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": -9,
+      "reason": "physical-memory",
+      "peakSampledRSS": 137199616,
+      "physicalCap": 134217728,
+      "cpu": 0.06,
+      "wall": 0.08217010111548007,
+      "outputBytes": 0,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "node-startup-output.log.raw.json"
+  },
+  {
+    "group": "helper-replay",
+    "cause": "command incorrectly attempted despite failed startup, then helper path ENOENT before replay",
+    "resolution": "no passing acceptance claimed; corrected ops path and executed only after successful unchanged-environment startup",
+    "receipt": {
+      "argv": [
+        "/usr/bin/env",
+        "-i",
+        "PATH=/usr/bin:/bin",
+        "LC_ALL=C",
+        "TZ=UTC",
+        "TMPDIR=/tmp/enigma-native-corpus-independent-accept-oct27/ops",
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=32",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/repo/test/enigma-corpus-production-helper-replay.js",
+        "/tmp/enigma-retained-canonical-native-msg-qualification-oct26",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops/helper-replay.json"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": 1,
+      "reason": "natural",
+      "peakSampledRSS": 78581760,
+      "physicalCap": 134217728,
+      "cpu": 0.02,
+      "wall": 0.039937043096870184,
+      "outputBytes": 1039,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "helper-replay-output.log.raw.json"
+  },
+  {
+    "group": "provenance-audit",
+    "cause": "assumed await in synchronous stageAndLoadPe statement",
+    "resolution": "inspected exact source; targeted statement is synchronous; final audit passes",
+    "receipt": {
+      "argv": [
+        "python3",
+        "/tmp/enigma-native-corpus-independent-accept-oct27/ops/audit.py"
+      ],
+      "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+      "exit": 1,
+      "reason": "natural",
+      "peakSampledRSS": 65789952,
+      "physicalCap": 134217728,
+      "cpu": 0.06,
+      "wall": 0.08710291492752731,
+      "outputBytes": 406,
+      "limits": {
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "excerpt": 8192,
+        "gitDATA": "unchanged inherited",
+        "nodeHeap64": "separate from physical cap"
+      },
+      "descendantsTracked": 1,
+      "supervisorIncluded": true
+    },
+    "encodedLog": "provenance-audit-output.log.raw.json"
+  }
+]

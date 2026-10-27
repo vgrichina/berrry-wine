@@ -1,0 +1,114 @@
+{
+  "verdict": "ACCEPT_SYNTHETIC_CANONICAL_CORPUS",
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "candidateTree": "fb1ef0832eb9e0229cd272c67b8465c4fcbf4396",
+  "donor": "291e4b03f77c3957c0e14fe0077fe5d301882964",
+  "donorTree": "f00667622b73b2d52f7ae1f7bf5309514db0c111",
+  "productionRunnerSHA": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+  "harnessVersions": [
+    {
+      "group": "core",
+      "bytes": 8943,
+      "sha256": "0f45d951978a59e9923a116459d5ac00a38c807f3d999fe7c5fc1b821fb27f54",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "hooks-thread",
+      "bytes": 11313,
+      "sha256": "f9fac7abd314000427349714f79bda6b70c6aabbe51c07e1688ca93634c9021a",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "hardware",
+      "bytes": 13846,
+      "sha256": "0f417592c42115a0a2bf494be2d906124d4779df201d02fd09c3548694f04b86",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    },
+    {
+      "group": "unrelated",
+      "bytes": 15527,
+      "sha256": "b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8",
+      "proxyOnly": true,
+      "productionRunnerExecuted": false
+    }
+  ],
+  "modules": {
+    "wine-assembly.wasm": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+    "wine-assembly.compat.wasm": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+  },
+  "corpusSHA": "3db93075b7928304067f0e7c0e0774cb7256dc65fa82dff22835cddff6e3e46a",
+  "corpusHashRecipe": "sha256 JSON(corpus-pins.json parsed, sort_keys=True,separators=(comma,colon))",
+  "source": {
+    "test/enigma-corpus-production-helper-replay.js": {
+      "bytes": 3353,
+      "sha256": "165f2ebdfa2abdca9de900e3ff7779f4e6a688c2bb350be113ed5e4df07a4e38"
+    },
+    "test/enigma-native-corpus-check.py": {
+      "bytes": 14386,
+      "sha256": "7963a3e78dc5067ac208ac1a9580053985f6b489a604af6996ba5f3a39b5110d"
+    },
+    "test/test-enigma-native-corpus-check.py": {
+      "bytes": 9139,
+      "sha256": "b8f4c20f105c97af1230d0ca721067f2948944775804063fa37855a79d3d13f2"
+    }
+  },
+  "completed": [
+    "production boundary identity/source-only timing reuse",
+    "actual executed versions and consumed provenance",
+    "independent raw corpus semantics",
+    "86 adversarial controls",
+    "four checker guard mutants",
+    "offline production owner/trace replay"
+  ],
+  "results": {
+    "baseline": {
+      "verdict": "ACCEPT_SYNTHETIC_CANONICAL_CORPUS",
+      "pairs": 120,
+      "primaryExecutions": 240,
+      "completionRecords": 136,
+      "omissionControls": [
+        "tail",
+        "compat"
+      ],
+      "groups": {
+        "tail:core": 20,
+        "tail:hooks-thread": 16,
+        "tail:hardware": 20,
+        "tail:unrelated": 4,
+        "compat:core": 20,
+        "compat:hooks-thread": 16,
+        "compat:hardware": 20,
+        "compat:unrelated": 4
+      },
+      "productionRunnerQualified": false,
+      "originalGame": false
+    },
+    "adversarialControls": 86,
+    "rejected": 86,
+    "checkerGuardMutantsKilled": 4,
+    "summaryFlagsIgnored": true,
+    "donorFilesEdited": false,
+    "nativeExecuted": false
+  },
+  "helperReplay": {
+    "records": 136,
+    "omissions": 2,
+    "mode": "OFFLINE_HOST_REPLAY_ONLY"
+  },
+  "remaining": [
+    "full production runner/native game initializers unqualified",
+    "generic unrelated signature-correct zero stubs",
+    "synthetic unrelated callback scheduling",
+    "records/calls lack unified phase timestamps and begin return values; matching owner oracle and unchanged harness assertions reused",
+    "no proof of arbitrary host scheduling or concurrency",
+    "step ACK all batches then frozen zero before input and original game remain open"
+  ],
+  "blockers": [],
+  "nativeExecutionsNew": 0,
+  "nativeGroupsReused": 8,
+  "mainIntegrated": false,
+  "productionSourceEdited": false
+}

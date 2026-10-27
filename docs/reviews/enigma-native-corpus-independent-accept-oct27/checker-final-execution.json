@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-native-corpus-independent-accept-oct27/repo/test/test-enigma-native-corpus-check.py",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/repo/docs/reviews/enigma-retained-canonical-native-msg-qualification-oct26/remote",
+    "/tmp/enigma-native-corpus-independent-accept-oct27/ops/final-tests"
+  ],
+  "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 54390784,
+  "physicalCap": 134217728,
+  "cpu": 1.41,
+  "wall": 1.4262217939831316,
+  "outputBytes": 572,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,217 @@
+[
+  {
+    "control": "tail/missing-case",
+    "rejected": true,
+    "reason": "exact expected case set: expected {('PeekMessageA', 'JMP', 'park', None, None), ('PeekMessageA', 'JMP', 'empty', None, None), ('GetMessageW', 'JMP', 'queued', None, None), ('PeekMessageA', 'JMP', 'queued', None, None), ('GetMessageW', 'CALL', 'queued', None, None), ('PeekMessageW', 'JMP', 'queued', None, None), ('GetMessageW', 'CALL', 'park', None, None), ('GetMessageA', 'JMP', 'queued', None, None), ('GetMessageA', 'CALL', 'park', None, None), ('PeekMessageW', 'JMP', 'empty', None, None), ('PeekMessageA', 'CALL', 'empty', None, None), ('GetMessageW', 'JMP', 'park', None, None), ('PeekMessageW', 'CALL', 'empty', None, None), ('PeekMessageA', "
+  },
+  {
+    "control": "tail/duplicate-case",
+    "rejected": true,
+    "reason": "duplicate case: expected 19, observed 20"
+  },
+  {
+    "control": "tail/wrong-case-edge",
+    "rejected": true,
+    "reason": "exact expected case set: expected {('PeekMessageA', 'JMP', 'park', None, None), ('PeekMessageA', 'JMP', 'empty', None, None), ('GetMessageW', 'JMP', 'queued', None, None), ('PeekMessageA', 'JMP', 'queued', None, None), ('GetMessageW', 'CALL', 'queued', None, None), ('PeekMessageW', 'JMP', 'queued', None, None), ('GetMessageW', 'CALL', 'park', None, None), ('GetMessageA', 'JMP', 'queued', None, None), ('GetMessageA', 'CALL', 'park', None, None), ('PeekMessageW', 'JMP', 'empty', None, None), ('PeekMessageA', 'CALL', 'empty', None, None), ('GetMessageW', 'JMP', 'park', None, None), ('PeekMessageW', 'CALL', 'empty', None, None), ('PeekMessageA', "
+  },
+  {
+    "control": "tail/stale-module",
+    "rejected": true,
+    "reason": "module SHA256: expected 'af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b', observed '0000000000000000000000000000000000000000000000000000000000000000'"
+  },
+  {
+    "control": "tail/wrong-backend",
+    "rejected": true,
+    "reason": "module backend: expected 'wine-assembly.wasm', observed 'wine-assembly.other.wasm'"
+  },
+  {
+    "control": "tail/stale-candidate",
+    "rejected": true,
+    "reason": "source candidate: expected '425755ee5ee9be0734c7aca187521100f5487674', observed '0000000000000000000000000000000000000000'"
+  },
+  {
+    "control": "tail/production-overclaim",
+    "rejected": true,
+    "reason": "production scope: expected False, observed True"
+  },
+  {
+    "control": "tail/missing-record",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record count: expected 1, observed 0"
+  },
+  {
+    "control": "tail/duplicate-record",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record count: expected 1, observed 2"
+  },
+  {
+    "control": "tail/wrong-record-owner",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-api",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-thread",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-frame",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-msg",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-result",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 2, 'bat"
+  },
+  {
+    "control": "tail/wrong-record-sequence",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 1, 'bat"
+  },
+  {
+    "control": "tail/missing-complete-import",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0]]"
+  },
+  {
+    "control": "tail/duplicate-complete-import",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/misordered-complete-import",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_complete', 1, 1], ['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0]]"
+  },
+  {
+    "control": "tail/wrong-complete-token",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 99, 1]]"
+  },
+  {
+    "control": "tail/off-diagnostic-import",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF diagnostic imports: expected [], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0]]"
+  },
+  {
+    "control": "tail/off-diagnostic-record",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF diagnostic records: expected [], observed [{'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}]"
+  },
+  {
+    "control": "tail/off-on-eax",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 2, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-esp",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 1, 'esp': 122683393, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-eip",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 1, 'esp': 122683392, 'eip': 1, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-yieldReason",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 1, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-queue",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 1}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-MSG",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON state: expected {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 999, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/off-on-first",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'queued', None, None): OFF/ON first: expected {'start': 4198400, 'thunk': 122683392, 'stack': 122683388, 'after': {'eax': 99, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}}, observed {'start': 4198400, 'thunk': 122683392, 'stack': 122683388, 'after': {'eax': 1, 'esp': 122683392, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}}"
+  },
+  {
+    "control": "tail/off-on-parked",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'park', None, None): OFF/ON bound: expected {'eax': 122683392, 'esp': 122683368, 'eip': 122683392, 'yieldReason': 0, 'msg': [0, 0, 0, 0, 0, 0, 0], 'queue': 0}, observed {'eax': 122683392, 'esp': 122683368, 'eip': 122683392, 'yieldReason': 17, 'msg': [0, 0, 0, 0, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/stale-retry-arguments",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'park', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_park', 1], ['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_park', 1], ['message_begin', 1, 1, 122683368, 4214848, 0, 0, 0, 0], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/missing-park-import",
+    "rejected": true,
+    "reason": "tail/core/('GetMessageA', 'CALL', 'park', None, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_park', 1], ['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/nested-record-order",
+    "rejected": true,
+    "reason": "tail/hooks-thread/('GetMessageA', 'CALL', None, True, None): completion record 0: expected {'kind': 'message-completion', 'sequence': 3, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 2, 'api': 'PeekMessageW', 'thread': 1, 'entryESP': 122683328, 'msgPointer': 4214848, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': 1, 'result': 0, 'pmRemove': True, 'successfulReturn': False, 'msg': None, 'scope': 'main-instance; canonical build/runtime qualification still required'}, observed {'kind': 'message-completion', 'sequence': 4, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread"
+  },
+  {
+    "control": "tail/nested-token-alias",
+    "rejected": true,
+    "reason": "tail/hooks-thread/('GetMessageA', 'CALL', None, True, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 2, 122683368], ['message_begin', 4, 1, 122683328, 4214848, 0, 0, 0, 1], ['message_complete', 2, 0], ['message_resume', 2, 122683368], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 2, 122683368], ['message_begin', 4, 1, 122683328, 4214848, 0, 0, 0, 1], ['message_complete', 1, 0], ['message_resume', 2, 122683368], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/wrong-resume-context",
+    "rejected": true,
+    "reason": "tail/hooks-thread/('GetMessageA', 'CALL', None, False, None): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 2, 122683368], ['message_resume', 2, 122683368], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 2, 122683368], ['message_resume', 2, 0], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/off-on-suspended",
+    "rejected": true,
+    "reason": "tail/hooks-thread/('GetMessageA', 'CALL', None, False, None): OFF/ON suspended: expected {'eax': 99, 'esp': 122683352, 'eip': 4198400, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683352, 'eip': 4198400, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/missing-bound-ignored-attempt",
+    "rejected": true,
+    "reason": "tail/hardware/('GetMessageA', 'CALL', 'keyboard', None, True): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 1, 122683368], ['message_resume', 1, 122683368], ['message_bind', 1, 2, 122683368], ['message_complete', 1, 1], ['message_resume', 2, 122683368], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 1, 122683368], ['message_resume', 1, 122683368], ['message_bind', 1, 2, 122683368], ['message_resume', 2, 122683368], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/chain-resume-before-bind",
+    "rejected": true,
+    "reason": "tail/hardware/('GetMessageA', 'CALL', 'keyboard', None, True): exact invocation import schedule: expected [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 1, 122683368], ['message_resume', 1, 122683368], ['message_bind', 1, 2, 122683368], ['message_complete', 1, 1], ['message_resume', 2, 122683368], ['message_complete', 1, 1]], observed [['message_begin', 1, 1, 122683368, 4214784, 0, 0, 0, 0], ['message_bind', 1, 1, 122683368], ['message_resume', 1, 122683368], ['message_resume', 2, 122683368], ['message_complete', 1, 1], ['message_bind', 1, 2, 122683368], ['message_complete', 1, 1]]"
+  },
+  {
+    "control": "tail/unrelated-early-record",
+    "rejected": true,
+    "reason": "tail/unrelated/('GetMessageA', None, 'unrelated-decoded-callback-return', None, None): completion record count: expected 1, observed 2"
+  },
+  {
+    "control": "tail/unrelated-frame-state",
+    "rejected": true,
+    "reason": "tail/unrelated/('GetMessageA', None, 'unrelated-decoded-callback-return', None, None): OFF/ON unrelatedState: expected {'eax': 0, 'esp': 0, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 0, 'esp': 122682368, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/unrelated-suspended-state",
+    "rejected": true,
+    "reason": "tail/unrelated/('GetMessageA', None, 'unrelated-decoded-callback-return', None, None): OFF/ON suspended: expected {'eax': 1, 'esp': 122683352, 'eip': 0, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}, observed {'eax': 1, 'esp': 122683352, 'eip': 4198400, 'yieldReason': 0, 'msg': [0, 1025, 291, 1110, 0, 0, 0], 'queue': 0}"
+  },
+  {
+    "control": "tail/missing-omission-control",
+    "rejected": true,
+    "reason": "'omissionControl'"
+  },
+  {
+    "control": "tail/fabricated-omission-observation",
+    "rejected": true,
+    "reason": "omitted observation records: expected [], observed [{'kind': 'message-completion', 'sequence': 2, 'batch': 0, 'correlation': 'invocation-owned', 'invocation': 1, 'api': 'GetMessageA', 'thread': 1, 'entryESP': 122683368, 'msgPointer': 4214784, 'filterHwnd': 0, 'filterMin': 0, 'filterMax': 0, 'removeFlags': None, 'result': 1, 'pmRemove': True, 'successfulReturn': True, 'msg': {'hwnd': 0, 'message': 1025, 'wParam': 291, 'lParam': 1110, 'time': 0, 'pointX': 0, 'pointY': 0}, 'scope': 'main-instance; canonical build/runtime qualification still required'}]"
+  }
+]

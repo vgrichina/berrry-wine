@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "git",
+    "ls-remote",
+    "origin",
+    "refs/heads/task/enigma-retained-canonical-native-msg-qualification-oct26",
+    "refs/heads/task/enigma-native-corpus-independent-accept-oct27",
+    "refs/heads/main"
+  ],
+  "cwd": "/tmp/enigma-native-corpus-independent-accept-oct27/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 47955968,
+  "physicalCap": 268435456,
+  "cpu": 0.04,
+  "wall": 1.704488362185657,
+  "outputBytes": 171,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": 536870912,
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 3,
+  "supervisorIncluded": true
+}

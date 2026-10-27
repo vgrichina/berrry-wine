@@ -1,0 +1,33 @@
+[
+  {
+    "mutant": "omit-exact-case-set",
+    "killedBy": [
+      "tail/wrong-case-edge"
+    ]
+  },
+  {
+    "mutant": "omit-first-state-comparison",
+    "killedBy": [
+      "tail/off-on-first"
+    ]
+  },
+  {
+    "mutant": "omit-import-schedule",
+    "killedBy": [
+      "tail/missing-bound-ignored-attempt"
+    ]
+  },
+  {
+    "mutant": "omit-completion-record",
+    "killedBy": [
+      "tail/wrong-record-owner",
+      "tail/wrong-record-api",
+      "tail/wrong-record-thread",
+      "tail/wrong-record-frame",
+      "tail/wrong-record-msg",
+      "tail/wrong-record-result",
+      "tail/wrong-record-sequence",
+      "tail/nested-record-order"
+    ]
+  }
+]
