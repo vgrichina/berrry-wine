@@ -1,0 +1,309 @@
+{
+  "at": 1793112607.3701448,
+  "decision": "ACCEPT_SOURCE_TRANSACTION_BOUNDARY",
+  "candidate": "742baebdcde0b0261e6d29818751d9f0866707e9",
+  "reportBranch": "task/generally-cursor-preflight-independent-accept-oct27",
+  "reportParent": "742baebdcde0b0261e6d29818751d9f0866707e9",
+  "sourceFixturePins": {
+    "tools/generally-loading-controller.py": "2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5",
+    "test/test-generally-loading-controller.py": "131bc9b57be3a30a04b95f5d69f37e994da1eb47a0674c6f961c22ea7520f5ca",
+    "test/test-generally-mailbox-ownership.py": "28c8c4020b2ec044cc22a49ade85dc8570f75ab5b55531fe974cdf9725a7e077",
+    "test/test-generally-mailbox-handoff.py": "e8b804193a27228b547f1ec32289f90123588069cd3a64556a0c9c0ed5afaf3d",
+    "test/independent-generally-bounded-acceptance.py": "af356e5301e50aefa5800e3cf7a4ad6b05be20b39521aa2d3709a6411daf90b6",
+    "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "docs/generally-mailbox-ownership-repair.md": "998652f763a1b6fcdcaa0e0b08ae02868505d87ba90654c1620025adba5e0abe",
+    "test/independent-generally-stdio-oct27.py": "5dae240f9b3e5d1221dc0c6cc99f4651a4d35dfe41597aec0c61255b11f789b2",
+    "test/independent-generally-durable-oct27.py": "21dc5e5e4fce90a56d98492c109461f18f57e8af687480a39dd1cd0c64f03f13",
+    "test/independent-generally-mailbox-accept-oct27.py": "1f7a9894a8135ac949d7aef38dd3cd7135dc84811e542f445eb00faa6da8d440",
+    "test/independent-generally-history-oct27.py": "177b99583d8179de79433cb7ae70b8562b526f340f1d55cd6ed633dc2b3ab7bf",
+    "test/independent-generally-no-advance-oct27.py": "ab9f913e452a4abd2f1dd2920e8341f2d007dd7aba0c8ff5cd1272350f9a3116",
+    "test/test-generally-cursor-transaction.py": "a4797d77bdd3809aa1c3d44a12c8fddd4ed983f5da08446e019ba30d6598fc48"
+  },
+  "productionBinding": {
+    "authority": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "candidate": "742baebdcde0b0261e6d29818751d9f0866707e9",
+    "start": 388781,
+    "end": 404736,
+    "bytes": 15959,
+    "sha256": "96de2e3dbd35b5059e05e7a346a65f2926d643acf03b7af5cd9760255d1e2bf7",
+    "oracleTransformation": "none; producer helper identity literals already bind candidate; behavioral assertions unchanged",
+    "mountArgv": [],
+    "mountValidation": "no mount or runtime command authorized or issued",
+    "ssh": "exact configured identity/trust in run.py",
+    "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/generally-cursor-preflight-independent-accept-oct27/root-ref-digest.json"
+  },
+  "transformation": "Candidate oracle byte unchanged from pinned producer. Producer previous literal-only binding recorded in canonical abf53f32. Controls rebind identity literals only; assertions/extraction unchanged.",
+  "results": {
+    "node-startup": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "a4589587c7c7b66f2d14742592ff762bcf6248d375f6a4291933430ca1ace630",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/node-startup.stdout",
+        "bytes": 2191,
+        "sha256": "54256d8bbe75ec473bf28d88b71325697a1bf2f8e3288cf65424d1308e9a1670"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/node-startup.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cleanupComplete": true
+    },
+    "first-no-advance": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "4eab239a2edc550e0c8c93c114770d997c32c6d3cadefe599f8290c402a762e6",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/first-no-advance.stdout",
+        "bytes": 620,
+        "sha256": "999f0e8ae2e7a02feeb8344a60cbac834c31265026681969d4fb4493f0bbe21e"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/first-no-advance.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cleanupComplete": true
+    },
+    "race-reservation": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "9c2ea30938115ec9dd26f3094533731703969812b36f36fe524bee01117a6064",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-reservation.stdout",
+        "bytes": 87,
+        "sha256": "b48e7f7e24639261da8897b9eabadad023b6a9cb0f72d32d566a084f073e5edf"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-reservation.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cleanupComplete": true
+    },
+    "race-journal": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "9448b4332b8726b53382c4656af718f53f7927413e95fe04baa764796dd4ee6f",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-journal.stdout",
+        "bytes": 83,
+        "sha256": "e3e020afdd70b184e188beb267cb5821299db7651cd4f538a8ed70d8c676e501"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-journal.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cleanupComplete": true
+    },
+    "race-after-dispatch": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "2080336160a3691dec105e39da980abcf8ecbe829e497839ab4b62e828e4e9b2",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-after-dispatch.stdout",
+        "bytes": 90,
+        "sha256": "b9df5eb7ff0365b642b1b01309ca4262c99d5482011ce31b56fa76c9d153d852"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/race-after-dispatch.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "cleanupComplete": true
+    },
+    "producer-transaction": {
+      "exit": 0,
+      "expectedFailure": false,
+      "receiptSHA256": "9b38274f3f13a2021022876e558809a23cc2ea9d5cb943d65c66ec2e74cd7b4a",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/producer-transaction.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/producer-transaction.stderr",
+        "bytes": 695,
+        "sha256": "47308c827380372b1cd40df8fcb3b54f96400d294eac025e103b20c8832149a1"
+      },
+      "cleanupComplete": true
+    },
+    "control-old-ordering": {
+      "exit": 1,
+      "expectedFailure": true,
+      "receiptSHA256": "7e66967763d7d6333ec74f4b13d39c2f5bdb276e3bbcd59c7e7ba7df2eb81c22",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/control-old-ordering.stdout",
+        "bytes": 526,
+        "sha256": "c8024252f9826bf7d4ded6cd4f43c53d4b4b481bfa7450dfa745450c0f482132"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/control-old-ordering.stderr",
+        "bytes": 478,
+        "sha256": "a675ad95240c62c8860cf67c16a55f771d9bdd185f2b9b64a00a7c48bd38604f"
+      },
+      "cleanupComplete": true
+    },
+    "control-guard-omission": {
+      "exit": 1,
+      "expectedFailure": true,
+      "receiptSHA256": "9057b78be1d01d3813b0f174e657e7b9368acb4c849e575d9fe1a34596875e45",
+      "stdout": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/control-guard-omission.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/control-guard-omission.stderr",
+        "bytes": 1983,
+        "sha256": "325e5fae3eb0f73515a9663a2203d5faafe84f6ba89a3a63f9372ae8eb6a91bc"
+      },
+      "cleanupComplete": true
+    }
+  },
+  "controls": [
+    {
+      "mode": "old-ordering",
+      "sourceSHA256": "c8b5557dc29546a0cd7ef11b29ee1fa944cdee8bb133bf7158bb0db6e155d2d1",
+      "changes": [
+        "omit rollback",
+        "reserve before preflight"
+      ],
+      "oracleIdentityOnlyRebinding": true
+    },
+    {
+      "mode": "guard-omission",
+      "sourceSHA256": "21e808f1060b43cd3d5eb0182915a4cd0860e9f62b234b893a8e9d64e03a0c56",
+      "changes": [
+        "omit rollback"
+      ],
+      "oracleIdentityOnlyRebinding": false
+    }
+  ],
+  "causal": "Known refusal before reservation leaves next63 and no63 request. Mutations after durable cursor/journal writes roll back tentative63, pending+failed retain last62. Attempted publish63 retains pending request63/next64. Competing real CLIs denied during active ownership and poisoned restarts; same-state/alternate-state cannot replay.",
+  "raceLimit": "Cooperating requests-directory flock serializes controller CLIs. Final integrity observations cannot make arbitrary noncooperating writers atomic with publication. Deterministic write hooks call original durable atomic then mutate consumed61; actual main/transport and pinned production fixture handle all requests and ACKs. No guest or initializers executed.",
+  "reuse": {
+    "canonical": "/tmp/generally-cursor-preflight-integrity-repair-oct27/ops/receipt-manifest.json",
+    "sha256": "abf53f32d598564e2912704b481b5481e5641371b6fc6e9d6c780871a6a5243f",
+    "coordinatorVerifiedNewPayloads": 897,
+    "predecessorPayloads": 8535,
+    "priorAcceptedManifestSHA256": "aeb3944e872eff0eb7fb3dbfae3c62cadc063c31d2d59bc9da2282febaa7541e",
+    "reused": "All unchanged producer affected/broad/loading-mailbox/stdio/ownership/handoff/history and baseline receipts; only five new affected candidate checks plus startup, two rejecting controls executed; no blanket audit"
+  },
+  "evidence": {
+    "archive": "evidence.tar.gz",
+    "sha256": "9da7142d34387053111046c7c8c20bca5bcff18989aee453a85896e28ec62ca1",
+    "index": "payload-index.json.gz",
+    "indexSHA256": "8143f69d3140e63d5803f6f6bf6346777e9c8977b5d07c771056dd9b5072523e",
+    "rawIndexSHA256": "9ac161980bb54ccb930a976f02478f807974104468924a2cc87f9012d7092085",
+    "payloads": 256
+  },
+  "resources": {
+    "allocation": 268435456,
+    "future": 159383552,
+    "clientAllowance": 335544320,
+    "hostFloor": 2982150144,
+    "aggregateFutureDisk": 1342177280,
+    "perOperation": "*.admission.json and *.json in archive include measured clients/process RSS, remaining growth, full current WAL once, session/events, own/launcher allocations and complete budget",
+    "latest": {
+      "at": 1793112561.0202136,
+      "ownAllocated": 3063808,
+      "launcherAllocated": 188416,
+      "sessionAndConservativeFullWAL": 30126080,
+      "externalFiles": [
+        {
+          "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T14-46-48-01a17dd4-0001-7042-9bfc-0f81c4198d81.jsonl",
+          "logical": 561396,
+          "allocated": 565248
+        },
+        {
+          "path": "/home/user/.codex/memories_1.sqlite-wal",
+          "logical": 0,
+          "allocated": 0
+        },
+        {
+          "path": "/home/user/.codex/logs_2.sqlite-wal",
+          "logical": 12244672,
+          "allocated": 12251136
+        },
+        {
+          "path": "/home/user/.codex/queue_1.sqlite-wal",
+          "logical": 4152992,
+          "allocated": 4157440
+        },
+        {
+          "path": "/home/user/.codex/goals_1.sqlite-wal",
+          "logical": 4280712,
+          "allocated": 4288512
+        },
+        {
+          "path": "/home/user/.codex/state_5.sqlite-wal",
+          "logical": 4606192,
+          "allocated": 4612096
+        },
+        {
+          "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+          "logical": 4243632,
+          "allocated": 4251648
+        }
+      ],
+      "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+      "clients": [
+        {
+          "pid": 218681,
+          "rss": 191619072
+        },
+        {
+          "pid": 224175,
+          "rss": 197357568
+        },
+        {
+          "pid": 226120,
+          "rss": 195575808
+        }
+      ],
+      "memAvailable": 3441795072,
+      "remainingClientGrowth": 422080512,
+      "sharedChild": 805306368,
+      "hostHeadroom": 805306368,
+      "requiredRemaining": 2032693248,
+      "allocation": 268435456,
+      "futureBreakdown": {
+        "sourceReportsGitSessionEvents": 100663296,
+        "controls": 25165824,
+        "publication": 16777216,
+        "reserve": 8388608,
+        "margin": 8388608
+      },
+      "projectedTask": 192761856,
+      "freeDisk": 6037196800,
+      "projectedDisk": 4695019520,
+      "diskFloor": 2982150144,
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "mountArgv": [],
+      "mountExecution": "no guest/mount invocation authorized",
+      "pass": true
+    },
+    "limits": "Git256MiB physical; DATA512MiB Git subprocess only. Python128MiB; Node descendants aggregate768MiB, heap512MiB DATA/AS unlimited. CPU90 wall120 file24MiB output2MiB; display8192/op cumulative1MiB. Pool1 tests/pool2+flock Git.",
+    "startup": "node-startup receipt actual inherited limits and environment; same wrapper configuration throughout, supervisor marker PID varies"
+  },
+  "incidents": [
+    "Nonfatal alternate nesting-too-deep diagnostics retained; pinned required objects and metadata index readable. No denied access or retries."
+  ],
+  "publication": "Exact task commit/remote refs and final resource/cleanup bound by external ops/publication-closeout.json; report branch only",
+  "cleanup": "All behavioral operations supervisor cleanupComplete and actual fixture/controller/competitor exit checks. Own watcher closed at external closeout.",
+  "lifecycle": "No assigned box or runtime allocated. Coordinator lifecycle untouched.",
+  "historicalRequest12": "untouched, never replayed; fresh synthetic roots only",
+  "guestInvocations": 0,
+  "compilerInvocations": 0,
+  "boatInvocations": 0,
+  "downloads": 0,
+  "fetchBytes": 0,
+  "sourceRepair": false,
+  "remainingGates": [
+    "coordinator review and separately authorized main integration; no runtime authorization"
+  ]
+}
