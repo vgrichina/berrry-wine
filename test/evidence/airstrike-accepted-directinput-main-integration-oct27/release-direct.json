@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 109330432,
+  "sampledPeakRSS": 109330432,
+  "reapedPeakRSS": 76955648,
+  "cpuSeconds": 0.565442,
+  "wallSeconds": 0.16561911115422845,
+  "owned": [
+    [
+      521656,
+      "117663759"
+    ],
+    [
+      521657,
+      "117663760"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-independent-com-release-oct27.js"
+  ],
+  "cwd": "/tmp/airstrike-accepted-directinput-main-integration-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-direct.stdout",
+    "bytes": 12587,
+    "sha256": "44f133ad400fbe43255c66b90cada1c20079394de1d092c99cd0194ca4aea2ce"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-direct.stderr",
+    "bytes": 2552,
+    "sha256": "a43369e844a73dc328b41a98b9f68e32fd0dc6f1368523143fb3c109f2e3e943"
+  }
+}

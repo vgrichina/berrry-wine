@@ -1,0 +1,23 @@
+{
+  "at": 1793129722.3528771,
+  "location": "/home/user/airstrike-atomic-build-oct27",
+  "hostname": "box-node-b9cf10d0c2491469",
+  "memAvailable": 15728283648,
+  "freeDisk": 129083084800,
+  "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             63749                63749                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       63749                63749                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "environment": {
+    "PATH": "/home/user/airstrike-atomic-build-oct27/bin:/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_TERMINAL_PROMPT": "0"
+  },
+  "sourceFiles": 3556,
+  "sourceHead": "5f4a2de27a909e46d233268e2902f059093320ae",
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ]
+}

@@ -1,0 +1,9 @@
+Tested integration: 5f4a2de27a909e46d233268e2902f059093320ae
+Task branch: task/airstrike-accepted-directinput-main-integration-oct27
+Main remains be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c.
+Full input archive: /tmp/airstrike-accepted-directinput-main-integration-oct27/ops/build-source.tar.gz
+Exact file pins: sibling source-manifest.json; final execution controls in remote-retained/.
+Archive uses the complete src/main.watx canonical closure, all tools/lib/root/test inputs and required font/browser bundles. Minimal exact Git commit/root/src/API-table objects retain the canonical HEAD comparison gate; no shallow-gate substitution.
+Boat bx_cdarggww snapshot-stopped; source/outputs retained at /home/user/airstrike-atomic-build-oct27. Stop completed and snapshot verified; no resume is part of this task.
+Canonical invocation was bash tools/build.sh using vendored WATX, not combined.wat or a fragment substitute. First failing gate tools/callback-ownership-census.js rejected two lifetime-producer hashes. Compiler was never invoked; no successful wasm/import signatures/hash exist. Do not describe fragment acceptance as a full build.
+Any future build requires coordinator assignment and review of the explicit census mismatch; this task does not authorize changing the lifetime review lock, bypassing it or repeating the failed exact-input build. No completed exact-input compile should be rerun on handoff.

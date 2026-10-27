@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 124379136,
+  "sampledPeakRSS": 124379136,
+  "reapedPeakRSS": 88465408,
+  "cpuSeconds": 0.671668,
+  "wallSeconds": 0.19714174093678594,
+  "owned": [
+    [
+      521645,
+      "117663732"
+    ],
+    [
+      521646,
+      "117663734"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-independent-atomic-edge-partitions-oct27.js"
+  ],
+  "cwd": "/tmp/airstrike-accepted-directinput-main-integration-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/edge-partitions.stdout",
+    "bytes": 12247,
+    "sha256": "828366a1e223099cd1075ebdf430bff2b04ea4c84aef02082d6c550ef04ca840"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/edge-partitions.stderr",
+    "bytes": 2134,
+    "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+  }
+}

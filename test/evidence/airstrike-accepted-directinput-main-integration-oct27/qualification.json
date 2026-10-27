@@ -1,0 +1,410 @@
+{
+  "status": "BLOCKED_CANONICAL_BUILD_GATE_NO_MAIN_PUBLICATION",
+  "main": "be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c",
+  "sourceRepair": "4a613bd1de739252c2ceebf72c32ebaf6f8ae6a1",
+  "acceptedCandidate": "6a269a769dbf99800531d01e9f3460f9f427c31f",
+  "testedIntegration": "5f4a2de27a909e46d233268e2902f059093320ae",
+  "testedTree": "ae72e430308ebdbd881c8143edee50199aaf02eb",
+  "candidateToIntegrationTreeDelta": [],
+  "productionPins": {
+    "lib/host-import-sigs.generated.json": {
+      "gitBlob": "6ef781cd6d5d5d768c5b9904328679c222842a18",
+      "sha256": "70380887a9966be790debcfe736d49e733f90f0362bcf5e20867053ffd295141"
+    },
+    "lib/host-window.js": {
+      "gitBlob": "2a26cde804a1af34386630db91ce60b386515bfc",
+      "sha256": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9"
+    },
+    "lib/renderer-input.js": {
+      "gitBlob": "a4778d19ee9ca0d7e8df919fd5393ba3c7a86f29",
+      "sha256": "0778aad2d09ecf790e816011dff29ae20009aae8b53dac769dec0979f3fc6b5a"
+    },
+    "src/09a8-handlers-directx.wat": {
+      "gitBlob": "25bb3e29b56f57458aa1701fc17c76c81b214c87",
+      "sha256": "c281b8747b5c1d74af735349c5d6a92a9c99a9611d47bb0abefdf182e21b0ba4"
+    }
+  },
+  "buildAndTestPins": {
+    "src/main.watx": {
+      "path": "src/main.watx",
+      "bytes": 5893,
+      "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+    },
+    "test/test-directinput-independent-atomic-edge-partitions-oct27.js": {
+      "path": "test/test-directinput-independent-atomic-edge-partitions-oct27.js",
+      "bytes": 3931,
+      "sha256": "63d86b87e50d80c32e6edc2a4f8e5bcaf705040cd22c0f1e72fc5e61fdbefb2b"
+    },
+    "test/test-directinput-independent-com-release-oct27.js": {
+      "path": "test/test-directinput-independent-com-release-oct27.js",
+      "bytes": 2390,
+      "sha256": "c75eb5d6cbb606e2abb49e14410f38f0b5601f047ed2e833edc8625533bfe718"
+    },
+    "test/test-directinput-independent-staged-admission-oct27.js": {
+      "path": "test/test-directinput-independent-staged-admission-oct27.js",
+      "bytes": 2219,
+      "sha256": "7cce8e809be038400deedf6e2f5c602cea5f5ad8cca2e0285f6c8c6d7f7695da"
+    },
+    "test/test-directinput-independent-worker-acquire-oct27.js": {
+      "path": "test/test-directinput-independent-worker-acquire-oct27.js",
+      "bytes": 5118,
+      "sha256": "f35fd295fdcfe32050434fda65a29ed647f2863e608dae902833ac053bad4331"
+    },
+    "tools/build-compile-wat.js": {
+      "path": "tools/build-compile-wat.js",
+      "bytes": 14826,
+      "sha256": "ef0833c055363f71f383eee1b2d285c3521d151e8a4048123c36ba920c5e6c87"
+    },
+    "tools/build.sh": {
+      "path": "tools/build.sh",
+      "bytes": 38494,
+      "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+    },
+    "tools/callback-ownership-census.js": {
+      "path": "tools/callback-ownership-census.js",
+      "bytes": 9356,
+      "sha256": "18114cbd3ad8282c222501b449851ed555cbf75259a1f31c435a47166d21ee28"
+    },
+    "tools/callback-ownership-census.json": {
+      "path": "tools/callback-ownership-census.json",
+      "bytes": 277308,
+      "sha256": "f4802a0d0755c42712c69087389d01b676355e724b6063574b5e639324eda372"
+    },
+    "tools/watx-src/CHANGELOG.md": {
+      "path": "tools/watx-src/CHANGELOG.md",
+      "bytes": 115884,
+      "sha256": "b8adf2095d221879a89f3b1f1e0aa233d8f164a4e59c4db7ddb4ed8158268021"
+    },
+    "tools/watx-src/PROVENANCE.md": {
+      "path": "tools/watx-src/PROVENANCE.md",
+      "bytes": 8451,
+      "sha256": "d0b1267d668879d917253eb419b637417baa6d9c75a8022879a9503ddc60d419"
+    },
+    "tools/watx.js": {
+      "path": "tools/watx.js",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    }
+  },
+  "regressions": {
+    "first-worker": {
+      "receipt": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/first-worker.json",
+        "bytes": 1111,
+        "sha256": "d3e56b281f828b75cafc3d23eae5f7e27e2320e5f25dc6ea41ed111bc4cd79ce"
+      },
+      "command": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "test/test-directinput-independent-worker-acquire-oct27.js"
+      ],
+      "peakRSS": 125992960,
+      "cpuSeconds": 0.734235,
+      "exit": 0,
+      "cleanupComplete": true,
+      "stdout": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/first-worker.stdout",
+        "bytes": 11999,
+        "sha256": "fd4efa57c2a9807c3ac279c5b89d98427a35800b63f5278e19b9d26b3fa85c21"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/first-worker.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      }
+    },
+    "edge-partitions": {
+      "receipt": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/edge-partitions.json",
+        "bytes": 1125,
+        "sha256": "369b2a9a7caebe0847278efcfd94e1ac6ef8b9c7111fb9270d7ce34d2660ac37"
+      },
+      "command": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "test/test-directinput-independent-atomic-edge-partitions-oct27.js"
+      ],
+      "peakRSS": 124379136,
+      "cpuSeconds": 0.671668,
+      "exit": 0,
+      "cleanupComplete": true,
+      "stdout": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/edge-partitions.stdout",
+        "bytes": 12247,
+        "sha256": "828366a1e223099cd1075ebdf430bff2b04ea4c84aef02082d6c550ef04ca840"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/edge-partitions.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      }
+    },
+    "release-direct": {
+      "receipt": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-direct.json",
+        "bytes": 1112,
+        "sha256": "96ac2af03cb237a0795d9b7baf19c1775e5d3d9dda6dec995cce1d1f6e4319ea"
+      },
+      "command": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "test/test-directinput-independent-com-release-oct27.js"
+      ],
+      "peakRSS": 109330432,
+      "cpuSeconds": 0.565442,
+      "exit": 0,
+      "cleanupComplete": true,
+      "stdout": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-direct.stdout",
+        "bytes": 12587,
+        "sha256": "44f133ad400fbe43255c66b90cada1c20079394de1d092c99cd0194ca4aea2ce"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-direct.stderr",
+        "bytes": 2552,
+        "sha256": "a43369e844a73dc328b41a98b9f68e32fd0dc6f1368523143fb3c109f2e3e943"
+      }
+    },
+    "release-rpc": {
+      "receipt": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-rpc.json",
+        "bytes": 1119,
+        "sha256": "a4b4f3185667fffe9e259dfe09c0d0947258dd865840872e944259b82a8841c6"
+      },
+      "command": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "test/test-directinput-independent-com-release-oct27.js",
+        "--rpc"
+      ],
+      "peakRSS": 113385472,
+      "cpuSeconds": 0.559777,
+      "exit": 0,
+      "cleanupComplete": true,
+      "stdout": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-rpc.stdout",
+        "bytes": 12587,
+        "sha256": "7839bc36101a36d2feb37bb9be5d865bd854dea365e458c6dd06b8a2343183f3"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/release-rpc.stderr",
+        "bytes": 2552,
+        "sha256": "a43369e844a73dc328b41a98b9f68e32fd0dc6f1368523143fb3c109f2e3e943"
+      }
+    },
+    "admission": {
+      "receipt": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/admission.json",
+        "bytes": 1107,
+        "sha256": "f962d542f25eec91ee799b5a98bec38033f1e2d0a17e5ea6d6ae52c10305071d"
+      },
+      "command": [
+        "/usr/bin/node",
+        "--max-old-space-size=512",
+        "test/test-directinput-independent-staged-admission-oct27.js"
+      ],
+      "peakRSS": 113991680,
+      "cpuSeconds": 0.521027,
+      "exit": 0,
+      "cleanupComplete": true,
+      "stdout": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/admission.stdout",
+        "bytes": 10217,
+        "sha256": "89daae069a463d2169107e1bad8bb3cb799309bd8345c2ae663569dde513d4d8"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/admission.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      }
+    }
+  },
+  "reusedAcceptance": {
+    "coordinatorVerified": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-atomic-accept-coordinator-verified.json",
+      "bytes": 1248,
+      "sha256": "18cb5dfba45889518db9b7f1e32f16ec1ce5cedd66e7cc1fca48197ae1040de1"
+    },
+    "manifest": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/receipt-manifest.json",
+      "bytes": 66985,
+      "sha256": "81ee6e414dca3d56ebdb68110593b385747c3d4a223a647d04f446b24e463448"
+    },
+    "verifiedReferencedHashes": 178,
+    "reason": "entire integrated tree equals exact accepted candidate tree; no broad regression replay"
+  },
+  "canonicalBuild": {
+    "command": [
+      "bash",
+      "tools/build.sh"
+    ],
+    "entry": "src/main.watx",
+    "result": "exit1 before WATX compilation",
+    "firstCausalFailure": {
+      "command": [
+        "node",
+        "tools/callback-ownership-census.js"
+      ],
+      "buildScriptLine": 24,
+      "stderr": "changed producer lib/renderer-input.js:host-file (sha256); review its lifetime\nchanged producer lib/thread-manager.js:host-file (sha256); review its lifetime\n",
+      "producerDrift": {
+        "lib/renderer-input.js": {
+          "expectedCensusSHA256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78",
+          "integratedSHA256": "0778aad2d09ecf790e816011dff29ae20009aae8b53dac769dec0979f3fc6b5a",
+          "currentMainSHA256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+        },
+        "lib/thread-manager.js": {
+          "expectedCensusSHA256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+          "integratedSHA256": "f4ba190b2dbf5e2cf2dac82398577bedfb13aa26d332fb7480b4d9d7e4ea2f78",
+          "currentMainSHA256": "f4ba190b2dbf5e2cf2dac82398577bedfb13aa26d332fb7480b4d9d7e4ea2f78"
+        }
+      }
+    },
+    "passed": [
+      "CLAUDE.md size",
+      "manifest:127 fragments",
+      "fragment parentheses:127 fragments"
+    ],
+    "module": null,
+    "imports": null,
+    "compilerInvoked": false,
+    "remoteNode": {
+      "exec": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "version": "v24.22.1",
+      "versions": {
+        "node": "24.22.1",
+        "acorn": "8.18.0",
+        "ada": "4.0.0",
+        "amaro": "1.1.11",
+        "ares": "1.34.9",
+        "brotli": "1.2.0",
+        "cldr": "48.0",
+        "icu": "78.3",
+        "llhttp": "9.4.3",
+        "merve": "1.2.2",
+        "modules": "137",
+        "napi": "10",
+        "nbytes": "0.1.4",
+        "ncrypto": "0.0.1",
+        "nghttp2": "1.70.0",
+        "nghttp3": "",
+        "ngtcp2": "",
+        "openssl": "3.5.9",
+        "simdjson": "4.6.11",
+        "simdutf": "6.4.0",
+        "sqlite": "3.53.4",
+        "tz": "2026e",
+        "undici": "7.30.1",
+        "unicode": "17.0",
+        "uv": "1.52.1",
+        "uvwasi": "0.0.23",
+        "v8": "13.6.233.17-node.58",
+        "zlib": "1.3.2.1-motley-285e94b",
+        "zstd": "1.5.7"
+      },
+      "flags": [
+        "-e",
+        "const fs=require(\"fs\"),c=require(\"crypto\");console.log(JSON.stringify({exec:process.execPath,version:process.version,versions:process.versions,flags:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),sha256:c.createHash(\"sha256\").update(fs.readFileSync(process.execPath)).digest(\"hex\")}))"
+      ],
+      "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             63749                63749                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       63749                63749                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+      "sha256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb"
+    },
+    "resources": {
+      "exit": 1,
+      "stopReason": null,
+      "peakRSS": 318484480,
+      "sampledPeakRSS": 318484480,
+      "reapedPeakRSS": 274653184,
+      "cpuSeconds": 6.563787,
+      "wallSeconds": 1.6396474790000184,
+      "owned": [
+        [
+          10648,
+          "71364"
+        ],
+        [
+          10649,
+          "71366"
+        ],
+        [
+          10651,
+          "71366"
+        ],
+        [
+          10659,
+          "71368"
+        ],
+        [
+          10666,
+          "71369"
+        ],
+        [
+          10673,
+          "71409"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "preflight": {
+      "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/remote-retained/outputs/preflight.json",
+      "bytes": 1994,
+      "sha256": "8853dc47184b81cb4a931bf387b1e7294c3bce63d8b566452d9c5a2473f34516"
+    },
+    "sourceManifest": {
+      "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/source-manifest.json",
+      "bytes": 597621,
+      "sha256": "78bfd584d01d9f30208e5b97a9a40356a5cbcb991d9bf3f12f3f49ca4a69e3a3"
+    },
+    "sourceArchive": {
+      "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/build-source.tar.gz",
+      "bytes": 16104020,
+      "sha256": "87916e3d000f95ad67be9593f2ad868e8b710d0fbf440c49b93b8879c7a985d1"
+    },
+    "stagedSourceArchive": {
+      "box": "bx_cdarggww",
+      "remote": "/home/user/airstrike-atomic-build-oct27",
+      "archiveBytes": 16104020,
+      "chunks": 328,
+      "duration": 42.6213436126709,
+      "api": "boat --no-update --json exec --timeout15 BOX python3 -c CODE; no SSH"
+    },
+    "recovery": "See recovery.txt; failed canonical input retained. No successful exact-input compile exists to reuse."
+  },
+  "publication": {
+    "taskBranch": "refs/heads/task/airstrike-accepted-directinput-main-integration-oct27",
+    "initialIntegrationCommit": "5f4a2de27a909e46d233268e2902f059093320ae",
+    "initialRemoteVerified": {
+      "path": "/tmp/airstrike-accepted-directinput-main-integration-oct27/ops/remote-task.stdout",
+      "bytes": 168,
+      "sha256": "831ff8bec4f4e162589f7c03687d85163a6bb37224dc6d94de50f91c7c8ff5e2"
+    },
+    "mainPublished": false,
+    "finalEvidenceCommit": "canonical ops receipt records final commit after this evidence is committed"
+  },
+  "cleanup": {
+    "box": "bx_cdarggww",
+    "state": "stopped",
+    "stoppedAt": "2026-10-27T19:36:17.267Z",
+    "snapshotVerifiedAt": "2026-10-27T19:36:17.198Z",
+    "stop": {
+      "endedAt": "2026-10-27T19:36:17.297Z",
+      "error": null,
+      "id": "stop_f6e69bc857bc0157",
+      "lastAttemptAt": "2026-10-27T19:36:17.297Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "expiry": null,
+    "delegatedShutdownOwner": "this worker; completed",
+    "supervisedBuildChildrenReaped": true,
+    "runtimeGameInvocations": 0,
+    "browserInvocations": 0,
+    "otherWorkersLaunched": 0
+  },
+  "limitations": [
+    "Accepted fragment/host/OS Worker behavior passes; canonical module compilation did not run.",
+    "No production allocator/thunk/full-module/browser/gameplay/original-game consumption claim.",
+    "No source or census pins were modified to bypass the rejection.",
+    "Physical left/right fidelity remains outside acceptance."
+  ]
+}
