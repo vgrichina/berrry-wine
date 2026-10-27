@@ -1,0 +1,62 @@
+{
+  "at": 1793069572.3489122,
+  "peers": [
+    {
+      "path": "/tmp/airstrike-sustained-gameplay-oct27",
+      "measured": 4151994,
+      "allocationMiB": 48
+    },
+    {
+      "path": "/tmp/alien-supervisor-owned-independent-accept-oct27",
+      "measured": 3007959,
+      "allocationMiB": 32
+    },
+    {
+      "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27",
+      "measured": 328898,
+      "allocationMiB": 32
+    },
+    {
+      "path": "/tmp/madbomber-retained-launch-recovery-oct27",
+      "measured": 977565,
+      "allocationMiB": 32
+    }
+  ],
+  "otherRemaining": 142528528,
+  "ownAllocation": 33554432,
+  "components": {
+    "sourceGit": 8388608,
+    "externalPositiveGrowth": 8388608,
+    "testsEvidencePublication": 8388608,
+    "reserve": 8388608
+  },
+  "externalBaseline": {
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/root-ref-digest.json": 196,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/events.jsonl": 113395,
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T02-51-56-01a17b45-8712-7753-b4c1-2976290c2b0b.jsonl": 395499,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 4177712,
+    "/home/user/.codex/state_5.sqlite-wal": 4396072,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4346632
+  },
+  "free": 3188043776,
+  "MemAvailable": 3820941312,
+  "workers": [
+    {
+      "pid": 3574161,
+      "rss": 194482176
+    },
+    {
+      "pid": 3576609,
+      "rss": 192741376
+    }
+  ],
+  "memoryRequired": 1275068416,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mount": "NO MOUNT/guest/Node permitted; canonical donor receipt is historical only",
+  "projectedFree": 3011960816,
+  "pass": true
+}

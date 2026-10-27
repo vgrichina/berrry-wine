@@ -1,0 +1,172 @@
+{
+  "status": "BLOCKED_RESOURCE_PUBLICATION_NOT_ATTEMPTED",
+  "at": 1793070134.3242862,
+  "branch": "task/penguin-capture-harness-contract-repair-oct27",
+  "baseCommit": "d9cabfa58c3c54c9e66b7315c02ec4826fcfaa15",
+  "taskCommit": null,
+  "remoteVerification": "NOT ATTEMPTED; no remote backup of new implementation",
+  "source": {
+    "/tmp/penguin-capture-harness-contract-repair-oct27/repo/tools/penguin_capture_contract.py": {
+      "bytes": 16534,
+      "sha256": "ed1828a46ea699e21f5ab68893b62bbe6e050884898725dbd0226de44d28573a"
+    },
+    "/tmp/penguin-capture-harness-contract-repair-oct27/repo/test/test_penguin_capture_contract.py": {
+      "bytes": 12511,
+      "sha256": "6119f90857c8328706d9bf05153ae78cacc309c08b6df36b49257b12deae4dfe"
+    }
+  },
+  "initialRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/root-ref-digest.json",
+  "remainingBlocker": {
+    "diagnostic": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/admission-tests-retained.json",
+    "projectedFree": 2975614646,
+    "requiredFloor": 2982150144,
+    "shortfall": 6535498,
+    "owner": "coordinator",
+    "resumeCondition": "actual capacity/reservation change and fresh passing admission; no unchanged retry"
+  },
+  "incidents": [
+    "Initial policy/source excerpts exceeded8192; no complete excerpt-compliance claim.",
+    "Final test launch was mistakenly not conditioned on failed immediately preceding admission; completed under resource guard, but admission compliance REJECTED. No further tests/Git executed after detection."
+  ],
+  "tests": {
+    "methods": 6,
+    "result": "PASS behavior only; final run NOT admission compliant",
+    "evidence": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/tests-retained.log",
+    "supervisor": {
+      "exitCode": 0,
+      "peakGroupRSS": 59019264,
+      "wall": 4.046550987986848,
+      "reason": "natural",
+      "limits": {
+        "physical": 134217728,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152
+      },
+      "DATAandAS": "unchanged",
+      "poolSlots": 1,
+      "supervisorSHA256": "55dddd318534a36a0735afb052f358aca77f4bc1015e5d16fa6f0a8d706801a0"
+    },
+    "earlierPassingRun": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/tests-final-supervisor.json",
+    "retainedLaunchReceipts": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/offline-receipts"
+  },
+  "oldFailures": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/old-contract-reproductions.json",
+  "transport": {
+    "pair": "UNSUPPORTED_PLAN under1MiB including base64+JSON; no collection",
+    "individualFixtures": "Both retained full PNGs roundtrip exactly under separate hypothetical offline plans, never a reset actual pair ledger.",
+    "apiCumulative": 1048576,
+    "text": 2097152,
+    "pngEach": 4194304,
+    "selectedLocal": 8388608,
+    "remote": 16777216
+  },
+  "referencePins": {
+    "runner": "3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e",
+    "historicalModule": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "exe": "14d6e430c26c44c94ef5c176eca2f66edd82dd66fd155d29a5596e3d6e170fc1"
+  },
+  "cleanup": {
+    "watcher": "sent SIGTERM to own board watcher3577763",
+    "fixturePids": [
+      {
+        "pid": 3585531,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585543,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585545,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585547,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585549,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585551,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585553,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585558,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585559,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585561,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585590,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585592,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585599,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585602,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      },
+      {
+        "pid": 3585604,
+        "ownedGroupAbsentAtExit": true,
+        "pidPresentNow": false
+      }
+    ],
+    "temporaryFixtureDirs": []
+  },
+  "runtime": {
+    "actions": "NONE; no guest/Node/browser/build/Boat/SSH executed",
+    "box": "bx_pj94q932",
+    "state": "STOPPED per coordinator receipt; no access/resume",
+    "owner": "coordinator",
+    "expiry": "historical2026-10-27T03:34:40Z; not a current runtime allocation"
+  },
+  "qualification": "Offline recipe only, no current-main/Node/gameplay qualification. Numerical A40033 count0to1 ammo10to9 unchanged; full before39999/after40060 no identifiable A-fired projectile.",
+  "remainingRuntimeGate": "After independent source/test review and publication: separately authorize actual permitted Node executable/flags/explicit env/unchanged supervisor limits startup then guest in one invocation; canonical filename/mount parser including commas and exact production closure pins; provider all-response framing and remaining cumulative budget. Retained pair is unsupported with this codec/cap, so no collection unless a different independently verified lossless plan fits without raising cap. No numerical acceptance rerun authorized.",
+  "limits": {
+    "totalLocal": 33554432,
+    "sourceGit": 8388608,
+    "externalPositiveGrowth": 8388608,
+    "testsEvidencePublication": 8388608,
+    "futureReserve": 8388608,
+    "clientReserve": 335544320,
+    "physicalHeadroom": 805306368,
+    "ordinaryExcerpt": 8192,
+    "cumulativeToolText": 1048576,
+    "Git": "permit2 then flock; direct Git physical256MiB DATA512MiB only; no publication after denial"
+  },
+  "ownership": "Only owned paths plus append-only messageboard; no donor/root tracked/index/ref writes; Claude idle/HeroesII laptop unchanged"
+}

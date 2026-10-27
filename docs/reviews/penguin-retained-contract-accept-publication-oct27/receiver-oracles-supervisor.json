@@ -1,0 +1,23 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 41811968,
+  "sampledPeakRSS": 41811968,
+  "reapedPeakRSS": 22802432,
+  "cpuSeconds": 0.11479899999999998,
+  "wallSeconds": 0.06935129500925541,
+  "owned": [
+    [
+      3596724,
+      "111778755"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/test_penguin_capture_independent_acceptance.py",
+    "EntryBoundary.test_04_payload_digest_and_cumulative_receiver_budget"
+  ],
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "DATA": "unchanged"
+}

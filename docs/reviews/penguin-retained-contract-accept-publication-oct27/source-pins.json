@@ -1,0 +1,9 @@
+{
+  "base": "d9cabfa58c3c54c9e66b7315c02ec4826fcfaa15",
+  "pins": {
+    "tools/penguin_capture_contract.py": "ed1828a46ea699e21f5ab68893b62bbe6e050884898725dbd0226de44d28573a",
+    "test/test_penguin_capture_contract.py": "6119f90857c8328706d9bf05153ae78cacc309c08b6df36b49257b12deae4dfe"
+  },
+  "retainedManifestEntriesVerified": 45,
+  "oldIncident": "final group behavior PASS, admission compliance REJECT; not compliant PASS"
+}

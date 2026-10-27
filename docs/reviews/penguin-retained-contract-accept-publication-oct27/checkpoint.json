@@ -1,0 +1,34 @@
+{
+  "status": "ACCEPTED_OFFLINE_PUBLICATION_PENDING",
+  "base": "d9cabfa58c3c54c9e66b7315c02ec4826fcfaa15",
+  "sourcePins": "source-pins.json",
+  "completed": [
+    "45 retained manifest entries rehashed",
+    "WIP copied",
+    "fresh gate PASS",
+    "actual pinned Python CLI: identity mismatch rejects before either child; frozen positive and pre-second-phase mutation rejection; PNG exact/one-over budget and corrupted wire rejection",
+    "remaining resource/owned-descendant-cleanup group PASS with fresh admission and pinned supervisor",
+    "independent receiver digest and cumulative-budget discriminating checks PASS",
+    "unchanged source/test pins and retained PNG pins verified"
+  ],
+  "remaining": [
+    "commit and task push/exact remote verify",
+    "separate integration and future genuinely admitted actual Node/gameplay proof"
+  ],
+  "testedSource": "ed1828a46ea699e21f5ab68893b62bbe6e050884898725dbd0226de44d28573a",
+  "independentFixture": "55510348810ba6d56974e599705c63af67b3c49a8dfbfd3197c1784ef09b8f88",
+  "evidence": [
+    "independent-boundary-supervisor.json",
+    "independent-boundary.log",
+    "independent-receipts",
+    "compliant-final.log",
+    "compliant-final-supervisor.json",
+    "admission-compliant-final.json",
+    "compliant-final-group",
+    "receiver-oracles-supervisor.json",
+    "receiver-oracles.log",
+    "independent-receipts/05-receiver-oracles.json"
+  ],
+  "fixtureSHA256": "0650fd41ea3380b89ef538ac215a04775837e79454abdccc14dadbeb83c6732c",
+  "fixtureChange": "Added only receiver-oracle method after first three independent methods passed; first three unchanged and reused"
+}

@@ -1,0 +1,62 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 89460736,
+  "sampledPeakRSS": 89460736,
+  "reapedPeakRSS": 30801920,
+  "cpuSeconds": 1.896413,
+  "wallSeconds": 0.6734389688353986,
+  "owned": [
+    [
+      3595393,
+      "111773004"
+    ],
+    [
+      3595394,
+      "111773015"
+    ],
+    [
+      3595395,
+      "111773021"
+    ],
+    [
+      3595396,
+      "111773027"
+    ],
+    [
+      3595397,
+      "111773032"
+    ],
+    [
+      3595398,
+      "111773037"
+    ],
+    [
+      3595399,
+      "111773043"
+    ],
+    [
+      3595400,
+      "111773047"
+    ],
+    [
+      3595401,
+      "111773053"
+    ],
+    [
+      3595402,
+      "111773057"
+    ],
+    [
+      3595403,
+      "111773061"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/test_penguin_capture_independent_acceptance.py"
+  ],
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "DATA": "unchanged"
+}

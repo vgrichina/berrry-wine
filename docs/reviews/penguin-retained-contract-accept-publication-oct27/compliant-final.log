@@ -1,0 +1,6 @@
+test_resource_guards_and_owned_descendant_cleanup (__main__.LaunchTests.test_resource_guards_and_owned_descendant_cleanup) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.554s
+
+OK

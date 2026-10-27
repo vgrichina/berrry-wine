@@ -1,0 +1,37 @@
+{
+  "pngSHA256": "4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5",
+  "positive": {
+    "images": [
+      {
+        "name": "comma,image.png",
+        "size": 70,
+        "sha256": "4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5",
+        "compressed": 69,
+        "chunks": 1
+      }
+    ],
+    "serialized_bytes": 656,
+    "used": 0,
+    "tail_reserve": 17,
+    "total": 673
+  },
+  "exact": {
+    "images": [
+      {
+        "name": "comma,image.png",
+        "size": 70,
+        "sha256": "4ff6ab670a58c14270e034e2090d9a432caa263a14e0a25785386b0c12f880b5",
+        "compressed": 69,
+        "chunks": 1
+      }
+    ],
+    "serialized_bytes": 656,
+    "used": 1047903,
+    "tail_reserve": 17,
+    "total": 1048576
+  },
+  "oneByteOver": {
+    "status": "REJECT",
+    "error": "UNSUPPORTED_PLAN: lossless payload + base64 + ALL JSON framing exceeds remaining API budget; used=1047904 transfer=656 tail=17 cap=1048576"
+  }
+}

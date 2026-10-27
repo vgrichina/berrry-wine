@@ -1,0 +1,35 @@
+{
+  "historicalEnvironmentMismatch": true,
+  "differingVariables": "UNKNOWN; hashes alone do not establish cause",
+  "oldGate": "exitCode only; no pre-guest environment identity comparison",
+  "oldAPIGate": "bounds history metadata file, not cumulative serialized responses",
+  "historicalSerializedBytes": 2429129,
+  "apiCap": 1048576,
+  "images": [
+    {
+      "path": "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b39999.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972",
+      "zlibBytes": 764394,
+      "base64Bytes": 1019192
+    },
+    {
+      "path": "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b40060.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754",
+      "zlibBytes": 771120,
+      "base64Bytes": 1028160
+    }
+  ],
+  "sourceHashes": {
+    "supervise.py": "b75b5f387618ade3a3d0744172afb9679ec60e121f610107edea00caf811d4f9",
+    "startup.cjs": "ac510b58bb2c9dcd130831f78c0ed0b2d5ade49e9879b1397ab04dc5a926dfb5",
+    "execute.py": "88a0f1190ee9714a1c58427f3ba3316845a38e31b48399ab4068f6b9248ea465",
+    "work.py": "94b11fe95e224d615c1a2f75498486b4aaf53347f4e659d06f41f9da37eede56",
+    "collect.py": "f442c6bcc803ad543fac17d82f574c4454b49030bf73bfbdc594b2b6334ec157",
+    "launch-config.json": "859ca1e4a3a1f82e6eb35ada1c8172dcb9bba555c75cedefbb72ebba871ca623",
+    "verification.json": "9c453414d8471d3a587b44a737b60aced9736b8fa22d8a8fcbc7486ba7aeec31",
+    "incidents.json": "88d936e17db7d0917d0a415352c80039e8d3d9405982ade2a15f1e3b8abf6dde"
+  },
+  "initialExcerptIncident": "First policy/source tool responses exceeded ordinary8192 excerpt; retained, subsequent output bounded; no blanket excerpt compliance claim"
+}

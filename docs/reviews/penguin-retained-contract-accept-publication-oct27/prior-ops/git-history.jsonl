@@ -1,0 +1,5 @@
+{"argv": ["init", "--quiet"], "exit": 0, "peak": 4247552, "guard": [], "outputBytes": 0}
+{"argv": ["config", "gc.auto", "0"], "exit": 0, "peak": 0, "guard": [], "outputBytes": 0}
+{"argv": ["config", "core.sparseCheckout", "true"], "exit": 0, "peak": 0, "guard": [], "outputBytes": 0}
+{"argv": ["checkout", "-b", "task/penguin-capture-harness-contract-repair-oct27", "d9cabfa58c3c54c9e66b7315c02ec4826fcfaa15"], "exit": 0, "peak": 11321344, "guard": [], "outputBytes": 78}
+{"argv": ["remote", "add", "origin", "git@github.com:vgrichina/wine-assembly.git"], "exit": 0, "peak": 0, "guard": [], "outputBytes": 0}

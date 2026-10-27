@@ -1,0 +1,16 @@
+{
+  "exitCode": 0,
+  "peakGroupRSS": 58847232,
+  "wall": 4.180643015075475,
+  "reason": "natural",
+  "limits": {
+    "physical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "DATAandAS": "unchanged",
+  "poolSlots": 1,
+  "supervisorSHA256": "55dddd318534a36a0735afb052f358aca77f4bc1015e5d16fa6f0a8d706801a0"
+}

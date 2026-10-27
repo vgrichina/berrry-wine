@@ -1,0 +1,10 @@
+test_initial_identity_and_ambient_inheritance_rejected_before_startup (__main__.LaunchTests.test_initial_identity_and_ambient_inheritance_rejected_before_startup) ... ok
+test_pre_guest_changes_and_startup_failure_start_zero_guests (__main__.LaunchTests.test_pre_guest_changes_and_startup_failure_start_zero_guests) ... ok
+test_real_entrypoint_same_frozen_configuration (__main__.LaunchTests.test_real_entrypoint_same_frozen_configuration) ... ok
+test_aggregate_budget_framing_and_truncation_boundaries (__main__.TransportTests.test_aggregate_budget_framing_and_truncation_boundaries) ... ok
+test_exact_retained_images_roundtrip_individually_pair_is_unsupported (__main__.TransportTests.test_exact_retained_images_roundtrip_individually_pair_is_unsupported) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.254s
+
+OK

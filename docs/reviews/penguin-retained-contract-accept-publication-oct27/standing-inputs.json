@@ -1,0 +1,27 @@
+{
+  "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b39999.png": {
+    "bytes": 806077,
+    "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972",
+    "newTaskBytes": 0
+  },
+  "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b40060.png": {
+    "bytes": 811393,
+    "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754",
+    "newTaskBytes": 0
+  },
+  "/usr/bin/python3.12": {
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+    "newTaskBytes": 0
+  },
+  "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py": {
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "newTaskBytes": 0
+  },
+  "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py": {
+    "bytes": 1151,
+    "sha256": "881b0bf09e2791ce85c757770efe27937f661e2934787f6c751d62075f5d761b",
+    "newTaskBytes": 0
+  }
+}

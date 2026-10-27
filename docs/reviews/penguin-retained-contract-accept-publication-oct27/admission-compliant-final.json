@@ -1,0 +1,42 @@
+{
+  "at": 1793070539.5366676,
+  "ownAllocated": 1724416,
+  "externalPositiveGrowth": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 0,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 0,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-retained-contract-accept-publication-oct27/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-retained-contract-accept-publication-oct27/root-ref-digest.json": 196,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-retained-contract-accept-publication-oct27/events.jsonl": 207348,
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T03-06-05-01a17b52-78c7-7041-8889-467b327f252e.jsonl": 609905
+  },
+  "future": 111036119,
+  "free": 3137183744,
+  "projected": 3026147625,
+  "floor": 2982150144,
+  "memAvailable": 3768541184,
+  "physicalFloor": 1946157056,
+  "sourceGit": 1359872,
+  "evidence": 360448,
+  "allocations": {
+    "total": 33554432,
+    "sourceGit": 8388608,
+    "events": 8388608,
+    "evidence": 8388608,
+    "reserve": 8388608
+  },
+  "peers": [
+    [
+      "/tmp/airstrike-focus-menu-independent-accept-oct27",
+      33554432
+    ],
+    [
+      "/tmp/enigma-retained-integration-allocation-recovery-oct27",
+      50331648
+    ]
+  ],
+  "pass": true
+}

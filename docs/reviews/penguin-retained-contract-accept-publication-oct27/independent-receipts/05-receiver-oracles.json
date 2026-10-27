@@ -1,0 +1,6 @@
+{
+  "sha256MismatchRejected": true,
+  "cumulativeOneByteOverflowRejected": true,
+  "opaqueTransportFixture": true,
+  "visualPNGValidationClaim": false
+}

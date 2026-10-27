@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "profile_digest",
+    "argvBoundary": "actual CLI supervise",
+    "returncode": 2,
+    "stdout": "{\"status\": \"REJECT\", \"error\": \"intended profile hash mismatch\"}\n",
+    "startupAbsent": true,
+    "guestAbsent": true
+  },
+  {
+    "kind": "executable_digest",
+    "argvBoundary": "actual CLI supervise",
+    "returncode": 2,
+    "stdout": "{\"status\": \"REJECT\", \"error\": \"executable changed\"}\n",
+    "startupAbsent": true,
+    "guestAbsent": true
+  }
+]

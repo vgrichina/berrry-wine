@@ -1,0 +1,50 @@
+{
+  "at": 1793069923.8646812,
+  "ownBytes": 1211694,
+  "externalPositiveGrowth": 259647,
+  "externalByPath": {
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/stderr.log": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/root-ref-digest.json": 0,
+    "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/events.jsonl": 33008,
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T02-51-56-01a17b45-8712-7753-b4c1-2976290c2b0b.jsonl": 226639,
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 0,
+    "/home/user/.codex/queue_1.sqlite-wal": 0,
+    "/home/user/.codex/goals_1.sqlite-wal": 0,
+    "/home/user/.codex/state_5.sqlite-wal": 0,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 0
+  },
+  "peers": [
+    {
+      "path": "/tmp/airstrike-sustained-gameplay-oct27",
+      "measured": 4151994,
+      "allocationMiB": 48
+    },
+    {
+      "path": "/tmp/alien-supervisor-owned-independent-accept-oct27",
+      "measured": 3007959,
+      "allocationMiB": 32
+    },
+    {
+      "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27",
+      "measured": 328898,
+      "allocationMiB": 32
+    },
+    {
+      "path": "/tmp/madbomber-retained-launch-recovery-oct27",
+      "measured": 1235838,
+      "allocationMiB": 32
+    }
+  ],
+  "otherRemaining": 142270255,
+  "ownRemaining": 32083091,
+  "free": 3174998016,
+  "projectedFree": 3000644670,
+  "MemAvailable": 3696521216,
+  "memoryRequired": 1275068416,
+  "sourceGitBytes": 1192514,
+  "opsBytes": 19180,
+  "allocation": 33554432,
+  "reserve": 8388608,
+  "pass": true
+}

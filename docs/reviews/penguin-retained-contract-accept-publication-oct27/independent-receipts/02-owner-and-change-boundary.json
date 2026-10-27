@@ -1,0 +1,227 @@
+[
+  {
+    "change": false,
+    "returncode": 0,
+    "receipt": {
+      "environment": {
+        "LC_ALL": "C.UTF-8",
+        "TZ": "UTC"
+      },
+      "environment_sha256": "2748a3d49a6bad21d16a8e730c7098a20473584251e2bf67a4213a1a446ad754",
+      "executable": "/usr/bin/python3.12",
+      "executable_sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "flags": [
+        "-S"
+      ],
+      "guest_starts": 1,
+      "limits": {
+        "AS": [
+          -1,
+          -1
+        ],
+        "CPU": [
+          90,
+          90
+        ],
+        "DATA": [
+          -1,
+          -1
+        ],
+        "FSIZE": [
+          4194304,
+          4194304
+        ],
+        "RSS": [
+          -1,
+          -1
+        ]
+      },
+      "phases": [
+        {
+          "actual_limits": {
+            "AS": [
+              -1,
+              -1
+            ],
+            "CPU": [
+              90,
+              90
+            ],
+            "DATA": [
+              -1,
+              -1
+            ],
+            "FSIZE": [
+              4194304,
+              4194304
+            ],
+            "RSS": [
+              -1,
+              -1
+            ]
+          },
+          "argv": [
+            "/usr/bin/python3.12",
+            "-S",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmp81oyfd3k/phase.py",
+            "startup",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmp81oyfd3k"
+          ],
+          "environment_sha256": "2748a3d49a6bad21d16a8e730c7098a20473584251e2bf67a4213a1a446ad754",
+          "owned_group_absent": true,
+          "peak_rss": 11898880,
+          "pid": 3595397,
+          "reason": "natural",
+          "returncode": 0,
+          "stage": "startup"
+        },
+        {
+          "actual_limits": {
+            "AS": [
+              -1,
+              -1
+            ],
+            "CPU": [
+              90,
+              90
+            ],
+            "DATA": [
+              -1,
+              -1
+            ],
+            "FSIZE": [
+              4194304,
+              4194304
+            ],
+            "RSS": [
+              -1,
+              -1
+            ]
+          },
+          "argv": [
+            "/usr/bin/python3.12",
+            "-S",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmp81oyfd3k/phase.py",
+            "guest",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmp81oyfd3k"
+          ],
+          "environment_sha256": "2748a3d49a6bad21d16a8e730c7098a20473584251e2bf67a4213a1a446ad754",
+          "owned_group_absent": true,
+          "peak_rss": 11841536,
+          "pid": 3595398,
+          "reason": "natural",
+          "returncode": 0,
+          "stage": "guest"
+        }
+      ],
+      "profile_sha256": "772f91ace6c2186e93d5a442e4bab8c34b1583f858599b08a30e808699300dc6",
+      "resources": {
+        "api": 1048576,
+        "guest_wall": 5,
+        "png": 4194304,
+        "remote": 16777216,
+        "rss": 33554432,
+        "selected": 8388608,
+        "startup_wall": 5,
+        "text": 2097152,
+        "total_wall": 15
+      },
+      "status": "PASS_OFFLINE_RECIPE",
+      "text_bytes": 0
+    }
+  },
+  {
+    "change": true,
+    "returncode": 2,
+    "receipt": {
+      "environment": {
+        "LC_ALL": "C.UTF-8",
+        "TZ": "UTC"
+      },
+      "environment_sha256": "2748a3d49a6bad21d16a8e730c7098a20473584251e2bf67a4213a1a446ad754",
+      "error": "profile changed before guest",
+      "executable": "/usr/bin/python3.12",
+      "executable_sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "flags": [
+        "-S"
+      ],
+      "guest_starts": 0,
+      "limits": {
+        "AS": [
+          -1,
+          -1
+        ],
+        "CPU": [
+          90,
+          90
+        ],
+        "DATA": [
+          -1,
+          -1
+        ],
+        "FSIZE": [
+          4194304,
+          4194304
+        ],
+        "RSS": [
+          -1,
+          -1
+        ]
+      },
+      "phases": [
+        {
+          "actual_limits": {
+            "AS": [
+              -1,
+              -1
+            ],
+            "CPU": [
+              90,
+              90
+            ],
+            "DATA": [
+              -1,
+              -1
+            ],
+            "FSIZE": [
+              4194304,
+              4194304
+            ],
+            "RSS": [
+              -1,
+              -1
+            ]
+          },
+          "argv": [
+            "/usr/bin/python3.12",
+            "-S",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmpczx_ije3/phase.py",
+            "startup",
+            "/tmp/penguin-retained-contract-accept-publication-oct27/repo/test/tmpczx_ije3"
+          ],
+          "environment_sha256": "2748a3d49a6bad21d16a8e730c7098a20473584251e2bf67a4213a1a446ad754",
+          "owned_group_absent": true,
+          "peak_rss": 12029952,
+          "pid": 3595400,
+          "reason": "natural",
+          "returncode": 0,
+          "stage": "startup"
+        }
+      ],
+      "profile_sha256": "e4b1809754aae37a9eb3b6d5b25304424219a3e686db1492a3ccafa200d98a07",
+      "resources": {
+        "api": 1048576,
+        "guest_wall": 5,
+        "png": 4194304,
+        "remote": 16777216,
+        "rss": 33554432,
+        "selected": 8388608,
+        "startup_wall": 5,
+        "text": 2097152,
+        "total_wall": 15
+      },
+      "status": "REJECT",
+      "text_bytes": 0
+    }
+  }
+]

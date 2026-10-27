@@ -1,0 +1,8 @@
+test_01_identity_mismatch_before_any_child (__main__.EntryBoundary.test_01_identity_mismatch_before_any_child) ... ok
+test_02_same_owner_positive_and_pre_guest_change (__main__.EntryBoundary.test_02_same_owner_positive_and_pre_guest_change) ... ok
+test_03_png_cli_budget_boundary (__main__.EntryBoundary.test_03_png_cli_budget_boundary) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.570s
+
+OK

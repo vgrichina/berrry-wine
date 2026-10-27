@@ -1,0 +1,7 @@
+{
+  "lossless": true,
+  "digestMismatchRejected": true,
+  "missingTruncatedExtraFramingRejected": true,
+  "chargedOnce": 663,
+  "apiCap": 1048576
+}

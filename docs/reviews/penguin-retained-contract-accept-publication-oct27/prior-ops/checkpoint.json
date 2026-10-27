@@ -1,0 +1,26 @@
+{
+  "status": "BLOCKED_RESOURCE_PUBLICATION_NOT_ATTEMPTED",
+  "result": "/tmp/penguin-capture-harness-contract-repair-oct27/ops/result.json",
+  "source": {
+    "/tmp/penguin-capture-harness-contract-repair-oct27/repo/tools/penguin_capture_contract.py": {
+      "bytes": 16534,
+      "sha256": "ed1828a46ea699e21f5ab68893b62bbe6e050884898725dbd0226de44d28573a"
+    },
+    "/tmp/penguin-capture-harness-contract-repair-oct27/repo/test/test_penguin_capture_contract.py": {
+      "bytes": 12511,
+      "sha256": "6119f90857c8328706d9bf05153ae78cacc309c08b6df36b49257b12deae4dfe"
+    }
+  },
+  "completed": [
+    "two old failures reproduced offline",
+    "new module and CLI implemented",
+    "six discriminating groups behavior PASS",
+    "owned fixture groups cleanup PASS"
+  ],
+  "remaining": [
+    "resource admission after actual change",
+    "review, commit and exact-ref push+verification",
+    "recipe/qualification publication",
+    "independent actual future Node/game gate"
+  ]
+}
