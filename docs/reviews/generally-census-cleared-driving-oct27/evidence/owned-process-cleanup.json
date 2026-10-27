@@ -1,0 +1,17 @@
+{
+  "at": 1793105460.161761,
+  "ownedSurvivors": [],
+  "supervisorCleanupComplete": true,
+  "exit": 1,
+  "stopReason": null,
+  "nodeTerminalStatus": "closed stdout after bridge ACK timeout; EPIPE retained; supervisor owns full cleanup",
+  "uncertainStepNotReplayed": true,
+  "heldDrivingKeys": [],
+  "drivingInputDispatched": false,
+  "ordinaryQuit": "not attempted after uncertain loading step",
+  "box": "bx_kx2vf4s8",
+  "expiry": "2026-10-27T13:20:39.001Z",
+  "lifecycleMutation": false,
+  "shutdownOwner": "coordinator",
+  "remoteAllocated": 126070784
+}

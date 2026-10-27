@@ -1,0 +1,41 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 49471488,
+  "sampledPeakRSS": 49471488,
+  "reapedPeakRSS": 12582912,
+  "cpuSeconds": 1.482834,
+  "wallSeconds": 1.457740968093276,
+  "owned": [
+    [
+      94051,
+      "115275552"
+    ],
+    [
+      94052,
+      "115275554"
+    ],
+    [
+      94053,
+      "115275554"
+    ],
+    [
+      94054,
+      "115275554"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/generally-census-cleared-driving-oct27/repo",
+    "ls-remote",
+    "--exit-code",
+    "origin",
+    "refs/heads/task/generally-census-cleared-driving-oct27"
+  ],
+  "commandSHA256": "9095b846621562e814f43d25a4028aff8b96728aba8ca371a17e39854b341799"
+}

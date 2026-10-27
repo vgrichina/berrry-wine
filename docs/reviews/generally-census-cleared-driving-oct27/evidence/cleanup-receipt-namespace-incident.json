@@ -1,0 +1,9 @@
+{
+  "cause": "semantic receipt used same basename as outer supervisor operation; wrapper overwrote semantic JSON after child exit",
+  "originalSemanticPreserved": "owned-cleanup.stdout",
+  "originalWrapperPreserved": "owned-cleanup.json",
+  "correctedSemantic": "owned-process-cleanup.json",
+  "guestReplayed": false,
+  "remoteAccessRepeated": false,
+  "repair": "recover original exact stdout JSON, give semantic receipt a distinct name; exclude payload manifest itself on report refresh"
+}

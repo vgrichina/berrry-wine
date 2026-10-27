@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/generally-census-cleared-driving-oct27/ops/finalize.py", line 7, in <module>
+    assert json.loads((H/'owned-cleanup.json').read_text())['ownedSurvivors']==[]
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'ownedSurvivors'
