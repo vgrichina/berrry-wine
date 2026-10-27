@@ -1,0 +1,11 @@
+{"command": {"action": "snapshot"}, "pid": 4165718, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4165718, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4165718, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4165718, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4165718, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-review-budget-independent-accept-oct27/ops/first-boundary/original/launch/controller/menu-candidate.png"}, "pid": 4165718, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4165718, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4165718, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4165718, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-review-budget-independent-accept-oct27/ops/first-boundary/original/launch/controller/menu-candidate-002.png"}, "pid": 4165718, "batch": 3}
+{"command": {"action": "quit"}, "pid": 4165718, "batch": 3}

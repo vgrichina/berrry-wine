@@ -1,0 +1,57 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 81555456,
+  "sampledPeakRSS": 81555456,
+  "reapedPeakRSS": 30609408,
+  "cpuSeconds": 3.391779,
+  "wallSeconds": 1.3364905850030482,
+  "owned": [
+    [
+      4166198,
+      "114685119"
+    ],
+    [
+      4166199,
+      "114685132"
+    ],
+    [
+      4166201,
+      "114685138"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-review-budget-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-transfer.py",
+    "--boundary",
+    "/tmp/enigma-review-budget-independent-accept-oct27/ops/transfer-slot",
+    "34",
+    "{\"checkpoint_seconds\":[0.25,33.75],\"progress_seconds\":45}"
+  ],
+  "commandSHA256": "5116906e6387a6995083262bb362552be9e099614d249d5f872b1d0222fa7abb",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "e07d4974b1bd4456dd71208fe73fdbb616705680427e801d3a5619380f9a290e",
+  "stdout": "/tmp/enigma-review-budget-independent-accept-oct27/ops/transfer-slot.stdout",
+  "stderr": "/tmp/enigma-review-budget-independent-accept-oct27/ops/transfer-slot.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

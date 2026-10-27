@@ -1,0 +1,6 @@
+{
+  "mount": "N/A offline HTTP fixture only; no guest mount argv",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "candidate": "8ff456e70baa82386e4e51c22f7174409746d326",
+  "canonicalManifestSHA256": "0b7137b0a5f19b8d2eead939dbd7eebf1b163c815cccbd27db05c8351fbfe229"
+}

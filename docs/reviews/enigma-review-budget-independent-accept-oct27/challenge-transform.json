@@ -1,0 +1,5 @@
+{
+  "baseSHA256": "6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461",
+  "resultSHA256": "6761f917576bc9360066f39164fb91954677e8233180d090be8bc574a88cebb7",
+  "changes": "only fixture transport delay placement and delay metadata; production controller/supervisor unchanged"
+}

@@ -1,0 +1,16 @@
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4167031, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4167031, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-review-budget-independent-accept-oct27/ops/local-frame-slot/launch/controller/menu-candidate.png"}, "pid": 4167031, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4167031, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-review-budget-independent-accept-oct27/ops/local-frame-slot/launch/controller/menu-candidate-002.png"}, "pid": 4167031, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 3}
+{"command": {"cmd": "click:10:20"}, "pid": 4167031, "batch": 3}
+{"command": {"action": "step", "n": 1}, "pid": 4167031, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4167031, "batch": 4}
+{"command": {"action": "png", "path": "/tmp/enigma-review-budget-independent-accept-oct27/ops/local-frame-slot/launch/controller/after-action.png"}, "pid": 4167031, "batch": 4}
+{"command": {"action": "quit"}, "pid": 4167031, "batch": 4}

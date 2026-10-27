@@ -1,0 +1,13 @@
+{
+  "tools/enigma-frozen-gameplay-controller.py": "8d110546e5795ba4b092cd76e5d0accb0c7b510b7947cbddd5db8b50fe7b5041",
+  "tools/enigma-supervised-gameplay.py": "8da9bd8dd47ae03dea50c7f55c2f988906f95252a4d8ef95e0cfb62bd6e17858",
+  "test/fixtures/enigma-controller/test_review_budget.py": "14341c8f37c35696365f8c262da2e163439e1affb4875e11e0757f3537150e95",
+  "test/fixtures/enigma-controller/test_progressive.py": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+  "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+  "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+  "test/fixtures/enigma-controller/test_controller.py": "684dfe81c33deb6b813bf9f362c99479621aedbc4a1066b80a93ea99c53c78e5",
+  "test/fixtures/enigma-controller/child_server.py": "42823513355d78eaff9831fb57d1ccd3409dfb2188ef1ef0907cda37f0cdb1e5",
+  "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+  "test/fixtures/enigma-controller/test_supervised.py": "98473ed865fcc004efe709879ecb0c63896f672ef972d73c0814acf09e4b59a2",
+  "test/fixtures/enigma-controller/original-reproducer.py": "6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461"
+}

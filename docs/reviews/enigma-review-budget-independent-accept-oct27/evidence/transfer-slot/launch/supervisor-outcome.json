@@ -1,0 +1,47 @@
+{
+  "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 61894656,
+  "cpuSeconds": 0.08,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4166199,
+      "114685132"
+    ],
+    [
+      4166201,
+      "114685138"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-review-budget-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "48475",
+        "--root",
+        "/tmp/enigma-review-budget-independent-accept-oct27/ops/transfer-slot",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4166199
+    }
+  }
+}

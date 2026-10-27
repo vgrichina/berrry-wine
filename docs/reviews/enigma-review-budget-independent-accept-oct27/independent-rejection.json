@@ -1,0 +1,48 @@
+{
+  "status": "REJECT",
+  "candidate": "8ff456e70baa82386e4e51c22f7174409746d326",
+  "sourcePins": {
+    "tools/enigma-frozen-gameplay-controller.py": "8d110546e5795ba4b092cd76e5d0accb0c7b510b7947cbddd5db8b50fe7b5041",
+    "tools/enigma-supervised-gameplay.py": "8da9bd8dd47ae03dea50c7f55c2f988906f95252a4d8ef95e0cfb62bd6e17858",
+    "test/fixtures/enigma-controller/test_review_budget.py": "14341c8f37c35696365f8c262da2e163439e1affb4875e11e0757f3537150e95"
+  },
+  "canonicalDonorManifest": "/tmp/enigma-retained-review-budget-publication-oct27/ops/receipt-manifest.json",
+  "production": "Exact pinned Python main --launch-config, actual supervisor-owned offline Python child/listener/HTTP, synthetic640x480 images, controlled clock only; no Node/guest/Boat/API",
+  "firstBoundary": "Unchanged original-reproducer SHA6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461: original28s exhausts, review completion [true,false], no input; PASS",
+  "positive": "Explicit34s [16,18] reviews both complete; exactly one click; every step fully ACKed then matching frozenzero snapshot; final quit; PASS",
+  "rejection": {
+    "firstSlotSeconds": 0.25,
+    "productionFrameReadSeconds": 2,
+    "reviewSecondsUsed": 0.16244745254516602,
+    "clicked": true,
+    "reason": "capture() reads and persists full frame before review() starts clock. Full-frame read latency debits neither checkpoint review slot nor cumulative review allowance.",
+    "smallestCommand": [
+      "python3",
+      "test/fixtures/enigma-controller/independent-transfer.py",
+      "--boundary",
+      "NEW_OWNED_DIRECTORY",
+      "34",
+      "{\"checkpoint_seconds\":[0.25,33.75],\"progress_seconds\":45}"
+    ],
+    "instrumentation": "Path.open context proxy advances only controlled time by2 after production bounded read(700001) of first menu PNG; no decision, controller, supervisor, ACK or authority replacement. Fixture read_bytes(-1) is undelayed. Socket timeout is not simulated or bypassed; latency occurs at local full-frame read after HTTP response."
+  },
+  "retainedPriorReceipts": "Canonical donor exact-pin groups reused, not rerun. Includes prechild cumulative/wall/ready/capture incompatibility, slot theft, cumulative CPU/API/capture/deadline and corrected float-only evidence IO assertion. No independent pass claimed for unresolved broader checks after rejection.",
+  "remaining": "Reject source integration/runtime until full-frame capture/read and durable capture evidence debit the advertised slot and cumulative allowance; independently retest affected boundary. No source repair in this task.",
+  "incidents": [
+    "Initial combined read displays exceeded8192B; transcript retained.",
+    "First transfer fixture modeled delay inside HTTP open hook; preserved transfer-slot evidence, refined once to production bounded local frame read to distinguish socket timeout."
+  ],
+  "cleanup": {
+    "allSupervisedOperationsCleanupComplete": true,
+    "remainingOwnedLive": [],
+    "assignedBoxes": [],
+    "lifecycleAction": "none; coordinator retains lifecycle",
+    "boardWatcher": "tool session11406; stop at closeout"
+  },
+  "publication": {
+    "reportOnlyOrphan": true,
+    "neverMergeWholeTree": true,
+    "branch": "task/enigma-review-budget-independent-accept-oct27",
+    "mainOwnership": false
+  }
+}
