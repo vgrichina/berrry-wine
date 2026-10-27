@@ -1,0 +1,741 @@
+{
+  "steps": 28,
+  "totalBatches": 6913,
+  "largestStep": 256,
+  "fullACK": true,
+  "followingSnapshots": [
+    {
+      "n": 1,
+      "batch": 1,
+      "snapshot": {
+        "batch": 1,
+        "eip": "0xb0de5c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 257,
+      "snapshot": {
+        "batch": 257,
+        "eip": "0x693d4c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 513,
+      "snapshot": {
+        "batch": 513,
+        "eip": "0x72e650",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 769,
+      "snapshot": {
+        "batch": 769,
+        "eip": "0x69347c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 1025,
+      "snapshot": {
+        "batch": 1025,
+        "eip": "0x693661",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 1281,
+      "snapshot": {
+        "batch": 1281,
+        "eip": "0x693b50",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 1537,
+      "snapshot": {
+        "batch": 1537,
+        "eip": "0x691fd8",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 1793,
+      "snapshot": {
+        "batch": 1793,
+        "eip": "0x693b50",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 2049,
+      "snapshot": {
+        "batch": 2049,
+        "eip": "0x691ee0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 2305,
+      "snapshot": {
+        "batch": 2305,
+        "eip": "0x691fbd",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 2561,
+      "snapshot": {
+        "batch": 2561,
+        "eip": "0x693c6c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 2817,
+      "snapshot": {
+        "batch": 2817,
+        "eip": "0xb0c43f",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 3073,
+      "snapshot": {
+        "batch": 3073,
+        "eip": "0x5af2b1",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 3329,
+      "snapshot": {
+        "batch": 3329,
+        "eip": "0x5a095f",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 3585,
+      "snapshot": {
+        "batch": 3585,
+        "eip": "0x87ba5c",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 3841,
+      "snapshot": {
+        "batch": 3841,
+        "eip": "0xb0c31b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 4097,
+      "snapshot": {
+        "batch": 4097,
+        "eip": "0x68f959",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 4353,
+      "snapshot": {
+        "batch": 4353,
+        "eip": "0x8e2b60",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 4609,
+      "snapshot": {
+        "batch": 4609,
+        "eip": "0x8a3bf8",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 4865,
+      "snapshot": {
+        "batch": 4865,
+        "eip": "0x7b96f6",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x0",
+        "mainHwnd": "0x0",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": []
+      }
+    },
+    {
+      "n": 256,
+      "batch": 5121,
+      "snapshot": {
+        "batch": 5121,
+        "eip": "0xc58d08",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": ""
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 5377,
+      "snapshot": {
+        "batch": 5377,
+        "eip": "0xd70290",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": ""
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 5633,
+      "snapshot": {
+        "batch": 5633,
+        "eip": "0xea3cfa",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": ""
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 5889,
+      "snapshot": {
+        "batch": 5889,
+        "eip": "0xec9bd0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": "Enigma v1.01"
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 6145,
+      "snapshot": {
+        "batch": 6145,
+        "eip": "0xec9bd0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": "Enigma v1.01"
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 6401,
+      "snapshot": {
+        "batch": 6401,
+        "eip": "0xec9bd0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": "Enigma v1.01"
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 6657,
+      "snapshot": {
+        "batch": 6657,
+        "eip": "0x59ec6d",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": "Enigma v1.01"
+          }
+        ]
+      }
+    },
+    {
+      "n": 256,
+      "batch": 6913,
+      "snapshot": {
+        "batch": 6913,
+        "eip": "0xec9bd0",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 640,
+          "h": 480
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 200,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 646,
+            "h": 507,
+            "visible": true,
+            "isChild": false,
+            "title": "Enigma v1.01"
+          }
+        ]
+      }
+    }
+  ],
+  "inputs": 0
+}

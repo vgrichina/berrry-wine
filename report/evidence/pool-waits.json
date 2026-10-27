@@ -1,0 +1,13 @@
+{
+  "collect": {
+    "toolSession": 62577,
+    "reason": "pool wait45 expired before operation",
+    "nextExecution": "after owner52272 exited"
+  },
+  "publish": {
+    "toolSession": 84751,
+    "reason": "pool wait45 expired before operation",
+    "nextExecution": "after actual /proc/locks showed both pool slots free at12:28:44UTC"
+  },
+  "noAdmissionBypass": true
+}

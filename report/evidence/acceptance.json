@@ -1,0 +1,157 @@
+{
+  "status": "ONE_INVOCATION_NO_REVIEWED_MAIN_MENU_NO_INPUT",
+  "at": 1793104035.6144934,
+  "guestInvocations": 1,
+  "source": {
+    "revision": "3b7667ff13bc727ed41d2131a3e063422a7bd66a",
+    "files": 2666,
+    "bytes": 39418082,
+    "receiptSHA256": "fe03f3ce22d21da496489ebbe5d35e5087f5cd6057b91a5e86675c6c033a13c7",
+    "mapSHA256": "cbea2074b290c6fa97e3ce3c710e089a42450b8e3932f4e3fbc58e09ebf880d7",
+    "description": "retained emulator with earlier diagnostic static DLL overlays plus accepted current controllers",
+    "staleCloseoutHashes": 2,
+    "reusedTests": "accepted merged source checks and independent tests; not rerun"
+  },
+  "controller": {
+    "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+    "batch": 6913,
+    "captures": 2,
+    "clicked": false,
+    "pending": false,
+    "failed": false,
+    "at": 1793103850.9202237,
+    "apiBytes": 11420,
+    "captureBytes": 5569,
+    "reviewSecondsUsed": 28.72172999382019,
+    "progress": {
+      "max_checkpoints": 2,
+      "total_seconds": 110,
+      "cpu_reserve": 15,
+      "api_bytes": 1048576,
+      "capture_total_bytes": 2100000
+    }
+  },
+  "supervisor": {
+    "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+    "failed": false,
+    "reason": "control-listener-identity-changed",
+    "peakTreeRSS": 265461760,
+    "cpuSeconds": 2.78,
+    "outputBytes": 6668,
+    "outputLimitExceeded": false,
+    "remainingOwnedLive": [],
+    "childReturncode": 0,
+    "owned": [
+      [
+        17123,
+        "93386"
+      ],
+      [
+        17134,
+        "93400"
+      ]
+    ],
+    "delegated": true,
+    "processDiagnostics": {
+      "startup": {
+        "status": "exited",
+        "exit": 0,
+        "stdout": "node-startup-stdout.log",
+        "stderr": "node-startup-stderr.log",
+        "argv": [
+          "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+          "--max-old-space-size=2048",
+          "-e",
+          "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+        ],
+        "pid": 17123
+      },
+      "command": {
+        "status": "exited",
+        "exit": 0,
+        "stdout": "output.log",
+        "stderr": "stderr.log",
+        "argv": [
+          "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+          "--max-old-space-size=2048",
+          "/tmp/enigma-remote-host-validated-startgame-oct27/repo/runner/test/run.js",
+          "--no-build",
+          "--wasm=/tmp/enigma-remote-host-validated-startgame-oct27/repo/modules/wine-assembly.wasm",
+          "--exe=/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/enigma.exe",
+          "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+          "--cwd=C:\\Enigma-1.01",
+          "--dlls=/tmp/enigma-remote-host-validated-startgame-oct27/repo/system/msvcrt.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs/Enigma-1.01/SDL_ttf.dll",
+          "--quiet-api",
+          "--quiet-blocks",
+          "--no-close",
+          "--memory-mb=512",
+          "--screen=640x480",
+          "--vfs-tree=/tmp/enigma-remote-host-validated-startgame-oct27/repo/vfs",
+          "--quiet-fs",
+          "--control=18127",
+          "--trace-input",
+          "--frozen",
+          "--max-seconds=110",
+          "--max-batches=2000000"
+        ],
+        "pid": 17134
+      }
+    }
+  },
+  "frames": [
+    {
+      "reviewed": true,
+      "frameSHA256": "cf54108b7650531aeaa719b810d53cd2c624323b760ba730b7897261efad2d68",
+      "batch": 4609,
+      "continueLoading": true,
+      "safeStartGame": false,
+      "width": 640,
+      "height": 480,
+      "at": 1793103828.119594,
+      "inspection": "Actual model inspection of entire 640x480 frame: uniform teal startup surface, no menu/text/controls visible. Authorize bounded continuation only; not a reviewed Loading label or Main Menu, no input authorization."
+    },
+    {
+      "reviewed": true,
+      "frameSHA256": "2f0537a6a34b1fcfc4345c406b2bfba0d625af9d3d6ab1e24b97675b3443e0c8",
+      "batch": 6913,
+      "width": 640,
+      "height": 480,
+      "continueLoading": true,
+      "safeStartGame": false,
+      "inspection": "Actual model full-image inspection: Enigma v1.01 window title across the top, black client area, teal desktop border. No Loading text, actual Main Menu, Start Game control, or gameplay is visible. Bounded continuation only; no click authorization. This is the second and last admitted review checkpoint; do not renew resources or add a checkpoint."
+    }
+  ],
+  "reviewedActualMenu": false,
+  "startGame": false,
+  "gameplay": false,
+  "ordinaryGuestQuit": false,
+  "harnessQuit": true,
+  "cleanupQualification": "Controller harness quit acknowledged; child exit0 and no survivors. control-listener-identity-changed is retained verbatim; no ordinary in-game Quit claim.",
+  "remainingGates": [
+    "reviewed actual Main Menu",
+    "correlated Start Game",
+    "inspected gameplay",
+    "ordinary game Quit"
+  ],
+  "box": "bx_95a6wxyt",
+  "leaveRunning": true,
+  "shutdownOwner": "coordinator",
+  "cutoff": "2026-10-27T12:43:00Z",
+  "handback": "2026-10-27T12:46:00Z",
+  "shutdown": "2026-10-27T12:48:00Z",
+  "expiry": "2026-10-27T12:54:04.345Z",
+  "replay": false,
+  "tests": "Accepted exact-revision source checks and independent tests reused; no synthetic tests or compilation repeated.",
+  "historicalIncidents": [
+    "Old run exhausted cumulative28second review; late menu decision did not authorize input; SIGTERM was not ordinary Quit.",
+    "Predecessor e39763d4cecab2bddad8df59d80f8d19e265f2c9 mistakenly validated remote executable on local host, zero guest. Canonical receipt SHA2565b96782d179631c8542932afe37667bd4aaee938f5ba5712d52b66848278bd18.",
+    "Accepted integration has two stale mutable late-closeout hashes; principal source/publication/test pins verified, no all-receipt claim."
+  ],
+  "incidents": [
+    "Initial document display exceeded requested bounded display; original transcript retained.",
+    "Readiness started before final staging completed: remote closure FileNotFoundError, API completed normally, zero guest at failure. Final stage completed before closure check continuation.",
+    "Readiness continuation passed remote closure, mount and production validation; final local diagnostic print used overwritten variable v and raised KeyError mount after durable passing receipts. No passed check repeated.",
+    "Several tiny setup/decision Python helpers ran outside the prescribed pool; no retrospective wrapper-compliance claim. Production preparation/staging/preflight/invocation and publication use bounded supervisors/pool.",
+    "First collect pool wait45 expired before operation; no API sent. Further collection only after actual capacity change."
+  ]
+}

@@ -1,0 +1,297 @@
+{
+  "at": 1793103339.814381,
+  "status": "STOP_FIRST_PRODUCTION_GUARD_REFUSAL_PUBLISHED",
+  "task": "enigma-full-frame-admitted-runtime-oct27",
+  "guard": "absolute-executable-required",
+  "failedGateHost": "local coordinator host, remote configuration not yet staged",
+  "fault": "worker applied host-specific launch validation locally before remote staging; no claim of remote Node absence",
+  "guestInvocations": 0,
+  "guestSteps": 0,
+  "inputDispatches": 0,
+  "guestCPUSeconds": 0,
+  "boatExecCalls": 0,
+  "framesFromNewRun": 0,
+  "newFrameReviews": [],
+  "retainedFrameInspection": "inspection-measure.json (timing only)",
+  "sourceIdentity": "pins.json",
+  "runtimeFiles": 2665,
+  "runtimeBytes": 37537228,
+  "moduleBytes": 1880854,
+  "totalMaterializedBytes": 39418082,
+  "productionRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "commandsAndLimits": "launch-config.json; control.py; operation receipts",
+  "reuse": "accepted merged source and independent test groups unchanged, not repeated",
+  "reviewPlan": "unexecuted-planning.json; never production-admitted",
+  "remaining": [
+    "actual mount enumeration",
+    "exact remote Node startup/limits/environment",
+    "remote closure admission",
+    "review-plan validate_launch on actual host",
+    "reviewed actual menu",
+    "correlated Start Game",
+    "inspected gameplay",
+    "ordinary Quit"
+  ],
+  "oldExhaustedReview": "retained unchanged historical-result.json in published report; no accepted Start Game, no ordinary Quit",
+  "lateCloseoutStaleHashes": 2,
+  "allReceiptClaim": false,
+  "cleanup": {
+    "localSupervisedOperations": [
+      {
+        "path": "closeout-prepare.execution.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "physicalPeak": 60121088,
+        "cpuSeconds": 0.419901,
+        "wallSeconds": 0.2987663419917226
+      },
+      {
+        "path": "local-preflight.execution.json",
+        "exit": 1,
+        "cleanupComplete": true,
+        "physicalPeak": 66785280,
+        "cpuSeconds": 0.415042,
+        "wallSeconds": 0.16611072910018265
+      },
+      {
+        "path": "package.execution.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "physicalPeak": 54657024,
+        "cpuSeconds": 0.338177,
+        "wallSeconds": 0.13540377095341682
+      },
+      {
+        "path": "prepare-module.execution.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "physicalPeak": 61767680,
+        "cpuSeconds": 1.250118,
+        "wallSeconds": 0.422413881868124
+      },
+      {
+        "path": "prepare.execution.json",
+        "exit": 1,
+        "cleanupComplete": true,
+        "physicalPeak": 67543040,
+        "cpuSeconds": 1.504957,
+        "wallSeconds": 0.8218650510534644
+      },
+      {
+        "path": "publish.execution.json",
+        "exit": 1,
+        "cleanupComplete": true,
+        "physicalPeak": 77168640,
+        "cpuSeconds": 2.972779,
+        "wallSeconds": 4.231113395188004
+      }
+    ],
+    "watcherToolSession": 61244,
+    "watcherExit": 130,
+    "remoteOwnedProcessesStarted": 0,
+    "remoteCleanupRequired": false,
+    "unknownGuestInvocation": false
+  },
+  "boat": {
+    "id": "bx_95a6wxyt",
+    "actualState": "idle",
+    "health": "ok",
+    "stoppedAt": null,
+    "expiry": "2026-10-27T12:54:04.345Z",
+    "observed": "boat-info.stdout",
+    "workerLifecycleActions": 0,
+    "shutdownOwner": "coordinator",
+    "watchdogUntouched": true,
+    "handedBack": true
+  },
+  "publication": {
+    "at": 1793103339.8117378,
+    "commit": "e39763d4cecab2bddad8df59d80f8d19e265f2c9",
+    "branch": "task/enigma-full-frame-admitted-runtime-oct27",
+    "remoteRef": "refs/heads/task/enigma-full-frame-admitted-runtime-oct27",
+    "exactRemoteVerified": true,
+    "cleanTracked": true,
+    "untracked": [
+      "runtime/"
+    ],
+    "untrackedMeaning": "verified retained runtime closure excluded from report publication",
+    "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "noMain": true,
+    "reportOnly": true,
+    "finalPublisherAssertion": "failed on intended untracked runtime/; push and exact remote verification already passed, no repeat"
+  },
+  "resources": "admission-finalize.json; local192MiB including session/events/positiveWALonce, remote256MiB allocation unused, no compile",
+  "failedObservations": [
+    "initial display-cap incidents",
+    "module inventory StopIteration before production preflight corrected",
+    "first production guard refusal, terminal no retry",
+    "publisher post-push clean assertion found intended untracked runtime/"
+  ],
+  "payloads": [
+    {
+      "path": "pins.json",
+      "bytes": 496,
+      "sha256": "72e16d3025fc3738cb5d9293835d39eb75bee5f88590a6e611bcecc6728d8e3b"
+    },
+    {
+      "path": "runtime-manifest.json",
+      "bytes": 1410382,
+      "sha256": "c32ae42a10e5dfafa9e6f01491fa31c83add06d82e9fb0f639ac7c63d3dc841b"
+    },
+    {
+      "path": "launch-config.json",
+      "bytes": 2564,
+      "sha256": "f972f7b2da49c34ca2b1f264cae2f9a2afeb5bc48a964ae7a80f9cfc9c65b098"
+    },
+    {
+      "path": "parser-identity.json",
+      "bytes": 1780,
+      "sha256": "1c16d474ee608e6adee9cc7690ca5c42f55cca058af78b440a44bf7fa78a8cd4"
+    },
+    {
+      "path": "inspection-measure.json",
+      "bytes": 390,
+      "sha256": "261ca82abe9af3001eaac5702882be59377fde79245ff6aef3284520e049dc84"
+    },
+    {
+      "path": "prepare.child.stderr",
+      "bytes": 347,
+      "sha256": "ff6c1bb8dc1f017f8c88112f7bfeb055a4408046f3893eac7423342d31f9f01e"
+    },
+    {
+      "path": "prepare.execution.json",
+      "bytes": 315,
+      "sha256": "ea4fe76b2324b30ff167c0d11d8552f51a40d870a3ce313dbd256ef3836c6608"
+    },
+    {
+      "path": "prepare-module.execution.json",
+      "bytes": 314,
+      "sha256": "47d2901c0d84b05f5e52b4bd4fe65b28b2bda6f567f376e941b97356bba99bae"
+    },
+    {
+      "path": "local-preflight.child.stderr",
+      "bytes": 794,
+      "sha256": "11cdb07af360902064e92ac1fdc064df620683e83287fe20ae9ac396af6d4254"
+    },
+    {
+      "path": "local-preflight.execution.json",
+      "bytes": 316,
+      "sha256": "4d1ef813aa254691537d73257dfd51451cd73390fb54886553ae31792aaee1c0"
+    },
+    {
+      "path": "blocker.json",
+      "bytes": 2833,
+      "sha256": "6d2cf8d1d1d71475050c750a812c93cbf7384606ba99af738c010f11d4d8fff2"
+    },
+    {
+      "path": "unexecuted-planning.json",
+      "bytes": 571,
+      "sha256": "79da625027f1bd216b6ce5e1df0996adea63980f3df276a7db963ede83ffa229"
+    },
+    {
+      "path": "scope.json",
+      "bytes": 960,
+      "sha256": "dc216b2e2ac58137fb361c912642bbc014598ada84f865fb51cc25e9629bcf2f"
+    },
+    {
+      "path": "boat-info.stdout",
+      "bytes": 1230,
+      "sha256": "6fc6373e56a44526bb5560e92d995fcee75d982c88258f3c9b1b83a788cb7a1b"
+    },
+    {
+      "path": "boat-info.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "boat-info-command.json",
+      "bytes": 221,
+      "sha256": "b6c29f87362e7b6e9906a6a6487ff58f9ea13fc6f6cb7e20e14ceecc8d7a9bcb"
+    },
+    {
+      "path": "publication-validation.json",
+      "bytes": 227,
+      "sha256": "2002faa845a0301ebcbba9d9b0bb57b17413d63e93a496f316439c426a1eb6ea"
+    },
+    {
+      "path": "publication.json",
+      "bytes": 770,
+      "sha256": "d0c7433210ea7d7d6cdea3b8b30d89303935d511d4ea0c0a787041de8617936c"
+    },
+    {
+      "path": "commit.json",
+      "bytes": 142,
+      "sha256": "fc2ba5c30f80f9ade43e868cac935dcb535bf694f9d656e34d763d76cf590a93"
+    },
+    {
+      "path": "git-remote-verify.stdout",
+      "bytes": 98,
+      "sha256": "a44d0523e7ed04795378db119b9b5a1050e89b527f9854b8b79c870b8997f503"
+    },
+    {
+      "path": "git-remote-verify.json",
+      "bytes": 461,
+      "sha256": "320ead00ef409a021fb239f6e70c1b5fdb9e57b6324491a01d23dd5027bbee51"
+    },
+    {
+      "path": "git-push.json",
+      "bytes": 442,
+      "sha256": "1229cd8cfed6c592abafcdc88b627eb2c3827b67017f025b1d64496c9a87a085"
+    },
+    {
+      "path": "git-push.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "git-push.stderr",
+      "bytes": 492,
+      "sha256": "51db3ed2182cbbf0db2215755b11f32f4251bbac57c048adbc5f4713f38cee3c"
+    },
+    {
+      "path": "git-status.stdout",
+      "bytes": 12,
+      "sha256": "72580b6c1c973a5c6b13ac71d2cd74e4f9d47f5454906e478a195db3a694dcc4"
+    },
+    {
+      "path": "publish.execution.json",
+      "bytes": 754,
+      "sha256": "a062719304116f086c4ff3e7123a8be25f03862a7c0b7922d34c03c39388a1bf"
+    },
+    {
+      "path": "publish.child.stderr",
+      "bytes": 348,
+      "sha256": "a5766f2d62a17b8af40fbdbb26be035ab362a2e773ea20ee68a16a855bf88408"
+    },
+    {
+      "path": "admission-prepare.json",
+      "bytes": 749,
+      "sha256": "3893d70b0abcc3f53cf28067d62cdcbeb29ec979533bc599597c75aa5ce2a895"
+    },
+    {
+      "path": "admission-local-preflight.json",
+      "bytes": 757,
+      "sha256": "ff0c1f704c108b53e7643d26aa9e8156b8ad730d336bae949fa50446c9df4096"
+    },
+    {
+      "path": "admission-publish.json",
+      "bytes": 757,
+      "sha256": "f3c5e863c7162731c3efcebe725a667c7459c0548583e3d337c200a6ef1b9b85"
+    },
+    {
+      "path": "admission-finalize.json",
+      "bytes": 755,
+      "sha256": "c54694407d932a1a731c49ce14597d6cd4dc0bb8ff7da722f6ea30f4fa290174"
+    },
+    {
+      "path": "closeout-prepare.execution.json",
+      "bytes": 359,
+      "sha256": "06cb5f589f5865a8f1cfb2dc804140e38a3e06c8a08357a6f5d9c96929f88e24"
+    },
+    {
+      "path": "package.execution.json",
+      "bytes": 316,
+      "sha256": "f2bf98682095b82cb8413adaac771f75614b4dd2ae2d47de15118814a9da5690"
+    }
+  ]
+}
