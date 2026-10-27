@@ -1,0 +1,18 @@
+[
+  [
+    "    start = time.monotonic()\n",
+    "    from importlib.util import spec_from_file_location, module_from_spec\n    spec = spec_from_file_location(\"unique_cpu_evidence\", pathlib.Path(__file__).with_name(\"unique-cpu-evidence-oct27.py\"))\n    diagnostic = module_from_spec(spec)\n    spec.loader.exec_module(diagnostic)\n    evidence = diagnostic.Evidence(existing, bootstrap_identity)\n    start = time.monotonic()\n"
+  ],
+  [
+    "            except ChildProcessError:\n                continue\n",
+    "            except ChildProcessError:\n                evidence.missing(key(candidate), \"wait4 ownership/usage unavailable\")\n                continue\n"
+  ],
+  [
+    "            cpu[identity] = max(cpu.get(identity, 0), usage.ru_utime + usage.ru_stime)\n",
+    "            evidence.reap(identity, usage.ru_utime, usage.ru_stime)\n            cpu[identity] = max(cpu.get(identity, 0), usage.ru_utime + usage.ru_stime)\n"
+  ],
+  [
+    "    return dict(exit=exit_code, stopReason=reason, peakRSS=max(peak, reaped_peak),\n",
+    "    unique_diagnostic = evidence.finish(not selected)\n    return dict(uniqueCPUReceipt=unique_diagnostic, exit=exit_code, stopReason=reason, peakRSS=max(peak, reaped_peak),\n"
+  ]
+]
