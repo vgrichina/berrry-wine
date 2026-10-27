@@ -1,0 +1,45 @@
+{
+  "command": [
+    "git",
+    "ls-tree",
+    "7378523e65935406837a80ecd800040b660ccf1a",
+    "tools/penguin_capture_contract.py",
+    "test/test_penguin_capture_contract.py",
+    "test/fixtures/penguin-wire-envelope.json"
+  ],
+  "commandSHA256": "c1a983d45abe6657e01159d8ef786b4135a67d289db57ff605e09a848bb38a5b",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 3376234496,
+  "free": 7779704832,
+  "at": 1793095472.434121,
+  "kind": "git",
+  "safeEnvironment": {
+    "PATH": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0oG8q25:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "LANG": "en_US.UTF-8",
+    "LC_ALL": "en_US.UTF-8",
+    "TZ": null,
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "PENGUIN_CONTRACT_RECEIPTS": "/tmp/penguin-explicit-budget-independent-accept-oct27/ops/evidence",
+    "GIT_CONFIG_NOSYSTEM": "1"
+  },
+  "safeEnvironmentSHA256": "0969b0f0ba8627d73e51ea90aee5a0754dedec3417b3ca2c618a9e0f56900fe1",
+  "pythonExecutableSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "wrapperSHA256": "4c6b21e3ebabb66ecdb64daf7d6f60eda41b1b963de002365f51323e392331f7",
+  "childWrapperSHA256": "f84f31f9d63a4be97d17a67854f9573da883676ed4f2fca773bc849eca5ca61e",
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27688960,
+  "sampledPeakRSS": 27688960,
+  "reapedPeakRSS": 12582912,
+  "cpuSeconds": 0.037791,
+  "wallSeconds": 0.0441140728071332,
+  "owned": [
+    [
+      4066828,
+      "114268168"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

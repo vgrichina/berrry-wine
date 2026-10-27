@@ -1,0 +1,29 @@
+{
+  "manifestPayloadsVerified": 96,
+  "pins": {
+    "tools/penguin_capture_contract.py": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "test/test_penguin_capture_contract.py": "455a24b0c71f39d9544a4020ae832375260f2338ddc2785c7bfa07d0ec2baf7b",
+    "test/fixtures/penguin-wire-envelope.json": "30df71f26400cd565268c22c9a42ea159233c50ed5ee2069375a53f84a5b4066"
+  },
+  "targetedTestsReused": 16,
+  "rejectingControlsReused": 4,
+  "launchReuse": {
+    "unchangedLaunchFunctions": {
+      "validate_profile": "48675179b0afd497c6aaaab636820dd275f029f28936c4c764f492fbe01187cb",
+      "check_files": "09a40c848d9abf91c07653daa22282b605b3262992fffb736c0411781e44b019",
+      "limits_now": "1a0f8c1c68124b511ba012bfd1f6beee54010e519db179b7a3ac3c9ef2508bd4",
+      "group_rss": "c34ac347cb15ebccb9423f2ced3ac7c536209b5be1519d1474526ce1e8c7c343",
+      "kill_group": "04aa04b4344d873503e0d36968f932b108d17c4e0f0c98569eb2f3b99a449bea",
+      "reap_group": "ae6bd4cb8a57b986aee5ddeb3dd27888634193eec6256bdaec6b3fb264d6d4e6",
+      "supervise": "e9d265149aaf7d36d99d724a79124418a49e8f3b4617dac46f2ad677f13112c0"
+    },
+    "launchTestsUnchanged": true,
+    "priorReceipts": {
+      "/tmp/penguin-accepted-causal-main-integration-oct27/ops/result.json": "40bb63b1ffec1fbafd3b2d505d9b8d0d9079bcf0f2083ba248a9cf3c0eba20fd",
+      "/tmp/penguin-accepted-causal-main-integration-oct27/ops/reuse-report.json": "26050993c76d30b96f9137e5e48d3633c9a4d83902f191c6f024cf41bc7b9227"
+    },
+    "behaviorRerun": false,
+    "qualification": "Unchanged launch/supervision acceptance only; live Node/mount/gameplay gates remain open"
+  },
+  "qualification": "unchanged exact-source receipts; no replay of passed groups"
+}

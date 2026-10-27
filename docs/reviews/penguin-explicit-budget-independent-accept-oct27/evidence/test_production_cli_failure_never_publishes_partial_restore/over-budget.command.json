@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/tools/penguin_capture_contract.py",
+    "restore-provider",
+    "/tmp/penguin-explicit-budget-independent-accept-oct27/ops/evidence/test_production_cli_failure_never_publishes_partial_restore/independent.png",
+    "--transcript",
+    "/tmp/penguin-explicit-budget-independent-accept-oct27/ops/evidence/test_production_cli_failure_never_publishes_partial_restore/transcript.json",
+    "--used",
+    "41",
+    "--tail-reserve",
+    "73",
+    "--capture-budget",
+    "8388609",
+    "--output",
+    "/tmp/penguin-explicit-budget-independent-accept-oct27/ops/evidence/test_production_cli_failure_never_publishes_partial_restore/out-over-budget"
+  ],
+  "exit": 2
+}

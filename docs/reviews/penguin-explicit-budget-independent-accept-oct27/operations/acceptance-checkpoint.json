@@ -1,0 +1,45 @@
+{
+  "status": "ACCEPT_SOURCE_ONLY",
+  "candidate": "7378523e65935406837a80ecd800040b660ccf1a",
+  "sourceSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+  "testSHA256": "455a24b0c71f39d9544a4020ae832375260f2338ddc2785c7bfa07d0ec2baf7b",
+  "fixtureSHA256": "30df71f26400cd565268c22c9a42ea159233c50ed5ee2069375a53f84a5b4066",
+  "newMethods": [
+    "test_expected_budget_mismatch_restorer_and_constructor",
+    "test_first_exact_cli_receipts_and_original_bytes",
+    "test_invalid_profiles_every_supported_entry",
+    "test_late_error_is_charged_then_poisoned",
+    "test_nested_reconstruction_cannot_upgrade_consumed_collector",
+    "test_production_cli_failure_never_publishes_partial_restore",
+    "test_raw_poll_error_bytes_once_and_exact_remaining_reserve",
+    "test_snapshot_survives_original_nested_mutation_and_reconstruction",
+    "test_supported_partial_collector_deepcopy_preserves_consumed_ledger",
+    "test_supported_reconstruction_is_pinned_before_collection"
+  ],
+  "newIndependentTests": 10,
+  "newRejectingControls": 4,
+  "reusedTests": 16,
+  "reusedControls": 4,
+  "verifiedDonorPayloads": 96,
+  "productionDefault": "UNSUPPORTED_PLAN default 1048576; exact unchanged CLI first",
+  "productionExplicit": "191 full serialized envelopes; previous333 + raw2130054 + terminal1048576 =3178963 charged once; originals byte/hash exact",
+  "remaining": [
+    "coordinator-scoped integration",
+    "exact live Node startup with diagnostics and limits",
+    "canonical filename-bearing mount validation",
+    "actual runtime startup/input",
+    "new projectile/gameplay observations",
+    "ordinary Quit"
+  ],
+  "noGuestOrBoxes": true,
+  "lifecycle": "coordinator; no boxes assigned or touched",
+  "incidents": [
+    "Read-only optional receipt lookup used wrong .admission filename; correct sibling -admission receipt used before tests",
+    "Git alternate nesting warnings retained; exact candidate source blob identity independently checked, no fetch/repack/donor modification",
+    "Independent exact-reserve fixture accidentally supplied24 bytes against23; original error and original test source retained; corrected to asserted23 then affected method passed",
+    "Packaging caught operation receipt overwriting identically named semantic checkpoint; kept the failure, moved semantic data to acceptance-checkpoint.json, and rebuilt metadata without rerunning acceptance",
+    "Staged diffcheck found unittest failure diagnostics with trailing spaces; original ops bytes retained, report stores lossless JSON strings with SHA256 instead; no source/test change"
+  ],
+  "contractScope": "Fresh authorized tasks supply correct prior used bytes. Supported CapturePlan reconstruction and partial ProviderCapture deepcopy preserve pins/ledger; no arbitrary-Python/object.__setattr__ security claim, no manual state reset or caller reinitialization guarantee.",
+  "at": 1793095746.4750419
+}

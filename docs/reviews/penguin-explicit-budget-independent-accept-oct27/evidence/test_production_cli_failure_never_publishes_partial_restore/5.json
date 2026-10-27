@@ -1,0 +1,18 @@
+{
+ "commandId": "independent-5",
+ "cwd": ".",
+ "exitCode": 0,
+ "finishedAt": "2026-10-27T03:35:02.603Z",
+ "launcherFailed": false,
+ "noticedMs": 20,
+ "oomKilled": false,
+ "signal": null,
+ "startMs": 20,
+ "startedAt": "2026-10-27T03:35:02.552Z",
+ "stderr": "",
+ "stderrTruncated": false,
+ "stdout": "{\"data\":\"SiiwhhLKGqSE6uUooRFjSkjRixIyT6GE/CspoYw+SqhWmhIaMqSE5N0pIZMESsi7jBJK7aaEqiQpoX49SkjGhRJix1JCHsWUUGI7JVQuRgn1aFNCUo6UkH4UJeRaQAnFtVBCJcKUUIcGJSRuTwnpRFBCTnmUUHQTJVQoSAm1qlE=\",\"image\":0,\"index\":4,\"kind\":\"chunk\"}\n",
+ "stdoutTruncated": false,
+ "success": true,
+ "timedOut": false
+}

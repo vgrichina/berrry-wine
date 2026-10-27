@@ -1,0 +1,8 @@
+usage: penguin_capture_contract.py restore-provider [-h] --transcript
+                                                    TRANSCRIPT --output OUTPUT
+                                                    --used USED --tail-reserve
+                                                    TAIL_RESERVE
+                                                    [--envelope-overhead ENVELOPE_OVERHEAD]
+                                                    [--capture-budget CAPTURE_BUDGET]
+                                                    png [png ...]
+penguin_capture_contract.py restore-provider: error: argument --capture-budget: invalid int value: 'true'

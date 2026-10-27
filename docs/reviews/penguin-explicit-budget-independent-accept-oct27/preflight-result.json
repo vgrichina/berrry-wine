@@ -1,0 +1,70 @@
+{
+  "at": 1793095472.3462522,
+  "candidate": "7378523e65935406837a80ecd800040b660ccf1a",
+  "baseline": "f78bca4820c5de96afe46d81e5583d71e39d1882",
+  "pins": {
+    "tools/penguin_capture_contract.py": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "test/test_penguin_capture_contract.py": "455a24b0c71f39d9544a4020ae832375260f2338ddc2785c7bfa07d0ec2baf7b",
+    "test/fixtures/penguin-wire-envelope.json": "30df71f26400cd565268c22c9a42ea159233c50ed5ee2069375a53f84a5b4066"
+  },
+  "images": {
+    "b39999.png": [
+      806077,
+      "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    ],
+    "b40060.png": [
+      811393,
+      "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    ]
+  },
+  "python": "/usr/bin/python3",
+  "limits": {
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ],
+    "RSS": [
+      -1,
+      -1
+    ],
+    "CPU": [
+      90,
+      90
+    ],
+    "FSIZE": [
+      25165824,
+      25165824
+    ]
+  },
+  "admission": {
+    "at": "2026-10-27T10:03:05.201159+00:00",
+    "task": "penguin-explicit-budget-independent-accept-oct27",
+    "memAvailable": 3452456960,
+    "required": 1409286144,
+    "diskFree": 7782236160,
+    "prospectiveBytes": 469762048,
+    "floor": 2982150144,
+    "taskAllocation": 134217728,
+    "client": 335544320,
+    "sharedChildPool": 268435456,
+    "hostHeadroom": 805306368,
+    "existingPeers": "actual RSS included in MemAvailable; future task/client counted once; shared pool once",
+    "pass": true
+  },
+  "initialRootRefs": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "mounts": "No mount argv: offline Python source/test only; live canonical mount acceptance remains open",
+  "sourceReadOnly": true,
+  "allocated": 134217728,
+  "reserve": 41943040
+}

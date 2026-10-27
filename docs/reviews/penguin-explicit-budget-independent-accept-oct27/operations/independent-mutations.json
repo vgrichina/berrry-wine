@@ -1,0 +1,42 @@
+[
+  {
+    "name": "no-raw-charge",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "e9b219cc1cb538d2c9857fc75547a67f683e439de51294dd9f93402114b17f09",
+    "old": "self.charged += len(raw)",
+    "new": "self.charged += 0",
+    "test": "test_late_error_is_charged_then_poisoned",
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "no-nested-pin",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "f19b4dd2e776848508fa02d4169ca4c59d13925d31f10af5405e54007f8ba6e9",
+    "old": "        plan_budget(self.plan['canonical'], self.capture_budget)",
+    "new": "        pass # nested pin omitted",
+    "test": "test_nested_reconstruction_cannot_upgrade_consumed_collector",
+    "failures": 2,
+    "errors": 0
+  },
+  {
+    "name": "no-maximum",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "f77c57e916f51bfd530e9805e1815da70d7b4664257364bfee9977f366e3ba25",
+    "old": "type(value) is int and 0 < value <= MAX_CAPTURE_BYTES",
+    "new": "type(value) is int and 0 < value",
+    "test": "test_invalid_profiles_every_supported_entry",
+    "failures": 3,
+    "errors": 0
+  },
+  {
+    "name": "no-closed-ledger",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "cc1efd5c25c98ae5d5d4fc473907d5e4c02715a3ac9743d25a1a2f6d26e2e32f",
+    "old": "require(not self.failed and not self.finished, 'collector is closed')",
+    "new": "pass # closed ledger omitted",
+    "test": "test_late_error_is_charged_then_poisoned",
+    "failures": 1,
+    "errors": 0
+  }
+]
