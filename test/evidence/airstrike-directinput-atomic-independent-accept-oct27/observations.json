@@ -1,0 +1,688 @@
+[
+  {
+    "receipt": "first-worker",
+    "observation": {
+      "group": "actual OS Worker identity",
+      "main": 0,
+      "worker": 1,
+      "rpcSHA256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+      "selected": {
+        "log_i32": {
+          "params": [
+            "i32"
+          ],
+          "results": []
+        },
+        "di_keyboard_buffer": {
+          "params": [
+            "i32",
+            "i32",
+            "i32"
+          ],
+          "results": [
+            "i32"
+          ]
+        },
+        "get_mouse_buttons_live": {
+          "params": [],
+          "results": [
+            "i32"
+          ]
+        },
+        "get_ticks": {
+          "params": [],
+          "results": [
+            "i32"
+          ]
+        },
+        "get_key_down_state": {
+          "params": [
+            "i32"
+          ],
+          "results": [
+            "i32"
+          ]
+        }
+      }
+    }
+  },
+  {
+    "receipt": "first-worker",
+    "observation": {
+      "group": "acquisition atomicity controls",
+      "before": {
+        "kind": "result",
+        "id": 2,
+        "hr": 0,
+        "count": 0,
+        "records": [],
+        "threadId": 1
+      },
+      "after": {
+        "kind": "result",
+        "id": 5,
+        "hr": 0,
+        "count": 4,
+        "records": [
+          [
+            3,
+            128
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ],
+        "threadId": 1
+      },
+      "rejected": [
+        "lost later selected key",
+        "reordered edges",
+        "false overflow"
+      ],
+      "pass": true
+    }
+  },
+  {
+    "receipt": "first-worker",
+    "observation": {
+      "group": "input interleaved after first selection RPC response",
+      "phase": "partial",
+      "acquired": false,
+      "input": [
+        "Return down",
+        "Return up",
+        "Space down",
+        "Space up"
+      ],
+      "selectedSoFar": [
+        13
+      ]
+    }
+  },
+  {
+    "receipt": "first-worker",
+    "observation": {
+      "group": "partially initialized acquired filter",
+      "observed": {
+        "kind": "result",
+        "id": 8,
+        "hr": 0,
+        "count": 0,
+        "records": [],
+        "threadId": 1
+      },
+      "operations": [
+        {
+          "phase": "before",
+          "device": 63512576,
+          "op": 8,
+          "value": 9,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "before",
+          "device": 63512576,
+          "op": 9,
+          "value": 13,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "before",
+          "device": 63512576,
+          "op": 9,
+          "value": 32,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "after",
+          "device": 63512576,
+          "op": 8,
+          "value": 9,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "after",
+          "device": 63512576,
+          "op": 9,
+          "value": 13,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "after",
+          "device": 63512576,
+          "op": 9,
+          "value": 32,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "partial",
+          "device": 63512576,
+          "op": 8,
+          "value": 9,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "partial",
+          "device": 63512576,
+          "op": 9,
+          "value": 13,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "phase": "partial",
+          "device": 63512576,
+          "op": 9,
+          "value": 32,
+          "result": 0,
+          "acquired": false
+        }
+      ],
+      "expected": "single acquisition boundary: empty or suffix of Return down/up then Space down/up; never Return-only",
+      "fullModule": false,
+      "actualOSWorker": true,
+      "gameplay": false
+    }
+  },
+  {
+    "receipt": "first-worker",
+    "observation": {
+      "group": "Worker cleanup",
+      "terminated": true,
+      "pending": 0
+    }
+  },
+  {
+    "receipt": "modifier-left",
+    "observation": {
+      "group": "accepted modifier-only custom format",
+      "requestedDIK": 42,
+      "formatAccepted": true,
+      "installedMapOffset": 7,
+      "callerFormatMutated": true,
+      "input": [
+        "VK_SHIFT right down",
+        "VK_SHIFT right up"
+      ],
+      "observed": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            7,
+            128,
+            110,
+            1
+          ],
+          [
+            7,
+            0,
+            110,
+            2
+          ]
+        ]
+      },
+      "expected": {
+        "hr": 0,
+        "count": 2,
+        "pairs": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+    }
+  },
+  {
+    "receipt": "modifier-right",
+    "observation": {
+      "group": "accepted modifier-only custom format",
+      "requestedDIK": 54,
+      "formatAccepted": true,
+      "installedMapOffset": 7,
+      "callerFormatMutated": true,
+      "input": [
+        "VK_SHIFT right down",
+        "VK_SHIFT right up"
+      ],
+      "observed": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            7,
+            128,
+            105,
+            1
+          ],
+          [
+            7,
+            0,
+            105,
+            2
+          ]
+        ]
+      },
+      "expected": {
+        "hr": 0,
+        "count": 2,
+        "pairs": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+    }
+  },
+  {
+    "receipt": "capacity",
+    "observation": {
+      "group": "independent oracle controls",
+      "pass": true,
+      "positive": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            7,
+            128,
+            97,
+            1
+          ],
+          [
+            7,
+            0,
+            97,
+            2
+          ]
+        ]
+      },
+      "rejected": [
+        "lost requested edge",
+        "reversed requested edges",
+        "spurious overflow"
+      ]
+    }
+  },
+  {
+    "receipt": "capacity",
+    "observation": {
+      "group": "omitted-key saturation",
+      "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+      "input": [
+        "A down",
+        "A up",
+        "Space down",
+        "Space up"
+      ],
+      "configuredSize": 3,
+      "effectiveCapacity": 2,
+      "customFormat": {
+        "57": 7,
+        "others": "omitted"
+      },
+      "observed": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            7,
+            128,
+            99,
+            5
+          ],
+          [
+            7,
+            0,
+            99,
+            6
+          ]
+        ]
+      },
+      "expected": {
+        "hr": 0,
+        "count": 2,
+        "pairs": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      "noGameplayClaim": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "individual-edge Worker activation partition",
+      "cut": 0,
+      "observed": {
+        "kind": "result",
+        "id": 2,
+        "hr": 0,
+        "count": 4,
+        "records": [
+          [
+            3,
+            128
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ],
+        "threadId": 1
+      },
+      "trace": [
+        {
+          "where": "before activation host call",
+          "cut": 0,
+          "acquired": false
+        },
+        {
+          "where": "host call completed; response not yet published",
+          "cut": 0,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "where": "serveRpc returned; response stored and notified",
+          "cut": 0,
+          "acquired": false
+        }
+      ],
+      "main": 0,
+      "worker": 1,
+      "pass": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "individual-edge Worker activation partition",
+      "cut": 1,
+      "observed": {
+        "kind": "result",
+        "id": 5,
+        "hr": 0,
+        "count": 3,
+        "records": [
+          [
+            3,
+            0
+          ],
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ],
+        "threadId": 1
+      },
+      "trace": [
+        {
+          "where": "before activation host call",
+          "cut": 1,
+          "acquired": false
+        },
+        {
+          "where": "host call completed; response not yet published",
+          "cut": 1,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "where": "serveRpc returned; response stored and notified",
+          "cut": 1,
+          "acquired": false
+        }
+      ],
+      "main": 0,
+      "worker": 1,
+      "pass": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "individual-edge Worker activation partition",
+      "cut": 2,
+      "observed": {
+        "kind": "result",
+        "id": 8,
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ],
+        "threadId": 1
+      },
+      "trace": [
+        {
+          "where": "before activation host call",
+          "cut": 2,
+          "acquired": false
+        },
+        {
+          "where": "host call completed; response not yet published",
+          "cut": 2,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "where": "serveRpc returned; response stored and notified",
+          "cut": 2,
+          "acquired": false
+        }
+      ],
+      "main": 0,
+      "worker": 1,
+      "pass": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "individual-edge Worker activation partition",
+      "cut": 3,
+      "observed": {
+        "kind": "result",
+        "id": 11,
+        "hr": 0,
+        "count": 1,
+        "records": [
+          [
+            7,
+            0
+          ]
+        ],
+        "threadId": 1
+      },
+      "trace": [
+        {
+          "where": "before activation host call",
+          "cut": 3,
+          "acquired": false
+        },
+        {
+          "where": "host call completed; response not yet published",
+          "cut": 3,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "where": "serveRpc returned; response stored and notified",
+          "cut": 3,
+          "acquired": false
+        }
+      ],
+      "main": 0,
+      "worker": 1,
+      "pass": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "individual-edge Worker activation partition",
+      "cut": 4,
+      "observed": {
+        "kind": "result",
+        "id": 14,
+        "hr": 0,
+        "count": 0,
+        "records": [],
+        "threadId": 1
+      },
+      "trace": [
+        {
+          "where": "before activation host call",
+          "cut": 4,
+          "acquired": false
+        },
+        {
+          "where": "host call completed; response not yet published",
+          "cut": 4,
+          "result": 0,
+          "acquired": false
+        },
+        {
+          "where": "serveRpc returned; response stored and notified",
+          "cut": 4,
+          "acquired": false
+        }
+      ],
+      "main": 0,
+      "worker": 1,
+      "pass": true
+    }
+  },
+  {
+    "receipt": "edge-partitions",
+    "observation": {
+      "group": "Worker cleanup",
+      "terminated": true,
+      "pending": 0
+    }
+  },
+  {
+    "receipt": "com-release-correct-layout",
+    "observation": {
+      "group": "actual COM Release with nonfinal/final refs, pending overflow, disjoint device and synthetic slot reuse",
+      "reused": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            11,
+            128,
+            106,
+            11
+          ],
+          [
+            11,
+            0,
+            106,
+            12
+          ]
+        ]
+      },
+      "pass": true,
+      "limitations": [
+        "fragment only",
+        "synthetic COM wrapper/create/reuse",
+        "fixture heap_free is no-op; production map drop and host reset tested"
+      ]
+    }
+  },
+  {
+    "receipt": "com-release-rpc",
+    "observation": {
+      "group": "actual COM Release with nonfinal/final refs, pending overflow, disjoint device and synthetic slot reuse",
+      "reused": {
+        "hr": 0,
+        "count": 2,
+        "records": [
+          [
+            11,
+            128,
+            114,
+            11
+          ],
+          [
+            11,
+            0,
+            114,
+            12
+          ]
+        ]
+      },
+      "pass": true,
+      "limitations": [
+        "fragment only",
+        "synthetic COM wrapper/create/reuse",
+        "fixture heap_free is no-op; production map drop and host reset tested"
+      ]
+    }
+  },
+  {
+    "receipt": "staged-admission-scope-corrected",
+    "observation": {
+      "group": "global staged/active exact quota, rejected transactional replacement, same IDs across16contexts and zero-stage release",
+      "slots": 65536,
+      "pass": true,
+      "coverage": "production renderer/host ABI; synthetic lease IDs, no WAT device allocation"
+    }
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "release-no-host-reset": {
+    "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release-no-host-reset.wat",
+    "sha256": "7b77e2609a2bbbf507d2d228c819b87bc1f6e69bc00cccfc0afcfbbaa4523337",
+    "recipe": "in exact dx_free form replace single keyboard host op1 drop expression with (nop)",
+    "expected": "COM final Release must reject surviving FIFO"
+  },
+  "acquire-no-activation": {
+    "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-acquire-no-activation.wat",
+    "sha256": "8a5bef956e49c7d2f370edbfe06a89e74cb5d9aadbd70989127db357165134a2",
+    "recipe": "in exact Acquire form replace single op10 activation call with i32.const 0",
+    "expected": "Worker partition at cut0 rejects count0 instead of four edges"
+  }
+}
