@@ -984,3 +984,60 @@ Ordinary continuation attempt10 used the exact built source `94d18605` and modul
 After the tutorial popup was dismissed with Enter, ordinary W was held from18:22:36.945 to18:22:38.150 UTC (requested1200ms); the camera advanced toward the corridor and the left NPC left view. S from18:22:58.855 to18:23:00.068 reversed movement, restoring the left NPC and wider doorway. A1500ms idle observation retained the camera geometry while NPCs animated. Root personally reviewed all movement frames and input receipts and accepted narrow first-person player control inside the prison ship. This is gameplay evidence beyond the Name form, not proof of complete character generation, quests, audio quality or FPS.
 
 Immutable run: `scratch/runs/20261005-morrowind-prison-movement/result.json`, with four reviewed gameplay images, exact inputs, root review, served-response receipts, frozen source closure and SHA256 artifact manifest. Actual registered memory was2GiB with Worker/WebGL backend; rendered scene640x480 inside1024x768 browser viewport. Session78331 exited0 on ordinary quit before its original600-second deadline. Browser/server closed18:23:55.881 UTC, no cleanup errors, no pending streams, Chrome exited0 and owning processes were absent. Remaining work includes typing fidelity, later game progression and a separately justified gameplay performance counter.
+
+## 2026-10-27 — bounded ordinary-name production input checkpoint
+
+Source `be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c` did **not** reproduce
+the documented Codex → cox loss at the portable browser/renderer/Worker
+boundary. `test/test-morrowind-ordered-name-input.js` executes unchanged
+`browser-input.js` listeners, the real `Win98Renderer`, complete `host.js`
+input closures and its exact input-publisher initializer, and production
+`guest-rpc.js` on a real Node OS Worker. DOM objects and the guest-side
+consumer are fixtures: no browser, game, compiled guest or gameplay was run.
+The consumer records message IDs, full wParam/lParam and destination HWND,
+rather than treating concatenated characters as proof of delivery.
+
+Rapid Codex (including physical left Shift for C), explicitly paced delivery
+with polls during held keys, and one-event-per-Worker-command draining all
+preserved the complete 17-message sequence and five WM_CHAR values. A caller
+focus change between commands changed the resolved HWND without losing an
+event. Repeat metadata, separate left/right Shift state, an ArrowLeft press,
+and browser-blur releases passed. Omitting d from the input produced a
+rejected expected-Codex comparison at message index 8, the first differing
+keydown. No production event was omitted in the positive cases.
+
+Live `get_key_down_state` samples during held keys returned down; samples
+after all releases returned up, even with the character messages still
+queued intact. This is a state-sampling distinction, not a reproduced
+WM_CHAR failure. The current WAT `di_kbd_collect` compares sampled live
+states with previous states, rather than consuming the Win32 character
+queue. Its behavior was inspected, not executed here; this checkpoint does
+not establish that Morrowind's Name control uses that API, nor that the
+Airstrike buffered-key repair diagnoses Morrowind. No ring, filter,
+device-lifecycle, modifier or input-path source semantics were changed.
+
+Validation: the new production-boundary probe,
+`test/test-browser-worker-input-focus.js`, and
+`test/test-keyboard-message-lparam.js` passed under Node v24.18.1 with
+`--max-old-space-size=320`, supervised RSS 512 MiB, CPU 90 s, wall 120 s,
+file 24 MiB and combined output 2 MiB limits. Git alone received its DATA
+limit; Node DATA/AS remained unlimited. The first probe attempt failed on a
+test-only generated-signature envelope lookup (`.sigs`); its stderr and
+cleanup receipt remain retained. The corrected probe then passed, followed
+by the physical-Shift refinement and affected regression checks.
+
+No causal repair or independent game acceptance is justified by this result.
+The remaining name-fidelity gate needs a separately authorized observation
+of the actual Morrowind Name consumer on a pinned production module: which
+WM_CHAR/GetDeviceState/GetDeviceData calls it uses, the ordinary DOM events
+and queue/poll schedule, and the first missing consumer observation. The
+historical `94d18605` run remains an observation, not a cause or a fresh
+before-control; it was not rerun. Existing gameplay qualification above is
+unchanged. No full build, guest/browser execution, Boat, main integration,
+controls change or game binary patch was performed.
+
+Canonical evidence/publication/cleanup receipt:
+`scratch/usage-watch/morrowind-ordered-name-input-oct27/receipt.json`;
+the same directory's `evidence.tar.gz` retains operation-specific admission,
+stdout/stderr and supervisor results, including the initial harness failure.
+Original evidence: `/tmp/morrowind-ordered-name-input-oct27/ops/`.
