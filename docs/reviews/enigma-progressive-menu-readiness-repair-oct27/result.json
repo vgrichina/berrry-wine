@@ -1,0 +1,58 @@
+{
+  "at": 1793093579.9248717,
+  "status": "BLOCKED_EXACT_PINNED_SOURCE_UNAVAILABLE",
+  "task": "enigma-progressive-menu-readiness-repair-oct27",
+  "requestedRevision": "425755ee5ee9be0734c7aca187521100f5487674",
+  "suppliedDonor": "/tmp/enigma-streams-independent-accept-integrate-oct27/repo",
+  "actualDonorTaskRef": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "pins": {
+    "/tmp/enigma-streams-independent-accept-integrate-oct27/repo/tools/enigma-frozen-gameplay-controller.py": {
+      "expected": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+      "actual": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+      "pass_": true
+    },
+    "/tmp/enigma-streams-independent-accept-integrate-oct27/repo/tools/enigma-supervised-gameplay.py": {
+      "expected": "ed3cfbb659a3ed6bdc6e218293579613a1709da1ab283f87a0b59de706048aa9",
+      "actual": "ed3cfbb659a3ed6bdc6e218293579613a1709da1ab283f87a0b59de706048aa9",
+      "pass_": true
+    }
+  },
+  "checks": {
+    "donorSourceSHA256": "PASS",
+    "exactSparseCheckout": "FAIL_PIN_ABSENT",
+    "readOnlyRootObjectAvailability": "FAIL_PIN_ABSENT"
+  },
+  "sourceModified": false,
+  "behavioralTestsExecuted": 0,
+  "guestInvocations": 0,
+  "boxesAssigned": [],
+  "boxesTouched": [],
+  "noMain": true,
+  "noDeploy": true,
+  "noWorkersLaunched": true,
+  "mountArgv": [],
+  "mountValidation": "NOT_APPLICABLE_SOURCE_ONLY_NO_MOUNTS",
+  "nodeStartup": "NOT_EXECUTED_NO_NODE_OPERATION",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-progressive-menu-readiness-repair-oct27/root-ref-digest.json",
+  "rootRefReceiptSHA256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3",
+  "rootFinalRefComparison": "not required; no root mutation performed",
+  "resumeCondition": "Supply the exact425755ee immutable commit/tree and production runner closure, or explicitly correct the assigned revision and production runner pin. Do not substitute b160b540 silently.",
+  "causalEvidence": [
+    "checkout.json",
+    "checkout-process.json",
+    "checkout.stdout",
+    "checkout.stderr",
+    "checkout-exit.json",
+    "checkout-supervision.json",
+    "root-pin.json",
+    "root-pin-process.json",
+    "root-pin.stdout",
+    "root-pin.stderr",
+    "root-pin-exit.json",
+    "root-pin-supervision.json"
+  ],
+  "historicalRuntime": "/tmp/enigma-full-frame-terminal-startgame-oct27/ops/result.json",
+  "historicalRuntimeStatus": "BLOCKED_LOADING_FRAME_NO_STARTGAME; loading batch49665; zero inputs; not replayed",
+  "publicationScope": "orphan sparse task report only; no source or integration",
+  "restrictions": "root tracked/index/refs and donors read only; no guest/boxes/main/deploy/spawning; strict launcher SSH; Git-only DATA512MiB; pool2/flock; Python pool1 physical128MiB"
+}

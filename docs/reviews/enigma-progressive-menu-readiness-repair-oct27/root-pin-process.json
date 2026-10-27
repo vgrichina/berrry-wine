@@ -1,0 +1,29 @@
+{
+  "argv": [
+    "git",
+    "cat-file",
+    "-t",
+    "425755ee5ee9be0734c7aca187521100f5487674"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "envSHA256": "57e4b57456bf84f6ee0f15fbce66e09b328abaf514038f26e1e27ffb84a448e5",
+  "inheritedLimits": {
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

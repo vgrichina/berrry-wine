@@ -1,0 +1,2 @@
+# Preserve raw Git diagnostic stream byte-for-byte, including Git hint spacing.
+init.stderr binary

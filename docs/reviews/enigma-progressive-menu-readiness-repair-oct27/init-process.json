@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "git",
+    "init",
+    "/tmp/enigma-progressive-menu-readiness-repair-oct27/repo"
+  ],
+  "cwd": null,
+  "envSHA256": "08bd9f51f650d3a768a0f216c827b9afab5c2815852fec58de4543bba99041ff",
+  "inheritedLimits": {
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}
