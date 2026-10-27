@@ -1,0 +1,257 @@
+{
+  "at": 1793113365.6435163,
+  "decision": "BLOCKED_CHANGED_PRODUCTION_ACK_BOUNDARY",
+  "baseline": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+  "candidate": "742baebdcde0b0261e6d29818751d9f0866707e9",
+  "branch": "task/generally-accepted-cursor-main-integration-oct27",
+  "sourceScope": "13 accepted files over full current-main index; current runner unchanged; blocked WIP only, main publication forbidden",
+  "materialization": {
+    "baseline": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+    "candidate": "742baebdcde0b0261e6d29818751d9f0866707e9",
+    "paths": [
+      {
+        "path": "tools/generally-loading-controller.py",
+        "sha256": "2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5",
+        "bytes": 18318,
+        "mainSHA256": null,
+        "actualSHA256": "2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5",
+        "match": true
+      },
+      {
+        "path": "test/test-generally-loading-controller.py",
+        "sha256": "131bc9b57be3a30a04b95f5d69f37e994da1eb47a0674c6f961c22ea7520f5ca",
+        "bytes": 17174,
+        "mainSHA256": null,
+        "actualSHA256": "131bc9b57be3a30a04b95f5d69f37e994da1eb47a0674c6f961c22ea7520f5ca",
+        "match": true
+      },
+      {
+        "path": "test/test-generally-mailbox-ownership.py",
+        "sha256": "28c8c4020b2ec044cc22a49ade85dc8570f75ab5b55531fe974cdf9725a7e077",
+        "bytes": 5560,
+        "mainSHA256": null,
+        "actualSHA256": "28c8c4020b2ec044cc22a49ade85dc8570f75ab5b55531fe974cdf9725a7e077",
+        "match": true
+      },
+      {
+        "path": "test/test-generally-mailbox-handoff.py",
+        "sha256": "e8b804193a27228b547f1ec32289f90123588069cd3a64556a0c9c0ed5afaf3d",
+        "bytes": 9381,
+        "mainSHA256": null,
+        "actualSHA256": "e8b804193a27228b547f1ec32289f90123588069cd3a64556a0c9c0ed5afaf3d",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-bounded-acceptance.py",
+        "sha256": "af356e5301e50aefa5800e3cf7a4ad6b05be20b39521aa2d3709a6411daf90b6",
+        "bytes": 6180,
+        "mainSHA256": null,
+        "actualSHA256": "af356e5301e50aefa5800e3cf7a4ad6b05be20b39521aa2d3709a6411daf90b6",
+        "match": true
+      },
+      {
+        "path": "test/fixtures/generally-loading-protocol.cjs",
+        "sha256": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "bytes": 4036,
+        "mainSHA256": null,
+        "actualSHA256": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "match": true
+      },
+      {
+        "path": "docs/generally-mailbox-ownership-repair.md",
+        "sha256": "998652f763a1b6fcdcaa0e0b08ae02868505d87ba90654c1620025adba5e0abe",
+        "bytes": 11666,
+        "mainSHA256": null,
+        "actualSHA256": "998652f763a1b6fcdcaa0e0b08ae02868505d87ba90654c1620025adba5e0abe",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-stdio-oct27.py",
+        "sha256": "5dae240f9b3e5d1221dc0c6cc99f4651a4d35dfe41597aec0c61255b11f789b2",
+        "bytes": 16271,
+        "mainSHA256": null,
+        "actualSHA256": "5dae240f9b3e5d1221dc0c6cc99f4651a4d35dfe41597aec0c61255b11f789b2",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-durable-oct27.py",
+        "sha256": "21dc5e5e4fce90a56d98492c109461f18f57e8af687480a39dd1cd0c64f03f13",
+        "bytes": 7390,
+        "mainSHA256": null,
+        "actualSHA256": "21dc5e5e4fce90a56d98492c109461f18f57e8af687480a39dd1cd0c64f03f13",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-mailbox-accept-oct27.py",
+        "sha256": "1f7a9894a8135ac949d7aef38dd3cd7135dc84811e542f445eb00faa6da8d440",
+        "bytes": 6180,
+        "mainSHA256": null,
+        "actualSHA256": "1f7a9894a8135ac949d7aef38dd3cd7135dc84811e542f445eb00faa6da8d440",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-history-oct27.py",
+        "sha256": "177b99583d8179de79433cb7ae70b8562b526f340f1d55cd6ed633dc2b3ab7bf",
+        "bytes": 8281,
+        "mainSHA256": null,
+        "actualSHA256": "177b99583d8179de79433cb7ae70b8562b526f340f1d55cd6ed633dc2b3ab7bf",
+        "match": true
+      },
+      {
+        "path": "test/independent-generally-no-advance-oct27.py",
+        "sha256": "ab9f913e452a4abd2f1dd2920e8341f2d007dd7aba0c8ff5cd1272350f9a3116",
+        "bytes": 2547,
+        "mainSHA256": null,
+        "actualSHA256": "ab9f913e452a4abd2f1dd2920e8341f2d007dd7aba0c8ff5cd1272350f9a3116",
+        "match": true
+      },
+      {
+        "path": "test/test-generally-cursor-transaction.py",
+        "sha256": "a4797d77bdd3809aa1c3d44a12c8fddd4ed983f5da08446e019ba30d6598fc48",
+        "bytes": 5985,
+        "mainSHA256": null,
+        "actualSHA256": "a4797d77bdd3809aa1c3d44a12c8fddd4ed983f5da08446e019ba30d6598fc48",
+        "match": true
+      }
+    ],
+    "all13PinsPass": true,
+    "sourceBytes": 118969,
+    "runnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+    "acceptedRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "acceptedBoundarySHA256": "96de2e3dbd35b5059e05e7a346a65f2926d643acf03b7af5cd9760255d1e2bf7",
+    "currentBoundarySHA256": "366711bfa9a7eb1694104a63368361370e8612eb002a3d5b4acc025d2fd9a5a1",
+    "acceptedBoundaryBytes": 15959,
+    "currentBoundaryBytes": 16268,
+    "diff": "production-boundary.diff",
+    "decision": "BLOCKED_CHANGED_PRODUCTION_ACK_BOUNDARY",
+    "requiredPrerequisite": "Coordinator review and independent acceptance of actual current-main production boundary with unchanged transaction/refusal assertions before integration may resume",
+    "transformations": [],
+    "behavioralExecutions": 0
+  },
+  "reuse": {
+    "acceptance": "/tmp/generally-cursor-preflight-independent-accept-oct27/ops/receipt-manifest.json",
+    "sha256": "d8e5b6c3fbea877df09b2042b329b944023a1684da664ebe2b3f5cbaf839046f",
+    "coordinatorReadiness": "/tmp/generally-cursor-integration-readiness-oct27/ops/verify.json",
+    "indexedPayloadsAlreadyVerified": 256,
+    "pinsAlreadyVerified": 14,
+    "olderPayloadsAlreadyVerified": [
+      897,
+      8535
+    ],
+    "replayed": false,
+    "unchangedGroups": "no-advance; real CLI write races; competing-owner; durable-no-replay; expected-negative-controls"
+  },
+  "newChecks": {
+    "thirteenAcceptedFileHashes": "PASS",
+    "currentRunnerPreservation": "PASS",
+    "productionBoundaryIdentity": "FAIL",
+    "behavioralExecution": "NOT RUN: stop at first failed assertion",
+    "nodeStartup": "NOT RUN: no Node process required"
+  },
+  "semanticDifference": "Current main adds input-state action calling inputConsumptionTrace.frozenState and binds scheduledInput/inputEvent/crossThreadMsgs/inputQueue/renderer/threadManager/instance.exports inside the accepted extraction. Identity-only rebinding cannot remove or substitute these semantics.",
+  "reproducer": "ops/materialize.py, unchanged asserted accepted boundary SHA256; exact command and limits in materialize.json; actual expected hashes and unified diff in boundary-blocker.json/production-boundary.diff",
+  "requiredPrerequisite": "Coordinator review and independent acceptance of actual current-main production boundary with unchanged transaction/refusal assertions before integration may resume",
+  "resources": {
+    "allocation": 402653184,
+    "future": 234881024,
+    "reserve": 16777216,
+    "aggregateFutureDisk": 1073741824,
+    "diskFloor": 2982150144,
+    "perOperation": "*.admission.json; remaining client growth to320MiB plus shared768MiB child once plus805306368 host headroom; entire shared WAL conservatively charged once; owned launcher/session included",
+    "limits": "Git256MiB physical DATA512MiB Git subprocess only; Python128MiB; Node not executed; CPU90 wall120 file24MiB aggregateoutput2MiB; pool1+Git flock; distinct stdout/stderr",
+    "latest": {
+      "at": 1793113335.9511297,
+      "ownAllocated": 2904064,
+      "launcherAllocated": 176128,
+      "sessionAndConservativeFullWAL": 30097408,
+      "externalFiles": [
+        {
+          "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T15-01-08-01a17de1-1e10-7263-95e0-f0429ad8aaf7.jsonl",
+          "logical": 534034,
+          "allocated": 536576
+        },
+        {
+          "path": "/home/user/.codex/memories_1.sqlite-wal",
+          "logical": 0,
+          "allocated": 0
+        },
+        {
+          "path": "/home/user/.codex/logs_2.sqlite-wal",
+          "logical": 12244672,
+          "allocated": 12251136
+        },
+        {
+          "path": "/home/user/.codex/queue_1.sqlite-wal",
+          "logical": 4152992,
+          "allocated": 4157440
+        },
+        {
+          "path": "/home/user/.codex/goals_1.sqlite-wal",
+          "logical": 4280712,
+          "allocated": 4288512
+        },
+        {
+          "path": "/home/user/.codex/state_5.sqlite-wal",
+          "logical": 4606192,
+          "allocated": 4612096
+        },
+        {
+          "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+          "logical": 4243632,
+          "allocated": 4251648
+        }
+      ],
+      "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+      "clients": [
+        {
+          "pid": 246412,
+          "rss": 188854272
+        }
+      ],
+      "memAvailable": 3733024768,
+      "remainingClientGrowth": 146690048,
+      "sharedChild": 805306368,
+      "hostHeadroom": 805306368,
+      "requiredRemaining": 1757302784,
+      "allocation": 402653184,
+      "futureBreakdown": {
+        "sourceGitReportsSessionEventsPublicationGrowth": 218103808,
+        "reserve": 16777216
+      },
+      "projectedTask": 268058624,
+      "freeDisk": 5860438016,
+      "projectedDisk": 4786696192,
+      "diskFloor": 2982150144,
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "mountArgv": [],
+      "mountExecution": "no guest/mount invocation authorized",
+      "pass": true
+    }
+  },
+  "launchConfiguration": {
+    "ssh": "exact configured SSH in run.py; no trust modifications",
+    "mountArgv": [],
+    "mountValidation": "no mount/guest invocation; no filename-bearing mount argv to parse",
+    "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/generally-accepted-cursor-main-integration-oct27/root-ref-digest.json"
+  },
+  "incidents": [
+    "Prior recursive donor alternate incident retained by reference to readiness; resolved flattened read-only store used without nested alternate inheritance or retry",
+    "Initial read-only inspection display exceeded8192B/operation; operational limitation retained, no claim of display-limit compliance",
+    "First production boundary identity assertion failed before behavioral checks; exact original failure retained; no semantic repair"
+  ],
+  "evidence": {
+    "archive": "evidence.tar.gz",
+    "sha256": "1db391ac1297956637bd12543176b345a7d066d0be1b7b71a68326b6b7f3b6e6",
+    "index": "payload-index.json",
+    "payloads": 20
+  },
+  "publication": "Blocked WIP task branch only. Exact commit/task remote/main remote and cleanup bound by external ops/publication-closeout.json, which references this canonical manifest SHA256.",
+  "cleanup": "All completed supervised operations cleanupComplete; watcher release in external closeout",
+  "historicalRequest12": "uncertain, untouched, never replayed",
+  "raceScope": "Cooperating flock writers serialize; arbitrary noncooperating writer atomicity not claimed",
+  "guestInvocations": 0,
+  "compilerInvocations": 0,
+  "boatInvocations": 0,
+  "fetchBytes": 0,
+  "lifecycle": "No assigned box; coordinator lifecycle unchanged; no processes or watchers belonging to peers touched"
+}

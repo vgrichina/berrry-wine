@@ -1,0 +1,102 @@
+[
+  {
+    "path": "boundary-blocker.json",
+    "bytes": 5062,
+    "sha256": "955bce75dae2e0db34f987b3f579ffe78aaca17328c90a793578244ad35dd840"
+  },
+  {
+    "path": "diagnose.admission.json",
+    "bytes": 1955,
+    "sha256": "e96ae80a57571fd046065ab1a8b03a9c2d29690eee9e4a36e52f2e3c3f0c42ea"
+  },
+  {
+    "path": "diagnose.json",
+    "bytes": 1237,
+    "sha256": "1a835f6ff71ea8100e52f6360955c75ef05c4461d3714a732560b881ee888da8"
+  },
+  {
+    "path": "diagnose.py",
+    "bytes": 1897,
+    "sha256": "27a5b6f303d9ffa1e6ec338e97e9d5333b28bb4eae5e9628e226d2a1275e9a6f"
+  },
+  {
+    "path": "diagnose.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "diagnose.stdout",
+    "bytes": 350,
+    "sha256": "1e2908282565aa859f6703aff384d88c018b8aec5eb4479267efdd64cb4450ca"
+  },
+  {
+    "path": "diagnose.supervisor-output",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "init.admission.json",
+    "bytes": 1950,
+    "sha256": "d884d43ad280a96dbe9204aa9a4ff5ece11c3e9157e27c498356eeca4127a662"
+  },
+  {
+    "path": "init.json",
+    "bytes": 1275,
+    "sha256": "921ccd2a5c97b124fb3e2a045b5b82b3fd96daa3d655f81323a26baa555c76bf"
+  },
+  {
+    "path": "init.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "init.stdout",
+    "bytes": 101,
+    "sha256": "1ef3ba1735db0836df220d9315502f8d76aa1a2883f3b83b8de2785092917f02"
+  },
+  {
+    "path": "init.supervisor-output",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "materialize.admission.json",
+    "bytes": 1953,
+    "sha256": "5f7aaad8655ccfde17f5844d77a3c647f8009f845ce69eae5b8fedc824060e5d"
+  },
+  {
+    "path": "materialize.json",
+    "bytes": 2278,
+    "sha256": "ae03424a9a0068efcbe5d4de9894197ccb70013499d3cee9c74961bc7d2ae679"
+  },
+  {
+    "path": "materialize.py",
+    "bytes": 3436,
+    "sha256": "a8d0145575f9078a348924fdc2204cee004cbdf6fa0fbea0968a472f14771047"
+  },
+  {
+    "path": "materialize.stderr",
+    "bytes": 761,
+    "sha256": "e8fff8922b4cc2f845405b6919bfcb8cc24de9d629ed4abfeed4d60e32c5ec6d"
+  },
+  {
+    "path": "materialize.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "materialize.supervisor-output",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "production-boundary.diff",
+    "bytes": 677,
+    "sha256": "8d4628b9bcdfb4a8a31992949c5d70b2e5d731fcca47c670d871ec2199615447"
+  },
+  {
+    "path": "run.py",
+    "bytes": 5813,
+    "sha256": "5ad420ce2aca84a8267963773f8e71f2b98421ce216aa97fce34610fb387b0f6"
+  }
+]
