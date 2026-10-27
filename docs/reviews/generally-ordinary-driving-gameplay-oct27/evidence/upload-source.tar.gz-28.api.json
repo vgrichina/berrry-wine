@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "958d088ce26860f3432e2a4bb4acc698382d3e9dd9c64598f015ba43952e370d",
+  "commandId": "cmd_la4i7ga2xsgp",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:42.739Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:43:42.712Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

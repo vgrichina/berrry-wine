@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "25868902a562000648474388986eaf2e4f1d4cf40076afbad15a739438f102c6",
+  "commandId": "cmd_8irkeaeafpu0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:45.571Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:43:45.543Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "821488dc6631ad6a5bdc6aef8c5613ad9ee7f7b7817278bb062c76442e24e397",
+  "commandId": "cmd_vikcl9p7o3j0",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:12.734Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:12.707Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

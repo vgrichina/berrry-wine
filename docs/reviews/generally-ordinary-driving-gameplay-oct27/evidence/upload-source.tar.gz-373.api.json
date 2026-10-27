@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b62250bd714319e9c1998fc693a9bf27c003876fd37c718a0888118b7c7eb596",
+  "commandId": "cmd_g04afknunkfo",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:39.495Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:39.468Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

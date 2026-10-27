@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "1c67909fe99e148f73b488adf40a59c3b83e5304d67ebf4d3da21d98b072f8c9",
+  "commandId": "cmd_uwbcoljviook",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:19.299Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:19.271Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

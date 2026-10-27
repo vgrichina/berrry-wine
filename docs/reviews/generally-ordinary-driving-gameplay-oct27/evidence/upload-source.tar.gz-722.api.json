@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b6c6cd2ea34da434d9784591a407983de63bb35a72d37c037f911801c9353f1f",
+  "commandId": "cmd_wy5bjjprlxse",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:41.791Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:41.761Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

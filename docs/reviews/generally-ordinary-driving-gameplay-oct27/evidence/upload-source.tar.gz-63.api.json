@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "f84d59c5cbeb5a201744918ab5a5ffa5694cae5a4f1e0b798c0de6a892636e49",
+  "commandId": "cmd_gpxcuux7sd2n",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:48.280Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:43:48.254Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

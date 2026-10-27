@@ -1,0 +1,61 @@
+total 8
+drwxr-xr-x  2 user user 4096 Oct 27 10:52 .
+drwxr-xr-x 10 user user 4096 Oct 27 10:52 ..
+{
+  "at": 1793098340.0418882,
+  "files": 3866,
+  "bytes": 78525315,
+  "source": "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+  "allPinsPass": true
+}{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 109682688,
+  "sampledPeakRSS": 109682688,
+  "reapedPeakRSS": 88760320,
+  "cpuSeconds": 0.36677499999999996,
+  "wallSeconds": 0.15106924700000945,
+  "owned": [
+    [
+      22252,
+      "91729"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "NODE_OPTIONS=--max-old-space-size=2048",
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/generally-driving/ops/remote-startup-v3.cjs"
+  ],
+  "commandSHA256": "83a1378a8107d563ad20d3f9f60c3d88554c837f752787e3dcc6425815f286fd",
+  "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "argvSHA256": "75989780de579ca51cfc6cfef80c9f93ca0656340aeb07e403ba604144a4f82e",
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+}

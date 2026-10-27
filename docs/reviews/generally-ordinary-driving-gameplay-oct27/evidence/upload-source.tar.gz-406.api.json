@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "3bdcb32daf29e7c0a3fb882fa59c95f3d6a2d143eca50a4223720f85dd3de611",
+  "commandId": "cmd_f1fzajzzyhmi",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:44.550Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:44.522Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

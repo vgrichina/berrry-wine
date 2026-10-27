@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "4c638bb92dcb88d5f8be362e4714b70ffdd99b249fc254c647d83977c184dbe6",
+  "commandId": "cmd_fpzb7nu7uhgj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:42.652Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:42.620Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

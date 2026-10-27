@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "87b26adaeb0819d1981565e653cc23fad484d1c908e48855e807f4fb99f5fbfd",
+  "localExit": 0,
+  "commandId": "cmd_esl4ttsrmxfv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:52:14.187Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T10:52:14.163Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

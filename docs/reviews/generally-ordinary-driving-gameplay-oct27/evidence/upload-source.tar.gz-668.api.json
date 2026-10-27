@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "1df8bb12a9a2881ddf793ca99eda2ae83e35c1e7a26ec32421a4a469c830b5e9",
+  "commandId": "cmd_gwek0uvxxflh",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:34.288Z",
+  "launcherFailed": false,
+  "noticedMs": 8,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 8,
+  "startedAt": "2026-10-27T10:46:34.260Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

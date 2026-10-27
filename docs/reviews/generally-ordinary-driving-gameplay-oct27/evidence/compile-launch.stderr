@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 36, in <module>
+    assert q.returncode==0
+           ^^^^^^^^^^^^^^^
+AssertionError

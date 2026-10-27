@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "041696a07df978f5a3e45e2262b4e0c6455ca84b2238de8b008d70b4756d8be4",
+  "commandId": "cmd_4pney5ryt23g",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:44.868Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:43:44.844Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

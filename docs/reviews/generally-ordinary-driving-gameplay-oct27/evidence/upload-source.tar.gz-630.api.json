@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "3a6392eaaa85a11210d0d7817409ba3785fc082d1f1a6fb84c35a44d187571d2",
+  "commandId": "cmd_ehg2gopdkl46",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:28.551Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:28.526Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

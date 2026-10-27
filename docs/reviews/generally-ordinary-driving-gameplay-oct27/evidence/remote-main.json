@@ -1,0 +1,39 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 47661056,
+  "sampledPeakRSS": 47661056,
+  "reapedPeakRSS": 12320768,
+  "cpuSeconds": 1.012178,
+  "wallSeconds": 1.537492488976568,
+  "owned": [
+    [
+      4116120,
+      "114482238"
+    ],
+    [
+      4116121,
+      "114482241"
+    ],
+    [
+      4116122,
+      "114482242"
+    ],
+    [
+      4116123,
+      "114482242"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/bin/bash",
+    "-c",
+    "ulimit -d 524288; exec \"$@\"",
+    "git-child",
+    "git",
+    "ls-remote",
+    "git@github.com:vgrichina/wine-assembly.git",
+    "refs/heads/main"
+  ],
+  "commandSHA256": "ab2402301881d0395ba2442ed3bb96dd54c82ef2b97c56e866221828ca0b2bac"
+}

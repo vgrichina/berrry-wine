@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "ff6a074e60a911e4b84529351c29f694e3b39831cb3b237b03e727bbac45dda6",
+  "commandId": "cmd_ndcsd61fgsas",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:23.924Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:23.895Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

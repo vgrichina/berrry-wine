@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 56180736,
+  "sampledPeakRSS": 56180736,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.302159,
+  "wallSeconds": 0.21594817889854312,
+  "owned": [
+    [
+      4137187,
+      "114558295"
+    ],
+    [
+      4137188,
+      "114558297"
+    ],
+    [
+      4137189,
+      "114558301"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "remote",
+    "compile-check",
+    "test ! -f /tmp/generally-driving/ops/compile-supervision.json || cat /tmp/generally-driving/ops/compile-supervision.json; tail -c 1800 /tmp/generally-driving/ops/compile.stdout; cat /tmp/generally-driving/ops/compile.stderr; tail -c 1500 /home/user/.ascii/processes/22676.err.log",
+    "30"
+  ],
+  "commandSHA256": "3ab990251a9630e8bda141a58e067ab83e211a1283dcacb168c7a45ac743d203"
+}

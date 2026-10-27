@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c14cd3db28c922fe0f397d40dd5ccca893550b2a31d20bddde28e3e195081431",
+  "commandId": "cmd_eptwisv1btfz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:24.725Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:24.697Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

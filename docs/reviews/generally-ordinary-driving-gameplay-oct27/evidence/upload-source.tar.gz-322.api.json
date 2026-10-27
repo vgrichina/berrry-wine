@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "bce11fa80a39cf9da012f0965744a8b42cdf648cd0457e620f516d2c3b2f3689",
+  "commandId": "cmd_xx7obtkftvri",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:33.228Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:33.201Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

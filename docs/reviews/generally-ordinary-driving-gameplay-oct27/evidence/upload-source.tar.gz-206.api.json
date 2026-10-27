@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "5c044de91ef1628b519846db0c6c30f08d3b0847bc8877adea7bfeabe1716ca2",
+  "commandId": "cmd_er6vrftuvdqw",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:18.013Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:17.986Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

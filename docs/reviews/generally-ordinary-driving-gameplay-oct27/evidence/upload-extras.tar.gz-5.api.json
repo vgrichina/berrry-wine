@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "7aa9867fb41184478c760c07e7cb01283b6650cf1b19e05b440f8c274fde865c",
+  "commandId": "cmd_sfipopa0j8pu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:51.329Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:47:51.298Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "4d0d1af9ab30350b94f685fa0d8762e3946a3da9f1f49b4789ff54c1befd7398",
+  "commandId": "cmd_3acctdetsd89",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:48.088Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:48.063Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

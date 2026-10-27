@@ -1,0 +1,76 @@
+tools/callback-census-reconcile.test.js:32:    assert(check(actual, lock).includes(`changed producer ${file}:${name} (sha256); review its lifetime`), label);
+tools/callback-census-reconcile.test.js:56:    [`changed producer ${file}:${name} (boundaryCalls); review its lifetime`]);
+tools/callback-ownership-census.js:141:          errors.push(`changed producer ${id} (${field}); review its lifetime`);
+test/enigma-forwarder-repair.test.py:93:# Owned ten-module fixture is also used by the unchanged producer suite, which
+test/test-callback-ownership-census.js:14:  .some(e => e.includes('changed producer')), 'target replacement with unchanged count fails');
+test/test-callback-ownership-census.js:61:  .some(e => e.includes('changed producer')), 'same named calls reordered still fails');
+test/test-callback-ownership-census.js:126:  ['changed producer host.js:host-file (sha256); review its lifetime'],
+test/test-callback-ownership-census.js:134:  ['changed producer lib/guest-worker.js:host-file (sha256); review its lifetime'],
+test/test-callback-ownership-census.js:174:    [`changed producer ${file}:${name} (sha256); review its lifetime`],
+test/test-callback-ownership-census.js:197:    [`changed producer ${file}:host-file (sha256); review its lifetime`]);
+#!/usr/bin/env node
+// Fixed WAT memory regions must be declared as:
+//   (global $NAME i32 (i32.const START))
+//   (global $NAME_SIZE i32 (i32.const SIZE))
+// The executable map is extracted from those globals instead of comments.
+
+'use strict';
+
+const assert = require('assert');
+const fs = require('fs');
+const path = require('path');
+const { WAT_FILES } = require('../lib/compile-wat');
+
+const ROOT = path.join(__dirname, '..');
+const SRC = path.join(ROOT, 'src');
+const WASM_MEMORY_SIZE = 0x20000000;
+
+// The globals come from tools/wat-globals.js, which resolves BOTH spellings —
+// `(i32.const 0x…)` and `(region.addr $R OFF)` / `(region.size $R)` — against
+// the placed layout. Since wave 3 most of this map's mirrors are symbolic,
+// because a literal mirror pins the region it mirrors: an allocated region would
+// relocate and every `global.get` would keep reading where it used to be. A
+// regex looking for `i32.const` finds nothing in that tree and reports an empty
+// map, which reads as green.
+const { collect: collectConstGlobals, parseConstI32 } = require('../tools/wat-globals.js');
+
+function collectRegions(globals) {
+  const regions = [];
+  for (const [name, sizeGlobal] of globals) {
+    if (!name.endsWith('_SIZE')) continue;
+    const baseName = name.slice(0, -'_SIZE'.length);
+    const baseGlobal = globals.get(baseName);
+    if (!baseGlobal) continue;
+    const size = sizeGlobal.value >>> 0;
+    assert(size > 0, `$${name} must be non-zero`);
+    regions.push({
+      name: baseName,
+      start: baseGlobal.value >>> 0,
+      size,
+      end: (baseGlobal.value + size) >>> 0,
+      baseGlobal,
+      sizeGlobal,
+    });
+  }
+  return regions.sort((a, b) => (a.start - b.start) || (a.end - b.end));
+}
+
+function watStringLength(literal) {
+  let length = 0;
+  for (let i = 0; i < literal.length; i++, length++) {
+    if (literal[i] !== '\\') continue;
+    if (/[0-9a-f]/i.test(literal[i + 1] || '') &&
+        /[0-9a-f]/i.test(literal[i + 2] || '')) i += 2;
+    else i += 1;
+  }
+  return length;
+}
+
+function collectDataRegions() {
+  const regions = [];
+  const dataRe = /\(data\s+\(i32\.const\s+([^)]+)\)\s*((?:"(?:[^"\\]|\\.)*"\s*)+)\)/gs;
+  const stringRe = /"((?:[^"\\]|\\.)*)"/g;
+  for (const file of WAT_FILES) {
+    const source = fs.readFileSync(path.join(SRC, file), 'utf8');
+    for (const match of source.matchAll(dataRe)) {
+{"pass":true,"node":"/home/user/.nvm/versions/node/v24.22.1/bin/node","version":"v24.22.1","flags":["--max-old-space-size=2048"],"limits":"Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              180                  180                  seconds   \nMax file size             25165824             25165824             bytes   

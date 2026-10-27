@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "82844a40c0956224a74c68f34f72b108cbd5c2e1fd421309c6b02c5c3bb5460f",
+  "commandId": "cmd_ujfrjet7sztz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:14.576Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:14.549Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

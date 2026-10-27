@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "e6ec58ed63986d85c52e0d08638406bad2d3d63eda1c0a86566d5b9ed54a4292",
+  "commandId": "cmd_advanvr1rprk",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:15.277Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:15.250Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c139ad7fd17eb00fe1345f58035cfc257f147b90478fa2e244fcb53a59d6a146",
+  "commandId": "cmd_juwyecjsio1x",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:02.700Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:02.672Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

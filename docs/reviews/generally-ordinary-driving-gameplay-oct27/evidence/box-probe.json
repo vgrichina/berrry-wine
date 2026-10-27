@@ -1,0 +1,34 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 36790272,
+  "sampledPeakRSS": 36790272,
+  "reapedPeakRSS": 12320768,
+  "cpuSeconds": 0.15581899999999999,
+  "wallSeconds": 0.1507922278251499,
+  "owned": [
+    [
+      4115394,
+      "114480672"
+    ],
+    [
+      4115395,
+      "114480675"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "bx_zw79r524",
+    "--timeout",
+    "30",
+    "--json",
+    "--no-update",
+    "--",
+    "bash",
+    "-lc",
+    "date -u; node --version; command -v node; cat /proc/self/limits; df -B1 /tmp; free -b; ls -la /tmp; ls -la /home/user"
+  ],
+  "commandSHA256": "96b77450930bfc2bcbc530babf0d972d8aa5d8b765dc2a83ee69141de7c7018d"
+}

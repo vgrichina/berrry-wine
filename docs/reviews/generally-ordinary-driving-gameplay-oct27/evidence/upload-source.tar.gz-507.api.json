@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "452ddd53ae38e2b578b0c432c21e41256fd3353d87062931613aac5d4c729d08",
+  "commandId": "cmd_wt4icrmxxcim",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:13.433Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:13.403Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

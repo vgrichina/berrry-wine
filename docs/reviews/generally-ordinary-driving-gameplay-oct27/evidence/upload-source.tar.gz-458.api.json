@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "0c454f91e6bec791c9bb5df5f94e6d578554b982f08bdffc0d32d6a81ba49e97",
+  "commandId": "cmd_nxlsxifo2vyu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:50.887Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:50.854Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

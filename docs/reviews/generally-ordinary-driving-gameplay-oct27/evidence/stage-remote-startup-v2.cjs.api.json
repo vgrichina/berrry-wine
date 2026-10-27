@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "52aab7d7e8580f3352e16a6b1118888f00f30821d2e3e085629add49ef1a4a1a",
+  "localExit": 0,
+  "commandId": "cmd_wmxjsyg6wuub",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:50:45.762Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T10:50:45.737Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

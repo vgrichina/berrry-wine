@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "fef850bb706dbcf76fadc90cdf97b161f94bf0e7ae4843fc190ed877468c59c5",
+  "commandId": "cmd_pdlnwteexeq4",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:25.056Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:25.031Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

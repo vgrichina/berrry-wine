@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "ebc15d227e2e86f83cf2b65d0c72c87222a26e323bc9cd547e21f7adcd21d7ce",
+  "commandId": "cmd_35yeclqoppka",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:33.121Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:33.094Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

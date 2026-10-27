@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "09f3bf8333f9b33321252f6c092d956a7e36f26e1676a25eb81530f2f0de0915",
+  "localExit": 0,
+  "commandId": "cmd_266lpxpetnpz",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:49:14.524Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:49:14.498Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

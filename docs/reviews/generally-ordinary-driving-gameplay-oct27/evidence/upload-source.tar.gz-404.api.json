@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "fb9b3d5ba6b16d7d60cc1461607f06c80f980a736d8b3621347b1856e881ab15",
+  "commandId": "cmd_mll5lalqcdir",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:44.309Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:44.281Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

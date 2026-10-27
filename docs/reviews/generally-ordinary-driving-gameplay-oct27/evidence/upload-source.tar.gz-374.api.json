@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d02348fb14c71dc9bc5cb1de41be12b26d3540a434116e812ce75e8c300dd79a",
+  "commandId": "cmd_bri9lvrkfpms",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:39.685Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:39.659Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

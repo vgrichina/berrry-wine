@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "64984a9c40134cdf75607f29b8408badfba494645f0e44a3c8eb10e5760d378f",
+  "commandId": "cmd_edlurmc80rmn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:54.782Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:54.754Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

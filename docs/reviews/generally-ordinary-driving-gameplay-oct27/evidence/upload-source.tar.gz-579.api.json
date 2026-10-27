@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "66fefdff0a8ef394db7fff97570e5afc14eba23a7a70bb0f2eda4ebd402879ce",
+  "commandId": "cmd_p9ppmoheopez",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:22.431Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:22.404Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 39, in <module>
+    print(api(sys.argv[2],sys.argv[3],int(sys.argv[4]) if len(sys.argv)>4 else 30)[:4000])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 12, in api
+    assert q.returncode==0,(label,q.returncode,x)
+           ^^^^^^^^^^^^^^^
+AssertionError: ('prebuild-v3', 1, {'commandId': 'cmd_yodcflsfbgtl', 'cwd': '.', 'exitCode': 1, 'finishedAt': '2026-10-27T10:50:53.222Z', 'launcherFailed': False, 'noticedMs': 0, 'oomKilled': False, 'signal': None, 'startMs': 0, 'startedAt': '2026-10-27T10:50:52.902Z', 'stderr': 'Traceback (most recent call last):\n  File "/tmp/generally-driving/ops/remote-v3.py", line 36, in <module>\n    supervise([N,\'--max-old-space-size=2048\',str(H/\'remote-startup-v2.cjs\')],\'startup-prebuild-v3\',4*1024**3,wall=30)\n  File "/tmp/generally-driving/ops/remote-v3.py", line 27, in supervise\n    assert q[\'exit\']==0 and not q[\'stopReason\'] and q[\'cleanupComplete\'],q\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: {\'exit\': 1, \'stopReason\': None, \'peakRSS\': 96575488, \'sampledPeakRSS\': 96575488, \'reapedPeakRSS\': 73957376, \'cpuSeconds\': 0.136253, \'wallSeconds\': 0.07348024899999928, \'owned\': [[21465, \'83025\']], \'cleanupComplete\': True}\n', 'stderrTruncated': False, 'stdout': '', 'stdoutTruncated': False, 'success': False, 'timedOut': False})

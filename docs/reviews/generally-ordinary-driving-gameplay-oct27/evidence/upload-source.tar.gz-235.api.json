@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "0d385882f351a3d0f6b0c689a0eabcf3b876211fc8c47db50abd0c20f25c9078",
+  "commandId": "cmd_klvdxhtd6tyv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:21.555Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:21.526Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

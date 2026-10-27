@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b45185b249546fc5e80fe33f3f83182f24694b51bff8620813c7b6bcbd88d936",
+  "commandId": "cmd_5iqvrduloxmv",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:45.269Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:45.241Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

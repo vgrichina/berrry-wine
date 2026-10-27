@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "55909fabf8ad82169e5392926bcfc0a6b6f5e52f371d5f87a02d210f06eef7ce",
+  "commandId": "cmd_bfbpredpigg2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:25.258Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:25.233Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

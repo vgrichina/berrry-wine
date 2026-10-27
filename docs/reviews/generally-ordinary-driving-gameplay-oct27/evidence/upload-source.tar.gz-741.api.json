@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "adff26c2f7fa535b5bdb47acd21b809d8f813b4b089866b936fccc0ec914086a",
+  "commandId": "cmd_kll4dixpytaj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:44.147Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:44.123Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

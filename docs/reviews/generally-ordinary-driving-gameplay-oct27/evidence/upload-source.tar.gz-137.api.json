@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "4b518a4eaba2e24cbf49bbb2af71e5983d2088191f3268fcdb38adffe649419e",
+  "commandId": "cmd_dvqytrbngru5",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:07.088Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:07.062Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

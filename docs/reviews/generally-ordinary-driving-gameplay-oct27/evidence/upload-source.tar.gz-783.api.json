@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "9325235c5ea7a2025b5b68526975efa4f87d1ef2e49762f96b1f38d86d9f1323",
+  "commandId": "cmd_sietxepmfipw",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:49.170Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:49.141Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

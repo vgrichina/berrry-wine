@@ -1,0 +1,37 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 59899904,
+  "sampledPeakRSS": 59899904,
+  "reapedPeakRSS": 27918336,
+  "cpuSeconds": 1.928381,
+  "wallSeconds": 1.0592671709600836,
+  "owned": [
+    [
+      4125373,
+      "114517672"
+    ],
+    [
+      4125374,
+      "114517674"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/bin/bash",
+    "-c",
+    "ulimit -d 524288; exec \"$@\"",
+    "git-child",
+    "git",
+    "-C",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/repo",
+    "archive",
+    "--format=tar.gz",
+    "--output=/tmp/generally-ordinary-driving-gameplay-oct27/ops/build-deps.tar.gz",
+    "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+    "--",
+    "docs/dos-corpus/live/toyvm-bundle.js",
+    "docs/dos-corpus/live/toyvm-jit-bundle.js"
+  ],
+  "commandSHA256": "b4fc412bc926803566018fb6fbaba7a28d1fb904a324e8e9c8a7140d3b03b7a9"
+}

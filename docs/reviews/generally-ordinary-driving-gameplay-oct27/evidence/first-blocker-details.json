@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 56180736,
+  "sampledPeakRSS": 56180736,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.387805,
+  "wallSeconds": 0.2849510449450463,
+  "owned": [
+    [
+      4138422,
+      "114561724"
+    ],
+    [
+      4138423,
+      "114561726"
+    ],
+    [
+      4138424,
+      "114561731"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "remote",
+    "first-blocker-details",
+    "cd /tmp/generally-driving/runner && rg -n \"changed producer|review its lifetime|producer\" tools/frozen* test/test-wat-memory-map.js | head -n 35; ls -la build; cat /tmp/generally-driving/ops/staged-closure.json; cat /tmp/generally-driving/ops/startup-prebuild-v4-supervision.json",
+    "30"
+  ],
+  "commandSHA256": "74c4788b493d4f410cf697693a19f8da0f3a1358d7732af6cb531cffa71ed390"
+}

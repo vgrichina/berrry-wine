@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "89527ddb2b2401b0d9059b3953d6cb5b3aa2355bd32842d9ef27aa236b1ff862",
+  "commandId": "cmd_0ealigydyk9s",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:17.734Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:17.704Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "caaea278aa79ce6bdeafbc65565b5b0690b1c9b61025b6e1fb913e3c2a4f9477",
+  "commandId": "cmd_4rdtcitis1vr",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:21.362Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:21.335Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

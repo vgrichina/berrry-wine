@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "f8ba3584ba10072e47b14579754f87658384ecbc1f55b80ce8638769ae5b377e",
+  "commandId": "cmd_olud8pbpr47e",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:45.722Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:45.696Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

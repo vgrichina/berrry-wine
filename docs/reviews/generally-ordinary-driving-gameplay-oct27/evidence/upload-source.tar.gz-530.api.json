@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "bfdb5c80f25893c2c19202f4e47f4679b4f75153ecd078fbacef647d85340bf6",
+  "commandId": "cmd_ccigbwyjazlr",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:16.272Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:16.246Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

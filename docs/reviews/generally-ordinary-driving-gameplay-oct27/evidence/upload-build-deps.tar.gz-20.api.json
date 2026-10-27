@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b878a261f862b8b6d73210de6453237290eb3a1795310c452a1bc84f97ebb5a0",
+  "commandId": "cmd_gz7ijxtrydip",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:23.152Z",
+  "launcherFailed": false,
+  "noticedMs": 8,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 8,
+  "startedAt": "2026-10-27T10:47:23.123Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

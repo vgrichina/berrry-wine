@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "934af2e9e7fe3679d26f59f50642b3f6f3df6848fb3b82c301ac6067565f569f",
+  "commandId": "cmd_dd3kjuopezua",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:20.220Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:20.193Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

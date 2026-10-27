@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "16d60f9bdf357ba39b5e4fd8be41b039d0db582273cdc0a5bd51fe1a7056702d",
+  "commandId": "cmd_splmg2gt2b3d",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:51.233Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:51.206Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,512 @@
+[
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/.candidate-source.json",
+    "target": "runner/test/binaries/candidates/generally/.candidate-source.json",
+    "bytes": 372,
+    "sha256": "2f617ede7a94df2f0db54f307b1e5394c405b606759508904d5b0d8ff38e2327"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Cars/Cars.car",
+    "target": "runner/test/binaries/candidates/generally/Cars/Cars.car",
+    "bytes": 16136,
+    "sha256": "913ff30987e3b4dce3f25ff7882b52f0dbfbc56cb70567f3cec2dab65d6cdb09"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Drivers/Player.drv",
+    "target": "runner/test/binaries/candidates/generally/Drivers/Player.drv",
+    "bytes": 96,
+    "sha256": "ed7aadc039c516f76f042365e9ca482cd901df7112ff1330b88469eaff0265b4"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/font.bmp",
+    "target": "runner/test/binaries/candidates/generally/font.bmp",
+    "bytes": 16062,
+    "sha256": "250ae66afc23ac9e598b559d4e39607f122ea3c97625952f45331f003ec978a3"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/GeneRally.exe",
+    "target": "runner/test/binaries/candidates/generally/GeneRally.exe",
+    "bytes": 569344,
+    "sha256": "7544f462b3cb29b2bbc2c548533b8a38ff1b4a98bf17cb28f9b101077741c942"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/gr.ini",
+    "target": "runner/test/binaries/candidates/generally/gr.ini",
+    "bytes": 1216,
+    "sha256": "4baa29ab4fd62ef428c9b4f6a2314856c364e2197c491f98c7e35590c0304836"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/gr.pal",
+    "target": "runner/test/binaries/candidates/generally/gr.pal",
+    "bytes": 1052,
+    "sha256": "a86ed82e6e2b4bc16f9bcdd1c45f24dc9f3e3e2642b404da139508fc4eee01c3"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Lang/English.lng",
+    "target": "runner/test/binaries/candidates/generally/Lang/English.lng",
+    "bytes": 11507,
+    "sha256": "b6d5204a43bf2ea150e60ebedd2086100fe5f26f34ea73aad0ae91f575f37419"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Lang/howto.txt",
+    "target": "runner/test/binaries/candidates/generally/Lang/howto.txt",
+    "bytes": 198,
+    "sha256": "ed794fcb73af20facb4b9b33ef801a886277a2ce221c06bd9c168298b693b133"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Lang/Suomi.lng",
+    "target": "runner/test/binaries/candidates/generally/Lang/Suomi.lng",
+    "bytes": 3902,
+    "sha256": "ba348fee00c9ccf656948b295aa5f5c337c47e24ad7f4e49392dff62caf5dab6"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/readme.txt",
+    "target": "runner/test/binaries/candidates/generally/readme.txt",
+    "bytes": 2355,
+    "sha256": "9d3d367746e9884c84314de55fd1e3c945a2038adceed7cd3d790380fc4cf7ee"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Default/Damage.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Default/Damage.wav",
+    "bytes": 7014,
+    "sha256": "3daa1917c050ffdaa87fdecba5ef0d74a2aabd4b7e3a2bb4f210b0cb6aa6a7f1"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Default/Ding.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Default/Ding.wav",
+    "bytes": 31068,
+    "sha256": "61ee1832042d217c213ca81d934d2c5387ac6127a2925d82f9b5bf8892d242ff"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Default/Engine.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Default/Engine.wav",
+    "bytes": 90494,
+    "sha256": "bdcdc24e993235b9f1ef6455b3bd6120c38d9af98da9236b3e702411b7bd7f76"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Default/Skid.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Default/Skid.wav",
+    "bytes": 199680,
+    "sha256": "66870a30ee392cd349b849336a1ced6094cdd6d655e8b7ca1f2803d3dd24da02"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Default/Yeah.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Default/Yeah.wav",
+    "bytes": 110298,
+    "sha256": "4a47ae0db72ee50cbb6e788e56308d6ae280d4d26b8c56d19cc2bbed169c9815"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Funny/Damage.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Funny/Damage.wav",
+    "bytes": 8218,
+    "sha256": "ba55bddc83fba0231af888b2d6f600b9455efa630326d910cafef7a34e6aee6b"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Funny/Ding.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Funny/Ding.wav",
+    "bytes": 18146,
+    "sha256": "7a915d6fb3b137701b65f651bf5fd400f20098fcc1eb980ad91b63f39b9ea7c0"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Funny/Engine.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Funny/Engine.wav",
+    "bytes": 164334,
+    "sha256": "369e939ee0589adc0c82ec62abc1c83692d93c92953354500740a8e29516d91b"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Funny/Skid.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Funny/Skid.wav",
+    "bytes": 152034,
+    "sha256": "4a19e3a38402dff3adecc1916fa50bb7defa197bebd047d021225cf60ab6256f"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/Funny/Yeah.wav",
+    "target": "runner/test/binaries/candidates/generally/Sounds/Funny/Yeah.wav",
+    "bytes": 89144,
+    "sha256": "834452ecf16a6482cd174c4ad10e580e2b4ac37c6f9491fa2babc7493f4ab59e"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Sounds/howto.txt",
+    "target": "runner/test/binaries/candidates/generally/Sounds/howto.txt",
+    "bytes": 644,
+    "sha256": "18a314f48d044f2e07aea81cd42fd2e301e4e9f1b6e506a8082d499ca02061f5"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/trackeditor.cur",
+    "target": "runner/test/binaries/candidates/generally/trackeditor.cur",
+    "bytes": 326,
+    "sha256": "edca731c812fdff47da58f5bd4959b5b8fd05a91a376b6df7a3ed1badca63d64"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/TrackEditor.exe",
+    "target": "runner/test/binaries/candidates/generally/TrackEditor.exe",
+    "bytes": 126976,
+    "sha256": "e28b59da65f31e1d8d654c8a4fa6a20fc1ed867527f50b4ceb972cf7a86aa914"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Agari.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Agari.trk",
+    "bytes": 24958,
+    "sha256": "faa35c2eb12cd4bf3b633e28781a22176b53ae9fe55c59053d5f77770531f9f2"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Bytes.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Bytes.trk",
+    "bytes": 25544,
+    "sha256": "2dd8af4720a6a5fd758da8c098f648e1c261689ff9445004bead4f3792b4b865"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Gilwan.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Gilwan.trk",
+    "bytes": 24344,
+    "sha256": "ccf15a41175095b15207a609f68b65a1244a939ba5eaa3f6fa535be7b5c5373e"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Gurveln.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Gurveln.trk",
+    "bytes": 35062,
+    "sha256": "b1cb9163a58c139e0c9c2c20129adc6d10835f95e0be4598509065973b9f39db"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Kutford.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Kutford.trk",
+    "bytes": 25760,
+    "sha256": "53e84019d76bd8760512a28d0fecb0ee9d68cc537fc2eca98a98ea65b7004f7b"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Mondega.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Mondega.trk",
+    "bytes": 22936,
+    "sha256": "bd9ff4a927160e761e8d593cbbf11ede21886eb68cd0894e0099c204095fc30b"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Nyrporl.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Nyrporl.trk",
+    "bytes": 34156,
+    "sha256": "47b9ee23aa2de3a7fa6373daa0549cd577e4972b405f5a8baad084abd9a16936"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Pargy.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Pargy.trk",
+    "bytes": 25766,
+    "sha256": "7c60794f9b5586b5f3481bef43414ff503800c1dd9dd7146abd80b64d8c82093"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Sewring.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Sewring.trk",
+    "bytes": 19718,
+    "sha256": "64c177126b28a0c0deae28b08dc6064989e8f05d6c35012aa47cefbb473a7713"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Snoogy.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Snoogy.trk",
+    "bytes": 24996,
+    "sha256": "05896205e1889a312294a755fc89eefd1ce27639802a8f0cd6fc4ccf282b90c4"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Tachren.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Tachren.trk",
+    "bytes": 29440,
+    "sha256": "bc00f5b25b1495081304ec3d283c98f3a58f195f543f6ed61c6d321e7fd79629"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Tantele.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Tantele.trk",
+    "bytes": 31288,
+    "sha256": "62889013af39a134c64d427f182decd5db8628446611f51c0736bda00b01c3ab"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Tusaye.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Tusaye.trk",
+    "bytes": 26952,
+    "sha256": "0a6c07cbe133db6ee8a093c2cb9c68d4b3733c398dfdb969fa3c4277f2051866"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Wendan.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Wendan.trk",
+    "bytes": 28376,
+    "sha256": "41955204e9ff7b8b913d6088c5939f0f66b2a71240f12fc3ffd914db202f47af"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Wigeno.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Wigeno.trk",
+    "bytes": 30924,
+    "sha256": "fe10ea5d06f0c064e66d2ae16bd94b4ba152ada141c8df8114e1c99cdba10928"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/GeneRally/Xupong.trk",
+    "target": "runner/test/binaries/candidates/generally/Tracks/GeneRally/Xupong.trk",
+    "bytes": 26182,
+    "sha256": "5873979bbf02e1edbc76d75b42e95e8ef4dd137687c7f8d71b54641823e14d3d"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Algeria.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Algeria.TRK",
+    "bytes": 23978,
+    "sha256": "c418e08b6f19b29769b035ce82d9f1d0e327bc513255c120678d9c0a7a1fc0ff"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Australia.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Australia.TRK",
+    "bytes": 37486,
+    "sha256": "2da0371b32a97a7307b05d5af24028f2fecd9786c0db07a69e4931498fddbe7d"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Belgium.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Belgium.TRK",
+    "bytes": 28890,
+    "sha256": "9805fec2a7e26f43e1a58ba198b9fa08cc11f28557e49ab808752df983dbabbe"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Brazil.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Brazil.TRK",
+    "bytes": 29900,
+    "sha256": "47304a886223eb258845495349d92cc281eeab5a19fda41feea706f375be81ac"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Canada.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Canada.TRK",
+    "bytes": 40772,
+    "sha256": "bb18c6eb936e5f04888f98dec28fb1870712651cb09d8c188be7789bdd4501bc"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Egypt.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Egypt.TRK",
+    "bytes": 21040,
+    "sha256": "d370d814434b245379eb54ae10a6a96c77cd0626b6cb12d7bb62cb0de3b3ef90"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Finland.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Finland.TRK",
+    "bytes": 26480,
+    "sha256": "1ff08007354dc49039fcf5ddcdf2f1d1daa804b3cc76455dc5908d479465f6a0"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/France.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/France.TRK",
+    "bytes": 58600,
+    "sha256": "0aa6d25b532d89887cd822e9041e72e9fd1153ed45987ad0ae09228eab077fc2"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Germany.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Germany.TRK",
+    "bytes": 33408,
+    "sha256": "5a285c8e168df96a4765a08f7769f0c327add25ebf6ce5aabf84433baeff5ede"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Indonesia.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Indonesia.TRK",
+    "bytes": 41558,
+    "sha256": "530ff30cf197c0ca99f6b0ec49b5d3cc39d0eb2ded1f60ab41ff96424452bd6c"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Italy.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Italy.TRK",
+    "bytes": 28892,
+    "sha256": "38a5c174b12264a5d252faf505354139773d71d2c69f488717cd0e50284edef4"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Japan.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Japan.TRK",
+    "bytes": 28752,
+    "sha256": "c1c055ae555da9a405cf603500d3a0b44f1a39006166fe49b5aa4c8a87ed437a"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Sweden.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Sweden.TRK",
+    "bytes": 32188,
+    "sha256": "673214d6e169bb2af4619ff0c2162bcf99314a8031acf7585df7a6155ef5832b"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/Switzerland.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/Switzerland.TRK",
+    "bytes": 35138,
+    "sha256": "49806a442a5ad6ad813dd47ac5f4ac57ce301ade6d2098e2aa6955c4f7a5e93e"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/Tracks/World Tour/USA.TRK",
+    "target": "runner/test/binaries/candidates/generally/Tracks/World Tour/USA.TRK",
+    "bytes": 42634,
+    "sha256": "7f81d4fa71341bd57d0f1a37949e6b9868d81a2a817bcf63412fc761a3204b15"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/version.txt",
+    "target": "runner/test/binaries/candidates/generally/version.txt",
+    "bytes": 4009,
+    "sha256": "a9663a6723f832eef7041dc7a7185f6fa364b990352f9a37dc34479c18b42642"
+  },
+  {
+    "source": "/home/user/wine-assembly/test/binaries/candidates/generally/.wine-assembly-browser.json",
+    "target": "runner/test/binaries/candidates/generally/.wine-assembly-browser.json",
+    "bytes": 5734,
+    "sha256": "6be0d82a2f8c48e14729bf5e6ff6d69887f62e16a367f6322ee4d4bba71fb4e3"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/package.json",
+    "target": "runner/node_modules/pngjs/package.json",
+    "bytes": 1812,
+    "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-inflate.js",
+    "target": "runner/node_modules/pngjs/lib/sync-inflate.js",
+    "bytes": 3751,
+    "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/constants.js",
+    "target": "runner/node_modules/pngjs/lib/constants.js",
+    "bytes": 662,
+    "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-async.js",
+    "target": "runner/node_modules/pngjs/lib/filter-parse-async.js",
+    "bytes": 558,
+    "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitmapper.js",
+    "target": "runner/node_modules/pngjs/lib/bitmapper.js",
+    "bytes": 6477,
+    "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-pack.js",
+    "target": "runner/node_modules/pngjs/lib/filter-pack.js",
+    "bytes": 4279,
+    "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-sync.js",
+    "target": "runner/node_modules/pngjs/lib/packer-sync.js",
+    "bytes": 1193,
+    "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/paeth-predictor.js",
+    "target": "runner/node_modules/pngjs/lib/paeth-predictor.js",
+    "bytes": 372,
+    "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png-sync.js",
+    "target": "runner/node_modules/pngjs/lib/png-sync.js",
+    "bytes": 252,
+    "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png.js",
+    "target": "runner/node_modules/pngjs/lib/png.js",
+    "bytes": 4418,
+    "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-async.js",
+    "target": "runner/node_modules/pngjs/lib/packer-async.js",
+    "bytes": 1162,
+    "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-async.js",
+    "target": "runner/node_modules/pngjs/lib/parser-async.js",
+    "bytes": 4368,
+    "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/chunkstream.js",
+    "target": "runner/node_modules/pngjs/lib/chunkstream.js",
+    "bytes": 4249,
+    "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitpacker.js",
+    "target": "runner/node_modules/pngjs/lib/bitpacker.js",
+    "bytes": 4670,
+    "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-sync.js",
+    "target": "runner/node_modules/pngjs/lib/parser-sync.js",
+    "bytes": 2580,
+    "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/interlace.js",
+    "target": "runner/node_modules/pngjs/lib/interlace.js",
+    "bytes": 2004,
+    "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-reader.js",
+    "target": "runner/node_modules/pngjs/lib/sync-reader.js",
+    "bytes": 1114,
+    "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-sync.js",
+    "target": "runner/node_modules/pngjs/lib/filter-parse-sync.js",
+    "bytes": 483,
+    "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser.js",
+    "target": "runner/node_modules/pngjs/lib/parser.js",
+    "bytes": 7720,
+    "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse.js",
+    "target": "runner/node_modules/pngjs/lib/filter-parse.js",
+    "bytes": 4798,
+    "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/crc.js",
+    "target": "runner/node_modules/pngjs/lib/crc.js",
+    "bytes": 853,
+    "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/format-normaliser.js",
+    "target": "runner/node_modules/pngjs/lib/format-normaliser.js",
+    "bytes": 2366,
+    "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0"
+  },
+  {
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer.js",
+    "target": "runner/node_modules/pngjs/lib/packer.js",
+    "bytes": 3723,
+    "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03"
+  },
+  {
+    "source": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "target": "ops/supervisor-original.py",
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  {
+    "source": "/tmp/generally-ordinary-driving-gameplay-oct27/ops/remote-main.json",
+    "target": "ops/remote-main.json",
+    "bytes": 697,
+    "sha256": "a326f783b8fb513256ff512e780f779b265296b7e1f12a7de84bbe8d9c1fb7d1"
+  },
+  {
+    "source": "/tmp/generally-ordinary-driving-gameplay-oct27/ops/remote-startup.cjs",
+    "target": "ops/remote-startup.cjs",
+    "bytes": 2225,
+    "sha256": "38b50c74a8abcd5b697aff3ca290c643981d0f42fb19bd103a270c0fae3755d4"
+  },
+  {
+    "source": "/tmp/generally-ordinary-driving-gameplay-oct27/ops/remote.py",
+    "target": "ops/remote.py",
+    "bytes": 5771,
+    "sha256": "4945aee4f2ed6a5b79ac49972dcfb86b31cf8c30f79ffe981fd5b3fd8a23b181"
+  },
+  {
+    "source": "/tmp/generally-ordinary-driving-gameplay-oct27/ops/source-closure.json",
+    "target": "ops/source-closure.json",
+    "bytes": 520,
+    "sha256": "5909c6b97fd85486c5172d0592d3308381d299d83136f32cc4035e9dffca9ae2"
+  }
+]

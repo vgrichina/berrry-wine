@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "907fa43b35d5551d0bf1c13cbd32de2d89d76a37cf42b9e66e322752ebed2468",
+  "commandId": "cmd_manxhnxr3al1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:11.518Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:11.487Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

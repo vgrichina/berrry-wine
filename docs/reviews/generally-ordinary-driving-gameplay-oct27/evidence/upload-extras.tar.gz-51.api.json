@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "428201886a0289659c79c6d003a66e79ee1d5705ffa2fa9fbaeca2028fcc5e14",
+  "commandId": "cmd_ozte9py13wf3",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:57.590Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:57.564Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

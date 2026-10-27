@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c7388311e9dcfa40f6231529f0f7605a73f41e9a70ad252ca7ff4e104adb397a",
+  "commandId": "cmd_gwpu9w4ngby3",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:55.732Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:55.705Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

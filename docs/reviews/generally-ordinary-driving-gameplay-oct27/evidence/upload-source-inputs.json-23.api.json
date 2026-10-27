@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "2ba6505a4a6831db09978bfd48cd5c7642e018f9bb9e09bce4011ef3357bd2db",
+  "localExit": 0,
+  "commandId": "cmd_3swxpotx3p9g",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:49:17.029Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 8,
+  "startedAt": "2026-10-27T10:49:17.001Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

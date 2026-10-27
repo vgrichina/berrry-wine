@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "dd2164a24c64656e0d49cf338856886f380e323bf330883ceafbe16c18080e5a",
+  "commandId": "cmd_pssgrzvw7dlu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:45.808Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:45.782Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

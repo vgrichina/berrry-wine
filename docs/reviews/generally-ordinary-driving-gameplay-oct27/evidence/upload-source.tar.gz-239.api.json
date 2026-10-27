@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "3ac565d9fe79ff0264b2ee0432da9a12ee35c2a462a2edb87ffb6048d55e0a9b",
+  "commandId": "cmd_huesqefh5lth",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:22.074Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:22.045Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

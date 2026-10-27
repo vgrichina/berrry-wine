@@ -1,0 +1,22 @@
+{
+  "at": 1793098617.1353593,
+  "taskAllocated": 52453376,
+  "eventsAllocated": 688128,
+  "sessionAllocated": 1888256,
+  "WALConservativeFullCharge": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 2330624,
+    "/home/user/.codex/state_5.sqlite-wal": 4612096,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4251648
+  },
+  "WALPolicy": "Full current allocated WAL charged once conservatively because launch baseline was unavailable; future positive growth counted once.",
+  "futurePublicationAndGrowth": 16777216,
+  "reserve": 8388608,
+  "allocation": 134217728,
+  "remoteMeasuredAllocated": 109318144,
+  "remoteAllocation": 1073741824,
+  "remoteReserve": 67108864,
+  "projectedLocal": 107798528
+}

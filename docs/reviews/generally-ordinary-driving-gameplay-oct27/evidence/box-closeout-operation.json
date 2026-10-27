@@ -1,0 +1,30 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 56061952,
+  "sampledPeakRSS": 56061952,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.371973,
+  "wallSeconds": 0.30915358709171414,
+  "owned": [
+    [
+      4140850,
+      "114571331"
+    ],
+    [
+      4140851,
+      "114571334"
+    ],
+    [
+      4140855,
+      "114571339"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "closeout"
+  ],
+  "commandSHA256": "e6a4a62189e5bbbfc9babb349201385833a58f8a85ecc543a1f9f2ab8678ad56"
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "dea84926d3f2dd3c5521bfc0db3499063190c636787b6a764163071cc095a80c",
+  "commandId": "cmd_6zi1hxsizrhm",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:49.116Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:43:49.088Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

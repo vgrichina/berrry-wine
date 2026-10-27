@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "a8baa15914f93579130703e7b9f10b5b3848c0773771e896b8484797181df418",
+  "commandId": "cmd_avx78yxgwulm",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:20.098Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:20.068Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

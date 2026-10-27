@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b273d6f9323cc0c9393223c5ea15bee84a6230afb0f55da577992b28721fda33",
+  "commandId": "cmd_frb1bube1cwy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:23.691Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:23.664Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

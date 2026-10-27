@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "f55cbce147821f37f625e5ca016ef32827bdd7fe4ff81b1576e3f5b8f0375451",
+  "commandId": "cmd_eqr6aggsejql",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:27.593Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:27.565Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c68db0c7fd39fdb6605b97b0946a4bfd10f6a5f7483c7d7a59c4100e414aff71",
+  "commandId": "cmd_bgtmgxsowt4q",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:53.925Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:53.895Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

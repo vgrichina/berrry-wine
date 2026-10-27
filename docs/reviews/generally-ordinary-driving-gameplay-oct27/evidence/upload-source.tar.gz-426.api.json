@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "0107cb0f947a34bb2565b7d4e90f26be354966f40cfb91c5d79213507063f087",
+  "commandId": "cmd_bm4usxjhnpfd",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:46.898Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:46.871Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

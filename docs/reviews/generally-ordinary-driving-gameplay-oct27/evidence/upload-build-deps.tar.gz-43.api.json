@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d7d17d1f629c681e320664a9eea5cad980864b0cfb54e49fdf0b51d1680e8001",
+  "commandId": "cmd_zzhkmaxetz2t",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:25.686Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:25.662Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

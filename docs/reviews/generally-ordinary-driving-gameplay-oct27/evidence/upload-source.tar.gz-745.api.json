@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "a207f335caaa21a75727624d89bfc26618569f1dc44cd0efe10cfaa38533d941",
+  "commandId": "cmd_xekax20irkly",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:44.886Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:44.859Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

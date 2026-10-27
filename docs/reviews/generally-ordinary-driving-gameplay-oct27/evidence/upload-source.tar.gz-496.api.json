@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "0500d8c5febcdce173b78513ce328907c6efbd7d95924049cafa10cfc1b4bdd9",
+  "commandId": "cmd_srejoo1x2zeb",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:56.042Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:56.017Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

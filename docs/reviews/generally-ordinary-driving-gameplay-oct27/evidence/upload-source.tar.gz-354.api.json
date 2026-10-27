@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "824dab38066b942505cf8dad2b954aa2a7f865991d12f44b1e2cc71f879b6d33",
+  "commandId": "cmd_iymnfyft2wgn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:36.993Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:36.969Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

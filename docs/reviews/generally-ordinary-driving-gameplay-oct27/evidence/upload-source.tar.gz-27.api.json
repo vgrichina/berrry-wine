@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "89e1c0aec532f4cbeaa8d85deb34d32561122c5f5f5c59c0017eb83e93e44419",
+  "commandId": "cmd_cemtno4hnnm1",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:42.598Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:43:42.567Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

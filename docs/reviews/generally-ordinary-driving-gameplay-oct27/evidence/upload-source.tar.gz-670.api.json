@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "3fc9cb372b41eee5a99f798d21ade89609e5f8672a0da97682565e66c3a2d9f5",
+  "commandId": "cmd_bxvtj1uerv3l",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:34.502Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:34.473Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

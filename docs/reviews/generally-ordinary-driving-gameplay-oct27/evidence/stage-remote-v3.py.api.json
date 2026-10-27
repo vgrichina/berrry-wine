@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "a1842d8534e797441350107895d48ff53e4527db4c35712a637597a708e02423",
+  "localExit": 0,
+  "commandId": "cmd_1ha1n1uxsnqe",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:50:45.658Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 2,
+  "startedAt": "2026-10-27T10:50:45.633Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

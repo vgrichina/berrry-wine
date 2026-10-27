@@ -1,0 +1,20 @@
+{
+  "commandSHA256": "05f7e64e2d506261a59dd91597dad9fbe4857321f4e002c95bf404079f1260dc",
+  "localExit": 0,
+  "commandId": "cmd_gc6pq466ebsx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:49:52.802Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T10:49:52.795Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "node:assert:152\n  throw new AssertionError(obj);\n  ^\n\nAssertionError [ERR_ASSERTION]: real DLL prerequisite must be resolved before guest: [\"kernel32.dll\",\"user32.dll\",\"gdi32.dll\",\"shell32.dll\",\"ole32.dll\",\"ddraw.dll\",\"dinput8.dll\",\"dsound.dll\"]\n    at Object.<anonymous> (/tmp/generally-driving/ops/remote-startup.cjs:11:8)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47 {\n  generatedMessage: false,\n  code: 'ERR_ASSERTION',\n  actual: 8,\n  expected: 0,\n  operator: '==',\n  diff: 'simple'\n}\n\nNode.js v24.22.1\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

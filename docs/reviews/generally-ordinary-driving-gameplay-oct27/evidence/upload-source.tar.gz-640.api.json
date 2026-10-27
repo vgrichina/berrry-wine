@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b03ab006356c856dc30259f6caafc35abdd48677910dee984696cfccca3cd585",
+  "commandId": "cmd_tbh4iktmetks",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:29.684Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:46:29.659Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

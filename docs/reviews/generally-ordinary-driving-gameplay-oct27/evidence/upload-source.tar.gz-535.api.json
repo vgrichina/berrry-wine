@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "8b4f45d11746e57b61017c08fa591ab58e84a7ee51d1cdcd0fc2f53d5b43ec9e",
+  "commandId": "cmd_2k3pyyizkbme",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:16.962Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:16.933Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

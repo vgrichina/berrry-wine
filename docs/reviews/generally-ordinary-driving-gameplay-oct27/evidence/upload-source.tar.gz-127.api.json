@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "6ab38901ab00d35715d83c4ce883126c88f92d4b79f021035d22e8d42d673635",
+  "commandId": "cmd_tomfyv0n6scj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:05.812Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:05.784Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

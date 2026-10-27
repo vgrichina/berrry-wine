@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "117ff031dd272d928fca863ee0a37ce6e1a1601dd0367a533992f104af457ee5",
+  "commandId": "cmd_ivuud4podetc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:46.796Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:46.769Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

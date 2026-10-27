@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c710c5a2c1dbef32f7f1a7d612223c18221f4f255137e384ad64dc261c0f6673",
+  "commandId": "cmd_4albbngl2xlm",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:37.616Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:37.589Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

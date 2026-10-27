@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "6f4d1a0421a24e1ef829a06f1f31d184ff7615f78c6cc52bb9d573389193a2d5",
+  "commandId": "cmd_nh7taoconhmy",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:16.675Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:16.647Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

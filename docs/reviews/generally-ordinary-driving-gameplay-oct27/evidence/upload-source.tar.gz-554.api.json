@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "54445324a665199bb256b503b4c68859b79746926220ef0ece597f36cf1f6153",
+  "commandId": "cmd_6wgioe7c5odw",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:19.179Z",
+  "launcherFailed": false,
+  "noticedMs": 8,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 8,
+  "startedAt": "2026-10-27T10:46:19.149Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

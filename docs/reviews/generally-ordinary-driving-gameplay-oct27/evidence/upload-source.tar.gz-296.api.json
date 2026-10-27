@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "8f8ff3ab1a16927748992cfbf0897f0b3981292b549cf361d12ec160f277f1cf",
+  "commandId": "cmd_cc5ma59iapkx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:29.088Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:29.062Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

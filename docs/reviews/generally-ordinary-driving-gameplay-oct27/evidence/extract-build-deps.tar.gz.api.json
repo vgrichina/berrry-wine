@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d61a70343d97fc13e78f4c59f282bd2e0b465f3b76b6eda80efedcb0f1f09690",
+  "commandId": "cmd_dpuulcnrzt2b",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:48:05.513Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T10:48:05.394Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

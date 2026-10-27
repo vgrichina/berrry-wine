@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "6b1658ee7b4de520642af572a3741b3f2c6af80a1852820264dc8c43ff9a443b",
+  "commandId": "cmd_yngexrmvhnug",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:51.717Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:51.689Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

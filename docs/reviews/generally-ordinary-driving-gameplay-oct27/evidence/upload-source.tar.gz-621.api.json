@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "723b4547b20b6f07a1e50677eca27dafd62e1d038f547bf3a24deb499c2a9c61",
+  "commandId": "cmd_phdbwlj1xsnb",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:27.510Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:27.484Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

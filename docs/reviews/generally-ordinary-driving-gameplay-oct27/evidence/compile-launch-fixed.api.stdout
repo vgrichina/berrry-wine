@@ -1,0 +1,1 @@
+{"command":"bash -lc 'python3 -B /tmp/generally-driving/ops/remote-v4.py compile'","commandId":"cmd_s1mixdrbblxm","cwd":".","errLogPath":"/home/user/.ascii/processes/22676.err.log","logPath":"/home/user/.ascii/processes/22676.log","pid":22676,"processId":22676,"startedAt":"2026-10-27T10:52:38.439Z","success":true}

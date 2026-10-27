@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "02a948dee0927167af40e98ea17cb49212b67dd376f09dc0ae5148e58ff0a123",
+  "commandId": "cmd_xnuonv68jllc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:49.439Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:49.412Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

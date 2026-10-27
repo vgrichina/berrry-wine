@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "03fff3afb9fe15168b00a54a97450d963b679c3bd1ee6385818b51c3b93c97ff",
+  "commandId": "cmd_9oalhcukauel",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:50.873Z",
+  "launcherFailed": false,
+  "noticedMs": 9,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 9,
+  "startedAt": "2026-10-27T10:43:50.839Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

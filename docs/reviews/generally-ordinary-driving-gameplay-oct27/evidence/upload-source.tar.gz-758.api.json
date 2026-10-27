@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "ad4a45d43aaa01c1465cca29659684b4f4d1945db777bb13d6d038d42d30a217",
+  "commandId": "cmd_rtwa10nxljkx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:46.449Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:46.420Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

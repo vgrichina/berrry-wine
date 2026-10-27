@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "6090824808cec462e2bfacb73554eb8f58cf12f5ebeadfd1e4b44398fa0d2fce",
+  "commandId": "cmd_oansckkmthss",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:21.309Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:21.284Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

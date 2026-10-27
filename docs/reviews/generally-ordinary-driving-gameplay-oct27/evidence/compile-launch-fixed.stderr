@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 37, in <module>
+    x=json.loads((H/(label+'.api.stdout')).read_text());save(label+'.api.json',dict(command=cmd,**x));print(json.dumps(x))
+                                                                               ^^^^^^^^^^^^^^^^^^^^^
+TypeError: dict() got multiple values for keyword argument 'command'

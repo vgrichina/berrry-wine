@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "4e2f72e1831d27a448d8e69d7246943fefc5f0aacb0ea154c631d526942fab88",
+  "commandId": "cmd_lovo6mhn292p",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:21.128Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:21.090Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

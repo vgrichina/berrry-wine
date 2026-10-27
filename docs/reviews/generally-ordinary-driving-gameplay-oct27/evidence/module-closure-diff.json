@@ -1,0 +1,39 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27787264,
+  "sampledPeakRSS": 27787264,
+  "reapedPeakRSS": 12320768,
+  "cpuSeconds": 0.168565,
+  "wallSeconds": 0.13062484888359904,
+  "owned": [
+    [
+      4117767,
+      "114492362"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/bin/bash",
+    "-c",
+    "ulimit -d 524288; exec \"$@\"",
+    "git-child",
+    "git",
+    "-C",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/repo",
+    "diff",
+    "--name-only",
+    "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+    "--",
+    "src",
+    "tools/build.sh",
+    "tools/build-compile-wat.js",
+    "tools/watx-closure.js",
+    "tools/vendor",
+    "tools/region-layout-hash.js",
+    "tools/region-alloc.js",
+    "lib/dispatch-trampoline.js"
+  ],
+  "commandSHA256": "ccdf856ebe9ed56a54cb28ef42fce8025d34479db4405f7107ebbb259db539c7"
+}

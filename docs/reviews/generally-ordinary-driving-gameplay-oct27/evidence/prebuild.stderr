@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 33, in <module>
+    print(api(sys.argv[2],sys.argv[3],int(sys.argv[4]) if len(sys.argv)>4 else 30)[:4000])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py", line 10, in api
+    raw=(H/(label+'.api.stdout')).read_bytes();assert q.returncode==0,(label,q.returncode)
+                                                      ^^^^^^^^^^^^^^^
+AssertionError: ('prebuild', 1)

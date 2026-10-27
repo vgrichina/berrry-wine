@@ -1,0 +1,2 @@
+# Raw operation evidence preserves original whitespace and terminal newlines.
+evidence/** -whitespace

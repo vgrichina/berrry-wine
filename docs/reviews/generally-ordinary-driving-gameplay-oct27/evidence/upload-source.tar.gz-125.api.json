@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "f7d51c46d3f60ba8f7493a4b54172c43fda5bac4660aae99887a5faa99aa4b0c",
+  "commandId": "cmd_xvosxwmvg2gi",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:05.539Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:05.511Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

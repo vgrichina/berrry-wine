@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 56049664,
+  "sampledPeakRSS": 56049664,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.41283500000000006,
+  "wallSeconds": 0.30272991908714175,
+  "owned": [
+    [
+      4138568,
+      "114562660"
+    ],
+    [
+      4138569,
+      "114562663"
+    ],
+    [
+      4138570,
+      "114562667"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "remote",
+    "gate-location",
+    "cd /tmp/generally-driving/runner; rg -n \"changed producer|review its lifetime\" tools lib test | head -n 10; sed -n \"1,65p\" test/test-wat-memory-map.js; cat /tmp/generally-driving/ops/startup-prebuild-v4.stdout | tail -n 1",
+    "30"
+  ],
+  "commandSHA256": "27ace1be04265cd03a98988338a0ea0d0d75d19bf3f373b9ec76971bbe13d641"
+}

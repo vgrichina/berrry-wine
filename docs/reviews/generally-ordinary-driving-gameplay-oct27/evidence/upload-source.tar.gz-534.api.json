@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "479e53de24b4ca8e1e426c487df4a5304a2a40183b272c5d7376127611ece4e5",
+  "commandId": "cmd_jmftba2d0mdl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:16.835Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:16.807Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

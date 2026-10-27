@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "2e1fced670b43f39aa109a8fcb2d167ee792980370593872d86494796bfe329d",
+  "commandId": "cmd_wpddptsuq4yq",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:22.841Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:47:22.815Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

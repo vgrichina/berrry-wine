@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "e0b5ee73a5529b4400033ccf09153c04632ddd9e1badaf1077b0c71200382eec",
+  "commandId": "cmd_nylhdnaw3rcn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:24.833Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:24.806Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

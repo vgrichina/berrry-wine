@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d4ada8ee7f895b3fa34f14aa0fa81e16d1bddaf5898bafaec7bc051335657412",
+  "commandId": "cmd_plhkoyhfgprt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:40.132Z",
+  "launcherFailed": false,
+  "noticedMs": 8,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 9,
+  "startedAt": "2026-10-27T10:46:40.098Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

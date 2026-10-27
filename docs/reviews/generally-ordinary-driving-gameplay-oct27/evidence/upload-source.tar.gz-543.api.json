@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "a8b4e33ea9299fed3078721810185c23b53363a8b068cda5a54a3e4b6caa6567",
+  "commandId": "cmd_msmjtnmgax9z",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:17.964Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:17.939Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

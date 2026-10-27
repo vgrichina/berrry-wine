@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "7f5426eb22cf2e3b48b0f33e87a67e99faec390d59ad5817d5bac82c234ab604",
+  "commandId": "cmd_ei3umgnurvju",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:32.222Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:32.197Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

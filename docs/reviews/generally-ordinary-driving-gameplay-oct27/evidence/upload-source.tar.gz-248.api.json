@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "2be62a29a64fb18ecfcce6d7122d15efbdec62eb9ceb3303fb7d1e614ab0c5f3",
+  "commandId": "cmd_gegmikjvssz5",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:23.132Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:23.102Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

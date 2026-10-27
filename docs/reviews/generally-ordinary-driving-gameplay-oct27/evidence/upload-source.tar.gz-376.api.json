@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "ac4a1a5e6844ec7696aeca1e7f83b8f2d190a32c5caaf714bb099f67bedcdd57",
+  "commandId": "cmd_wcvfahip5xnn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:40.117Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:40.089Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

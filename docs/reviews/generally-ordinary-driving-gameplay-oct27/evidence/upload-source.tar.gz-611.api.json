@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "430a7b246d7e7ee09d8a9951d2cb4b4274a4bcafc4fc8d04f7f67ea2f695d62f",
+  "commandId": "cmd_namx9egycpmx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:26.425Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:26.398Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

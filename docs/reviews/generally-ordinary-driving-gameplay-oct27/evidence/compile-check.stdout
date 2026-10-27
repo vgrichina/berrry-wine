@@ -1,0 +1,75 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 491327488,
+  "sampledPeakRSS": 491327488,
+  "reapedPeakRSS": 466423808,
+  "cpuSeconds": 26.473891000000002,
+  "wallSeconds": 4.222608206000018,
+  "owned": [
+    [
+      22683,
+      "93573"
+    ],
+    [
+      22693,
+      "93576"
+    ],
+    [
+      22700,
+      "93578"
+    ],
+    [
+      22707,
+      "93635"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "NODE_OPTIONS=--max-old-space-size=2048",
+    "bash",
+    "tools/build.sh"
+  ],
+  "commandSHA256": "293864daf8118cc0a50275cd6abeeb2bfca470145c3a40e458088e1cc1d9043f",
+  "environmentSHA256": "df65779b5566321e2a4d44dc7d48a905a9825e8d451709676a7f933777f52fb1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "argvSHA256": "75989780de579ca51cfc6cfef80c9f93ca0656340aeb07e403ba604144a4f82e",
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "daeec57588a023fe02428e32a1b4a8e89fee6576e9a8c0fdf46d44ae49a573e8"
+}CLAUDE.md size: 22221/32768 bytes
+WAT manifest OK: src/main.watx includes all 127 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+check-wat-fragments: 127 fragments OK (all self-balanced, no exceptions)
+changed producer host.js:host-file (sha256); review its lifetime
+changed producer lib/renderer-input.js:host-file (sha256); review its lifetime
+Traceback (most recent call last):
+  File "/tmp/generally-driving/ops/remote-v4.py", line 39, in <module>
+    supervise(['bash','tools/build.sh'],'compile',6*1024**3,output=4*M)
+  File "/tmp/generally-driving/ops/remote-v4.py", line 27, in supervise
+    assert q['exit']==0 and not q['stopReason'] and q['cleanupComplete'],q
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'exit': 1, 'stopReason': None, 'peakRSS': 491327488, 'sampledPeakRSS': 491327488, 'reapedPeakRSS': 466423808, 'cpuSeconds': 26.473891000000002, 'wallSeconds': 4.222608206000018, 'owned': [[22683, '93573'], [22693, '93576'], [22700, '93578'], [22707, '93635']], 'cleanupComplete': True}
+

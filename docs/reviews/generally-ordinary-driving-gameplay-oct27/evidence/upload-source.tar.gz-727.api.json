@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c8c3edb5b688c663fde0a00b192b87eda3f59795dd64311f90fb9ba3b3a5a351",
+  "commandId": "cmd_maoost7hp39s",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:42.537Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:42.507Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

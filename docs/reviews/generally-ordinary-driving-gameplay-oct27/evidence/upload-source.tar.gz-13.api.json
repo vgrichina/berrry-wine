@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "09c4595fdfadfc3b4b1ff900858680db3557f48ec7abef9c3b9128ff5aec6915",
+  "commandId": "cmd_izewtxby9wt6",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:43:40.103Z",
+  "launcherFailed": false,
+  "noticedMs": 7,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:43:40.074Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

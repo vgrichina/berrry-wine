@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "16fe28cc4eb2bbe3e2aca7992ade6dcdf82a82ef39bedf15a0a73bca2707b3b4",
+  "commandId": "cmd_ebplzizdbouc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:20.275Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:20.246Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

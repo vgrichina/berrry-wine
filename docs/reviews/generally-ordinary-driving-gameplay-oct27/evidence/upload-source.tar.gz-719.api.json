@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d2e1eb486b931e56b3f17bc4bf4548ba2af46d11c0ce3cc6e6501cc1741e91f7",
+  "commandId": "cmd_riusjsy8ngne",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:41.436Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:41.411Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

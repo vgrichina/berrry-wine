@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "c7aec0a8fcf398720d5461d816af0ce438e58848d0355b05e555fb6e1411926b",
+  "commandId": "cmd_plkebpxpanpb",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:21.452Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:21.425Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

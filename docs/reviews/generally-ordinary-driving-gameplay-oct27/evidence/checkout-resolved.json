@@ -1,0 +1,34 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 49545216,
+  "sampledPeakRSS": 49545216,
+  "reapedPeakRSS": 18350080,
+  "cpuSeconds": 0.6470020000000001,
+  "wallSeconds": 0.2597883311100304,
+  "owned": [
+    [
+      4117228,
+      "114489353"
+    ],
+    [
+      4117229,
+      "114489357"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/bin/bash",
+    "-c",
+    "ulimit -d 524288; exec \"$@\"",
+    "git-child",
+    "git",
+    "-C",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/repo",
+    "checkout",
+    "-b",
+    "task/generally-ordinary-driving-gameplay-oct27",
+    "4a2bec145ef34b0d084b96b09a682a16e89703fd"
+  ],
+  "commandSHA256": "45215f402f600e101fcd37b2248ff242fb43042ec50b194b23736e2cf107c2d2"
+}

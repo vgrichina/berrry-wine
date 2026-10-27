@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "09c85e07290d6afe165a42b132461d121c2dbe62c48388528080145f136d5992",
+  "commandId": "cmd_5tfpowmxnypl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:34.864Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:34.838Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

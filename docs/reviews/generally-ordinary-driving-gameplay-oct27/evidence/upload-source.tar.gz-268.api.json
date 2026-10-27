@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "a6b53a8241b1b53ea7de8e0752f0520cd277042f0e006cc72f2ea3fa5ccdb914",
+  "commandId": "cmd_baxcmxhtigd9",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:25.659Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:25.632Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

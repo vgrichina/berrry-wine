@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "1289fd25386e876d53f3e145f25f915c6485cc5f960b5ca7495ff1cf65d63c93",
+  "commandId": "cmd_lzua2xtlxg3m",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:41.102Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:41.075Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

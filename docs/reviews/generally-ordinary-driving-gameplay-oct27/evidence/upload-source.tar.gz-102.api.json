@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "09edb9caa483f63146997ff0a74e7d17b1c65fe53236a0c05fc296c1ca79134e",
+  "commandId": "cmd_juiniffpbfkl",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:02.530Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:45:02.500Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

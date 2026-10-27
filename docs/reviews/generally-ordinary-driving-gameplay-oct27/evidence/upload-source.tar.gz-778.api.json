@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "47e56b6b0bd49a162fad1e99c150f677a14248c4acb0559eeb85f81ff85058be",
+  "commandId": "cmd_dhbsa48wpa1k",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:48.664Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:48.639Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

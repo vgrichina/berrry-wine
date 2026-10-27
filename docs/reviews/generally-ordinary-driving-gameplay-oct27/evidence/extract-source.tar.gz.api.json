@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "372d1459d0cf7785f63ff2f9989b481cc40cced7071a1a20f30ac5d8b79364fd",
+  "commandId": "cmd_4coax3hfs2pn",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:16.278Z",
+  "launcherFailed": false,
+  "noticedMs": 0,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 0,
+  "startedAt": "2026-10-27T10:47:15.167Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

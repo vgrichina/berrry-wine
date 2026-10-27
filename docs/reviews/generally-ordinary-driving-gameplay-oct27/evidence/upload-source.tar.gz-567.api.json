@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "b734585a9a916f351574915a10f66279b0c1d5fe1742e85f5752c13dc78cc1f7",
+  "commandId": "cmd_gyht5pdanex2",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:20.921Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:20.892Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

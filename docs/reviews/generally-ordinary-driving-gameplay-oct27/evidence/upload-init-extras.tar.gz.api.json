@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "7d3c73b099f6577e4323a0098c89f1c827b06d9914cd751e5f22d57a2dd08895",
+  "commandId": "cmd_ykbqgt5vuhli",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:47:50.549Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T10:47:50.542Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

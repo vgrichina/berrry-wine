@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "d0fc513d23b92f8c75bfec842816a56dff369e328a7b19eecf66b90209fc88fd",
+  "commandId": "cmd_e4lcfoztllpj",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:52.879Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:52.855Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

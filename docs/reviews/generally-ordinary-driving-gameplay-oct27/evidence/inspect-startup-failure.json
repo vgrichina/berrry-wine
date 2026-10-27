@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 55926784,
+  "sampledPeakRSS": 55926784,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.412011,
+  "wallSeconds": 0.3034244279842824,
+  "owned": [
+    [
+      4132422,
+      "114540189"
+    ],
+    [
+      4132423,
+      "114540192"
+    ],
+    [
+      4132424,
+      "114540195"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "remote",
+    "inspect-startup-failure",
+    "cat /tmp/generally-driving/ops/startup-prebuild.stderr; cat /tmp/generally-driving/ops/startup-prebuild.stdout",
+    "30"
+  ],
+  "commandSHA256": "19beed00f2da33b184b40aa7c7b164ee7e1baa04acde6ce7697070c883437f58"
+}

@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "350151c65cde6fc822b58fd91d7f651109731c028c2ca45106682892933372df",
+  "commandId": "cmd_rgcgyaij8tdf",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:45.605Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:45.579Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

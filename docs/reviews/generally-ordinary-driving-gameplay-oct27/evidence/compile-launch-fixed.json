@@ -1,0 +1,32 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 62783488,
+  "sampledPeakRSS": 62783488,
+  "reapedPeakRSS": 32022528,
+  "cpuSeconds": 0.584619,
+  "wallSeconds": 0.35499460506252944,
+  "owned": [
+    [
+      4136906,
+      "114556757"
+    ],
+    [
+      4136907,
+      "114556759"
+    ],
+    [
+      4136908,
+      "114556762"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "detach",
+    "compile-launch-fixed",
+    "python3 -B /tmp/generally-driving/ops/remote-v4.py compile"
+  ],
+  "commandSHA256": "3a97b5fb0665f377f1235dd267524e336e9f02d450bfd750072d18eb4f1f186d"
+}

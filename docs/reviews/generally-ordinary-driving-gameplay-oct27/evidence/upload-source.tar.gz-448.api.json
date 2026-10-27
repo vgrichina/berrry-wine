@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "14103a21b1589a100b7af586597c7be1019e40d468a4ddda78a935c701724e4c",
+  "commandId": "cmd_zxovbptyjci4",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:49.753Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:49.727Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

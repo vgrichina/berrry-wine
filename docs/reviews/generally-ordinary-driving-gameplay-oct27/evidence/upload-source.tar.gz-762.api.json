@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "0105da832993033c96189df29df7a608dcfc6e5a5216b37bf1a8a9ee4f03c707",
+  "commandId": "cmd_vcqm6da6bnip",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:46.871Z",
+  "launcherFailed": false,
+  "noticedMs": 6,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 7,
+  "startedAt": "2026-10-27T10:46:46.838Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

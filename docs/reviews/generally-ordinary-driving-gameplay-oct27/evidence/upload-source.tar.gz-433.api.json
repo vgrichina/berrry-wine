@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "6cf7ded017d9e96d7f268921290acfa86a803feacff8e28fed61700b291c27c2",
+  "commandId": "cmd_7loofi2ltmbu",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:48.147Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 5,
+  "startedAt": "2026-10-27T10:45:48.121Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

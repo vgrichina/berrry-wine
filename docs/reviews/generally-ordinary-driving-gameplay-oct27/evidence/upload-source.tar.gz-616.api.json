@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "ae4c3c4f8ed89af42c2108c199f475c7ab1a7b8704870778fdc241a3a57bfc52",
+  "commandId": "cmd_igloy4dgi1xp",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:26.960Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:46:26.934Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

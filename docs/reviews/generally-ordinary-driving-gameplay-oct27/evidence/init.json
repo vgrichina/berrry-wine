@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 31457280,
+  "sampledPeakRSS": 31457280,
+  "reapedPeakRSS": 12320768,
+  "cpuSeconds": 0.113255,
+  "wallSeconds": 0.07787885307334363,
+  "owned": [
+    [
+      4116657,
+      "114486745"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/bin/bash",
+    "-c",
+    "ulimit -d 524288; exec \"$@\"",
+    "git-child",
+    "git",
+    "init",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/repo"
+  ],
+  "commandSHA256": "bf5ba56edad579306f477b36da15b1d7875000343bd312dc54e347496183a417"
+}

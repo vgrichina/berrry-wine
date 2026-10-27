@@ -1,0 +1,9 @@
+src/09a8-handlers-directx.wat
+src/09ab-handlers-d3dim-core.wat
+src/09ah-d3d-software.wat
+src/09aj-d3d-fixed.wat
+src/09b-dispatch.wat
+src/09c3a-dialog-runtime.wat
+src/10-helpers.wat
+src/11-seh.wat
+src/13-exports.wat

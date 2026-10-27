@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "e8e6996c2e5f0f91430ef22d24c39eaec99993c57fd98bcc70ee7b21ec5bb433",
+  "commandId": "cmd_gsavkewmvrgx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:27.719Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:27.692Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

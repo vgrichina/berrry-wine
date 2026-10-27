@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "236fbb68d218885531b3775d2c806c46a0f2ee6dd2b7820316e26e3dd077380a",
+  "commandId": "cmd_tks3kemb5hbb",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:45:40.762Z",
+  "launcherFailed": false,
+  "noticedMs": 5,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 6,
+  "startedAt": "2026-10-27T10:45:40.736Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

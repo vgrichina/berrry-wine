@@ -1,0 +1,19 @@
+{
+  "commandSHA256": "8cac3436a131d5cec60b5cc5453eb52ca73080710f6cddd2d2bd7431e1b18043",
+  "commandId": "cmd_8hmo5detigtx",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T10:46:46.663Z",
+  "launcherFailed": false,
+  "noticedMs": 9,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 9,
+  "startedAt": "2026-10-27T10:46:46.626Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

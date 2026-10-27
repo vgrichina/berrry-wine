@@ -1,0 +1,37 @@
+{
+  "at": 1793097652.0925546,
+  "peers": [
+    {
+      "pid": 4101030,
+      "rss": 164212736
+    },
+    {
+      "pid": 4111334,
+      "rss": 186662912
+    },
+    {
+      "pid": 4111340,
+      "rss": 190529536
+    },
+    {
+      "pid": 4111341,
+      "rss": 190386176
+    },
+    {
+      "pid": 4114007,
+      "rss": 188694528
+    },
+    {
+      "pid": 4114088,
+      "rss": 196648960
+    }
+  ],
+  "memAvailable": 2491191296,
+  "remainingRequired": 1969872896,
+  "diskFree": 7566008320,
+  "localAllocation": 134217728,
+  "localReserve": 8388608,
+  "remoteAllocation": 1073741824,
+  "remoteReserve": 67108864,
+  "passAll": true
+}

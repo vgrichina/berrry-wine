@@ -1,0 +1,33 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 61722624,
+  "sampledPeakRSS": 61722624,
+  "reapedPeakRSS": 32108544,
+  "cpuSeconds": 0.58617,
+  "wallSeconds": 0.3444427589420229,
+  "owned": [
+    [
+      4140098,
+      "114568026"
+    ],
+    [
+      4140099,
+      "114568028"
+    ],
+    [
+      4140100,
+      "114568030"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/generally-ordinary-driving-gameplay-oct27/ops/task.py",
+    "remote",
+    "blocker-cause",
+    "cd /tmp/generally-driving/runner; sed -n \"110,158p\" tools/callback-ownership-census.js; rg -n \"callback|census|LOCK\" lib/compile-wat.js tools/watx-closure.js tools/region-alloc.js tools/callback-ownership-census.js | head -n 35; sha256sum host.js lib/renderer-input.js; du -sb /tmp/generally-driving; ps -p 22676,22683,22693,22700,22707 -o pid,ppid,stat,args",
+    "30"
+  ],
+  "commandSHA256": "04ae716153dec68b33b5d7fbe139643fc963783b2edb2d91c58cd406cf9a4645"
+}
