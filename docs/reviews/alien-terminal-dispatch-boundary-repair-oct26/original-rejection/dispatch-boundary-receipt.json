@@ -1,0 +1,76 @@
+{
+  "mode": "dispatch-boundary",
+  "entry": "/tmp/alien-terminal-failfast-independent-accept-oct26/repo/test/alien-gameplay-sequence.py",
+  "events": [
+    {
+      "event": "intent-file-and-directory-fsynced",
+      "pending": {
+        "command": {
+          "action": "png",
+          "path": "/tmp/offline-only.png"
+        },
+        "index": 1
+      },
+      "status": "uncertain"
+    },
+    {
+      "event": "terminal-receipt-durable-before-transport"
+    }
+  ],
+  "cliReturn": 1,
+  "cliOutput": "{\"error\": \"known guest terminal receipt\", \"guestAcceptance\": \"unqualified\"}\n",
+  "sends": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "png",
+      "path": "/tmp/offline-only.png"
+    }
+  ],
+  "ledger": {
+    "guestAcceptance": "unqualified",
+    "lastAcknowledgedBatch": 4650,
+    "lastFrozenBatch": 4650,
+    "next": 2,
+    "planSHA256": "57ec8b893f04860d27732f532f3375a625acf29029fcaf8205314e60c789a6cf",
+    "reason": "known guest terminal receipt",
+    "receipts": [
+      {
+        "command": {
+          "action": "snapshot"
+        },
+        "index": 0,
+        "responseBytes": 101,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"batch\":4650,\"quit\":false,\"frozen\":{\"frozen\":true,\"credits\":0},\"yieldReason\":16}}",
+        "responseSHA256": "24111dfb25719446e54e71a503263f2f31b187779f373f1486737ab07d2a6364"
+      },
+      {
+        "command": {
+          "action": "png",
+          "path": "/tmp/offline-only.png"
+        },
+        "index": 1,
+        "responseBytes": 90,
+        "responseExcerpt": "{\"ok\":true,\"value\":{\"batch\":4650,\"frozen\":true,\"path\":\"/tmp/offline-only.png\",\"bytes\":20}}",
+        "responseSHA256": "0e3d425e153ba1dcb02cd78da08685848040b6ec896941e61774bdf7d24a4c88"
+      }
+    ],
+    "runId": "independent-offline-injected",
+    "status": "terminal",
+    "terminalObserved": {
+      "batch": 4650,
+      "reason": "supervisor-ended-invocation",
+      "returncode": 0
+    },
+    "version": 1
+  },
+  "restartReturn": 1,
+  "restartSentNothing": true,
+  "guestExecuted": false,
+  "expectedSends": [
+    {
+      "action": "snapshot"
+    }
+  ]
+}

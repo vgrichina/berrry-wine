@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo/test/alien-terminal-failfast-independent-accept-oct26.py",
+    "dispatch-boundary"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 128176128,
+  "physicalCap": 134217728,
+  "cpu": 0.71,
+  "wall": 0.6269655129872262,
+  "outputBytes": 1128,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 5,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3355625": 17563648,
+    "3355627": 13631488,
+    "3355629": 19267584,
+    "3355630": 26345472,
+    "3355631": 51367936
+  }
+}

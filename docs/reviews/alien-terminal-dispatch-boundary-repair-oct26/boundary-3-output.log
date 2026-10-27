@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 1.622s
+
+OK
+{"where": "connected-before-bytes", "index": 3, "action": {"action": "png", "path": "/tmp/offline-frame.png"}, "sends": 3, "pending": {"command": {"action": "png", "path": "/tmp/offline-frame.png"}, "index": 3}, "restartSentNothing": true}
+{"where": "durable-intent", "index": 3, "action": {"action": "png", "path": "/tmp/offline-frame.png"}, "sends": 3, "pending": {"command": {"action": "png", "path": "/tmp/offline-frame.png"}, "index": 3}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 3, "action": {"action": "png", "path": "/tmp/offline-frame.png"}, "sends": 3, "pending": {"command": {"action": "png", "path": "/tmp/offline-frame.png"}, "index": 3}, "restartSentNothing": true}

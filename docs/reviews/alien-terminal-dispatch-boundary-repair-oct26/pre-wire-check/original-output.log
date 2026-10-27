@@ -1,0 +1,8 @@
+test_boundary (__main__.Challenge.test_boundary) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 1.031s
+
+OK
+{"mode": "dispatch-boundary", "oracleRejected": false}
+UNCHANGED REPRODUCER: assertions pass; legacy rejection-mode exit1 interpreted

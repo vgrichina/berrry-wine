@@ -1,0 +1,1 @@
+{"cmd": ["/usr/bin/python3", "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo/test/test-alien-terminal-dispatch-boundary-oct26.py", "Boundary.test_partial_http_request_remains_pending"], "git": false, "label": "partial-http", "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo"}

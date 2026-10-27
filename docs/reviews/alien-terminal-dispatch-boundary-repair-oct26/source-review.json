@@ -1,0 +1,8 @@
+{
+  "diffSHA256": "966355bc1706829c0abf6273ae86c5c84115ffeb4390ecca088e80a2f484e145",
+  "helperSHA256": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+  "scope": "helper only production change; new unchanged reproducer + focused regression + task docs",
+  "sourcePinsUnchangedExceptHelper": true,
+  "actualEntryWiringUnchanged": true,
+  "noGameOrMainChange": true
+}

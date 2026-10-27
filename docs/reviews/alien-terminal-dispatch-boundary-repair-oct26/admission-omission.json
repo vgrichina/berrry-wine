@@ -1,0 +1,140 @@
+{
+  "at": 1793059332.9211988,
+  "stage": "omission",
+  "charges": {
+    "own": 6963200,
+    "launcher": 241664,
+    "session": 770048,
+    "positiveWAL": 733184,
+    "publicationAndSelectiveGitGrowth": 4194304,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "allocation": 67108864,
+  "projectedBytes": 38068224,
+  "free": 3169271808,
+  "otherRemainingDisk": 119013376,
+  "projectedFree": 3020898304,
+  "existingTaskBytesAlreadyInFree": true,
+  "incrementalOwnGrowth": 29360128,
+  "diskFloor": 2982150144,
+  "memAvailable": 3873357824,
+  "requiredMemory": 1476395008,
+  "hostFloor": 805306368,
+  "civReservation": 0,
+  "sharedExecutionPool": 268435456,
+  "residentFutureGrowth": 402653184,
+  "prospectiveUnlaunchedClients": 0,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 19214336,
+      "argv": [
+        "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+        "app-server",
+        "daemon",
+        "pid-update-loop",
+        ""
+      ]
+    },
+    {
+      "pid": 752162,
+      "rss": 393871360,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "resume",
+        "--profile",
+        "wine-coordinator",
+        "--strict-config",
+        "01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+        "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise.",
+        ""
+      ]
+    },
+    {
+      "pid": 1789179,
+      "rss": 52744192,
+      "argv": [
+        "/home/user/.codex/packages/app-server-daemon/releases/0.164.0-x86_64-unknown-linux-musl/bin/codex",
+        "app-server",
+        "--listen",
+        "unix://",
+        "--analytics-default-enabled",
+        "--managed-daemon",
+        ""
+      ]
+    },
+    {
+      "pid": 3351840,
+      "rss": 194134016,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-retained-canonical-native-msg-qualification-oct26/final.txt",
+        "-",
+        ""
+      ]
+    },
+    {
+      "pid": 3354109,
+      "rss": 191766528,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-terminal-dispatch-boundary-repair-oct26/final.txt",
+        "-",
+        ""
+      ]
+    },
+    {
+      "pid": 3355833,
+      "rss": 191102976,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/gl-output-namespace-independent-publication-oct26/final.txt",
+        "-",
+        ""
+      ]
+    }
+  ],
+  "residentRSSAlreadyDeducted": true,
+  "positiveWALCountedOnce": true,
+  "pass": true
+}

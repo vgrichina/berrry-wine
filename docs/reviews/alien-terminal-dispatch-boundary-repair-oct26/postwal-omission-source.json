@@ -1,0 +1,6 @@
+{
+  "justification": "Custom callback transports need the post-WAL observation; HTTP guard alone cannot protect them.",
+  "originalSHA": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+  "mutatedSHA": "4b480cbf51d9883816f41b9f54523760e4112029d8f62e08d409712ab36286cd",
+  "testSHA": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+}

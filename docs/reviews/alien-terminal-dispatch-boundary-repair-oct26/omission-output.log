@@ -1,0 +1,27 @@
+test_request_prepared (regression.Boundary.test_request_prepared) ... FAIL
+
+======================================================================
+FAIL: test_request_prepared (regression.Boundary.test_request_prepared)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/alien-terminal-dispatch-boundary-repair-oct26/omission-source/test/test-alien-terminal-dispatch-boundary-oct26.py", line 83, in test_request_prepared
+    self.challenge('request-prepared',int(os.environ.get('BOUNDARY_INDEX','3')))
+  File "/tmp/alien-terminal-dispatch-boundary-repair-oct26/omission-source/test/test-alien-terminal-dispatch-boundary-oct26.py", line 67, in challenge
+    self.assertEqual(observed,plan[:index],'request dispatched after durable observed terminal')
+AssertionError: Lists differ: [{'ac[63 chars]napshot'}, {'action': 'png', 'path': '/tmp/offline-frame.png'}] != [{'ac[63 chars]napshot'}]
+
+First list contains 1 additional elements.
+First extra element 3:
+{'action': 'png', 'path': '/tmp/offline-frame.png'}
+
++ [{'action': 'snapshot'}, {'action': 'step', 'n': 256}, {'action': 'snapshot'}]
+- [{'action': 'snapshot'},
+-  {'action': 'step', 'n': 256},
+-  {'action': 'snapshot'},
+-  {'action': 'png', 'path': '/tmp/offline-frame.png'}] : request dispatched after durable observed terminal
+
+----------------------------------------------------------------------
+Ran 1 test in 1.154s
+
+FAILED (failures=1)
+{"omitted": "final-HTTP-guard", "unchangedRegressionRejected": true, "failures": 1, "errors": 0}

@@ -1,0 +1,118 @@
+{
+  "candidate": "f4455d87f011890622b76c846e342492b2bdcfda",
+  "completed": [
+    "pins",
+    "startup",
+    "empty-mount",
+    "first-unchanged-production-reproducer-REJECT",
+    "original",
+    "crashes",
+    "boundary-0",
+    "boundary-1",
+    "boundary-2",
+    "boundary-3",
+    "boundary-4",
+    "boundary-5",
+    "boundary-6",
+    "unit",
+    "crashes",
+    "original"
+  ],
+  "firstReceipt": "first-dispatch-boundary-receipt.json",
+  "remaining": [
+    "repair",
+    "focused-regressions",
+    "publish"
+  ],
+  "testedPins": {
+    "test/helpers/alien-control-sequence.py": "8020e36150d66f98793d314e4e54661352df39b1da8f25cdf556dbedaf2fcaac",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/test-alien-control-sequence.py": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+    "test/fixtures/alien-control-sequence/control-server.cjs": "4656d80826a488f31f713ecc19ea24fe0684d38be0218907c4ede51a0732cd57",
+    "test/fixtures/alien-control-sequence/historical-boundary.json": "c76a5c650075579017cc577081484e549613675f5be6955e6819c0234b26d702",
+    "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+  },
+  "testSHA": "b83f5e3ba5c44029b028374fe00b37ef731f8590b8f98afb2a007bba29051164",
+  "groups": {
+    "omission": {
+      "execution": "omission-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+      },
+      "completedAt": 1793059334.1532557
+    },
+    "production": {
+      "execution": "production-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+      },
+      "completedAt": 1793059353.3472722
+    },
+    "postwal-omission": {
+      "execution": "postwal-omission-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+      },
+      "completedAt": 1793059369.1321788
+    },
+    "early-terminal": {
+      "execution": "early-terminal-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+      },
+      "completedAt": 1793059387.0710287
+    },
+    "partial-http": {
+      "execution": "partial-http-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "7728be1d23f0d203e7b774a873f233f8872f18b2980da5b691dfad787436856b"
+      },
+      "completedAt": 1793059414.678474
+    },
+    "boundary-3-final": {
+      "execution": "boundary-3-final-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "7728be1d23f0d203e7b774a873f233f8872f18b2980da5b691dfad787436856b"
+      },
+      "completedAt": 1793059438.8388777
+    },
+    "git-3365119-1": {
+      "execution": "git-3365119-1-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "7728be1d23f0d203e7b774a873f233f8872f18b2980da5b691dfad787436856b"
+      },
+      "completedAt": 1793059526.287353
+    },
+    "git-3365119-2": {
+      "execution": "git-3365119-2-execution.json",
+      "sourcePins": {
+        "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+        "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+        "lib/control-server.js": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+        "test/test-alien-terminal-dispatch-boundary-oct26.py": "7728be1d23f0d203e7b774a873f233f8872f18b2980da5b691dfad787436856b"
+      },
+      "completedAt": 1793059526.6594784
+    }
+  }
+}

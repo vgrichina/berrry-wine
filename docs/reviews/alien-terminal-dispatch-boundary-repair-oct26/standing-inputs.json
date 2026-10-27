@@ -1,0 +1,30 @@
+{
+  "installedNode": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "bytes": 123656816,
+    "allocated": 123662336,
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a"
+  },
+  "donors": [
+    {
+      "path": "/tmp/alien-controller-terminal-failfast-repair-oct26",
+      "allocated": 9506816,
+      "readOnly": true
+    },
+    {
+      "path": "/tmp/alien-terminal-failfast-independent-accept-oct26",
+      "allocated": 7507968,
+      "readOnly": true
+    }
+  ],
+  "newCopiesChargedWithinAllocation": true,
+  "completeTaskCharges": {
+    "own": 7303168,
+    "launcher": 258048,
+    "session": 876544,
+    "positiveWAL": 733184,
+    "publicationAndSelectiveGitGrowth": 4194304,
+    "future": 16777216,
+    "reserve": 8388608
+  }
+}

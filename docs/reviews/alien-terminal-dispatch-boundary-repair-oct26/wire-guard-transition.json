@@ -1,0 +1,13 @@
+{
+  "reason": "Final observation moved inside HTTPConnection.send after connection setup, before every header/body write; no shared terminal-writer protocol exists.",
+  "reused": [
+    "unit: custom-transport controller paths unchanged",
+    "crashes: helper controller/WAL/locks unchanged"
+  ],
+  "affected": [
+    "unchanged production reproducer",
+    "all HTTP boundary positions",
+    "production group",
+    "late-guard omission"
+  ]
+}

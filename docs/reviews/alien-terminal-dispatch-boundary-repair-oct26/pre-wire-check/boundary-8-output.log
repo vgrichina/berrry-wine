@@ -1,0 +1,7 @@
+..
+----------------------------------------------------------------------
+Ran 2 tests in 4.360s
+
+OK
+{"where": "durable-intent", "index": 8, "action": {"action": "snapshot"}, "sends": 8, "pending": {"command": {"action": "snapshot"}, "index": 8}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 8, "action": {"action": "snapshot"}, "sends": 8, "pending": {"command": {"action": "snapshot"}, "index": 8}, "restartSentNothing": true}

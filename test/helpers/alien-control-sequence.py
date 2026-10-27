@@ -60,11 +60,37 @@ class HttpTransport:
         self.timeout = timeout
 
     def __call__(self, command):
+        return self.send(command, lambda: None)
+
+    def send(self, command, before_send):
+        """Check at HTTPConnection.send, after connection setup and before bytes.
+
+        This observes a terminal receipt; it does not synchronize an external
+        writer with the socket send. Never retry after this boundary.
+        """
+        import http.client
         import urllib.request
+        class GuardedConnection(http.client.HTTPConnection):
+            def send(self, data):
+                # Connection establishment can yield too. It sends no ctl HTTP
+                # bytes; check after it, before each header/body write. A later
+                # receipt cannot retract bytes already sent: WAL stays pending
+                # on every interruption, including a partial HTTP request.
+                if self.sock is None:
+                    if not self.auto_open:
+                        raise http.client.NotConnected()
+                    self.connect()
+                before_send()
+                return super().send(data)
+
+        class GuardedHTTP(urllib.request.HTTPHandler):
+            def http_open(self, request):
+                return self.do_open(GuardedConnection, request)
+
         class NoRedirect(urllib.request.HTTPRedirectHandler):
             def redirect_request(self, *args, **kwargs):
                 raise ControlStopped('redirect refused; dispatch uncertain')
-        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
+        opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect(), GuardedHTTP())
         request = urllib.request.Request(self.endpoint, data=encoded(command),
                                          headers={'Content-Type': 'application/json'})
         with opener.open(request, timeout=self.timeout) as response:
@@ -226,7 +252,13 @@ class Controller:
                     # WAL precedes the potentially delivered command. If killed
                     # here or during transport, the next invocation cannot send.
                     self._store(state)
-                    raw = self.transport(command)
+                    # Intent persistence can yield to the terminal writer. Keep
+                    # pending truthful if that writer ended the invocation.
+                    self._check_guest(state)
+                    if isinstance(self.transport, HttpTransport):
+                        raw = self.transport.send(command, lambda: self._check_guest(state))
+                    else:
+                        raw = self.transport(command)
                     value = self._validate(command, raw, state)
                     state['receipts'].append(dict(index=i, command=command,
                         responseSHA256=digest(raw), responseBytes=len(raw),

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-terminal-dispatch-boundary-repair-oct26/ops/omission-run.py"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 113254400,
+  "physicalCap": 134217728,
+  "cpu": 0.63,
+  "wall": 1.2293417640030384,
+  "outputBytes": 1563,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 4,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3361586": 19398656,
+    "3361587": 27394048,
+    "3361588": 52830208,
+    "3361578": 13631488
+  }
+}

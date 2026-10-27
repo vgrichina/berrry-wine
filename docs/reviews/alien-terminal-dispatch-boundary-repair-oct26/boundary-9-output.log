@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.923s
+
+OK
+{"where": "connected-before-bytes", "index": 9, "action": {"action": "quit"}, "sends": 9, "pending": {"command": {"action": "quit"}, "index": 9}, "restartSentNothing": true}
+{"where": "durable-intent", "index": 9, "action": {"action": "quit"}, "sends": 9, "pending": {"command": {"action": "quit"}, "index": 9}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 9, "action": {"action": "quit"}, "sends": 9, "pending": {"command": {"action": "quit"}, "index": 9}, "restartSentNothing": true}

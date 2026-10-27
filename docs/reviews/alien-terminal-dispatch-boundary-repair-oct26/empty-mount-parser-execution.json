@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=64",
+    "/tmp/alien-controller-terminal-failfast-repair-oct26/repo/docs/reviews/alien-controller-terminal-failfast-repair-oct26/offline-mount-parser.cjs"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 96948224,
+  "physicalCap": 134217728,
+  "cpu": 0.21,
+  "wall": 0.04338254709728062,
+  "outputBytes": 58,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 4,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3355498": 13631488,
+    "3355484": 19529728,
+    "3355501": 19136512,
+    "3355502": 44650496
+  }
+}

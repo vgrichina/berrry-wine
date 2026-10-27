@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 1.427s
+
+OK
+{"where": "connected-before-bytes", "index": 1, "action": {"action": "step", "n": 256}, "sends": 1, "pending": {"command": {"action": "step", "n": 256}, "index": 1}, "restartSentNothing": true}
+{"where": "durable-intent", "index": 1, "action": {"action": "step", "n": 256}, "sends": 1, "pending": {"command": {"action": "step", "n": 256}, "index": 1}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 1, "action": {"action": "step", "n": 256}, "sends": 1, "pending": {"command": {"action": "step", "n": 256}, "index": 1}, "restartSentNothing": true}

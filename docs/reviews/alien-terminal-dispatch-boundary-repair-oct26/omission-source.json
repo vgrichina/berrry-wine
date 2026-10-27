@@ -1,0 +1,6 @@
+{
+  "justification": "Post-WAL check alone cannot observe terminal published during urllib Request preparation/connection setup. This removes only the last HTTP guard and retains all test injection/assertions.",
+  "originalSHA": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+  "mutatedSHA": "98cb03470161deb3d4c364bbbbb3cbaa8b0f2401857a7deb505f44c822be5ffe",
+  "testSHA": "23ba75c2da14b090cc9b62dcf31e3c0dcb4191858e11187235b920931ba729ba"
+}

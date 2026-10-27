@@ -1,0 +1,7 @@
+..
+----------------------------------------------------------------------
+Ran 2 tests in 3.684s
+
+OK
+{"where": "durable-intent", "index": 4, "action": {"action": "eval", "code": "ctx.renderWaitAttribution"}, "sends": 4, "pending": {"command": {"action": "eval", "code": "ctx.renderWaitAttribution"}, "index": 4}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 4, "action": {"action": "eval", "code": "ctx.renderWaitAttribution"}, "sends": 4, "pending": {"command": {"action": "eval", "code": "ctx.renderWaitAttribution"}, "index": 4}, "restartSentNothing": true}

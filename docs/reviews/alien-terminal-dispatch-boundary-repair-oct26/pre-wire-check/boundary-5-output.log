@@ -1,0 +1,7 @@
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.402s
+
+OK
+{"where": "durable-intent", "index": 5, "action": {"cmd": "keypress:13"}, "sends": 5, "pending": {"command": {"cmd": "keypress:13"}, "index": 5}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 5, "action": {"cmd": "keypress:13"}, "sends": 5, "pending": {"command": {"cmd": "keypress:13"}, "index": 5}, "restartSentNothing": true}

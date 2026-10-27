@@ -1,0 +1,11 @@
+{
+  "firstPhysicalStop": "first-physical-boundary-7-execution.json",
+  "measured": 134811648,
+  "cap": 134217728,
+  "correction": "Replace idle Python group driver with exec into pool. Same cap/CPU/wall/file/output limits and same Node executable/heap/environment/inherited DATA/AS; node-startup receipt remains applicable.",
+  "affectedRecheck": "boundary-7 completed under reduced wrapper tree; later wire-guard HTTP groups independently completed under same cap",
+  "firstFailure": "first-dispatch-boundary-receipt.json",
+  "originalIndependentRejection": "original-rejection/",
+  "priorSourceAndSuiteIncidents": "Inherited unchanged candidate docs/reviews/alien-controller-terminal-failfast-repair-oct26 and referenced independent rejection commit38f7b011; no incidents deleted",
+  "fixtureReuse": "Thirty final helper HTTP position tests retain fixture-before-partial-extension.py; final fixture adds partial-header instrumentation and test, verified in partial-http plus four-case boundary-3-final. Custom/controller-only unit/crash groups reused across later HTTP-only guard move. No broad unchanged suite repeated."
+}

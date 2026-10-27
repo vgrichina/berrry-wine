@@ -1,0 +1,6 @@
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.834s
+
+OK
+{"where": "headers-sent-before-body", "index": 3, "action": {"action": "png", "path": "/tmp/offline-frame.png"}, "sends": 3, "pending": {"command": {"action": "png", "path": "/tmp/offline-frame.png"}, "index": 3}, "restartSentNothing": true}

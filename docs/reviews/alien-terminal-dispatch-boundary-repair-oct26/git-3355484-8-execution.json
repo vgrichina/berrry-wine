@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-c",
+    "pack.windowMemory=16m",
+    "config",
+    "user.email",
+    "wine-ops@local"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 52305920,
+  "physicalCap": 268435456,
+  "cpu": 1.43,
+  "wall": 0.008022174937650561,
+  "outputBytes": 0,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": 536870912,
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 4,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3355547": 13631488,
+    "3355548": 19267584,
+    "3355550": 0,
+    "3355484": 19406848
+  }
+}

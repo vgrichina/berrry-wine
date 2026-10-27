@@ -1,0 +1,22 @@
+test_custom_transport_post_intent_guard (regression.Crashes.test_custom_transport_post_intent_guard) ... FAIL
+
+======================================================================
+FAIL: test_custom_transport_post_intent_guard (regression.Crashes.test_custom_transport_post_intent_guard)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/alien-terminal-dispatch-boundary-repair-oct26/omission-postwal-source/test/test-alien-terminal-dispatch-boundary-oct26.py", line 113, in test_custom_transport_post_intent_guard
+    self.assertEqual(sends,legacy.PLAN[:index])
+AssertionError: Lists differ: [{'action': 'snapshot'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'action': 'snapshot'}
+
+- [{'action': 'snapshot'}]
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.158s
+
+FAILED (failures=1)
+{"omitted": "post-WAL-guard", "unchangedRegressionRejected": true, "failures": 1, "errors": 0}

@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 1.219s
+
+OK
+{"where": "connected-before-bytes", "index": 5, "action": {"cmd": "keypress:13"}, "sends": 5, "pending": {"command": {"cmd": "keypress:13"}, "index": 5}, "restartSentNothing": true}
+{"where": "durable-intent", "index": 5, "action": {"cmd": "keypress:13"}, "sends": 5, "pending": {"command": {"cmd": "keypress:13"}, "index": 5}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 5, "action": {"cmd": "keypress:13"}, "sends": 5, "pending": {"command": {"cmd": "keypress:13"}, "index": 5}, "restartSentNothing": true}

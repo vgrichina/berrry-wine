@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "env",
+    "BOUNDARY_INDEX=6",
+    "/usr/bin/python3",
+    "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo/test/test-alien-terminal-dispatch-boundary-oct26.py",
+    "Boundary"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 120848384,
+  "physicalCap": 134217728,
+  "cpu": 0.71,
+  "wall": 0.632456004852429,
+  "outputBytes": 633,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 7,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3361107": 3801088,
+    "3361355": 19398656,
+    "3361354": 13631488,
+    "3361371": 53084160,
+    "3361356": 30932992
+  }
+}

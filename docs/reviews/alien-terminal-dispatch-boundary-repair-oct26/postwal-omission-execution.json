@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-terminal-dispatch-boundary-repair-oct26/ops/postwal-omission-run.py"
+  ],
+  "cwd": "/tmp/alien-terminal-dispatch-boundary-repair-oct26/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 58064896,
+  "physicalCap": 134217728,
+  "cpu": 0.23,
+  "wall": 0.24764670501463115,
+  "outputBytes": 1026,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 3,
+  "supervisorIncluded": true,
+  "peakOwners": {
+    "3362604": 19529728,
+    "3362605": 24903680,
+    "3362599": 13631488
+  }
+}

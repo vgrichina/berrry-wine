@@ -1,0 +1,9 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 1.887s
+
+OK
+{"crash": "intent-file-fsync", "ledgerStatus": "running", "restartSentNothing": true}
+{"crash": "intent-directory-fsync", "ledgerStatus": "uncertain", "restartSentNothing": true}
+{"crash": "request-prepared", "ledgerStatus": "uncertain", "restartSentNothing": true}
+{"crash": "terminal-before-latch", "ledgerStatus": "uncertain", "restartSentNothing": true}

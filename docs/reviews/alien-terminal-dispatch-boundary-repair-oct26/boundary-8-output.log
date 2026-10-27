@@ -1,0 +1,8 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.557s
+
+OK
+{"where": "connected-before-bytes", "index": 8, "action": {"action": "snapshot"}, "sends": 8, "pending": {"command": {"action": "snapshot"}, "index": 8}, "restartSentNothing": true}
+{"where": "durable-intent", "index": 8, "action": {"action": "snapshot"}, "sends": 8, "pending": {"command": {"action": "snapshot"}, "index": 8}, "restartSentNothing": true}
+{"where": "request-prepared", "index": 8, "action": {"action": "snapshot"}, "sends": 8, "pending": {"command": {"action": "snapshot"}, "index": 8}, "restartSentNothing": true}
