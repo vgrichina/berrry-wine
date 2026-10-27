@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "task": "airstrike-interior-independent-accept-oct27",
+  "verdict": "PASS_OFFLINE_DISPATCH_GEOMETRY",
+  "candidate": "a6a5cda53242adba9738a30811cee60fa696548a",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+    "tools/airstrike-observation-bridge.py": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+    "test/test-airstrike-caption-interior.py": "bf66f5aade28992b87fc95c68bab2afe54d543e35d5fd6c64116e96679c49743",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "canonicalInputManifest": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/receipt-manifest.json",
+  "canonicalInputManifestSHA256": "84e46aae879bb0fae3632b67e6a56bee0dda1407f71c469cea2a75a703ad9f55",
+  "first": {
+    "receipt": "independent-rejection.json",
+    "expectedExit": 1,
+    "actualCLI": {
+      "exit": 2,
+      "commands": []
+    },
+    "actualBridgeInputs": [],
+    "cleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": -15,
+      "complete": true
+    }
+  },
+  "independentCases": 32,
+  "affectedPositiveMethods": 2,
+  "reused": "Unchanged producer10focused+8controls; affected two positive methods rerun",
+  "remaining": [],
+  "reviewBoundary": "OFFLINE protocol dispatch only, no actual guest/renderer/gameplay acceptance",
+  "publication": {
+    "branch": "refs/heads/task/airstrike-interior-independent-accept-oct27",
+    "commit": null,
+    "exactRemoteVerified": false
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-interior-independent-accept-oct27/root-ref-digest.json",
+  "diagnostics": "All raw files under ops; historical blocker preserved as first-admission-manifest.json",
+  "cleanup": "Supervisor receipts all complete; no boxes assigned; watcher cleanup at closeout"
+}
