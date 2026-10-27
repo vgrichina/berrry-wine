@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "90",
+    "bx_e9mecsag",
+    "timeout 120 prlimit --cpu=90 --fsize=25165824 -- sh -c 'python3 -c '\"'\"'import pathlib,time;h=pathlib.Path('\"'\"'\"'\"'\"'\"'\"'\"'/tmp/ricochet-cleanup-round-play-oct27'\"'\"'\"'\"'\"'\"'\"'\"');end=time.monotonic()+85\nwhile time.monotonic()<end:\n if (h/\"serial/paused.json\").exists():print((h/\"serial/paused.json\").read_text());break\n if (h/\"guest/supervision.json\").exists():raise RuntimeError(\"guest ended before menu\")\n time.sleep(.05)\nelse:raise RuntimeError(\"menu readiness timeout; no replay\")'\"'\"''"
+  ],
+  "commandSHA256": "1afd041b4ff8c21a8c21cba5e3a6504b38d30ae0f23cab3829d2991b98671d68",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

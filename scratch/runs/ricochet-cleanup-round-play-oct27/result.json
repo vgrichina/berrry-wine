@@ -1,0 +1,78 @@
+{
+  "candidateId": "reflexive-ricochet-xtreme",
+  "taskId": "ricochet-cleanup-round-play-oct27",
+  "agentId": "codex:01a17c8c-e990-78f2-974d-931b9430afa5",
+  "startedAt": "2026-10-27T08:57:29.440Z",
+  "finishedAt": "2026-10-27T08:58:30.722Z",
+  "outcome": "timeout",
+  "route": "startup",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/ricochet-cleanup-round-play-oct27/runner/test/run.js",
+    "--app=ricochet_xtreme",
+    "--no-build",
+    "--wasm=/tmp/ricochet-cleanup-round-play-oct27/current.wasm",
+    "--dll-seed=IFC22.dll",
+    "--d3d9-renderer=software",
+    "--no-close",
+    "--stuck-after=0",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=116",
+    "--control=8128",
+    "--frozen"
+  ],
+  "build": {
+    "commit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "apiTableSha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "acceptedHelperCommit": "f461584655aa36f1ca30686cbd1428757b232b3c"
+  },
+  "environment": {
+    "host": "bx_e9mecsag",
+    "mode": "CLI",
+    "renderer": "software",
+    "node": "24.22.1",
+    "viewport": [
+      640,
+      480
+    ]
+  },
+  "summary": "One production invocation stopped by the unchanged trusted aggregate CPU guard before fresh menu capture. Last completed step batch 1281 with frozen zero credits; SIGTERM statistics report 1414 batches during the interrupted next step. No inputs, captures, round/paddle/ball acceptance or ordinary Quit. No retry.",
+  "verification": "reviewed",
+  "artifacts": [
+    "remote/guest/node.stdout",
+    "remote/guest/node.stderr",
+    "remote/guest/command.json",
+    "remote/guest/supervision.json",
+    "remote/serial/control.jsonl",
+    "remote/serial/checkpoint.json",
+    "configuration.json",
+    "inputs.json",
+    "node-startup.json"
+  ],
+  "acceptance": {
+    "closurePins": true,
+    "remoteHashes": true,
+    "nodeStartup": true,
+    "canonicalParser": true,
+    "productionEntryDllMain": true,
+    "freshMenu": false,
+    "round": false,
+    "paddleBallResponse": false,
+    "ordinaryQuit": false
+  },
+  "termination": {
+    "supervisorExit": -15,
+    "reason": "aggregate CPU limit",
+    "wallSeconds": 61.24969600500003,
+    "conservativeChargedCPUSeconds": 152.096336,
+    "physicalPeakRSS": 344616960,
+    "cleanupComplete": true,
+    "nodeWaitTerminalRecordMissing": true,
+    "nodeWaitTerminalExplanation": "Supervisor terminated the runner/controller/Node owned tree; runner wait record was not reached. Exact supervisor exit and node SIGTERM output retained."
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "at": 1793091522.5083303,
+  "free": 7973851136,
+  "memAvailable": 3569057792,
+  "requiredRAM": 2751463424,
+  "clients": [
+    {
+      "pid": 3965837,
+      "task": "alien-cleanup-menu-mission-oct27",
+      "rss": 138227712
+    },
+    {
+      "pid": 3965838,
+      "task": "airstrike-cleanup-ordinary-quit-oct27",
+      "rss": 139530240
+    },
+    {
+      "pid": 3965839,
+      "task": "ricochet-cleanup-round-play-oct27",
+      "rss": 140156928
+    },
+    {
+      "pid": 3965845,
+      "task": "enigma-cleanup-startgame-oct27",
+      "rss": 145620992
+    },
+    {
+      "pid": 3967555,
+      "task": "penguin-causal-independent-accept-cleanup-oct27",
+      "rss": 135626752
+    }
+  ],
+  "actualClientRSS": 699162624,
+  "actualRSSAlreadyInMemAvailable": true,
+  "peers": [
+    {
+      "task": "airstrike-cleanup-ordinary-quit-oct27",
+      "used": 4247552,
+      "remaining": 96415744
+    },
+    {
+      "task": "alien-cleanup-menu-mission-oct27",
+      "used": 10985472,
+      "remaining": 89677824
+    },
+    {
+      "task": "enigma-cleanup-startgame-oct27",
+      "used": 7802880,
+      "remaining": 92860416
+    },
+    {
+      "task": "madbomber-retained-launch-recovery-oct27",
+      "used": 3612672,
+      "remaining": 97050624
+    },
+    {
+      "task": "penguin-causal-independent-accept-cleanup-oct27",
+      "used": 4542464,
+      "remaining": 96120832
+    },
+    {
+      "task": "ricochet-cleanup-round-play-oct27",
+      "used": 57233408,
+      "remaining": 43429888
+    }
+  ],
+  "positiveWAL": 131072,
+  "projected": 7441387520,
+  "floor": 2982150144,
+  "ownAllocated": 55906304,
+  "localCap": 100663296
+}

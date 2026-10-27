@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_1jagritpooov",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T08:57:29.444Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T08:57:29.410Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"supervisorPID\": 33172, \"start\": 1793091449.4400606, \"state\": \"STARTING\", \"noReplay\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

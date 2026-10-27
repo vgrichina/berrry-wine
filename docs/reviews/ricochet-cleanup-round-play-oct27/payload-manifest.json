@@ -1,0 +1,617 @@
+[
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-stage-1793091356096188914.json",
+    "bytes": 840,
+    "sha256": "73f4fe75193a7df0a5de45ce3bc66727a03551acb209301e1b21f96c4604b8c2"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/menu-1793091453132884012.stderr",
+    "bytes": 980,
+    "sha256": "20bc095a114c3665595514d1f01307d77730b1029c4d14df3b56efe22a86c7e9"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/launch-guest.py",
+    "bytes": 1193,
+    "sha256": "fd9d9feac8c32e235d7a4e3032a1c72bcfb92ea51eed7bba06b71d7c1196a338"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/collect-remote.py",
+    "bytes": 1216,
+    "sha256": "ecfc29a844db26de0c30711c6e4a033f5e83af340a7989ad61865afc4a7078e8"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/build-config.py",
+    "bytes": 1819,
+    "sha256": "1932bf92080cea87e6f78c684852c8c9066d13ac47d0924066f3b0f5f95e65f6"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/stage-supervision-1793091402123157373.json",
+    "bytes": 9997,
+    "sha256": "e0fb97117d6ab412eea42601a00e4fbfe2e61f4272bbfe59e681a91721c7ce16"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/launch-supervision-1793091449968113708.json",
+    "bytes": 348,
+    "sha256": "e7ec8b1e36a4562619cd2883ab9efcbfc5d78f6dedbc279a900048dd0e134e3c"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/menu-supervision-1793091510885489425.json",
+    "bytes": 338,
+    "sha256": "5bb73259304f5cb800c8d7e972b99b8f9c6e810ff17720cd35bce24986579cd9"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/startup-supervision-1793091416028895022.json",
+    "bytes": 336,
+    "sha256": "dc5c0c18d0499a9c7463f18b680af8f40948efed34fa701135864180d2894de1"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320149081859-command.json",
+    "bytes": 361,
+    "sha256": "ddd8dd6b677083e2a408de19e58ec0df79e84a0806e4707f203911f91ce71586"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320181921709.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320128444820-command.json",
+    "bytes": 359,
+    "sha256": "e024bf166209152b383187b67e756a8593c47231384b92b217c570aa633e8b46"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/verify-remote.py",
+    "bytes": 734,
+    "sha256": "9fdaa2664659e7a5dfd523c0a9fdc7b7801a89c084a30e4c365eccb55e4f3aff"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/api-1793091453227296117.stdout",
+    "bytes": 438,
+    "sha256": "35c9d60356cef3c150d0aeaaa6e75ef61af483f8c9982932cb4e8df0be4b3034"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/read-audit.py",
+    "bytes": 894,
+    "sha256": "515e980efcba15dae3b165e718f8839008d3e65b489cad84d76392d15492c619"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-prepare-1793091063858601347.json",
+    "bytes": 829,
+    "sha256": "0791d499f64c1a158e9642880850ef8b8aafd28f7cccdb56aa4e09cb4734d140"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-supervision-1793091522673475770.json",
+    "bytes": 338,
+    "sha256": "d781ceb4e23d256346f9f91a582b134e7ab97420040a2238a9f0b1ae79773aad"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/cleanup-recovery-runtime-pins-oct27.json",
+    "bytes": 1235,
+    "sha256": "64e76c6f7c9a2aed04a6c1032a128184e04cbfd0e17c44c2186f1a2e892e1773"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/work.py",
+    "bytes": 1287,
+    "sha256": "28144518bbb2cb062be578e8171de6fbd6e7ee537644cd7b8aac935c7adaac7c"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091824305445223.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320149081859.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/evidence-checker.json",
+    "bytes": 986,
+    "sha256": "8e47a75ff96d311e185cb700abff647123522aa249b4419a7c370214fd68405f"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/stage-supervision-1793091164598636412.json",
+    "bytes": 21736,
+    "sha256": "f72b2f74bff0e90bb9594e8f5518ccc65de1f6137e644ead3828990320fabc82"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/publication-incidents.json",
+    "bytes": 285,
+    "sha256": "124762766826e3a3998c09a30656d6c6f3932a53072b9b4f634d58b88bbcb93b"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091824098969240.stderr",
+    "bytes": 951,
+    "sha256": "0b577961b0a8d1ce8a483ead055d33a78ea1794598c15c97a2b5e82a6964f9b5"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/production-launch.json",
+    "bytes": 489,
+    "sha256": "0a86a08f756b805dc2591507b51041de4ad85c8819c4708420dd1a444b088ead"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/prepare-supervision-1793091064714921969.json",
+    "bytes": 301,
+    "sha256": "7504acdac711ac2050ffddc1967cbbe882780cb7045fd1af9905a256686062f2"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-handback.json",
+    "bytes": 2845,
+    "sha256": "653339b7181722a990c57cc1b04bd9c33e8393a069347e97dca4d8c5328c005a"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/ricochet-cleanup-round-play-oct27.task.runtime.json",
+    "bytes": 252,
+    "sha256": "977f37a24d59c33d5dd6047b146dafdfabcb0c47ce94543725f3bda1294c6639"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/api-1793091453227296117.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/driver.py",
+    "bytes": 21560,
+    "sha256": "1fe3115f19ad0a3ba4b62a9c1f79b7e2c109e19db4a21a1b8f9b10176670cc48"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/supervised.py",
+    "bytes": 856,
+    "sha256": "dca65a8334c7234ec1e9bc8ccd74c7be53efd567b486a6551ce15a4283635eeb"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320078468066.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320123046608-command.json",
+    "bytes": 370,
+    "sha256": "3c8821020b09027ac964ef7336124dfb1a917d4baef2c683390f013eb61cea6c"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-collect-1793091550751494616.json",
+    "bytes": 1622,
+    "sha256": "f7759bb9ada5115e58625f98f50e58c6432969fc73c6346dc9f973926dbaa305"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-tools-1793091271037936854.json",
+    "bytes": 840,
+    "sha256": "e6f367859ea5b28904bf59e1548c86644f8352625ae6c6357e43561ed96fe4cb"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/configuration.json",
+    "bytes": 46457,
+    "sha256": "2e73a57b61090025a660239d14196c0542421e775f48f92b45369a552258c145"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-init-receipt.json",
+    "bytes": 172,
+    "sha256": "1fdee036bee9c9275a32b25413d3826041a093fe4cc28ffa17ce8243041513ff"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320123046608.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-launch-1793091449302509083.json",
+    "bytes": 839,
+    "sha256": "8ea3701523a47917c6cbf7ad8be9ab3fb98694cff02bd3a55a8ac02dfd53f265"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-remote-1793091522518798189.json",
+    "bytes": 1622,
+    "sha256": "88e980e0616a6d885d5eddc560c28ad4b35f4f98a36a0859bb852a1b8c54d248"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-menu-1793091453206101775.json",
+    "bytes": 839,
+    "sha256": "10abfbd337a23180d40271dbd828c9487b4215e0ef7f498f792a2f26e89b41e7"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/config-supervision-1793091247081958632.json",
+    "bytes": 292,
+    "sha256": "8b0e0dea33874e107f9b6d01d04d96b7906d144e44c84e1ed0b1c9e1d00188c5"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091824324055950.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/startup-run.py",
+    "bytes": 853,
+    "sha256": "da8df06c8d4acfb8e47099ec1d21b9acdf9af3eec723b977f8c21fc046890321"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/menu-1793091453132697111.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-stage-1793091226214905108.json",
+    "bytes": 840,
+    "sha256": "ed5d5df79a9b1ba43a7863298799adf11d4bf94001718305042d4585c88bacbb"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-config-1793091247036604045.json",
+    "bytes": 840,
+    "sha256": "6901a621289177af8f4fa03632e3afd8a9a74994e993869f7afd807184e56f8c"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320133253227-command.json",
+    "bytes": 401,
+    "sha256": "c4d5b6f680036686f63cdac17124049011a7c0756503a6fa1d8b8622c6b98b8d"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/read.py",
+    "bytes": 1080,
+    "sha256": "1979202afd4833abf0a3f00db9692a9b597620fb5bef17941bda96395083b2ae"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/wal-baseline.json",
+    "bytes": 314,
+    "sha256": "23812f40cc57a405b35b613ed656a7bfa393f1e58c219a550a068265c6696904"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320140666568-command.json",
+    "bytes": 435,
+    "sha256": "17fd0efe8d55e6999539fa4e8c2b5bd5027d09581d35fd6bed0298083ed1fc74"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-supervision-1793091517852030486.json",
+    "bytes": 337,
+    "sha256": "4ceccef0d8ae2c49e15cc29179f0ceab207436353c1bd6d12284c8514ece5e53"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091824238359070.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320137924767-command.json",
+    "bytes": 350,
+    "sha256": "879682dc25ad5b746f8f9d59a41587e84339a79053bb7a6e4da061cb57338c18"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/text-ledger.json",
+    "bytes": 40,
+    "sha256": "4c1589bbe5d1921fd6247bac9f5084591c11dbf8671d337187607745fd23117d"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-remote-1793091407457720750.json",
+    "bytes": 840,
+    "sha256": "c8da320e911e2d8e653e59a0e3eee65f48fa78b6e513441365f11724542324fd"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/node-startup.json",
+    "bytes": 5225,
+    "sha256": "cf19ac83cd8fc56acdfe37525594634a21940c516bf058230864fb744fa47519"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/collection-receipts.json",
+    "bytes": 5430,
+    "sha256": "d4c9e7252ad0e53d3fc32f324f5dbfdea889b0a4995496376556e0592c78ddf0"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320133253227.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/inputs.json",
+    "bytes": 205206,
+    "sha256": "db9db02900adb80270a86e206a49920d6ac81bd1108daa25d2dd32c3b7c4d54a"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-stage-1793091074512633393.json",
+    "bytes": 834,
+    "sha256": "4bf35b4f65e682f7e8d06e75b827f993921dd6d20405f647bce7d1bb304b0d0c"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/package.py",
+    "bytes": 7457,
+    "sha256": "382fbc0a1a9980420008d2a1c636c870828e393b2506bf3f2298847452940efc"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/serial.py",
+    "bytes": 3663,
+    "sha256": "b1598fd20457bc27184d6f6d81aa0a30840a7276295f4b632ab4bd0d169426c4"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/retained-api-ledger-manifest.json",
+    "bytes": 540985,
+    "sha256": "a3754bc165fedef1749d50213a0294f7f6cf93ce893b30e0578f6c581a394e0e"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091803768847646-command.json",
+    "bytes": 431,
+    "sha256": "02353a2188ce99d64b6fab2cbbf1a14593eb83c66eac29ffac43166c174abffb"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320140666568.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/tools-supervision-1793091272886549391.json",
+    "bytes": 945,
+    "sha256": "b1d31352f834f6c06712bb735bdac4d702f9e77cddb38c2d016aeafca3c746b6"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091803768847646.stderr",
+    "bytes": 204,
+    "sha256": "04ebdc2914943698f282edac534c599901210275197f373aa9b95704fbe1c9b4"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/accounting-before-publication.json",
+    "bytes": 2047,
+    "sha256": "5a515142ee2cd8aea89dd7e0b05f0b34ff0096a4788ff2d70ae92731292942d2"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320128444820.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-supervisor.py",
+    "bytes": 1899,
+    "sha256": "9269a7067c163340ea6c30c185a1cc6be54c5534c7008033df57f263eb4b7fc4"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/api-1793091453227296117-command.json",
+    "bytes": 922,
+    "sha256": "48b2b0d2d564c2edca2213501bb606db86445881e9f5f398453d90d009e18fb5"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/result.json",
+    "bytes": 2721,
+    "sha256": "62d26ba60b8a55b9fe294022c21a511877a254fb47309400c7219dcf4248edd8"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320135676322-command.json",
+    "bytes": 365,
+    "sha256": "e577a0f37c364ce95f4123fac53e9be9e99a718dbc82e085204ba04fb61a09dc"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-package-1793091660612488949.json",
+    "bytes": 1508,
+    "sha256": "f7a09c31239a1e3daf675273cb852c6580e0cfb4dc486af84b69b4c78a5f2bb3"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320130871551-command.json",
+    "bytes": 366,
+    "sha256": "bf201e34bce76df0805ca78ce255fa035ea2f5a5d7a351ccda591a5da45e9aef"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/driver-before-ledger-policy.py",
+    "bytes": 11240,
+    "sha256": "bb6d72bc6daf0b584b6cb5bc4481c475614d706693c9512f07acc27282954522"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/checker-source-pin.json",
+    "bytes": 164,
+    "sha256": "5a9967f72ba9eb4b23edaff1b5330c638132e0975ed2b4704aa55f974a78a96f"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-supervision-1793091320214419277.json",
+    "bytes": 383,
+    "sha256": "156b98307bb1deb7de654fb4f17a1aa0faf0147cf985502a8c92cb0b393ea0ff"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/publication-incidents-final.json",
+    "bytes": 980,
+    "sha256": "3b37022db28f44a5b9cc511c775b42fd12b27351a52e83f232602df65890c8b0"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320181921709-command.json",
+    "bytes": 345,
+    "sha256": "85ac7978ea5698e11c3c0c76cd9f664eca911b2940c521330220903176d942f0"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/runtime-state.py",
+    "bytes": 372,
+    "sha256": "4085256aa4d870637889a08ac0274f251275e5bee931cddd3cdae7c5327680ca"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-supervision-1793091408260516937.json",
+    "bytes": 337,
+    "sha256": "7f2bc26e819fd6f38a28894effb6c930de87ce2570d0742163d8356e570aa3d6"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote-child.py",
+    "bytes": 1187,
+    "sha256": "9d4d22a4b67823532bb91dea14fd3915d379f3ae9a454baa381d315862d1945e"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/prepublish-1793091823761974091.stderr",
+    "bytes": 335,
+    "sha256": "f4b5a4be1118e2c7396d6b3233097cc3d433e2b29a7e818fd6c9a8b8cc381e84"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/ricochet-cleanup-shutdown-oct27.json",
+    "bytes": 148,
+    "sha256": "1ab8f814f70f5b551a3303cf32be457ce594a4c78becfd8459232e2180a426ee"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/pinned-checkpoint.json",
+    "bytes": 328,
+    "sha256": "8b5381df881b3823ec56cd6e015176ec78b0a7e55bbef4a950689e0c330d1d49"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320137924767.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/stage-supervision-1793091316348058365.json",
+    "bytes": 21368,
+    "sha256": "366084713781a8a0fa56bc531ad8978111d561afd46d99fd2dd53c26ec8682a3"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-remote-1793091517593506018.json",
+    "bytes": 1621,
+    "sha256": "01158658ddce276acf9ce5aad8ef664e02ea9b9c900db85768128037dc893d2d"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091824334168642.stderr",
+    "bytes": 310,
+    "sha256": "81304f7bae8f34e7740a29e5704735c3a172fb4409edd9c0cd7fc0cd00cbda95"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/prepublish-1793091797504451137.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/collect-supervision-1793091559984054129.json",
+    "bytes": 4936,
+    "sha256": "7217dcc76f3adc774e59ede870be79548b3706d9f004d6a26a987a7c4fb86946"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-startup-1793091415632387651.json",
+    "bytes": 839,
+    "sha256": "1f3165869ab05a7ae8ad2169e62a7c69f876ed1a0f4dece02acf6ac2ca1cf476"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/round-plan.txt",
+    "bytes": 868,
+    "sha256": "1f3577300f4300304bfa4e74ff490e0c444446662791ebac79d1ab9c2d8f3bd2"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320135676322.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/stage-progress.json",
+    "bytes": 54,
+    "sha256": "3fe1a8848f5e4b7ca255604b8264a49a1a80114e2b353b251fd18613d64d84f1"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091320130871551.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/admission-git-1793091320115361297.json",
+    "bytes": 840,
+    "sha256": "97953fa515ce3ca20bd13d983223ee13ae8547f77a1de080bb36e34fbf11ceab"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/git-1793091803670918920.stderr",
+    "bytes": 860,
+    "sha256": "bc0f5c628767a0e8f96985b6c58c4dda2eaeb145d67629fe347386cddc551ab7"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/cleanup-recovery-fleet-admission-oct27.json",
+    "bytes": 777,
+    "sha256": "cf4bf949653926b7265394b46c1452bef45569b0b3b3d77922729e6caeae1efe"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup-supervisor.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest-supervisor.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/remote-input-verification.json",
+    "bytes": 124,
+    "sha256": "b8b3063b2508a490c7dae30464bfe02bf455d054095f2a6e60c7ae752f9eac1b"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/before-guest.json",
+    "bytes": 173,
+    "sha256": "15a820d6b75ab1c5f71dbb26cb0515b3fd823d5d8b114e161116bbd764c4ba95"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest-supervisor.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup-supervisor.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/node.stdout",
+    "bytes": 2009,
+    "sha256": "7d6efa7c23fdaff80cf32d919a678182ba26e85fc2ed3b8faf0d23e51ba7f80e"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/controller.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/supervision.json",
+    "bytes": 532,
+    "sha256": "4204005271adfe1f2e60c746e241d16bfdf6b8d8d3b12d5ecf3559a84e54cd46"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/controller.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/node.stderr",
+    "bytes": 652,
+    "sha256": "4abf17a254acd4af8de8bf55fcf7bb423d69615ee58b9f71e9ae750729169183"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/guest/command.json",
+    "bytes": 1101,
+    "sha256": "416e9f03d6245e0e211bea5723585eba879f8c6b258709a0e094e4b39314b052"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/serial/checkpoint.json",
+    "bytes": 470,
+    "sha256": "151c2dccf3cf3384f721ca5ea745d84bbcf47a5fe0f1bc77e6e23ad4afc24a28"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/serial/control.jsonl",
+    "bytes": 4164,
+    "sha256": "5d95ab6a5298efc6d0490df4f4e61e669ded334915b7a94016af85d22db68a40"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup/node.stdout",
+    "bytes": 2077,
+    "sha256": "582235df73dbdfd409b5ba497fc7ab256d4c7e182b515ef6cbbef9a6817d26d9"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup/supervision.json",
+    "bytes": 481,
+    "sha256": "d91c4ad0bbe8446aaa240a8778853962ce09a1aed5aa0f2c9b99ddec8e28e27b"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup/terminal.json",
+    "bytes": 2038,
+    "sha256": "d84caae6f42f0460db9582158904b93d163f8d8657baf5c762b5850c9180afaf"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup/node.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "scratch/runs/ricochet-cleanup-round-play-oct27/remote/startup/command.json",
+    "bytes": 1989,
+    "sha256": "994f377bccc4c4fba2d3fad09e03c4581b7b04440e2bb0b0a988092722f95cb1"
+  },
+  {
+    "path": "docs/reviews/ricochet-cleanup-round-play-oct27/README.md",
+    "bytes": 3959,
+    "sha256": "d39fe2b27097bb1351ffa35390877a0129971f4e76bebaa473f7d0aeb44c79ba"
+  }
+]

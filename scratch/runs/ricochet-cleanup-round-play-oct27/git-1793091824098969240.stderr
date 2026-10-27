@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 103, in <module>
+    git(['-C',str(repo),'commit','-m','Document bounded Ricochet round-play acceptance and retained diagnostics']);commit=git(['-C',str(repo),'rev-parse','HEAD']).strip();git(['-C',str(repo),'push','origin','HEAD:refs/heads/'+branch]);ref=git(['-C',str(repo),'ls-remote','--exit-code','origin','refs/heads/'+branch]).strip();assert ref==commit+'\trefs/heads/'+branch
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 93, in git
+    assert p.returncode==0,(args,p.returncode,ident)
+           ^^^^^^^^^^^^^^^
+AssertionError: (['-C', '/tmp/ricochet-cleanup-round-play-oct27/repo', 'commit', '-m', 'Document bounded Ricochet round-play acceptance and retained diagnostics'], 1, '1793091824334168642')

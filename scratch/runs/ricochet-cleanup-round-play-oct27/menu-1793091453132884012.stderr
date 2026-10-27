@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 116, in <module>
+    elif label=='launch':
+       ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 45, in py
+    assert len(cmd.encode())<=60000
+                            ^^^^^^^^
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 43, in remote
+    def remote(cmd,timeout=30,detach=False):
+                              ^^^^^^^^^^^^^^^
+AssertionError: {'commandId': 'cmd_1lxqzom1lzme', 'cwd': '.', 'exitCode': 1, 'finishedAt': '2026-10-27T08:58:30.827Z', 'launcherFailed': False, 'noticedMs': 4, 'oomKilled': False, 'signal': None, 'startMs': 1, 'startedAt': '2026-10-27T08:57:33.414Z', 'stderr': 'Traceback (most recent call last):\n  File "<string>", line 4, in <module>\nRuntimeError: guest ended before menu\n', 'stderrTruncated': False, 'stdout': '', 'stdoutTruncated': False, 'success': False, 'timedOut': False}

@@ -1,0 +1,20 @@
+{
+  "at": 1793090609.5654452,
+  "cleanupReceipt": "scratch/cleanup-20261027/receipt.json",
+  "availableRAM": 3825631232,
+  "diskFree": 8074465280,
+  "clients": 5,
+  "clientFutureEach": 335544320,
+  "sharedChildPool": 268435456,
+  "RAMHeadroom": 805306368,
+  "requiredRAM": 2751463424,
+  "localAllocationEach": 100663296,
+  "coordinatorReserve": 8388608,
+  "driftMargin": 8388608,
+  "diskFloor": 2982150144,
+  "projectedDisk": 7554371584,
+  "pins": {
+    "/tmp/penguin-stream-open-causal-repair-oct27/repo/tools/penguin_capture_contract.py": "9ec154496d10053252701d786f26e821fc226db3bdcb0e948f45e68ab0045cb0",
+    "/tmp/penguin-stream-open-causal-repair-oct27/repo/test/test_penguin_capture_contract.py": "ae9827feb0a5da2a8657b14fa0d2b1c9300aebf6340f504f5c9e23b692b032f5"
+  }
+}

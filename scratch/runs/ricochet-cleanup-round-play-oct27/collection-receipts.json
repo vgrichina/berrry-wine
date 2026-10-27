@@ -1,0 +1,249 @@
+{
+  "before-guest.json": {
+    "bytes": 173,
+    "identity": [
+      64769,
+      141053,
+      173,
+      1793091449437842211,
+      1793091449437842211
+    ],
+    "sha256": "15a820d6b75ab1c5f71dbb26cb0515b3fd823d5d8b114e161116bbd764c4ba95",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "remote-input-verification.json": {
+    "bytes": 124,
+    "identity": [
+      64769,
+      141281,
+      124,
+      1793091408186911122,
+      1793091408186911122
+    ],
+    "sha256": "b8b3063b2508a490c7dae30464bfe02bf455d054095f2a6e60c7ae752f9eac1b",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "startup/command.json": {
+    "bytes": 1989,
+    "identity": [
+      64769,
+      141287,
+      1989,
+      1793091415791090533,
+      1793091415791090533
+    ],
+    "sha256": "994f377bccc4c4fba2d3fad09e03c4581b7b04440e2bb0b0a988092722f95cb1",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "startup/node.stdout": {
+    "bytes": 2077,
+    "identity": [
+      64769,
+      141288,
+      2077,
+      1793091415850091911,
+      1793091415850091911
+    ],
+    "sha256": "582235df73dbdfd409b5ba497fc7ab256d4c7e182b515ef6cbbef9a6817d26d9",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "startup/node.stderr": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141289,
+      0,
+      1793091415790090509,
+      1793091415790090509
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "startup/terminal.json": {
+    "bytes": 2038,
+    "identity": [
+      64769,
+      141290,
+      2038,
+      1793091415855092028,
+      1793091415855092028
+    ],
+    "sha256": "d84caae6f42f0460db9582158904b93d163f8d8657baf5c762b5850c9180afaf",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "startup/supervision.json": {
+    "bytes": 481,
+    "identity": [
+      64769,
+      141292,
+      481,
+      1793091415894092939,
+      1793091415894092939
+    ],
+    "sha256": "d91c4ad0bbe8446aaa240a8778853962ce09a1aed5aa0f2c9b99ddec8e28e27b",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "startup-supervisor.stdout": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141282,
+      0,
+      1793091415722088921,
+      1793091415722088921
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "startup-supervisor.stderr": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141283,
+      0,
+      1793091415722088921,
+      1793091415722088921
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "guest/command.json": {
+    "bytes": 1101,
+    "identity": [
+      64769,
+      141297,
+      1101,
+      1793091449491843365,
+      1793091449491843365
+    ],
+    "sha256": "416e9f03d6245e0e211bea5723585eba879f8c6b258709a0e094e4b39314b052",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "guest/node.stdout": {
+    "bytes": 2009,
+    "identity": [
+      64769,
+      141298,
+      2009,
+      1793091510681055497,
+      1793091510681055497
+    ],
+    "sha256": "7d6efa7c23fdaff80cf32d919a678182ba26e85fc2ed3b8faf0d23e51ba7f80e",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "guest/node.stderr": {
+    "bytes": 652,
+    "identity": [
+      64769,
+      141299,
+      652,
+      1793091450246859484,
+      1793091450246859484
+    ],
+    "sha256": "4abf17a254acd4af8de8bf55fcf7bb423d69615ee58b9f71e9ae750729169183",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "guest/controller.stdout": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141300,
+      0,
+      1793091449490843344,
+      1793091449490843344
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "guest/controller.stderr": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141301,
+      0,
+      1793091449490843344,
+      1793091449490843344
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "guest/supervision.json": {
+    "bytes": 532,
+    "identity": [
+      64769,
+      141271,
+      532,
+      1793091510722056251,
+      1793091510722056251
+    ],
+    "sha256": "4204005271adfe1f2e60c746e241d16bfdf6b8d8d3b12d5ecf3559a84e54cd46",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "guest-supervisor.stdout": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141109,
+      0,
+      1793091449437842211,
+      1793091449437842211
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "guest-supervisor.stderr": {
+    "bytes": 0,
+    "identity": [
+      64769,
+      141295,
+      0,
+      1793091449437842211,
+      1793091449437842211
+    ],
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "chunks": 0,
+    "maxActive": 0
+  },
+  "serial/checkpoint.json": {
+    "bytes": 470,
+    "identity": [
+      64769,
+      141304,
+      470,
+      1793091503966931171,
+      1793091503966931171
+    ],
+    "sha256": "151c2dccf3cf3384f721ca5ea745d84bbcf47a5fe0f1bc77e6e23ad4afc24a28",
+    "chunks": 1,
+    "maxActive": 1
+  },
+  "serial/control.jsonl": {
+    "bytes": 4164,
+    "identity": [
+      64769,
+      141303,
+      4164,
+      1793091503966931171,
+      1793091503966931171
+    ],
+    "sha256": "5d95ab6a5298efc6d0490df4f4e61e669ded334915b7a94016af85d22db68a40",
+    "chunks": 1,
+    "maxActive": 1
+  }
+}

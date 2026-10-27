@@ -1,0 +1,6 @@
+{
+  "ignoredScratch": "Explicit scoped git add -f corrects ignored report paths; no force push.",
+  "selfManifest": "Previous manifest accidentally included itself after repackaging; excluded self entry while preserving original failure stdout/stderr.",
+  "missingHistoricalBlob": "Normal git commit rejected unavailable unchanged historical Army Authority tgz blob90413573b25a8bc99486bb8bdb4c64e60b45188d in immutable sparse donor. Preserve unchanged parent tree with git write-tree --missing-ok and commit-tree; no fetch/full checkout/repack. All NEW report payload blobs are present and hashed.",
+  "wrapperPropagation": "Initial supervisor wrapper recorded child rejection but exited0. A packaging sequence therefore attempted next staging after a failed manifest check. No commit/push occurred. Wrapper now propagates child exit and later operations are sequenced only on inspected passing receipts. Original receipts retained; no behavioral acceptance or guest repeated."
+}

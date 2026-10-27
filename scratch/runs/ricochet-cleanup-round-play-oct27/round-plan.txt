@@ -1,0 +1,8 @@
+Fresh frame inspection required before each screen action. Prior coordinates are navigation hints only.
+Main menu: mousemove 445 55; mousedown; 4 exact batches; mouseup; 20 exact batches; capture select.png.
+Select Player: mousemove 320 234; mousedown; 4 exact batches; mouseup; 20 exact batches; capture options.png.
+New Game Options: mousemove 75 170; mousedown; 4 exact batches; mouseup; 100 exact batches; capture round.png.
+If round visible: relmousemove 180 0; normal mousedown at visible paddle; 4 batches; mouseup; 50 batches; capture response.png.
+Opposite relative movement and time if allowance remains, sixth capture only when needed.
+Ordinary Quit only from an inspected visible menu; harness action quit is recorded as host control, never ordinary guest Quit.
+No uncertain step replay, credit reset, second invocation or capture-count-only early finish.

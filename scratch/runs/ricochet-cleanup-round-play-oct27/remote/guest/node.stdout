@@ -1,0 +1,54 @@
+PE loaded. Entry: 0x00509d24
+DLL: IFC22.dll at 0x6fd000, DllMain=0x71663c, thunks=1986, origBase=0x10000000
+Patching EXE imports: IFC22.dll -> DLL #0 (IFC22.dll)
+After patching: 1986 thunks
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+[files] policy lazy: 358 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[control] listening on http://127.0.0.1:8128/ctl
+[CreateWindow] hwnd=0x10001 title="Ricochet" style=0x-6ff80000 pos=0,0 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=5
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[ThreadManager] CreateThread handle=0xe1000 start=0x7504cc0 param=0x0 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x7504cc0 ESP=0x7ef5fff8
+Calling DllMain at 0x71663c...
+DllMain returned, EAX=0x1
+[signal] SIGTERM requested orderly shutdown
+uop: installs=985 kills=53 retired-poor=53 enters=45601024 blocks=741705821 head-exits=6 reguards=17045424 rg-pages=265273610 rg-nonadj=370392 win-kept=45599477 win-reset=1547 gen=7 | compiled=985 declined=545 insns=55428 uops=243672 flushes=4 traces=506
+  declines: no-backedge=456 head-unsupported=137 call-indirect=63
+uop nobump: skips=323395023
+uop hot: decays=7269164 halvings=1969
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=368 kills=12 enters=25474073 blocks=127974767
+
+Stats: 779461 API calls, 1414 batches in 60.260s (23 batches/s)
+MMX: 3210384 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x4c171b esp=0x7ef5ff84 ebp=0x1577 yield=0 waitH=0x0 sleepCount=0 csPark/steal=0/0

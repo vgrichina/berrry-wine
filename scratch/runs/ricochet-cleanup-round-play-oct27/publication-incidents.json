@@ -1,0 +1,8 @@
+{
+  "ignoredScratch": {
+    "returncode": 1,
+    "commandReceipt": "git-1793091803768847646-command.json",
+    "stderr": "git-1793091803768847646.stderr",
+    "resolution": "Explicit forced add of the authorized scoped report paths only; no files removed and no Git force push."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "at": 1793091449.289421,
+  "free": 7975952384,
+  "memAvailable": 3478523904,
+  "requiredRAM": 2751463424,
+  "peers": [
+    {
+      "task": "enigma-cleanup-startgame-oct27",
+      "used": 7442432,
+      "remaining": 93220864
+    },
+    {
+      "task": "alien-cleanup-menu-mission-oct27",
+      "used": 10928128,
+      "remaining": 89735168
+    },
+    {
+      "task": "ricochet-cleanup-round-play-oct27",
+      "used": 57077760,
+      "remaining": 43585536
+    },
+    {
+      "task": "airstrike-cleanup-ordinary-quit-oct27",
+      "used": 4169728,
+      "remaining": 96493568
+    },
+    {
+      "task": "madbomber-retained-launch-recovery-oct27",
+      "used": 3612672,
+      "remaining": 97050624
+    }
+  ],
+  "positiveWAL": 94208,
+  "projected": 7538995200,
+  "floor": 2982150144,
+  "ownAllocated": 55820288,
+  "localCap": 100663296
+}

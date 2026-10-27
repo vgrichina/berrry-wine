@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 164, in <module>
+    p=H/'repo'/x['path'];assert hashlib.file_digest(p.open('rb'),'sha256').hexdigest()==x['sha256']
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

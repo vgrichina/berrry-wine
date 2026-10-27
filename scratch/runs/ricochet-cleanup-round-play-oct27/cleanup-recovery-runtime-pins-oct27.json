@@ -1,0 +1,32 @@
+{
+  "at": 1793090720.467766,
+  "maps": {
+    "enigma": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-cleanup-verified-runtime-map-oct27.json",
+      "sha256": "06a72d86b409850d73a8158d4f12d974b517ed0c9532652a1fc5f0ee2cb09f83",
+      "files": 2665,
+      "bytes": 37525867,
+      "recoveredIdenticalDependencyPaths": 0
+    },
+    "alien": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/alien-cleanup-verified-runtime-map-oct27.json",
+      "sha256": "d8c670ba75041e084e2be480ee17238ce41832fc721bc5ee1d54053c95ac4ca4",
+      "files": 617,
+      "bytes": 49699925,
+      "recoveredIdenticalDependencyPaths": 27
+    },
+    "ricochet": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/ricochet-cleanup-verified-runtime-map-oct27.json",
+      "sha256": "db9db02900adb80270a86e206a49920d6ac81bd1108daa25d2dd32c3b7c4d54a",
+      "files": 537,
+      "bytes": 53313381,
+      "recoveredIdenticalDependencyPaths": 27
+    },
+    "airstrike": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-cleanup-verified-runtime-map-oct27.json",
+      "sha256": "3b9c75b8d1115fd61a0f1106933faafcfde24b96e4191c3572302c4e65072baf",
+      "files": 265,
+      "bytes": 17385191
+    }
+  }
+}

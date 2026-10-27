@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_diwzrualbhxc",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T09:02:06.237Z",
+  "launcherFailed": false,
+  "noticedMs": 2,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 2,
+  "startedAt": "2026-10-27T09:02:05.985Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"supervision\": {\"exit\": 0, \"stopReason\": null, \"peakRSS\": 82780160, \"sampledPeakRSS\": 82780160, \"reapedPeakRSS\": 50667520, \"cpuSeconds\": 0.20904199999999998, \"wallSeconds\": 0.1319313809999585, \"owned\": [[37119, \"138384\"], [37120, \"138387\"]], \"output\": \"\", \"cleanupComplete\": true, \"box\": \"bx_e9mecsag\", \"boxState\": \"RUNNING\", \"shutdownOwner\": \"coordinator\", \"at\": 1793091726.2241077, \"elapsed\": 0.16505462500003887}, \"stdout\": \"{\\n  \\\"runs\\\": 1,\\n  \\\"errors\\\": [],\\n  \\\"missing\\\": [],\\n  \\\"invalid\\\": []\\n}\\n\", \"stderr\": \"\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

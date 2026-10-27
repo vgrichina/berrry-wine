@@ -1,0 +1,86 @@
+{
+  "manifest": {
+    "before-guest.json": {
+      "bytes": 173,
+      "sha256": "15a820d6b75ab1c5f71dbb26cb0515b3fd823d5d8b114e161116bbd764c4ba95"
+    },
+    "remote-input-verification.json": {
+      "bytes": 124,
+      "sha256": "b8b3063b2508a490c7dae30464bfe02bf455d054095f2a6e60c7ae752f9eac1b"
+    },
+    "startup/command.json": {
+      "bytes": 1989,
+      "sha256": "994f377bccc4c4fba2d3fad09e03c4581b7b04440e2bb0b0a988092722f95cb1"
+    },
+    "startup/node.stdout": {
+      "bytes": 2077,
+      "sha256": "582235df73dbdfd409b5ba497fc7ab256d4c7e182b515ef6cbbef9a6817d26d9"
+    },
+    "startup/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "startup/terminal.json": {
+      "bytes": 2038,
+      "sha256": "d84caae6f42f0460db9582158904b93d163f8d8657baf5c762b5850c9180afaf"
+    },
+    "startup/supervision.json": {
+      "bytes": 481,
+      "sha256": "d91c4ad0bbe8446aaa240a8778853962ce09a1aed5aa0f2c9b99ddec8e28e27b"
+    },
+    "startup-supervisor.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "startup-supervisor.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/command.json": {
+      "bytes": 1101,
+      "sha256": "416e9f03d6245e0e211bea5723585eba879f8c6b258709a0e094e4b39314b052"
+    },
+    "guest/node.stdout": {
+      "bytes": 2009,
+      "sha256": "7d6efa7c23fdaff80cf32d919a678182ba26e85fc2ed3b8faf0d23e51ba7f80e"
+    },
+    "guest/node.stderr": {
+      "bytes": 652,
+      "sha256": "4abf17a254acd4af8de8bf55fcf7bb423d69615ee58b9f71e9ae750729169183"
+    },
+    "guest/controller.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/controller.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/supervision.json": {
+      "bytes": 532,
+      "sha256": "4204005271adfe1f2e60c746e241d16bfdf6b8d8d3b12d5ecf3559a84e54cd46"
+    },
+    "guest-supervisor.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest-supervisor.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "serial/checkpoint.json": {
+      "bytes": 470,
+      "sha256": "151c2dccf3cf3384f721ca5ea745d84bbcf47a5fe0f1bc77e6e23ad4afc24a28"
+    },
+    "serial/control.jsonl": {
+      "bytes": 4164,
+      "sha256": "5d95ab6a5298efc6d0490df4f4e61e669ded334915b7a94016af85d22db68a40"
+    }
+  },
+  "mem": 7244767232,
+  "free": 48988409856,
+  "allocated": 54775808,
+  "box": "bx_e9mecsag",
+  "state": "RUNNING",
+  "at": 1793091550.848459
+}

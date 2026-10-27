@@ -1,0 +1,3 @@
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.

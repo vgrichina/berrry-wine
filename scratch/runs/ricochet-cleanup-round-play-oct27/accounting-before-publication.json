@@ -1,0 +1,68 @@
+{
+  "at": 1793091881.2803917,
+  "ownTotalIncludingSession": 61698048,
+  "opsAllocated": 55668736,
+  "opsPlanningBucket": 20971520,
+  "opsPlanningBucketOverage": 34697216,
+  "allocation": 100663296,
+  "publicationFuture": 4194304,
+  "eventGrowthFuture": 8388608,
+  "minimumRemainingReserve": 8388608,
+  "completeProjectedTask": 82669568,
+  "aggregateAdmission": {
+    "at": 1793091881.2247915,
+    "free": 7945650176,
+    "memAvailable": 3834056704,
+    "requiredRAM": 2751463424,
+    "clients": [
+      {
+        "pid": 3965839,
+        "task": "ricochet-cleanup-round-play-oct27",
+        "rss": 100012032
+      },
+      {
+        "pid": 3965845,
+        "task": "enigma-cleanup-startgame-oct27",
+        "rss": 100904960
+      }
+    ],
+    "actualClientRSS": 200916992,
+    "actualRSSAlreadyInMemAvailable": true,
+    "peers": [
+      {
+        "task": "airstrike-cleanup-ordinary-quit-oct27",
+        "used": 4816896,
+        "remaining": 95846400
+      },
+      {
+        "task": "alien-cleanup-menu-mission-oct27",
+        "used": 15740928,
+        "remaining": 84922368
+      },
+      {
+        "task": "enigma-cleanup-startgame-oct27",
+        "used": 23781376,
+        "remaining": 76881920
+      },
+      {
+        "task": "madbomber-retained-launch-recovery-oct27",
+        "used": 3612672,
+        "remaining": 97050624
+      },
+      {
+        "task": "ricochet-cleanup-round-play-oct27",
+        "used": 61698048,
+        "remaining": 38965248
+      }
+    ],
+    "positiveWAL": 196608,
+    "projected": 7535009792,
+    "floor": 2982150144,
+    "ownAllocated": 59969536,
+    "localCap": 100663296
+  },
+  "cumulativeFullAPIRawResponseBytes": 463782,
+  "responseCap": 1048576,
+  "rawResponseCount": 1272,
+  "historicalIncident": "Complete encoded staging command bodies were retained and exceeded the20MiB ops planning bucket. Existing bodies preserved; future bodies use exact command hashes plus immutable file rows. No claim of historical component-bucket compliance. Full96MiB total projection passes; no other cleanup performed."
+}

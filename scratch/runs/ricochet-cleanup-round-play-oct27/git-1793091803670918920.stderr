@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 102, in <module>
+    git(['-C',str(repo),'add','docs/reviews/'+H.name,'scratch/runs/'+H.name]);git(['-C',str(repo),'diff','--cached','--check']);scope=git(['-C',str(repo),'diff','--cached','--name-only']);assert all(p.startswith(('docs/reviews/'+H.name+'/','scratch/runs/'+H.name+'/')) for p in scope.splitlines())
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/ricochet-cleanup-round-play-oct27/ops/driver.py", line 93, in git
+    assert p.returncode==0,(args,p.returncode,ident)
+           ^^^^^^^^^^^^^^^
+AssertionError: (['-C', '/tmp/ricochet-cleanup-round-play-oct27/repo', 'add', 'docs/reviews/ricochet-cleanup-round-play-oct27', 'scratch/runs/ricochet-cleanup-round-play-oct27'], 1, '1793091803768847646')

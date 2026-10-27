@@ -1,0 +1,30 @@
+{
+  "exit": -15,
+  "stopReason": "aggregate CPU limit",
+  "peakRSS": 344616960,
+  "sampledPeakRSS": 344616960,
+  "reapedPeakRSS": 286158848,
+  "cpuSeconds": 152.096336,
+  "wallSeconds": 61.24969600500003,
+  "owned": [
+    [
+      33173,
+      "110722"
+    ],
+    [
+      33174,
+      "110724"
+    ],
+    [
+      33175,
+      "110724"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "box": "bx_e9mecsag",
+  "boxState": "RUNNING",
+  "shutdownOwner": "coordinator",
+  "at": 1793091510.7224996,
+  "elapsed": 61.258142445999965
+}
