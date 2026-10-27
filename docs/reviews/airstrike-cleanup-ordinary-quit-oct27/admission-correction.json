@@ -1,0 +1,81 @@
+{
+  "incident": "Initial local disk ledger omitted remaining reservation for freshly launched penguin-causal-independent-accept-cleanup-oct27 while measuring all five live client RSS values. Completed publication-only Penguin reservation was correctly released, but new independent acceptance is distinct.",
+  "correction": "Final gate measures actual materialization plus remaining futures for all four peers and this task, with positive WAL once and coordinator/drift. Historical incomplete gates remain retained; final passing gate is not retrospective proof of full compliance.",
+  "correctedGate": {
+    "at": 1793091583.035281,
+    "ownMaterialized": 3280896,
+    "sessionAllocated": 1200128,
+    "positiveWAL": 126976,
+    "used": 4608000,
+    "allocation": 100663296,
+    "peerRemaining": [
+      {
+        "task": "enigma-cleanup-startgame-oct27",
+        "actual": 8089600,
+        "remaining": 92573696
+      },
+      {
+        "task": "alien-cleanup-menu-mission-oct27",
+        "actual": 14503936,
+        "remaining": 86159360
+      },
+      {
+        "task": "ricochet-cleanup-round-play-oct27",
+        "actual": 57905152,
+        "remaining": 42758144
+      },
+      {
+        "task": "penguin-causal-independent-accept-cleanup-oct27",
+        "actual": 4599808,
+        "remaining": 96063488
+      }
+    ],
+    "completedPenguinReservationReleased": true,
+    "coordinatorAndDrift": 16777216,
+    "future": 430387200,
+    "free": 7968768000,
+    "projectedFree": 7538380800,
+    "floor": 2982150144,
+    "memAvailable": 3567030272,
+    "requiredRemainingRAM": 2064068608,
+    "peers": [
+      {
+        "pid": 3965837,
+        "rss": 136646656,
+        "argvSHA256": "8e409169da437acf0f9ab43ac4e4ab001677e3ea77adbf2b80c8187801be5416"
+      },
+      {
+        "pid": 3965838,
+        "rss": 138326016,
+        "argvSHA256": "a6881a019d2e2fa94b7e901ef8df52b6d54f921536f290a9eb5085e498c1ded7"
+      },
+      {
+        "pid": 3965839,
+        "rss": 136060928,
+        "argvSHA256": "bf15c71915d190d6a51929cd90cd216610126592adab1e814abd80259405f2c7"
+      },
+      {
+        "pid": 3965845,
+        "rss": 141959168,
+        "argvSHA256": "d78cdc32ca68d2f094f2fc63737d8aaa61ab0dbad45e07d0c582b92125d42573"
+      },
+      {
+        "pid": 3967555,
+        "rss": 134402048,
+        "argvSHA256": "cc373c537c713e41cf0bb185c7791a7c0db6baf3ec2d0650d5737a68150a9ccf"
+      }
+    ],
+    "buckets": {
+      "sourceGit": 20971520,
+      "events": 16777216,
+      "ops": 20971520,
+      "reserve": 41943040
+    },
+    "sourceGit": 2555904,
+    "ops": 303104,
+    "pass": true
+  },
+  "sourceBehaviorChanged": false,
+  "additionalGuestStarts": 0,
+  "testsRerun": false
+}
