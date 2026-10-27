@@ -1,0 +1,874 @@
+[
+  {
+    "name": "terminal-before-observation",
+    "messages": [
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"terminal before observed Quit activation\"}\n",
+    "expectedCommands": [],
+    "expectedSuccess": false
+  },
+  {
+    "name": "quit-keydown-terminal-without-ack",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n",
+    "stderr": "{\"status\": \"normal-quit-observed\", \"commands\": 1}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      }
+    ],
+    "expectedSuccess": true
+  },
+  {
+    "name": "terminal-after-keyup-ack",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=13 at batch 88"
+            ]
+          }
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-2",
+          "ok": true,
+          "value": {
+            "batch": 89,
+            "logs": [
+              "[input] keyup vk=13 at batch 89"
+            ]
+          }
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n{\"id\": \"airstrike-2\", \"cmd\": \"keyup:13\"}\n",
+    "stderr": "{\"status\": \"normal-quit-observed\", \"commands\": 2}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:13"
+      }
+    ],
+    "expectedSuccess": true
+  },
+  {
+    "name": "stale-initial-observation",
+    "messages": [
+      {
+        "observation": {
+          "after": "airstrike-2",
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.\"}\n",
+    "expectedCommands": [],
+    "expectedSuccess": false
+  },
+  {
+    "name": "uncertain-keys-released",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": null,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.\"}\n",
+    "expectedCommands": [],
+    "expectedSuccess": false
+  },
+  {
+    "name": "boolean-menu-row-refused",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": true,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.\"}\n",
+    "expectedCommands": [],
+    "expectedSuccess": false
+  },
+  {
+    "name": "ack-identity-mismatch",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "other",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=13 at batch 88"
+            ]
+          }
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"uncertain/rejected dispatch; no replay or further input\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "queued-ack-even-with-input-log",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "queued": true,
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=13 at batch 88"
+            ]
+          }
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"uncertain/rejected dispatch; no replay or further input\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "wrong-dispatched-key-log",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=40 at batch 88"
+            ]
+          }
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"uncertain/rejected dispatch; no replay or further input\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "terminal-before-ordinary-quit-on-navigation",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 5,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:40\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"terminal before observed Quit activation\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:40"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "keyup-ack-mismatch-stops",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=13 at batch 88"
+            ]
+          }
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 89,
+            "logs": [
+              "[input] keyup vk=13 at batch 89"
+            ]
+          }
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n{\"id\": \"airstrike-2\", \"cmd\": \"keyup:13\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"uncertain/rejected dispatch; no replay or further input\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:13"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "stale-post-release-observation",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 5,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=40 at batch 88"
+            ]
+          }
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-2",
+          "ok": true,
+          "value": {
+            "batch": 89,
+            "logs": [
+              "[input] keyup vk=40 at batch 89"
+            ]
+          }
+        }
+      },
+      {
+        "observation": {
+          "after": "airstrike-1",
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:40\"}\n{\"id\": \"airstrike-2\", \"cmd\": \"keyup:40\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:40"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:40"
+      }
+    ],
+    "expectedSuccess": false
+  },
+  {
+    "name": "fresh-observed-final-row-then-normal-quit",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 5,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=40 at batch 88"
+            ]
+          }
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-2",
+          "ok": true,
+          "value": {
+            "batch": 89,
+            "logs": [
+              "[input] keyup vk=40 at batch 89"
+            ]
+          }
+        }
+      },
+      {
+        "observation": {
+          "after": "airstrike-2",
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-3",
+          "ok": true,
+          "value": {
+            "batch": 90,
+            "logs": [
+              "[input] keydown vk=13 at batch 90"
+            ]
+          }
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": false,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 0,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:40\"}\n{\"id\": \"airstrike-2\", \"cmd\": \"keyup:40\"}\n{\"id\": \"airstrike-3\", \"cmd\": \"keydown:13\"}\n{\"id\": \"airstrike-4\", \"cmd\": \"keyup:13\"}\n",
+    "stderr": "{\"status\": \"normal-quit-observed\", \"commands\": 4}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:40"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:40"
+      },
+      {
+        "id": "airstrike-3",
+        "cmd": "keydown:13"
+      },
+      {
+        "id": "airstrike-4",
+        "cmd": "keyup:13"
+      }
+    ],
+    "expectedSuccess": true
+  },
+  {
+    "name": "post-activation-fault-refused",
+    "messages": [
+      {
+        "observation": {
+          "after": null,
+          "selected": 6,
+          "focus": "airstrike",
+          "unobscured": true,
+          "evidence": "trusted-parent-desktop-1",
+          "keysReleased": true,
+          "state": "menu",
+          "header": "Airstrike menu",
+          "items": [
+            "Resume game",
+            "Players setup",
+            "Toggle fullscreen",
+            "About the game",
+            "Release notes",
+            "Toggle debug mode",
+            "Quit game"
+          ]
+        }
+      },
+      {
+        "ack": {
+          "id": "airstrike-1",
+          "ok": true,
+          "value": {
+            "batch": 88,
+            "logs": [
+              "[input] keydown vk=13 at batch 88"
+            ]
+          }
+        }
+      },
+      {
+        "terminal": {
+          "reason": "guest-exit",
+          "guestExitCode": 0,
+          "runnerExitCode": 0,
+          "signals": [],
+          "cleanupComplete": true,
+          "evidence": "trusted-parent-terminal-1",
+          "timeout": false,
+          "controlQuit": false,
+          "wmClose": false,
+          "fault": true,
+          "hostExitObserved": true,
+          "runnerLog": "[Exit] code=0\n"
+        }
+      }
+    ],
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/tools/airstrike-menu-controller.py"
+    ],
+    "returncode": 2,
+    "stdout": "{\"id\": \"airstrike-1\", \"cmd\": \"keydown:13\"}\n{\"id\": \"airstrike-2\", \"cmd\": \"keyup:13\"}\n",
+    "stderr": "{\"status\": \"refused\", \"reason\": \"normal Quit unproven: need guest host-exit(0), full terminal log and cleanup; runner exit0 alone is insufficient\"}\n",
+    "expectedCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:13"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:13"
+      }
+    ],
+    "expectedSuccess": false
+  }
+]

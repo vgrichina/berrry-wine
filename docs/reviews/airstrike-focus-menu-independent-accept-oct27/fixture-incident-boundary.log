@@ -1,0 +1,19 @@
+PASS terminal-before-observation
+PASS quit-keydown-terminal-without-ack
+PASS terminal-after-keyup-ack
+PASS stale-initial-observation
+PASS uncertain-keys-released
+PASS boolean-menu-row-refused
+PASS ack-identity-mismatch
+PASS queued-ack-even-with-input-log
+PASS wrong-dispatched-key-log
+PASS terminal-before-ordinary-quit-on-navigation
+PASS keyup-ack-mismatch-stops
+PASS stale-post-release-observation
+Traceback (most recent call last):
+  File "/tmp/airstrike-focus-menu-independent-accept-oct27/ops/boundary.py", line 46, in <module>
+    case('fresh-observed-final-row-then-normal-quit',[obs(selected=5),ack(1,'keydown',40),ack(2,'keyup',40),obs(after='airstrike-2'),ack(3,'keydown',13),T],[cmd(1,'keydown:40'),cmd(2,'keyup:40'),cmd(3,'keydown:13')],True)
+  File "/tmp/airstrike-focus-menu-independent-accept-oct27/ops/boundary.py", line 25, in case
+    assert got==expected,(name,got,expected)
+           ^^^^^^^^^^^^^
+AssertionError: ('fresh-observed-final-row-then-normal-quit', [{'id': 'airstrike-1', 'cmd': 'keydown:40'}, {'id': 'airstrike-2', 'cmd': 'keyup:40'}, {'id': 'airstrike-3', 'cmd': 'keydown:13'}, {'id': 'airstrike-4', 'cmd': 'keyup:13'}], [{'id': 'airstrike-1', 'cmd': 'keydown:40'}, {'id': 'airstrike-2', 'cmd': 'keyup:40'}, {'id': 'airstrike-3', 'cmd': 'keydown:13'}])

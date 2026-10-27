@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-focus-menu-independent-accept-oct27/ops/source-contract.py", line 13, in <module>
+    assert lines[int(n)-1]==text,(n,text,lines[int(n)-1]); count+=1
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('176', '  while ( SDL_PollEvent(&event) >= 1 )', '  while ( SDL_PollEvent(&event) >= 1 ) ')

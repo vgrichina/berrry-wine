@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-focus-menu-independent-accept-oct27/ops/source-contract.py", line 12, in <module>
+    n,text=line.split(': ',1)
+    ^^^^^^
+ValueError: not enough values to unpack (expected 2, got 1)

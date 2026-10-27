@@ -1,0 +1,168 @@
+{
+  "candidate": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "manifestSha256": "eb35c16c06975c157c9f0a1984175274168069a1b7bf855618e89056df13ddfe",
+  "verified": {
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/accounting.json": {
+      "sha256": "47101592b68e48bf59327e669fdc0b45c64d4e85a7d074dbd1480f043ec05c76",
+      "bytes": 374
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/checkpoint.json": {
+      "sha256": "a512c1014c8193491bb57792b917d372398197028f718af0ef29319edd094ecb",
+      "bytes": 996
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/tests.json": {
+      "sha256": "29c1e8c92f504ba7fd94a541bed8be7fe5c49508ce41f21a372c7d6dd2974506",
+      "bytes": 1192
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/production-input-pins.json": {
+      "sha256": "d62e8f9502be8ccf6ce7c6e23a2f1f30cb5a274f3dbf265003a2a1dbbef36209",
+      "bytes": 433
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/tests.log": {
+      "sha256": "abf7182c5153413826f5bb9fbdec231ce03595e61a3caa7838299c85ec68974f",
+      "bytes": 758
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/renderer-input.js.excerpt": {
+      "sha256": "1279e4df9f30c3fe8bd35d4900f855cacd449e87f1ac3653ef842d620bdea451",
+      "bytes": 4669
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/run.js.excerpt": {
+      "sha256": "5f59d498eae77e6ed5029a0f7f816573f410679e69376f33835d95b2f0c30671",
+      "bytes": 5616
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/admission.json": {
+      "sha256": "f246b45d134e40671b9d311dbd3e56d5567854da4fdb632dcd58dd23327650b2",
+      "bytes": 1651
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/airstrike.c.excerpt": {
+      "sha256": "f607afce1214b77d7a8733f79333dacbff66d6eb96e7b47054f0bff27693dc62",
+      "bytes": 7925
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/run-light.py": {
+      "sha256": "4744e8db5ffa370fb2ef76a67ff7843cd414dbe814a9534ca25b3326bd3287fb",
+      "bytes": 1907
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/source-pin.json": {
+      "sha256": "a0f4aa8d438d01e693266c8f2228dc6592e5ec691e3d58a0902aa8e585dea059",
+      "bytes": 370
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/host-window.js.excerpt": {
+      "sha256": "e88245f647467ba1eb452e88d0e22f9b0c4e4931bee80a0ec861ae3efaa0a106",
+      "bytes": 2229
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027/incidents.json": {
+      "sha256": "6e150afb16542e5cc8040ff1e28c61e28abf6d45e8aa474251d1d6298ef2512e",
+      "bytes": 766
+    },
+    "tools/airstrike-menu-controller.py": {
+      "sha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+      "bytes": 6030
+    },
+    "test/test-airstrike-menu-controller.py": {
+      "sha256": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6",
+      "bytes": 4652
+    },
+    "docs/re-notes/airstrike-focus-menu-controller-20261027.md": {
+      "sha256": "1a5bc097322c85476233b36126c7dcac2ebc45b72fa1ee59dd3624865869ef48",
+      "bytes": 8226
+    }
+  },
+  "groups": 5,
+  "disposition": "PASS REUSED unchanged actual-CLI fake-transport groups; not rerun",
+  "receipt": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 47710208,
+    "sampledPeakRSS": 47710208,
+    "reapedPeakRSS": 16515072,
+    "cpuSeconds": 2.425067,
+    "wallSeconds": 1.140676646027714,
+    "owned": [
+      [
+        3585327,
+        "111723173"
+      ],
+      [
+        3585329,
+        "111723182"
+      ],
+      [
+        3585330,
+        "111723185"
+      ],
+      [
+        3585331,
+        "111723190"
+      ],
+      [
+        3585332,
+        "111723192"
+      ],
+      [
+        3585333,
+        "111723195"
+      ],
+      [
+        3585334,
+        "111723200"
+      ],
+      [
+        3585336,
+        "111723207"
+      ],
+      [
+        3585341,
+        "111723214"
+      ],
+      [
+        3585348,
+        "111723222"
+      ],
+      [
+        3585350,
+        "111723227"
+      ],
+      [
+        3585354,
+        "111723236"
+      ],
+      [
+        3585355,
+        "111723244"
+      ],
+      [
+        3585356,
+        "111723248"
+      ],
+      [
+        3585357,
+        "111723251"
+      ],
+      [
+        3585358,
+        "111723256"
+      ],
+      [
+        3585359,
+        "111723258"
+      ],
+      [
+        3585360,
+        "111723262"
+      ],
+      [
+        3585361,
+        "111723264"
+      ],
+      [
+        3585366,
+        "111723275"
+      ],
+      [
+        3585367,
+        "111723278"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

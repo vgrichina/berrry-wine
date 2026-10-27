@@ -1,0 +1,45 @@
+{
+  "pins": [
+    {
+      "path": "test/run.js",
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "bytes": 685960
+    },
+    {
+      "path": "lib/renderer-input.js",
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+      "bytes": 177069
+    },
+    {
+      "path": "lib/host-window.js",
+      "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+      "bytes": 63698
+    }
+  ],
+  "excerptRanges": [
+    [
+      3954,
+      3962
+    ],
+    [
+      7139,
+      7150
+    ],
+    [
+      7346,
+      7379
+    ],
+    [
+      7386,
+      7408
+    ],
+    [
+      9746,
+      9751
+    ]
+  ],
+  "excerptSha256": "f0cabb8449fd23a8432a60b9d719d68063147a2735a201110ae26901fbc4e122",
+  "contract": "NDJSON {id,cmd:\"keydown|keyup:VK\"}; serial [ctl] {ok,id,value:{batch,logs}}; frozen queued ACK insufficient; host exit logs distinct from runner exit",
+  "mount": "N/A no runtime/mounts",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

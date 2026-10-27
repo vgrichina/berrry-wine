@@ -1,0 +1,26 @@
+{
+  "candidate": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "sourceSha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+  "fixtureSha256": "0e4344c82c77b0477bb8ba958cd10616e9198348fdbc24fcf53a37b047c79728",
+  "reusedGroups": 5,
+  "completedIndependentCases": [
+    "terminal-before-observation",
+    "quit-keydown-terminal-without-ack",
+    "terminal-after-keyup-ack",
+    "stale-initial-observation",
+    "uncertain-keys-released",
+    "boolean-menu-row-refused",
+    "ack-identity-mismatch",
+    "queued-ack-even-with-input-log",
+    "wrong-dispatched-key-log",
+    "terminal-before-ordinary-quit-on-navigation",
+    "keyup-ack-mismatch-stops",
+    "stale-post-release-observation"
+  ],
+  "evidence": "/tmp/airstrike-focus-menu-independent-accept-oct27/ops/boundary-transcripts.json",
+  "remaining": [
+    "remaining bounded boundary cases",
+    "task branch publication"
+  ],
+  "runtime": false
+}

@@ -1,0 +1,37 @@
+{
+  "at": 1793070415.0453334,
+  "free": 3144241152,
+  "remainingFuture": 117440512,
+  "projectedFree": 3026800640,
+  "floor": 2982150144,
+  "memAvailable": 3672211456,
+  "memoryRequired": 1946157056,
+  "physicalFloor": 2281701376,
+  "clients": 3,
+  "clientReserveEach": 335544320,
+  "lightPool": 134217728,
+  "headroom": 805306368,
+  "oldProspectiveReleased": true,
+  "oldUsedAlreadyInFree": true,
+  "futuresMiB": {
+    "Airstrike": 32,
+    "Penguin": 32,
+    "Enigma": 48
+  },
+  "allocation": {
+    "sourceGit": 8388608,
+    "events": 8388608,
+    "evidence": 8388608,
+    "reserve": 8388608
+  },
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/airstrike-focus-menu-independent-accept-oct27",
+  "session": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T03-06-05-01a17b52-78bb-7a02-9e3d-fc556a530293.jsonl",
+  "walBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4403200,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 26804224
+  },
+  "mountValidation": "N/A: no runtime/mount argv authorized",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "admitted": true
+}

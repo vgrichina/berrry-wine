@@ -1,0 +1,7 @@
+{
+  "cause": "Independent expected transcript omitted keyup after successful Enter keydown ACK; candidate followed press() contract correctly.",
+  "candidateRejection": false,
+  "affectedCase": "fresh-observed-final-row-then-normal-quit",
+  "passingCasesReused": 12,
+  "correction": "Include airstrike-4 keyup:13 before terminal receipt; only affected and remaining cases executed."
+}

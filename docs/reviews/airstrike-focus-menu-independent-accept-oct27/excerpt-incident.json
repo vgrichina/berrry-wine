@@ -1,0 +1,6 @@
+{
+  "cause": "Published source excerpt strips trailing source whitespace; byte-exact verifier initially compared unnormalized original line.",
+  "semanticMismatch": false,
+  "candidateRejection": false,
+  "correction": "Require published line equals original rstrip; retain byte-exact original excerpt with explicit line-number recipe and hash."
+}

@@ -1,0 +1,32 @@
+{
+  "installed": {
+    "python3": {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standing": true
+    },
+    "git": {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standing": true
+    }
+  },
+  "supervisor": {
+    "path": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountValidation": "N/A: no runtime/mount argv",
+  "githubTrustFiles": [
+    {
+      "path": "/home/user/.ssh/wine_github_ed25519",
+      "exists": true
+    },
+    {
+      "path": "/home/user/.ssh/wine_github_known_hosts",
+      "exists": true
+    }
+  ]
+}

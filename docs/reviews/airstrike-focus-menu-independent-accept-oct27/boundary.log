@@ -1,0 +1,14 @@
+REUSED PASS terminal-before-observation
+REUSED PASS quit-keydown-terminal-without-ack
+REUSED PASS terminal-after-keyup-ack
+REUSED PASS stale-initial-observation
+REUSED PASS uncertain-keys-released
+REUSED PASS boolean-menu-row-refused
+REUSED PASS ack-identity-mismatch
+REUSED PASS queued-ack-even-with-input-log
+REUSED PASS wrong-dispatched-key-log
+REUSED PASS terminal-before-ordinary-quit-on-navigation
+REUSED PASS keyup-ack-mismatch-stops
+REUSED PASS stale-post-release-observation
+PASS fresh-observed-final-row-then-normal-quit
+PASS post-activation-fault-refused
