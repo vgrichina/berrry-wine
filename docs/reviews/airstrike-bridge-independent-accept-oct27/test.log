@@ -1,0 +1,46 @@
+RECEIPT py-1793074205270543703
+test_00_boundary_delayed_review_serial_input_exit_zero_rejected (__main__.Acceptance.test_00_boundary_delayed_review_serial_input_exit_zero_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 11.424s
+
+OK
+
+RECEIPT py-1793074218453969153
+test_deadline_after_successful_escape_no_reset (__main__.Acceptance.test_deadline_after_successful_escape_no_reset) ... ok
+test_exit_zero_pending_review_is_not_quit (__main__.Acceptance.test_exit_zero_pending_review_is_not_quit) ... ok
+test_partial_input_ack_deadline_without_replay (__main__.Acceptance.test_partial_input_ack_deadline_without_replay) ... ok
+test_queued_input_ack_no_key_release (__main__.Acceptance.test_queued_input_ack_no_key_release) ... ok
+test_wrong_input_log_no_key_release (__main__.Acceptance.test_wrong_input_log_no_key_release) ... ok
+test_duplicate_ack_stops_stream (__main__.Acceptance.test_duplicate_ack_stops_stream) ... ok
+test_window_identity_same_focus_and_pixels_rejected (__main__.Acceptance.test_window_identity_same_focus_and_pixels_rejected) ... ok
+test_matching_outer_stale_inner_after_rejected (__main__.Acceptance.test_matching_outer_stale_inner_after_rejected) ... ok
+test_full_labels_required_after_escape (__main__.Acceptance.test_full_labels_required_after_escape) ... ok
+test_wrong_session_rejected (__main__.Acceptance.test_wrong_session_rejected) ... ok
+test_capture_ack_size_mismatch_rejected (__main__.Acceptance.test_capture_ack_size_mismatch_rejected) ... ok
+test_stderr_fault_after_input_rejected (__main__.Acceptance.test_stderr_fault_after_input_rejected) ... ok
+test_distinct_stream_cumulative_cap (__main__.Acceptance.test_distinct_stream_cumulative_cap) ... FAIL
+
+======================================================================
+FAIL: test_distinct_stream_cumulative_cap (__main__.Acceptance.test_distinct_stream_cumulative_cap)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-bridge-independent-accept-oct27/repo/test/test-airstrike-bridge-independent-acceptance.py", line 130, in test_distinct_stream_cumulative_cap
+    o,r,inputs=self.exercise('cap',mode='stream-cap');self.assertEqual(r['status'],'refused');self.assertEqual(inputs,['keydown:27']);self.assertIn('aggregate output bound',r['reason']);self.assertEqual(sum((o.root/('runner.'+s)).stat().st_size for s in ('stdout','stderr')),2*1024*1024)
+                                                                                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['keydown:27', 'keyup:27'] != ['keydown:27']
+
+First list contains 1 additional elements.
+First extra element 1:
+'keyup:27'
+
+- ['keydown:27', 'keyup:27']
++ ['keydown:27']
+
+----------------------------------------------------------------------
+Ran 13 tests in 3.946s
+
+FAILED (failures=1)
+
+RECEIPT py-1793074270425230584
+PASS14 independent outcomes; unchanged12 affected+original14CLI/fivegroups reused; cap oracle corrected from retained exact evidence without replay

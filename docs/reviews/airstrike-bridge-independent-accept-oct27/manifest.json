@@ -1,0 +1,45 @@
+{
+  "candidate": "cebb48b3926760fc3ea69981614a7004192f8b7d",
+  "files": [
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/REPORT.md",
+      "bytes": 5742,
+      "sha256": "0588862f62cc1072c0602b559bc70aca6ba57e1f8590b18c2a85bd0480f1d9e6"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/checkpoint.json",
+      "bytes": 4702,
+      "sha256": "ee7cb4cb898d8354328b950d992de88d0cf2b14ed4b2947c553ce9632e99da00"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/original-independent-assertion.py",
+      "bytes": 9057,
+      "sha256": "3602164738ab80e9182d528b7ec074cbe8872a8c7749f4ecda212eaf5e104938"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/source-pins.json",
+      "bytes": 2885,
+      "sha256": "dcf6eb2ed1880c77182efe5d068ebc4ade72127d0904b6740cdd3214470aafed"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/test-supervisor.json",
+      "bytes": 1766,
+      "sha256": "d16587845ff1c07376ec047b21f7303f846fe0cea986e728a4e03e0605975728"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/test.log",
+      "bytes": 3101,
+      "sha256": "c09f2aaaff08afb05fcecdb88a92c4b3a6bcd66d40520821261fdeeeb7d9b807"
+    },
+    {
+      "path": "docs/reviews/airstrike-bridge-independent-accept-oct27/verification.json",
+      "bytes": 5705,
+      "sha256": "3c28c3d372fd4f80a4f7fe5f6f52ac1dc9da09e3fdef282b55f7be92db177837"
+    },
+    {
+      "path": "test/test-airstrike-bridge-independent-acceptance.py",
+      "bytes": 9445,
+      "sha256": "8a190b0e4d0b810ecf40cbc3373776c12de943254cfa847378934a82f91a14cf"
+    }
+  ]
+}
