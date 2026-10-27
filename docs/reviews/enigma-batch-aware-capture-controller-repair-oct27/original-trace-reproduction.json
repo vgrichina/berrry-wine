@@ -1,0 +1,11 @@
+{
+  "sourceSHA256": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+  "traceSHA256": "71b0ff97d376640c98a7d9c6be4a4d8e21ed3c17bf9135edf14063e64f25d195",
+  "pairs": 79,
+  "lastBatch": 19969,
+  "remaining": 31,
+  "nextRequested": 256,
+  "elapsed": 4.525983371999928,
+  "captureCheckpointWallSeconds": 35,
+  "unchangedInitializationPreserved": true
+}

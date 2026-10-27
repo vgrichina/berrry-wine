@@ -1,0 +1,5 @@
+{
+  "originalBytes": 942,
+  "originalSHA256": "983e708738576913531e0145c4c10df3f34a5e00144c142c6101e1cb54ed04ae",
+  "originalOutput": "test_last31_clips_both_checkpoint_and_reserve (__main__.ControllerTests.test_last31_clips_both_checkpoint_and_reserve) ... FAIL\n\n======================================================================\nFAIL: test_last31_clips_both_checkpoint_and_reserve (__main__.ControllerTests.test_last31_clips_both_checkpoint_and_reserve)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/enigma-batch-aware-capture-controller-repair-oct27/repo/test/fixtures/enigma-controller/test_controller.py\", line 237, in test_last31_clips_both_checkpoint_and_reserve\n    self.assertEqual([x['n'] for x in fake.commands if x.get('action') == 'step'], [1, 26])\nAssertionError: Lists differ: [1, 29] != [1, 26]\n\nFirst differing element 1:\n29\n26\n\n- [1, 29]\n?      ^\n\n+ [1, 26]\n?      ^\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.067s\n\nFAILED (failures=1)\n"
+}

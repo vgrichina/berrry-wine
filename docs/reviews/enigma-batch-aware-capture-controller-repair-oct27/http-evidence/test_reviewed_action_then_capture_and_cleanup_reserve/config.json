@@ -1,0 +1,30 @@
+{
+  "url": "http://127.0.0.1:46567/ctl",
+  "evidence_dir": "/tmp/enigma-batch-aware-capture-controller-repair-oct27/ops/tmp1lla8rra/evidence",
+  "terminal_path": "/tmp/enigma-batch-aware-capture-controller-repair-oct27/ops/tmp1lla8rra/terminal.json",
+  "pid": 3439821,
+  "process_start_ticks": "111001641",
+  "started_at": 1793062808.881278,
+  "deadline_at": 1793062918.881278,
+  "max_batches": 20000,
+  "checkpoint_batches": 4096,
+  "checkpoint_seconds": 35,
+  "after_action_batches": 2,
+  "after_action_seconds": 8,
+  "cleanup_batches": 1,
+  "cleanup_seconds": 1,
+  "review_seconds": 0,
+  "request_timeout": 0.1,
+  "max_captures": 8,
+  "capture_bytes": 2097152,
+  "width": 640,
+  "height": 480,
+  "supervisor_limits": {
+    "cpu": 90,
+    "wall": 120,
+    "physical": 134217728,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "decision_path": "/tmp/enigma-batch-aware-capture-controller-repair-oct27/ops/tmp1lla8rra/decision.json"
+}

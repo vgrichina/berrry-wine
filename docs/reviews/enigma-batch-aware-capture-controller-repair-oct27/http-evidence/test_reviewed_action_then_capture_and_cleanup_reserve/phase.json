@@ -1,0 +1,9 @@
+{
+  "phase": "AWAIT_IMAGE_REVIEW",
+  "frame": {
+    "path": "/tmp/enigma-batch-aware-capture-controller-repair-oct27/ops/tmp1lla8rra/evidence/menu-candidate.png",
+    "batch": 19996,
+    "sha256": "441da7236f6ffdd8fb4cdfa2d9ce7b8d8df8cf2f7a8e82c530714d92266ce613",
+    "bytes": 972
+  }
+}

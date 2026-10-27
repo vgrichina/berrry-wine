@@ -1,0 +1,6 @@
+[
+  {
+    "kind": "diff-check-whitespace",
+    "detail": "Three raw unittest subtest log lines have trailing spaces. Original bytes preserved externally; all six mutant logs packaged as reversible JSON with exact raw SHA256. No test or source change; no enforced restriction changed."
+  }
+]

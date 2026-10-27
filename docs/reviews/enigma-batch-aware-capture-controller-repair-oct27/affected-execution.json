@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/enigma-batch-aware-capture-controller-repair-oct27/repo/test/fixtures/enigma-controller/test_controller.py"
+  ],
+  "cwd": "/tmp/enigma-batch-aware-capture-controller-repair-oct27/repo",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 81170432,
+  "physicalCap": 134217728,
+  "cpu": 0.27,
+  "wall": 0.7116013148333877,
+  "outputBytes": 1317,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 2,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,38 @@
+[
+  {
+    "name": "checkpoint",
+    "affectedTest": "test_fast_actual_driver_captures_before_20000_cap",
+    "status": "REJECTED",
+    "exit": 1
+  },
+  {
+    "name": "batch-reserve",
+    "affectedTest": "test_last31_clips_both_checkpoint_and_reserve",
+    "status": "REJECTED",
+    "exit": 1
+  },
+  {
+    "name": "ack",
+    "affectedTest": "test_wrong_completion_and_uncertain_no_replay",
+    "status": "REJECTED",
+    "exit": 1
+  },
+  {
+    "name": "frozen-zero",
+    "affectedTest": "test_wrong_completion_and_uncertain_no_replay",
+    "status": "REJECTED",
+    "exit": 1
+  },
+  {
+    "name": "snapshot-match",
+    "affectedTest": "test_wrong_completion_and_uncertain_no_replay",
+    "status": "REJECTED",
+    "exit": 1
+  },
+  {
+    "name": "frame-review",
+    "affectedTest": "test_stale_review_refuses_click",
+    "status": "REJECTED",
+    "exit": 1
+  }
+]

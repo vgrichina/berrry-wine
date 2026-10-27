@@ -1,0 +1,20 @@
+test_actual_slow_http_reaches_time_checkpoint_before_batch_checkpoint (__main__.ControllerTests.test_actual_slow_http_reaches_time_checkpoint_before_batch_checkpoint) ... ok
+test_capture_credit_exact_two_and_dimensions (__main__.ControllerTests.test_capture_credit_exact_two_and_dimensions) ... ok
+test_cli_config_real_scheduling_no_input (__main__.ControllerTests.test_cli_config_real_scheduling_no_input) ... ok
+test_expired_aggregate_and_past_checkpoint_do_not_reset_allowance (__main__.ControllerTests.test_expired_aggregate_and_past_checkpoint_do_not_reset_allowance) ... ok
+test_fast_actual_driver_captures_before_20000_cap (__main__.ControllerTests.test_fast_actual_driver_captures_before_20000_cap) ... ok
+test_last31_clips_both_checkpoint_and_reserve (__main__.ControllerTests.test_last31_clips_both_checkpoint_and_reserve) ... ok
+test_review_terminal_or_consumed_time_no_click (__main__.ControllerTests.test_review_terminal_or_consumed_time_no_click) ... ok
+test_reviewed_action_then_capture_and_cleanup_reserve (__main__.ControllerTests.test_reviewed_action_then_capture_and_cleanup_reserve) ... ok
+test_slower_response_time_checkpoint_first (__main__.ControllerTests.test_slower_response_time_checkpoint_first) ... ok
+test_stale_review_refuses_click (__main__.ControllerTests.test_stale_review_refuses_click) ... ok
+test_terminal_refuses_all_wire (__main__.ControllerTests.test_terminal_refuses_all_wire) ... ok
+test_time_and_capture_reserves_fail_before_input (__main__.ControllerTests.test_time_and_capture_reserves_fail_before_input) ... ok
+test_uncertain_click_never_replays_or_steps (__main__.ControllerTests.test_uncertain_click_never_replays_or_steps) ... ok
+test_wrong_completion_and_uncertain_no_replay (__main__.ControllerTests.test_wrong_completion_and_uncertain_no_replay) ... ok
+test_zero_one_and_insufficient_reserve_no_step (__main__.ControllerTests.test_zero_one_and_insufficient_reserve_no_step) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 4.110s
+
+OK

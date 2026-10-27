@@ -1,0 +1,5 @@
+{
+  "originalBytes": 867,
+  "originalSHA256": "7ebfc15675bc2e7c380289d3dc7677ebb6e6ff78901d823a01f9669ef3da067d",
+  "originalOutput": "test_stale_review_refuses_click (__main__.ControllerTests.test_stale_review_refuses_click) ... FAIL\n\n======================================================================\nFAIL: test_stale_review_refuses_click (__main__.ControllerTests.test_stale_review_refuses_click)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/enigma-batch-aware-capture-controller-repair-oct27/repo/test/fixtures/enigma-controller/test_controller.py\", line 298, in test_stale_review_refuses_click\n    self.assertEqual(d.run(), 'unreviewed-or-stale-frame')\nAssertionError: 'ACTION_ACKNOWLEDGED_REQUIRES_REVIEW' != 'unreviewed-or-stale-frame'\n- ACTION_ACKNOWLEDGED_REQUIRES_REVIEW\n+ unreviewed-or-stale-frame\n\n\n----------------------------------------------------------------------\nRan 1 test in 0.091s\n\nFAILED (failures=1)\n"
+}

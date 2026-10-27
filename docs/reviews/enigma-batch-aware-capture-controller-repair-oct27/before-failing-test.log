@@ -1,0 +1,14 @@
+test_original_capture_precedes_ceiling (__main__.BeforeRegression.test_original_capture_precedes_ceiling) ... FAIL
+
+======================================================================
+FAIL: test_original_capture_precedes_ceiling (__main__.BeforeRegression.test_original_capture_precedes_ceiling)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-batch-aware-capture-controller-repair-oct27/repo/test/fixtures/enigma-controller/test_controller.py", line 330, in test_original_capture_precedes_ceiling
+    self.assertGreater(len(fake.frames), 0, f'unchanged original overshoots remaining31 before capture: {result}')
+AssertionError: 0 not greater than 0 : unchanged original overshoots remaining31 before capture: {'batch': 19969, 'steps': 79, 'error': "RemoteDisconnected('Remote end closed connection without response')", 'pending': True}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.087s
+
+FAILED (failures=1)

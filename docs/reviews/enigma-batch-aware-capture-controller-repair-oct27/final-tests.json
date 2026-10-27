@@ -1,0 +1,9 @@
+{
+  "tests": 15,
+  "exit": 0,
+  "sourceSHA256": "6821de8473bb5025ea14c18e53bd89c8b8eaaa3f28756c5c53cd63af65025fff",
+  "testSHA256": "e65bb6b3ec10b793eace4727de058d4cc79bb1832b2cabf29088273c93a4ec43",
+  "originalSHA256": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+  "retainedHTTPGroups": 3,
+  "noGuest": true
+}
