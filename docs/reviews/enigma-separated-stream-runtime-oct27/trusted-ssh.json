@@ -1,0 +1,13 @@
+{
+  "command": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "keyPresent": true,
+  "knownHostsSHA256": "c73ac5d045cd2a359d2202b79b551fb22a638463d5ddbe5ed59b1b3998869c88",
+  "rootRefReceipt": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "at": 1793074709.7680497,
+  "phase": "READY_FOR_SINGLE_PRODUCTION_LAUNCH",
+  "source": "425755ee5ee9be0734c7aca187521100f5487674",
+  "supervisorMain": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "runtimeMapSHA256": "0ae08516d6a390d6d52ab31656c79bc21ed8141080a25b8e9184c004a322190f",
+  "integrity": {
+    "rows": 2663,
+    "bytes": 37486692,
+    "mismatches": [],
+    "moduleSha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+    "free": 48974671872,
+    "memAvailable": 7240065024
+  },
+  "mount": {
+    "PASS": true,
+    "fileCount": 2460,
+    "commaBearingCount": 0,
+    "enumerationSHA256": "db45e33dd0872ecceb89f56b3acff449d4ad2bd3de3bb7c4600bf61191b7753d",
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e"
+  },
+  "config": {
+    "PASS": true,
+    "guestStarted": false,
+    "configSHA256": "8ca21294c914dde6962ebaf15fe08fb5aa54f0b955c94baabfc340bc9b64a480"
+  },
+  "guestInvocations": 0,
+  "remaining": [
+    "exact Node startup",
+    "production initialization",
+    "first n1 ACK + frozen zero",
+    "menu image review",
+    "safe Start Game",
+    "gameplay",
+    "actual guest ordinary Quit"
+  ],
+  "lifecycle": {
+    "box": "bx_nmvbu5c7",
+    "createdAt": "2026-10-27T04:12:05Z",
+    "guestCutoff": "2026-10-27T04:40:00Z",
+    "handback": "2026-10-27T04:43:00Z",
+    "shutdown": "2026-10-27T04:45:00Z",
+    "expiry": "2026-10-27T05:12:05Z"
+  }
+}

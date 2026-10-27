@@ -1,0 +1,16 @@
+{
+  "at": 1793074680.352568,
+  "label": "mount-parser",
+  "own": 2043904,
+  "allocation": 33554432,
+  "reserve": 8388608,
+  "peerMaterial": 6119424,
+  "peerFuture": 23240704,
+  "wal": 0,
+  "free": 3058114560,
+  "projected": 2994974720,
+  "floor": 2982150144,
+  "memAvailable": 3329007616,
+  "required": 1610612736,
+  "pass": true
+}

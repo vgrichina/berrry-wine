@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cxtrawmmwqyr",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-27T04:17:40.143Z",
+  "launcherFailed": false,
+  "noticedMs": 13,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 13,
+  "startedAt": "2026-10-27T04:17:40.041Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 3, in <module>\n  File \"/usr/lib/python3.12/pathlib.py\", line 1021, in read_bytes\n    with self.open(mode='rb') as f:\n         ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/pathlib.py\", line 1015, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/data/enigma_conf.lua'\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}
