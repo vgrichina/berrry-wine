@@ -1,0 +1,17 @@
+{
+  "status": "refused",
+  "reason": "degenerate/clipped/offscreen caption geometry",
+  "elapsed": 0.2655970258638263,
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": -15,
+    "complete": true
+  },
+  "controllerSHA256": "ed06ed10f7a044faa179d0c7032aa6aec6cc7c7876630c11c8602f6bca98443e",
+  "responseSeconds": 10,
+  "guestSeconds": 12,
+  "wallSeconds": 150
+}

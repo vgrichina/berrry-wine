@@ -1,0 +1,25 @@
+{
+  "session": "2aa98d87471b49c6b31ae960e4f7bc15",
+  "token": "87ffdc9f5b834f879ae5aec1550134e2",
+  "sha256": "16993a5ffa8ed9f702920b1040bf0482ebdd9fb9e3d1b3aba4c9ea69458b6b87",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "unknown",
+    "unobscured": false,
+    "keysReleased": true,
+    "evidence": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-changed-height-qtg1l55e/evidence/capture-87ffdc9f5b834f879ae5aec1550134e2.png",
+    "state": "startup",
+    "startupPrompt": "Press any key to start",
+    "consoleObstruction": {
+      "hwnd": "0x10002",
+      "x": 0,
+      "y": 8,
+      "w": 648,
+      "h": 328,
+      "visible": true,
+      "isChild": false,
+      "title": "Console"
+    }
+  }
+}

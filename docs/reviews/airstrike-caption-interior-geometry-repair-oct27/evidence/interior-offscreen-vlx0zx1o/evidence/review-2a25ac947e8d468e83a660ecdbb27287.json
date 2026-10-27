@@ -1,0 +1,25 @@
+{
+  "session": "5a4bf7a5fd9840298b0223d807753bd4",
+  "token": "2a25ac947e8d468e83a660ecdbb27287",
+  "sha256": "16993a5ffa8ed9f702920b1040bf0482ebdd9fb9e3d1b3aba4c9ea69458b6b87",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "unknown",
+    "unobscured": false,
+    "keysReleased": true,
+    "evidence": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-offscreen-vlx0zx1o/evidence/capture-2a25ac947e8d468e83a660ecdbb27287.png",
+    "state": "startup",
+    "startupPrompt": "Press any key to start",
+    "consoleObstruction": {
+      "hwnd": "0x10002",
+      "x": 0,
+      "y": 8,
+      "w": 648,
+      "h": 328,
+      "visible": true,
+      "isChild": false,
+      "title": "Console"
+    }
+  }
+}

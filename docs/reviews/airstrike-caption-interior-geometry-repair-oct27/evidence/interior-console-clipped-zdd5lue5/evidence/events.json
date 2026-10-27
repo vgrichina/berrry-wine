@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.008047461975365877,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.10654002195224166,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-console-clipped-zdd5lue5/evidence/capture-febb5ee9d34f4883bab2f04e0681506c.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.10742351785302162,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.10926052299328148,
+    "token": "febb5ee9d34f4883bab2f04e0681506c",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.1304477439261973,
+    "token": "febb5ee9d34f4883bab2f04e0681506c",
+    "seconds": 10
+  }
+]

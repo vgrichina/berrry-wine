@@ -1,0 +1,15 @@
+{
+  "status": "refused",
+  "reason": "runner exited before ACK; no replay",
+  "elapsed": 0.22786281583830714,
+  "cleanup": {
+    "remaining": [],
+    "signals": [],
+    "runnerExit": 0,
+    "complete": true
+  },
+  "controllerSHA256": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e",
+  "responseSeconds": 10,
+  "guestSeconds": 12,
+  "wallSeconds": 150
+}

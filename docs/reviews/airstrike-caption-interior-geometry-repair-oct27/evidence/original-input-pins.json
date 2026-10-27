@@ -1,0 +1,11 @@
+{
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e",
+    "tools/airstrike-observation-bridge.py": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "copied": {
+    "reproduce.py": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d",
+    "production-renderer-input.js": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+  }
+}

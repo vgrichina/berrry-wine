@@ -1,0 +1,9 @@
+test_actual_cli_and_bridge_negative_geometry (__main__.Interior.test_actual_cli_and_bridge_negative_geometry) ... ok
+test_changed_geometry_and_stale_batch_before_dispatch (__main__.Interior.test_changed_geometry_and_stale_batch_before_dispatch) ... ok
+test_unchanged_original_attack_after_repair (__main__.Interior.test_unchanged_original_attack_after_repair) ... ok
+test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 5.786s
+
+OK

@@ -1,0 +1,12 @@
+{
+  "state": "started",
+  "pid": 4169203,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/test/test-airstrike-caption-interior.py",
+    "--transport",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-zero-width-4_l3yxcc",
+    "zero-width"
+  ]
+}

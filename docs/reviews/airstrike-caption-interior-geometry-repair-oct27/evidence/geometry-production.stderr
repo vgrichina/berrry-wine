@@ -1,0 +1,43 @@
+test_actual_cli_and_bridge_negative_geometry (__main__.Interior.test_actual_cli_and_bridge_negative_geometry) ... ok
+test_changed_geometry_and_stale_batch_before_dispatch (__main__.Interior.test_changed_geometry_and_stale_batch_before_dispatch) ... ok
+test_unchanged_original_attack_after_repair (__main__.Interior.test_unchanged_original_attack_after_repair) ... ok
+test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) ... 
+  test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) (kind='normal') ... FAIL
+  test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) (kind='height-27') ... FAIL
+
+======================================================================
+FAIL: test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) (kind='normal')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/test/test-airstrike-caption-interior.py", line 116, in test_valid_normal_and_minimum_caption_interior
+    self.assertEqual(commands,[dict(id='airstrike-1',cmd='click:656:33')],q.stderr)
+AssertionError: Lists differ: [] != [{'id': 'airstrike-1', 'cmd': 'click:656:33'}]
+
+Second list contains 1 additional elements.
+First extra element 0:
+{'id': 'airstrike-1', 'cmd': 'click:656:33'}
+
+- []
++ [{'cmd': 'click:656:33', 'id': 'airstrike-1'}] : {"status": "refused", "reason": "degenerate/clipped/offscreen caption geometry"}
+
+
+======================================================================
+FAIL: test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) (kind='height-27')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/test/test-airstrike-caption-interior.py", line 116, in test_valid_normal_and_minimum_caption_interior
+    self.assertEqual(commands,[dict(id='airstrike-1',cmd='click:656:33')],q.stderr)
+AssertionError: Lists differ: [] != [{'id': 'airstrike-1', 'cmd': 'click:656:33'}]
+
+Second list contains 1 additional elements.
+First extra element 0:
+{'id': 'airstrike-1', 'cmd': 'click:656:33'}
+
+- []
++ [{'cmd': 'click:656:33', 'id': 'airstrike-1'}] : {"status": "refused", "reason": "degenerate/clipped/offscreen caption geometry"}
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 6.573s
+
+FAILED (failures=2)

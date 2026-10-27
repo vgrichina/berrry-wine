@@ -1,0 +1,33 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/test/test-airstrike-caption-interior.py",
+    "Interior.test_unchanged_original_attack_after_repair",
+    "Interior.test_actual_cli_and_bridge_negative_geometry",
+    "Interior.test_changed_geometry_and_stale_batch_before_dispatch"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "environmentSHA256": "a1f4e3157d6d5754daa33cbe75ac30a8628542a5db0c88252da1a72952d65df0",
+  "inheritedLimits": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "cwd": "/home/user/wine-assembly",
+  "mounts": [],
+  "mountValidation": "No guest/Node/API or mount argv in offline Python-only task"
+}

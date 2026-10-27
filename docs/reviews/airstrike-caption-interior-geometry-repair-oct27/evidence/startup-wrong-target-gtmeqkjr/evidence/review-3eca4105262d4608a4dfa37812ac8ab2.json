@@ -1,0 +1,25 @@
+{
+  "session": "948b007623ba49f68ded781660881694",
+  "token": "3eca4105262d4608a4dfa37812ac8ab2",
+  "sha256": "a3ab51b9e33a768ffe1cefa981f392727fac1227d2172d51ae936471c7ad90c0",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "unknown",
+    "unobscured": false,
+    "keysReleased": true,
+    "evidence": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-wrong-target-gtmeqkjr/evidence/capture-3eca4105262d4608a4dfa37812ac8ab2.png",
+    "state": "startup",
+    "startupPrompt": "Press any key to start",
+    "consoleObstruction": {
+      "hwnd": "0x99999",
+      "x": 0,
+      "y": 8,
+      "w": 648,
+      "h": 328,
+      "visible": true,
+      "isChild": false,
+      "title": "Console"
+    }
+  }
+}

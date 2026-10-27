@@ -1,0 +1,77 @@
+{
+  "session": "253615621b674a3ea04dfac27445cd38",
+  "token": "82aa42ffafd148b18f53bf2b52c2456b",
+  "after": null,
+  "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-zero-width-4_l3yxcc/evidence/capture-82aa42ffafd148b18f53bf2b52c2456b.png",
+  "sha256": "16993a5ffa8ed9f702920b1040bf0482ebdd9fb9e3d1b3aba4c9ea69458b6b87",
+  "snapshot": {
+    "batch": 5000,
+    "eip": "0x55995b",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 5,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 20,
+        "y": 20,
+        "w": 0,
+        "h": 608,
+        "visible": true,
+        "isChild": false,
+        "title": "Airstrike 1.0 pre6"
+      },
+      {
+        "hwnd": "0x10002",
+        "x": 0,
+        "y": 8,
+        "w": 648,
+        "h": 328,
+        "visible": true,
+        "isChild": false,
+        "title": "Console"
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 20,
+        "y": 20,
+        "w": 0,
+        "h": 608,
+        "visible": true,
+        "isChild": false,
+        "title": "Airstrike 1.0 pre6"
+      },
+      {
+        "hwnd": "0x10002",
+        "x": 0,
+        "y": 8,
+        "w": 648,
+        "h": 328,
+        "visible": true,
+        "isChild": false,
+        "title": "Console"
+      }
+    ]
+  }
+}

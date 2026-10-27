@@ -1,0 +1,11 @@
+{
+  "state": "started",
+  "pid": 4169214,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/test/test-airstrike-console-obscuration.py",
+    "--startup-runner",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-stale-review-rpjsy4pt"
+  ]
+}

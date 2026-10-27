@@ -1,0 +1,6 @@
+{
+  "stage": "Initial add partially staged paths then exit1 because new test was outside exact sparse definition; expanded only own test pattern.",
+  "check": "Subsequent cached whitespace check rejected raw original stderr/diff trailing spaces; preserve raw diagnostics with report-local evidence whitespace attribute, source checks retained.",
+  "sequence": "Dependent stat/check were run after initial partial-stage failure; no commit/push occurred. Require successful exact staging and check before commit.",
+  "evidence": "Original stage.stderr/staged-check.stdout and supervised receipts retained. Synthetic PNG/text fixture streams require explicit force-add of own evidence only; no credentials."
+}

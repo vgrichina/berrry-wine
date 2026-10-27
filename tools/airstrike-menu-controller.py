@@ -57,6 +57,9 @@ def console_target(observation, snapshot):
         raise Refusal('invalid Console handle')
     x, y = target['x'] + target['w'] - 46, target['y'] + 13
     screen = s.get('screen', {})
+    if (not isinstance(screen, dict)
+            or any(type(screen.get(k)) is not int or screen[k] <= 0 for k in ('w', 'h'))):
+        raise Refusal('unknown screen geometry')
     if (hwnd <= 0 or target['hwnd'] != hex(hwnd) or target['w'] < 64
             or target['h'] < 32 or not 0 <= x < screen.get('w', 0)
             or not 0 <= y < screen.get('h', 0)):
@@ -69,10 +72,19 @@ def activation_command(observation, snapshot):
     main = next(w for w in snapshot['windows'] if w['hwnd'] == snapshot['mainHwnd'])
     if any(type(main.get(k)) is not int for k in ('x', 'y', 'w', 'h')):
         raise Refusal('unknown Airstrike caption geometry')
+    screen = snapshot.get('screen', {})
+    if (any(type(screen.get(k)) is not int or screen[k] <= 0 for k in ('w', 'h'))
+            or main['w'] < 89 or main['h'] < 27 or main['y'] + 27 > screen['h']
+            or any(w['x'] < 0 or w['y'] < 0 or w['w'] <= 0 or w['h'] <= 0
+                   for w in (main, target))):
+        raise Refusal('degenerate/clipped/offscreen caption geometry')
     # The retained frame exposes Airstrike's caption to the right of Console.
     # Keep clear of the system menu, border and all three caption buttons.
+    # The client/bottom/right may extend beyond the canvas (as in the retained
+    # valid window); the selected caption interior itself must be on screen.
     x, y = target['x'] + target['w'] + 8, main['y'] + 13
     if (not main['x'] + 24 <= x < main['x'] + main['w'] - 64
+            or not main['y'] + 1 < y < min(main['y'] + 26, main['y'] + main['h'] - 1)
             or not 0 <= x < snapshot['screen']['w']
             or not 0 <= y < snapshot['screen']['h']
             or (target['x'] <= x < target['x'] + target['w']

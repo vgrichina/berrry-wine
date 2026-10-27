@@ -1,0 +1,120 @@
+{"id": "bridge-1", "action": "snapshot"}
+{"id": "bridge-2", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-f49f4a94b61449debb7b3c10dcb5b4b6.png"}
+{"id": "bridge-3", "action": "snapshot"}
+{"id": "bridge-4", "action": "snapshot"}
+{"id": "bridge-5", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-f49f4a94b61449debb7b3c10dcb5b4b6-fresh.png"}
+{"id": "bridge-6", "action": "snapshot"}
+{"id": "airstrike-1", "cmd": "click:656:33"}
+{"id": "bridge-7", "action": "step", "n": 1}
+{"id": "bridge-8", "action": "snapshot"}
+{"id": "bridge-9", "action": "snapshot"}
+{"id": "bridge-10", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-5bbf53deae2b48bdb1bc437d9a012807.png"}
+{"id": "bridge-11", "action": "snapshot"}
+{"id": "bridge-12", "action": "snapshot"}
+{"id": "bridge-13", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-5bbf53deae2b48bdb1bc437d9a012807-fresh.png"}
+{"id": "bridge-14", "action": "snapshot"}
+{"id": "airstrike-2", "cmd": "keydown:32"}
+{"id": "bridge-15", "action": "step", "n": 1}
+{"id": "bridge-16", "action": "snapshot"}
+{"id": "bridge-17", "action": "snapshot"}
+{"id": "airstrike-3", "cmd": "keyup:32"}
+{"id": "bridge-18", "action": "step", "n": 1}
+{"id": "bridge-19", "action": "snapshot"}
+{"id": "bridge-20", "action": "snapshot"}
+{"id": "bridge-21", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-61e5a2fe722a44ee9094e3454a0d2c7c.png"}
+{"id": "bridge-22", "action": "snapshot"}
+{"id": "bridge-23", "action": "snapshot"}
+{"id": "bridge-24", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-61e5a2fe722a44ee9094e3454a0d2c7c-fresh.png"}
+{"id": "bridge-25", "action": "snapshot"}
+{"id": "airstrike-4", "cmd": "keydown:27"}
+{"id": "bridge-26", "action": "step", "n": 1}
+{"id": "bridge-27", "action": "snapshot"}
+{"id": "bridge-28", "action": "snapshot"}
+{"id": "airstrike-5", "cmd": "keyup:27"}
+{"id": "bridge-29", "action": "step", "n": 1}
+{"id": "bridge-30", "action": "snapshot"}
+{"id": "bridge-31", "action": "snapshot"}
+{"id": "bridge-32", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-66bb714c4405436cbf599ed2d252889a.png"}
+{"id": "bridge-33", "action": "snapshot"}
+{"id": "bridge-34", "action": "snapshot"}
+{"id": "bridge-35", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-66bb714c4405436cbf599ed2d252889a-fresh.png"}
+{"id": "bridge-36", "action": "snapshot"}
+{"id": "airstrike-6", "cmd": "keydown:40"}
+{"id": "bridge-37", "action": "step", "n": 1}
+{"id": "bridge-38", "action": "snapshot"}
+{"id": "bridge-39", "action": "snapshot"}
+{"id": "airstrike-7", "cmd": "keyup:40"}
+{"id": "bridge-40", "action": "step", "n": 1}
+{"id": "bridge-41", "action": "snapshot"}
+{"id": "bridge-42", "action": "snapshot"}
+{"id": "bridge-43", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-f2039922ac9a4520bc5c681e754e3ed1.png"}
+{"id": "bridge-44", "action": "snapshot"}
+{"id": "bridge-45", "action": "snapshot"}
+{"id": "bridge-46", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-f2039922ac9a4520bc5c681e754e3ed1-fresh.png"}
+{"id": "bridge-47", "action": "snapshot"}
+{"id": "airstrike-8", "cmd": "keydown:40"}
+{"id": "bridge-48", "action": "step", "n": 1}
+{"id": "bridge-49", "action": "snapshot"}
+{"id": "bridge-50", "action": "snapshot"}
+{"id": "airstrike-9", "cmd": "keyup:40"}
+{"id": "bridge-51", "action": "step", "n": 1}
+{"id": "bridge-52", "action": "snapshot"}
+{"id": "bridge-53", "action": "snapshot"}
+{"id": "bridge-54", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-0efd7ff243774a0a869f9ad6a2fa8689.png"}
+{"id": "bridge-55", "action": "snapshot"}
+{"id": "bridge-56", "action": "snapshot"}
+{"id": "bridge-57", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-0efd7ff243774a0a869f9ad6a2fa8689-fresh.png"}
+{"id": "bridge-58", "action": "snapshot"}
+{"id": "airstrike-10", "cmd": "keydown:40"}
+{"id": "bridge-59", "action": "step", "n": 1}
+{"id": "bridge-60", "action": "snapshot"}
+{"id": "bridge-61", "action": "snapshot"}
+{"id": "airstrike-11", "cmd": "keyup:40"}
+{"id": "bridge-62", "action": "step", "n": 1}
+{"id": "bridge-63", "action": "snapshot"}
+{"id": "bridge-64", "action": "snapshot"}
+{"id": "bridge-65", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-e37606e964b7481eaac93fdecb8dbb92.png"}
+{"id": "bridge-66", "action": "snapshot"}
+{"id": "bridge-67", "action": "snapshot"}
+{"id": "bridge-68", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-e37606e964b7481eaac93fdecb8dbb92-fresh.png"}
+{"id": "bridge-69", "action": "snapshot"}
+{"id": "airstrike-12", "cmd": "keydown:40"}
+{"id": "bridge-70", "action": "step", "n": 1}
+{"id": "bridge-71", "action": "snapshot"}
+{"id": "bridge-72", "action": "snapshot"}
+{"id": "airstrike-13", "cmd": "keyup:40"}
+{"id": "bridge-73", "action": "step", "n": 1}
+{"id": "bridge-74", "action": "snapshot"}
+{"id": "bridge-75", "action": "snapshot"}
+{"id": "bridge-76", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-cb8a1726486d4a6dbec51a17655eda8e.png"}
+{"id": "bridge-77", "action": "snapshot"}
+{"id": "bridge-78", "action": "snapshot"}
+{"id": "bridge-79", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-cb8a1726486d4a6dbec51a17655eda8e-fresh.png"}
+{"id": "bridge-80", "action": "snapshot"}
+{"id": "airstrike-14", "cmd": "keydown:40"}
+{"id": "bridge-81", "action": "step", "n": 1}
+{"id": "bridge-82", "action": "snapshot"}
+{"id": "bridge-83", "action": "snapshot"}
+{"id": "airstrike-15", "cmd": "keyup:40"}
+{"id": "bridge-84", "action": "step", "n": 1}
+{"id": "bridge-85", "action": "snapshot"}
+{"id": "bridge-86", "action": "snapshot"}
+{"id": "bridge-87", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-83bb2c0ef9ca47e0aec193d8c1978c3c.png"}
+{"id": "bridge-88", "action": "snapshot"}
+{"id": "bridge-89", "action": "snapshot"}
+{"id": "bridge-90", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-83bb2c0ef9ca47e0aec193d8c1978c3c-fresh.png"}
+{"id": "bridge-91", "action": "snapshot"}
+{"id": "airstrike-16", "cmd": "keydown:40"}
+{"id": "bridge-92", "action": "step", "n": 1}
+{"id": "bridge-93", "action": "snapshot"}
+{"id": "bridge-94", "action": "snapshot"}
+{"id": "airstrike-17", "cmd": "keyup:40"}
+{"id": "bridge-95", "action": "step", "n": 1}
+{"id": "bridge-96", "action": "snapshot"}
+{"id": "bridge-97", "action": "snapshot"}
+{"id": "bridge-98", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-2f5958c265024d699b1ec3dbe6e3645a.png"}
+{"id": "bridge-99", "action": "snapshot"}
+{"id": "bridge-100", "action": "snapshot"}
+{"id": "bridge-101", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-8x65e07t/evidence/capture-2f5958c265024d699b1ec3dbe6e3645a-fresh.png"}
+{"id": "bridge-102", "action": "snapshot"}
+{"id": "airstrike-18", "cmd": "keydown:13"}

@@ -1,0 +1,11 @@
+{
+  "state": "started",
+  "pid": 4171537,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/unchanged-attack-q9wvsil2/ops/reproduce.py",
+    "--fake-transport",
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/unchanged-attack-q9wvsil2/ops/independent-unsafe-height"
+  ]
+}

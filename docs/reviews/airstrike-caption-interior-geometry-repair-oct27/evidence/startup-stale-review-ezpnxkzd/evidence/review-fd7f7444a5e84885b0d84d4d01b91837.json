@@ -1,0 +1,25 @@
+{
+  "session": "a342d75d375d476e9c8e303fbec0c35b",
+  "token": "stale",
+  "sha256": "a3ab51b9e33a768ffe1cefa981f392727fac1227d2172d51ae936471c7ad90c0",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "unknown",
+    "unobscured": false,
+    "keysReleased": true,
+    "evidence": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-stale-review-ezpnxkzd/evidence/capture-fd7f7444a5e84885b0d84d4d01b91837.png",
+    "state": "startup",
+    "startupPrompt": "Press any key to start",
+    "consoleObstruction": {
+      "hwnd": "0x10002",
+      "x": 0,
+      "y": 8,
+      "w": 648,
+      "h": 328,
+      "visible": true,
+      "isChild": false,
+      "title": "Console"
+    }
+  }
+}

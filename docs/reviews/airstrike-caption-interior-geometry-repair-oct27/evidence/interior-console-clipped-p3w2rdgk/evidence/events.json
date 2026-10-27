@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0029769919347018003,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.05077424203045666,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-console-clipped-p3w2rdgk/evidence/capture-6944b6b642f049aaaae7f932f02d1251.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.05163549701683223,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.0526053449138999,
+    "token": "6944b6b642f049aaaae7f932f02d1251",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.07345123589038849,
+    "token": "6944b6b642f049aaaae7f932f02d1251",
+    "seconds": 10
+  }
+]

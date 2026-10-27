@@ -1,0 +1,10 @@
+docs/reviews/airstrike-caption-interior-geometry-repair-oct27/evidence/geometry-production.stderr:4: trailing whitespace.
++test_valid_normal_and_minimum_caption_interior (__main__.Interior.test_valid_normal_and_minimum_caption_interior) ... 
+docs/reviews/airstrike-caption-interior-geometry-repair-oct27/evidence/init.stderr:4: trailing whitespace.
++hint: 
+docs/reviews/airstrike-caption-interior-geometry-repair-oct27/evidence/init.stderr:6: trailing whitespace.
++hint: 
+docs/reviews/airstrike-caption-interior-geometry-repair-oct27/evidence/init.stderr:9: trailing whitespace.
++hint: 
+docs/reviews/airstrike-caption-interior-geometry-repair-oct27/evidence/source-diff.stdout:42: trailing whitespace.
++ 

@@ -1,0 +1,25 @@
+{
+  "session": "4869702e1ba34463a54a42edef0adb06",
+  "token": "2107446241e945d5810dd45c6e6d8585",
+  "sha256": "e6121cd784515ded35a7c1ffcecd38ad9c9a35e209dacc7b524f57548c17f6b7",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "unknown",
+    "unobscured": false,
+    "keysReleased": true,
+    "evidence": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/unchanged-attack-nac7ahpl/ops/independent-unsafe-height/evidence/capture-2107446241e945d5810dd45c6e6d8585.png",
+    "state": "startup",
+    "startupPrompt": "Press any key to start",
+    "consoleObstruction": {
+      "hwnd": "0x10002",
+      "x": 0,
+      "y": 8,
+      "w": 648,
+      "h": 328,
+      "visible": true,
+      "isChild": false,
+      "title": "Console"
+    }
+  }
+}

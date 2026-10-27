@@ -1,0 +1,78 @@
+{
+  "verdict": "PASS",
+  "kind": "OFFLINE FAKE transport, actual pinned Controller CLI and Bridge.run; static exact renderer rectangle oracle; NOT gameplay",
+  "snapshot": {
+    "batch": 5000,
+    "eip": "0x55995b",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 5,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 20,
+        "y": 20,
+        "w": 806,
+        "h": 8,
+        "visible": true,
+        "isChild": false,
+        "title": "Airstrike 1.0 pre6"
+      },
+      {
+        "hwnd": "0x10002",
+        "x": 0,
+        "y": 8,
+        "w": 648,
+        "h": 328,
+        "visible": true,
+        "isChild": false,
+        "title": "Console"
+      }
+    ]
+  },
+  "point": [
+    656,
+    33
+  ],
+  "pointInsideMain": false,
+  "expected": "No input: no safe Airstrike caption exists in height8 rectangle",
+  "controllerCLI": {
+    "exit": 2,
+    "commands": []
+  },
+  "bridge": {
+    "result": {
+      "status": "refused",
+      "reason": "degenerate/clipped/offscreen caption geometry",
+      "elapsed": 0.21836991305463016,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      },
+      "controllerSHA256": "ed06ed10f7a044faa179d0c7032aa6aec6cc7c7876630c11c8602f6bca98443e",
+      "responseSeconds": 10,
+      "guestSeconds": 12,
+      "wallSeconds": 150
+    },
+    "inputs": [],
+    "reviewErrors": []
+  },
+  "rendererSHA256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+  "causalBoundary": "renderer handleMouseDown sortedWins filters point outside [y,y+h); no target activation",
+  "terminalAfterClick": "fake transport exited after receiving unsafe click; no subsequent keys; cleanup complete"
+}

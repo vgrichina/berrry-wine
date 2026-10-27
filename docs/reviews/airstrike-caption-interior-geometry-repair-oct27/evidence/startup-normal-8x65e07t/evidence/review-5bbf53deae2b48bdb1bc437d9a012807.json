@@ -1,0 +1,15 @@
+{
+  "session": "f861b8a6e02e42aa91e17d5e9f089420",
+  "token": "5bbf53deae2b48bdb1bc437d9a012807",
+  "sha256": "fbefb20ff6dd060a3c13ffbb9aa331c95eadd8abbfc7bb9f6cadcb390963bf85",
+  "after": "airstrike-1",
+  "observation": {
+    "after": "airstrike-1",
+    "focus": "airstrike",
+    "unobscured": true,
+    "keysReleased": true,
+    "evidence": "offline next observation",
+    "state": "startup",
+    "startupPrompt": "Press any key to start"
+  }
+}

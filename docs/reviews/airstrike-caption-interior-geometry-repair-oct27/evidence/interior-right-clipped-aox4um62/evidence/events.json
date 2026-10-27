@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.00397706707008183,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0630232309922576,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-right-clipped-aox4um62/evidence/capture-cc8fac10f5594bd79c6039fd222ec46a.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.06352091394364834,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.06420231191441417,
+    "token": "cc8fac10f5594bd79c6039fd222ec46a",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.08483484294265509,
+    "token": "cc8fac10f5594bd79c6039fd222ec46a",
+    "seconds": 10
+  }
+]

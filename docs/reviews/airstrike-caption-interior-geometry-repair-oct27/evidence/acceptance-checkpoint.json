@@ -1,0 +1,273 @@
+{
+  "status": "TESTED_REPAIR_CANDIDATE_REQUIRES_INDEPENDENT_ACCEPTANCE",
+  "task": "airstrike-caption-interior-geometry-repair-oct27",
+  "base": "e2525d558e8bd4891e3c14d3b6b2f3c2f5efd0a4",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+    "tools/airstrike-observation-bridge.py": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+    "test/test-airstrike-caption-interior.py": "bf66f5aade28992b87fc95c68bab2afe54d543e35d5fd6c64116e96679c49743",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "behavior": "Reject degenerate/short, clipped caption-point, offscreen, malformed and changed geometry before activation. Keep the retained valid caption focus route; main client/bottom/right may extend past canvas while the selected caption interior remains on screen. No Console close/minimize.",
+  "tests": {
+    "originalFirst": "original-rejection.json: unchanged reproduce.py FIRST actual CLI then Bridge.run reproduces unsafe click656:33 at main height8; no guest execution",
+    "geometry": "4 test methods: unchanged attack now no commands/inputs;17 negative variants through actual CLI and Bridge.run;3 changed/stale Bridge.run cases;2 valid CLI+Bridge.run cases",
+    "focused": "10 existing startup tests PASS including complete fake normal-Quit path, wrong/stale review, ACK/log/frozen-zero/terminal rejection",
+    "controls": "8 additional changed-pixels/geometry/focus/hidden/extra-window/ACK/log/terminal controls PASS; offline fixtures only",
+    "results": {
+      "final-geometry": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 87687168,
+        "sampledPeakRSS": 87687168,
+        "reapedPeakRSS": 33161216,
+        "cpuSeconds": 16.501237,
+        "wallSeconds": 5.95401448989287,
+        "owned": [
+          [
+            4171323,
+            "114710897"
+          ],
+          [
+            4171324,
+            "114710905"
+          ],
+          [
+            4171326,
+            "114710909"
+          ],
+          [
+            4171329,
+            "114710936"
+          ],
+          [
+            4171330,
+            "114710955"
+          ],
+          [
+            4171332,
+            "114710960"
+          ],
+          [
+            4171335,
+            "114710988"
+          ],
+          [
+            4171337,
+            "114711007"
+          ],
+          [
+            4171340,
+            "114711012"
+          ],
+          [
+            4171371,
+            "114711045"
+          ],
+          [
+            4171383,
+            "114711082"
+          ],
+          [
+            4171387,
+            "114711098"
+          ],
+          [
+            4171389,
+            "114711104"
+          ],
+          [
+            4171393,
+            "114711127"
+          ],
+          [
+            4171395,
+            "114711131"
+          ],
+          [
+            4171404,
+            "114711150"
+          ],
+          [
+            4171407,
+            "114711153"
+          ],
+          [
+            4171410,
+            "114711174"
+          ],
+          [
+            4171442,
+            "114711201"
+          ],
+          [
+            4171464,
+            "114711224"
+          ],
+          [
+            4171472,
+            "114711241"
+          ],
+          [
+            4171475,
+            "114711244"
+          ],
+          [
+            4171483,
+            "114711265"
+          ],
+          [
+            4171499,
+            "114711282"
+          ],
+          [
+            4171502,
+            "114711286"
+          ],
+          [
+            4171507,
+            "114711306"
+          ],
+          [
+            4171510,
+            "114711311"
+          ],
+          [
+            4171516,
+            "114711331"
+          ],
+          [
+            4171522,
+            "114711351"
+          ],
+          [
+            4171527,
+            "114711370"
+          ],
+          [
+            4171532,
+            "114711388"
+          ],
+          [
+            4171537,
+            "114711398"
+          ],
+          [
+            4171544,
+            "114711432"
+          ],
+          [
+            4171545,
+            "114711453"
+          ],
+          [
+            4171547,
+            "114711457"
+          ]
+        ],
+        "cleanupComplete": true
+      },
+      "final-startup": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 68149248,
+        "sampledPeakRSS": 68149248,
+        "reapedPeakRSS": 26341376,
+        "cpuSeconds": 2.9481129999999998,
+        "wallSeconds": 1.4728019018657506,
+        "owned": [
+          [
+            4171348,
+            "114711020"
+          ],
+          [
+            4171360,
+            "114711032"
+          ],
+          [
+            4171391,
+            "114711116"
+          ],
+          [
+            4171397,
+            "114711134"
+          ]
+        ],
+        "cleanupComplete": true
+      },
+      "final-controls": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 40108032,
+        "sampledPeakRSS": 40108032,
+        "reapedPeakRSS": 23068672,
+        "cpuSeconds": 0.227672,
+        "wallSeconds": 0.12634538300335407,
+        "owned": [
+          [
+            4171605,
+            "114712138"
+          ]
+        ],
+        "cleanupComplete": true
+      }
+    }
+  },
+  "incidentLedger": [
+    "Initial oversized read displays are in immutable launcher session/events; subsequent reads bounded.",
+    "Initial overinclusive donor alternate graph emitted nesting-too-deep warnings on successful checkout; original stderr retained, own alternates narrowed to canonical donor/root without donor edits.",
+    "Initial geometry group failed2positive subtests because full-window screen containment rejected the retained valid window; causal failure and intermediate diff description retained. Caption-point containment correction passed targeted positive and affected negative groups.",
+    "Original unchanged exploit oracle deliberately asserts vulnerability; after repair its final assertion exits1 only after its report records PASS and zero inputs. This expected oracle exit is tested, not hidden.",
+    "Controller pin updated repeatedly during implementation; no stale-pin behavioral attempt was executed."
+  ],
+  "publication": {
+    "remoteRef": "refs/heads/task/airstrike-caption-interior-geometry-repair-oct27",
+    "mainTouched": false,
+    "accepted": false,
+    "warning": "Sparse report tree: NEVER merge whole tree; later integration needs explicit ownership and exact path closure."
+  },
+  "environment": {
+    "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountValidation": "No mounts/guest/Node/API allowed; parser not applicable to empty mount argv",
+    "supervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "gitPhysicalBytes": 268435456,
+    "gitDataBytes": 536870912,
+    "pythonPhysicalBytes": 134217728,
+    "gitDataScope": "prlimit exec Git child only; parent/supervisor unchanged",
+    "pool": "Git2permits plus flock /tmp/wine-ops-production-git.lock; Python1permit",
+    "cpuSeconds": 90,
+    "wallSeconds": 120,
+    "fileBytes": 25165824,
+    "operationOutputBytes": 2097152,
+    "cumulativeOutputBytes": 1048576,
+    "displayBytes": 8192
+  },
+  "resources": {
+    "at": 1793099970.2566104,
+    "MemAvailable": 3725246464,
+    "required": 1409286144,
+    "existingPeerRSS": "already in MemAvailable",
+    "clientCountedOnce": 335544320,
+    "sharedPoolCountedOnce": 268435456,
+    "used": 25214976,
+    "events": 1355776,
+    "allocation": 134217728,
+    "publicationGrowth": 25165824,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "controlReserve": 25165824,
+    "free": 7186804736,
+    "projectedFree": 7052587008,
+    "pass": true
+  },
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-caption-interior-geometry-repair-oct27/root-ref-digest.json",
+  "lifecycle": {
+    "assignedBox": null,
+    "boxOperations": false,
+    "owner": "coordinator; no lifecycle change"
+  },
+  "remaining": "Independent acceptance of exact candidate before integration/runtime; no main ownership, deployment, Node, guest, Boat/API, workers or other task.",
+  "at": 1793099970.3181663
+}

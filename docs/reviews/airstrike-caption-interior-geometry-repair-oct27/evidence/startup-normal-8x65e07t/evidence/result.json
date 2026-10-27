@@ -1,0 +1,15 @@
+{
+  "status": "normal-quit-observed",
+  "commands": 18,
+  "elapsed": 0.7011448570992798,
+  "cleanup": {
+    "remaining": [],
+    "signals": [],
+    "runnerExit": 0,
+    "complete": true
+  },
+  "controllerSHA256": "91168f3198f7e6fdcb2a21f103968d4a34f40581249bea413af1c296a136bbe8",
+  "responseSeconds": 10,
+  "guestSeconds": 15,
+  "wallSeconds": 150
+}

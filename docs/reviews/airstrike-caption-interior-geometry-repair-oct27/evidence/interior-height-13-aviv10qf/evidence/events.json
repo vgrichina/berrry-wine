@@ -1,0 +1,39 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.014950816985219717,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.20367740094661713,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-height-13-aviv10qf/evidence/capture-fdf5868816cb4dcbb06fdcd42fb09e04.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.20456402306444943,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.21191774285398424,
+    "token": "fdf5868816cb4dcbb06fdcd42fb09e04",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.2326148150023073,
+    "token": "fdf5868816cb4dcbb06fdcd42fb09e04",
+    "seconds": 10
+  }
+]

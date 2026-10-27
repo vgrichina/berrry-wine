@@ -1,0 +1,15 @@
+test_actual_bridge_entry_with_reviewed_startup_and_wrong_target (__main__.Startup.test_actual_bridge_entry_with_reviewed_startup_and_wrong_target) ... ok
+test_actual_controller_cli_startup_contract (__main__.Startup.test_actual_controller_cli_startup_contract) ... ok
+test_bridge_activation_frozen_completion_uses_actual_log (__main__.Startup.test_bridge_activation_frozen_completion_uses_actual_log) ... ok
+test_bridge_dispatches_only_exact_reviewed_action (__main__.Startup.test_bridge_dispatches_only_exact_reviewed_action) ... ok
+test_bridge_rejects_stale_image_window_batch_and_credit_state (__main__.Startup.test_bridge_rejects_stale_image_window_batch_and_credit_state) ... ok
+test_exact_original_observation_remains_failclosed (__main__.Startup.test_exact_original_observation_remains_failclosed) ... ok
+test_no_repeat_or_key_after_uncertain_activation (__main__.Startup.test_no_repeat_or_key_after_uncertain_activation) ... ok
+test_retained_image_and_production_caption_contract (__main__.Startup.test_retained_image_and_production_caption_contract) ... ok
+test_reviewed_activation_then_fresh_startup_before_any_key (__main__.Startup.test_reviewed_activation_then_fresh_startup_before_any_key) ... ok
+test_wrong_unknown_window_target_and_geometry (__main__.Startup.test_wrong_unknown_window_target_and_geometry) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.245s
+
+OK

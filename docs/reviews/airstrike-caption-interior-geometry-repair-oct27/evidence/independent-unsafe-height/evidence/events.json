@@ -1,0 +1,72 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0032728880178183317,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.08352371701039374,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/independent-unsafe-height/evidence/capture-a25d7102e72841a582f884d85b37ea9f.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0850906758569181,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.08685235981829464,
+    "token": "a25d7102e72841a582f884d85b37ea9f",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.10983183491043746,
+    "token": "a25d7102e72841a582f884d85b37ea9f",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11053066584281623,
+    "command": {
+      "id": "bridge-4",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11149152694270015,
+    "command": {
+      "id": "bridge-5",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/independent-unsafe-height/evidence/capture-a25d7102e72841a582f884d85b37ea9f-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11238919082097709,
+    "command": {
+      "id": "bridge-6",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11587923602201045,
+    "command": {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    }
+  }
+]

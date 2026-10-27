@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/unchanged-attack-nac7ahpl/ops/reproduce.py", line 54, in <module>
+    assert not inside and commands==[dict(id='airstrike-1',cmd='click:656:33')] and inputs==commands
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

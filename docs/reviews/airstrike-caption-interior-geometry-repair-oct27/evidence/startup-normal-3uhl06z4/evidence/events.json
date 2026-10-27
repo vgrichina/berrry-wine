@@ -1,0 +1,2309 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.004043712979182601,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.08639716589823365,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-9df714b02329473bbaa066b92031c88c.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0871831199619919,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.0892867639195174,
+    "token": "9df714b02329473bbaa066b92031c88c",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.11103133903816342,
+    "token": "9df714b02329473bbaa066b92031c88c",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.1126592110376805,
+    "command": {
+      "id": "bridge-4",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11526198196224868,
+    "command": {
+      "id": "bridge-5",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-9df714b02329473bbaa066b92031c88c-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11612356803379953,
+    "command": {
+      "id": "bridge-6",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11705613601952791,
+    "command": {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.11797330505214632,
+    "command": {
+      "id": "bridge-7",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.12000024691224098,
+    "command": {
+      "id": "bridge-8",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.12081504496745765,
+    "inputAck": {
+      "id": "airstrike-1",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5000
+      }
+    },
+    "inputId": "airstrike-1",
+    "step": {
+      "id": "bridge-7",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5001
+      }
+    },
+    "snapshot": {
+      "id": "bridge-8",
+      "ok": true,
+      "value": {
+        "batch": 5001,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] click 656,33 at batch 5000"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.12142305495217443,
+    "command": {
+      "id": "bridge-9",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.1229095219168812,
+    "command": {
+      "id": "bridge-10",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-415dc8991cce46ab807134ce51785ccb.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.12497737002559006,
+    "command": {
+      "id": "bridge-11",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.12752260197885334,
+    "token": "415dc8991cce46ab807134ce51785ccb",
+    "after": "airstrike-1"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.14878213708288968,
+    "token": "415dc8991cce46ab807134ce51785ccb",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.15271888789720833,
+    "command": {
+      "id": "bridge-12",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.15554157202132046,
+    "command": {
+      "id": "bridge-13",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-415dc8991cce46ab807134ce51785ccb-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.1606720620766282,
+    "command": {
+      "id": "bridge-14",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.16439396096393466,
+    "command": {
+      "id": "airstrike-2",
+      "cmd": "keydown:32"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.16934778005816042,
+    "command": {
+      "id": "bridge-15",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.17220729193650186,
+    "command": {
+      "id": "bridge-16",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.17477987590245903,
+    "inputAck": {
+      "id": "airstrike-2",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5001
+      }
+    },
+    "inputId": "airstrike-2",
+    "step": {
+      "id": "bridge-15",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5002
+      }
+    },
+    "snapshot": {
+      "id": "bridge-16",
+      "ok": true,
+      "value": {
+        "batch": 5002,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=32 at batch 5001"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.17782886303029954,
+    "command": {
+      "id": "bridge-17",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.18033865909092128,
+    "command": {
+      "id": "airstrike-3",
+      "cmd": "keyup:32"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.18689187709242105,
+    "command": {
+      "id": "bridge-18",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.18959280103445053,
+    "command": {
+      "id": "bridge-19",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.19146962091326714,
+    "inputAck": {
+      "id": "airstrike-3",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5002
+      }
+    },
+    "inputId": "airstrike-3",
+    "step": {
+      "id": "bridge-18",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5003
+      }
+    },
+    "snapshot": {
+      "id": "bridge-19",
+      "ok": true,
+      "value": {
+        "batch": 5003,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=32 at batch 5002"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.19409707793965936,
+    "command": {
+      "id": "bridge-20",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.19559733103960752,
+    "command": {
+      "id": "bridge-21",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-008fb3b3e5a1458abce4214a1714078c.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.19655243190936744,
+    "command": {
+      "id": "bridge-22",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.19793084706179798,
+    "token": "008fb3b3e5a1458abce4214a1714078c",
+    "after": "airstrike-3"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.22112334589473903,
+    "token": "008fb3b3e5a1458abce4214a1714078c",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.22224823501892388,
+    "command": {
+      "id": "bridge-23",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.22652708808891475,
+    "command": {
+      "id": "bridge-24",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-008fb3b3e5a1458abce4214a1714078c-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.22785753291100264,
+    "command": {
+      "id": "bridge-25",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.23208047193475068,
+    "command": {
+      "id": "airstrike-4",
+      "cmd": "keydown:27"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.23289497895166278,
+    "command": {
+      "id": "bridge-26",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.23360338807106018,
+    "command": {
+      "id": "bridge-27",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.234323046868667,
+    "inputAck": {
+      "id": "airstrike-4",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5003
+      }
+    },
+    "inputId": "airstrike-4",
+    "step": {
+      "id": "bridge-26",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5004
+      }
+    },
+    "snapshot": {
+      "id": "bridge-27",
+      "ok": true,
+      "value": {
+        "batch": 5004,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=27 at batch 5003"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2348641420248896,
+    "command": {
+      "id": "bridge-28",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2382467130664736,
+    "command": {
+      "id": "airstrike-5",
+      "cmd": "keyup:27"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.23973865108564496,
+    "command": {
+      "id": "bridge-29",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2410327980760485,
+    "command": {
+      "id": "bridge-30",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.24251395487226546,
+    "inputAck": {
+      "id": "airstrike-5",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5004
+      }
+    },
+    "inputId": "airstrike-5",
+    "step": {
+      "id": "bridge-29",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5005
+      }
+    },
+    "snapshot": {
+      "id": "bridge-30",
+      "ok": true,
+      "value": {
+        "batch": 5005,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=27 at batch 5004"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.24352332903072238,
+    "command": {
+      "id": "bridge-31",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2450906669255346,
+    "command": {
+      "id": "bridge-32",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-c09f67b433744ec7a5be17f9916ffada.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.24673795606940985,
+    "command": {
+      "id": "bridge-33",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.2487571130041033,
+    "token": "c09f67b433744ec7a5be17f9916ffada",
+    "after": "airstrike-5"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.2710847188718617,
+    "token": "c09f67b433744ec7a5be17f9916ffada",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.27308813598938286,
+    "command": {
+      "id": "bridge-34",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.27919045905582607,
+    "command": {
+      "id": "bridge-35",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-c09f67b433744ec7a5be17f9916ffada-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2834980860352516,
+    "command": {
+      "id": "bridge-36",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.28858801908791065,
+    "command": {
+      "id": "airstrike-6",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.2906344970688224,
+    "command": {
+      "id": "bridge-37",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.29213984101079404,
+    "command": {
+      "id": "bridge-38",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.2936265179887414,
+    "inputAck": {
+      "id": "airstrike-6",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5005
+      }
+    },
+    "inputId": "airstrike-6",
+    "step": {
+      "id": "bridge-37",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5006
+      }
+    },
+    "snapshot": {
+      "id": "bridge-38",
+      "ok": true,
+      "value": {
+        "batch": 5006,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5005"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.29502723505720496,
+    "command": {
+      "id": "bridge-39",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.29654801706783473,
+    "command": {
+      "id": "airstrike-7",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.29803027608431876,
+    "command": {
+      "id": "bridge-40",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3009422260802239,
+    "command": {
+      "id": "bridge-41",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.3021490990649909,
+    "inputAck": {
+      "id": "airstrike-7",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5006
+      }
+    },
+    "inputId": "airstrike-7",
+    "step": {
+      "id": "bridge-40",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5007
+      }
+    },
+    "snapshot": {
+      "id": "bridge-41",
+      "ok": true,
+      "value": {
+        "batch": 5007,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5006"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.30321459798142314,
+    "command": {
+      "id": "bridge-42",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.30520880687981844,
+    "command": {
+      "id": "bridge-43",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-aa32cf41933547a5acc2946c92147801.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.30694435094483197,
+    "command": {
+      "id": "bridge-44",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.30910547403618693,
+    "token": "aa32cf41933547a5acc2946c92147801",
+    "after": "airstrike-7"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.3108070339076221,
+    "token": "aa32cf41933547a5acc2946c92147801",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3120746009517461,
+    "command": {
+      "id": "bridge-45",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3147394969128072,
+    "command": {
+      "id": "bridge-46",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-aa32cf41933547a5acc2946c92147801-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.31719210697337985,
+    "command": {
+      "id": "bridge-47",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3208562668878585,
+    "command": {
+      "id": "airstrike-8",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.32311029406264424,
+    "command": {
+      "id": "bridge-48",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3247477749828249,
+    "command": {
+      "id": "bridge-49",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.3263929090462625,
+    "inputAck": {
+      "id": "airstrike-8",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5007
+      }
+    },
+    "inputId": "airstrike-8",
+    "step": {
+      "id": "bridge-48",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5008
+      }
+    },
+    "snapshot": {
+      "id": "bridge-49",
+      "ok": true,
+      "value": {
+        "batch": 5008,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5007"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.32793996995314956,
+    "command": {
+      "id": "bridge-50",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3295398410409689,
+    "command": {
+      "id": "airstrike-9",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3310480690561235,
+    "command": {
+      "id": "bridge-51",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.33305567293427885,
+    "command": {
+      "id": "bridge-52",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.3345187660306692,
+    "inputAck": {
+      "id": "airstrike-9",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5008
+      }
+    },
+    "inputId": "airstrike-9",
+    "step": {
+      "id": "bridge-51",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5009
+      }
+    },
+    "snapshot": {
+      "id": "bridge-52",
+      "ok": true,
+      "value": {
+        "batch": 5009,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5008"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3364188689738512,
+    "command": {
+      "id": "bridge-53",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.339273622026667,
+    "command": {
+      "id": "bridge-54",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-82c1128ec7a249cf865cd4ce2c26caa0.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3411030520219356,
+    "command": {
+      "id": "bridge-55",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.3433630410581827,
+    "token": "82c1128ec7a249cf865cd4ce2c26caa0",
+    "after": "airstrike-9"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.34555816696956754,
+    "token": "82c1128ec7a249cf865cd4ce2c26caa0",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3468331170734018,
+    "command": {
+      "id": "bridge-56",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.34920534607954323,
+    "command": {
+      "id": "bridge-57",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-82c1128ec7a249cf865cd4ce2c26caa0-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.35112744104117155,
+    "command": {
+      "id": "bridge-58",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.35326239303685725,
+    "command": {
+      "id": "airstrike-10",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3558736799750477,
+    "command": {
+      "id": "bridge-59",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.357576112030074,
+    "command": {
+      "id": "bridge-60",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.35918785398826003,
+    "inputAck": {
+      "id": "airstrike-10",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5009
+      }
+    },
+    "inputId": "airstrike-10",
+    "step": {
+      "id": "bridge-59",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5010
+      }
+    },
+    "snapshot": {
+      "id": "bridge-60",
+      "ok": true,
+      "value": {
+        "batch": 5010,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5009"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3605736019089818,
+    "command": {
+      "id": "bridge-61",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.36354911187663674,
+    "command": {
+      "id": "airstrike-11",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3657199018634856,
+    "command": {
+      "id": "bridge-62",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3680457239970565,
+    "command": {
+      "id": "bridge-63",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.3697770999278873,
+    "inputAck": {
+      "id": "airstrike-11",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5010
+      }
+    },
+    "inputId": "airstrike-11",
+    "step": {
+      "id": "bridge-62",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5011
+      }
+    },
+    "snapshot": {
+      "id": "bridge-63",
+      "ok": true,
+      "value": {
+        "batch": 5011,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5010"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.37115447293035686,
+    "command": {
+      "id": "bridge-64",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3733550189062953,
+    "command": {
+      "id": "bridge-65",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-85dd72a072044c86af72c2c315fdab19.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.3770038508810103,
+    "command": {
+      "id": "bridge-66",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.3807307998649776,
+    "token": "85dd72a072044c86af72c2c315fdab19",
+    "after": "airstrike-11"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.4032917150761932,
+    "token": "85dd72a072044c86af72c2c315fdab19",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.40648482204414904,
+    "command": {
+      "id": "bridge-67",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.41002013091929257,
+    "command": {
+      "id": "bridge-68",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-85dd72a072044c86af72c2c315fdab19-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.4141011240426451,
+    "command": {
+      "id": "bridge-69",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.4225970439147204,
+    "command": {
+      "id": "airstrike-12",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.42870568903163075,
+    "command": {
+      "id": "bridge-70",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.43321965308859944,
+    "command": {
+      "id": "bridge-71",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.438340085092932,
+    "inputAck": {
+      "id": "airstrike-12",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5011
+      }
+    },
+    "inputId": "airstrike-12",
+    "step": {
+      "id": "bridge-70",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5012
+      }
+    },
+    "snapshot": {
+      "id": "bridge-71",
+      "ok": true,
+      "value": {
+        "batch": 5012,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5011"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.4410758139565587,
+    "command": {
+      "id": "bridge-72",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.446517227916047,
+    "command": {
+      "id": "airstrike-13",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.453038115054369,
+    "command": {
+      "id": "bridge-73",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.4558207029476762,
+    "command": {
+      "id": "bridge-74",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.45965575403533876,
+    "inputAck": {
+      "id": "airstrike-13",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5012
+      }
+    },
+    "inputId": "airstrike-13",
+    "step": {
+      "id": "bridge-73",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5013
+      }
+    },
+    "snapshot": {
+      "id": "bridge-74",
+      "ok": true,
+      "value": {
+        "batch": 5013,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5012"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.462759573943913,
+    "command": {
+      "id": "bridge-75",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.465512857073918,
+    "command": {
+      "id": "bridge-76",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-25463df866004edeb976daeef4306de6.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.46772580593824387,
+    "command": {
+      "id": "bridge-77",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.47181998402811587,
+    "token": "25463df866004edeb976daeef4306de6",
+    "after": "airstrike-13"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.49446191103197634,
+    "token": "25463df866004edeb976daeef4306de6",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5001105119008571,
+    "command": {
+      "id": "bridge-78",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5032117869704962,
+    "command": {
+      "id": "bridge-79",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-25463df866004edeb976daeef4306de6-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5178152010776103,
+    "command": {
+      "id": "bridge-80",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5257045440375805,
+    "command": {
+      "id": "airstrike-14",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5287957999389619,
+    "command": {
+      "id": "bridge-81",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.533151739044115,
+    "command": {
+      "id": "bridge-82",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.5367569599766284,
+    "inputAck": {
+      "id": "airstrike-14",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5013
+      }
+    },
+    "inputId": "airstrike-14",
+    "step": {
+      "id": "bridge-81",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5014
+      }
+    },
+    "snapshot": {
+      "id": "bridge-82",
+      "ok": true,
+      "value": {
+        "batch": 5014,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5013"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5393687558826059,
+    "command": {
+      "id": "bridge-83",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5428005119320005,
+    "command": {
+      "id": "airstrike-15",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5464315800927579,
+    "command": {
+      "id": "bridge-84",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5495845119003206,
+    "command": {
+      "id": "bridge-85",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.5538636159617454,
+    "inputAck": {
+      "id": "airstrike-15",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5014
+      }
+    },
+    "inputId": "airstrike-15",
+    "step": {
+      "id": "bridge-84",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5015
+      }
+    },
+    "snapshot": {
+      "id": "bridge-85",
+      "ok": true,
+      "value": {
+        "batch": 5015,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5014"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5568043710663915,
+    "command": {
+      "id": "bridge-86",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5610263170674443,
+    "command": {
+      "id": "bridge-87",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-e44e7a6deb5a459e8ee21e3f75411e81.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5645007519051433,
+    "command": {
+      "id": "bridge-88",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.567981778876856,
+    "token": "e44e7a6deb5a459e8ee21e3f75411e81",
+    "after": "airstrike-15"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.59146923199296,
+    "token": "e44e7a6deb5a459e8ee21e3f75411e81",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5941821390297264,
+    "command": {
+      "id": "bridge-89",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.5988561720587313,
+    "command": {
+      "id": "bridge-90",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-e44e7a6deb5a459e8ee21e3f75411e81-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6023812440689653,
+    "command": {
+      "id": "bridge-91",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6055573890917003,
+    "command": {
+      "id": "airstrike-16",
+      "cmd": "keydown:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6085810388904065,
+    "command": {
+      "id": "bridge-92",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6140622859820724,
+    "command": {
+      "id": "bridge-93",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.6179878378752619,
+    "inputAck": {
+      "id": "airstrike-16",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5015
+      }
+    },
+    "inputId": "airstrike-16",
+    "step": {
+      "id": "bridge-92",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5016
+      }
+    },
+    "snapshot": {
+      "id": "bridge-93",
+      "ok": true,
+      "value": {
+        "batch": 5016,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keydown vk=40 at batch 5015"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6201575060840696,
+    "command": {
+      "id": "bridge-94",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6237235530279577,
+    "command": {
+      "id": "airstrike-17",
+      "cmd": "keyup:40"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6271960248705,
+    "command": {
+      "id": "bridge-95",
+      "action": "step",
+      "n": 1
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6304553260561079,
+    "command": {
+      "id": "bridge-96",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "frozen-input-complete",
+    "elapsed": 0.6341057810932398,
+    "inputAck": {
+      "id": "airstrike-17",
+      "ok": true,
+      "value": {
+        "queued": true,
+        "batch": 5016
+      }
+    },
+    "inputId": "airstrike-17",
+    "step": {
+      "id": "bridge-95",
+      "ok": true,
+      "value": {
+        "ran": 1,
+        "steps": 1,
+        "frozen": true,
+        "batch": 5017
+      }
+    },
+    "snapshot": {
+      "id": "bridge-96",
+      "ok": true,
+      "value": {
+        "batch": 5017,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    "logs": [
+      "[input] keyup vk=40 at batch 5016"
+    ]
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.636519436025992,
+    "command": {
+      "id": "bridge-97",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6412855840753764,
+    "command": {
+      "id": "bridge-98",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-ee1a8fc99a1a4dd184b9e279990721f6.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.64414490503259,
+    "command": {
+      "id": "bridge-99",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.650753207039088,
+    "token": "ee1a8fc99a1a4dd184b9e279990721f6",
+    "after": "airstrike-17"
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.6750533629674464,
+    "token": "ee1a8fc99a1a4dd184b9e279990721f6",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6792657419573516,
+    "command": {
+      "id": "bridge-100",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6837243719492108,
+    "command": {
+      "id": "bridge-101",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/startup-normal-3uhl06z4/evidence/capture-ee1a8fc99a1a4dd184b9e279990721f6-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.686588783049956,
+    "command": {
+      "id": "bridge-102",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.6918883710168302,
+    "command": {
+      "id": "airstrike-18",
+      "cmd": "keydown:13"
+    }
+  }
+]

@@ -1,0 +1,7 @@
+{"id": "bridge-1", "action": "snapshot"}
+{"id": "bridge-2", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-normal-8p54_8e0/evidence/capture-5f8b3ce21426486b8f2826fbbb952f72.png"}
+{"id": "bridge-3", "action": "snapshot"}
+{"id": "bridge-4", "action": "snapshot"}
+{"id": "bridge-5", "action": "png", "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-normal-8p54_8e0/evidence/capture-5f8b3ce21426486b8f2826fbbb952f72-fresh.png"}
+{"id": "bridge-6", "action": "snapshot"}
+{"id": "airstrike-1", "cmd": "click:656:33"}

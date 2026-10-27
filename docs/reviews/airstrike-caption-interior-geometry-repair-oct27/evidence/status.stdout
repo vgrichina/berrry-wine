@@ -1,0 +1,3 @@
+ M tools/airstrike-menu-controller.py
+ M tools/airstrike-observation-bridge.py
+?? test/test-airstrike-caption-interior.py

@@ -1,0 +1,8 @@
+{
+  "readOnly": true,
+  "stores": [
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/repo/.git/objects",
+    "/home/user/wine-assembly/.git/objects"
+  ],
+  "noDonorMutations": true
+}

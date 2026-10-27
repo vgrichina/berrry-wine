@@ -1,0 +1,8 @@
+test_unchanged_original_attack_after_repair (__main__.Interior.test_unchanged_original_attack_after_repair) ... ok
+test_actual_cli_and_bridge_negative_geometry (__main__.Interior.test_actual_cli_and_bridge_negative_geometry) ... ok
+test_changed_geometry_and_stale_batch_before_dispatch (__main__.Interior.test_changed_geometry_and_stale_batch_before_dispatch) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 4.651s
+
+OK

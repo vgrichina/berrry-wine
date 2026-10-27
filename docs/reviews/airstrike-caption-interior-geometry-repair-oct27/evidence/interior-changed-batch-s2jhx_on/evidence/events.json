@@ -1,0 +1,64 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0021236538887023926,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0561913619749248,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-changed-batch-s2jhx_on/evidence/capture-eb3326109fe248e696331a3777cb2798.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.057187489001080394,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.05869099893607199,
+    "token": "eb3326109fe248e696331a3777cb2798",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.07918202388100326,
+    "token": "eb3326109fe248e696331a3777cb2798",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.07971800887025893,
+    "command": {
+      "id": "bridge-4",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.08051241794601083,
+    "command": {
+      "id": "bridge-5",
+      "action": "png",
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/interior-changed-batch-s2jhx_on/evidence/capture-eb3326109fe248e696331a3777cb2798-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0811027258168906,
+    "command": {
+      "id": "bridge-6",
+      "action": "snapshot"
+    }
+  }
+]

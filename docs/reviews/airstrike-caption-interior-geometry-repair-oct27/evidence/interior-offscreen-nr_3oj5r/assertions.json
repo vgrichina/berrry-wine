@@ -1,0 +1,21 @@
+{
+  "kind": "offscreen",
+  "result": {
+    "status": "refused",
+    "reason": "no safe exposed Airstrike caption point",
+    "elapsed": 0.20227358606643975,
+    "cleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": -15,
+      "complete": true
+    },
+    "controllerSHA256": "91168f3198f7e6fdcb2a21f103968d4a34f40581249bea413af1c296a136bbe8",
+    "responseSeconds": 10,
+    "guestSeconds": 12,
+    "wallSeconds": 150
+  },
+  "inputs": []
+}
