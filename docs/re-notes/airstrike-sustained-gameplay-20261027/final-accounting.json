@@ -1,0 +1,24 @@
+{
+  "at": 1793069179.896583,
+  "ownDiskBytes": 2544307,
+  "externalFullBytes": {
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T02-36-29-01a17b37-609f-7462-bba1-1627854461b9.jsonl": 2141767,
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/stderr.log": 189,
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/root-ref-digest.json": 196,
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/events.jsonl": 322648
+  },
+  "positiveWALGrowthCountedOnce": 0,
+  "totalMeasured": 5009107,
+  "allocation": 50331648,
+  "reserve": 8388608,
+  "futureGrowth": 8388608,
+  "publicationFuture": 8388608,
+  "localFree": 3209441280,
+  "aggregateReservationsConservative": 218103808,
+  "projectedFree": 2991337472,
+  "floor": 2982150144,
+  "remoteUsed": 18197051,
+  "remoteAllocation": 100663296,
+  "remoteCaptures": 669780,
+  "remoteLogs": 15848
+}

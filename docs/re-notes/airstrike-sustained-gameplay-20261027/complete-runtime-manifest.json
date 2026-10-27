@@ -1,0 +1,2089 @@
+[
+  {
+    "path": "test/run.js",
+    "bytes": 685960,
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "kind": "git",
+    "source": "test/run.js",
+    "dest": "runner/test/run.js"
+  },
+  {
+    "path": "lib/gl-compat.js",
+    "bytes": 106632,
+    "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d",
+    "kind": "git",
+    "source": "lib/gl-compat.js",
+    "dest": "runner/lib/gl-compat.js"
+  },
+  {
+    "path": "lib/mem-utils.js",
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580",
+    "kind": "git",
+    "source": "lib/mem-utils.js",
+    "dest": "runner/lib/mem-utils.js"
+  },
+  {
+    "path": "lib/region-map.generated.js",
+    "bytes": 36089,
+    "sha256": "1f1edfd8f13ef528434828243e8f1e37a059d2c4136dc7aaa1427b91e629e968",
+    "kind": "git",
+    "source": "lib/region-map.generated.js",
+    "dest": "runner/lib/region-map.generated.js"
+  },
+  {
+    "path": "lib/gl-command-stream.js",
+    "bytes": 7766,
+    "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb",
+    "kind": "git",
+    "source": "lib/gl-command-stream.js",
+    "dest": "runner/lib/gl-command-stream.js"
+  },
+  {
+    "path": "lib/gpu-backend.js",
+    "bytes": 49253,
+    "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd",
+    "kind": "git",
+    "source": "lib/gpu-backend.js",
+    "dest": "runner/lib/gpu-backend.js"
+  },
+  {
+    "path": "lib/dib.js",
+    "bytes": 12071,
+    "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34",
+    "kind": "git",
+    "source": "lib/dib.js",
+    "dest": "runner/lib/dib.js"
+  },
+  {
+    "path": "tools/dump_sprites.js",
+    "bytes": 3035,
+    "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05",
+    "kind": "git",
+    "source": "tools/dump_sprites.js",
+    "dest": "runner/tools/dump_sprites.js"
+  },
+  {
+    "path": "lib/save-bundle.js",
+    "bytes": 28589,
+    "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848",
+    "kind": "git",
+    "source": "lib/save-bundle.js",
+    "dest": "runner/lib/save-bundle.js"
+  },
+  {
+    "path": "lib/storage.js",
+    "bytes": 79616,
+    "sha256": "a42b58ea21eb8ed3477d4e9b80ff2ce3f05b048c3c007816cd630e269422c8fe",
+    "kind": "git",
+    "source": "lib/storage.js",
+    "dest": "runner/lib/storage.js"
+  },
+  {
+    "path": "lib/zip-mount.js",
+    "bytes": 32525,
+    "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274",
+    "kind": "git",
+    "source": "lib/zip-mount.js",
+    "dest": "runner/lib/zip-mount.js"
+  },
+  {
+    "path": "lib/byte-provider.js",
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce",
+    "kind": "git",
+    "source": "lib/byte-provider.js",
+    "dest": "runner/lib/byte-provider.js"
+  },
+  {
+    "path": "lib/control-server.js",
+    "bytes": 7126,
+    "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b",
+    "kind": "git",
+    "source": "lib/control-server.js",
+    "dest": "runner/lib/control-server.js"
+  },
+  {
+    "path": "tools/disasm.js",
+    "bytes": 29904,
+    "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166",
+    "kind": "git",
+    "source": "tools/disasm.js",
+    "dest": "runner/tools/disasm.js"
+  },
+  {
+    "path": "tools/simd-ops.js",
+    "bytes": 8592,
+    "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e",
+    "kind": "git",
+    "source": "tools/simd-ops.js",
+    "dest": "runner/tools/simd-ops.js"
+  },
+  {
+    "path": "lib/vfs-overlay.js",
+    "bytes": 14961,
+    "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5",
+    "kind": "git",
+    "source": "lib/vfs-overlay.js",
+    "dest": "runner/lib/vfs-overlay.js"
+  },
+  {
+    "path": "lib/overlay-store.js",
+    "bytes": 22486,
+    "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e",
+    "kind": "git",
+    "source": "lib/overlay-store.js",
+    "dest": "runner/lib/overlay-store.js"
+  },
+  {
+    "path": "lib/media-cli.js",
+    "bytes": 3730,
+    "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4",
+    "kind": "git",
+    "source": "lib/media-cli.js",
+    "dest": "runner/lib/media-cli.js"
+  },
+  {
+    "path": "lib/cdrom.js",
+    "bytes": 14034,
+    "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727",
+    "kind": "git",
+    "source": "lib/cdrom.js",
+    "dest": "runner/lib/cdrom.js"
+  },
+  {
+    "path": "lib/media-import.js",
+    "bytes": 37173,
+    "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47",
+    "kind": "git",
+    "source": "lib/media-import.js",
+    "dest": "runner/lib/media-import.js"
+  },
+  {
+    "path": "lib/iso9660.js",
+    "bytes": 23867,
+    "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544",
+    "kind": "git",
+    "source": "lib/iso9660.js",
+    "dest": "runner/lib/iso9660.js"
+  },
+  {
+    "path": "lib/app-files.js",
+    "bytes": 12067,
+    "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278",
+    "kind": "git",
+    "source": "lib/app-files.js",
+    "dest": "runner/lib/app-files.js"
+  },
+  {
+    "path": "lib/process-boot.js",
+    "bytes": 52033,
+    "sha256": "c7b4e7f88dd147f9858fb0281107331cc4dcbdb7c26eeacc7adc2b0218de08a9",
+    "kind": "git",
+    "source": "lib/process-boot.js",
+    "dest": "runner/lib/process-boot.js"
+  },
+  {
+    "path": "lib/ne-guest-bridge.js",
+    "bytes": 4652,
+    "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a",
+    "kind": "git",
+    "source": "lib/ne-guest-bridge.js",
+    "dest": "runner/lib/ne-guest-bridge.js"
+  },
+  {
+    "path": "lib/ne-invoke.js",
+    "bytes": 5358,
+    "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5",
+    "kind": "git",
+    "source": "lib/ne-invoke.js",
+    "dest": "runner/lib/ne-invoke.js"
+  },
+  {
+    "path": "lib/ne-load-error.js",
+    "bytes": 676,
+    "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa",
+    "kind": "git",
+    "source": "lib/ne-load-error.js",
+    "dest": "runner/lib/ne-load-error.js"
+  },
+  {
+    "path": "lib/ne-lifecycle.js",
+    "bytes": 12104,
+    "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4",
+    "kind": "git",
+    "source": "lib/ne-lifecycle.js",
+    "dest": "runner/lib/ne-lifecycle.js"
+  },
+  {
+    "path": "lib/ne-image.js",
+    "bytes": 7091,
+    "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0",
+    "kind": "git",
+    "source": "lib/ne-image.js",
+    "dest": "runner/lib/ne-image.js"
+  },
+  {
+    "path": "lib/ne-sources.js",
+    "bytes": 3473,
+    "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2",
+    "kind": "git",
+    "source": "lib/ne-sources.js",
+    "dest": "runner/lib/ne-sources.js"
+  },
+  {
+    "path": "lib/dll-loader.js",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145",
+    "kind": "git",
+    "source": "lib/dll-loader.js",
+    "dest": "runner/lib/dll-loader.js"
+  },
+  {
+    "path": "lib/pe.js",
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853",
+    "kind": "git",
+    "source": "lib/pe.js",
+    "dest": "runner/lib/pe.js"
+  },
+  {
+    "path": "lib/dll-registry.js",
+    "bytes": 6443,
+    "sha256": "a5d814cd4af1639d189939d1b16e963218d0b8680d11cbbf9a3985e1fd00f981",
+    "kind": "git",
+    "source": "lib/dll-registry.js",
+    "dest": "runner/lib/dll-registry.js"
+  },
+  {
+    "path": "lib/guest-thread-host.js",
+    "bytes": 73126,
+    "sha256": "dab1418c519f4d094dd4d1357a6f4dd4a0d0fab21d9bf73b60eef8bb26bbdc7b",
+    "kind": "git",
+    "source": "lib/guest-thread-host.js",
+    "dest": "runner/lib/guest-thread-host.js"
+  },
+  {
+    "path": "lib/d3d-command-stream.js",
+    "bytes": 47664,
+    "sha256": "ea1080750e8557f261d2b62f646b2cbc317be1b639cdc566b022c9a6ad494945",
+    "kind": "git",
+    "source": "lib/d3d-command-stream.js",
+    "dest": "runner/lib/d3d-command-stream.js"
+  },
+  {
+    "path": "lib/render-worker.js",
+    "bytes": 17410,
+    "sha256": "15d9e5f7a4ca693cf3b41bc5763d9b2fff8e7f1f898f9b05a9736425722761aa",
+    "kind": "git",
+    "source": "lib/render-worker.js",
+    "dest": "runner/lib/render-worker.js"
+  },
+  {
+    "path": "lib/thread-send-waits.js",
+    "bytes": 14963,
+    "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747",
+    "kind": "git",
+    "source": "lib/thread-send-waits.js",
+    "dest": "runner/lib/thread-send-waits.js"
+  },
+  {
+    "path": "lib/guest-rpc.js",
+    "bytes": 59680,
+    "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "kind": "git",
+    "source": "lib/guest-rpc.js",
+    "dest": "runner/lib/guest-rpc.js"
+  },
+  {
+    "path": "lib/named-event-authority.js",
+    "bytes": 15058,
+    "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278",
+    "kind": "git",
+    "source": "lib/named-event-authority.js",
+    "dest": "runner/lib/named-event-authority.js"
+  },
+  {
+    "path": "lib/vlan-wire.js",
+    "bytes": 13050,
+    "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659",
+    "kind": "git",
+    "source": "lib/vlan-wire.js",
+    "dest": "runner/lib/vlan-wire.js"
+  },
+  {
+    "path": "lib/present-frame-audit.js",
+    "bytes": 6506,
+    "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de",
+    "kind": "git",
+    "source": "lib/present-frame-audit.js",
+    "dest": "runner/lib/present-frame-audit.js"
+  },
+  {
+    "path": "tools/build-page-translation-stats.js",
+    "bytes": 6442,
+    "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9",
+    "kind": "git",
+    "source": "tools/build-page-translation-stats.js",
+    "dest": "runner/tools/build-page-translation-stats.js"
+  },
+  {
+    "path": "test/compile-src.js",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76",
+    "kind": "git",
+    "source": "test/compile-src.js",
+    "dest": "runner/test/compile-src.js"
+  },
+  {
+    "path": "lib/d3dim-gpu.js",
+    "bytes": 52919,
+    "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8",
+    "kind": "git",
+    "source": "lib/d3dim-gpu.js",
+    "dest": "runner/lib/d3dim-gpu.js"
+  },
+  {
+    "path": "lib/d3d9-backend.js",
+    "bytes": 65335,
+    "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5",
+    "kind": "git",
+    "source": "lib/d3d9-backend.js",
+    "dest": "runner/lib/d3d9-backend.js"
+  },
+  {
+    "path": "lib/d3d9-fixed.js",
+    "bytes": 29976,
+    "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3",
+    "kind": "git",
+    "source": "lib/d3d9-fixed.js",
+    "dest": "runner/lib/d3d9-fixed.js"
+  },
+  {
+    "path": "lib/d3d9-shader.js",
+    "bytes": 47006,
+    "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834",
+    "kind": "git",
+    "source": "lib/d3d9-shader.js",
+    "dest": "runner/lib/d3d9-shader.js"
+  },
+  {
+    "path": "lib/d3d-shader-ir.js",
+    "bytes": 9130,
+    "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434",
+    "kind": "git",
+    "source": "lib/d3d-shader-ir.js",
+    "dest": "runner/lib/d3d-shader-ir.js"
+  },
+  {
+    "path": "lib/thread-manager.js",
+    "bytes": 226864,
+    "sha256": "f0a2f006b0eb992bcdb904f10128167b06bfe143ac05661b82f9586d9755bf40",
+    "kind": "git",
+    "source": "lib/thread-manager.js",
+    "dest": "runner/lib/thread-manager.js"
+  },
+  {
+    "path": "lib/worker-imports.js",
+    "bytes": 22458,
+    "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9",
+    "kind": "git",
+    "source": "lib/worker-imports.js",
+    "dest": "runner/lib/worker-imports.js"
+  },
+  {
+    "path": "tools/diablo-gameplay-bench.js",
+    "bytes": 10737,
+    "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58",
+    "kind": "git",
+    "source": "tools/diablo-gameplay-bench.js",
+    "dest": "runner/tools/diablo-gameplay-bench.js"
+  },
+  {
+    "path": "lib/headless-gl.js",
+    "bytes": 14928,
+    "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb",
+    "kind": "git",
+    "source": "lib/headless-gl.js",
+    "dest": "runner/lib/headless-gl.js"
+  },
+  {
+    "path": "test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209",
+    "kind": "git",
+    "source": "test/runner-experiments.js",
+    "dest": "runner/test/runner-experiments.js"
+  },
+  {
+    "path": "test/runner-win-census.js",
+    "bytes": 7071,
+    "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5",
+    "kind": "git",
+    "source": "test/runner-win-census.js",
+    "dest": "runner/test/runner-win-census.js"
+  },
+  {
+    "path": "test/runner-experiment-report.js",
+    "bytes": 24188,
+    "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408",
+    "kind": "git",
+    "source": "test/runner-experiment-report.js",
+    "dest": "runner/test/runner-experiment-report.js"
+  },
+  {
+    "path": "lib/renderer.js",
+    "bytes": 214278,
+    "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2",
+    "kind": "git",
+    "source": "lib/renderer.js",
+    "dest": "runner/lib/renderer.js"
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "bytes": 177069,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "kind": "git",
+    "source": "lib/renderer-input.js",
+    "dest": "runner/lib/renderer-input.js"
+  },
+  {
+    "path": "lib/canvas-compat.js",
+    "bytes": 984,
+    "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373",
+    "kind": "git",
+    "source": "lib/canvas-compat.js",
+    "dest": "runner/lib/canvas-compat.js"
+  },
+  {
+    "path": "lib/raster-canvas.js",
+    "bytes": 17590,
+    "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3",
+    "kind": "git",
+    "source": "lib/raster-canvas.js",
+    "dest": "runner/lib/raster-canvas.js"
+  },
+  {
+    "path": "lib/presentation-filter.js",
+    "bytes": 53087,
+    "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058",
+    "kind": "git",
+    "source": "lib/presentation-filter.js",
+    "dest": "runner/lib/presentation-filter.js"
+  },
+  {
+    "path": "lib/surface.js",
+    "bytes": 14312,
+    "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b",
+    "kind": "git",
+    "source": "lib/surface.js",
+    "dest": "runner/lib/surface.js"
+  },
+  {
+    "path": "host.js",
+    "bytes": 368727,
+    "sha256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+    "kind": "git",
+    "source": "host.js",
+    "dest": "runner/host.js"
+  },
+  {
+    "path": "lib/main-io-wait.js",
+    "bytes": 3133,
+    "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef",
+    "kind": "git",
+    "source": "lib/main-io-wait.js",
+    "dest": "runner/lib/main-io-wait.js"
+  },
+  {
+    "path": "lib/startup-clock.js",
+    "bytes": 3363,
+    "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7",
+    "kind": "git",
+    "source": "lib/startup-clock.js",
+    "dest": "runner/lib/startup-clock.js"
+  },
+  {
+    "path": "lib/guest-clock.js",
+    "bytes": 3204,
+    "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+    "kind": "git",
+    "source": "lib/guest-clock.js",
+    "dest": "runner/lib/guest-clock.js"
+  },
+  {
+    "path": "lib/batch-clock.js",
+    "bytes": 2726,
+    "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+    "kind": "git",
+    "source": "lib/batch-clock.js",
+    "dest": "runner/lib/batch-clock.js"
+  },
+  {
+    "path": "lib/tinysynth-offline.js",
+    "bytes": 11712,
+    "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53",
+    "kind": "git",
+    "source": "lib/tinysynth-offline.js",
+    "dest": "runner/lib/tinysynth-offline.js"
+  },
+  {
+    "path": "lib/vendor/webaudio-tinysynth.js",
+    "bytes": 62376,
+    "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c",
+    "kind": "git",
+    "source": "lib/vendor/webaudio-tinysynth.js",
+    "dest": "runner/lib/vendor/webaudio-tinysynth.js"
+  },
+  {
+    "path": "lib/cli-recorder.js",
+    "bytes": 9287,
+    "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae",
+    "kind": "git",
+    "source": "lib/cli-recorder.js",
+    "dest": "runner/lib/cli-recorder.js"
+  },
+  {
+    "path": "lib/apps.js",
+    "bytes": 411370,
+    "sha256": "5a438ebd6c312a99f0f638d3cc57336885d4daa707b9bb03d227de008cafbd54",
+    "kind": "git",
+    "source": "lib/apps.js",
+    "dest": "runner/lib/apps.js"
+  },
+  {
+    "path": "lib/app-file-sizes.generated.js",
+    "bytes": 304086,
+    "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0",
+    "kind": "git",
+    "source": "lib/app-file-sizes.generated.js",
+    "dest": "runner/lib/app-file-sizes.generated.js"
+  },
+  {
+    "path": "lib/font-substitutions.js",
+    "bytes": 2966,
+    "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16",
+    "kind": "git",
+    "source": "lib/font-substitutions.js",
+    "dest": "runner/lib/font-substitutions.js"
+  },
+  {
+    "path": "lib/api-format.js",
+    "bytes": 34699,
+    "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa",
+    "kind": "git",
+    "source": "lib/api-format.js",
+    "dest": "runner/lib/api-format.js"
+  },
+  {
+    "path": "lib/vfs-export.js",
+    "bytes": 4975,
+    "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d",
+    "kind": "git",
+    "source": "lib/vfs-export.js",
+    "dest": "runner/lib/vfs-export.js"
+  },
+  {
+    "path": "lib/vfs-host-files.js",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7",
+    "kind": "git",
+    "source": "lib/vfs-host-files.js",
+    "dest": "runner/lib/vfs-host-files.js"
+  },
+  {
+    "path": "lib/vfs-seed.js",
+    "bytes": 8258,
+    "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d",
+    "kind": "git",
+    "source": "lib/vfs-seed.js",
+    "dest": "runner/lib/vfs-seed.js"
+  },
+  {
+    "path": "lib/app-profiles.js",
+    "bytes": 18930,
+    "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8",
+    "kind": "git",
+    "source": "lib/app-profiles.js",
+    "dest": "runner/lib/app-profiles.js"
+  },
+  {
+    "path": "lib/host-window.js",
+    "bytes": 63698,
+    "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+    "kind": "git",
+    "source": "lib/host-window.js",
+    "dest": "runner/lib/host-window.js"
+  },
+  {
+    "path": "lib/frame-intervals.js",
+    "bytes": 5466,
+    "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b",
+    "kind": "git",
+    "source": "lib/frame-intervals.js",
+    "dest": "runner/lib/frame-intervals.js"
+  },
+  {
+    "path": "lib/host-imports.js",
+    "bytes": 197066,
+    "sha256": "1bc869ea2d7645e2a9e09a10f2611cd5e6cd8eb7c27e660eb4d02310a25c5e60",
+    "kind": "git",
+    "source": "lib/host-imports.js",
+    "dest": "runner/lib/host-imports.js"
+  },
+  {
+    "path": "lib/filesystem.js",
+    "bytes": 157994,
+    "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e",
+    "kind": "git",
+    "source": "lib/filesystem.js",
+    "dest": "runner/lib/filesystem.js"
+  },
+  {
+    "path": "lib/resources-icon.js",
+    "bytes": 20791,
+    "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5",
+    "kind": "git",
+    "source": "lib/resources-icon.js",
+    "dest": "runner/lib/resources-icon.js"
+  },
+  {
+    "path": "lib/d3d9-host.js",
+    "bytes": 89674,
+    "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452",
+    "kind": "git",
+    "source": "lib/d3d9-host.js",
+    "dest": "runner/lib/d3d9-host.js"
+  },
+  {
+    "path": "lib/d3d9-software-backend.js",
+    "bytes": 87766,
+    "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32",
+    "kind": "git",
+    "source": "lib/d3d9-software-backend.js",
+    "dest": "runner/lib/d3d9-software-backend.js"
+  },
+  {
+    "path": "lib/d3d-geometry-batches.js",
+    "bytes": 3149,
+    "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc",
+    "kind": "git",
+    "source": "lib/d3d-geometry-batches.js",
+    "dest": "runner/lib/d3d-geometry-batches.js"
+  },
+  {
+    "path": "lib/d3d9-texture.js",
+    "bytes": 3107,
+    "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e",
+    "kind": "git",
+    "source": "lib/d3d9-texture.js",
+    "dest": "runner/lib/d3d9-texture.js"
+  },
+  {
+    "path": "lib/glide-host.js",
+    "bytes": 17374,
+    "sha256": "4d010474960efb779ce7642495e94165110e430cee96a811a2443d7f560ec591",
+    "kind": "git",
+    "source": "lib/glide-host.js",
+    "dest": "runner/lib/glide-host.js"
+  },
+  {
+    "path": "lib/glide-software.js",
+    "bytes": 27955,
+    "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46",
+    "kind": "git",
+    "source": "lib/glide-software.js",
+    "dest": "runner/lib/glide-software.js"
+  },
+  {
+    "path": "lib/glide-backend.js",
+    "bytes": 41345,
+    "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3",
+    "kind": "git",
+    "source": "lib/glide-backend.js",
+    "dest": "runner/lib/glide-backend.js"
+  },
+  {
+    "path": "lib/gl-render-host.js",
+    "bytes": 15356,
+    "sha256": "0eb27b404eab6d5e078d4431dc5641743bcb85db8c858de8ab428602ebab6812",
+    "kind": "git",
+    "source": "lib/gl-render-host.js",
+    "dest": "runner/lib/gl-render-host.js"
+  },
+  {
+    "path": "lib/host-audio.js",
+    "bytes": 207077,
+    "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb",
+    "kind": "git",
+    "source": "lib/host-audio.js",
+    "dest": "runner/lib/host-audio.js"
+  },
+  {
+    "path": "lib/audio-worklet-host.js",
+    "bytes": 14592,
+    "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14",
+    "kind": "git",
+    "source": "lib/audio-worklet-host.js",
+    "dest": "runner/lib/audio-worklet-host.js"
+  },
+  {
+    "path": "lib/gdi-surface.js",
+    "bytes": 20152,
+    "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a",
+    "kind": "git",
+    "source": "lib/gdi-surface.js",
+    "dest": "runner/lib/gdi-surface.js"
+  },
+  {
+    "path": "lib/cli-failure-cleanup.js",
+    "bytes": 717,
+    "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435",
+    "kind": "git",
+    "source": "lib/cli-failure-cleanup.js",
+    "dest": "runner/lib/cli-failure-cleanup.js"
+  },
+  {
+    "path": "fonts/Courier.fon",
+    "bytes": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457",
+    "kind": "git",
+    "source": "fonts/Courier.fon",
+    "dest": "runner/fonts/Courier.fon"
+  },
+  {
+    "path": "fonts/Fixedsys.fon",
+    "bytes": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4",
+    "kind": "git",
+    "source": "fonts/Fixedsys.fon",
+    "dest": "runner/fonts/Fixedsys.fon"
+  },
+  {
+    "path": "fonts/MSSansSerif.fon",
+    "bytes": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4",
+    "kind": "git",
+    "source": "fonts/MSSansSerif.fon",
+    "dest": "runner/fonts/MSSansSerif.fon"
+  },
+  {
+    "path": "fonts/System.fon",
+    "bytes": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b",
+    "kind": "git",
+    "source": "fonts/System.fon",
+    "dest": "runner/fonts/System.fon"
+  },
+  {
+    "path": "fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1",
+    "kind": "git",
+    "source": "fonts/Terminal.fon",
+    "dest": "runner/fonts/Terminal.fon"
+  },
+  {
+    "path": "fonts/comic-relief/ComicRelief-Bold.ttf",
+    "bytes": 63808,
+    "sha256": "371fd5e24cb1f4ef5bd38940702e9a7d2caf325732e206f0eccdb49ee5345c0c",
+    "kind": "git",
+    "source": "fonts/comic-relief/ComicRelief-Bold.ttf",
+    "dest": "runner/fonts/comic-relief/ComicRelief-Bold.ttf"
+  },
+  {
+    "path": "fonts/comic-relief/ComicRelief-Regular.ttf",
+    "bytes": 53252,
+    "sha256": "557a7ea8e01c3617267ad7bb908eed3fb95591984eca749677cb340f591ad26d",
+    "kind": "git",
+    "source": "fonts/comic-relief/ComicRelief-Regular.ttf",
+    "dest": "runner/fonts/comic-relief/ComicRelief-Regular.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationMono-Bold.ttf",
+    "bytes": 307996,
+    "sha256": "bd62a0672d0b9b6710b01df434c80ad54fa5f0835207eb7b17b7a761463067bb",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationMono-Bold.ttf",
+    "dest": "runner/fonts/liberation/LiberationMono-Bold.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationMono-BoldItalic.ttf",
+    "bytes": 284068,
+    "sha256": "79451f3c09fe25116098853b7a2ca6e2436220ccc11af022979adbcf195be130",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationMono-BoldItalic.ttf",
+    "dest": "runner/fonts/liberation/LiberationMono-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationMono-Italic.ttf",
+    "bytes": 281536,
+    "sha256": "605c01c711b44480a7508d349dfbf3264e81fa43d69e61cfa7d10b86e764c4d1",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationMono-Italic.ttf",
+    "dest": "runner/fonts/liberation/LiberationMono-Italic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationMono-Regular.ttf",
+    "bytes": 319508,
+    "sha256": "f2b83c763e8afd21709333370bed4774337fae82267937e2b5aea7e2fbd922c1",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationMono-Regular.ttf",
+    "dest": "runner/fonts/liberation/LiberationMono-Regular.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSans-Bold.ttf",
+    "bytes": 414456,
+    "sha256": "788abee4c806d660e8aee46689dd8540cd4bb98da03dcc9d171ce3efd99a9173",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSans-Bold.ttf",
+    "dest": "runner/fonts/liberation/LiberationSans-Bold.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSans-BoldItalic.ttf",
+    "bytes": 408996,
+    "sha256": "698da70fc191cc5f33ad4d6d3fe830fe4624b898ea2e3169955928b7c491f1ee",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSans-BoldItalic.ttf",
+    "dest": "runner/fonts/liberation/LiberationSans-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSans-Italic.ttf",
+    "bytes": 415816,
+    "sha256": "e5bae5c4cde31f22142753855f4f8fb86da6ff39955ed3c0a11248b0d16948b0",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSans-Italic.ttf",
+    "dest": "runner/fonts/liberation/LiberationSans-Italic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSans-Regular.ttf",
+    "bytes": 410712,
+    "sha256": "76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSans-Regular.ttf",
+    "dest": "runner/fonts/liberation/LiberationSans-Regular.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSerif-Bold.ttf",
+    "bytes": 370096,
+    "sha256": "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSerif-Bold.ttf",
+    "dest": "runner/fonts/liberation/LiberationSerif-Bold.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSerif-BoldItalic.ttf",
+    "bytes": 376772,
+    "sha256": "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSerif-BoldItalic.ttf",
+    "dest": "runner/fonts/liberation/LiberationSerif-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSerif-Italic.ttf",
+    "bytes": 375632,
+    "sha256": "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSerif-Italic.ttf",
+    "dest": "runner/fonts/liberation/LiberationSerif-Italic.ttf"
+  },
+  {
+    "path": "fonts/liberation/LiberationSerif-Regular.ttf",
+    "bytes": 393576,
+    "sha256": "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74",
+    "kind": "git",
+    "source": "fonts/liberation/LiberationSerif-Regular.ttf",
+    "dest": "runner/fonts/liberation/LiberationSerif-Regular.ttf"
+  },
+  {
+    "path": "fonts/substitutions.json",
+    "bytes": 10654,
+    "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3",
+    "kind": "git",
+    "source": "fonts/substitutions.json",
+    "dest": "runner/fonts/substitutions.json"
+  },
+  {
+    "path": "fonts/wine/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+    "kind": "git",
+    "source": "fonts/wine/marlett.ttf",
+    "dest": "runner/fonts/wine/marlett.ttf"
+  },
+  {
+    "path": "fonts/wine/small_fonts.ttf",
+    "bytes": 19068,
+    "sha256": "c8b7ec4e4db4b9de2f588094376c21306cf829ad5d90b3238f86b34070b74ef6",
+    "kind": "git",
+    "source": "fonts/wine/small_fonts.ttf",
+    "dest": "runner/fonts/wine/small_fonts.ttf"
+  },
+  {
+    "path": "fonts/wine/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+    "kind": "git",
+    "source": "fonts/wine/symbol.ttf",
+    "dest": "runner/fonts/wine/symbol.ttf"
+  },
+  {
+    "path": "fonts/wine/tahoma.ttf",
+    "bytes": 143884,
+    "sha256": "90f1abad4da0ce03da5d2277ee75a9600ce812d37c90eab76e0838ffa7937e55",
+    "kind": "git",
+    "source": "fonts/wine/tahoma.ttf",
+    "dest": "runner/fonts/wine/tahoma.ttf"
+  },
+  {
+    "path": "fonts/wine/tahomabd.ttf",
+    "bytes": 137836,
+    "sha256": "508a2acc88cd6abdd399ae79c9965db43fba75a46bb115117b55d2be2272d889",
+    "kind": "git",
+    "source": "fonts/wine/tahomabd.ttf",
+    "dest": "runner/fonts/wine/tahomabd.ttf"
+  },
+  {
+    "path": "fonts/wine/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+    "kind": "git",
+    "source": "fonts/wine/webdings.ttf",
+    "dest": "runner/fonts/wine/webdings.ttf"
+  },
+  {
+    "path": "fonts/wine/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+    "kind": "git",
+    "source": "fonts/wine/wingding.ttf",
+    "dest": "runner/fonts/wine/wingding.ttf"
+  },
+  {
+    "path": "package-lock.json",
+    "bytes": 22493,
+    "sha256": "0057c3be43c6b6dac68158f84a8c1b7831ccc44c8a92bd3d263df5fbc6425eef",
+    "kind": "git",
+    "source": "package-lock.json",
+    "dest": "runner/package-lock.json"
+  },
+  {
+    "path": "src/02-thread-table.wat",
+    "bytes": 33956,
+    "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426",
+    "kind": "git",
+    "source": "src/02-thread-table.wat",
+    "dest": "runner/src/02-thread-table.wat"
+  },
+  {
+    "path": "src/api_table.json",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "kind": "git",
+    "source": "src/api_table.json",
+    "dest": "runner/src/api_table.json"
+  },
+  {
+    "path": "src/win16-ordinals.generated.json",
+    "bytes": 42442,
+    "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4",
+    "kind": "git",
+    "source": "src/win16-ordinals.generated.json",
+    "dest": "runner/src/win16-ordinals.generated.json"
+  },
+  {
+    "path": "test/binaries/tlbs/stdole2.tlb",
+    "bytes": 15088,
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895",
+    "kind": "git",
+    "source": "test/binaries/tlbs/stdole2.tlb",
+    "dest": "runner/test/binaries/tlbs/stdole2.tlb"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitmapper.js",
+    "bytes": 6477,
+    "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitmapper.js",
+    "dest": "runner/node_modules/pngjs/lib/bitmapper.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitpacker.js",
+    "bytes": 4670,
+    "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitpacker.js",
+    "dest": "runner/node_modules/pngjs/lib/bitpacker.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/chunkstream.js",
+    "bytes": 4249,
+    "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/chunkstream.js",
+    "dest": "runner/node_modules/pngjs/lib/chunkstream.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/constants.js",
+    "bytes": 662,
+    "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/constants.js",
+    "dest": "runner/node_modules/pngjs/lib/constants.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/crc.js",
+    "bytes": 853,
+    "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/crc.js",
+    "dest": "runner/node_modules/pngjs/lib/crc.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-pack.js",
+    "bytes": 4279,
+    "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-pack.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-pack.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-async.js",
+    "bytes": 558,
+    "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-async.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-sync.js",
+    "bytes": 483,
+    "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse.js",
+    "bytes": 4798,
+    "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/format-normaliser.js",
+    "bytes": 2366,
+    "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/format-normaliser.js",
+    "dest": "runner/node_modules/pngjs/lib/format-normaliser.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/interlace.js",
+    "bytes": 2004,
+    "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/interlace.js",
+    "dest": "runner/node_modules/pngjs/lib/interlace.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-async.js",
+    "bytes": 1162,
+    "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-async.js",
+    "dest": "runner/node_modules/pngjs/lib/packer-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-sync.js",
+    "bytes": 1193,
+    "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/packer-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer.js",
+    "bytes": 3723,
+    "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer.js",
+    "dest": "runner/node_modules/pngjs/lib/packer.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/paeth-predictor.js",
+    "bytes": 372,
+    "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/paeth-predictor.js",
+    "dest": "runner/node_modules/pngjs/lib/paeth-predictor.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-async.js",
+    "bytes": 4368,
+    "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-async.js",
+    "dest": "runner/node_modules/pngjs/lib/parser-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-sync.js",
+    "bytes": 2580,
+    "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/parser-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser.js",
+    "bytes": 7720,
+    "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser.js",
+    "dest": "runner/node_modules/pngjs/lib/parser.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png-sync.js",
+    "bytes": 252,
+    "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/png-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png.js",
+    "bytes": 4418,
+    "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png.js",
+    "dest": "runner/node_modules/pngjs/lib/png.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-inflate.js",
+    "bytes": 3751,
+    "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-inflate.js",
+    "dest": "runner/node_modules/pngjs/lib/sync-inflate.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-reader.js",
+    "bytes": 1114,
+    "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-reader.js",
+    "dest": "runner/node_modules/pngjs/lib/sync-reader.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/package.json",
+    "bytes": 1812,
+    "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/package.json",
+    "dest": "runner/node_modules/pngjs/package.json"
+  },
+  {
+    "path": "airstrike-pre6a.exe",
+    "bytes": 143360,
+    "sha256": "0e6f5450109c4c83e97bcf263bc90dc2d64dd83587356dd8a87994cc4246b474",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/airstrike-pre6a.exe",
+    "dest": "game/airstrike-pre6a.exe"
+  },
+  {
+    "path": "airstrikerc",
+    "bytes": 2178,
+    "sha256": "f7c455015f727a1b37b57b84bc48d6a2413c3a6664e94de96e937b8f02faf835",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/airstrikerc",
+    "dest": "game/airstrikerc"
+  },
+  {
+    "path": "data/about.txt",
+    "bytes": 317,
+    "sha256": "839d0a5061f894dcc587e06358389fe24ddc970d48a678656fb2d82dc347cc77",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/about.txt",
+    "dest": "game/data/about.txt"
+  },
+  {
+    "path": "data/airballoon.png",
+    "bytes": 18679,
+    "sha256": "70f690c33fe1129950768a22ac1af33e458c288dec3e9949b92b28a55fcfa744",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/airballoon.png",
+    "dest": "game/data/airballoon.png"
+  },
+  {
+    "path": "data/ball.png",
+    "bytes": 134,
+    "sha256": "c55305df9ab1f50799c2403268d8d644c1f6c7a32774f6ca70688e426f7acde9",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/ball.png",
+    "dest": "game/data/ball.png"
+  },
+  {
+    "path": "data/balloon-bounce.png",
+    "bytes": 15992,
+    "sha256": "cc6cd163d4aa20f4819cbe492964c60a44096a9fd91997e21eb3f664e0ab3774",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/balloon-bounce.png",
+    "dest": "game/data/balloon-bounce.png"
+  },
+  {
+    "path": "data/balloon-deflate.png",
+    "bytes": 7478,
+    "sha256": "5d3a24050890edf90e18e4ab9e4097c47a52949f6235bcfe9728879858cd3749",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/balloon-deflate.png",
+    "dest": "game/data/balloon-deflate.png"
+  },
+  {
+    "path": "data/balloon-float.png",
+    "bytes": 974,
+    "sha256": "c613e464ebe99f06761ef821575339269381b2bd849f4f0eeb3bd936a4c47575",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/balloon-float.png",
+    "dest": "game/data/balloon-float.png"
+  },
+  {
+    "path": "data/balloon.png",
+    "bytes": 768,
+    "sha256": "f113817d0ff2fcac28f9e7af0b507099565a92b9a7d9bdc39d0331f314f55291",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/balloon.png",
+    "dest": "game/data/balloon.png"
+  },
+  {
+    "path": "data/bg-wide-mask.png",
+    "bytes": 6356,
+    "sha256": "69f4aef8393d5e87054f88a1b71e1abadec2d00eb755e863a5fc0a859f2ee997",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bg-wide-mask.png",
+    "dest": "game/data/bg-wide-mask.png"
+  },
+  {
+    "path": "data/bg-wide.png",
+    "bytes": 6374,
+    "sha256": "88a703b494278f085d44ff14a6883f1892971b772603c895c117e29db00a4b78",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bg-wide.png",
+    "dest": "game/data/bg-wide.png"
+  },
+  {
+    "path": "data/bg.png",
+    "bytes": 169376,
+    "sha256": "2df5185f7ae68f177c30e7c94919178758072b16d1ea1e570c25ad50665f0c6b",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bg.png",
+    "dest": "game/data/bg.png"
+  },
+  {
+    "path": "data/bgmask.png",
+    "bytes": 102417,
+    "sha256": "8766965f04a188c054b20a944e20fc85c2b1b1e79bb3bca033acde04f3c223c4",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bgmask.png",
+    "dest": "game/data/bgmask.png"
+  },
+  {
+    "path": "data/bigfont.png",
+    "bytes": 42000,
+    "sha256": "f9e4c9ab56c6060960daeac88e013b44f844b012edca5d9ef7116f882995041b",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bigfont.png",
+    "dest": "game/data/bigfont.png"
+  },
+  {
+    "path": "data/bird.png",
+    "bytes": 976,
+    "sha256": "1e10ddecc6af495b05d6a339451c26597042d9b15da23f08518d50ab341dd9b4",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bird.png",
+    "dest": "game/data/bird.png"
+  },
+  {
+    "path": "data/blackpixel.png",
+    "bytes": 70,
+    "sha256": "125ccba66783542868efffb30beaa1adcfd3bfc7aac971f8a62542e0b6164285",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/blackpixel.png",
+    "dest": "game/data/blackpixel.png"
+  },
+  {
+    "path": "data/blacksmoke.png",
+    "bytes": 6446,
+    "sha256": "a345f3b29c1025b79c41319ff3ef24dab5553484fb01da29a599d2cdb80649db",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/blacksmoke.png",
+    "dest": "game/data/blacksmoke.png"
+  },
+  {
+    "path": "data/blueplane.png",
+    "bytes": 149481,
+    "sha256": "74b61fa65530c4adfcc2797c3a19501ebf83958ae77b3fb68b373a9ea613fa61",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/blueplane.png",
+    "dest": "game/data/blueplane.png"
+  },
+  {
+    "path": "data/blueplanewreck.png",
+    "bytes": 171807,
+    "sha256": "78872c262f147c67ce86686754b6dff078ebb67cbb58cc8b4cbeeae3ab79d489",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/blueplanewreck.png",
+    "dest": "game/data/blueplanewreck.png"
+  },
+  {
+    "path": "data/bomb.png",
+    "bytes": 14047,
+    "sha256": "8c30b83667538d244c96c27753637cc4a41878481155225c37378cf2be2f39a7",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bomb.png",
+    "dest": "game/data/bomb.png"
+  },
+  {
+    "path": "data/bombexplosion.png",
+    "bytes": 131382,
+    "sha256": "7272cbeb72a8aea9687f0a06d41d20b4ebf1ebd4fefa79ae44c8906c646f85f7",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bombexplosion.png",
+    "dest": "game/data/bombexplosion.png"
+  },
+  {
+    "path": "data/bonus-machine.png",
+    "bytes": 15992,
+    "sha256": "2f3b401cc9a624b05bd74075ce8b843c6eef925dc2b7c2855d97326f581a0963",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bonus-machine.png",
+    "dest": "game/data/bonus-machine.png"
+  },
+  {
+    "path": "data/bonus.png",
+    "bytes": 18880,
+    "sha256": "88d1d697c23dcfaf05044fe526054b7113b325a785cdc93409b03e59416bfb46",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bonus.png",
+    "dest": "game/data/bonus.png"
+  },
+  {
+    "path": "data/bouncer.png",
+    "bytes": 7478,
+    "sha256": "5d3a24050890edf90e18e4ab9e4097c47a52949f6235bcfe9728879858cd3749",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bouncer.png",
+    "dest": "game/data/bouncer.png"
+  },
+  {
+    "path": "data/bsmoke-dissolve.png",
+    "bytes": 12342,
+    "sha256": "8f617598c38c0ebb19aaef0a16b58bea43fc9dc6b96359a2f2fd9f8b920de7fa",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bsmoke-dissolve.png",
+    "dest": "game/data/bsmoke-dissolve.png"
+  },
+  {
+    "path": "data/bsmoke-grow.png",
+    "bytes": 12342,
+    "sha256": "427747515b2a2be26a2918caf2d2964aadc074907dd8272829f45a6e37d63d42",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bsmoke-grow.png",
+    "dest": "game/data/bsmoke-grow.png"
+  },
+  {
+    "path": "data/bullet.png",
+    "bytes": 154,
+    "sha256": "85610a3d357c5c3e8c62463851868743f37c228ea75dc3494b564a39c4fa5f7a",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/bullet.png",
+    "dest": "game/data/bullet.png"
+  },
+  {
+    "path": "data/cannon-fire.png",
+    "bytes": 37305,
+    "sha256": "cbd1d8d50fc1edd28f985e0bdcf909f429c5e7e6fe6c70dddfd77aabc00ca47f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannon-fire.png",
+    "dest": "game/data/cannon-fire.png"
+  },
+  {
+    "path": "data/cannon-left.png",
+    "bytes": 17938,
+    "sha256": "eae7bc748734473551d8ce82299951570053749cac2bfff55925d69607154483",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannon-left.png",
+    "dest": "game/data/cannon-left.png"
+  },
+  {
+    "path": "data/cannon-right.png",
+    "bytes": 19546,
+    "sha256": "0b47057a006ea7e95070ca3ce752e1f23b2ee629842479abaa6a8ceccc1cd3d7",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannon-right.png",
+    "dest": "game/data/cannon-right.png"
+  },
+  {
+    "path": "data/cannon-turn-lr.png",
+    "bytes": 38421,
+    "sha256": "e5fd882966991b2dbb717f717d559af8b21f3c29935659454fe1b175df597672",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannon-turn-lr.png",
+    "dest": "game/data/cannon-turn-lr.png"
+  },
+  {
+    "path": "data/cannon-turn-rl.png",
+    "bytes": 36599,
+    "sha256": "844fd7524a625f155ea58eecae05866a805dbf5741f17178c466fb7861549048",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannon-turn-rl.png",
+    "dest": "game/data/cannon-turn-rl.png"
+  },
+  {
+    "path": "data/cannonball.png",
+    "bytes": 313,
+    "sha256": "ec81fd2bf31efe720f28014c15471f4bf19f3f14426fd9edf558eb5c7843a23d",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cannonball.png",
+    "dest": "game/data/cannonball.png"
+  },
+  {
+    "path": "data/cloud.png",
+    "bytes": 30888,
+    "sha256": "15fd247dfdb168666d0a628c8215abfd8de7c1db00cdb2134e9b7a4842acf0ba",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/cloud.png",
+    "dest": "game/data/cloud.png"
+  },
+  {
+    "path": "data/console-bg.png",
+    "bytes": 1458,
+    "sha256": "33034d0994dc79de1394018472b2dd5e4b1b2ad29f6f158b4f45b5bb9816c661",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/console-bg.png",
+    "dest": "game/data/console-bg.png"
+  },
+  {
+    "path": "data/direxpl.png",
+    "bytes": 21817,
+    "sha256": "dbb62949abef4f3b47e854fab65223d0338cb84985b99dfc446164413d52eb03",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/direxpl.png",
+    "dest": "game/data/direxpl.png"
+  },
+  {
+    "path": "data/energymeter.png",
+    "bytes": 3247,
+    "sha256": "0d5694f7762066fa8a9c5a6ec32f9e815967612e7eecbfeeb76118b27e7eafab",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/energymeter.png",
+    "dest": "game/data/energymeter.png"
+  },
+  {
+    "path": "data/fire.png",
+    "bytes": 9539,
+    "sha256": "83b7e03f5274bc01b534abaeb3a35eac1ba8ca6ead00508b60842286e405f513",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/fire.png",
+    "dest": "game/data/fire.png"
+  },
+  {
+    "path": "data/firebomb.png",
+    "bytes": 128993,
+    "sha256": "7bfcf16aa71b2e69e9911c711b2ac172a78dd69a533551f1bbe8daa2f7f79cd7",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/firebomb.png",
+    "dest": "game/data/firebomb.png"
+  },
+  {
+    "path": "data/gauge.png",
+    "bytes": 16716,
+    "sha256": "7acfcd4e77b995aa790ca51f6a344ddf3501e900a634a720b82ea3f01b2dc147",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/gauge.png",
+    "dest": "game/data/gauge.png"
+  },
+  {
+    "path": "data/glyphs-alpha.png",
+    "bytes": 42462,
+    "sha256": "b1ef9dcf4d6c58cc0bd29f17f89470aac5c93f827aa2d7b84ede48a2e1977632",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/glyphs-alpha.png",
+    "dest": "game/data/glyphs-alpha.png"
+  },
+  {
+    "path": "data/gsmoke-dissolve.png",
+    "bytes": 12342,
+    "sha256": "5b409f97c809108b7c8d5f973df5d661b576449e81afa6b1452a5c4cb1faf22c",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/gsmoke-dissolve.png",
+    "dest": "game/data/gsmoke-dissolve.png"
+  },
+  {
+    "path": "data/gsmoke-grow.png",
+    "bytes": 12342,
+    "sha256": "310b3c161f4fdfa586506c15e94e402804d29101414b560db16289e299d7f521",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/gsmoke-grow.png",
+    "dest": "game/data/gsmoke-grow.png"
+  },
+  {
+    "path": "data/hangar.png",
+    "bytes": 46530,
+    "sha256": "a1fc8cfe0f247188bb71af9bf0796ce19fa9f309a80bed9352ac46b5e0f04c14",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/hangar.png",
+    "dest": "game/data/hangar.png"
+  },
+  {
+    "path": "data/ldust-dissolve.png",
+    "bytes": 24630,
+    "sha256": "e68dd82dacb8448e8de58602f19da422fe9d01bc036d71051425f8542c2317d9",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/ldust-dissolve.png",
+    "dest": "game/data/ldust-dissolve.png"
+  },
+  {
+    "path": "data/ldust-grow.png",
+    "bytes": 24630,
+    "sha256": "026ad3fbe36223004d009ad2e6f941c9c838ac5361d862a9006e8d35b3961d5f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/ldust-grow.png",
+    "dest": "game/data/ldust-grow.png"
+  },
+  {
+    "path": "data/lpuff1.png",
+    "bytes": 27702,
+    "sha256": "c173b64009092ca1759dc763cda976eb00af23a0873b67358f99b6fdf7c11f87",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/lpuff1.png",
+    "dest": "game/data/lpuff1.png"
+  },
+  {
+    "path": "data/lpuff2.png",
+    "bytes": 27702,
+    "sha256": "654273c9198e1eb0fcc2eca0f8d74c88f94f3e8fa234128b80432ae59a711db8",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/lpuff2.png",
+    "dest": "game/data/lpuff2.png"
+  },
+  {
+    "path": "data/mark.png",
+    "bytes": 27702,
+    "sha256": "5b90615aa0516e4d5b2f2b733d83d460e5b1e840d32bed916c3256bd83ca2787",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/mark.png",
+    "dest": "game/data/mark.png"
+  },
+  {
+    "path": "data/message.png",
+    "bytes": 3194,
+    "sha256": "7c5b46bf3e76e7c8defe325c54d36da600b1f13827aff90d0cdc35e49a5c6236",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/message.png",
+    "dest": "game/data/message.png"
+  },
+  {
+    "path": "data/missile.png",
+    "bytes": 21442,
+    "sha256": "22f470deff0b97aa1a9e96c5f970f0ddb1f476b8853b4a77adc7e86fed708b55",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/missile.png",
+    "dest": "game/data/missile.png"
+  },
+  {
+    "path": "data/notes.txt",
+    "bytes": 216,
+    "sha256": "352dd1b8705258d1d5e66660c769f8407284cb59ffe69606cd21a9ce502db8fb",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/notes.txt",
+    "dest": "game/data/notes.txt"
+  },
+  {
+    "path": "data/parachute.png",
+    "bytes": 83545,
+    "sha256": "1478da50836d83b2df0b801bf3813a6d99f4e2bc4c6727f7c45f8688b6bcc3b5",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/parachute.png",
+    "dest": "game/data/parachute.png"
+  },
+  {
+    "path": "data/puff-dissolve.png",
+    "bytes": 27702,
+    "sha256": "bad95e7cb818a2d9f9c25533bbccd7b104611230feb3ff8a8ca6ccf4fcd4930d",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/puff-dissolve.png",
+    "dest": "game/data/puff-dissolve.png"
+  },
+  {
+    "path": "data/puff.png",
+    "bytes": 27702,
+    "sha256": "8f91ce584fa467944f9c2ef1775ee493270211552d0d3fbae619a088b74e86e1",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/puff.png",
+    "dest": "game/data/puff.png"
+  },
+  {
+    "path": "data/redplane.png",
+    "bytes": 107273,
+    "sha256": "f5b520a4d335d346d0aeaa896eafa0443c6d1df0296af3c7d520fe93717718e0",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/redplane.png",
+    "dest": "game/data/redplane.png"
+  },
+  {
+    "path": "data/redplanewreck.png",
+    "bytes": 155508,
+    "sha256": "3523451769f1189209193cc33ebdd7dcbed10d2d1b0f5be5759aa8c9eb747b52",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/redplanewreck.png",
+    "dest": "game/data/redplanewreck.png"
+  },
+  {
+    "path": "data/sdust-dissolve.png",
+    "bytes": 3510,
+    "sha256": "2f10406faa8ac366b34718893f4cffd842b50e61cf9699483e266cea0acb09e9",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sdust-dissolve.png",
+    "dest": "game/data/sdust-dissolve.png"
+  },
+  {
+    "path": "data/sdust-grow.png",
+    "bytes": 3510,
+    "sha256": "b609e14baf043b53ab74f9239aaa56bcdd5ce268ce8765824ed97730ac991008",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sdust-grow.png",
+    "dest": "game/data/sdust-grow.png"
+  },
+  {
+    "path": "data/smallfont-green.png",
+    "bytes": 20944,
+    "sha256": "06afff659f6891fd49c94bcec98eb6205da46963c369cdedcd5e91cf6013c995",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/smallfont-green.png",
+    "dest": "game/data/smallfont-green.png"
+  },
+  {
+    "path": "data/smoke.png",
+    "bytes": 3674,
+    "sha256": "8db470872e20d7ee6ca07c751d3b85111b0ae1404940442327afb2c6d1c58a9d",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/smoke.png",
+    "dest": "game/data/smoke.png"
+  },
+  {
+    "path": "data/sound/bird.wav",
+    "bytes": 10950,
+    "sha256": "45021de9de359a49ec64b9ea5172402f96713b13814bd818b81ef047d023464f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/bird.wav",
+    "dest": "game/data/sound/bird.wav"
+  },
+  {
+    "path": "data/sound/hummm.wav",
+    "bytes": 106156,
+    "sha256": "5a14764519760f0cf229ce34fc84505851b138399da40b08b02d37a76b892e85",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/hummm.wav",
+    "dest": "game/data/sound/hummm.wav"
+  },
+  {
+    "path": "data/sound/huvum.wav",
+    "bytes": 28268,
+    "sha256": "7094d1d74aa70c85358e727035143ec3fcecbd05901d0adfa3d1828e75125fa8",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/huvum.wav",
+    "dest": "game/data/sound/huvum.wav"
+  },
+  {
+    "path": "data/sound/klank2.wav",
+    "bytes": 9644,
+    "sha256": "32007b62c3d7fc7ef11d036126f0e9c3b903330d0758b56e1e489c081e366442",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/klank2.wav",
+    "dest": "game/data/sound/klank2.wav"
+  },
+  {
+    "path": "data/sound/shoot.wav",
+    "bytes": 28756,
+    "sha256": "e4d1e0d01589eccd9fa552a5b71a5db0b21db074b20276ce1c0f17aa78a3cd51",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/shoot.wav",
+    "dest": "game/data/sound/shoot.wav"
+  },
+  {
+    "path": "data/sound/splat2a.wav",
+    "bytes": 1626,
+    "sha256": "48554ceb309f6c78b1f06ddb5aa34a950aa76c82d5f2a9fcfc8f205e914ee0c7",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/splat2a.wav",
+    "dest": "game/data/sound/splat2a.wav"
+  },
+  {
+    "path": "data/sound/splat3a.wav",
+    "bytes": 2650,
+    "sha256": "3aced671a1e13a16ddf98413b2699c244f7332cbfe85a5dcfa7d9eb22c1b03a5",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/splat3a.wav",
+    "dest": "game/data/sound/splat3a.wav"
+  },
+  {
+    "path": "data/sound/thump1.wav",
+    "bytes": 21420,
+    "sha256": "8ba2a7758f55e660713670151ca426f1c1e58bbce3b6f637c10a682b6c2d5f4f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/thump1.wav",
+    "dest": "game/data/sound/thump1.wav"
+  },
+  {
+    "path": "data/sound/thump4.wav",
+    "bytes": 20908,
+    "sha256": "5d0d36d108e7f7c3a41bb39141ae1b1d01b9c3af12bd3f85860a686debceaceb",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/thump4.wav",
+    "dest": "game/data/sound/thump4.wav"
+  },
+  {
+    "path": "data/sound/twirp.wav",
+    "bytes": 3860,
+    "sha256": "00db4f89af4ca9d679ec32778c45a360b0115498b91a8835c5dbe602de14e0b9",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/twirp.wav",
+    "dest": "game/data/sound/twirp.wav"
+  },
+  {
+    "path": "data/sound/whrii.wav",
+    "bytes": 33676,
+    "sha256": "820864bb9fd00d9e29c9706d712192f4510c119b212e2ee1e09616af0eaaa2a0",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/sound/whrii.wav",
+    "dest": "game/data/sound/whrii.wav"
+  },
+  {
+    "path": "data/whitesmoke.png",
+    "bytes": 4977,
+    "sha256": "4d231a491d1d472afaf4146a3e5509abe0c20232c14487e5d2d235c3c47fb7bf",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/whitesmoke.png",
+    "dest": "game/data/whitesmoke.png"
+  },
+  {
+    "path": "data/wsmoke-dissolve.png",
+    "bytes": 6966,
+    "sha256": "7e7b577b083ec06fa86d314bab2ae0060598fa247d9715af5d47372dd9c71319",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/wsmoke-dissolve.png",
+    "dest": "game/data/wsmoke-dissolve.png"
+  },
+  {
+    "path": "data/wsmoke-grow.png",
+    "bytes": 6966,
+    "sha256": "abe96ea4ac2b2b611f758f37642bba18cf45d7256901cc28f755542e1e9cfc52",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/wsmoke-grow.png",
+    "dest": "game/data/wsmoke-grow.png"
+  },
+  {
+    "path": "data/zeppelin-left.png",
+    "bytes": 5374,
+    "sha256": "bf32931384b324a9d8f9d54c654d47b33c1aefa7234f4fe769067822ce015428",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin-left.png",
+    "dest": "game/data/zeppelin-left.png"
+  },
+  {
+    "path": "data/zeppelin-right.png",
+    "bytes": 5405,
+    "sha256": "fb78d3ac56feccc0e70bc53d5c25bd25b3ccfe7fe6c31ce286b79c534ee47cd0",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin-right.png",
+    "dest": "game/data/zeppelin-right.png"
+  },
+  {
+    "path": "data/zeppelin-turn-lr.png",
+    "bytes": 74421,
+    "sha256": "55d2ce8a2747812829560966a387dfc600729e2fd4b282da86079b90a3f7832f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin-turn-lr.png",
+    "dest": "game/data/zeppelin-turn-lr.png"
+  },
+  {
+    "path": "data/zeppelin-turn-rl.png",
+    "bytes": 74011,
+    "sha256": "479705a00b71187f945402b4c41b9df32d27b05f58619808796134e09d3a4c6b",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin-turn-rl.png",
+    "dest": "game/data/zeppelin-turn-rl.png"
+  },
+  {
+    "path": "data/zeppelin-wreck.png",
+    "bytes": 19735,
+    "sha256": "7f56f6f291daa1664ee32923faad3c84302277d3efdc3a64ff68fa0a7047b4be",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin-wreck.png",
+    "dest": "game/data/zeppelin-wreck.png"
+  },
+  {
+    "path": "data/zeppelin.png",
+    "bytes": 41527,
+    "sha256": "bf620abe82faa897814fd773763a5891ddbcf6f4cb739ed0a32c92c57d8bdecf",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/data/zeppelin.png",
+    "dest": "game/data/zeppelin.png"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL.dll",
+    "bytes": 229376,
+    "sha256": "7644c783c600b821f84e25b6ade44217e53e2bbae85fcc59e6296a0363a5a0a9",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL.dll",
+    "dest": "game/SDL.dll"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_image.dll",
+    "bytes": 36864,
+    "sha256": "80d5825b9697cf769e58472aeac87338214702feef9e095f552be33564b25d35",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_image.dll",
+    "dest": "game/SDL_image.dll"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_mixer.dll",
+    "bytes": 270336,
+    "sha256": "331e6ade3e42718cddd73d8ada553f0c400db8ae7fe87062bd51636622703e75",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/SDL_mixer.dll",
+    "dest": "game/SDL_mixer.dll"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/jpeg.dll",
+    "bytes": 169443,
+    "sha256": "ac3f25027c9725fb6c6a4d54b3764b08cd99928a395b1cfe8682bb447b3790be",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/jpeg.dll",
+    "dest": "game/jpeg.dll"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/libpng1.dll",
+    "bytes": 94720,
+    "sha256": "3f10e96d56d45e5c62d5b1fa12182503e8c1f59b6a0018dbb4dcea3df208811f",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/libpng1.dll",
+    "dest": "game/libpng1.dll"
+  },
+  {
+    "path": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/msvcr70.dll",
+    "bytes": 307200,
+    "sha256": "90ba388a08475bea3e2febb51c3f17ced0ccda3c9ba3e7b1831db046cf38bc37",
+    "kind": "file",
+    "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/msvcr70.dll",
+    "dest": "game/msvcr70.dll"
+  },
+  {
+    "path": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+    "bytes": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/test/binaries/dlls/msvcrt.dll",
+    "dest": "game/msvcrt.dll"
+  },
+  {
+    "path": "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+    "bytes": 53760,
+    "sha256": "0df0c22bf411ad670d7b8fe5a533e4831313d5a3118cf9216389c642c90ec2f9",
+    "kind": "file",
+    "source": "/tmp/airstrike-legacy-zlib-private-oct23/docs/re-notes/airstrike-legacy-zlib-20261023/zlib.dll",
+    "dest": "game/zlib.dll"
+  },
+  {
+    "bytes": 1879746,
+    "sha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "kind": "file",
+    "source": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/build/wine-assembly.wasm",
+    "dest": "runner/build/wine-assembly.wasm"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Bold.ttf",
+    "bytes": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7",
+    "kind": "git",
+    "source": "fonts/subset/ComicRelief-Bold.ttf",
+    "dest": "runner/fonts/subset/ComicRelief-Bold.ttf"
+  },
+  {
+    "path": "fonts/subset/ComicRelief-Regular.ttf",
+    "bytes": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00",
+    "kind": "git",
+    "source": "fonts/subset/ComicRelief-Regular.ttf",
+    "dest": "runner/fonts/subset/ComicRelief-Regular.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Bold.ttf",
+    "bytes": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110",
+    "kind": "git",
+    "source": "fonts/subset/LiberationMono-Bold.ttf",
+    "dest": "runner/fonts/subset/LiberationMono-Bold.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "bytes": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264",
+    "kind": "git",
+    "source": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "dest": "runner/fonts/subset/LiberationMono-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Italic.ttf",
+    "bytes": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705",
+    "kind": "git",
+    "source": "fonts/subset/LiberationMono-Italic.ttf",
+    "dest": "runner/fonts/subset/LiberationMono-Italic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationMono-Regular.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7",
+    "kind": "git",
+    "source": "fonts/subset/LiberationMono-Regular.ttf",
+    "dest": "runner/fonts/subset/LiberationMono-Regular.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Bold.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSans-Bold.ttf",
+    "dest": "runner/fonts/subset/LiberationSans-Bold.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "dest": "runner/fonts/subset/LiberationSans-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Italic.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSans-Italic.ttf",
+    "dest": "runner/fonts/subset/LiberationSans-Italic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSans-Regular.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSans-Regular.ttf",
+    "dest": "runner/fonts/subset/LiberationSans-Regular.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Bold.ttf",
+    "bytes": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSerif-Bold.ttf",
+    "dest": "runner/fonts/subset/LiberationSerif-Bold.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "bytes": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "dest": "runner/fonts/subset/LiberationSerif-BoldItalic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Italic.ttf",
+    "bytes": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSerif-Italic.ttf",
+    "dest": "runner/fonts/subset/LiberationSerif-Italic.ttf"
+  },
+  {
+    "path": "fonts/subset/LiberationSerif-Regular.ttf",
+    "bytes": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9",
+    "kind": "git",
+    "source": "fonts/subset/LiberationSerif-Regular.ttf",
+    "dest": "runner/fonts/subset/LiberationSerif-Regular.ttf"
+  },
+  {
+    "path": "fonts/subset/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1",
+    "kind": "git",
+    "source": "fonts/subset/marlett.ttf",
+    "dest": "runner/fonts/subset/marlett.ttf"
+  },
+  {
+    "path": "fonts/subset/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f",
+    "kind": "git",
+    "source": "fonts/subset/symbol.ttf",
+    "dest": "runner/fonts/subset/symbol.ttf"
+  },
+  {
+    "path": "fonts/subset/tahoma.ttf",
+    "bytes": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459",
+    "kind": "git",
+    "source": "fonts/subset/tahoma.ttf",
+    "dest": "runner/fonts/subset/tahoma.ttf"
+  },
+  {
+    "path": "fonts/subset/tahomabd.ttf",
+    "bytes": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab",
+    "kind": "git",
+    "source": "fonts/subset/tahomabd.ttf",
+    "dest": "runner/fonts/subset/tahomabd.ttf"
+  },
+  {
+    "path": "fonts/subset/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a",
+    "kind": "git",
+    "source": "fonts/subset/webdings.ttf",
+    "dest": "runner/fonts/subset/webdings.ttf"
+  },
+  {
+    "path": "fonts/subset/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e",
+    "kind": "git",
+    "source": "fonts/subset/wingding.ttf",
+    "dest": "runner/fonts/subset/wingding.ttf"
+  },
+  {
+    "path": "tools/watx-closure.js",
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c",
+    "kind": "git",
+    "source": "tools/watx-closure.js",
+    "dest": "runner/tools/watx-closure.js"
+  },
+  {
+    "path": "tools/region-layout-hash.js",
+    "bytes": 8031,
+    "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac",
+    "kind": "git",
+    "source": "tools/region-layout-hash.js",
+    "dest": "runner/tools/region-layout-hash.js"
+  },
+  {
+    "path": "tools/region-layout.js",
+    "bytes": 8174,
+    "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139",
+    "kind": "git",
+    "source": "tools/region-layout.js",
+    "dest": "runner/tools/region-layout.js"
+  }
+]

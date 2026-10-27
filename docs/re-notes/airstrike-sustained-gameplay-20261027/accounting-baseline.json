@@ -1,0 +1,33 @@
+{
+  "at": 1793068864.3751976,
+  "launcher": {
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/stderr.log": 189,
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/root-ref-digest.json": 196,
+    "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/events.jsonl": 271190
+  },
+  "walBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4396072,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 26484736
+  },
+  "thread": "01a17b37-609f-7462-bba1-1627854461b9",
+  "localFree": 3218411520,
+  "plannedLocal": {
+    "sparseGitReportTemp": 8388608,
+    "launcherEventsSessionWAL": 8388608,
+    "selectedCaptures": 8388608,
+    "publication": 8388608,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "plannedRemote": {
+    "closure": 17345286,
+    "transferWorkingCopy": 1048576,
+    "captures": 16777216,
+    "text": 2097152,
+    "helpersEvidence": 8388608,
+    "publicationCopies": 16777216,
+    "futureGrowth": 8388608,
+    "reserve": 8388608
+  }
+}

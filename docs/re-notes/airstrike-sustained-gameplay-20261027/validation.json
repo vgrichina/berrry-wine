@@ -1,0 +1,48 @@
+{
+  "terminal": {
+    "returncode": 0,
+    "reason": "exited",
+    "fault": false,
+    "elapsed": 115.59626216600009,
+    "signals": [],
+    "remaining": [],
+    "peakGroupRSS": 345542656,
+    "logBytes": 15848,
+    "commandsSent": 37,
+    "plannedCommands": 37,
+    "finished": 1793069096.2758615
+  },
+  "frames": [
+    {
+      "name": "play-20s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 161018,
+      "sha256": "639e971b5fc9fca1ee964f1e022235b8c007a7e0fcb33267e955a2e2830a6199"
+    },
+    {
+      "name": "play-50s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 183783,
+      "sha256": "244f0edee67332cc183c55453f13b0b5728dcdb6175e02ffcd01916e5fbf6e08"
+    },
+    {
+      "name": "play-85s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 156288,
+      "sha256": "a74c97f6977195c59879050a3a43fe53b8b2bc2f5c34b3bd3da16a9540ceb48d"
+    },
+    {
+      "name": "quit-outcome.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 168691,
+      "sha256": "4d50eb47ab895259b4965c6c3b243babd5e57d688f704e350b2374a8ce71f883"
+    }
+  ],
+  "mechanicalIntegrityPass": true,
+  "visualAcceptance": "requires separate reviewed screenshot record",
+  "lateCaptureAcknowledged": true
+}

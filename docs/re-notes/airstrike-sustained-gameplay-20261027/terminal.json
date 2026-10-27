@@ -1,0 +1,13 @@
+{
+  "returncode": 0,
+  "reason": "exited",
+  "fault": false,
+  "elapsed": 115.59626216600009,
+  "signals": [],
+  "remaining": [],
+  "peakGroupRSS": 345542656,
+  "logBytes": 15848,
+  "commandsSent": 37,
+  "plannedCommands": 37,
+  "finished": 1793069096.2758615
+}

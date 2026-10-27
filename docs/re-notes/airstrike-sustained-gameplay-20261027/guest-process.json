@@ -1,0 +1,31 @@
+{
+  "pid": 26540,
+  "pgid": 26540,
+  "started": 1793068980.6795971,
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "--require",
+    "/home/user/airstrike-sustained-oct27/evidence/abi-preload.cjs",
+    "/home/user/airstrike-sustained-oct27/runner/test/run.js",
+    "--no-build",
+    "--wasm=/home/user/airstrike-sustained-oct27/runner/build/wine-assembly.wasm",
+    "--exe=/home/user/airstrike-sustained-oct27/game/airstrike-pre6a.exe",
+    "--dlls=/home/user/airstrike-sustained-oct27/game/SDL.dll,/home/user/airstrike-sustained-oct27/game/SDL_image.dll,/home/user/airstrike-sustained-oct27/game/SDL_mixer.dll,/home/user/airstrike-sustained-oct27/game/jpeg.dll,/home/user/airstrike-sustained-oct27/game/libpng1.dll,/home/user/airstrike-sustained-oct27/game/msvcr70.dll,/home/user/airstrike-sustained-oct27/game/msvcrt.dll,/home/user/airstrike-sustained-oct27/game/zlib.dll",
+    "--vfs-tree=/home/user/airstrike-sustained-oct27/game",
+    "--cwd=C:\\",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-threads",
+    "--memory-mb=512",
+    "--max-seconds=115",
+    "--max-batches=1000000",
+    "--batch-size=20000",
+    "--tick-ms-per-batch=5",
+    "--trace-input",
+    "--screen=800x600",
+    "--control-stdin",
+    "--no-close",
+    "--png=/home/user/airstrike-sustained-oct27/evidence/quit-outcome.png"
+  ]
+}

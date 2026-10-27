@@ -1,0 +1,26 @@
+[
+  {
+    "stage": "Git read-only source extraction",
+    "detail": "Initial own Git wrapper polled a pipe without draining, terminated only its own blocked Git child and corrected communicate/drain; no donor writes or resource-limit changes."
+  },
+  {
+    "stage": "Boat detach CLI",
+    "detail": "CLI rejected incompatible timeout+detach flags before execution; corrected to supported detach."
+  },
+  {
+    "stage": "Node environment checkpoint",
+    "detail": "Foreground/detached inherited environments differed, gate rejected before guest Popen; reran only affected startup check with explicit same PATH HOME LANG TZ. Guest count remains one."
+  },
+  {
+    "stage": "packaging",
+    "detail": "Missing own sparse docs directory corrected with mkdir before writing report."
+  },
+  {
+    "stage": "Git alternate traversal",
+    "detail": "Inherited chain exceeded Git alternate nesting; listed existing read-only object directories leaf-first in own alternates, with no donor writes/copy/repack."
+  },
+  {
+    "stage": "whitespace validation",
+    "detail": "Removed blank-line whitespace from own Git helper before commit; no runtime/input change."
+  }
+]

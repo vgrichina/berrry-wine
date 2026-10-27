@@ -1,0 +1,57 @@
+{
+  "reviewed": true,
+  "method": "view_image on all four original PNGs; no image edits",
+  "frames": [
+    {
+      "name": "play-20s.png",
+      "observation": "Blue human-plane sprite visible around (500,435), combat effects and projectiles; Console covers x0..647 y9..335. Held fire/acceleration acknowledged."
+    },
+    {
+      "name": "play-50s.png",
+      "observation": "Changed plane positions, smoke trails, projectiles and score; blue sprites visible at right around (680,300)/(740,375). Console still occludes upper-left. Held fire/acceleration acknowledged."
+    },
+    {
+      "name": "play-85s.png",
+      "observation": "Later intact active scene; red plane and blue plane fragment at right edge around y480, with trails and combat text. Human plane is partly clipped; no complete late human-plane firing claim."
+    },
+    {
+      "name": "quit-outcome.png",
+      "observation": "Harness final PNG uses dx slot6 800x600, unlike input PNG desktop route. No Console overlay on this surface; scene and small blue-plane fragment at lower-left remain. This is a live game surface after max-seconds, not a successful Quit image."
+    }
+  ],
+  "hashes": [
+    {
+      "name": "play-20s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 161018,
+      "sha256": "639e971b5fc9fca1ee964f1e022235b8c007a7e0fcb33267e955a2e2830a6199"
+    },
+    {
+      "name": "play-50s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 183783,
+      "sha256": "244f0edee67332cc183c55453f13b0b5728dcdb6175e02ffcd01916e5fbf6e08"
+    },
+    {
+      "name": "play-85s.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 156288,
+      "sha256": "a74c97f6977195c59879050a3a43fe53b8b2bc2f5c34b3bd3da16a9540ceb48d"
+    },
+    {
+      "name": "quit-outcome.png",
+      "width": 800,
+      "height": 600,
+      "bytes": 168691,
+      "sha256": "4d50eb47ab895259b4965c6c3b243babd5e57d688f704e350b2374a8ce71f883"
+    }
+  ],
+  "sustainedOrdinarySessionObserved": true,
+  "fullObjectiveAccepted": false,
+  "normalQuit": false,
+  "lateUnobscuredHumanPlaneFire": false,
+  "noTrap": true
+}

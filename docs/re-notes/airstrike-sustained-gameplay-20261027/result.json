@@ -1,0 +1,38 @@
+{
+  "status": "PARTIAL_OBJECTIVE_NOT_MET",
+  "historicalSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "runnerSha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "moduleSha256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "guestSessions": 1,
+  "terminal": {
+    "returncode": 0,
+    "reason": "exited",
+    "fault": false,
+    "elapsed": 115.59626216600009,
+    "signals": [],
+    "remaining": [],
+    "peakGroupRSS": 345542656,
+    "logBytes": 15848,
+    "commandsSent": 37,
+    "plannedCommands": 37,
+    "finished": 1793069096.2758615
+  },
+  "passed": [
+    "261 pinned closure files transferred and rehashed before/after",
+    "actual canonical parser/tree mount enumeration",
+    "exact Node startup limits/environment",
+    "115 second ordinary-input session without trap",
+    "separated gameplay captures at20/50/85 seconds",
+    "no owned processes remain"
+  ],
+  "remaining": [
+    "normal in-game Quit; actual terminal is harness max-seconds",
+    "complete unobscured late human-plane firing frame",
+    "independent acceptance/current-main qualification"
+  ],
+  "box": "bx_ra5kxtgq",
+  "state": "RUNNING via successful API exec",
+  "expiry": "2026-10-27T03:34:45Z",
+  "shutdownOwner": "coordinator",
+  "evidenceRoot": "/tmp/airstrike-sustained-gameplay-oct27/ops"
+}

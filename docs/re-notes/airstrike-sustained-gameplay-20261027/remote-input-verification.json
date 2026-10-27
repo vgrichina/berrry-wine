@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_yvqgvzbnnnfw",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T02:41:52.120Z",
+  "launcherFailed": false,
+  "noticedMs": 26,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 26,
+  "startedAt": "2026-10-27T02:41:52.022Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 261, \"bytes\": 17345286, \"bad\": [], \"free\": 49012260864}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

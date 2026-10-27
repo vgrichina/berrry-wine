@@ -1,0 +1,6 @@
+{
+  "guestStarted": false,
+  "firstDetachedPID": 26448,
+  "rejection": "API foreground and detach environments differ; exact environment gate rejected before Popen",
+  "resolution": "explicit minimal same PATH HOME LANG TZ for Node startup and actual guest; limits unchanged"
+}

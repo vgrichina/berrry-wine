@@ -1,0 +1,20 @@
+{
+  "reason": "leaf-first explicit existing read-only alternates avoids inherited excessive nesting; no copy/repack/donor edits",
+  "directories": [
+    "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects"
+  ]
+}
