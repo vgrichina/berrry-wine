@@ -1,0 +1,383 @@
+{
+  "publication": {
+    "commit": "df17c90c42ad4ce384ce0a9bd10570620f2eb253",
+    "remoteRef": "refs/heads/task/alien-retained-staging-menu-mission-oct27",
+    "exactRemote": "df17c90c42ad4ce384ce0a9bd10570620f2eb253\trefs/heads/task/alien-retained-staging-menu-mission-oct27",
+    "exactRemoteVerified": true,
+    "receipt": "git-1793093118094210612.json",
+    "strictSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "sourceEdits": false,
+    "mainWrite": false
+  },
+  "cleanup": {
+    "boardWatcher": {
+      "toolSession": 42789,
+      "terminalExit": 143,
+      "ownSessionNoLongerLive": true,
+      "otherWatchersUntouched": true,
+      "terminationCause": "not inferred"
+    },
+    "remoteOwnedLive": [],
+    "remoteReceipt": "remote-recovery.json",
+    "remoteSupervisorCleanupComplete": true,
+    "box": "bx_yydnx5av",
+    "boxState": "RUNNING_API_EXEC_OBSERVED",
+    "expiry": "2026-10-27T09:43:30Z",
+    "shutdownOwner": "coordinator",
+    "stopDeleteResume": false,
+    "localSupervisors": [
+      {
+        "path": "supervision-1793092817813530073.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092611751240638.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092587731252763.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092960838041314.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092592367907357.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092892276547195.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092583219975181.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092837319019821.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092668891556701.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092880226762994.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092843627699185.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092624087134078.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092777833459223.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092761241861884.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092709955757567.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092930608232427.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092869303865494.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092687117838303.json",
+        "exit": 1,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793093097864991914.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092632376826522.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092606883535531.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092770689101752.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092854363032583.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092830981176057.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092596638668515.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092888332791673.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092905956404871.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793093182622718869.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092683978431731.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793093105051382569.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092681440982025.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793093067989525765.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092651659027499.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793093035993400650.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092674952203141.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092645555346226.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092753283219752.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092771868234116.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092534650204408.json",
+        "exit": 1,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092792279195920.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092773812305953.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092563630832325.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092781505699758.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      },
+      {
+        "path": "supervision-1793092539745285094.json",
+        "exit": 0,
+        "cleanupComplete": true,
+        "stopReason": null
+      }
+    ],
+    "noHostCleanup": true
+  },
+  "accounting": {
+    "at": 1793093182.4991198,
+    "peers": [
+      {
+        "task": "alien-retained-staging-menu-mission-oct27",
+        "actual": 46694400,
+        "remaining": 87523328
+      },
+      {
+        "task": "enigma-full-frame-terminal-startgame-oct27",
+        "actual": 6488064,
+        "remaining": 0,
+        "terminal": true
+      },
+      {
+        "task": "airstrike-sixteen-capture-ordinary-quit-oct27",
+        "actual": 5939200,
+        "remaining": 0,
+        "terminal": true
+      },
+      {
+        "task": "ricochet-measured-cpu-round-gameplay-oct27",
+        "actual": 19795968,
+        "remaining": 114421760
+      },
+      {
+        "task": "penguin-accepted-causal-main-integration-oct27",
+        "actual": 4276224,
+        "remaining": 0,
+        "terminal": true
+      }
+    ],
+    "clients": [
+      {
+        "pid": 4003114,
+        "rss": 103260160
+      },
+      {
+        "pid": 4003272,
+        "rss": 104542208
+      }
+    ],
+    "free": 7871975424,
+    "projectedFree": 7653253120,
+    "memAvailable": 3501666304,
+    "remainingRAM": 2543661056,
+    "own": 20221952,
+    "cap": 134217728,
+    "actualRSSAlreadyInMemAvailable": true,
+    "walCurrentConservativeUpperBoundOnce": 25853952,
+    "walRows": [
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-wal",
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-wal",
+        "allocated": 12251136
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-wal",
+        "allocated": 4157440
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-wal",
+        "allocated": 630784
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-wal",
+        "allocated": 4612096
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+        "allocated": 4202496
+      }
+    ],
+    "initialWALBaselineOmitted": true,
+    "noExactPositiveGrowthClaim": true,
+    "ownIncludingConservativeWAL": 46694400,
+    "sourceGit": 5877760,
+    "ops": 14340096,
+    "eventsSession": 618496,
+    "reserve": 41943040,
+    "ownProjected": 88637440,
+    "actualMaterializationAlreadyInFree": true,
+    "oldCompletedReservations": 0
+  }
+}
