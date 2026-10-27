@@ -1,0 +1,622 @@
+{
+  "task": "airstrike-directinput-format-independent-accept-oct27",
+  "candidate": "a1af2860361539639cb1ce1f307c83cb2276c307",
+  "verdict": "REJECT",
+  "firstDefect": "Accepted right-Shift-only custom format returns DI_OK/count0 for physical right Shift down/up; left-only positive returns count2.",
+  "sourcePins": {
+    "lib/guest-rpc.js": {
+      "blob": "a88d4f2a877bc92c9a6caa39b99c5362bc5054ff",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/lib/guest-rpc.js",
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    "lib/host-window.js": {
+      "blob": "2a26cde804a1af34386630db91ce60b386515bfc",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/lib/host-window.js",
+      "bytes": 64156,
+      "sha256": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9"
+    },
+    "lib/renderer-input.js": {
+      "blob": "9854f2cb1a1b53f5b5ca557646d592c01c6e5ef4",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/lib/renderer-input.js",
+      "bytes": 185229,
+      "sha256": "643fb191891803e6200cb83fdbc106d542459b4a21ee43941d97bd22a98b9bb8"
+    },
+    "lib/renderer.js": {
+      "blob": "a82e1e8731e7622f9e9529ae8f83ea461dfc68be",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/lib/renderer.js",
+      "bytes": 214846,
+      "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03"
+    },
+    "src/00-regions.wat": {
+      "blob": "7736935d0599f0b60dfa5071f1c6bec2e62b47d8",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/00-regions.wat",
+      "bytes": 68743,
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557"
+    },
+    "src/01-header.wat": {
+      "blob": "a568afa6575bcd2a7467bcaf73172772146c8bf6",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/01-header.wat",
+      "bytes": 297934,
+      "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+    },
+    "src/03-registers.wat": {
+      "blob": "db1b5b62825b251432e094891ed09d76e2e81f69",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/03-registers.wat",
+      "bytes": 61869,
+      "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+    },
+    "src/03a-page-watch.wat": {
+      "blob": "08c4dd1da792c630d2d5e77940780b107ce66ff1",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/03a-page-watch.wat",
+      "bytes": 8175,
+      "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+    },
+    "src/09a8-handlers-directx.wat": {
+      "blob": "0f6b901797a0f239e7fa6044d7365e90c2b743c0",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/09a8-handlers-directx.wat",
+      "bytes": 1056692,
+      "sha256": "f7696c3f557272bd3247c1ad9977034c831db0c4cc04d8a007829718178563ab"
+    },
+    "src/10-helpers.wat": {
+      "blob": "1c02e670575f60ed0170abb02d9973cc2cab2d29",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/src/10-helpers.wat",
+      "bytes": 533986,
+      "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+    },
+    "test/run.js": {
+      "blob": "a0db98c4b9275c5e7c555195fdbe85d385115920",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/run.js",
+      "bytes": 690638,
+      "sha256": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7"
+    },
+    "test/test-directinput-buffered-keyboard.js": {
+      "blob": "3af389ebcbb13fcfd38cf8333b8d893f7b760af4",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/test-directinput-buffered-keyboard.js",
+      "bytes": 17062,
+      "sha256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a"
+    },
+    "test/test-directinput-independent-custom-capacity.js": {
+      "blob": "2215c9d85cba24555a474e83234f9c1b24e0defe",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/test-directinput-independent-custom-capacity.js",
+      "bytes": 3293,
+      "sha256": "6d4e47187d417e5d81c11039eaa104a38d16a177aae94d745664468945b56cd0"
+    },
+    "tools/watx.js": {
+      "blob": "ecd5aef4fa16b4d1209f24d6d371b28fb7ce8b71",
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/tools/watx.js",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    }
+  },
+  "test": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/test-directinput-independent-modifier-format.js",
+    "bytes": 4148,
+    "sha256": "69a3a1c4c958b534b9de71fcbad826eb6559cab9b4c9cb6dac7331650c903661"
+  },
+  "checks": {
+    "unchanged-first": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "independent oracle controls",
+          "pass": true,
+          "positive": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                150,
+                1
+              ],
+              [
+                7,
+                0,
+                150,
+                2
+              ]
+            ]
+          },
+          "rejected": [
+            "lost requested edge",
+            "reversed requested edges",
+            "spurious overflow"
+          ]
+        },
+        {
+          "group": "omitted-key saturation",
+          "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+          "input": [
+            "A down",
+            "A up",
+            "Space down",
+            "Space up"
+          ],
+          "configuredSize": 3,
+          "effectiveCapacity": 2,
+          "customFormat": {
+            "57": 7,
+            "others": "omitted"
+          },
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                153,
+                5
+              ],
+              [
+                7,
+                0,
+                153,
+                6
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "noGameplayClaim": true
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/unchanged-first.json",
+        "bytes": 1110,
+        "sha256": "784fa48809dab6c58b2d4c4bc6fc2aa5638667f0f81e8fd2ac83137dc0644191"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/unchanged-first.stdout",
+        "bytes": 8848,
+        "sha256": "ed66177d0c3061a135a282585b9d334cef5a6fa00db22be7b228541d0c6a6bff"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/unchanged-first.stderr",
+        "bytes": 1763,
+        "sha256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+      }
+    },
+    "modifier-left-control": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 42,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                232,
+                1
+              ],
+              [
+                7,
+                0,
+                232,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-left-control.json",
+        "bytes": 1123,
+        "sha256": "bbd9da78d1a6553691620119234ec7be210deeeebdbd7ad432d28008aebdd6a2"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-left-control.stdout",
+        "bytes": 10201,
+        "sha256": "fc383849f88f8eb93761e1d35ffdcd4fa77b00a03cdf2a23a6508bfc143d2809"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-left-control.stderr",
+        "bytes": 2129,
+        "sha256": "d36819b0df69ac8154e6c256b1f0fe30523fa723e287d3646880faabef5c7016"
+      }
+    },
+    "modifier-right-defect": {
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 54,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 0,
+            "records": []
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-right-defect.json",
+        "bytes": 1143,
+        "sha256": "ad8ee20b7e7375b2684a592abb74a01d389e92aaab7fd0e70ef5a0ec7c46c96d"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-right-defect.stdout",
+        "bytes": 10176,
+        "sha256": "2f49ac341078a6800991b3411b707e42fd03bfd3ff6adeef5cdfc980245ec50c"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/modifier-right-defect.stderr",
+        "bytes": 3234,
+        "sha256": "3a9c1c7690d1e9e9db09cd17e519e68e2bfc1e62cbc8d64bdfb7424432b457ef"
+      }
+    },
+    "causal-right-control": {
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 54,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 0,
+            "records": []
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-control.json",
+        "bytes": 1262,
+        "sha256": "93d4755936c160eaccdd343c4760efd6e74b60c9798fb0fe09cb46fd07da67d1"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-control.stdout",
+        "bytes": 10176,
+        "sha256": "1afc0009fee7c2266d6a38fbc4dcbfc501da7fce40cee91cad4a67cf012f74cc"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-control.stderr",
+        "bytes": 3234,
+        "sha256": "247001d9044f1388ab59c8070e1f4147ea324879115033dcb83dd51c1f91927f"
+      }
+    },
+    "reject-left-control": {
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 42,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 0,
+            "records": []
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/reject-left-control.json",
+        "bytes": 1231,
+        "sha256": "26d7a4fb53fff37ebd6ea5c5a22f8400b997bd6ecd84901f6bc671d98836c4d5"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/reject-left-control.stdout",
+        "bytes": 10176,
+        "sha256": "f75682db5ddfa2a04c566d15bc233118430fc56d2a836150bcf08a2842c4f1ba"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/reject-left-control.stderr",
+        "bytes": 3234,
+        "sha256": "3a9c1c7690d1e9e9db09cd17e519e68e2bfc1e62cbc8d64bdfb7424432b457ef"
+      }
+    },
+    "causal-right-leftskip-control": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "groups": [
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 54,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                263,
+                1
+              ],
+              [
+                7,
+                0,
+                264,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ],
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-leftskip-control.json",
+        "bytes": 1280,
+        "sha256": "22b1809c4c66153fbfc40683a02c8ab0772e8a534cac21a666e95e50e8d5b0ab"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-leftskip-control.stdout",
+        "bytes": 10201,
+        "sha256": "566a3d6636767200504b2998cd2a137c39e22e4230a23485d14d53de75ffb203"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/causal-right-leftskip-control.stderr",
+        "bytes": 2129,
+        "sha256": "d36819b0df69ac8154e6c256b1f0fe30523fa723e287d3646880faabef5c7016"
+      }
+    }
+  },
+  "causalExcerpts": {
+    "advertised-keyboard-object": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 9898,
+      "lastLine": 9908,
+      "bytes": 535,
+      "sha256": "1c284f5a7196c5fd53b3450fdd01b54edea9e7a82bb219147463ca32d5f80e47",
+      "text": "  (func $di_object_exists (param $kind i32) (param $index i32) (result i32)\n    (if (result i32) (i32.eq (local.get $kind) (i32.const 2))\n      (then (i32.lt_u (local.get $index) (i32.const 6)))\n      (else\n        (i32.and\n          (i32.eq (local.get $kind) (i32.const 1))\n          (i32.and (i32.lt_u (local.get $index) (i32.const 256))\n                   (i32.ne (call $di_dik_to_vk_strict (local.get $index))\n                           (i32.const 0)))))))\n\n  ;; DIDEVICEOBJECTINSTANCEA. Mouse offsets match DIMOUSESTATE; keyboard\n"
+    },
+    "custom-matcher": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 10589,
+      "lastLine": 10607,
+      "bytes": 1180,
+      "sha256": "b6ef69be5840c322ef84c69bee4d51202ebfd2279f63d3eff7d86c0460febed2",
+      "text": "      (local.set $inst (i32.and (i32.shr_u (local.get $want) (i32.const 8)) (i32.const 0xFFFF)))\n      (local.set $found (i32.const -1))\n      (local.set $n (i32.const 0))\n      (block $matched (loop $candidates\n        (br_if $matched (i32.ge_u (local.get $n) (local.get $limit)))\n        (local.set $obj_type (call $di_object_type (local.get $kind) (local.get $n)))\n        (if (i32.and\n              (i32.and\n                (call $di_object_exists (local.get $kind) (local.get $n))\n                ;; Each device object is assigned to at most one format object.\n                (i32.eq (call $di_format_map_get (local.get $map) (local.get $n)) (i32.const -1)))\n              (i32.and\n                (i32.or (i32.eqz (local.get $type_bits))\n                        (i32.ne (i32.and (local.get $obj_type) (local.get $type_bits)) (i32.const 0)))\n                (i32.and\n                  (i32.or (i32.eq (local.get $inst) (i32.const 0xFFFF))\n                          (i32.eq (local.get $inst) (local.get $n)))\n                  (i32.or (i32.eqz (local.get $guid))\n                          (call $di_object_guid_matches (local.get $guid) (local.get $kind) (local.get $n))))))\n"
+    },
+    "format-install": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 10628,
+      "lastLine": 10633,
+      "bytes": 271,
+      "sha256": "f20092ee7f40ec6194c59d0c050ac4f4c26bccc645972867eaee01975176f4db",
+      "text": "      (br $objects)))\n    (call $di_format_map_install (local.get $entry) (local.get $map))\n    (local.get $data_size))\n\n  ;; The offset at which this device reports native object $index, or -1 when\n  ;; its data format leaves the object out. Standard formats report the\n"
+    },
+    "skip-and-register": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 10727,
+      "lastLine": 10756,
+      "bytes": 1569,
+      "sha256": "96e02e8c05f6dd446ad93061f9ab099154b1a81641790ebcd5956cbf6b7621bb",
+      "text": "\n  ;; The right-hand duplicates of keys that share one VK with their left-hand\n  ;; twin. Reporting both would deliver every Shift press twice.\n  (func $di_kbd_scan_skip (param $dik i32) (result i32)\n    (i32.or\n      (i32.or (i32.eq (local.get $dik) (i32.const 0x36))   ;; RSHIFT  -> VK_SHIFT\n              (i32.eq (local.get $dik) (i32.const 0x9C)))  ;; NUMPADENTER -> VK_RETURN\n      (i32.or (i32.eq (local.get $dik) (i32.const 0x9D))   ;; RCONTROL -> VK_CONTROL\n              (i32.eq (local.get $dik) (i32.const 0xB8))))) ;; RMENU -> VK_MENU\n\n  ;; An acquired format is immutable. Register exactly the objects collect\n  ;; can report, before input is admitted to this device's bounded FIFO.\n  ;; Keep the mapping here: the host must not duplicate the DIK/format rules.\n  (func $di_kbd_buffer_format (param $entry i32)\n    (local $dik i32) (local $vk i32)\n    (block $done (loop $keys\n      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))\n      (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))\n      (if (i32.and (i32.ne (local.get $vk) (i32.const 0))\n                   (i32.eqz (call $di_kbd_scan_skip (local.get $dik))))\n        (then\n          (if (i32.ge_s\n                (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik))\n                (i32.const 0))\n            (then (drop (call $host_di_keyboard_buffer\n              (local.get $entry) (i32.const 9) (local.get $vk)))))))\n      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))\n      (br $keys))))\n\n  ;; Live host state for one scan code, as 0 or 1.\n"
+    },
+    "collector-early-break": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 10778,
+      "lastLine": 10807,
+      "bytes": 1854,
+      "sha256": "ea8705a1f08a7795919400f61392a573870c32fc9bb9452dca98e0ee0aa1c225",
+      "text": "        (br_if $mapped (i32.ge_u (local.get $dik) (i32.const 256)))\n        (if (i32.and\n              (i32.eqz (call $di_kbd_scan_skip (local.get $dik)))\n              (i32.and (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0))\n                       (i32.eq (call $di_dik_to_vk_strict (local.get $dik))\n                               (i32.and (local.get $event) (i32.const 255)))))\n          (then\n            (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))\n            (if (i32.ge_s (local.get $ofs) (i32.const 0))\n              (then\n                (if (local.get $rgdod) (then\n                  (local.set $rec (i32.add (local.get $rgdod) (i32.mul (local.get $count) (local.get $cb))))\n                  (call $gs32 (local.get $rec) (local.get $ofs))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 4))\n                    (i32.and (i32.shr_u (local.get $event) (i32.const 1)) (i32.const 128)))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 8))\n                    (call $host_di_keyboard_buffer (local.get $entry) (i32.const 4) (local.get $index)))\n                  (call $gs32 (i32.add (local.get $rec) (i32.const 12))\n                    (call $host_di_keyboard_buffer (local.get $entry) (i32.const 5) (local.get $index)))))\n                (local.set $count (i32.add (local.get $count) (i32.const 1)))))\n            (br $mapped)))\n        (local.set $dik (i32.add (local.get $dik) (i32.const 1)))\n        (br $keys)))\n      (local.set $index (i32.add (local.get $index) (i32.const 1)))\n      (br $events)))\n    (if (local.get $commit) (then\n      (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 6) (local.get $index)))))\n    (local.get $count))\n\n  ;; DirectInput keyboard state is indexed by DIK scan codes, while the host\n"
+    },
+    "setter-acceptance": {
+      "path": "src/09a8-handlers-directx.wat",
+      "firstLine": 11251,
+      "lastLine": 11287,
+      "bytes": 2376,
+      "sha256": "6fb576d769001e9fb84190f954747bbb1cb9719b8c311e39423290a3df135724",
+      "text": "  ;; SetDataFormat accepts the standard keyboard, DIMOUSESTATE and\n  ;; DIMOUSESTATE2 layouts, and any application-defined format whose objects\n  ;; the device has ($di_custom_data_format). The format may be replaced while\n  ;; unacquired, but DirectInput rejects changes while acquired.\n  (func $handle_IDirectInputDevice_SetDataFormat (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n    (local $entry i32) (local $data_size i32)\n    (local.set $entry (call $dx_from_this (local.get $arg0)))\n    (if (call $di_device_is_acquired (local.get $entry))\n      (then\n        (i32.store offset=0 (global.get $reg_base) (i32.const 0x800700AA)) ;; DIERR_ACQUIRED\n        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))\n        (return)))\n    (local.set $data_size\n      (call $di_standard_data_format_size (local.get $entry) (local.get $arg1)))\n    (if (local.get $data_size)\n      (then (call $di_format_map_drop (local.get $entry)))\n      (else\n        (local.set $data_size\n          (call $di_custom_data_format (local.get $entry) (local.get $arg1)))))\n    (if (i32.lt_s (local.get $data_size) (i32.const 0))\n      (then\n        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057)) ;; DIERR_INVALIDPARAM\n        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))\n        (return)))\n    (store.field DxObject misc1 (local.get $entry) (local.get $data_size))\n    (store.field DxObject flags (local.get $entry)\n      (i32.or (load.field DxObject flags (local.get $entry))\n              (global.get $DIDEV_FORMAT_SET)))\n    (i32.store offset=0 (global.get $reg_base) (i32.const 0))\n    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))\n\n  ;; SetEventNotification(this, hEvent) \u2014 remember the host event so renderer\n  ;; input can wake DirectInput polling loops.\n  (func $handle_IDirectInputDevice_SetEventNotification (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)\n    (local $entry i32) (local $dev_type i32)\n    (local.set $entry (call $dx_from_this (local.get $arg0)))\n    (local.set $dev_type (load.field DxObject misc0 (local.get $entry)))\n"
+    }
+  },
+  "cause": "SetDataFormat accepts DIK_RSHIFT because di_object_exists sees its strict VK. New acquired-format registration excludes RSHIFT unconditionally via di_kbd_scan_skip, leaving selected VK set empty for a right-only format. Renderer drops VK_SHIFT edges before admission. Existing collector also stops at the omitted left SHIFT match before it could consider RSHIFT. The unconditional duplicate-skip and collector stop predate a1af286; repair extends this assumption to admission. This is a supported-format acceptance defect, not a claim that the patch introduced all causes.",
+  "controlInterpretation": {
+    "modifier-left-control": "PASS: same actual right-side input, accepted LSHIFT-only format, DI_OK/count2; caller DIDATAFORMAT mutation does not mutate installed map",
+    "modifier-right-defect": "FAIL: actual accepted RSHIFT-only format, DI_OK/count0",
+    "causal-right-control": "FAIL: removing duplicate-skip alone admits VK_SHIFT but collector still breaks on omitted left match",
+    "reject-left-control": "Expected oracle rejection: diagnostic skip representative changed from RSHIFT to LSHIFT; left-only now DI_OK/count0",
+    "causal-right-leftskip-control": "PASS with identical right-only oracle/input: changing skip representative from RSHIFT to LSHIFT lets registration and collection choose right; fixture-only causal control, not a candidate repair"
+  },
+  "allocatorScope": "Single successful custom-format allocation at private guest 0x28000; test supplies fixed one-block allocation and no-op free. Not allocator/lifetime acceptance. All DirectInput format validation/matching/install, acquisition, renderer/checkInput, host and collection forms are actual pinned source; unrelated out-of-scope dependencies trap.",
+  "remaining": "Not run after first demonstrated defect: selected-only overflow independent challenge; disjoint devices/hosts; unacquire/reacquire/release and reuse; zero/empty/malformed/omitted formats; full snapshot/acquired setter rejection; RPC ordering/partial initialization; actual OS Worker. Existing exact-pinned groups reused only.",
+  "reused": {
+    "canonical": {
+      "path": "/tmp/airstrike-directinput-format-admission-repair-oct27/ops/receipt-manifest.json",
+      "bytes": 24903,
+      "sha256": "847e3b47a7a3cf79c405ff7e1034a9323c596e450b583543e2b047dea6f9f4f4"
+    },
+    "coordinator": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-format-repair-coordinator-verified.json",
+      "bytes": 566,
+      "sha256": "25788a53ee022faf68c3be74f0de994c9837ab9c4c56ed3d24ee5f956d3f5c94"
+    },
+    "groups": "14 buffered groups per direct/in-process RPC mode and 9 affected regression groups, exact unchanged pins, coordinator-verified; not rerun"
+  },
+  "limitations": [
+    "No actual OS Worker test: stopped at first defect before RPC expansion.",
+    "No full module build; retained original full module predates FIFO import and is not compatibility evidence.",
+    "No actual game, browser, Boat, gameplay/input-consumption qualification or main/integration/deploy.",
+    "Remaining groups unqualified independently; caller snapshot check is limited to the passing single-format control."
+  ],
+  "recovery": {
+    "candidateCheckout": "a1af2860361539639cb1ce1f307c83cb2276c307",
+    "firstBoundary": "/usr/bin/node --max-old-space-size=512 test/test-directinput-independent-custom-capacity.js",
+    "minimalFailure": "/usr/bin/node --max-old-space-size=512 test/test-directinput-independent-modifier-format.js --right-only",
+    "positive": "same command without --right-only",
+    "controls": "ops/controls.py uses exact original skip form; change only skip representative 0x36 to 0x2A for causal and negative controls; pass --control-source=<owned diagnostic file>",
+    "requirement": "Use fresh task-specific resource admission and trusted supervisor; no candidate source edits."
+  },
+  "startup": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/node-startup.json",
+    "bytes": 1278,
+    "sha256": "5d7d33d11c295d180b453887656836221a2bf152011f01b399ac018ebb2df437"
+  },
+  "startupOutput": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/node-startup.stdout",
+    "bytes": 2156,
+    "sha256": "166238a7db10033a6727709c3ae4a9b2646c6308863b115febd9ed6de4161331"
+  },
+  "controls": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/controls-source.json",
+    "bytes": 935,
+    "sha256": "0d32b1060f9a476ecbb381caacba536c39a3ad71ea9ebf1ef647b2231080061a"
+  },
+  "resources": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/source-blobs.admission.json",
+    "bytes": 2017,
+    "sha256": "e584c983036636e8001e6c659c9d0d2761379af8dd5d31ea123edc550d26d568"
+  },
+  "supervisor": {
+    "path": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "wrapper": {
+    "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/run.py",
+    "bytes": 5408,
+    "sha256": "4f6e4813e92a34d68783f6c07f5ff76ef5dcdfd09f22041a9eb43d2873d28a0f"
+  },
+  "rootInitialRef": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-format-independent-accept-oct27/root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "retainedNewDiagnostics": {
+    "first-defect.stdout": {
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/fixtures/directinput-format-independent-accept-oct27/first-defect.stdout",
+      "bytes": 10176,
+      "sha256": "2f49ac341078a6800991b3411b707e42fd03bfd3ff6adeef5cdfc980245ec50c"
+    },
+    "first-defect.stderr": {
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/repo/test/fixtures/directinput-format-independent-accept-oct27/first-defect.stderr",
+      "bytes": 3234,
+      "sha256": "3a9c1c7690d1e9e9db09cd17e519e68e2bfc1e62cbc8d64bdfb7424432b457ef"
+    }
+  }
+}
