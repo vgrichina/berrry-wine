@@ -1,0 +1,222 @@
+{
+  "result": {
+    "status": "CAUSAL_RAW_RETURN_OBSERVED",
+    "at": 1793113753.4911163,
+    "guestInvocations": 1,
+    "rawEAX": "0x887600ff",
+    "rawUnsigned": 2289434879,
+    "rawSigned": -2005532417,
+    "apiSequence": 672,
+    "api": "IDirectDrawSurface_GetAttachedSurface",
+    "thisPointer": "0x08221038",
+    "vtable": "0x006fd7fc",
+    "capsPointer": "0x074ffe34",
+    "capsBytes16": "040000000100010030e1950000008f08",
+    "capsLittleEndianDwords": [
+      "0x00000004",
+      "0x00010001",
+      "0x0095e130",
+      "0x088f0000"
+    ],
+    "outPointer": "0x0087addc",
+    "callerReturn": "0x00953275",
+    "actualModuleBase": "0x00951000",
+    "preferredModuleBase": "0x01000000",
+    "moduleOffset": "0x2275",
+    "preferredCallerReturn": "0x01002275",
+    "observation": "entry-time memory dump plus raw log_api_exit EAX before guest caller resumes; correlated by uninterrupted API entry/exit pair",
+    "laterModeCheck": "TRACE-AT batch165 EAX1 ESI2 is separate and earlier in buffered output; displayed2 is requested mode, not HRESULT",
+    "runnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+    "runnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+    "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "guestSupervisor": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 168697856,
+      "sampledPeakRSS": 168697856,
+      "reapedPeakRSS": 140779520,
+      "cpuSeconds": 1.488856,
+      "wallSeconds": 0.40308075500001905,
+      "owned": [
+        [
+          28388,
+          "167656"
+        ],
+        [
+          28389,
+          "167663"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "remainingGuestAllowance": {
+      "cpuSeconds": 178.511144,
+      "wallSeconds": 239.59691924499998,
+      "invocations": 0
+    },
+    "cleanup": {
+      "at": 1793113606.1257105,
+      "ownedSurvivors": [],
+      "supervisor": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 168697856,
+        "sampledPeakRSS": 168697856,
+        "reapedPeakRSS": 140779520,
+        "cpuSeconds": 1.488856,
+        "wallSeconds": 0.40308075500001905,
+        "owned": [
+          [
+            28388,
+            "167656"
+          ],
+          [
+            28389,
+            "167663"
+          ]
+        ],
+        "cleanupComplete": true
+      },
+      "controllerPending": null,
+      "guestExit": {
+        "exit": 0,
+        "at": 1793113588.9485455
+      },
+      "remoteUsed": 114216960,
+      "box": "bx_w99qrvz9",
+      "state": "RUNNING: supported exec succeeded",
+      "lifecycleMutations": 0,
+      "expiry": "2026-10-27T15:47:01.657Z",
+      "shutdownOwner": "coordinator",
+      "cutoff": "15:30Z",
+      "handback": "15:34Z",
+      "shutdown": "15:39Z"
+    },
+    "limitations": [
+      "No gameplay acceptance",
+      "No fullscreen semantic repair",
+      "Controller quit acknowledged; no ordinary in-game Quit claim",
+      "Caps tail bytes are exact input, no initialized-field assumption",
+      "stderr missing optional PE DLL warnings preserved; exact registered71-file closure passed"
+    ]
+  },
+  "archive": {
+    "path": "evidence.tar.gz",
+    "bytes": 848742,
+    "sha256": "419d13a63f4bf9f395796cdddd05e372527659398c65a9fe418fe8070639abe6"
+  },
+  "indexSHA256": "de10c83bb7a349ccf3e1536e976344f644b397ed74cc2a69a5e4e71f50717b1d",
+  "payloads": 986,
+  "reused": {
+    "predecessorManifest": "/tmp/gta2-accepted-raw-return-causal-trace-oct27/ops/receipt-manifest.json",
+    "predecessorManifestSHA256": "5a962a91f17e69f35ba8c3cad99a53b6c3eec039cb684f4640adc7aeb1e40552",
+    "coordinatorVerification": "/tmp/gta2-allocation-recovery-readiness-oct27/ops/verification.json",
+    "payloadsAlreadyVerified": 6793,
+    "stagedBaseGroups": 120,
+    "baseRetransfers": 0,
+    "helperClosure": 33
+  },
+  "historicalAllocationIncident": {
+    "projected": 339529728,
+    "allocation": 335544320,
+    "shortfall": 3985408,
+    "meaning": "conservative future projection before helpers/preflight/guest; not real disk/RAM exhaustion or observed HRESULT"
+  },
+  "continuationAllocation": 536870912,
+  "reserve": 33554432,
+  "apiLedger": {
+    "chargedBytes": 1575961,
+    "limit": 8388608,
+    "terminalReserve": 1048576,
+    "remainingIncludingReserve": 6812647,
+    "inherited": 723213,
+    "accounting": "all response files conservatively includes envelopes/start/terminal metadata; raw wire is lower"
+  },
+  "resources": {
+    "at": 1793113753.4084387,
+    "ownAllocated": 9502720,
+    "ownLogical": 6124031,
+    "launcherAllocated": 724992,
+    "sessionAndConservativeFullWAL": 30572544,
+    "externalFiles": [
+      {
+        "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T15-04-15-01a17de3-fa70-7f63-bb25-cd31abf66f38.jsonl",
+        "logical": 1008477,
+        "allocated": 1011712
+      },
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-wal",
+        "logical": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-wal",
+        "logical": 12244672,
+        "allocated": 12251136
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-wal",
+        "logical": 4152992,
+        "allocated": 4157440
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-wal",
+        "logical": 4280712,
+        "allocated": 4288512
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-wal",
+        "logical": 4606192,
+        "allocated": 4612096
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+        "logical": 4243632,
+        "allocated": 4251648
+      }
+    ],
+    "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+    "clients": [
+      {
+        "pid": 249844,
+        "rss": 188047360
+      },
+      {
+        "pid": 253699,
+        "rss": 184627200
+      }
+    ],
+    "memAvailable": 3708243968,
+    "remainingClientGrowth": 298414080,
+    "sharedChild": 805306368,
+    "hostHeadroom": 805306368,
+    "requiredRemaining": 1909026816,
+    "allocation": 536870912,
+    "retainedDonorAllocated": 111611904,
+    "futureBreakdown": {
+      "runtimeAbandoned": 0,
+      "controls": 4194304,
+      "sessionEvents": 8388608,
+      "publication": 16777216,
+      "reserve": 33554432,
+      "margin": 41943040
+    },
+    "projectedTask": 353738752,
+    "freeDisk": 5842202624,
+    "projectedDisk": 4500025344,
+    "diskFloor": 2982150144,
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountExecution": "assigned single causal guest; registered --app=gta2_demo route, no extra filename mounts; canonical remote parser/preflight required",
+    "pass": true
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gta2-retained-allocation-raw-return-oct27/root-ref-digest.json",
+  "publication": "ops/publication-closeout.json binds final exact commit/remote ref after commit",
+  "incidents": [
+    "Initial inspection matched node substring in Avahi hostname; exact executable-name correction passed, no guest existed",
+    "Initial helper archive-name check omitted path normalization; corrected locally, no transfer occurred before verification",
+    "Initial instruction reading exceeded8192B display; bounded excerpts used thereafter",
+    "Sparse repository initialization used stricter128MiB aggregate supervision and one light pool slot with child-only Git DATA plus Git flock; no concurrent owned Git",
+    "Initial donor Git alternates caused nested-store warnings; corrected own alternate configuration to267 verified read-only leaf stores; no fetch/repack or donor changes. Original diagnostics retained."
+  ]
+}
