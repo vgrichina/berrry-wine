@@ -157,7 +157,7 @@
   {
     "path": "remote-final-footprint.json",
     "bytes": 467,
-    "sha256": "3d69341ee58336823cb6117b4e27b51a401e20ab094c41bf04cc7b40275b4ee6"
+    "sha256": "ca70a2b39665b764b7543bbb82f78be34fc4c84e0daa935d7b912dd8d744df15"
   },
   {
     "path": "lifecycle-handback.json",
@@ -173,6 +173,11 @@
     "path": "collect.py",
     "bytes": 810,
     "sha256": "c242dcda3d200e8725de2c051d8eb1875d7c7c20cff3d40dc76fd0824370473d"
+  },
+  {
+    "path": "initial-publication.json",
+    "bytes": 261,
+    "sha256": "e1e1db784a3d17b9f8c52da3cc8b6c497a4436e68b57e0652ed61ffed7322fe2"
   },
   {
     "path": "live-worker-flags.json",
@@ -191,8 +196,8 @@
   },
   {
     "path": "final-accounting.json",
-    "bytes": 1794,
-    "sha256": "5e8198a81f5a072fd7dde0fc6f5b5a5257d907e8e81649ed95960d19b565aec5"
+    "bytes": 1793,
+    "sha256": "4b3d707fe8c85084d8cd469098744566f0c3b9e9aea1f9626eb6e9d9c9a2f5f8"
   },
   {
     "path": "launch-configuration.json",

@@ -81,6 +81,7 @@
     "lifecycle-handback.json",
     "prestage-admission.json",
     "collect.py",
+    "initial-publication.json",
     "live-worker-flags.json",
     "module-manifest-correction.json",
     "command.json",
