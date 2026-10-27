@@ -1,0 +1,30 @@
+{
+  "base": "25a3bb3feaa63c5ed0869cdcbcecd9a36b456707",
+  "candidate": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "acceptance": "2a4b5de2e135c567d1f0f854ad4ff2982982bcf4",
+  "controller": "/tmp/airstrike-accepted-focus-menu-quit-api-oct27/repo/tools/airstrike-menu-controller.py",
+  "sha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+  "donorStores": [
+    "/tmp/airstrike-accepted-focus-menu-quit-api-oct27/repo/.git/objects",
+    "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/.git/objects",
+    "/tmp/airstrike-focus-menu-controller-repair-oct27/repo/.git/objects",
+    "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects",
+    "/tmp/airstrike-sustained-gameplay-oct27/repo/.git/objects"
+  ],
+  "ssh": "strict launcher configuration",
+  "mount": "N/A no runtime"
+}

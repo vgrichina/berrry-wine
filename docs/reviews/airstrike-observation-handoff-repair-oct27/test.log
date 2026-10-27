@@ -1,0 +1,17 @@
+test_actual_controller_rejects_wrong_selected (__main__.Integration.test_actual_controller_rejects_wrong_selected) ... ok
+test_changed_current_image (__main__.Integration.test_changed_current_image) ... ok
+test_current_focus_before_input (__main__.Integration.test_current_focus_before_input) ... ok
+test_delayed_menu_review_before_response_window (__main__.Integration.test_delayed_menu_review_before_response_window) ... ok
+test_failed_spawn_distinct_diagnostics (__main__.Integration.test_failed_spawn_distinct_diagnostics) ... ok
+test_missing_ack_never_replayed (__main__.Integration.test_missing_ack_never_replayed) ... ok
+test_overall_deadline_during_review_cleans_up (__main__.Integration.test_overall_deadline_during_review_cleans_up) ... ok
+test_process_exit_during_review (__main__.Integration.test_process_exit_during_review) ... ok
+test_runner_zero_without_host_exit_is_refused (__main__.Integration.test_runner_zero_without_host_exit_is_refused) ... ok
+test_stale_observation (__main__.Integration.test_stale_observation) ... ok
+test_unmatched_ack (__main__.Integration.test_unmatched_ack) ... ok
+test_unmatched_observation (__main__.Integration.test_unmatched_observation) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 23.630s
+
+OK
