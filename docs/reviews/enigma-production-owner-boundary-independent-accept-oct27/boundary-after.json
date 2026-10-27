@@ -1,0 +1,88 @@
+{
+  "competitors": [
+    {
+      "kind": "legacy-alternate",
+      "result": {
+        "exit": 1,
+        "stdout": "existing-guest-attachment-retired: use enigma-supervised-gameplay.py --launch-config for a NEW guest\n",
+        "stderr": ""
+      }
+    },
+    {
+      "kind": "new-primary",
+      "result": {
+        "exit": 1,
+        "stdout": "[Errno 98] Address already in use\n",
+        "stderr": ""
+      }
+    },
+    {
+      "kind": "new-alternate",
+      "result": {
+        "exit": 1,
+        "stdout": "[Errno 98] Address already in use\n",
+        "stderr": ""
+      }
+    }
+  ],
+  "wire": [
+    {
+      "command": {
+        "action": "snapshot"
+      },
+      "pid": 3573084,
+      "batch": 0
+    },
+    {
+      "command": {
+        "action": "step",
+        "n": 1
+      },
+      "pid": 3573084,
+      "batch": 0
+    },
+    {
+      "command": {
+        "action": "snapshot"
+      },
+      "pid": 3573084,
+      "batch": 1
+    },
+    {
+      "command": {
+        "action": "step",
+        "n": 1
+      },
+      "pid": 3573084,
+      "batch": 1
+    },
+    {
+      "command": {
+        "action": "snapshot"
+      },
+      "pid": 3573084,
+      "batch": 2
+    },
+    {
+      "command": {
+        "action": "png",
+        "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/launch/controller/menu-candidate.png"
+      },
+      "pid": 3573084,
+      "batch": 2
+    }
+  ],
+  "state": {
+    "first-n1-completion-gate.json": "b9e60f1a88a8cdc9b7ebf2d129650e53de040ff6492f5d5eaa984ef17a56b3f0",
+    "requests.jsonl": "245dfef14eae1cae20a56e4bdd947e71af7c637f0c74256f5fe61e7efe2c3495",
+    "menu-candidate.png.json": "d1ce0b3c579010da5a0e82ccba94544f810c04a0bd8d4465f344987ae1e6eb05",
+    "config.json": "ccdb9def03714c5741735961a8993b395aea4942426abd5e7e25fedb408b3c3d",
+    "phase.json": "6650825d932bf13e8c40aa440135da96f099386d835da3ffd47fab2a94cdf5df",
+    "menu-candidate.png": "441da7236f6ffdd8fb4cdfa2d9ce7b8d8df8cf2f7a8e82c530714d92266ce613",
+    "request-intent.json": "a25a322c3508adc63f2d5812733cb2a2d42fd5fa5d4d4c7982b83c6572d4e4fd"
+  },
+  "journal": "{\"command\": [\"/usr/bin/python3\", \"/tmp/enigma-process-ownership-controller-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py\", \"--port\", \"54767\", \"--root\", \"/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original\", \"--fault\", \"\"], \"cwd\": \"/tmp/enigma-process-ownership-controller-repair-oct27/repo\", \"deadline_at\": 1793069333.889699, \"event\": \"new-launch\", \"limits\": {\"cpu\": 20, \"file\": 25165824, \"output\": 2097152, \"physical\": 100663296, \"wall\": 21}, \"schedule\": {\"after_action_batches\": 1, \"after_action_seconds\": 1, \"capture_bytes\": 524288, \"checkpoint_batches\": 1, \"checkpoint_seconds\": 3, \"cleanup_batches\": 1, \"cleanup_seconds\": 0.5, \"decision_path\": \"/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/decision.json\", \"height\": 480, \"max_batches\": 100, \"max_captures\": 2, \"request_timeout\": 0.15, \"review_seconds\": 8, \"width\": 640}, \"started_at\": 1793069315.889699, \"url\": \"http://127.0.0.1:54767/ctl\"}\n{\"event\": \"owned-child\", \"pid\": 3573084, \"process_start_ticks\": \"111652514\"}\n{\"event\": \"delegation-consumed\", \"pid\": 3573084, \"start_ticks\": \"111652514\"}\n{\"at\": 1793069316.0226936, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": null}\n{\"at\": 1793069316.0226936, \"ended\": 1793069316.0484552, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 0, \\\"quit\\\": false, \\\"yieldReason\\\": 0, \\\"frozen\\\": {\\\"frozen\\\": true, \\\"credits\\\": 0, \\\"recording\\\": false}}}\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": null}\n{\"at\": 1793069316.05543, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"step\", \"n\": 1}, \"startingBatch\": 0}\n{\"at\": 1793069316.05543, \"ended\": 1793069316.0668933, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"ran\\\": 1, \\\"steps\\\": 1, \\\"batch\\\": 1, \\\"frozen\\\": true}}\", \"request\": {\"action\": \"step\", \"n\": 1}, \"startingBatch\": 0}\n{\"at\": 1793069316.0748708, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": 0}\n{\"at\": 1793069316.0748708, \"ended\": 1793069316.086645, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 1, \\\"quit\\\": false, \\\"yieldReason\\\": 0, \\\"frozen\\\": {\\\"frozen\\\": true, \\\"credits\\\": 0, \\\"recording\\\": false}}}\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": 0}\n{\"at\": 1793069316.095665, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"step\", \"n\": 1}, \"startingBatch\": 1}\n{\"at\": 1793069316.095665, \"ended\": 1793069316.1095338, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"ran\\\": 1, \\\"steps\\\": 1, \\\"batch\\\": 2, \\\"frozen\\\": true}}\", \"request\": {\"action\": \"step\", \"n\": 1}, \"startingBatch\": 1}\n{\"at\": 1793069316.1153054, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": 1}\n{\"at\": 1793069316.1153054, \"ended\": 1793069316.127676, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 2, \\\"quit\\\": false, \\\"yieldReason\\\": 0, \\\"frozen\\\": {\\\"frozen\\\": true, \\\"credits\\\": 0, \\\"recording\\\": false}}}\", \"request\": {\"action\": \"snapshot\"}, \"startingBatch\": 1}\n{\"at\": 1793069316.1425908, \"captures\": 0, \"clicked\": false, \"event\": \"request-intent\", \"request\": {\"action\": \"png\", \"path\": \"/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/launch/controller/menu-candidate.png\"}, \"startingBatch\": 2}\n{\"at\": 1793069316.1425908, \"ended\": 1793069316.1613033, \"event\": \"response\", \"originalResponse\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 2, \\\"frozen\\\": true, \\\"path\\\": \\\"/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/launch/controller/menu-candidate.png\\\", \\\"bytes\\\": 972}}\", \"request\": {\"action\": \"png\", \"path\": \"/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/launch/controller/menu-candidate.png\"}, \"startingBatch\": 2}\n",
+  "originalLive": true,
+  "HTTPdelta": 0,
+  "budgetConfigUnchanged": true
+}

@@ -1,0 +1,145 @@
+{
+  "candidate": "f7d14e7d965a9671e4ea18da461df85b90affdad",
+  "files": [
+    {
+      "path": "README.md",
+      "bytes": 2450,
+      "sha256": "982ca8b5f84b27e67fcef2655db54946f7b148fbcaae81636f31cf01c382dda7"
+    },
+    {
+      "path": "accept.py",
+      "bytes": 6937,
+      "sha256": "f6aa5e6e74468c13a608b31150567b02d31fb9da28c2a13fc12f1adf7d520f02"
+    },
+    {
+      "path": "admin.py",
+      "bytes": 3991,
+      "sha256": "ba16e116732b0592d3f580e491098fec4d28974ef1c7be2dedeed2e4a1e8c4ec"
+    },
+    {
+      "path": "admission-sparse.json",
+      "bytes": 1412,
+      "sha256": "9bc58993c1c6f8eb5075e352ec8dfd20acd061989af76181fbd7a9775f47b406"
+    },
+    {
+      "path": "boundary-after.json",
+      "bytes": 6704,
+      "sha256": "cc5d1aa2558a4bbec1f46ec28e7f2d9e469d694f5f5fee65d7fc0ae9f21b42f9"
+    },
+    {
+      "path": "boundary-before.json",
+      "bytes": 7288,
+      "sha256": "5baba23dd076081110ce797222af6a130ce6b02579a639318f27ba0576383082"
+    },
+    {
+      "path": "boundary-execution.json",
+      "bytes": 691,
+      "sha256": "1e986a2963eee449b8451a5b36d6c79a240ffef1dfb00b67a87c590ffe73187c"
+    },
+    {
+      "path": "boundary-outcome.json",
+      "bytes": 599,
+      "sha256": "d6b8a6c75e6a4fe6c9374341c08408d393ecbc80ac2e7bf234583f407868e9b7"
+    },
+    {
+      "path": "capacity-change.json",
+      "bytes": 584,
+      "sha256": "006a6b8a0b062f0f4ecce2f26c284bfef0859a34f8e0b1717bc9b51f31ebc978"
+    },
+    {
+      "path": "historical-setup-outcome.json",
+      "bytes": 2298,
+      "sha256": "29c9ce300b7ea3f36150fc26ee569e21548cf5bdddedf94e838cf3e887ad9f4d"
+    },
+    {
+      "path": "historical-unchanged-reproducer.py",
+      "bytes": 6003,
+      "sha256": "60b7619bb8910d4ab71df9e34e7fe543167fa0c935a0a239a48f59a1124919c2"
+    },
+    {
+      "path": "original/child.json",
+      "bytes": 62,
+      "sha256": "93f3f205c7b224a2dce44362ab3fb46e9636c254e244a050c07780f66b245c1a"
+    },
+    {
+      "path": "original/launch/authority.jsonl",
+      "bytes": 4563,
+      "sha256": "aa30d0ac3e773464fc3af41526260e047122faeff835cab6216b5be1f4f2c8fa"
+    },
+    {
+      "path": "original/launch/controller/first-n1-completion-gate.json",
+      "bytes": 73,
+      "sha256": "b9e60f1a88a8cdc9b7ebf2d129650e53de040ff6492f5d5eaa984ef17a56b3f0"
+    },
+    {
+      "path": "original/launch/controller/outcome.json",
+      "bytes": 164,
+      "sha256": "1b7343cf2d30e43e1a7c4995dfb1e96b4ebbcc091f555c294362ec373f5067c6"
+    },
+    {
+      "path": "original/launch/supervisor-outcome.json",
+      "bytes": 375,
+      "sha256": "7d90c06d41edba91545a0655af952ac1d6fb8c0086361ba3fba0d25cef0a454d"
+    },
+    {
+      "path": "original/wire.jsonl",
+      "bytes": 571,
+      "sha256": "d3158fe72acea4aa98f974edac412df72ed4f965ecae3f0cece70b76616d6d4d"
+    },
+    {
+      "path": "positive/child.json",
+      "bytes": 62,
+      "sha256": "aae28427653f7e56807ce3a4386fe8bec72ba317eb2f9bdc1113cd26a0bb42eb"
+    },
+    {
+      "path": "positive/launch/authority.jsonl",
+      "bytes": 6950,
+      "sha256": "19945081e09d429ef83addbf8c6193622ca7964b081cff79f58c127cde923151"
+    },
+    {
+      "path": "positive/launch/controller/first-n1-completion-gate.json",
+      "bytes": 73,
+      "sha256": "b9e60f1a88a8cdc9b7ebf2d129650e53de040ff6492f5d5eaa984ef17a56b3f0"
+    },
+    {
+      "path": "positive/launch/controller/outcome.json",
+      "bytes": 171,
+      "sha256": "fbb4f51c7b22d846d7ae08e34b5fe5a8e93620be8b4c4b6c3b4267b3634938e6"
+    },
+    {
+      "path": "positive/launch/supervisor-outcome.json",
+      "bytes": 383,
+      "sha256": "0015017f3429b28556ddd1faf07c882395a81d75a873396be14baee3f171bf50"
+    },
+    {
+      "path": "positive/wire.jsonl",
+      "bytes": 1012,
+      "sha256": "62b7ec89eb1a1a011a9b81fc66d0a66500f5d153773d00ea928dd794b501a27b"
+    },
+    {
+      "path": "positive-execution.json",
+      "bytes": 552,
+      "sha256": "26237c1c135d9c6b324b09baf4f49a472077baa2254afc8cb6215bb5d0e7f06e"
+    },
+    {
+      "path": "positive-outcome.json",
+      "bytes": 1313,
+      "sha256": "6d7ce12e7d2f79505b29ce1777e70b8874da05fd8273d0a36f211374e60e9312"
+    },
+    {
+      "path": "result.json",
+      "bytes": 7302,
+      "sha256": "2ae48d6e31b7daf9a317f132549bc9c4e433110853556b11b7d4b9d417a4148b"
+    },
+    {
+      "path": "reused.json",
+      "bytes": 2653,
+      "sha256": "69c5be71bd23dc896a58874f846d6865f07c2a36f6420425a07b5d9c2dfa2074"
+    },
+    {
+      "path": "source-pins.json",
+      "bytes": 227,
+      "sha256": "9146ea43f3ed4f6ba56ff3a716022b0aa9a31a4cc1f1a4de98953a9eddd1fbec"
+    }
+  ]
+}

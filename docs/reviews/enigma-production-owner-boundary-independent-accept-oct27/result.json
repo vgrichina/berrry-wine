@@ -1,0 +1,184 @@
+{
+  "status": "PASS_OFFLINE_PRODUCTION_SUPERVISOR_AUTHORITY_HANDOFF",
+  "candidate": "f7d14e7d965a9671e4ea18da461df85b90affdad",
+  "tree": "884ce1d52de3a6fb4cb7f334c632efd01dc02fb4",
+  "sourcePins": {
+    "tools/enigma-frozen-gameplay-controller.py": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+    "tools/enigma-supervised-gameplay.py": "6f00afae565b32114cc6b78d9b806348d2195ff69122e345aabaf09493b5960c"
+  },
+  "newTests": [
+    "Live original NEW supervisor review: legacy alternate/PID/output/timing competitor HTTP0 no claim, unchanged original journal/state/config/finite budget",
+    "NEW competing CLI primary and alternate occupied listener: refuses before authority directory/child/HTTP; original remains live",
+    "Independent NEW child positive serial full ACK/frozen-zero before input, before/after captures, terminal and cleanup"
+  ],
+  "newExecutions": {
+    "boundary": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 117751808,
+      "sampledPeakRSS": 117751808,
+      "reapedPeakRSS": 25354240,
+      "cpuSeconds": 2.087046,
+      "wallSeconds": 0.6610465398989618,
+      "owned": [
+        [
+          3573082,
+          "111652506"
+        ],
+        [
+          3573083,
+          "111652509"
+        ],
+        [
+          3573084,
+          "111652514"
+        ],
+        [
+          3573086,
+          "111652521"
+        ],
+        [
+          3573088,
+          "111652548"
+        ],
+        [
+          3573089,
+          "111652553"
+        ],
+        [
+          3573090,
+          "111652557"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/accept.py",
+        "boundary"
+      ]
+    },
+    "positive": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 94420992,
+      "sampledPeakRSS": 94420992,
+      "reapedPeakRSS": 25427968,
+      "cpuSeconds": 1.432594,
+      "wallSeconds": 0.47476348001509905,
+      "owned": [
+        [
+          3573142,
+          "111653272"
+        ],
+        [
+          3573143,
+          "111653274"
+        ],
+        [
+          3573144,
+          "111653279"
+        ],
+        [
+          3573146,
+          "111653282"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/accept.py",
+        "positive"
+      ]
+    }
+  },
+  "reused": {
+    "methods": 28,
+    "result": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/result.json",
+    "resultSHA256": "c88c7e7f9b273aa3878bbe58faa2f1df2e12bb6191a15c412244e8abad19be31",
+    "manifest": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/evidence-manifest.json",
+    "manifestSHA256": "5bced9ea0a3485ed8c5738d8b80e46e00d9d0856deb4871517152a3055494aa0",
+    "freshPayloadRehashes": 327,
+    "pins": [
+      {
+        "path": "tools/enigma-frozen-gameplay-controller.py",
+        "sha256": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26"
+      },
+      {
+        "path": "tools/enigma-supervised-gameplay.py",
+        "sha256": "6f00afae565b32114cc6b78d9b806348d2195ff69122e345aabaf09493b5960c"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/child_server.py",
+        "sha256": "aec2de6694a5979ea90831bbb8b9b4756e043bda3d785a55979777314edb285a"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/original-operate.py",
+        "sha256": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/test_controller.py",
+        "sha256": "70187afa1e763b996e80f3f9b0881ffa00ddc4c9afeba7eaed34fafad4d0c1dd"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/test_listener.py",
+        "sha256": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/test_ownership.py",
+        "sha256": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2"
+      },
+      {
+        "path": "test/fixtures/enigma-controller/test_supervised.py",
+        "sha256": "a76bb50eb8e4d29731b8e0c368b02a2c4806df68a50d95e4acf173c6871d9130"
+      }
+    ],
+    "historicalSetup": {
+      "path": "/tmp/enigma-supervisor-owned-independent-accept-oct27/ops/result.json",
+      "sha256": "f632baa8da22b7540d0f58db5d5d961ac35664f9231d54784a07575c2fe71e2f",
+      "replayed": false
+    },
+    "originalReproducer": {
+      "path": "/tmp/enigma-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py",
+      "sha256": "60b7619bb8910d4ab71df9e34e7fe543167fa0c935a0a239a48f59a1124919c2",
+      "replayed": false
+    },
+    "legacyRefusalReplayed": false,
+    "root611Receipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-supervisor-owned-root-closeout-oct27.json",
+    "reuseGroups": [
+      "controller error/timeout/pending lifetime poison",
+      "child death/identity boundary checks stop commands",
+      "unrelated sentinel survives and owned cleanup",
+      "distinct new guests independent",
+      "original supervisor cannot replace child",
+      "scheduler/legacy refusal/resource caps"
+    ]
+  },
+  "productionContractObserved": "Actual tools/enigma-supervised-gameplay.py CLI -> Popen new child -> original handle/start ticks/immutable endpoint/finite copied schedule -> local one-use OwnedHandoff -> controller dispatch. Public legacy --config refuses. NEW occupied endpoints refuse before authority. No public PID/config attachment or serialized handoff. Cooperative local orchestration only; no arbitrary same-UID security or atomic check/send claim.",
+  "fixtureDelta": "Original-owner creation adapted from retired legacy CLI to actual NEW production CLI/Popen; unchanged original historical SHA60b7619b source retained without replay. Pinned existing child_server.py supplies both listeners sharing state; idle descendant only inherits alternate socket. No invented supervisor or production source edits.",
+  "sourceChanged": false,
+  "mainTouched": false,
+  "productionIntegration": "NOT_AUTHORIZED_OR_PERFORMED",
+  "runtimeQualification": false,
+  "minimalFailure": null,
+  "incidents": [
+    "Historical retired-original setup blocker retained",
+    "admission-sparse.json failed disk floor; no unchanged retry; capacity-change.json records actual peer completion/reservation change before passing fresh admission"
+  ],
+  "remaining": [
+    "Separately authorized main integration",
+    "Separately admitted exact production Node runner startup/closure, Enigma step gate, menu/gameplay/normal Quit"
+  ],
+  "ownedProcessCleanup": true,
+  "boxes": [],
+  "lifecycleOwner": "coordinator",
+  "publication": {
+    "branch": "task/enigma-production-owner-boundary-independent-accept-oct27",
+    "scope": "acceptance report/evidence only",
+    "pending": true
+  },
+  "mounts": {
+    "argv": [],
+    "validation": "No mounts in actual Python CLI or child command; canonical guest mount parser not applicable; Node never executed"
+  },
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

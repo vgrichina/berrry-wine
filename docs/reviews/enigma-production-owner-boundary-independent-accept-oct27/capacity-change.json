@@ -1,0 +1,16 @@
+{
+  "at": 1793069360.8391616,
+  "priorGate": "admission-sparse.json",
+  "priorProjected": 2981482496,
+  "floor": 2982150144,
+  "unchangedRetry": false,
+  "actualChange": "Penguin and MadBomber completed, RELEASE on board and both worker PIDs absent; retained bytes remain in measured host free; reduce each 48MiB prospective allowance to conservative16MiB for closeout tail",
+  "peerFutureBefore": 184549376,
+  "peerFutureAfter": 117440512,
+  "reservations": {
+    "Alien": 33554432,
+    "Airstrike": 50331648,
+    "PenguinCloseout": 16777216,
+    "MadBomberCloseout": 16777216
+  }
+}

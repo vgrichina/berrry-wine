@@ -1,0 +1,12 @@
+{"command": {"action": "snapshot"}, "pid": 3573144, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 3573144, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 3573144, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 3573144, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 3573144, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/positive/launch/controller/menu-candidate.png"}, "pid": 3573144, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 3573144, "batch": 2}
+{"command": {"cmd": "click:10:20"}, "pid": 3573144, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 3573144, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 3573144, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/positive/launch/controller/after-action.png"}, "pid": 3573144, "batch": 3}
+{"command": {"action": "quit"}, "pid": 3573144, "batch": 3}

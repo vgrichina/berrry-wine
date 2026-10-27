@@ -1,0 +1,81 @@
+{
+  "at": 1793069344.586649,
+  "label": "sparse",
+  "measured": {
+    "own": 532480,
+    "eventsSessions": 802816,
+    "positiveWAL": 0
+  },
+  "used": 1335296,
+  "allocation": 33554432,
+  "peerFuture": 184549376,
+  "free": 3198251008,
+  "projectedFree": 2981482496,
+  "MemAvailable": 3714183168,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 30826496,
+      "own": false
+    },
+    {
+      "pid": 752162,
+      "rss": 439099392,
+      "own": false
+    },
+    {
+      "pid": 857107,
+      "rss": 11563008,
+      "own": false
+    },
+    {
+      "pid": 1789179,
+      "rss": 58019840,
+      "own": false
+    },
+    {
+      "pid": 3551297,
+      "rss": 203214848,
+      "own": false
+    },
+    {
+      "pid": 3551695,
+      "rss": 20099072,
+      "own": false
+    },
+    {
+      "pid": 3566236,
+      "rss": 193941504,
+      "own": false
+    },
+    {
+      "pid": 3566491,
+      "rss": 21929984,
+      "own": false
+    },
+    {
+      "pid": 3571136,
+      "rss": 201162752,
+      "own": false
+    },
+    {
+      "pid": 3571325,
+      "rss": 22523904,
+      "own": false
+    }
+  ],
+  "newClientReserve": 335544320,
+  "activeFutureClientReserve": 402653184,
+  "testPoolReserve": 134217728,
+  "physicalHeadroom": 805306368,
+  "requiredAvailable": 1677721600,
+  "positiveWALCountedOnce": true,
+  "ownClient": [
+    {
+      "pid": 3571136,
+      "rss": 201162752,
+      "own": false
+    }
+  ],
+  "pass": false
+}

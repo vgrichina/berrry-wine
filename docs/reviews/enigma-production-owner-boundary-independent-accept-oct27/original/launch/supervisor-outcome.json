@@ -1,0 +1,21 @@
+{
+  "status": "NO_REVIEWED_ACTION_NO_INPUT",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 56934400,
+  "cpuSeconds": 0.06,
+  "outputBytes": 0,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      3573084,
+      "111652514"
+    ],
+    [
+      3573086,
+      "111652521"
+    ]
+  ],
+  "delegated": true
+}

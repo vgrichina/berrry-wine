@@ -1,0 +1,7 @@
+{"command": {"action": "snapshot"}, "pid": 3573084, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 3573084, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 3573084, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 3573084, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 3573084, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/original/launch/controller/menu-candidate.png"}, "pid": 3573084, "batch": 2}
+{"command": {"action": "quit"}, "pid": 3573084, "batch": 2}

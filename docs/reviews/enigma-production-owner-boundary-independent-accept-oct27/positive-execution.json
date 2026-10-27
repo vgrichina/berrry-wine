@@ -1,0 +1,33 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 94420992,
+  "sampledPeakRSS": 94420992,
+  "reapedPeakRSS": 25427968,
+  "cpuSeconds": 1.432594,
+  "wallSeconds": 0.47476348001509905,
+  "owned": [
+    [
+      3573142,
+      "111653272"
+    ],
+    [
+      3573143,
+      "111653274"
+    ],
+    [
+      3573144,
+      "111653279"
+    ],
+    [
+      3573146,
+      "111653282"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/enigma-production-owner-boundary-independent-accept-oct27/ops/accept.py",
+    "positive"
+  ]
+}
