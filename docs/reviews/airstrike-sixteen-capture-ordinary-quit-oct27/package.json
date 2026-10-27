@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 43163648,
+  "sampledPeakRSS": 43163648,
+  "reapedPeakRSS": 21889024,
+  "cpuSeconds": 0.319242,
+  "wallSeconds": 0.2006377310026437,
+  "owned": [
+    [
+      4017849,
+      "114016513"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/package.py"
+  ],
+  "commandSHA256": "71468eff9fde6155661baa356db2096a9e675c7727bbc0ef9e041af2cdb4fd72",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/package.stdout",
+  "stderr": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/package.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

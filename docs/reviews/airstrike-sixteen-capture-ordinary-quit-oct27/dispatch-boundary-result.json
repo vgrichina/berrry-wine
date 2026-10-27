@@ -1,0 +1,34 @@
+{
+  "status": "BLOCKED_EXACT_PRODUCTION_FROZEN_DISPATCH_CONTRACT",
+  "fixtureOnly": true,
+  "actualGuestStarts": 0,
+  "controllerSHA256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+  "bridgeSHA256": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f",
+  "reason": "uncertain/rejected dispatch; no replay or further input",
+  "commands": [
+    {
+      "id": "airstrike-1",
+      "cmd": "keydown:27"
+    }
+  ],
+  "sourceRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "extractions": [
+    {
+      "name": "parseInputEntries",
+      "start": 121357,
+      "end": 150524,
+      "bytes": 29231,
+      "sha256": "a7ba59ef1c31e29d683d2e783b94003ba91a46c537b60af21be5589045fa8a2a"
+    },
+    {
+      "name": "handleControlCommand",
+      "start": 390475,
+      "end": 399640,
+      "bytes": 9165,
+      "sha256": "126c480fad208d3bfc704e85aedec31c567a3e0ba30b90ab48511821a13a8741"
+    }
+  ],
+  "gate": "unchanged bridge has no step/thaw orchestration; frozen input ACK is queued and lacks actual input logs; unchanged controller refuses before key release, Down or Enter",
+  "remaining": "Actual focus/menu rows0..6, ordinary Quit, guest Exit0 and runner exit remain unqualified",
+  "resolution": "Coordinator must authorize a bridge/runner protocol repair or clarify a permitted thaw/freeze adapter; no source semantic edits authorized in this task"
+}

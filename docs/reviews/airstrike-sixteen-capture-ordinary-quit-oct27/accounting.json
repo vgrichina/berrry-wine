@@ -1,0 +1,74 @@
+{
+  "at": 1793093018.0495172,
+  "ownMaterialized": 5541888,
+  "sessionAllocated": 1216512,
+  "positiveWAL": 28672,
+  "used": 6787072,
+  "allocation": 134217728,
+  "peerRemaining": [
+    {
+      "task": "enigma-full-frame-terminal-startgame-oct27",
+      "actual": 8040448,
+      "remaining": 126177280
+    },
+    {
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "actual": 17743872,
+      "remaining": 116473856
+    },
+    {
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "actual": 8605696,
+      "remaining": 125612032
+    },
+    {
+      "task": "penguin-accepted-causal-main-integration-oct27",
+      "actual": 5099520,
+      "remaining": 129118208
+    }
+  ],
+  "completedPenguinReservationReleased": true,
+  "coordinatorAndDrift": 16777216,
+  "future": 641589248,
+  "free": 7891714048,
+  "projectedFree": 7250124800,
+  "floor": 2982150144,
+  "memAvailable": 3515146240,
+  "requiredRemainingRAM": 2240069632,
+  "peers": [
+    {
+      "pid": 4002021,
+      "rss": 99856384,
+      "argvSHA256": "c15c3d79ec8f5af47ebbce2dfde3e47bce8a7624fbd0e97752569c7962aa38c9"
+    },
+    {
+      "pid": 4002816,
+      "rss": 102481920,
+      "argvSHA256": "fa127cb7e8a046e35c1d95669dde623cf949c0e67d10dff2a0657a1176f915bf"
+    },
+    {
+      "pid": 4002953,
+      "rss": 102121472,
+      "argvSHA256": "575b592961dc944cd9769a16a649d4d72b57fce47b43db4bcf468d0a9a85e787"
+    },
+    {
+      "pid": 4003114,
+      "rss": 102944768,
+      "argvSHA256": "e92c141c46443dd313332e60613851dd36f63730fcd1c33dae3e1e8ec8953a82"
+    },
+    {
+      "pid": 4003272,
+      "rss": 103989248,
+      "argvSHA256": "b2e69f7c2bc7c15d5be964388cc509113bc947140fb8f33f5b940513b4581129"
+    }
+  ],
+  "buckets": {
+    "sourceGit": 20971520,
+    "events": 16777216,
+    "ops": 54525952,
+    "reserve": 41943040
+  },
+  "sourceGit": 3854336,
+  "ops": 1167360,
+  "pass": true
+}

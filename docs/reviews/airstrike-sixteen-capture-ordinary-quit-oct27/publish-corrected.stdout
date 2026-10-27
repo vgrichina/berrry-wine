@@ -1,0 +1,16 @@
+index {"exit": 0, "stopReason": null, "peakRSS": 25530368, "cleanupComplete": true}
+
+
+stage {"exit": 0, "stopReason": null, "peakRSS": 34365440, "cleanupComplete": true}
+
+
+whitespace {"exit": 2, "stopReason": null, "peakRSS": 28807168, "cleanupComplete": true}
+docs/reviews/airstrike-sixteen-capture-ordinary-quit-oct27/init.stderr:4: trailing whitespace.
++hint: 
+docs/reviews/airstrike-sixteen-capture-ordinary-quit-oct27/init.stderr:6: trailing whitespace.
++hint: 
+docs/reviews/airstrike-sixteen-capture-ordinary-quit-oct27/init.stderr:9: trailing whitespace.
++hint: 
+docs/reviews/airstrike-sixteen-capture-ordinary-quit-oct27/publish.stdout:5: new blank line at EOF.
+
+

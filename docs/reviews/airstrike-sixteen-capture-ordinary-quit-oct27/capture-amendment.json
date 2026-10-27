@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-27T08:56:03.268915+00:00",
+  "task": "airstrike-cleanup-ordinary-quit-oct27",
+  "thread": "01a17c8c-e98a-7ae1-a2ca-e44a55ec9f55",
+  "cause": "Task8PNG cap incompatible with exact accepted production bridge16PNG minimum; no guest started",
+  "localAllocation": 134217728,
+  "localBucketsMiB": {
+    "sourceGit": 20,
+    "events": 16,
+    "opsCapturesPublication": 52,
+    "growthReserve": 40
+  },
+  "captureCount": 16,
+  "perCaptureBytes": 2097152,
+  "remoteAllocation": 268435456,
+  "remoteProjection": 180963047,
+  "hostFree": 7971401728,
+  "remainingFleetConservative": 687865856,
+  "hostProjected": 7283535872,
+  "hostFloor": 2982150144,
+  "MemAvailable": 2935836672,
+  "memoryCapsUnchanged": true,
+  "deadlinesUnchanged": true,
+  "pass": true
+}

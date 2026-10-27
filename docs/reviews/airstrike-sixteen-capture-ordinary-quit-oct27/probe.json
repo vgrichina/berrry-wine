@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 25513984,
+  "sampledPeakRSS": 25513984,
+  "reapedPeakRSS": 12230656,
+  "cpuSeconds": 0.11710199999999998,
+  "wallSeconds": 0.1690961360000074,
+  "owned": [
+    [
+      4005330,
+      "113976594"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--json",
+    "--timeout",
+    "15",
+    "bx_fk6x4peu",
+    "python3",
+    "-B",
+    "-c",
+    "import pathlib,json,shutil; print(json.dumps(dict(memAvailable=next(s for s in pathlib.Path(\"/proc/meminfo\").read_text().splitlines() if s.startswith(\"MemAvailable\")),free=shutil.disk_usage(\"/tmp\").free,roots=[str(p) for p in pathlib.Path(\"/tmp\").glob(\"*airstrike*\")]+[str(p) for p in pathlib.Path(\"/home/user\").glob(\"*airstrike*\")])) )"
+  ],
+  "commandSHA256": "045b56d99e8536ad12a753e47bfaf36e89e21fed6817623b80a7ec788b2012d3",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/probe.stdout",
+  "stderr": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/probe.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

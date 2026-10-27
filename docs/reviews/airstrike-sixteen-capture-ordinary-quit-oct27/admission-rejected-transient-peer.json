@@ -1,0 +1,79 @@
+{
+  "at": 1793092688.495724,
+  "ownMaterialized": 696320,
+  "sessionAllocated": 913408,
+  "positiveWAL": 8192,
+  "used": 1617920,
+  "allocation": 134217728,
+  "peerRemaining": [
+    {
+      "task": "enigma-full-frame-terminal-startgame-oct27",
+      "actual": 3985408,
+      "remaining": 130232320
+    },
+    {
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "actual": 9396224,
+      "remaining": 124821504
+    },
+    {
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "actual": 3133440,
+      "remaining": 131084288
+    },
+    {
+      "task": "penguin-causal-independent-accept-cleanup-oct27",
+      "actual": 5705728,
+      "remaining": 128512000
+    }
+  ],
+  "completedPenguinReservationReleased": true,
+  "coordinatorAndDrift": 16777216,
+  "future": 664027136,
+  "free": 7919640576,
+  "projectedFree": 7255613440,
+  "floor": 2982150144,
+  "memAvailable": 2499346432,
+  "requiredRemainingRAM": 1818640384,
+  "peers": [
+    {
+      "pid": 4002021,
+      "rss": 198062080,
+      "argvSHA256": "c15c3d79ec8f5af47ebbce2dfde3e47bce8a7624fbd0e97752569c7962aa38c9"
+    },
+    {
+      "pid": 4002816,
+      "rss": 204439552,
+      "argvSHA256": "fa127cb7e8a046e35c1d95669dde623cf949c0e67d10dff2a0657a1176f915bf"
+    },
+    {
+      "pid": 4002953,
+      "rss": 206413824,
+      "argvSHA256": "575b592961dc944cd9769a16a649d4d72b57fce47b43db4bcf468d0a9a85e787"
+    },
+    {
+      "pid": 4003114,
+      "rss": 202686464,
+      "argvSHA256": "e92c141c46443dd313332e60613851dd36f63730fcd1c33dae3e1e8ec8953a82"
+    },
+    {
+      "pid": 4003272,
+      "rss": 198057984,
+      "argvSHA256": "b2e69f7c2bc7c15d5be964388cc509113bc947140fb8f33f5b940513b4581129"
+    },
+    {
+      "pid": 4010313,
+      "rss": 258707456,
+      "argvSHA256": "ab171e4316826d160cc7e781422fd6af64ea07b437eff7512a6948faa234324e"
+    }
+  ],
+  "buckets": {
+    "sourceGit": 20971520,
+    "events": 16777216,
+    "ops": 54525952,
+    "reserve": 41943040
+  },
+  "sourceGit": 0,
+  "ops": 241664,
+  "pass": false
+}

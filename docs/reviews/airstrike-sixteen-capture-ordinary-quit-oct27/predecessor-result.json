@@ -1,0 +1,147 @@
+{
+  "status": "BLOCKED_CAPTURE_CONTRACT_TASK_BRANCH_PUBLISHED_STOP",
+  "publication": {
+    "commit": "bcabd5ef97bd5cebc30518b51713fa870e52f0d0",
+    "remoteRef": "refs/heads/task/airstrike-cleanup-ordinary-quit-oct27",
+    "exactVerified": true,
+    "priorCommit": "b89dc324007a100a8f00e9fbd330201a6f7f6a14",
+    "admissionCorrectionRetained": true,
+    "sourceEdits": false,
+    "actualGuestStarts": 0
+  },
+  "actualGuestStarts": 0,
+  "acceptance": "OPEN: actual focus/menu rows0..6, ordinary Quit Exit0 and clean runner exit unqualified",
+  "blocker": "Pinned unchanged bridge requires16 captures; task permits8. New exact production resource fixture rejects ninth before dispatch and before Enter.",
+  "fixtureOnly": true,
+  "offlineSuitesRepeated": false,
+  "sourceEdits": false,
+  "main": false,
+  "publicDeployment": false,
+  "box": {
+    "id": "bx_fk6x4peu",
+    "state": "RUNNING at coordinator dispatch; untouched, not freshly queried by worker",
+    "expiry": "2026-10-27T09:42:43Z",
+    "guestCutoff": "09:15 UTC",
+    "handback": "09:20 UTC",
+    "shutdown": "09:25 UTC",
+    "lifecycleOwner": "coordinator"
+  },
+  "admissionIncident": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/admission-correction.json",
+  "accounting": {
+    "at": 1793091625.5854676,
+    "ownMaterialized": 3448832,
+    "sessionAllocated": 1236992,
+    "positiveWAL": 159744,
+    "used": 4845568,
+    "allocation": 100663296,
+    "peerRemaining": [
+      {
+        "task": "enigma-cleanup-startgame-oct27",
+        "actual": 8818688,
+        "remaining": 91844608
+      },
+      {
+        "task": "alien-cleanup-menu-mission-oct27",
+        "actual": 15159296,
+        "remaining": 85504000
+      },
+      {
+        "task": "ricochet-cleanup-round-play-oct27",
+        "actual": 57942016,
+        "remaining": 42721280
+      },
+      {
+        "task": "penguin-causal-independent-accept-cleanup-oct27",
+        "actual": 4755456,
+        "remaining": 95907840
+      }
+    ],
+    "completedPenguinReservationReleased": true,
+    "coordinatorAndDrift": 16777216,
+    "future": 428572672,
+    "free": 7966711808,
+    "projectedFree": 7538139136,
+    "floor": 2982150144,
+    "memAvailable": 3634892800,
+    "requiredRemainingRAM": 2061279232,
+    "peers": [
+      {
+        "pid": 3965837,
+        "rss": 137895936,
+        "argvSHA256": "8e409169da437acf0f9ab43ac4e4ab001677e3ea77adbf2b80c8187801be5416"
+      },
+      {
+        "pid": 3965838,
+        "rss": 141180928,
+        "argvSHA256": "a6881a019d2e2fa94b7e901ef8df52b6d54f921536f290a9eb5085e498c1ded7"
+      },
+      {
+        "pid": 3965839,
+        "rss": 134684672,
+        "argvSHA256": "bf15c71915d190d6a51929cd90cd216610126592adab1e814abd80259405f2c7"
+      },
+      {
+        "pid": 3965845,
+        "rss": 143892480,
+        "argvSHA256": "d78cdc32ca68d2f094f2fc63737d8aaa61ab0dbad45e07d0c582b92125d42573"
+      },
+      {
+        "pid": 3967555,
+        "rss": 132530176,
+        "argvSHA256": "cc373c537c713e41cf0bb185c7791a7c0db6baf3ec2d0650d5737a68150a9ccf"
+      }
+    ],
+    "buckets": {
+      "sourceGit": 20971520,
+      "events": 16777216,
+      "ops": 20971520,
+      "reserve": 41943040
+    },
+    "sourceGit": 2641920,
+    "ops": 380928,
+    "pass": true
+  },
+  "rootRefs": "initial launcher digest reused; no final comparison claimed; root tracked/index/refs read-only",
+  "cleanup": {
+    "watcherPID": 3968760,
+    "watcherAbsent": true,
+    "supervisorsClean": [
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-whitespace.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-final-staged.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/package.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/final-staged.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-remote.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/stage.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/index.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-stage.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/scope-final.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/push.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/accounting-correction.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-head.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/head.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/boundary.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-push.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/supplement.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/stage-final.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/whitespace.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/commit.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/integrity.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/staged-review.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/whitespace-final.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-commit.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/init.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-exact-remote.json",
+      "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/correction-scope.json"
+    ],
+    "fixtureCleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": -15,
+      "complete": true
+    },
+    "boxTouched": false,
+    "boxShutdown": false
+  }
+}

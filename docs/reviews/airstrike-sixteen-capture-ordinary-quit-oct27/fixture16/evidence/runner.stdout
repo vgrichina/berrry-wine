@@ -1,0 +1,71 @@
+FAKE RUNNER stdout diagnostic
+[ctl] {"id": "bridge-1", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-2", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-d1fc5a0bea664b54bb8dad9b85adb959.png", "bytes": 23, "batch": 12}}
+[ctl] {"id": "bridge-3", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-4", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-5", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-d1fc5a0bea664b54bb8dad9b85adb959-fresh.png", "bytes": 23, "batch": 12}}
+[ctl] {"id": "bridge-6", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-1", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=27 at batch 12"]}}
+[ctl] {"id": "bridge-7", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-2", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=27 at batch 12"]}}
+[ctl] {"id": "bridge-8", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-9", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-5cda809d15694e139440c7fab225938d.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-10", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-11", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-12", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-5cda809d15694e139440c7fab225938d-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-13", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-3", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-14", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-4", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-15", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-16", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-66e5c4902b0f4e949d4bad7528402c38.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-17", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-18", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-19", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-66e5c4902b0f4e949d4bad7528402c38-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-20", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-5", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-21", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-6", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-22", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-23", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-4a57748d530040369c829071ff267dd4.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-24", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-25", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-26", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-4a57748d530040369c829071ff267dd4-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-27", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-7", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-28", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-8", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-29", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-30", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-92703a136cd445d69c5cb70585e4e0ef.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-31", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-32", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-33", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-92703a136cd445d69c5cb70585e4e0ef-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-34", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-9", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-35", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-10", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-36", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-37", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-c18a67df96664abe8b1731270ea29b7a.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-38", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-39", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-40", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-c18a67df96664abe8b1731270ea29b7a-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-41", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-11", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-42", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-12", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-43", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-44", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-8a04278c8a7e419a9d9cc59c9830c09a.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-45", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-46", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-47", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-8a04278c8a7e419a9d9cc59c9830c09a-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-48", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-13", "ok": true, "value": {"batch": 12, "logs": ["[input] keydown vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-49", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "airstrike-14", "ok": true, "value": {"batch": 12, "logs": ["[input] keyup vk=40 at batch 12"]}}
+[ctl] {"id": "bridge-50", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-51", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-aeaf5a0901cb47d7bbdbf2fc79a75849.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-52", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-53", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-54", "ok": true, "value": {"path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-aeaf5a0901cb47d7bbdbf2fc79a75849-fresh.png", "bytes": 20, "batch": 12}}
+[ctl] {"id": "bridge-55", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[Exit] code=0

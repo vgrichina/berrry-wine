@@ -1,0 +1,160 @@
+{
+  "at": 1793093018.053217,
+  "result": {
+    "status": "BLOCKED_EXACT_PRODUCTION_FROZEN_DISPATCH_CONTRACT",
+    "actualGuestStarts": 0,
+    "sourceEdits": false,
+    "main": false,
+    "publicDeployment": false,
+    "captureAllocation": {
+      "count": 16,
+      "perCaptureBytes": 2097152,
+      "localBytes": 134217728,
+      "remoteBytes": 268435456,
+      "apiCaptureBytes": 8388608
+    },
+    "fixture16": {
+      "status": "normal-quit-observed",
+      "commands": 15,
+      "elapsed": 0.513286653906107,
+      "cleanup": {
+        "remaining": [],
+        "signals": [],
+        "runnerExit": 0,
+        "complete": true
+      },
+      "controllerSHA256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+      "responseSeconds": 10,
+      "guestSeconds": 10,
+      "wallSeconds": 150
+    },
+    "dispatch": {
+      "status": "BLOCKED_EXACT_PRODUCTION_FROZEN_DISPATCH_CONTRACT",
+      "fixtureOnly": true,
+      "actualGuestStarts": 0,
+      "controllerSHA256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+      "bridgeSHA256": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f",
+      "reason": "uncertain/rejected dispatch; no replay or further input",
+      "commands": [
+        {
+          "id": "airstrike-1",
+          "cmd": "keydown:27"
+        }
+      ],
+      "sourceRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "extractions": [
+        {
+          "name": "parseInputEntries",
+          "start": 121357,
+          "end": 150524,
+          "bytes": 29231,
+          "sha256": "a7ba59ef1c31e29d683d2e783b94003ba91a46c537b60af21be5589045fa8a2a"
+        },
+        {
+          "name": "handleControlCommand",
+          "start": 390475,
+          "end": 399640,
+          "bytes": 9165,
+          "sha256": "126c480fad208d3bfc704e85aedec31c567a3e0ba30b90ab48511821a13a8741"
+        }
+      ],
+      "gate": "unchanged bridge has no step/thaw orchestration; frozen input ACK is queued and lacks actual input logs; unchanged controller refuses before key release, Down or Enter",
+      "remaining": "Actual focus/menu rows0..6, ordinary Quit, guest Exit0 and runner exit remain unqualified",
+      "resolution": "Coordinator must authorize a bridge/runner protocol repair or clarify a permitted thaw/freeze adapter; no source semantic edits authorized in this task"
+    },
+    "box": {
+      "id": "bx_fk6x4peu",
+      "state": "RUNNING at coordinator dispatch; API exec succeeded 09:15:56Z",
+      "expiry": "2026-10-27T09:42:43Z",
+      "guestCutoff": "2026-10-27T09:30:00Z",
+      "handback": "2026-10-27T09:32:00Z",
+      "shutdown": "2026-10-27T09:35:00Z",
+      "owner": "coordinator",
+      "untouched": true
+    },
+    "cleanup": {
+      "guestProcessStarted": false,
+      "remoteStageFiles": 0,
+      "noBoxShutdown": true
+    },
+    "rootRefs": "launcher digest reused; no later comparison claimed; root read-only",
+    "restrictions": "single bounded gpt-6.1-sol medium worker 200k total compaction; no workers, main ownership, source edits, deployment, runtime SSH/resume, retries of denial, compile, full checkout/repack; strict supplied Git SSH; Git DATA512MiB child-only/RSS256MiB pool2+flock; Python RSS128MiB pool1 CPU90 wall120 file24MiB output2MiB display8192B cumulative1MiB; local128MiB20/16/52/40; remote256MiB; guest one invocation2GiB physical heap512 CPU90 wall120 unused",
+    "remaining": "Actual focus/menu rows0..6, ordinary Quit, guest Exit0 and runner exit remain unqualified"
+  },
+  "admission": {
+    "at": 1793093018.0495172,
+    "ownMaterialized": 5541888,
+    "sessionAllocated": 1216512,
+    "positiveWAL": 28672,
+    "used": 6787072,
+    "allocation": 134217728,
+    "peerRemaining": [
+      {
+        "task": "enigma-full-frame-terminal-startgame-oct27",
+        "actual": 8040448,
+        "remaining": 126177280
+      },
+      {
+        "task": "alien-retained-staging-menu-mission-oct27",
+        "actual": 17743872,
+        "remaining": 116473856
+      },
+      {
+        "task": "ricochet-measured-cpu-round-gameplay-oct27",
+        "actual": 8605696,
+        "remaining": 125612032
+      },
+      {
+        "task": "penguin-accepted-causal-main-integration-oct27",
+        "actual": 5099520,
+        "remaining": 129118208
+      }
+    ],
+    "completedPenguinReservationReleased": true,
+    "coordinatorAndDrift": 16777216,
+    "future": 641589248,
+    "free": 7891714048,
+    "projectedFree": 7250124800,
+    "floor": 2982150144,
+    "memAvailable": 3515146240,
+    "requiredRemainingRAM": 2240069632,
+    "peers": [
+      {
+        "pid": 4002021,
+        "rss": 99856384,
+        "argvSHA256": "c15c3d79ec8f5af47ebbce2dfde3e47bce8a7624fbd0e97752569c7962aa38c9"
+      },
+      {
+        "pid": 4002816,
+        "rss": 102481920,
+        "argvSHA256": "fa127cb7e8a046e35c1d95669dde623cf949c0e67d10dff2a0657a1176f915bf"
+      },
+      {
+        "pid": 4002953,
+        "rss": 102121472,
+        "argvSHA256": "575b592961dc944cd9769a16a649d4d72b57fce47b43db4bcf468d0a9a85e787"
+      },
+      {
+        "pid": 4003114,
+        "rss": 102944768,
+        "argvSHA256": "e92c141c46443dd313332e60613851dd36f63730fcd1c33dae3e1e8ec8953a82"
+      },
+      {
+        "pid": 4003272,
+        "rss": 103989248,
+        "argvSHA256": "b2e69f7c2bc7c15d5be964388cc509113bc947140fb8f33f5b940513b4581129"
+      }
+    ],
+    "buckets": {
+      "sourceGit": 20971520,
+      "events": 16777216,
+      "ops": 54525952,
+      "reserve": 41943040
+    },
+    "sourceGit": 3854336,
+    "ops": 1167360,
+    "pass": true
+  },
+  "passedSuitesReused": true,
+  "fullGuestStagingNotPerformed": true
+}

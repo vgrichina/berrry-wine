@@ -1,0 +1,44 @@
+{
+  "fixtureOnly": true,
+  "result": {
+    "status": "normal-quit-observed",
+    "commands": 15,
+    "elapsed": 0.513286653906107,
+    "cleanup": {
+      "remaining": [],
+      "signals": [],
+      "runnerExit": 0,
+      "complete": true
+    },
+    "controllerSHA256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+    "responseSeconds": 10,
+    "guestSeconds": 10,
+    "wallSeconds": 150
+  },
+  "counts": {
+    "png": 16
+  },
+  "evidence": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence",
+  "pins": [
+    {
+      "source": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/release/airstrike-pre6a/airstrike-pre6a.exe",
+      "sha256": "0e6f5450109c4c83e97bcf263bc90dc2d64dd83587356dd8a87994cc4246b474"
+    },
+    {
+      "source": "/tmp/airstrike-complete-controller-main-integration-oct27/repo/tools/airstrike-menu-controller.py",
+      "sha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb"
+    },
+    {
+      "source": "/tmp/airstrike-complete-controller-main-integration-oct27/repo/tools/airstrike-observation-bridge.py",
+      "sha256": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f"
+    },
+    {
+      "source": "/tmp/airstrike-complete-controller-main-integration-oct27/repo/test/test-airstrike-menu-controller.py",
+      "sha256": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6"
+    },
+    {
+      "source": "/tmp/airstrike-complete-controller-main-integration-oct27/repo/test/test-airstrike-observation-bridge.py",
+      "sha256": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 46354432,
+  "sampledPeakRSS": 28073984,
+  "reapedPeakRSS": 46354432,
+  "cpuSeconds": 0.130622,
+  "wallSeconds": 0.11152595398016274,
+  "owned": [
+    [
+      4017604,
+      "114014759"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/usr/local/bin:/usr/bin:/bin",
+    "HOME=/home/user",
+    "LANG=C.UTF-8",
+    "TZ=UTC",
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require(\"fs\"),c=require(\"crypto\");console.log(JSON.stringify({executable:process.execPath,version:process.version,flags:process.execArgv.slice(0,1),limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),environmentSHA256:c.createHash(\"sha256\").update(JSON.stringify(Object.entries(process.env).sort())).digest(\"hex\"),pass:true}))"
+  ],
+  "commandSHA256": "4571c89008c8c5dc596eb04c9b87aa2de03f0fe4ca287960db3cd48c0ae52969",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/node-startup-explicit.stdout",
+  "stderr": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/node-startup-explicit.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

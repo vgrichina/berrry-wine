@@ -1,0 +1,51 @@
+{
+  "fixtureOnly": true,
+  "actualGuestStarts": 0,
+  "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "sourceRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "extractions": [
+    {
+      "name": "parseInputEntries",
+      "start": 121357,
+      "end": 150524,
+      "bytes": 29231,
+      "sha256": "a7ba59ef1c31e29d683d2e783b94003ba91a46c537b60af21be5589045fa8a2a"
+    },
+    {
+      "name": "handleControlCommand",
+      "start": 390475,
+      "end": 399640,
+      "bytes": 9165,
+      "sha256": "126c480fad208d3bfc704e85aedec31c567a3e0ba30b90ab48511821a13a8741"
+    }
+  ],
+  "command": {
+    "id": "airstrike-1",
+    "cmd": "keydown:27"
+  },
+  "ack": {
+    "id": "airstrike-1",
+    "ok": true,
+    "value": {
+      "queued": true,
+      "batch": 12
+    }
+  },
+  "scheduled": [
+    {
+      "batch": 12,
+      "action": "keydown",
+      "code": 27
+    }
+  ],
+  "nonFrozenReturnsPendingPromise": true,
+  "node": {
+    "executable": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "version": "v24.18.1",
+    "flags": [
+      "--max-old-space-size=512"
+    ],
+    "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "environmentSHA256": "090951cc60f155ad8af69f6ca364a20d7135e77d3db46c2906b8fce9b955abb3"
+  }
+}

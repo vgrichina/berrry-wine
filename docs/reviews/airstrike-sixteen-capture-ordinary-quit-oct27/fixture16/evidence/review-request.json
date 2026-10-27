@@ -1,0 +1,39 @@
+{
+  "session": "141e71f3481b4f19bfa2fc280fdbdb5f",
+  "token": "aeaf5a0901cb47d7bbdbf2fc79a75849",
+  "after": "airstrike-14",
+  "path": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/sixteen-cap-tutz1itw/evidence/capture-aeaf5a0901cb47d7bbdbf2fc79a75849.png",
+  "sha256": "e159831f1f177b93ab5ef1fbea7e511aeb2cfc3a30ed4bc991a2c38070822842",
+  "snapshot": {
+    "batch": 12,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "quit": false,
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  }
+}

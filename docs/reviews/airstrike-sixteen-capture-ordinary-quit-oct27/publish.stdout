@@ -1,0 +1,6 @@
+index {"exit": 0, "stopReason": null, "peakRSS": 24465408, "cleanupComplete": true}
+
+
+stage {"exit": -15, "stopReason": "accounting check failed: unstable size /tmp/airstrike-sixteen-capture-ordinary-quit-oct27/repo", "peakRSS": 29478912, "cleanupComplete": true}
+
+

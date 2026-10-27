@@ -1,0 +1,11 @@
+# Airstrike ordinary Quit remains open
+
+The amended sixteen-capture resource preflight passes using the unchanged accepted production Controller and Observation Bridge and their deterministic fake runner. All sixteen captures are fixture bytes. The predecessor eight-capture rejection remains historical and was not consumed retroactively.
+
+A new prerequisite boundary rejects before scarce guest execution: the exact historical production runner queues keydown while frozen and ACKs `{queued:true,batch:12}` without an input execution log. Its actual `parseInputEntries` and `handleControlCommand` functions were extracted byte-for-byte from runner SHA4d7b9587 at revision b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a. The unchanged accepted Controller rejects that exact ACK as uncertain dispatch. The unchanged accepted Bridge contains no step or thaw orchestration. A non-frozen diagnostic returns a pending Promise, confirming the distinct execution path. This is a narrow source-extraction protocol fixture, not full runner/guest initialization acceptance.
+
+The assigned contract requires serial ACK/frozen-zero and prohibits source changes. We did not invent a live/frozen adapter, synthesize executed ACKs, silently run live, or spend the sole guest attempt on the known rejected boundary. No guest started, input was delivered, PNG was captured from a game, or remote runtime was staged. Ordinary focus, menu rows0..6, Enter on Quit, guest Exit0 and clean runner exit remain unqualified. Coordinator resolution is required for the runner/bridge frozen-input protocol.
+
+All preceding accepted suites, build, codec/font/ABI receipts and historical sustained-play receipts are reused without repetition; no current-main emulator claim. Assigned box bx_fk6x4peu API probe succeeded with ample RAM/disk; it remains coordinator owned, running as assigned, with shutdown09:35 before expiry09:42:43 UTC. This worker performs no stop/resume. Setup incidents include an initial oversized policy display, a transient sixth-client admission rejection and an owned nested-accounting temp-file race; they remain recorded and do not acquire retrospective compliance. The temp file now uses process-specific names.
+
+Evidence-only task branch publication; no source, main, or public deployment.

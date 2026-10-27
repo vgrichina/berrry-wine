@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 48939008,
+  "sampledPeakRSS": 45481984,
+  "reapedPeakRSS": 48939008,
+  "cpuSeconds": 0.20811599999999997,
+  "wallSeconds": 0.21381096192635596,
+  "owned": [
+    [
+      4014452,
+      "114002036"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/frozen-boundary.cjs"
+  ],
+  "commandSHA256": "2b62958c2c20279fd0acf10dc75d9cda8afb7c7b47c2dca2fc643cbcd9f8d015",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/frozen-runner.stdout",
+  "stderr": "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/frozen-runner.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/task.py", line 72, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/task.py", line 39, in main
+    b=git('source-'+str(i),'-C',x['gitDonor'],'show',x['gitRevision']+':'+x['source']) if x['kind']=='git' else pathlib.Path(x['source']).read_bytes()
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/task.py", line 19, in git
+    sys.argv=['run','gitblob' if label.startswith('source-') else 'git',label,*args];c.main()
+                                                                                     ^^^^^^^^
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/run.py", line 58, in main
+    assert gate() is None,json.loads((H/'accounting.json').read_text())
+           ^^^^^^
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/run.py", line 55, in gate
+    dump('accounting.json',q)
+  File "/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/run.py", line 18, in dump
+    p=H/(name+'.tmp');p.write_text(json.dumps(q,indent=2)+'\n');p.replace(H/name)
+                                                                ^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1378, in replace
+    os.replace(self, target)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/accounting.json.tmp' -> '/tmp/airstrike-sixteen-capture-ordinary-quit-oct27/ops/accounting.json'
