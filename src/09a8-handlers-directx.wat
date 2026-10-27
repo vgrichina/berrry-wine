@@ -10663,12 +10663,13 @@
         (return)))
     (if (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
       (then
-        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 0)
+        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 8)
               (i32.load offset=12 (local.get $entry)))
           (then
             (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-            (return)))))
+            (return)))
+        (call $di_kbd_buffer_format (local.get $entry))))
     (store.field DxObject flags (local.get $entry)
       (i32.or (local.get $flags) (global.get $DIDEV_ACQUIRED)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
@@ -10732,6 +10733,25 @@
               (i32.eq (local.get $dik) (i32.const 0x9C)))  ;; NUMPADENTER -> VK_RETURN
       (i32.or (i32.eq (local.get $dik) (i32.const 0x9D))   ;; RCONTROL -> VK_CONTROL
               (i32.eq (local.get $dik) (i32.const 0xB8))))) ;; RMENU -> VK_MENU
+
+  ;; An acquired format is immutable. Register exactly the objects collect
+  ;; can report, before input is admitted to this device's bounded FIFO.
+  ;; Keep the mapping here: the host must not duplicate the DIK/format rules.
+  (func $di_kbd_buffer_format (param $entry i32)
+    (local $dik i32) (local $vk i32)
+    (block $done (loop $keys
+      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))
+      (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))
+      (if (i32.and (i32.ne (local.get $vk) (i32.const 0))
+                   (i32.eqz (call $di_kbd_scan_skip (local.get $dik))))
+        (then
+          (if (i32.ge_s
+                (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik))
+                (i32.const 0))
+            (then (drop (call $host_di_keyboard_buffer
+              (local.get $entry) (i32.const 9) (local.get $vk)))))))
+      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
+      (br $keys))))
 
   ;; Live host state for one scan code, as 0 or 1.
   (func $di_kbd_live (param $dik i32) (result i32)

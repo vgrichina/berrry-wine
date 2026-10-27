@@ -1,0 +1,151 @@
+{
+  "at": 1793124717.146574,
+  "sourceAndFixtureSHA256": {
+    "src/09a8-handlers-directx.wat": "f7696c3f557272bd3247c1ad9977034c831db0c4cc04d8a007829718178563ab",
+    "lib/renderer-input.js": "643fb191891803e6200cb83fdbc106d542459b4a21ee43941d97bd22a98b9bb8",
+    "test/test-directinput-independent-custom-capacity.js": "6d4e47187d417e5d81c11039eaa104a38d16a177aae94d745664468945b56cd0",
+    "test/test-directinput-format-admission.js": "eba0cf142385f5c8e9b8cbb3d91dc6ee58fcb8c4cd0337f08c36212d1a491553",
+    "test/test-directinput-buffered-keyboard.js": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+    "lib/host-window.js": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9",
+    "lib/guest-rpc.js": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "lib/host-import-sigs.generated.json": "70380887a9966be790debcfe736d49e733f90f0362bcf5e20867053ffd295141",
+    "test/run.js": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+    "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+  },
+  "focusedProductionFunctionChanges": [
+    "$handle_IDirectInputDevice_Acquire"
+  ],
+  "addedFunction": [
+    "$di_kbd_buffer_format"
+  ],
+  "unchangedLifecycleMappingImmediateMouseReadFunctions": [
+    "$dx_free",
+    "$handle_IDirectInputDevice_Unacquire",
+    "$handle_IDirectInputDevice_SetDataFormat",
+    "$handle_IDirectInputDevice_GetDeviceState",
+    "$handle_IDirectInputDevice_GetDeviceData",
+    "$di_kbd_collect"
+  ],
+  "focusedWasm": "17085b42edf8a4c339e362b6343b262e5842fbb7ad24c0c832b094be8bd99446",
+  "regressionInputs": {
+    "test/test-renderer-input-button-hold.js": "9ac2fee0455883ff613babe521553af2a6dda0dd5228932b291fdd589769f1e1",
+    "test/test-renderer-input-cursor.js": "860315e79464a684eb8fbd969cb1e14162f82858c28b3e6c9064db2140c29755",
+    "test/test-renderer-input-resize.js": "c2a57f18da2a4f382261936ece51785c241e202a16f70be5ff0bbfa80bad66b4",
+    "test/renderer-physical-modifiers.test.cjs": "5da609bbdd7ecc48c10bdd867335a0eb1aa6f4a9ee07677b03ddc84963a69888",
+    "test/renderer-side-modifier-polling.test.cjs": "98ab85c8859f8ada4efd222f08abf4164f2b3b240f37837c3179607bd15db222",
+    "test/renderer-modifier-independent-accept.test.cjs": "e8b40d94e65f380e67a00107582c0906e51206f70ec15fd2326f48245d92aaaf",
+    "test/test-keyboard-message-lparam.js": "43d574064092a89c191af61a4dae97f637f670067c854760bdef1eeb95e7ec82",
+    "test/test-keyboard-focus-seed.js": "7257c19dbb039cd12aa0a45c237fad9c1d267c4b5e995173b5bbcebb75add763",
+    "test/test-guest-rpc-import-throw.js": "4df2344ee7c7321faebe96d67bd4595993e82ba2580fa0fd83b5772bcbdc874b",
+    "test/fixtures/airstrike-caption/production-renderer-input.js": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "tools/check-wat-fragments.js": "5e916cf3e66c31c4837a693d4d568b06437bdfb0ebadf5dd051eadeaa9a5d3f9",
+    "tools/check-wat-logical-and.js": "db81c73d21d2999f2bc6fbc67b95e20710fe30c424b0f467bd0fb0b92eb8bb22"
+  },
+  "controls": "unfiltered acquisition mutant restores exact omitted-key overflow/count-zero rejection; independent oracle loss/order/false-overflow controls pass; selected-key and zero-capacity overflow asserted",
+  "task": "airstrike-directinput-format-admission-repair-oct27",
+  "base": "91b9d5a7c073318dd886377a053ed950d0ec5379",
+  "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+  "before": {
+    "hr": 1,
+    "count": 0,
+    "records": []
+  },
+  "after": {
+    "hr": 0,
+    "count": 2,
+    "records": [
+      [
+        7,
+        128,
+        113,
+        5
+      ],
+      [
+        7,
+        0,
+        113,
+        6
+      ]
+    ]
+  },
+  "tests": {
+    "unchanged-baseline": {
+      "exit": 1,
+      "stdoutSHA256": "24643f9e88b6520dc543ac9581779f36cddc4d619763a1999bea6592607a6828",
+      "stderrSHA256": "16000bfd3bedafa355f825622dfd922d7a8060f2da8a9c56957f7a98db370ea7"
+    },
+    "unchanged-reproducer-fixed": {
+      "exit": 0,
+      "stdoutSHA256": "43e1fd165d37fcf0f5121d32e040803526ac2fb6b0a37561409adab0200346a8",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "unchanged-reproducer-rpc": {
+      "exit": 0,
+      "stdoutSHA256": "d9f82bc1072aa0cb9ec25e629baa6001953ef7a5b0228b130dacac5907ff7bcc",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "targeted-direct-final": {
+      "exit": 0,
+      "stdoutSHA256": "447b98ebdc21a332099866b00b48a54fc676c2e8e64216143a20e9711ab36804",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "targeted-rpc": {
+      "exit": 0,
+      "stdoutSHA256": "61b341a592d8063167d671ff38bc3eebdbadd0ad0e6cfb1654ec8231e42ab946",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "existing-buffered-direct": {
+      "exit": 0,
+      "stdoutSHA256": "1c590ddb78caf39b51615c470ff139ffb53f11deacebe575b021fe4b59676157",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "existing-buffered-rpc": {
+      "exit": 0,
+      "stdoutSHA256": "ba128862e81f511f788d3cd8be80b3b5f62c656ed326a47802649505896792a7",
+      "stderrSHA256": "bf2cf40969ab5c5f6411cf54561ff8148daae970e3f33f445aaa874fe7d7ea68"
+    },
+    "reject-unfiltered": {
+      "exit": 1,
+      "stdoutSHA256": "08e1f3bb4a495f16fe4f314d84aad9b0da3abd6d6a12a0603159cdbd9f5b031b",
+      "stderrSHA256": "c4c3ec4f6fa299789aa2b926d2bc470b67e90bb6ba270eadcdca860b353c033f"
+    }
+  },
+  "targetedChecks": [
+    "omitted keys before, between and after selected edges preserve metadata and peek/consume",
+    "only selected edges cause overflow; omitted edges do not clear it",
+    "zero-capacity device ignores omitted edges but overflows for a selected edge",
+    "empty and unsupported-only formats do not overflow",
+    "strict mapping rejects VK-shaped aliases before capacity admission",
+    "different acquired devices filter independently before their own capacities",
+    "host contexts with identical device ids retain independent filters and reset",
+    "reacquire replaces eligibility and discards stale records and overflow",
+    "omitted buffered objects still contribute to host physical state"
+  ],
+  "unchangedExistingChecks": 14,
+  "affectedInputGroups": 9,
+  "canonical": "/tmp/airstrike-directinput-format-admission-repair-oct27/ops/receipt-manifest.json",
+  "recovery": {
+    "node": "/usr/bin/node --max-old-space-size=512",
+    "tests": [
+      "test/test-directinput-independent-custom-capacity.js",
+      "test/test-directinput-format-admission.js",
+      "test/test-directinput-buffered-keyboard.js"
+    ],
+    "modes": [
+      "direct",
+      "--rpc"
+    ],
+    "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "limits": "CPU90 wall120 file24MiB output2MiB; Node RSS768MiB, heap512MiB, DATA/AS unlimited; fresh RAM/disk admission and pool slot required"
+  },
+  "limitations": [
+    "Synthetic memory/device input fixture; actual production WAT and renderer/host/checkInput wiring.",
+    "Production GuestRpc broker in-process; no OS Worker, browser or game evidence.",
+    "Custom immediate-state helper remains trap-only in fixture; standard immediate state passes existing suite and immediate/mouse production functions unchanged.",
+    "No full-module build, old module compatibility qualification, main integration or runtime authorization. Independent acceptance is next coordinator-owned gate."
+  ],
+  "incidents": [
+    "First own checkout exceeded donor alternate nesting; preserved failure, flattened own read-only alternate paths then checkout succeeded.",
+    "First targeted fixture used incorrect state stride; corrected to production stride32. Subsequent custom immediate-state call trapped out-of-scope as designed; final control queries exact production host physical state. Original failures preserved."
+  ]
+}
