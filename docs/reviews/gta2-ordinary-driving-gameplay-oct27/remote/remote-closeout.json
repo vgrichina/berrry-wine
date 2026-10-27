@@ -1,0 +1,15 @@
+{
+  "at": 1793099128.9396296,
+  "box": "bx_9th86yg2",
+  "state": "RUNNING_API_EXEC_OBSERVED",
+  "compileOwnedLive": [],
+  "cleanupComplete": true,
+  "guestInvocations": 0,
+  "modules": [],
+  "allocatedBytes": 107986944,
+  "allocation": 1073741824,
+  "reserve": 67108864,
+  "lifecycleOwner": "coordinator",
+  "expiry": "2026-10-27T11:37:58.013Z",
+  "leftRunning": true
+}

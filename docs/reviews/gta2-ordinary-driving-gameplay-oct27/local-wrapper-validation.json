@@ -1,0 +1,76 @@
+{
+  "status": "PASS_SYNTAX_AND_EXACT_IMMUTABLE_ALTERNATE_TARGETS",
+  "files": [
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/setup.py",
+      "sha256": "b83a486b50b9dc794d2e737ef24e863f50be586085da694453859e3caee96b1a"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/extend.py",
+      "sha256": "e74692f208286106be320c604eba2709d7f94e209268350438ff60f635198d43"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/remote-control.py",
+      "sha256": "e7470e4792956d8556b4dc39060e2aaf386a30cfbb98b3fda4c79f9eab1d942e"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/plan.py",
+      "sha256": "9f1354338d6a33cf17515c37fb1bbf355743a5d3ee73cd1a0d8c997e9deae2dd"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/stage-18k-recipe.py",
+      "sha256": "dadb6dc77b4fe3fba7e23694a6ff46d8f6221cfd2169a56b5ce8f0e6914cee94"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/shorten.py",
+      "sha256": "00b534dee37e6527fc93eb35d7137198a9735504bd49f5a60833e845d2b3ff34"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/local-check.py",
+      "sha256": "44d112e644c7f9cb731a49f61ab0853eded52ff555332a6bf7483c903a82b691"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/run.py",
+      "sha256": "28dd84e4622a4e75e5cdebb43080f6e0926228b65f310679e0eb61d46f3055b4"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/flatten.py",
+      "sha256": "9b5be89b1c53ef8bf8c1a6fab25620905953289c6c85be403a0cb226f11f66f2"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/prepare-remote.py",
+      "sha256": "04d118ec038ee604a4c119954d1142b2509f19a8de6fa141b3e6c0080920dbfa"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/remote-supervise.py",
+      "sha256": "c73ce1d8a33d7a5cd6a6348f5632cd9f81e202e9b4d092c866c71fdea04d333c"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/manifest.py",
+      "sha256": "608b7ce0b99a2811bf3a012ccf53bc46fdec1da2ae94ed0db82d25ac4e66f70c"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/control-op.py",
+      "sha256": "a35c4e64e2deb15ab9b7e188a1d9b19630327afafd18c4876c3c68db08d60fb4"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/stage.py",
+      "sha256": "98c2864c6451c4ebd97505e4a6c3bb32fe7e431c4329c76e60fa6046f34629d4"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/common.py",
+      "sha256": "202e296645502c2c72a7fd7d9cf8403007f26f00fdcfad84621fc4e304c7fb86"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/inspect-plan.py",
+      "sha256": "8698483b9e44f1210e54636dd51114b17d27376a15a31e9782e65f0126539b1e"
+    },
+    {
+      "path": "/tmp/gta2-ordinary-driving-gameplay-oct27/ops/remote-op.py",
+      "sha256": "322919d3715c5083c95065640bef11798a79d080359fbb7bb191527e8182be9e"
+    }
+  ],
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "remoteCPUChange": "one requested CPU-constant substitution only; local trusted supervisor unchanged",
+  "localResourceConfiguration": "128MiB physical CPU90 wall120 FSIZE24MiB output2MiB; no DATA/AS on Python/Node"
+}

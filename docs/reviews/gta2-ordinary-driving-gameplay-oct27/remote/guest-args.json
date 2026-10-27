@@ -1,0 +1,16 @@
+[
+  "test/run.js",
+  "--app=gta2_demo",
+  "--no-build",
+  "--wasm=/tmp/gta2-ordinary-driving-gameplay-oct27/runner/build/wine-assembly.wasm",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--trace-input",
+  "--max-seconds=180",
+  "--batch-size=10000",
+  "--tick-ms-per-batch=10",
+  "--control=8123",
+  "--frozen",
+  "--screen=640x480",
+  "--vfs-tree=/tmp/gta2-ordinary-driving-gameplay-oct27/runner/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files"
+]

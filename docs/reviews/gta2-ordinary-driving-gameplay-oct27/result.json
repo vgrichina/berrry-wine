@@ -1,0 +1,135 @@
+{
+  "status": "BLOCKED_PRODUCTION_CALLBACK_CENSUS_BEFORE_COMPILER_NO_GUEST",
+  "selectedProductionRevision": "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+  "registeredRoute": "gta2_demo",
+  "rootAuthoritativeRouteBlocks": [
+    {
+      "bytes": 2058,
+      "sha256": "ce8e2809518c06f859841bdf3a001b6931c830c4650b22b75b8ccfcdfdd2c930",
+      "rootAndSelectedIdentical": true
+    },
+    {
+      "bytes": 465,
+      "sha256": "8ad3a75a32eb057a2cc0c44646a74d8d0cfa7ae7d89dbbb3c92b7061bf2d2558",
+      "rootAndSelectedIdentical": true
+    }
+  ],
+  "firstBlocker": {
+    "command": [
+      "/bin/bash",
+      "tools/build.sh"
+    ],
+    "gate": [
+      "node",
+      "tools/callback-ownership-census.js"
+    ],
+    "reason": "Two changed whole-file host-entry producer fingerprints require lifetime review; census deliberately unchanged.",
+    "changed": [
+      {
+        "file": "host.js",
+        "producer": "host.js:host-file",
+        "expectedSHA256": "03eb8a7ab8dfae1f6e2a16c7943be2ed582a3f463029ae950043f0b2c0569ee4",
+        "actualSHA256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+      },
+      {
+        "file": "lib/renderer-input.js",
+        "producer": "lib/renderer-input.js:host-file",
+        "expectedSHA256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+        "actualSHA256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+      }
+    ],
+    "pins": [
+      {
+        "path": "tools/build.sh",
+        "bytes": 38494,
+        "sha256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef"
+      },
+      {
+        "path": "tools/callback-ownership-census.js",
+        "bytes": 9047,
+        "sha256": "680a13027e348a3c19cc8f4ec670e3046372372d6d674fb1cd32e8fe216e707e"
+      },
+      {
+        "path": "tools/callback-ownership-census.json",
+        "bytes": 276711,
+        "sha256": "5bb9d07c4658b419ff72202ec0e1378608a61df2f8b2083e8aa3a3f1911dfcf4"
+      },
+      {
+        "path": "host.js",
+        "bytes": 369423,
+        "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+      },
+      {
+        "path": "lib/renderer-input.js",
+        "bytes": 181810,
+        "sha256": "e7b59c046f63b504a0aba256b644a42c01f820fde9a0f9e5fee3961dae397f78"
+      }
+    ]
+  },
+  "completed": [
+    "all71 original game SHA256 pins",
+    "3878-file98062584-byte remote immutable closure",
+    "exact build Node startup with no DATA/AS restriction",
+    "four full PNG envelope reservation8179810 of8388608 bytes including1MiB terminal reserve",
+    "one canonical build invocation with distinct stdout/stderr and complete cleanup"
+  ],
+  "notReached": [
+    "memory-map gate and later build gates",
+    "WATX compile/module",
+    "actual filename-bearing canonical mount parser and guest Node startup",
+    "guest execution/initial frame/menu/world",
+    "ordinary movement/driving dispatch",
+    "before/after acceptance PNGs and human review",
+    "held inputs or ordinary Quit"
+  ],
+  "guestInvocations": 0,
+  "inputDispatches": 0,
+  "inspectedPNGs": [],
+  "fpsClaim": false,
+  "audioClaim": false,
+  "deviceClaim": false,
+  "compile": {
+    "exit": 1,
+    "stopReason": null,
+    "peakRSS": 493821952,
+    "sampledPeakRSS": 493821952,
+    "reapedPeakRSS": 469458944,
+    "cpuSeconds": 13.483629,
+    "wallSeconds": 3.070756094999979,
+    "owned": [
+      [
+        28077,
+        "154891"
+      ],
+      [
+        28087,
+        "154894"
+      ],
+      [
+        28094,
+        "154896"
+      ],
+      [
+        28101,
+        "154960"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "remoteCloseout": {
+    "at": 1793099128.9396296,
+    "box": "bx_9th86yg2",
+    "state": "RUNNING_API_EXEC_OBSERVED",
+    "compileOwnedLive": [],
+    "cleanupComplete": true,
+    "guestInvocations": 0,
+    "modules": [],
+    "allocatedBytes": 107986944,
+    "allocation": 1073741824,
+    "reserve": 67108864,
+    "lifecycleOwner": "coordinator",
+    "expiry": "2026-10-27T11:37:58.013Z",
+    "leftRunning": true
+  },
+  "resumeCondition": "Coordinator-assigned source repair/independent review of the exact two producer changes and census, then a separately admitted runtime task. This worker does not perform that repair or select a new task."
+}

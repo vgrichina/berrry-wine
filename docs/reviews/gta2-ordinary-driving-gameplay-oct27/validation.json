@@ -1,0 +1,32 @@
+{
+  "status": "PASS_REPORT_PAYLOAD_HASHES_RECIPE_SYNTAX_CAUSAL_DIAGNOSTICS_EXACT_STARTUP_NO_GUEST_CLEANUP",
+  "payloads": 51,
+  "payloadBytes": 2590188,
+  "archiveMembers": 4299,
+  "reusedRemoteClosure": "3878files98062584B exact77e9605085e2d57a0d20370bbfede558c7fa378da1cc8cde61e4a6bb42caa7d5",
+  "resourceAdmission": {
+    "at": 1793099376.370547,
+    "memAvailable": 3742785536,
+    "requiredRemainingRAM": 1428049920,
+    "peers": [
+      {
+        "pid": 4114088,
+        "rss": 109178880
+      },
+      {
+        "pid": 4159952,
+        "rss": 207601664
+      }
+    ],
+    "free": 7276527616,
+    "future": 603979776,
+    "projectedFree": 6672547840,
+    "sourceGit": 84389888,
+    "ops": 24666112,
+    "events": 3244032,
+    "used": 112300032,
+    "reserve": 8388608,
+    "allocation": 134217728,
+    "pass": true
+  }
+}

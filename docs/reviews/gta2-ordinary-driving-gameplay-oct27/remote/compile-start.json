@@ -1,0 +1,52 @@
+{
+  "at": 1793098958.6786711,
+  "mode": "compile",
+  "command": [
+    "/bin/bash",
+    "tools/build.sh"
+  ],
+  "commandSHA256": "73adf1556e83963584e1146b0301ba28d9dba71b625d57ffb03716d3d3e79b8b",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
+  "environmentSHA256": "b81030573cbfc9ea5639848ec37aa12aeaea4682d125faf7140ef086d5c0ef96",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "inheritedLimits": {
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ],
+    "RSS": [
+      -1,
+      -1
+    ],
+    "CPU": [
+      -1,
+      -1
+    ],
+    "FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "resources": {
+    "physicalRSS": 6442450944,
+    "CPU": 180,
+    "wall": 240,
+    "FSIZE": 25165824,
+    "output": 4194304
+  },
+  "sourceRevision": "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+  "trustedSourceSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "remoteDerivedSHA256": "45b971c8e661302ff77b518ba1b1d7c920ec239c78c1026a081d8d6071c1cf0c"
+}

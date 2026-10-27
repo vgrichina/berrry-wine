@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_cmlaeachlvig",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T11:01:39.414Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T11:01:39.132Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 3878, \"bytes\": 98062584, \"manifestSHA256\": \"77e9605085e2d57a0d20370bbfede558c7fa378da1cc8cde61e4a6bb42caa7d5\", \"free\": 129053863936, \"verified\": true}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

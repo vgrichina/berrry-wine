@@ -1,0 +1,28 @@
+{
+  "actualEnvelopeOverhead": 322,
+  "rawChunk": 6000,
+  "encoding": "Python-base85-no-JSON-quote-or-backslash-alphabet",
+  "maxDisplayedResponse": 7886,
+  "expectedDimensions": [
+    640,
+    480
+  ],
+  "fullPNGBytesConservative": 1229796,
+  "remoteEachCeiling": 4194304,
+  "reservedRemotePNGs": 4,
+  "remoteCaptureAllocation": 33554432,
+  "rawAPIBudget": 8388608,
+  "alreadyUsed": 664714,
+  "terminalReserve": 1048576,
+  "projectedTotal": 8179810,
+  "passBudget": true,
+  "remainingTimePlan": {
+    "guestWall": 240,
+    "initialLoading": 80,
+    "menuAction": 35,
+    "worldLoading": 40,
+    "ordinaryMovement": 20,
+    "captureReviewTransfer": 45,
+    "cleanup": 20
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "at": 1793099238.4796143,
+  "boardWatcher": {
+    "pid": 4114750,
+    "start": "114476352",
+    "ppid": 4114088,
+    "state": "S",
+    "rss": 2097152,
+    "cpu": 0.0,
+    "argvSHA256": "d38417f4ba928843ce74dde88f13e8b890814b33de3e365ce31e1c7873da782a",
+    "argv": [
+      "tail",
+      "-n",
+      "0",
+      "-f",
+      "messageboard.txt"
+    ],
+    "cwd": "/home/user/wine-assembly"
+  },
+  "signal": "pidfdSIGTERM",
+  "stillLive": false,
+  "remoteCompileCleanup": {
+    "at": 1793099128.9396296,
+    "box": "bx_9th86yg2",
+    "state": "RUNNING_API_EXEC_OBSERVED",
+    "compileOwnedLive": [],
+    "cleanupComplete": true,
+    "guestInvocations": 0,
+    "modules": [],
+    "allocatedBytes": 107986944,
+    "allocation": 1073741824,
+    "reserve": 67108864,
+    "lifecycleOwner": "coordinator",
+    "expiry": "2026-10-27T11:37:58.013Z",
+    "leftRunning": true
+  },
+  "coordinatorWatcherTouched": false,
+  "boxLifecycleOperations": [],
+  "boxLeftRunning": true
+}
