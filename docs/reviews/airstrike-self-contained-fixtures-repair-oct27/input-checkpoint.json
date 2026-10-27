@@ -1,0 +1,55 @@
+{
+  "candidate": "a6a5cda53242adba9738a30811cee60fa696548a",
+  "accepted": "/tmp/airstrike-interior-independent-accept-oct27/ops/receipt-manifest.json",
+  "acceptedSHA256": "d66f6eb0831c8f943cdae99f24c1bb2d23d72f62f0b0d5727c7cb29da906bdc9",
+  "firstFailure": "/tmp/airstrike-accepted-interior-main-integrate-oct27/ops/receipt-manifest.json",
+  "firstFailureSHA256": "3e8a065de7166f662b68d8e91add69a4f08c7c4a228f42a70b823e155bb4ee5a",
+  "requiredFixtures": [
+    {
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/reproduce.py",
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    {
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/production-run.js",
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    {
+      "path": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/production-renderer-input.js",
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    {
+      "path": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained/review-request.json",
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    {
+      "path": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained/review-9b55685e506a4124abd456510ebaf254.json",
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    {
+      "path": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained/9b55685e506a4124abd456510ebaf254.png",
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    }
+  ],
+  "fixtureBytes": 1014134,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "stores": [
+    "/tmp/airstrike-caption-interior-geometry-repair-oct27/repo/.git/objects",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/repo/.git/objects",
+    "/home/user/wine-assembly/.git/objects"
+  ],
+  "paths": [
+    "tools/airstrike-menu-controller.py",
+    "tools/airstrike-observation-bridge.py",
+    "test/test-airstrike-console-obscuration.py",
+    "test/test-airstrike-caption-interior.py"
+  ],
+  "mountArgv": [],
+  "mountValidation": "Not applicable: no runtime, mounts or Node execution; only Git sparse checkout and offline Python",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-self-contained-fixtures-repair-oct27/root-ref-digest.json"
+}

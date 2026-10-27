@@ -10,7 +10,7 @@ import threading
 import unittest
 
 ROOT=pathlib.Path(__file__).resolve().parents[1]
-OPS=ROOT.parent/'ops'
+FIXTURES=ROOT/'test/fixtures/airstrike-caption'
 s=importlib.util.spec_from_file_location('startup',ROOT/'test/test-airstrike-console-obscuration.py')
 t=importlib.util.module_from_spec(s);s.loader.exec_module(t)
 
@@ -51,6 +51,11 @@ def transport(directory,kind):
         print('[ctl] '+json.dumps(dict(id=cmd['id'],ok=True,value=v)),flush=True)
 
 class Interior(unittest.TestCase):
+    def setUp(self):
+        work=tempfile.TemporaryDirectory(prefix='airstrike-interior-')
+        self.addCleanup(work.cleanup)
+        self.work=pathlib.Path(work.name)
+
     def cli(self,kind):
         o=t.approved();o['startupSnapshot']=snapshot(kind)
         o['consoleObstruction']=copy.deepcopy(o['startupSnapshot']['windows'][1])
@@ -58,7 +63,7 @@ class Interior(unittest.TestCase):
         return q,[json.loads(x) for x in q.stdout.splitlines()]
 
     def bridge(self,kind):
-        d=pathlib.Path(tempfile.mkdtemp(prefix='interior-'+kind+'-',dir=OPS))
+        d=pathlib.Path(tempfile.mkdtemp(prefix='interior-'+kind+'-',dir=self.work))
         obj=t.b.Bridge([sys.executable,'-B',__file__,'--transport',str(d),kind],ROOT/'tools/airstrike-menu-controller.py',d/'evidence',guest_seconds=12)
         done=threading.Event();errors=[]
         def review():
@@ -85,9 +90,9 @@ class Interior(unittest.TestCase):
         return inputs
 
     def test_unchanged_original_attack_after_repair(self):
-        d=pathlib.Path(tempfile.mkdtemp(prefix='unchanged-attack-',dir=OPS));h=d/'ops';h.mkdir()
+        d=pathlib.Path(tempfile.mkdtemp(prefix='unchanged-attack-',dir=self.work));h=d/'ops';h.mkdir()
         (d/'repo').symlink_to(ROOT,target_is_directory=True)
-        for n in ('reproduce.py','production-renderer-input.js'):(h/n).write_bytes((OPS/n).read_bytes())
+        for n in ('reproduce.py','production-renderer-input.js'):(h/n).write_bytes((FIXTURES/n).read_bytes())
         q=subprocess.run([sys.executable,'-B',str(h/'reproduce.py')],capture_output=True,timeout=20)
         (h/'stdout').write_bytes(q.stdout);(h/'stderr').write_bytes(q.stderr)
         report=json.loads((h/'independent-rejection.json').read_text())

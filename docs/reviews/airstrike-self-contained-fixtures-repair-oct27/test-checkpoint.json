@@ -1,0 +1,26 @@
+{
+  "candidate": "a6a5cda53242adba9738a30811cee60fa696548a",
+  "completed": {
+    "height8-final": {
+      "supervision": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/height8-final.json",
+      "sha256": "e9706ebd95909fd51eb9bd3178d64660c519d1cc480a1129ec47a6cd66d91835",
+      "temporaryOutputsClean": true,
+      "repositoryPinsUnchanged": true
+    },
+    "interior-final": {
+      "supervision": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/interior-final.json",
+      "sha256": "d7d11d9eeb67b6a43fcc5ee062f35f5f3abc39d0e80614796498f2d2aef107e9",
+      "temporaryOutputsClean": true,
+      "repositoryPinsUnchanged": true
+    },
+    "console-affected": {
+      "supervision": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/console-affected.json",
+      "sha256": "07165095269fd92253818902568baf3993013d926b035544bca1081f3d1fb0d5",
+      "temporaryOutputsClean": true,
+      "repositoryPinsUnchanged": true
+    }
+  },
+  "reused": "Independent 32 geometry cases and unchanged producer controls: accepted-reuse-receipt.json; production source pins unchanged",
+  "remaining": [],
+  "verdict": "PASS_RELOCATED_OFFLINE_FIXTURE_CLOSURE"
+}

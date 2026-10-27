@@ -18,7 +18,7 @@ def load(name, path):
     return m
 m = load('controller', ROOT/'tools/airstrike-menu-controller.py')
 b = load('bridge', ROOT/'tools/airstrike-observation-bridge.py')
-D = pathlib.Path('/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained')
+D = ROOT/'test/fixtures/airstrike-caption'
 REQUEST = json.loads((D/'review-request.json').read_text())
 SNAPSHOT = REQUEST['snapshot']
 TARGET = SNAPSHOT['windows'][1]
@@ -54,6 +54,11 @@ def drive(messages):
     return commands, 'success'
 
 class Startup(unittest.TestCase):
+    def setUp(self):
+        work=tempfile.TemporaryDirectory(prefix='airstrike-startup-')
+        self.addCleanup(work.cleanup)
+        self.work=pathlib.Path(work.name)
+
     def test_actual_controller_cli_startup_contract(self):
         messages=[dict(observation=approved()),queued(1,'click:656:33',SNAPSHOT),
                   dict(observation=observed('airstrike-1')),queued(2,'keydown:32',batch=5001),
@@ -68,7 +73,7 @@ class Startup(unittest.TestCase):
 
     def test_actual_bridge_entry_with_reviewed_startup_and_wrong_target(self):
         for mode in ('normal', 'wrong-target', 'stale-review'):
-            directory = pathlib.Path(tempfile.mkdtemp(prefix='startup-'+mode+'-', dir=ROOT.parent/'ops'))
+            directory = pathlib.Path(tempfile.mkdtemp(prefix='startup-'+mode+'-', dir=self.work))
             obj = b.Bridge([sys.executable, '-B', __file__, '--startup-runner', str(directory)],
                            ROOT/'tools/airstrike-menu-controller.py', directory/'evidence', guest_seconds=15)
             done = threading.Event();errors=[]
@@ -113,13 +118,13 @@ class Startup(unittest.TestCase):
 
     def test_retained_image_and_production_caption_contract(self):
         self.assertEqual(hashlib.sha256((D/'9b55685e506a4124abd456510ebaf254.png').read_bytes()).hexdigest(),REQUEST['sha256'])
-        p=ROOT.parent/'ops/production-run.js';source=p.read_text()
+        p=D/'production-run.js';source=p.read_text()
         self.assertEqual(hashlib.sha256(p.read_bytes()).hexdigest(),'4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809')
         for s in ["kind === 'click'", "const evs = parseInputEntries([`${tickState.batch | 0}:${entry}`]);", "ev.action === 'click' && renderer && renderer.handleMouseDown", "renderer.handleMouseDown(ev.x, ev.y, 1);", "renderer.handleMouseUp(ev.x, ev.y, 1);", "return { queued: true, batch: tickState.batch | 0 };"]:
             self.assertIn(s,source)
         self.assertEqual(m.execution_log('click:656:33',5000,SNAPSHOT),'[input] click 656,33 at batch 5000')
         self.assertEqual(m.activation_command(approved(),SNAPSHOT),'click:656:33')
-        renderer=ROOT.parent/'ops/production-renderer-input.js'
+        renderer=D/'production-renderer-input.js'
         self.assertEqual(hashlib.sha256(renderer.read_bytes()).hexdigest(),'4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051')
         source=renderer.read_text()
         for snippet in ['this._raiseWindowGroup(win);','this._setKeyboardInputOwner(win);',

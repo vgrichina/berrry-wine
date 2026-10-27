@@ -1,0 +1,495 @@
+{
+  "tree": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree",
+  "repositoryFiles": {
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "test/fixtures/airstrike-caption/README.md": {
+      "bytes": 1212,
+      "sha256": "fff62ef6e499ef92c705af924e70dcdac27ca640e6ace3bea578c12cbb2dfeec"
+    },
+    "test/fixtures/airstrike-caption/manifest.json": {
+      "bytes": 1159,
+      "sha256": "b6ac626fb2a4ada5df5e2e84d43eea99603546f60a5a7e9346e48425de0edc4b"
+    },
+    "test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "imports": {
+    "tools/airstrike-menu-controller.py": [
+      "import json",
+      "import select",
+      "import sys",
+      "import time",
+      "import os"
+    ],
+    "tools/airstrike-observation-bridge.py": [
+      "import hashlib",
+      "import importlib.util",
+      "import json",
+      "import os",
+      "from pathlib import Path",
+      "import resource",
+      "import selectors",
+      "import signal",
+      "import subprocess",
+      "import time",
+      "import uuid"
+    ],
+    "test/test-airstrike-caption-interior.py": [
+      "import copy",
+      "import importlib.util",
+      "import json",
+      "import pathlib",
+      "import subprocess",
+      "import sys",
+      "import tempfile",
+      "import threading",
+      "import unittest"
+    ],
+    "test/test-airstrike-console-obscuration.py": [
+      "import copy",
+      "import hashlib",
+      "import importlib.util",
+      "import json",
+      "import pathlib",
+      "import sys",
+      "import subprocess",
+      "import tempfile",
+      "import threading",
+      "import time",
+      "import unittest"
+    ],
+    "test/fixtures/airstrike-caption/reproduce.py": [
+      "import copy, hashlib, importlib.util, json, pathlib, subprocess, sys, threading, time"
+    ]
+  },
+  "env": {
+    "PATH": "/usr/bin:/bin",
+    "HOME": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/home",
+    "TMPDIR": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tmp",
+    "PYTHONPATH": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/audit",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "AIRSTRIKE_AUDIT_BASE": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone"
+  },
+  "envSHA256": "a1ea2ed85708b021913f11bc2841a3156cf1cd8ed37a7fb9cb220b4a25ad65e4",
+  "cwd": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/cwd",
+  "requiredRuntime": "Python 3.12 standard library and Linux /proc/*/stat process identity introspection only",
+  "historicalJavaScript": "Static reads only: no JS imports, execution, packages, guest or renderer runtime",
+  "readClosure": [
+    "all four Python source files",
+    "test/fixtures/airstrike-caption/review-request.json",
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json",
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png",
+    "test/fixtures/airstrike-caption/production-run.js",
+    "test/fixtures/airstrike-caption/production-renderer-input.js",
+    "test/fixtures/airstrike-caption/reproduce.py copied byte-exact to temporary directory"
+  ],
+  "subprocessClosure": [
+    "same Python executable -B tools/airstrike-menu-controller.py (JSON CLI)",
+    "same Python executable -B test/test-airstrike-caption-interior.py --transport TEMP KIND",
+    "same Python executable -B test/test-airstrike-console-obscuration.py --startup-runner TEMP",
+    "same Python executable -B TEMP/ops/reproduce.py; --fake-transport TEMP on same reproducer"
+  ],
+  "configClosure": [
+    "fixture JSONs; controller embedded SHA256; bridge/controller defaults; synthetic JSON protocol messages and temporary reviewed replies; no external config"
+  ],
+  "outputClosure": {
+    "root": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tmp",
+    "lifetime": "TemporaryDirectory+unittest.addCleanup; temporary symlink repo resolves to relocated tree",
+    "files": [
+      "received.jsonl",
+      "assertions.json",
+      "reproducer-cli.stdout",
+      "reproducer-cli.stderr",
+      "independent-rejection.json",
+      "reproduce.py",
+      "production-renderer-input.js",
+      "review-request.json",
+      "review-<token>.json",
+      "capture*.png",
+      "events.json",
+      "result.json",
+      "runner.stdout",
+      "runner.stderr",
+      "controller.stderr",
+      "other bridge tokenized capture/review/evidence paths",
+      "terminal.json",
+      "spawn-status.json",
+      "owned-cleanup.json",
+      "*.json.tmp (atomic replacement)"
+    ]
+  },
+  "projectedCheckoutBytes": 1072872,
+  "projectedPublicationIncrementBytes": 16777216,
+  "fixtureCount": 6,
+  "runtimeReadInventory": [
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-renderer-input.js",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-run.js",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/reproduce.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-request.json",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/airstrike-observation-bridge.py"
+  ],
+  "absentOptionalCacheLookups": [
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/__pycache__/test-airstrike-console-obscuration.cpython-312.pyc",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/__pycache__/airstrike-menu-controller.cpython-312.pyc",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/__pycache__/airstrike-observation-bridge.cpython-312.pyc"
+  ],
+  "sourceFileOperationInventory": {
+    "test/fixtures/airstrike-caption/reproduce.py": [
+      {
+        "line": 24,
+        "call": "subprocess.run([sys.executable, '-B', str(R / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+      },
+      {
+        "line": 25,
+        "call": "(H / 'reproducer-cli.stdout').write_text(cli.stdout)"
+      },
+      {
+        "line": 25,
+        "call": "(H / 'reproducer-cli.stderr').write_text(cli.stderr)"
+      },
+      {
+        "line": 27,
+        "call": "directory.mkdir()"
+      },
+      {
+        "line": 47,
+        "call": "(H / 'production-renderer-input.js').read_text()"
+      },
+      {
+        "line": 53,
+        "call": "(H / 'independent-rejection.json').write_text(json.dumps(report, indent=2) + '\\n')"
+      },
+      {
+        "line": 43,
+        "call": "obj.run()"
+      },
+      {
+        "line": 14,
+        "call": "(d / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 40,
+        "call": "b.save(obj.root / ('review-' + q['token'] + '.json'), reply)"
+      },
+      {
+        "line": 19,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 36,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 45,
+        "call": "(directory / 'received.jsonl').read_text()"
+      }
+    ],
+    "test/test-airstrike-caption-interior.py": [
+      {
+        "line": 62,
+        "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, capture_output=True, timeout=5)"
+      },
+      {
+        "line": 89,
+        "call": "(d / 'assertions.json').write_text(json.dumps(dict(kind=kind, result=result, inputs=inputs), indent=2) + '\\n')"
+      },
+      {
+        "line": 93,
+        "call": "h.mkdir()"
+      },
+      {
+        "line": 94,
+        "call": "(d / 'repo').symlink_to(ROOT, target_is_directory=True)"
+      },
+      {
+        "line": 96,
+        "call": "subprocess.run([sys.executable, '-B', str(h / 'reproduce.py')], capture_output=True, timeout=20)"
+      },
+      {
+        "line": 97,
+        "call": "(h / 'stdout').write_bytes(q.stdout)"
+      },
+      {
+        "line": 97,
+        "call": "(h / 'stderr').write_bytes(q.stderr)"
+      },
+      {
+        "line": 39,
+        "call": "(d / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 83,
+        "call": "obj.run()"
+      },
+      {
+        "line": 95,
+        "call": "(h / n).write_bytes((FIXTURES / n).read_bytes())"
+      },
+      {
+        "line": 98,
+        "call": "(h / 'independent-rejection.json').read_text()"
+      },
+      {
+        "line": 49,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 95,
+        "call": "(FIXTURES / n).read_bytes()"
+      },
+      {
+        "line": 80,
+        "call": "t.b.save(obj.root / ('review-' + q['token'] + '.json'), reply)"
+      },
+      {
+        "line": 75,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 87,
+        "call": "(d / 'received.jsonl').read_text()"
+      }
+    ],
+    "test/test-airstrike-console-obscuration.py": [
+      {
+        "line": 22,
+        "call": "(D / 'review-request.json').read_text()"
+      },
+      {
+        "line": 52,
+        "call": "c.run()"
+      },
+      {
+        "line": 66,
+        "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=''.join((json.dumps(x) + '\\n' for x in messages)), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+      },
+      {
+        "line": 121,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 129,
+        "call": "renderer.read_text()"
+      },
+      {
+        "line": 115,
+        "call": "(D / 'review-9b55685e506a4124abd456510ebaf254.json').read_text()"
+      },
+      {
+        "line": 216,
+        "call": "(pathlib.Path(directory) / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 101,
+        "call": "obj.run()"
+      },
+      {
+        "line": 219,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 110,
+        "call": "(obj.root / 'events.json').read_text()"
+      },
+      {
+        "line": 98,
+        "call": "b.save(obj.root / ('review-' + request['token'] + '.json'), reply)"
+      },
+      {
+        "line": 120,
+        "call": "(D / '9b55685e506a4124abd456510ebaf254.png').read_bytes()"
+      },
+      {
+        "line": 122,
+        "call": "p.read_bytes()"
+      },
+      {
+        "line": 128,
+        "call": "renderer.read_bytes()"
+      },
+      {
+        "line": 86,
+        "call": "path.read_text()"
+      },
+      {
+        "line": 105,
+        "call": "(directory / 'received.jsonl').read_text()"
+      }
+    ],
+    "tools/airstrike-menu-controller.py": [
+      {
+        "line": 241,
+        "call": "Controller(receive, lambda c: print(json.dumps(c), flush=True)).run()"
+      }
+    ],
+    "tools/airstrike-observation-bridge.py": [
+      {
+        "line": 42,
+        "call": "tmp.write_text(json.dumps(value, indent=2) + '\\n')"
+      },
+      {
+        "line": 73,
+        "call": "self.root.mkdir(parents=True, exist_ok=False)"
+      },
+      {
+        "line": 229,
+        "call": "reply.read_text()"
+      },
+      {
+        "line": 394,
+        "call": "(self.root / ('runner.' + name)).open('wb')"
+      },
+      {
+        "line": 399,
+        "call": "subprocess.Popen(self.argv, cwd=self.cwd, env=self.env, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True, preexec_fn=child_limits)"
+      },
+      {
+        "line": 407,
+        "call": "self.controller.run()"
+      },
+      {
+        "line": 408,
+        "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+      },
+      {
+        "line": 411,
+        "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+      },
+      {
+        "line": 47,
+        "call": "Path(path).read_bytes()"
+      },
+      {
+        "line": 210,
+        "call": "path.read_bytes()"
+      },
+      {
+        "line": 355,
+        "call": "path.read_text()"
+      }
+    ]
+  },
+  "productionPinsPreserved": {
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "auditProof": {
+    "successfulGroupPIDs": [
+      17701,
+      17706,
+      17707,
+      17710,
+      18112,
+      18113,
+      18115,
+      18116,
+      18118,
+      18119,
+      18121,
+      18122,
+      18125,
+      18144,
+      18146,
+      18161,
+      18163,
+      18164,
+      18166,
+      18170,
+      18174,
+      18177,
+      18179,
+      18180,
+      18182,
+      18183,
+      18185,
+      18186,
+      18188,
+      18189,
+      18191,
+      18192,
+      18194,
+      18195,
+      18197,
+      18198,
+      18200,
+      18201,
+      18203,
+      18205,
+      18207,
+      18209,
+      18210,
+      18212,
+      18213,
+      18215,
+      18921,
+      18924,
+      18930,
+      18932,
+      18934
+    ],
+    "noUndeclaredFileAccess": true,
+    "repositoryWrites": 0,
+    "unrelatedCWD": "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/cwd",
+    "environmentSHA256": "a1ea2ed85708b021913f11bc2841a3156cf1cd8ed37a7fb9cb220b4a25ad65e4",
+    "allTemporaryOutputsClean": true,
+    "observerSourceSHA256": "0ff18689b2a39f3cef6cf483456311b170f2c43b5fb9a0eea45fc0453ef634eb",
+    "observerLimit": "CPython audit hooks cover file opens and subprocesses; source inventory also covers filesystem operations. Not an OS sandbox or a gameplay result."
+  },
+  "standingRuntime": {
+    "executable": "/usr/bin/python3",
+    "resolvedExecutable": "/usr/bin/python3.12",
+    "bytes": 8020928,
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+    "version": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+    "standardLibrary": "/usr/lib/python3.12 (installed, not newly staged)",
+    "processIntrospection": "/proc/[0-9]*/stat read-only for owned child cleanup"
+  }
+}

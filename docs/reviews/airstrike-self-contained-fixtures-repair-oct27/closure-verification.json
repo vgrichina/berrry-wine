@@ -1,0 +1,262 @@
+{
+  "verdict": "PASS",
+  "groups": [
+    "height8-final",
+    "interior-final",
+    "console-affected"
+  ],
+  "tests": 14,
+  "assertions": "Original assertion ASTs preserved (stage-fixtures receipt)",
+  "readPaths": [
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-renderer-input.js",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-run.js",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/reproduce.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-request.json",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py",
+    "/tmp/airstrike-self-contained-fixtures-repair-oct27/ops/standalone/tree/tools/airstrike-observation-bridge.py"
+  ],
+  "temporaryOutputsClean": true,
+  "independentGeometry32": "REUSED exact unchanged production source pins; accepted-reuse-receipt.json",
+  "producerControls": "10 fixture-affected Console controls rerun; unchanged 8 controls reuse accepted receipt",
+  "noProductionChange": true,
+  "sourceInventory": {
+    "test/fixtures/airstrike-caption/reproduce.py": [
+      {
+        "line": 24,
+        "call": "subprocess.run([sys.executable, '-B', str(R / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+      },
+      {
+        "line": 25,
+        "call": "(H / 'reproducer-cli.stdout').write_text(cli.stdout)"
+      },
+      {
+        "line": 25,
+        "call": "(H / 'reproducer-cli.stderr').write_text(cli.stderr)"
+      },
+      {
+        "line": 27,
+        "call": "directory.mkdir()"
+      },
+      {
+        "line": 47,
+        "call": "(H / 'production-renderer-input.js').read_text()"
+      },
+      {
+        "line": 53,
+        "call": "(H / 'independent-rejection.json').write_text(json.dumps(report, indent=2) + '\\n')"
+      },
+      {
+        "line": 43,
+        "call": "obj.run()"
+      },
+      {
+        "line": 14,
+        "call": "(d / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 40,
+        "call": "b.save(obj.root / ('review-' + q['token'] + '.json'), reply)"
+      },
+      {
+        "line": 19,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 36,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 45,
+        "call": "(directory / 'received.jsonl').read_text()"
+      }
+    ],
+    "test/test-airstrike-caption-interior.py": [
+      {
+        "line": 62,
+        "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, capture_output=True, timeout=5)"
+      },
+      {
+        "line": 89,
+        "call": "(d / 'assertions.json').write_text(json.dumps(dict(kind=kind, result=result, inputs=inputs), indent=2) + '\\n')"
+      },
+      {
+        "line": 93,
+        "call": "h.mkdir()"
+      },
+      {
+        "line": 94,
+        "call": "(d / 'repo').symlink_to(ROOT, target_is_directory=True)"
+      },
+      {
+        "line": 96,
+        "call": "subprocess.run([sys.executable, '-B', str(h / 'reproduce.py')], capture_output=True, timeout=20)"
+      },
+      {
+        "line": 97,
+        "call": "(h / 'stdout').write_bytes(q.stdout)"
+      },
+      {
+        "line": 97,
+        "call": "(h / 'stderr').write_bytes(q.stderr)"
+      },
+      {
+        "line": 39,
+        "call": "(d / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 83,
+        "call": "obj.run()"
+      },
+      {
+        "line": 95,
+        "call": "(h / n).write_bytes((FIXTURES / n).read_bytes())"
+      },
+      {
+        "line": 98,
+        "call": "(h / 'independent-rejection.json').read_text()"
+      },
+      {
+        "line": 49,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 95,
+        "call": "(FIXTURES / n).read_bytes()"
+      },
+      {
+        "line": 80,
+        "call": "t.b.save(obj.root / ('review-' + q['token'] + '.json'), reply)"
+      },
+      {
+        "line": 75,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 87,
+        "call": "(d / 'received.jsonl').read_text()"
+      }
+    ],
+    "test/test-airstrike-console-obscuration.py": [
+      {
+        "line": 22,
+        "call": "(D / 'review-request.json').read_text()"
+      },
+      {
+        "line": 52,
+        "call": "c.run()"
+      },
+      {
+        "line": 66,
+        "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=''.join((json.dumps(x) + '\\n' for x in messages)), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+      },
+      {
+        "line": 121,
+        "call": "p.read_text()"
+      },
+      {
+        "line": 129,
+        "call": "renderer.read_text()"
+      },
+      {
+        "line": 115,
+        "call": "(D / 'review-9b55685e506a4124abd456510ebaf254.json').read_text()"
+      },
+      {
+        "line": 216,
+        "call": "(pathlib.Path(directory) / 'received.jsonl').open('a')"
+      },
+      {
+        "line": 101,
+        "call": "obj.run()"
+      },
+      {
+        "line": 219,
+        "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+      },
+      {
+        "line": 110,
+        "call": "(obj.root / 'events.json').read_text()"
+      },
+      {
+        "line": 98,
+        "call": "b.save(obj.root / ('review-' + request['token'] + '.json'), reply)"
+      },
+      {
+        "line": 120,
+        "call": "(D / '9b55685e506a4124abd456510ebaf254.png').read_bytes()"
+      },
+      {
+        "line": 122,
+        "call": "p.read_bytes()"
+      },
+      {
+        "line": 128,
+        "call": "renderer.read_bytes()"
+      },
+      {
+        "line": 86,
+        "call": "path.read_text()"
+      },
+      {
+        "line": 105,
+        "call": "(directory / 'received.jsonl').read_text()"
+      }
+    ],
+    "tools/airstrike-menu-controller.py": [
+      {
+        "line": 241,
+        "call": "Controller(receive, lambda c: print(json.dumps(c), flush=True)).run()"
+      }
+    ],
+    "tools/airstrike-observation-bridge.py": [
+      {
+        "line": 42,
+        "call": "tmp.write_text(json.dumps(value, indent=2) + '\\n')"
+      },
+      {
+        "line": 73,
+        "call": "self.root.mkdir(parents=True, exist_ok=False)"
+      },
+      {
+        "line": 229,
+        "call": "reply.read_text()"
+      },
+      {
+        "line": 394,
+        "call": "(self.root / ('runner.' + name)).open('wb')"
+      },
+      {
+        "line": 399,
+        "call": "subprocess.Popen(self.argv, cwd=self.cwd, env=self.env, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True, preexec_fn=child_limits)"
+      },
+      {
+        "line": 407,
+        "call": "self.controller.run()"
+      },
+      {
+        "line": 408,
+        "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+      },
+      {
+        "line": 411,
+        "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+      },
+      {
+        "line": 47,
+        "call": "Path(path).read_bytes()"
+      },
+      {
+        "line": 210,
+        "call": "path.read_bytes()"
+      },
+      {
+        "line": 355,
+        "call": "path.read_text()"
+      }
+    ]
+  }
+}
