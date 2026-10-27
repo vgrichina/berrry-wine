@@ -340,6 +340,11 @@
     "sha256": "fe2d2151073a527c0299389e978e4534447147418e14284927b91ced4c9a0e03"
   },
   {
+    "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/final-accounting.json",
+    "bytes": 1819,
+    "sha256": "2e320a1d37bbd16a36dea3d7fb3ad403865486be4d4137356ac136d87bac443e"
+  },
+  {
     "path": "scratch/runs/alien-accepted-dispatch-menu-mission-oct27/first-api-failure.json",
     "bytes": 714,
     "sha256": "08e422721faa27385d0d28e3ee7c324598e096348e57f0ba8d7bc27172638dc2"

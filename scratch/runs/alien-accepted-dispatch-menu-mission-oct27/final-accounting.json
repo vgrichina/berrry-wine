@@ -1,0 +1,41 @@
+{
+  "at": 1793061339.7256784,
+  "charges": {
+    "owned": 7319552,
+    "dashboardPublishedCopy": 2703360,
+    "launcher": 753664,
+    "session": 2109440,
+    "positiveWALOnce": 0,
+    "future": 16777216,
+    "reserve": 8388608
+  },
+  "totalLocal": 38051840,
+  "localCap": 67108864,
+  "remoteMeasured": 53080064,
+  "remoteCap": 268435456,
+  "remoteWithAllReservedGrowth": 114450432,
+  "totalTaskCap": 335544320,
+  "peerConservativeFuture": 62914560,
+  "free": 3110899712,
+  "projectedFree": 2993762304,
+  "hostFloor": 2982150144,
+  "MemAvailable": 3960541184,
+  "requiredRAM": 1543503872,
+  "ownWatcherStopped": true,
+  "rootWatchersUntouched": true,
+  "ownedGuestControlTransport": [],
+  "accountingCorrection": "Explicitly includes completed dashboard copy alongside task/Git/session/events/WAL once; previous per-operation admission reserved whole64MiB but omitted this measured line item.",
+  "publication": {
+    "commit": "6ad216ca8a4ee081eac93590ef4238221209f7ee",
+    "tree": "7907375274dbcaccd53e49d52726838184acc73f",
+    "branch": "task/alien-accepted-dispatch-menu-mission-oct27",
+    "remoteRef": "6ad216ca8a4ee081eac93590ef4238221209f7ee\trefs/heads/task/alien-accepted-dispatch-menu-mission-oct27",
+    "exactRemoteVerified": true,
+    "normalPush": true,
+    "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "evidence": "/tmp/alien-accepted-dispatch-menu-mission-oct27/repo/scratch/runs/alien-accepted-dispatch-menu-mission-oct27",
+    "dashboardEvidence": "/home/user/wine-assembly/scratch/runs/alien-accepted-dispatch-menu-mission-oct27",
+    "mainWrite": false,
+    "scope": "standalone minimal evidence-only task branch; no source/main integration"
+  }
+}
