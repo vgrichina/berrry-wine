@@ -1,0 +1,19 @@
+{
+  "status": "OFFLINE_IMPLEMENTED_TESTED_RUNTIME_OBSERVATION_GATE_OPEN",
+  "branch": "task/airstrike-focus-menu-controller-repair-oct27",
+  "parent": "e5031a1f19942a2e88774b070657198b6fc835f4",
+  "sourceHashes": {
+    "tools/airstrike-menu-controller.py": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+    "test/test-airstrike-menu-controller.py": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6"
+  },
+  "tests": "5 focused groups PASS actual new CLI fake transport; no guest",
+  "remaining": "Fresh admitted original-game unobscured focus/menu observation, ordinary Quit and terminal proof; separate current-main qualification",
+  "boat": {
+    "id": "bx_ra5kxtgq",
+    "state": "STOPPED coordinator supplied snapshot receipt",
+    "accessed": false,
+    "owner": "coordinator"
+  },
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-focus-menu-controller-repair-oct27/root-ref-digest.json",
+  "runtimePerformed": false
+}

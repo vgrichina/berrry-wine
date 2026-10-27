@@ -1,0 +1,18 @@
+{
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/accounting.json": "47101592b68e48bf59327e669fdc0b45c64d4e85a7d074dbd1480f043ec05c76",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/checkpoint.json": "a512c1014c8193491bb57792b917d372398197028f718af0ef29319edd094ecb",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/tests.json": "29c1e8c92f504ba7fd94a541bed8be7fe5c49508ce41f21a372c7d6dd2974506",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/production-input-pins.json": "d62e8f9502be8ccf6ce7c6e23a2f1f30cb5a274f3dbf265003a2a1dbbef36209",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/tests.log": "abf7182c5153413826f5bb9fbdec231ce03595e61a3caa7838299c85ec68974f",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/renderer-input.js.excerpt": "1279e4df9f30c3fe8bd35d4900f855cacd449e87f1ac3653ef842d620bdea451",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/run.js.excerpt": "5f59d498eae77e6ed5029a0f7f816573f410679e69376f33835d95b2f0c30671",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/admission.json": "f246b45d134e40671b9d311dbd3e56d5567854da4fdb632dcd58dd23327650b2",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/airstrike.c.excerpt": "f607afce1214b77d7a8733f79333dacbff66d6eb96e7b47054f0bff27693dc62",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/run-light.py": "4744e8db5ffa370fb2ef76a67ff7843cd414dbe814a9534ca25b3326bd3287fb",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/source-pin.json": "a0f4aa8d438d01e693266c8f2228dc6592e5ec691e3d58a0902aa8e585dea059",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/host-window.js.excerpt": "e88245f647467ba1eb452e88d0e22f9b0c4e4931bee80a0ec861ae3efaa0a106",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027/incidents.json": "6e150afb16542e5cc8040ff1e28c61e28abf6d45e8aa474251d1d6298ef2512e",
+  "tools/airstrike-menu-controller.py": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+  "test/test-airstrike-menu-controller.py": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6",
+  "docs/re-notes/airstrike-focus-menu-controller-20261027.md": "1a5bc097322c85476233b36126c7dcac2ebc45b72fa1ee59dd3624865869ef48"
+}

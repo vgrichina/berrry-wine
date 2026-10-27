@@ -1,0 +1,7 @@
+{
+  "archive": "/tmp/airstrike-original-private-oct23/docs/re-notes/airstrike-original-20261023/airstrike-pre6a-src.tar.gz",
+  "sha256": "11232b4bbc760b261a3ae87441783ba5f327f15d37ec095a659ea0cbbed8d9c0",
+  "member": "airstrike-pre6a-src/src/airstrike.c",
+  "memberSha256": "290454b9082bf3bda46be94533670a5ec604da38fde68b87cbe7c3460c72f46a",
+  "fullExtraction": false
+}

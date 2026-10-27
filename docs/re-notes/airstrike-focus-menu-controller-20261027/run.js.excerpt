@@ -1,0 +1,92 @@
+3954:   h.exit = code => {
+3955:     hostExitRequested = true;
+3956:     logs.push('[Exit] code=' + code); stopped = true;
+3957:     // A child process_spawn started: its parent's GetExitCodeProcess and
+3958:     // WaitForSingleObject need the guest's own exit code, not this
+3959:     // process's.
+3960:     if (PIPE_STD && process.send) process.send({ t: 'child-exit', code: code >>> 0 });
+3961:     // A --spawn-processes child has no wire to keep: once its exit code is
+3962:     // on its way, drop the IPC channel, which otherwise keeps this process
+7139:   const settleLiveInput = () => {
+7140:     if (!liveOutstanding.size) return;
+7141:     // One shared slice for every command settled this batch: per-command log
+7142:     // attribution would need hooks all through the 2000-line action chain,
+7143:     // and the common agent sends one command per round trip anyway.
+7144:     const batchLogs = logs.slice(liveLogsStart);
+7145:     for (const [ev, resolve] of liveOutstanding) {
+7146:       if (!scheduledInput.includes(ev)) {
+7147:         liveOutstanding.delete(ev);
+7148:         resolve({ batch: tickState.batch | 0, logs: batchLogs });
+7149:       }
+7150:     }
+7151:   };
+7152:   const controlSafeValue = (value) => {
+7346:     if (!entry) throw new Error('need {cmd:"action:args"} or action: ping|snapshot|eval|png|input-message|frozen|tick|step|record|quit');
+7347:     // A frozen CLI is already at a coherent between-batches boundary. Capture
+7348:     // there instead of queueing a png action that cannot execute until a
+7349:     // later `step` (ctl.js checks that the file exists before it returns).
+7350:     if (controlFrozen && entry.startsWith('png:')) {
+7351:       return controlPng(entry.slice(4));
+7352:     }
+7353:     if (/^wait-/.test(entry)) {
+7354:       throw new Error('wait-* entries are scheduled-only; poll snapshot or png instead');
+7355:     }
+7356:     const evs = parseInputEntries([`${tickState.batch | 0}:${entry}`]);
+7357:     const last = evs[evs.length - 1];
+7358:     // The parser's fallback reads an unrecognized kind as a raw message id;
+7359:     // NaN there is a typo'd action name, not a message.
+7360:     if (last && last.action === undefined && !Number.isFinite(last.msg)) {
+7361:       throw new Error(`unknown input action ${JSON.stringify(entry.split(':')[0])}`);
+7362:     }
+7363:     const enqueue = (resolve) => {
+7364:       if (resolve) liveOutstanding.set(last, resolve);
+7365:       // After everything already due this batch, before everything scheduled
+7366:       // later: the schedule is the fixture, the stream is the driver.
+7367:       const now = tickState.batch | 0;
+7368:       for (const ev of evs) ev.batch = now;
+7369:       let at = scheduledInput.findIndex(e => e.batch > now);
+7370:       if (at < 0) at = scheduledInput.length;
+7371:       scheduledInput.splice(at, 0, ...evs);
+7372:     };
+7373:     // In frozen mode an input is deliberately only queued; waiting for it to
+7374:     // execute would deadlock the ordinary `ctl click; ctl step` agent loop.
+7375:     if (controlFrozen) {
+7376:       enqueue(null);
+7377:       return { queued: true, batch: tickState.batch | 0 };
+7378:     }
+7379:     return new Promise((resolve) => enqueue(resolve));
+7382:     const server = CONTROL ? require('../lib/control-server').startControlServer({
+7383:       port: CONTROL_PORT, host: CONTROL_HOST,
+7384:       onCommand: handleControlCommand, log: line => console.log(line),
+7385:     }) : null;
+7386:     if (CONTROL_STDIN) {
+7387:       const rl = require('readline').createInterface({ input: process.stdin, terminal: false });
+7388:       let stdinCommands = Promise.resolve();
+7389:       rl.on('line', (line) => {
+7390:         const text = line.trim();
+7391:         if (!text) return;
+7392:         let cmd;
+7393:         try { cmd = JSON.parse(text); } catch (_) { cmd = { cmd: text }; }
+7394:         const list = Array.isArray(cmd) ? cmd : [cmd];
+7395:         for (const one of list) {
+7396:           // `new Promise(r => r(f()))`, not `Promise.resolve(f())`: the latter
+7397:           // evaluates f() *before* the promise exists, so a synchronous throw
+7398:           // escapes into the enclosing .then callback, where the rejection
+7399:           // handler below cannot see it — it only covers the promise it is
+7400:           // attached to. That is an unhandled rejection, and node exits 1 on
+7401:           // it, so one bad `eval` expression killed a 38-minute B&W2 run that
+7402:           // was sitting on the profile dialog. A control command must never be
+7403:           // able to take the run down with it.
+7404:           stdinCommands = stdinCommands.then(() => new Promise(r => r(handleControlCommand(one))).then(
+7405:             value => console.log(`[ctl] ${JSON.stringify({ ok: true, id: one.id, value })}`),
+7406:             error => console.log(`[ctl] ${JSON.stringify({ ok: false, id: one.id, error: String(error && error.message || error) })}`)));
+7407:         }
+7408:       });
+9746:       } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {
+9747:         renderer.handleKeyDown(ev.code);
+9748:         logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);
+9749:       } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {
+9750:         renderer.handleKeyUp(ev.code);
+9751:         logs.push(`[input] keyup vk=${ev.code} at batch ${batch}`);
+9752:       } else if ((ev.action === 'di-keydown' || ev.action === 'di-keyup') && renderer) {
+9753:         if (!renderer._asyncKeys) renderer._asyncKeys = Object.create(null);

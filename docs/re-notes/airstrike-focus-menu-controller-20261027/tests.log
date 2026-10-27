@@ -1,0 +1,10 @@
+test_ack_is_not_row_observation_and_wrong_row_stops (__main__.MenuTests.test_ack_is_not_row_observation_and_wrong_row_stops) ... ok
+test_observation_refusals_dispatch_nothing (__main__.MenuTests.test_observation_refusals_dispatch_nothing) ... ok
+test_observed_gameplay_menu_each_row_and_quit (__main__.MenuTests.test_observed_gameplay_menu_each_row_and_quit) ... ok
+test_timeout_controlquit_wmclose_and_exit0_are_not_normal_quit (__main__.MenuTests.test_timeout_controlquit_wmclose_and_exit0_are_not_normal_quit) ... ok
+test_uncertain_or_terminal_halts_without_keyup_or_retry (__main__.MenuTests.test_uncertain_or_terminal_halts_without_keyup_or_retry) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.001s
+
+OK

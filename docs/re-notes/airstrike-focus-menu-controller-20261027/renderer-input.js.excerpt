@@ -1,0 +1,86 @@
+3284:   P.handleKeyDown = function(vkCode, keyInfo) {
+3285:     if (this._exited) return;
+3286:     this._restoreKeyboardInputOwner();
+3287:     // A key is the first thing an on-screen dpad ever sends, so this is where
+3288:     // an app that was never clicked gets the focus USER would have given it.
+3289:     this._seedKeyboardFocus();
+3290:     // Update async key state up-front so handlers that read it (edit's
+3291:     // Shift/Ctrl+arrow, Ctrl+A, etc.) see the right modifier state for
+3292:     // *this* keystroke. Otherwise the _asyncKeys bump that checkInput
+3293:     // does later only lands after the next modifier press, which loses
+3294:     // chords issued in the same batch.
+3295:     if (!this._asyncKeys) this._asyncKeys = Object.create(null);
+3296:     if (!this._asyncPressedKeys) this._asyncPressedKeys = Object.create(null);
+3297:     this.pokeKeyDownState(vkCode, true);
+3298:     const wasDown = !!this._asyncKeys[vkCode & 0xFF];
+3299:     const keyLParam = keyboardMessageLParam(vkCode, keyInfo, false, wasDown);
+3300:     // TranslateMessage gives the WM_CHAR its keystroke's lParam; the char the
+3301:     // browser reports for this key next takes it from here (handleKeyPress).
+3302:     this._charLParam = keyLParam;
+3303:     this._asyncKeys[vkCode & 0xFF] = true;
+3304:     this._asyncPressedKeys[vkCode & 0xFF] = true;
+3305:     this._signalDirectInputDevice(1);
+3306:     // The browser-side instance is only an ownership token when slot 0 runs
+3347:     if (vkCode === 27) { // Escape
+3348:       // Consumed here, so the WM_CHAR the browser queues next is not the
+3349:       // application's either.
+3350:       if (menuOpenHwnd) {
+3351:         if (menu.exports.menu_handle_key_open) menu.exports.menu_handle_key_open(vkCode);
+3352:         this.repaint();
+3353:         this._suppressNextKeyPress = 27;
+3354:         return;
+3355:       }
+3356:       if (this._menuMode) { this._menuMode = false; this._suppressNextKeyPress = 27; return; }
+3357:     }
+3358:     // A modal dialog owns Enter/Esc even if the previous modeless dialog's
+3359:     // child still has the WAT focus. This happens when Notepad's modeless
+3360:     // Find dialog opens a not-found MessageBox.
+3361:     if ((vkCode === 13 || vkCode === 27) && we && (we.send_message || we.post_message_q)) {
+3362:       const modalHwnd = this._modalDialogHwnd();
+3363:       if (modalHwnd) {
+3364:         if (we.dialog_handle_key) we.dialog_handle_key(modalHwnd, vkCode, 0);
+3365:         this.scheduleRepaint();
+3366:         if (vkCode === 27) this._suppressNextKeyPress = 27;
+3367:         return;
+3368:       }
+3369:     }
+3370:
+3371:     // Open dropdown keyboard routing is WAT-side.
+3372:     if (menuOpenHwnd) {
+3373:       if (we.menu_handle_key_open && we.menu_handle_key_open(vkCode)) {
+3374:         this.repaint();
+3375:         if (vkCode >= 65 && vkCode <= 90) this._suppressNextKeyPress = vkCode;
+3376:         return;
+3377:       }
+3378:     }
+3499:   P.handleKeyUp = function(vkCode, keyInfo) {
+3500:     this._restoreKeyboardInputOwner();
+3501:     this.pokeKeyDownState(vkCode, false);
+3502:     const upMessage = this._keyMessage(vkCode, true,
+3503:       keyboardMessageLParam(vkCode, keyInfo, true, true));
+3504:     // A release only takes effect where it lands in the queue. Clearing the
+3505:     // state here while earlier key messages are still in flight retracts the
+3506:     // modifier before the guest has even seen the keystroke it modified: the
+3507:     // Ctrl-up of a Ctrl+Z would land before the queued WM_KEYDOWN for Z, and
+3508:     // TranslateAccelerator, which reads this state, would see a bare Z.
+3509:     // takeInput clears it when the WM_KEYUP is actually dispatched.
+3510:     const keyInFlight = this.inputQueue.some(e => e && e.type === 'key');
+3511:     if (!keyInFlight && this._asyncKeys) this._asyncKeys[vkCode & 0xFF] = false;
+3512:     this._signalDirectInputDevice(1);
+3513:     if (vkCode === 16) this._shiftDown = false;
+3514:     if (vkCode === 17) this._ctrlDown = false;
+3515:     if (vkCode === 18) {
+3516:       this._altDown = false;
+3517:       // Alt tap (press and release without other keys) activates menu mode
+3518:       if (this._altTapped) {
+3519:         this._menuMode = !this._menuMode;
+3520:         this._altTapped = false;
+3521:       }
+3522:     }
+3523:     const sysF10 = vkCode === 121 && this._f10ToGuest;
+3524:     if (vkCode === 121) this._f10ToGuest = false;
+3525:     this.inputQueue.push({
+3526:       type: 'key', hwnd: 0, wParam: vkCode,
+3527:       msg: sysF10 ? 0x0105 : upMessage.msg, lParam: upMessage.lParam,
+3528:     });
+3529:     this._wakeMessageWait(true);

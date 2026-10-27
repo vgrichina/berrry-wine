@@ -1,0 +1,14 @@
+[
+  {
+    "incident": "First staged diff-check rejected authentic source excerpt trailing whitespace",
+    "resolution": "Only presentation excerpts strip trailing whitespace; original full member identity stays pinned; no source edits"
+  },
+  {
+    "incident": "Initial light wrapper omitted own session bytes from periodic accounting before session path discovery",
+    "resolution": "Fresh full accounting included own session before staging; wrapper now includes it and focused tests passed again; no limit changed"
+  },
+  {
+    "incident": "Initial isolated origin URL was an unverified guess",
+    "resolution": "Corrected to exact donor origin before any network operation; first remote read and all publication use donor URL and trusted dedicated SSH"
+  }
+]

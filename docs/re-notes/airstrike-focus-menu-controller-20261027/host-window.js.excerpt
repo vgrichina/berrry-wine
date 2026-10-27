@@ -1,0 +1,42 @@
+16: // because GetMessage would substitute the top-level window.
+17: //
+18: // Both hosts asked this question separately, and the CLI's copy still carried
+19: // a hard-coded 0x10002 (notepad's edit child) long after focus tracking landed.
+20: function inputEventHwnd(evt, exports, onDecision, keyboardFallback) {
+21:   const say = onDecision || (() => {});
+22:   if (!evt) return 0;
+23:   if (evt.hwnd) { say(`explicit hwnd=0x${(evt.hwnd >>> 0).toString(16)}`); return evt.hwnd | 0; }
+24:   const msg = evt.msg;
+25:   if (msg >= 0x0100 && msg <= 0x0108) {
+26:     const focus = (exports && exports.get_focus_hwnd) ? (exports.get_focus_hwnd() | 0) : 0;
+27:     if (focus) { say(`keyboard \u2192 focus 0x${focus.toString(16)}`); return focus; }
+28:     const fallback = typeof keyboardFallback === 'function' ? (keyboardFallback() | 0) : 0;
+29:     if (fallback) {
+30:       say(`keyboard \u2192 active 0x${(fallback >>> 0).toString(16)}`);
+31:       return fallback;
+32:     }
+33:     say('keyboard \u2192 0 (main_hwnd)');
+34:     return 0;
+35:   }
+36:   say(`msg=0x${(msg >>> 0).toString(16)} \u2192 0 (main_hwnd)`);
+37:   return 0;
+38: }
+39:
+40: // Turn the host-side CreateMenu/AppendMenu tree into the compact menu blob
+41: // consumed by src/09c5-menu.wat. Resource menus already arrive in this format;
+42: // Visual Basic 1 builds menu bars dynamically instead, and JigSawed is the
+43: // first app in the corpus whose only route to File -> Open is such a tree.
+44: function serializeHostMenuTree(menus, rootHandle) {
+45:   const itemsFor = handle => (menus && menus.get(handle >>> 0)) || [];
+46:   const bars = itemsFor(rootHandle).map(item => ({ item, children: [] }));
+47:   let structSize = 4 + bars.length * 16;
+48:
+49:   for (const bar of bars) {
+50:     if (!bar.item.popup) continue;
+51:     bar.children = itemsFor(bar.item.submenu).map(item => ({ item, children: [] }));
+52:     bar.childOffset = structSize;
+53:     structSize += 4 + bar.children.length * 28;
+54:   }
+55:   // The native menu blob supports one nested popup below a dropdown. That is
+56:   // enough for Win9x menu bars (and for JigSawed's Options -> Piece size /
+57:   // Shape submenus); deeper items remain ordinary commands, matching the WAT

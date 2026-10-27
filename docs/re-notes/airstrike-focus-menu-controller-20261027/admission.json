@@ -1,0 +1,62 @@
+{
+  "at": 1793069724.5994313,
+  "free": 3182387200,
+  "peerFuture": 67108864,
+  "taskAllocation": 33554432,
+  "projectedFree": 3081723904,
+  "floor": 2982150144,
+  "memoryAvailable": 3536752640,
+  "memoryRequired": 2617245696,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 25919488
+    },
+    {
+      "pid": 752162,
+      "rss": 423829504
+    },
+    {
+      "pid": 857107,
+      "rss": 13926400
+    },
+    {
+      "pid": 1789179,
+      "rss": 52580352
+    },
+    {
+      "pid": 3576609,
+      "rss": 194146304
+    },
+    {
+      "pid": 3576869,
+      "rss": 21340160
+    },
+    {
+      "pid": 3580208,
+      "rss": 269410304
+    },
+    {
+      "pid": 3580433,
+      "rss": 22482944
+    }
+  ],
+  "liveClientRSS": 1023635456,
+  "pendingCloseoutClients": 2,
+  "allocation": {
+    "sourceGit": 8388608,
+    "sessionWAL": 8388608,
+    "testsEvidencePublication": 8388608,
+    "futureReserve": 8388608
+  },
+  "walBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4403200,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 26669056
+  },
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/airstrike-focus-menu-controller-repair-oct27",
+  "admitted": true,
+  "mountValidation": "not applicable: no runtime or mounts; reuse retained canonical parser receipt for historical run only",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "session": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T02-54-51-01a17b48-316f-7e71-854c-cc44d76c65fb.jsonl"
+}

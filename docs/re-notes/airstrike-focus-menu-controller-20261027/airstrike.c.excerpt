@@ -1,0 +1,309 @@
+176:   while ( SDL_PollEvent(&event) >= 1 )
+177:     {
+178:       switch (event.type)
+179: 	{
+180: 	case SDL_QUIT:
+181: 	  ret = 0;
+182: 	  break;
+183: 	case SDL_KEYDOWN:
+184: 	  switch (event.key.keysym.sym)
+185: 	    {
+186: 	    case SDLK_ESCAPE:
+187: 	      paused = 1 - paused;
+188: 	      break;
+189: 	    case SDLK_s:
+190: 	      SDL_SaveBMP(sprite_global.display,"screenshot.bmp");
+191: 	      break;
+192: 	    default:
+193: 	      break;
+194: 	    }
+195: 	  break;
+196: 	default:
+197: 	  break;
+198: 	}
+199:     }
+200:   return ret;
+201: }
+202:
+203: static int wait_for_key(void)
+204: {
+205:   SDL_Event event;
+206:   while (1)
+207:     {
+208:       while ( SDL_PollEvent(&event) >= 1 )
+209: 	{
+210: 	  switch (event.type)
+211: 	    {
+212: 	    case SDL_QUIT:
+213: 	      exit(EXIT_SUCCESS);
+214: 	      break;
+215: 	    case SDL_KEYDOWN:
+216: 	      return event.key.keysym.sym;
+217: 	      break;
+218: 	    default:
+219: 	      break;
+220: 	    }
+221: 	}
+222:       SDL_Delay(sprite_global.display_dt);
+223:     }
+224: }
+225:
+226: void draw_ui(void)
+227: {
+228:   char cbuf[256];
+229:   float av_dt,s_dt;
+230:   int i;
+231:   /* left player stats */
+232:   text_render(sprite_global.display,0,big_font,
+233: 	      54,sprite_global.display->h - 27,
+234: 	      ALIGN_LEFT,ALIGN_BOTTOM,
+235: 	      player_name[1]);
+236:   if (sprite_isvalid(&player_sprite[1]))
+237:     {
+238:       sprite_signal(player_sprite[1],SIGNAL_STATSTRING,cbuf);
+239:       text_render(sprite_global.display,0,small_font,
+240: 		  54,sprite_global.display->h - 17,
+241: 		  ALIGN_LEFT,ALIGN_BOTTOM,cbuf);
+242:     }
+243:   /* right player stats */
+244:   text_render(sprite_global.display,0,big_font,
+245: 	      sprite_global.display->w - 54,
+246: 	      sprite_global.display->h - 27,
+247: 	      ALIGN_RIGHT,ALIGN_BOTTOM,player_name[0]);
+248:   if (sprite_isvalid(&player_sprite[0]))
+249:     {
+250:       sprite_signal(player_sprite[0],SIGNAL_STATSTRING,cbuf);
+251:       text_render(sprite_global.display,0,small_font,
+252: 		  sprite_global.display->w - 54,
+253: 		  sprite_global.display->h - 17,
+254: 		  ALIGN_RIGHT,ALIGN_BOTTOM,cbuf);
+255:     }
+256:   /* score */
+257:   sprintf(cbuf,"%2.2i-%2.2i\nSCORE",max_points - 1 - player_points[0],
+258: 	  max_points - 1 - player_points[1]);
+259:   text_render(sprite_global.display,0,big_font,
+293:   console_draw();
+294:   sprite_end_frame();
+295: }
+296:
+297: /* choices is null terminated. Return the
+298:    index of the choosen item, or -1 if escape was
+299:    pressed.*/
+300: int select_mode(char *header, char *choices[])
+301: {
+302:   int i,key,choice = 0;
+303:   while (1)
+304:     {
+305:       console_clear();
+306:       console_write(header);
+307:       console_write("\n");
+308:       for (i=0;choices[i];i++)
+309: 	{
+310: 	  if (choice == i)
+311: 	    console_write("*");
+312: 	  else
+313: 	    console_write(" ");
+314: 	  console_write(choices[i]);
+315: 	  console_write("\n");
+316: 	}
+317:       console_frame();
+318:       key = wait_for_key();
+319:       switch (key)
+320: 	{
+321: 	case SDLK_UP:
+322: 	  choice--;
+323: 	  if (choice < 0)
+324: 	    {
+325: 	      /* seek last item */
+326: 	      choice = 0;
+327: 	      while (choices[choice + 1] != 0)
+328: 		choice++;
+329: 	    }
+330: 	  break;
+331: 	case SDLK_DOWN:
+332: 	  choice++;
+333: 	  if (choices[choice] == 0)
+334: 	    choice = 0;
+335: 	  break;
+336: 	case SDLK_ESCAPE:
+337: 	  return -1;
+338: 	default:
+339: 	  return choice;
+340: 	}
+341:     }
+342: }
+343:
+344: void player_keys_mode(int p)
+345: {
+346:   int i;
+347:   int key;
+348:   char cbuf[2] = {0,0};
+349:  again:
+350:   console_clear();
+351:   console_write("Setting up key bindings,\nhit the appropriate keys.\n");
+352:   i = 0;
+353:   while (control_key_names[i].signal)
+354:     {
+355:       console_write(control_key_names[i].name);
+356:       console_write(" [");
+357:       console_write(SDL_GetKeyName(player_keymap[p][i][0]));
+358:       console_write("] ");
+359:       console_frame();
+360:       key = wait_for_key();
+361:       console_write(SDL_GetKeyName(key));
+362:       console_write("\n");
+363:       player_keymap[p][i][0] = key;
+364:       player_keymap[p][i][1] = control_key_names[i].signal;
+365:       i++;
+366:     }
+367:   console_write("Done. Press any key to continue.\n");
+368:   console_frame();
+369:   key = wait_for_key();
+370: }
+371:
+372: void player_setup_mode(void)
+373: {
+374:   char *items[] = {0,0,"Left player keys",
+375: 		   "Right player keys","Go back",0};
+376:   while (1)
+377:     {
+378:       if (player_ishuman[1])
+379: 	items[0] = "Left Player: Keyboard";
+380:       else
+381: 	items[0] = "Left Player: AI";
+382:       if (player_ishuman[0])
+383: 	items[1] = "Right Player: Keyboard";
+384:       else
+385: 	items[1] = "Right Player: AI";
+386:
+387:       switch (select_mode("Player setup",items))
+388: 	{
+389: 	case 0:
+390: 	  player_ishuman[1] = 1 - player_ishuman[1];
+391: 	  if (player_ishuman[1])
+392: 	    player_sethuman(1);
+393: 	  else
+394: 	    player_setai(1);
+395: 	  break;
+396: 	case 1:
+397: 	  player_ishuman[0] = 1 - player_ishuman[0];
+398: 	  if (player_ishuman[0])
+399: 	    player_sethuman(0);
+400: 	  else
+401: 	    player_setai(0);
+402: 	  break;
+403: 	case 2:
+404: 	  player_keys_mode(1);
+405: 	  break;
+406: 	case 3:
+407: 	  player_keys_mode(0);
+408: 	  break;
+409: 	default:
+410: 	  return;
+411: 	}
+412:     }
+413: }
+414:
+415: /* Display the message and wait for a keypress */
+416: void message_mode(char *message)
+417: {
+418:   sprite_start_frame();
+419:   sprite_group_draw(mech_group);
+420:   sprite_group_draw(bullet_group);
+421:   sprite_group_draw(effects_group);
+422:   sprite_group_draw(foreground_group);
+423:   sprite_group_draw(ui_group);
+424:   text_render(sprite_global.display, 0, big_font,
+425: 	      sprite_global.display->w/2, sprite_global.display->h/2,
+426: 	      ALIGN_CENTER, ALIGN_CENTER, message);
+427:   sprite_end_frame();
+428:   sprite_dirty_all();
+429:   wait_for_key();
+430: }
+431:
+444:   else
+445:     {
+446:       sprintf(cbuf,"Error: could not open '%s'.",filename);
+447:     }
+448:   message_mode(cbuf);
+449: }
+450:
+451: void console_mode()
+452: {
+453:   char *items[] =
+454:     {
+455:       "Resume game",
+456:       "Players setup",
+457:       "Toggle fullscreen",
+458:       "About the game",
+459:       "Release notes",
+460:       "Toggle debug mode",
+461:       "Quit game",
+462:       0
+463:     };
+464:   while (1)
+465:     {
+466:       switch (select_mode("Airstrike menu",items))
+467: 	{
+468: 	case 0:
+469: 	  return;
+470: 	  break;
+471: 	case 1:
+472: 	  player_setup_mode();
+473: 	  break;
+474: 	case 2:
+475: 	  displayflags ^= SDL_FULLSCREEN;
+476: 	  sprite_global.display =
+477: 	    SDL_SetVideoMode(screen_w, screen_h, 0, displayflags);
+478: 	  assert(sprite_global.display);
+479: 	  sprite_dirty_all();
+480: 	  sprite_bg_dirty_all();
+481: 	  break;
+482: 	case 3:
+483: 	  about_mode("about.txt");
+484: 	  break;
+485: 	case 4:
+486: 	  about_mode("notes.txt");
+487: 	  break;
+488: 	case 5:
+489: 	  show_debug = 1 - show_debug;
+490: 	  break;
+491: 	case 6:
+492: 	  exit(EXIT_SUCCESS);
+493: 	  break;
+494: 	default:
+495: 	  return;
+496: 	  break;
+497: 	}
+498:     }
+499: }
+500:
+501: /* Keeps track of dead planes, recreates them and award points */
+502: void scorekeeper()
+503: {
+504:   char cbuf[200];
+505:   sprite_t *s;
+506:   int i;
+507:
+508:   /* This loop relies on MAXPLAYERS = 2 (great programming..)*/
+509:   for (i=0;i<MAXPLAYERS;i++)
+510:     {
+667:     {
+668:       if (!paused)
+669: 	{
+670: 	  game_frame();
+671: 	}
+672:       else
+673: 	{
+674: 	  console_mode();
+675: 	  paused = 0;
+676: 	}
+677:     }
+678:   /* We probably never get here right now, because of exit() calls. */
+679:   fprintf(stderr,"Left main loop.\n");
+680:   sprite_group_free(mech_group);
+681:   sprite_group_free(bullet_group);
+682:   sprite_group_free(effects_group);
+683:   sprite_group_free(foreground_group);
+684:   return EXIT_SUCCESS;
+685: }

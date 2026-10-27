@@ -1,0 +1,17 @@
+[
+  {
+    "path": "test/run.js",
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "bytes": 685960
+  },
+  {
+    "path": "lib/renderer-input.js",
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051",
+    "bytes": 177069
+  },
+  {
+    "path": "lib/host-window.js",
+    "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3",
+    "bytes": 63698
+  }
+]
