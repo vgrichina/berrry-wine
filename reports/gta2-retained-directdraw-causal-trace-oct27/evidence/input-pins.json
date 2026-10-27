@@ -1,0 +1,32 @@
+{
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "runner": {
+    "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "bytes": 688295,
+    "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba"
+  },
+  "modules": [
+    {
+      "path": "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/retrieved/wine-assembly.wasm",
+      "bytes": 1880317,
+      "sha256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+      "standingReadOnly": true,
+      "newCopiedBytes": 0
+    },
+    {
+      "path": "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/retrieved/wine-assembly.compat.wasm",
+      "bytes": 1882890,
+      "sha256": "ff495de2b12c308013fa489b9fb291ca836171929655ca20df03440946c54dbc",
+      "standingReadOnly": true,
+      "newCopiedBytes": 0
+    }
+  ],
+  "acceptedOfflineManifest": {
+    "path": "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/receipt-manifest.json",
+    "sha256": "db9cd4a29466ebc83402fce091d99d1dd65a04ddde92480c40a907e7597cbfa8",
+    "verifiedPayloads": 175,
+    "rehashed": false
+  },
+  "readiness": "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/source-readiness.json",
+  "fixtureReadiness": "/home/user/wine-assembly/scratch/usage-watch/gta2-driving-input-readiness-oct27.json"
+}

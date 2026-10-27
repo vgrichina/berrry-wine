@@ -1,0 +1,60 @@
+[
+  {
+    "id": 975,
+    "name": "DirectDrawCreate",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3402690714
+  },
+  {
+    "id": 978,
+    "name": "IDirectDraw_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 39384395,
+    "args": [
+      {
+        "name": "this",
+        "type": "HANDLE"
+      },
+      {
+        "name": "riid",
+        "type": "REFIID"
+      },
+      {
+        "name": "ppv",
+        "type": "LPVOIDPTR",
+        "out": true
+      }
+    ],
+    "ret": "HRESULT"
+  },
+  {
+    "id": 984,
+    "name": "IDirectDraw_CreateSurface",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 866938883
+  },
+  {
+    "id": 998,
+    "name": "IDirectDraw_SetCooperativeLevel",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 79477203
+  },
+  {
+    "id": 999,
+    "name": "IDirectDraw_SetDisplayMode",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3276337121
+  },
+  {
+    "id": 1013,
+    "name": "IDirectDrawSurface_GetAttachedSurface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3395718076
+  }
+]

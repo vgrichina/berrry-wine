@@ -1,0 +1,41 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-C",
+    "/tmp/gta2-retained-directdraw-causal-trace-oct27/repo",
+    "checkout",
+    "-b",
+    "task/gta2-retained-directdraw-causal-trace-oct27",
+    "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 59359232,
+    "sampledPeakRSS": 59359232,
+    "reapedPeakRSS": 24379392,
+    "cpuSeconds": 0.90573,
+    "wallSeconds": 0.6768530218396336,
+    "owned": [
+      [
+        137546,
+        "115509337"
+      ],
+      [
+        137547,
+        "115509339"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

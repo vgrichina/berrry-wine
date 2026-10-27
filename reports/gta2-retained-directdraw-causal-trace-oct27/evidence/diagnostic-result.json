@@ -1,0 +1,39 @@
+{
+  "status": "BLOCKED_LOCAL_ESTIMATE_RSS",
+  "causalCapture": false,
+  "guestInvocations": 0,
+  "compilerInvocations": 0,
+  "boatRequests": 0,
+  "estimateAttempts": 1,
+  "estimateReplayed": false,
+  "measuredPeakRSS": 134397952,
+  "cap": 134217728,
+  "overage": 180224,
+  "cleanupComplete": true,
+  "owned": [
+    [
+      137916,
+      "115512274"
+    ],
+    [
+      137917,
+      "115512276"
+    ],
+    [
+      137918,
+      "115512281"
+    ]
+  ],
+  "box": "bx_cqss3x42",
+  "boxMutated": false,
+  "boxState": "not requeried; coordinator-supplied allocated running box left untouched",
+  "expiry": "2026-10-27T14:27:50.265Z",
+  "guestCutoff": "2026-10-27T14:08:00Z",
+  "handback": "2026-10-27T14:12:00Z",
+  "shutdown": "2026-10-27T14:15:00Z",
+  "shutdownOwner": "coordinator",
+  "pendingAPIRequests": [],
+  "pendingControlRequests": [],
+  "liveOwnedGuestProcesses": [],
+  "nextGate": "Fresh coordinator assignment must provide a memory-bounded transfer estimate within unchanged physical limits, then verify complete staging and production startup before at most one authorized diagnostic invocation. No current-task restart or limit increase."
+}

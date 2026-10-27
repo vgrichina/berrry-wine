@@ -1,0 +1,712 @@
+[
+  {
+    "name": "build-command.json",
+    "bytes": 138,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-command.json",
+    "bytes": 28829,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-start.json",
+    "bytes": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-startup-environment.json",
+    "bytes": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-suffix.json",
+    "bytes": 274,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-supervisor.json",
+    "bytes": 1174,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.stderr",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.stdout",
+    "bytes": 1004,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-remaining-budget.json",
+    "bytes": 149,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-start.json",
+    "bytes": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-command.json",
+    "bytes": 385,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-environment.json",
+    "bytes": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-start.json",
+    "bytes": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-startup-environment.json",
+    "bytes": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-supervisor.json",
+    "bytes": 324,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.stderr",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.stdout",
+    "bytes": 1464,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-supervisor.json",
+    "bytes": 1706,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.stderr",
+    "bytes": 1083,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.stdout",
+    "bytes": 4123,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "captures/menu.png",
+    "bytes": 6210,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.reply.json",
+    "bytes": 439,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.request.json",
+    "bytes": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.dispatch.json",
+    "bytes": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.dispatch.json",
+    "bytes": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.dispatch.json",
+    "bytes": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.reply.json",
+    "bytes": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.reply.json",
+    "bytes": 178,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.request.json",
+    "bytes": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.reply.json",
+    "bytes": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.dispatch.json",
+    "bytes": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.reply.json",
+    "bytes": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.reply.json",
+    "bytes": 178,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.reply.json",
+    "bytes": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.request.json",
+    "bytes": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.dispatch.json",
+    "bytes": 188,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.reply.json",
+    "bytes": 254,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.request.json",
+    "bytes": 112,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.dispatch.json",
+    "bytes": 107,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.reply.json",
+    "bytes": 142,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.request.json",
+    "bytes": 34,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/28.dispatch.json",
+    "bytes": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/28.request.json",
+    "bytes": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.reply.json",
+    "bytes": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.request.json",
+    "bytes": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.reply.json",
+    "bytes": 176,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.request.json",
+    "bytes": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.reply.json",
+    "bytes": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.request.json",
+    "bytes": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.dispatch.json",
+    "bytes": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.reply.json",
+    "bytes": 177,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.request.json",
+    "bytes": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.reply.json",
+    "bytes": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.request.json",
+    "bytes": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.dispatch.json",
+    "bytes": 114,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.reply.json",
+    "bytes": 179,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.request.json",
+    "bytes": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.dispatch.json",
+    "bytes": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.reply.json",
+    "bytes": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.request.json",
+    "bytes": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "game-pins.json",
+    "bytes": 16276,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-command.json",
+    "bytes": 412,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-controller-terminal.json",
+    "bytes": 712,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-start.json",
+    "bytes": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-command.json",
+    "bytes": 385,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-environment.json",
+    "bytes": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-start.json",
+    "bytes": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-startup-environment.json",
+    "bytes": 1950,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-supervisor.json",
+    "bytes": 272,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.stderr",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.stdout",
+    "bytes": 1464,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-supervisor.json",
+    "bytes": 321,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.stderr",
+    "bytes": 658,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.stdout",
+    "bytes": 8582,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-command.json",
+    "bytes": 230,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-exit.json",
+    "bytes": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-result.json",
+    "bytes": 45654,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-start.json",
+    "bytes": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-startup-environment.json",
+    "bytes": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-supervisor.json",
+    "bytes": 324,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-v2.js",
+    "bytes": 3028,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.js",
+    "bytes": 3028,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.stderr",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.stdout",
+    "bytes": 157,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.supervisor.log",
+    "bytes": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-job-v2.py",
+    "bytes": 5308,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-job.py",
+    "bytes": 4219,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-supervisor.py",
+    "bytes": 23269,
+    "type": "b'0'"
+  }
+]

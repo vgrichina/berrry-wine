@@ -1,0 +1,2 @@
+from control import *
+p=pathlib.Path('/tmp/gta2-fullscreen-mode-cause-repair-oct27/repo/src/api_table.json');j=json.loads(p.read_text());rows=[r for r in j if r['name'] in ['DirectDrawCreate','IDirectDraw_QueryInterface','IDirectDraw_SetCooperativeLevel','IDirectDraw_SetDisplayMode','IDirectDraw_CreateSurface','IDirectDrawSurface_GetAttachedSurface']];save('trace-api-table.json',rows);print(json.dumps(rows,indent=2))

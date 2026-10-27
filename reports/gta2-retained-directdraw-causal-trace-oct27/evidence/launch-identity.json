@@ -1,0 +1,10 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gta2-retained-directdraw-causal-trace-oct27/root-ref-digest.json",
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "box": "bx_cqss3x42",
+  "guestCutoff": "2026-10-27T14:08:00Z",
+  "handback": "2026-10-27T14:12:00Z",
+  "shutdown": "2026-10-27T14:15:00Z",
+  "expiry": "2026-10-27T14:27:50.265Z"
+}

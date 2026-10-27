@@ -1,0 +1,202 @@
+// --trace-api[=Name1,Name2]: log API calls with args + return values; with =NAMES, only those APIs
+const TRACE_API_RAW = args.find(a => a === '--trace-api' || a.startsWith('--trace-api='));
+const TRACE_API = !!TRACE_API_RAW;
+const TRACE_API_FILTER = (TRACE_API_RAW && TRACE_API_RAW.includes('='))
+  ? new Set(TRACE_API_RAW.split('=')[1].split(',').map(s => s.trim()).filter(Boolean))
+  : null;
+// --trace-api-paused (with --quiet-api): install the --trace-api logging but keep
+// the WAT API log OFF until a control command {"action":"trace-api","on":true}
+// turns it on. Any --trace-api switches every Win32 call to three host calls
+// (log, log_i32, log_api_exit), which slowed Black & White 2 about 4x and moved
+// a route's timing out from under its inputs; paused, the run is full speed up
+// to the moment worth tracing. {"on":false} pauses it again.
+const TRACE_API_PAUSED = hasFlag('trace-api-paused');
+const TRACE_API_DEDUP = hasFlag('trace-api-dedup'); // --trace-api-dedup: collapse N consecutive identical lines into "(xN)"
+const TRACE_API_COUNTS = hasFlag('trace-api-counts'); // --trace-api-counts: print histogram of API call names at end
+const TRACE_MOUSE_STATE = hasFlag('trace-mouse-state'); // --trace-mouse-state: log renderer mouse state changes seen by host imports
+const TRACE_INPUT_DISPATCH = hasFlag('trace-input-dispatch'); // bounded schedule/dequeue/route/DispatchMessage timing
+// --trace-stack[=N|=Name1,Name2|=Name:N,...]: walk EBP chain on matched API calls
+const TRACE_STACK_RAW = args.find(a => a === '--trace-stack' || a.startsWith('--trace-stack='));
+const TRACE_STACK = !!TRACE_STACK_RAW;
+let TRACE_STACK_DEFAULT_DEPTH = 12;
+const TRACE_STACK_FILTER = (() => {
+  if (!TRACE_STACK_RAW || !TRACE_STACK_RAW.includes('=')) return null;
+  const spec = TRACE_STACK_RAW.split('=')[1];
+  // pure number → just override default depth
+  if (/^\d+$/.test(spec)) { TRACE_STACK_DEFAULT_DEPTH = parseInt(spec); return null; }
+  const filter = new Map();
+  for (const part of spec.split(',').map(s => s.trim()).filter(Boolean)) {
+    const [name, depth] = part.split(':');
+    filter.set(name, depth ? parseInt(depth) : TRACE_STACK_DEFAULT_DEPTH);
+  }
+  return filter;
+})();
+// --trace-stack-scan: for code built without frame pointers, where the EBP
+const TRACE_AT = getArg('trace-at', null); // --trace-at=0xADDR: log regs each time EIP hits addr (non-interactive)
+const TRACE_AT_DUMP = getArg('trace-at-dump', null); // --trace-at-dump=0xADDR:LEN[,0xADDR:LEN,...]: hexdump these regions on each --trace-at hit
+const TRACE_AT_MEM = getArg('trace-at-mem', null); // --trace-at-mem=REG+OFF:LEN[,ADDR:LEN]: log memory at each --trace-at hit
+const TRACE_AT_START_BATCH = parseInt(getArg('trace-at-start-batch', '0'), 10) || 0; // delay --trace-at logging until batch N
+const TRACE_AT_LIMIT = parseInt(getArg('trace-at-limit', '0'), 10) || 0; // stop logging after N --trace-at hits (0 = unlimited)
+const BREAK_API = getArg('break-api', null); // --break-api=Name[,Name,...]: break on API call
+// --trace-api-mem=Name:ARG:LEN[,...]: at each entry of API Name, hexdump LEN
+// bytes at the guest pointer in stdcall argument ARG (0-based). For buffers
+// built on the stack just before the call (colour tables, rects, structs).
+const TRACE_API_MEM = (getArg('trace-api-mem', '') || '').split(',').filter(Boolean).map(spec => {
+  const [name, arg, len] = spec.split(':');
+  return { name, arg: parseInt(arg, 10) || 0, len: Math.min(parseInt(len, 10) || 64, 4096) };
+});
+const WATCH_SPEC = getArg('watch', null);    // --watch=0xADDR: break on memory change (dword)
+const WATCH_BYTE = getArg('watch-byte', null);   // --watch-byte=0xADDR: byte-granularity watch
+const WATCH_WORD = getArg('watch-word', null);   // --watch-word=0xADDR: 16-bit watch
+const WATCH_VALUE = getArg('watch-value', null); // --watch-value=0xVAL: only break when watch becomes this value
+const WATCH_LOG = hasFlag('watch-log');          // --watch-log: log each change and keep running (no debug prompt)
+const WATCH_START_BATCH = parseInt(getArg('watch-start-batch', '0'), 10) || 0; // delay arming --watch until batch N
+const WATCH_JS_ONLY = hasFlag('watch-js-only');  // --watch-js-only: sample in JS only; do not arm WAT watchpoint
+    let t = apiNameCache.get(ptr);
+    if (t === undefined) {
+      const b = new Uint8Array(memory.buffer, ptr, Math.min(len, 256));
+      t = '';
+      for (let i = 0; i < b.length && b[i]; i++) t += String.fromCharCode(b[i]);
+      apiNameCache.set(ptr, t);
+    }
+    // COM ordinal dispatch: 09b-dispatch.wat emits the api_id marker via
+    // host_log_i32 IMMEDIATELY before this log of the '<ord>' placeholder.
+    // Resolve the real method name now so all downstream tracing
+    // (--trace-api filter, --trace-stack, breakpoints, decodeDx, typed
+    // formatting via api_table.json) works against the real name.
+    let comOrdRaw = false;
+    if (t === '<ord>' && pendingComApiId >= 0) {
+      // Ids are array positions (tools/check-api-table.js gates it). A
+      // linear find here was ~28% of CLI CPU in a COM-heavy D3D8 world.
+      const entry = apiTable[pendingComApiId];
+      if (entry && entry.id === pendingComApiId) t = entry.name;
+      comOrdRaw = true;
+      pendingComApiId = -1;
+    }
+    apiCount++;
+    if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
+
+    if (TRACE_CRITICAL && (t === 'EnterCriticalSection' || t === 'LeaveCriticalSection')) {
+      try {
+    for (const spec of TRACE_API_MEM) {
+      if (t !== spec.name) continue;
+      try {
+        const e = instance.exports;
+        const imageBase = e.get_image_base() >>> 0;
+        const dv = new DataView(memory.buffer);
+        const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+        const ptr = dv.getUint32(g2w((e.get_esp() + 4 + spec.arg * 4) >>> 0), true) >>> 0;
+        logs.push(`[api-mem] ${t} arg${spec.arg}=${hex(ptr)} len=${spec.len}`);
+        for (let off = 0; ptr && off < spec.len; off += 16) {
+          const row = [];
+          for (let i = off; i < Math.min(off + 16, spec.len); i++) {
+            row.push(dv.getUint8(g2w((ptr + i) >>> 0)).toString(16).padStart(2, '0'));
+          }
+          logs.push(`  ${hex((ptr + off) >>> 0)}: ${row.join(' ')}`);
+        }
+      } catch (err) {
+        logs.push(`[api-mem] ${t} unreadable: ${err.message}`);
+      }
+    }
+
+    // Check API breakpoints
+    if (breakApis.length && breakApis.some(name => t.includes(name))) {
+      lastApiName = t;
+      lastApiEsp = instance.exports.get_esp();
+    }
+
+    if (TRACE_API && (!TRACE_API_FILTER || TRACE_API_FILTER.has(t))) {
+      const e = instance.exports;
+      const esp = e.get_esp();
+      const imageBase = e.get_image_base();
+      const dv = new DataView(memory.buffer);
+      const g2w = addr => translateGuest(addr, imageBase, memory.buffer);
+      const fmtCtx = { dv, g2w, memory: memory.buffer, readStr, hex };
+
+      const entry = apiByName.get(t);
+      lastApiName = t;
+      lastApiEntry = entry || null;
+      // Snapshot arg dwords at entry so out-param decoding survives stack churn
+      if (entry && Array.isArray(entry.args) && entry.args.some(a => a.out)) {
+        lastApiArgs = [];
+        try {
+          for (let i = 0; i < entry.args.length; i++) {
+            lastApiArgs.push(dv.getUint32(g2w(esp + 4 + i * 4), true));
+          }
+        } catch (_) { lastApiArgs = null; }
+      } else {
+        lastApiArgs = null;
+      }
+
+      // Typed formatter path
+      let header = fmtApiCall(entry, esp, fmtCtx);
+      // Legacy path: nargs raw dwords (fallback to 6 if unknown) + ad-hoc decoders
+      let strInfo = '';
+          try {
+            const thisPtr = dv.getUint32(g2w(esp + 4), true);
+            if (dxLookupThis(thisPtr, dv, g2w)) isOrdDx = true;
+          } catch (_) {}
+        }
+        if (isNamedDx || isOrdDx) {
+          try { dxInfo = ' ' + decodeDx(t, esp, dv, g2w, memory); } catch (_) {}
+        }
+      }
+      let callerInfo = '';
+      try {
+        const callerRet = dv.getUint32(g2w(esp), true);
+        callerInfo = ` [esp=${hex(esp)} ret=${hex(callerRet)}]`;
+      } catch (_) {}
+      pushApi(`[API #${apiCount}] ${header}${strInfo}${dxInfo}${callerInfo}`);
+
+      // --trace-stack: walk EBP chain on matched calls
+      if (TRACE_STACK && (!TRACE_STACK_FILTER || TRACE_STACK_FILTER.has(t))) {
+        const depth = TRACE_STACK_FILTER ? TRACE_STACK_FILTER.get(t) : TRACE_STACK_DEFAULT_DEPTH;
+        flushDedup();
+        logs.push('  ' + traceStackLine(() => e.get_ebp(), esp, dv, g2w, imageBase, memory.buffer, depth));
+      }
+
+      // Legacy struct dumps only fire when API isn't typed (formatter already covers them)
+      if (!entry || !entry.args) {
+    h.log_api_exit = () => {
+      if (criticalTracePending) {
+        try {
+          const after = criticalTracePending.state();
+          logs.push(`[critical T0/tid${criticalTracePending.tid}] ${criticalTracePending.name} cs=${hex(criticalTracePending.cs)} ret=${hex(criticalTracePending.ret)} after={lock:${after.lock},rec:${after.recursion},owner:${after.owner}}`);
+        } catch (_) {}
+        criticalTracePending = null;
+      }
+      if (!lastApiName) return;
+      if (ESP_DELTA) {
+        const espAfter = instance.exports.get_esp();
+        const delta = (espAfter - lastApiEsp) | 0;
+        logs.push(`[ESP] ${lastApiName}: ${hex(lastApiEsp)} -> ${hex(espAfter)} delta=${delta >= 0 ? '+' : ''}${delta}`);
+      }
+      if (TRACE_API && lastApiEntry) {
+        const dv = new DataView(memory.buffer);
+        const imageBase = instance.exports.get_image_base();
+        const fmtCtx = { dv, g2w: addr => translateGuest(addr, imageBase, memory.buffer), memory: memory.buffer, readStr, hex };
+        const eax = instance.exports.get_eax();
+        const typedRet = fmtApiRet(lastApiEntry, eax, fmtCtx);
+        const outInfo = lastApiArgs ? fmtApiOutParams(lastApiEntry, lastApiArgs, fmtCtx) : '';
+        if (typedRet || outInfo) flushDedup();
+        if (typedRet) logs.push(`  ${typedRet.trim()}`);
+        if (outInfo) logs.push(outInfo);
+      }
+      if (TRACE_API && lastApiName === 'SendMessageA' && lastTreeItemTrace) {
+        try {
+          const imageBase = instance.exports.get_image_base();
+          const textValue = readStr(RegionMap.g2w(lastTreeItemTrace.textGuest, imageBase),
+            Math.min(lastTreeItemTrace.textMax, 1024));
+          logs.push(`  TVITEMA.text=${JSON.stringify(textValue)}`);
+        } catch (_) {}
+        lastTreeItemTrace = null;
+      }
+      lastApiName = null;
+      lastApiEntry = null;
+      lastApiArgs = null;
+    };
+  }
+
+  // --- Override exit to also log ---
+  h.exit = code => {
+    hostExitRequested = true;

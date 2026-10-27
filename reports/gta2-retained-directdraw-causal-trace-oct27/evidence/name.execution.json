@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-C",
+    "/tmp/gta2-retained-directdraw-causal-trace-oct27/repo",
+    "config",
+    "user.name",
+    "Wine Ops Worker"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 34979840,
+    "sampledPeakRSS": 34979840,
+    "reapedPeakRSS": 14991360,
+    "cpuSeconds": 0.07843000000000004,
+    "wallSeconds": 0.05188402603380382,
+    "owned": [
+      [
+        137552,
+        "115509413"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "argv": [
+    "/usr/bin/env",
+    "-u",
+    "NODE_OPTIONS",
+    "node",
+    "/tmp/gta2-retained-directdraw-causal-trace-oct27/ops/parser-check.cjs"
+  ],
+  "kind": "node",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 64208896,
+    "sampledPeakRSS": 64208896,
+    "reapedPeakRSS": 46481408,
+    "cpuSeconds": 0.151501,
+    "wallSeconds": 0.09341581608168781,
+    "owned": [
+      [
+        137527,
+        "115509313"
+      ],
+      [
+        137528,
+        "115509315"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

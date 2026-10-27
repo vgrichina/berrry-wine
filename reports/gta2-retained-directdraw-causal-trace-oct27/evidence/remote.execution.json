@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-C",
+    "/tmp/gta2-retained-directdraw-causal-trace-oct27/repo",
+    "remote",
+    "add",
+    "origin",
+    "git@github.com:vgrichina/wine-assembly.git"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 35110912,
+    "sampledPeakRSS": 35110912,
+    "reapedPeakRSS": 14991360,
+    "cpuSeconds": 0.06680400000000003,
+    "wallSeconds": 0.05295446282252669,
+    "owned": [
+      [
+        137550,
+        "115509406"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-retained-directdraw-causal-trace-oct27/ops/prepare.py"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": -15,
+    "stopReason": "aggregate RSS limit",
+    "peakRSS": 134397952,
+    "sampledPeakRSS": 134397952,
+    "reapedPeakRSS": 68661248,
+    "cpuSeconds": 5.464511,
+    "wallSeconds": 2.636956009082496,
+    "owned": [
+      [
+        137916,
+        "115512274"
+      ],
+      [
+        137917,
+        "115512276"
+      ],
+      [
+        137918,
+        "115512281"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}
