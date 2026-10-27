@@ -21,8 +21,8 @@
 //   layout().holes                       // [{ base, size, after, before }]
 //
 // `layout({ shake: 'gap' })` asks for a permuted placement (§8) without touching
-// the tree. The result is memoized per shake key, because several callers ask for
-// the same layout in one process and a compile is not free.
+// the tree. The result is memoized per shake key and current compiler input,
+// because several callers ask for the same layout in one process.
 //
 // CLI:
 //   node tools/region-layout.js            # the placed map
@@ -70,7 +70,7 @@ function lawGlobals(source) {
   const found = new Map();
   const dir = path.join(ROOT, 'src');
   for (const f of fs.readdirSync(dir).filter(x => x.endsWith('.wat')).sort()) {
-    const txt = fs.readFileSync(path.join(dir, f), 'utf8');
+    const txt = f === '00-regions.wat' ? source : fs.readFileSync(path.join(dir, f), 'utf8');
     const g = /\(global\s+(\$[A-Za-z0-9_]+)\s+i32\s+\(i32\.const\s+(-?(?:0x[0-9A-Fa-f]+|\d+))\s*\)\s*\)/g;
     let h;
     while ((h = g.exec(txt))) {
@@ -89,13 +89,18 @@ function lawGlobals(source) {
 function layout(options = {}) {
   const shake = options.shake || null;
   const key = String(shake);
-  if (cache.has(key) && !options.fresh) return cache.get(key);
-
-  const source = fs.readFileSync(DECLS, 'utf8');
+  // A process can span several gates. Validate the complete compiler input on
+  // every consumption, including rediscovery of files supplying law globals.
+  // Callers parsing this same declaration text may supply their current read.
+  const source = options.source === undefined ? fs.readFileSync(DECLS, 'utf8') : options.source;
+  const globals = lawGlobals(source);
+  const input = `${globals}${source}`;
+  const previous = cache.get(key);
+  if (previous && previous.input === input && !options.fresh) return previous.result;
   const { compile } = require(path.join(__dirname, 'watx.js'));
   // A trivial function and export so the module is well formed; the declarations
   // themselves emit nothing, which is the whole point of the family.
-  const module = `(memory ${MEMORY_PAGES} ${MEMORY_PAGES})\n${lawGlobals(source)}${source}\n` +
+  const module = `(memory ${MEMORY_PAGES} ${MEMORY_PAGES})\n${input}\n` +
     `(func $noop (effects heap) (nop))\n(wasm-export "noop" $noop)\n`;
   const opts = { mode: 'production', standardWat: true, runtimeBuiltins: false, tailCalls: true };
   if (shake) opts.regionShake = shake;
@@ -140,7 +145,7 @@ function layout(options = {}) {
     shakeScaledDown: report.shakeScaledDown || 0,
     memoryBytes: MEMORY_PAGES * 65536,
   };
-  cache.set(key, result);
+  cache.set(key, { input, result });
   return result;
 }
 

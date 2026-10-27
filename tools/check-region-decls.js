@@ -98,7 +98,7 @@ const NUMERIC_CLAUSES = new Set(['size', 'end', 'align']);
 // `shake` asks for the SHAKEN placement (§8) instead of the canonical one, so a
 // generated mirror can be made to match a shaken artifact. Nothing in the build
 // passes it; only tools/region-shake-smoke.js does.
-function collectDeclarations(overrideFile, shake) {
+function collectDeclarations(overrideFile, shake, cache) {
   const fileArg = overrideFile ||
     (require.main === module
       ? (process.argv.find(a => a.startsWith('--file=')) || '').slice('--file='.length)
@@ -108,7 +108,14 @@ function collectDeclarations(overrideFile, shake) {
   // Where the regions actually landed. Asked of the compiler (tools/region-layout.js)
   // rather than read out of the clauses, because since wave 3 most bases are the
   // allocator's choice and simply are not written down anywhere.
-  const placed = require('./region-layout.js').layout(shake ? { shake } : {});
+  const placed = require('./region-layout.js').layout({ shake,
+    ...(file === path.join(SRC, DECLS) ? { source: text } : {}),
+  });
+  // Invocation-owned parse reuse must follow a fresh layout validation. Text
+  // equality alone misses changed/removed/discovered law-global providers.
+  if (cache && cache.file === file && cache.text === text && cache.placed === placed) {
+    return cache.decls;
+  }
   const decls = [];
   const lines = text.split(/\r?\n/);
   for (let i = 0; i < lines.length; i++) {
@@ -221,6 +228,7 @@ function collectDeclarations(overrideFile, shake) {
     if (d.kind !== 'span') decls.push(d);
     i = j - 1;
   }
+  if (cache) Object.assign(cache, { file, text, placed, decls });
   return decls;
 }
 
