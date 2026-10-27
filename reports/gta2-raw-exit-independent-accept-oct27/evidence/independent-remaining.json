@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 87101440,
+  "sampledPeakRSS": 87101440,
+  "reapedPeakRSS": 77533184,
+  "cpuSeconds": 0.195003,
+  "wallSeconds": 0.10393343307077885,
+  "owned": [
+    [
+      198222,
+      "115813399"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/gta2-raw-exit-independent-accept-oct27/ops/independent-boundaries.js",
+    "--remaining"
+  ],
+  "kind": "node",
+  "at": 1793110924.8567846
+}

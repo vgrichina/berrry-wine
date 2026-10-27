@@ -1,0 +1,388 @@
+{
+  "status": "INDEPENDENT_ACCEPTANCE_SOURCE_ONLY",
+  "candidate": "e99799cd80087eddcd574a58a7062d354fc4d050",
+  "base": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "testedPins": {
+    "test/run.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/test/run.js",
+      "bytes": 688717,
+      "sha256": "0ae0c1abf3f626e38a3d66bf9f7f586e1aeb7b532c752152e348bcea8538d1dd"
+    },
+    "test/test-api-exit-observer.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/test/test-api-exit-observer.js",
+      "bytes": 12812,
+      "sha256": "5cae87793962aeed1fbc6c3a8ceee8020221eef8a1a060c53ce20018d08346e9"
+    },
+    "lib/api-format.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/lib/api-format.js",
+      "bytes": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    "src/api_table.json": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/src/api_table.json",
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    }
+  },
+  "sourceGitBlobs": "evidence/source-binding.stdout",
+  "results": {
+    "node-startup": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 46862336,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/startup.js"
+      ]
+    },
+    "production-boundary": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 62611456,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/repo/test/test-api-exit-observer.js",
+        "--repro-only"
+      ]
+    },
+    "independent-causal": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 73551872,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/independent-boundaries.js",
+        "--causal-only"
+      ]
+    },
+    "base-rejection": {
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 70352896,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/base-rejection.js",
+        "--causal-only"
+      ]
+    },
+    "independent-remaining": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 87101440,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/independent-boundaries.js",
+        "--remaining"
+      ]
+    },
+    "typed-pointer": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 72765440,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/typed-pointer.js"
+      ]
+    },
+    "source-binding": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 24248320,
+      "command": [
+        "git",
+        "-C",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/repo",
+        "ls-tree",
+        "e99799cd80087eddcd574a58a7062d354fc4d050",
+        "--",
+        "test/run.js",
+        "test/test-api-exit-observer.js",
+        "lib/api-format.js",
+        "src/api_table.json"
+      ]
+    }
+  },
+  "reused": {
+    "producerGroups": 11,
+    "producerRejectingControls": 6,
+    "verifiedPayloads": 70,
+    "producerManifestSHA256": "cd5336e81ce84f5d1fb0e83ec04b31673da581932722d94ba6ccc2b3a496bf48",
+    "predecessor9276PayloadAcceptance": "unchanged coordinator verified; not repeated"
+  },
+  "payloads": [
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/admission.json",
+      "bytes": 1889,
+      "sha256": "b805402031a4db95637a16f88604445d5f3e3d9f375b09465c2502f3edc2f40c"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/base-rejection.js",
+      "bytes": 5139,
+      "sha256": "224f1b173f45b86b2811f951f7a78c0cafeed248ff9f55be7fba333d5731b878"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/base-rejection.json",
+      "bytes": 534,
+      "sha256": "e59851ca7cee0abe8c02f72d6cec8a9eb1d24e6052e2f5ea3b5c72efef823c22"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/base-rejection.stderr",
+      "bytes": 912,
+      "sha256": "fda790bb7a45d1cdf3de4be8a7fa1bbf6e347f947f5ae673ed5446eaff99c433"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/base-rejection.stdout",
+      "bytes": 706,
+      "sha256": "f07b956ec5752f0307c86edbcad19f3ed2fd2c8130d3ebc103968730ef52cae3"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/checkout.json",
+      "bytes": 563,
+      "sha256": "29fcf694abe8cc444a6ac26b728de9d128a8c023cd9beefbed9a4715c3a87b05"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/checkout.stderr",
+      "bytes": 137,
+      "sha256": "57903e96d69d2e31b5976c8f001c8c7cf6db70bbb1c959eb55de6eaf5994b4ed"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/checkout.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/checkpoint.json",
+      "bytes": 3162,
+      "sha256": "5f9954f622aab931cfafcfe75e009cadef2e047b26154c7e44930d7425850eb7"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/child.py",
+      "bytes": 286,
+      "sha256": "322a2c702bfcaf9ed30a70d56c31979da0225bb39aba3787eac631b2651a2167"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-boundaries.js",
+      "bytes": 5037,
+      "sha256": "d15c291ae31d34a2e83f90cf2900fe47f465614f561df42598ff5553dbaa576f"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-causal-original.js",
+      "bytes": 5038,
+      "sha256": "8e00ce9c2a469515745f2c3e8107da2ff54b3dc28a3dd1b32a3306d58724aced"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-causal.json",
+      "bytes": 542,
+      "sha256": "107fcbb562296af29ceb2a5e77e7555ca302e5cfe7a78a771790c43b6789457b"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-causal.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-causal.stdout",
+      "bytes": 1033,
+      "sha256": "3037b9b9dee69b3b973947cf0d851d2741944e921d041593bc1c562987696a64"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-remaining.json",
+      "bytes": 541,
+      "sha256": "8ebb87cde499d676cc343c56dfebe309b15e167ab32e4771a02623a02bf5181e"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-remaining.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/independent-remaining.stdout",
+      "bytes": 4839,
+      "sha256": "4de5054d922b630e1f332aec8d187a6d729a61635325800a8d6b97d0d31db673"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/init.json",
+      "bytes": 440,
+      "sha256": "5d0950d44ab45c0f9714d20aa2797a1bf63096e82c1a206054935b2ec4706868"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/init.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/init.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/node-startup.json",
+      "bytes": 507,
+      "sha256": "26024c2ff1cfadccbc3f447d4f5e6bb1b520270368b73155b07da421618d2a1d"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/node-startup.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/node-startup.stdout",
+      "bytes": 1654,
+      "sha256": "77f2950de93c82d02d7597483d13e893d631ba6c372f8e42ba5098babcd42072"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/package.py",
+      "bytes": 9609,
+      "sha256": "731434691cbaf330e67813e3eaa788623dd8d36dc1fa93f8d6b339ef9a969a52"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/production-boundary.json",
+      "bytes": 548,
+      "sha256": "cd27b10668fee05ae19668e154f894be3e503d7ce100c60d9d4835f74dee1831"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/production-boundary.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/production-boundary.stdout",
+      "bytes": 797,
+      "sha256": "137633d10905729e6cb1cfab0b2d77e4c99760760033b4717d11466f7c5172c3"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/resource-final.json",
+      "bytes": 23645,
+      "sha256": "39bbcbbdf6bad40ca46862ed8a895c11db7b022190ed4326c326c6c7bc18d58b"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/resource-pre-execution.json",
+      "bytes": 9998,
+      "sha256": "6e2bfd0e38607b4e9aaaf82bf3acae6a449ae378aaa59d733618903c4c93b312"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/run.py",
+      "bytes": 3844,
+      "sha256": "3d54b5c01052ca9d3236bf6affdc2559989f06660741b2b897ddc5804e4aeec2"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-binding.json",
+      "bytes": 611,
+      "sha256": "9a9328134d34ceb64e3ca5e42a11dd96d63ab8a42543381638fa6e65ac6f93ca"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-binding.stderr",
+      "bytes": 137,
+      "sha256": "57903e96d69d2e31b5976c8f001c8c7cf6db70bbb1c959eb55de6eaf5994b4ed"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-binding.stdout",
+      "bytes": 292,
+      "sha256": "e98e588a0b6817742a32cb628d26005ef772e13d336181c851227913ccf851d7"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-review.diff.gz",
+      "bytes": 1358,
+      "sha256": "245ae5d5065bd24de5cf31ad162ef2c5fd5534385b0cf62cfca4df015b579e7d"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-review.txt",
+      "bytes": 2698,
+      "sha256": "36195b0cf26dae0dd553ac836e7ab79dc023e2dbbb7bb2a038fbaf4b88e1f8bb"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/startup.js",
+      "bytes": 417,
+      "sha256": "19c5f043cef482c88042da09afec133e92c73a62fc66c967da25b0e27b9d847e"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/typed-pointer.js",
+      "bytes": 1953,
+      "sha256": "5a516c186de91af38d088a8b4e659166c427c001e4bfcd68c1289753a2ef5aa0"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/typed-pointer.json",
+      "bytes": 512,
+      "sha256": "cdf6567b6093616f51315b96931c18c47673d66f74f91c40c7c1408c5f8f0fdc"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/typed-pointer.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/typed-pointer.stdout",
+      "bytes": 525,
+      "sha256": "9b3e4cc8157019a096452df4c609b602f36fc227c48113faf50b8f23b4f0df26"
+    }
+  ],
+  "losslessCompressedDiagnostics": [
+    {
+      "path": "reports/gta2-raw-exit-independent-accept-oct27/evidence/source-review.diff.gz",
+      "rawBytes": 3485,
+      "rawSHA256": "d121c2e4cc491a4149c54050561299242efdf64e943c623577834277f9c36610",
+      "recipe": "gzip -dc reports/gta2-raw-exit-independent-accept-oct27/evidence/source-review.diff.gz"
+    }
+  ],
+  "resource": [
+    "evidence/resource-pre-execution.json",
+    "evidence/resource-final.json"
+  ],
+  "review": "evidence/source-review.txt",
+  "executionScripts": {
+    "independent-causal": "evidence/independent-causal-original.js",
+    "base-rejection": "evidence/base-rejection.js",
+    "independent-remaining": "evidence/independent-boundaries.js",
+    "typed-pointer": "evidence/typed-pointer.js"
+  },
+  "controls": {
+    "originalBase": "expected exit1: diagnostic became premature return",
+    "independentOmissions": 2,
+    "producerReused": 6
+  },
+  "incidents": [
+    "producer initial missing author/base-only push preserved in referenced original closeout",
+    "producer decimal/hex fixture correction preserved in original closeout",
+    "producer disappearing index.lock accounting incident preserved in original closeout",
+    "donor alternates nesting warning retained in checkout/source binding stderr; required source object reads succeeded",
+    "initial local remote URL template corrected to exact donor vgrichina before any network operation"
+  ],
+  "producerCloseout": "/tmp/gta2-untyped-api-return-observer-repair-oct27/ops/publication-closeout.json",
+  "preservation": {
+    "compiledModules": "all predecessor modules untouched, zero rebuild",
+    "originalDonors": "read only; no predecessor wrappers executed"
+  },
+  "runtime": {
+    "guest": 0,
+    "compiler": 0,
+    "boatActions": 0,
+    "assignedBox": null,
+    "lifecycleOwner": "coordinator",
+    "realGTA2HRESULT": null,
+    "gameplay": false
+  },
+  "remaining": [
+    "later independently assigned current-main reconciliation",
+    "fresh coordinator runtime task/admission",
+    "real GTA2 HRESULT and build/gameplay gates"
+  ],
+  "publication": "postcommit exact remote verification in ops/publication-closeout.json; no main publication"
+}

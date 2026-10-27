@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 22937600,
+  "sampledPeakRSS": 22937600,
+  "reapedPeakRSS": 11153408,
+  "cpuSeconds": 0.049624,
+  "wallSeconds": 0.04549801000393927,
+  "owned": [
+    [
+      196881,
+      "115805659"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "init",
+    "-q",
+    "/tmp/gta2-raw-exit-independent-accept-oct27/repo"
+  ],
+  "kind": "git",
+  "at": 1793110847.39258
+}

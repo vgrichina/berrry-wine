@@ -1,0 +1,29 @@
+Independent source review: ACCEPT source-only candidate e99799cd80087eddcd574a58a7062d354fc4d050.
+Only six runner hunks differ from exact original base: selected-entry state, entry reset,
+selection bit, diagnostic integer handling, authoritative raw return fallback, and exit reset.
+No API signature/table/formatter change, guest code change, or silent success implementation.
+GetAttachedSurface has no ret metadata. API #672 is the CLI call sequence counter, not table ID;
+COM 0xC0DE marker resolves the actual table method before the normal entry callback.
+Return identity follows existing last-entry CLI semantics; callbacks carry no invocation token.
+This does not establish nested invocation ownership: a new/filtered call supersedes old state,
+and an exit is attributed to the last selected entry. Synthetic stale exits are checked only
+when realizable by no-entry/duplicate callbacks, not invented API/sequence arguments.
+Assumption: log_api_exit follows handler result storage and precedes caller register overwrite.
+This task verifies the host boundary with stubbed registers; retained dispatch/runtime evidence
+remains the authority for guest callback placement. No guest has been started to reverify it.
+0xC0DE and multiword diagnostic markers keep their existing protocol meaning. They are not
+unconditionally printed as arbitrary integers or interpreted as return values. Current-call
+correlation survives diagnostic messages. Marker-shaped test inputs invoke actual callbacks.
+Intentional legacy trace delta: untyped diagnostics now print [i32], while log_api_exit adds
+one raw EAX line with API name; this is the repair. Typed trace formatting/suppression remains
+unchanged. Filtered entries no longer inherit stale return/out-param/TVITEM metadata.
+Quiet/default-off behavior installs no exit observer when no trace/ESP/critical consumer exists;
+no observer register/memory reads occur. Paused tracing preserves the existing apiLogOff gate;
+pause is effective through the existing quiet-mode dispatch suppression, not a new independent
+pause guard inside callbacks. Forcing callbacks with another consumer follows legacy semantics.
+Known ESP audit behavior may emit per-integer and exit deltas; it is unchanged by the repair.
+No unintended legacy trace change found in the six-hunk diff. Existing broad producer groups
+and six controls are reused, not rerun. Independent targeted cases add marker payloads,
+zero/positive/signed/unsigned HRESULT/all-ones boundaries, current unknown/filtered sequence,
+duplicate exit reads, omitted exit-reset and traced-return guards, and real GetClientRect
+BOOL/LPRECT entry-pointer/ESP churn with one typed return/out-param and no guest mutation.

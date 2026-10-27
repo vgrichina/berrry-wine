@@ -1,0 +1,106 @@
+{
+  "candidate": "e99799cd80087eddcd574a58a7062d354fc4d050",
+  "status": "ACCEPTED_SOURCE_ONLY",
+  "results": {
+    "node-startup": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 46862336,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/startup.js"
+      ]
+    },
+    "production-boundary": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 62611456,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/repo/test/test-api-exit-observer.js",
+        "--repro-only"
+      ]
+    },
+    "independent-causal": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 73551872,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/independent-boundaries.js",
+        "--causal-only"
+      ]
+    },
+    "base-rejection": {
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 70352896,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/base-rejection.js",
+        "--causal-only"
+      ]
+    },
+    "independent-remaining": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 87101440,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/independent-boundaries.js",
+        "--remaining"
+      ]
+    },
+    "typed-pointer": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 72765440,
+      "command": [
+        "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "--max-old-space-size=512",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/ops/typed-pointer.js"
+      ]
+    },
+    "source-binding": {
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 24248320,
+      "command": [
+        "git",
+        "-C",
+        "/tmp/gta2-raw-exit-independent-accept-oct27/repo",
+        "ls-tree",
+        "e99799cd80087eddcd574a58a7062d354fc4d050",
+        "--",
+        "test/run.js",
+        "test/test-api-exit-observer.js",
+        "lib/api-format.js",
+        "src/api_table.json"
+      ]
+    }
+  },
+  "reused": {
+    "producerGroups": 11,
+    "producerRejectingControls": 6,
+    "verifiedPayloads": 70,
+    "producerManifestSHA256": "cd5336e81ce84f5d1fb0e83ec04b31673da581932722d94ba6ccc2b3a496bf48",
+    "predecessor9276PayloadAcceptance": "unchanged coordinator verified; not repeated"
+  },
+  "remaining": [
+    "later independently assigned current-main reconciliation",
+    "fresh coordinator runtime task/admission",
+    "real GTA2 HRESULT and build/gameplay gates"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 41848832,
+  "sampledPeakRSS": 41848832,
+  "reapedPeakRSS": 27037696,
+  "cpuSeconds": 0.226553,
+  "wallSeconds": 0.13065146398730576,
+  "owned": [
+    [
+      197033,
+      "115806518"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "-C",
+    "/tmp/gta2-raw-exit-independent-accept-oct27/repo",
+    "checkout",
+    "-q",
+    "-b",
+    "task/gta2-raw-exit-independent-accept-oct27",
+    "e99799cd80087eddcd574a58a7062d354fc4d050"
+  ],
+  "kind": "git",
+  "at": 1793110856.06451
+}

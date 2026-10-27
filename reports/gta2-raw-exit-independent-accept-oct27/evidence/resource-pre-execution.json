@@ -1,0 +1,355 @@
+{
+  "at": 1793110870.6459596,
+  "entries": [
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/checkout.json",
+      "bytes": 563,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/checkout.stderr",
+      "bytes": 137,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/init.stderr",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/init.stdout",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/checkout.stdout",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/run.py",
+      "bytes": 3381,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/startup.js",
+      "bytes": 417,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/admission.json",
+      "bytes": 1889,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/child.py",
+      "bytes": 286,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/ops/init.json",
+      "bytes": 440,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/lib",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/test",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/src",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/objects",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/refs",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/branches",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/description",
+      "bytes": 73,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/config",
+      "bytes": 275,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/HEAD",
+      "bytes": 60,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/info",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/index",
+      "bytes": 1917972,
+      "allocated": 1921024
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/lib/api-format.js",
+      "bytes": 34699,
+      "allocated": 36864
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/test/test-api-exit-observer.js",
+      "bytes": 12812,
+      "allocated": 16384
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/test/run.js",
+      "bytes": 688717,
+      "allocated": 692224
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/src/api_table.json",
+      "bytes": 723350,
+      "allocated": 724992
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/objects/pack",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/objects/info",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/refs/heads",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/refs/tags",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs/refs",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs/HEAD",
+      "bytes": 220,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/applypatch-msg.sample",
+      "bytes": 478,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/post-update.sample",
+      "bytes": 189,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/commit-msg.sample",
+      "bytes": 896,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/push-to-checkout.sample",
+      "bytes": 2783,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-receive.sample",
+      "bytes": 544,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/update.sample",
+      "bytes": 3650,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-merge-commit.sample",
+      "bytes": 416,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-rebase.sample",
+      "bytes": 4898,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-commit.sample",
+      "bytes": 1643,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/sendemail-validate.sample",
+      "bytes": 2308,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-applypatch.sample",
+      "bytes": 424,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/fsmonitor-watchman.sample",
+      "bytes": 4726,
+      "allocated": 8192
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/prepare-commit-msg.sample",
+      "bytes": 1492,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/hooks/pre-push.sample",
+      "bytes": 1374,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/info/sparse-checkout",
+      "bytes": 133,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/info/exclude",
+      "bytes": 240,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/objects/info/alternates",
+      "bytes": 69,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/refs/heads/task",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/refs/heads/task/gta2-raw-exit-independent-accept-oct27",
+      "bytes": 41,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs/refs/heads",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs/refs/heads/task",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/tmp/gta2-raw-exit-independent-accept-oct27/repo/.git/logs/refs/heads/task/gta2-raw-exit-independent-accept-oct27",
+      "bytes": 206,
+      "allocated": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/gta2-raw-exit-independent-accept-oct27",
+      "bytes": 4096,
+      "allocated": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/gta2-raw-exit-independent-accept-oct27/stderr.log",
+      "bytes": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/gta2-raw-exit-independent-accept-oct27/root-ref-digest.json",
+      "bytes": 196,
+      "allocated": 4096
+    },
+    {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/gta2-raw-exit-independent-accept-oct27/events.jsonl",
+      "bytes": 204672,
+      "allocated": 204800
+    },
+    {
+      "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T14-19-57-01a17dbb-6b5e-7330-8c4e-a56299d5a73c.jsonl",
+      "bytes": 563405,
+      "allocated": 565248
+    }
+  ],
+  "walGrowth": 0,
+  "sessionID": "01a17dbb-6b5e-7330-8c4e-a56299d5a73c",
+  "measured": 4386816,
+  "futureGrowth": 100663296,
+  "reserve": 8388608,
+  "projection": 113438720,
+  "allocation": 268435456,
+  "hostFree": 6128545792,
+  "otherReservedGrowth": 872415232,
+  "projectedFree": 5147078656,
+  "clients": [
+    {
+      "pid": 189066,
+      "rss": 191688704,
+      "remaining": 143855616
+    },
+    {
+      "pid": 190568,
+      "rss": 196866048,
+      "remaining": 138678272
+    },
+    {
+      "pid": 195683,
+      "rss": 198672384,
+      "remaining": 136871936
+    }
+  ],
+  "memAvailable": 3453329408,
+  "requiredRemaining": 2030018560,
+  "admitted": true
+}

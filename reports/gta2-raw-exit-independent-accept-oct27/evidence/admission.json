@@ -1,0 +1,40 @@
+{
+  "pins": {
+    "test/run.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/test/run.js",
+      "bytes": 688717,
+      "sha256": "0ae0c1abf3f626e38a3d66bf9f7f586e1aeb7b532c752152e348bcea8538d1dd"
+    },
+    "test/test-api-exit-observer.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/test/test-api-exit-observer.js",
+      "bytes": 12812,
+      "sha256": "5cae87793962aeed1fbc6c3a8ceee8020221eef8a1a060c53ce20018d08346e9"
+    },
+    "lib/api-format.js": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/lib/api-format.js",
+      "bytes": 34699,
+      "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+    },
+    "src/api_table.json": {
+      "path": "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/src/api_table.json",
+      "bytes": 723350,
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+    }
+  },
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountValidation": "No guest/mount operation authorized or planned; filename mount parser inapplicable",
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 4280712,
+    "/home/user/.codex/state_5.sqlite-wal": 4606192,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243632
+  },
+  "allocation": 268435456,
+  "sourceCeiling": 2097152,
+  "fetchBytes": 0,
+  "rootRefReceipt": "scratch/usage-watch/gta2-raw-exit-independent-accept-oct27/root-ref-digest.json"
+}
