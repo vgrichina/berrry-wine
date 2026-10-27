@@ -1,0 +1,469 @@
+{
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "version": "v24.22.1",
+  "execArgv": [
+    "--max-old-space-size=512"
+  ],
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             4194304              4194304              bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "parserSourceSha256": "0be6705dcd46cd5ec5f7c122a791bd8bf6ec131326a59dc23e29e7453865cce2",
+  "dllParserSha256": "be1dc7d1b5991558d31135de9cd91c66b50baab513ca121817d8c1843be3011f",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/penguin-visible-projectile-gameplay-oct27/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/penguin-visible-projectile-gameplay-oct27/game/penguin-command.exe",
+    "--exe-guest-path=C:\\penguin-command.exe",
+    "--cwd=C:\\",
+    "--args=--windowed --nosound",
+    "--dlls=/tmp/penguin-visible-projectile-gameplay-oct27/game/msvcrt.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/zlib1.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/libpng12-0.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/jpeg.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL_image.dll,/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL_mixer.dll",
+    "--vfs-include=data/gfx/*.png",
+    "--vfs-include=data/gfx/*.jpg",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--max-batches=43000",
+    "--memory-mb=512",
+    "--tick-ms-per-batch=200",
+    "--screen=840x660",
+    "--trace-input-dispatch",
+    "--input=33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34800:mousemove:260:220,39999:png:/tmp/penguin-visible-projectile-gameplay-oct27/ops/decision/b39999.png,40000:keydown:65,40060:png:/tmp/penguin-visible-projectile-gameplay-oct27/ops/decision/b40060.png,40100:png:/tmp/penguin-visible-projectile-gameplay-oct27/ops/decision/b40100.png,40200:png:/tmp/penguin-visible-projectile-gameplay-oct27/ops/decision/b40200.png,40200:keyup:65",
+    "--trace-eip-range=0x406ec4-0x406f50",
+    "--trace-eip-from=39999",
+    "--trace-eip-detail",
+    "--trace-eip-stream",
+    "--trace-eip-dump=0x4130a0:8,0x410110:12,0x413e50:4,0x413f30:4,0x4d0750:32"
+  ],
+  "exe": "/tmp/penguin-visible-projectile-gameplay-oct27/game/penguin-command.exe",
+  "dllFiles": [
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/msvcrt.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/zlib1.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/libpng12-0.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/jpeg.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL_image.dll",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/game/SDL_mixer.dll"
+  ],
+  "includedFiles": [
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/10explo.png",
+      "relativePath": "data/gfx/10explo.png",
+      "guestPath": "data/gfx/10explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/10flyer.png",
+      "relativePath": "data/gfx/10flyer.png",
+      "guestPath": "data/gfx/10flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/11explo.png",
+      "relativePath": "data/gfx/11explo.png",
+      "guestPath": "data/gfx/11explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/11flyer.png",
+      "relativePath": "data/gfx/11flyer.png",
+      "guestPath": "data/gfx/11flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/12explo.png",
+      "relativePath": "data/gfx/12explo.png",
+      "guestPath": "data/gfx/12explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/12flyer.png",
+      "relativePath": "data/gfx/12flyer.png",
+      "guestPath": "data/gfx/12flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/13explo.png",
+      "relativePath": "data/gfx/13explo.png",
+      "guestPath": "data/gfx/13explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/13flyer.png",
+      "relativePath": "data/gfx/13flyer.png",
+      "guestPath": "data/gfx/13flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/14explo.png",
+      "relativePath": "data/gfx/14explo.png",
+      "guestPath": "data/gfx/14explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/14flyer.png",
+      "relativePath": "data/gfx/14flyer.png",
+      "guestPath": "data/gfx/14flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/15explo.png",
+      "relativePath": "data/gfx/15explo.png",
+      "guestPath": "data/gfx/15explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/15flyer.png",
+      "relativePath": "data/gfx/15flyer.png",
+      "guestPath": "data/gfx/15flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/16explo.png",
+      "relativePath": "data/gfx/16explo.png",
+      "guestPath": "data/gfx/16explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/16flyer.png",
+      "relativePath": "data/gfx/16flyer.png",
+      "guestPath": "data/gfx/16flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/17explo.png",
+      "relativePath": "data/gfx/17explo.png",
+      "guestPath": "data/gfx/17explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/18explo.png",
+      "relativePath": "data/gfx/18explo.png",
+      "guestPath": "data/gfx/18explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/19explo.png",
+      "relativePath": "data/gfx/19explo.png",
+      "guestPath": "data/gfx/19explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/1cursor.png",
+      "relativePath": "data/gfx/1cursor.png",
+      "guestPath": "data/gfx/1cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/1explo.png",
+      "relativePath": "data/gfx/1explo.png",
+      "guestPath": "data/gfx/1explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/1flyer.png",
+      "relativePath": "data/gfx/1flyer.png",
+      "guestPath": "data/gfx/1flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/20explo.png",
+      "relativePath": "data/gfx/20explo.png",
+      "guestPath": "data/gfx/20explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/2cursor.png",
+      "relativePath": "data/gfx/2cursor.png",
+      "guestPath": "data/gfx/2cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/2explo.png",
+      "relativePath": "data/gfx/2explo.png",
+      "guestPath": "data/gfx/2explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/2flyer.png",
+      "relativePath": "data/gfx/2flyer.png",
+      "guestPath": "data/gfx/2flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/3cursor.png",
+      "relativePath": "data/gfx/3cursor.png",
+      "guestPath": "data/gfx/3cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/3explo.png",
+      "relativePath": "data/gfx/3explo.png",
+      "guestPath": "data/gfx/3explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/3flyer.png",
+      "relativePath": "data/gfx/3flyer.png",
+      "guestPath": "data/gfx/3flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/4cursor.png",
+      "relativePath": "data/gfx/4cursor.png",
+      "guestPath": "data/gfx/4cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/4explo.png",
+      "relativePath": "data/gfx/4explo.png",
+      "guestPath": "data/gfx/4explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/4flyer.png",
+      "relativePath": "data/gfx/4flyer.png",
+      "guestPath": "data/gfx/4flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/5cursor.png",
+      "relativePath": "data/gfx/5cursor.png",
+      "guestPath": "data/gfx/5cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/5explo.png",
+      "relativePath": "data/gfx/5explo.png",
+      "guestPath": "data/gfx/5explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/5flyer.png",
+      "relativePath": "data/gfx/5flyer.png",
+      "guestPath": "data/gfx/5flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/6cursor.png",
+      "relativePath": "data/gfx/6cursor.png",
+      "guestPath": "data/gfx/6cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/6explo.png",
+      "relativePath": "data/gfx/6explo.png",
+      "guestPath": "data/gfx/6explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/6flyer.png",
+      "relativePath": "data/gfx/6flyer.png",
+      "guestPath": "data/gfx/6flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/7cursor.png",
+      "relativePath": "data/gfx/7cursor.png",
+      "guestPath": "data/gfx/7cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/7explo.png",
+      "relativePath": "data/gfx/7explo.png",
+      "guestPath": "data/gfx/7explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/7flyer.png",
+      "relativePath": "data/gfx/7flyer.png",
+      "guestPath": "data/gfx/7flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/8cursor.png",
+      "relativePath": "data/gfx/8cursor.png",
+      "guestPath": "data/gfx/8cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/8explo.png",
+      "relativePath": "data/gfx/8explo.png",
+      "guestPath": "data/gfx/8explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/8flyer.png",
+      "relativePath": "data/gfx/8flyer.png",
+      "guestPath": "data/gfx/8flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/9cursor.png",
+      "relativePath": "data/gfx/9cursor.png",
+      "guestPath": "data/gfx/9cursor.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/9explo.png",
+      "relativePath": "data/gfx/9explo.png",
+      "guestPath": "data/gfx/9explo.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/9flyer.png",
+      "relativePath": "data/gfx/9flyer.png",
+      "guestPath": "data/gfx/9flyer.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/abc.png",
+      "relativePath": "data/gfx/abc.png",
+      "guestPath": "data/gfx/abc.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/back.jpg",
+      "relativePath": "data/gfx/back.jpg",
+      "guestPath": "data/gfx/back.jpg"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb1.png",
+      "relativePath": "data/gfx/bomb1.png",
+      "guestPath": "data/gfx/bomb1.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb10.png",
+      "relativePath": "data/gfx/bomb10.png",
+      "guestPath": "data/gfx/bomb10.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb2.png",
+      "relativePath": "data/gfx/bomb2.png",
+      "guestPath": "data/gfx/bomb2.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb3.png",
+      "relativePath": "data/gfx/bomb3.png",
+      "guestPath": "data/gfx/bomb3.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb4.png",
+      "relativePath": "data/gfx/bomb4.png",
+      "guestPath": "data/gfx/bomb4.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb5.png",
+      "relativePath": "data/gfx/bomb5.png",
+      "guestPath": "data/gfx/bomb5.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb6.png",
+      "relativePath": "data/gfx/bomb6.png",
+      "guestPath": "data/gfx/bomb6.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb7.png",
+      "relativePath": "data/gfx/bomb7.png",
+      "guestPath": "data/gfx/bomb7.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb8.png",
+      "relativePath": "data/gfx/bomb8.png",
+      "guestPath": "data/gfx/bomb8.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/bomb9.png",
+      "relativePath": "data/gfx/bomb9.png",
+      "guestPath": "data/gfx/bomb9.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon1.png",
+      "relativePath": "data/gfx/cannon1.png",
+      "guestPath": "data/gfx/cannon1.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon10.png",
+      "relativePath": "data/gfx/cannon10.png",
+      "guestPath": "data/gfx/cannon10.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon11.png",
+      "relativePath": "data/gfx/cannon11.png",
+      "guestPath": "data/gfx/cannon11.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon12.png",
+      "relativePath": "data/gfx/cannon12.png",
+      "guestPath": "data/gfx/cannon12.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon13.png",
+      "relativePath": "data/gfx/cannon13.png",
+      "guestPath": "data/gfx/cannon13.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon14.png",
+      "relativePath": "data/gfx/cannon14.png",
+      "guestPath": "data/gfx/cannon14.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon15.png",
+      "relativePath": "data/gfx/cannon15.png",
+      "guestPath": "data/gfx/cannon15.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon16.png",
+      "relativePath": "data/gfx/cannon16.png",
+      "guestPath": "data/gfx/cannon16.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon17.png",
+      "relativePath": "data/gfx/cannon17.png",
+      "guestPath": "data/gfx/cannon17.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon18.png",
+      "relativePath": "data/gfx/cannon18.png",
+      "guestPath": "data/gfx/cannon18.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon19.png",
+      "relativePath": "data/gfx/cannon19.png",
+      "guestPath": "data/gfx/cannon19.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon2.png",
+      "relativePath": "data/gfx/cannon2.png",
+      "guestPath": "data/gfx/cannon2.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon20.png",
+      "relativePath": "data/gfx/cannon20.png",
+      "guestPath": "data/gfx/cannon20.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon21.png",
+      "relativePath": "data/gfx/cannon21.png",
+      "guestPath": "data/gfx/cannon21.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon3.png",
+      "relativePath": "data/gfx/cannon3.png",
+      "guestPath": "data/gfx/cannon3.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon4.png",
+      "relativePath": "data/gfx/cannon4.png",
+      "guestPath": "data/gfx/cannon4.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon5.png",
+      "relativePath": "data/gfx/cannon5.png",
+      "guestPath": "data/gfx/cannon5.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon6.png",
+      "relativePath": "data/gfx/cannon6.png",
+      "guestPath": "data/gfx/cannon6.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon7.png",
+      "relativePath": "data/gfx/cannon7.png",
+      "guestPath": "data/gfx/cannon7.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon8.png",
+      "relativePath": "data/gfx/cannon8.png",
+      "guestPath": "data/gfx/cannon8.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannon9.png",
+      "relativePath": "data/gfx/cannon9.png",
+      "guestPath": "data/gfx/cannon9.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cannonhit.png",
+      "relativePath": "data/gfx/cannonhit.png",
+      "guestPath": "data/gfx/cannonhit.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/city.png",
+      "relativePath": "data/gfx/city.png",
+      "guestPath": "data/gfx/city.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/cityhit.png",
+      "relativePath": "data/gfx/cityhit.png",
+      "guestPath": "data/gfx/cityhit.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/shot.png",
+      "relativePath": "data/gfx/shot.png",
+      "guestPath": "data/gfx/shot.png"
+    },
+    {
+      "hostPath": "/tmp/penguin-visible-projectile-gameplay-oct27/game/data/gfx/title.jpg",
+      "relativePath": "data/gfx/title.jpg",
+      "guestPath": "data/gfx/title.jpg"
+    }
+  ],
+  "commaBearingFiles": [],
+  "canonicalParser": true,
+  "pass": true
+}

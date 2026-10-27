@@ -1,0 +1,10 @@
+{
+  "bytes": 16777216,
+  "perImage": 4194304,
+  "images": 4,
+  "dimensions": [
+    840,
+    660
+  ],
+  "allocatedBeforeGuest": true
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "const fs=require('fs'),path=require('path'),assert=require('assert'),crypto=require('crypto');\nconst H=path.resolve(process.cwd(),'../ops'),T=path.resolve(H,'..');\nconst argv=JSON.parse(fs.readFileSync(path.join(H,'decision-args.json'),'utf8'));\nconst args=argv.slice(3),source=fs.readFileSync(path.join(T,'runner/test/run.js'),'utf8');\nassert.equal(crypto.createHash('sha256').update(source).digest('hex'),'3c59fd034391e069f24a6047cf96cd8dac84a791d7d7591d55e5f7cb6e161a5e');\nconst parserSource=source.slice(source.indexOf('const getArg = '),source.indexOf('const hasFlag = '));\nconst {getArg,getArgs}=eval(parserSource+';({getArg,getArgs})');\nconst {expandIncludePatterns}=require(path.join(T,'runner/lib/vfs-host-files'));\nconst includes=expandIncludePatterns(path.dirname(getArg('exe')),getArgs('vfs-include'));\nconst intended=JSON.parse(fs.readFileSync(path.join(H,'manifest.json'),'utf8')).filter(x=>x.target.startsWith('game/data/gfx/')).map(x=>path.join(T,x.target)).sort();\nassert.deepEqual(includes.map(x=>x.hostPath).sort(),intended);\nconst dllArg=getArg('dlls',null),readAssetBytes=p=>fs.readFileSync(p);let dlls;\nconst a=source.indexOf(\"    dlls = dllArg.split(',').map(p => ({\");\nconst dllParserSource=source.slice(a,source.indexOf('\\n  } else {',a));eval(dllParserSource);\nconst dllFiles=dllArg.split(',').map(x=>x.trim());assert.equal(dlls.length,7);for(const f of dllFiles)assert(fs.statSync(f).isFile());\nassert(![...intended,...dllFiles,getArg('exe')].some(x=>x.includes(',')),'comma-bearing filenames require a tree mount');\nassert.equal(getArg('screen'),'840x660');assert(args.includes('--no-build'));assert.equal(getArg('max-batches'),'43000');\nconst receipt={node:process.execPath,version:process.version,execArgv:process.execArgv.slice(0,1),inheritedLimits:fs.readFileSync('/proc/self/limits','utf8'),parserSourceSha256:crypto.createHash('sha256').update(parserSource).digest('hex'),dllParserSha256:crypto.createHash('sha256').update(dllParserSource).digest('hex'),argv,exe:getArg('exe'),dllFiles,includedFiles:includes,commaBearingFiles:[],canonicalParser:true,pass:true};\nfs.writeFileSync(path.join(H,'launch-parser-startup.json'),JSON.stringify(receipt,null,2)+'\\n');\nconsole.log(JSON.stringify({node:receipt.node,version:receipt.version,dllFiles:7,includedFiles:includes.length,canonicalParser:true,pass:true}));\n"
+  ],
+  "pid": 23400,
+  "pgid": 23400,
+  "startedAt": 1793068848.0307567,
+  "memAvailable": 7225856000,
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "environmentSha256": "951e268038ebeb2dfa2cf33bea61c4c69fe7da279ede0ea7ac83a11f8b5f0c22",
+  "removedEnvironment": [
+    "WINE_RUN_EXTRA_ARGS",
+    "WINE_REGION_MAP",
+    "WINE_ASSEMBLY_WASM",
+    "NODE_OPTIONS",
+    "NODE_PATH"
+  ],
+  "limits": {
+    "oldspaceMiB": 512,
+    "arenaMiB": 512,
+    "cpu": 90,
+    "wall": 20,
+    "fileBytes": 4194304,
+    "textLogBytes": 524288,
+    "captureBytes": 16777216,
+    "physicalGroupBytes": 2147483648,
+    "remoteAllocation": 100663296
+  }
+}

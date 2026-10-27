@@ -1,0 +1,24 @@
+{
+  "box": "bx_pj94q932",
+  "currentAPIState": "UNKNOWN; final read-only cleanup probe timed out after50wall seconds; no retry",
+  "lastSuccessfulAPI": "capture-reservation retrieval after guest",
+  "guestTerminal": {
+    "TERM": false,
+    "KILL": false,
+    "returncode": 0,
+    "reaped": [],
+    "remainingGroup": false,
+    "reason": "natural",
+    "elapsed": 4.064076347999958,
+    "peakGroupRSS": 317849600,
+    "maxTaskOwnedBytes": 19149299,
+    "box": "bx_pj94q932",
+    "state": "RUNNING; coordinator owns shutdown03:20UTC",
+    "expiry": "2026-10-27T03:34:40Z"
+  },
+  "ownedGuestGroupRemaining": false,
+  "processAbsenceBasis": "guest supervisor terminal; no fresh procfs confirmation",
+  "retainedBytes": 19149299,
+  "expiryFromAuthoritativeSchedule": "2026-10-27T03:34:40Z",
+  "coordinatorOwnsShutdown": true
+}

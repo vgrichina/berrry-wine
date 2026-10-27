@@ -1,0 +1,14 @@
+{
+  "exitCode": 0,
+  "peakGroupRSS": 35512320,
+  "wall": 1.3453623570967466,
+  "reason": "natural",
+  "limits": {
+    "physical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "output": 2097152
+  },
+  "DATAandAS": "unchanged",
+  "poolSlots": 1
+}

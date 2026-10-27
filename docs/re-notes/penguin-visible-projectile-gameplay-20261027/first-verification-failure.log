@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/penguin-visible-projectile-gameplay-oct27/ops/verify.py", line 31, in <module>
+    assert startup['environmentSha256']==guest['environmentSha256'];assert startup['argv'][:2]==guest['argv'][:2];assert startup['limits']['fileBytes']==guest['limits']['fileBytes']==4194304
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

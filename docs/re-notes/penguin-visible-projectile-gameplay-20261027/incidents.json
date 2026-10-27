@@ -1,0 +1,24 @@
+{
+  "startupEnvironmentMismatch": {
+    "startup": "951e268038ebeb2dfa2cf33bea61c4c69fe7da279ede0ea7ac83a11f8b5f0c22",
+    "guest": "59ab7def8946a62086685f8cc46f65aa2d9c0e6e6b079dca6c5e602193130a77",
+    "status": "REJECT qualification; unchanged full-environment startup receipt cannot be claimed",
+    "cause": "Unknown exact differing variables; full environments were hashed but not retained to avoid capturing secrets.",
+    "nextRecipe": "Use one supervisor invocation with a frozen explicit environment for startup and guest; compare fingerprints BEFORE guest. Do not rerun under this assignment."
+  },
+  "apiTransferOutput": {
+    "serializedResponseBytes": 2429129,
+    "cumulativeOutputCap": 1048576,
+    "includesBinaryPNGBase64": true,
+    "status": "Total serialized API response bytes exceeded 1MiB while transferring PNGs. Guest text stayed 13705 bytes. Do not claim cumulative transport-output compliance.",
+    "interruptedOriginalCollector": true,
+    "earliestAfterRetrievedBySeparateCollector": true
+  },
+  "finalCleanupProbe": {
+    "status": "local subprocess.TimeoutExpired after50s; stdout/stderr empty; no unchanged retry",
+    "command": "import pathlib,json,os,time\nT=pathlib.Path('/tmp/penguin-visible-projectile-gameplay-oct27');found=[]\nfor p in pathlib.Path('/proc').glob('[0-9]*'):\n try:\n  a=(p/'cmdline').read_bytes().decode(errors='replace').split('\\0')\n  if a and pathlib.Path(a[0]).name=='node' and str(T/'runner/test/run.js') in a:found.append(int(p.name))\n except (OSError,ValueError):pass\nassert not found,found\nprint(json.dumps(dict(box='bx_pj94q932',observedAt=time.time(),apiReachable=True,ownedNodeProcesses=found,ownedGuestGroupRemaining=False,retainedBytes=sum(p.stat().st_size for p in T.rglob('*') if p.is_file()),lifecycle='RUNNING; coordinator owns snapshot-stop03:20UTC',expiryFromAuthoritativeSchedule='2026-10-27T03:34:40Z')))\n"
+  },
+  "consoleReading": "Initial broad policy/source searches emitted more than8192 bytes; subsequent source reads were bounded. No claim of complete source-slice compliance.",
+  "firstVerificationFailure": "first-verification-failure.log; first-verification-supervisor.json",
+  "noGuestRetry": true
+}

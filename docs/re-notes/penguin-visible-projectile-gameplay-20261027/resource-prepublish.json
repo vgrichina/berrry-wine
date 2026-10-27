@@ -1,0 +1,25 @@
+{
+  "at": 1793069240.7214017,
+  "localOwned": 3910761,
+  "external": {
+    "launcher": 566744,
+    "session": 3137145,
+    "positiveSQLiteGrowthOnce": 2428928
+  },
+  "localCap": 50331648,
+  "components": {
+    "sparseGitReportTemp": 8388608,
+    "externalSessionEventsWAL": 8388608,
+    "selectedCaptures": 8388608,
+    "publication": 8388608,
+    "future": 8388608,
+    "reserve": 8388608
+  },
+  "remoteMeasured": 19149299,
+  "remoteCap": 100663296,
+  "projectedLocalPeak": 35209402,
+  "localFree": 3206266880,
+  "otherAggregateFuture": 167772160,
+  "projectedHostFree": 2992073833,
+  "diskFloor": 2982150144
+}

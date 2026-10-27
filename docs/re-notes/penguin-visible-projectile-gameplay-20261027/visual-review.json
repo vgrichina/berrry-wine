@@ -1,0 +1,14 @@
+{
+  "reviewedAt": 1793069240.7164671,
+  "fullBefore": "decision/b39999.png",
+  "fullAfter": "decision/b40060.png",
+  "dimensions": [
+    840,
+    660
+  ],
+  "inspected": true,
+  "visibleProjectileAccepted": false,
+  "observations": "Before and after show the original game field, crosshair, incoming green lines, ground cannons and cities. After shows changed incoming lines and city explosions. No distinct A-fired projectile is identifiable near the left-cannon to crosshair path.",
+  "laterCaptures": "b40100 and b40200 have exactly the same hash as b40060; their identity is sealed remotely, not an independent visual motion observation.",
+  "limits": "No claim that there was no projectile between captured frames. Numerical firing does not establish visible projectile appearance."
+}

@@ -1,0 +1,22 @@
+{
+  "references": [
+    {
+      "path": "/tmp/penguin-postloop-shot-acceptance-oct24/preflight-api.json",
+      "sha256": "d3dee9619aa6fe6c4f09f6638927d4aa42b88e9b8f6cd1abe85a1fc9b1056ace",
+      "reused": true
+    },
+    {
+      "path": "/tmp/penguin-postloop-shot-acceptance-oct24/reused-checkpoint.json",
+      "sha256": "df0000fee88e1450a4be655624f2b58ef615f1c69cd19b1b2b259c17a80f870b",
+      "reused": true
+    },
+    {
+      "path": "/tmp/penguin-postloop-shot-acceptance-oct24/repo/docs/re-notes/penguin-command-postloop-shot-acceptance-20261024.md",
+      "sha256": "6770936ec9830c38e81a5d240e997d69a6a0c1c6bb3937b559a03aa04b1f403e",
+      "reused": true
+    }
+  ],
+  "claims": "Exact closure passed original numerical acceptance and codec/layout preflight; no broad suite or build repeated.",
+  "historicalModule": true,
+  "currentMainClaim": false
+}

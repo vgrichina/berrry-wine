@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_5oo8hdzesumt",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T02:40:15.605Z",
+  "launcherFailed": false,
+  "noticedMs": 18,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 18,
+  "startedAt": "2026-10-27T02:40:15.542Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"files\": 291, \"bytes\": 15760340, \"passHash\": true, \"free\": 49016025088, \"actualOwned\": 15860474}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

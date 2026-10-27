@@ -1,0 +1,57 @@
+{
+  "at": 1793068691.343223,
+  "clients": [
+    {
+      "pid": 3523880,
+      "rss": 105885696
+    },
+    {
+      "pid": 3551248,
+      "rss": 191950848
+    },
+    {
+      "pid": 3551297,
+      "rss": 196964352
+    },
+    {
+      "pid": 3553876,
+      "rss": 231981056
+    }
+  ],
+  "aggregateClientRSS": 726781952,
+  "newClientReservation": 335544320,
+  "memAvailable": 3761856512,
+  "physicalSafetyHeadroom": 805306368,
+  "localFree": 3240419328,
+  "aggregatePositiveFuture": 218103808,
+  "projectedFree": 3022315520,
+  "localAllocation": 50331648,
+  "localComponents": {
+    "sparseGitReportTemp": 8388608,
+    "externalSessionEventsWAL": 8388608,
+    "selectedCaptures": 8388608,
+    "publication": 8388608,
+    "future": 8388608,
+    "reserve": 8388608
+  },
+  "remoteAllocation": 100663296,
+  "remoteComponents": {
+    "closure": 15760340,
+    "transferTemp": 2097152,
+    "captures": 16777216,
+    "textLogs": 2097152,
+    "supervisorEvidence": 4194304,
+    "publication": 16777216,
+    "future": 8388608,
+    "reserve": 8388608
+  },
+  "standingManifest": {
+    "files": 291,
+    "bytes": 15760340,
+    "sha256": "4141f5ff9e95ad35f8891394d79706a9a9a4792fe8dffce8f0f59bc4633ed5fd"
+  },
+  "donor": "/tmp/input-consumption-clock-independent-closeout-oct24/repo",
+  "revision": "5691793a58b4670fd2a621114d7926100a1e47de",
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "pass": true
+}

@@ -1,0 +1,48 @@
+{
+  "passEvidenceIntegrity": true,
+  "dimensions": [
+    840,
+    660
+  ],
+  "fullPNGCRCAndInflation": true,
+  "pixelChanges": 12895,
+  "pixelChangeBounds": [
+    23,
+    43,
+    748,
+    642
+  ],
+  "exactStartupConfig": false,
+  "startupEnvironmentSha256": "951e268038ebeb2dfa2cf33bea61c4c69fe7da279ede0ea7ac83a11f8b5f0c22",
+  "guestEnvironmentSha256": "59ab7def8946a62086685f8cc46f65aa2d9c0e6e6b079dca6c5e602193130a77",
+  "qualification": "REJECT_ENVIRONMENT_IDENTITY_MISMATCH",
+  "actualAKeydownDispatchBatch": 40033,
+  "actualAKeyupDispatchBatch": 40295,
+  "count": [
+    0,
+    1
+  ],
+  "ammo": [
+    10,
+    9
+  ],
+  "finiteEIPLines": 6,
+  "toolsStanding": [
+    {
+      "path": "/home/user/.ascii/bin/boat",
+      "bytes": 8516688,
+      "sha256": "e2b69ea9b637ef8d5fef6d7c2df872e101985a6d72b1c0631d10deec6d01db6c"
+    },
+    {
+      "path": "/usr/bin/python3.12",
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    },
+    {
+      "path": "/usr/bin/git",
+      "bytes": 4066232,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668"
+    }
+  ],
+  "visualReviewSeparate": true
+}

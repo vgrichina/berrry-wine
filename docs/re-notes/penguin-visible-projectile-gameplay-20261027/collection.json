@@ -1,0 +1,14 @@
+{
+  "fullSelected": [
+    "b39999.png",
+    "b40060.png"
+  ],
+  "additionalRemote": [
+    "b40100.png",
+    "b40200.png"
+  ],
+  "reason": "Two full matching frames suffice; no additional guest or capture.",
+  "transportInterruptedAfterBefore": true,
+  "partialSecondInMemoryDiscarded": true,
+  "binaryCaptureTransportChargedSeparately": true
+}
