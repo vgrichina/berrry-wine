@@ -68,3 +68,34 @@ registration/handlers even with refreshed inventory. Run the unchanged scanner
 CLI. Retain exact old/current blobs, complete diffs and command/resource receipts
 under `/tmp/airstrike-directinput-census-build-recovery-oct27/ops`.
 Canonical build remains a separate conditional acceptance gate.
+
+## Retained outcome
+
+Correction 8218b104b8bcca52f147394de446a626d8daab50 passed the unchanged
+scanner (407 boundaries, nonlocal disabled) and existing census mutation suite.
+Only these two entries changed; the other 405 entries are byte-preserved.
+Canonical `bash tools/build.sh` used the exact corrected portable source closure
+and vendored compiler on API-exec Boat bx_qq2nauqh. Every build gate ran, WATX
+emitted both modules, and the 323 data segments passed the overlap check.
+However, the trusted supervisor rejected aggregate CPU use: `exit: 0`,
+`stopReason: "aggregate CPU limit"`, CPU 105.48018 seconds versus the 90-second
+limit, wall 19.653827 seconds, peak RSS 806514688 bytes, cleanup complete.
+No successful full-build qualification is claimed and no compile was retried.
+Build stderr was empty; the guard rejection is the causal blocker.
+
+The 1880345-byte canonical module has SHA-256
+b6cdde8dfa78bfcce22694127636ce1ad6714ac92df0e1182b7377005b58d758.
+The 1882918-byte compatibility module has SHA-256
+2ef31d69863914161bf3b37c330ae56d2968cda57444d3c6d7ba09a270910421.
+They are retained as unqualified artifacts with static import metadata (292
+imports each), without another engine compile, instantiation or guest execution.
+
+The retained predecessor could not be resumed: API returned 403
+`api_key_action_forbidden`, with no retry. One separately authorized fresh Boat
+was used after local/provider/remote RAM/disk/cgroup admission. It was
+snapshot-stopped at 19:48:56 UTC, with stop completion and snapshot verified.
+No main publication, browser, game, additional worker or allowance reset occurred.
+The canonical receipt, recovery recipe, evidence archive and modules are outside
+Git at `/tmp/airstrike-directinput-census-build-recovery-oct27/ops/`:
+`receipt-manifest.json`, `RECOVERY.md`, `recovery-evidence.tar.gz` and
+`remote-retained/modules/`. Independent review/integration remains coordinator-owned.
