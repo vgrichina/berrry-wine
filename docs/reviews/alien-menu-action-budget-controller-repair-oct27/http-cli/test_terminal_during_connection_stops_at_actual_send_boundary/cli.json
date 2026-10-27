@@ -1,0 +1,26 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_terminal_during_connection_stops_at_actual_send_boundary",
+      "--endpoint",
+      "http://127.0.0.1:34659/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_terminal_during_connection_stops_at_actual_send_boundary/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_terminal_during_connection_stops_at_actual_send_boundary/clock.json",
+      "ALIEN_TEST_CONNECT": "{\"terminal\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_terminal_during_connection_stops_at_actual_send_boundary/terminal.json\"}"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"known guest terminal receipt\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_process_start_identity_stops_before_control",
+      "--endpoint",
+      "http://127.0.0.1:42891/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_process_start_identity_stops_before_control/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_process_start_identity_stops_before_control/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ownership blocker: control process identity changed\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve",
+      "--endpoint",
+      "http://127.0.0.1:45941/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ControlStopped: budget blocker: remaining 9.000000s < required 10.000000s (after)\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve",
+      "--endpoint",
+      "http://127.0.0.1:45941/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_slow_action_stops_without_spending_cleanup_reserve/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"existing invocation owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

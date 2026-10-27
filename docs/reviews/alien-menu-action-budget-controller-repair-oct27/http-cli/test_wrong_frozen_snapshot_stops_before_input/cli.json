@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_frozen_snapshot_stops_before_input",
+      "--endpoint",
+      "http://127.0.0.1:39041/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_frozen_snapshot_stops_before_input/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_wrong_frozen_snapshot_stops_before_input/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ControlStopped: snapshot not confirmed frozen/zero-credit/alive\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_live_unrelated_process_cannot_claim_endpoint",
+      "--endpoint",
+      "http://127.0.0.1:33699/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_live_unrelated_process_cannot_claim_endpoint/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_live_unrelated_process_cannot_claim_endpoint/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ownership blocker: endpoint listener not owned by control process\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

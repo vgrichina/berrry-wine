@@ -1,0 +1,24 @@
+{
+  "at": 1793063979.2421653,
+  "stage": "process-owned-orchestration-cli",
+  "actual": {
+    "task": 3502080,
+    "processOwnershipReceipts": 0,
+    "launcher": 315392,
+    "session": 1228800,
+    "positiveWAL": 0
+  },
+  "used": 5046272,
+  "allocation": 46137344,
+  "ownRemaining": 41091072,
+  "peerFuture": 35319808,
+  "peerMeasuredLowerBound": 2428928,
+  "peerAllocation": 37748736,
+  "free": 3064889344,
+  "projectedFree": 2988478464,
+  "floor": 2982150144,
+  "memAvailable": 3978276864,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

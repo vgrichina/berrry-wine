@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_changed_review_batch_stops_before_input",
+      "--endpoint",
+      "http://127.0.0.1:43875/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_changed_review_batch_stops_before_input/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_changed_review_batch_stops_before_input/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ControlStopped: review blocker: frozen boundary differs from reviewed menu frame\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_insufficient_action_time_stops_before_any_control",
+      "--endpoint",
+      "http://127.0.0.1:46115/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_insufficient_action_time_stops_before_any_control/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_insufficient_action_time_stops_before_any_control/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"budget blocker: remaining 35.000000s < required 40.000000s (menu)\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

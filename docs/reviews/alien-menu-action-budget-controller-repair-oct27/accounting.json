@@ -1,0 +1,24 @@
+{
+  "at": 1793064084.924586,
+  "stage": "after-package",
+  "actual": {
+    "task": 7290880,
+    "processOwnershipReceipts": 81920,
+    "launcher": 348160,
+    "session": 1306624,
+    "positiveWAL": 0
+  },
+  "used": 9027584,
+  "allocation": 46137344,
+  "ownRemaining": 37109760,
+  "peerFuture": 35180544,
+  "peerMeasuredLowerBound": 2568192,
+  "peerAllocation": 37748736,
+  "free": 3059994624,
+  "projectedFree": 2987704320,
+  "floor": 2982150144,
+  "memAvailable": 3860221952,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

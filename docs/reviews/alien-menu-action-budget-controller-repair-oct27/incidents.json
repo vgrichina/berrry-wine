@@ -1,0 +1,22 @@
+[
+  {
+    "incident": "supplied ca6c2de ref absent from physical donor",
+    "resolution": "use explicitly accepted a9d65e overlay, files match exact SHA pins; failed unchanged lookup not retried"
+  },
+  {
+    "incident": "local fetch traversed intentionally sparse donor missing unrelated blob c2be2e36",
+    "resolution": "readonly object alternate; sparse read-tree preserves tree without bulk fetch/checkout; no retry"
+  },
+  {
+    "incident": "orchestration test preflight blocked projectedFree2979549184 below2982150144",
+    "resolution": "no test executed; coordinator01:07 replaced completed Enigma48MiB lane with fresh independent44MiB lane; update current peer reservation44MiB, retain own44MiB/floor unchanged"
+  },
+  {
+    "incident": "historical fixture parent path typo",
+    "resolution": "corrected fixture ROOT to file.parents[3]; first failure retained, unchanged historical source ran successfully afterwards"
+  },
+  {
+    "incident": "package preflight projected2982031360 below2982150144; child not executed",
+    "resolution": "coordinator01:14 closed old44MiB peer and assigned new measured36MiB Enigma repair; fresh accounting uses changed task and allocation; own44MiB and hostfloor unchanged"
+  }
+]

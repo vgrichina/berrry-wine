@@ -1,0 +1,127 @@
+[
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"cmd\":\"click:98:296\"}",
+    "command": {
+      "cmd": "click:98:296"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"queued\": true}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"step\",\"n\":128}",
+    "command": {
+      "action": "step",
+      "n": 128
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4850, \"ran\": 128, \"steps\": 128, \"frozen\": true}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4850, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"png\",\"path\":\"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/new-game-response.png\"}",
+    "command": {
+      "action": "png",
+      "path": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/new-game-response.png"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4850, \"frozen\": true, \"path\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/new-game-response.png\", \"bytes\": 20}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4850, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"step\",\"n\":128}",
+    "command": {
+      "action": "step",
+      "n": 128
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"ran\": 128, \"steps\": 128, \"frozen\": true}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"png\",\"path\":\"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/mission-observation.png\"}",
+    "command": {
+      "action": "png",
+      "path": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/mission-observation.png"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"frozen\": true, \"path\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/mission-observation.png\", \"bytes\": 20}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"png\",\"path\":\"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/before-quit.png\"}",
+    "command": {
+      "action": "png",
+      "path": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/before-quit.png"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"frozen\": true, \"path\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_replay_issued_input/before-quit.png\", \"bytes\": 20}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"quit\"}",
+    "command": {
+      "action": "quit"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"quitting\": true}}"
+  }
+]

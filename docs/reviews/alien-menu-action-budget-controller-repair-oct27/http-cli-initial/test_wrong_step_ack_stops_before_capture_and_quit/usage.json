@@ -1,0 +1,1 @@
+{"budgetSHA256":"043bf3cb84f65c98032dafe043dbb38ed21d286b1df7502cb894be62f3386bc0","capturesCharged":5,"capturesReserved":3,"guestAcceptance":"unqualified","inputIssued":true,"pending":{"action":"step","n":128},"runId":"offline/test_wrong_step_ack_stops_before_capture_and_quit"}

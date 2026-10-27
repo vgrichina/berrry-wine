@@ -1,0 +1,21 @@
+{
+  "at": 1793063206.5035,
+  "stage": "historical-before",
+  "actual": {
+    "task": 2174976,
+    "launcher": 221184,
+    "session": 659456,
+    "positiveWAL": 0
+  },
+  "used": 3055616,
+  "allocation": 46137344,
+  "ownRemaining": 43081728,
+  "peerFuture": 50331648,
+  "free": 3076370432,
+  "projectedFree": 2982957056,
+  "floor": 2982150144,
+  "memAvailable": 4034490368,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

@@ -1,0 +1,34 @@
+{
+  "script": "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/test/test-alien-control-sequence.py",
+  "scriptSHA256": "d3bc4a6cad6752f2ddd418ef4e2607acca19201c1a575d58df7e05ca16b12698",
+  "root": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo",
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/test/test-alien-control-sequence.py",
+    "--group",
+    "unit"
+  ],
+  "executable": "/usr/bin/python3",
+  "limits": {
+    "CPU": [
+      90,
+      90
+    ],
+    "FSIZE": [
+      25165824,
+      25165824
+    ],
+    "DATA": [
+      -1,
+      -1
+    ],
+    "AS": [
+      -1,
+      -1
+    ]
+  },
+  "sourcePins": {
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39"
+  }
+}

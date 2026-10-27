@@ -1,0 +1,21 @@
+{
+  "at": 1793063135.6839244,
+  "stage": "inspect-donor",
+  "actual": {
+    "task": 159744,
+    "launcher": 200704,
+    "session": 577536,
+    "positiveWAL": 0
+  },
+  "used": 937984,
+  "allocation": 46137344,
+  "ownRemaining": 45199360,
+  "peerFuture": 50331648,
+  "free": 3079090176,
+  "projectedFree": 2983559168,
+  "floor": 2982150144,
+  "memAvailable": 3954724864,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

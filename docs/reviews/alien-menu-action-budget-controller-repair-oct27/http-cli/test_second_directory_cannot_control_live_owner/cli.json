@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner",
+      "--endpoint",
+      "http://127.0.0.1:36101/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner/clock.json"
+    },
+    "returncode": 0,
+    "stdout": "{\"status\": \"terminal\", \"next\": 12, \"guestAcceptance\": \"unqualified\", \"capturesCharged\": 8}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner/second-directory",
+      "--endpoint",
+      "http://127.0.0.1:36101/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_second_directory_cannot_control_live_owner/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"existing control process owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

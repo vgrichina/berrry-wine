@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py",
+    "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before"
+  ],
+  "cwd": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo",
+  "exit": 1,
+  "reason": "natural",
+  "peakSampledRSS": 68255744,
+  "physicalCap": 134217728,
+  "cpu": 0.1,
+  "wall": 0.11705460213124752,
+  "outputBytes": 785,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 1,
+  "supervisorIncluded": true
+}

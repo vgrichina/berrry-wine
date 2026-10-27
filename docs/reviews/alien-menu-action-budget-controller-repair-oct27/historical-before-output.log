@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py", line 100, in <module>
+    print(json.dumps(reproduce(Path(sys.argv[1])), indent=2))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py", line 26, in reproduce
+    shutil.copyfile(ROOT / rel, home / 'runner' / rel)
+  File "/usr/lib/python3.12/shutil.py", line 260, in copyfile
+    with open(src, 'rb') as fsrc:
+         ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/test/alien-gameplay-sequence.py'

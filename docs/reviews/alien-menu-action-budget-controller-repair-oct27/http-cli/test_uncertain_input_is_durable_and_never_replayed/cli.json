@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed",
+      "--endpoint",
+      "http://127.0.0.1:37539/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"RemoteDisconnected: Remote end closed connection without response\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed",
+      "--endpoint",
+      "http://127.0.0.1:37539/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_uncertain_input_is_durable_and_never_replayed/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"existing invocation owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit",
+      "--endpoint",
+      "http://127.0.0.1:33217/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit/clock.json"
+    },
+    "returncode": 0,
+    "stdout": "{\"status\": \"terminal\", \"next\": 12, \"guestAcceptance\": \"unqualified\", \"capturesCharged\": 8}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit",
+      "--endpoint",
+      "http://127.0.0.1:33217/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_approved_menu_action_then_reserved_evidence_and_quit/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"existing invocation owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

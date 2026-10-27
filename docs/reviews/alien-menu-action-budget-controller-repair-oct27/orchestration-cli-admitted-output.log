@@ -1,0 +1,24 @@
+test_action_reserve_checked_again_at_socket_send (__main__.Case.test_action_reserve_checked_again_at_socket_send) ... ok
+test_allowance_cannot_be_renewed_after_refusal (__main__.Case.test_allowance_cannot_be_renewed_after_refusal) ... ok
+test_approved_menu_action_then_reserved_evidence_and_quit (__main__.Case.test_approved_menu_action_then_reserved_evidence_and_quit) ... ok
+test_changed_review_batch_stops_before_input (__main__.Case.test_changed_review_batch_stops_before_input) ... ok
+test_cleanup_reserved_with_last_three_capture_credits (__main__.Case.test_cleanup_reserved_with_last_three_capture_credits) ... ok
+test_insufficient_action_time_stops_before_any_control (__main__.Case.test_insufficient_action_time_stops_before_any_control) ... ok
+test_insufficient_capture_credits_stops_before_any_control (__main__.Case.test_insufficient_capture_credits_stops_before_any_control) ... ok
+test_no_default_approval_sends_nothing (__main__.Case.test_no_default_approval_sends_nothing) ... ok
+test_slow_action_stops_without_spending_cleanup_reserve (__main__.Case.test_slow_action_stops_without_spending_cleanup_reserve) ... ok
+test_slow_initial_snapshot_stops_before_input (__main__.Case.test_slow_initial_snapshot_stops_before_input) ... ok
+test_slow_startup_stops_before_any_control (__main__.Case.test_slow_startup_stops_before_any_control) ... ok
+test_terminal_before_control (__main__.Case.test_terminal_before_control) ... ok
+test_terminal_during_connection_stops_at_actual_send_boundary (__main__.Case.test_terminal_during_connection_stops_at_actual_send_boundary) ... ok
+test_time_exhausted_during_connection_stops_before_input (__main__.Case.test_time_exhausted_during_connection_stops_before_input) ... ok
+test_uncertain_input_is_durable_and_never_replayed (__main__.Case.test_uncertain_input_is_durable_and_never_replayed) ... ok
+test_unreviewed_or_changed_frame_stops_before_control (__main__.Case.test_unreviewed_or_changed_frame_stops_before_control) ... ok
+test_wrong_frozen_snapshot_stops_before_input (__main__.Case.test_wrong_frozen_snapshot_stops_before_input) ... ok
+test_wrong_review_authorization_stops_before_control (__main__.Case.test_wrong_review_authorization_stops_before_control) ... ok
+test_wrong_step_ack_stops_before_capture_and_quit (__main__.Case.test_wrong_step_ack_stops_before_capture_and_quit) ... ok
+
+----------------------------------------------------------------------
+Ran 19 tests in 12.646s
+
+OK

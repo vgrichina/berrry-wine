@@ -1,0 +1,46 @@
+{
+  "tools/alien-menu-gameplay-controller.py": {
+    "bytes": 14912,
+    "sha256": "767c3206e5e03b03e5d91ac0380c6b3e252ef929499ac11b8a680b4bf3eb7eb3"
+  },
+  "test/alien-gameplay-sequence.py": {
+    "bytes": 2374,
+    "sha256": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f"
+  },
+  "test/helpers/alien-control-sequence.py": {
+    "bytes": 14836,
+    "sha256": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39"
+  },
+  "test/fixtures/alien-menu-controller/README.md": {
+    "bytes": 6373,
+    "sha256": "6360ddc5d3ba0da403399b081b27f4e9f6a5494ceb40f8ec91ecfab9cea488f2"
+  },
+  "test/fixtures/alien-menu-controller/historical/drive.py": {
+    "bytes": 1798,
+    "sha256": "90b8c092b326525a59216705fe8f61fa47962378eb1b12179eeda268faab2c73"
+  },
+  "test/fixtures/alien-menu-controller/historical/newgame.py": {
+    "bytes": 175,
+    "sha256": "e9041b8612c7e02fa7bb7a6901d2ce3a14d43d9165e73a876e441b9e36b33170"
+  },
+  "test/fixtures/alien-menu-controller/historical/package.py": {
+    "bytes": 8496,
+    "sha256": "1744f00cdc52c4c1705cc78fe4586bc076a3adaa262310d51a58ba44247786ba"
+  },
+  "test/fixtures/alien-menu-controller/historical/phase.py": {
+    "bytes": 1669,
+    "sha256": "e4749398939e5fad21846bd46b3d377e848301ae61ef5e5c8a77c7ed9f93840a"
+  },
+  "test/fixtures/alien-menu-controller/historical_reproduction.py": {
+    "bytes": 5570,
+    "sha256": "6afad60f69c97f390892ad4676a014b92012300813ffd86e16e46df977bb04ab"
+  },
+  "test/fixtures/alien-menu-controller/sitecustomize.py": {
+    "bytes": 1177,
+    "sha256": "17488c3db6662ac450fa1bb4331411d1ad366c650cc3f96235b437ffca682d63"
+  },
+  "test/fixtures/alien-menu-controller/test_controller.py": {
+    "bytes": 16418,
+    "sha256": "dc3eceb882b79549dcab33d4fb5a894d65120d71dedf6c24a35edc6a7545819f"
+  }
+}

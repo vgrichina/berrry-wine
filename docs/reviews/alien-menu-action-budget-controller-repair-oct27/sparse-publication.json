@@ -1,0 +1,4 @@
+{
+  "incident": "git write-tree rejected an unavailable unrelated inherited tgz blob90413573b25a8bc99486bb8bdb4c64e60b45188d",
+  "resolution": "preserve exact accepted base index objects using write-tree --missing-ok; verify every newly owned staged blob against file bytes and recursive diff only owned additions; no bulk fetch/checkout or unrelated replacement"
+}

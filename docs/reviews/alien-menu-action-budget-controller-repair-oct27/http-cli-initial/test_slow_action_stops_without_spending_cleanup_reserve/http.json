@@ -1,0 +1,43 @@
+[
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"cmd\":\"click:98:296\"}",
+    "command": {
+      "cmd": "click:98:296"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"queued\": true}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  },
+  {
+    "commandRaw": "{\"action\":\"step\",\"n\":128}",
+    "command": {
+      "action": "step",
+      "n": 128
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4850, \"ran\": 128, \"steps\": 128, \"frozen\": true}}"
+  }
+]

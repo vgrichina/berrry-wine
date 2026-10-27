@@ -1,0 +1,12 @@
+[
+  {
+    "commandRaw": "{\"action\":\"snapshot\"}",
+    "command": {
+      "action": "snapshot"
+    },
+    "clock": {
+      "now": 1070
+    },
+    "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4723, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+  }
+]

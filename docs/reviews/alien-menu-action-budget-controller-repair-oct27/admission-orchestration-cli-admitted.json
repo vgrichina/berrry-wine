@@ -1,0 +1,21 @@
+{
+  "at": 1793063359.1714246,
+  "stage": "orchestration-cli-admitted",
+  "actual": {
+    "task": 2408448,
+    "launcher": 241664,
+    "session": 798720,
+    "positiveWAL": 0
+  },
+  "used": 3448832,
+  "allocation": 46137344,
+  "ownRemaining": 42688512,
+  "peerFuture": 46137344,
+  "free": 3072544768,
+  "projectedFree": 2983718912,
+  "floor": 2982150144,
+  "memAvailable": 3731943424,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

@@ -1,0 +1,1 @@
+{"runId": "offline/test_action_reserve_checked_again_at_socket_send", "startedAt": 1000, "deadline": 1110, "startupMaximum": 75, "actionReserve": 30, "cleanupReserve": 10, "captureLimit": 8, "capturesUsed": 5}

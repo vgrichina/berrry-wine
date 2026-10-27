@@ -1,0 +1,24 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_no_default_approval_sends_nothing",
+      "--endpoint",
+      "http://127.0.0.1:33579/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_no_default_approval_sends_nothing/terminal.json",
+      "--after-batches",
+      "128"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_no_default_approval_sends_nothing/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"review blocker: no explicit approval; no control sent\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

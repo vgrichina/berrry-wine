@@ -1,0 +1,64 @@
+{
+  "installed": {
+    "/usr/bin/python3.12": {
+      "bytes": 8020928,
+      "allocated": 8024064,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standingInput": true,
+      "copied": false
+    },
+    "/usr/bin/git": {
+      "bytes": 4066232,
+      "allocated": 4067328,
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standingInput": true,
+      "copied": false
+    },
+    "/usr/bin/ssh": {
+      "bytes": 846888,
+      "allocated": 847872,
+      "sha256": "27a7f5e86ed31efa1e758c7f955bdc016adf58bb3266c68e217ab5bee311b46b",
+      "standingInput": true,
+      "copied": false
+    },
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/common.py": {
+      "bytes": 6812,
+      "allocated": 8192,
+      "sha256": "97634011a564f143467789ae879d0f9cfb2afd2b039b1e81f6582a59be61ccbc",
+      "standingInput": true,
+      "copied": false
+    }
+  },
+  "donorGitPath": "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/.git",
+  "donorGitAllocated": 2510848,
+  "donorObjectAlternate": "/tmp/alien-dispatch-boundary-independent-publication-oct27/repo/.git/objects",
+  "donorObjectsCopied": false,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 18362368
+    },
+    {
+      "pid": 752162,
+      "rss": 402563072
+    },
+    {
+      "pid": 1789179,
+      "rss": 57020416
+    },
+    {
+      "pid": 3443794,
+      "rss": 199000064
+    },
+    {
+      "pid": 3455343,
+      "rss": 194052096
+    }
+  ],
+  "aggregateClientRSS": 870998016,
+  "ownClient": {
+    "pid": 3443794,
+    "rss": 199000064
+  },
+  "ownClientAllowance": 335544320
+}

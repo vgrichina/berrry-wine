@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership",
+      "--endpoint",
+      "http://127.0.0.1:41345/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership/clock.json"
+    },
+    "returncode": 0,
+    "stdout": "{\"status\": \"terminal\", \"next\": 12, \"guestAcceptance\": \"unqualified\", \"capturesCharged\": 8}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership/second-directory",
+      "--endpoint",
+      "http://127.0.0.1:041345/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_endpoint_spelling_cannot_split_process_ownership/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"existing control process owner; no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

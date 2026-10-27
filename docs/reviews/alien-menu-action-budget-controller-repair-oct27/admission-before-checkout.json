@@ -1,0 +1,21 @@
+{
+  "at": 1793063128.82021,
+  "stage": "before-checkout",
+  "actual": {
+    "task": 20480,
+    "launcher": 188416,
+    "session": 557056,
+    "positiveWAL": 0
+  },
+  "used": 765952,
+  "allocation": 46137344,
+  "ownRemaining": 45371392,
+  "peerFuture": 50331648,
+  "free": 3079274496,
+  "projectedFree": 2983571456,
+  "floor": 2982150144,
+  "memAvailable": 3907137536,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

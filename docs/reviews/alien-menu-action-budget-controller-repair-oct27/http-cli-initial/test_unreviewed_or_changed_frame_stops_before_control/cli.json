@@ -1,0 +1,25 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_unreviewed_or_changed_frame_stops_before_control",
+      "--endpoint",
+      "http://127.0.0.1:34807/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_unreviewed_or_changed_frame_stops_before_control/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli/test_unreviewed_or_changed_frame_stops_before_control/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"review blocker: reviewed frame identity changed\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

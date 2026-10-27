@@ -1,0 +1,48 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal",
+      "--endpoint",
+      "http://127.0.0.1:34405/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"budget blocker: remaining 35.000000s < required 40.000000s (menu)\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal",
+      "--endpoint",
+      "http://127.0.0.1:34405/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_allowance_cannot_be_renewed_after_refusal/clock.json"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"budget blocker: existing invocation allowance changed\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]

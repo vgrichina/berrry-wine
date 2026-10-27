@@ -1,0 +1,1 @@
+{"budgetSHA256":"3f4a3013dd7260b9a5d7742bf2ab966b1dea4afc45179a74eb669916f5f32109","capturesCharged":5,"capturesReserved":3,"guestAcceptance":"unqualified","inputIssued":true,"pending":{"cmd":"click:98:296"},"runId":"offline/test_uncertain_input_is_durable_and_never_replayed"}

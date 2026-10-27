@@ -1,0 +1,110 @@
+[
+  {
+    "group": "historical-before-corrected",
+    "pool": [
+      "python3",
+      "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py",
+      "--slots",
+      "1",
+      "--",
+      "python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/admin.py",
+      "test",
+      "historical-before-corrected",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-corrected"
+    ],
+    "supervisedArgv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-corrected"
+    ],
+    "receipt": "historical-before-corrected-execution.json"
+  },
+  {
+    "group": "historical-exact-newgame",
+    "pool": [
+      "python3",
+      "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py",
+      "--slots",
+      "1",
+      "--",
+      "python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/admin.py",
+      "test",
+      "historical-exact-newgame",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame"
+    ],
+    "supervisedArgv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/historical_reproduction.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame"
+    ],
+    "receipt": "historical-exact-newgame-execution.json"
+  },
+  {
+    "group": "orchestration-cli-admitted",
+    "pool": [
+      "python3",
+      "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py",
+      "--slots",
+      "1",
+      "--",
+      "python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/admin.py",
+      "test",
+      "orchestration-cli-admitted",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli"
+    ],
+    "supervisedArgv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-cli"
+    ],
+    "receipt": "orchestration-cli-admitted-execution.json"
+  },
+  {
+    "group": "process-owned-orchestration-cli",
+    "pool": [
+      "python3",
+      "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py",
+      "--slots",
+      "1",
+      "--",
+      "python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/admin.py",
+      "test",
+      "process-owned-orchestration-cli",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli"
+    ],
+    "supervisedArgv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller/test_controller.py",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli"
+    ],
+    "receipt": "process-owned-orchestration-cli-execution.json"
+  },
+  {
+    "group": "accepted-transport-unit",
+    "pool": [
+      "python3",
+      "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py",
+      "--slots",
+      "1",
+      "--",
+      "python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/admin.py",
+      "test",
+      "accepted-transport-unit",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/affected.py"
+    ],
+    "supervisedArgv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/affected.py"
+    ],
+    "receipt": "accepted-transport-unit-execution.json"
+  }
+]

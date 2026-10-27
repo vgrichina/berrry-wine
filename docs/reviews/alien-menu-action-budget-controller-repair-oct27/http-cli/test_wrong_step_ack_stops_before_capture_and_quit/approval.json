@@ -1,0 +1,1 @@
+{"runId": "offline/test_wrong_step_ack_stops_before_capture_and_quit", "batch": 4722, "frameSHA256": "9a93ba9ddc2320848c013364e211e5b50d627e34f92f895c3737e0858c303f03", "humanReviewed": true, "reviewId": "explicit-offline-review", "action": "New Game", "command": "click:98:296"}

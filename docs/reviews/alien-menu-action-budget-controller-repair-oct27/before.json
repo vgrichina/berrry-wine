@@ -1,0 +1,115 @@
+{
+  "offlineOnly": true,
+  "guestAcceptance": "unqualified",
+  "initialBatch": 4722,
+  "finalBatch": 5746,
+  "redundantBatches": 1024,
+  "redundantSeconds": 19.6748,
+  "finalElapsed": 118.14731607,
+  "newGameSends": 0,
+  "duplicateCapture": true,
+  "commandsAndRawResponses": [
+    {
+      "commandRaw": "{\"action\":\"snapshot\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}",
+      "elapsed": 98.47251607
+    },
+    {
+      "commandRaw": "{\"action\":\"step\",\"n\":256}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"ran\": 256, \"steps\": 256, \"frozen\": true}}",
+      "elapsed": 103.39121607
+    },
+    {
+      "commandRaw": "{\"action\":\"snapshot\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 4978, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}",
+      "elapsed": 103.39121607
+    },
+    {
+      "commandRaw": "{\"action\":\"step\",\"n\":256}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5234, \"ran\": 256, \"steps\": 256, \"frozen\": true}}",
+      "elapsed": 108.30991607
+    },
+    {
+      "commandRaw": "{\"action\":\"snapshot\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5234, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}",
+      "elapsed": 108.30991607
+    },
+    {
+      "commandRaw": "{\"action\":\"step\",\"n\":256}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5490, \"ran\": 256, \"steps\": 256, \"frozen\": true}}",
+      "elapsed": 113.22861607
+    },
+    {
+      "commandRaw": "{\"action\":\"snapshot\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5490, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}",
+      "elapsed": 113.22861607
+    },
+    {
+      "commandRaw": "{\"action\":\"step\",\"n\":256}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5746, \"ran\": 256, \"steps\": 256, \"frozen\": true}}",
+      "elapsed": 118.14731607
+    },
+    {
+      "commandRaw": "{\"action\":\"snapshot\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5746, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}",
+      "elapsed": 118.14731607
+    },
+    {
+      "commandRaw": "{\"action\":\"png\",\"path\":\"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/guest/settled.png\"}",
+      "responseRaw": "{\"ok\": true, \"value\": {\"batch\": 5746, \"path\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/guest/settled.png\", \"bytes\": 20, \"frozen\": true}}",
+      "elapsed": 118.14731607
+    }
+  ],
+  "settled": {
+    "stdout": "{\"exit\": 0, \"stdout\": \"{\\\"status\\\": \\\"complete\\\", \\\"next\\\": 10, \\\"lastAcknowledgedBatch\\\": 5746, \\\"lastFrozenBatch\\\": 5746, \\\"terminalObserved\\\": null, \\\"guestAcceptance\\\": \\\"unqualified\\\"}\\n\", \"status\": \"complete\", \"next\": 10, \"lastAcknowledgedBatch\": 5746, \"lastFrozenBatch\": 5746, \"lastReceipts\": [{\"command\": {\"action\": \"snapshot\"}, \"index\": 8, \"responseBytes\": 95, \"responseExcerpt\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 5746, \\\"quit\\\": false, \\\"frozen\\\": {\\\"frozen\\\": true, \\\"credits\\\": 0}}}\", \"responseSHA256\": \"c251b3281474b77b68d2949f0240d55e5bb997ff79d2a26f2ef15dfeb5f7c257\"}, {\"command\": {\"action\": \"png\", \"path\": \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/guest/settled.png\"}, \"index\": 9, \"responseBytes\": 192, \"responseExcerpt\": \"{\\\"ok\\\": true, \\\"value\\\": {\\\"batch\\\": 5746, \\\"path\\\": \\\"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/guest/settled.png\\\", \\\"bytes\\\": 20, \\\"frozen\\\": true}}\", \"responseSHA256\": \"4f48aa493cdd47c65f1ea76a1940dea35f22bac3224ed27fa364fdd3e7832c3c\"}]}\n",
+    "stderr": "",
+    "exit": 0
+  },
+  "refused": {
+    "stdout": "",
+    "stderr": "Traceback (most recent call last):\n  File \"/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/phase.py\", line 6, in <module>\n    assert not (H/'guest/terminal.json').exists(), 'terminal observed: all control blocked'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: terminal observed: all control blocked\n",
+    "exit": 1
+  },
+  "originalNewGamePlan": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "cmd": "mousemove:98:296"
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "step",
+      "n": 2
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "cmd": "click:98:296"
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "step",
+      "n": 128
+    },
+    {
+      "action": "snapshot"
+    },
+    {
+      "action": "png",
+      "path": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/before-exact-newgame/historical-owner/guest/newgame.png"
+    }
+  ],
+  "offlineFetchMarker": "newgame",
+  "historicalPins": {
+    "newgame.py": "e9041b8612c7e02fa7bb7a6901d2ce3a14d43d9165e73a876e441b9e36b33170",
+    "package.py": "1744f00cdc52c4c1705cc78fe4586bc076a3adaa262310d51a58ba44247786ba",
+    "phase.py": "e4749398939e5fad21846bd46b3d377e848301ae61ef5e5c8a77c7ed9f93840a",
+    "drive.py": "90b8c092b326525a59216705fe8f61fa47962378eb1b12179eeda268faab2c73"
+  }
+}

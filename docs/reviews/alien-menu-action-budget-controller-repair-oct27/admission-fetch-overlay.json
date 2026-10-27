@@ -1,0 +1,21 @@
+{
+  "at": 1793063147.9826496,
+  "stage": "fetch-overlay",
+  "actual": {
+    "task": 163840,
+    "launcher": 204800,
+    "session": 589824,
+    "positiveWAL": 0
+  },
+  "used": 958464,
+  "allocation": 46137344,
+  "ownRemaining": 45178880,
+  "peerFuture": 50331648,
+  "free": 3078975488,
+  "projectedFree": 2983464960,
+  "floor": 2982150144,
+  "memAvailable": 3329142784,
+  "requiredMemory": 1610612736,
+  "clientAllowance": 335544320,
+  "testTreeCap": 134217728
+}

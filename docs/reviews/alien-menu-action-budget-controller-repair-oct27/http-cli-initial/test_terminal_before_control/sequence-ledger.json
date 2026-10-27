@@ -1,0 +1,1 @@
+{"guestAcceptance":"unqualified","lastAcknowledgedBatch":null,"lastFrozenBatch":null,"next":0,"planSHA256":"cf21527aa146f0fe241dc69df935c344fa9446b7c0fb7c5765cde4d43b9cc0bd","reason":"known guest terminal receipt","receipts":[],"runId":"offline/test_terminal_before_control","status":"terminal","terminalObserved":{"reason":"already ended","returncode":0},"version":1}

@@ -1,0 +1,26 @@
+[
+  {
+    "argv": [
+      "/usr/bin/python3",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+      "--invocation",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_time_exhausted_during_connection_stops_before_input",
+      "--endpoint",
+      "http://127.0.0.1:46637/ctl",
+      "--terminal-file",
+      "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_time_exhausted_during_connection_stops_before_input/terminal.json",
+      "--after-batches",
+      "128",
+      "--approve-new-game"
+    ],
+    "environmentOverrides": {
+      "PYTHONPATH": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/test/fixtures/alien-menu-controller",
+      "PYTHONDONTWRITEBYTECODE": "1",
+      "ALIEN_TEST_CLOCK": "/tmp/alien-menu-action-budget-controller-repair-oct27/ops/http-process-cli/test_time_exhausted_during_connection_stops_before_input/clock.json",
+      "ALIEN_TEST_CONNECT": "{\"now\": 1081}"
+    },
+    "returncode": 1,
+    "stdout": "{\"error\": \"ControlStopped: budget blocker: startup elapsed 81.000000s exceeds 75.000000s\", \"guestAcceptance\": \"unqualified\"}\n",
+    "stderr": ""
+  }
+]
