@@ -1,0 +1,160 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 86519808,
+  "sampledPeakRSS": 86519808,
+  "reapedPeakRSS": 41168896,
+  "cpuSeconds": 8.80297,
+  "wallSeconds": 3.9014064189977944,
+  "owned": [
+    [
+      3419492,
+      "110909774"
+    ],
+    [
+      3419556,
+      "110909881"
+    ],
+    [
+      3419562,
+      "110909893"
+    ],
+    [
+      3419568,
+      "110909903"
+    ],
+    [
+      3419574,
+      "110909913"
+    ],
+    [
+      3419580,
+      "110909929"
+    ],
+    [
+      3419583,
+      "110909940"
+    ],
+    [
+      3419589,
+      "110909952"
+    ],
+    [
+      3419595,
+      "110909962"
+    ],
+    [
+      3419601,
+      "110909975"
+    ],
+    [
+      3419604,
+      "110909985"
+    ],
+    [
+      3419610,
+      "110909994"
+    ],
+    [
+      3419613,
+      "110910003"
+    ],
+    [
+      3419619,
+      "110910012"
+    ],
+    [
+      3419622,
+      "110910023"
+    ],
+    [
+      3419628,
+      "110910037"
+    ],
+    [
+      3419634,
+      "110910048"
+    ],
+    [
+      3419640,
+      "110910063"
+    ],
+    [
+      3419646,
+      "110910081"
+    ],
+    [
+      3419649,
+      "110910094"
+    ],
+    [
+      3419655,
+      "110910111"
+    ],
+    [
+      3419662,
+      "110910124"
+    ],
+    [
+      3419665,
+      "110910139"
+    ],
+    [
+      3419666,
+      "110910147"
+    ]
+  ],
+  "cleanupComplete": true,
+  "sourceFixtureHashes": {
+    "test/test-gl-anonymous-output-staging.py": "7110bc8075900104de26cc56163da3c020c50e14b072bfc3a2b8c170707dd96b",
+    "test/test-gl-output-namespace-independent.py": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+    "test/test-gl-runner-output-namespace.py": "87bc5ea77bdeb74a6ef5f8f9083815cf18cda8d22d9847ee72fbe2fbe8991836",
+    "test/test-gl-output-file-confinement.py": "08a2a0d3f8665a5f1f0472b6993e72381bc96e73e5f6f8eff445d376621305b4",
+    "test/test-gl-runner-output-namespace-omissions.py": "9254046bca2358b87a5d702ee869428040d33b4a9580210885846c44a4c838d4",
+    "test/test-palette-disk-accounting.py": "ec251f5e44a6727d1f9ba705837a5ff0de24f14944ad6bb27322be6772e48597",
+    "test/test-gl-output-namespace-controls.py": "fcaede8c1de2ab95914b6cdd327addf28c319bb5ba0762861541602a11922d52",
+    "test/test-palette-disk-accounting-omissions.py": "746af4f664a910b1713a03228fd9280e155c8d8164837442aa15e2499f5447d3",
+    "test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "e046999a89d3997b26c1530ea82145cd6b33a2d2984356aeebc6a9d8f44c079b",
+    "test/fixtures/gl-transient-accounting/remote-run-before.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "9420aa2d58d9965afb240d9f91f017bf5d77f0cfb9316e90770b18ae813ce475"
+  },
+  "command": [
+    "python3",
+    "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-runner-output-namespace.py",
+    "Entry.test_required_faults_refuse_next_child",
+    "Entry.test_child_failure_cleanup_and_known_final_bytes"
+  ],
+  "admission": {
+    "timestamp": 1793061888.4883971,
+    "charges": {
+      "task": 2371584,
+      "launcher": 688128,
+      "session": 1060864,
+      "positiveWALOnce": 0
+    },
+    "projection": 29286400,
+    "allocation": 50331648,
+    "sourceGitTempEvidence": 16777216,
+    "sessionEventsPositiveWAL": 16777216,
+    "publication": 8388608,
+    "reserve": 8388608,
+    "peerRemaining": 58892288,
+    "projectedFree": 2993455104,
+    "floor": 2982150144,
+    "memAvailable": 3633561600,
+    "requiredFutureRAM": 1610612736,
+    "standingSupervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "standingSupervisorBytes": 24576,
+    "pass": true
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "limits": {
+    "physical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}

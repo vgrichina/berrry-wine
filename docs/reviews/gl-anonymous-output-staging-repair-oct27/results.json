@@ -1,0 +1,173 @@
+{
+  "outcome": "SOURCE_REPAIR_TESTED_PENDING_INDEPENDENT_ACCEPTANCE",
+  "candidate": "2b825a30d178a34aca28b50307d87049693ba529",
+  "sourceTree": "1212459af97b992b8e9816a0d56fbfb9425f1159",
+  "testedTree": "5a38ce5871c8254368b2f1939e94c0fb6e5e5b0b",
+  "testedPins": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": "9420aa2d58d9965afb240d9f91f017bf5d77f0cfb9316e90770b18ae813ce475",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "e046999a89d3997b26c1530ea82145cd6b33a2d2984356aeebc6a9d8f44c079b",
+    "test/test-gl-anonymous-output-staging.py": "f8f2f4bbac07b46fa7fca912919120e5bfcbed87cd7a7dc6869cdfe008e9699b",
+    "test/test-gl-output-file-confinement.py": "08a2a0d3f8665a5f1f0472b6993e72381bc96e73e5f6f8eff445d376621305b4",
+    "test/test-gl-runner-output-namespace.py": "87bc5ea77bdeb74a6ef5f8f9083815cf18cda8d22d9847ee72fbe2fbe8991836",
+    "test/test-palette-disk-accounting.py": "0918d2a4c4171e0aabc3af829ae694d8c583d3ae2dab683939abcd2cc1c19977",
+    "docs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/hardlink-race.py": "109fde795e3489590db0203e96cdfe0f44b5a9ca037a1e832a4bb38ee66d4efe",
+    "docs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/baseline-write.py": "b94acb996d741f98572914534a8788307a697a5b0ed998dc3338b9792274637e"
+  },
+  "groups": [
+    {
+      "group": "final-production-controls",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-anonymous-output-staging.py"
+      ],
+      "receipt": "final-production-controls.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 1.9461832791566849,
+      "peakRSS": 114118656,
+      "stopReason": null
+    },
+    {
+      "group": "confinement-races",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-output-file-confinement.py",
+        "controls"
+      ],
+      "receipt": "confinement-races.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.1121649609412998,
+      "peakRSS": 60358656,
+      "stopReason": null
+    },
+    {
+      "group": "original-admission-injection",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/ops/accept.py",
+        "first"
+      ],
+      "receipt": "original-admission-injection.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.1851088299881667,
+      "peakRSS": 61812736,
+      "stopReason": null
+    },
+    {
+      "group": "affected-faults-child",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-runner-output-namespace.py",
+        "Entry.test_required_faults_refuse_next_child",
+        "Entry.test_child_failure_cleanup_and_known_final_bytes"
+      ],
+      "receipt": "affected-faults-child.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 3.9014064189977944,
+      "peakRSS": 86519808,
+      "stopReason": null
+    },
+    {
+      "group": "affected-routing-concrete-projection",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-runner-output-namespace-omissions.py"
+      ],
+      "receipt": "affected-routing-concrete-projection.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 5.51498112315312,
+      "peakRSS": 81760256,
+      "stopReason": null
+    },
+    {
+      "group": "affected-accounting",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/ops/affected-accounting.py"
+      ],
+      "receipt": "affected-accounting.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.6696062148548663,
+      "peakRSS": 61661184,
+      "stopReason": null
+    },
+    {
+      "group": "final-confinement-omissions-primary",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/ops/affected-confinement.py"
+      ],
+      "receipt": "final-confinement-omissions-primary.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.31657183705829084,
+      "peakRSS": 74280960,
+      "stopReason": null
+    },
+    {
+      "group": "dependency-audit",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/ops/audit.py"
+      ],
+      "receipt": "dependency-audit.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.04953373991884291,
+      "peakRSS": 51384320,
+      "stopReason": null
+    },
+    {
+      "group": "linux-prerequisites",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/ops/prerequisites.py"
+      ],
+      "receipt": "linux-prerequisites.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.16573952394537628,
+      "peakRSS": 59400192,
+      "stopReason": null
+    },
+    {
+      "group": "baseline-mutant-fixture-trim",
+      "command": [
+        "python3",
+        "/tmp/gl-anonymous-output-staging-repair-oct27/repo/test/test-gl-anonymous-output-staging.py",
+        "Staging.test_named_writable_staging_mutant_is_rejected"
+      ],
+      "receipt": "baseline-mutant-fixture-trim.json",
+      "exit": 0,
+      "cleanupComplete": true,
+      "wallSeconds": 0.17199795204214752,
+      "peakRSS": 89518080,
+      "stopReason": null
+    }
+  ],
+  "baseline": {
+    "receipt": "baseline-late-hardlink.json",
+    "expectedFailure": true,
+    "externalContentBytes": 2358,
+    "externalAllocatedBytes": 4096
+  },
+  "runtimeObservations": 0,
+  "browserExecuted": false,
+  "mainIntegration": false,
+  "remaining": [
+    "fresh independent exact-commit output-staging acceptance",
+    "separately admitted real browser WebGL1 and WebGL2 42 observations each"
+  ],
+  "completeLocalAllocation": 50331648,
+  "partsMiB": {
+    "sourceGitTempEvidence": 16,
+    "externalSessionEventsPositiveWALOnce": 16,
+    "publication": 8,
+    "reserve": 8
+  }
+}

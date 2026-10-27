@@ -1,0 +1,6 @@
+GROUP omission
+PASS late production log substitution; single removed log-write guard mutant REJECTED
+GROUP collector_omission
+PASS collector late-leaf substitution; single safe-read call removal mutant REJECTED before external read
+GROUP primary
+PASS exact entry preserves original exception when diagnostic/final writes refuse the namespace

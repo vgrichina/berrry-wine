@@ -1,0 +1,14 @@
+{
+  "externalBytes": 0,
+  "externalAllocated": 0,
+  "formerlyReachableNamedInode": false,
+  "anonymousWrites": 13,
+  "children": [
+    "startup",
+    "test"
+  ],
+  "collected": true,
+  "completeAccounting": true,
+  "historicalAssertion": "AssertionError()",
+  "runtimeObservations": 0
+}

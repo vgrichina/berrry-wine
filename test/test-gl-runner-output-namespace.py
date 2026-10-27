@@ -30,6 +30,19 @@ M=1048576
 def allocated(root):
     return sum(p.lstat().st_blocks*512 for p in [root,*root.rglob('*')])
 
+def anonymous_allocated(root):
+    # Independent physical oracle, not the production staging registry.
+    seen = {}
+    for entry in P('/proc/self/fd').iterdir():
+        try:
+            if os.readlink(entry).startswith(str(root) + '/'):
+                st = os.stat(entry)
+                if st.st_nlink == 0:
+                    seen[(st.st_dev, st.st_ino)] = st.st_blocks * 512
+        except FileNotFoundError:
+            pass
+    return sum(seen.values())
+
 def exercise(source, fault=None, boundary='admission', child_failure=None):
     """Transform ONLY task root, executable constants and lifecycle constants.
 
@@ -99,7 +112,13 @@ def exercise(source, fault=None, boundary='admission', child_failure=None):
                     class Observed(ledger):
                         def __init__(self,*a,**kw):super().__init__(*a,**kw);ledgers.append(self)
                         def allocated(self):
-                            value=super().allocated();samples.append(dict(bytes=value,actual=allocated(h)));return value
+                            value=super().allocated()
+                            staged=ns['outputs'].allocated_staging() if 'outputs' in ns else 0
+                            samples.append(dict(bytes=value,actual=allocated(h),staging=staged,
+                                                complete=value+staged,
+                                                actualComplete=allocated(h)+anonymous_allocated(h)))
+                            assert samples[-1]['complete']==samples[-1]['actualComplete']
+                            return value
                     mod.AllocatedDisk=Observed
                     def child(argv,**kw):
                         name='startup' if '-e' in argv else 'test';children.append(name)

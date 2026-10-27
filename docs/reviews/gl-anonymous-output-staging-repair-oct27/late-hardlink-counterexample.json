@@ -1,0 +1,35 @@
+{
+  "candidate": "2b825a30d178a34aca28b50307d87049693ba529",
+  "runnerSHA256": "3f08d9ec7528af2df5057e66481b9e44861492b8122a65a20e2fef57b4d85c3b",
+  "unchangedReproducerSHA256": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+  "exactProductionEntry": true,
+  "nodeExecutable": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+  "nodeFlags": [
+    "--max-old-space-size=512"
+  ],
+  "injection": [
+    {
+      "at": "immediately before first os.write on exclusively-created startup-log descriptor",
+      "source": "/tmp/gl-entry-vkowvyk1/ops/output/node-startup.log.new",
+      "outside": "/tmp/gl-anonymous-output-staging-repair-oct27/ops/independent-late-link-69akbq6q/external-log",
+      "linkCountAtWrite": 2,
+      "rootRelocated": false
+    }
+  ],
+  "externalContentBytes": 2358,
+  "externalAllocatedBytes": 4096,
+  "externalSHA256": "2a8641f53acc472ea5b4e68ae124d581dd0cecb9f01803523e460cb8bd6cc87f",
+  "runnerError": "RuntimeError('output must be a single-link regular file')",
+  "collectorError": "RuntimeError('output must be a single-link regular file')",
+  "children": [
+    "startup"
+  ],
+  "collected": false,
+  "accountingComplete": false,
+  "rootRelocated": false,
+  "OSsandboxClaim": false,
+  "outerAllocationBypassClaim": false,
+  "safeRefusalAfterWrite": true,
+  "acceptance": "REJECT",
+  "reason": "A single late hardlink aliases the already-open output inode outside the task root before its first write. The post-write link-count check refuses, but external content already exists."
+}

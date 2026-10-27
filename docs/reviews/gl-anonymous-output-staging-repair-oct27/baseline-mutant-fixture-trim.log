@@ -1,0 +1,6 @@
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.074s
+
+OK
+{"acceptance": "REJECT", "externalContentBytes": 2358, "externalAllocatedBytes": 4096, "runnerError": "RuntimeError('output must be a single-link regular file')", "collectorError": "RuntimeError('output must be a single-link regular file')", "children": ["startup"], "rootRelocated": false}

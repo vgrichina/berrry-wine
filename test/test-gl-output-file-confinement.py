@@ -141,28 +141,33 @@ def controls():
             # leaf, including substitution after exclusive creation.
             try:
                 with fs.create('child.json') as fd:
-                    (e/'child.json').unlink();(e/'child.json').symlink_to(outside)
+                    assert not (e/'child.json').exists()
+                    assert os.fstat(fd).st_nlink == 0
+                    (e/'child.json').symlink_to(outside)
                     P('/proc/self/fd',str(fd)).write_bytes(b'owned descriptor')
             except RuntimeError:
                 pass
             else:raise AssertionError('child output substitution accepted')
             assert outside.read_bytes()==b'';(e/'child.json').unlink()
-            # Late destination swap after verify but before exclusive temp open:
+            # Late destination swap after verify but before anonymous open:
             # publication replaces the link itself, never its outside target.
             real_open = os.open
             def swap_destination(name, flags, *a, **kw):
-                if name == 'normal.log.new':
+                if flags & os.O_TMPFILE == os.O_TMPFILE:
                     (e/'normal.log').unlink();(e/'normal.log').symlink_to(outside)
                 return real_open(name, flags, *a, **kw)
             with mock.patch.object(os,'open',swap_destination):
                 rejected(lambda:fs.write('normal.log',b'next'))
             assert outside.read_bytes() == b''
-            (e/'normal.log').unlink();(e/'normal.log.new').unlink()
-            # Exclusive temp-open resists a symlink injected at the open itself.
-            def swap_temp(name, flags, *a, **kw):
+            (e/'normal.log').unlink()
+            assert not (e/'normal.log.new').exists()
+            # Publication link is exclusive, including a symlink injected at
+            # linkat itself. The anonymous inode is already complete by then.
+            real_link = os.link
+            def swap_temp(source, name, *a, **kw):
                 if name == 'normal.log.new':(e/name).symlink_to(outside)
-                return real_open(name, flags, *a, **kw)
-            with mock.patch.object(os,'open',swap_temp):
+                return real_link(source, name, *a, **kw)
+            with mock.patch.object(os,'link',swap_temp):
                 rejected(lambda:fs.write('normal.log',b'next'))
             assert outside.read_bytes() == b'';(e/'normal.log.new').unlink()
             # Read-open races: O_NOFOLLOW and descriptor/name equality both

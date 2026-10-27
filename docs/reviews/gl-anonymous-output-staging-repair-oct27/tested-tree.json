@@ -1,0 +1,28 @@
+{
+  "candidate": "2b825a30d178a34aca28b50307d87049693ba529",
+  "parentTree": "1bc1326cd0ded0437980a1bb0e94f1abbbe2494d",
+  "sourceTree": "1212459af97b992b8e9816a0d56fbfb9425f1159",
+  "testedTree": "5a38ce5871c8254368b2f1939e94c0fb6e5e5b0b",
+  "pins": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": "9420aa2d58d9965afb240d9f91f017bf5d77f0cfb9316e90770b18ae813ce475",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "e046999a89d3997b26c1530ea82145cd6b33a2d2984356aeebc6a9d8f44c079b",
+    "test/test-gl-anonymous-output-staging.py": "f8f2f4bbac07b46fa7fca912919120e5bfcbed87cd7a7dc6869cdfe008e9699b",
+    "test/test-gl-output-file-confinement.py": "08a2a0d3f8665a5f1f0472b6993e72381bc96e73e5f6f8eff445d376621305b4",
+    "test/test-gl-runner-output-namespace.py": "87bc5ea77bdeb74a6ef5f8f9083815cf18cda8d22d9847ee72fbe2fbe8991836",
+    "test/test-palette-disk-accounting.py": "0918d2a4c4171e0aabc3af829ae694d8c583d3ae2dab683939abcd2cc1c19977",
+    "docs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/hardlink-race.py": "109fde795e3489590db0203e96cdfe0f44b5a9ca037a1e832a4bb38ee66d4efe",
+    "docs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/baseline-write.py": "b94acb996d741f98572914534a8788307a697a5b0ed998dc3338b9792274637e"
+  },
+  "changedPaths": [
+    "A\tdocs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/baseline-write.py",
+    "A\tdocs/reviews/gl-anonymous-output-staging-repair-oct27/reproducer/hardlink-race.py",
+    "M\ttest/fixtures/gl-transient-accounting/collect-evidence.py",
+    "M\ttest/fixtures/gl-transient-accounting/remote-run.py",
+    "A\ttest/test-gl-anonymous-output-staging.py",
+    "M\ttest/test-gl-output-file-confinement.py",
+    "M\ttest/test-gl-runner-output-namespace.py",
+    "M\ttest/test-palette-disk-accounting.py"
+  ],
+  "unrelatedTreeEntriesPreserved": true,
+  "mergedTree": null
+}

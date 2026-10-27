@@ -1,0 +1,19 @@
+{
+  "candidate": "2b825a30d178a34aca28b50307d87049693ba529",
+  "hashes": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": "3f08d9ec7528af2df5057e66481b9e44861492b8122a65a20e2fef57b4d85c3b",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "87ea3ddec16baf2ba1bf94347160de6e589282ccd1265ed76f16537e04da3989",
+    "test/test-gl-runner-output-namespace.py": "2e978fe4c0d7930a015c9acd96c2f0107e52bcc4621e2c59b1a564c53666bc1a",
+    "test/test-gl-runner-output-namespace-omissions.py": "9254046bca2358b87a5d702ee869428040d33b4a9580210885846c44a4c838d4",
+    "test/test-gl-output-file-confinement.py": "3585215696a92b6b4b0fea9f90abcd333b0e0475c911f1d6cf761434cb39bc09",
+    "test/test-gl-output-namespace-independent.py": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628"
+  },
+  "blobs": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": "d41fcabb4fc82eed63df7b1cb9694e293df7deff",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "df5a504fa12da62d3fe6e858bd69285848aa50d1",
+    "test/test-gl-runner-output-namespace.py": "3b79055b00dac4af49f1720bbc9e09b04cda2bc1",
+    "test/test-gl-runner-output-namespace-omissions.py": "42ffda474c0d4d1d60abeb7da6dbfc19902e0c10",
+    "test/test-gl-output-file-confinement.py": "e6c002460d366181fecd4dfac5cf1387cfdc8612",
+    "test/test-gl-output-namespace-independent.py": "9e29e6294a0522cdd033bd54fc4a28dc630734e8"
+  }
+}

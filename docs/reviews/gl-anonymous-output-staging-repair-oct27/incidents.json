@@ -1,0 +1,8 @@
+[
+  {
+    "incident": "Initial prepare nested outer flock with standing git-child flock, causing self contention. Stopped owned supervisor; corrected invocation to acquire pool2 then Git-child flock only. No source or acceptance ran."
+  },
+  {
+    "incident": "Fresh affected-routing-omissions admission denied before test: projectedFree2970701824 below2982150144, measured4153344 task/external bytes. Retained failure. Replaced full unspent-allocation reservation with concrete measured+26MiB prospective2source+8external+8publication+8reserve projection; no allocation/floor/resource limit increased. Fresh admission required."
+  }
+]

@@ -1,0 +1,174 @@
+{
+  "payloads": {
+    "linux-prerequisites.log": {
+      "bytes": 337,
+      "sha256": "1e61cf243198e8270547674ce92c20af357aa2537514857ec02a338315ae5cf1"
+    },
+    "final-production-controls.json": {
+      "bytes": 5239,
+      "sha256": "d13e0689d3368e9cd72923aff1b9337f620b5d23ebcb45934dd0cb8397cb0bee"
+    },
+    "linux-prerequisites.json": {
+      "bytes": 4568,
+      "sha256": "0f1abd5c6d5a01c39d31c1fc9d37107b21a6cf355072085434c044ea68fd79a5"
+    },
+    "pins.json": {
+      "bytes": 1422,
+      "sha256": "55f51e36a4b3e472f2104ab2ade0a8e1374af0e24e3fdb83f3efdbed9584b513"
+    },
+    "baseline-mutant-fixture-trim.log": {
+      "bytes": 389,
+      "sha256": "6b8ffd8fab3e499aaf4fb2c1f589d4d8bc0772d566ab59ec49cbc0e8b30fcedd"
+    },
+    "node-production-startup.json": {
+      "bytes": 2307,
+      "sha256": "93b863bd4c057ba2afca72af79c1429610ef0c3523234b03dcd7243eea07d575"
+    },
+    "first-production-boundary.json": {
+      "bytes": 6427,
+      "sha256": "8c65370e51adb8819bd19c62190d2fc0e8c551709830f701281eddcf28477e4c"
+    },
+    "affected-routing-concrete-projection.json": {
+      "bytes": 7047,
+      "sha256": "8c25317c2fa1f180011ea536d5d26b374f68bcf7a22d21ccaf8e4a9aca6f4c3a"
+    },
+    "affected-faults-child.json": {
+      "bytes": 5285,
+      "sha256": "2d0fdb21fb230cd0756fad508d3a7cd6c9ec4a0af1589db2c55cc4c127bb7342"
+    },
+    "final-production-controls.log": {
+      "bytes": 401,
+      "sha256": "2afece9cde3a574f13737ca386a4a297ec7ebf31a14d87a334bf91ca887be989"
+    },
+    "late-hardlink-counterexample.json": {
+      "bytes": 1529,
+      "sha256": "398bec4b3dc82749a829e64645d025dbbca74b86ddd7261119b123b2a2fbd446"
+    },
+    "dependency-audit.json": {
+      "bytes": 4559,
+      "sha256": "d75be7d52c2b047fceb6543f89d457776c3078f64650e83b8977557fe8a2e06f"
+    },
+    "dependency-audit.log": {
+      "bytes": 177,
+      "sha256": "fc894c7606b8882a010707d98b83e5246ffc2475b54e288b0ae54a407c2b08ab"
+    },
+    "tested-tree.json": {
+      "bytes": 1890,
+      "sha256": "3c8ceeb0125cd05618b3a67bb83114e7337859c3d9a8372e503963ca8fe7d9ce"
+    },
+    "affected-accounting.json": {
+      "bytes": 4584,
+      "sha256": "ed22aba68282d1cd0ac0383e2def0b8228ba3a942c59af5cf385cd089324a251"
+    },
+    "affected-accounting.log": {
+      "bytes": 2805,
+      "sha256": "227bdddde0a4f1d760b063978dd09955123a66c424b52ae0c1ca43b416d3321f"
+    },
+    "original-admission-injection.json": {
+      "bytes": 4584,
+      "sha256": "93bad57073d04cae741c49fd85f9babbf7ff2766f3f2b4e970f817f369aee29a"
+    },
+    "affected-routing-concrete-projection.log": {
+      "bytes": 745,
+      "sha256": "71bbf08890158aaa16b9ca038c448670720bffb8cd9289a53b91d254218182a3"
+    },
+    "original-admission-injection.log": {
+      "bytes": 144,
+      "sha256": "e758e08960b2590bacf4d86b7192ddfb0e50d60b01072c8f28a6ea1853f2053e"
+    },
+    "confinement-races.json": {
+      "bytes": 2643,
+      "sha256": "40c3fb7c72351f2e3d582d507ce3dd36bb66ac030c97af11ba168dd45150b9a8"
+    },
+    "late-hardlink-payload-identity.json": {
+      "bytes": 196,
+      "sha256": "64747a80796399d5bbc36de884df23d79b38ca6f004841ccfaeafb23e3cf253e"
+    },
+    "baseline-mutant-fixture-trim.json": {
+      "bytes": 4702,
+      "sha256": "b6e92f03d78293465db17dae9a43990bebf3fa2a90ab1f012dcccbc5659a4bd3"
+    },
+    "final-confinement-omissions-primary.json": {
+      "bytes": 4666,
+      "sha256": "5b8acd3031432b7a1a5975c0c944aaf62bf6781ce1a40323fe603e1c78a078db"
+    },
+    "final-confinement-omissions-primary.log": {
+      "bytes": 342,
+      "sha256": "6d09e3e518f8c2b5509f9ecf5771f173936f6c536118771951033ab9a59c16b3"
+    },
+    "baseline-late-hardlink.log": {
+      "bytes": 652,
+      "sha256": "f64422be8de74af3496277b8631016f3b7b52ed1132c974bde25cdbd22fcbf4b"
+    },
+    "baseline-late-hardlink.json": {
+      "bytes": 2650,
+      "sha256": "5934fdaf5f463fee478dfa63338317b46fdda2a99199f869ac6e0adcf9951fd2"
+    },
+    "affected-faults-child.log": {
+      "bytes": 178,
+      "sha256": "661c969a49c70f30bd72167c8dd7f049f185512399e8284968fb0a4b6e664bcd"
+    },
+    "anonymous-late-hardlink.json": {
+      "bytes": 286,
+      "sha256": "f488219ef24b476179effe5a166b1a3f5c7c4632b3ab4184eb73dc565822a3fa"
+    },
+    "README.md": {
+      "bytes": 10390,
+      "sha256": "edbef4f55e9591a695574226370ec316a3f26400465c21be36afbd800ce6822c"
+    },
+    "confinement-races.log": {
+      "bytes": 496,
+      "sha256": "801f9b612576ea1d88182f95784300d38fb9d151ea79b36a4497d018d2e6b3f9"
+    },
+    "incidents.json": {
+      "bytes": 635,
+      "sha256": "4a5afa08cb104aba72cc5fd09c74c749722c2a04120c9fed2f3dd6ed6405fa3e"
+    },
+    "launch-configuration.json": {
+      "bytes": 859,
+      "sha256": "91565b9f5e3e60a0d0e665fa3ed00d7d02c23007b228f2a462a02059f8e5efa6"
+    },
+    "results.json": {
+      "bytes": 5991,
+      "sha256": "d381ed214df1f0a0ff172cc9595ed937a9e90bd0a287437d892895c973dbf033"
+    },
+    "reproducer/accept.py": {
+      "bytes": 3589,
+      "sha256": "16d144df575be0cbf29ec95f078baf23ee257ea6cbdc450a895ad32ca6b1f5b2"
+    },
+    "reproducer/hardlink-race.py": {
+      "bytes": 2921,
+      "sha256": "109fde795e3489590db0203e96cdfe0f44b5a9ca037a1e832a4bb38ee66d4efe"
+    },
+    "reproducer/affected-accounting-methods.json": {
+      "bytes": 352,
+      "sha256": "a056d0a12ffbd57287d4ee7fba880e8d91989a66162f5da3408220dcb902d57e"
+    },
+    "reproducer/baseline-write.py": {
+      "bytes": 1113,
+      "sha256": "b94acb996d741f98572914534a8788307a697a5b0ed998dc3338b9792274637e"
+    },
+    "reproducer/affected-confinement.py": {
+      "bytes": 341,
+      "sha256": "e9d0433fe7a181fbbbb66510d02201c60b852b960e6c1ebb2893704a57fa446f"
+    },
+    "reproducer/affected-accounting.py": {
+      "bytes": 1204,
+      "sha256": "a9b89259db2c55f36a0e3a447d1ee0e29faa52a387b232ec7bc8884a57349700"
+    },
+    "reproducer/audit.py": {
+      "bytes": 3039,
+      "sha256": "ebae4abbea689eb87a38e40f7767f5363ffa9a71b32ce6a592a2b889c5c1cc8c"
+    },
+    "reproducer/run.py": {
+      "bytes": 4362,
+      "sha256": "2e774acb8ad224ed5cdf7e43df688d76de9a34a7880612add5782be374b49869"
+    },
+    "reproducer/prerequisites.py": {
+      "bytes": 1222,
+      "sha256": "3f27c83ae12e934276c2ba628e3b325cffeb86360c5d22d6fb26f5cc4c229fc3"
+    }
+  },
+  "totalPayloadBytes": 107268,
+  "note": "Focused source/test repair evidence only; prior receipts/donors remain referenced in dependency-audit."
+}

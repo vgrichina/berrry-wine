@@ -1,0 +1,56 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 94588928,
+  "sampledPeakRSS": 94588928,
+  "reapedPeakRSS": 46616576,
+  "cpuSeconds": 0.591622,
+  "wallSeconds": 0.3140579480677843,
+  "owned": [
+    [
+      3412322,
+      "110877420"
+    ],
+    [
+      3412325,
+      "110877431"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/gl-anonymous-output-staging-repair-oct27/ops/hardlink-race.py"
+  ],
+  "admission": {
+    "timestamp": 1793061564.9518404,
+    "charges": {
+      "task": 2224128,
+      "launcher": 581632,
+      "session": 663552,
+      "positiveWALOnce": 0
+    },
+    "projection": 28635136,
+    "allocation": 50331648,
+    "sourceGitTempEvidence": 16777216,
+    "sessionEventsPositiveWAL": 16777216,
+    "publication": 8388608,
+    "reserve": 8388608,
+    "peerRemaining": 58892288,
+    "projectedFree": 2999541760,
+    "floor": 2982150144,
+    "memAvailable": 4021579776,
+    "requiredFutureRAM": 1610612736,
+    "standingSupervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "standingSupervisorBytes": 24576,
+    "pass": true
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "limits": {
+    "physical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}

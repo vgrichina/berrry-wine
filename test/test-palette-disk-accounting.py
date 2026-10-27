@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """Offline controls at the shared ledger and retained production callback boundary."""
 import ast
+import contextlib
 import errno
 import importlib.util
 import json
 import os
 import pathlib
 import shutil
+import stat
 import tempfile
 import types
 import unittest
@@ -25,12 +27,15 @@ def callback(root, source=None):
     """Execute the EXACT retained functions and ledger initializer, no guest code."""
     tree = ast.parse(WRAPPER.read_text() if source is None else source)
     nodes = [n for n in tree.body if
+             isinstance(n, ast.ClassDef) and n.name == 'OutputFiles' or
              isinstance(n, ast.FunctionDef) and n.name in ('alloc', 'check') or
              isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'disk' for t in n.targets)]
-    evidence=root/'output';evidence.mkdir(exist_ok=True)
+    evidence=root/'ops/output';evidence.mkdir(parents=True,exist_ok=True)
     ns = dict(H=root, E=evidence, P=P, M=M, sup=sup, shutil=shutil, future=352*M,
+              pathlib=pathlib, contextlib=contextlib, stat=stat, os=os,
               accounting=dict(samples=0, peakProjected=0, minFree=None, minMem=None))
     exec(compile(ast.Module(body=nodes, type_ignores=[]), str(WRAPPER), 'exec'), ns)
+    ns['outputs'] = ns['OutputFiles'](root)
     return ns
 
 
@@ -86,7 +91,7 @@ class Accounting(unittest.TestCase):
                     self.assertIsNone(ns['check']())
                 self.assertEqual(len(fired), 1)
                 self.assertEqual(ns['disk'].receipt['retries'], 1)
-                expected = sum(p.lstat().st_blocks*512 for p in [self.root,self.tmp,self.required,self.root/'output'])
+                expected = sum(p.lstat().st_blocks*512 for p in [self.root,self.tmp,self.required,self.root/'ops',self.root/'ops/output'])
                 self.assertEqual(ns['accounting']['peakProjected'], expected+352*M)
 
     def test_production_cap_and_headroom(self):

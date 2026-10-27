@@ -9,6 +9,7 @@ class OutputFiles:
     def __init__(self, root):
         self.root = pathlib.Path(root)
         self.identities = None
+        self.staging = set()
         with self.directory():
             pass
 
@@ -68,47 +69,85 @@ class OutputFiles:
             self.verify(directory)
 
     @contextlib.contextmanager
-    def create(self, name):
-        """Exclusive descriptor for a child output; caller closes after cleanup.
+    def anonymous(self, directory):
+        # Linux O_TMPFILE WITHOUT O_EXCL permits later linkat publication. Never
+        # fall back to a named writable inode: a pre/post nlink check races link.
+        if not hasattr(os, 'O_TMPFILE'):
+            raise RuntimeError('Linux O_TMPFILE output staging required')
+        fd = os.open('.', os.O_TMPFILE | os.O_RDWR | os.O_CLOEXEC,
+                     0o600, dir_fd=directory)
+        self.staging.add(fd)
+        try:
+            st = os.fstat(fd)
+            if not stat.S_ISREG(st.st_mode) or st.st_nlink != 0:
+                raise RuntimeError('anonymous output staging required')
+            yield fd
+        finally:
+            self.staging.remove(fd)
+            os.close(fd)
 
-        A child receives /proc/PARENT/fd/N, never a mutable pathname. The inode
-        stays named and accounted in output; replacement makes the run unknown.
+    def allocated_staging(self):
+        # Once linked, the directory ledger owns the blocks. Before that the
+        # live descriptor owns them, including during child check callbacks.
+        return sum(os.fstat(fd).st_blocks * 512 for fd in self.staging
+                   if os.fstat(fd).st_nlink == 0)
+
+    def publish(self, directory, name, fd):
+        self.verify(directory)
+        st = os.fstat(fd)
+        if not stat.S_ISREG(st.st_mode) or st.st_nlink != 0:
+            raise RuntimeError('anonymous output changed before publication')
+        temporary = name + '.new'
+        linked = False
+        try:
+            # With dst_dir_fd Python uses linkat(AT_SYMLINK_FOLLOW). The Linux
+            # procfs alternative needs no CAP_DAC_READ_SEARCH (AT_EMPTY_PATH
+            # does). No source namespace entry exists while bytes are written.
+            os.link('/proc/self/fd/' + str(fd), temporary,
+                    dst_dir_fd=directory, follow_symlinks=True)
+            linked = True
+            self.bound(directory, temporary, fd)
+            anchor = pathlib.Path('/proc/self/fd') / str(directory)
+            os.replace(anchor / temporary, anchor / name)
+            self.bound(directory, name, fd)
+            # No producer writes after the first link, even if a later alias is
+            # added. Same-user /proc/FD access is outside this userspace guard.
+        finally:
+            if linked:
+                try:
+                    leaf = os.stat(temporary, dir_fd=directory, follow_symlinks=False)
+                    if self.identity(leaf) == self.identity(os.fstat(fd)):
+                        os.unlink(temporary, dir_fd=directory)
+                except FileNotFoundError:
+                    pass
+
+    @contextlib.contextmanager
+    def create(self, name):
+        """Child writes an anonymous inode via /proc/PARENT/fd/N.
+
+        The caller must wait for all owned writers to finish before returning.
+        Publication happens only on normal context exit, after child cleanup.
         """
         name = self.name(name)
         with self.directory() as directory:
-            self.verify(directory)
-            fd = os.open(name, os.O_RDWR | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                         0o600, dir_fd=directory)
-            try:
-                self.bound(directory, name, fd)
+            if name in self.verify(directory):
+                raise FileExistsError(name)
+            with self.anonymous(directory) as fd:
                 yield fd
-                self.bound(directory, name, fd)
-            finally:
-                os.close(fd)
+                self.publish(directory, name, fd)
 
     def write(self, name, data):
         name = self.name(name)
-        temporary = name + '.new'
         with self.directory() as directory:
             self.verify(directory)
-            fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW,
-                         0o600, dir_fd=directory)
-            try:
-                self.bound(directory, temporary, fd)
+            with self.anonymous(directory) as fd:
                 remaining = memoryview(data)
                 while remaining:
                     count = os.write(fd, remaining)
                     if count <= 0:
                         raise RuntimeError('short output write')
                     remaining = remaining[count:]
-                self.bound(directory, temporary, fd)
-                # procfs paths preserve the existing replace-observation contract
-                # while anchoring BOTH parents to the verified open directory.
-                anchor = pathlib.Path('/proc/self/fd') / str(directory)
-                os.replace(anchor / temporary, anchor / name)
-                self.bound(directory, name, fd)
-            finally:
-                os.close(fd)
+                self.publish(directory, name, fd)
 
     def read(self, name):
         name = self.name(name)
@@ -174,7 +213,7 @@ def sha(p):
  return h.hexdigest()
 def alloc(p):
  if p != H:raise ValueError('unexpected accounting root')
- return disk.allocated()
+ return disk.allocated()+outputs.allocated_staging()
 pins=json.loads((O/'pins.json').read_text());manifest=json.loads((O/'inputs-manifest.json').read_text())
 def integrity():
  for r in pins['source']['files']:assert sha(S/r['path'])==r['sha256'],r['path']
@@ -218,6 +257,7 @@ try:
  with outputs.create('test-result.json') as result_fd:
   os.environ['PALETTE_GPU_EVIDENCE']='/proc/'+str(os.getpid())+'/fd/'+str(result_fd)
   rec,out=execute([NODE,'--max-old-space-size=512',str(R/'test/test-d3dim-palette-gpu-web.js')],'test')
+  if rec['stopReason'] is not None or not rec['cleanupComplete']:raise RuntimeError('child output writers not safely cleaned up')
  result=outputs.read('test-result.json');j=json.loads(result) if result else {}
  assert j.get('wasmSha256')==pins['moduleSHA256'],j.get('wasmSha256')
  success=rec['exit']==0 and rec['stopReason'] is None and rec['cleanupComplete'] and j.get('stage')=='passed' and len(j.get('results',[]))==2

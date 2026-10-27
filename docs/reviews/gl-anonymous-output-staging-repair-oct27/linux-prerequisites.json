@@ -1,0 +1,73 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 59400192,
+  "sampledPeakRSS": 59400192,
+  "reapedPeakRSS": 27131904,
+  "cpuSeconds": 0.330793,
+  "wallSeconds": 0.16573952394537628,
+  "owned": [
+    [
+      3427773,
+      "110940526"
+    ]
+  ],
+  "cleanupComplete": true,
+  "sourceFixtureHashes": {
+    "test/test-gl-anonymous-output-staging.py": "f8f2f4bbac07b46fa7fca912919120e5bfcbed87cd7a7dc6869cdfe008e9699b",
+    "test/test-gl-output-namespace-independent.py": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+    "test/test-gl-runner-output-namespace.py": "87bc5ea77bdeb74a6ef5f8f9083815cf18cda8d22d9847ee72fbe2fbe8991836",
+    "test/test-gl-output-file-confinement.py": "08a2a0d3f8665a5f1f0472b6993e72381bc96e73e5f6f8eff445d376621305b4",
+    "test/test-gl-runner-output-namespace-omissions.py": "9254046bca2358b87a5d702ee869428040d33b4a9580210885846c44a4c838d4",
+    "test/test-palette-disk-accounting.py": "0918d2a4c4171e0aabc3af829ae694d8c583d3ae2dab683939abcd2cc1c19977",
+    "test/test-gl-output-namespace-controls.py": "fcaede8c1de2ab95914b6cdd327addf28c319bb5ba0762861541602a11922d52",
+    "test/test-palette-disk-accounting-omissions.py": "746af4f664a910b1713a03228fd9280e155c8d8164837442aa15e2499f5447d3",
+    "test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "e046999a89d3997b26c1530ea82145cd6b33a2d2984356aeebc6a9d8f44c079b",
+    "test/fixtures/gl-transient-accounting/remote-run-before.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+    "test/fixtures/gl-transient-accounting/remote-run.py": "9420aa2d58d9965afb240d9f91f017bf5d77f0cfb9316e90770b18ae813ce475"
+  },
+  "command": [
+    "python3",
+    "/tmp/gl-anonymous-output-staging-repair-oct27/ops/prerequisites.py"
+  ],
+  "admission": {
+    "timestamp": 1793062196.001198,
+    "charges": {
+      "task": 3047424,
+      "launcher": 753664,
+      "session": 1343488,
+      "positiveWALOnce": 0
+    },
+    "projection": 32407552,
+    "allocation": 50331648,
+    "sourceGitTempEvidence": 16777216,
+    "sessionEventsPositiveWAL": 16777216,
+    "publication": 8388608,
+    "reserve": 8388608,
+    "peerRemaining": 58892288,
+    "projectedFree": 3004764160,
+    "floor": 2982150144,
+    "memAvailable": 3101229056,
+    "requiredFutureRAM": 1610612736,
+    "standingSupervisor": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+    "standingSupervisorBytes": 24576,
+    "remainingGrowthParts": {
+      "sourceGitTempEvidence": 2097152,
+      "sessionEventsPositiveWAL": 8388608,
+      "publication": 8388608,
+      "reserve": 8388608
+    },
+    "measuredPlusProspectiveSizing": "Physical focused checkout is 2.3MiB; remaining source/tests/evidence/Git prepublication <=2MiB, external capture/session growth <=8MiB, publication8MiB, reserve8MiB. Recheck before every group and stop on growth mismatch; ceilings remain16/16/8/8MiB within48MiB.",
+    "pass": true
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "limits": {
+    "physical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  }
+}
