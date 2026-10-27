@@ -1,0 +1,170 @@
+{
+  "status": "BLOCKED_PINNED_HELPER_LACKS_FROZENSTATE",
+  "guestInvocations": 1,
+  "controlRequests": 3,
+  "guestBatches": 5000,
+  "guestInputCommands": 0,
+  "captures": 0,
+  "causalSpaceConsumption": "unknown",
+  "menu": "unknown",
+  "gameplay": "unknown",
+  "ordinaryQuit": "unknown; SIGTERM cleanup is not Quit",
+  "matchedRequests": [
+    {
+      "id": "bridge-1",
+      "action": "step",
+      "n": 5000
+    },
+    {
+      "id": "bridge-2",
+      "action": "snapshot"
+    },
+    {
+      "id": "bridge-3",
+      "action": "input-state"
+    }
+  ],
+  "matchedResponses": [
+    {
+      "ok": true,
+      "id": "bridge-1",
+      "value": {
+        "batch": 5000,
+        "ran": 5000,
+        "steps": 5000,
+        "frozen": true
+      }
+    },
+    {
+      "ok": true,
+      "id": "bridge-2",
+      "value": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "ok": false,
+      "id": "bridge-3",
+      "error": "inputConsumptionTrace.frozenState is not a function"
+    }
+  ],
+  "closureMismatch": {
+    "mappedHelper": {
+      "source": "/tmp/generally-census-cleared-driving-oct27/repo/test/input-consumption-trace.js",
+      "target": "runner/test/input-consumption-trace.js",
+      "bytes": 2508,
+      "sha256": "313bb9f70b6f24e5244cb3f4b77b7899081710692279b2b3b5c8e1fa1fbf79be",
+      "kind": "file"
+    },
+    "acceptedHelper": {
+      "path": "/tmp/airstrike-accepted-input-observer-main-integrate-oct27/repo/test/input-consumption-trace.js",
+      "bytes": 7361,
+      "sha256": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe"
+    },
+    "mappedHasFrozenState": false,
+    "acceptedHasFrozenState": true,
+    "cause": "integrated runner calls frozenState, but map pins a historical helper lacking it",
+    "scope": "static identity comparison only; no source change or acceptance replay"
+  },
+  "runtimeResult": {
+    "status": "refused",
+    "reason": "runner rejected command; no replay",
+    "elapsed": 0.8328472910000073,
+    "cleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": 0,
+      "complete": true
+    },
+    "controllerSHA256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+    "responseSeconds": 10,
+    "guestSeconds": 115,
+    "wallSeconds": 120
+  },
+  "supervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 259244032,
+    "cpuSeconds": 3.478179,
+    "wallSeconds": 0.9516376030001084,
+    "cleanupComplete": true
+  },
+  "box": {
+    "at": 1793112426.601623,
+    "box": "bx_hqd5add8",
+    "state": "RUNNING supported exec",
+    "expiry": "2026-10-27T15:26:23.439Z",
+    "handback": "2026-10-27T15:17:00Z",
+    "coordinatorShutdown": "2026-10-27T15:20:00Z",
+    "remainingOwned": [],
+    "ownedIdentities": [
+      [
+        12683,
+        "107261"
+      ],
+      [
+        12684,
+        "107270"
+      ]
+    ],
+    "remoteLogicalBytes": 19118957,
+    "watcher": "coordinator-owned untouched",
+    "lifecycleMutation": false
+  },
+  "API": {
+    "charged": 246176,
+    "pending": {},
+    "limit": 8388608,
+    "reserve": 1048576,
+    "priorProbeCharged": true
+  },
+  "runnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+  "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+  "remainingGate": "coordinator must reconcile runtime closure with accepted production helper before assigning any later task",
+  "tests": "unchanged acceptance groups reused; no suite replay",
+  "incidents": [
+    "Initial combined policy reads exceeded intended per-display bound; later reads were narrowed. No resource/API capture limit was lifted.",
+    "One read-only review retrieval failed because bridge had already stopped before producing a review request. It was not retried.",
+    "Hash equality established transport integrity but did not establish accepted observer/helper consistency. The known canonical map was incompatible; no repair or guest relaunch."
+  ]
+}
