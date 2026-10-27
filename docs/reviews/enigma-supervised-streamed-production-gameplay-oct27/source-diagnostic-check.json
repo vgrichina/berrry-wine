@@ -1,0 +1,95 @@
+{
+  "at": 1793072235.2763753,
+  "verdict": "BLOCKED_BEFORE_GUEST",
+  "sourceIdentityPass": true,
+  "inputs": [
+    {
+      "path": "/tmp/enigma-retained-integration-allocation-recovery-oct27/repo/tools/enigma-frozen-gameplay-controller.py",
+      "sha256": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+      "bytes": 19195,
+      "revision": "b2922b17dd6b62f4129fc87fd03b0e1df269ba4a"
+    },
+    {
+      "path": "/tmp/enigma-retained-integration-allocation-recovery-oct27/repo/tools/enigma-supervised-gameplay.py",
+      "sha256": "6f00afae565b32114cc6b78d9b806348d2195ff69122e345aabaf09493b5960c",
+      "bytes": 17216,
+      "revision": "b2922b17dd6b62f4129fc87fd03b0e1df269ba4a"
+    },
+    {
+      "path": "/tmp/enigma-retained-integration-allocation-recovery-oct27/repo/test/fixtures/enigma-controller/test_supervised.py",
+      "sha256": "a76bb50eb8e4d29731b8e0c368b02a2c4806df68a50d95e4acf173c6871d9130",
+      "bytes": 13118,
+      "reviewOnly": true,
+      "testsRerun": false
+    },
+    {
+      "path": "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo/test/run.js",
+      "target": "runner/test/run.js",
+      "bytes": 690150,
+      "sha256": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+      "kind": "file",
+      "revision": "425755ee5ee9be0734c7aca187521100f5487674",
+      "gitOid": "96564821da3e401b79985804f9d689439799edf0"
+    },
+    {
+      "path": "/tmp/enigma-accepted-msg-current-tree-reconcile-oct26/repo/lib/host-imports.js",
+      "target": "runner/lib/host-imports.js",
+      "bytes": 197359,
+      "sha256": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347",
+      "kind": "file",
+      "revision": "425755ee5ee9be0734c7aca187521100f5487674",
+      "gitOid": "3615e90637c3a2b98b4a7fc4efec67ed04d6f308"
+    },
+    {
+      "path": "/tmp/enigma-reconciled-canonical-boat-build-oct26/modules/wine-assembly.wasm",
+      "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+      "bytes": 1880854
+    }
+  ],
+  "childLaunchSites": [
+    {
+      "line": 292,
+      "endLine": 294,
+      "argv": "c['command']",
+      "stdout": "subprocess.PIPE",
+      "stderr": "subprocess.STDOUT",
+      "excerpt": "subprocess.Popen(c['command'], cwd=c['cwd'], env=env, close_fds=True,\n            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n            start_new_session=True, preexec_fn=child_limits)"
+    },
+    {
+      "line": 270,
+      "endLine": 272,
+      "argv": "startup_args",
+      "stdout": "subprocess.PIPE",
+      "stderr": "subprocess.STDOUT",
+      "excerpt": "subprocess.Popen(startup_args, cwd=c['cwd'], env=env, close_fds=True,\n                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,\n                start_new_session=True, preexec_fn=child_limits)"
+    }
+  ],
+  "launchFields": [
+    "command",
+    "controller",
+    "cutoff_at",
+    "cwd",
+    "duration_seconds",
+    "launch_dir",
+    "limits",
+    "ready_seconds",
+    "url"
+  ],
+  "schemaLine": 70,
+  "diagnosticRequirement": "Distinct owned stdout AND stderr files from process creation, including startup/preflight and failed spawn/setup.",
+  "mismatch": "Both exact pinned supervisor Popen calls set stderr=subprocess.STDOUT; bytes lose stream identity before output.log. Outer CLI stderr redirection cannot separate child streams.",
+  "sourceChangesAuthorized": false,
+  "wrapperOrMonkeypatchUsed": false,
+  "fullMap": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/enigma-exact-production-runtime-map-oct27.json",
+    "sha256": "0ae08516d6a390d6d52ab31656c79bc21ed8141080a25b8e9184c004a322190f",
+    "rows": 2663,
+    "bytes": 37486692,
+    "allRowsRehash": "coordinator dispatch receipt reused; not repeated"
+  },
+  "canonicalMountParser": "NOT RUN: prelaunch source contract rejection precedes staging, config construction, checkout and conditional guest execution",
+  "runtimeLaunches": 0,
+  "nodeStartupAttempts": 0,
+  "guestAllowanceUsed": 0,
+  "testsRerun": false
+}

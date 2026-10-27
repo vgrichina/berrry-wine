@@ -1,0 +1,33 @@
+{
+  "at": 1793072248.6301641,
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--no-update",
+    "--json",
+    "--timeout",
+    "20",
+    "bx_xs97h52x",
+    "timeout 10 python3 -c 'import json,pathlib,time\nguests=[]\nfor p in pathlib.Path('\"'\"'/proc'\"'\"').glob('\"'\"'[0-9]*'\"'\"'):\n try:\n  a=(p/'\"'\"'cmdline'\"'\"').read_bytes().split(b'\"'\"'\\0'\"'\"')\n  if a and pathlib.Path(a[0].decode()).name in ('\"'\"'node'\"'\"','\"'\"'nodejs'\"'\"') and any(x.endswith(b'\"'\"'/test/run.js'\"'\"') or x==b'\"'\"'test/run.js'\"'\"' for x in a):guests.append(int(p.name))\n except (OSError,ValueError,UnicodeDecodeError):pass\nprint(json.dumps(dict(at=time.time(),productionNodePids=guests,memAvailableKiB=int(pathlib.Path('\"'\"'/proc/meminfo'\"'\"').read_text().split('\"'\"'MemAvailable:'\"'\"')[1].split()[0]),probe='\"'\"'read-only; no runtime staged or launched'\"'\"')))\n'"
+  ],
+  "exit": 0,
+  "response": {
+    "commandId": "cmd_ra3i4pnntjco",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-27T03:37:28.562Z",
+    "launcherFailed": false,
+    "noticedMs": 17,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 17,
+    "startedAt": "2026-10-27T03:37:28.525Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"at\": 1793072248.5595798, \"productionNodePids\": [], \"memAvailableKiB\": 7139576, \"probe\": \"read-only; no runtime staged or launched\"}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  },
+  "stderrBytes": 0
+}

@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 38621184,
+  "sampledPeakRSS": 38621184,
+  "reapedPeakRSS": 13238272,
+  "cpuSeconds": 0.20409,
+  "wallSeconds": 0.2981126490049064,
+  "owned": [
+    [
+      3634873,
+      "111945762"
+    ],
+    [
+      3634875,
+      "111945764"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/enigma-supervised-streamed-production-gameplay-oct27/ops/remote-check.py"
+  ]
+}

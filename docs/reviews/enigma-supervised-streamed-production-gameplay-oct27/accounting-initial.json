@@ -1,0 +1,39 @@
+{
+  "at": 1793072192.6698754,
+  "label": "initial",
+  "ownedAllocated": 36864,
+  "externalAllocated": 684032,
+  "positiveWALSinceBaseline": 0,
+  "initialWALGrowthBeforeBaseline": "not attributable; all remaining external allowance reserved",
+  "used": 720896,
+  "allocation": 33554432,
+  "reserve": 8388608,
+  "externalLimit": 8388608,
+  "partsMiB": {
+    "sparseGitOps": 4,
+    "captures": 8,
+    "external": 8,
+    "transferPublication": 4,
+    "reserve": 8
+  },
+  "peers": [
+    {
+      "task": "airstrike-accepted-focus-menu-quit-api-oct27",
+      "allocation": 58720256,
+      "materialized": 7237632,
+      "future": 51482624
+    },
+    {
+      "task": "penguin-accepted-contract-main-integrate-oct27",
+      "allocation": 50331648,
+      "materialized": 458752,
+      "future": 49872896
+    }
+  ],
+  "free": 3117268992,
+  "projected": 2983079936,
+  "floor": 2982150144,
+  "memAvailable": 3935514624,
+  "physicalRequired": 1946157056,
+  "pass": true
+}

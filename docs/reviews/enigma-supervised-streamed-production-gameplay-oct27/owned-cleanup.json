@@ -1,0 +1,14 @@
+{
+  "at": 1793072248.6303744,
+  "guestLaunches": 0,
+  "supervisorLaunches": 0,
+  "nodeStartupAttempts": 0,
+  "ownedGuestPids": [],
+  "ownedGuestLive": [],
+  "remoteProbeProductionNodePids": [],
+  "box": "bx_xs97h52x",
+  "boxState": "RUNNING (successful bounded API exec)",
+  "leaveRunning": true,
+  "shutdownOwner": "coordinator",
+  "expiry": "2026-10-27T04:33:22.349Z"
+}

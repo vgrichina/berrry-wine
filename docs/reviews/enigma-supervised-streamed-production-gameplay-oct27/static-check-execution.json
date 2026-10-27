@@ -1,0 +1,20 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 42119168,
+  "sampledPeakRSS": 42119168,
+  "reapedPeakRSS": 23244800,
+  "cpuSeconds": 0.13655299999999998,
+  "wallSeconds": 0.0929259390104562,
+  "owned": [
+    [
+      3634771,
+      "111944447"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/enigma-supervised-streamed-production-gameplay-oct27/ops/check.py"
+  ]
+}
