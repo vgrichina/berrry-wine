@@ -1,0 +1,496 @@
+{
+  "schema": 1,
+  "status": "SOURCE_BACKED_BLOCKER_NO_CAUSAL_FIX",
+  "at": 1793107402.8889542,
+  "task": "airstrike-space-startup-boundary-repair-oct27",
+  "branch": "task/airstrike-space-startup-boundary-repair-oct27",
+  "testedSourceRevision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+  "source": [
+    {
+      "path": "tools/airstrike-menu-controller.py",
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+      "revision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+      "changed": false
+    },
+    {
+      "path": "tools/airstrike-observation-bridge.py",
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+      "revision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+      "changed": false
+    }
+  ],
+  "fixture": {
+    "path": "test/fixtures/airstrike-startup-boundary/receipt-replay.json",
+    "sha256": "f994c20a88ae44549bf355eddd2d1e69a16671c07025578581278db17177a573"
+  },
+  "runtimeReceipt": {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/receipt-manifest.json",
+    "sha256": "3b5138f821f24e9a092e6c482f1cc82065d42b3ed738d29d3e62790658ce9897"
+  },
+  "runtimeRunner": {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "execution": "retained original only, no rerun"
+  },
+  "currentRunner": {
+    "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "execution": "static source only; not substituted for historical runtime"
+  },
+  "tests": {
+    "first": "reproduce.json",
+    "subsequent": "controls.json",
+    "newChecksPassed": 11,
+    "unchangedGroupsRerun": 0,
+    "reusedAcceptedChecks": 32,
+    "acceptedReceipt": {
+      "path": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/ops/receipt-manifest.json",
+      "sha256": "63b146fe860bfb21603f1eba79df4de27f164ce3023e2dc80e74c6008a0a00c9",
+      "reuse": "unchanged controller/bridge and coordinator-verified closure"
+    },
+    "behavioralScope": "actual controller CLI; actual bridge completion method; retained production NDJSON; no full runner/guest/module execution"
+  },
+  "diagnosis": {
+    "status": "SOURCE_BACKED_BLOCKER_NO_CAUSAL_FIX",
+    "runtimeRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "currentRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "inputCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "click:656:33"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keydown:32"
+      },
+      {
+        "id": "airstrike-3",
+        "cmd": "keyup:32"
+      }
+    ],
+    "inputBatches": [
+      5000,
+      5001,
+      5002
+    ],
+    "completionBatches": [
+      5001,
+      5002,
+      5003
+    ],
+    "eips": [
+      "0x55995b",
+      "0x55995b",
+      "0x55995b"
+    ],
+    "tickMs": 5,
+    "guestBatchBaseAdvanceSpaceToFinalMs": 10,
+    "spaceDownToUpElapsedSeconds": 0.005378112000016699,
+    "lastReviewStart": 34.13763522799991,
+    "lastBatch": 5003,
+    "credits": 0,
+    "checkInputLogCount": 0,
+    "consumptionConclusion": "No host check_input event logged; queue occupancy, async state, thread park and SDL event consumption were not measured. Absence of host delivery does not prove keyboard loss, SDL pump failure, deadlock or wrong focus.",
+    "originalDeadlineSeconds": 115.09100895799997,
+    "reviewFrozenRemainderSeconds": 80.95337373000007,
+    "fix": "None: arbitrary hold duration or extra stepping would presume the unmeasured prerequisite. Current controller already refuses unchanged startup.",
+    "nextMinimalObservation": "Later coordinator-admitted attempt: read-only frozen queue/key/main-thread/SDL-pump diagnostic at the Space boundaries, using exact production runner and its existing consumption trace where supported. Retain queue lengths/types, key state, sleep/wait identity, dequeue/route/dispatch proof, and same-channel frozen-zero snapshots before considering any bounded no-input progression. No key replay, no new deadline, no guest-state write. Source repair scope if proven: shared runner/renderer/emulator requires separate ownership.",
+    "initializers": "Retained actual runner log records DllMain initialization before bridge-1 ACK; no guest/initializer replay in this task.",
+    "artifactPreservation": "Previously compiled modules and all predecessor trees unchanged; only focused receipts copied, no ignored tree copies.",
+    "runtimeGate": "Guest prerequisite unmeasured; no gameplay/menu/ordinary-Quit acceptance, no runtime authorized in this task."
+  },
+  "payloads": [
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/README.md",
+      "bytes": 3795,
+      "sha256": "e60308ed93d0e35e0aed1b0a01ccaf5e68b4805cb95cf80db7ef6ba7bd3c4834"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/blob-pins.stdout",
+      "bytes": 179,
+      "sha256": "47ee932af5480596b44454357d7a4645a1181bfe73b4d9aa29ef8f5eabf377f6"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/branch.json",
+      "bytes": 1207,
+      "sha256": "b9edea0e627935b894e13bfd3ab08ca687600192e2b7b7b1bc1bd8abdfb9e08e"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/branch.stderr",
+      "bytes": 63,
+      "sha256": "5155a4a287a1147637194af6a7fac401cb8db8b9db4f733394b51fd052eb4f96"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/credits-io_9lriq/receipt.json",
+      "bytes": 636,
+      "sha256": "1869a10fe9c69e2e3a40fcca98719c9d3083ba5a2754eb8b8bf545c0e28a61a3"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/credits-io_9lriq/stderr",
+      "bytes": 91,
+      "sha256": "013f7b3597ac731a44fc9c8861ba183631aa44c93415370f20e82a8a6f14a8ca"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/credits-io_9lriq/stdin.ndjson",
+      "bytes": 3884,
+      "sha256": "2febdf5e8f1591a939b5362b114262224fef7b4cdc2e20ad3e363084e0be6ac2"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/credits-io_9lriq/stdout",
+      "bytes": 88,
+      "sha256": "75ca9713317e8f6610b2f5d0b2df98d9f5ca4981cfd4a06ba64d5df41b9e4900"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/identity-qzglidwx/receipt.json",
+      "bytes": 635,
+      "sha256": "42668de3f6974979ece33ed49e2c56e338e817a6eb77578c93a8bc06d8719ef0"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/identity-qzglidwx/stderr",
+      "bytes": 91,
+      "sha256": "013f7b3597ac731a44fc9c8861ba183631aa44c93415370f20e82a8a6f14a8ca"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/identity-qzglidwx/stdin.ndjson",
+      "bytes": 3888,
+      "sha256": "293862137be131e2fcdeb9464c18d1884ac0748c4c280cec1f56b26873b61c57"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/identity-qzglidwx/stdout",
+      "bytes": 88,
+      "sha256": "75ca9713317e8f6610b2f5d0b2df98d9f5ca4981cfd4a06ba64d5df41b9e4900"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/no-dispatch-m6qkmwcr/receipt.json",
+      "bytes": 630,
+      "sha256": "b3ec9641b0f8069127c44f7948443d390ffd822fbaf0e74fc9ef4c2316d395bd"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/no-dispatch-m6qkmwcr/stderr",
+      "bytes": 85,
+      "sha256": "338e57c68a45def2e326b69cbb1d22498ed78bc1a60bddd0c3e7832f507f26fa"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/no-dispatch-m6qkmwcr/stdin.ndjson",
+      "bytes": 3847,
+      "sha256": "87703da7bc4b7182c4169e13022a09588a8c7c65d42757ace57adbd1c21458b5"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/no-dispatch-m6qkmwcr/stdout",
+      "bytes": 88,
+      "sha256": "75ca9713317e8f6610b2f5d0b2df98d9f5ca4981cfd4a06ba64d5df41b9e4900"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/partial-step-hprake2t/receipt.json",
+      "bytes": 635,
+      "sha256": "f77a64d870ade02bed9a5f9965dfb5ca4af9b64f28f9a14a0691f803d772ba08"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/partial-step-hprake2t/stderr",
+      "bytes": 91,
+      "sha256": "013f7b3597ac731a44fc9c8861ba183631aa44c93415370f20e82a8a6f14a8ca"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/partial-step-hprake2t/stdin.ndjson",
+      "bytes": 3884,
+      "sha256": "6c63161b8d8479b85d867fcbcf826d92bfc38e5789785c8143a4e428282486a9"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/partial-step-hprake2t/stdout",
+      "bytes": 88,
+      "sha256": "75ca9713317e8f6610b2f5d0b2df98d9f5ca4981cfd4a06ba64d5df41b9e4900"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/queue-only-5s7q4x4s/receipt.json",
+      "bytes": 635,
+      "sha256": "5e15773cad0de5219c22a11c88f711016d9f904192b07ec58dfec9e11a184f03"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/queue-only-5s7q4x4s/stderr",
+      "bytes": 91,
+      "sha256": "013f7b3597ac731a44fc9c8861ba183631aa44c93415370f20e82a8a6f14a8ca"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/queue-only-5s7q4x4s/stdin.ndjson",
+      "bytes": 3165,
+      "sha256": "d20f47b0a6619ccd9964230636ee805fa2adc1d47e85126d358efe8212f935e1"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/queue-only-5s7q4x4s/stdout",
+      "bytes": 88,
+      "sha256": "75ca9713317e8f6610b2f5d0b2df98d9f5ca4981cfd4a06ba64d5df41b9e4900"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/stale-startup-yzm1svwa/receipt.json",
+      "bytes": 747,
+      "sha256": "346a2471d7b7300fa10d20a6a6d99e103c347898740de2065514643a436b17da"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/stale-startup-yzm1svwa/stderr",
+      "bytes": 269,
+      "sha256": "8d8a1e215539cfe0fd050239b795fcd31ef078cce00a2a293cf2ab5c45f2f72b"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/stale-startup-yzm1svwa/stdin.ndjson",
+      "bytes": 3875,
+      "sha256": "ec006f4213f918f0e47b0c1e28159224f2211f89410acd17df78ecd0579e2667"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/stale-startup-yzm1svwa/stdout",
+      "bytes": 45,
+      "sha256": "dbeff8fd87e4772f336eda2e0e7b77b97c1f922fecba67749ad830becd6fab51"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/still-obscured-ztzxig5h/receipt.json",
+      "bytes": 747,
+      "sha256": "20e64e897482afb86b2cc9a7bdcd3867277abb4371b7205078c95bfe37ec669c"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/still-obscured-ztzxig5h/stderr",
+      "bytes": 269,
+      "sha256": "8d8a1e215539cfe0fd050239b795fcd31ef078cce00a2a293cf2ab5c45f2f72b"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/still-obscured-ztzxig5h/stdin.ndjson",
+      "bytes": 3885,
+      "sha256": "f5431d8831f79f7762a62ba2712db48a7938fb50785d1eefcf8fd46dc901910f"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/still-obscured-ztzxig5h/stdout",
+      "bytes": 45,
+      "sha256": "dbeff8fd87e4772f336eda2e0e7b77b97c1f922fecba67749ad830becd6fab51"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/unchanged-htq_ux4_/receipt.json",
+      "bytes": 877,
+      "sha256": "f22825b5f9c1bcf944dea9b37019d416202aebc8f4443984327e9f8333101268"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/unchanged-htq_ux4_/stderr",
+      "bytes": 269,
+      "sha256": "8d8a1e215539cfe0fd050239b795fcd31ef078cce00a2a293cf2ab5c45f2f72b"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/unchanged-htq_ux4_/stdin.ndjson",
+      "bytes": 3884,
+      "sha256": "d23faadf7727263eb65cf7458c5766b56df5f7897ff6065f94819972daa715cf"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/cli/unchanged-htq_ux4_/stdout",
+      "bytes": 129,
+      "sha256": "f992b5ffcdb9587a9532ed8c61480e3c0bdbb9b7616f873826b394fbaeba3231"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/controls.json",
+      "bytes": 1513,
+      "sha256": "cdef1d8dbec97430664fb24ffe8f82e808780cdc0f9af961e8b33cae4b94700e"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/controls.stderr",
+      "bytes": 1364,
+      "sha256": "17fdb54a34c649ed1aa37aa360c142824d4413d51e0dbadaf48d6a014ef64129"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/controls.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/diagnosis.json",
+      "bytes": 2348,
+      "sha256": "af72c729162aae399006a1fa1f9fc57dc67d1a6f15cc65bb1a6724e840401dbb"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/initial-root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/pinned-inputs.json",
+      "bytes": 362,
+      "sha256": "82156cdf444688943abd9894a047f35fc7963349072696b4230b681ac514a6c9"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/reproduce.json",
+      "bytes": 1223,
+      "sha256": "fbf5e4cf59892f1f306b4e948f06d5063a41d7c014504c9da2e1055f3a788ae2"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/reproduce.stderr",
+      "bytes": 214,
+      "sha256": "8d8d888ea7a9630911de5114d399c28adc1d0f6c349eb0c9b6fb2aef3f67799c"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/reproduce.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/resource-wrapper.py",
+      "bytes": 4929,
+      "sha256": "d08595e5c4e5ce10f585712e943d0fcb1a062f8cf36f7c5c7a9d89573de2e84d"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/review-diff.admission.json",
+      "bytes": 1954,
+      "sha256": "8fd3b50ba0a9faec25e78da7f0408bf466c5b03bd621322cd2d491c2ca8af7a2"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/source-boundaries.json",
+      "bytes": 7280,
+      "sha256": "54de60c834789c365aaa1e72224e22dc89bed58736bad5f3b84684063e0325e1"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/evidence/unchanged-reproducer.ndjson",
+      "bytes": 3884,
+      "sha256": "d23faadf7727263eb65cf7458c5766b56df5f7897ff6065f94819972daa715cf"
+    },
+    {
+      "path": "test/fixtures/airstrike-startup-boundary/receipt-replay.json",
+      "bytes": 10046,
+      "sha256": "f994c20a88ae44549bf355eddd2d1e69a16671c07025578581278db17177a573"
+    },
+    {
+      "path": "test/test-airstrike-startup-boundary.py",
+      "bytes": 7017,
+      "sha256": "2208ec124e5408031fe9e54c4ba47d2ed088efbc220b425a441e44f3b099f0ac"
+    }
+  ],
+  "resourceAdmission": {
+    "at": 1793107344.2317805,
+    "ownAllocated": 3756032,
+    "launcherAllocated": 397312,
+    "sessionAndConservativeFullWAL": 30674944,
+    "externalFiles": [
+      {
+        "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T13-13-55-01a17d7e-f8c0-7642-8d0d-7362151f9c81.jsonl",
+        "logical": 1112909,
+        "allocated": 1114112
+      },
+      {
+        "path": "/home/user/.codex/memories_1.sqlite-wal",
+        "logical": 0,
+        "allocated": 0
+      },
+      {
+        "path": "/home/user/.codex/logs_2.sqlite-wal",
+        "logical": 12244672,
+        "allocated": 12251136
+      },
+      {
+        "path": "/home/user/.codex/queue_1.sqlite-wal",
+        "logical": 4152992,
+        "allocated": 4157440
+      },
+      {
+        "path": "/home/user/.codex/goals_1.sqlite-wal",
+        "logical": 4280712,
+        "allocated": 4288512
+      },
+      {
+        "path": "/home/user/.codex/state_5.sqlite-wal",
+        "logical": 4606192,
+        "allocated": 4612096
+      },
+      {
+        "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+        "logical": 4243632,
+        "allocated": 4251648
+      }
+    ],
+    "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+    "clients": [
+      {
+        "pid": 117959,
+        "rss": 183279616
+      },
+      {
+        "pid": 117960,
+        "rss": 188620800
+      },
+      {
+        "pid": 117961,
+        "rss": 184438784
+      }
+    ],
+    "memAvailable": 2301820928,
+    "remainingClientGrowth": 450293760,
+    "sharedChild": 805306368,
+    "hostHeadroom": 805306368,
+    "requiredRemaining": 2060906496,
+    "allocation": 268435456,
+    "projectedTask": 143880192,
+    "freeDisk": 6379548672,
+    "projectedDisk": 5574242304,
+    "diskFloor": 2982150144,
+    "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "mountArgv": [],
+    "mountExecution": "no guest/mount invocation authorized",
+    "pass": true
+  },
+  "installedTools": [
+    {
+      "path": "/usr/bin/python3.12",
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+      "standingBytes": 8020928,
+      "newCopy": false
+    },
+    {
+      "path": "/usr/bin/git",
+      "sha256": "2a8c18fbf43da9f692d75474c72bea9dfd796c260b0f3dfe456376abc3bbd668",
+      "standingBytes": 4066232,
+      "newCopy": false
+    },
+    {
+      "path": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "standingBytes": 23268,
+      "newCopy": false
+    }
+  ],
+  "standingDonors": [
+    {
+      "path": "/tmp/airstrike-portable-fixtures-accepted-main-integration-oct27/repo",
+      "allocatedBytes": 3379200,
+      "readOnly": true,
+      "objects": "immutable alternates; no donor mutation"
+    },
+    {
+      "path": "/tmp/generally-census-accepted-main-integration-oct27/repo",
+      "allocatedBytes": 30650368,
+      "readOnly": true
+    }
+  ],
+  "publication": {
+    "remote": "git@github.com:vgrichina/wine-assembly.git",
+    "ref": "refs/heads/task/airstrike-space-startup-boundary-repair-oct27",
+    "finalPublicationReceipt": "/tmp/airstrike-space-startup-boundary-repair-oct27/ops/publication.json",
+    "selfReference": "Commit containing this manifest identified by external exact-ref verification receipt and root messageboard; no self hash embedded.",
+    "mainIntegrated": false,
+    "publicDeployment": false
+  },
+  "cleanup": {
+    "reproduce": true,
+    "controls": true,
+    "controllerProcessesReaped": true,
+    "guestInvocations": 0,
+    "newBoxes": 0,
+    "box": {
+      "id": "bx_ffsw74qe",
+      "state": "coordinator reported snapshot-stopped before assignment; not queried or mutated by worker",
+      "historicalExpiry": "2026-10-27T13:11:07.294Z",
+      "owner": "coordinator"
+    },
+    "boardWatcher": "owned watcher will be stopped after publication; no peer watcher touched"
+  },
+  "remainingGate": "Guest input-consumption prerequisite unmeasured; see diagnosis.nextMinimalObservation. No causal source fix or gameplay acceptance.",
+  "incidents": [
+    "Initial oversized policy reads retained in launcher events; subsequent displays bounded.",
+    "Initial Git checkout rejected incompatible --no-overlay/branch flags before materialization; corrected only that invocation and enabled explicit sparse checkout before successful checkout.",
+    "First read-only pins operation set Git DATA on child Python wrapper as well as Git; wrapper corrected immediately to Git preexec_fn only before checkout/tests. No Node process ran.",
+    "Initial admission omitted separate Codex rollout/shared WAL measurement inside96MiB growth allowance; corrected before publication, conservatively charging full current WAL once without an initial baseline."
+  ],
+  "restrictions": "No source/controller change, guest/game/compiler/Node/download/Boat/workers/Claude/HeroesII/public deploy/main/root tracked/index/refs mutation; no orphan history merge/repack/full checkout/ignored-tree copy/replay/denied-operation retry."
+}

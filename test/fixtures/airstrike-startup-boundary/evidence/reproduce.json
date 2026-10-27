@@ -1,0 +1,52 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 68812800,
+  "sampledPeakRSS": 68812800,
+  "reapedPeakRSS": 20971520,
+  "cpuSeconds": 0.272192,
+  "wallSeconds": 0.12726462702266872,
+  "owned": [
+    [
+      125199,
+      "115441616"
+    ],
+    [
+      125203,
+      "115441618"
+    ],
+    [
+      125204,
+      "115441622"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "env",
+    "AIRSTRIKE_BOUNDARY_EVIDENCE=/tmp/airstrike-space-startup-boundary-repair-oct27/ops/cli-evidence",
+    "python3",
+    "-B",
+    "test/test-airstrike-startup-boundary.py",
+    "RetainedReproducer",
+    "-v"
+  ],
+  "cwd": "/tmp/airstrike-space-startup-boundary-repair-oct27/repo",
+  "limits": {
+    "rss": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-space-startup-boundary-repair-oct27/ops/reproduce.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-space-startup-boundary-repair-oct27/ops/reproduce.stderr",
+    "bytes": 214,
+    "sha256": "8d8d888ea7a9630911de5114d399c28adc1d0f6c349eb0c9b6fb2aef3f67799c"
+  }
+}

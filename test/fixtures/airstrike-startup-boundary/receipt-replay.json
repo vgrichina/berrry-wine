@@ -1,0 +1,364 @@
+{
+  "kind": "Retained production NDJSON receipts; OFFLINE replay, no guest execution",
+  "runtimeReceipt": {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/receipt-manifest.json",
+    "sha256": "3b5138f821f24e9a092e6c482f1cc82065d42b3ed738d29d3e62790658ce9897"
+  },
+  "runtimeRunnerRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "runtimeRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "currentClosureRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "currentRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "controllerRevision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+  "observations": [
+    {
+      "after": null,
+      "focus": "airstrike",
+      "unobscured": false,
+      "evidence": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-db7934d4de8d4a1b8743b785a04c5ded.png",
+      "keysReleased": true,
+      "state": "startup",
+      "startupPrompt": "Press any key to start",
+      "consoleObstruction": {
+        "hwnd": "0x10002",
+        "x": 0,
+        "y": 8,
+        "w": 648,
+        "h": 328,
+        "visible": true,
+        "isChild": false,
+        "title": "Console"
+      },
+      "startupSnapshot": {
+        "batch": 5000,
+        "eip": "0x55995b",
+        "quit": false,
+        "yieldReason": 0,
+        "focus": "0x10001",
+        "mainHwnd": "0x10001",
+        "screen": {
+          "w": 800,
+          "h": 600
+        },
+        "frozen": {
+          "frozen": true,
+          "tickMs": 5,
+          "credits": 0,
+          "recording": false
+        },
+        "windows": [
+          {
+            "hwnd": "0x10001",
+            "x": 20,
+            "y": 20,
+            "w": 806,
+            "h": 608,
+            "visible": true,
+            "isChild": false,
+            "title": "Airstrike 1.0 pre6"
+          },
+          {
+            "hwnd": "0x10002",
+            "x": 0,
+            "y": 8,
+            "w": 648,
+            "h": 328,
+            "visible": true,
+            "isChild": false,
+            "title": "Console"
+          }
+        ]
+      }
+    },
+    {
+      "after": "airstrike-1",
+      "focus": "airstrike",
+      "unobscured": true,
+      "evidence": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/33dd2d3ad8f94dfe9e1274423897a1cf.png",
+      "keysReleased": true,
+      "state": "startup",
+      "startupPrompt": "Press any key to start"
+    },
+    {
+      "after": "airstrike-3",
+      "focus": "airstrike",
+      "unobscured": true,
+      "evidence": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/acc084c26a66499f94652bda2d9ea955.png",
+      "keysReleased": true,
+      "state": "startup",
+      "startupPrompt": "Press any key to start"
+    }
+  ],
+  "responses": [
+    {
+      "ack": {
+        "ok": true,
+        "id": "airstrike-1",
+        "value": {
+          "queued": true,
+          "batch": 5000
+        }
+      },
+      "completion": {
+        "inputId": "airstrike-1",
+        "step": {
+          "ok": true,
+          "id": "bridge-9",
+          "value": {
+            "batch": 5001,
+            "ran": 1,
+            "steps": 1,
+            "frozen": true
+          }
+        },
+        "snapshot": {
+          "ok": true,
+          "id": "bridge-10",
+          "value": {
+            "batch": 5001,
+            "eip": "0x55995b",
+            "quit": false,
+            "yieldReason": 0,
+            "focus": "0x10001",
+            "mainHwnd": "0x10001",
+            "screen": {
+              "w": 800,
+              "h": 600
+            },
+            "frozen": {
+              "frozen": true,
+              "tickMs": 5,
+              "credits": 0,
+              "recording": false
+            },
+            "windows": [
+              {
+                "hwnd": "0x10001",
+                "x": 20,
+                "y": 20,
+                "w": 806,
+                "h": 608,
+                "visible": true,
+                "isChild": false,
+                "title": "Airstrike 1.0 pre6"
+              },
+              {
+                "hwnd": "0x10002",
+                "x": 0,
+                "y": 8,
+                "w": 648,
+                "h": 328,
+                "visible": true,
+                "isChild": false,
+                "title": "Console"
+              }
+            ]
+          }
+        },
+        "logs": [
+          "[input] click 656,33 at batch 5000"
+        ]
+      }
+    },
+    {
+      "ack": {
+        "ok": true,
+        "id": "airstrike-2",
+        "value": {
+          "queued": true,
+          "batch": 5001
+        }
+      },
+      "completion": {
+        "inputId": "airstrike-2",
+        "step": {
+          "ok": true,
+          "id": "bridge-17",
+          "value": {
+            "batch": 5002,
+            "ran": 1,
+            "steps": 1,
+            "frozen": true
+          }
+        },
+        "snapshot": {
+          "ok": true,
+          "id": "bridge-18",
+          "value": {
+            "batch": 5002,
+            "eip": "0x55995b",
+            "quit": false,
+            "yieldReason": 0,
+            "focus": "0x10001",
+            "mainHwnd": "0x10001",
+            "screen": {
+              "w": 800,
+              "h": 600
+            },
+            "frozen": {
+              "frozen": true,
+              "tickMs": 5,
+              "credits": 0,
+              "recording": false
+            },
+            "windows": [
+              {
+                "hwnd": "0x10001",
+                "x": 20,
+                "y": 20,
+                "w": 806,
+                "h": 608,
+                "visible": true,
+                "isChild": false,
+                "title": "Airstrike 1.0 pre6"
+              },
+              {
+                "hwnd": "0x10002",
+                "x": 0,
+                "y": 8,
+                "w": 648,
+                "h": 328,
+                "visible": true,
+                "isChild": false,
+                "title": "Console"
+              }
+            ]
+          }
+        },
+        "logs": [
+          "[input] keydown vk=32 at batch 5001"
+        ]
+      }
+    },
+    {
+      "ack": {
+        "ok": true,
+        "id": "airstrike-3",
+        "value": {
+          "queued": true,
+          "batch": 5002
+        }
+      },
+      "completion": {
+        "inputId": "airstrike-3",
+        "step": {
+          "ok": true,
+          "id": "bridge-20",
+          "value": {
+            "batch": 5003,
+            "ran": 1,
+            "steps": 1,
+            "frozen": true
+          }
+        },
+        "snapshot": {
+          "ok": true,
+          "id": "bridge-21",
+          "value": {
+            "batch": 5003,
+            "eip": "0x55995b",
+            "quit": false,
+            "yieldReason": 0,
+            "focus": "0x10001",
+            "mainHwnd": "0x10001",
+            "screen": {
+              "w": 800,
+              "h": 600
+            },
+            "frozen": {
+              "frozen": true,
+              "tickMs": 5,
+              "credits": 0,
+              "recording": false
+            },
+            "windows": [
+              {
+                "hwnd": "0x10001",
+                "x": 20,
+                "y": 20,
+                "w": 806,
+                "h": 608,
+                "visible": true,
+                "isChild": false,
+                "title": "Airstrike 1.0 pre6"
+              },
+              {
+                "hwnd": "0x10002",
+                "x": 0,
+                "y": 8,
+                "w": 648,
+                "h": 328,
+                "visible": true,
+                "isChild": false,
+                "title": "Console"
+              }
+            ]
+          }
+        },
+        "logs": [
+          "[input] keyup vk=32 at batch 5002"
+        ]
+      }
+    }
+  ],
+  "expectedCommands": [
+    {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    },
+    {
+      "id": "airstrike-2",
+      "cmd": "keydown:32"
+    },
+    {
+      "id": "airstrike-3",
+      "cmd": "keyup:32"
+    }
+  ],
+  "provenance": [
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-events.json",
+      "sha256": "2e115d82f92aabdd473cc401876f1695fdf511bfe694c7ef94cea2315795836b",
+      "bytes": 9549
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-runner.stdout",
+      "sha256": "3443ed529dc7ee801155a3d5555eba047921f7bf181cc33c30c2b7335151e0f7",
+      "bytes": 13100
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-review-db7934d4de8d4a1b8743b785a04c5ded.json",
+      "sha256": "60416b5330e4fba42b1272b2b16b2c49f63ba3ee7bae24bc1d079744bbff93a2",
+      "bytes": 606
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-review-33dd2d3ad8f94dfe9e1274423897a1cf.json",
+      "sha256": "75109ca5f917a2434f05b46b666271e28e676ee3116cd0010472308f2a9f0067",
+      "bytes": 476
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-review-acc084c26a66499f94652bda2d9ea955.json",
+      "sha256": "110f1cd7d918ebddfd97e62c1e81087d6b4158806110afb910b03ae3042dbc07",
+      "bytes": 476
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-review-request.json",
+      "sha256": "786d55c62de6d5761cc879ba68aa7f60208dec12166046420411ee2857933ceb",
+      "bytes": 1601
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-result.json",
+      "sha256": "dee661aa3fb40585147e0fc0805371fe884a08f81686b6baa462b75c57c4dc75",
+      "bytes": 391
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-owned-cleanup.json",
+      "sha256": "7c213fdb28772b12ba794d65c7c0bc9bd8b38c9f974572ba0459d2bc39e1249a",
+      "bytes": 95
+    },
+    {
+      "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/retained/remote-closure.json",
+      "sha256": "8791611707044934e580af8fbf1b964e60e7b40161d57278323d35c64d7aaa1d",
+      "bytes": 1410
+    }
+  ]
+}

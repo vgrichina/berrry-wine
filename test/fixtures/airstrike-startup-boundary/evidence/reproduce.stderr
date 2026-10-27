@@ -1,0 +1,6 @@
+test_unchanged_receipts_stop_at_startup (__main__.RetainedReproducer.test_unchanged_receipts_stop_at_startup) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.034s
+
+OK

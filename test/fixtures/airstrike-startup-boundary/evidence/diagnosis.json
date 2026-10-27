@@ -1,0 +1,49 @@
+{
+  "status": "SOURCE_BACKED_BLOCKER_NO_CAUSAL_FIX",
+  "runtimeRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "currentRunnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+  "inputCommands": [
+    {
+      "id": "airstrike-1",
+      "cmd": "click:656:33"
+    },
+    {
+      "id": "airstrike-2",
+      "cmd": "keydown:32"
+    },
+    {
+      "id": "airstrike-3",
+      "cmd": "keyup:32"
+    }
+  ],
+  "inputBatches": [
+    5000,
+    5001,
+    5002
+  ],
+  "completionBatches": [
+    5001,
+    5002,
+    5003
+  ],
+  "eips": [
+    "0x55995b",
+    "0x55995b",
+    "0x55995b"
+  ],
+  "tickMs": 5,
+  "guestBatchBaseAdvanceSpaceToFinalMs": 10,
+  "spaceDownToUpElapsedSeconds": 0.005378112000016699,
+  "lastReviewStart": 34.13763522799991,
+  "lastBatch": 5003,
+  "credits": 0,
+  "checkInputLogCount": 0,
+  "consumptionConclusion": "No host check_input event logged; queue occupancy, async state, thread park and SDL event consumption were not measured. Absence of host delivery does not prove keyboard loss, SDL pump failure, deadlock or wrong focus.",
+  "originalDeadlineSeconds": 115.09100895799997,
+  "reviewFrozenRemainderSeconds": 80.95337373000007,
+  "fix": "None: arbitrary hold duration or extra stepping would presume the unmeasured prerequisite. Current controller already refuses unchanged startup.",
+  "nextMinimalObservation": "Later coordinator-admitted attempt: read-only frozen queue/key/main-thread/SDL-pump diagnostic at the Space boundaries, using exact production runner and its existing consumption trace where supported. Retain queue lengths/types, key state, sleep/wait identity, dequeue/route/dispatch proof, and same-channel frozen-zero snapshots before considering any bounded no-input progression. No key replay, no new deadline, no guest-state write. Source repair scope if proven: shared runner/renderer/emulator requires separate ownership.",
+  "initializers": "Retained actual runner log records DllMain initialization before bridge-1 ACK; no guest/initializer replay in this task.",
+  "artifactPreservation": "Previously compiled modules and all predecessor trees unchanged; only focused receipts copied, no ignored tree copies.",
+  "runtimeGate": "Guest prerequisite unmeasured; no gameplay/menu/ordinary-Quit acceptance, no runtime authorized in this task."
+}

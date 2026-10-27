@@ -1,0 +1,15 @@
+test_no_dispatch_log_cannot_release_or_navigate (__main__.RejectingControls.test_no_dispatch_log_cannot_release_or_navigate) ... ok
+test_nonzero_credits_cannot_release_or_navigate (__main__.RejectingControls.test_nonzero_credits_cannot_release_or_navigate) ... ok
+test_partial_step_cannot_release_or_navigate (__main__.RejectingControls.test_partial_step_cannot_release_or_navigate) ... ok
+test_queue_ack_alone_cannot_release_or_navigate (__main__.RejectingControls.test_queue_ack_alone_cannot_release_or_navigate) ... ok
+test_stale_startup_cannot_send_space (__main__.RejectingControls.test_stale_startup_cannot_send_space) ... ok
+test_still_obscured_cannot_send_space (__main__.RejectingControls.test_still_obscured_cannot_send_space) ... ok
+test_wrong_input_identity_cannot_release_or_navigate (__main__.RejectingControls.test_wrong_input_identity_cannot_release_or_navigate) ... ok
+test_actual_bridge_completion_is_only_dispatch_evidence (__main__.BridgeBoundary.test_actual_bridge_completion_is_only_dispatch_evidence) ... ok
+test_actual_bridge_stops_on_partial_step (__main__.BridgeBoundary.test_actual_bridge_stops_on_partial_step) ... ok
+test_actual_bridge_stops_on_pending_credit (__main__.BridgeBoundary.test_actual_bridge_stops_on_pending_credit) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.247s
+
+OK

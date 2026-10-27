@@ -1,0 +1,74 @@
+[
+  {
+    "version": "runtime",
+    "label": "queue ACK",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "firstLine": 7373,
+    "bytes": 266,
+    "sha256": "4699c27f013eed98a1ae15875b16dfda508351dfc15e530e1563e831ee800077",
+    "text": "    // In frozen mode an input is deliberately only queued; waiting for it to\n    // execute would deadlock the ordinary `ctl click; ctl step` agent loop.\n    if (controlFrozen) {\n      enqueue(null);\n      return { queued: true, batch: tickState.batch | 0 };\n    }\n"
+  },
+  {
+    "version": "runtime",
+    "label": "step completion",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "firstLine": 7114,
+    "bytes": 499,
+    "sha256": "ead0fe3e797c451082c867163e6fc783501734e18dfceee2dac4086b669f02c9",
+    "text": "  const finishPreviousControlBatch = () => {\n    if (!controlPreviousBatchRan) return;\n    controlPreviousBatchRan = false;\n    if (controlFrozen && controlRunCredits > 0) controlRunCredits--;\n    if (controlStepWaiter && --controlStepWaiter.remaining <= 0) {\n      const waiter = controlStepWaiter;\n      controlStepWaiter = null;\n      waiter.resolve({\n        batch: tickState.batch | 0,\n        ran: waiter.total,\n        steps: waiter.total,\n        frozen: controlFrozen,\n      });\n    }\n  };\n"
+  },
+  {
+    "version": "runtime",
+    "label": "host delivery",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "firstLine": 4497,
+    "bytes": 1184,
+    "sha256": "f566bc9c9ff6c878523f6fbc427d4961c7de07f65ce625a5777389ca45f1bef4",
+    "text": "  h.check_input = () => {\n    let evt = null;\n    if (inputEvent) {\n      evt = inputEvent;\n      inputEvent = null;\n    } else if (crossThreadMsgs.length > 0) {\n      evt = crossThreadMsgs.shift();\n    } else if (inputQueue && inputQueue.length > 0) {\n      // Delay button clicks while on \"Installing Files\" page (let extraction thread work)\n      if (installingFiles) return 0;\n      const id = inputQueue.shift();\n      if (typeof id === 'object') { evt = id; } // allow full event objects in queue\n      // Button-id form: WM_COMMAND from a menu, hwnd=0 \u2192 WAT routes to main_hwnd.\n      // Previously hard-coded 0x10002 (edit child), which silently swallowed\n      // menu commands because the edit child's wndproc is WNDPROC_BUILTIN.\n      else evt = { msg: 0x0111, wParam: id, lParam: 0, hwnd: 0 };\n    } else if (renderer) {\n      evt = renderer.checkInput();\n    }\n    if (!evt) return 0;\n    lastInputEvent = evt;\n    const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);\n    logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);\n    return packed;\n  };\n"
+  },
+  {
+    "version": "runtime",
+    "label": "key dispatch",
+    "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "firstLine": 9746,
+    "bytes": 378,
+    "sha256": "0728c6611be8ba2372152e358c548e5b6f1581fcd417df87bf94e936fc5c77c7",
+    "text": "      } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {\n        renderer.handleKeyDown(ev.code);\n        logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);\n      } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {\n        renderer.handleKeyUp(ev.code);\n        logs.push(`[input] keyup vk=${ev.code} at batch ${batch}`);\n"
+  },
+  {
+    "version": "current",
+    "label": "queue ACK",
+    "sourceSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "firstLine": 7420,
+    "bytes": 266,
+    "sha256": "4699c27f013eed98a1ae15875b16dfda508351dfc15e530e1563e831ee800077",
+    "text": "    // In frozen mode an input is deliberately only queued; waiting for it to\n    // execute would deadlock the ordinary `ctl click; ctl step` agent loop.\n    if (controlFrozen) {\n      enqueue(null);\n      return { queued: true, batch: tickState.batch | 0 };\n    }\n"
+  },
+  {
+    "version": "current",
+    "label": "step completion",
+    "sourceSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "firstLine": 7161,
+    "bytes": 499,
+    "sha256": "ead0fe3e797c451082c867163e6fc783501734e18dfceee2dac4086b669f02c9",
+    "text": "  const finishPreviousControlBatch = () => {\n    if (!controlPreviousBatchRan) return;\n    controlPreviousBatchRan = false;\n    if (controlFrozen && controlRunCredits > 0) controlRunCredits--;\n    if (controlStepWaiter && --controlStepWaiter.remaining <= 0) {\n      const waiter = controlStepWaiter;\n      controlStepWaiter = null;\n      waiter.resolve({\n        batch: tickState.batch | 0,\n        ran: waiter.total,\n        steps: waiter.total,\n        frozen: controlFrozen,\n      });\n    }\n  };\n"
+  },
+  {
+    "version": "current",
+    "label": "host delivery",
+    "sourceSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "firstLine": 4524,
+    "bytes": 1363,
+    "sha256": "569b95d738d7738953cf3abe32f2889cfbe8481fc6726c1be571e2e68c2ddf17",
+    "text": "  h.check_input = () => {\n    let evt = null;\n    let source;\n    if (inputEvent) {\n      source = 'pending';\n      evt = inputEvent;\n      inputEvent = null;\n    } else if (crossThreadMsgs.length > 0) {\n      source = 'cross-thread';\n      evt = crossThreadMsgs.shift();\n    } else if (inputQueue && inputQueue.length > 0) {\n      source = 'button-queue';\n      // Delay button clicks while on \"Installing Files\" page (let extraction thread work)\n      if (installingFiles) return 0;\n      const id = inputQueue.shift();\n      if (typeof id === 'object') { evt = id; } // allow full event objects in queue\n      // Button-id form: WM_COMMAND from a menu, hwnd=0 \u2192 WAT routes to main_hwnd.\n      // Previously hard-coded 0x10002 (edit child), which silently swallowed\n      // menu commands because the edit child's wndproc is WNDPROC_BUILTIN.\n      else evt = { msg: 0x0111, wParam: id, lParam: 0, hwnd: 0 };\n    } else if (renderer) {\n      source = 'renderer';\n      evt = renderer.checkInput();\n    }\n    if (!evt) return 0;\n    lastInputEvent = evt;\n    inputConsumptionTrace.dequeue(evt, source);\n    const packed = (evt.wParam << 16) | (evt.msg & 0xFFFF);\n    logs.push(`[check_input] msg=0x${evt.msg.toString(16)} wParam=0x${evt.wParam.toString(16)} lParam=0x${(evt.lParam >>> 0).toString(16)} packed=0x${packed.toString(16)}`);\n    return packed;\n  };\n"
+  },
+  {
+    "version": "current",
+    "label": "key dispatch",
+    "sourceSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "firstLine": 9784,
+    "bytes": 378,
+    "sha256": "0728c6611be8ba2372152e358c548e5b6f1581fcd417df87bf94e936fc5c77c7",
+    "text": "      } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {\n        renderer.handleKeyDown(ev.code);\n        logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);\n      } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {\n        renderer.handleKeyUp(ev.code);\n        logs.push(`[input] keyup vk=${ev.code} at batch ${batch}`);\n"
+  }
+]
