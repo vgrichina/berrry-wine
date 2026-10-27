@@ -96,6 +96,137 @@ class SupervisedTests(unittest.TestCase):
         self.assertTrue((d/'launch/terminal.json').exists())
         return out
 
+    def diagnostic_fixture(self, mode, *, startup=True, executable=True):
+        d,c=self.config(mode)
+        # A real Python executable fixture named node enters the unchanged
+        # production preflight dispatch. No Node engine or guest is executed.
+        program=d/('node' if startup else 'command-fixture')
+        program.write_text('#!'+sys.executable+'\n'+'''
+import json,os,resource,sys,threading
+mode=MODE
+preflight='-e' in sys.argv
+if preflight and mode!='startup-failure':
+ print(json.dumps(dict(version='offline-python-fixture',execArgv=sys.argv[1:],
+  sentinel='STARTUP-STDOUT',limits=open('/proc/self/limits').read())))
+ os.write(2,b'STARTUP-STDERR\\n'+b'E'*16384)
+ sys.exit(0)
+prefix=b'STARTUP' if preflight else b'COMMAND'
+size=196608 if mode=='simultaneous' else (131072 if mode=='cap' else 0)
+def emit(fd,label,fill):
+ data=prefix+b'-'+label+b'\\n'+fill*size
+ while data:
+  data=data[os.write(fd,data):]
+threads=[threading.Thread(target=emit,args=(1,b'STDOUT',b'O')),
+         threading.Thread(target=emit,args=(2,b'STDERR',b'E'))]
+for thread in threads:thread.start()
+for thread in threads:thread.join()
+sys.exit(23 if preflight else 29)
+'''.replace('MODE',repr(mode)))
+        program.chmod(0o700 if executable else 0o600)
+        c['command']=[str(program)]
+        return d,c
+
+    def assert_diagnostic_streams(self,d,stage):
+        names=('node-startup-stdout.log','node-startup-stderr.log') if stage=='startup' else ('output.log','stderr.log')
+        out,err=((d/'launch'/name).read_bytes() for name in names)
+        prefix=stage.upper().encode()
+        self.assertIn(prefix+b'-STDOUT',out)
+        self.assertNotIn(prefix+b'-STDERR',out)
+        self.assertIn(prefix+b'-STDERR',err)
+        self.assertNotIn(prefix+b'-STDOUT',err)
+        self.assertNotEqual((d/'launch'/names[0]).stat().st_ino,(d/'launch'/names[1]).stat().st_ino)
+        return out,err
+
+    def test_diagnostic_startup_failure_distinct_from_creation(self):
+        d,c=self.diagnostic_fixture('startup-failure')
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        self.assert_diagnostic_streams(d,'startup')
+        startup=json.loads((d/'launch/node-startup.json').read_text())
+        self.assertEqual(startup['exit'],23)
+        self.assertEqual(startup['status'],'exited')
+        self.assertEqual(self.cleaned(d)['processDiagnostics']['command']['status'],'not-started')
+        self.assertEqual((d/'launch/output.log').read_bytes(),b'')
+        self.assertEqual((d/'launch/stderr.log').read_bytes(),b'')
+
+    def test_diagnostic_startup_json_then_command_failure(self):
+        d,c=self.diagnostic_fixture('command-failure')
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        self.assert_diagnostic_streams(d,'startup')
+        self.assert_diagnostic_streams(d,'command')
+        startup=json.loads((d/'launch/node-startup.json').read_text())
+        self.assertEqual(startup['exit'],0)
+        self.assertEqual(json.loads(startup['output'])['sentinel'],'STARTUP-STDOUT')
+        outcome=self.cleaned(d)
+        self.assertEqual(outcome['processDiagnostics']['command']['exit'],29)
+        self.assertFalse(outcome['delegated'])
+
+    def test_diagnostic_simultaneous_streams_no_loss_or_deadlock(self):
+        d,c=self.diagnostic_fixture('simultaneous',startup=False)
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        out,err=self.assert_diagnostic_streams(d,'command')
+        self.assertEqual(out,b'COMMAND-STDOUT\n'+b'O'*196608)
+        self.assertEqual(err,b'COMMAND-STDERR\n'+b'E'*196608)
+        outcome=self.cleaned(d)
+        self.assertEqual(outcome['outputBytes'],len(out)+len(err))
+        self.assertEqual(outcome['childReturncode'],29)
+
+    def test_diagnostic_combined_output_cap(self):
+        d,c=self.diagnostic_fixture('cap',startup=False)
+        c['limits']['output']=1024
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        outcome=self.cleaned(d)
+        self.assertIn('aggregate-resource-limit',outcome['reason'])
+        logs=[d/'launch'/name for name in ('output.log','stderr.log','node-startup-stdout.log','node-startup-stderr.log')]
+        self.assertEqual(sum(p.stat().st_size for p in logs),1024)
+        self.assertGreater(outcome['outputBytes'],1024)
+
+    def test_diagnostic_failed_spawn_retains_files_and_error(self):
+        for startup in (True,False):
+            d,c=self.diagnostic_fixture('spawn-'+str(startup),startup=startup,executable=False)
+            self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+            outcome=self.cleaned(d)
+            stage='startup' if startup else 'command'
+            diag=outcome['processDiagnostics'][stage]
+            self.assertEqual(diag['status'],'spawn-failed')
+            self.assertIn('Permission denied',diag['error'])
+            self.assertIsNone(diag['exit'])
+            self.assertEqual(outcome['owned'],[])
+            for name in ('output.log','stderr.log','node-startup-stdout.log','node-startup-stderr.log'):
+                self.assertEqual((d/'launch'/name).read_bytes(),b'')
+
+    def test_diagnostic_failed_setup_retains_empty_streams(self):
+        d,c=self.diagnostic_fixture('setup-failure')
+        c['command'].append('--flag-without-equals')
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        outcome=self.cleaned(d)
+        self.assertIn('node-startup-requires-explicit-equals-flags',outcome['status'])
+        self.assertTrue(all(diag['status']=='not-started' for diag in outcome['processDiagnostics'].values()))
+        self.assertEqual(outcome['owned'],[])
+        for name in ('output.log','stderr.log','node-startup-stdout.log','node-startup-stderr.log'):
+            self.assertEqual((d/'launch'/name).read_bytes(),b'')
+
+    def test_diagnostic_cleanup_tail_cap_cannot_report_success(self):
+        d,c=self.config('cleanup-tail')
+        wrapper=d/'cleanup-tail.py'
+        wrapper.write_text('''
+import os,runpy,signal,sys
+def tail(*args):
+ os.write(2,b'CLEANUP-STDERR\\n'+b'E'*4096)
+ raise SystemExit(0)
+signal.signal(signal.SIGTERM,tail)
+sys.argv=sys.argv[1:]
+runpy.run_path(sys.argv[0],run_name='__main__')
+''')
+        c['command'].insert(1,str(wrapper))
+        c['limits']['output']=1024
+        self.assertEqual(self.finish(self.launch(d,c),d)['exit'],1)
+        outcome=self.cleaned(d)
+        self.assertTrue(outcome['failed'])
+        self.assertTrue(outcome['outputLimitExceeded'])
+        self.assertEqual((d/'launch/output.log').read_bytes(),b'')
+        self.assertTrue((d/'launch/stderr.log').read_bytes().startswith(b'CLEANUP-STDERR\n'))
+        self.assertEqual((d/'launch/stderr.log').stat().st_size,1024)
+
     def test_positive_real_entry_ack_zero_and_reviewed_input(self):
         d,c=self.config(fault='review',review_seconds=1)
         r=self.finish(self.launch(d,c),d)

@@ -139,7 +139,13 @@ def supervise_new(value):
     cpu = {}
     peak = 0
     output_bytes = 0
-    startup_output = None
+    startup_output = bytearray()
+    streams = {}
+    phase = None
+    diagnostics = {
+        'startup': dict(status='not-started', exit=None, stdout='node-startup-stdout.log', stderr='node-startup-stderr.log'),
+        'command': dict(status='not-started', exit=None, stdout='output.log', stderr='stderr.log'),
+    }
     delegated = False
     listener = None
     p = None
@@ -184,17 +190,30 @@ def supervise_new(value):
         rss = sum(r['rss'] for r in live) + rows.get(os.getpid(), {}).get('rss', 0)
         used_cpu = sum(cpu.values()) + max(0, rows.get(os.getpid(), {}).get('cpu', self_cpu)-self_cpu)
         peak = max(peak, rss)
-        if p and p.stdout and not p.stdout.closed:
-            try:
-                data = os.read(p.stdout.fileno(), 8192)
-            except BlockingIOError:
-                data = b''
-            if data:
-                output.write(data[:max(0, limits['output']-output_bytes)])
-                output.flush()
-                output_bytes += len(data)
-                if startup_output is not None and len(startup_output) < limits['output']:
-                    startup_output.extend(data[:limits['output']-len(startup_output)])
+        if p:
+            # Fair, nonblocking reads: neither full pipe may block the other.
+            # One cumulative cap covers both streams and both process stages.
+            for _ in range(8):
+                progress = False
+                for name in ('stdout', 'stderr'):
+                    pipe = getattr(p, name)
+                    if pipe is None or pipe.closed or output_bytes > limits['output']:
+                        continue
+                    try:
+                        data = os.read(pipe.fileno(), min(8192, limits['output']+1-output_bytes))
+                    except BlockingIOError:
+                        data = b''
+                    if data:
+                        progress = True
+                        retained = data[:max(0, limits['output']-output_bytes)]
+                        target = streams[diagnostics[phase][name]]
+                        target.write(retained)
+                        target.flush()
+                        if phase == 'startup' and name == 'stdout':
+                            startup_output.extend(retained)
+                        output_bytes += len(data)
+                if not progress:
+                    break
         if rss > limits['physical'] or used_cpu >= limits['cpu'] or output_bytes > limits['output']:
             latch('aggregate-resource-limit')
         if time.time() >= deadline or time.monotonic()-mono >= c['duration_seconds']:
@@ -241,11 +260,45 @@ def supervise_new(value):
         lower_limit(resource.RLIMIT_FSIZE, limits['file'])
         # Never impose Git DATA/AS limits on Python or Node/V8.
 
+    def spawn(argv, stage, env):
+        nonlocal p, phase
+        phase = stage
+        diag = diagnostics[stage]
+        diag.update(status='spawn-pending', argv=argv)
+        record(dict(event=stage+'-spawn', **diag))
+        try:
+            p = subprocess.Popen(argv, cwd=c['cwd'], env=env, close_fds=True,
+                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                start_new_session=True, preexec_fn=child_limits)
+        except BaseException as ex:
+            diag.update(status='spawn-failed', error=str(ex))
+            raise
+        diag.update(status='running', pid=p.pid)
+        for pipe in (p.stdout, p.stderr):
+            os.set_blocking(pipe.fileno(), False)
+
+    def finish_streams():
+        # After exit/owned cleanup, drain all available bytes, including a
+        # short-lived child that exited before the first monitor sample.
+        while True:
+            before = output_bytes
+            account()
+            if before == output_bytes:
+                break
+        diagnostics[phase].update(status='exited' if p.returncode is not None else 'pending', exit=p.returncode)
+        for pipe in (p.stdout, p.stderr):
+            pipe.close()
+
     thread = None
-    output = (root/'output.log').open('xb')
     status = 'launch-failure'
     failed = True
     try:
+        # Create every owned stream file before setup or either Popen. A spawn
+        # error has empty stream files and an explicit error, never invented
+        # child stderr. Keep output.log as the command's stdout for callers.
+        for diag in diagnostics.values():
+            for name in ('stdout', 'stderr'):
+                streams[diag[name]] = (root/diag[name]).open('xb')
         require(hasattr(os, 'pidfd_open') and hasattr(signal, 'pidfd_send_signal'), 'pidfd-required')
         require(ctypes.CDLL(None, use_errno=True).prctl(36, 1, 0, 0, 0) == 0, 'subreaper-required')
         env = dict(os.environ)
@@ -266,34 +319,26 @@ def supervise_new(value):
                 prefix.append(arg)
             code = 'console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require("fs").readFileSync("/proc/self/limits","utf8")}))'
             startup_args = prefix + ['-e', code]
-            startup_output = bytearray()
-            p = subprocess.Popen(startup_args, cwd=c['cwd'], env=env, close_fds=True,
-                stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                start_new_session=True, preexec_fn=child_limits)
-            os.set_blocking(p.stdout.fileno(), False)
+            spawn(startup_args, 'startup', env)
             until = min(time.monotonic()+5, mono+c['duration_seconds'])
             while p.poll() is None:
                 account()
                 require(reason is None and time.monotonic() < until, 'node-startup-budget-or-timeout')
                 time.sleep(.02)
-            account()
-            save(root/'node-startup.json', dict(argv=startup_args, exit=p.returncode,
+            finish_streams()
+            save(root/'node-startup.json', dict(diagnostics['startup'],
                   output=startup_output.decode(errors='replace'), sameEnvironment=True, limits=limits))
+            require(reason is None, 'terminal-after-node-startup')
             require(p.returncode == 0, 'node-startup-failed')
             actual = json.loads(startup_output)
             for name in ('Max data size', 'Max address space'):
                 require('unlimited' in next(x for x in actual['limits'].splitlines() if x.startswith(name)),
                         'node-inherited-data-or-address-limit-conflict')
-            p.stdout.close()
             p = None
-            startup_output = None
             account()
             require(reason is None, 'terminal-after-node-startup')
-        p = subprocess.Popen(c['command'], cwd=c['cwd'], env=env, close_fds=True,
-            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-            start_new_session=True, preexec_fn=child_limits)
+        spawn(c['command'], 'command', env)
         ticks = controller.process_identity(p.pid)
-        os.set_blocking(p.stdout.fileno(), False)
         record(dict(event='owned-child', pid=p.pid, process_start_ticks=ticks))
         thread = threading.Thread(target=monitor, daemon=True)
         thread.start()
@@ -337,6 +382,8 @@ def supervise_new(value):
         failed = driver.failed
     except BaseException as ex:
         status = str(ex)
+        if phase is not None:
+            diagnostics[phase]['error'] = status
         latch('supervisor-or-controller-failure: '+status)
     finally:
         latch(reason or 'supervisor-complete-no-reconnect')
@@ -351,7 +398,7 @@ def supervise_new(value):
                     p.wait(timeout=.25)
                 except subprocess.TimeoutExpired:
                     pass
-            p.stdout.close()
+            finish_streams()
         rows = scan()
         remaining = [pid for (pid, ticks_) in known if pid in rows and rows[pid]['start'] == ticks_
                      and rows[pid]['state'] not in ('Z', 'X')]
@@ -361,11 +408,21 @@ def supervise_new(value):
                 os.waitpid(pid, os.WNOHANG)
             except ChildProcessError:
                 pass
-        output.close()
+        for stream in streams.values():
+            stream.close()
+        if diagnostics['startup']['status'] != 'not-started':
+            save(root/'node-startup.json', dict(diagnostics['startup'],
+                 output=startup_output.decode(errors='replace'), sameEnvironment=True, limits=limits))
+        # Cleanup can expose a final pipe tail after the controller has already
+        # returned success. Keep its first terminal reason, but never accept an
+        # output overflow discovered while draining that tail.
+        output_limit_exceeded = output_bytes > limits['output']
+        failed = failed or output_limit_exceeded
         save(root/'supervisor-outcome.json', dict(status=status, failed=failed, reason=reason,
              peakTreeRSS=peak, cpuSeconds=sum(cpu.values()), outputBytes=output_bytes,
+             outputLimitExceeded=output_limit_exceeded,
              remainingOwnedLive=remaining, childReturncode=p.returncode if p else None,
-             owned=[list(k) for k in known], delegated=delegated))
+             owned=[list(k) for k in known], delegated=delegated, processDiagnostics=diagnostics))
         journal.close()
     return 1 if failed or remaining else 0
 
