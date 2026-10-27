@@ -1,0 +1,13 @@
+# Airstrike scheduler observation at Space5001/5002
+
+The newly accepted production observer recorded the actual sleep admission branch: guest times25000/25005/25010ms were below the25021ms deadline. Every ordinary and cooperative admission in the trace was suspended; liveThreads=true prevented fast-forward. The12 bounded records contain no admitted main-run or host-check-input event, with no suppression.
+
+Caption activation used the reviewed ordinary click656,33. Space down5001 and up5002 each have matched input ACK, one-step completion and frozen-zero snapshot. At frozen5003 the renderer FIFO retains WM_PAINT, WM_KEYDOWN32 and WM_KEYUP32; dequeue/route/dispatch counters are zero. The full800x600 post-release frame still shows Press any key to start. This establishes the cause of no main execution in this bounded window; no scheduler defect or gameplay success is established. Actual admission/run/dequeue after the deadline remains unobserved; earliest ordinary due boundary is5005.
+
+Exact main be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c runner a8187d18, thread manager f4ba190b and required observer93775a00 were staged with unchanged helper c8c85b12 and module bf707aa4(compiled1e4fdb06). All332 staged hashes, canonical89-file tree mount, helper frozenState contract, Node v24.22.1 executable/environment/heap512 and inherited limits passed before the single guest. Independent12groups/4controls and affected merged-tree acceptance are reused unchanged; no build or acceptance replay.
+
+The guest stopped after Space release with complete exact descendant cleanup. Conservative supervisor charge25.326731CPU/25.571552193wall seconds fits remaining58.962178/68.740196. Cumulative charge56.364553CPU/76.831356193wall fits original90/120; unused time does not authorize another invocation. Five full frames fit the eight-capture cap. Distinct process/runner stdout and stderr, matched requests/responses, timestamps, scheduler logs, FIFO snapshots, operational incidents and recovery links are preserved in the new archive.
+
+Boat bx_k3hacj25 was verified RUNNING with zero owned guest survivors and handed back to the coordinator; shutdown16:44Z, expiry16:47:38.097Z. No lifecycle operation, source repair, main integration or public deployment. Evidence-only task branch task/airstrike-integrated-scheduler-trace-oct27; final canonical ops/receipt-manifest.json and append-only messageboard bind exact commit/ref verification.
+
+evidence-index.json hashes NEW payloads in evidence.tar.gz. Historic canonical receipts are referenced in recovery-links.json; already verified payloads were neither recopied nor replayed.

@@ -1,0 +1,736 @@
+{
+  "status": "SCHEDULER_SLEEP_BRANCH_OBSERVED_NO_ADMITTED_MAIN_RUN",
+  "observedDecisions": [
+    {
+      "event": "decision",
+      "id": 1,
+      "path": "ordinary",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 2,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 3,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 4,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 5,
+      "path": "ordinary",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 6,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 7,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 8,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 9,
+      "path": "ordinary",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 10,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 11,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 12,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    }
+  ],
+  "matchedControlRequests": 34,
+  "allACKsMatched": true,
+  "serialFrozenInputs": [
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 14.528022598000007,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-1",
+        "value": {
+          "queued": true,
+          "batch": 5000
+        }
+      },
+      "inputId": "airstrike-1",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-11",
+        "value": {
+          "batch": 5001,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-12",
+        "value": {
+          "batch": 5001,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] click 656,33 at batch 5000"
+      ]
+    },
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 25.063004665999983,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-2",
+        "value": {
+          "queued": true,
+          "batch": 5001
+        }
+      },
+      "inputId": "airstrike-2",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-21",
+        "value": {
+          "batch": 5002,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-22",
+        "value": {
+          "batch": 5002,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] keydown vk=32 at batch 5001"
+      ]
+    },
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 25.177728447999982,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-3",
+        "value": {
+          "queued": true,
+          "batch": 5002
+        }
+      },
+      "inputId": "airstrike-3",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-26",
+        "value": {
+          "batch": 5003,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-27",
+        "value": {
+          "batch": 5003,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] keyup vk=32 at batch 5002"
+      ]
+    }
+  ],
+  "mainRunRecords": 0,
+  "hostCheckInputRecords": 0,
+  "observerSuppressed": false,
+  "finalState": {
+    "requestId": "corrected-bridge-28",
+    "batch": 5003,
+    "frozen": true,
+    "credits": 0,
+    "counters": {
+      "scheduled": 3,
+      "enqueued": 0,
+      "dequeued": 0,
+      "routed": 0,
+      "dispatched": 0
+    },
+    "counterLimit": 4294967295,
+    "saturated": false,
+    "last": {
+      "dequeue": null,
+      "route": null,
+      "dispatch": null
+    },
+    "queues": {
+      "scheduled": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "pending": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "crossThread": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "buttons": {
+        "count": "unknown",
+        "head": [],
+        "truncated": false
+      },
+      "renderer": {
+        "count": 3,
+        "truncated": false,
+        "head": [
+          {
+            "action": "unknown",
+            "batch": "unknown",
+            "hwnd": 65537,
+            "msg": 15,
+            "wParam": 0,
+            "lParam": 0
+          },
+          {
+            "action": "unknown",
+            "batch": "unknown",
+            "hwnd": 0,
+            "msg": 256,
+            "wParam": 32,
+            "lParam": 3735553
+          },
+          {
+            "action": "unknown",
+            "batch": "unknown",
+            "hwnd": 0,
+            "msg": 257,
+            "wParam": 32,
+            "lParam": 3224961025
+          }
+        ]
+      },
+      "guestPostQueue": "unknown"
+    },
+    "keys": {
+      "16": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "17": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "18": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "32": {
+        "_physicalKeys": false,
+        "_asyncKeys": true,
+        "_asyncPressedKeys": true
+      }
+    },
+    "threads": {
+      "backend": "cooperative",
+      "main": {
+        "state": "active",
+        "suspendCount": 0,
+        "eip": 5609819,
+        "yieldReason": 0,
+        "waitHandle": 917509,
+        "waitTimeout": -1,
+        "sleepUntil": 25021,
+        "sleepActive": "unknown"
+      },
+      "count": 1,
+      "truncated": false,
+      "head": [
+        {
+          "handle": 921600,
+          "tid": 1,
+          "state": "active",
+          "suspendCount": 0,
+          "eip": 5532240,
+          "yieldReason": 1,
+          "waitHandle": 917508,
+          "waitTimeout": -1,
+          "sleepUntil": 0,
+          "sleepActive": "unknown"
+        }
+      ]
+    },
+    "sdlConsumption": "unknown"
+  },
+  "causalConclusion": "Every actual ordinary/cooperative admission at5000-5002 returned suspended=true reason=sleep: now25000/25005/25010<deadline25021; liveThreads=true prevents fast-forward. No main run was admitted, so matching main execution/host-input dequeue cannot exist in this window. Space remains in renderer FIFO.",
+  "remainingBranch": "Actual runnable admission at/after25021ms, matching main-run/host-check-input decisionId and FIFO dequeue remain unobserved. Earliest ordinary5ms boundary is5005(25025ms), not frozen5003. No further step authorized.",
+  "limitsOfConclusion": "No scheduler defect, gameplay, ordinary Quit or later SDL consumption established. Diagnostic completion intentionally stopped runtime.",
+  "frames": [
+    {
+      "path": "retained/game-evidence/capture-cfe241c610344923822fdefa41877b7b-fresh.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 manually inspected; identical fresh captures share review",
+      "content": "Airstrike frontmost, Press any key to start; no gameplay"
+    },
+    {
+      "path": "retained/game-evidence/capture-cfe241c610344923822fdefa41877b7b.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 manually inspected; identical fresh captures share review",
+      "content": "Airstrike frontmost, Press any key to start; no gameplay"
+    },
+    {
+      "path": "retained/game-evidence/capture-post-space.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 manually inspected; identical fresh captures share review",
+      "content": "Airstrike frontmost, Press any key to start; no gameplay"
+    },
+    {
+      "path": "retained/game-evidence/capture-255a20d918df4035bf184062a370f7ff-fresh.png",
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "bytes": 144804,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 manually inspected; identical fresh captures share review",
+      "content": "Console obscures startup"
+    },
+    {
+      "path": "retained/game-evidence/capture-255a20d918df4035bf184062a370f7ff.png",
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "bytes": 144804,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 manually inspected; identical fresh captures share review",
+      "content": "Console obscures startup"
+    }
+  ],
+  "allowance": {
+    "originalCPU": 90,
+    "originalWall": 120,
+    "priorCPU": 31.037822,
+    "priorWall": 51.259804,
+    "newCPU": 25.326731,
+    "newWall": 25.571552193000002,
+    "CPUCharge": "trusted supervisor conservative own+waited high-water; may double-charge; not exact physical CPU",
+    "cumulativeCPU": 56.364553,
+    "cumulativeWall": 76.831356193,
+    "remainingCPU": 33.635447,
+    "remainingWall": 43.168643806999995,
+    "newGuestInvocations": 1,
+    "invocationAllowanceConsumed": true,
+    "noReplay": true
+  },
+  "boatHandback": {
+    "at": 1793118277.2401848,
+    "box": "bx_k3hacj25",
+    "state": "RUNNING",
+    "stateEvidence": "successful supported API exec on assigned Boat",
+    "expiry": "2026-10-27T16:47:38.097Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T16:44:00Z",
+    "logicalBytes": 20079201,
+    "allocatedBytes": 20881408,
+    "freeDisk": 49019236352,
+    "guestIdentities": [
+      {
+        "pid": 10133,
+        "start": "39752",
+        "currentStart": null,
+        "ownedIdentityAlive": false
+      },
+      {
+        "pid": 10134,
+        "start": "39760",
+        "currentStart": null,
+        "ownedIdentityAlive": false
+      }
+    ],
+    "ownedCleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": 0,
+      "complete": true
+    },
+    "supervisorCleanupComplete": true,
+    "survivors": [],
+    "lifecycleOperations": 0
+  }
+}
