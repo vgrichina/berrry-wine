@@ -1,0 +1,7 @@
+{
+  "target": "/tmp/enigma-cleanup-startgame-oct27/modules/wine-assembly.wasm",
+  "bytes": 1880854,
+  "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "encodedBytes": 925584,
+  "maxChunk": 48000
+}

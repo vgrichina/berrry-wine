@@ -1,0 +1,10 @@
+gate('mount-wrapper-correction')
+import ast
+tree=ast.parse((O/'prepare.py').read_text());node=next(n for n in tree.body if isinstance(n,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='remote' for t in n.targets));raw=ast.literal_eval(node.value.func.value)
+fixed=raw.replace('h=pathlib.Path(HOME)','h=pathlib.Path('+repr(str(H))+')');assert "'HOME':'/home/user'" in fixed;ast.parse(fixed)
+save('setup-incident.json',dict(cause='Unscoped HOME placeholder replacement changed explicit environment HOME key in owned mount wrapper; Python SyntaxError before Node/guest. First failed stderr retained in mount-failed-setup.json.',firstResponse='1793091269340223569',guestStarts=0,nodeStarts=0,correction='Replace only h=pathlib.Path(HOME) placeholder, new v2 wrapper and separate causal streams; unchanged staged closure reused.',correctedSHA256=sha(fixed.encode())))
+put_bytes(str(O/'mount-preflight-v2.py'),fixed.encode(),'mount-preflight-v2')
+cmd='python3 '+shlex.quote(str(O/'mount-preflight-v2.py'))+' > '+shlex.quote(str(O/'mount-preflight-v2-api.stdout'))+' 2> '+shlex.quote(str(O/'mount-preflight-v2-api.stderr'))
+save('mount-preflight-v2-api.json',api(cmd))
+v=json.loads(py('import pathlib,json;h=pathlib.Path('+repr(str(O))+');print(json.dumps(dict(receipt=json.loads((h/"mount-check.json").read_text()),stdout=(h/"mount-parser.stdout").read_text(),stderr=(h/"mount-parser.stderr").read_text(),wrapperStderr=(h/"mount-preflight-v2-api.stderr").read_text())))')['stdout']);save('mount-check.json',v);assert v['receipt']['exit']==0;print(json.dumps(v))
+save('checkpoint.json',dict(status='EXACT_CLOSURE_AND_MOUNT_PASS_NO_GUEST',at=time.time(),files=2665,bytes=37525867,production='425755ee5ee9be0734c7aca187521100f5487674',acceptedSupervisor='b160b5403e69f28e92e218849cc8165c67776bd2',remaining=['fresh remote/local admission','accepted production supervisor startup and single guest','actual frame inspection and correlated StartGame','after-action gameplay review','evidence and branch publication'],lifecycle=json.loads((ROOT/'scratch/usage-watch/enigma-cleanup-startgame-oct27.task.runtime.json').read_text())))

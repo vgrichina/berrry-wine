@@ -1,0 +1,8 @@
+{
+  "apiCapture": 1048576,
+  "actualAPICapture": 1076436,
+  "overshoot": 27860,
+  "guardFailure": "Post-response guard and eagerly queued concurrent fetch admitted all pending chunks; a subsequent diagnostic also ran before post-capture rejection. No further API calls after recognition. Pre-dispatch guard fixed locally but no runtime retries.",
+  "responses": 975,
+  "maxResponseBytes": 5788
+}

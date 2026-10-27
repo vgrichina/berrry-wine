@@ -1,0 +1,13 @@
+{
+  "source": "/tmp/enigma-reconciled-canonical-boat-build-oct26/modules/wine-assembly.wasm",
+  "target": "modules/wine-assembly.wasm",
+  "bytes": 1880854,
+  "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "explicitTaskPin": true,
+  "retainedReadiness": "scratch/usage-watch/enigma-next-production-readiness-oct27.json",
+  "originalMapSHA256": "06a72d86b409850d73a8158d4f12d974b517ed0c9532652a1fc5f0ee2cb09f83",
+  "originalMapIssue": "Contains runtime/build/wine-assembly.wasm SHA8fac3993, not the explicitly requested af202 tailcall module at launch path. Original map retained; wrong module never executed.",
+  "projectedRuntimeBytes": 39406721,
+  "noCompile": true,
+  "noReacquisition": true
+}

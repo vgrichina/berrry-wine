@@ -1,0 +1,2 @@
+# Causal streams are byte-exact captured artifacts, including final newlines.
+evidence/*.log binary

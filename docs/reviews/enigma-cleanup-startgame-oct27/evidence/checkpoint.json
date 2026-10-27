@@ -1,0 +1,58 @@
+{
+  "status": "BLOCKED_FRAME_REVIEW_CAPTURE_BUDGET_STOP",
+  "at": 1793091750.5492606,
+  "acceptedSupervisor": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "productionRuntime": "425755ee5ee9be0734c7aca187521100f5487674",
+  "moduleSHA256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "mapSHA256": "06a72d86b409850d73a8158d4f12d974b517ed0c9532652a1fc5f0ee2cb09f83",
+  "mapFiles": 2665,
+  "mapBytes": 37525867,
+  "moduleSupplementBytes": 1880854,
+  "guestInvocations": 1,
+  "restarts": 0,
+  "decisions": 0,
+  "inputs": 0,
+  "gameplay": false,
+  "ordinaryGuestQuit": false,
+  "actualNewFrame": {
+    "path": "/tmp/enigma-cleanup-startgame-oct27/ops/launch/controller/menu-candidate.png",
+    "batch": 45569,
+    "sha256": "b876992c5035e22563a9a2c9ed87bda8d3ab381bc7b55974050d6205b8933be9",
+    "bytes": 413407
+  },
+  "historicalTransportGate": {
+    "path": "/tmp/enigma-cleanup-startgame-oct27/ops/historical-menu.png",
+    "bytes": 389913,
+    "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "wireBytes": 370938,
+    "elapsed": 4.67033106717281,
+    "chunk": 4096,
+    "maxInflight": 4,
+    "passGate": true
+  },
+  "captureBudget": {
+    "apiCapture": 1048576,
+    "actualAPICapture": 1076436,
+    "overshoot": 27860,
+    "guardFailure": "Post-response guard and eagerly queued concurrent fetch admitted all pending chunks; a subsequent diagnostic also ran before post-capture rejection. No further API calls after recognition. Pre-dispatch guard fixed locally but no runtime retries.",
+    "responses": 975,
+    "maxResponseBytes": 5788
+  },
+  "terminal": "Not independently retrieved: cumulative API capture budget exhausted; remote original supervisor owns no-review cleanup within unchanged110s allowance. Actual terminal/owned absence require coordinator preservation/collection under separate authorization.",
+  "startup": "Original accepted supervisor produced new menu metadata at batch45569; exact startup diagnostics retained on box and partially in already-captured-runtime-diagnostic.json. Do not substitute detached acknowledgment for startup proof.",
+  "box": "bx_mueag3dn",
+  "lastProvenState": "RUNNING_API_EXEC_SUCCEEDED_2026-10-27T09:00:26Z",
+  "leaveRunning": true,
+  "shutdownOwner": "coordinator",
+  "lifecycle": {
+    "box": "bx_mueag3dn",
+    "createdAt": "2026-10-27T08:47:15.003176Z",
+    "guestCutoff": "2026-10-27T09:15:00Z",
+    "handback": "2026-10-27T09:20:00Z",
+    "shutdown": "2026-10-27T09:25:00Z",
+    "expiry": "2026-10-27T09:42:54Z",
+    "owner": "coordinator"
+  },
+  "remainingGate": "Pre-admit entire new-frame envelope and terminal reserve, inspect genuine current frame within accepted review window then correlated StartGame and after-action gameplay review under a separately assigned fresh invocation; this spent attempt must not restart.",
+  "cleanup": "All local supervised child receipts retained; remote supervisor/Node terminal and absence unverified; coordinator owns snapshot-stop and evidence preservation."
+}

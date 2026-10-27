@@ -1,0 +1,3 @@
+All 9 groups already staged; no API or guest action
+
+{"exit": 0, "stopReason": null, "peakRSS": 43909120, "sampledPeakRSS": 43909120, "reapedPeakRSS": 25124864, "cpuSeconds": 0.188739, "wallSeconds": 0.11123310402035713, "owned": [[3977416, "113845040"]], "cleanupComplete": true}

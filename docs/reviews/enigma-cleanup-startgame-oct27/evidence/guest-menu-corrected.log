@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 79, in <module>
+    elif a[0]=='script':exec(pathlib.Path(a[1]).read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 30, in <module>
+RuntimeError: bounded frame poll exhausted; no input

@@ -1,0 +1,15 @@
+const assert=require("assert"),fs=require("fs"),path=require("path"),crypto=require("crypto");const args=["--no-build", "--wasm=/tmp/enigma-cleanup-startgame-oct27/modules/wine-assembly.wasm", "--exe=/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/enigma.exe", "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe", "--cwd=C:\\Enigma-1.01", "--dlls=/tmp/enigma-cleanup-startgame-oct27/system/msvcrt.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-cleanup-startgame-oct27/vfs/Enigma-1.01/SDL_ttf.dll", "--quiet-api", "--quiet-blocks", "--no-close", "--memory-mb=512", "--screen=640x480", "--vfs-tree=/tmp/enigma-cleanup-startgame-oct27/vfs", "--quiet-fs", "--control=18127", "--trace-input", "--frozen", "--max-seconds=110", "--max-batches=2000000"];
+const getArg = (name, def) => {
+  const prefix = `--${name}=`;
+  const arg = args.find(value => value.startsWith(prefix));
+  return arg ? arg.slice(prefix.length) : def;
+};
+const getArgs = name => {
+  const prefix = `--${name}=`;
+  return args.filter(value => value.startsWith(prefix))
+    .flatMap(value => value.slice(prefix.length).split(','))
+    .map(value => value.trim()).filter(Boolean);
+};
+const hasFlag = name => args.includes(`--${name}`);
+
+const {expandIncludePatterns,guestPathInTree}=require("/tmp/enigma-cleanup-startgame-oct27/runner/lib/vfs-host-files.js");const trees=getArgs("vfs-tree");assert.deepEqual(trees,["/tmp/enigma-cleanup-startgame-oct27/vfs"]);assert.equal(getArgs("dlls").length,8);assert.equal(getArgs("vfs-mount").length,0);assert(hasFlag("no-build")&&hasFlag("frozen"));const files=expandIncludePatterns(trees[0],["**/*"]);assert.equal(guestPathInTree(trees[0],getArg("exe")),getArg("exe-guest-path"));for(const p of getArgs("dlls"))assert(fs.statSync(p).isFile());const v={argv:args,dlls:getArgs("dlls"),files,commaBearingFiles:files.filter(f=>f.hostPath.includes(",")),parserSHA256:"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e"};fs.writeFileSync("/tmp/enigma-cleanup-startgame-oct27/ops/mount-enumeration.json",JSON.stringify(v,null,2));console.log(JSON.stringify({PASS:true,fileCount:files.length,commaBearingCount:v.commaBearingFiles.length,enumerationSHA256:crypto.createHash("sha256").update(fs.readFileSync("/tmp/enigma-cleanup-startgame-oct27/ops/mount-enumeration.json")).digest("hex"),parserSHA256:v.parserSHA256}));

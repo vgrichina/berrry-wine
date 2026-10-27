@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 77, in <module>
+    r=m.supervise([sys.executable,__file__,*a[2:]],rss_limit=(256 if a[2]=='git' else 128)*1048576,cpu_limit=90,wall_limit=120,output_limit=2097152);out=r.pop('output');(O/(a[1]+'.log')).write_bytes(out);save(a[1]+'.execution.json',r);print(out[:8192].decode(errors='replace'));print(json.dumps(r));assert r['exit']==0 and not r['stopReason']
+                                                                                                                                                                                                                                                                                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

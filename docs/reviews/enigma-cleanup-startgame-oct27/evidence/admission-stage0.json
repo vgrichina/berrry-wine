@@ -1,0 +1,63 @@
+{
+  "at": 1793091092.8647869,
+  "rows": [
+    {
+      "task": "enigma-cleanup-startgame-oct27",
+      "actual": 2781184,
+      "remaining": 97882112
+    },
+    {
+      "task": "alien-cleanup-menu-mission-oct27",
+      "actual": 3862528,
+      "remaining": 96800768
+    },
+    {
+      "task": "ricochet-cleanup-round-play-oct27",
+      "actual": 4706304,
+      "remaining": 95956992
+    },
+    {
+      "task": "airstrike-cleanup-ordinary-quit-oct27",
+      "actual": 1421312,
+      "remaining": 99241984
+    },
+    {
+      "task": "penguin-causal-independent-accept-cleanup-oct27",
+      "actual": 737280,
+      "remaining": 99926016
+    }
+  ],
+  "walPositiveOnce": 28672,
+  "own": 2809856,
+  "ownAllocation": 100663296,
+  "ownReserve": 41943040,
+  "free": 8047538176,
+  "future": 506585088,
+  "projected": 7540953088,
+  "floor": 2982150144,
+  "clients": [
+    {
+      "pid": 3965837,
+      "rss": 202055680
+    },
+    {
+      "pid": 3965838,
+      "rss": 204505088
+    },
+    {
+      "pid": 3965839,
+      "rss": 202862592
+    },
+    {
+      "pid": 3965845,
+      "rss": 211595264
+    },
+    {
+      "pid": 3967555,
+      "rss": 202813440
+    }
+  ],
+  "memAvailable": 3447336960,
+  "requiredRAM": 1727631360,
+  "pass": true
+}

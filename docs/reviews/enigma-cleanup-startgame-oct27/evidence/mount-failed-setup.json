@@ -1,0 +1,7 @@
+{
+  "mount-check.json": null,
+  "mount-parser.stdout": null,
+  "mount-parser.stderr": null,
+  "mount-preflight-api.stdout": "",
+  "mount-preflight-api.stderr": "  File \"/tmp/enigma-cleanup-startgame-oct27/ops/mount-preflight.py\", line 2\n    h=pathlib.Path('/tmp/enigma-cleanup-startgame-oct27');o=h/'ops';env={''/tmp/enigma-cleanup-startgame-oct27'':'/home/user','PATH':'/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin','LANG':'C.UTF-8','TZ':'UTC','PYTHONDONTWRITEBYTECODE':'1'}\n                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nSyntaxError: invalid syntax. Perhaps you forgot a comma?\n"
+}

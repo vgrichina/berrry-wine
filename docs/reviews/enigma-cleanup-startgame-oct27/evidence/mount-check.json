@@ -1,0 +1,25 @@
+{
+  "receipt": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 94339072,
+    "sampledPeakRSS": 94339072,
+    "reapedPeakRSS": 68227072,
+    "cpuSeconds": 0.477254,
+    "wallSeconds": 0.21360585899992657,
+    "owned": [
+      [
+        26796,
+        "84285"
+      ],
+      [
+        26797,
+        "84288"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "stdout": "{\"PASS\":true,\"fileCount\":2460,\"commaBearingCount\":0,\"enumerationSHA256\":\"68e73fe531f547bd4d4e9648f59bc5da24f5112ed76047fd520981ee44a2c322\",\"parserSHA256\":\"aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e\"}\n",
+  "stderr": "",
+  "wrapperStderr": ""
+}

@@ -1,0 +1,11 @@
+{
+  "command": "timeout 120 python3 /tmp/enigma-cleanup-startgame-oct27/ops/launch.py",
+  "commandId": "cmd_hqtwflmxdxp3",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/30075.err.log",
+  "logPath": "/home/user/.ascii/processes/30075.log",
+  "pid": 30075,
+  "processId": 30075,
+  "startedAt": "2026-10-27T08:59:33.817Z",
+  "success": true
+}

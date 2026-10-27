@@ -1,0 +1,7 @@
+{
+  "target": "/tmp/enigma-cleanup-startgame-oct27/ops/stage-5.tar",
+  "bytes": 4925440,
+  "sha256": "8d51ada732a50d86a0e30ffe456eceb07887199a385aa8748afd738a1032856f",
+  "encodedBytes": 2363404,
+  "maxChunk": 48000
+}

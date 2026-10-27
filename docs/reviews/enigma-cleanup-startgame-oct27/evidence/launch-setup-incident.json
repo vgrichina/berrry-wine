@@ -1,0 +1,19 @@
+{
+  "cliParser": {
+    "response": "1793091353260044017",
+    "error": "--timeout cannot be used with --detach",
+    "beforeAPI": true
+  },
+  "wrapper": {
+    "commandID": "cmd_2ofiwfifq2m9",
+    "error": "Missing modules/wine-assembly.wasm",
+    "beforeSupervisor": true,
+    "beforeNode": true,
+    "beforeGuest": true,
+    "diagnostic": "launch-wrapper-diagnostic.json"
+  },
+  "guestInvocations": 0,
+  "acceptedSupervisorInvocations": 0,
+  "correction": "Stage exact supplied af202 tailcall module from verified immutable local recovery source; all unchanged closure/mount/transport checks reused",
+  "noUnknownStep": true
+}

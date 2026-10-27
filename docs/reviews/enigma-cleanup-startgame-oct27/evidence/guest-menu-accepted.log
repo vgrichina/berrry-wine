@@ -1,0 +1,31 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 79, in <module>
+    elif a[0]=='script':exec(pathlib.Path(a[1]).read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 27, in <module>
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 64, in fetch
+    for off,b in pool.map(one,range(0,size,4096)):pieces[off]=b
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 619, in result_iterator
+    yield _result_or_cancel(fs.pop())
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 317, in _result_or_cancel
+    return fut.result(timeout)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/usr/lib/python3.12/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 61, in one
+    return off,base64.b64decode(py(code)['stdout'].strip(),validate=True)
+                                ^^^^^^^^
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 50, in py
+    def py(code):return api('python3 -c '+shlex.quote(code))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 45, in api
+    assert len(raw)+len(err)<=8192 and sum(x.stat().st_size for x in d.iterdir())<=1048576,'API capture limit'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: API capture limit

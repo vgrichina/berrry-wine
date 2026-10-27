@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 79, in <module>
+    elif a[0]=='script':exec(pathlib.Path(a[1]).read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 15, in <module>
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 46, in api
+    assert p.returncode==0,dict(exit=p.returncode,response=n)
+           ^^^^^^^^^^^^^^^
+AssertionError: {'exit': 2, 'response': '1793091353260044017'}

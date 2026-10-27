@@ -1,0 +1,7 @@
+{
+  "pythonSyntax": "PASS",
+  "jsonFiles": "All retained JSON documents parsed where complete; raw stdout/error streams intentionally retain non-JSON diagnostics",
+  "readbackRecovery": "readback-recovery.json",
+  "noRepeatedAcceptanceSuites": true,
+  "publication": "Evidence-only independent-root sparse branch; no production source edits and no main merge authorization"
+}

@@ -1,0 +1,8 @@
+{
+  "cause": "Unscoped HOME placeholder replacement changed explicit environment HOME key in owned mount wrapper; Python SyntaxError before Node/guest. First failed stderr retained in mount-failed-setup.json.",
+  "firstResponse": "1793091269340223569",
+  "guestStarts": 0,
+  "nodeStarts": 0,
+  "correction": "Replace only h=pathlib.Path(HOME) placeholder, new v2 wrapper and separate causal streams; unchanged staged closure reused.",
+  "correctedSHA256": "298ace2268760c26cafed927e3e627da49a72c74ab50df2345133e46feabb306"
+}

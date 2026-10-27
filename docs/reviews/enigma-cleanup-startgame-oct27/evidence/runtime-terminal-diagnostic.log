@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 79, in <module>
+    elif a[0]=='script':exec(pathlib.Path(a[1]).read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 3, in <module>
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 50, in py
+    def py(code):return api('python3 -c '+shlex.quote(code))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-cleanup-startgame-oct27/ops/work.py", line 45, in api
+    assert len(raw)+len(err)<=8192 and sum(x.stat().st_size for x in d.iterdir())<=1048576,'API capture limit'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: API capture limit

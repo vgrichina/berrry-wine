@@ -1,0 +1,28 @@
+{
+  "historicalInspected": true,
+  "historicalPreauthorizesNothing": true,
+  "coordinatesCandidate": [
+    343,
+    213
+  ],
+  "decisionSchema": {
+    "reviewed": true,
+    "safeStartGame": true,
+    "frameSHA256": "new actual SHA256",
+    "batch": "actual new integer",
+    "x": 343,
+    "y": 213
+  },
+  "pollSeconds": 0.25,
+  "transportGateSeconds": 4.67033106717281,
+  "checkpointSeconds": 35,
+  "reviewSeconds": 25,
+  "afterActionSeconds": 20,
+  "aggregateSeconds": 110,
+  "cleanupSeconds": 10,
+  "maxFrames": 4,
+  "perFrameBytes": 2097152,
+  "remotePNGBytes": 8388608,
+  "remainingAcceptance": "Actual inspected new menu, exact hash/batch click ACK, actual after-action gameplay review; menu/loading insufficient",
+  "ordinaryQuit": "Accepted controller action:quit is host control cleanup; never label ordinary guest Quit. No semantic repairs or extra direct input."
+}
