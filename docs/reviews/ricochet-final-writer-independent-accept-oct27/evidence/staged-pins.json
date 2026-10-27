@@ -1,0 +1,1156 @@
+{
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "pins": {
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": {
+      "blob": "9fcb5ac6722a6afe1873d627a2d04a5e284f6733",
+      "sha256": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b",
+      "bytes": 2997
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/README.md": {
+      "blob": "e54807a57a8992557f64ef9325bea213f7f43f64",
+      "sha256": "2b8d6eea804e797c7c8d25684a06746d90dd7e9d80acbe3a0d4f8a3deeb13450",
+      "bytes": 6172
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/api-1793092826212634802-command.json": {
+      "blob": "0f1f2d0a6d793ea71c855d3f5abc5c811194697b",
+      "sha256": "e7a77bc25fb6127b0d132ac58bad80a5f8df48ee10919b0c6d238f5665fec498",
+      "bytes": 1233
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/api-1793092833026763786-command.json": {
+      "blob": "82ba02eafe55bf0feda5ac66728b762e9667ca2b",
+      "sha256": "762123ede3ae0a881d14d187af4441d7e04763d9a98cd199a7dbfffd7d4343e4",
+      "bytes": 1236
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/api-1793092841347248549-command.json": {
+      "blob": "db610970bcd3e3bfa163bbe5ebb97531bc2b2f0a",
+      "sha256": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff",
+      "bytes": 1285
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/api-1793092867150456577-command.json": {
+      "blob": "560f55abdf0d5c7e2c8676533e6835d620300afa",
+      "sha256": "907fb832c2aa80c111093287dd1154295792307acddc96110be05c902d160213",
+      "bytes": 1287
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/bounded-api-1793092826212634802-command.json": {
+      "blob": "970adc6be9cf7980215ebe7f47bf767f4b8388a0",
+      "sha256": "49e85c9a1ddaf950e3d72e4b060c8e84bbca31f33ce80e5d271941da54584d6a",
+      "bytes": 2054
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/bounded-api-1793092833026763786-command.json": {
+      "blob": "d3295766ef98901c9b610e53230453acb78c70bf",
+      "sha256": "560d3903c0310508a52a24b885386fd98607c5603d4a8e57905c51abf708708e",
+      "bytes": 2057
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/bounded-api-1793092841347248549-command.json": {
+      "blob": "a69f8c36ad1c20fa03ec6890446d80d7cd4dc3f7",
+      "sha256": "1df1f8cc6d60faf2331e88135dc2557f130505ebd1b0e6785e95b620c905050e",
+      "bytes": 2106
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/bounded-api-1793092867150456577-command.json": {
+      "blob": "f47624b0f4188bc6422d782076a7418f32c3bb74",
+      "sha256": "5847a141cbb2f9c6f1dc1d41ef463bab5ac8891a4593c49914963daed1c74ed4",
+      "bytes": 2108
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/checkpoint.json": {
+      "blob": "5eda0c463913e3a067213f184fc9ffbfded6a2c8",
+      "sha256": "d6f0fd690402823a242bf8380e5021e2db6aa7c9b8979e043b19db78da271af1",
+      "bytes": 4189
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094970714803720.command.json": {
+      "blob": "09963eee3625e8c5672a200314df2e4350564fc7",
+      "sha256": "581bdb311d054d8f2f22d73efa216dc751f44d61775835eae114cabeb770d15b",
+      "bytes": 1096
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094970714803720.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094970714803720.result.json": {
+      "blob": "1abfe9c63de11e247e6c60db8ba5031d15ab5cc9",
+      "sha256": "5399be7bc45fb099c78981b668e5dd413a2c543b521e21218ab5f78f854c501e",
+      "bytes": 556
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094970714803720.stderr.b64": {
+      "blob": "c79404eff6295285228cdc6f2de75955fa436292",
+      "sha256": "12637f4292a032ef4493a1dd1f272b2b4d6c7f90e6a73d4f6ef2f6b8149ac114",
+      "bytes": 649
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094970714803720.stdout.b64": {
+      "blob": "e219c00973725013f301f061030301712432bfd4",
+      "sha256": "d03457f13c537dfc4069baf5d179125426607f96bd88f49b69675b496dd222e8",
+      "bytes": 145
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094989565247483.command.json": {
+      "blob": "abaf4c357040fc3acc4373265abd518df2961ec3",
+      "sha256": "7c5555235d2a44b56ecfac66c56d41f1cad782caad479b845fa94e048b853d8e",
+      "bytes": 1119
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094989565247483.result.json": {
+      "blob": "69068f78a3131ecf53575d5d73e0777d8bdfadf2",
+      "sha256": "6b2a95c86ccd7c88539bb2fdda9a74118071f34152fa5c9a0c97c66c25ea500a",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094989565247483.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094989565247483.stdout.b64": {
+      "blob": "476384c0195dcf73380de796a8031e9a9fd95647",
+      "sha256": "173f1a9ad52ac760dc9e9b8e3521b1d1b7b2d99eab2d18737483d2633cf3c97e",
+      "bytes": 145
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993505441677.command.json": {
+      "blob": "3d762e25c2e480ced7f907322a6e466357eb7f80",
+      "sha256": "086179d6a531a2cf95fec516c6165e9c21a269892a91297db666444240ffa72e",
+      "bytes": 1122
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993505441677.result.json": {
+      "blob": "2a51312d25bba82e379038f9eba23f680686cc4c",
+      "sha256": "3b31c3b8ed9be6aad852bade44688bbb82b5f3193fe77229ac6cdbd3248903d0",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993505441677.stderr.b64": {
+      "blob": "a834be4bab686f3c1716f130db502b2b5b927e98",
+      "sha256": "c7bad01eda80fb1bf006d06d0b2cb9ed8e117b3ec4390ca7daffee9c36aa6a51",
+      "bytes": 481
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993505441677.stdout.b64": {
+      "blob": "8db4d32b00239995061ed7eaa2d3b4c349dbb66f",
+      "sha256": "38ff232560ac8e3884758de8ee7f5f584b8d241894ed36cb98111731eacd7fcc",
+      "bytes": 69
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993660090218.command.json": {
+      "blob": "d218cee1d4fdbfaadb9f5e95148275407fd5cdce",
+      "sha256": "95b17d0e6a9d18e9ba19675614fc7067ae0636637b1e0c11d8de7257da391a6f",
+      "bytes": 1194
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993660090218.result.json": {
+      "blob": "94a3d4bcf3b6d3a16ec09cfa1dc4507d8faeef6c",
+      "sha256": "737e9ad2374a489187b3f241fdcf2874a1fa0f71fe8f7a865a596c8d1c4741b9",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993660090218.stderr.b64": {
+      "blob": "88f0a95f9ea61bdf8501e143587870191ce62fa4",
+      "sha256": "7973e2d165a5ee9cb42b6f6ecffe3284bf133992732e1063130e65feece37d31",
+      "bytes": 3621
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993660090218.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993817367055.command.json": {
+      "blob": "794dcb2e8c6d023e8813ba2b26b3b4c8f6396a20",
+      "sha256": "023cd7616e79f0a36cc48d2b955ae0abe3b52c450f50b16572aa37bd666420d7",
+      "bytes": 1212
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993817367055.result.json": {
+      "blob": "5ee035fc520962bd2070a1007f98296fea88e4dd",
+      "sha256": "8bc087cdd4fcf06166cbcd83016d76fa56cf26bb68c05753699578b372bab8f1",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993817367055.stderr.b64": {
+      "blob": "71256545f8c9e1752d3309d90193ab4682faf329",
+      "sha256": "0e4049ebc24e67906d393c43b385dd90204a63e083137d212cd1a52af915644f",
+      "bytes": 1713
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793094993817367055.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089649574181.command.json": {
+      "blob": "79b53ed0f93ea3f83f3069ba51051aa809f24ecf",
+      "sha256": "78f5f7d5eec0dde45b9c3439c17bcea43e6d7f6c9f69f622110f7bd121187983",
+      "bytes": 1121
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089649574181.result.json": {
+      "blob": "1d1d35bfcd19679d3c17a5871ad8e43dab3d3856",
+      "sha256": "f3eeb25e7fbc30a83355ab2632a8bee1e64c13df51f17ae9a7779056bd02d887",
+      "bytes": 556
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089649574181.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089649574181.stdout.b64": {
+      "blob": "2392a0407a88c07c8b4eda1e26f1a8a358449cea",
+      "sha256": "0e4af6e04d7218d6b1866f4de824ae0e1a5dd2935c2689f8b8aabb457c3641ad",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089777001182.command.json": {
+      "blob": "53797d2f866cfcdfb249f9d656c406f6563cc033",
+      "sha256": "d551d422346c7b6d791bf7addbfdbf1b61dab1eba0692f6845ed6ff6a47eda8c",
+      "bytes": 1221
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089777001182.result.json": {
+      "blob": "b12d63f5d215157d8cb49266d473467f0f4dd1f0",
+      "sha256": "d6e0137a5853fa801ecae89b268c48063818a761a6c46a21574403899416dd2d",
+      "bytes": 600
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089777001182.stderr.b64": {
+      "blob": "2cf44e81ab5481cc1c2270f17cbc7a24494b0287",
+      "sha256": "ab485704a60675455f142380a7007b90513cacfeb6923477047e66a09ecefbae",
+      "bytes": 301
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095089777001182.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095106854196868.command.json": {
+      "blob": "600557cffbf9f7263fcf2582120d940843353453",
+      "sha256": "790f11078901eca587bb1b929b918f309995b7a122efcf366994fd24e6dd6b86",
+      "bytes": 1786
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095106854196868.result.json": {
+      "blob": "f2c56a9b20ec062f68a5dc61e918a2ea01d73958",
+      "sha256": "1b4ba706b805ea0e07a5796dd4f2ad067d1b50de69e8cead4be2d88db466798f",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095106854196868.stderr.b64": {
+      "blob": "8a3e4b85ad942b58209aa04e9dbb01535b29688d",
+      "sha256": "23d23de1a7a4c39cf02fac820cb212dc02c348306e56f999e310081a92356af1",
+      "bytes": 4597
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095106854196868.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095109004579741.command.json": {
+      "blob": "9f20a5f7442d1fdf6e10e768f5983eb33bf4dbca",
+      "sha256": "bd60937e085f579d3e28ef07364774dc906662715cc06df0d89702b351cacf4d",
+      "bytes": 1203
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095109004579741.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095109004579741.result.json": {
+      "blob": "bcf632fff66b11d77d609e08f4b0bda8a0984755",
+      "sha256": "90f1c99d74c1a30141a3b6f96195ddec04d9df6c6baaa09c6e0d41e9cb3a497d",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095109004579741.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095109004579741.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174697213641.command.json": {
+      "blob": "e0fc2cd60f9bf443cb8da8e55656e1e6b1a7694d",
+      "sha256": "437a9a8a217f377667b7d36fa6cecba7d5855a3a30da33c2c1f0311a8d8558c3",
+      "bytes": 1232
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174697213641.result.json": {
+      "blob": "15c746639dadd9978f9761675edab3aecbd54706",
+      "sha256": "9036ae511a7c04290319c3d1a839c6eafa555f962cdddeea806c309217d3107b",
+      "bytes": 554
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174697213641.stderr.b64": {
+      "blob": "b10ae2355d85b9a0e6afd2b539f98103ad534a8b",
+      "sha256": "5d280969749a5f2be8ceadf0217b08c0a8d7a50c81faf3508023385b0fbc41dd",
+      "bytes": 4653
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174697213641.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174853431549.command.json": {
+      "blob": "74cef89a1d38277a11fd7cd5661412b3c0be0db9",
+      "sha256": "573278065f771ed1538bb0a6564cbcd5c68493989bf25554496c2293f1fd80fa",
+      "bytes": 1786
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174853431549.result.json": {
+      "blob": "9e32de574b6666dd090a54f045af4ab8bdb057ef",
+      "sha256": "e87c24a184f94b9a7445b0df6e944051f9cf5963f9845462df56356d6bc2f8ba",
+      "bytes": 693
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174853431549.stderr.b64": {
+      "blob": "ebec700f2d564767a30ca177f72ca630dd152f7a",
+      "sha256": "6c2c3c6a3bf70cac8334b94597cba2103ccfb4330730d219d4af0be47399fedb",
+      "bytes": 1797
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095174853431549.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188030717539.command.json": {
+      "blob": "f5450b1c9428ec15d450b7f31fc62be276e2aef6",
+      "sha256": "ef830c9978341f516c81a4b24825cb2dca6e8e012b01a9915a69010f786ce7b3",
+      "bytes": 1121
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188030717539.result.json": {
+      "blob": "72a9c3cdfe5d43a6ecc16b94d20d72187c7f8e14",
+      "sha256": "beef4b32144d8ef0ef22055a86197c627a1f7f69006456080913b03a8e79f112",
+      "bytes": 556
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188030717539.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188030717539.stdout.b64": {
+      "blob": "950111091d2cec3c0bc3d477cc3e89b1cd676301",
+      "sha256": "5cbae5cd13c4dbb699ec4e98b978c3a3af36df8eed2f4e16a0b51b3bfce349b3",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188155107738.command.json": {
+      "blob": "21218be9ec55c1cea52715047143ff9767ad3eae",
+      "sha256": "edba10882d6e0645199185bc8cdbd5fff3752468fcb394a8b973d173d0c56069",
+      "bytes": 1232
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188155107738.result.json": {
+      "blob": "c55f853f8e3ea0211c74dde25e8bfc75b5002000",
+      "sha256": "159c4052c390ed9613e5a97ba5862888a1ebaa50b49374a78125b54f098854ca",
+      "bytes": 554
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188155107738.stderr.b64": {
+      "blob": "c68275f31d7c6a61446c9b0e568ba5853fd8b0e7",
+      "sha256": "56612254e91456120ef3e298e3cba9a5da6ced8f849509715f7f0dcf90003a07",
+      "bytes": 133
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095188155107738.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095211350948752.command.json": {
+      "blob": "ee13c0fb1d62ad8cf237d4ed7ae7752487cf2788",
+      "sha256": "d2cffc65e8aa59b3ab0e2a2cfd036a3026ff9e603689c8fd46f19993c6c223be",
+      "bytes": 1770
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095211350948752.result.json": {
+      "blob": "1b6e1686eeae5f6bc4cb73524ca480c6fabe64d7",
+      "sha256": "0a5bd7a81ec4be09fd76d88d40eb224f65aaed0e75c33de74a855b59e64c1a4f",
+      "bytes": 737
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095211350948752.stderr.b64": {
+      "blob": "d653fe9c44cd1f815398d774cda78d6620cee7db",
+      "sha256": "cb3211b1a20e699d0721a63cde7bba66eb6cb68402f651b8d2012c903d2eae82",
+      "bytes": 145
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095211350948752.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262169367949.command.json": {
+      "blob": "77f5bf9c35b75303a6303a047f4b2cf148b5d137",
+      "sha256": "3307c4fc262dbaf19340e7893f90089fc00578d2a9e528107e4d1acdd54102ef",
+      "bytes": 1539
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262169367949.result.json": {
+      "blob": "628b4f69a9647f1677ef50db45f2626062d72d98",
+      "sha256": "b4f57176232eefc9ed204d39a0c2888a2cf0d30cd85965f5b132cea75c14f53c",
+      "bytes": 565
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262169367949.stderr.b64": {
+      "blob": "603e83e1a293cabc3d0996d5401d398c6dfc34bf",
+      "sha256": "439a9b30ef03db4f4a5d84d6755134f7f86ecf881f375fc8397efbb805978dee",
+      "bytes": 1065
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262169367949.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262331187514.command.json": {
+      "blob": "b3b8535bc06c70788a55654fe1497c99b3f3a49e",
+      "sha256": "7b0ce77eb65ffc62e005374feaf9c5f25d03dd07f5a0e47e3c7f4c60d159e40a",
+      "bytes": 1167
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262331187514.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262331187514.result.json": {
+      "blob": "722dfc4102408836ebff8a9c022e2ee0adc2e899",
+      "sha256": "e67bc744007827afea19e468a5be752b77ba89d3103e7fa864d6bf87eef2b6e2",
+      "bytes": 554
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262331187514.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262331187514.stdout.b64": {
+      "blob": "697734cd2231f77833fffa7399100b5a517447b1",
+      "sha256": "e9e731bb6fdf60c7657c154144e48bf5b53d035c31599a95937c052e3e4e4cc3",
+      "bytes": 13
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262442405995.command.json": {
+      "blob": "13711b46f2d5509c9c1e20f4c6dcc2344b56567f",
+      "sha256": "9a79ad73519079206715f0c0d34ed160f17c5a9b67e4ad67ea26d0f72b72e6a0",
+      "bytes": 1168
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262442405995.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262442405995.result.json": {
+      "blob": "cee034ebc9e6a142d598823b401a1164638ea641",
+      "sha256": "408aba283a9bc74fc161340bb8e9013d19fdd8385f9293fac553bf9b3f0e46a2",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262442405995.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095262442405995.stdout.b64": {
+      "blob": "697734cd2231f77833fffa7399100b5a517447b1",
+      "sha256": "e9e731bb6fdf60c7657c154144e48bf5b53d035c31599a95937c052e3e4e4cc3",
+      "bytes": 13
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095304659490278.command.json": {
+      "blob": "d447dcc202634d7389664806c2498eaaa6451307",
+      "sha256": "a46b445336a47dd9ed19ffcfc337eebaae97b5f41f6ec2c742b95f26e985013b",
+      "bytes": 1385
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095304659490278.result.json": {
+      "blob": "6a0bcc3e0c41e13800e42b8995cb04af8fa811de",
+      "sha256": "8fbe07a9a8a3a012a96e469360956dc1a604309fffa935394f24af2b9d0b44c4",
+      "bytes": 612
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095304659490278.stderr.b64": {
+      "blob": "757e784c6147180daf6b31f71c28a6d2ef713510",
+      "sha256": "0395eca0ba5863d3fe9f0fb2f524a9a466510171059acfd48526f033d72481e2",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095304659490278.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416450227320.command.json": {
+      "blob": "0fd2bb0b01ff06fbef9de647bb4a445cfc32e46c",
+      "sha256": "803eb608a0189c0e2d75c888edcc2e475faef4c0fc2c5b6c0a5148bd7a29bcf7",
+      "bytes": 1825
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416450227320.result.json": {
+      "blob": "db4510ef60026f3d4d42e481fb96d4a49f31b5e0",
+      "sha256": "bb4904ed9d322e329ea95e00f4f2840c1f039c7bd35f02d456b2ddaa11204f0f",
+      "bytes": 738
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416450227320.stderr.b64": {
+      "blob": "4ab6533989f08de8d4b462af6cf4f2c2bca425af",
+      "sha256": "9852dd4bb1f580a7287ff435494ddf63d5f055399ddcf878aea0b92a7b3d3652",
+      "bytes": 1797
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416450227320.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416837070244.command.json": {
+      "blob": "f29196a37d124bf82cbbe0accc6c936ee3c861a5",
+      "sha256": "5d22ca4c26466902dfc84399076f77464ccac94bdb4750228addd848ed3ffd34",
+      "bytes": 1309
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416837070244.result.json": {
+      "blob": "44c63f78c90629a90822a875df8c7774550fca0d",
+      "sha256": "d13ccf9f4991993d7ff54b1f7f80bc45edc430b31e2555ba623f389577576d91",
+      "bytes": 611
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416837070244.stderr.b64": {
+      "blob": "98f16158fc66637b190bfcc2b1da40b63fd80299",
+      "sha256": "63ab0bda397f933a1ff7e68218511a5b045fac2ab7fa1502023e09d761330f1d",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095416837070244.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095431652402842.command.json": {
+      "blob": "b7be0993209070a8358d77821fa35871de3334dd",
+      "sha256": "f97c082a4ca9d9a43da466052777cce4abe1e38b1a44afbcb712b6a905794186",
+      "bytes": 1288
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095431652402842.result.json": {
+      "blob": "443843c9cde04dcd689ed58e0fa1a2f6655fc586",
+      "sha256": "7f259079cbee17ad2e56dbde7e10e985729e37cf151534ebdda9f07bbc9200ac",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095431652402842.stderr.b64": {
+      "blob": "4d2b08ae1d26773f2f909b2ba748e08fcd3ce1d8",
+      "sha256": "194b198430f0a0989147fbcbb75594730e18046d686a86a115e7a912b5798557",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095431652402842.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470581209003.command.json": {
+      "blob": "035e838b5901b5bab7541ca327309d8511b4d7fa",
+      "sha256": "3aa83447a303b7f2bc00c4de4d0c28e052013eb302ae9e2b05dc20395e064faf",
+      "bytes": 1121
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470581209003.result.json": {
+      "blob": "7da59bc9bd0b69550e6fa2c38e9f5fea88f06d59",
+      "sha256": "cdfa885de6b956c694b0187ecd950abc01debd458bc7c90a83fd628650757d0c",
+      "bytes": 568
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470581209003.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470581209003.stdout.b64": {
+      "blob": "c7c0804b9331bd1baded430037193ad6fae0117a",
+      "sha256": "1f4632851b27aa3c018f09ecd698c8f421eb3a312ff681c2ea07fac6df461123",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470715695403.command.json": {
+      "blob": "eecc00f8372568009631f669e324a95204a60e55",
+      "sha256": "e764aa052da3866abe58744ff0d74495cf98f882ba28da16c291e4bf24382be6",
+      "bytes": 1152
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470715695403.result.json": {
+      "blob": "e65b46a301c30aefa1b65a46a80fbdb597261362",
+      "sha256": "e7e4d4f933bc62e7ee6fc9762459cb3ec0a3c01e0338f57fd95542dcb3a0f0c0",
+      "bytes": 785
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470715695403.stderr.b64": {
+      "blob": "b9990c307c56c0250e00a4a3caa9d4d45c179c86",
+      "sha256": "83fc9c3d78000d51a85dd0a2f1031a59fb0e31a39c7249a07ef95f78d92b89ee",
+      "bytes": 157
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095470715695403.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095490233857871.command.json": {
+      "blob": "dbd2c14036c441aca76c3198896e3b347e1b241a",
+      "sha256": "8d15ee637565a40a6d171c7b799d26268a3660f0275b5a098e75ad873013c7fc",
+      "bytes": 1427
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095490233857871.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095490233857871.result.json": {
+      "blob": "5bec67ac1c2e5a03687f30a45361e6e08606adbc",
+      "sha256": "ded845c7719b459e49dbd9ab760e2ec08c2698bb40117a0db4fa00a8d624992a",
+      "bytes": 567
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095490233857871.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095490233857871.stdout.b64": {
+      "blob": "e84618574dec8c95659338039ef754b4c18d7482",
+      "sha256": "0cf0f8f900785a18b945097264fc6555c1a457aa5aa18f9883a37e96e02c7cc0",
+      "bytes": 977
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515677499607.command.json": {
+      "blob": "3b004b86fe5a059a3e7ef0013aeba33f5653af70",
+      "sha256": "e4586d61d973252898fa9236f01a4ca082e2f506e8d4cc900086b16ba6227024",
+      "bytes": 1131
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515677499607.result.json": {
+      "blob": "9e360aba393d3a7bdba45be9c4968d94c22e41f8",
+      "sha256": "91f8de1d18a8082b80946e47cc7f8682bfcca9e4a7c00a7f17f4487f56578d8b",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515677499607.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515677499607.stdout.b64": {
+      "blob": "860539391432c9f009e3c53660332e92a1a81bf3",
+      "sha256": "07bb30a3ea426915cab34c921acf96ab268044122d3bb43a29a506647f007537",
+      "bytes": 61
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515847644545.command.json": {
+      "blob": "b96fd95b93c8b4e80b51e404f169f2a370a3dbed",
+      "sha256": "d7c950525a71409fe10b09e3b6b2c8200cbbdd8f6d4d3e31be1f6daa88d09917",
+      "bytes": 1539
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515847644545.result.json": {
+      "blob": "589239c547188820a3ebc9f1ea38d9ee1c3b7a7b",
+      "sha256": "9ebe35d9013301f16fdffd9d202227d818373e62e3fd0c9848d255614c80526c",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515847644545.stderr.b64": {
+      "blob": "8919fd7af9694c14bf0ef2f200765d92b51a25cb",
+      "sha256": "ce200939cb378b82fbb74d94dd564b8d7b2baf0826ad72276aae17be9b49c4b9",
+      "bytes": 1065
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095515847644545.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095576695389670.command.json": {
+      "blob": "32c7896c8f51ec04ba3653cae56e8cc5fb379f00",
+      "sha256": "d796c89e75947fc6f69320038f8b5c8f0cf145005a00c95e7307bf3b33ffb294",
+      "bytes": 1122
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095576695389670.result.json": {
+      "blob": "06d1d1be2a78a87a04361dd7da232d9c3f4af135",
+      "sha256": "16a08c0f61f9910c84e98154a6c4272cc6b613d453c5f029d78c9bbb485bb25e",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095576695389670.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095576695389670.stdout.b64": {
+      "blob": "c82b3fff3b7f57f4abcf2bd9cc6276d079b2d0f8",
+      "sha256": "5764ddfa836db3666572c88868d65cb736b670c37f45559638bf7ed6aa2d2a6c",
+      "bytes": 1485
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589821668960.command.json": {
+      "blob": "f5f5027dd8ab1d861aeeb0ec58162a6be9ae1262",
+      "sha256": "a84507732d7645b4c34074f0ee8da160d85cf09b89634c370d61254fc1f3980e",
+      "bytes": 1382
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589821668960.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589821668960.result.json": {
+      "blob": "44f96ddab4e4ffb19b12b32069defe1c387e0f18",
+      "sha256": "0fd19eb2d088524660fd43cf47ec3d25296fbbcfa44b56bf857d107af2310b69",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589821668960.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589821668960.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589951256006.command.json": {
+      "blob": "64ecb07272b9ef8603f3d520eb662fccc8d3680b",
+      "sha256": "d1768d1babb1913f435289e14e3c5102b9f6b03d4ecfb9c8a4e36dd380f61cf9",
+      "bytes": 1137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589951256006.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589951256006.result.json": {
+      "blob": "41c5a44692ee5760baf9bd09879df70c09d1f779",
+      "sha256": "8513b8c82cc5e2f82e6fa9eb17e27d3fb947b43e564c4b4c44f93bec853fbea2",
+      "bytes": 556
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589951256006.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095589951256006.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095590070007961.command.json": {
+      "blob": "6678d1e2588c323ff574d6e3907d83de5118905b",
+      "sha256": "b6845b3525db9493cb2722a2fde20f6ef8c759542f14a1d2f8670704187e3620",
+      "bytes": 1336
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095590070007961.git-limits.json": {
+      "blob": "5f815f740f89893bf6fa8691869fffb7f9bb84d3",
+      "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed",
+      "bytes": 124
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095590070007961.result.json": {
+      "blob": "1b5b2655154e2595ef2ee43361f1627ab0a5cce4",
+      "sha256": "85b95f1bd7064958924002cb19864667fb9b7d0a280468a11e280a790ec0a5d4",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095590070007961.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095590070007961.stdout.b64": {
+      "blob": "e7482fb9cdb17743cff881a92811fd1a4f8cf061",
+      "sha256": "37849b844710d88608ae571e20f3df1aee34a1cab561963d421c6c2394286347",
+      "bytes": 3925
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613243130557.command.json": {
+      "blob": "f84a04454b324408d31ed1af7a01dc29fd578385",
+      "sha256": "04a1b1e7d8f6d0e35383484fd4e2175bbc31e2ed9d5de23649e4abfbfe5df070",
+      "bytes": 1120
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613243130557.result.json": {
+      "blob": "f127ab4dc2f0d27dd0e340029a05ba3d29045a30",
+      "sha256": "8629d5d3e1b7d0ffb86fd390cc784f70493966724326ad7cdc9969026899140c",
+      "bytes": 555
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613243130557.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613243130557.stdout.b64": {
+      "blob": "c7c0804b9331bd1baded430037193ad6fae0117a",
+      "sha256": "1f4632851b27aa3c018f09ecd698c8f421eb3a312ff681c2ea07fac6df461123",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613358309985.command.json": {
+      "blob": "b1b9059f6171134e0baa142629afc232498caaff",
+      "sha256": "05967a20544163a625667c6cd20f725e41adedba2249d443ac4b85e1a7486e13",
+      "bytes": 1232
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613358309985.result.json": {
+      "blob": "a781df02b8f463e84da162c39e0137dfbb97f23d",
+      "sha256": "8470e843bfb5e96c74cb4a727c78d23512c76921b2630db984177f4b841f411d",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613358309985.stderr.b64": {
+      "blob": "87e7d3ae4ed24abe66080a512689883ee23d1fdb",
+      "sha256": "e73df0ed9f6314f8d6fbba29d89661871b0de1c80bf929eee7b2639c172cc8bb",
+      "bytes": 133
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095613358309985.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095657714899290.command.json": {
+      "blob": "3ebb166a05cb63b9aebd1f7e969e4b7397838f9d",
+      "sha256": "db48b1887e7d5279d12a8a8feeb0a2dcece37b912225825beaf1677de1593bbe",
+      "bytes": 1121
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095657714899290.result.json": {
+      "blob": "b001410500fe59e8b1f305c3dc6c34ecd89d99f8",
+      "sha256": "fa37a003ea6d1b693654b2694dc432c0f34659053a00f0fa5e85efc5bb01208f",
+      "bytes": 566
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095657714899290.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095657714899290.stdout.b64": {
+      "blob": "c7c0804b9331bd1baded430037193ad6fae0117a",
+      "sha256": "1f4632851b27aa3c018f09ecd698c8f421eb3a312ff681c2ea07fac6df461123",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689716671091.command.json": {
+      "blob": "9dc1a671ffe4e460401f125720bd277070be7aab",
+      "sha256": "94c2c5a51aa753864c1f1d96f887569d84191b5b94ff9d5c9fb97ea503a79d99",
+      "bytes": 1120
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689716671091.result.json": {
+      "blob": "ac1b52e324f88f71f8fd02b1cd2a35110afa9cf7",
+      "sha256": "bbc804013a319be83dfd49e6a808370691e9849d6c9f0a8ac76e9b2ddfa25da9",
+      "bytes": 556
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689716671091.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689716671091.stdout.b64": {
+      "blob": "c7c0804b9331bd1baded430037193ad6fae0117a",
+      "sha256": "1f4632851b27aa3c018f09ecd698c8f421eb3a312ff681c2ea07fac6df461123",
+      "bytes": 137
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689867005459.command.json": {
+      "blob": "4af7390d178759e79cdddbb044ec7f3b4a25f1a3",
+      "sha256": "8fb13594f9113bf07002e74773b5406de884a47734739e741d7e099936140092",
+      "bytes": 1122
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689867005459.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/1793095689867005459.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/affected.py": {
+      "blob": "26425e8ae13997bab61cc98fc8abfa316d8610a1",
+      "sha256": "a12c8dbbe99ac8a6ba9ad9bb04df4d13154669712b5907d66dd612768ef03fbc",
+      "bytes": 1207
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/authoritative-admission.json": {
+      "blob": "cde1f2a81cf4c78eadc09a053d5c7cd64315d2f0",
+      "sha256": "51d9670f19973529d036cff7f4ed3084033217dcf99308ec518dbf596741680f",
+      "bytes": 495
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/bundle.py": {
+      "blob": "e7ebb11882b3681e786a5ce5e9fb44b1dd2861ec",
+      "sha256": "3187539143addc132b7b3c5c759459784f292864fec8a8ef65a475e431b5a0a9",
+      "bytes": 2298
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-README.md": {
+      "blob": "d875a4ce1249a97c820d9767e5f62bab3c9073a3",
+      "sha256": "01e6c240147478f6f0cb69f127fde92fe655d434a3b025543266743f6c8add8d",
+      "bytes": 7727
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-boundary-original.json": {
+      "blob": "47e1c86da41d24751e70ae9f0fdb20966f758b5e",
+      "sha256": "d441e438b8de8417f102f26504e8fc318fd2c25d25d9f9956c54c87cd88e1447",
+      "bytes": 433
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-checkpoint.json": {
+      "blob": "62e347f251aa7b6c63848d42b94a758ed920ca6d",
+      "sha256": "9a67e257679fc840b0bbd5e808375f1fa16bc949a934c25aee14cdab27a1cedb",
+      "bytes": 5706
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-first-implementation-command.json.b64": {
+      "blob": "f515f2181b0af7e98778230c391e5710c45a10fc",
+      "sha256": "3fac1d8fcf08b7d3edc2ba9ac54817dfa58e75ba3a6dd7d155a90d6149158b84",
+      "bytes": 2657
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-first-implementation-result.json.b64": {
+      "blob": "10d20b68513acea34a64ffb3473b69d0ab3c68c3",
+      "sha256": "ced43ea85398c9ab9fcf4d246ab973ac8eb6ea76abb7b845e8468992b5a3c1fb",
+      "bytes": 729
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-first-implementation-stderr.b64": {
+      "blob": "ca68fce0cd099b4713afd54e4a4e1783bb65dccc",
+      "sha256": "7bdb116877fd5a00a8eab82622219c9c6450b95f7433b2f007f89ebd5f42f9a0",
+      "bytes": 4557
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-first-implementation-stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/candidate-publication.json": {
+      "blob": "2105749a2d4c74a427e2d54100da56c837779029",
+      "sha256": "3dcc9b29b5756671df07f951f4a0593e695541a5c20a993c410f8ac29643c657",
+      "bytes": 361
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/cleanup-supervision.json": {
+      "blob": "b213bb0f9ac3f7dad20cd12dca29e6785dea6b32",
+      "sha256": "247b2db506a9ac294fe63d299e8b9de037d5bc35b8970e2872cef4e47c1312db",
+      "bytes": 1145
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/cleanup.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/cleanup.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-0.stderr.b64": {
+      "blob": "30f28373a4a7b84417a8544a8427d903c72163a7",
+      "sha256": "640d3a07996ec74a970f472d8f6af5602187813aa2fdb905394ae9185e9e4f00",
+      "bytes": 429
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-0.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-1.stderr.b64": {
+      "blob": "30f28373a4a7b84417a8544a8427d903c72163a7",
+      "sha256": "640d3a07996ec74a970f472d8f6af5602187813aa2fdb905394ae9185e9e4f00",
+      "bytes": 429
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-1.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-2.stderr.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-2.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-3.stderr.b64": {
+      "blob": "30f28373a4a7b84417a8544a8427d903c72163a7",
+      "sha256": "640d3a07996ec74a970f472d8f6af5602187813aa2fdb905394ae9185e9e4f00",
+      "bytes": 429
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774-3.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/concurrent-1793095470783856774.json": {
+      "blob": "8e3e47bd18066528761a60ebf9538e234ff27a84",
+      "sha256": "a7b18cd5b3e6b6e594cc5691061f7bdbcad18822aa1a6dfb616118038fe6c566",
+      "bytes": 3630
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/configuration.json": {
+      "blob": "a71546adb571baa931f8e8e1b14b5395794cc44f",
+      "sha256": "54fff99b055e741b0daea8fa9ef30ac8e98c2fb0456de44c60a7fb989ccf329d",
+      "bytes": 1413
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/git-child.py": {
+      "blob": "03b61eaede1c518af3ec6bed5eca540a5e31f83f",
+      "sha256": "f4051186b97fd95fc2b2b4f77da7cc1b5b7c6e8c627be834ec13b9fcd21272f2",
+      "bytes": 453
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/independent-retarget.json": {
+      "blob": "599ff2e0fc777a8ae9abba458b1702aec4cde497",
+      "sha256": "453b9d25d2fc91bf53579e352af3f6c409856a0c10e98e9098454cae83037a3e",
+      "bytes": 336
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/initial-root-ref-digest.json": {
+      "blob": "876d5dfc2530ee1275541c69f607b598c10fee00",
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3",
+      "bytes": 196
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/late-final-hardlink.json": {
+      "blob": "1e8524f1d2c167e96221149562cca681905ee05b",
+      "sha256": "63063ec9b047fd7e387320621c5af6ca21b7154482ea23cfedf8d7a0fd82d055",
+      "bytes": 376
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/late-final-symlink.json": {
+      "blob": "0fa82c904ada078fe3a5c335201bf2dc68f87917",
+      "sha256": "4dc5bb1cbc845ff2ea164a45cd55e2950fa0140a893b032a224f4f809b2c6ee1",
+      "bytes": 375
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/light-execution-pool-oct26.py": {
+      "blob": "065e8f6687731c42946daa127a3081dca834e24b",
+      "sha256": "881b0bf09e2791ce85c757770efe27937f661e2934787f6c751d62075f5d761b",
+      "bytes": 1151
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/minimal-retarget.py": {
+      "blob": "fb7788caaa9e901213b523d3827478bae4aec01d",
+      "sha256": "e6d89b55bee4dcf813e05762edc0cfb7e23d31c237b88b9de2f9b6d56f6bed69",
+      "bytes": 616
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/mutation-controls.json": {
+      "blob": "aa988cf3a660eb8e36025c78ae57e5533498ffdc",
+      "sha256": "8aa702750fd54859dad13e27c00a509201c2b0f1e592b640b348e452c76ec7d0",
+      "bytes": 71
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/operate.py": {
+      "blob": "3cbc73a743d447b88dbc56cee0026fa907e57cf0",
+      "sha256": "27ee5e6eb04426250bd9c6ce7d1ce5a395691e901ddfa5b77bd84e7fcf7c9ccf",
+      "bytes": 5417
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/package.py": {
+      "blob": "98fa9f86559e4d3599d6e7ae1c94021ece60742b",
+      "sha256": "447b58f4ff5d979dc288206b5e16c614eb85933782391534234c971b3d418956",
+      "bytes": 11929
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/prior-checkpoint.json": {
+      "blob": "ca68daa4f6cead1cc67494700f90827d5f9d3b18",
+      "sha256": "0d426f54b93b595e92283f92ca3afe298e58aacef2b657b692b5b926c00c5832",
+      "bytes": 3062
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/prior-manifest.json": {
+      "blob": "fdcee045069bd44726716d5f37eb12f773b5bc37",
+      "sha256": "bccb9cde86cf4bdda9f62ea646920510fbba0d493f3419109ddf6fb9f1dfb91c",
+      "bytes": 20579
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/prior-reused-22-methods.json": {
+      "blob": "81d543c1e1ff6262ec43773bae1a7ca5a07db190",
+      "sha256": "7a40d303f6aba8c57c0d95145ea23dd1acb539f0200f1c920e94d673918b7bda",
+      "bytes": 5585
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/production-after-open.json": {
+      "blob": "101bfaf43243e76c7f2e651bf19af64c7c77d0e8",
+      "sha256": "beb09b843d39a34c81b3b8d1b027bcd06a5f1a64476405497eabff5dfee2b96e",
+      "bytes": 1503
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/production-final-path-stat.json": {
+      "blob": "de7e638d5c53be766f5b6deb234eb8a68de5db21",
+      "sha256": "c0c54127daed5a150e404c1dd5bec1748307a0d00c30260ac803b726bb35a828",
+      "bytes": 1524
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093773002351570.command.json.b64": {
+      "blob": "87dfd7c3f4ceacc462c0132af69ddcc66ce5fbc7",
+      "sha256": "211d08c9ad864cc2b4770059429a1521b29885bd712c9ab21466c51861350022",
+      "bytes": 1429
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093773002351570.result.json.b64": {
+      "blob": "116a40db8b81c1a4da34b22a3258edcdb3d70642",
+      "sha256": "0abbda0bfe87e790e4eccaf86ddc889c73199faba0aef7029ff737955f6bd8b5",
+      "bytes": 729
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093773002351570.stderr.b64": {
+      "blob": "3a85b70597e9c8525fe07f4f5a5cda07f2fb7fff",
+      "sha256": "558f20a2c0bd45a3bc54a567c0eea4fedf4b0d24841bf06c4798c1fcea1ceea0",
+      "bytes": 601
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093773002351570.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093815108437900.command.json.b64": {
+      "blob": "3f8a11181d84d9c47e3b95265a797e2a1d87ae4a",
+      "sha256": "4bf0c96fe41759474a453cd5de80655f8cdaa965ec905a74309efbdf577f1ef4",
+      "bytes": 1553
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093815108437900.result.json.b64": {
+      "blob": "b091854fa31d3801fda460ccbcd859c9e8579f09",
+      "sha256": "008b85c62f665a395ed5d539c98dcfabf06ac410c5caa409fe189a65ae1b8b47",
+      "bytes": 1037
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093815108437900.stderr.b64": {
+      "blob": "b6812d4b0dfeabdbf0637312925052e157fdb5b1",
+      "sha256": "1fc3375791882fbeee8cf64c492293d288eeae1127c79d09d3c1c00b75dcec7e",
+      "bytes": 841
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093815108437900.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093877288782354.command.json.b64": {
+      "blob": "11fe5b8c873b5cccd367570b1bc60068beae35ce",
+      "sha256": "daf00b171c416f3ad5bc35636d3def0367d45b0fd9bfe67fc2361b70e8ec2e5c",
+      "bytes": 3009
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093877288782354.result.json.b64": {
+      "blob": "3b8e4e0c00f8640c38de00aa383c17bcf88bede9",
+      "sha256": "9721bef1008fe1abaf27f117454646004d5a79b97fe8db2916d4471cbedc5f9e",
+      "bytes": 729
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093877288782354.stderr.b64": {
+      "blob": "ed401a47457e69cdb01d9f67fabd98a37e45f29f",
+      "sha256": "42c4ca547c6b3dd37dcaa1c7ab083f51d406beb6f9c4ac1e5b0c9f7d9ce54a27",
+      "bytes": 2533
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793093877288782354.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793094011518506732.command.json.b64": {
+      "blob": "6e33ccb4901f1f4d8b13eaff13b7c19bab6bf575",
+      "sha256": "a1d1ada6eafbaeefc5083755949e913f5ca1b6c8e5279cf97995b229ead2f599",
+      "bytes": 1809
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793094011518506732.result.json.b64": {
+      "blob": "aaf844f211cbb3a2a52ab0f50263da4e4203f060",
+      "sha256": "46a00f44cab82afb826d2185d7f68f189d05b36f8a0549b8a4b6358da7ec2d64",
+      "bytes": 729
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793094011518506732.stderr.b64": {
+      "blob": "66f255bd51da1f2b7a5c1894156999e3b07ec921",
+      "sha256": "02fa50f4aaa5ac71e8c7df0374fe13dd3e8e9afc5da413180eb105d528b75636",
+      "bytes": 497
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/reused-1793094011518506732.stdout.b64": {
+      "blob": "8b137891791fe96927ad78e64b0aad7bded08bdc",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "bytes": 1
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/setup.py": {
+      "blob": "f950f8ddaf24e4536f4df104b548b31c45b795d8",
+      "sha256": "aefe45751d0625fd8ace1ac940261037fa2c0ddf580b26678f7b906813380284",
+      "bytes": 2001
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/evidence/verify.py": {
+      "blob": "40cf8e8920b703d5df389a611b5829ce199a7d99",
+      "sha256": "93c8f66e01c64f1da864aad58a5ed84842efbe1acbd0e45c7885057baafe9c73",
+      "bytes": 1157
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/historical-payload-manifest.json": {
+      "blob": "d2d65f4e273369a76e4c6bc54cc4c3e1d325262c",
+      "sha256": "a3602a66d9d7a6886bce07ff17911840d3049349ab2180dddad2515896997cb8",
+      "bytes": 219839
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py": {
+      "blob": "13df8290e54c59f229a079a30fd4bd2c7564ee44",
+      "sha256": "e6ba7e6db935ac02e494493e85d3a6facb1548f6ec474005e40485062a8f03f6",
+      "bytes": 2799
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/manifest.json": {
+      "blob": "6c25b15a31996a5871227cc951613a284ab5c84d",
+      "sha256": "2c72d5a9042b796d9fb0448f401733717cf4160efc7a5d10f6c255fc9a81f92f",
+      "bytes": 49397
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/producer-manifest.json": {
+      "blob": "869d05bd7608801ea1e9230e809281c3275c9b16",
+      "sha256": "d2e28e40862c71ff54f47d9edb5676ee77a26311cdf37dc5c72f1000e866faef",
+      "bytes": 1607
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": {
+      "blob": "96d09e5f6dd50eba482bb83c793eb153e2fd6136",
+      "sha256": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+      "bytes": 1974
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/serial.py": {
+      "blob": "6283fd9ccb721eb707e2ed2077be828d442eceec",
+      "sha256": "983f8e627f3a5bb6eaf4ffaf664badf693621d5728808f0afb54bddb57ee2496",
+      "bytes": 3663
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": {
+      "blob": "6c4f83b48bb4c3f9245af76469af835180c0ebfb",
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "bytes": 23268
+    },
+    "test/ricochet-consumed-independent.test.py": {
+      "blob": "a578a633c5687bc2c023540ffaaeb530cc7abd12",
+      "sha256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551",
+      "bytes": 11757
+    },
+    "test/ricochet-control-publisher.test.py": {
+      "blob": "77ee7b57ccc084b1e4a647506e3ae011bd85fa7f",
+      "sha256": "ef77dfa87a7026dc0bcefdf9e8494cac1495bbad9b78d27166ec389be4a02100",
+      "bytes": 16225
+    },
+    "test/ricochet-final-inventory-independent.test.py": {
+      "blob": "178b362950f527da6e74ac3d027e1427e20cfb59",
+      "sha256": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0",
+      "bytes": 1363
+    },
+    "test/ricochet-late-link-minimal.py": {
+      "blob": "bac5dff44acc69cabbd49fe84c1786abc1afc948",
+      "sha256": "9c17daa4038dbc696719045324eab6456a1e78ffb0a26c14842eea80d8ed8b1f",
+      "bytes": 1459
+    },
+    "test/ricochet-runtime-accounting.test.py": {
+      "blob": "d980d91258a226fd2030494f99f558d286f03af8",
+      "sha256": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+      "bytes": 15622
+    },
+    "tools/ricochet/control-publisher.py": {
+      "blob": "830753c7340062ead17e01876afd24ee4158d1c9",
+      "sha256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+      "bytes": 3970
+    },
+    "tools/ricochet/production-commands.py": {
+      "blob": "10d22ad8d8c99cc63b7930c4eea18ca80953d152",
+      "sha256": "3aa4012ae350eed2d4120e86f358ab93e555d58506ef38656448c7fc1c0a7c5e",
+      "bytes": 2730
+    },
+    "tools/ricochet/runtime-accounting.py": {
+      "blob": "25a42fe84271df3bb03eeac673762d8a0b39cb91",
+      "sha256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+      "bytes": 12776
+    }
+  },
+  "total": 596892
+}

@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-S",
+    "/tmp/ricochet-final-writer-independent-accept-oct27/ops/final-reopen-mutation.py"
+  ],
+  "mode": "python",
+  "cwd": "/tmp/ricochet-final-writer-independent-accept-oct27/repo",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "at": 1793096364.7567756,
+  "envSHA256": "2da0b52532f149e2a711a69c316cb972367c2e4a22ae21fa6ceea2ac2aab3597",
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "memAvailable": 3281842176,
+  "free": 7720849408,
+  "initialRootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-final-writer-independent-accept-oct27/root-ref-digest.json"
+}

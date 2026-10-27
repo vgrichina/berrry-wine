@@ -1,0 +1,52 @@
+{
+  "status": "PASS_SOURCE_ONLY_REPAIR_PENDING_INDEPENDENT_ACCEPTANCE",
+  "candidate": "e8cfe229416c4076f68f18c9806a07dd50848cd7",
+  "rejectionReport": "a679a43e16ca71a761a2368a41784c4371c4a3b1",
+  "pins": {
+    "tools/ricochet/control-publisher.py": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+    "tools/ricochet/runtime-accounting.py": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+    "tools/ricochet/production-commands.py": "3aa4012ae350eed2d4120e86f358ab93e555d58506ef38656448c7fc1c0a7c5e",
+    "test/ricochet-consumed-independent.test.py": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551",
+    "test/ricochet-runtime-accounting.test.py": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+    "test/ricochet-final-inventory-independent.test.py": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0",
+    "test/ricochet-control-publisher.test.py": "ef77dfa87a7026dc0bcefdf9e8494cac1495bbad9b78d27166ec389be4a02100",
+    "test/ricochet-late-link-minimal.py": "9c17daa4038dbc696719045324eab6456a1e78ffb0a26c14842eea80d8ed8b1f",
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py": "e6ba7e6db935ac02e494493e85d3a6facb1548f6ec474005e40485062a8f03f6"
+  },
+  "strictOriginalFailures": [
+    "1793094993505441677",
+    "1793094993660090218",
+    "1793094993817367055"
+  ],
+  "firstBoundary": "unchanged minimal, independent test10, exact historical API publication prefix, before implementation changes",
+  "passing": {
+    "finalWriter16": "1793095470715695403",
+    "finalIndependent10": "1793095416450227320",
+    "finalAffectedOriginal6": "1793095515847644545",
+    "minimalRetarget": "1793095515677499607",
+    "originalProductionBoundary": "1793095089777001182",
+    "finalProducerCommandsMetadataAndWiring": "1793095613358309985"
+  },
+  "priorManifestVerified": 95,
+  "original22MethodHashesVerified": true,
+  "originalNineIndependentReceiptsReused": true,
+  "incidents": [
+    "Initial policy/report/board displays exceeded8192B per operation; cumulative output remains below1MiB; subsequent displays capped7500B. Initial tool-only missing optional run.py and absent task-directory reads are retained in transcript, without separate on-disk startup streams; subsequent supervised operations retain distinct streams from creation.",
+    "First unchanged independent tests defaulted to donor ops and overwrote three untracked diagnostics: late-final-symlink.json, late-final-hardlink.json, publisher-contract.json; transient fixtures cleaned. Donor tracked files/index/refs/objects and committed report unchanged. No attempt to edit/restore donor. Own first-failure receipts preserve outcomes. RICOCHET_ACCEPT_OPS then fixed to own ops.",
+    "First retarget driver exec used a private namespace; unittest could not resolve Independent. Receipt1793095106854196868 retained; fixed module globals without changing assertions.",
+    "First local O_TMPFILE AT_EMPTY_PATH publication returned ENOENT in four production prefixes receipt1793095174697213641. Changed implementation to a single source-descriptor linkat with AT_SYMLINK_FOLLOW, no production fallback/retry; successful exact transformed prefixes retained.",
+    "Early local tests used automatically cleaned default /tmp fixture directories; subsequent TMPDIR is owned ops/fixtures and explicit24MiB unnamed-inode staging reservation charged inside task allocation. Prior temporary outputs no longer exist. First concurrency child streams were transient; final authoritative16-method run preserves each child stdout/stderr and command/PID/exit receipt.",
+    "Shared WAL baseline unavailable; entire current allocated WAL conservatively charged once, not claimed as exact growth."
+  ],
+  "remaining": [
+    "fresh independent affected acceptance of final source and production writer closure",
+    "coordinator scoped integration only; never merge orphan tree",
+    "fresh authorized runtime closure/lifecycle and actual post-input gameplay response plus ordinary Quit"
+  ],
+  "noRuntime": true,
+  "noAPI": true,
+  "noNode": true,
+  "noBoxes": true,
+  "noWorkers": true,
+  "noIntegration": true
+}

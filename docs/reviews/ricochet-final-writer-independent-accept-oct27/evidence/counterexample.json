@@ -1,0 +1,80 @@
+{
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "source": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/tools/ricochet/runtime-accounting.py",
+  "sourceSHA256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+  "events": [
+    {
+      "event": "control_read_open",
+      "ordinal": 1,
+      "before": {
+        "dev": 64769,
+        "ino": 2334471,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793096364837627705,
+        "ctime_ns": 1793096364837627705,
+        "nlink": 1
+      }
+    },
+    {
+      "event": "control_read_open",
+      "ordinal": 2,
+      "before": {
+        "dev": 64769,
+        "ino": 2334471,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793096364837627705,
+        "ctime_ns": 1793096364837627705,
+        "nlink": 1
+      }
+    },
+    {
+      "event": "same_inode_mutation_before_final_open",
+      "after": {
+        "dev": 64769,
+        "ino": 2334471,
+        "size": 33,
+        "blocks": 8,
+        "mtime_ns": 1793096364837627705,
+        "ctime_ns": 1793096364837627705,
+        "nlink": 1
+      }
+    }
+  ],
+  "before": {
+    "dev": 64769,
+    "ino": 2334471,
+    "size": 2,
+    "blocks": 8,
+    "mtime_ns": 1793096364837627705,
+    "ctime_ns": 1793096364837627705,
+    "nlink": 1
+  },
+  "after": {
+    "dev": 64769,
+    "ino": 2334471,
+    "size": 33,
+    "blocks": 8,
+    "mtime_ns": 1793096364837627705,
+    "ctime_ns": 1793096364837627705,
+    "nlink": 1
+  },
+  "error": null,
+  "accepted": {
+    "bytes": 25174016,
+    "sizes": {
+      "/tmp/ricochet-final-writer-independent-accept-oct27/ops/fixtures/tmpvzux3x5_/serial/continue.json": 33
+    }
+  },
+  "receipt": {
+    "samples": 1,
+    "failures": 0,
+    "peakBytes": 25174016,
+    "lastBytes": 25174016
+  },
+  "controlReserve": 25165824,
+  "totalCeiling": 268435456,
+  "mutation": "synchronous owned-file write before second real control os.open; inside final _file validation and before sample return",
+  "fixtureCleanup": "TemporaryDirectory exit"
+}

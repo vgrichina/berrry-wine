@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "git",
+    "ls-tree",
+    "-r",
+    "93fce294621b5f40a1a23f6711c555dc5159e554"
+  ],
+  "mode": "git",
+  "cwd": "/tmp/ricochet-final-writer-independent-accept-oct27/repo",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "at": 1793096272.9410288,
+  "envSHA256": "5df4ba086bf783270a7d414ab999150dc55d791cc364c9833dc80c1b19770ff9",
+  "inheritedLimits": {
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "memAvailable": 3778068480,
+  "free": 7730057216,
+  "initialRootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-final-writer-independent-accept-oct27/root-ref-digest.json"
+}

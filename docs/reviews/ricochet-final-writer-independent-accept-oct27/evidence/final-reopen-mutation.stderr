@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-final-writer-independent-accept-oct27/ops/final-reopen-mutation.py", line 35, in <module>
+    assert failure is not None and accepted is None and ledger.receipt['lastBytes'] is None,'REJECT CANDIDATE: final reopen observed changed control version yet returned accepted inventory'
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: REJECT CANDIDATE: final reopen observed changed control version yet returned accepted inventory

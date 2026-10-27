@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "35",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,json,time;h=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');o=h/\"serial\";p=o/\"continue.json\";assert not p.exists() and not (o/\"done.json\").exists();j={'\"'\"'commands'\"'\"': [{'\"'\"'cmd'\"'\"': '\"'\"'mousemove:75:170'\"'\"'}, {'\"'\"'cmd'\"'\"': '\"'\"'mousedown:75:170'\"'\"'}], '\"'\"'release'\"'\"': '\"'\"'mouseup:75:170'\"'\"', '\"'\"'step'\"'\"': 256, '\"'\"'png'\"'\"': '\"'\"'round-before.png'\"'\"', '\"'\"'id'\"'\"': 1793092841347238229};p.write_text(json.dumps(j));end=time.monotonic()+30\nwhile time.monotonic()<end:\n d=o/\"decision-done.json\"\n if d.exists() and json.loads(d.read_text())[\"id\"]==j[\"id\"]:print(d.read_text());break\n if (h/\"guest/terminal.json\").exists():raise RuntimeError(\"guest terminated; do not replay\")\n time.sleep(.02)\nelse:raise RuntimeError(\"inflight uncertain; no replay\")'"
+  ],
+  "commandSHA256": "b00f78a57164ca8dc3ff6d7fbb6e885292407672efa7616f8cebf2e0e167d350",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

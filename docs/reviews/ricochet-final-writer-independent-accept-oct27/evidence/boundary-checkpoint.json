@@ -1,0 +1,63 @@
+{
+  "status": "PASS",
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "receipts": [
+    {
+      "producer": "1793092826212634802",
+      "originalSHA256": "e7a77bc25fb6127b0d132ac58bad80a5f8df48ee10919b0c6d238f5665fec498",
+      "transformedSHA256": "ee0406aeb78cb95ce6f1579fb9b654c6424fbe808a2936d06bd74bed03875957",
+      "cliArgvExact": true,
+      "payloadExact": true,
+      "pollingAndNoReplayTailExact": true,
+      "symlinkAttackRejected": true,
+      "originalWriterControlViolated": true,
+      "writerFSIZE": [
+        25165824,
+        25165824
+      ]
+    },
+    {
+      "producer": "1793092833026763786",
+      "originalSHA256": "762123ede3ae0a881d14d187af4441d7e04763d9a98cd199a7dbfffd7d4343e4",
+      "transformedSHA256": "fc0cd57b3c57da926e40d0c1eeed7ddb2b83e48abb68256a4f039f7e88b30bd9",
+      "cliArgvExact": true,
+      "payloadExact": true,
+      "pollingAndNoReplayTailExact": true,
+      "symlinkAttackRejected": true,
+      "originalWriterControlViolated": true,
+      "writerFSIZE": [
+        25165824,
+        25165824
+      ]
+    },
+    {
+      "producer": "1793092841347248549",
+      "originalSHA256": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff",
+      "transformedSHA256": "5d7b7adfa145ecb1284a1ddf26946fdbadd04e8b0fbef2df011cd750ac2cb1f0",
+      "cliArgvExact": true,
+      "payloadExact": true,
+      "pollingAndNoReplayTailExact": true,
+      "symlinkAttackRejected": true,
+      "originalWriterControlViolated": true,
+      "writerFSIZE": [
+        25165824,
+        25165824
+      ]
+    },
+    {
+      "producer": "1793092867150456577",
+      "originalSHA256": "907fb832c2aa80c111093287dd1154295792307acddc96110be05c902d160213",
+      "transformedSHA256": "a5726bd4ba1e171f8d87d473d4bd1f9532271cc8ffa58486c410300582c3c5e4",
+      "cliArgvExact": true,
+      "payloadExact": true,
+      "pollingAndNoReplayTailExact": true,
+      "symlinkAttackRejected": true,
+      "originalWriterControlViolated": true,
+      "writerFSIZE": [
+        25165824,
+        25165824
+      ]
+    }
+  ],
+  "scope": "Only outer API subprocess intercepted; dispatched exact prefix executed in owned fixture. No API/polling tail ran."
+}

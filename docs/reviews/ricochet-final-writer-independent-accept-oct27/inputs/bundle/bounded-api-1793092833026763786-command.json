@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "35",
+    "bx_e9mecsag",
+    "python3 -B -c 'import pathlib,json,time;h=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');o=h/\"serial\";p=o/\"continue.json\";assert not p.exists() and not (o/\"done.json\").exists();j={'\"'\"'commands'\"'\"': [{'\"'\"'cmd'\"'\"': '\"'\"'mousemove:320:234'\"'\"'}, {'\"'\"'cmd'\"'\"': '\"'\"'mousedown:320:234'\"'\"'}], '\"'\"'release'\"'\"': '\"'\"'mouseup:320:234'\"'\"', '\"'\"'step'\"'\"': 32, '\"'\"'id'\"'\"': 1793092833026749870};import importlib.util,hashlib;helper=h/'\"'\"'control-publisher.py'\"'\"';assert hashlib.sha256(helper.read_bytes()).hexdigest()=='\"'\"'cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654'\"'\"';spec=importlib.util.spec_from_file_location('\"'\"'control_publisher'\"'\"',helper);publisher=importlib.util.module_from_spec(spec);spec.loader.exec_module(publisher);publisher.publish(o,j);end=time.monotonic()+30\nwhile time.monotonic()<end:\n d=o/\"decision-done.json\"\n if d.exists() and json.loads(d.read_text())[\"id\"]==j[\"id\"]:print(d.read_text());break\n if (h/\"guest/terminal.json\").exists():raise RuntimeError(\"guest terminated; do not replay\")\n time.sleep(.02)\nelse:raise RuntimeError(\"inflight uncertain; no replay\")'"
+  ],
+  "historicalCommandSHA256": "edbf219aed99b55fd980fa2cf0afa64ae7594076aefbf95561e0f2e32747f6f6",
+  "historicalClientLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "commandSHA256": "c88903d8dabade55a37b211a639a0a8c853d0a07f0f74efee22851478d4a53f7",
+  "commandHashEncoding": "UTF8 json.dumps(argv, sort_keys=True)",
+  "sourceSHA256": "762123ede3ae0a881d14d187af4441d7e04763d9a98cd199a7dbfffd7d4343e4",
+  "helperSHA256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+  "transformedSourceSHA256": "fc0cd57b3c57da926e40d0c1eeed7ddb2b83e48abb68256a4f039f7e88b30bd9"
+}

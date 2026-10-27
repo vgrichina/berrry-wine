@@ -1,0 +1,13 @@
+{
+  "timestamp": 1793096189.8918571,
+  "memAvailable": 3697876992,
+  "diskFree": 7744098304,
+  "requiredRAM": 1409286144,
+  "futureDisk": 469762048,
+  "diskFloor": 2982150144,
+  "passed": true,
+  "taskAllocation": 134217728,
+  "clientAllowance": 335544320,
+  "sharedPool": 268435456,
+  "hostHeadroom": 805306368
+}
