@@ -1,0 +1,13 @@
+# Airstrike ordinary post-deadline input consumption
+
+Actual scheduler decision21 at batch5005 records now25025>=sleep deadline25021, suspended=false, reason=runnable. Its matching ordinary main-run and six admitted-main-run host polls contain renderer dequeues1-3: WM_PAINT, Space down and Space up. Both keys route to Airstrike0x10001 and reach DispatchMessageA at5005. The final frozen5006 snapshot has zero credits, empty renderer FIFO and counters dequeued3/routed3/dispatched2. At5004, now25020<25021 still suspended all four ordinary/cooperative admissions. The observer produced24 decisions,4 main runs and9 host polls, with no suppression.
+
+The controller confirmed Space release frozen5003, issued one serial step n=3, matched ran3/steps3/batch5006, then matched a frozen-zero snapshot and stopped. No forced wake, clock mutation, scheduler repair or additional controls. All38 control requests and responses match. Invocation IDs link scheduler decisions, admitted execution and host polls; dequeue IDs and ordering link poll/dequeue/route. Historical enqueue identities and DispatchMessageA correlation are explicitly unavailable.
+
+The full800x600 post-deadline frame still shows Press any key to start. SDL event translation and application handling after DispatchMessageA remain unobserved; sdlConsumption is explicitly unknown. This diagnostic establishes scheduler admission and host FIFO consumption, not gameplay or a source defect.
+
+Exact main be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c, runner a8187d18/thread manager f4ba190b/observer93775a00, unchanged helper c8c85b12 and canonical module bf707aa4(compiled1e4fdb06). All332 staged pins/18913957B, canonical89-file mount, helper frozenState contract and exact Nodev24.22.1 heap512/environment/inherited limits passed. Independent12groups/4controls and merged-tree checks reused unchanged. No build, source repair, main integration or public deployment.
+
+One guest only; conservative new CPU23.451084s/wall23.374853223s fits authorized33.635447/43.168643807. Cumulative CPU79.815637s/wall100.206209416s fits original90/120; unused time grants no replay. Five captures fit the eight-capture cap. Distinct setup/guest/runner stdout and stderr, exact argv/start/terminal states, control IDs, scheduler operands, FIFO snapshots and reviewed frames are retained in the NEW evidence archive. Prior verified payloads are referenced, not recopied or rehashed.
+
+Boat bx_ms3j5waq remains RUNNING with all exact guest descendant identities absent. Coordinator owns shutdown17:07Z and expiry17:10:43.934Z. Evidence branch task/airstrike-post-deadline-consumption-oct27; final ops/receipt-manifest.json binds exact remote commit/ref verification, package integrity, limits and cleanup.

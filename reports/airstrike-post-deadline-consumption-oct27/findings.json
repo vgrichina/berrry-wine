@@ -1,0 +1,1195 @@
+{
+  "status": "POST_DEADLINE_ADMITTED_MAIN_RUN_AND_SPACE_DEQUEUE_OBSERVED",
+  "schedulerRecords": [
+    {
+      "event": "decision",
+      "id": 1,
+      "path": "ordinary",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 2,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 3,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 4,
+      "path": "cooperative-interleaved",
+      "batch": 5000,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25000,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 5,
+      "path": "ordinary",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 6,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 7,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 8,
+      "path": "cooperative-interleaved",
+      "batch": 5001,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25005,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 9,
+      "path": "ordinary",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 10,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 11,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 12,
+      "path": "cooperative-interleaved",
+      "batch": 5002,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25010,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 13,
+      "path": "ordinary",
+      "batch": 5003,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 14,
+      "path": "cooperative-interleaved",
+      "batch": 5003,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 15,
+      "path": "cooperative-interleaved",
+      "batch": 5003,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 16,
+      "path": "cooperative-interleaved",
+      "batch": 5003,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25015,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 17,
+      "path": "ordinary",
+      "batch": 5004,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 18,
+      "path": "cooperative-interleaved",
+      "batch": 5004,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 19,
+      "path": "cooperative-interleaved",
+      "batch": 5004,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 20,
+      "path": "cooperative-interleaved",
+      "batch": 5004,
+      "yieldReason": 0,
+      "liveThreads": true,
+      "sleepChecks": [
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        },
+        {
+          "now": 25020,
+          "deadline": 25021,
+          "sleeping": true
+        }
+      ],
+      "fastForward": false,
+      "suspended": true,
+      "reason": "sleep"
+    },
+    {
+      "event": "decision",
+      "id": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "yieldReason": 0,
+      "liveThreads": null,
+      "sleepChecks": [
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        },
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        }
+      ],
+      "fastForward": false,
+      "suspended": false,
+      "reason": "runnable"
+    },
+    {
+      "event": "main-run",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 21,
+      "path": "ordinary",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "decision",
+      "id": 22,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "yieldReason": 0,
+      "liveThreads": null,
+      "sleepChecks": [
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        },
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        }
+      ],
+      "fastForward": false,
+      "suspended": false,
+      "reason": "runnable"
+    },
+    {
+      "event": "main-run",
+      "decisionId": 22,
+      "path": "cooperative-interleaved",
+      "batch": 5005
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 22,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "decision",
+      "id": 23,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "yieldReason": 0,
+      "liveThreads": null,
+      "sleepChecks": [
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        },
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        }
+      ],
+      "fastForward": false,
+      "suspended": false,
+      "reason": "runnable"
+    },
+    {
+      "event": "main-run",
+      "decisionId": 23,
+      "path": "cooperative-interleaved",
+      "batch": 5005
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 23,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    },
+    {
+      "event": "decision",
+      "id": 24,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "yieldReason": 0,
+      "liveThreads": null,
+      "sleepChecks": [
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        },
+        {
+          "now": 25025,
+          "deadline": 25021,
+          "sleeping": false
+        }
+      ],
+      "fastForward": false,
+      "suspended": false,
+      "reason": "runnable"
+    },
+    {
+      "event": "main-run",
+      "decisionId": 24,
+      "path": "cooperative-interleaved",
+      "batch": 5005
+    },
+    {
+      "event": "host-check-input",
+      "decisionId": 24,
+      "path": "cooperative-interleaved",
+      "batch": 5005,
+      "scope": "admitted-main-run",
+      "workerTid": null
+    }
+  ],
+  "matchedRequests": 38,
+  "allACKsMatched": true,
+  "serialFrozenInputs": [
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 10.738776340000015,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-1",
+        "value": {
+          "queued": true,
+          "batch": 5000
+        }
+      },
+      "inputId": "airstrike-1",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-11",
+        "value": {
+          "batch": 5001,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-12",
+        "value": {
+          "batch": 5001,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] click 656,33 at batch 5000"
+      ]
+    },
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 23.018171372999973,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-2",
+        "value": {
+          "queued": true,
+          "batch": 5001
+        }
+      },
+      "inputId": "airstrike-2",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-21",
+        "value": {
+          "batch": 5002,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-22",
+        "value": {
+          "batch": 5002,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] keydown vk=32 at batch 5001"
+      ]
+    },
+    {
+      "kind": "frozen-input-complete",
+      "elapsed": 23.064204662999998,
+      "inputAck": {
+        "ok": true,
+        "id": "airstrike-3",
+        "value": {
+          "queued": true,
+          "batch": 5002
+        }
+      },
+      "inputId": "airstrike-3",
+      "step": {
+        "ok": true,
+        "id": "corrected-bridge-26",
+        "value": {
+          "batch": 5003,
+          "ran": 1,
+          "steps": 1,
+          "frozen": true
+        }
+      },
+      "snapshot": {
+        "ok": true,
+        "id": "corrected-bridge-27",
+        "value": {
+          "batch": 5003,
+          "eip": "0x55995b",
+          "quit": false,
+          "yieldReason": 0,
+          "focus": "0x10001",
+          "mainHwnd": "0x10001",
+          "screen": {
+            "w": 800,
+            "h": 600
+          },
+          "frozen": {
+            "frozen": true,
+            "tickMs": 5,
+            "credits": 0,
+            "recording": false
+          },
+          "windows": [
+            {
+              "hwnd": "0x10001",
+              "x": 20,
+              "y": 20,
+              "w": 806,
+              "h": 608,
+              "visible": true,
+              "isChild": false,
+              "title": "Airstrike 1.0 pre6"
+            },
+            {
+              "hwnd": "0x10002",
+              "x": 0,
+              "y": 8,
+              "w": 648,
+              "h": 328,
+              "visible": true,
+              "isChild": false,
+              "title": "Console"
+            }
+          ]
+        }
+      },
+      "logs": [
+        "[input] keyup vk=32 at batch 5002"
+      ]
+    }
+  ],
+  "deadlineStep": {
+    "ok": true,
+    "id": "corrected-bridge-30",
+    "value": {
+      "batch": 5006,
+      "ran": 3,
+      "steps": 3,
+      "frozen": true
+    }
+  },
+  "deadlineSnapshot": {
+    "ok": true,
+    "id": "corrected-bridge-31",
+    "value": {
+      "batch": 5006,
+      "eip": "0x549d7f",
+      "quit": false,
+      "yieldReason": 0,
+      "focus": "0x10001",
+      "mainHwnd": "0x10001",
+      "screen": {
+        "w": 800,
+        "h": 600
+      },
+      "frozen": {
+        "frozen": true,
+        "tickMs": 5,
+        "credits": 0,
+        "recording": false
+      },
+      "windows": [
+        {
+          "hwnd": "0x10001",
+          "x": 20,
+          "y": 20,
+          "w": 806,
+          "h": 608,
+          "visible": true,
+          "isChild": false,
+          "title": "Airstrike 1.0 pre6"
+        },
+        {
+          "hwnd": "0x10002",
+          "x": 0,
+          "y": 8,
+          "w": 648,
+          "h": 328,
+          "visible": true,
+          "isChild": false,
+          "title": "Console"
+        }
+      ]
+    }
+  },
+  "matchedExecution": {
+    "decisionId": 21,
+    "path": "ordinary",
+    "batch": 5005,
+    "now": 25025,
+    "deadline": 25021,
+    "reason": "runnable",
+    "mainRun": true,
+    "hostInputPolls": 6,
+    "lineStart": 121,
+    "lineEnd": 141,
+    "orderedEvidence": [
+      "[main-scheduler] {\"event\":\"main-run\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005}",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}",
+      "[input-dequeue] dequeueId=1 source=renderer enqueueId=unavailable hwnd=0x10001 msg=0xf wParam=0x0 lParam=0x0 batch=5005 guestMs=25025 clock=batch lastGuestTick=25001",
+      "[check_input] msg=0xf wParam=0x0 lParam=0x0 packed=0xf",
+      "[check_input_hwnd] explicit hwnd=0x10001",
+      "[input-dequeue-route] dequeueId=1 focusHwnd=0x10001 hwnd=0x10001 batch=5005 guestMs=25025 clock=batch lastGuestTick=25001",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}",
+      "[input-dequeue] dequeueId=2 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x100 wParam=0x20 lParam=0x390001 batch=5005 guestMs=25025 clock=batch lastGuestTick=25026",
+      "[check_input] msg=0x100 wParam=0x20 lParam=0x390001 packed=0x200100",
+      "[check_input_hwnd] keyboard \u2192 focus 0x10001",
+      "[input-dequeue-route] dequeueId=2 focusHwnd=0x10001 hwnd=0x10001 batch=5005 guestMs=25025 clock=batch lastGuestTick=25026",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x100 wParam=0x20 lParam=0x390001 correlation=unavailable batch=5005 guestMs=25025 clock=batch lastGuestTick=25028",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}",
+      "[input-dequeue] dequeueId=3 source=renderer enqueueId=unavailable hwnd=0x0 msg=0x101 wParam=0x20 lParam=0xc0390001 batch=5005 guestMs=25025 clock=batch lastGuestTick=25028",
+      "[check_input] msg=0x101 wParam=0x20 lParam=0xc0390001 packed=0x200101",
+      "[check_input_hwnd] keyboard \u2192 focus 0x10001",
+      "[input-dequeue-route] dequeueId=3 focusHwnd=0x10001 hwnd=0x10001 batch=5005 guestMs=25025 clock=batch lastGuestTick=25028",
+      "[dispatch-input] DispatchMessageA hwnd=0x10001 msg=0x101 wParam=0x20 lParam=0xc0390001 correlation=unavailable batch=5005 guestMs=25025 clock=batch lastGuestTick=25029",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}",
+      "[main-scheduler] {\"event\":\"host-check-input\",\"decisionId\":21,\"path\":\"ordinary\",\"batch\":5005,\"scope\":\"admitted-main-run\",\"workerTid\":null}"
+    ],
+    "enqueueIdentity": "unavailable; no invented identity"
+  },
+  "dequeueCount": 3,
+  "routeCount": 3,
+  "dispatchCount": 2,
+  "observerSuppressed": false,
+  "finalState": {
+    "requestId": "corrected-bridge-32",
+    "batch": 5006,
+    "frozen": true,
+    "credits": 0,
+    "counters": {
+      "scheduled": 3,
+      "enqueued": 0,
+      "dequeued": 3,
+      "routed": 3,
+      "dispatched": 2
+    },
+    "counterLimit": 4294967295,
+    "saturated": false,
+    "last": {
+      "dequeue": {
+        "id": 3,
+        "source": "renderer",
+        "enqueueId": "unavailable",
+        "hwnd": 0,
+        "msg": 257,
+        "wParam": 32,
+        "lParam": 3224961025
+      },
+      "route": {
+        "dequeueId": 3,
+        "focusHwnd": 65537,
+        "hwnd": 65537
+      },
+      "dispatch": {
+        "api": "DispatchMessageA",
+        "hwnd": 65537,
+        "msg": 257,
+        "wParam": 32,
+        "lParam": 3224961025,
+        "correlation": "unavailable"
+      }
+    },
+    "queues": {
+      "scheduled": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "pending": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "crossThread": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "buttons": {
+        "count": "unknown",
+        "head": [],
+        "truncated": false
+      },
+      "renderer": {
+        "count": 0,
+        "truncated": false,
+        "head": []
+      },
+      "guestPostQueue": "unknown"
+    },
+    "keys": {
+      "16": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "17": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "18": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": false
+      },
+      "32": {
+        "_physicalKeys": false,
+        "_asyncKeys": false,
+        "_asyncPressedKeys": true
+      }
+    },
+    "threads": {
+      "backend": "cooperative",
+      "main": {
+        "state": "active",
+        "suspendCount": 0,
+        "eip": 5545343,
+        "yieldReason": 0,
+        "waitHandle": 917509,
+        "waitTimeout": -1,
+        "sleepUntil": 0,
+        "sleepActive": "unknown"
+      },
+      "count": 1,
+      "truncated": false,
+      "head": [
+        {
+          "handle": 921600,
+          "tid": 1,
+          "state": "active",
+          "suspendCount": 0,
+          "eip": 5532240,
+          "yieldReason": 1,
+          "waitHandle": 917508,
+          "waitTimeout": -1,
+          "sleepUntil": 0,
+          "sleepActive": "unknown"
+        }
+      ]
+    },
+    "sdlConsumption": "unknown"
+  },
+  "causalConclusion": "At5004 now25020<25021 so all main admissions sleep. At5005 now25025>=25021 actual decision21 becomes runnable and admits main execution. Matching main polls dequeue WM_PAINT and Space down/up, route both keys to0x10001 and DispatchMessageA both at5005. Frozen5006 has empty renderer FIFO, zero credits, sleepUntil0. Scheduler admission and host dequeue are demonstrated.",
+  "remainingBranch": "SDL event translation and application startup handling after DispatchMessageA are unobserved. Snapshot explicitly reports sdlConsumption=unknown; the inspected full frozen5006 frame remains Press any key to start. No source defect or gameplay conclusion is established, and no further execution is authorized.",
+  "correlationLimits": "Observer invocation IDs match decision/main-run/host-input. FIFO dequeue IDs1-3 and log order bind host polls and routes; enqueueId and DispatchMessageA correlation are explicitly unavailable.",
+  "frames": [
+    {
+      "path": "retained/game-evidence/capture-3dc57facb44941778cc370098b159eaa-fresh.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 inspected; fresh frame byte-identical to reviewed counterpart",
+      "content": "Airstrike frontmost; Press any key to start; gameplay unproven"
+    },
+    {
+      "path": "retained/game-evidence/capture-post-deadline.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 inspected; fresh frame byte-identical to reviewed counterpart",
+      "content": "Airstrike frontmost; Press any key to start; gameplay unproven"
+    },
+    {
+      "path": "retained/game-evidence/capture-3dc57facb44941778cc370098b159eaa.png",
+      "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95",
+      "bytes": 184247,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 inspected; fresh frame byte-identical to reviewed counterpart",
+      "content": "Airstrike frontmost; Press any key to start; gameplay unproven"
+    },
+    {
+      "path": "retained/game-evidence/capture-5bb280c9e74e418f98b868a9ac741cd8.png",
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "bytes": 144804,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 inspected; fresh frame byte-identical to reviewed counterpart",
+      "content": "Console obscures startup"
+    },
+    {
+      "path": "retained/game-evidence/capture-5bb280c9e74e418f98b868a9ac741cd8-fresh.png",
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+      "bytes": 144804,
+      "dimensions": [
+        800,
+        600
+      ],
+      "review": "full800x600 inspected; fresh frame byte-identical to reviewed counterpart",
+      "content": "Console obscures startup"
+    }
+  ],
+  "allowance": {
+    "originalCPU": 90,
+    "originalWall": 120,
+    "priorCPU": 56.364553,
+    "priorWall": 76.831356193,
+    "authorizedRemainingCPU": 33.635447,
+    "authorizedRemainingWall": 43.168643807,
+    "newCPU": 23.451084,
+    "newWall": 23.374853223000002,
+    "cumulativeCPU": 79.81563700000001,
+    "cumulativeWall": 100.20620941600001,
+    "remainingCPU": 10.184362999999998,
+    "remainingWall": 19.793790584,
+    "charge": "trusted supervisor conservative own+waited high-water may double-charge; not exact physical CPU",
+    "newGuestInvocations": 1,
+    "noReplay": true,
+    "invocationConsumed": true
+  },
+  "boatHandback": {
+    "at": 1793119588.4474716,
+    "box": "bx_ms3j5waq",
+    "state": "RUNNING",
+    "stateEvidence": "successful supported API exec on assigned Boat",
+    "expiry": "2026-10-27T17:10:43.934Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T17:07:00Z",
+    "logicalBytes": 20107753,
+    "allocatedBytes": 20926464,
+    "freeDisk": 49016848384,
+    "guestIdentities": [
+      {
+        "pid": 10960,
+        "start": "48673",
+        "currentStart": null,
+        "ownedIdentityAlive": false
+      },
+      {
+        "pid": 10961,
+        "start": "48683",
+        "currentStart": null,
+        "ownedIdentityAlive": false
+      }
+    ],
+    "ownedCleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": 0,
+      "complete": true
+    },
+    "supervisorCleanupComplete": true,
+    "survivors": [],
+    "lifecycleOperations": 0
+  }
+}
