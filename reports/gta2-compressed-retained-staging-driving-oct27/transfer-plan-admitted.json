@@ -1,0 +1,31 @@
+{
+  "at": 1793105061.2031431,
+  "sourceBytes": 74781703,
+  "gameBytes": 26207806,
+  "remainingBytes": 68928960,
+  "gzipBytes": 23773184,
+  "base64Bytes": 31697700,
+  "remainingRequests": 1102,
+  "measuredHistoricalRequestMean": 0.28238194733497307,
+  "measuredHistoricalRequestP90": 0.33705997467041016,
+  "estimatedStageSeconds": 311.18490596314035,
+  "buildGuestCleanupReservedSeconds": 600,
+  "secondsUntilCutoff": 1418.7968463897705,
+  "remotePeak": 402872833,
+  "remoteAllocation": 1073741824,
+  "rawResponsesUsed": 135876,
+  "rawResponseProjected": 7147852,
+  "rawAllowance": 8388608,
+  "timePass": true,
+  "remotePass": true,
+  "wirePass": true,
+  "rawCapturePlan": {
+    "remoteImages": 4,
+    "perImageCeiling": 4194304,
+    "initialFullFrameTransfers": 3,
+    "fourthConditionalOnMeasuredRemaining": true,
+    "maxFullFrameBytes": 1232000,
+    "base64AndEnvelopePerImage": 1750000
+  },
+  "reason": "Three full-frame transfers pre-reserved: reviewed menu, world before, world after; fourth full PNG retained remotely with retrieval conditional on measured wire remaining."
+}

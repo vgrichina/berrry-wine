@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_xu6qoxx7ozns",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T12:56:24.558Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T12:56:24.537Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"guest-exit.json\": {\"exit\": 0, \"at\": 1793105747.3598392}, \"guest-controller-terminal.json\": {\"exit\": 0, \"pending\": 28, \"seen\": [\"1.request.json\", \"10.request.json\", \"11.request.json\", \"12.request.json\", \"13.request.json\", \"14.request.json\", \"15.request.json\", \"16.request.json\", \"17.request.json\", \"18.request.json\", \"19.request.json\", \"2.request.json\", \"20.request.json\", \"21.request.json\", \"22.request.json\", \"23.request.json\", \"24.request.json\", \"25.request.json\", \"26.request.json\", \"27.request.json\", \"28.request.json\", \"3.request.json\", \"4.request.json\", \"5.request.json\", \"6.request.json\", \"7.request.json\", \"8.request.json\", \"9.request.json\"], \"at\": 1793105747.3596473}, \"guest-supervisor.json\": {\"exit\": 0, \"stopReason\": null, \"peakRSS\": 184598528, \"sampledPeakRSS\": 184598528, \"reapedPeakRSS\": 147648512, \"cpuSeconds\": 62.675315999999995, \"wallSeconds\": 86.22624496200001, \"cleanupComplete\": true}, \"stdoutTail\": \"\\\",\\\"x\\\":0,\\\"y\\\":0,\\\"w\\\":640,\\\"h\\\":480,\\\"visible\\\":true,\\\"isChild\\\":false,\\\"title\\\":\\\"GTA2 Demo\\\"},{\\\"hwnd\\\":\\\"0x10002\\\",\\\"x\\\":40,\\\"y\\\":40,\\\"w\\\":235,\\\"h\\\":124,\\\"visible\\\":true,\\\"isChild\\\":false,\\\"title\\\":\\\"Error!\\\"}]}}\\n[ctl] {\\\"ok\\\":true,\\\"id\\\":26,\\\"value\\\":{\\\"batch\\\":3000,\\\"frozen\\\":true,\\\"path\\\":\\\"/tmp/gta2-compressed-retained-staging-driving-oct27/ops/captures/menu.png\\\",\\\"bytes\\\":6210}}\\n[ctl] {\\\"ok\\\":true,\\\"id\\\":27,\\\"value\\\":{\\\"queued\\\":true,\\\"batch\\\":3000}}\\n[input-route] up 154,139 enter: outside=0 directDown=none btnDrag=0x10002 resizing=0 dragging=0\\n[input] click 154,139 at batch 3000\\n[Exit] code=1037\\nuop: installs=10 kills=4 retired-poor=1 enters=302 blocks=8733 head-exits=0 reguards=37 rg-pages=587 rg-nonadj=0 win-kept=279 win-reset=23 gen=3 | compiled=10 declined=10 insns=397 uops=1697 flushes=0 traces=0\\n  declines: no-backedge=7 head-unsupported=3\\nuop nobump: skips=33653\\nuop hot: decays=39760 halvings=3\\n\\nStats: 719 API calls, 3007 batches in 85.927s (35 batches/s)\\nMMX: 0 instructions retired (cpuid mmx bit on)\\n\\n[spin-park] clock 0 trips (0 serviced on the main thread), empty-PeekMessage 0 trips (2832 serviced on the main thread); K=8\\n\", \"stderrTail\": \"t/binaries/dlls is gitignored: copy it into a fresh worktree.\\n[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as \\\"<ord>\\\". test/binaries/dlls is gitignored: copy it into a fresh worktree.\\n[dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as \\\"<ord>\\\". test/binaries/dlls is gitignored: copy it into a fresh worktree.\\n\"}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

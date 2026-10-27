@@ -1,0 +1,14 @@
+{
+  "path": "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/retrieved/menu.png",
+  "sha256": "2b13e1affd97046e5bf433a52cc7ae846c18ffa164936e356919892a34da70b6",
+  "dimensions": [
+    640,
+    480
+  ],
+  "inspectedVia": "view_image",
+  "classification": "GTA2 Demo Error dialog: Failed to set fullscreen videomode: 2",
+  "gameplay": false,
+  "actionChosen": "ordinary click visible OK at154,139 after inspection",
+  "after": "application exit1037 at batch3007; no after-gameplay frame available",
+  "noFPSAudioDeviceClaim": true
+}

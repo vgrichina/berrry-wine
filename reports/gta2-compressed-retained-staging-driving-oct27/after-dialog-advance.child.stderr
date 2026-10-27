@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/control.py", line 77, in <module>
+    elif mode in ('script','gitbatch'):exec(pathlib.Path(sys.argv[2]).read_text())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 10, in <module>
+  File "<string>", line 7, in send
+AssertionError: unresolved command; do not replay

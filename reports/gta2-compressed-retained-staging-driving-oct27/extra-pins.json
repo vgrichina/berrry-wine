@@ -1,0 +1,20 @@
+[
+  {
+    "path": "index.html",
+    "bytes": 182430,
+    "oid": "674b22a39cc2e01749a2643b9c9aea740463d1e6",
+    "sha256": "19ba3e4a2e680db7dd16f4b191f2d236f276561d1f91175e564fe9f400912541"
+  },
+  {
+    "path": "docs/dos-corpus/live/toyvm-bundle.js",
+    "bytes": 2354086,
+    "oid": "dc0948c1da33c5888777f1bb9b10fc1b03e70213",
+    "sha256": "881080a4598991119cd11c0dd1daf71b45d0c33198d70abc389b93a7a97a2c99"
+  },
+  {
+    "path": "docs/dos-corpus/live/toyvm-jit-bundle.js",
+    "bytes": 2316998,
+    "oid": "34154cff21932e60e92cc0331d0d8a4413cb65f6",
+    "sha256": "149c92ffcb33c5983cb5f6cc0105801543f661f0dda312cc2fd363e0803f327e"
+  }
+]

@@ -1,0 +1,1 @@
+ident=sys.argv[-1];q=py('import pathlib,json;p=pathlib.Path('+repr(str(O/'control'/(ident+'.reply.json')))+');print(p.read_text() if p.exists() else json.dumps(dict(pending=True,id='+repr(ident)+')))');save('control-local/'+ident+'.observation-'+str(time.time_ns())+'.json',q);print(q['stdout'])

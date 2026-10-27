@@ -1,0 +1,129 @@
+{
+  "python": [
+    {
+      "path": "control-observe.py",
+      "sha256": "1ef5d05bc50593fae66b8cdf15911cd48e5f990519a3845e67a7d9070824c760",
+      "syntax": true
+    },
+    {
+      "path": "control-request.py",
+      "sha256": "fc04d52c887223a713b7e6f83f3e29e77ec52f498cadd3414bdde9be6191420c",
+      "syntax": true
+    },
+    {
+      "path": "control.py",
+      "sha256": "32b812add4c7aba153bea2f034387428472b4010c06a00e16ef34ef1815397eb",
+      "syntax": true
+    },
+    {
+      "path": "estimate.py",
+      "sha256": "37543aff75a0c738f918d72a04fcb542945514749d19fcbfa4b9c89c4686e56c",
+      "syntax": true
+    },
+    {
+      "path": "extra.py",
+      "sha256": "842450b2bed2b1dc1a9689a071eb9937e7f48c819283a6bbb3f869c4ae5c256f",
+      "syntax": true
+    },
+    {
+      "path": "fonts.py",
+      "sha256": "a5394c004fed400298ad6db6644a10d2dd54709e24c0e190b8c6b05d0bcbeac0",
+      "syntax": true
+    },
+    {
+      "path": "guest-ready.py",
+      "sha256": "e29f28584844a94e6af8166e57a134f9d6843164231927adfcc758daec3fad11",
+      "syntax": true
+    },
+    {
+      "path": "launch-build.py",
+      "sha256": "d605bf60148a02248bcc52725b36473593c39602a8aecf4c2a824636469aa797",
+      "syntax": true
+    },
+    {
+      "path": "local-checks.py",
+      "sha256": "9bfaf385dab2fb7c4ca3b06c7811cb18c72494a25f81b8d8269f5083ea4acd63",
+      "syntax": true
+    },
+    {
+      "path": "pre-guest-stage.py",
+      "sha256": "1ad57dd93dfd8f0930523bd7ae32fa655a4dd5a2741a479495b91916b9e9e188",
+      "syntax": true
+    },
+    {
+      "path": "ranges.py",
+      "sha256": "7658b2a715314734fa5bb8d8e9677348d790e426ab90d1509275522988055f02",
+      "syntax": true
+    },
+    {
+      "path": "reconcile.py",
+      "sha256": "27afb6398f5ed609ec35271eafa52bf6c1675091cbd475d36159fbcd45924dfe",
+      "syntax": true
+    },
+    {
+      "path": "recover-inspect.py",
+      "sha256": "91f836655576c1d611f29b79df824df0057b661abfb4339e793ade1d16067503",
+      "syntax": true
+    },
+    {
+      "path": "remote-job.py",
+      "sha256": "2335b48f51c1d124f556e81d034a702eccfd55347af3e39261732b76fda8b755",
+      "syntax": true
+    },
+    {
+      "path": "resume-build.py",
+      "sha256": "b64df480fc36e01296519b5306afd10d534c748806563bfcc52f17f9e90aae9e",
+      "syntax": true
+    },
+    {
+      "path": "reuse.py",
+      "sha256": "35d2a746cb384c4d405c4743966217353891a8f587a599654554f6969f724224",
+      "syntax": true
+    },
+    {
+      "path": "sendwait.py",
+      "sha256": "3e23438a4c4bc8834964ad418f6df466b926ec4ba26e6e355a395d78c07ab9a0",
+      "syntax": true
+    },
+    {
+      "path": "setup.py",
+      "sha256": "e5f3bcee96ad7fefb2f7cd6aeeb3a274826bdcdf2677991c3a3e417cdc92541c",
+      "syntax": true
+    },
+    {
+      "path": "stage-gzip.py",
+      "sha256": "ef5493b87658c50f47abc225324ceb9c1b53833e9a184b45a204acd665610309",
+      "syntax": true
+    },
+    {
+      "path": "status.py",
+      "sha256": "046fb31d7861485ae3464b49f0c34c738e7486c05bc9278e75ddbca9023bef8a",
+      "syntax": true
+    },
+    {
+      "path": "stream-wrapper.py",
+      "sha256": "bc1ce53b27b5156a759a87a4771ed92c3a514519f18af5878f0a7a47ab688c1a",
+      "syntax": true
+    },
+    {
+      "path": "transfer-file.py",
+      "sha256": "bd77a0f959476a779d7e6536db9c56daddf9d68090a89f75805f5c67dee601b1",
+      "syntax": true
+    }
+  ],
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "originalLocalPendingPIDObservation": {
+    "exists": false,
+    "currentArgvSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "matchesOriginalAppend": false
+  },
+  "gitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "parentLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "incidents": [
+    "Initial combined policy displays oversized; retained tool transcript.",
+    "A narrow process query accidentally included one base64-bearing API argv; retained transcript, command already in owned ledger, no credential content.",
+    "Pool2 initial wait45 expired before operation; capacity observed free before admitted retry.",
+    "Overbroad fonts discovery rejected78files/8456711B before transfer; corrected exact required bitmap/subset closure29files/761186B.",
+    "Canonical build prefix stopped missing fonts/Terminal.fon; no WAT compile/module/guest. Exact remaining suffix resumed with initial CPU/wall/output deducted."
+  ]
+}

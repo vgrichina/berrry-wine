@@ -1,0 +1,13 @@
+{
+  "result": "PASS",
+  "reportBytes": 3051471,
+  "reportFiles": 88,
+  "moduleMatchesPreflight": true,
+  "compatPreserved": true,
+  "allLocalOperationsRetained": true,
+  "rawAPICumulative": 5974519,
+  "terminalReserveIntact": true,
+  "gameplay": false,
+  "exactBlocker": true,
+  "sourceUnchanged": true
+}

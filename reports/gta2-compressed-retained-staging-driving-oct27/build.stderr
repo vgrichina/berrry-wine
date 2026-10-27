@@ -1,0 +1,22 @@
+node:fs:621
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/tmp/gta2-compressed-retained-staging-driving-oct27/repo/fonts/Terminal.fon'
+    at Object.openSync (node:fs:621:18)
+    at Object.readFileSync (node:fs:487:35)
+    at buildBundle (/tmp/gta2-compressed-retained-staging-driving-oct27/repo/tools/toyvm/bundle-browser.js:485:42)
+    at main (/tmp/gta2-compressed-retained-staging-driving-oct27/repo/tools/toyvm/bundle-browser.js:535:57)
+    at Object.<anonymous> (/tmp/gta2-compressed-retained-staging-driving-oct27/repo/tools/toyvm/bundle-browser.js:544:30)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/tmp/gta2-compressed-retained-staging-driving-oct27/repo/fonts/Terminal.fon'
+}
+
+Node.js v24.22.1

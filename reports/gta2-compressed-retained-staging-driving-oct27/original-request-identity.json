@@ -1,0 +1,25 @@
+{
+  "request": "1793103981773541913",
+  "localStart": {
+    "argv": [
+      "/home/user/.ascii/boat",
+      "exec",
+      "--no-update",
+      "--json",
+      "--timeout",
+      "10",
+      "bx_c35ty8f8"
+    ],
+    "pid": 55496,
+    "at": 1793103981.7748404,
+    "state": "pending"
+  },
+  "commandSHA256": "dfd4c60c501b3f3c63fb540f69d3050cd4d48f17be5afbbfd04a7a80faab0456",
+  "expectedPartialBytes": 2220000,
+  "expectedPartialSHA256": "e16ebb6a08bb36cf0bdf50f2f0b02baceaa059acf4b9ec1cecbfeb6f0f10f9b7",
+  "responseBytes": {
+    "1793103981773541913.stderr": 0,
+    "1793103981773541913.stdout": 0
+  },
+  "readOnlyObservation": true
+}

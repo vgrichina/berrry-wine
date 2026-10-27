@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/control.py", line 77, in <module>
+    elif mode in ('script','gitbatch'):exec(pathlib.Path(sys.argv[2]).read_text())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 4, in <module>
+  File "/usr/lib/python3.12/ast.py", line 52, in parse
+    return compile(source, filename, mode, flags,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/guest-ready.py", line 4
+    n=201326592,localReserve=8388608,remoteReserve=67108864,rawAPIUsed=raw,rawAPIRemaining=remaining,terminalReserve=1048576,acceptancePNGs=4,remotePNGReserve=16777216,fullTransferReserved=3,fullTransferMaxBytes=1232000,fullTransferEnvelopeEach=1750000,controlAndStatusEnvelope=262144,secondsUntilCutoff=1793106480-time.time(),guestWall=240,publicationLocalEnvelope=8388608+25165824)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?

@@ -1,0 +1,45 @@
+{
+  "at": 1793105998.2636037,
+  "rows": [
+    {
+      "task": "gta2-compressed-retained-staging-driving-oct27",
+      "actual": 83394560,
+      "remaining": 117932032
+    },
+    {
+      "task": "airstrike-portable-fixtures-accepted-main-integration-oct27",
+      "actual": 7839744,
+      "remaining": 0
+    },
+    {
+      "task": "enigma-remote-host-validated-startgame-oct27",
+      "actual": 88698880,
+      "remaining": 0
+    },
+    {
+      "task": "generally-census-cleared-driving-oct27",
+      "actual": 134860800,
+      "remaining": 66465792
+    }
+  ],
+  "walPositiveOnce": 65536,
+  "own": 83394560,
+  "reserve": 58720256,
+  "free": 6419906560,
+  "future": 201175040,
+  "projectedFree": 6218731520,
+  "diskFloor": 2982150144,
+  "memAvailable": 3779567616,
+  "requiredRAM": 1787060224,
+  "clients": [
+    {
+      "pid": 49453,
+      "rss": 113086464
+    },
+    {
+      "pid": 76443,
+      "rss": 113119232
+    }
+  ],
+  "pass": true
+}

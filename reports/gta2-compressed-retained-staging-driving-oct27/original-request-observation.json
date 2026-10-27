@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_6xqizzeirlhg",
+  "cwd": ".",
+  "exitCode": 0,
+  "finishedAt": "2026-10-27T12:43:31.308Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-27T12:43:31.277Z",
+  "stderr": "",
+  "stderrTruncated": false,
+  "stdout": "{\"path\": \"/tmp/gta2-census-cleared-driving-oct27/ops/pack-8.tar.z64\", \"bytes\": 2220000, \"sha256\": \"e16ebb6a08bb36cf0bdf50f2f0b02baceaa059acf4b9ec1cecbfeb6f0f10f9b7\", \"processes\": []}\n",
+  "stdoutTruncated": false,
+  "success": true,
+  "timedOut": false
+}

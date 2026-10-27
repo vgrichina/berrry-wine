@@ -1,0 +1,17 @@
+docs/dos-corpus/live/toyvm-bundle.js: up to date (2299KB)
+docs/dos-corpus/live/toyvm-jit-bundle.js: up to date (2263KB)
+20000 cases: 19970 match, 0 MISMATCH, 30 declined (99.8% claimed by wasm)
+[esp-epilogue] OK — 1629 of 1874 handler(s), 2186 epilogue line(s) match nargs
+check-watx-provenance: OK (all 23 required files present and matching, manifest sealed against CHANGELOG.md)
+layout offsets OK — 36 layouts, 2 frozen
+Concatenating WAT parts...
+Wrote build/combined.wat from 127 parts (src/main.watx include order, (module ...) wrapper added here)
+Compiling (WATX)...
+Compiler: watx (from default)
+WATX entry: src/main.watx
+Region layout: CANONICAL — 269 regions (14 pinned/derived, 254 allocated, 1 span), floor 0x00000100
+Region layout hash: 9a3bc9149d58209c
+Build complete: build/wine-assembly.wasm (1880317 bytes)
+Build complete: build/wine-assembly.compat.wasm (1882890 bytes)
+wasm-data: 323 data segments, no overlaps
+-rw-r--r-- 1 user user 1880317 Oct 27 12:53 build/wine-assembly.wasm

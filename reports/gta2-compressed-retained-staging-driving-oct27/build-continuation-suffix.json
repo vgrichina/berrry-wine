@@ -1,0 +1,6 @@
+{
+  "sourceSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "suffixSHA256": "01ef14fe6dc7ef3dbd16f20567fb9df97140032c357e267477b3b918ba1053d8",
+  "resumeCommand": "node tools/toyvm/bundle-browser.js --check",
+  "compilerInvocationsBefore": 0
+}

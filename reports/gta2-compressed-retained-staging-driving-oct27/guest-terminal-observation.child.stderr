@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/control.py", line 77, in <module>
+    elif mode in ('script','gitbatch'):exec(pathlib.Path(sys.argv[2]).read_text())
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in <module>
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/control.py", line 50, in py
+    def py(code):return api('python3 -c '+shlex.quote(code))
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/control.py", line 45, in api
+    assert len(raw)+len(e)<=8192 and sum(p.stat().st_size for p in d.iterdir())+sum(p.stat().st_size for p in prior.iterdir())<=8388608
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

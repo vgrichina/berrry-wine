@@ -1,0 +1,22 @@
+{
+  "at": 1793105660.6981883,
+  "remoteUsed": 139411456,
+  "remoteProjection": 412041216,
+  "localUsed": 61726720,
+  "remoteAllocation": 1073741824,
+  "localAllocation": 201326592,
+  "localReserve": 8388608,
+  "remoteReserve": 67108864,
+  "rawAPIUsed": 574026,
+  "rawAPIRemaining": 7814582,
+  "terminalReserve": 1048576,
+  "acceptancePNGs": 4,
+  "remotePNGReserve": 16777216,
+  "fullTransferReserved": 3,
+  "fullTransferMaxBytes": 1232000,
+  "fullTransferEnvelopeEach": 1750000,
+  "controlAndStatusEnvelope": 262144,
+  "secondsUntilCutoff": 819.2569785118103,
+  "guestWall": 240,
+  "publicationLocalEnvelope": 33554432
+}
