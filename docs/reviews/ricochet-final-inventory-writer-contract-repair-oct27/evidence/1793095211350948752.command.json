@@ -1,0 +1,49 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/test/ricochet-control-publisher.test.py",
+    "WriterTests.test_01_raced_symlink_does_not_modify_retained",
+    "WriterTests.test_02_existing_regular_symlink_hardlink_and_terminal",
+    "WriterTests.test_03_concurrent_publishers_one_outstanding",
+    "WriterTests.test_04_oversize_stream_fails_with_no_partial_namespace",
+    "WriterTests.test_05_sparse_and_overallocated_inode_reject",
+    "WriterTests.test_06_partial_write_failure_cleans_unnamed_inode",
+    "WriterTests.test_07_limit_set_before_encoding_and_write",
+    "WriterTests.test_08_final_regular_replacement_and_new_entry_failclosed",
+    "WriterTests.test_09_rejecting_writer_mutation_controls"
+  ],
+  "mode": "python",
+  "at": 1793095211.3522158,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "8f0403d1912f04632041de3864b2f46b0963ac3be4a69bbfbecd616b3cc02b83",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 2346864640,
+  "free": 7789879296,
+  "used": 5349376,
+  "clientsAlreadyInMemAvailable": [],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

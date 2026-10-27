@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "35",
+    "bx_e9mecsag",
+    "python3 -B -c 'import pathlib,json,time;h=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');o=h/\"serial\";p=o/\"continue.json\";assert not p.exists() and not (o/\"done.json\").exists();j={'\"'\"'commands'\"'\"': [{'\"'\"'cmd'\"'\"': '\"'\"'mousemove:75:170'\"'\"'}, {'\"'\"'cmd'\"'\"': '\"'\"'mousedown:75:170'\"'\"'}], '\"'\"'release'\"'\"': '\"'\"'mouseup:75:170'\"'\"', '\"'\"'step'\"'\"': 256, '\"'\"'png'\"'\"': '\"'\"'round-before.png'\"'\"', '\"'\"'id'\"'\"': 1793092841347238229};import importlib.util,hashlib;helper=h/'\"'\"'control-publisher.py'\"'\"';assert hashlib.sha256(helper.read_bytes()).hexdigest()=='\"'\"'cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654'\"'\"';spec=importlib.util.spec_from_file_location('\"'\"'control_publisher'\"'\"',helper);publisher=importlib.util.module_from_spec(spec);spec.loader.exec_module(publisher);publisher.publish(o,j);end=time.monotonic()+30\nwhile time.monotonic()<end:\n d=o/\"decision-done.json\"\n if d.exists() and json.loads(d.read_text())[\"id\"]==j[\"id\"]:print(d.read_text());break\n if (h/\"guest/terminal.json\").exists():raise RuntimeError(\"guest terminated; do not replay\")\n time.sleep(.02)\nelse:raise RuntimeError(\"inflight uncertain; no replay\")'"
+  ],
+  "historicalCommandSHA256": "b00f78a57164ca8dc3ff6d7fbb6e885292407672efa7616f8cebf2e0e167d350",
+  "historicalClientLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "commandSHA256": "ec9cf9e36462a09f5bf38935ee745114efe3ae20ee96abf15b7a88840cebf5f1",
+  "commandHashEncoding": "UTF8 json.dumps(argv, sort_keys=True)",
+  "sourceSHA256": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff",
+  "helperSHA256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+  "transformedSourceSHA256": "5d7b7adfa145ecb1284a1ddf26946fdbadd04e8b0fbef2df011cd750ac2cb1f0"
+}

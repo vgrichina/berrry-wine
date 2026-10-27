@@ -1,0 +1,24 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 47853568,
+  "sampledPeakRSS": 47853568,
+  "reapedPeakRSS": 28512256,
+  "cpuSeconds": 0.151836,
+  "wallSeconds": 0.1091983700171113,
+  "owned": [
+    [
+      4059336,
+      "114229903"
+    ],
+    [
+      4059337,
+      "114229908"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "stdout": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.stdout",
+  "stderr": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.stderr",
+  "commandReceipt": "1793095089777001182.command.json"
+}

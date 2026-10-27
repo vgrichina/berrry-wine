@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "bash",
+    "-c",
+    "exec \"$@\" >\"/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/cleanup.stdout\" 2>\"/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/cleanup.stderr\"",
+    "capture",
+    "/usr/bin/python3",
+    "-S",
+    "-c",
+    "import pathlib,subprocess,sys,time;subprocess.Popen([sys.executable,\"-S\",\"-c\",\"import time;time.sleep(5)\"]);time.sleep(.1);pathlib.Path(sys.argv[1]).write_bytes(b\"x\"*131072);time.sleep(5)",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-hepmzwln/retained"
+  ],
+  "supervision": {
+    "exit": -15,
+    "stopReason": "accounting check failed: runtime storage ceiling",
+    "peakRSS": 49778688,
+    "sampledPeakRSS": 49778688,
+    "reapedPeakRSS": 20373504,
+    "cpuSeconds": 0.07818800000000001,
+    "wallSeconds": 0.15003695408813655,
+    "owned": [
+      [
+        4065720,
+        "114262583"
+      ],
+      [
+        4065721,
+        "114262585"
+      ]
+    ],
+    "output": "b''",
+    "cleanupComplete": true
+  },
+  "ledger": {
+    "samples": 1,
+    "failures": 1,
+    "peakBytes": 25300992,
+    "lastBytes": null
+  }
+}

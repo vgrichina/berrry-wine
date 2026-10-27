@@ -1,0 +1,40 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "test/ricochet-late-link-minimal.py"
+  ],
+  "mode": "python",
+  "at": 1793094993.5059974,
+  "cwd": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo",
+  "envHash": "0811df6c21b1f2c9504edf14ba0a0439ce488173ab05dbaedf224a4b5be6d61b",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3570622464,
+  "free": 7798366208,
+  "used": 5062656,
+  "clientsAlreadyInMemAvailable": [],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

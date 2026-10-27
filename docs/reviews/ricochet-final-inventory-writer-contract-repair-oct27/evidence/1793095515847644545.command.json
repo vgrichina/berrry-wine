@@ -1,0 +1,46 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/test/ricochet-runtime-accounting.test.py",
+    "AccountingTests.test_consumption_after_descriptor_open",
+    "AccountingTests.test_consumption_immediately_after_open",
+    "AccountingTests.test_control_link_and_replacement_races",
+    "AccountingTests.test_control_reservation_and_recreation",
+    "AccountingTests.test_bounds_and_configuration",
+    "AccountingTests.test_missing_retained_between_enumeration_and_stat_rejects"
+  ],
+  "mode": "python",
+  "at": 1793095515.8489916,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "3c3728168a464e1ade431c713524da1f7e2ecbce05d26043f74779fa1d642ac6",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 2530684928,
+  "free": 7772049408,
+  "used": 5623808,
+  "clientsAlreadyInMemAvailable": [],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

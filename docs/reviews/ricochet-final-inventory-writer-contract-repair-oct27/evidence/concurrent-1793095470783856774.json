@@ -1,0 +1,90 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-S",
+        "-c",
+        "import importlib.util,sys;s=importlib.util.spec_from_file_location(\"p\",sys.argv[1]);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);m.publish(sys.argv[2],{\"id\":int(sys.argv[3])})",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/tools/ricochet/control-publisher.py",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixtures/tmp9lajygs0/serial",
+        "0"
+      ],
+      "pid": 4066811,
+      "stdout": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-0.stdout",
+      "stderr": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-0.stderr"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-S",
+        "-c",
+        "import importlib.util,sys;s=importlib.util.spec_from_file_location(\"p\",sys.argv[1]);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);m.publish(sys.argv[2],{\"id\":int(sys.argv[3])})",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/tools/ricochet/control-publisher.py",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixtures/tmp9lajygs0/serial",
+        "1"
+      ],
+      "pid": 4066812,
+      "stdout": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-1.stdout",
+      "stderr": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-1.stderr"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-S",
+        "-c",
+        "import importlib.util,sys;s=importlib.util.spec_from_file_location(\"p\",sys.argv[1]);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);m.publish(sys.argv[2],{\"id\":int(sys.argv[3])})",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/tools/ricochet/control-publisher.py",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixtures/tmp9lajygs0/serial",
+        "2"
+      ],
+      "pid": 4066813,
+      "stdout": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-2.stdout",
+      "stderr": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-2.stderr"
+    },
+    {
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "-S",
+        "-c",
+        "import importlib.util,sys;s=importlib.util.spec_from_file_location(\"p\",sys.argv[1]);m=importlib.util.module_from_spec(s);s.loader.exec_module(m);m.publish(sys.argv[2],{\"id\":int(sys.argv[3])})",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/tools/ricochet/control-publisher.py",
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixtures/tmp9lajygs0/serial",
+        "3"
+      ],
+      "pid": 4066814,
+      "stdout": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-3.stdout",
+      "stderr": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/concurrent-1793095470783856774-3.stderr"
+    }
+  ],
+  "exits": [
+    1,
+    1,
+    0,
+    1
+  ],
+  "helperSHA256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_CPU": [
+      90,
+      90
+    ]
+  },
+  "cleanup": "all four waited"
+}

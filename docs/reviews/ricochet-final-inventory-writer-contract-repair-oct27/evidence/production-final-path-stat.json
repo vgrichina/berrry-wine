@@ -1,0 +1,40 @@
+{
+  "sourceSHA": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+  "transformSHA": "5f1c4fbe376160857097f16255f2c9cf40ec9d2266dbb956b64ca7467fe5c559",
+  "manifest": {
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-f3jxks2m/final-path-stat/runtime-accounting.py": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-f3jxks2m/final-path-stat/remote-child.py": "16ed5df91b6162316825fd1f1f943da701bd17412a9cded1bd42d31369470309",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-f3jxks2m/final-path-stat/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "consumed": [
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-f3jxks2m/final-path-stat/serial/continue.json"
+  ],
+  "supervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 36671488,
+    "sampledPeakRSS": 36671488,
+    "reapedPeakRSS": 20373504,
+    "cpuSeconds": 0.014857000000000009,
+    "wallSeconds": 0.029566011857241392,
+    "owned": [
+      [
+        4065719,
+        "114262580"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "accounting": {
+      "samples": 4,
+      "failures": 0,
+      "peakBytes": 25231360,
+      "lastBytes": 25231360
+    },
+    "box": "bx_e9mecsag",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator",
+    "at": 0,
+    "elapsed": 0.03409943915903568
+  }
+}

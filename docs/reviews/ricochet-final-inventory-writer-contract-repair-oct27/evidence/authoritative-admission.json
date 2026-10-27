@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-27T09:55:33.721852+00:00",
+  "task": "ricochet-final-inventory-writer-contract-repair-oct27",
+  "memAvailable": 3611652096,
+  "required": 1409286144,
+  "diskFree": 7799824384,
+  "prospectiveBytes": 469762048,
+  "floor": 2982150144,
+  "taskAllocation": 134217728,
+  "existingPeers": "actual clients already in MemAvailable; future320MiB client +128MiB task; shared256MiB child pool plus805306368 hostheadroom counted once",
+  "verifiedAcceptancePayloads": 95,
+  "pass": true
+}

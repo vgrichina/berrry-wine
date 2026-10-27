@@ -1,0 +1,52 @@
+{
+  "status": "REJECT",
+  "candidate": "e8cfe229416c4076f68f18c9806a07dd50848cd7",
+  "sourcePins": {
+    "test/ricochet-runtime-accounting.test.py": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/serial.py": "983f8e627f3a5bb6eaf4ffaf664badf693621d5728808f0afb54bddb57ee2496",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "tools/ricochet/runtime-accounting.py": "857e30508c1e4db1c943b765a0e7551842973032cc5431eb08235dabda903364"
+  },
+  "firstBehavioralReceipt": "1793094423373928474",
+  "completeRemainingConsumptionWindowsReceipt": "1793094495062072046",
+  "independentPassedMethods": 9,
+  "originalReusableMethods": 22,
+  "rejections": [
+    {
+      "case": "final-inventory symlink and hardlink",
+      "receipt": "1793094508467405778",
+      "acceptedBytes": 25178112,
+      "assertion": "inventory must reject; unchanged strict assertions fail"
+    },
+    {
+      "case": "exact historical API publication prefix follows raced symlink",
+      "receipt": "1793094594520332898",
+      "assertion": "retained contents must remain unchanged; strict assertion fails"
+    }
+  ],
+  "minimalReproducer": {
+    "path": "test/ricochet-late-link-minimal.py",
+    "receipt": "1793094536198190798",
+    "expectedExit": 1
+  },
+  "missingPrerequisite": "Production wiring enforcing single outstanding bounded regular single-link JSON, logical+allocated <=24MiB and writer RLIMIT_FSIZE <=24MiB for ALL producers including API-side writers before publication",
+  "incidents": [
+    "Initial read-only source displays exceeded requested8192B display bound; subsequent operation wrapper bounded display7500B, cumulative initial read output remains below1MiB",
+    "Initial final-swap evidence serialization could not encode Path dict keys; original two errors retained; only diagnostic key serialization fixed; exact strict assertions then failed",
+    "WAL baseline unavailable: entire current WAL conservatively charged once, not an exact growth claim"
+  ],
+  "remaining": [
+    "candidate repair and fresh independent affected acceptance",
+    "all-producer production publication contract and immutable closure verified before any integration",
+    "coordinator scoped integration only; orphan report must never be merged whole",
+    "fresh authorized actual gameplay completed post-input response and ordinary Quit"
+  ],
+  "noImplementationRepair": true,
+  "noIntegration": true,
+  "noRuntime": true,
+  "noBoxes": true,
+  "noWorkers": true,
+  "root": "tracked/index/refs read-only; initial digest reused, no later comparison claimed"
+}

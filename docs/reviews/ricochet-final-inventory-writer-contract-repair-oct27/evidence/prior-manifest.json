@@ -1,0 +1,382 @@
+{
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/README.md": {
+    "bytes": 5929,
+    "sha256": "406b48a2205f1d8585f61bf780c29f70e9b9660ec59194439da34238086b24e1"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/checkpoint.json": {
+    "bytes": 3062,
+    "sha256": "0d426f54b93b595e92283f92ca3afe298e58aacef2b657b692b5b926c00c5832"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094398289925008.command.json": {
+    "bytes": 1106,
+    "sha256": "d285380bc40295ef97ddb21f0650f8551189fe38400f1379c62b92bb1d86f1d3"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094398289925008.git-limits.json": {
+    "bytes": 124,
+    "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094398289925008.result.json": {
+    "bytes": 556,
+    "sha256": "4f69b691a1c473a157e385ad5e22a103a9b60223dac7a567167b65518f4392f0"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094398289925008.stderr.b64": {
+    "bytes": 649,
+    "sha256": "12637f4292a032ef4493a1dd1f272b2b4d6c7f90e6a73d4f6ef2f6b8149ac114"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094398289925008.stdout.b64": {
+    "bytes": 145,
+    "sha256": "36cfcaaf8819f8531d896612fe9aa61314c9377dc919b8743e6228a4c7b5eeff"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407241712048.command.json": {
+    "bytes": 1203,
+    "sha256": "c5bc8f49ce4f69cddcb60f4f1b518792457c241cf6d271c5e2bff89df7e40fc6"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407241712048.git-limits.json": {
+    "bytes": 124,
+    "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407241712048.result.json": {
+    "bytes": 567,
+    "sha256": "2bbad4623fef62063e09a4c1192264e1a4201e9bf90938db901d9f140aee96ad"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407241712048.stderr.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407241712048.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407355317626.command.json": {
+    "bytes": 1272,
+    "sha256": "8eb7ed5417e5e7ef99fc067b3c67449a38da9b65f1dfd5703638d6526fa975b6"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407355317626.git-limits.json": {
+    "bytes": 124,
+    "sha256": "d48d362b47b93fc04e6fa83a4f756dbd86a1f6b8e53d69d9a6196d87df2b58ed"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407355317626.result.json": {
+    "bytes": 556,
+    "sha256": "6168bf09cb4960788394fd3af8e11bc77283cce9ea4a0b4c8297165149c62600"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407355317626.stderr.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094407355317626.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094423373928474.command.json": {
+    "bytes": 1128,
+    "sha256": "64ed34a98f6113aefdeada1843291ecc71a899aeb19d6ce68f1b0a54b600d8b8"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094423373928474.result.json": {
+    "bytes": 599,
+    "sha256": "bfe4ed678ad2094bc3ca8c972d0c7ea996da31d53760da6a849f94daf768615c"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094423373928474.stderr.b64": {
+    "bytes": 301,
+    "sha256": "f9aee365b2ee368d983c8c0a29ff452cc42b765d80394437b90544e1c0e37298"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094423373928474.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094495062072046.command.json": {
+    "bytes": 1232,
+    "sha256": "ed477bf914ee37bf64fecd6614dc2546fe62a867a2e3c6dc3b9f4eb6cc3b914e"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094495062072046.result.json": {
+    "bytes": 646,
+    "sha256": "0e309af83a7dc081f402064e419049ae17743a88410fb67f59923aa8eebb2e77"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094495062072046.stderr.b64": {
+    "bytes": 325,
+    "sha256": "f24d9bf93c3ecfa153d4e8bfbb95999235f17c937a3e25215a1f4f8d4f741d97"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094495062072046.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094501831571307.command.json": {
+    "bytes": 1740,
+    "sha256": "2d431b8a5fa059d3b9b9b0de43a51d57e8c209055620f016aa0dd6b67b3163b7"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094501831571307.result.json": {
+    "bytes": 645,
+    "sha256": "dcdfaba3db2bbea35d892d2b0a7e651ac97c2f24518f507492454b6724fee86e"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094501831571307.stderr.b64": {
+    "bytes": 6665,
+    "sha256": "fff09f3d370fe0cf173b02a8609e2e32ff64f033361ffd94e2572387d8ea843d"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094501831571307.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094508467405778.command.json": {
+    "bytes": 1220,
+    "sha256": "17b0a0f9ed02066577027ed0ed7d999bc2955dfd3ff63356e08e5460d704b459"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094508467405778.result.json": {
+    "bytes": 553,
+    "sha256": "204061ba0a396310e8e63660d40433cb9d6deb954f45ae097dabbb516170f8e2"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094508467405778.stderr.b64": {
+    "bytes": 3621,
+    "sha256": "bd244d633da1d925ddc5221a13d36d33e30f9044ac8a8b2b47b124c7b7f3381e"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094508467405778.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094536198190798.command.json": {
+    "bytes": 1147,
+    "sha256": "5405fb41a126d564c69b11a3ed32505d03e2237329bb80d956234e135efb7d1f"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094536198190798.result.json": {
+    "bytes": 566,
+    "sha256": "d1e9c4861964ad4e17499910db07ff9d530a04076e1e7c8d560cade70a244df6"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094536198190798.stderr.b64": {
+    "bytes": 481,
+    "sha256": "355481a0b6cd48261d8923a1a1c17d603ef13deabdab414d1d943fdae5a530fd"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094536198190798.stdout.b64": {
+    "bytes": 69,
+    "sha256": "38ff232560ac8e3884758de8ee7f5f584b8d241894ed36cb98111731eacd7fcc"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094580909029197.command.json": {
+    "bytes": 1126,
+    "sha256": "524869a386167608e2df72af2e848e5926f2f2eae833463c74b3b99876f1a93b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094580909029197.result.json": {
+    "bytes": 556,
+    "sha256": "f167924b48f32409d3083a9d453233b047de26082b691cc284cccd68bc9309be"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094580909029197.stderr.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094580909029197.stdout.b64": {
+    "bytes": 41,
+    "sha256": "cab852332fcc50c24b24ffdf0cd203445ee63303eb8c69b5a7712f8d4040595c"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094594520332898.command.json": {
+    "bytes": 1237,
+    "sha256": "4a4def141e4c891bd00e883b562afab4efc44ef0478e017df019e071fff452bb"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094594520332898.result.json": {
+    "bytes": 566,
+    "sha256": "aaa873485e9eb7a1a390ba8fbf343fddbeda59eb49d1e3ab1c6c38624d55730b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094594520332898.stderr.b64": {
+    "bytes": 1713,
+    "sha256": "61aaf2715f1fc81dc57b4de19a19599953d099f3f47015f362ca614339ecc8b2"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094594520332898.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094672216653465.command.json": {
+    "bytes": 1121,
+    "sha256": "82f3dea870835a4686979174331fff8370a2b6eab29bdd344da114d1c42c5e5b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094672216653465.stderr.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/1793094672216653465.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/board-watcher.json": {
+    "bytes": 112,
+    "sha256": "658d72a5b14ff6e1ced4d13983ff113a60dfddf2326b434cb00ac57a78a65cfc"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-README.md": {
+    "bytes": 7727,
+    "sha256": "01e6c240147478f6f0cb69f127fde92fe655d434a3b025543266743f6c8add8d"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-boundary-original.json": {
+    "bytes": 433,
+    "sha256": "d441e438b8de8417f102f26504e8fc318fd2c25d25d9f9956c54c87cd88e1447"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-checkpoint.json": {
+    "bytes": 5706,
+    "sha256": "9a67e257679fc840b0bbd5e808375f1fa16bc949a934c25aee14cdab27a1cedb"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-first-implementation-command.json.b64": {
+    "bytes": 2657,
+    "sha256": "3fac1d8fcf08b7d3edc2ba9ac54817dfa58e75ba3a6dd7d155a90d6149158b84"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-first-implementation-result.json.b64": {
+    "bytes": 729,
+    "sha256": "ced43ea85398c9ab9fcf4d246ab973ac8eb6ea76abb7b845e8468992b5a3c1fb"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-first-implementation-stderr.b64": {
+    "bytes": 4557,
+    "sha256": "7bdb116877fd5a00a8eab82622219c9c6450b95f7433b2f007f89ebd5f42f9a0"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-first-implementation-stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/candidate-publication.json": {
+    "bytes": 361,
+    "sha256": "3dcc9b29b5756671df07f951f4a0593e695541a5c20a993c410f8ac29643c657"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/cleanup-supervision.json": {
+    "bytes": 1145,
+    "sha256": "38d396700e4985dc33fb4e470c3077de80913470382579c910cf69a3d783cfcf"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/cleanup.stderr.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/cleanup.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/git-child.py": {
+    "bytes": 453,
+    "sha256": "f4051186b97fd95fc2b2b4f77da7cc1b5b7c6e8c627be834ec13b9fcd21272f2"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/historical-api-1793092841347248549-command.json": {
+    "bytes": 1285,
+    "sha256": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/historical-cpu-accounting.json": {
+    "bytes": 521,
+    "sha256": "2fba6d5df03f065349cd8cabf794e030a00c99ee09d278cf225cab73f1094897"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/initial-root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/late-final-hardlink.json": {
+    "bytes": 485,
+    "sha256": "1fc3f560e801b89f3d3345888c88b5c5b95b91adf5f8a078938d18ad6f397faa"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/late-final-symlink.json": {
+    "bytes": 484,
+    "sha256": "cdac7e48ce827d30251c51a0e3255470b167b5f5350dd09820101e770a5da333"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/launcher-admission.json": {
+    "bytes": 1225,
+    "sha256": "ccab8727cf38d082c0e3a5e23830f3295fcb7798f84b9620aeba8fb52bccd624"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/mutation-controls.json": {
+    "bytes": 71,
+    "sha256": "8aa702750fd54859dad13e27c00a509201c2b0f1e592b640b348e452c76ec7d0"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/operate.py": {
+    "bytes": 5110,
+    "sha256": "44d3d748e71ba0b0b445a28a6725f29d1bb0313b1acc0cc9f2c69a0979334659"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/package.py": {
+    "bytes": 11508,
+    "sha256": "1294186dea615868c0872db2768885872ead9e2c6973c34498d7e54d98f7391f"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/pins-boundary.py": {
+    "bytes": 659,
+    "sha256": "93439a82ec4cae5455da19aad595a698c1f27af4c3f137353864aff380fa04ee"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/production-after-open.json": {
+    "bytes": 1502,
+    "sha256": "66b66fb770f18f22970e4c49dae6690f35642dab5ded150af18936c4cf8aeca9"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/production-final-path-stat.json": {
+    "bytes": 1522,
+    "sha256": "668e5f6af179f3eba7f8e0387aca1dc8d7cf946c589d4e076c5ec61379941e9d"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/publisher-contract.json": {
+    "bytes": 1168,
+    "sha256": "c05ddfca90eabe62e519d70d8fad55bc34613869a8e80c7a9c618892d245900c"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093773002351570.command.json.b64": {
+    "bytes": 1429,
+    "sha256": "211d08c9ad864cc2b4770059429a1521b29885bd712c9ab21466c51861350022"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093773002351570.result.json.b64": {
+    "bytes": 729,
+    "sha256": "0abbda0bfe87e790e4eccaf86ddc889c73199faba0aef7029ff737955f6bd8b5"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093773002351570.stderr.b64": {
+    "bytes": 601,
+    "sha256": "558f20a2c0bd45a3bc54a567c0eea4fedf4b0d24841bf06c4798c1fcea1ceea0"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093773002351570.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093815108437900.command.json.b64": {
+    "bytes": 1553,
+    "sha256": "4bf0c96fe41759474a453cd5de80655f8cdaa965ec905a74309efbdf577f1ef4"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093815108437900.result.json.b64": {
+    "bytes": 1037,
+    "sha256": "008b85c62f665a395ed5d539c98dcfabf06ac410c5caa409fe189a65ae1b8b47"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093815108437900.stderr.b64": {
+    "bytes": 841,
+    "sha256": "1fc3375791882fbeee8cf64c492293d288eeae1127c79d09d3c1c00b75dcec7e"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093815108437900.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093877288782354.command.json.b64": {
+    "bytes": 3009,
+    "sha256": "daf00b171c416f3ad5bc35636d3def0367d45b0fd9bfe67fc2361b70e8ec2e5c"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093877288782354.result.json.b64": {
+    "bytes": 729,
+    "sha256": "9721bef1008fe1abaf27f117454646004d5a79b97fe8db2916d4471cbedc5f9e"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093877288782354.stderr.b64": {
+    "bytes": 2533,
+    "sha256": "42c4ca547c6b3dd37dcaa1c7ab083f51d406beb6f9c4ac1e5b0c9f7d9ce54a27"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793093877288782354.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793094011518506732.command.json.b64": {
+    "bytes": 1809,
+    "sha256": "a1d1ada6eafbaeefc5083755949e913f5ca1b6c8e5279cf97995b229ead2f599"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793094011518506732.result.json.b64": {
+    "bytes": 729,
+    "sha256": "46a00f44cab82afb826d2185d7f68f189d05b36f8a0549b8a4b6358da7ec2d64"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793094011518506732.stderr.b64": {
+    "bytes": 497,
+    "sha256": "02fa50f4aaa5ac71e8c7df0374fe13dd3e8e9afc5da413180eb105d528b75636"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/reused-1793094011518506732.stdout.b64": {
+    "bytes": 1,
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/verified-pins.json": {
+    "bytes": 854,
+    "sha256": "47d28465128f012418a87ecceebc0de42d204fcb88a25e7ef13674159053cfa5"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/evidence/watcher-pin.py": {
+    "bytes": 448,
+    "sha256": "debdf20ed704e757a8270c3d4e7a8f57847ddb8872f1312151ffc91587938d91"
+  },
+  "docs/reviews/ricochet-consumed-accounting-independent-accept-oct27/reused-22-methods.json": {
+    "bytes": 5585,
+    "sha256": "7a40d303f6aba8c57c0d95145ea23dd1acb539f0200f1c920e94d673918b7bda"
+  },
+  "test/ricochet-consumed-independent.test.py": {
+    "bytes": 11757,
+    "sha256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551"
+  },
+  "test/ricochet-late-link-minimal.py": {
+    "bytes": 1459,
+    "sha256": "9c17daa4038dbc696719045324eab6456a1e78ffb0a26c14842eea80d8ed8b1f"
+  }
+}

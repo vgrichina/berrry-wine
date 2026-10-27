@@ -1,0 +1,15 @@
+{
+  "swaps": [
+    "hardlink"
+  ],
+  "accepted": null,
+  "error": "AccountingError('control replaced at final boundary: /tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/fixture-geo8jm49/serial/continue.json')",
+  "receipt": {
+    "samples": 0,
+    "failures": 1,
+    "peakBytes": 25178112,
+    "lastBytes": null
+  },
+  "controlMode": 33204,
+  "controlLinks": 2
+}

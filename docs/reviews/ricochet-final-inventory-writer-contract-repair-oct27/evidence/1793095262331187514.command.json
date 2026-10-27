@@ -1,0 +1,42 @@
+{
+  "command": [
+    "-C",
+    "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo",
+    "cat-file",
+    "-t",
+    "e8cfe229416c4076f68f18c9806a07dd50848cd7"
+  ],
+  "mode": "git",
+  "at": 1793095262.331968,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "e5fa993c6c3d7bc33b796b4c8741741e1f46403a6238fd2662c8224bbf1be9b9",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3571941376,
+  "free": 7785299968,
+  "used": 5394432,
+  "clientsAlreadyInMemAvailable": [],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}
