@@ -4480,6 +4480,9 @@ async function main() {
   // Resolve the reader at call time so the optional observer below sees the
   // same mapped return as GetTickCount/timeGetTime/QueryPerformanceCounter.
   h.get_ticks = () => guestClock.ticks();
+  // Independent of --trace-input-dispatch; no initialization or hooks by default.
+  const mainSchedulerObserver = hasFlag('trace-main-scheduler')
+    ? require('./main-scheduler-observer').createMainSchedulerObserver({ logs, isOpen: traceWindowOpen }) : null;
   const inputConsumptionTrace = createInputConsumptionTrace({
     enabled: TRACE_INPUT_DISPATCH, logs,
     snapshot: () => ({ batch: tickState.batch, guestMs: guestClock.publish(),
@@ -4532,6 +4535,7 @@ async function main() {
   // --- Override input for test injection ---
   let lastInputEvent = null;
   h.check_input = () => {
+    if (mainSchedulerObserver) mainSchedulerObserver.hostInput();
     let evt = null;
     let source;
     if (inputEvent) {
@@ -5189,7 +5193,8 @@ async function main() {
     // A console reader may live on a guest worker (telnet does). Its low-level
     // input buffer is process-scoped, so it must drain the same host event and
     // metadata latch as the main instance.
-    wh.check_input = h.check_input;
+    wh.check_input = mainSchedulerObserver
+      ? () => mainSchedulerObserver.workerInput(tid, h.check_input) : h.check_input;
     wh.check_input_lparam = h.check_input_lparam;
     wh.check_input_wparam = h.check_input_wparam;
     wh.check_input_hwnd = h.check_input_hwnd;
@@ -6828,10 +6833,14 @@ async function main() {
   const renderWaitAttribution = hasFlag('trace-render-wait') ? createRenderWaitAttribution() : null;
   if (renderWaitAttribution) ctx.renderWaitAttribution = renderWaitAttribution.stats;
   let mainRenderWait = null;
-  const mainExecutionSuspended = () => {
+  const mainExecutionSuspended = (path = 'probe') => {
+    const observation = mainSchedulerObserver?.begin(path, tickState.batch);
+    const finish = (value, reason) => observation ? observation.finish(value, reason) : value;
     const ex = instance.exports;
-    if (threadManager.isMainNamedEventWaiting()) return true;
-    if (ex.get_yield_reason() === 16) {
+    if (threadManager.isMainNamedEventWaiting()) return finish(true, 'named-event');
+    let yieldReason = ex.get_yield_reason();
+    if (observation) observation.yield(yieldReason);
+    if (yieldReason === 16) {
       const token = ex.get_d3d_render_token() | 0;
       if (!mainRenderWait || mainRenderWait.token !== token) {
         const wait = {token,done:false,polls:0,since:tickState.batch|0}; mainRenderWait = wait;
@@ -6849,13 +6858,15 @@ async function main() {
         if (++mainRenderWait.polls === 1000 && record && record.done)
           console.log(`[render] main parked on completed request ${token} for 1000 checks ` +
             `(since batch ${mainRenderWait.since}); the wait never observed it`);
-        return true;
+        return finish(true, 'render');
       }
       mainRenderWait = null; ex.clear_yield();
     }
-    if (threadManager._renderSendTargets.has(ex)) return true;
-    if (ex.get_yield_reason() === 10 && (threadManager.backend === 'worker' ||
-        !threadManager.resolveCooperativeThreadSend(ex))) return true;
+    if (threadManager._renderSendTargets.has(ex)) return finish(true, 'render-send');
+    yieldReason = ex.get_yield_reason();
+    if (observation) observation.yield(yieldReason);
+    if (yieldReason === 10 && (threadManager.backend === 'worker' ||
+        !threadManager.resolveCooperativeThreadSend(ex))) return finish(true, 'thread-send');
     // Sleep(n) on the main thread. checkMainYield records the deadline after
     // the batch that slept; host.js parks the main instance until it passes,
     // and so must this loop, or Sleep(1001) lasts one batch of guest time.
@@ -6871,12 +6882,15 @@ async function main() {
     // A Sleep main made earlier in this batch (between thread slices) has not
     // been through checkMainYield yet; record its deadline now.
     threadManager.noteMainSleep();
-    if (!REAL_TICK_SLEEPS && threadManager.isMainSleeping() && !threadManager.hasLiveThreads()) {
+    if (!REAL_TICK_SLEEPS && threadManager.isMainSleeping(observation?.sleep) &&
+        !(observation ? observation.live(threadManager.hasLiveThreads()) : threadManager.hasLiveThreads())) {
+      if (observation) observation.fastForward();
       tickState.pausedMs += threadManager.mainSleepRemaining();
     }
-    if (threadManager.isMainSleeping()) return true;
-    if (!threadManager.isMainThreadSuspended()) return false;
-    return !(ex.is_mm_timer_callback_active && (ex.is_mm_timer_callback_active() | 0));
+    if (threadManager.isMainSleeping(observation?.sleep)) return finish(true, 'sleep');
+    if (!threadManager.isMainThreadSuspended()) return finish(false, 'runnable');
+    return finish(!(ex.is_mm_timer_callback_active && (ex.is_mm_timer_callback_active() | 0)),
+      'suspend-count-or-mm-timer');
   };
 
   // A main thread parked on a software D3D request (yield 16) used to cost a
@@ -10414,7 +10428,10 @@ async function main() {
       if (instance.exports.get_yield_reason && instance.exports.get_yield_reason() === 7) {
         threadManager.checkMainYield();
       }
-      if (!mainExecutionSuspended()) instance.exports.run(BATCH_SIZE);
+      if (!mainExecutionSuspended('ordinary')) {
+        if (mainSchedulerObserver) mainSchedulerObserver.run('ordinary', () => instance.exports.run(BATCH_SIZE));
+        else instance.exports.run(BATCH_SIZE);
+      }
       else if (instance.exports.get_yield_reason() === 16) renderParkStats.skippedBatches++;
     } catch (e) {
       flushLogs();
@@ -10879,10 +10896,13 @@ async function main() {
         // --threads-serial means nothing runs beside a guest thread, main
         // included, or the switch would not answer the question it exists for.
         if (THREADS_SERIAL) await workerSlices;
-        else if (s < THREAD_SLICES - 1 && !stopped && !mainExecutionSuspended()) {
+        else if (s < THREAD_SLICES - 1 && !stopped && !mainExecutionSuspended('worker-interleaved')) {
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
-          try { instance.exports.run(BATCH_SIZE); } catch (e) { /* reported below */ }
+          try {
+            if (mainSchedulerObserver) mainSchedulerObserver.run('worker-interleaved', () => instance.exports.run(BATCH_SIZE));
+            else instance.exports.run(BATCH_SIZE);
+          } catch (e) { /* reported below */ }
         }
         ran = await workerSlices;
         if (!ran || stopped || !threadManager.hasActiveThreads()) break;
@@ -10926,8 +10946,11 @@ async function main() {
         // loop; repeatedly re-entering the main message pump here can drain
         // creation-time paints before an app has finished its first layout.
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
-            !mainExecutionSuspended()) {
-          try { instance.exports.run(BATCH_SIZE); } catch (e) { break; }
+            !mainExecutionSuspended('cooperative-interleaved')) {
+          try {
+            if (mainSchedulerObserver) mainSchedulerObserver.run('cooperative-interleaved', () => instance.exports.run(BATCH_SIZE));
+            else instance.exports.run(BATCH_SIZE);
+          } catch (e) { break; }
         }
       }
       if (TRACE_BATCH_TIMING) {
