@@ -175,7 +175,8 @@
     "Wrong owned box literal bx_5pu4jynk8 returned404 metadata only; raw/err retained. Corrected once from authoritative runtime/live/shutdown receipts before staging; no unchanged retry or restriction bypass.",
     "Read-only nested donor alternates warnings retained; exact150Git/141file input hashes pass; no fetch/fullcheckout/repack/donor writes.",
     "Operation label actual-capture-plan overwrote local child plan metadata; operation receipt retained under capture-plan-operation-receipt.json; collect-1 KeyError before API call. Remote unchanged original plan fetched back, no replanning/ledger reset/guest replay.",
-    "First substantive aggregate guard stops capture379/756; no capture retry. Later separately measured peerRSS below cap permits diagnostic publication only."
+    "First substantive aggregate guard stops capture379/756; no capture retry. Later separately measured peerRSS below cap permits diagnostic publication only.",
+    "Closeout committed-file inventory found nested operations/manifest.json excluded by overly broad manifest filename filter. Original payload/source file intact in commit4191395; corrected root-only manifest exclusion, no runtime/capture repetition. First failed finish receipt and corrected package source retained."
   ],
   "rootRefs": "Initial launcher digest reused; root tracked/index/refs and donors read-only; no full refs listing captured or later comparison claimed",
   "at": 1793097608.0092616

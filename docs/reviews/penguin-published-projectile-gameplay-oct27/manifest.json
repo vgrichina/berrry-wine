@@ -4,8 +4,8 @@
     "sha256": "3ab9736a7ecea283994bdbed0d6ee6bae884f5fc37140620d10a64c70b5ed04f"
   },
   "receipt.json": {
-    "bytes": 8357,
-    "sha256": "422ab8e1fb4497d3d03dfc2d21aab044dcc2fe477625cc712766fdfd95c838e0"
+    "bytes": 8679,
+    "sha256": "825f0578156f046363a3fc28b7c7be4028b9c2dcc05eca5ce0e3a7a3df1c9bf9"
   },
   "README.md": {
     "bytes": 1176,
@@ -43,6 +43,10 @@
     "bytes": 98,
     "sha256": "277b69b37caeb98469ef719d02919b5064b28fd244624b75a3242ff3457f62fc"
   },
+  "operations/finish-op.stdout": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
   "operations/read-input.stdout": {
     "bytes": 0,
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
@@ -50,6 +54,10 @@
   "operations/prepare-runtime.stdout": {
     "bytes": 159,
     "sha256": "8bc89f8099ad954f546e951787d45bc0e49ce34447a0ba53e193394dc5c75825"
+  },
+  "operations/finish-op.json": {
+    "bytes": 2541,
+    "sha256": "506f13ba7232998f26c2108489656dc7cb63318faf9e55a85f65ee18a6c76d75"
   },
   "operations/remote-initial.json": {
     "bytes": 2615,
@@ -144,8 +152,8 @@
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
   },
   "operations/package-blocker.py": {
-    "bytes": 8462,
-    "sha256": "f3e5244b42ad7c3d6e218148ad1cbef4a36e37f7f92374184e380c59bf77ccdc"
+    "bytes": 8459,
+    "sha256": "974137b3e752aa0648b0bee5e4578dbe84c05eb662a9d28a9c66f2ab4a864407"
   },
   "operations/stage-1.stdout": {
     "bytes": 74,
@@ -263,6 +271,10 @@
     "bytes": 2697,
     "sha256": "87da400c2bd25e7ec101e800ad1153e3fc738ff00415d6081233d7f60c8af1ea"
   },
+  "operations/fix-manifest-coverage.py": {
+    "bytes": 1046,
+    "sha256": "e358c75958b99154faee9ec0d202f396c5a8ad08d855bdc37607aa80b376d015"
+  },
   "operations/prepare-runtime.json": {
     "bytes": 2561,
     "sha256": "68158612dfc8e27e80fb63bfa8efd9e98fe369ee07ab371cfdfd8535c3c51517"
@@ -282,6 +294,10 @@
   "operations/init-input.stderr": {
     "bytes": 0,
     "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "operations/manifest.json": {
+    "bytes": 100134,
+    "sha256": "4141f5ff9e95ad35f8891394d79706a9a9a4792fe8dffce8f0f59bc4633ed5fd"
   },
   "operations/capture-ledger-start.json": {
     "bytes": 88,
@@ -446,6 +462,10 @@
   "operations/fetch-diagnostics.json": {
     "bytes": 4150,
     "sha256": "6ed8d0a73b2a5c64164352fc7f3815be5d6ba1aa2bfe278889bc8667d875f736"
+  },
+  "operations/finish-op.stderr": {
+    "bytes": 418,
+    "sha256": "c91b50dc53a0187b8b9bcb2fc7f5513aefe10e88e2657c5ff18285f4c0d6e8d4"
   },
   "operations/task-sparse.json": {
     "bytes": 2644,
