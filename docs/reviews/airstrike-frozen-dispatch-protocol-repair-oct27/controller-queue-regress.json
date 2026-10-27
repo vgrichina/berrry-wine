@@ -1,0 +1,102 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 48488448,
+  "sampledPeakRSS": 48488448,
+  "reapedPeakRSS": 16900096,
+  "cpuSeconds": 1.0572249999999999,
+  "wallSeconds": 0.4505724720656872,
+  "owned": [
+    [
+      4033723,
+      "114103008"
+    ],
+    [
+      4033727,
+      "114103012"
+    ],
+    [
+      4033729,
+      "114103015"
+    ],
+    [
+      4033731,
+      "114103018"
+    ],
+    [
+      4033733,
+      "114103020"
+    ],
+    [
+      4033735,
+      "114103023"
+    ],
+    [
+      4033739,
+      "114103025"
+    ],
+    [
+      4033776,
+      "114103030"
+    ],
+    [
+      4033778,
+      "114103032"
+    ],
+    [
+      4033780,
+      "114103035"
+    ],
+    [
+      4033782,
+      "114103037"
+    ],
+    [
+      4033784,
+      "114103040"
+    ],
+    [
+      4033786,
+      "114103043"
+    ],
+    [
+      4033788,
+      "114103045"
+    ],
+    [
+      4033790,
+      "114103047"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/regress.py",
+    "test-airstrike-menu-controller.py"
+  ],
+  "commandSHA256": "f2af628bd13629e156fb2d8597df8caedaf9206f48ce6c442425780d692dd82d",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stdout",
+  "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

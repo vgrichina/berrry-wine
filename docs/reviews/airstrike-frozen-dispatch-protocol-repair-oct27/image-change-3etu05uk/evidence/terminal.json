@@ -1,0 +1,16 @@
+{
+  "reason": "unproven-terminal",
+  "guestExitCode": null,
+  "runnerExitCode": -15,
+  "signals": [
+    "SIGTERM"
+  ],
+  "cleanupComplete": true,
+  "evidence": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/terminal.json",
+  "runnerLog": "FAKE RUNNER stdout diagnostic\n[ctl] {\"id\": \"bridge-1\", \"ok\": true, \"value\": {\"batch\": 12, \"focus\": \"0x10001\", \"mainHwnd\": \"0x10001\", \"quit\": false, \"screen\": {\"w\": 800, \"h\": 600}, \"windows\": [{\"hwnd\": \"0x10001\", \"title\": \"Airstrike FAKE\", \"visible\": true}]}}\n[ctl] {\"id\": \"bridge-2\", \"ok\": true, \"value\": {\"path\": \"/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/capture-04e116f61e9242179c1716be8cca688d.png\", \"bytes\": 23, \"batch\": 12}}\n[ctl] {\"id\": \"bridge-3\", \"ok\": true, \"value\": {\"batch\": 12, \"focus\": \"0x10001\", \"mainHwnd\": \"0x10001\", \"quit\": false, \"screen\": {\"w\": 800, \"h\": 600}, \"windows\": [{\"hwnd\": \"0x10001\", \"title\": \"Airstrike FAKE\", \"visible\": true}]}}\n[ctl] {\"id\": \"bridge-4\", \"ok\": true, \"value\": {\"batch\": 12, \"focus\": \"0x10001\", \"mainHwnd\": \"0x10001\", \"quit\": false, \"screen\": {\"w\": 800, \"h\": 600}, \"windows\": [{\"hwnd\": \"0x10001\", \"title\": \"Airstrike FAKE\", \"visible\": true}]}}\n[ctl] {\"id\": \"bridge-5\", \"ok\": true, \"value\": {\"path\": \"/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/capture-04e116f61e9242179c1716be8cca688d-fresh.png\", \"bytes\": 31, \"batch\": 12}}\n[ctl] {\"id\": \"bridge-6\", \"ok\": true, \"value\": {\"batch\": 12, \"focus\": \"0x10001\", \"mainHwnd\": \"0x10001\", \"quit\": false, \"screen\": {\"w\": 800, \"h\": 600}, \"windows\": [{\"hwnd\": \"0x10001\", \"title\": \"Airstrike FAKE\", \"visible\": true}]}}\n",
+  "timeout": false,
+  "controlQuit": false,
+  "wmClose": false,
+  "fault": false,
+  "hostExitObserved": false
+}

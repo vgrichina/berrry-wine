@@ -1,0 +1,39 @@
+{
+  "session": "1c6cbc2204d84a26a5302a144f57c331",
+  "token": "b619857a6b3744adac4c8513f021c00c",
+  "after": null,
+  "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/missing-ack-pnha9zph/evidence/capture-b619857a6b3744adac4c8513f021c00c.png",
+  "sha256": "b10569ef90c1f5c754b2eda8b22012f04ab5b79eb094387f836882d865eb5d84",
+  "snapshot": {
+    "batch": 12,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "quit": false,
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  }
+}

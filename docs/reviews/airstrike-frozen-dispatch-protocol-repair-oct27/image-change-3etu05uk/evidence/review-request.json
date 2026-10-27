@@ -1,0 +1,39 @@
+{
+  "session": "4d89913ab87f4190bc3b70bfb63953af",
+  "token": "04e116f61e9242179c1716be8cca688d",
+  "after": null,
+  "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/capture-04e116f61e9242179c1716be8cca688d.png",
+  "sha256": "b10569ef90c1f5c754b2eda8b22012f04ab5b79eb094387f836882d865eb5d84",
+  "snapshot": {
+    "batch": 12,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "quit": false,
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "status": "refused",
+  "reason": "missing ACK within ten-second response window; no replay",
+  "elapsed": 10.105721267871559,
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": -15,
+    "complete": true
+  },
+  "controllerSHA256": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+  "responseSeconds": 10,
+  "guestSeconds": 30,
+  "wallSeconds": 150
+}

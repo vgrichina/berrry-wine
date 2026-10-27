@@ -1,0 +1,64 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0024627679958939552,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.029401122126728296,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/capture-04e116f61e9242179c1716be8cca688d.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.030068824999034405,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.030689268140122294,
+    "token": "04e116f61e9242179c1716be8cca688d",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 0.05105381505563855,
+    "token": "04e116f61e9242179c1716be8cca688d",
+    "seconds": 10
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.05139858205802739,
+    "command": {
+      "id": "bridge-4",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.051784997107461095,
+    "command": {
+      "id": "bridge-5",
+      "action": "png",
+      "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/image-change-3etu05uk/evidence/capture-04e116f61e9242179c1716be8cca688d-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.052080780966207385,
+    "command": {
+      "id": "bridge-6",
+      "action": "snapshot"
+    }
+  }
+]

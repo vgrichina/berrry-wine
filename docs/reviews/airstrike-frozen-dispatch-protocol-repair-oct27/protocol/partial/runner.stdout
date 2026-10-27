@@ -1,0 +1,11 @@
+production handler fixture stdout diagnostic
+[ctl] {"id":"bridge-1","ok":true,"value":{"batch":12,"eip":"0x1","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":16,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":0,"h":0,"visible":true,"isChild":false,"title":"Airstrike FAKE"}]}}
+[ctl] {"id":"bridge-2","ok":true,"value":{"batch":12,"eip":"0x1","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":16,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":0,"h":0,"visible":true,"isChild":false,"title":"Airstrike FAKE"}]}}
+[ctl] {"id":"bridge-3","ok":true,"value":{"path":"/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/protocol/partial/capture-initial.png","bytes":18,"batch":12}}
+[ctl] {"id":"bridge-4","ok":true,"value":{"batch":12,"eip":"0x1","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":16,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":0,"h":0,"visible":true,"isChild":false,"title":"Airstrike FAKE"}]}}
+[ctl] {"id":"bridge-5","ok":true,"value":{"batch":12,"eip":"0x1","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":16,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":0,"h":0,"visible":true,"isChild":false,"title":"Airstrike FAKE"}]}}
+[ctl] {"id":"bridge-6","ok":true,"value":{"path":"/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/protocol/partial/capture-initial-fresh.png","bytes":18,"batch":12}}
+[ctl] {"id":"bridge-7","ok":true,"value":{"batch":12,"eip":"0x1","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":true,"tickMs":16,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":0,"y":0,"w":0,"h":0,"visible":true,"isChild":false,"title":"Airstrike FAKE"}]}}
+[ctl] {"id":"airstrike-1","ok":true,"value":{"queued":true,"batch":12}}
+[input] keydown vk=27 at batch 12
+[ctl] {"id":"bridge-8","ok":true,"value":{"batch":13,"ran":0,"steps":1,"frozen":true}}

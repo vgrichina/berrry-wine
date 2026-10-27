@@ -1,0 +1,49 @@
+{
+  "at": 1793093862.3869433,
+  "ownMaterialized": 4034560,
+  "sessionAllocated": 954368,
+  "positiveWAL": 45056,
+  "used": 5033984,
+  "allocation": 134217728,
+  "peerRemaining": [
+    {
+      "task": "enigma-progressive-menu-readiness-repair-oct27",
+      "actual": 2138112,
+      "remaining": 132079616
+    },
+    {
+      "task": "ricochet-consumed-control-accounting-repair-oct27",
+      "actual": 1597440,
+      "remaining": 132620288
+    }
+  ],
+  "completedPenguinReservationReleased": true,
+  "coordinatorAndDrift": 16777216,
+  "future": 410660864,
+  "free": 7858597888,
+  "projectedFree": 7447937024,
+  "floor": 2982150144,
+  "memAvailable": 3699544064,
+  "requiredRemainingRAM": 2537332736,
+  "peers": [
+    {
+      "pid": 4026311,
+      "rss": 110198784,
+      "argvSHA256": "6246b10e1f99eecc414c65f1865cc24440e0005691955a88a888188b835efe0e"
+    },
+    {
+      "pid": 4026607,
+      "rss": 103931904,
+      "argvSHA256": "f1c575e963f1be1ddb7e9cc5788958c184171d797b19ea8bef1f2437accc7eab"
+    }
+  ],
+  "buckets": {
+    "sourceGit": 20971520,
+    "events": 16777216,
+    "ops": 54525952,
+    "reserve": 41943040
+  },
+  "sourceGit": 1261568,
+  "ops": 2490368,
+  "pass": true
+}

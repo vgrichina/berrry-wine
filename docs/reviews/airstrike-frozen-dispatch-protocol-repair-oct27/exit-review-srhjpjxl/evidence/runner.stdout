@@ -1,0 +1,4 @@
+FAKE RUNNER stdout diagnostic
+[ctl] {"id": "bridge-1", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}
+[ctl] {"id": "bridge-2", "ok": true, "value": {"path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/exit-review-srhjpjxl/evidence/capture-544e178cf4344c36aef54ecd59ab16f4.png", "bytes": 23, "batch": 12}}
+[ctl] {"id": "bridge-3", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}

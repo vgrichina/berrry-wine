@@ -1,0 +1,25 @@
+{
+  "session": "0cb9c8f775664d3aa175eda36bab5aa4",
+  "token": "d7fa45ff03f74b5680a6d9620ec36dd7",
+  "sha256": "7a50d7afc47cd1d384e5e1f5686602aeb7ea6b81ff2e57f677ad115771d2472d",
+  "after": "airstrike-4",
+  "observation": {
+    "focus": "airstrike",
+    "unobscured": true,
+    "keysReleased": true,
+    "state": "menu",
+    "after": "airstrike-4",
+    "evidence": "FAKE fixture 7a50d7afc47cd1d384e5e1f5686602aeb7ea6b81ff2e57f677ad115771d2472d",
+    "header": "Airstrike menu",
+    "items": [
+      "Resume game",
+      "Players setup",
+      "Toggle fullscreen",
+      "About the game",
+      "Release notes",
+      "Toggle debug mode",
+      "Quit game"
+    ],
+    "selected": 1
+  }
+}

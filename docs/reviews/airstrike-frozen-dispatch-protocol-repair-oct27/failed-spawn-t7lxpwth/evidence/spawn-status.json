@@ -1,0 +1,7 @@
+{
+  "state": "spawn-failed",
+  "error": "[Errno 2] No such file or directory: '/no/such/executable'",
+  "argv": [
+    "/no/such/executable"
+  ]
+}

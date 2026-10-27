@@ -1,0 +1,1 @@
+Initial policy/supervisor read exceeded 8192B display allowance (tool output 8278 tokens); retained in original events, no retrospective compliance claimed. Subsequent displays bounded. Missing exploratory local.py read retained. No runtime attempted.

@@ -1,0 +1,2 @@
+FAKE RUNNER stdout diagnostic
+[ctl] {"id": "wrong-id", "ok": true, "value": {"batch": 12, "focus": "0x10001", "mainHwnd": "0x10001", "quit": false, "screen": {"w": 800, "h": 600}, "windows": [{"hwnd": "0x10001", "title": "Airstrike FAKE", "visible": true}]}}

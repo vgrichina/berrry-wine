@@ -1,0 +1,33 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.002168807899579406,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.032236289931461215,
+    "command": {
+      "id": "bridge-2",
+      "action": "png",
+      "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/unmatched-n1561v2e/evidence/capture-44aec01dea9d4587b2e8b850558f8ee5.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.033229221822693944,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 0.03399872500449419,
+    "token": "44aec01dea9d4587b2e8b850558f8ee5",
+    "after": null
+  }
+]

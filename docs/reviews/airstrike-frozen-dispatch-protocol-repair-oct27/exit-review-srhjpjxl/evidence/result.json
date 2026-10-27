@@ -1,0 +1,15 @@
+{
+  "status": "refused",
+  "reason": "runner exited during factual review",
+  "elapsed": 0.37082386296242476,
+  "cleanup": {
+    "remaining": [],
+    "signals": [],
+    "runnerExit": 7,
+    "complete": true
+  },
+  "controllerSHA256": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+  "responseSeconds": 10,
+  "guestSeconds": 30,
+  "wallSeconds": 150
+}

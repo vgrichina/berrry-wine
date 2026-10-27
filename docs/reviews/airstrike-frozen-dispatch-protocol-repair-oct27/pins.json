@@ -1,0 +1,18 @@
+{
+  "base": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "pins": {
+    "tools/airstrike-observation-bridge.py": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f",
+    "tools/airstrike-menu-controller.py": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb"
+  },
+  "donor": "/tmp/airstrike-complete-controller-main-integration-oct27/repo",
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mount": "N/A source/test only; no mounts or guest execution",
+  "rootRefReceipt": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  }
+}

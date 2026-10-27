@@ -1,0 +1,12 @@
+{
+  "state": "started",
+  "pid": 4031265,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo/test/test-airstrike-observation-bridge.py",
+    "--fake-runner",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/focus-change-xupklncu",
+    "focus"
+  ]
+}

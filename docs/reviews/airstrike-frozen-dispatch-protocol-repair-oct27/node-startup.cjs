@@ -1,0 +1,1 @@
+const fs=require('fs'),crypto=require('crypto');console.log(JSON.stringify({executable:process.execPath,version:process.version,flags:process.execArgv,limits:fs.readFileSync('/proc/self/limits','utf8'),environmentSHA256:crypto.createHash('sha256').update(JSON.stringify(Object.entries(process.env).filter(([k])=>k!=='PALETTE_BROWSER_SUPERVISED').sort())).digest('hex')}));

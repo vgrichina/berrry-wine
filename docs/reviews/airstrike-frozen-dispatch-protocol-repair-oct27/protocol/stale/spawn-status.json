@@ -1,0 +1,11 @@
+{
+  "state": "started",
+  "pid": 4031050,
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=32",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo/test/fixtures/airstrike-frozen-dispatch.cjs",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-runner.js",
+    "stale"
+  ]
+}

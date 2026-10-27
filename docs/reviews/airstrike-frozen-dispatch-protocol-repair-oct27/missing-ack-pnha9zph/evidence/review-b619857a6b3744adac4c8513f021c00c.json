@@ -1,0 +1,14 @@
+{
+  "session": "1c6cbc2204d84a26a5302a144f57c331",
+  "token": "b619857a6b3744adac4c8513f021c00c",
+  "sha256": "b10569ef90c1f5c754b2eda8b22012f04ab5b79eb094387f836882d865eb5d84",
+  "after": null,
+  "observation": {
+    "focus": "airstrike",
+    "unobscured": true,
+    "keysReleased": true,
+    "state": "gameplay",
+    "after": null,
+    "evidence": "FAKE fixture b10569ef90c1f5c754b2eda8b22012f04ab5b79eb094387f836882d865eb5d84"
+  }
+}

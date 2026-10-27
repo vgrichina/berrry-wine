@@ -1,0 +1,51 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 21233664,
+  "sampledPeakRSS": 21233664,
+  "reapedPeakRSS": 12161024,
+  "cpuSeconds": 0.053866000000000004,
+  "wallSeconds": 0.06277797906659544,
+  "owned": [
+    [
+      4033211,
+      "114097989"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo",
+    "diff",
+    "--",
+    "tools/airstrike-menu-controller.py"
+  ],
+  "commandSHA256": "5500430bc6070165f11cb86f109a357e35ff7f78cabdc46cafa1a10f8c721dd5",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/review.stdout",
+  "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/review.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

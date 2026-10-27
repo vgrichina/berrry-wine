@@ -1,0 +1,7 @@
+{"id": "bridge-1", "action": "snapshot"}
+{"id": "bridge-2", "action": "png", "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/missing-ack-pnha9zph/evidence/capture-b619857a6b3744adac4c8513f021c00c.png"}
+{"id": "bridge-3", "action": "snapshot"}
+{"id": "bridge-4", "action": "snapshot"}
+{"id": "bridge-5", "action": "png", "path": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/missing-ack-pnha9zph/evidence/capture-b619857a6b3744adac4c8513f021c00c-fresh.png"}
+{"id": "bridge-6", "action": "snapshot"}
+{"id": "airstrike-1", "cmd": "keydown:27"}

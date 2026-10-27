@@ -41,6 +41,17 @@ def drive(messages):
 
 
 class MenuTests(unittest.TestCase):
+    def test_frozen_queue_needs_matching_complete_serial_evidence(self):
+        import copy
+        value = ack(1, 'keydown', 27)
+        value['ack']['value'] = {'queued': True, 'batch': 12}
+        for completion in [None, {}, {'inputId': 'other-input'}]:
+            message = copy.deepcopy(value)
+            if completion is not None:
+                message['completion'] = completion
+            rc, commands, _ = drive([observation(state='gameplay'), message])
+            self.assertEqual((rc, len(commands)), (2, 1))
+
     def test_observed_gameplay_menu_each_row_and_quit(self):
         messages = [observation(state='gameplay')]
         expected = []

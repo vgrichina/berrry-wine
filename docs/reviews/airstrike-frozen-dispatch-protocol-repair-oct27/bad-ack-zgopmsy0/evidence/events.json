@@ -1,0 +1,10 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0023755840957164764,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "reason": "unproven-terminal",
+  "guestExitCode": null,
+  "runnerExitCode": -15,
+  "signals": [
+    "SIGTERM"
+  ],
+  "cleanupComplete": true,
+  "evidence": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bad-ack-zgopmsy0/evidence/terminal.json",
+  "runnerLog": "FAKE RUNNER stdout diagnostic\n[ctl] {\"id\": \"wrong-id\", \"ok\": true, \"value\": {\"batch\": 12, \"focus\": \"0x10001\", \"mainHwnd\": \"0x10001\", \"quit\": false, \"screen\": {\"w\": 800, \"h\": 600}, \"windows\": [{\"hwnd\": \"0x10001\", \"title\": \"Airstrike FAKE\", \"visible\": true}]}}\n",
+  "timeout": false,
+  "controlQuit": false,
+  "wmClose": false,
+  "fault": false,
+  "hostExitObserved": false
+}

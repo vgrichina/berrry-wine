@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 61239296,
+  "sampledPeakRSS": 61239296,
+  "reapedPeakRSS": 42905600,
+  "cpuSeconds": 0.148663,
+  "wallSeconds": 0.09672453789971769,
+  "owned": [
+    [
+      4028850,
+      "114074007"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=32",
+    "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/frozen-boundary.cjs"
+  ],
+  "commandSHA256": "189b10176ac732e3f010f31cce3ecb338b5139e5868b7bc4c363af67d8bc7f5e",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/baseline-production.stdout",
+  "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/baseline-production.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

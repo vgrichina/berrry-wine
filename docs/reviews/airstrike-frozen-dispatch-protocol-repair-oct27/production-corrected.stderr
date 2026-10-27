@@ -1,0 +1,12 @@
+test_00_production_queue_step_and_frozen_zero_before_next_input (__main__.FrozenDispatch.test_00_production_queue_step_and_frozen_zero_before_next_input) ... ok
+test_missing_actual_input_log (__main__.FrozenDispatch.test_missing_actual_input_log) ... ok
+test_partial_ack (__main__.FrozenDispatch.test_partial_ack) ... ok
+test_stale_frozen_state (__main__.FrozenDispatch.test_stale_frozen_state) ... ok
+test_terminal_during_step_is_rejected (__main__.FrozenDispatch.test_terminal_during_step_is_rejected) ... ok
+test_timeout_no_replay (__main__.FrozenDispatch.test_timeout_no_replay) ... ok
+test_wrong_step_id (__main__.FrozenDispatch.test_wrong_step_id) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.515s
+
+OK

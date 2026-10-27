@@ -62,13 +62,36 @@ class Controller:
         self.after = 'airstrike-' + str(self.serial)
         cmd = f'{action}:{vk}'
         self.send({'id': self.after, 'cmd': cmd})
-        a = self.read().get('ack', {})
+        response = self.read()
+        a = response.get('ack', {})
         v = a.get('value', {})
-        # Frozen queued ACK is insufficient: require the actual runner input log.
+        # A production queue receipt needs separate serial completion evidence.
         logs = v.get('logs', [])
+        queued = v.get('queued')
+        if queued is True:
+            completion = response.get('completion', {})
+            step = completion.get('step', {})
+            snapshot = completion.get('snapshot', {})
+            done, state = step.get('value', {}), snapshot.get('value', {})
+            batch = v.get('batch')
+            if (type(batch) is not int or completion.get('inputId') != self.after
+                    or step.get('ok') is not True or snapshot.get('ok') is not True
+                    or not isinstance(step.get('id'), str)
+                    or not isinstance(snapshot.get('id'), str)
+                    or len({self.after, step.get('id'), snapshot.get('id')}) != 3
+                    or done.get('ran') != 1 or done.get('steps') != 1
+                    or done.get('frozen') is not True or done.get('batch') != batch+1
+                    or state.get('batch') != batch+1
+                    or state.get('frozen', {}).get('frozen') is not True
+                    or state['frozen'].get('credits') != 0):
+                raise Refusal('uncertain frozen completion; no replay or further input')
+            logs = completion.get('logs', [])
+            expected = f'[input] {action} vk={vk} at batch {batch}'
+            if not isinstance(logs, list) or logs.count(expected) != 1:
+                raise Refusal('missing actual frozen input log; no further input')
         prefix = f'[input] {action} vk={vk} at batch '
         if (a.get('id') != self.after or a.get('ok') is not True
-                or v.get('queued') or type(v.get('batch')) is not int
+                or (queued and queued is not True) or type(v.get('batch')) is not int
                 or not isinstance(logs, list)
                 or not any(isinstance(s, str) and s.startswith(prefix) for s in logs)):
             raise Refusal('uncertain/rejected dispatch; no replay or further input')

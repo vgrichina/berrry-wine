@@ -1,0 +1,16 @@
+test_missing_actual_input_log (__main__.FrozenDispatch.test_missing_actual_input_log) ... FAIL
+
+======================================================================
+FAIL: test_missing_actual_input_log (__main__.FrozenDispatch.test_missing_actual_input_log)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo/test/test-airstrike-frozen-dispatch.py", line 98, in test_missing_actual_input_log
+    self.assert_rejected('missing-log', 'actual input execution log')
+  File "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo/test/test-airstrike-frozen-dispatch.py", line 78, in assert_rejected
+    self.assertIn(reason, result['reason'])
+AssertionError: 'actual input execution log' not found in 'runner rejected command; no replay'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.108s
+
+FAILED (failures=1)
