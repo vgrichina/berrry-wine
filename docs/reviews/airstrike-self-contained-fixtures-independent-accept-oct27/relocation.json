@@ -1,0 +1,69 @@
+{
+  "assertions": {
+    "test-airstrike-caption-interior.py": {
+      "count": 14,
+      "assertionASTSHA256": "4784335bb34f9912a737f2ac6ef75d654ac0900ce6415fbe0715e88fb067916e",
+      "unchanged": true
+    },
+    "test-airstrike-console-obscuration.py": {
+      "count": 35,
+      "assertionASTSHA256": "808dd52056a4536054e94ac9c8a452a666ef71534dc856d721517c369b70a73e",
+      "unchanged": true
+    }
+  },
+  "allSixHistoricalFixtureBytesUnchanged": true,
+  "repositoryFiles": {
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "test/fixtures/airstrike-caption/README.md": {
+      "bytes": 1212,
+      "sha256": "fff62ef6e499ef92c705af924e70dcdac27ca640e6ace3bea578c12cbb2dfeec"
+    },
+    "test/fixtures/airstrike-caption/manifest.json": {
+      "bytes": 1159,
+      "sha256": "b6ac626fb2a4ada5df5e2e84d43eea99603546f60a5a7e9346e48425de0edc4b"
+    },
+    "test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "auditSHA256": "adfb6b9e7a1d574b86e320ce4f520c1bb2ae5c0f130d3e9b93feaa50b000cff2",
+  "donorReadsDeniedByAudit": true,
+  "limitation": "CPython audit hook is not an OS sandbox; installed stdlib and proc stat allowed",
+  "cwd": "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/cwd"
+}

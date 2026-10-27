@@ -1,0 +1,258 @@
+{
+  "schema": 1,
+  "task": "airstrike-accepted-interior-main-integrate-oct27",
+  "at": 1793101510.2409341,
+  "verdict": "BLOCKED_INCOMPLETE_NON_IMPORT_FIXTURE_CLOSURE",
+  "candidate": "a6a5cda53242adba9738a30811cee60fa696548a",
+  "independentAcceptance": "a194ba65477e48209f74624e790a2e88bdf04138",
+  "canonicalAcceptedReceipt": "/tmp/airstrike-interior-independent-accept-oct27/ops/receipt-manifest.json",
+  "canonicalAcceptedReceiptSHA256": "d66f6eb0831c8f943cdae99f24c1bb2d23d72f62f0b0d5727c7cb29da906bdc9",
+  "acceptedEvidenceReused": "Original height8 zero input,32geometrycases,2positive+cleanup PASS; no duplicate execution",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": {
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+      "bytes": 12302,
+      "imports": [
+        "import json",
+        "import select",
+        "import sys",
+        "import time",
+        "import os"
+      ]
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+      "bytes": 22733,
+      "imports": [
+        "import hashlib",
+        "import importlib.util",
+        "import json",
+        "import os",
+        "from pathlib import Path",
+        "import resource",
+        "import selectors",
+        "import signal",
+        "import subprocess",
+        "import time",
+        "import uuid"
+      ]
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "sha256": "bf66f5aade28992b87fc95c68bab2afe54d543e35d5fd6c64116e96679c49743",
+      "bytes": 6436,
+      "imports": [
+        "import copy",
+        "import importlib.util",
+        "import json",
+        "import pathlib",
+        "import subprocess",
+        "import sys",
+        "import tempfile",
+        "import threading",
+        "import unittest"
+      ]
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "sha256": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c",
+      "bytes": 14578,
+      "imports": [
+        "import copy",
+        "import hashlib",
+        "import importlib.util",
+        "import json",
+        "import pathlib",
+        "import sys",
+        "import subprocess",
+        "import tempfile",
+        "import threading",
+        "import time",
+        "import unittest"
+      ]
+    }
+  },
+  "nonImportDependencies": [
+    {
+      "path": "test/test-airstrike-caption-interior.py",
+      "line": 68,
+      "source": "                    p=obj.root/'review-request.json'"
+    },
+    {
+      "path": "test/test-airstrike-caption-interior.py",
+      "line": 90,
+      "source": "        for n in ('reproduce.py','production-renderer-input.js'):(h/n).write_bytes((OPS/n).read_bytes())"
+    },
+    {
+      "path": "test/test-airstrike-caption-interior.py",
+      "line": 91,
+      "source": "        q=subprocess.run([sys.executable,'-B',str(h/'reproduce.py')],capture_output=True,timeout=20)"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 1,
+      "source": "\"\"\"Offline retained-startup regression; no guest, Node or substituted runner.\"\"\""
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 21,
+      "source": "D = pathlib.Path('/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained')"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 22,
+      "source": "REQUEST = json.loads((D/'review-request.json').read_text())"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 79,
+      "source": "                        path=obj.root/'review-request.json'"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 110,
+      "source": "        v=json.loads((D/'review-9b55685e506a4124abd456510ebaf254.json').read_text())"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 114,
+      "source": "    def test_retained_image_and_production_caption_contract(self):"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 115,
+      "source": "        self.assertEqual(hashlib.sha256((D/'9b55685e506a4124abd456510ebaf254.png').read_bytes()).hexdigest(),REQUEST['sha256'])"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 116,
+      "source": "        p=ROOT.parent/'ops/production-run.js';source=p.read_text()"
+    },
+    {
+      "path": "test/test-airstrike-console-obscuration.py",
+      "line": 122,
+      "source": "        renderer=ROOT.parent/'ops/production-renderer-input.js'"
+    }
+  ],
+  "missingAssignedPaths": [
+    "/tmp/airstrike-accepted-interior-main-integrate-oct27/ops/reproduce.py",
+    "/tmp/airstrike-accepted-interior-main-integrate-oct27/ops/production-run.js",
+    "/tmp/airstrike-accepted-interior-main-integrate-oct27/ops/production-renderer-input.js"
+  ],
+  "retainedAbsoluteFixtureRoot": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained",
+  "blocker": "Accepted tests require files read dynamically outside four-file source/test closure. AST import inventory does not prove data/subprocess closure. Reproduce script and production runner/renderer are absent from assigned ops; absolute retained evidence is also outside publishable four-file tree.",
+  "resumeCondition": "Coordinator supplies complete pinned fixture/reproducer/production-source closure and authorizes its placement/publication, or assigns repair and independent acceptance of self-contained tests. No ad-hoc repair authorized here.",
+  "inheritedLimits": {
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "publication": {
+    "commit": null,
+    "taskBranch": null,
+    "mainUpdated": false,
+    "remoteVerification": "Not attempted: fixture-closure gate stops before any Git/checkout/publication. Earlier main4a2bec readiness is historical, not a fresh check."
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-accepted-interior-main-integrate-oct27/root-ref-digest.json",
+  "incidents": [
+    "Initial combined policy/donor/config displays exceeded8192B; original session diagnostics retained. No secrets displayed."
+  ],
+  "cleanup": {
+    "rootTrackedIndexRefs": "READ ONLY",
+    "donors": "READ ONLY",
+    "checkout": "Empty owned repo directory, no Git repository created",
+    "runtime": "None, no boxes assigned or lifecycle calls",
+    "workers": "None launched",
+    "watcher": {
+      "session": 36164,
+      "identities": [
+        {
+          "pid": 6382,
+          "signal": "pidfdSIGTERM",
+          "notLive": true
+        }
+      ]
+    },
+    "supervisedChildren": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 39096320,
+      "sampledPeakRSS": 39096320,
+      "reapedPeakRSS": 20406272,
+      "cpuSeconds": 0.11806199999999999,
+      "wallSeconds": 0.07284796284511685,
+      "owned": [
+        [
+          7640,
+          "114871944"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "allObservedChildrenClean": true
+  },
+  "resources": {
+    "at": 1793101539.6158988,
+    "liveClients": [
+      {
+        "pid": 5045,
+        "rss": 189550592,
+        "remainingGrowth": 145993728
+      },
+      {
+        "pid": 6037,
+        "rss": 194752512,
+        "remainingGrowth": 140791808
+      }
+    ],
+    "MemAvailable": 3811115008,
+    "required": 1628962816,
+    "prospectiveClients": 0,
+    "sharedPool": 536870912,
+    "hostHeadroom": 805306368,
+    "used": 913408,
+    "sessionPaths": [
+      "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T11-43-27-01a17d2c-2476-7271-b5b4-ac22174d8c6e.jsonl"
+    ],
+    "events": "/home/user/wine-assembly/scratch/usage-watch/airstrike-accepted-interior-main-integrate-oct27",
+    "walPositiveGrowth": 24576,
+    "allocation": 201326592,
+    "controlGrowth": 25165824,
+    "publicationGrowth": 16777216,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "free": 7085998080,
+    "projectedFree": 6884671488,
+    "pass": true
+  },
+  "strictGitSSHConfiguration": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "evidence": {
+    "audit.supervision.json": "1257a0a15f3a6fdabe9275bb6f3017adfe7e77ae22c4c30b959e84c50a5b25f6",
+    "audit.stdout": "b4d8473ccb76759db2dd7debbbc3b3fe25394204e4d6f9ef21a8690a0ba60593",
+    "supervise-audit.py": "1e33bd9d3b1c0c0a35c11b09f38c6416ddd19fa5348670d7feab119f8c6c0ea6",
+    "audit.command.json": "4969cb31503f4c6416359d498027f46f37d7f1ef54dceb3fba9fff481fb15a6a",
+    "closeout-admission.json": "babf465c2dce423b30a1850b7fd4cb7b46dc5dc306c4248b617c018c6093d84b",
+    "audit.py": "a6dc2c0a49f9263524f7e736dc5c46b2f3d6361e97fe58cee257205241b201f4",
+    "wal-baseline.json": "1cdec100b458cb3d9ebb007a568b8551cd5946196473ea7e4cc0e2aeadd2d3c4",
+    "closeout.command.json": "64400283a04387b6d8cf009f2715c4785da66f3b964bc2ec22863738e19579bf",
+    "board-watch.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "board-watch.stdout": "26f1386e90e60ceea9c259322becdb87953b199269302b738841252470c0b4e4",
+    "closeout.py": "7d966a67dcc5d106e22985890e7c4b65686c57264cfa3a50c3125c4c30216eb1",
+    "admission.json": "07dc8d3e388ad5573aa0fb1832181c4fff58018afca3272adaee481ccbf125ca",
+    "audit.supervisor-output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audit.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "closeoutSupervision": "closeout.supervision.json (written after process completion)",
+  "ownership": "Main and assigned paths released; STOP"
+}

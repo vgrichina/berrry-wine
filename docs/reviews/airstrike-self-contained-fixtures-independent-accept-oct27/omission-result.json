@@ -1,0 +1,9 @@
+{
+  "passCausalFailure": true,
+  "exit": 1,
+  "omitted": "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-run.js",
+  "originalSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "diagnostic": "FileNotFoundError at retained production source read; no fallback",
+  "stdout": "omission.stdout",
+  "stderr": "omission.stderr"
+}

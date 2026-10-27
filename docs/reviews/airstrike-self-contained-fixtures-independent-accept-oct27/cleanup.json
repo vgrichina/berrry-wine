@@ -1,0 +1,10 @@
+{
+  "supervisedGroupsComplete": true,
+  "temporaryOutputsRemaining": [],
+  "repositoryWrites": 0,
+  "donorsReadOnly": true,
+  "rootTrackedIndexRefsReadOnly": true,
+  "boardWatcher": "tool session 51192 to be stopped at release",
+  "boxes": "None assigned or accessed; lifecycle untouched; coordinator owns shutdown",
+  "pools": "released after each invocation"
+}

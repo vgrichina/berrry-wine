@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "task": "airstrike-interior-independent-accept-oct27",
+  "verdict": "PASS_OFFLINE_DISPATCH_GEOMETRY",
+  "candidate": "a6a5cda53242adba9738a30811cee60fa696548a",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+    "tools/airstrike-observation-bridge.py": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e",
+    "test/test-airstrike-caption-interior.py": "bf66f5aade28992b87fc95c68bab2afe54d543e35d5fd6c64116e96679c49743",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "canonicalInputManifest": "/tmp/airstrike-caption-interior-geometry-repair-oct27/ops/receipt-manifest.json",
+  "canonicalInputManifestSHA256": "84e46aae879bb0fae3632b67e6a56bee0dda1407f71c469cea2a75a703ad9f55",
+  "first": {
+    "receipt": "independent-rejection.json",
+    "expectedExit": 1,
+    "actualCLI": {
+      "exit": 2,
+      "commands": []
+    },
+    "actualBridgeInputs": [],
+    "cleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": -15,
+      "complete": true
+    }
+  },
+  "independentCases": 32,
+  "affectedPositiveMethods": 2,
+  "reused": "Unchanged producer10focused+8controls; affected two positive methods rerun",
+  "remaining": [],
+  "reviewBoundary": "OFFLINE protocol dispatch only, no actual guest/renderer/gameplay acceptance",
+  "publication": {
+    "commit": "a194ba65477e48209f74624e790a2e88bdf04138",
+    "branch": "refs/heads/task/airstrike-interior-independent-accept-oct27",
+    "exactRemoteVerified": true,
+    "remoteReceipt": "remote-verify.stdout",
+    "remoteReceiptSHA256": "daa63b106576cae98706b209c57e8717d96aba04b035edc6d31639b917c66145",
+    "cleanCheckout": true,
+    "reportPath": "docs/reviews/airstrike-interior-independent-accept-oct27"
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-interior-independent-accept-oct27/root-ref-digest.json",
+  "diagnostics": "All raw files under ops; historical blocker preserved as first-admission-manifest.json",
+  "cleanup": {
+    "boardWatchers": {
+      "first": {
+        "pid": 4181262,
+        "session": 20045,
+        "exit": 143
+      },
+      "final": {
+        "pid": 4183513,
+        "session": 23448,
+        "start": "114779904",
+        "signal": "pidfdSIGTERM",
+        "notLive": true
+      }
+    },
+    "remainingSupervisedChildren": [],
+    "boxes": "None assigned; none accessed; lifecycle untouched",
+    "rootAndDonors": "Tracked/index/refs read-only; root board append-only",
+    "pool": "Released after every invocation"
+  },
+  "resources": {
+    "at": 1793100967.621485,
+    "MemAvailable": 3434004480,
+    "required": 3019898880,
+    "existingPeerRSS": "already in MemAvailable",
+    "clientCountedOnce": 335544320,
+    "sharedPoolCountedOnce": 536870912,
+    "used": 5783552,
+    "events": 1298432,
+    "allocation": 201326592,
+    "publicationGrowth": 16777216,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "controlReserve": 25165824,
+    "free": 7102091264,
+    "projectedFree": 6900764672,
+    "pass": true
+  },
+  "incidents": [
+    "Initial oversized displays retained in session/events",
+    "Nonexistent exploratory test path diagnostic retained",
+    "RAM denials retained in admission receipts; resumed only after actual measured capacity change with unchanged limits",
+    "Original assertion exit1 intentionally required; zero actual inputs verified",
+    "Intermediate donor source-diff superseded by fresh exact candidate diff",
+    "Report count33 corrected to actual32 without rerun",
+    "Report hash manifest initially included its own prior hash; validation rejected; excluded self and full payload validation then passed"
+  ],
+  "testReceipts": {
+    "first-original": {
+      "path": "first-original.json",
+      "sha256": "418f8c4a9a596d71918a9cabdb0a2bf3f7c3fd4cfbe00434da7869da8046a3b0"
+    },
+    "independent-geometry": {
+      "path": "independent-geometry.json",
+      "sha256": "120ba3f9bef9dd05f98125170576b93d82924c2368d4edfcb2997048f1ae1f85"
+    },
+    "affected-positive": {
+      "path": "affected-positive.json",
+      "sha256": "c9dfb9e192541039c6660d72f7743f03da606458789569835a15582dc6a92156"
+    },
+    "error-check": {
+      "path": "error-check.json",
+      "sha256": "f768e53a9c8f923e15be03805804fdaf98491b721edd78447981e79dc3c3a02a"
+    },
+    "validate-fixed": {
+      "path": "validate-fixed.json",
+      "sha256": "ff022874822d25aeb5e7e87061aa38af0190fec0afbeee0764d09d0cabccf44e"
+    },
+    "staged-check": {
+      "path": "staged-check.json",
+      "sha256": "30e74a141d192007889f86b9bd9265c7c4f68570df3364794749d9da630813f5"
+    }
+  },
+  "commandPins": {
+    "final-head.command.json": "4395a15c812dc8a391dbf480575164044137c94f2bd4fd4072f015ecfd2f7555",
+    "error-check.command.json": "6b611bfd750bbe93eb5c7c0aa0e3c183d2f35a8b31fb26b96370d90b163c1b76",
+    "report.command.json": "6493c068faef94b7c96292fa0411164361ab0e8c5c046c38f808d5fa1fdff752",
+    "push.command.json": "1ecc23b156b4900ffde9bdc2d21eb1f163628932ec51de577cf854f8048bc2f8",
+    "affected-positive.command.json": "cec0f619b808e7af5fbab66e897085d3015483a10df8247a5ecbb6da90913a22",
+    "closeout-after-capacity-change.command.json": "02abb9d7201f04e0d808c23e42986453e1f96ebcda33b86d210089cfa881bc49",
+    "remote-verify.command.json": "1d261e71e1ca0367110506e8f35cec0aa7fca20cae192fe3421b23267315185e",
+    "exact-source-review.command.json": "76836043f809a4ec6a59dbb6619abb425d103aa932e0f1a4c7c8ac6da98da6f4",
+    "report-fixed.command.json": "fcb1813e60e0829803e4779b31e7c2d9b11bf41209d0b76a726e4ce1cb40a35a",
+    "report-correct-count.command.json": "9948ec828026fa835e13c9a3b592af6691d122a2ac8ee2c2a7090ada4bfd0b5e",
+    "commit.command.json": "7b46b2b8e8fc3768f29f0c4145050670915c330b715ac904542b02328e921c8c",
+    "report-after-capacity-change.command.json": "632a211a88fb7efafe303e173193b3f05748bbcd80165dc3cc7b39d5874d7f96",
+    "validate-report.command.json": "e414c9221ddd5a7d942221a65679e9e1bb6dbb6291d2dd319a8d70484034f571",
+    "configure.command.json": "4d830b318dd34042ef9577fe95b26077548f5aa2706ca6eb81436b0211e4cc73",
+    "validate-fixed.command.json": "feea699538269432eeefc9991f75f2cfe155bbd00b0cfa5cde095712c78c85fd",
+    "first-original.command.json": "30d62c6d722b253985edae29146b20a2beb4b546269535954a7f53bb2f009c82",
+    "staged-check.command.json": "f8e23e0f2bc9796d54105526f1272f0438ff404bb19664ff4b092cf1078737b6",
+    "init-after-capacity-change.command.json": "11d385463ad30ffef4f48315cd3644eafcea5ec017efa034ef91069b296a01de",
+    "checkout.command.json": "a7af7697f514b1c67f46511151070f9568743b9139e61a978a8fad8514e92d2c",
+    "independent-geometry.command.json": "ec9b44474650ed07b5a468d2bb878e9fd0e854b10222ff89428c94da102b2967",
+    "final-status.command.json": "38f419820477b1910858a11bda60e875c54ea5c4b389489362186877dae02fd0",
+    "stage.command.json": "dd1a00dde9638cd9b8a6cec2917dba3e30d55b36222e4f67e498b5cc40f0f3e1"
+  }
+}

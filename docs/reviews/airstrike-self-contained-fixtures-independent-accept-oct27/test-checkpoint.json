@@ -1,0 +1,336 @@
+{
+  "candidate": "2682c16933c7267f679c3c9867ecfa92c8704eba",
+  "sourcePins": {
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "test/fixtures/airstrike-caption/README.md": {
+      "bytes": 1212,
+      "sha256": "fff62ef6e499ef92c705af924e70dcdac27ca640e6ace3bea578c12cbb2dfeec"
+    },
+    "test/fixtures/airstrike-caption/manifest.json": {
+      "bytes": 1159,
+      "sha256": "b6ac626fb2a4ada5df5e2e84d43eea99603546f60a5a7e9346e48425de0edc4b"
+    },
+    "test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "groups": {
+    "height8": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 88211456,
+      "sampledPeakRSS": 88211456,
+      "reapedPeakRSS": 27000832,
+      "cpuSeconds": 2.186121,
+      "wallSeconds": 0.9689716829452664,
+      "owned": [
+        [
+          29760,
+          "114991402"
+        ],
+        [
+          29761,
+          "114991427"
+        ],
+        [
+          29762,
+          "114991436"
+        ],
+        [
+          29764,
+          "114991441"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "normal-quit": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 67108864,
+      "sampledPeakRSS": 67108864,
+      "reapedPeakRSS": 27000832,
+      "cpuSeconds": 3.999522,
+      "wallSeconds": 1.6780923700425774,
+      "owned": [
+        [
+          29823,
+          "114992006"
+        ],
+        [
+          29825,
+          "114992021"
+        ],
+        [
+          29908,
+          "114992116"
+        ],
+        [
+          29963,
+          "114992142"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "interior": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 66453504,
+      "sampledPeakRSS": 66453504,
+      "reapedPeakRSS": 26869760,
+      "cpuSeconds": 16.062669,
+      "wallSeconds": 6.1737227558624,
+      "owned": [
+        [
+          30416,
+          "114993856"
+        ],
+        [
+          30417,
+          "114993868"
+        ],
+        [
+          30419,
+          "114993873"
+        ],
+        [
+          30422,
+          "114993899"
+        ],
+        [
+          30427,
+          "114993903"
+        ],
+        [
+          30434,
+          "114993930"
+        ],
+        [
+          30437,
+          "114993934"
+        ],
+        [
+          30443,
+          "114993958"
+        ],
+        [
+          30445,
+          "114993962"
+        ],
+        [
+          30452,
+          "114993987"
+        ],
+        [
+          30455,
+          "114993991"
+        ],
+        [
+          30460,
+          "114994013"
+        ],
+        [
+          30463,
+          "114994017"
+        ],
+        [
+          30469,
+          "114994040"
+        ],
+        [
+          30472,
+          "114994044"
+        ],
+        [
+          30478,
+          "114994067"
+        ],
+        [
+          30481,
+          "114994072"
+        ],
+        [
+          30486,
+          "114994094"
+        ],
+        [
+          30489,
+          "114994099"
+        ],
+        [
+          30508,
+          "114994124"
+        ],
+        [
+          30510,
+          "114994129"
+        ],
+        [
+          30511,
+          "114994153"
+        ],
+        [
+          30513,
+          "114994157"
+        ],
+        [
+          30514,
+          "114994178"
+        ],
+        [
+          30516,
+          "114994183"
+        ],
+        [
+          30517,
+          "114994206"
+        ],
+        [
+          30519,
+          "114994209"
+        ],
+        [
+          30523,
+          "114994229"
+        ],
+        [
+          30525,
+          "114994233"
+        ],
+        [
+          30541,
+          "114994256"
+        ],
+        [
+          30543,
+          "114994260"
+        ],
+        [
+          30544,
+          "114994284"
+        ],
+        [
+          30546,
+          "114994288"
+        ],
+        [
+          30547,
+          "114994312"
+        ],
+        [
+          30549,
+          "114994317"
+        ],
+        [
+          30551,
+          "114994343"
+        ],
+        [
+          30553,
+          "114994365"
+        ],
+        [
+          30558,
+          "114994389"
+        ],
+        [
+          30559,
+          "114994414"
+        ],
+        [
+          30561,
+          "114994418"
+        ],
+        [
+          30562,
+          "114994441"
+        ],
+        [
+          30564,
+          "114994445"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "console": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 54394880,
+      "sampledPeakRSS": 54394880,
+      "reapedPeakRSS": 28413952,
+      "cpuSeconds": 0.418479,
+      "wallSeconds": 0.18907433678396046,
+      "owned": [
+        [
+          30648,
+          "114995219"
+        ],
+        [
+          30649,
+          "114995230"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "fault": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 64614400,
+      "sampledPeakRSS": 64614400,
+      "reapedPeakRSS": 27000832,
+      "cpuSeconds": 0.521971,
+      "wallSeconds": 0.24742785398848355,
+      "owned": [
+        [
+          30723,
+          "114996498"
+        ],
+        [
+          30724,
+          "114996503"
+        ]
+      ],
+      "cleanupComplete": true
+    }
+  },
+  "totalAffectedMethods": 14,
+  "first": "unchanged height8 actual production CLI and Bridge.run zero commands/inputs",
+  "positive": "ordinary normal Quit offline observed; exact 18-input route and 17 frozen completions asserted",
+  "reuse": "32 independent geometry and 8 unaffected controls reused exact production/fixture pins, not repeated",
+  "remaining": []
+}

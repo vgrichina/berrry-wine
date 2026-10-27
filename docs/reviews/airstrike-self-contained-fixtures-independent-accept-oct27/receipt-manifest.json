@@ -1,0 +1,150 @@
+{
+  "verdict": "PASS_INDEPENDENT_STANDALONE_FIXTURE_CLOSURE",
+  "candidate": "2682c16933c7267f679c3c9867ecfa92c8704eba",
+  "candidateReceipt": {
+    "bytes": 22581,
+    "sha256": "e3544c60982be4593345ca11bd6f60eb32c665ac3617b2b5c235281184ce6109"
+  },
+  "dependencyManifest": {
+    "bytes": 16428,
+    "sha256": "deac296c941925aa0b4e0dd266cd930feb0fa9fe4b1e0aa02ea8a156f8d4d696"
+  },
+  "sourceFixturePins": {
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "test/fixtures/airstrike-caption/README.md": {
+      "bytes": 1212,
+      "sha256": "fff62ef6e499ef92c705af924e70dcdac27ca640e6ace3bea578c12cbb2dfeec"
+    },
+    "test/fixtures/airstrike-caption/manifest.json": {
+      "bytes": 1159,
+      "sha256": "b6ac626fb2a4ada5df5e2e84d43eea99603546f60a5a7e9346e48425de0edc4b"
+    },
+    "test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "reportFiles": {
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/input-checkpoint.json": {
+      "bytes": 2872,
+      "sha256": "7ffb99c3a7af533d897381c7096e5ca2d9d85edee0008a0b635c30e2c6c33327"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/omission-result.json": {
+      "bytes": 430,
+      "sha256": "ba55b01cf7afb38c7cc84e24788c854c7b5909a8e67141f6a692e377d83d328a"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/candidate-accepted-reuse-receipt.json": {
+      "bytes": 7030,
+      "sha256": "d66f6eb0831c8f943cdae99f24c1bb2d23d72f62f0b0d5727c7cb29da906bdc9"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/test-checkpoint.json": {
+      "bytes": 7192,
+      "sha256": "03a0cdf2c0d6d76d4e9ddde1f0c325b069e756134a773c40fc5b2afd7731d809"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/candidate-original-missing-closure-receipt.json": {
+      "bytes": 9778,
+      "sha256": "3e8a065de7166f662b68d8e91add69a4f08c7c4a228f42a70b823e155bb4ee5a"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/causal-diagnostics.json.gz.b64": {
+      "bytes": 23337,
+      "sha256": "85f89c0271680b46f1f8b0b7445225893d75396477d83a46fe3e1114753778b7"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/relocation.json": {
+      "bytes": 2844,
+      "sha256": "f5b0a9ab58369b1bbfff0f77c13d6e109ee0870f15790e66a5d5375f2b3f4a0b"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/closure-verification.json": {
+      "bytes": 70261,
+      "sha256": "fb7ae89da3c4ce391cc8346ea5087f99ebe4ba47a5ffb88e79f8daaffedb62e2"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/cleanup.json": {
+      "bytes": 363,
+      "sha256": "cffe1ef291ff8e50b3cf130093338d69faf5d09172f33ebf849d1a8984598125"
+    },
+    "docs/reviews/airstrike-self-contained-fixtures-independent-accept-oct27/README.md": {
+      "bytes": 692,
+      "sha256": "38af4a080fb72d3a9a2bf1e23159e94d75aab3ee2ad0ad3cc22c11be75aafe68"
+    }
+  },
+  "historicalDiagnostics": {
+    "path": "/tmp/airstrike-self-contained-fixtures-repair-oct27/repo/docs/reviews/airstrike-self-contained-fixtures-repair-oct27/causal-diagnostics.json.gz.b64",
+    "bytes": 90057,
+    "sha256": "0aa1a7704a5099601480eedb9db58168512d70d0fd3524c83e0772f5ea724d46"
+  },
+  "actualAccessLog": {
+    "path": "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/access.jsonl",
+    "bytes": 558473,
+    "sha256": "700aad34570505baf35b1689e80b1f90251ec4032a75701aac27eb0fc0548876"
+  },
+  "testResults": "14 affected PASS; omission causal failure PASS; 32 geometry+8 controls reused",
+  "limitations": "Offline protocol only; audit hooks not OS sandbox; installed stdlib/proc stat allowed; JS read only",
+  "mainOwnership": false,
+  "publication": "conditional task branch only; exact commit/ref recorded in publication.json after push",
+  "cleanup": "cleanup.json plus supervisor receipts; watcher stopped at release",
+  "rootRefInitial": "/home/user/wine-assembly/scratch/usage-watch/airstrike-self-contained-fixtures-independent-accept-oct27/root-ref-digest.json",
+  "resources": {
+    "at": 1793102796.5912507,
+    "MemAvailable": 3904860160,
+    "required": 1637068800,
+    "clients": [
+      {
+        "pid": 28046,
+        "rss": 189784064,
+        "remaining": 145760256
+      },
+      {
+        "pid": 28047,
+        "rss": 186413056,
+        "remaining": 149131264
+      }
+    ],
+    "futureClients": 0,
+    "sharedPool": 536870912,
+    "headroom": 805306368,
+    "used": 4358144,
+    "eventsSessionPositiveWAL": 1036288,
+    "allocation": 201326592,
+    "publicationGrowth": 16777216,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "controlGrowth": 25165824,
+    "free": 6867697664,
+    "projectedFree": 6666371072,
+    "pass": true
+  }
+}

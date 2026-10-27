@@ -1,0 +1,2013 @@
+{
+  "candidate": "2682c16933c7267f679c3c9867ecfa92c8704eba",
+  "sourcePins": {
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "test/fixtures/airstrike-caption/README.md": {
+      "bytes": 1212,
+      "sha256": "fff62ef6e499ef92c705af924e70dcdac27ca640e6ace3bea578c12cbb2dfeec"
+    },
+    "test/fixtures/airstrike-caption/manifest.json": {
+      "bytes": 1159,
+      "sha256": "b6ac626fb2a4ada5df5e2e84d43eea99603546f60a5a7e9346e48425de0edc4b"
+    },
+    "test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    }
+  },
+  "actualReadInventory": {
+    "/proc/1/stat": {
+      "bytes": 212,
+      "sha256": "efbc712ea778ac2070387047fed1854d0c2ad2459bc6d916ee1f2248fd477398"
+    },
+    "/proc/1046/stat": {
+      "bytes": 190,
+      "sha256": "3035461999b6000f9ca4c8a68c841fc4b670f3f338fd4e2f13a8e903a201802c"
+    },
+    "/proc/1049/stat": {
+      "bytes": 182,
+      "sha256": "eefcd01ed3aeaf770505dd095564504d2228b2ff06badd23e3a57e1da407c18a"
+    },
+    "/proc/119/stat": {
+      "bytes": 170,
+      "sha256": "4060bb54ef180ff3513591f4b8eaaea08d915cf36b25f26cc2b44da28ffebfab"
+    },
+    "/proc/11957/stat": {
+      "bytes": 188,
+      "sha256": "c0ecd0643e319d50acc51f79017664c3c311f6d759905751c7203943bc7ff455"
+    },
+    "/proc/12/stat": {
+      "bytes": 160,
+      "sha256": "bb8fddfb566457ff56744cf72c31e59de705a0afb8cca5d5e7915381c6cdde2d"
+    },
+    "/proc/12206/stat": {
+      "bytes": 179,
+      "sha256": "b691102f50acbfe708e275ba3c66768c03a12d316c7fb7bb692078db3abee617"
+    },
+    "/proc/1224/stat": {
+      "bytes": 165,
+      "sha256": "248226d1ea09190efd9e34e95737faf7f359b73615178a5602db88c8a8158947"
+    },
+    "/proc/123/stat": {
+      "bytes": 170,
+      "sha256": "c45e54dccdacdf339c32bc9d5eeff984eaad3fcc6bdc3be1644669d3a55781fc"
+    },
+    "/proc/1236/stat": {
+      "bytes": 182,
+      "sha256": "33cc1ab517291c0ca3c87c9b13472f23079008645ed53f21b51750fe6dc6d716"
+    },
+    "/proc/1238/stat": {
+      "bytes": 165,
+      "sha256": "cf5105d681c54204d365d5285485e63776460f6a9c78117190248ecc24c24c6c"
+    },
+    "/proc/124/stat": {
+      "bytes": 170,
+      "sha256": "d090e1336d12f211b38716a8aec4964b8556eed8041f9e1d2b0e998786fa1a5f"
+    },
+    "/proc/1256/stat": {
+      "bytes": 166,
+      "sha256": "838d8322a1d65f3be3069406c9f52db13bb5dee8d4231112d0e8b640a4bb326d"
+    },
+    "/proc/1259/stat": {
+      "bytes": 166,
+      "sha256": "94ca15065b6ecf138fa652ccf064a15dd95be52eb88471628beb70ecb804c63b"
+    },
+    "/proc/12597/stat": {
+      "bytes": 323,
+      "sha256": "0afb917fcee0784a4d8113487e551c9168bab7d680381d1fe5a4d371542236d7"
+    },
+    "/proc/12609/stat": {
+      "bytes": 331,
+      "sha256": "5f678b647a79c431c8403cd2b7026677ec50e44ba20eef2b9a9a174b803488bf"
+    },
+    "/proc/12613/stat": {
+      "bytes": 322,
+      "sha256": "7624ca98a0387c887e965ce36f79a5633f2894feceeb2ceea24aa487fa0a7013"
+    },
+    "/proc/12620/stat": {
+      "bytes": 185,
+      "sha256": "369cf7e797ea7eed2f70214b94146be3388a11d79fc7bbffea47fd295f7a90e6"
+    },
+    "/proc/1293/stat": {
+      "bytes": 179,
+      "sha256": "271310a68a174241332da574dfc1815381e5a7eb884f31c51056260b4fd4d947"
+    },
+    "/proc/13/stat": {
+      "bytes": 160,
+      "sha256": "fbb9dd6cba5a350d77f781df87b43e398eb7cc4434070866a9df09f0ad7e075c"
+    },
+    "/proc/1345/stat": {
+      "bytes": 203,
+      "sha256": "3d70423bcde5ced7768ee96b0aac5a1b73899510f1fc04e45c86e50c6bb8fe26"
+    },
+    "/proc/1346/stat": {
+      "bytes": 168,
+      "sha256": "4bf4232e0af575926eb62075b18eefc860c1ecac2a4b8ec7bcdab23a18b684d6"
+    },
+    "/proc/13593/stat": {
+      "bytes": 170,
+      "sha256": "7398aaab9d0692a53529e141bdcd2badc7f56e82a2938b1b91e64da86d3d445c"
+    },
+    "/proc/1374/stat": {
+      "bytes": 193,
+      "sha256": "e5f497ab60eef21e94486b8d56049ab24ac88ba6277a0ed5d4be9d5e1b8596c4"
+    },
+    "/proc/14/stat": {
+      "bytes": 165,
+      "sha256": "02380260184b69fa4bd94334bd3fd7574687df238d09e498e8efca483cdd029f"
+    },
+    "/proc/1428/stat": {
+      "bytes": 321,
+      "sha256": "869cfd4434bc4e835ed4e8d119c2f0a089bed68224830d2a93d61ade1cefdb92"
+    },
+    "/proc/1430/stat": {
+      "bytes": 309,
+      "sha256": "8d41789094850837eb12ee7496692f68cc2d5355657ed4ed47a1b9b4162fe916"
+    },
+    "/proc/1434/stat": {
+      "bytes": 319,
+      "sha256": "00f94b38231ba10c47983a0b3928374bd45afd08d33d4a286be182b4ce7561bf"
+    },
+    "/proc/1437/stat": {
+      "bytes": 318,
+      "sha256": "e964467e8e9dffde5a7e20797436469b119dc40ec01f5b3ac5fe13b89d47d7e7"
+    },
+    "/proc/14635/stat": {
+      "bytes": 180,
+      "sha256": "3d20312ca33e53527ee65e4ad95f779e8c51bf488919fc9d6c6e64e570e114ee"
+    },
+    "/proc/1465/stat": {
+      "bytes": 326,
+      "sha256": "f714374cac5bb275d3f690f5c35cb1f3ae30f9441701d2f7bce5f9f10b7399c3"
+    },
+    "/proc/15/stat": {
+      "bytes": 166,
+      "sha256": "3834ccaec690eacfbc0f3443b89f981b570857723617c5e1d24e8e59b2f8170d"
+    },
+    "/proc/151772/stat": {
+      "bytes": 198,
+      "sha256": "cef651283026b7f82bc50f8cec04fa27e3ab363354590974f16b98b62d93677d"
+    },
+    "/proc/151925/stat": {
+      "bytes": 199,
+      "sha256": "04903de73508247c3a16116e0e529e8609855f2adaf883eaf6142f6f78624507"
+    },
+    "/proc/152/stat": {
+      "bytes": 152,
+      "sha256": "3f0122ddf416ba2ea458e8c572b62f4322868780e7af35e8658d429be5b6410d"
+    },
+    "/proc/1552/stat": {
+      "bytes": 174,
+      "sha256": "fd0af3ace63e0762a917554a65c557e4b4eb833615696781ea028eecd944a03a"
+    },
+    "/proc/16/stat": {
+      "bytes": 159,
+      "sha256": "142f7ad5401f061b203bc9a4b65817b8f28f925af8879361f1fa4abdaeb0c8b1"
+    },
+    "/proc/16249/stat": {
+      "bytes": 201,
+      "sha256": "7f2fac47af9421a802bdaf90fb42f7c1b6ac7103427b7d5d42883d3a54b9a432"
+    },
+    "/proc/17/stat": {
+      "bytes": 158,
+      "sha256": "fd40d87dce49b3a011e25d74313eebe43003b002a731a8b8c4d96cc234d64169"
+    },
+    "/proc/17104/stat": {
+      "bytes": 183,
+      "sha256": "8c751336a869b7305217e08b550f1b80211517bedcbce4f1d6062f3f651d63a3"
+    },
+    "/proc/17151/stat": {
+      "bytes": 193,
+      "sha256": "8871607b38957306d84fe764be56689feb496ad72240cdfb652f3ced23ac13a2"
+    },
+    "/proc/17163/stat": {
+      "bytes": 182,
+      "sha256": "2a1f6a0c7c78cafc085c0d5c850c5d7521ec517d0397c5420e06209fd7d3272c"
+    },
+    "/proc/17168/stat": {
+      "bytes": 323,
+      "sha256": "087d06fdf256091849df9fd7b0524cdc85f10195f056b278e280b89ef740d86c"
+    },
+    "/proc/17202/stat": {
+      "bytes": 192,
+      "sha256": "efb395649aaef50f1097710fb47d76d8e8746598da4a258b3c2da2f0938e6ac7"
+    },
+    "/proc/17302/stat": {
+      "bytes": 315,
+      "sha256": "19fc54b3b1e90e29c8078c1e5c51fb4f901d37beebc8e9fc97bb7334915a989e"
+    },
+    "/proc/17303/stat": {
+      "bytes": 317,
+      "sha256": "4886a28dbabd5e93a3e105c02ab6ce81fc6d5ceb041273976706dbe37e12628d"
+    },
+    "/proc/17305/stat": {
+      "bytes": 317,
+      "sha256": "afefc1ca26a74c466f198d5da34b272b3a7e7ad0de3299a4e5fcee7802b1f0e9"
+    },
+    "/proc/17311/stat": {
+      "bytes": 325,
+      "sha256": "bf616883a6c033e4fd7225cc2731d92ac934b0656159e3be6a5c134620389e80"
+    },
+    "/proc/17316/stat": {
+      "bytes": 316,
+      "sha256": "bb07780a1a9590fe0b6b7009aa85622c02ff5969eaa6b88850c1af9382790d73"
+    },
+    "/proc/17447/stat": {
+      "bytes": 180,
+      "sha256": "4a7034138e0a4cb5b4f3c4a6e9fa4c94a3bc7945014632903f3fb57f1a7eedc5"
+    },
+    "/proc/17449/stat": {
+      "bytes": 180,
+      "sha256": "12cf12a48e3d0a80bed6664789046d5f0cf52beb6d6996fa8c36fbeaebf55c5e"
+    },
+    "/proc/17450/stat": {
+      "bytes": 188,
+      "sha256": "a7d5276aca78018e0249279c9bcd661b8679ad84a2308675877ac1f513afaa50"
+    },
+    "/proc/17554/stat": {
+      "bytes": 316,
+      "sha256": "f75d91a681e9980ff7a8aa1304534eb99f7f08960c5619b45b0873084eb128b4"
+    },
+    "/proc/17556/stat": {
+      "bytes": 318,
+      "sha256": "eb04a1a5a42f7f1bd179625e2a6cee245c2b1c4d31e862494ed745c0985fed7f"
+    },
+    "/proc/17560/stat": {
+      "bytes": 340,
+      "sha256": "6f92070065395584b6c3d9e89b420c4377c7dfd22b44e5000ab3b1b82903d6a1"
+    },
+    "/proc/17565/stat": {
+      "bytes": 320,
+      "sha256": "625f5900954e76b1321ca50f47e9ea085ef0d539d5f84f082ed35abcd43b88e1"
+    },
+    "/proc/17566/stat": {
+      "bytes": 320,
+      "sha256": "0b66a804e59f2fefa2ee0ffa2e3e054063909af178eb94689f074e58deeb3334"
+    },
+    "/proc/17567/stat": {
+      "bytes": 327,
+      "sha256": "d45f62b30d7ab6a5a85f0e84550d0bb445c31ce234a9912edd3c4fa4043c8896"
+    },
+    "/proc/17568/stat": {
+      "bytes": 326,
+      "sha256": "0aa8d95dda6e1d549ee8c5b3e3fb0e0dc802601e72ae582d3a12fa4c92fd250d"
+    },
+    "/proc/17570/stat": {
+      "bytes": 313,
+      "sha256": "a297534f1fa65ee86dcb7010290e14ca1b78b784c3d68d11d24b1a31826d9337"
+    },
+    "/proc/17572/stat": {
+      "bytes": 323,
+      "sha256": "fbdce25a5401dce587924d1c818ef1e92a1d8fe1456f67b2975015ba8c8b1e6d"
+    },
+    "/proc/17635/stat": {
+      "bytes": 324,
+      "sha256": "cd43a19df70d6647d0b558b8cbb63ae68ed8d99a2f28aec773e19a980ce9d2de"
+    },
+    "/proc/17675/stat": {
+      "bytes": 206,
+      "sha256": "9828bbad8fd2605974427ea482ceb0ace7e46aa25a4c208aad21ab27c219d691"
+    },
+    "/proc/17791/stat": {
+      "bytes": 217,
+      "sha256": "8ffb1a8e6f618a53680949c314f78c7ba126b86900601603335c6f92fcbc36e1"
+    },
+    "/proc/17817/stat": {
+      "bytes": 323,
+      "sha256": "aa3836547e1d8f393f9de54feff0af2e6ae92d1c32ab22e5dec1c8a18de038f6"
+    },
+    "/proc/1789179/stat": {
+      "bytes": 346,
+      "sha256": "1b42d7db5c69595e29ae8f5513a740cc17be89de93caa65c355ac516d67df7a9"
+    },
+    "/proc/18/stat": {
+      "bytes": 160,
+      "sha256": "84ac9f0c1669f2c306a098396ae9ce4a8c72a85c4a7f061af477ab2d48490c8f"
+    },
+    "/proc/19/stat": {
+      "bytes": 159,
+      "sha256": "631312e55e10bfeeeff2addf583b438c8df1a2cb329b3c7599c626ef91bd6220"
+    },
+    "/proc/197/stat": {
+      "bytes": 163,
+      "sha256": "61401dfee2ebad2993c1402aa7a45c61107075d3cd55416833f2e7aa149b17fe"
+    },
+    "/proc/2/stat": {
+      "bytes": 151,
+      "sha256": "2efb9ceb372bbb2791c53c1b7aed5a9e6e4db9c321b3e45f4ad9e74180c5b46c"
+    },
+    "/proc/20/stat": {
+      "bytes": 151,
+      "sha256": "359fbfa0851a05266d1e4345ade633d457e6fcf10ccebeebf058d8f923a19724"
+    },
+    "/proc/2068/stat": {
+      "bytes": 313,
+      "sha256": "76e928bc71c9494493b1b596252e2a7d88e65d1b25bbc77a1ab3323a12e876f5"
+    },
+    "/proc/2074/stat": {
+      "bytes": 323,
+      "sha256": "9fe62471d4df60a82cdc65fb49e9f759d454b8291b6eccc8d3a5f64a489e5445"
+    },
+    "/proc/2082/stat": {
+      "bytes": 324,
+      "sha256": "8be323ff631966f1caf68ff0bea1ab3e6b1ee3f0c5c69b05f1ab3445dcac9e2c"
+    },
+    "/proc/2090/stat": {
+      "bytes": 318,
+      "sha256": "4087e80163604a3a120d3c0b9b9b4127fb07791bd20fceb04651b2c0f9abcbfd"
+    },
+    "/proc/21/stat": {
+      "bytes": 151,
+      "sha256": "e713f4fa7a7953f38b15c258e771a22f2a8b28310cdc29cd04c30a2597365c0c"
+    },
+    "/proc/22/stat": {
+      "bytes": 159,
+      "sha256": "7374f9707634fbb71524e78d2629fb6f310329e4e9c45981217b8e64bd1caf5d"
+    },
+    "/proc/2223/stat": {
+      "bytes": 329,
+      "sha256": "35b78ad818e4c097ee21aac2752495b03b2dc5dbedf8a7ac4ebb977b143c16a2"
+    },
+    "/proc/2263/stat": {
+      "bytes": 164,
+      "sha256": "5358eab555894206c2f9f59a77436ff0cae3349f9fed926a3aa58be8ffd8a745"
+    },
+    "/proc/23/stat": {
+      "bytes": 160,
+      "sha256": "41799a57396f594f4a2b7415521e197486eefc04b89de94e1a48c98985629588"
+    },
+    "/proc/23523/stat": {
+      "bytes": 173,
+      "sha256": "6f3f4d8debe16ae381670585b880ca610066860c7799da31aaf467a41b00ec6c"
+    },
+    "/proc/236/stat": {
+      "bytes": 161,
+      "sha256": "4eb458c561e70ed62857d60dc88c7b0a37e7929189732dc08337270d294388d9"
+    },
+    "/proc/237/stat": {
+      "bytes": 163,
+      "sha256": "c86975e92426e4fecd7c724f83ea05a8be3b7e980ce70fbf6763372bdd0c19ad"
+    },
+    "/proc/24/stat": {
+      "bytes": 159,
+      "sha256": "08dd1246dde7d11a7947400f7c69bd3570cb55d281a4edf1acfb362c7947c876"
+    },
+    "/proc/2468/stat": {
+      "bytes": 178,
+      "sha256": "8e5919b8f0691683a644f467bb320f75d36da7cf1c4b052aad1c31b2ef5caf3a"
+    },
+    "/proc/2485/stat": {
+      "bytes": 319,
+      "sha256": "0817afaa0cfa5fb35d72d67912acfcd957a1af2253ce0d9165ab6dbae10e17f8"
+    },
+    "/proc/2547/stat": {
+      "bytes": 173,
+      "sha256": "e7d05578d2d715f5f79a35310a95b67c434abe8a686325410e3d13f1e7bdb6b9"
+    },
+    "/proc/26/stat": {
+      "bytes": 172,
+      "sha256": "2c85e9954d8885ab65d72c3177b68517650cd2b95b2b77c754aa7d5019d4c0bb"
+    },
+    "/proc/2641/stat": {
+      "bytes": 167,
+      "sha256": "86b41e2fc5444905aba95a4c682a6edfc887b3fcccf9c083614834bceb6d4cdf"
+    },
+    "/proc/265398/stat": {
+      "bytes": 372,
+      "sha256": "08b0803f2c231d0636611c056e4a588f200dcf3d802c7422cda4a4c408281a0e"
+    },
+    "/proc/265414/stat": {
+      "bytes": 309,
+      "sha256": "6fce416851692843d38d0c23744fe687553e0293a69aa370e2f1fe85286dc7e7"
+    },
+    "/proc/265422/stat": {
+      "bytes": 325,
+      "sha256": "c7e13209ecdada5bac78e88352f88d9d7874a5dd857d87433495e397aa9ede0d"
+    },
+    "/proc/265632/stat": {
+      "bytes": 354,
+      "sha256": "ad3c01b36aef1e8aea2b1c70b3ab2e4ab0048033085feae0b9c7a19c41cf2494"
+    },
+    "/proc/2685/stat": {
+      "bytes": 311,
+      "sha256": "51e8cd97b12ac038b01fb8dc38bc562f1b3155bb84ca03b8b70f1c6d8857f51c"
+    },
+    "/proc/26973/stat": {
+      "bytes": 179,
+      "sha256": "6a8534ef8d96ab32493d0604c682f332a6eed959a2b586ccf9715ec24a1b193f"
+    },
+    "/proc/27/stat": {
+      "bytes": 151,
+      "sha256": "884cb31a3f4f5e2da8b82ed88fcc04952906c40517d2a8553327a16afb942368"
+    },
+    "/proc/271075/stat": {
+      "bytes": 319,
+      "sha256": "c63d4ecdd660f73b33dff7065510bb376cf9a9096f6d7f4ce80866b9c3ca726a"
+    },
+    "/proc/27578/stat": {
+      "bytes": 173,
+      "sha256": "664987ca23291dd5474dfdb56af150af9d99b1d9c46579c74d3ab0d034c5bd00"
+    },
+    "/proc/28/stat": {
+      "bytes": 159,
+      "sha256": "33159ce939be2c690981966c6f4f2854275136ad0cbc211b1080d385c0dae365"
+    },
+    "/proc/28040/stat": {
+      "bytes": 292,
+      "sha256": "2f450bb8b6989a03f7a6291da7e70079df1f87b95f509a409fc272a6f33f8399"
+    },
+    "/proc/28041/stat": {
+      "bytes": 292,
+      "sha256": "00ab0f03ee785d32f2e29139f175ae94d203b65cdc1b86c1ac61723290da0c3e"
+    },
+    "/proc/28046/stat": {
+      "bytes": 348,
+      "sha256": "61038d1cdaac11665e87671bf7562e34d3c80793f652bb22dd08e9d845ae1ab4"
+    },
+    "/proc/28047/stat": {
+      "bytes": 346,
+      "sha256": "cdc0b99046a327737d07c88a91bf92daf45d90423b8fa28c56fe06372cb0eb26"
+    },
+    "/proc/28287/stat": {
+      "bytes": 288,
+      "sha256": "70b1a23373dbeebc35693e42e1f43e3d8577ecf0893226a5d4b0c913a40f3a98"
+    },
+    "/proc/28288/stat": {
+      "bytes": 288,
+      "sha256": "1fdb9771e8fd465ccf682809b27824b37b039198e94390f11c88ea7e219ff82f"
+    },
+    "/proc/28439/stat": {
+      "bytes": 343,
+      "sha256": "deec8f6f3460ab687e6c3ef564db2a572be5186b99567326e57fc7e0234d1594"
+    },
+    "/proc/28453/stat": {
+      "bytes": 341,
+      "sha256": "86ae613dca536a73039a14ab7d376345871d8095430e71266406f5addd182338"
+    },
+    "/proc/28594/stat": {
+      "bytes": 318,
+      "sha256": "36fd0dc1f19c82a10aa43b49798d4dae036635a2d603afa86c5a127e0e07c6e8"
+    },
+    "/proc/28698/stat": {
+      "bytes": 318,
+      "sha256": "588e8605e5f59fc550a67e18c308f1b2f2887d81cf2e3e4cf0504b25caac4bf8"
+    },
+    "/proc/2896015/stat": {
+      "bytes": 348,
+      "sha256": "26f60797d8ac216248529cdb1ce23e26a84c7128981783b5e5662fc2f7907fc9"
+    },
+    "/proc/29/stat": {
+      "bytes": 160,
+      "sha256": "e0d926cfcffebfa5b7a0f8a12c4145091507ade9db28d33dd127a123e655353d"
+    },
+    "/proc/29139/stat": {
+      "bytes": 187,
+      "sha256": "6584dc999643900a14aa2fea78c6c8f6d2a89f7029c1df691087def22c0edc35"
+    },
+    "/proc/2914/stat": {
+      "bytes": 328,
+      "sha256": "59993983cdb3dae58fb2e2e8040af133e3454b9944c28d0d154fbba67870254d"
+    },
+    "/proc/2955986/stat": {
+      "bytes": 311,
+      "sha256": "cf1e567feabb309e56c9ab0781de1b9804a30a6f67402fc2ebae2b12261a838d"
+    },
+    "/proc/2977/stat": {
+      "bytes": 318,
+      "sha256": "cef641eb07d4cc101f1c2b99a116b14306607211a2042bb437c68599f631870f"
+    },
+    "/proc/3/stat": {
+      "bytes": 164,
+      "sha256": "51a3a4ec2e3c037be0c055b8c15b2459420abcae8b6ec478c8a09967cd45a6fd"
+    },
+    "/proc/30/stat": {
+      "bytes": 159,
+      "sha256": "6c3491d9f5085685d96de1da07f3458d64eb96f82b473b97f7a1b140c27a4628"
+    },
+    "/proc/3002/stat": {
+      "bytes": 324,
+      "sha256": "00a5fd79aaeafde47dbd4e40721979c87414d41f9da36f375d141f24798ce5a5"
+    },
+    "/proc/3006/stat": {
+      "bytes": 164,
+      "sha256": "625659c73401fde4e7ce265c01624a9e96ae75d213ec2b2753ef598ba6f91880"
+    },
+    "/proc/3046345/stat": {
+      "bytes": 319,
+      "sha256": "3b97a685e2e51db4be90234114533a9792a11421826245123073e76d8f8f5d9d"
+    },
+    "/proc/3055/stat": {
+      "bytes": 161,
+      "sha256": "2f5fcd16e5a6cb4e67811fd5224ef1a6e04603317d7151601820ffc02bc38894"
+    },
+    "/proc/310/stat": {
+      "bytes": 194,
+      "sha256": "7c7ba8e4e1d26cf1a2e9724da10741f1a24cb4ac77cae8dc2e5f685c64e261b8"
+    },
+    "/proc/3104/stat": {
+      "bytes": 313,
+      "sha256": "045b165d061a158221a8b655a872646b7158a885c81fe6b9e51a4902404dd7a3"
+    },
+    "/proc/3132/stat": {
+      "bytes": 315,
+      "sha256": "f6ad121e876d8a0a70a55ce63b35ae844ceb131b9c69b73dc3fc3dca8dc5bcbc"
+    },
+    "/proc/3158/stat": {
+      "bytes": 327,
+      "sha256": "0278cdb89b8def04dce02f6dfab4bb61f1418bddd3b77bbcb6014c6f4edb6ed1"
+    },
+    "/proc/3166/stat": {
+      "bytes": 322,
+      "sha256": "53654876e080a631fd011b4f7ec2ae2266f5c76368ef779b524d2b91927ae774"
+    },
+    "/proc/3177/stat": {
+      "bytes": 313,
+      "sha256": "962b72f71b121db62a7c6069cc14541de31aeef50c07a1f1f6076709e6e08742"
+    },
+    "/proc/3186/stat": {
+      "bytes": 317,
+      "sha256": "e568428a2e4b887e458365d6ebaee02b3f10071bffbaa155b16b24e49654a4a1"
+    },
+    "/proc/32/stat": {
+      "bytes": 172,
+      "sha256": "0d20b0093ee503144e35d591baa4862a731b8152f5de0c263b66321dda571bca"
+    },
+    "/proc/3209/stat": {
+      "bytes": 324,
+      "sha256": "18ef5b0bafd071631a3cbd0c2e83eceff812e10589ef23215a82d7d1c26fb1d7"
+    },
+    "/proc/33/stat": {
+      "bytes": 151,
+      "sha256": "215ef9ec2c94759045dafb0743088ab0677cad613dec48946f0d49d4d842400f"
+    },
+    "/proc/3306/stat": {
+      "bytes": 312,
+      "sha256": "04cae67388f39fdeeb16ffea74ec4af5922b9a2999c7174062dd7bd774f9bab4"
+    },
+    "/proc/3343/stat": {
+      "bytes": 324,
+      "sha256": "f14c34fb5f15a4755fc7fc093fcc80226118627566c8be4cd8eed677d0a57a7d"
+    },
+    "/proc/3358331/stat": {
+      "bytes": 186,
+      "sha256": "60bcf019e263c5dbcf8abd9eaac3fb731d926e56bb349b9ee77971d195dd7550"
+    },
+    "/proc/3358332/stat": {
+      "bytes": 195,
+      "sha256": "2f498e186ba0ec33f661d251edc5b8ce03de7a4727df4e19ce1c4e42e9d0db0d"
+    },
+    "/proc/34/stat": {
+      "bytes": 159,
+      "sha256": "13fb10b7e6e4e1f7299a6fbad5d4268304305a35de81e6639b6d60d7f879aa96"
+    },
+    "/proc/35/stat": {
+      "bytes": 160,
+      "sha256": "6527c97a4c31932e90dff2652a1ed9d3bc1b6792886fac9970f47caab0960e9c"
+    },
+    "/proc/355/stat": {
+      "bytes": 163,
+      "sha256": "180d912bf728c0bfa4b4137de6066e84f7b26b473957cd9efe713549ece4bf2c"
+    },
+    "/proc/356/stat": {
+      "bytes": 163,
+      "sha256": "548ea164d22e8be7bef98eb76b66783e3b5a6e2dc6a1d7d308e39ed3e7215a8a"
+    },
+    "/proc/36/stat": {
+      "bytes": 159,
+      "sha256": "738de484f2bdc36c1e5c7e095d1dc048a3f7acc6e5f26c0f7489fa94fc4d84bf"
+    },
+    "/proc/368/stat": {
+      "bytes": 187,
+      "sha256": "9098555630166526dd161156cb1f11154f5fde7f4b844d2c1303cd2166ca9168"
+    },
+    "/proc/3733558/stat": {
+      "bytes": 245,
+      "sha256": "235d0650166dcfbbd99b902a0b7a0aaf300080ac813735dcf9788e6df6f9ca0e"
+    },
+    "/proc/3733598/stat": {
+      "bytes": 189,
+      "sha256": "e6efb2d8d44bd720b495bcb8f9a882b22bceea0b9a7b2b78ca9270b8db55230f"
+    },
+    "/proc/3733601/stat": {
+      "bytes": 216,
+      "sha256": "d92439230a75305fbda4988f0145ec16678a72f51a48cd11134249fcffd241f9"
+    },
+    "/proc/3734440/stat": {
+      "bytes": 194,
+      "sha256": "e2915033ebe86ee053f068cba3b559263d2752b385ce2113f5c3f6d5e6944256"
+    },
+    "/proc/3734686/stat": {
+      "bytes": 162,
+      "sha256": "c5127bdc8c8e21afc56a9451176c25cb217021f741a56638d7e2e7424802296c"
+    },
+    "/proc/38/stat": {
+      "bytes": 172,
+      "sha256": "f7c3b721d7d40e3f59aabe9b825f9be668fb98ec401d7568ee3228e68c07f808"
+    },
+    "/proc/39/stat": {
+      "bytes": 152,
+      "sha256": "fa420f975331c698b0371aa4a365afc52aeac7ded8ecd6c9d3639d87c91829c8"
+    },
+    "/proc/3958329/stat": {
+      "bytes": 329,
+      "sha256": "b8015bf11fd8898bdf8254e05b4ec36d577b7f3d6fd19b2c0af8af501b681f32"
+    },
+    "/proc/3958330/stat": {
+      "bytes": 321,
+      "sha256": "78e83d106bbe9fcb3f2fd874c0e2df985b0a7a93901b70c6b74a21b4f537f217"
+    },
+    "/proc/397/stat": {
+      "bytes": 202,
+      "sha256": "098a8b54e553f5b07359a757716f74f9f355867950ca70954b8b50f4d37cbe19"
+    },
+    "/proc/398/stat": {
+      "bytes": 153,
+      "sha256": "64e454a2986f5758b8bad5e75f1fa805caffa2f2f5d61b40b497fcddabd100c8"
+    },
+    "/proc/4/stat": {
+      "bytes": 159,
+      "sha256": "6a97130e91e9685ebb7a20ff0257354568c45e120c53be1cd04b3e0f545fdba6"
+    },
+    "/proc/40/stat": {
+      "bytes": 160,
+      "sha256": "349a6abce70d598801110240ab9631b088e9f5f4d192e3764c151d641ffe4aeb"
+    },
+    "/proc/41/stat": {
+      "bytes": 151,
+      "sha256": "3c88a131868ee97da62b62f452da5aa0d1191b52f968a7b7659006557286202d"
+    },
+    "/proc/4144845/stat": {
+      "bytes": 182,
+      "sha256": "e50a404303c4227bee9c818a2edf955d30ab6094825d4ce5ab0ad40ed706a9fa"
+    },
+    "/proc/4155965/stat": {
+      "bytes": 182,
+      "sha256": "d7c821369cf120c7eebc68ff95e08c1323738d6cf24cdf393acf405085d8b7cb"
+    },
+    "/proc/4173183/stat": {
+      "bytes": 182,
+      "sha256": "0ea5edcbf2a80ef1b44120d083f481c8141ec6830a45a3ea145cf45d66f73173"
+    },
+    "/proc/4174310/stat": {
+      "bytes": 193,
+      "sha256": "4b82ef0b64946bc0c74c14d570088934cf24ea0cfac7136611b933a0a491bdd6"
+    },
+    "/proc/4179520/stat": {
+      "bytes": 182,
+      "sha256": "0da964b9763e6d6900c4b8243c37da6afdac71d397ffd9f3e4ec0286b477f8e1"
+    },
+    "/proc/4182398/stat": {
+      "bytes": 182,
+      "sha256": "2405039d150c0a4fdd0cb9825a98a7ebdbd01d963796d0572aeb2da920e979d2"
+    },
+    "/proc/4189724/stat": {
+      "bytes": 182,
+      "sha256": "7250596410c61e18deab394b2a8cfec120fc6397846e6dd8405ce0bb4c473760"
+    },
+    "/proc/4193365/stat": {
+      "bytes": 181,
+      "sha256": "cabd8206f896eba4f904075174bf95adff80a3104b7f90a11a23129b4b60b2b0"
+    },
+    "/proc/4193368/stat": {
+      "bytes": 182,
+      "sha256": "f3859a8e75af738108bc4c2290e9b8f80936477ed5e7667d99d90fe5fc15c25a"
+    },
+    "/proc/4193372/stat": {
+      "bytes": 191,
+      "sha256": "83813f0c7b723f938e190b69775b15aee83299a2475402e725cad7cd41c2342d"
+    },
+    "/proc/42/stat": {
+      "bytes": 155,
+      "sha256": "a74211b7fea647702f3e0af9e023f25631914008b465a26eb0189464109e8dc3"
+    },
+    "/proc/43/stat": {
+      "bytes": 153,
+      "sha256": "9721432cd64e927f8d46d99f79ddec2b0b62225637911b07219947697378264b"
+    },
+    "/proc/45/stat": {
+      "bytes": 160,
+      "sha256": "ee1e087b8a4a0f4a9695eca11ce635a9bdac8bc114fb8e823fd92211caf73a9f"
+    },
+    "/proc/47/stat": {
+      "bytes": 158,
+      "sha256": "ec04fdcafa457b2f0d72c6dc2fc5b56394f928a2be57f7e2a6db5abfc528f3d6"
+    },
+    "/proc/48/stat": {
+      "bytes": 147,
+      "sha256": "ce7d8ef6d424cc68fb34595e647764979d58bfdcaf717e33d7e7b1247aa23f2f"
+    },
+    "/proc/49/stat": {
+      "bytes": 157,
+      "sha256": "9f9623991b27417e981fbe7049552ed969eca6f5b617ca3893283b6126bf340d"
+    },
+    "/proc/5/stat": {
+      "bytes": 159,
+      "sha256": "aad279c267757c09d530f3c0e95f91cc508d434c54079b74ffa17c7254f6c7b0"
+    },
+    "/proc/50/stat": {
+      "bytes": 160,
+      "sha256": "31a118c988e8d078b051c4079b1d0f8f4c542af5044328438492dd105050cebc"
+    },
+    "/proc/51/stat": {
+      "bytes": 160,
+      "sha256": "19e2b64591d545150cfc15e83f8f82b507a0c2236598b3dff130e5ffe4303446"
+    },
+    "/proc/52/stat": {
+      "bytes": 160,
+      "sha256": "4b363a89dd2cf97fd1260da3bbc50a0949e72fca3029517d7ceb1e6e6b750ac7"
+    },
+    "/proc/55/stat": {
+      "bytes": 160,
+      "sha256": "e072aa69055c816ae5775a9a6fc0a3a5b33f87815831eda753a7f995ac56f5f0"
+    },
+    "/proc/55262/stat": {
+      "bytes": 188,
+      "sha256": "3e2c0a12c39653e588e54a58d0034bdd96746e7ca98602ef3b8d8dbe5d242894"
+    },
+    "/proc/557/stat": {
+      "bytes": 188,
+      "sha256": "555221de9d817464644c4902899e950f265d15c8900d8b6e9720346b8390e000"
+    },
+    "/proc/558/stat": {
+      "bytes": 182,
+      "sha256": "7446267a137b76afc3446a6630a1c6d6fe6ae8430a0676f6d9b66093e6f5b876"
+    },
+    "/proc/56/stat": {
+      "bytes": 160,
+      "sha256": "162f6a6a9cb9aecfbf4e3f16344d6d4f8e5e64a224176da1b199edc0986f8197"
+    },
+    "/proc/57/stat": {
+      "bytes": 157,
+      "sha256": "33737a16a4453bf4f353e957129a41214b495b5fd377419d32948c4bd4e6e5d3"
+    },
+    "/proc/58/stat": {
+      "bytes": 160,
+      "sha256": "7f9e2b39dc36417547064a6592fb9a16736945144ea8616a6eb261b9ef14e702"
+    },
+    "/proc/59/stat": {
+      "bytes": 160,
+      "sha256": "5f4381e173d09360749ee4a689d61deda0a1ecfa84b24d7ce7c852fdef35c5a9"
+    },
+    "/proc/6/stat": {
+      "bytes": 159,
+      "sha256": "2089484df17d517c7ba1008eb8211fae48439bb350a2184fd800e63834fb4277"
+    },
+    "/proc/60/stat": {
+      "bytes": 160,
+      "sha256": "9d276946cf0c12f0fe3a8280e3af6022520d2eabb4b4052dbf109a27111c5d15"
+    },
+    "/proc/61/stat": {
+      "bytes": 154,
+      "sha256": "73136568d5b96b6bd088dcf145478a1e33e057daebd6a1c5f78e9c44ccdaf015"
+    },
+    "/proc/6149/stat": {
+      "bytes": 179,
+      "sha256": "13469ed411a2dfa52d7ea9f8d426be8b740dd183f8a63b0a77ab917158220fae"
+    },
+    "/proc/62/stat": {
+      "bytes": 160,
+      "sha256": "5001ec2164a4530bc2b75baa86980a5d55f271a69eaec8f702134aa3c1babed5"
+    },
+    "/proc/63/stat": {
+      "bytes": 169,
+      "sha256": "0d0083ff1f0d53f26fcba6e7839744b4133d8225951d89092b836caf835f0b00"
+    },
+    "/proc/64/stat": {
+      "bytes": 156,
+      "sha256": "85b8e49c214c4f9ca572838863bddb417682b703d8d63ac54b61c777c5154b01"
+    },
+    "/proc/65/stat": {
+      "bytes": 160,
+      "sha256": "fb2730e2c0d92866cc56d10a5ea7772eb4462dd16c3b98a12f9d0da3f4cdcb1b"
+    },
+    "/proc/66/stat": {
+      "bytes": 161,
+      "sha256": "63b19fe3d9b2d7363881cf15d6715dea89e7ff553fdf513d39b81e7b829ebad6"
+    },
+    "/proc/67/stat": {
+      "bytes": 161,
+      "sha256": "ec9063b4e62902f95ed0526f9c73671b3c6d79f6ff8778c8bbb3e8a0efeedf90"
+    },
+    "/proc/68/stat": {
+      "bytes": 161,
+      "sha256": "26a0990c8aaffec139bdde3cfcea66e5c6910948c2b30de7c3323b1e2e4d87f0"
+    },
+    "/proc/7/stat": {
+      "bytes": 159,
+      "sha256": "c7c1f6b3b33f055f84e234e1dd9506cf8d2f0ebaec29dbe71067e4c107d418a3"
+    },
+    "/proc/70/stat": {
+      "bytes": 159,
+      "sha256": "b77f65becae1986fa41de3bf59a776a0564bfb0f742707854af8d75cfb88bffc"
+    },
+    "/proc/71/stat": {
+      "bytes": 161,
+      "sha256": "70cf8a1a1a36d1b46e5a229a1c72ebf815b6eeb57df9fde85a4ce95903ec7f43"
+    },
+    "/proc/752162/stat": {
+      "bytes": 388,
+      "sha256": "2c6fe4d559e9c904d50dba783de531a510117d972e6a730c638390783fcfc537"
+    },
+    "/proc/757/stat": {
+      "bytes": 183,
+      "sha256": "107a2416d690cdddc8b5556e6bb24a991d132f0b786216a614fdf9090465cddd"
+    },
+    "/proc/762/stat": {
+      "bytes": 163,
+      "sha256": "edb0b46b50cb79bb5332f0544f3ad761a6cb570b2da005fbf55c2972be3cd5d2"
+    },
+    "/proc/7689/stat": {
+      "bytes": 178,
+      "sha256": "348f57648663c89915040926fb83956bd93105379c4546450f2ed1f16b617050"
+    },
+    "/proc/774691/stat": {
+      "bytes": 300,
+      "sha256": "1d2461c20da6f96a20c6caa8b71c8c5807a44f0bfbdb693713b412bf78a4e661"
+    },
+    "/proc/78/stat": {
+      "bytes": 161,
+      "sha256": "8f87ac8a607872a1df5cbb3301af5b8ced73b298685bd990ee34236f7c4d9ec8"
+    },
+    "/proc/80/stat": {
+      "bytes": 158,
+      "sha256": "d5da8a08b3aaf625faa42ae3218c3484c8cb4d48350f406c5d310d4d5905160a"
+    },
+    "/proc/8498/stat": {
+      "bytes": 173,
+      "sha256": "3295a24139447f6e73482c14bcb8743008ffc4cbc68382937fc46ee61f57a526"
+    },
+    "/proc/85/stat": {
+      "bytes": 161,
+      "sha256": "4b1476efdbb6fa1112bde783fe7e7430ad9289539b526e7f8c6bd7daa783e584"
+    },
+    "/proc/857107/stat": {
+      "bytes": 363,
+      "sha256": "7b229ad9bdc5bf70a93bbd7f4ea2c5332a912e53079b2c5f74d194989f32a5c8"
+    },
+    "/proc/862/stat": {
+      "bytes": 189,
+      "sha256": "423874e26bc931a394737e9f9302077bedad12c15cdc0545178deb4aa710f320"
+    },
+    "/proc/865/stat": {
+      "bytes": 178,
+      "sha256": "d76a77a75cc7a4c37af4cac14546d5b0f1de45f49d2b8dc0f6394781114bedd8"
+    },
+    "/proc/866/stat": {
+      "bytes": 181,
+      "sha256": "7869de29b77ce4d5b29d8b8c84d5da4b287febf20c247d5ae63300bf0137e572"
+    },
+    "/proc/875/stat": {
+      "bytes": 182,
+      "sha256": "86b01b68428edf5e9ce0b751cf7d4bbc6113e049f41dacb139a426dba50a0746"
+    },
+    "/proc/9/stat": {
+      "bytes": 171,
+      "sha256": "e7cff3d8c437fd407d50838754bfdc42b87428c133ac677499db7fc0babf4960"
+    },
+    "/proc/902/stat": {
+      "bytes": 174,
+      "sha256": "41471c92f9798964e90ceb9f99de209fdcdfa79d6bf6fc67381cd220b8d3640f"
+    },
+    "/proc/913/stat": {
+      "bytes": 182,
+      "sha256": "36181de3ccd206e41e49fb70098d767d2f74d05ba53a8776374362a24f4a0c50"
+    },
+    "/proc/926/stat": {
+      "bytes": 172,
+      "sha256": "ce7e2d4a56933e17de83346fb98ae54524170ee5c2e43567c0dca69be4d72424"
+    },
+    "/proc/929/stat": {
+      "bytes": 186,
+      "sha256": "3745e635df7b9bc3b181e026454830e334a1ef93923c7f019be1c43bc766b595"
+    },
+    "/proc/935/stat": {
+      "bytes": 174,
+      "sha256": "c6f18ce53dac7fd6204d5184ffe3c5d046bc7a56fc8eed2e821d424ba259d16a"
+    },
+    "/proc/95/stat": {
+      "bytes": 161,
+      "sha256": "72325d36eb4a395d3c7676af23bf064db2a96a296405deb0c2d8ecbda807ce26"
+    },
+    "/proc/955/stat": {
+      "bytes": 188,
+      "sha256": "3fb0acd1411999c4b294981515e60ff8541980205a430d2aa42c8f14c3208037"
+    },
+    "/proc/956/stat": {
+      "bytes": 164,
+      "sha256": "5b50c437b4cb1ee86e1d5f39adea1bca0f21878b33e55db5427eb54c9f51ea49"
+    },
+    "/proc/960/stat": {
+      "bytes": 183,
+      "sha256": "14ce4ff3e52cb62e3353efe52672c4fe9d97654bd4912e0f72afe7b9994263f9"
+    },
+    "/proc/998234/stat": {
+      "bytes": 195,
+      "sha256": "2070137a81172023b6b1e521349decc44a3e5aeb59690df7d71a02abeea57864"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/fixtures/airstrike-caption/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py": {
+      "bytes": 6652,
+      "sha256": "f8acbc5a9d0f752d0b6f43d85afb508bb69be9a0b80b762c1f4f1e384ae04f38"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py": {
+      "bytes": 14680,
+      "sha256": "d016f0c9ff967f79821179b8f3b7fc748833bdee6f0767968877ab1772f32c46"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py": {
+      "bytes": 12302,
+      "sha256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662"
+    },
+    "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-observation-bridge.py": {
+      "bytes": 22733,
+      "sha256": "a7c07110c128c9a521b9e05affdbf6fa86fff672e228680d5a7d5b15cbbb924e"
+    },
+    "/usr/lib/python3.12/__pycache__/_compression.cpython-312.pyc": {
+      "bytes": 7497,
+      "sha256": "6d75072838e06ba35d1bfeadef7b1d0480676c0f7998e67f4b1d2602efa4ee8c"
+    },
+    "/usr/lib/python3.12/__pycache__/argparse.cpython-312.pyc": {
+      "bytes": 101682,
+      "sha256": "e3bd7036c9e4df5f3d0dca82a921ba4eb16130ffdfbb96c4cd1949d50c17d464"
+    },
+    "/usr/lib/python3.12/__pycache__/ast.cpython-312.pyc": {
+      "bytes": 100279,
+      "sha256": "91f74707437ccf9174bfbce9b0cb45079e7f762cf6f0aea08b5006f9bfa28147"
+    },
+    "/usr/lib/python3.12/__pycache__/bisect.cpython-312.pyc": {
+      "bytes": 3641,
+      "sha256": "e27f2a00f316c6644fdd9e7b0b04e3c54e7c2c21db1742ed39206f563b10932a"
+    },
+    "/usr/lib/python3.12/__pycache__/bz2.cpython-312.pyc": {
+      "bytes": 15133,
+      "sha256": "e7111b2c40e90d6058c74e3e5fc96bacfad438a579705ed71d43c0d5a367509d"
+    },
+    "/usr/lib/python3.12/__pycache__/contextlib.cpython-312.pyc": {
+      "bytes": 30376,
+      "sha256": "542b69b2d0e0c84cdb01cf78ddfa15ec9eb7ae64b26c4e2deeef9ce186517ee3"
+    },
+    "/usr/lib/python3.12/__pycache__/copy.cpython-312.pyc": {
+      "bytes": 9800,
+      "sha256": "6feccda0a20a1e72b5430c1f8d11dfc2f2dd5bf1b3021bfdbe4fb37c788df30f"
+    },
+    "/usr/lib/python3.12/__pycache__/dataclasses.cpython-312.pyc": {
+      "bytes": 44678,
+      "sha256": "e013395b4463f713b42f714c56b2b5d7b968e2962fa00b7da21d67879b68a23c"
+    },
+    "/usr/lib/python3.12/__pycache__/difflib.cpython-312.pyc": {
+      "bytes": 75499,
+      "sha256": "19ff5a87c0c83b1bd69009f61e50348b9bda0e324eab195484f97f61fe2050ce"
+    },
+    "/usr/lib/python3.12/__pycache__/dis.cpython-312.pyc": {
+      "bytes": 34560,
+      "sha256": "311f18c3f670446cbb93c716abc50785f17a4e51aab7238c08d88b8466a10e0e"
+    },
+    "/usr/lib/python3.12/__pycache__/gettext.cpython-312.pyc": {
+      "bytes": 22151,
+      "sha256": "2f55a7063b9c0f4e9118101c687ab6a82e11c90bf11b8bfc1db5ba338956601d"
+    },
+    "/usr/lib/python3.12/__pycache__/hashlib.cpython-312.pyc": {
+      "bytes": 8087,
+      "sha256": "8f4dfda452436f1ebb850023c29e8ab24ae99794a7d06c7e420a305c64db0508"
+    },
+    "/usr/lib/python3.12/__pycache__/heapq.cpython-312.pyc": {
+      "bytes": 17956,
+      "sha256": "21a69e48daa4c45c4410b86d300dc3a621d9204e0d991aa26e0c2b316c1b7186"
+    },
+    "/usr/lib/python3.12/__pycache__/inspect.cpython-312.pyc": {
+      "bytes": 133446,
+      "sha256": "178c6181a9d7f722b2922a226039d79538892251c52880ae7eb673f86fae4539"
+    },
+    "/usr/lib/python3.12/__pycache__/linecache.cpython-312.pyc": {
+      "bytes": 6401,
+      "sha256": "2dcc9767b91307d0f43d8747863cc8120caa2b6591eddf06f16878ec3fb1db49"
+    },
+    "/usr/lib/python3.12/__pycache__/locale.cpython-312.pyc": {
+      "bytes": 59536,
+      "sha256": "c3ef6b30204ff195a53ac1b3056c2144d4b04f0e6fe5dd8829a59e40d8d6ba1b"
+    },
+    "/usr/lib/python3.12/__pycache__/lzma.cpython-312.pyc": {
+      "bytes": 15855,
+      "sha256": "6a57d8576a7fe953f47ef46062774aa76e3f8e6e68eaf7e7231ad9906d7d7659"
+    },
+    "/usr/lib/python3.12/__pycache__/opcode.cpython-312.pyc": {
+      "bytes": 14716,
+      "sha256": "521206668f4a963bc11852d9f6cc3547589d92c67867cfd48a6460fe46cdfbc2"
+    },
+    "/usr/lib/python3.12/__pycache__/platform.cpython-312.pyc": {
+      "bytes": 41600,
+      "sha256": "110ccb5d36ad0ad244d287ffd0d1f3354aff0037f4da2184e0e68c16419a3245"
+    },
+    "/usr/lib/python3.12/__pycache__/pprint.cpython-312.pyc": {
+      "bytes": 29474,
+      "sha256": "11ff3ae7669209bb87d400552e348c13d0dc19d59e0c4fadc4a77c1a8325005d"
+    },
+    "/usr/lib/python3.12/__pycache__/random.cpython-312.pyc": {
+      "bytes": 33153,
+      "sha256": "94160967a9efd1acbc0a7bef5a8eb08d703bbba4fb4c0e137cc7f4105f580fc0"
+    },
+    "/usr/lib/python3.12/__pycache__/selectors.cpython-312.pyc": {
+      "bytes": 26128,
+      "sha256": "21adf0618f39c31c452f9b61ec8ed53f3d344b44b180a0e4f60d945e576cfbf1"
+    },
+    "/usr/lib/python3.12/__pycache__/shutil.cpython-312.pyc": {
+      "bytes": 68113,
+      "sha256": "02d5a180a4b18b9f0bb8b16ed7c318c73060ab91f845df43b84eb4c3aa7cf71c"
+    },
+    "/usr/lib/python3.12/__pycache__/signal.cpython-312.pyc": {
+      "bytes": 4448,
+      "sha256": "76575275bd83abe57f60eaaacfc20be9e67ccac2591073ade9a6e883c3404c98"
+    },
+    "/usr/lib/python3.12/__pycache__/subprocess.cpython-312.pyc": {
+      "bytes": 79187,
+      "sha256": "b5c62cff938d67584c9d1f2cbcbbe3a4f522848a73686d7b1bef041f93538993"
+    },
+    "/usr/lib/python3.12/__pycache__/tempfile.cpython-312.pyc": {
+      "bytes": 47339,
+      "sha256": "96242564fb7d24cf0c0661b757ed0b98d1a4c76a4cb69fe5fce3c82c21ce963e"
+    },
+    "/usr/lib/python3.12/__pycache__/textwrap.cpython-312.pyc": {
+      "bytes": 18293,
+      "sha256": "444671392b50df1b35ea9056203e6a4af7709012fa3e7d92e86428a076cbf108"
+    },
+    "/usr/lib/python3.12/__pycache__/token.cpython-312.pyc": {
+      "bytes": 3557,
+      "sha256": "ba852e8ca56cde909fb96b89fe8dbc1df44e6142d74ef05fd4042a1bf22fb2f0"
+    },
+    "/usr/lib/python3.12/__pycache__/tokenize.cpython-312.pyc": {
+      "bytes": 24775,
+      "sha256": "09ce97a3de0ba0d1ffead71752db61c736d3a72a8994eded3519956316403cb1"
+    },
+    "/usr/lib/python3.12/__pycache__/traceback.cpython-312.pyc": {
+      "bytes": 51523,
+      "sha256": "ef6f1ae8dcab7c53f0be0fc5436302ef11e83769318b3deed3df04113225fc14"
+    },
+    "/usr/lib/python3.12/__pycache__/uuid.cpython-312.pyc": {
+      "bytes": 33007,
+      "sha256": "558ec502256222ecb83ed8946d54287d53c02ba8f1d329196bdbfcfca291dfc5"
+    },
+    "/usr/lib/python3.12/__pycache__/weakref.cpython-312.pyc": {
+      "bytes": 31348,
+      "sha256": "b9ee66044a2223606544db3635851a448592b450a145b3b4673c6769c23d6a39"
+    },
+    "/usr/lib/python3.12/collections/__pycache__/abc.cpython-312.pyc": {
+      "bytes": 249,
+      "sha256": "30c9dcc1254f83f404be9239ea83e102d9c7e5158672bf81ffc7a3fb3f67cb6f"
+    },
+    "/usr/lib/python3.12/pathlib.py": {
+      "bytes": 51153,
+      "sha256": "b43e134bf7479759838b4ecec3d78e0e67fdfde2d671c5c2d7886a47da93885d"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/__init__.cpython-312.pyc": {
+      "bytes": 3432,
+      "sha256": "a01e17252cb480cda461cc1ddc1e9e610d9f1301005f59afb3e57f522694848a"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/case.cpython-312.pyc": {
+      "bytes": 69828,
+      "sha256": "5faa10872c711b6a160d65b1c7d3c82946d5351787c2e67c96bcdb1743a50eb3"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/loader.cpython-312.pyc": {
+      "bytes": 23945,
+      "sha256": "01d679120c032b861b1a2c9783cd66f0fc0a84219591b2aab24dbb957a36fcff"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/main.cpython-312.pyc": {
+      "bytes": 13565,
+      "sha256": "fb281840275dfe60120ef50250acb95cdfe4c4b6fe8db335bafc0c8460f647c5"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/result.cpython-312.pyc": {
+      "bytes": 12743,
+      "sha256": "51fde3a5324c57966555b9790fe930be327a90a8787bc008c6f8ac262c3682ba"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/runner.cpython-312.pyc": {
+      "bytes": 16487,
+      "sha256": "e07dee57f6297bb31285580c8c8bbbc7642eca16004cf72e94e0f504af79d00d"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/signals.cpython-312.pyc": {
+      "bytes": 3613,
+      "sha256": "84fd5bc5eb692544742632f7895d4db5b3fb4ab3d6d44ab297f734df222dea90"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/suite.cpython-312.pyc": {
+      "bytes": 15462,
+      "sha256": "a22f0739bf766d233d28be0200551a4504d5faa05f4c059622657cb4c4ffcc87"
+    },
+    "/usr/lib/python3.12/unittest/__pycache__/util.cpython-312.pyc": {
+      "bytes": 7291,
+      "sha256": "94ee670ac43fb54ff4d66a2acd32a7fd8595cc32197b7c83caea2dd105caeac2"
+    }
+  },
+  "repositoryReadInventory": [
+    "test/fixtures/airstrike-caption/9b55685e506a4124abd456510ebaf254.png",
+    "test/fixtures/airstrike-caption/production-renderer-input.js",
+    "test/fixtures/airstrike-caption/production-run.js",
+    "test/fixtures/airstrike-caption/reproduce.py",
+    "test/fixtures/airstrike-caption/review-9b55685e506a4124abd456510ebaf254.json",
+    "test/fixtures/airstrike-caption/review-request.json",
+    "test/test-airstrike-caption-interior.py",
+    "test/test-airstrike-console-obscuration.py",
+    "tools/airstrike-menu-controller.py",
+    "tools/airstrike-observation-bridge.py"
+  ],
+  "subprocesses": [
+    {
+      "pid": 29760,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-qdjclj3j/unchanged-attack-dm3ywn7m/ops/reproduce.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 29761,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-qdjclj3j/unchanged-attack-dm3ywn7m/repo/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 29761,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-qdjclj3j/unchanged-attack-dm3ywn7m/ops/reproduce.py",
+        "--fake-transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-qdjclj3j/unchanged-attack-dm3ywn7m/ops/independent-unsafe-height"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 29823,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py",
+        "--startup-runner",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-startup-4w2xjvez/startup-normal-dfcv5178"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 29823,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py",
+        "--startup-runner",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-startup-4w2xjvez/startup-wrong-target-i9a3ms18"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 29823,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-console-obscuration.py",
+        "--startup-runner",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-startup-4w2xjvez/startup-stale-review-ur1pi2pg"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-height-0-1dnbl7ns",
+        "height-0"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-height-8-y1jam19u",
+        "height-8"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-height-13-_9y36138",
+        "height-13"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-height-14-0sj9tox4",
+        "height-14"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-height-26-mcf88880",
+        "height-26"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-zero-width-7uhfw3t_",
+        "zero-width"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-narrow-5zohkyhu",
+        "narrow"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-negative-x-8oi5_e5i",
+        "negative-x"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-negative-y-ko8nyvf6",
+        "negative-y"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-right-clipped-_lwypkw6",
+        "right-clipped"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-bottom-clipped-0kcgncsz",
+        "bottom-clipped"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-caption-band-clipped-2f4_jr1p",
+        "caption-band-clipped"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-offscreen-a61ns1x7",
+        "offscreen"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-fractional-puts17qz",
+        "fractional"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-bool-ii_o9_26",
+        "bool"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-console-clipped-ydev8wpt",
+        "console-clipped"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-es25lrsd/interior-screen-zero-wskxfp7u",
+        "screen-zero"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-tm1c6iqd/interior-changed-height-1122066s",
+        "changed-height"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-tm1c6iqd/interior-changed-valid-a4fna85v",
+        "changed-valid"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-tm1c6iqd/interior-changed-batch-3dwipq95",
+        "changed-batch"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-1yyls12i/interior-normal-wk_w6li_",
+        "normal"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30416,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/test/test-airstrike-caption-interior.py",
+        "--transport",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tmp/airstrike-interior-1yyls12i/interior-height-27-7opfrlh6",
+        "height-27"
+      ],
+      "cwd": null
+    },
+    {
+      "pid": 30648,
+      "event": "subprocess.Popen",
+      "argv": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-self-contained-fixtures-independent-accept-oct27/ops/standalone/tree/tools/airstrike-menu-controller.py"
+      ],
+      "cwd": null
+    }
+  ],
+  "sourceOperationInventory": {
+    "test/fixtures/airstrike-caption/reproduce.py": {
+      "imports": [
+        "import copy, hashlib, importlib.util, json, pathlib, subprocess, sys, threading, time"
+      ],
+      "fileAndSubprocessCalls": [
+        {
+          "line": 24,
+          "call": "subprocess.run([sys.executable, '-B', str(R / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+        },
+        {
+          "line": 25,
+          "call": "(H / 'reproducer-cli.stdout').write_text(cli.stdout)"
+        },
+        {
+          "line": 25,
+          "call": "(H / 'reproducer-cli.stderr').write_text(cli.stderr)"
+        },
+        {
+          "line": 27,
+          "call": "directory.mkdir()"
+        },
+        {
+          "line": 47,
+          "call": "(H / 'production-renderer-input.js').read_text()"
+        },
+        {
+          "line": 53,
+          "call": "(H / 'independent-rejection.json').write_text(json.dumps(report, indent=2) + '\\n')"
+        },
+        {
+          "line": 43,
+          "call": "obj.run()"
+        },
+        {
+          "line": 14,
+          "call": "(d / 'received.jsonl').open('a')"
+        },
+        {
+          "line": 19,
+          "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+        },
+        {
+          "line": 36,
+          "call": "p.read_text()"
+        },
+        {
+          "line": 45,
+          "call": "(directory / 'received.jsonl').read_text()"
+        }
+      ]
+    },
+    "test/test-airstrike-caption-interior.py": {
+      "imports": [
+        "import copy",
+        "import importlib.util",
+        "import json",
+        "import pathlib",
+        "import subprocess",
+        "import sys",
+        "import tempfile",
+        "import threading",
+        "import unittest"
+      ],
+      "fileAndSubprocessCalls": [
+        {
+          "line": 62,
+          "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=json.dumps(dict(observation=o)) + '\\n', text=True, capture_output=True, timeout=5)"
+        },
+        {
+          "line": 89,
+          "call": "(d / 'assertions.json').write_text(json.dumps(dict(kind=kind, result=result, inputs=inputs), indent=2) + '\\n')"
+        },
+        {
+          "line": 93,
+          "call": "h.mkdir()"
+        },
+        {
+          "line": 94,
+          "call": "(d / 'repo').symlink_to(ROOT, target_is_directory=True)"
+        },
+        {
+          "line": 96,
+          "call": "subprocess.run([sys.executable, '-B', str(h / 'reproduce.py')], capture_output=True, timeout=20)"
+        },
+        {
+          "line": 97,
+          "call": "(h / 'stdout').write_bytes(q.stdout)"
+        },
+        {
+          "line": 97,
+          "call": "(h / 'stderr').write_bytes(q.stderr)"
+        },
+        {
+          "line": 39,
+          "call": "(d / 'received.jsonl').open('a')"
+        },
+        {
+          "line": 83,
+          "call": "obj.run()"
+        },
+        {
+          "line": 95,
+          "call": "(h / n).write_bytes((FIXTURES / n).read_bytes())"
+        },
+        {
+          "line": 98,
+          "call": "(h / 'independent-rejection.json').read_text()"
+        },
+        {
+          "line": 49,
+          "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+        },
+        {
+          "line": 95,
+          "call": "(FIXTURES / n).read_bytes()"
+        },
+        {
+          "line": 75,
+          "call": "p.read_text()"
+        },
+        {
+          "line": 87,
+          "call": "(d / 'received.jsonl').read_text()"
+        }
+      ]
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "imports": [
+        "import copy",
+        "import hashlib",
+        "import importlib.util",
+        "import json",
+        "import pathlib",
+        "import sys",
+        "import subprocess",
+        "import tempfile",
+        "import threading",
+        "import time",
+        "import unittest"
+      ],
+      "fileAndSubprocessCalls": [
+        {
+          "line": 22,
+          "call": "(D / 'review-request.json').read_text()"
+        },
+        {
+          "line": 52,
+          "call": "c.run()"
+        },
+        {
+          "line": 66,
+          "call": "subprocess.run([sys.executable, '-B', str(ROOT / 'tools/airstrike-menu-controller.py')], input=''.join((json.dumps(x) + '\\n' for x in messages)), text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=5)"
+        },
+        {
+          "line": 121,
+          "call": "p.read_text()"
+        },
+        {
+          "line": 129,
+          "call": "renderer.read_text()"
+        },
+        {
+          "line": 115,
+          "call": "(D / 'review-9b55685e506a4124abd456510ebaf254.json').read_text()"
+        },
+        {
+          "line": 216,
+          "call": "(pathlib.Path(directory) / 'received.jsonl').open('a')"
+        },
+        {
+          "line": 101,
+          "call": "obj.run()"
+        },
+        {
+          "line": 219,
+          "call": "pathlib.Path(cmd['path']).write_bytes(data)"
+        },
+        {
+          "line": 110,
+          "call": "(obj.root / 'events.json').read_text()"
+        },
+        {
+          "line": 120,
+          "call": "(D / '9b55685e506a4124abd456510ebaf254.png').read_bytes()"
+        },
+        {
+          "line": 122,
+          "call": "p.read_bytes()"
+        },
+        {
+          "line": 128,
+          "call": "renderer.read_bytes()"
+        },
+        {
+          "line": 86,
+          "call": "path.read_text()"
+        },
+        {
+          "line": 105,
+          "call": "(directory / 'received.jsonl').read_text()"
+        }
+      ]
+    },
+    "tools/airstrike-menu-controller.py": {
+      "imports": [
+        "import json",
+        "import select",
+        "import sys",
+        "import time",
+        "import os"
+      ],
+      "fileAndSubprocessCalls": [
+        {
+          "line": 241,
+          "call": "Controller(receive, lambda c: print(json.dumps(c), flush=True)).run()"
+        }
+      ]
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "imports": [
+        "import hashlib",
+        "import importlib.util",
+        "import json",
+        "import os",
+        "from pathlib import Path",
+        "import resource",
+        "import selectors",
+        "import signal",
+        "import subprocess",
+        "import time",
+        "import uuid"
+      ],
+      "fileAndSubprocessCalls": [
+        {
+          "line": 42,
+          "call": "tmp.write_text(json.dumps(value, indent=2) + '\\n')"
+        },
+        {
+          "line": 73,
+          "call": "self.root.mkdir(parents=True, exist_ok=False)"
+        },
+        {
+          "line": 229,
+          "call": "reply.read_text()"
+        },
+        {
+          "line": 394,
+          "call": "(self.root / ('runner.' + name)).open('wb')"
+        },
+        {
+          "line": 399,
+          "call": "subprocess.Popen(self.argv, cwd=self.cwd, env=self.env, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True, preexec_fn=child_limits)"
+        },
+        {
+          "line": 407,
+          "call": "self.controller.run()"
+        },
+        {
+          "line": 408,
+          "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+        },
+        {
+          "line": 411,
+          "call": "(self.root / 'controller.stderr').write_text(json.dumps(result) + '\\n')"
+        },
+        {
+          "line": 47,
+          "call": "Path(path).read_bytes()"
+        },
+        {
+          "line": 210,
+          "call": "path.read_bytes()"
+        },
+        {
+          "line": 355,
+          "call": "path.read_text()"
+        }
+      ]
+    }
+  },
+  "repositoryWrites": 0,
+  "deniedReads": 0,
+  "temporaryOutputsRemaining": [],
+  "all14AffectedPassed": true,
+  "productionBytesUnchanged": true,
+  "historicalFixturesUnchanged": true,
+  "oracle": "Original assertions unchanged; complete two-file diff reviewed: only fixture/local temporary resolution and automatic cleanup",
+  "limitations": "CPython audit hooks plus static source inventory; not an OS sandbox. /proc owned-child stat, installed Python stdlib and /dev/null allowed. No Node, renderer execution, guest or gameplay result.",
+  "configuration": "Only pinned fixture JSONs and production embedded defaults; historical JSON path fields inert; environment and limits in execution receipts"
+}
