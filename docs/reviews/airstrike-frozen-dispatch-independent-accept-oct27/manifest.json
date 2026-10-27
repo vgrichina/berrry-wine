@@ -483,5 +483,6 @@
   "evidence/independent/focus-change/owned-cleanup.json": "7afca6f0aa3f3d89482413e664931941770cf2d9b4c731de6bc538d0fdb71267",
   "evidence/independent/focus-change/received.jsonl": "36c6863e9b7ce508dac4a3204f5fba7e77cda7b27b3c87bb57df38e7dc19e709",
   "evidence/independent/focus-change/capture-initial.png": "45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
-  "evidence/independent/focus-change/runner.stderr": "fafcbcc292fa286c62da61f4b9320274393fdc4f43e0345595332fc71fa41703"
+  "evidence/independent/focus-change/runner.stderr": "fafcbcc292fa286c62da61f4b9320274393fdc4f43e0345595332fc71fa41703",
+  "evidence/publication-closure-incident.json": "265651775040c8c88e8f92ff42c20134673e80767896d460b3cb5818daaad554"
 }
