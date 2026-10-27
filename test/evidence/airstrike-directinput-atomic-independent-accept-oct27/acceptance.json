@@ -1,0 +1,446 @@
+{
+  "task": "airstrike-directinput-atomic-independent-accept-oct27",
+  "candidate": "4a613bd1de739252c2ceebf72c32ebaf6f8ae6a1",
+  "decision": "ACCEPT within bounded production fragment/host/OS Worker contract; no demonstrated candidate defect",
+  "at": 1793128655.9282649,
+  "pins": {
+    "lib/renderer-input.js": "0778aad2d09ecf790e816011dff29ae20009aae8b53dac769dec0979f3fc6b5a",
+    "src/09a8-handlers-directx.wat": "c281b8747b5c1d74af735349c5d6a92a9c99a9611d47bb0abefdf182e21b0ba4",
+    "lib/guest-rpc.js": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "test/test-directinput-buffered-keyboard.js": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+    "test/helpers/directinput-independent-accept-oct27.js": "a164be89fb44932d6fcd71cba53dbfaebbc37cbc86f92c403652172009751b42",
+    "test/helpers/directinput-independent-os-worker-oct27.js": "c07e6817daeb5078e07e0b4a4269e947de73fcb51682e6a829f0c4fab4bd625d",
+    "test/test-directinput-independent-worker-acquire-oct27.js": "f35fd295fdcfe32050434fda65a29ed647f2863e608dae902833ac053bad4331",
+    "test/test-directinput-independent-modifier-format.js": "69a3a1c4c958b534b9de71fcbad826eb6559cab9b4c9cb6dac7331650c903661",
+    "test/test-directinput-independent-custom-capacity.js": "6d4e47187d417e5d81c11039eaa104a38d16a177aae94d745664468945b56cd0"
+  },
+  "newTests": {
+    "test/test-directinput-independent-atomic-edge-partitions-oct27.js": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/repo/test/test-directinput-independent-atomic-edge-partitions-oct27.js",
+      "bytes": 3931,
+      "sha256": "63d86b87e50d80c32e6edc2a4f8e5bcaf705040cd22c0f1e72fc5e61fdbefb2b"
+    },
+    "test/test-directinput-independent-com-release-oct27.js": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/repo/test/test-directinput-independent-com-release-oct27.js",
+      "bytes": 2390,
+      "sha256": "c75eb5d6cbb606e2abb49e14410f38f0b5601f047ed2e833edc8625533bfe718"
+    },
+    "test/test-directinput-independent-staged-admission-oct27.js": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/repo/test/test-directinput-independent-staged-admission-oct27.js",
+      "bytes": 2219,
+      "sha256": "7cce8e809be038400deedf6e2f5c602cea5f5ad8cca2e0285f6c8c6d7f7695da"
+    },
+    "test/helpers/directinput-independent-release-oct27.js": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/repo/test/helpers/directinput-independent-release-oct27.js",
+      "bytes": 3091,
+      "sha256": "90636469d40fe686a53b28fd5239ddeb0b77254def6d855515180ae1ad163f3a"
+    }
+  },
+  "checks": {
+    "first-worker": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/first-worker.json",
+        "bytes": 1121,
+        "sha256": "9b5ec3a7e24cd83cd7b22b468238df08cd447a9812cb1a95ae0310d47517b47b"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/first-worker.stdout",
+        "bytes": 11999,
+        "sha256": "fd4efa57c2a9807c3ac279c5b89d98427a35800b63f5278e19b9d26b3fa85c21"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/first-worker.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 122884096,
+      "cleanupComplete": true
+    },
+    "modifier-left": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-left.json",
+        "bytes": 1118,
+        "sha256": "d73771564d93f9c4f69b20744460d711fdf58615a2ee8dd791d6224bc9d7821c"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-left.stdout",
+        "bytes": 10206,
+        "sha256": "c440efd4b4b11b32c685a139e95181dc36b8723e29e0c2c6af4327de8613928e"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-left.stderr",
+        "bytes": 2134,
+        "sha256": "7b889063f3d8b9ad8906d7a5fcb6364e36a5a21df749ee71f2cbb5621a9fa210"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 111828992,
+      "cleanupComplete": true
+    },
+    "modifier-right": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-right.json",
+        "bytes": 1130,
+        "sha256": "cba6f97c1e952fc2d687e85a6d360b3b7107f88c3221e04df5029bfbb0caf3f4"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-right.stdout",
+        "bytes": 10206,
+        "sha256": "77506cdb4ee5ae86b3a378021d9ae3737ba9a32e7b712266479024ae635800c8"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-right.stderr",
+        "bytes": 2134,
+        "sha256": "7b889063f3d8b9ad8906d7a5fcb6364e36a5a21df749ee71f2cbb5621a9fa210"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 112066560,
+      "cleanupComplete": true
+    },
+    "capacity": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/capacity.json",
+        "bytes": 1097,
+        "sha256": "3a020c45cb3d49ca4ff13c073d03e6e781f232eb6f14a7c3bebb4087a3ac5d2d"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/capacity.stdout",
+        "bytes": 8849,
+        "sha256": "155e119cb88576c5932e1ec0ef120b5497fb546413b8f6efc07a6f9bdf2720fe"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/capacity.stderr",
+        "bytes": 1768,
+        "sha256": "a1a9a6978f127a8bb3eb3c3de7abc9203ec3ae6a1814b6b6e0c75b3e6cb4b5ba"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 111349760,
+      "cleanupComplete": true
+    },
+    "edge-partitions": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/edge-partitions.json",
+        "bytes": 1125,
+        "sha256": "04fbc874459ac41628f0391fcbc621438c20de76c819fb223a31e057cdf19f33"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/edge-partitions.stdout",
+        "bytes": 12249,
+        "sha256": "59f47a0d93dd178da21d11b4d09b9be21367734ca633a2762cc00d648853dd58"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/edge-partitions.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 124100608,
+      "cleanupComplete": true
+    },
+    "com-release-correct-layout": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-correct-layout.json",
+        "bytes": 1145,
+        "sha256": "3b02c93b9d832a1d6270e7c4da72ea77460e2df4a68194e45545655ff81e344f"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-correct-layout.stdout",
+        "bytes": 12587,
+        "sha256": "836ce96cfe48d5cd440cceb49bc773d05c184fdd896fda378d48528e332e4189"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-correct-layout.stderr",
+        "bytes": 2552,
+        "sha256": "a43369e844a73dc328b41a98b9f68e32fd0dc6f1368523143fb3c109f2e3e943"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 109236224,
+      "cleanupComplete": true
+    },
+    "com-release-rpc": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-rpc.json",
+        "bytes": 1127,
+        "sha256": "d07969f2c1e2cccc9a8510598bc1bd30606101012fc2a95ff79730da3501d6bb"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-rpc.stdout",
+        "bytes": 12587,
+        "sha256": "7e939656ccf71ee2e3dbaed757475a3b72e2003cb90c4737e1b2fc3f4fc87f8a"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-rpc.stderr",
+        "bytes": 2552,
+        "sha256": "a43369e844a73dc328b41a98b9f68e32fd0dc6f1368523143fb3c109f2e3e943"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 115081216,
+      "cleanupComplete": true
+    },
+    "staged-admission-scope-corrected": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/staged-admission-scope-corrected.json",
+        "bytes": 1152,
+        "sha256": "eacc1e2d79cc260985e4be240f5eca6849cf1fd47518a5799ac940506d140044"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/staged-admission-scope-corrected.stdout",
+        "bytes": 10217,
+        "sha256": "89daae069a463d2169107e1bad8bb3cb799309bd8345c2ae663569dde513d4d8"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/staged-admission-scope-corrected.stderr",
+        "bytes": 2134,
+        "sha256": "2c2bbc0409656a8856316e64a93eab9f6122cfa4a19fd1d39cd12d608c93eb0e"
+      },
+      "expectedExit": 0,
+      "actualExit": 0,
+      "peakRSS": 111947776,
+      "cleanupComplete": true
+    },
+    "control-release": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release.json",
+        "bytes": 1233,
+        "sha256": "5987396d617e939f948901a5307c659d9ad6ed017ad4766f1999da4777a16244"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release.stdout",
+        "bytes": 12248,
+        "sha256": "351a9ec4561b0a199696c47ba9240898bc9719c777bbbee58db686443d509372"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release.stderr",
+        "bytes": 3662,
+        "sha256": "470a49a1ef8fedaa6512ef896fa8b012e25dd8b434a40e72439d448be9728697"
+      },
+      "expectedExit": 1,
+      "actualExit": 1,
+      "peakRSS": 109305856,
+      "cleanupComplete": true
+    },
+    "control-activation": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-activation.json",
+        "bytes": 1262,
+        "sha256": "f2d6a77e24878423cba689a3829fc70a4541529ef8980cf909d020adf1c89b0f"
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-activation.stdout",
+        "bytes": 10028,
+        "sha256": "9b859ab4c3bd34580b9124e01d024954e711b8639d2c6d8889b1da71591fc5de"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-activation.stderr",
+        "bytes": 2294,
+        "sha256": "afc8c5b09e8c70fb5b2d4e68f9b5f10b81d633cfe6ab30bba9ede9e400afc6bc"
+      },
+      "expectedExit": 1,
+      "actualExit": 1,
+      "peakRSS": 122679296,
+      "cleanupComplete": true
+    }
+  },
+  "requiredOrder": [
+    "unchanged actual OS Worker oracle",
+    "unchanged modifier left/right",
+    "unchanged custom capacity"
+  ],
+  "observations": [
+    "Partial registration admits no events; actual Worker edge partitions retain exactly the suffix after activation for cuts0 through4.",
+    "Omitted A edges do not saturate Space-only effective capacity2: DI_OK/count2, offset7, data128/0.",
+    "Nonfinal COM Release preserves queue/overflow; final Release drops map and FIFO without touching disjoint device; reconstructed slot uses new selection only.",
+    "65536 global slots include staged and active leases across16host contexts; exact boundary accepts, excess/replacement rejects transactionally, zero stage releases quota."
+  ],
+  "oracleSensitivity": {
+    "release-no-host-reset": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release-no-host-reset.wat",
+      "sha256": "7b77e2609a2bbbf507d2d228c819b87bc1f6e69bc00cccfc0afcfbbaa4523337",
+      "recipe": "in exact dx_free form replace single keyboard host op1 drop expression with (nop)",
+      "expected": "COM final Release must reject surviving FIFO"
+    },
+    "acquire-no-activation": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-acquire-no-activation.wat",
+      "sha256": "8a5bef956e49c7d2f370edbfe06a89e74cb5d9aadbd70989127db357165134a2",
+      "recipe": "in exact Acquire form replace single op10 activation call with i32.const 0",
+      "expected": "Worker partition at cut0 rejects count0 instead of four edges"
+    }
+  },
+  "reuse": {
+    "canonical": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/receipt-manifest.json",
+      "bytes": 68574,
+      "sha256": "6d3ed25703f3e62ee441afd6f5fdb43a050d2a679b4b46ec645fd9eebf6109f8"
+    },
+    "coordinatorVerified": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-atomic-repair-coordinator-verified.json",
+      "bytes": 1087,
+      "sha256": "2d5b497c867c8a2b2e23179999d74db2d57f21f4bf39b8a2adc5c2f22ee6b352"
+    },
+    "groups": "Exact unchanged14buffered,16alias combinations,7contract groups per mode,9light regressions; implementer actual Worker lifecycle/activation-failure cleanup/disjoint-host/immutable-active-selection groups. Reused, not rerun; direct staging contract test changed for op10 and is not an unchanged independent oracle."
+  },
+  "incidents": [
+    {
+      "name": "com-release",
+      "cause": "fixture closure had unbound surface-only dx_trace import; corrected with throw-only binding; candidate unchanged"
+    },
+    {
+      "name": "com-release-bound",
+      "cause": "own synthetic refcount was incorrectly written at misc0 +8 instead of refcount +4; corrected against production DxObject layout; candidate unchanged"
+    },
+    {
+      "name": "staged-admission",
+      "cause": "own challenge extra name collided with pinned runner extra; renamed spill; candidate unchanged"
+    }
+  ],
+  "limitations": [
+    "Fragment compilation, synthetic guest memory and COM objects; no full-module/build/browser/original-game qualification.",
+    "Actual Node worker_threads transport is covered; browser Worker execution is not.",
+    "COM Release endpoint and dx_free are actual production forms. Creation and reuse reconstruct a synthetic slot; production CreateDevice/allocator/thunk dispatch and heap reclamation are not tested. heap_free is a fixture no-op.",
+    "Aggregate VK chooses lowest requested DIK; physical-side fidelity is unavailable and is not accepted.",
+    "No inference about actual game consumption, immediate state beyond reused evidence, or gameplay readiness.",
+    "First unchanged oracle labels injection after RPC response, but injection actually occurs inside host call before response; new partition challenge logs the real post-serveRpc boundary separately."
+  ],
+  "publication": {
+    "branch": "task/airstrike-directinput-atomic-independent-accept-oct27",
+    "status": "pending own evidence/test commit; canonical ops receipt will bind exact commit/remote"
+  },
+  "resources": {
+    "allocation": 536870912,
+    "reserve": 33554432,
+    "admissions": [
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/capacity.admission.json",
+        "bytes": 2017,
+        "sha256": "faf264216f44c11fd58bc84e47ecfa8df12930729a1a718055455bed7d88b888"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/checkout.admission.json",
+        "bytes": 2014,
+        "sha256": "b2a104d4d749d6c35fff4caf16b1b4244bd7aca23a4a84fd86ee7dcdc3af88c7"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-bound.admission.json",
+        "bytes": 2017,
+        "sha256": "23e17d23d8ca386c920914293176938d9b4d8f7b233f52b48ae0cd0f518a0ed3"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-correct-layout.admission.json",
+        "bytes": 2016,
+        "sha256": "56d4b59ad411c6b2c525fc0559a271e2d9c3cef44907ce64ca91d647ec2e4593"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release-rpc.admission.json",
+        "bytes": 2016,
+        "sha256": "f2f10074753ee5ab1bffbe12064257d2a424d720de944b6cab531c75d6fcf4cb"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/com-release.admission.json",
+        "bytes": 2017,
+        "sha256": "7575c984e3c046092a462145912ef4c5ce07c63f7393fc6ec72f369b914c426d"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-activation.admission.json",
+        "bytes": 2017,
+        "sha256": "fb45126b10f8ad211a3482116f2555e21f67d28f88e9b96b1548c1707d5483a3"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/control-release.admission.json",
+        "bytes": 2017,
+        "sha256": "b8efcd1980ddfc3afa00d4f70f9326bf6d16891c3715d8b711340e69c7179ce0"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/edge-partitions.admission.json",
+        "bytes": 2017,
+        "sha256": "46f89d66b8ebf506b7331eae9d6a5ebdd0fa49b8a2fc96a982cbe04401eb9899"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/first-worker.admission.json",
+        "bytes": 2017,
+        "sha256": "9fc70cd31a12781995066cde761ed0965f5f60f11fdf8bacec22aabd805311e5"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/init.admission.json",
+        "bytes": 2013,
+        "sha256": "98917ab1862da2bd722cf97b6b078af8a3e03c6511883079920ae1e212f08ba8"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/make-controls.admission.json",
+        "bytes": 2017,
+        "sha256": "cbba7a265fbdd629fe502324c5bd5401f134a37a128f232f2cfc114861affc10"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-left.admission.json",
+        "bytes": 2017,
+        "sha256": "e2402c900e8e251fbbc84295ee1da4d60b9cda7a67d55d077293b279a2b750ae"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/modifier-right.admission.json",
+        "bytes": 2017,
+        "sha256": "3356476e92a05620feea709dc7f87280ca870cc2be61a4679599e776692f3949"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/node-startup.admission.json",
+        "bytes": 2015,
+        "sha256": "9c6314fd0b1dfd4ad5f1f5bac10de15985bd4ef6ade4f83e8e26a5f29296cee0"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/prepare.admission.json",
+        "bytes": 2017,
+        "sha256": "3ee39f7811a70a8d2e00b63b2bdec9305af70a087a4221b3dd880231d7e46307"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/report.admission.json",
+        "bytes": 2017,
+        "sha256": "2c63f522ff1fb0d95b2090927359bb56e5d993eeb1b9cfd571c9deea687bddcd"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/setup.admission.json",
+        "bytes": 2014,
+        "sha256": "67d44ac84b90d7078f33f2d776e0d00dedd48d304aab3bc230c487ad039b35a7"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/staged-admission-scope-corrected.admission.json",
+        "bytes": 2015,
+        "sha256": "e4fde67414befc191098725f25d95b12c5f99ccc92312d17b3ff7c3403d7bd86"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/staged-admission.admission.json",
+        "bytes": 2017,
+        "sha256": "a80a975edacf03a0611194b6cf167b9e0da225d6b299405f601332147a5a17ae"
+      }
+    ],
+    "nodeStartup": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/node-startup.stdout",
+      "bytes": 2052,
+      "sha256": "2a0872b72843513ee9d85918146ab90af3a906d34fedc708b9c0a0fedfe27b72"
+    },
+    "nodeSupervisor": {
+      "path": "/tmp/airstrike-directinput-atomic-independent-accept-oct27/ops/node-startup.json",
+      "bytes": 1260,
+      "sha256": "af5d0c53704359d19f20345add6586073e1f72717aa9e0fed70b420e2a1da77d"
+    },
+    "physicalRSS": "sampled aggregate plus reaped high-water supervision; heap512MiB is not total RSS limit",
+    "limits": "Git256MiB RSS, DATA512MiB on Git only; Python128MiB, Node768MiB RSS; CPU90/wall120/file24MiB/output2MiB. Node DATA/AS unlimited. Full current shared WAL charged once conservatively.",
+    "recovery": "Minimal sparse checkout with read-only object alternates; no clone/fetch/repack. No guests/mounts; canonical mount parser inapplicable to empty argv."
+  },
+  "cleanup": {
+    "supervisedChildren": "all reaped including expected mutation failures",
+    "workers": "actual worker_threads terminated in finally",
+    "watcher": "pending publication closeout",
+    "boxes": [],
+    "lifecycleOwner": "coordinator",
+    "rootRefsInitial": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-atomic-independent-accept-oct27/root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    }
+  }
+}

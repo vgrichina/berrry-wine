@@ -1,0 +1,20 @@
+{
+  "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+  "pins": {
+    "src/09a8-handlers-directx.wat": "23b1313996351b3acb9b3b78f9d685fc4f0e73a2d3b5198a9e6d37b0caf21156",
+    "lib/renderer-input.js": "429c476020c1c3cc274b587bdf48f5cb95cc579be62c18ec9bc66bf3f3d23dc8",
+    "lib/host-window.js": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9",
+    "lib/host-import-sigs.generated.json": "70380887a9966be790debcfe736d49e733f90f0362bcf5e20867053ffd295141",
+    "test/test-directinput-buffered-keyboard.js": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+    "lib/renderer.js": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03",
+    "lib/guest-rpc.js": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "test/run.js": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+    "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "test/fixtures/directinput-buffered-keyboard-oct27/receipt.json": "982083e5b807a4377b2668cfe8efaa4cac43a95b5d080217f39a7f08ef0b0a98"
+  },
+  "manifestSHA256": "d6a6fa7192938f0dd6e0ccc7474bbf1aa197c03bf640826198baf547fe32eeb6",
+  "mountArgv": [],
+  "mounts": "none: guest forbidden",
+  "SSH": "exact command in run.py",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-independent-accept-oct27/root-ref-digest.json"
+}

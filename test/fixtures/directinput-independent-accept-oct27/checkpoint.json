@@ -1,0 +1,64 @@
+{
+  "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+  "pins": {
+    "src/09a8-handlers-directx.wat": "23b1313996351b3acb9b3b78f9d685fc4f0e73a2d3b5198a9e6d37b0caf21156",
+    "lib/renderer-input.js": "429c476020c1c3cc274b587bdf48f5cb95cc579be62c18ec9bc66bf3f3d23dc8",
+    "lib/host-window.js": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9",
+    "lib/host-import-sigs.generated.json": "70380887a9966be790debcfe736d49e733f90f0362bcf5e20867053ffd295141",
+    "test/test-directinput-buffered-keyboard.js": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+    "lib/renderer.js": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03",
+    "lib/guest-rpc.js": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1",
+    "test/run.js": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+    "tools/watx.js": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+    "test/fixtures/directinput-buffered-keyboard-oct27/receipt.json": "982083e5b807a4377b2668cfe8efaa4cac43a95b5d080217f39a7f08ef0b0a98"
+  },
+  "completed": [
+    {
+      "group": "unchanged production rapid Space before broader tests",
+      "receipt": "/tmp/airstrike-directinput-independent-accept-oct27/ops/production-boundary-first.json",
+      "sha256": "fb49c5d591266af27918ce507f1220e0212e141826feaadbd7b781d9c8157a82",
+      "pass": true
+    },
+    {
+      "group": "independent custom-format capacity challenge",
+      "expected": {
+        "hr": 0,
+        "count": 2,
+        "pairs": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      "actual": {
+        "hr": 1,
+        "count": 0,
+        "records": []
+      },
+      "receipt": "/tmp/airstrike-directinput-independent-accept-oct27/ops/independent-custom-capacity.json",
+      "originalFailurePreserved": true,
+      "controls": [
+        "lost edge rejected",
+        "reversed edges rejected",
+        "spurious overflow rejected"
+      ]
+    }
+  ],
+  "reuse": "nine unchanged affected groups from coordinator-verified donor manifest",
+  "remaining": [
+    "STOPPED ON FIRST CONTRACT FAILURE: no further acceptance"
+  ],
+  "blockers": [],
+  "status": "REJECTED: omitted-key saturation loses selected Space edges",
+  "limitations": [
+    "synthetic guest memory and custom map; no original Airstrike execution",
+    "actual OS Worker not attempted: acceptance stopped at earlier direct-host failure",
+    "release/device reuse, further modifier/isolation challenges not run after rejection",
+    "no full module build or integration closure"
+  ]
+}

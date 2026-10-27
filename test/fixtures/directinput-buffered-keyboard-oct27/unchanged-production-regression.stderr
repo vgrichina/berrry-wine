@@ -1,0 +1,67 @@
+[watx] [WATX] Compiled successfully: 3440 bytes, 4 imports, 45 user funcs
+[watx] [WATX] Function index map: imports[0..3] builtins=0 user[4..48]
+[watx] [WATX] User functions:   [4] $handle_IDirectInputDevice_GetDeviceData
+  [5] $dx_from_this
+  [6] $g2w
+  [7] $di_device_is_acquired
+  [8] $gl32
+  [9] $gs32
+  [10] $page_watch_write_one
+  [11] $page_watch_cell
+  [12] $di_kbd_collect
+  [13] $di_format_offset
+  [14] $di_format_map
+  [15] $dx_surf_state_ptr
+  [16] $dx_slot_of
+  [17] $di_format_map_get
+  [18] $di_object_offset
+  [19] $di_kbd_scan_skip
+  [20] $di_dik_to_vk_strict
+  [21] $di_kbd_live
+  [22] $di_kbd_prev_bit
+  [23] $di_kbd_prev_word
+  [24] $di_kbd_prev_set
+  [25] $di_kbd_prev_store
+  [26] $handle_IDirectInputDevice_Acquire
+  [27] $handle_IDirectInputDevice_Unacquire
+  [28] $di_dik_to_vk
+  [29] $g2w_slow
+  [30] $code_write_hit
+  [31] $page_watch_bump
+  [32] $invalidate_code_write
+  [33] $page_watch_write
+  [34] $di_mouse_event_count
+  [35] $di_mouse_event_take
+  [36] $di_mouse_event_peek
+  [37] $di_mouse_event_is_button
+  [38] $di_mouse_object_index
+  [39] $di_mouse_data_write
+  [40] $di_mouse_event_stamp
+  [41] $di_mouse_button_commit_state
+  [42] $__anonymous_0
+  [43] $__anonymous_1
+  [44] $__anonymous_2
+  [45] $__anonymous_3
+  [46] $__anonymous_4
+  [47] $__anonymous_5
+  [48] $__anonymous_6
+node:assert:90
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: buffered rapid press/release must both survive between polls
+    at Object.<anonymous> (/tmp/airstrike-directinput-buffered-key-regression-oct27/repo/test/directinput-buffered-key-boundary.js:95:8)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 2,
+  operator: '=='
+}
+
+Node.js v20.20.2

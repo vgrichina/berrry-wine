@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 290,
+  "count": 291,
   "sigs": {
     "log": {
       "params": [
@@ -2698,6 +2698,16 @@
     "voice_notify_set": {
       "params": [
         "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "di_keyboard_buffer": {
+      "params": [
         "i32",
         "i32",
         "i32"

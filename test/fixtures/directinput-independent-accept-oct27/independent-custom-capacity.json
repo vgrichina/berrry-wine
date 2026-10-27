@@ -1,0 +1,48 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 124932096,
+  "sampledPeakRSS": 124932096,
+  "reapedPeakRSS": 74616832,
+  "cpuSeconds": 0.669369,
+  "wallSeconds": 0.2250033551827073,
+  "owned": [
+    [
+      426165,
+      "117089067"
+    ],
+    [
+      426167,
+      "117089070"
+    ],
+    [
+      426169,
+      "117089072"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-independent-custom-capacity.js"
+  ],
+  "cwd": "/tmp/airstrike-directinput-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-independent-accept-oct27/ops/independent-custom-capacity.stdout",
+    "bytes": 8714,
+    "sha256": "d55ef347c624a15eaa326834797758bbf274737e60de0875adb689e9cd4c6841"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-independent-accept-oct27/ops/independent-custom-capacity.stderr",
+    "bytes": 2853,
+    "sha256": "d94139cf69d6fbf786a2231851d3b035c42cf58c1749db8235928d1c6eb77fe7"
+  }
+}

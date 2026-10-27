@@ -1,0 +1,84 @@
+[watx] [WATX] Compiled successfully: 4684 bytes, 4 imports, 62 user funcs
+[watx] [WATX] Function index map: imports[0..3] builtins=0 user[4..65]
+[watx] [WATX] User functions:   [4] $handle_IDirectInputDevice_GetDeviceData
+  [5] $dx_from_this
+  [6] $g2w
+  [7] $di_device_is_acquired
+  [8] $gl32
+  [9] $gs32
+  [10] $page_watch_write_one
+  [11] $page_watch_cell
+  [12] $page_watch_write
+  [13] $page_watch_valid
+  [14] $di_kbd_collect
+  [15] $di_format_offset
+  [16] $di_format_map
+  [17] $dx_surf_state_ptr
+  [18] $dx_slot_of
+  [19] $di_format_map_get
+  [20] $di_object_offset
+  [21] $di_kbd_scan_skip
+  [22] $di_dik_to_vk_strict
+  [23] $di_kbd_live
+  [24] $di_kbd_prev_bit
+  [25] $di_kbd_prev_word
+  [26] $di_kbd_prev_set
+  [27] $di_kbd_prev_store
+  [28] $handle_IDirectInputDevice_Acquire
+  [29] $handle_IDirectInputDevice_Unacquire
+  [30] $di_dik_to_vk
+  [31] $handle_IDirectInputDevice_GetDeviceState
+  [32] $g2w_affine_span
+  [33] $zero_memory
+  [34] $handle_IDirectInputDevice_SetProperty
+  [35] $di_valid_device_dword_property
+  [36] $handle_IDirectInputDevice_GetProperty
+  [37] $g2w_slow
+  [38] $code_write_hit
+  [39] $page_watch_bump
+  [40] $invalidate_code_write
+  [41] $di_mouse_event_count
+  [42] $di_mouse_event_take
+  [43] $di_mouse_event_peek
+  [44] $di_mouse_event_is_button
+  [45] $di_mouse_object_index
+  [46] $di_mouse_data_write
+  [47] $di_mouse_event_stamp
+  [48] $di_mouse_button_commit_state
+  [49] $d3dim_lazy_access
+  [50] $guest_page_affine_span
+  [51] $uwc_bulk_note
+  [52] $di_custom_device_state
+  [53] $di_mouse_delta_take_x
+  [54] $di_mouse_delta_take_y
+  [55] $di_mouse_wheel_take
+  [56] $__anonymous_0
+  [57] $__anonymous_1
+  [58] $__anonymous_2
+  [59] $__anonymous_3
+  [60] $__anonymous_4
+  [61] $__anonymous_5
+  [62] $__anonymous_6
+  [63] $__anonymous_7
+  [64] $__anonymous_8
+  [65] $__anonymous_9
+node:assert:90
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: buffered rapid press/release must both survive between polls
+    at Object.<anonymous> (/tmp/airstrike-directinput-buffered-key-regression-oct27/repo/test/test-directinput-buffered-keyboard.js:118:8)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 0,
+  expected: 2,
+  operator: '=='
+}
+
+Node.js v20.20.2

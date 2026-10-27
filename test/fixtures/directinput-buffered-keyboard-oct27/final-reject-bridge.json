@@ -1,0 +1,45 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 106688512,
+  "sampledPeakRSS": 106688512,
+  "reapedPeakRSS": 73265152,
+  "cpuSeconds": 0.569272,
+  "wallSeconds": 0.22558187204413116,
+  "owned": [
+    [
+      410630,
+      "116997280"
+    ],
+    [
+      410631,
+      "116997284"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "test/test-directinput-buffered-keyboard.js",
+    "--control-missing-bridge"
+  ],
+  "cwd": "/tmp/airstrike-directinput-buffered-key-regression-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/final-reject-bridge.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-buffered-key-regression-oct27/ops/final-reject-bridge.stderr",
+    "bytes": 2657,
+    "sha256": "c5776ea1a4a1043ca33f349e02d4cab489e0c85bc6f9d44594854a7a1c9700df"
+  }
+}

@@ -1,0 +1,353 @@
+{
+  "task": "airstrike-directinput-atomic-acquire-repair-oct27",
+  "status": "repair tested; independent acceptance coordinator-owned",
+  "base": "ec1a3ed2bea124ac4af0c442cd09d13d3e8d0264",
+  "productionPredecessor": "7a2f1460f8ef4015af7083b679cd46fc19125a07",
+  "cause": "op8 created an active empty selection; op9 exposed each incremental selection. Inactive staging and explicit op10 activation now publish the complete selection atomically.",
+  "changedFiles": {
+    "lib/renderer-input.js": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/lib/renderer-input.js",
+      "bytes": 185658,
+      "sha256": "0778aad2d09ecf790e816011dff29ae20009aae8b53dac769dec0979f3fc6b5a"
+    },
+    "src/09a8-handlers-directx.wat": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/src/09a8-handlers-directx.wat",
+      "bytes": 1057385,
+      "sha256": "c281b8747b5c1d74af735349c5d6a92a9c99a9611d47bb0abefdf182e21b0ba4"
+    },
+    "test/test-directinput-independent-contract-oct27.js": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/test-directinput-independent-contract-oct27.js",
+      "bytes": 4504,
+      "sha256": "94e080b8aa6edba0e4249d60a815a60687734b49df8ab9165c1f95f3ce6243bd"
+    },
+    "test/test-directinput-atomic-acquire.js": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/test-directinput-atomic-acquire.js",
+      "bytes": 7693,
+      "sha256": "8fa6a5403ca498366a92d69f25b1408d291906bd4c9e35a4aa44e19fdd0f409a"
+    },
+    "test/helpers/directinput-atomic-acquire-mutation.js": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/helpers/directinput-atomic-acquire-mutation.js",
+      "bytes": 1081,
+      "sha256": "5a7196696a10403707f38504dd7d37fd8037612d2d184f64ba64e986c21c2f74"
+    }
+  },
+  "mandatoryUnchangedOracles": {
+    "test/test-directinput-independent-worker-acquire-oct27.js": "f35fd295fdcfe32050434fda65a29ed647f2863e608dae902833ac053bad4331",
+    "test/test-directinput-independent-modifier-format.js": "69a3a1c4c958b534b9de71fcbad826eb6559cab9b4c9cb6dac7331650c903661",
+    "test/test-directinput-independent-custom-capacity.js": "6d4e47187d417e5d81c11039eaa104a38d16a177aae94d745664468945b56cd0"
+  },
+  "inputCanonical": {
+    "path": "/tmp/airstrike-directinput-modifier-independent-accept-oct27/ops/receipt-manifest.json",
+    "bytes": 31511,
+    "sha256": "4d10e156ecba265ba3dbfae6a40de18057bcace555c422c878834f2b24b5193a"
+  },
+  "coordinatorVerified": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-modifier-accept-coordinator-verified.json",
+    "bytes": 829,
+    "sha256": "ae42b704cfe77935220965525430050950f51688e0bfd0617d5fff7c521f99f9"
+  },
+  "baseline": {
+    "receipt": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/baseline-worker.json",
+      "bytes": 1097,
+      "sha256": "be3f41abf8efbd24cdaa5f7d38bd625304474b2e53871d575ee402f453a6b685"
+    },
+    "observed": "DI_OK Return-only records3:128/0; later selected Space lost while acquired flag false",
+    "unchangedReproducer": true
+  },
+  "repaired": {
+    "receipt": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/repaired-worker.json",
+      "bytes": 1097,
+      "sha256": "a55186bb8c0aea3c2434ea644846e4cdf0618e1a8b2c13e252f3ee1b1518dc74"
+    },
+    "controls": "before empty, after four selected edges; partial op9 empty",
+    "actualOSWorker": true
+  },
+  "boundaries": {
+    "atomicAcquireChecks": [
+      {
+        "boundary": "before op8 value9",
+        "records": []
+      },
+      {
+        "boundary": "after op8 value9",
+        "records": []
+      },
+      {
+        "boundary": "before op9 value13",
+        "records": []
+      },
+      {
+        "boundary": "after op9 value13",
+        "records": []
+      },
+      {
+        "boundary": "before op9 value32",
+        "records": []
+      },
+      {
+        "boundary": "after op9 value32",
+        "records": []
+      },
+      {
+        "boundary": "before op10 value0",
+        "records": []
+      },
+      {
+        "boundary": "after op10 value0",
+        "records": [
+          [
+            3,
+            128
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      {
+        "lifecycle": "failed admission/activation, cleanup, reacquire, repeated Acquire, unacquire",
+        "pass": true
+      },
+      {
+        "isolation": "two devices, two host contexts, actual OS Workers, staged/live/reset isolation and slot reuse",
+        "pass": true
+      },
+      {
+        "hostABI": "legacy activation, missing/double commit rejection, immutable active selection",
+        "pass": true
+      }
+    ],
+    "actualOSWorkers": true,
+    "fullModule": false,
+    "gameplay": false
+  },
+  "regressionResults": {
+    "repaired-worker": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/repaired-worker.json",
+      "bytes": 1097,
+      "sha256": "a55186bb8c0aea3c2434ea644846e4cdf0618e1a8b2c13e252f3ee1b1518dc74"
+    },
+    "atomic-boundaries": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/atomic-boundaries.json",
+      "bytes": 1082,
+      "sha256": "952c540c7164ed1c8cfff947a0f1a07840659fa01b74745808c56f4a5e0da916"
+    },
+    "modifier-left-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/modifier-left-direct.json",
+      "bytes": 1112,
+      "sha256": "c122a77f21745e2d79f9fb66e114ef52576b6e40d4a62a5790f857b8c6c0a657"
+    },
+    "modifier-right-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/modifier-right-direct.json",
+      "bytes": 1123,
+      "sha256": "97c3f75a3c2bf24ad74fbcdf2af093044da1fca34c9111d6eebed31046463257"
+    },
+    "capacity-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/capacity-direct.json",
+      "bytes": 1090,
+      "sha256": "a511ff00509e2e30e7eeaced3b68b00315055b352b69ebb0825209abb539ef6b"
+    },
+    "buffered-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/buffered-direct.json",
+      "bytes": 1091,
+      "sha256": "a4009867d3db8914ece5a76ea8402c70d945694bf5012fb49f7c5491c5455410"
+    },
+    "alias-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/alias-direct.json",
+      "bytes": 1075,
+      "sha256": "6d9ffd0f1f1d371a1392b821ef8b870bdad47392f7e14ca1e04e26bb32e5b10b"
+    },
+    "contract-direct": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/contract-direct.json",
+      "bytes": 1090,
+      "sha256": "0900c60fa97e2fbfece86f4e61689cce6614b31dc9db57a85e8a0bba39da9c63"
+    },
+    "modifier-left-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/modifier-left-rpc.json",
+      "bytes": 1108,
+      "sha256": "cf3c1d2a179abe8681f1c4219e353461869676198332191f2f0cf38f499bcc23"
+    },
+    "modifier-right-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/modifier-right-rpc.json",
+      "bytes": 1129,
+      "sha256": "5a78c6df3df847b0a37504c0e1bdb8281024a9dff953264f65ed290565482564"
+    },
+    "capacity-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/capacity-rpc.json",
+      "bytes": 1096,
+      "sha256": "36a82661845e1c152dae51a9b98bbf1478f612c781c818e17844da899bb80cda"
+    },
+    "buffered-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/buffered-rpc.json",
+      "bytes": 1086,
+      "sha256": "6dd9e858b95a2d2ff2aed78551a1e0e76025c8b03b33b3f7cd8f54b753982987"
+    },
+    "alias-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/alias-rpc.json",
+      "bytes": 1083,
+      "sha256": "548523f5e79b7f266be3b40b748dce9db401b2dcbbda92b1775d0c127a5442f5"
+    },
+    "contract-rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/contract-rpc.json",
+      "bytes": 1097,
+      "sha256": "f6b10234a61d7fb55aec7782c955920245aa9fb545b96fb31457e27b3ceb042c"
+    },
+    "light-0": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-0.json",
+      "bytes": 1056,
+      "sha256": "1fc54fa8f5d5fd52007e2e12f99c7d1dd75ca2fb4fdfa76f323fd7eec465b40d"
+    },
+    "light-1": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-1.json",
+      "bytes": 1062,
+      "sha256": "d9fb4e60de1992952ae05e1d3e5527428db1680a2e367a70f3900acab5f0f5f6"
+    },
+    "light-2": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-2.json",
+      "bytes": 1061,
+      "sha256": "a7d5ba565d6fcf4cbb017cfc34dc22337ab10a0c256b4c43f4671228b32571e9"
+    },
+    "light-3": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-3.json",
+      "bytes": 1069,
+      "sha256": "2eebd15ad64b2a554e9c99da15a53f98a2406fec544d294d7768cabac5813c2a"
+    },
+    "light-4": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-4.json",
+      "bytes": 1060,
+      "sha256": "7f620eec1be4b1f7be342b1f921897f96840558d70ec08bf40b48e9825bfcf3c"
+    },
+    "light-5": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-5.json",
+      "bytes": 1067,
+      "sha256": "df2c27c161b470cae49554e81f643c268d42a56fc3f7bb82319bbdf88ae34294"
+    },
+    "light-6": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-6.json",
+      "bytes": 1062,
+      "sha256": "b1e8298b194f6f8ec38ae287246175a1a97c0cfa31c433a7502ed6a771372589"
+    },
+    "light-7": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-7.json",
+      "bytes": 1058,
+      "sha256": "9e64ff4387e4787de9c414f81c3f100189d6403bb4c341b219fa5cc8b87cffb1"
+    },
+    "light-8": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/light-8.json",
+      "bytes": 1061,
+      "sha256": "eeec7c2d921bd940abe8188d0b8239dacbc2f36f1c9fcf425f383d5d7ae8fe9d"
+    },
+    "fragment-parens": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/fragment-parens.json",
+      "bytes": 1120,
+      "sha256": "09a576ececf046d09ecf0c555500c7590ff71020627f9ae5cb0def4ec864dd88"
+    },
+    "boolean-gate": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/boolean-gate.json",
+      "bytes": 1057,
+      "sha256": "5963499f953d9992062bbef49bf62fa79a23b5e83d45932754987317b2a784dc"
+    }
+  },
+  "mutation": {
+    "receipt": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/reject-partial-admission.json",
+      "bytes": 1193,
+      "sha256": "fa4d3f80814bdec0a9bd77e78c28b4f7b609762b47b02874766782029f402ed3"
+    },
+    "control": "remove only inactive filter admission guard; unchanged Worker oracle rejects original Return-only defect",
+    "source": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/helpers/directinput-atomic-acquire-mutation.js",
+      "bytes": 1081,
+      "sha256": "5a7196696a10403707f38504dd7d37fd8037612d2d184f64ba64e986c21c2f74"
+    }
+  },
+  "productionRunner": {
+    "fixture": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/test-directinput-buffered-keyboard.js",
+      "bytes": 17062,
+      "sha256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a"
+    },
+    "helper": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/helpers/directinput-independent-accept-oct27.js",
+      "bytes": 2360,
+      "sha256": "a164be89fb44932d6fcd71cba53dbfaebbc37cbc86f92c403652172009751b42"
+    },
+    "workerAdapter": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/test/helpers/directinput-independent-os-worker-oct27.js",
+      "bytes": 1256,
+      "sha256": "c07e6817daeb5078e07e0b4a4269e947de73fcb51682e6a829f0c4fab4bd625d"
+    },
+    "rpc": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/lib/guest-rpc.js",
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    "host": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/lib/host-window.js",
+      "bytes": 64156,
+      "sha256": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9"
+    },
+    "compiler": [
+      {
+        "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/tools/watx.js",
+        "bytes": 2663,
+        "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/tools/watx-src/compiler.js",
+        "bytes": 18610,
+        "sha256": "0633b916abfcab30ba5f2698b27da2454ae387afd3c781e1c35d21c8506f5175"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/tools/watx-src/compiler-codegen.js",
+        "bytes": 302257,
+        "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/tools/watx-src/compiler-parser.js",
+        "bytes": 38100,
+        "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236"
+      },
+      {
+        "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/repo/tools/watx-src/compiler-stages.js",
+        "bytes": 31195,
+        "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03"
+      }
+    ],
+    "startup": {
+      "path": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/node-startup.json",
+      "bytes": 1212,
+      "sha256": "b8325eb762d9ee3f13ad5644a8dc7a877490fc07c73b5615bb8f6ef7061e89ea"
+    }
+  },
+  "commands": [
+    "node --max-old-space-size=512 test/test-directinput-independent-worker-acquire-oct27.js",
+    "node --max-old-space-size=512 test/test-directinput-atomic-acquire.js",
+    "node --max-old-space-size=512 --require ./test/helpers/directinput-atomic-acquire-mutation.js test/test-directinput-independent-worker-acquire-oct27.js (must reject)"
+  ],
+  "limits": "Git child-only DATA512MiB/RSS256MiB; Python128MiB; Node RSS768MiB with max-old-space-size512, DATA/AS unlimited; Workers resourceLimits512/execArgv empty; CPU90 wall120 file24MiB output2MiB. Supervised peaks are actual aggregate descendants; heap flag is not total process cap.",
+  "limitations": [
+    "Production fragment compilation and actual Node Worker_threads transport with production RPC; no browser scheduling or actual game/full-module claim.",
+    "Aggregate VK edges preserve existing lowest selected DIK alias representative, without physical-side fidelity.",
+    "Lifecycle includes failed acquisition, unacquire/reacquire and device-slot reuse; actual COM Release not newly executed.",
+    "No runtime boxes, original game, browser, full module, main integration, allowance reset, worker launches or Claude."
+  ],
+  "incidents": [
+    "Initial broad diagnostic reads exceeded8192-byte terminal output rule; subsequent reads narrowed. Session/evidence charged in admission.",
+    "Initial seven-group contract used old direct host staging ABI and failed expected2/actual0. Added explicit op10 and stronger preactivation empty assertion; all seven groups then pass in both modes. Initial incidental contract receipt names were reused by corrected run; original diagnostic excerpt remains in session, baseline and mutation failures have distinct preserved files.",
+    "Initial report compiler pathname assumed directory entry point; actual pinned compiler is tools/watx.js. Original report failure preserved; corrected report only, no test replay.",
+    "Bootstrap watcher was reaped by trusted supervisor; watcher lifecycle explicitly measured; publication watcher separately bounded."
+  ],
+  "canonicalCloseout": "/tmp/airstrike-directinput-atomic-acquire-repair-oct27/ops/receipt-manifest.json"
+}
