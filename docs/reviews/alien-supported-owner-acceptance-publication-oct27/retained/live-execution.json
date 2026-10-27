@@ -1,0 +1,53 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 126128128,
+  "sampledPeakRSS": 126128128,
+  "reapedPeakRSS": 30052352,
+  "cpuSeconds": 1.426769,
+  "wallSeconds": 0.5313323850277811,
+  "owned": [
+    [
+      3570877,
+      "111639245"
+    ],
+    [
+      3570878,
+      "111639248"
+    ],
+    [
+      3570879,
+      "111639248"
+    ],
+    [
+      3570880,
+      "111639251"
+    ],
+    [
+      3570882,
+      "111639254"
+    ],
+    [
+      3570884,
+      "111639268"
+    ],
+    [
+      3570885,
+      "111639270"
+    ],
+    [
+      3570886,
+      "111639272"
+    ],
+    [
+      3570887,
+      "111639292"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+    "live"
+  ]
+}

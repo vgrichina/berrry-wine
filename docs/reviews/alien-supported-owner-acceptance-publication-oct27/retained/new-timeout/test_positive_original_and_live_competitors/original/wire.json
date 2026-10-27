@@ -1,0 +1,1 @@
+[{"command": {"action": "snapshot"}, "raw": "{\"action\":\"snapshot\"}", "serverPID": 3572101, "socketPort": 39293, "response": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"}, {"command": {"cmd": "click:98:296"}, "raw": "{\"cmd\":\"click:98:296\"}", "serverPID": 3572101, "socketPort": 39293}]

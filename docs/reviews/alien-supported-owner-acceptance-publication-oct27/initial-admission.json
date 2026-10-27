@@ -1,0 +1,118 @@
+{
+  "free": 3177844736,
+  "peerFuture": 67108864,
+  "otherNewTask": 33554432,
+  "ownNewTask": 33554432,
+  "projected": 3043627008,
+  "floor": 2982150144,
+  "mem": 3600986112,
+  "required": 2617245696,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 423854080,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "resume",
+        "--profile",
+        "wine-coordinator",
+        "--strict-config",
+        "01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+        "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise.",
+        ""
+      ]
+    },
+    {
+      "pid": 3576609,
+      "rss": 195424256,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/final.txt",
+        "-",
+        ""
+      ]
+    },
+    {
+      "pid": 3580208,
+      "rss": 197742592,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/airstrike-focus-menu-controller-repair-oct27/final.txt",
+        "-",
+        ""
+      ]
+    },
+    {
+      "pid": 3581945,
+      "rss": 255983616,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-supervisor-accepted-main-integration-oct27/final.txt",
+        "-",
+        ""
+      ]
+    },
+    {
+      "pid": 3582094,
+      "rss": 211230720,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-supported-owner-acceptance-publication-oct27/final.txt",
+        "-",
+        ""
+      ]
+    }
+  ]
+}

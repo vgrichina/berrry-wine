@@ -1,0 +1,56 @@
+{
+  "verdict": "PASS",
+  "actualHTTPTimeout": true,
+  "elapsed": 20.144908369984478,
+  "stdout": "{\"error\": \"TimeoutError: timed out\", \"guestAcceptance\": \"unqualified\"}\n",
+  "stderr": "",
+  "pending": {
+    "command": {
+      "cmd": "click:98:296"
+    },
+    "index": 1
+  },
+  "commands": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "cmd": "click:98:296"
+    }
+  ],
+  "cleanup": {
+    "delegationConsumed": true,
+    "elapsed": 20.175346599891782,
+    "guestAcceptance": "unqualified",
+    "identities": {
+      "3572101": {
+        "cpu": 0.12,
+        "ppid": 3572100,
+        "rss": 20840448,
+        "start": "111645740",
+        "state": "S"
+      },
+      "3572103": {
+        "cpu": 0.0,
+        "ppid": 3572100,
+        "rss": 0,
+        "start": "111645744",
+        "state": "Z"
+      }
+    },
+    "peaks": {
+      "cpu": 2.69,
+      "output": 0,
+      "rss": 55705600
+    },
+    "reason": "controller failure; no replay/reconnect",
+    "receiptErrors": [],
+    "remainingOwnedLive": [],
+    "returncode": -15
+  },
+  "noReplayOrReconnect": true,
+  "unrelatedSentinelPreserved": {
+    "pid": 3572099,
+    "startTicks": "111645736"
+  }
+}

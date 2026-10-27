@@ -1,0 +1,356 @@
+{
+  "manifest": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/evidence-manifest.json",
+  "sha256": "660ddc7d24d0ef709fe241680d2c5edc4b2b12dd8e58786ba7e083f45dfa21f8",
+  "payloadsVerified": 1990,
+  "errors": [],
+  "sourcePins": {
+    "tools/alien-menu-gameplay-controller.py": "5296d852171d0811a7fd73176167297aadf8c86f8c3c46b8eb267ead8a2d7c67",
+    "tools/alien-supervised-gameplay.py": "fc21a9e0bb2fd503328ba44e03d11261fa7a200667b72a66d40521d5a44443ba",
+    "test/fixtures/alien-menu-controller/test_controller.py": "fed648ac38c788c1f1576a30577bd2a55c51e30faaafbeac815771c276d7d51b",
+    "test/fixtures/alien-menu-controller/test_process_owner.py": "3f7b13bf7fc2d72c66646c1158cf3de1fa77e69976bc57df10694cd2d9242404",
+    "test/fixtures/alien-menu-controller/test_supervised.py": "ea4df9cc600add32ae9f5dc080c4511e0721d8b21f84a0a1168b0face5d9a4da",
+    "test/fixtures/alien-menu-controller/child_server.py": "c7769df31c86ffc172461cd39c133b7443a1c32bae3b01e38749f2f4e5e3135e",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+    "test/fixtures/alien-menu-controller/inject/sitecustomize.py": "418870eeb4342b18b43783ff0b28bb1ee3342ac6998450ec4f5c174ad671db9b"
+  },
+  "reusedProductionMethods": 13,
+  "groups": {
+    "frozen-production": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 113074176,
+      "sampledPeakRSS": 113074176,
+      "reapedPeakRSS": 33030144,
+      "cpuSeconds": 21.487993,
+      "wallSeconds": 12.844332871958613,
+      "owned": [
+        [
+          3543339,
+          "111536778"
+        ],
+        [
+          3543340,
+          "111536783"
+        ],
+        [
+          3543344,
+          "111536903"
+        ],
+        [
+          3543346,
+          "111536906"
+        ],
+        [
+          3543371,
+          "111537081"
+        ],
+        [
+          3543372,
+          "111537090"
+        ],
+        [
+          3543373,
+          "111537093"
+        ],
+        [
+          3543376,
+          "111537148"
+        ],
+        [
+          3543377,
+          "111537152"
+        ],
+        [
+          3543379,
+          "111537157"
+        ],
+        [
+          3543381,
+          "111537237"
+        ],
+        [
+          3543382,
+          "111537241"
+        ],
+        [
+          3543384,
+          "111537244"
+        ],
+        [
+          3543386,
+          "111537256"
+        ],
+        [
+          3543387,
+          "111537260"
+        ],
+        [
+          3543389,
+          "111537263"
+        ],
+        [
+          3543392,
+          "111537353"
+        ],
+        [
+          3543393,
+          "111537357"
+        ],
+        [
+          3543395,
+          "111537361"
+        ],
+        [
+          3543397,
+          "111537370"
+        ],
+        [
+          3543398,
+          "111537384"
+        ],
+        [
+          3543400,
+          "111537388"
+        ],
+        [
+          3543402,
+          "111537402"
+        ],
+        [
+          3543403,
+          "111537407"
+        ],
+        [
+          3543412,
+          "111537411"
+        ],
+        [
+          3543424,
+          "111537436"
+        ],
+        [
+          3543425,
+          "111537439"
+        ],
+        [
+          3543426,
+          "111537447"
+        ],
+        [
+          3543428,
+          "111537451"
+        ],
+        [
+          3543430,
+          "111537462"
+        ],
+        [
+          3543431,
+          "111537464"
+        ],
+        [
+          3543432,
+          "111537474"
+        ],
+        [
+          3543434,
+          "111537478"
+        ],
+        [
+          3543436,
+          "111537505"
+        ],
+        [
+          3543437,
+          "111537507"
+        ],
+        [
+          3543438,
+          "111537513"
+        ],
+        [
+          3543440,
+          "111537517"
+        ],
+        [
+          3543442,
+          "111537534"
+        ],
+        [
+          3543443,
+          "111537537"
+        ],
+        [
+          3543444,
+          "111537544"
+        ],
+        [
+          3543446,
+          "111537547"
+        ],
+        [
+          3543448,
+          "111537576"
+        ],
+        [
+          3543449,
+          "111537578"
+        ],
+        [
+          3543450,
+          "111537582"
+        ],
+        [
+          3543452,
+          "111537586"
+        ],
+        [
+          3543463,
+          "111537634"
+        ],
+        [
+          3543466,
+          "111537637"
+        ],
+        [
+          3543468,
+          "111537641"
+        ],
+        [
+          3543474,
+          "111537723"
+        ],
+        [
+          3543476,
+          "111537741"
+        ],
+        [
+          3543478,
+          "111537745"
+        ],
+        [
+          3543480,
+          "111537751"
+        ],
+        [
+          3543481,
+          "111537781"
+        ],
+        [
+          3543482,
+          "111537784"
+        ],
+        [
+          3543483,
+          "111537787"
+        ],
+        [
+          3543484,
+          "111537790"
+        ],
+        [
+          3543506,
+          "111537987"
+        ],
+        [
+          3543507,
+          "111537990"
+        ],
+        [
+          3543509,
+          "111537994"
+        ],
+        [
+          3543511,
+          "111538010"
+        ],
+        [
+          3543522,
+          "111538013"
+        ],
+        [
+          3543523,
+          "111538016"
+        ],
+        [
+          3543525,
+          "111538020"
+        ],
+        [
+          3543527,
+          "111538028"
+        ],
+        [
+          3543528,
+          "111538031"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "frozen-legacy": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 61857792,
+      "sampledPeakRSS": 61857792,
+      "reapedPeakRSS": 24633344,
+      "cpuSeconds": 1.267699,
+      "wallSeconds": 1.7110037440434098,
+      "owned": [
+        [
+          3544570,
+          "111544530"
+        ],
+        [
+          3544572,
+          "111544546"
+        ],
+        [
+          3544574,
+          "111544597"
+        ],
+        [
+          3544575,
+          "111544601"
+        ],
+        [
+          3544580,
+          "111544647"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "frozen-pid": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 67895296,
+      "sampledPeakRSS": 67895296,
+      "reapedPeakRSS": 24133632,
+      "cpuSeconds": 0.6431840000000001,
+      "wallSeconds": 0.6733134631067514,
+      "owned": [
+        [
+          3545367,
+          "111548428"
+        ],
+        [
+          3545370,
+          "111548439"
+        ],
+        [
+          3545371,
+          "111548439"
+        ]
+      ],
+      "cleanupComplete": true
+    }
+  },
+  "retainedTransportChecks": 8,
+  "retainedUnaffectedChecks": 24,
+  "transportOriginal": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/checks.json",
+  "testedTree": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/tested-tree.json",
+  "productionContract": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/production-contract.json",
+  "result": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/result.json",
+  "originalIncidents": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/incidents.json",
+  "independentChecks": "Selected gaps only, no full-suite repeat"
+}

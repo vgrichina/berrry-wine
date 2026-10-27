@@ -1,0 +1,46 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 106692608,
+  "sampledPeakRSS": 106692608,
+  "reapedPeakRSS": 25821184,
+  "cpuSeconds": 14.844231,
+  "wallSeconds": 20.316245744936168,
+  "owned": [
+    [
+      3572098,
+      "111645731"
+    ],
+    [
+      3572099,
+      "111645736"
+    ],
+    [
+      3572100,
+      "111645736"
+    ],
+    [
+      3572101,
+      "111645740"
+    ],
+    [
+      3572103,
+      "111645744"
+    ],
+    [
+      3572310,
+      "111647758"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+    "timeout"
+  ],
+  "harnessPins": {
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/manage.py": "1a069228c03e401c8f1cbed8f8754708670b0109e4201314603f7eb566caf564",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py": "28508592acf9d331575b8d3d8800a14db557712ae7078b26fc0472fadc776bed",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py": "cf4c223631685da41e540a25cf142382c7a02b98e5683b4a0e2418aaf977a490"
+  }
+}

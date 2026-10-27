@@ -1,0 +1,59 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/repo/tools/alien-menu-gameplay-controller.py",
+    "--invocation",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/new-live/test_positive_original_and_live_competitors/same-endpoint",
+    "--endpoint",
+    "http://127.0.0.1:41647/ctl",
+    "--terminal-file",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/new-live/test_positive_original_and_live_competitors/same-endpoint/terminal.json",
+    "--after-batches",
+    "1",
+    "--approve-new-game"
+  ],
+  "exit": 1,
+  "stdout": "{\"error\": \"existing-guest attachment retired; launch a NEW child with tools/alien-supervised-gameplay.py (explicit command/cwd/endpoint/deadline); no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+  "stderr": "",
+  "newClaim": false,
+  "HTTP": 0,
+  "originalStateUnchanged": true,
+  "originalWire": [
+    {
+      "command": {
+        "action": "snapshot"
+      },
+      "raw": "{\"action\":\"snapshot\"}",
+      "serverPID": 3570880,
+      "socketPort": 41647,
+      "response": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+    },
+    {
+      "command": {
+        "action": "png",
+        "path": "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/new-live/test_positive_original_and_live_competitors/original/menu-before.png"
+      },
+      "raw": "{\"action\":\"png\",\"path\":\"/tmp/alien-supervisor-owned-independent-accept-oct27/ops/new-live/test_positive_original_and_live_competitors/original/menu-before.png\"}",
+      "serverPID": 3570880,
+      "socketPort": 41647,
+      "response": "{\"ok\": true, \"value\": {\"batch\": 4722, \"frozen\": true, \"path\": \"/tmp/alien-supervisor-owned-independent-accept-oct27/ops/new-live/test_positive_original_and_live_competitors/original/menu-before.png\", \"bytes\": 21}}"
+    },
+    {
+      "command": {
+        "action": "snapshot"
+      },
+      "raw": "{\"action\":\"snapshot\"}",
+      "serverPID": 3570880,
+      "socketPort": 41647,
+      "response": "{\"ok\": true, \"value\": {\"batch\": 4722, \"quit\": false, \"frozen\": {\"frozen\": true, \"credits\": 0}}}"
+    },
+    {
+      "command": {
+        "cmd": "click:98:296"
+      },
+      "raw": "{\"cmd\":\"click:98:296\"}",
+      "serverPID": 3570880,
+      "socketPort": 41647
+    }
+  ]
+}

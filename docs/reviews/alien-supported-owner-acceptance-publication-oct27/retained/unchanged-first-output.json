@@ -1,0 +1,3 @@
+{
+  "raw": "Traceback (most recent call last):\n  File \"/tmp/alien-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py\", line 35, in <module>\n    assert case.input_arrived.wait(8) and first.poll() is None,'original must be live at pending input ACK'\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: original must be live at pending input ACK\n"
+}

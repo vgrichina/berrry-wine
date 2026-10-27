@@ -1,0 +1,406 @@
+{
+  "status": "QUALIFIED_PASS_OFFLINE_PRODUCTION_LIFETIME",
+  "at": 1793069416.290106,
+  "candidate": "d8694f71a82df09be05ea3e9222ff1c535da47a3",
+  "tree": "4b0279edfc0266ab0bb0a6a40c619d1d896405b2",
+  "pins": {
+    "tools/alien-menu-gameplay-controller.py": "5296d852171d0811a7fd73176167297aadf8c86f8c3c46b8eb267ead8a2d7c67",
+    "tools/alien-supervised-gameplay.py": "fc21a9e0bb2fd503328ba44e03d11261fa7a200667b72a66d40521d5a44443ba",
+    "test/fixtures/alien-menu-controller/test_controller.py": "fed648ac38c788c1f1576a30577bd2a55c51e30faaafbeac815771c276d7d51b",
+    "test/fixtures/alien-menu-controller/test_process_owner.py": "3f7b13bf7fc2d72c66646c1158cf3de1fa77e69976bc57df10694cd2d9242404",
+    "test/fixtures/alien-menu-controller/test_supervised.py": "ea4df9cc600add32ae9f5dc080c4511e0721d8b21f84a0a1168b0face5d9a4da",
+    "test/fixtures/alien-menu-controller/child_server.py": "c7769df31c86ffc172461cd39c133b7443a1c32bae3b01e38749f2f4e5e3135e",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+    "test/fixtures/alien-menu-controller/inject/sitecustomize.py": "418870eeb4342b18b43783ff0b28bb1ee3342ac6998450ec4f5c174ad671db9b"
+  },
+  "firstBoundary": "first-boundary.json",
+  "exactUnchangedReproducerPassed": false,
+  "actualNewSupervisorLiveAlternateBoundaryPassed": true,
+  "groups": {
+    "live": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 126128128,
+      "sampledPeakRSS": 126128128,
+      "reapedPeakRSS": 30052352,
+      "cpuSeconds": 1.426769,
+      "wallSeconds": 0.5313323850277811,
+      "owned": [
+        [
+          3570877,
+          "111639245"
+        ],
+        [
+          3570878,
+          "111639248"
+        ],
+        [
+          3570879,
+          "111639248"
+        ],
+        [
+          3570880,
+          "111639251"
+        ],
+        [
+          3570882,
+          "111639254"
+        ],
+        [
+          3570884,
+          "111639268"
+        ],
+        [
+          3570885,
+          "111639270"
+        ],
+        [
+          3570886,
+          "111639272"
+        ],
+        [
+          3570887,
+          "111639292"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "python3",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+        "live"
+      ]
+    },
+    "uncertain": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 106754048,
+      "sampledPeakRSS": 106754048,
+      "reapedPeakRSS": 26013696,
+      "cpuSeconds": 0.686373,
+      "wallSeconds": 0.26577032799832523,
+      "owned": [
+        [
+          3571457,
+          "111641191"
+        ],
+        [
+          3571458,
+          "111641194"
+        ],
+        [
+          3571459,
+          "111641194"
+        ],
+        [
+          3571460,
+          "111641198"
+        ],
+        [
+          3571462,
+          "111641201"
+        ],
+        [
+          3571471,
+          "111641212"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "python3",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+        "uncertain"
+      ]
+    },
+    "new-and-death": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 111906816,
+      "sampledPeakRSS": 111906816,
+      "reapedPeakRSS": 31166464,
+      "cpuSeconds": 1.826138,
+      "wallSeconds": 0.5569252180866897,
+      "owned": [
+        [
+          3571983,
+          "111644664"
+        ],
+        [
+          3571985,
+          "111644667"
+        ],
+        [
+          3571986,
+          "111644667"
+        ],
+        [
+          3571987,
+          "111644671"
+        ],
+        [
+          3571989,
+          "111644675"
+        ],
+        [
+          3571991,
+          "111644706"
+        ],
+        [
+          3571992,
+          "111644709"
+        ],
+        [
+          3571994,
+          "111644713"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "python3",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+        "new-and-death"
+      ]
+    },
+    "timeout": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 106692608,
+      "sampledPeakRSS": 106692608,
+      "reapedPeakRSS": 25821184,
+      "cpuSeconds": 14.844231,
+      "wallSeconds": 20.316245744936168,
+      "owned": [
+        [
+          3572098,
+          "111645731"
+        ],
+        [
+          3572099,
+          "111645736"
+        ],
+        [
+          3572100,
+          "111645736"
+        ],
+        [
+          3572101,
+          "111645740"
+        ],
+        [
+          3572103,
+          "111645744"
+        ],
+        [
+          3572310,
+          "111647758"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "python3",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py",
+        "timeout"
+      ],
+      "harnessPins": {
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/manage.py": "1a069228c03e401c8f1cbed8f8754708670b0109e4201314603f7eb566caf564",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/independent.py": "28508592acf9d331575b8d3d8800a14db557712ae7078b26fc0472fadc776bed",
+        "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py": "cf4c223631685da41e540a25cf142382c7a02b98e5683b4a0e2418aaf977a490"
+      }
+    }
+  },
+  "newIndependentGroups": 4,
+  "ownedChildLifetimes": 5,
+  "cleanup": {
+    "new-live/test_positive_original_and_live_competitors/original/cleanup.json": {
+      "delegationConsumed": true,
+      "elapsed": 0.4013610149268061,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "3570880": {
+          "cpu": 0.03,
+          "ppid": 3570879,
+          "rss": 20840448,
+          "start": "111639251",
+          "state": "S"
+        },
+        "3570882": {
+          "cpu": 0.0,
+          "ppid": 3570879,
+          "rss": 0,
+          "start": "111639254",
+          "state": "Z"
+        }
+      },
+      "peaks": {
+        "cpu": 0.29000000000000004,
+        "output": 0,
+        "rss": 59805696
+      },
+      "reason": "controller complete",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": -15
+    },
+    "new-uncertain/test_positive_original_and_live_competitors/original/cleanup.json": {
+      "delegationConsumed": true,
+      "elapsed": 0.1330431499518454,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "3571460": {
+          "cpu": 0.02,
+          "ppid": 3571459,
+          "rss": 20971520,
+          "start": "111641198",
+          "state": "S"
+        },
+        "3571462": {
+          "cpu": 0.0,
+          "ppid": 3571459,
+          "rss": 0,
+          "start": "111641201",
+          "state": "Z"
+        }
+      },
+      "peaks": {
+        "cpu": 0.13,
+        "output": 0,
+        "rss": 55898112
+      },
+      "reason": "controller failure; no replay/reconnect",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": -15
+    },
+    "new-new-and-death/test_positive_original_and_live_competitors/death/cleanup.json": {
+      "delegationConsumed": false,
+      "elapsed": 0.07853719708509743,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "3571992": {
+          "cpu": 0.0,
+          "ppid": 3571991,
+          "rss": 11403264,
+          "start": "111644709",
+          "state": "R"
+        },
+        "3571994": {
+          "cpu": 0.0,
+          "ppid": 3571991,
+          "rss": 0,
+          "start": "111644713",
+          "state": "Z"
+        }
+      },
+      "peaks": {
+        "cpu": 0.07,
+        "output": 0,
+        "rss": 31719424
+      },
+      "reason": "original child ended or terminal latch",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": -9
+    },
+    "new-new-and-death/test_positive_original_and_live_competitors/new-legitimate/cleanup.json": {
+      "delegationConsumed": true,
+      "elapsed": 0.3380209819879383,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "3571987": {
+          "cpu": 0.05,
+          "ppid": 3571986,
+          "rss": 20971520,
+          "start": "111644671",
+          "state": "S"
+        },
+        "3571989": {
+          "cpu": 0.0,
+          "ppid": 3571986,
+          "rss": 0,
+          "start": "111644675",
+          "state": "Z"
+        }
+      },
+      "peaks": {
+        "cpu": 0.38999999999999996,
+        "output": 0,
+        "rss": 61181952
+      },
+      "reason": "controller complete",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": -15
+    },
+    "new-timeout/test_positive_original_and_live_competitors/original/cleanup.json": {
+      "delegationConsumed": true,
+      "elapsed": 20.175346599891782,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "3572101": {
+          "cpu": 0.12,
+          "ppid": 3572100,
+          "rss": 20840448,
+          "start": "111645740",
+          "state": "S"
+        },
+        "3572103": {
+          "cpu": 0.0,
+          "ppid": 3572100,
+          "rss": 0,
+          "start": "111645744",
+          "state": "Z"
+        }
+      },
+      "peaks": {
+        "cpu": 2.69,
+        "output": 0,
+        "rss": 55705600
+      },
+      "reason": "controller failure; no replay/reconnect",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": -15
+    }
+  },
+  "unrelatedSentinelsPreserved": true,
+  "reused": {
+    "productionFocusedMethods": 13,
+    "transportChecks": 8,
+    "unaffectedChecks": 24,
+    "sourceIdentity": "reuse.json",
+    "olderAffected29": "superseded attach contract, not evidence for new supervisor"
+  },
+  "contract": "source-review.json",
+  "incidents": "incidents.json",
+  "noSubstantiveCandidateFailureObserved": true,
+  "scope": "Simulated Python protocol through exact actual production CLI/Popen/supervision/controller; cooperative local scope only. No actual gameplay or main readiness claim.",
+  "resource": {
+    "groupRSSCap": 134217728,
+    "peakRSS": 126128128,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "internalCapturedBytes": 27740,
+    "internalCaptureCeiling": 1048576,
+    "ordinaryExcerpts": 8192,
+    "diskAllocation": 33554432
+  },
+  "publication": {
+    "branch": "task/alien-supervisor-owned-independent-accept-oct27",
+    "main": false,
+    "sourceChanges": false,
+    "finalReceipt": "ops/publication.json after evidence-only commit/push"
+  },
+  "boxes": {
+    "assigned": [],
+    "actions": [],
+    "coordinatorOwnsLifecycle": true
+  },
+  "remaining": [
+    "Coordinator must resolve/accept historical unchanged-reproducer original-leg incompatibility; do not claim that exact oracle passed",
+    "Separate main integration assignment under main ownership, merged-tree affected checks",
+    "Separately admitted actual Node startup/closure/mount/limits and Alien title/menu/New Game/gameplay/capture/Quit verification"
+  ],
+  "restrictions": "No workers/refill/Node/native/browser/build/Boat/public deployment/source repair/main/root index or refs/donor mutation. Claude idle; HeroesII laptop-owned; blocked lanes preserved."
+}

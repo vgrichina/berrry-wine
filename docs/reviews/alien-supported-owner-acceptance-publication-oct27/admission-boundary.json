@@ -1,0 +1,137 @@
+{
+  "at": 1793069943.773417,
+  "used": 3297280,
+  "allocation": 33554432,
+  "positiveWALCountedOnce": 0,
+  "breakdown": {
+    "own": 2486272,
+    "sessions": 581632,
+    "launcher": 229376
+  },
+  "remaining": 30257152,
+  "peerFuture": 100663296,
+  "free": 3156930560,
+  "projectedFree": 3026010112,
+  "floor": 2982150144,
+  "memAvailable": 3659649024,
+  "clients": [
+    {
+      "pid": 752162,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "resume",
+        "--profile",
+        "wine-coordinator",
+        "--strict-config",
+        "01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+        "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise.",
+        ""
+      ],
+      "rss": 419016704
+    },
+    {
+      "pid": 3576609,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/penguin-capture-harness-contract-repair-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 193519616
+    },
+    {
+      "pid": 3580208,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/airstrike-focus-menu-controller-repair-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 194199552
+    },
+    {
+      "pid": 3581945,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-supervisor-accepted-main-integration-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 197246976
+    },
+    {
+      "pid": 3582094,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-supported-owner-acceptance-publication-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 197988352
+    }
+  ],
+  "aggregateClientRSS": 1201971200,
+  "futureClient": 402653184,
+  "newClient": 335544320,
+  "headroom": 805306368,
+  "lightPool": 134217728,
+  "categoriesMiB": {
+    "sourceGitTempEvidence": 8,
+    "sessionEventsWAL": 8,
+    "publication": 8,
+    "reserve": 8
+  },
+  "pass": true
+}

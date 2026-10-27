@@ -1,0 +1,17 @@
+{
+  "opsPayloads": 258,
+  "stagedPayloads": 146,
+  "opsManifestSHA": "d6e109a5aa10195f9dc9a6eba1bab27db363b4d8809a9651c90261c27dba22cc",
+  "stagedManifestSHA": "d2e22aab167f5b714a546438ba153047f464212e7127391f796ccb723086444d",
+  "groupsReused": [
+    "live",
+    "uncertain",
+    "new-and-death",
+    "timeout"
+  ],
+  "focused": 13,
+  "transport": 8,
+  "unaffected": 24,
+  "originalHistoricalScriptSHA": "cf4c223631685da41e540a25cf142382c7a02b98e5683b4a0e2418aaf977a490",
+  "historicalUnchangedSetupFailurePreserved": true
+}

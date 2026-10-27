@@ -1,0 +1,81 @@
+{
+  "status": "PASS_OFFLINE_SUPPORTED_ORIGINAL_LIVE_ACCEPTANCE",
+  "candidate": "d8694f71a82df09be05ea3e9222ff1c535da47a3",
+  "sourceTree": "4b0279edfc0266ab0bb0a6a40c619d1d896405b2",
+  "sourcePins": {
+    "tools/alien-menu-gameplay-controller.py": "5296d852171d0811a7fd73176167297aadf8c86f8c3c46b8eb267ead8a2d7c67",
+    "tools/alien-supervised-gameplay.py": "fc21a9e0bb2fd503328ba44e03d11261fa7a200667b72a66d40521d5a44443ba",
+    "test/fixtures/alien-menu-controller/test_controller.py": "fed648ac38c788c1f1576a30577bd2a55c51e30faaafbeac815771c276d7d51b",
+    "test/fixtures/alien-menu-controller/test_process_owner.py": "3f7b13bf7fc2d72c66646c1158cf3de1fa77e69976bc57df10694cd2d9242404",
+    "test/fixtures/alien-menu-controller/test_supervised.py": "ea4df9cc600add32ae9f5dc080c4511e0721d8b21f84a0a1168b0face5d9a4da",
+    "test/fixtures/alien-menu-controller/child_server.py": "c7769df31c86ffc172461cd39c133b7443a1c32bae3b01e38749f2f4e5e3135e",
+    "test/alien-gameplay-sequence.py": "4ae9e957ffdb03c99be55242e796b58e9c482c0b102bebdd571be3ade9e7a17f",
+    "test/helpers/alien-control-sequence.py": "db75a7f3316be2c919b55423c0275c5e4fe544f5c4b50eed60372d3a98167d39",
+    "test/fixtures/alien-menu-controller/inject/sitecustomize.py": "418870eeb4342b18b43783ff0b28bb1ee3342ac6998450ec4f5c174ad671db9b"
+  },
+  "boundary": "boundary-result.json",
+  "execution": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 118099968,
+    "sampledPeakRSS": 118099968,
+    "reapedPeakRSS": 29757440,
+    "cpuSeconds": 5.0582,
+    "wallSeconds": 3.5277648270130157,
+    "owned": [
+      [
+        3583667,
+        "111715303"
+      ],
+      [
+        3583668,
+        "111715313"
+      ],
+      [
+        3583669,
+        "111715321"
+      ],
+      [
+        3583671,
+        "111715335"
+      ],
+      [
+        3583673,
+        "111715364"
+      ],
+      [
+        3583674,
+        "111715369"
+      ]
+    ],
+    "cleanupComplete": true,
+    "argv": [
+      "python3",
+      "-B",
+      "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/accept.py"
+    ],
+    "harnessPins": {
+      "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/manage.py": "9664bb3636aed3b0f268aae697a81b7a31c6c7cd591e7cb7f63f3c8110f531bf",
+      "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/accept.py": "7739a44f06bb6d0682f504693088ca2b2b5749ab17026d47251e7b586162c33b"
+    }
+  },
+  "reused": "reuse-verification.json",
+  "historicalScriptUnchangedPass": false,
+  "setupDelta": "Replace obsolete attach-based original with exact production new supervisor CLI/Popen and real pinned Python child. Both sockets use identical Handler/state; idle descendant inherits only alternate. Pause original pending input, retain competing legacy changed PID/endpoint/output/timing and NEW occupied-original refusal assertions. No production source modification.",
+  "scope": "Cooperative local supervisor protocol only; real Node/gameplay unqualified",
+  "remaining": [
+    "Enigma owner coordinates separate main integration and affected merged-tree checks",
+    "Fresh admitted exact Node startup, production closure and mount/limits checks",
+    "Alien title/menu/New Game/gameplay/captures/normal Quit acceptance"
+  ],
+  "boxes": {
+    "assigned": [],
+    "actions": [],
+    "lifecycleOwner": "coordinator"
+  },
+  "publication": {
+    "branch": "task/alien-supported-owner-acceptance-publication-oct27",
+    "main": false,
+    "sourceChanged": false
+  }
+}

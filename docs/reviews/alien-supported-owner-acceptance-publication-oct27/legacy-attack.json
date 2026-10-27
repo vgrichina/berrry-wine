@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/repo/tools/alien-menu-gameplay-controller.py",
+    "--invocation",
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/boundary/test_positive_original_and_live_competitors/competing",
+    "--endpoint",
+    "http://127.0.0.1:35981/ctl",
+    "--terminal-file",
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/boundary/test_positive_original_and_live_competitors/competing/terminal.json",
+    "--after-batches",
+    "1",
+    "--approve-new-game"
+  ],
+  "exit": 1,
+  "stdout": "{\"error\": \"existing-guest attachment retired; launch a NEW child with tools/alien-supervised-gameplay.py (explicit command/cwd/endpoint/deadline); no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+  "stderr": ""
+}

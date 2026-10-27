@@ -1,0 +1,18 @@
+{
+  "new": [
+    {
+      "group": "unchanged-first",
+      "kind": "historical oracle incompatibility",
+      "substantiveCandidateFailure": false,
+      "expected": "historical existing-guest CLI creates live owner at pending input ACK",
+      "observed": "retired CLI produces no input; unchanged test asserts original must be live and exits1",
+      "raw": "unchanged-first-output.log",
+      "rawRequests": "fixture/test_approved_menu_action_then_reserved_evidence_and_quit/http.json",
+      "originalCLIStdout": "historical reproducer does not retain completed original CLI stdout when this prerequisite fails; source pin and supplemental real competitor receipts retained",
+      "handling": "Preserved unchanged test and failure. Supplemental actual new supervisor live challenge, no repair or baseline rerun; full exact-reproducer acceptance remains a qualification"
+    }
+  ],
+  "inherited": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/incidents.json",
+  "noResourceDenial": true,
+  "noCandidateRepair": true
+}

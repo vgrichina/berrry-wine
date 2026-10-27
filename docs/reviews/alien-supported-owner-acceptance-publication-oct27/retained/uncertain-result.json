@@ -1,0 +1,52 @@
+{
+  "verdict": "PASS",
+  "pending": {
+    "command": {
+      "cmd": "click:98:296"
+    },
+    "index": 1
+  },
+  "commands": [
+    {
+      "action": "snapshot"
+    },
+    {
+      "cmd": "click:98:296"
+    }
+  ],
+  "cleanup": {
+    "delegationConsumed": true,
+    "elapsed": 0.1330431499518454,
+    "guestAcceptance": "unqualified",
+    "identities": {
+      "3571460": {
+        "cpu": 0.02,
+        "ppid": 3571459,
+        "rss": 20971520,
+        "start": "111641198",
+        "state": "S"
+      },
+      "3571462": {
+        "cpu": 0.0,
+        "ppid": 3571459,
+        "rss": 0,
+        "start": "111641201",
+        "state": "Z"
+      }
+    },
+    "peaks": {
+      "cpu": 0.13,
+      "output": 0,
+      "rss": 55898112
+    },
+    "reason": "controller failure; no replay/reconnect",
+    "receiptErrors": [],
+    "remainingOwnedLive": [],
+    "returncode": -15
+  },
+  "noReconnect": true,
+  "unrelatedSentinelPreserved": {
+    "pid": 3571458,
+    "startTicks": "111641194"
+  }
+}

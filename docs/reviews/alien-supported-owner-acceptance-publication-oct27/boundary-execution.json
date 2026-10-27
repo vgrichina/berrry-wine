@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 118099968,
+  "sampledPeakRSS": 118099968,
+  "reapedPeakRSS": 29757440,
+  "cpuSeconds": 5.0582,
+  "wallSeconds": 3.5277648270130157,
+  "owned": [
+    [
+      3583667,
+      "111715303"
+    ],
+    [
+      3583668,
+      "111715313"
+    ],
+    [
+      3583669,
+      "111715321"
+    ],
+    [
+      3583671,
+      "111715335"
+    ],
+    [
+      3583673,
+      "111715364"
+    ],
+    [
+      3583674,
+      "111715369"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/accept.py"
+  ],
+  "harnessPins": {
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/manage.py": "9664bb3636aed3b0f268aae697a81b7a31c6c7cd591e7cb7f63f3c8110f531bf",
+    "/tmp/alien-supported-owner-acceptance-publication-oct27/ops/accept.py": "7739a44f06bb6d0682f504693088ca2b2b5749ab17026d47251e7b586162c33b"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "checkoutWarning": "invalid object for unrelated apps/abe.md emitted during sparse checkout; nine required paths verified exact",
+  "remoteCorrection": "Initial local origin placeholder corrected against retained remote-config before any network operation",
+  "ordinaryWriteTreeFailure": {
+    "exit": 128,
+    "missingUnrelatedBlob": "01081bee55508e271e87f761131604972129ceb4",
+    "path": "apps/abe.md",
+    "resolution": "Established sparse write-tree --missing-ok plus entire recursive delta ownership verification; unchanged unrelated tree entries preserved; no source recovery/runtime repetition"
+  }
+}

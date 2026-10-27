@@ -1,0 +1,7 @@
+{
+  "original": "/tmp/alien-supervisor-owned-independent-accept-oct27/repo/test/fixtures/alien-menu-controller/child_server.py",
+  "originalSHA": "c7769df31c86ffc172461cd39c133b7443a1c32bae3b01e38749f2f4e5e3135e",
+  "new": "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/timeout-child/child_server.py",
+  "newSHA": "bc8d1b0e76d68aebfbf9786e46652b7a114eb7ee7bd96cf914959ea59ea173dd",
+  "delta": "Insert if mode == 'timeout': time.sleep(22) before uncertain-input branch; no other changes"
+}

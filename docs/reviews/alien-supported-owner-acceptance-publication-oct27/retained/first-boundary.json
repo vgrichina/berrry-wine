@@ -1,0 +1,23 @@
+{
+  "unchangedReproducer": {
+    "path": "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py",
+    "sha256": "cf4c223631685da41e540a25cf142382c7a02b98e5683b4a0e2418aaf977a490",
+    "exactOriginal": true,
+    "executedFirst": true,
+    "exit": 1,
+    "failure": "original must be live at pending input ACK",
+    "classification": "historical original attach leg incompatible with retired attachment CLI; not a competitor authorization regression; no baseline rerun",
+    "evidence": "unchanged-first-output.log"
+  },
+  "productionBoundary": {
+    "entry": "tools/alien-supervised-gameplay.py",
+    "result": "live-result.json",
+    "live": "live-observation.json",
+    "legacySameAndInheritedAlternateHTTP": 0,
+    "newClaims": false,
+    "originalStateUnchanged": true,
+    "actualPopenChild": true
+  },
+  "delta": "Historical reproducer copied byte-for-byte; only manage R/O import bindings point at owned sparse candidate/output. A separate new independent test uses actual production supervisor because original historical attach CLI cannot create a live owner. No historical unauthorized12-command baseline rerun.",
+  "qualification": "Exact unchanged reproducer original-live condition not satisfiable via retired entry; new production-path same-handler/inherited-alternate challenge passes. Preserve this explicit gap; do not represent unchanged reproducer as PASS."
+}

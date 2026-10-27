@@ -1,0 +1,46 @@
+{
+  "verdict": "PASS",
+  "candidate": "d8694f71a82df09be05ea3e9222ff1c535da47a3",
+  "tree": "4b0279edfc0266ab0bb0a6a40c619d1d896405b2",
+  "cleanup": {
+    "delegationConsumed": true,
+    "elapsed": 3.042119788005948,
+    "guestAcceptance": "unqualified",
+    "identities": {
+      "3583669": {
+        "cpu": 0.17,
+        "ppid": 3583668,
+        "rss": 20971520,
+        "start": "111715321",
+        "state": "S"
+      },
+      "3583671": {
+        "cpu": 0.0,
+        "ppid": 3583668,
+        "rss": 0,
+        "start": "111715335",
+        "state": "Z"
+      }
+    },
+    "peaks": {
+      "cpu": 1.13,
+      "output": 0,
+      "rss": 59772928
+    },
+    "reason": "controller complete",
+    "receiptErrors": [],
+    "remainingOwnedLive": [],
+    "returncode": -15
+  },
+  "originalResult": {
+    "status": "terminal",
+    "next": 12,
+    "guestAcceptance": "unqualified",
+    "capturesCharged": 8
+  },
+  "exactHistoricalScriptPassed": false,
+  "authorizedSetupCorrection": true,
+  "legacyHTTP": 0,
+  "newHTTP": 0,
+  "productionUnchanged": true
+}

@@ -1,0 +1,160 @@
+{
+  "at": 1793069248.0599022,
+  "used": 4141056,
+  "allocation": 33554432,
+  "positiveWALCountedOnce": 0,
+  "breakdown": {
+    "own": 3006464,
+    "sessions": 778240,
+    "launcher": 356352
+  },
+  "remaining": 29413376,
+  "peerFuture": 184549376,
+  "free": 3204182016,
+  "projectedFree": 2990219264,
+  "floor": 2982150144,
+  "memAvailable": 3532357632,
+  "clients": [
+    {
+      "pid": 752162,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "resume",
+        "--profile",
+        "wine-coordinator",
+        "--strict-config",
+        "01a0ff91-cf9d-7f42-ba93-f9e7616b35a5",
+        "Resume user-authorized Wine Ops work. Read updated ~/.codex/AGENTS.md runtime correction and latest messageboard. Do not use native spawn: it inherited48k despite default role. Fresh single-task workers must use scratch/usage-watch/start-worker.py with a task file and NEW output directory; this explicitly loads200k worker profile. Coordinator profile now48k body_after_prefix to prevent the observed compaction loop.200k means automatic compaction and continued same-task work, NOT stop. Only coordinator assigns new games. Do not reuse oldworkers. Reconcile remote origin/main with laptop changes; protect laptop Warcraft3/HeroesII work, don't restart Claude fleet or publicly deploy. Resume concrete authorized tasks; report useful result/blocker rather than more preparation cycles. Independent30min timer reviews usage and queues findings; act on them. Start with one useful bounded assignment, then review progress. Keep handoffs concise.",
+        ""
+      ],
+      "rss": 433184768
+    },
+    {
+      "pid": 3551248,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/penguin-visible-projectile-gameplay-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 208371712
+    },
+    {
+      "pid": 3551297,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/airstrike-sustained-gameplay-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 201469952
+    },
+    {
+      "pid": 3553876,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/madbomber-gameover-restart-gameplay-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 196878336
+    },
+    {
+      "pid": 3566236,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/alien-supervisor-owned-independent-accept-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 194928640
+    },
+    {
+      "pid": 3571136,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-production-owner-boundary-independent-accept-oct27/final.txt",
+        "-",
+        ""
+      ],
+      "rss": 199057408
+    }
+  ],
+  "aggregateClientRSS": 1433890816,
+  "futureClient": 402653184,
+  "newClient": 335544320,
+  "headroom": 805306368,
+  "lightPool": 134217728,
+  "categoriesMiB": {
+    "sourceGitTempEvidence": 8,
+    "sessionEventsWAL": 8,
+    "publication": 8,
+    "reserve": 8
+  },
+  "pass": true
+}

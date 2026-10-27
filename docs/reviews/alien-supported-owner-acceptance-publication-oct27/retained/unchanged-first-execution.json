@@ -1,0 +1,28 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 67895296,
+  "sampledPeakRSS": 67895296,
+  "reapedPeakRSS": 33644544,
+  "cpuSeconds": 3.461108,
+  "wallSeconds": 8.694391509983689,
+  "owned": [
+    [
+      3569047,
+      "111630939"
+    ],
+    [
+      3569058,
+      "111630951"
+    ],
+    [
+      3569059,
+      "111630952"
+    ]
+  ],
+  "cleanupComplete": true,
+  "argv": [
+    "python3",
+    "/tmp/alien-supervisor-owned-independent-accept-oct27/ops/inherited-alternate-listener.py"
+  ]
+}
