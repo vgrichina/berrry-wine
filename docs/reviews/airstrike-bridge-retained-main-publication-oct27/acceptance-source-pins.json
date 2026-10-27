@@ -1,0 +1,41 @@
+{
+  "candidate": "cebb48b3926760fc3ea69981614a7004192f8b7d",
+  "source": {
+    "tools/airstrike-menu-controller.py": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+    "tools/airstrike-observation-bridge.py": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f",
+    "test/test-airstrike-menu-controller.py": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6",
+    "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc"
+  },
+  "donorManifest": "/tmp/airstrike-observation-handoff-repair-oct27/ops/evidence-manifest.json",
+  "manifestVerified": 534,
+  "stores": [
+    "/tmp/airstrike-observation-handoff-repair-oct27/repo/.git/objects",
+    "/tmp/airstrike-accepted-focus-menu-quit-api-oct27/repo/.git/objects",
+    "/tmp/airstrike-focus-menu-independent-accept-oct27/repo/.git/objects",
+    "/tmp/airstrike-focus-menu-controller-repair-oct27/repo/.git/objects",
+    "/home/user/wine-assembly-shadow-man-capture-build-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-repair-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-fresh-selection-independent-accept-oct23/.git/objects",
+    "/home/user/wine-assembly/.git/objects",
+    "/home/user/wine-assembly-shadow-man-phased-canonical-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-ready-canonical-module-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-com-qualification-fixture-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-file-log-bounds-readiness-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-diagnostic-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-render-positiont-guarded-com-qualification-oct23/.git/objects",
+    "/home/user/wine-assembly-shared-native-bound-boundary-controls-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-accepted-guard-canonical-oct23/.git/objects",
+    "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/.git/objects",
+    "/tmp/airstrike-sustained-gameplay-oct27/repo/.git/objects"
+  ],
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-bridge-independent-accept-oct27/root-ref-digest.json",
+  "mount": "N/A no runtime argv",
+  "gitBlobs": {
+    "test/test-airstrike-menu-controller.py": "46a3fb1e29cf1a58805cb903de6f8a44c10c24ea",
+    "test/test-airstrike-observation-bridge.py": "325f8a2bb9fd11cb10f1ce8d2a02b2942225cfd2",
+    "tools/airstrike-menu-controller.py": "825e608c690de4935875ace94e68beb6804406e2",
+    "tools/airstrike-observation-bridge.py": "3c139a8804db24da839bd3f14d47d1a4c5b4b028"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "at": 1793075456.7724736,
+  "status": "BLOCKED_MISSING_ACCEPTED_MAIN_DEPENDENCY",
+  "main": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "mainTree": "a5e301efefcdc881816f5686e9e12cc57252b764",
+  "currentMainRemoteReceipt": "git-1793075323433357591.log",
+  "missingMainDependencies": [
+    "tools/airstrike-menu-controller.py",
+    "test/test-airstrike-menu-controller.py"
+  ],
+  "missingMainDependencyReceipt": "git-1793075394969250364.log",
+  "candidatePinsReceipt": "git-1793075410106847019.log",
+  "scopedDeltaReceipt": "git-1793075377778619401.log",
+  "inputs": {
+    "tools/airstrike-menu-controller.py": {
+      "sha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+      "gitBlob": "825e608c690de4935875ace94e68beb6804406e2",
+      "acceptedSyntax": "PASS",
+      "acceptedASTSHA256": "636d6244fbbd5943bf3f51acd977758c00b870f15d03fb25de0b17052315fe32",
+      "presentInMain": false,
+      "presentInOwnedCheckout": false,
+      "imports": [
+        "json",
+        "os",
+        "select",
+        "sys",
+        "time"
+      ]
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "sha256": "72df7a6e70d41bb3bb6c659e43b73f053bea1269c1b1a134f4060976a7d5f65f",
+      "gitBlob": "3c139a8804db24da839bd3f14d47d1a4c5b4b028",
+      "acceptedSyntax": "PASS",
+      "acceptedASTSHA256": "be85fc0dcb396bc6734b8004219b0503c071cbe4f20bc64561341b8bbc4c5fda",
+      "presentInMain": false,
+      "presentInOwnedCheckout": false,
+      "imports": [
+        "hashlib",
+        "importlib.util",
+        "json",
+        "os",
+        "pathlib",
+        "resource",
+        "selectors",
+        "signal",
+        "subprocess",
+        "time",
+        "uuid"
+      ]
+    },
+    "test/test-airstrike-menu-controller.py": {
+      "sha256": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6",
+      "gitBlob": "46a3fb1e29cf1a58805cb903de6f8a44c10c24ea",
+      "acceptedSyntax": "PASS",
+      "acceptedASTSHA256": "fa6aeac27a01da90ba0f606d70a24876dd5423e23a23af8665daf085577b4026",
+      "presentInMain": false,
+      "presentInOwnedCheckout": false,
+      "imports": [
+        "json",
+        "pathlib",
+        "subprocess",
+        "sys",
+        "unittest"
+      ]
+    },
+    "test/test-airstrike-observation-bridge.py": {
+      "sha256": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+      "gitBlob": "325f8a2bb9fd11cb10f1ce8d2a02b2942225cfd2",
+      "acceptedSyntax": "PASS",
+      "acceptedASTSHA256": "0091ac0c40bd89b44a5e03bcf3df2fd8705161d364e3f03856f6c9a4e8751083",
+      "presentInMain": false,
+      "presentInOwnedCheckout": false,
+      "imports": [
+        "hashlib",
+        "importlib.util",
+        "json",
+        "os",
+        "pathlib",
+        "sys",
+        "tempfile",
+        "threading",
+        "time",
+        "unittest"
+      ]
+    }
+  },
+  "acceptedManifestEntriesVerified": 266,
+  "mergedBehavioralInputsUnchanged": false,
+  "sourceDeltaApplied": false,
+  "behavioralReplay": false,
+  "mainPublicationAllowed": false,
+  "reportOnlyBranch": true,
+  "reused": "Exact unchanged12candidatecases,14independent outcomes,14originalCLI/fivegroups; original13casegroup retains one-failure status; corrected cap oracle applied to unchanged receipt only",
+  "resumeCondition": "Coordinator assigns integration of missing already-accepted Controller/original-test prerequisites, or supplies actual current main containing their exact accepted blobs; then reconcile scoped Bridge delta. Do not infer authorization for extra paths here.",
+  "runtime": false,
+  "gameplay": false
+}

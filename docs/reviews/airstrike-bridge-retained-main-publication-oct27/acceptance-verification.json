@@ -1,0 +1,221 @@
+{
+  "at": 1793074270.3940644,
+  "status": "PASS_OFFLINE_INDEPENDENT_ACCEPTANCE",
+  "cases": [
+    {
+      "case": "boundary",
+      "status": "refused",
+      "reason": "normal Quit unproven: need guest host-exit(0), full terminal log and cleanup; runner exit0 alone is insufficient",
+      "elapsed": 11.421041074907407,
+      "cleanup": {
+        "remaining": [],
+        "signals": [],
+        "runnerExit": 0,
+        "complete": true
+      }
+    },
+    {
+      "case": "cap",
+      "status": "refused",
+      "reason": "distinct stream aggregate output bound",
+      "elapsed": 1.5717712109908462,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "capture",
+      "status": "refused",
+      "reason": "capture file/ACK mismatch",
+      "elapsed": 0.09141321806237102,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "deadline",
+      "status": "refused",
+      "reason": "overall guest deadline; no replay",
+      "elapsed": 0.5671798230614513,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "duplicate",
+      "status": "refused",
+      "reason": "unmatched/duplicate ACK; no replay",
+      "elapsed": 0.10224604606628418,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "identity",
+      "status": "refused",
+      "reason": "focus/window changed across capture",
+      "elapsed": 0.10200749593786895,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "inner",
+      "status": "refused",
+      "reason": "stale/unmatched factual observation",
+      "elapsed": 0.13148202514275908,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "labels",
+      "status": "refused",
+      "reason": "insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.",
+      "elapsed": 0.12853070022538304,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "log",
+      "status": "refused",
+      "reason": "uncertain/rejected dispatch; no replay or further input",
+      "elapsed": 0.10837896703742445,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "partial",
+      "status": "refused",
+      "reason": "overall guest deadline; no replay",
+      "elapsed": 0.5592009499669075,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "queued",
+      "status": "refused",
+      "reason": "uncertain/rejected dispatch; no replay or further input",
+      "elapsed": 0.10224778787232935,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "session",
+      "status": "refused",
+      "reason": "stale/unmatched factual observation",
+      "elapsed": 0.10034659202210605,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "stderr",
+      "status": "refused",
+      "reason": "runner fault/timeout",
+      "elapsed": 0.10915838787332177,
+      "cleanup": {
+        "remaining": [],
+        "signals": [
+          "SIGTERM"
+        ],
+        "runnerExit": -15,
+        "complete": true
+      }
+    },
+    {
+      "case": "terminal",
+      "status": "refused",
+      "reason": "runner exited during factual review",
+      "elapsed": 0.23489686101675034,
+      "cleanup": {
+        "remaining": [],
+        "signals": [],
+        "runnerExit": 0,
+        "complete": true
+      }
+    }
+  ],
+  "correctedOracle": {
+    "changedMethods": [
+      "test_distinct_stream_cumulative_cap"
+    ],
+    "unchangedReproducer": "/tmp/airstrike-bridge-independent-accept-oct27/ops/original-independent-assertion.py",
+    "originalFailure": "/tmp/airstrike-bridge-independent-accept-oct27/ops/py-1793074218453969153.log",
+    "reason": "Overstrong no-keyup assertion: actual valid ACK permits release before all buffered stderr is observed; exact retained cap/refusal/no replay/cleanup verified from unchanged evidence",
+    "runtimeReplayed": false
+  },
+  "sourceReview": {
+    "original120sSingleDeadline": true,
+    "response10AfterReview": true,
+    "actualPinnedController": true,
+    "truthfulSevenLabelsRequired": true,
+    "standaloneControllerUnchanged": true,
+    "streamsDistinctFromCreation": true,
+    "cleanupBounded": true,
+    "sameUIDHostileModelAdded": false,
+    "guestAuthorizationAdded": false
+  },
+  "donorGroupsReused": true,
+  "productionRuntime": false,
+  "gameplay": false
+}
