@@ -1,0 +1,6 @@
+{
+  "originalSHA256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551",
+  "retargetSHA256": "d81886a4d11e61bc137833dbe5b66b2cc5c5952e82934608001f1ce7177c2833",
+  "helperSHA256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732",
+  "onlyChanges": "D and expected helper pin; all assertions unchanged"
+}

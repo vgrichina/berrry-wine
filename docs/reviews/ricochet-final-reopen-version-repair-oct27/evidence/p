@@ -1,0 +1,2 @@
+#!/bin/bash
+exec python3 /home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py --slots 1 -- python3 -B -S /tmp/ricochet-final-reopen-version-repair-oct27/ops/run.py python "$@"

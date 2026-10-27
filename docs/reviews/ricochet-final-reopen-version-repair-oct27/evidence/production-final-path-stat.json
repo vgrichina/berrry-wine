@@ -1,0 +1,40 @@
+{
+  "sourceSHA": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+  "transformSHA": "9b429c901f22111519bb001ee43b2050b1bdb0ac34fbd390ce5ffdfa4e9218c3",
+  "manifest": {
+    "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixture-xkhxw7g3/final-path-stat/runtime-accounting.py": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732",
+    "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixture-xkhxw7g3/final-path-stat/remote-child.py": "16ed5df91b6162316825fd1f1f943da701bd17412a9cded1bd42d31369470309",
+    "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixture-xkhxw7g3/final-path-stat/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "consumed": [
+    "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixture-xkhxw7g3/final-path-stat/serial/continue.json"
+  ],
+  "supervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 36675584,
+    "sampledPeakRSS": 36675584,
+    "reapedPeakRSS": 20041728,
+    "cpuSeconds": 0.05214900000000001,
+    "wallSeconds": 0.05048681912012398,
+    "owned": [
+      [
+        4097391,
+        "114409472"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "accounting": {
+      "samples": 4,
+      "failures": 0,
+      "peakBytes": 25231360,
+      "lastBytes": 25231360
+    },
+    "box": "bx_e9mecsag",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator",
+    "at": 0,
+    "elapsed": 0.06677949195727706
+  }
+}

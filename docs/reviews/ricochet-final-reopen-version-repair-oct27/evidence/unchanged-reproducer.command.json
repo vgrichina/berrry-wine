@@ -1,0 +1,36 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-S",
+    "/tmp/ricochet-final-reopen-version-repair-oct27/ops/final-reopen-mutation.py"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "environment": {
+    "RICOCHET_ACCEPT_OPS": "/tmp/ricochet-final-reopen-version-repair-oct27/ops",
+    "TMPDIR": "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixtures",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "sourcePins": {
+    "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  }
+}

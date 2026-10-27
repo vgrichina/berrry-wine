@@ -1,0 +1,27 @@
+{
+  "at": 1793097064.9952037,
+  "sourceGit": 655360,
+  "opsMeasured": 372736,
+  "unnamedControlReserveInsideOps": 25165824,
+  "opsWithControlReserve": 25538560,
+  "launcherEvents": 290816,
+  "stateWALConservativeWholeChargeOnce": 4612096,
+  "eventsWithStateWAL": 4902912,
+  "growthReserve": 41943040,
+  "total": 73039872,
+  "allocation": 134217728,
+  "memAvailable": 3229376512,
+  "requiredRAM": 1409286144,
+  "diskFree": 7618912256,
+  "projectedFree": 7490625536,
+  "diskFloor": 2982150144,
+  "otherSharedWALStandingSnapshot": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 2006472,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4243632
+  },
+  "note": "No task runtime/box/Node; existing client is already in host MemAvailable. Other shared WAL snapshot retained; subsequent positive growth charged once at closeout. Global WAL not copied into report.",
+  "passed": true
+}

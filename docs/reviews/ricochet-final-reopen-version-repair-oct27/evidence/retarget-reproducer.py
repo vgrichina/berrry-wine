@@ -1,0 +1,3 @@
+import os,pathlib,hashlib,json
+O=pathlib.Path(os.environ['RICOCHET_ACCEPT_OPS']);p=O/'final-reopen-mutation.py';b=p.read_bytes();old='580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de';new=hashlib.sha256((O.parent/'repo/tools/ricochet/runtime-accounting.py').read_bytes()).hexdigest();assert b.count(old.encode())==1
+q=O/'repaired-final-reopen-mutation.py';q.write_bytes(b.replace(old.encode(),new.encode()));(O/'reproducer-retarget.json').write_text(json.dumps(dict(originalSHA256=hashlib.sha256(b).hexdigest(),newSHA256=hashlib.sha256(q.read_bytes()).hexdigest(),sourceSHA256=new,change='expected source pin only; all strict assertions and timing hook unchanged'),indent=2))

@@ -1,0 +1,14 @@
+{
+  "tests": 8,
+  "failures": [
+    "focused_tests.FinalReopenTests.test_failure_clears_previous_accepted_receipt",
+    "focused_tests.FinalReopenTests.test_growth_at_final_named_stat",
+    "focused_tests.FinalReopenTests.test_mode_change_after_final_open",
+    "focused_tests.FinalReopenTests.test_mutation_then_consumption_rejects",
+    "focused_tests.FinalReopenTests.test_same_inode_growth_before_final_open",
+    "focused_tests.FinalReopenTests.test_same_size_rewrite_before_final_open"
+  ],
+  "errors": [],
+  "expected": "six mutation cases fail unchanged assertions; two legitimate windows pass",
+  "originalSHA256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de"
+}

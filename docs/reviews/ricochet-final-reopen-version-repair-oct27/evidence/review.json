@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "payloads": 124,
+  "pins": 12,
+  "changedExactPaths": [
+    "test/ricochet-final-reopen-version.test.py",
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py",
+    "tools/ricochet/runtime-accounting.py"
+  ],
+  "scope": "orphan sparse report, not mergeable whole"
+}

@@ -1,0 +1,125 @@
+{
+  "disposition": "REJECT_SOURCE_ONLY",
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "sourceSHA256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+  "candidateBlob": "25a42fe84271df3bb03eeac673762d8a0b39cb91",
+  "firstGate": "PASS all4 actual production CLI; exact dispatched argv/prefix/payload/tails and strict historical symlink attack; original writer controls discriminate",
+  "blockingGate": "FAIL final reopen version mutation: accepted inventory and lastBytes25174016, same inode content size2->33 during sample()",
+  "observed": {
+    "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+    "source": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/tools/ricochet/runtime-accounting.py",
+    "sourceSHA256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+    "events": [
+      {
+        "event": "control_read_open",
+        "ordinal": 1,
+        "before": {
+          "dev": 64769,
+          "ino": 2334471,
+          "size": 2,
+          "blocks": 8,
+          "mtime_ns": 1793096364837627705,
+          "ctime_ns": 1793096364837627705,
+          "nlink": 1
+        }
+      },
+      {
+        "event": "control_read_open",
+        "ordinal": 2,
+        "before": {
+          "dev": 64769,
+          "ino": 2334471,
+          "size": 2,
+          "blocks": 8,
+          "mtime_ns": 1793096364837627705,
+          "ctime_ns": 1793096364837627705,
+          "nlink": 1
+        }
+      },
+      {
+        "event": "same_inode_mutation_before_final_open",
+        "after": {
+          "dev": 64769,
+          "ino": 2334471,
+          "size": 33,
+          "blocks": 8,
+          "mtime_ns": 1793096364837627705,
+          "ctime_ns": 1793096364837627705,
+          "nlink": 1
+        }
+      }
+    ],
+    "before": {
+      "dev": 64769,
+      "ino": 2334471,
+      "size": 2,
+      "blocks": 8,
+      "mtime_ns": 1793096364837627705,
+      "ctime_ns": 1793096364837627705,
+      "nlink": 1
+    },
+    "after": {
+      "dev": 64769,
+      "ino": 2334471,
+      "size": 33,
+      "blocks": 8,
+      "mtime_ns": 1793096364837627705,
+      "ctime_ns": 1793096364837627705,
+      "nlink": 1
+    },
+    "error": null,
+    "accepted": {
+      "bytes": 25174016,
+      "sizes": {
+        "/tmp/ricochet-final-writer-independent-accept-oct27/ops/fixtures/tmpvzux3x5_/serial/continue.json": 33
+      }
+    },
+    "receipt": {
+      "samples": 1,
+      "failures": 0,
+      "peakBytes": 25174016,
+      "lastBytes": 25174016
+    },
+    "controlReserve": 25165824,
+    "totalCeiling": 268435456,
+    "mutation": "synchronous owned-file write before second real control os.open; inside final _file validation and before sample return",
+    "fixtureCleanup": "TemporaryDirectory exit"
+  },
+  "priorRejection": "a679a43e16ca71a761a2368a41784c4371c4a3b1 retained unchanged, not superseded",
+  "reusableCandidateReceipts": {
+    "finalWriter16": "1793095470715695403",
+    "finalIndependent10": "1793095416450227320",
+    "finalAffectedOriginal6": "1793095515847644545",
+    "minimalRetarget": "1793095515677499607",
+    "originalProductionBoundary": "1793095089777001182",
+    "finalProducerCommandsMetadataAndWiring": "1793095613358309985"
+  },
+  "reused": "229 manifest payloads and230 staged candidate blobs verified, all9 source pins; prior successful suites not rerun for packaging. Candidate receipts are historical, not proof against new counterexample.",
+  "remainingStopped": [
+    "remaining writer/regression attacks",
+    "independent enumeration consumption groups",
+    "executable integrate.py staging/full immutable closure validation",
+    "all main integration/publication",
+    "fresh runtime startup/input/gameplay/Quit"
+  ],
+  "incidents": [
+    "Initial policy/evidence/config displays exceeded8192B operation display limit; bounded later displays. No retrospective compliance claim.",
+    "Inherited implementer incident retained: three predecessor untracked ops diagnostics overwritten by implementer; this worker set RICOCHET_ACCEPT_OPS and TMPDIR to owned ops before every import/run. Donors never edited or restored."
+  ],
+  "resources": {
+    "taskAllocation": 134217728,
+    "controlInodeReserveInsideTask": 25165824,
+    "runtimeControlReserve": 25165824,
+    "runtimeTotalCapUnchanged": 268435456,
+    "pythonRSS": 134217728,
+    "gitRSS": 268435456,
+    "gitOnlyDATA": 536870912,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "pool": "Python1 Git2 plus flock",
+    "node": "not authorized/not executed"
+  },
+  "scope": "No API/Boat/guest/Node, workers, candidate fix, root tracked/index/ref writes, donor writes, main ownership/integration or deployment. No boxes assigned. Lifecycle remains coordinator-owned. No protection claimed after return or for unspecified future producers."
+}

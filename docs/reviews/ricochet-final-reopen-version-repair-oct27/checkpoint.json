@@ -1,0 +1,428 @@
+{
+  "status": "PASS_SOURCE_ONLY_REPAIR_PENDING_INDEPENDENT_ACCEPTANCE",
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "originalSourceSHA256": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+  "newSourceSHA256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732",
+  "sourceAndTestPins": {
+    "test/ricochet-final-reopen-version.test.py": {
+      "bytes": 4633,
+      "sha256": "32affcf4bc03ba4dad476d923e58e02820f7f0cf39f6964da24e28ef6b456a04"
+    },
+    "test/ricochet-consumed-independent.test.py": {
+      "bytes": 11757,
+      "sha256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551"
+    },
+    "test/ricochet-runtime-accounting.test.py": {
+      "bytes": 15622,
+      "sha256": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c"
+    },
+    "test/ricochet-final-inventory-independent.test.py": {
+      "bytes": 1363,
+      "sha256": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0"
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/producer-manifest.json": {
+      "bytes": 1607,
+      "sha256": "d2e28e40862c71ff54f47d9edb5676ee77a26311cdf37dc5c72f1000e866faef"
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py": {
+      "bytes": 3003,
+      "sha256": "8b5bc22fb520480403c479dbc094dc91e99af04d0ad4472a6740568404711ba9"
+    },
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": {
+      "bytes": 2997,
+      "sha256": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b"
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": {
+      "bytes": 1974,
+      "sha256": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63"
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "tools/ricochet/control-publisher.py": {
+      "bytes": 3970,
+      "sha256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654"
+    },
+    "tools/ricochet/runtime-accounting.py": {
+      "bytes": 13814,
+      "sha256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732"
+    },
+    "tools/ricochet/production-commands.py": {
+      "bytes": 2730,
+      "sha256": "3aa4012ae350eed2d4120e86f358ab93e555d58506ef38656448c7fc1c0a7c5e"
+    }
+  },
+  "inputPins": {
+    "tools/ricochet/runtime-accounting.py": "580a0fa000c2784f3bbfdb91ad100a6c91c1b1a558729b27756727d183f558de",
+    "test/ricochet-runtime-accounting.test.py": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+    "test/ricochet-consumed-independent.test.py": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551",
+    "test/ricochet-final-inventory-independent.test.py": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0",
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b",
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py": "e6ba7e6db935ac02e494493e85d3a6facb1548f6ec474005e40485062a8f03f6",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "unchangedRejection": {
+    "commit": "3bec7b92972e580c2cf35813cbfeb40c5d9cb29e",
+    "manifest": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/docs/reviews/ricochet-final-writer-independent-accept-oct27/manifest.json",
+    "bytes": 11414,
+    "sha256": "9c2cbe313cf2e6d52668811994f791c3d5aae62d469af21b00a014ab5dce3766",
+    "verification": "Coordinator verified all79 payloads; reused unchanged, not claimed freshly reverified"
+  },
+  "results": {
+    "unchanged-reproducer": {
+      "exit": 1,
+      "stopReason": null,
+      "peakRSS": 62259200,
+      "sampledPeakRSS": 62259200,
+      "reapedPeakRSS": 25686016,
+      "cpuSeconds": 0.565163,
+      "wallSeconds": 0.2518262679222971,
+      "owned": [
+        [
+          4095038,
+          "114400151"
+        ],
+        [
+          4095040,
+          "114400155"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "repaired-reproducer": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 62652416,
+      "sampledPeakRSS": 62652416,
+      "reapedPeakRSS": 25952256,
+      "cpuSeconds": 0.380407,
+      "wallSeconds": 0.16258914093486965,
+      "owned": [
+        [
+          4096831,
+          "114407004"
+        ],
+        [
+          4096832,
+          "114407007"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "focused": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 62259200,
+      "sampledPeakRSS": 62259200,
+      "reapedPeakRSS": 25559040,
+      "cpuSeconds": 0.404694,
+      "wallSeconds": 0.161925541004166,
+      "owned": [
+        [
+          4096834,
+          "114407029"
+        ],
+        [
+          4096835,
+          "114407032"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "original-bug-control": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 62390272,
+      "sampledPeakRSS": 62390272,
+      "reapedPeakRSS": 25952256,
+      "cpuSeconds": 0.467987,
+      "wallSeconds": 0.1729493741877377,
+      "owned": [
+        [
+          4097286,
+          "114409421"
+        ],
+        [
+          4097290,
+          "114409424"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "affected-independent": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 86351872,
+      "sampledPeakRSS": 86351872,
+      "reapedPeakRSS": 28286976,
+      "cpuSeconds": 1.572452,
+      "wallSeconds": 0.6127493851818144,
+      "owned": [
+        [
+          4097328,
+          "114409448"
+        ],
+        [
+          4097340,
+          "114409452"
+        ],
+        [
+          4097364,
+          "114409463"
+        ],
+        [
+          4097391,
+          "114409472"
+        ],
+        [
+          4097429,
+          "114409480"
+        ],
+        [
+          4097442,
+          "114409484"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "affected-original": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 63176704,
+      "sampledPeakRSS": 63176704,
+      "reapedPeakRSS": 26791936,
+      "cpuSeconds": 0.47931199999999996,
+      "wallSeconds": 0.2146107389125973,
+      "owned": [
+        [
+          4098275,
+          "114412127"
+        ],
+        [
+          4098276,
+          "114412132"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    },
+    "recipe-check": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 55619584,
+      "sampledPeakRSS": 55619584,
+      "reapedPeakRSS": 25952256,
+      "cpuSeconds": 0.36894800000000005,
+      "wallSeconds": 0.19003389705903828,
+      "owned": [
+        [
+          4100121,
+          "114418285"
+        ],
+        [
+          4100122,
+          "114418292"
+        ]
+      ],
+      "output": "",
+      "cleanupComplete": true
+    }
+  },
+  "reusedReceipts": {
+    "finalWriter16": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.command.json": {
+          "bytes": 1152,
+          "sha256": "e764aa052da3866abe58744ff0d74495cf98f882ba28da16c291e4bf24382be6"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.result.json": {
+          "bytes": 785,
+          "sha256": "e7e4d4f933bc62e7ee6fc9762459cb3ec0a3c01e0338f57fd95542dcb3a0f0c0"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stderr": {
+          "bytes": 115,
+          "sha256": "86f4d6bcb0a5fce7c6fad3be1a66a077e94338826c194033651cd123f24dd8c8"
+        }
+      }
+    },
+    "finalIndependent10": {
+      "reason": "historical receipt, affected accounting checks rerun on new source; not reused as current accounting proof",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095416450227320.command.json": {
+          "bytes": 1825,
+          "sha256": "803eb608a0189c0e2d75c888edcc2e475faef4c0fc2c5b6c0a5148bd7a29bcf7"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095416450227320.result.json": {
+          "bytes": 738,
+          "sha256": "bb4904ed9d322e329ea95e00f4f2840c1f039c7bd35f02d456b2ddaa11204f0f"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095416450227320.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095416450227320.stderr": {
+          "bytes": 1345,
+          "sha256": "58c4f81024d6333b85153272cd64f903bdf0078563943ab3110659d619928b61"
+        }
+      }
+    },
+    "finalAffectedOriginal6": {
+      "reason": "historical receipt, affected accounting checks rerun on new source; not reused as current accounting proof",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515847644545.command.json": {
+          "bytes": 1539,
+          "sha256": "d7c950525a71409fe10b09e3b6b2c8200cbbdd8f6d4d3e31be1f6daa88d09917"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515847644545.result.json": {
+          "bytes": 566,
+          "sha256": "9ebe35d9013301f16fdffd9d202227d818373e62e3fd0c9848d255614c80526c"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515847644545.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515847644545.stderr": {
+          "bytes": 798,
+          "sha256": "32a40a79a7f40bf8615b8370d223018a5f54dc0f93d277f1e17a4c473f5392b9"
+        }
+      }
+    },
+    "minimalRetarget": {
+      "reason": "historical receipt, affected accounting checks rerun on new source; not reused as current accounting proof",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515677499607.command.json": {
+          "bytes": 1131,
+          "sha256": "e4586d61d973252898fa9236f01a4ca082e2f506e8d4cc900086b16ba6227024"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515677499607.result.json": {
+          "bytes": 555,
+          "sha256": "91f8de1d18a8082b80946e47cc7f8682bfcca9e4a7c00a7f17f4487f56578d8b"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515677499607.stdout": {
+          "bytes": 45,
+          "sha256": "523aa722d9a21947c759f90a0694568d1be329315132288cd43aa8327c9933ad"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095515677499607.stderr": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    "originalProductionBoundary": {
+      "reason": "historical receipt, affected accounting checks rerun on new source; not reused as current accounting proof",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.command.json": {
+          "bytes": 1221,
+          "sha256": "d551d422346c7b6d791bf7addbfdbf1b61dab1eba0692f6845ed6ff6a47eda8c"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.result.json": {
+          "bytes": 600,
+          "sha256": "d6e0137a5853fa801ecae89b268c48063818a761a6c46a21574403899416dd2d"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095089777001182.stderr": {
+          "bytes": 223,
+          "sha256": "170653cf215eb9d3a749e8a7051eb3dca46f21ccef22c5708ae7c1e8404dc645"
+        }
+      }
+    },
+    "finalProducerCommandsMetadataAndWiring": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.command.json": {
+          "bytes": 1232,
+          "sha256": "05967a20544163a625667c6cd20f725e41adedba2249d443ac4b85e1a7486e13"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.result.json": {
+          "bytes": 566,
+          "sha256": "8470e843bfb5e96c74cb4a727c78d23512c76921b2630db984177f4b841f411d"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stderr": {
+          "bytes": 98,
+          "sha256": "8c48a33d2c359464395f74f0b2034ed8bf3608b2775d4035d227ae6fba0e0ce0"
+        }
+      }
+    },
+    "actualProductionCLI4": {
+      "reportCommit": "3bec7b92972e580c2cf35813cbfeb40c5d9cb29e",
+      "checkpoint": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/docs/reviews/ricochet-final-writer-independent-accept-oct27/evidence/boundary-checkpoint.json",
+      "bytes": 2182,
+      "sha256": "4ab3c10290fb0143e418a7f81a4213a22cfbdcc0dc479f576b0bc445ceeb65a1",
+      "reason": "all four actual production writer CLI dispatch/prefix/payload/tail gates and original-writer negative controls unchanged; accounting helper not used by these intercepted writer prefixes"
+    }
+  },
+  "summary": {
+    "focused": 8,
+    "originalBugControl": "original helper fails six unchanged mutation assertions and passes both legitimate windows",
+    "affectedAccounting": 10,
+    "affectedOriginal": 6,
+    "recipe": "exact helper pin staging/compile and wrong-pin rejection; no generated runner execution"
+  },
+  "remaining": [
+    "fresh independent acceptance of changed accounting version checks and focused regression",
+    "full immutable runtime closure staging and scoped integration under coordinator ownership",
+    "fresh authorized runtime startup/input/gameplay/ordinary Quit"
+  ],
+  "resources": {
+    "gitPhysical": 268435456,
+    "gitChildOnlyDATA": 536870912,
+    "pythonPhysical": 134217728,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "display": 8192,
+    "displayCumulative": 1048576,
+    "controlReserve": 25165824,
+    "totalRuntimeCeiling": 268435456,
+    "taskAllocation": 134217728,
+    "sourceGit": 20971520,
+    "events": 16777216,
+    "ops": 54525952,
+    "growthReserve": 41943040
+  },
+  "scope": "No workers/API/Node/Boat/guest/boxes/main/deployment; root tracked/index/refs and donors read only. Report orphan must never be merged whole. No protection after sample returns or filesystem quota enforcement claimed. Coordinator lifecycle; no boxes assigned.",
+  "incidents": [
+    "Initial tool policy/evidence displays exceeded8192B, and missing task-directory ls failed; causal tool transcript retained, no separate disk streams for those preliminary reads. No retrospective compliance claim. All supervised commands retain distinct stdout/stderr from creation.",
+    "Predecessor implementer overwrote three untracked diagnostics historically; untouched by this worker. RICOCHET_ACCEPT_OPS/TMPDIR set to own ops before every harness import.",
+    "Optional rg on checkpoint with no matching hashes returned1; read-only, retained tool output.",
+    "Early command receipts contain full argv/config and inherited limits but lack explicit executable/env hashes and Git child limit capture; run-v1.py retained, later wrapper adds them without repeating passing tests. Git child DATA limit was already set by v1."
+  ],
+  "publication": {
+    "branch": "refs/heads/task/ricochet-final-reopen-version-repair-oct27",
+    "receiptLocator": "/tmp/ricochet-final-reopen-version-repair-oct27/ops/receipt-manifest.json",
+    "state": "to be finalized after commit/push/exact remote verification and watcher cleanup"
+  },
+  "watcher": {
+    "pid": 4093640,
+    "parent": 4092476,
+    "argv": [
+      "tail",
+      "-n",
+      "0",
+      "-f",
+      "messageboard.txt"
+    ]
+  },
+  "rootRefs": "reuse launcher root-ref-digest.json initial receipt; no later root-ref comparison needed",
+  "mountCheckpoint": "No guest/mount argv or runtime execution authorized; not applicable"
+}

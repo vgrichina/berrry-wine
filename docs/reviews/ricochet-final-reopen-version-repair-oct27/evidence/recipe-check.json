@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "recipeSHA256": "8b5bc22fb520480403c479dbc094dc91e99af04d0ad4472a6740568404711ba9",
+  "accountingSHA256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732",
+  "runnerSHA256": "9516ece83c40cc3eaf7d4f2f654da60bb9e6df0f26661300cac2416ea553bcfd",
+  "wrongHelperPinRejected": true,
+  "cap": 268435456,
+  "reserve": 25165824,
+  "scope": "synthetic local staging of recipe; full runtime immutable closure and independent acceptance not attempted",
+  "cleanup": "TemporaryDirectory"
+}

@@ -1,0 +1,46 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "-S",
+    "/tmp/ricochet-final-reopen-version-repair-oct27/repo/test/ricochet-final-inventory-independent.test.py",
+    "Independent.test_01_complete_production_remaining_consumption_windows",
+    "Independent.test_02_full_reserve_absent_and_open_unlinked",
+    "Independent.test_03_reserve_inside_existing_256_mib_ceiling",
+    "Independent.test_04_unknown_disappearance_and_path_replacement",
+    "Independent.test_05_late_links_before_descriptor_validation",
+    "Independent.test_06_immutable_mutation_and_no_partial_live_growth",
+    "Independent.test_07_mandatory_root_identity",
+    "Independent.test_08_failure_cleans_owned_descendants_by_pid_start",
+    "Independent.test_09_rejecting_mutation_controls",
+    "Independent.test_10_final_inventory_link_swap_must_reject"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "environment": {
+    "RICOCHET_ACCEPT_OPS": "/tmp/ricochet-final-reopen-version-repair-oct27/ops",
+    "TMPDIR": "/tmp/ricochet-final-reopen-version-repair-oct27/ops/fixtures",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "sourcePins": {
+    "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  }
+}

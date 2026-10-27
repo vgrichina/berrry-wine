@@ -1,0 +1,78 @@
+{
+  "candidate": "93fce294621b5f40a1a23f6711c555dc5159e554",
+  "source": "/tmp/ricochet-final-reopen-version-repair-oct27/repo/tools/ricochet/runtime-accounting.py",
+  "sourceSHA256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732",
+  "events": [
+    {
+      "event": "control_read_open",
+      "ordinal": 1,
+      "before": {
+        "dev": 64769,
+        "ino": 327955,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793096860900303159,
+        "ctime_ns": 1793096860900303159,
+        "nlink": 1
+      }
+    },
+    {
+      "event": "control_read_open",
+      "ordinal": 2,
+      "before": {
+        "dev": 64769,
+        "ino": 327955,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793096860900303159,
+        "ctime_ns": 1793096860900303159,
+        "nlink": 1
+      }
+    },
+    {
+      "event": "same_inode_mutation_before_final_open",
+      "after": {
+        "dev": 64769,
+        "ino": 327955,
+        "size": 33,
+        "blocks": 8,
+        "mtime_ns": 1793096860900303159,
+        "ctime_ns": 1793096860900303159,
+        "nlink": 1
+      }
+    }
+  ],
+  "before": {
+    "dev": 64769,
+    "ino": 327955,
+    "size": 2,
+    "blocks": 8,
+    "mtime_ns": 1793096860900303159,
+    "ctime_ns": 1793096860900303159,
+    "nlink": 1
+  },
+  "after": {
+    "dev": 64769,
+    "ino": 327955,
+    "size": 33,
+    "blocks": 8,
+    "mtime_ns": 1793096860900303159,
+    "ctime_ns": 1793096860900303159,
+    "nlink": 1
+  },
+  "error": {
+    "type": "AccountingError",
+    "message": "control version changed during scan: /tmp/ricochet-final-reopen-version-repair-oct27/ops/fixtures/tmpnrgv01xr/serial/continue.json"
+  },
+  "accepted": null,
+  "receipt": {
+    "samples": 0,
+    "failures": 1,
+    "peakBytes": 25174016,
+    "lastBytes": null
+  },
+  "controlReserve": 25165824,
+  "totalCeiling": 268435456,
+  "mutation": "synchronous owned-file write before second real control os.open; inside final _file validation and before sample return",
+  "fixtureCleanup": "TemporaryDirectory exit"
+}

@@ -1,0 +1,8 @@
+import pathlib,os,json,shutil,time
+O=pathlib.Path(os.environ['RICOCHET_ACCEPT_OPS']);R=O.parent/'repo';E=pathlib.Path('/home/user/wine-assembly/scratch/usage-watch/ricochet-final-reopen-version-repair-oct27')
+def allocated(p):
+ return sum(q.lstat().st_blocks*512 for q in [p,*p.rglob('*')] if not q.is_symlink())
+source=allocated(R);ops=allocated(O);events=allocated(E);wal=pathlib.Path('/home/user/.codex/state_5.sqlite-wal').stat().st_blocks*512
+mem=int(next(l.split()[1] for l in pathlib.Path('/proc/meminfo').read_text().splitlines() if l.startswith('MemAvailable:')))*1024;free=shutil.disk_usage(O).free
+r={'at':time.time(),'sourceGit':source,'opsMeasured':ops,'unnamedControlReserveInsideOps':25165824,'opsWithControlReserve':ops+25165824,'launcherEvents':events,'stateWALConservativeWholeChargeOnce':wal,'eventsWithStateWAL':events+wal,'growthReserve':41943040,'total':source+ops+25165824+events+wal+41943040,'allocation':134217728,'memAvailable':mem,'requiredRAM':335544320+268435456+805306368,'diskFree':free,'projectedFree':free-(134217728-source-ops-events-wal),'diskFloor':2982150144,'otherSharedWALStandingSnapshot':{str(p):p.stat().st_size for p in pathlib.Path('/home/user/.codex').glob('*-wal') if p.name!='state_5.sqlite-wal'},'note':'No task runtime/box/Node; existing client is already in host MemAvailable. Other shared WAL snapshot retained; subsequent positive growth charged once at closeout. Global WAL not copied into report.'}
+r['passed']=source<=20971520 and ops+25165824<=54525952 and events+wal<=16777216 and r['total']<=134217728 and mem>=r['requiredRAM'] and r['projectedFree']>=r['diskFloor'];(O/'accounting-prepublication.json').write_text(json.dumps(r,indent=2));print(json.dumps(r));assert r['passed']
