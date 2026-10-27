@@ -73,6 +73,16 @@
       "sha256": "99508b69437413b2fe54ac8312b704b1a5c565aa6ba759f3095b66e11a449c38"
     },
     {
+      "path": "publish-complete.child.stderr",
+      "bytes": 632,
+      "sha256": "6cd5e9e7619a599aafc90948b887709e11b12081e375d95faf037a5b38b7f349"
+    },
+    {
+      "path": "publish-complete.execution.json",
+      "bytes": 535,
+      "sha256": "f516b8b2fca0d89edd70092ca9d26d7cbc860cdbbac55819c55fe95e2df1254d"
+    },
+    {
       "path": "publish.child.stderr",
       "bytes": 628,
       "sha256": "2c527f7107b0d5fc79d3351c3dd78ec4d20ceac52cd3dc8973806295052d03b0"
@@ -81,6 +91,16 @@
       "path": "publish.execution.json",
       "bytes": 489,
       "sha256": "0294df53c0b2dde6975d4c26a7d82b6076343be7e162a1fc95677f41c109aa19"
+    },
+    {
+      "path": "push-final.json",
+      "bytes": 498,
+      "sha256": "ab0840ab542686e81d79af7d663d48cfdfaacc64ac67bb25c0da5a064a9932fc"
+    },
+    {
+      "path": "push-final.stderr",
+      "bytes": 83,
+      "sha256": "e7453c6dc500aaaa1021f84f9211ae0f9d8c309ea7dae88221bcde70770438f7"
     },
     {
       "path": "remote-job.py",
@@ -158,5 +178,6 @@
     "shutdownOwner": "coordinator",
     "workerHandback": "immediate; leave running; no stop/delete/resume"
   },
-  "publicationSetupIncident": "Initial commit failed128 because isolated repo lacked author identity; no commit/push occurred. Set repository-local Wine Ops Worker identity matching donor and resume publication."
+  "publicationSetupIncident": "Initial commit failed128 because isolated repo lacked author identity; no commit/push occurred. Set repository-local Wine Ops Worker identity matching donor and resume publication.",
+  "publicationTransportIncident": "Root origin was HTTPS; GIT_SSH_COMMAND did not apply. Push stopped before authentication (could not read HTTPS Username). Correct isolated repo origin to donor GitHub SSH URL, retaining exact prescribed identity/trust configuration. Never retry unchanged HTTPS."
 }
