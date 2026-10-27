@@ -10669,7 +10669,18 @@
             (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
             (return)))
-        (call $di_kbd_buffer_format (local.get $entry))))
+        (call $di_kbd_buffer_format (local.get $entry))
+        ;; Registration RPCs build an inactive selection. Publish it only once
+        ;; complete; the host call is the acquisition's input linearization point.
+        ;; Zero-sized immediate devices have no host FIFO to activate.
+        (if (i32.load offset=12 (local.get $entry))
+          (then
+            (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 10) (i32.const 0))
+              (then
+                (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 1) (i32.const 0)))
+                (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
+                (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+                (return)))))))
     (store.field DxObject flags (local.get $entry)
       (i32.or (local.get $flags) (global.get $DIDEV_ACQUIRED)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK

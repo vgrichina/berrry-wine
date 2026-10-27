@@ -34,6 +34,8 @@ check('disjoint acquired formats isolate omission, overflow and consumption',()=
 check('disjoint filtered host contexts preserve independent queues with same device ID',()=>{
  reset([[57,7]],3);const h=createWindowHost({renderer},{}).imports;
  assert.equal(h.di_keyboard_buffer(e.entry(),8,3),0);h.di_keyboard_buffer(e.entry(),9,65);
+ tap(65);assert.equal(h.di_keyboard_buffer(e.entry(),2,0),0);
+ assert.equal(h.di_keyboard_buffer(e.entry(),10,0),0);
  tap(65);tap(32);assert.deepEqual(pairs(poll()),[[7,128],[7,0]]);
  assert.equal(h.di_keyboard_buffer(e.entry(),2,0),2);assert.equal(h.di_keyboard_buffer(e.entry(),7,0),0);
  assert.equal(h.di_keyboard_buffer(e.entry(),3,0),65|256);h.di_keyboard_buffer(e.entry(),1,0);
