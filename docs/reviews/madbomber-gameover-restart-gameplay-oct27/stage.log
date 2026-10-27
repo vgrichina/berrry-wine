@@ -1,0 +1,17 @@
+transfer bytes 8733073
+transferred 49152
+transferred 1032192
+transferred 2015232
+transferred 2998272
+transferred 3981312
+transferred 4964352
+transferred 5947392
+transferred 6930432
+transferred 7913472
+Traceback (most recent call last):
+  File "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/stage.py", line 29, in <module>
+    put('manifest.json',raw)
+  File "/tmp/madbomber-gameover-restart-gameplay-oct27/ops/stage.py", line 10, in put
+    assert len(b)<65536
+           ^^^^^^^^^^^^
+AssertionError

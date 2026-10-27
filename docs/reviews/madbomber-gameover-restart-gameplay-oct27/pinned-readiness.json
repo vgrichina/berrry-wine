@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-27T02:37:01.945055+00:00",
+  "manifest": "scratch/usage-watch/madbomber-restart-runtime-manifest-oct27.json",
+  "manifestSha256": "13008013c325f602b4a9aa25f4d3ddfb5f2737d3e738a4e1c36e318612d118a1",
+  "files": 378,
+  "bytes": 18611136,
+  "bad": [],
+  "pass": true,
+  "originalArchive": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+  "sourceRevision": "72e7a30d6e36df896eb25007b6139d750e715720"
+}

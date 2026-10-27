@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-27T02:45:45.290694+00:00",
+  "outcome": "BLOCKED_LAUNCH_CAUSE_UNKNOWN",
+  "game": "MadBomber",
+  "objective": "ordinary Game Over -> restart/new game -> reset score/lives -> resumed bomb catching -> ordinary Quit",
+  "acceptance": "UNQUALIFIED",
+  "guestAttemptsStarted": 0,
+  "launchCommandsAttempted": 1,
+  "captures": [],
+  "scoreBefore": null,
+  "scoreAfter": null,
+  "livesBefore": null,
+  "livesAfter": null,
+  "ordinaryQuit": null,
+  "productionChanges": false,
+  "currentMainClaim": false,
+  "historicalModule": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c",
+  "source": "72e7a30d6e36df896eb25007b6139d750e715720",
+  "acceptedBuildSource": "30a2c3fb1b5c2bfa8a6b001d7394d5cf50df295d",
+  "closure": {
+    "files": 378,
+    "bytes": 18611136,
+    "manifestSha256": "13008013c325f602b4a9aa25f4d3ddfb5f2737d3e738a4e1c36e318612d118a1",
+    "allRemoteHashesPassed": true
+  },
+  "launch": {
+    "argv": [
+      "/home/user/.ascii/boat",
+      "exec",
+      "--json",
+      "--detach",
+      "--timeout",
+      "170",
+      "bx_auvzp2av",
+      "python3",
+      "-B",
+      "/home/user/madbomber-restart-oct27/remote-run.py",
+      "run"
+    ],
+    "returnCode": 1,
+    "stdoutBytes": 0,
+    "stderr": "NOT RETAINED: launch wrapper captured but failed to save stderr; cause cannot be classified as access/argument/runtime failure",
+    "retry": false
+  },
+  "box": {
+    "id": "bx_auvzp2av",
+    "state": "RUNNING inferred from successful supported API exec",
+    "expiry": "2026-10-27T03:37:20Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T03:20:00Z",
+    "remoteRoot": "/home/user/madbomber-restart-oct27",
+    "ownedProcessesAbsent": true,
+    "handback": "early; no guest launched; remote staged closure retained"
+  },
+  "passed": [
+    "378 exact remote file size/hash checks",
+    "exact Node executable/flags/environment/supervisor startup",
+    "canonical pinned runner argument parser: no explicit mounts;149 registered asset paths present",
+    "read-only process/output check: no guest/controller/output directory"
+  ],
+  "limitations": [
+    "No Game Over, restart, score/lives reset, resumed play or Quit was observed",
+    "Prepared controller is unexecuted, not acceptance evidence",
+    "Mount parser check used CPU/file prlimit but had no physical RSS monitor; startup check itself used the full2GiB supervisor",
+    "First staging manifest upload hit a local chunk-size assertion; fixed within task without retransferring closure or starting guest",
+    "No launch stderr retained; do not infer permission to replay or bypass an unknown rejection"
+  ],
+  "remainingGates": [
+    "coordinator determine nonzero detached-launch cause using trusted diagnostics before deciding any new task",
+    "separately authorized single restart acceptance after launch blocker is understood",
+    "current-main qualification, audio and performance remain outside this task"
+  ],
+  "standingInputs": {
+    "gitDonor": "/home/user/wine-assembly",
+    "gitPayloadBytes": 12784151,
+    "originalArchive": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "originalArchiveBytes": 3069702,
+    "moduleBytes": 1878508,
+    "priorEvidenceArchiveBytes": 11965531,
+    "notes": "Immutable donors read in place; own Git objects use read-only alternates; no full source/media copy, build, npm or duplicate module generation. Local compressed Git transfer input was deleted after remote verification."
+  }
+}

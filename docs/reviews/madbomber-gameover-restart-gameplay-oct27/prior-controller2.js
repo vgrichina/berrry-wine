@@ -1,0 +1,23 @@
+const fs=require('fs'),cp=require('child_process');
+const root='/home/user/madbomber-source',out='/home/user/madbomber-evidence/run2';
+fs.mkdirSync(out);
+const args=['test/run.js','--app=madbomber','--no-build','--wasm='+root+'/build/wine-assembly.wasm','--quiet-api','--no-close','--no-threads','--real-ticks','--time-scale=1','--real-calendar','--tz=UTC','--batch-size=200000','--max-batches=10000000','--max-seconds=60','--control-stdin','--trace-input','--png='+out+'/final.png'];
+const inputs=[[4,{cmd:'keydown:13'}],[4.15,{cmd:'keyup:13'}],[6,{cmd:'mousemove:532:400'}],[7,{cmd:'keydown:32'}],[7.15,{cmd:'keyup:32'}]];
+inputs.push([8.5,{cmd:'mousemove:470:400'}],[9,{cmd:'mousemove:408:400'}],[9.5,{cmd:'mousemove:346:400'}]);
+for(const sec of [16,26,36,46]) {inputs.push([sec-1,{cmd:'mousemove:346:400'}],[sec,{cmd:'keydown:32'}],[sec+0.15,{cmd:'keyup:32'}]);}
+const captures=[3,5,6.8,7.5,7.8,8,8.2,8.5,9,10,12,15,18,20,25,30,40,50,59];
+fs.writeFileSync(out+'/launch.json',JSON.stringify({startedAt:new Date().toISOString(),root,args,inputs,captures,logCap:4194304,softSeconds:65,hardSeconds:70},null,2));
+const env=Object.fromEntries(Object.entries(process.env).filter(([k])=>!k.startsWith('WA_')&&!k.startsWith('WINE_')&&!['NODE_OPTIONS','NODE_PATH'].includes(k)));
+const fd=fs.openSync(out+'/output.log','wx'),rf=fs.openSync(out+'/input-receipts.jsonl','wx');
+const child=cp.spawn(process.execPath,args,{cwd:root,env,detached:true,stdio:['pipe','pipe','pipe']});
+const start=performance.now();let bytes=0,reason=null;
+const send=o=>{const rec={at:new Date().toISOString(),elapsedMs:performance.now()-start,command:o,writable:!child.stdin.destroyed};fs.writeSync(rf,JSON.stringify(rec)+'\n');if(rec.writable)child.stdin.write(JSON.stringify(o)+'\n');};
+child.stdin.on('error',()=>{});
+const kill=()=>{try{process.kill(-child.pid,'SIGKILL');}catch{}};
+const log=b=>{fs.writeSync(fd,b.subarray(0,Math.max(0,4194304-bytes)));bytes+=b.length;if(bytes>=4194304){reason='log cap';kill();}};
+child.stdout.on('data',log);child.stderr.on('data',log);
+const timers=inputs.map(([s,o])=>setTimeout(()=>send(o),s*1000));
+for(const s of captures)timers.push(setTimeout(()=>send({action:'png',path:out+'/sample-'+s+'s.png'}),s*1000));
+timers.push(setTimeout(()=>{reason='soft guard';send({action:'quit'});},65000),setTimeout(()=>{reason='hard guard';kill();},70000));
+child.on('close',(code,signal)=>{timers.forEach(clearTimeout);fs.closeSync(fd);fs.closeSync(rf);kill();let groupAbsent;try{process.kill(-child.pid,0);groupAbsent=false;}catch{groupAbsent=true;}
+ const terminal={finishedAt:new Date().toISOString(),code,signal,reason,bytes,groupAbsent};fs.writeFileSync(out+'/terminal.json',JSON.stringify(terminal,null,2));console.log(JSON.stringify(terminal));});

@@ -1,0 +1,50 @@
+{
+  "at": 1793069014.7516136,
+  "used": 2408448,
+  "allocation": 50331648,
+  "externalPositiveWAL": 0,
+  "peerFuture": 167772160,
+  "ownRemaining": 47923200,
+  "free": 3216105472,
+  "projectedFree": 3000410112,
+  "floor": 2982150144,
+  "memAvailable": 3545432064,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 435310592
+    },
+    {
+      "pid": 3551248,
+      "rss": 229076992
+    },
+    {
+      "pid": 3551297,
+      "rss": 196526080
+    },
+    {
+      "pid": 3553876,
+      "rss": 196263936
+    },
+    {
+      "pid": 3556454,
+      "rss": 194678784
+    },
+    {
+      "pid": 3566236,
+      "rss": 242937856
+    }
+  ],
+  "aggregateClientRSS": 1494794240,
+  "headroom": 805306368,
+  "clientReservation": 335544320,
+  "categoriesMiB": {
+    "gitReportTemp": 8,
+    "external": 8,
+    "captures": 8,
+    "publication": 8,
+    "growth": 8,
+    "reserve": 8
+  },
+  "pass": true
+}

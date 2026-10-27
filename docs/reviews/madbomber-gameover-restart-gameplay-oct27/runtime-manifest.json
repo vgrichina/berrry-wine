@@ -1,0 +1,3238 @@
+[
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/Courier.fon",
+    "target": "runner/fonts/Courier.fon",
+    "bytes": 4816,
+    "sha256": "51dd54b23b9857032faac1ab672d7c788b657752ea0b2d0cc39a9f727a607457"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/Fixedsys.fon",
+    "target": "runner/fonts/Fixedsys.fon",
+    "bytes": 5264,
+    "sha256": "2b5cf71bfbadbc460f79fb5b2d8bf1650a7e148359fcb6064392b4a28fadd3c4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/MSSansSerif.fon",
+    "target": "runner/fonts/MSSansSerif.fon",
+    "bytes": 20128,
+    "sha256": "e038cf667907c0a75a59e172191c718e1d30e7e006915b55afd3411b72335cc4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/System.fon",
+    "target": "runner/fonts/System.fon",
+    "bytes": 13456,
+    "sha256": "2f41afc0ea1d2ac4361fea4bfe4cd4eac5cb99627f1e7ee185ec9f5d1980f94b"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/Terminal.fon",
+    "target": "runner/fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/comic-relief/ComicRelief-Bold.ttf",
+    "target": "runner/fonts/comic-relief/ComicRelief-Bold.ttf",
+    "bytes": 63808,
+    "sha256": "371fd5e24cb1f4ef5bd38940702e9a7d2caf325732e206f0eccdb49ee5345c0c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/comic-relief/ComicRelief-Regular.ttf",
+    "target": "runner/fonts/comic-relief/ComicRelief-Regular.ttf",
+    "bytes": 53252,
+    "sha256": "557a7ea8e01c3617267ad7bb908eed3fb95591984eca749677cb340f591ad26d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationMono-Bold.ttf",
+    "target": "runner/fonts/liberation/LiberationMono-Bold.ttf",
+    "bytes": 307996,
+    "sha256": "bd62a0672d0b9b6710b01df434c80ad54fa5f0835207eb7b17b7a761463067bb"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationMono-BoldItalic.ttf",
+    "target": "runner/fonts/liberation/LiberationMono-BoldItalic.ttf",
+    "bytes": 284068,
+    "sha256": "79451f3c09fe25116098853b7a2ca6e2436220ccc11af022979adbcf195be130"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationMono-Italic.ttf",
+    "target": "runner/fonts/liberation/LiberationMono-Italic.ttf",
+    "bytes": 281536,
+    "sha256": "605c01c711b44480a7508d349dfbf3264e81fa43d69e61cfa7d10b86e764c4d1"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationMono-Regular.ttf",
+    "target": "runner/fonts/liberation/LiberationMono-Regular.ttf",
+    "bytes": 319508,
+    "sha256": "f2b83c763e8afd21709333370bed4774337fae82267937e2b5aea7e2fbd922c1"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSans-Bold.ttf",
+    "target": "runner/fonts/liberation/LiberationSans-Bold.ttf",
+    "bytes": 414456,
+    "sha256": "788abee4c806d660e8aee46689dd8540cd4bb98da03dcc9d171ce3efd99a9173"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSans-BoldItalic.ttf",
+    "target": "runner/fonts/liberation/LiberationSans-BoldItalic.ttf",
+    "bytes": 408996,
+    "sha256": "698da70fc191cc5f33ad4d6d3fe830fe4624b898ea2e3169955928b7c491f1ee"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSans-Italic.ttf",
+    "target": "runner/fonts/liberation/LiberationSans-Italic.ttf",
+    "bytes": 415816,
+    "sha256": "e5bae5c4cde31f22142753855f4f8fb86da6ff39955ed3c0a11248b0d16948b0"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSans-Regular.ttf",
+    "target": "runner/fonts/liberation/LiberationSans-Regular.ttf",
+    "bytes": 410712,
+    "sha256": "76d04c18ea243f426b7de1f3ad208e927008f961dc5945e5aad352d0dfde8ee8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSerif-Bold.ttf",
+    "target": "runner/fonts/liberation/LiberationSerif-Bold.ttf",
+    "bytes": 370096,
+    "sha256": "d754ba427cfe0bca54ae052384baa8f842da5bd6550ad4da024ac441e7a7d5ce"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSerif-BoldItalic.ttf",
+    "target": "runner/fonts/liberation/LiberationSerif-BoldItalic.ttf",
+    "bytes": 376772,
+    "sha256": "f17db8af71e24d2066b587546021d4f0b296be389512b658dec3c09affeb11a7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSerif-Italic.ttf",
+    "target": "runner/fonts/liberation/LiberationSerif-Italic.ttf",
+    "bytes": 375632,
+    "sha256": "0e3dea9f8d613e006ccfa62201f33e265d19167bd0907725c3e145368b04fc2e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/liberation/LiberationSerif-Regular.ttf",
+    "target": "runner/fonts/liberation/LiberationSerif-Regular.ttf",
+    "bytes": 393576,
+    "sha256": "058ea80864aef09a23f45cbec2bb5400bc3dfbdea01c3f10538a21fcb497fb74"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/ComicRelief-Bold.ttf",
+    "target": "runner/fonts/subset/ComicRelief-Bold.ttf",
+    "bytes": 27616,
+    "sha256": "418315433348d4c22069e8183164b03a2d242bd70a4f991a17afb15ac55528f7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/ComicRelief-Regular.ttf",
+    "target": "runner/fonts/subset/ComicRelief-Regular.ttf",
+    "bytes": 22776,
+    "sha256": "03895913b5f3aa6ed3887b65a460d79d032f929408aa54b18b7272fe31983e00"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationMono-Bold.ttf",
+    "target": "runner/fonts/subset/LiberationMono-Bold.ttf",
+    "bytes": 34148,
+    "sha256": "b1342eb3319519ed3a9c8e5fd2f434572905773ef2df41f1274b737d385b7110"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationMono-BoldItalic.ttf",
+    "target": "runner/fonts/subset/LiberationMono-BoldItalic.ttf",
+    "bytes": 30408,
+    "sha256": "a375703d0e2e24e92a21ccf6a94ba86d09ec64813b7a6d605849ac22009f6264"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationMono-Italic.ttf",
+    "target": "runner/fonts/subset/LiberationMono-Italic.ttf",
+    "bytes": 30056,
+    "sha256": "7fb459c1a1005354e5224cad4a82bc99ad17c19d58f7a8a16d371e7ea8b0d705"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationMono-Regular.ttf",
+    "target": "runner/fonts/subset/LiberationMono-Regular.ttf",
+    "bytes": 34044,
+    "sha256": "d7343a4c29424b95a3b0c2eeb8f0c93f2f8e8f53c343770f27c30d4fd372e9c7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSans-Bold.ttf",
+    "target": "runner/fonts/subset/LiberationSans-Bold.ttf",
+    "bytes": 40984,
+    "sha256": "73c84e92eb8e62a655704e32b674411ea691636cb64122d42d39f8a52823f253"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSans-BoldItalic.ttf",
+    "target": "runner/fonts/subset/LiberationSans-BoldItalic.ttf",
+    "bytes": 41104,
+    "sha256": "4e40b378a7f0ae604d03a04e5ba82cf06af9e9be9c7076cb3311eb0127f2fcd7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSans-Italic.ttf",
+    "target": "runner/fonts/subset/LiberationSans-Italic.ttf",
+    "bytes": 40848,
+    "sha256": "d6c28903b87bd89bfde52531e6e115ffa1927ae1fad8eb9fb4c29e787c1161e8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSans-Regular.ttf",
+    "target": "runner/fonts/subset/LiberationSans-Regular.ttf",
+    "bytes": 42460,
+    "sha256": "88285b035e7c0424d0dff4d5861d67013866fdd73c41a89e92eada8d72a20042"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSerif-Bold.ttf",
+    "target": "runner/fonts/subset/LiberationSerif-Bold.ttf",
+    "bytes": 45140,
+    "sha256": "cb268f2aba012bcf8eaebce71cf494ea0c70377d5f647f1843b6d7b8c972f85a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "target": "runner/fonts/subset/LiberationSerif-BoldItalic.ttf",
+    "bytes": 45144,
+    "sha256": "581b1e896db076dfe82377a28c71d59d18426f5070a966805370b08e43753893"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSerif-Italic.ttf",
+    "target": "runner/fonts/subset/LiberationSerif-Italic.ttf",
+    "bytes": 46840,
+    "sha256": "7ff206ea16b4b670e994ff4f2cec5117af9c7a463021203dacc9f3382ee63451"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/LiberationSerif-Regular.ttf",
+    "target": "runner/fonts/subset/LiberationSerif-Regular.ttf",
+    "bytes": 52440,
+    "sha256": "eab2ab50aede4b588231fb88325f6213cc3de9732f5ea1cdf5cf1320187905a9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/marlett.ttf",
+    "target": "runner/fonts/subset/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/symbol.ttf",
+    "target": "runner/fonts/subset/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/tahoma.ttf",
+    "target": "runner/fonts/subset/tahoma.ttf",
+    "bytes": 18712,
+    "sha256": "b9a2f7d46e1e117106d36d2d8d12a0919a8e302d51b9e29c10a3c3010a8ec459"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/tahomabd.ttf",
+    "target": "runner/fonts/subset/tahomabd.ttf",
+    "bytes": 19216,
+    "sha256": "6179a426c8f0b5c9c500abed8503e79004f759ac29eec4d28442c2f7d12182ab"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/webdings.ttf",
+    "target": "runner/fonts/subset/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/subset/wingding.ttf",
+    "target": "runner/fonts/subset/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/substitutions.json",
+    "target": "runner/fonts/substitutions.json",
+    "bytes": 10654,
+    "sha256": "b16fde78827227f150b620ff7bf6aee096a173c55278adab265e7e82dd919fe3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/marlett.ttf",
+    "target": "runner/fonts/wine/marlett.ttf",
+    "bytes": 6136,
+    "sha256": "1a9b951ca1815344050ae6158263991e2145918bc74ad65d82bc6ec4056a57d1"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/small_fonts.ttf",
+    "target": "runner/fonts/wine/small_fonts.ttf",
+    "bytes": 19068,
+    "sha256": "c8b7ec4e4db4b9de2f588094376c21306cf829ad5d90b3238f86b34070b74ef6"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/symbol.ttf",
+    "target": "runner/fonts/wine/symbol.ttf",
+    "bytes": 26028,
+    "sha256": "d79da0fbd9a9f3cf806059bb1f2c9d7ce43dd9e3e4c7d4dcc5d9f2759b81196f"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/tahoma.ttf",
+    "target": "runner/fonts/wine/tahoma.ttf",
+    "bytes": 143884,
+    "sha256": "90f1abad4da0ce03da5d2277ee75a9600ce812d37c90eab76e0838ffa7937e55"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/tahomabd.ttf",
+    "target": "runner/fonts/wine/tahomabd.ttf",
+    "bytes": 137836,
+    "sha256": "508a2acc88cd6abdd399ae79c9965db43fba75a46bb115117b55d2be2272d889"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/webdings.ttf",
+    "target": "runner/fonts/wine/webdings.ttf",
+    "bytes": 4300,
+    "sha256": "bbaf4df7911928cbb196fc48f1c7237f68aba2aec3e53c01761b89fdd038ac7a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "fonts/wine/wingding.ttf",
+    "target": "runner/fonts/wine/wingding.ttf",
+    "bytes": 9524,
+    "sha256": "cf5784b53e365ecfad1661b8b23d133effa1d3b54fb7a51137c8a9548f0db08e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "host.js",
+    "target": "runner/host.js",
+    "bytes": 368554,
+    "sha256": "967e46d1cc065e4eb2bc6d2bcb0d69cc090ce42dcf5110cb94fe83f1b86cdcab"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/agent-connect-ui.js",
+    "target": "runner/lib/agent-connect-ui.js",
+    "bytes": 19998,
+    "sha256": "1b0df6ce6774d2836113ae5c26482fb16ea89d4a87cc88cc163d3eaaf4532441"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/agent-connect.js",
+    "target": "runner/lib/agent-connect.js",
+    "bytes": 10563,
+    "sha256": "d1f75b67c056fc7d7305265d8888783bbb9c1bd0557a3073af1c1d966376fe90"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/agent-pair.js",
+    "target": "runner/lib/agent-pair.js",
+    "bytes": 15985,
+    "sha256": "ea65283149a177180badc7693aaccf1c93fad369afc0edd3ca8e5fc9ff5b5f54"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/agent-remote.js",
+    "target": "runner/lib/agent-remote.js",
+    "bytes": 25007,
+    "sha256": "a26fa6c5fefdc605413431386818fd437f916ba7fbe41595547caf5d02ab5c12"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/api-format.js",
+    "target": "runner/lib/api-format.js",
+    "bytes": 34699,
+    "sha256": "e7dd76d89a07b5618e90bf969bc4a8bb82046382c0424636d1926c5fad96f7fa"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/app-file-sizes.generated.js",
+    "target": "runner/lib/app-file-sizes.generated.js",
+    "bytes": 304086,
+    "sha256": "132cb2ca9dbd15ee383b6f8b78a2ceaf0c45d5b36713fc3fb4850ee188943fc0"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/app-files.js",
+    "target": "runner/lib/app-files.js",
+    "bytes": 12067,
+    "sha256": "89783341764e658df2bdfe12ee24565684267e54343111a32573ac5d3dc29278"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/app-icon-manifest.json",
+    "target": "runner/lib/app-icon-manifest.json",
+    "bytes": 3703,
+    "sha256": "ad0de39dc85d82d1bfea52f82f6c6cd74504e7176a5f8db742e7b7a3fa726d87"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/app-profiles.js",
+    "target": "runner/lib/app-profiles.js",
+    "bytes": 18930,
+    "sha256": "8798f81a53fb45b89c54c4864fec96181a3f01c76bb8e73c229719535c5c45a8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/apps.js",
+    "target": "runner/lib/apps.js",
+    "bytes": 411175,
+    "sha256": "09aa50e962aae8c8de0495d1820ce2737e0a091092e795688fcba5da62144669"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/arena-gog-source.json",
+    "target": "runner/lib/arena-gog-source.json",
+    "bytes": 55510,
+    "sha256": "ed20ac8e3471e42e1ab7dd10906dbc769b86acfebe369c01f2bd17a6a79b4ffd"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/audio-voice-worklet.js",
+    "target": "runner/lib/audio-voice-worklet.js",
+    "bytes": 10257,
+    "sha256": "da695e5a3c469718c3734a568666e01bacc4ab83467ad7465b35a24376d2a6ca"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/audio-worklet-host.js",
+    "target": "runner/lib/audio-worklet-host.js",
+    "bytes": 14592,
+    "sha256": "710fe1ede2bfcebbf0378109a755705f68a5792881669937e08430ec3d49cd14"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/batch-clock.js",
+    "target": "runner/lib/batch-clock.js",
+    "bytes": 2726,
+    "sha256": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/browser-input.js",
+    "target": "runner/lib/browser-input.js",
+    "bytes": 60908,
+    "sha256": "6da88dc4f3bf896b5a96a546d901848dec96cdb68c04ae3cc09b39b53d4e3de9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/browser-shell.js",
+    "target": "runner/lib/browser-shell.js",
+    "bytes": 210360,
+    "sha256": "bcc096641ebe4cd587aed5abbf160ef73dfee5bdaae96ad4a7581cec60e6d318"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/byte-provider.js",
+    "target": "runner/lib/byte-provider.js",
+    "bytes": 35492,
+    "sha256": "2a1f857d7eb653add0fcf8f10b4bf52fbc21316bce46368ef5ed32c90065b9ce"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/candidate-cli.js",
+    "target": "runner/lib/candidate-cli.js",
+    "bytes": 7985,
+    "sha256": "519d8ef938dd623e8bc2cd459c5f3b74f576fd1a40a30916fc269a4dcfa85391"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/canvas-compat.js",
+    "target": "runner/lib/canvas-compat.js",
+    "bytes": 984,
+    "sha256": "6e04a892db299ab17d5d30df645c846f9302407d461d3b25e50f34ac55808373"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/cdrom.js",
+    "target": "runner/lib/cdrom.js",
+    "bytes": 14034,
+    "sha256": "99020671e2b3f3eaca930d4acad0d502ed33d5295fadaaa28d32736c6a0c6727"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/cli-failure-cleanup.js",
+    "target": "runner/lib/cli-failure-cleanup.js",
+    "bytes": 717,
+    "sha256": "a345ba0788c9534f683d2b6579ecffe99d1bd6e974a510efedbbe34f0552a435"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/cli-recorder.js",
+    "target": "runner/lib/cli-recorder.js",
+    "bytes": 9287,
+    "sha256": "b0ec010dc076cb2edfbaeef615e0c7e262f4171d04e35e801ddfde23a7040eae"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/compile-wat.js",
+    "target": "runner/lib/compile-wat.js",
+    "bytes": 72471,
+    "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/control-server.js",
+    "target": "runner/lib/control-server.js",
+    "bytes": 7126,
+    "sha256": "d83da28c64b9eafdb55eb4525711c4efdcc9bc7a9c4ed7177326acab6e83ad7b"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d-command-stream.js",
+    "target": "runner/lib/d3d-command-stream.js",
+    "bytes": 46364,
+    "sha256": "e7cf12966a7be6e2d46f033d2eee85e24e50e957e4cfb399565d033bb4cac854"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d-geometry-batches.js",
+    "target": "runner/lib/d3d-geometry-batches.js",
+    "bytes": 3149,
+    "sha256": "2d585ef05cc7377d54e6b71b28b2cbdea721d966c88dc03659e4a44bd33115dc"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d-render-worker.js",
+    "target": "runner/lib/d3d-render-worker.js",
+    "bytes": 27907,
+    "sha256": "36b24a3c54f820f03c2c0feab1da3e72b3cc00f98ccd265dd9857f01b1230517"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d-shader-ir.js",
+    "target": "runner/lib/d3d-shader-ir.js",
+    "bytes": 9130,
+    "sha256": "b5e24577641dcc412d94e6d72354067dfb849bdadd3e6d6bd943d87a1e3cf434"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-backend.js",
+    "target": "runner/lib/d3d9-backend.js",
+    "bytes": 65335,
+    "sha256": "88dab6d6de661fdb61641921b19f0e63856ca6f5d6b47a1faad9de646c1dc0b5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-fixed.js",
+    "target": "runner/lib/d3d9-fixed.js",
+    "bytes": 29976,
+    "sha256": "2b12986d183e9808d58b169db7f64a5e17c04ee61f17fcc3fc9310290135a5e3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-host.js",
+    "target": "runner/lib/d3d9-host.js",
+    "bytes": 89674,
+    "sha256": "679ac5f58072cd97a6bf386f0d9a09a9ab09a78155066419939be6593558c452"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-render-worker.js",
+    "target": "runner/lib/d3d9-render-worker.js",
+    "bytes": 4815,
+    "sha256": "4ffbbb40e6276a2109eb673f88d61cbed53b3c3f365e4845a3d5a725c41fd0cb"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-shader.js",
+    "target": "runner/lib/d3d9-shader.js",
+    "bytes": 47006,
+    "sha256": "eae2e93aac01fe83284d522f052b9c8f783e73dc27701b6c47f1ee7c5153e834"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-software-backend.js",
+    "target": "runner/lib/d3d9-software-backend.js",
+    "bytes": 87766,
+    "sha256": "1bb9d9d7cadd19dbf0837a1958fdce87d52e62131f119c9e6813c1b290521b32"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3d9-texture.js",
+    "target": "runner/lib/d3d9-texture.js",
+    "bytes": 3107,
+    "sha256": "76fb654acd7601d767d7edd3b7146df11348bd9168175a3fe2be328c21a22d0e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3dim-draw-trace.js",
+    "target": "runner/lib/d3dim-draw-trace.js",
+    "bytes": 3255,
+    "sha256": "36899dbdb897e3904de737f71ae6e91b81913a34a142d437b5d559592c517061"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3dim-gpu.js",
+    "target": "runner/lib/d3dim-gpu.js",
+    "bytes": 52919,
+    "sha256": "363ff220b67bd8e87365c3003e2a2445376a490a8e511a697900de914d1053a8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/d3dim-render-worker.js",
+    "target": "runner/lib/d3dim-render-worker.js",
+    "bytes": 3080,
+    "sha256": "1383eb795447b7c1beeeb8993a81ac86f17fcfbd8fe04bba7cd7948cfd79473f"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/daggerfall-gog-source.json",
+    "target": "runner/lib/daggerfall-gog-source.json",
+    "bytes": 2264,
+    "sha256": "cdc24a5907ca2caef0dc2fbd804c601d28ae124c8e97c96ff3b6dd8932e75ee5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/debug-app-picker.js",
+    "target": "runner/lib/debug-app-picker.js",
+    "bytes": 15387,
+    "sha256": "eaf2d515f27f9db641541c32bcb3307eecb9645fd08623eff906b1f0c3d58565"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/debug-midi.js",
+    "target": "runner/lib/debug-midi.js",
+    "bytes": 7275,
+    "sha256": "75195abb8fcbc41511f4c4349284e2545e98f5ba39e533beae86ca527e7f70ae"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/debug-thread-state.js",
+    "target": "runner/lib/debug-thread-state.js",
+    "bytes": 24222,
+    "sha256": "f5e1a00527797b129d2e27fc43ba6f77b9dfd9c3b4ba0c0d3d26e9356cd037b9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/dib.js",
+    "target": "runner/lib/dib.js",
+    "bytes": 12071,
+    "sha256": "63a6045429754293b6fb826309110e36b75a0984e93d663baa9e612654d79a34"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/dispatch-trampoline.js",
+    "target": "runner/lib/dispatch-trampoline.js",
+    "bytes": 5332,
+    "sha256": "21267e1bec969169b1a7a619e7fee03514a88957ac9abfcc63ba0c0905a910af"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/dll-loader.js",
+    "target": "runner/lib/dll-loader.js",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/dll-registry.js",
+    "target": "runner/lib/dll-registry.js",
+    "bytes": 6271,
+    "sha256": "3ec807f95e31d613167104af9af48123cdbb8bd0cb1da26e4019d9f74eacc014"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/file-bundle.js",
+    "target": "runner/lib/file-bundle.js",
+    "bytes": 2461,
+    "sha256": "9a358b80d9c46ab5249e92c4c3835fd36ac744f5aacfc22c7879b37a95cdcf7c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/filesystem.js",
+    "target": "runner/lib/filesystem.js",
+    "bytes": 157994,
+    "sha256": "4c255570c74512262849420c74fe73704fcfe006dc09fb963272c66c9ea0b27e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/font-substitutions.js",
+    "target": "runner/lib/font-substitutions.js",
+    "bytes": 2966,
+    "sha256": "d52c2381d7b5453a5baca9439a3f2946005b4bc8b4eead5c98a0ea866a4a5d16"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/frame-intervals.js",
+    "target": "runner/lib/frame-intervals.js",
+    "bytes": 5466,
+    "sha256": "a301b47329a5a474df65743f71e4a9a91fbf7e4d81158792cd99667b3cfbb53b"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/game-wait.js",
+    "target": "runner/lib/game-wait.js",
+    "bytes": 10829,
+    "sha256": "171b78283e425597b95777a58bdf7387a37f50e91b6320de6b8c865f092a0999"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gdi-surface.js",
+    "target": "runner/lib/gdi-surface.js",
+    "bytes": 20152,
+    "sha256": "68878c4a105605274f29c4a0b9522c83db74909fd06ddb2192f6f3b11143b87a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gl-command-stream.js",
+    "target": "runner/lib/gl-command-stream.js",
+    "bytes": 7766,
+    "sha256": "dd3c35ddcc4e2f5b7d5e752ee9dd9c149892ef74193e70da9df05c4b573abdfb"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gl-compat.js",
+    "target": "runner/lib/gl-compat.js",
+    "bytes": 106632,
+    "sha256": "6abc9e29f5f8c0fac069ad869a1b32264f6942650298786e36d558fd0a38d04d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gl-render-host.js",
+    "target": "runner/lib/gl-render-host.js",
+    "bytes": 6433,
+    "sha256": "1cc7751013cb55193edb277a9e96a0a35647ce9e55738d60ae066bf13ea9efd6"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gl-render-worker.js",
+    "target": "runner/lib/gl-render-worker.js",
+    "bytes": 4054,
+    "sha256": "d97616307cd05922e46a3b9c68ef6313d216ef4d57387f45f6b7d7a46cbc9515"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gl-software-producer.js",
+    "target": "runner/lib/gl-software-producer.js",
+    "bytes": 1712,
+    "sha256": "3507d226ea5013ad030959ca96a434e9c6ae2505489effb7711216fa5f76436d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/glide-backend.js",
+    "target": "runner/lib/glide-backend.js",
+    "bytes": 41345,
+    "sha256": "4c0fccb77d6046415221c7e2c5d7af3edcb48b12b706a4164be02382efae7be3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/glide-host.js",
+    "target": "runner/lib/glide-host.js",
+    "bytes": 13912,
+    "sha256": "0b84f6f5758fdeca85fefdfaddb07b93695bc78be0f0b0af09ad871c99f3297d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/glide-render-worker.js",
+    "target": "runner/lib/glide-render-worker.js",
+    "bytes": 4430,
+    "sha256": "fd300dd0263d98620af9aea1fc99fd6e2567f86736b2704cb8ec8c670ebb1836"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/glide-software.js",
+    "target": "runner/lib/glide-software.js",
+    "bytes": 27955,
+    "sha256": "a541a16ad0594faefced64f89d9a09e7f12b295b2631d81df39eb9f1b6ddda46"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/gpu-backend.js",
+    "target": "runner/lib/gpu-backend.js",
+    "bytes": 49253,
+    "sha256": "5b02eb42dd21e02f0dc01bea589a121456e28fcf1dbcf42b5a647efa5181d1dd"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/guest-clock.js",
+    "target": "runner/lib/guest-clock.js",
+    "bytes": 3204,
+    "sha256": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/guest-rpc.js",
+    "target": "runner/lib/guest-rpc.js",
+    "bytes": 59328,
+    "sha256": "6547e7b1dd344b2ec29099b365e1a51395021482ded4c23abfaff64499fb462e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/guest-thread-host.js",
+    "target": "runner/lib/guest-thread-host.js",
+    "bytes": 73023,
+    "sha256": "9969054661788c03ac4d2dae3b86c5f94f0b71035b31d25efce936c01ef0f720"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/guest-worker.js",
+    "target": "runner/lib/guest-worker.js",
+    "bytes": 64591,
+    "sha256": "bbc1a93aeb9ef2db50cbc4aef1ba1f63dfd2afeb38e6936d1902cd6ac6bf9cdf"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/headless-gl.js",
+    "target": "runner/lib/headless-gl.js",
+    "bytes": 14928,
+    "sha256": "7e79d93edd690f4c2338874bcde1961360547bfd031d4b58827484e7b03689fb"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/hlp-parser.js",
+    "target": "runner/lib/hlp-parser.js",
+    "bytes": 9209,
+    "sha256": "9ace0b0178c57f11eb38476ad25944e1b523d1646483489d483c9de5dd76191e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/host-audio.js",
+    "target": "runner/lib/host-audio.js",
+    "bytes": 207077,
+    "sha256": "00e02890ff3010cb514bbff3e946d9cbc8c00d8cba2d2966a16950e585574bdb"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/host-import-sigs.generated.json",
+    "target": "runner/lib/host-import-sigs.generated.json",
+    "bytes": 39713,
+    "sha256": "7515bd48d37588bb194c3d683969195ac379c340d0cc0abaddd493a556b25069"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/host-imports.js",
+    "target": "runner/lib/host-imports.js",
+    "bytes": 196264,
+    "sha256": "b30e45ebdd8425966d75072ca42a44ef6e89f36586b991d9b7e377ee4891d232"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/host-window.js",
+    "target": "runner/lib/host-window.js",
+    "bytes": 63698,
+    "sha256": "1de3789863578647a2c8076f4074690370543163dc29bfac04f6add328d817a3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/installed-shortcuts.js",
+    "target": "runner/lib/installed-shortcuts.js",
+    "bytes": 5423,
+    "sha256": "a5f15467cf6309532ca65b8b4a304121f2dcd71dd176e0154d358e17fa30ac9e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/iso9660.js",
+    "target": "runner/lib/iso9660.js",
+    "bytes": 23867,
+    "sha256": "c840f7b10a3cd02ba4c122db7a37876088d6062adfbde2fed297d520ad51d544"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/launch-progress.js",
+    "target": "runner/lib/launch-progress.js",
+    "bytes": 39200,
+    "sha256": "4496dafb7b15c7801ad5a0b3eafd3773b1530a68e1c51758abd7b2171e13a492"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/main-io-wait.js",
+    "target": "runner/lib/main-io-wait.js",
+    "bytes": 3133,
+    "sha256": "e625fa54c9371b266bb7ca29cd92792bc35f560b4147cfda1bf101179a2ea4ef"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/media-cli.js",
+    "target": "runner/lib/media-cli.js",
+    "bytes": 3730,
+    "sha256": "86ee445779ccf36064890c3ef0ab2eaba8900c5c8dcd855a64d6d590d7c01fb4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/media-import-ui.js",
+    "target": "runner/lib/media-import-ui.js",
+    "bytes": 50466,
+    "sha256": "87ccbe12f99bb4b5ec3b7ec9b2a2bf879458fcf464c6fbb5ecff54704c2cb869"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/media-import.js",
+    "target": "runner/lib/media-import.js",
+    "bytes": 37173,
+    "sha256": "016c7188b954ace6f573b6fdfb3ff383617b40311bcba45635ad4db77b8d1d47"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/media-library.js",
+    "target": "runner/lib/media-library.js",
+    "bytes": 24163,
+    "sha256": "0915c4d7b2d29ff905a2e811426f59463a64d18b75e452ed5b399fdfa9f668d3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/media-sniff.js",
+    "target": "runner/lib/media-sniff.js",
+    "bytes": 7648,
+    "sha256": "0fd8b8269258d4664e52edeec70a9d1f7383b35bc361fd390e6c6e3713b7993f"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/mem-utils.js",
+    "target": "runner/lib/mem-utils.js",
+    "bytes": 13470,
+    "sha256": "c1164402fac449f7006c11acb557cfc70c7a2d4bf298c9fc61fea9cf3b4b4580"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/mobile-keyboard.js",
+    "target": "runner/lib/mobile-keyboard.js",
+    "bytes": 11915,
+    "sha256": "d8822c5dd20a6b2ef6d9df12af0f8d1b2f2ae2872b8fd1bfa21b276e0cb4f35c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/named-event-authority.js",
+    "target": "runner/lib/named-event-authority.js",
+    "bytes": 15058,
+    "sha256": "855917eb91029b5c8501c2de972fdb9da94bb948ee3570f5dbd98e8fea7dd278"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-guest-bridge.js",
+    "target": "runner/lib/ne-guest-bridge.js",
+    "bytes": 4652,
+    "sha256": "38f4458597a38719f3d20964039b305016ead8536d7b22a911ae14d4c5da336a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-image.js",
+    "target": "runner/lib/ne-image.js",
+    "bytes": 7091,
+    "sha256": "5ce051afa41391e63bd88b2084098c52ba515241c02e99a423c6d4f3632be7d0"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-invoke.js",
+    "target": "runner/lib/ne-invoke.js",
+    "bytes": 5358,
+    "sha256": "c75e1d432ab136b7ed49deaee3886ce224f67bf35e13015e2f4d66dd04e377f5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-lifecycle.js",
+    "target": "runner/lib/ne-lifecycle.js",
+    "bytes": 12104,
+    "sha256": "ee93030db5ac0c85ac1378e600c170dce07fd896acfe6bed5c7cef5fa5677fb4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-load-error.js",
+    "target": "runner/lib/ne-load-error.js",
+    "bytes": 676,
+    "sha256": "c4ef6991b40b903833dedbf8fff5d214b882b194dbbca7eb9259dd1c67b800fa"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-qt-stack.js",
+    "target": "runner/lib/ne-qt-stack.js",
+    "bytes": 2551,
+    "sha256": "3d3971c6982a2e72b9698fbdc77aba603ad69ae038ea3bd30a928f2bae4cb4c4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ne-sources.js",
+    "target": "runner/lib/ne-sources.js",
+    "bytes": 3473,
+    "sha256": "e2c12ce6a3f00dbad4649afe231a18b7cabb7d90369f402f98575f2acf6d60b2"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/overlay-store.js",
+    "target": "runner/lib/overlay-store.js",
+    "bytes": 22486,
+    "sha256": "03cde7095d5eca0b1c32d6cef272b30a56d55d922150a333ae1f20a62319d84e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/page-settings.js",
+    "target": "runner/lib/page-settings.js",
+    "bytes": 7161,
+    "sha256": "937b21ccf5e3864ca46b08c295899ec5d9e54a56511343839b63616e078b8d32"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/page-viewport.js",
+    "target": "runner/lib/page-viewport.js",
+    "bytes": 14609,
+    "sha256": "8ee519c033398a81afdfcac3a1d9b5992e60302b35501e98e86f919ced779108"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/pe.js",
+    "target": "runner/lib/pe.js",
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/perf-hud.js",
+    "target": "runner/lib/perf-hud.js",
+    "bytes": 38796,
+    "sha256": "7c790bd80d8a06e8e4f9cf81fcf65f4746c04b22ba165b405435b0e0a2d22779"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/phone-diag.js",
+    "target": "runner/lib/phone-diag.js",
+    "bytes": 25484,
+    "sha256": "3d3b3e0e2624acbbb0c5a7763261b71173914ef869b3aca20cfabbd695717ff8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/present-frame-audit.js",
+    "target": "runner/lib/present-frame-audit.js",
+    "bytes": 6506,
+    "sha256": "f11730a9baf9b668a3c80598ee59738425ff5f9fac46142e61b10498c2c0c6de"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/presentation-filter.js",
+    "target": "runner/lib/presentation-filter.js",
+    "bytes": 53087,
+    "sha256": "b8820a6da349c51a7a614b9b561f6cdf08358e23c7599136a5e6b67922aeb058"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/process-boot.js",
+    "target": "runner/lib/process-boot.js",
+    "bytes": 52725,
+    "sha256": "3b3103b5783900c1783be3a5683bba87058d81dc42958b12623facbd71d157fd"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/process-send-broker.js",
+    "target": "runner/lib/process-send-broker.js",
+    "bytes": 11076,
+    "sha256": "60747d39426faf69836d711a7019b3ab08479f2521f70bda67ae78e2c601f47a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/quake2-demo-source.txt",
+    "target": "runner/lib/quake2-demo-source.txt",
+    "bytes": 1325,
+    "sha256": "f23326e1377cecff60e13fc40e334413d3f08fcd9afa08eac774c5985fd80269"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/quake2-modern-controls.ini",
+    "target": "runner/lib/quake2-modern-controls.ini",
+    "bytes": 568,
+    "sha256": "9a8f1293a4e16ccbb58e1e91520b5562354ba944ef951e61830410dc3356a20c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/quake3-demo-source.txt",
+    "target": "runner/lib/quake3-demo-source.txt",
+    "bytes": 556,
+    "sha256": "efd14ed4967ed0e8e76845b0edcc9988a4351c37703a52e8d05798be19c11d8e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/quake3-modern-controls.ini",
+    "target": "runner/lib/quake3-modern-controls.ini",
+    "bytes": 488,
+    "sha256": "963c12f19de48e0b183835284a50586f1838df4bb349174277f3b92abc2b5795"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/raster-canvas.js",
+    "target": "runner/lib/raster-canvas.js",
+    "bytes": 17590,
+    "sha256": "01528dda1024df6d5c98ef8db9a11d045f4aa5b9c7db0cc84d6796fe03d93ef3"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/recorder.js",
+    "target": "runner/lib/recorder.js",
+    "bytes": 19878,
+    "sha256": "555376002e04f3b6998b8f5a0c4b412a699c67ae7f7ed745212c7ccdd046b48d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/region-map.generated.js",
+    "target": "runner/lib/region-map.generated.js",
+    "bytes": 35959,
+    "sha256": "8d5732373933ec882ac627c3c56c43621006d7f203d519498b946053601871fe"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/registry-snapshot.js",
+    "target": "runner/lib/registry-snapshot.js",
+    "bytes": 2595,
+    "sha256": "c400a4e9609faea50f2f720490fb2e5569bb24653cb638a1ce4ae86756d4dbfc"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/render-worker.js",
+    "target": "runner/lib/render-worker.js",
+    "bytes": 10159,
+    "sha256": "b0edba7e1a0a09879e8dc27dec55af247dabb581494cfd3df570bbc3df9a3dba"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/renderer-input.js",
+    "target": "runner/lib/renderer-input.js",
+    "bytes": 177069,
+    "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/renderer.js",
+    "target": "runner/lib/renderer.js",
+    "bytes": 214278,
+    "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/resources-icon.js",
+    "target": "runner/lib/resources-icon.js",
+    "bytes": 20791,
+    "sha256": "103ed8f4e27a00aacb88a1251b148f7db19ae49795d50afbf0f3b1511f5597a5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/save-bundle.js",
+    "target": "runner/lib/save-bundle.js",
+    "bytes": 28589,
+    "sha256": "3683e564797c1df2c4e9e335b7eb2fca5edcf7e5f440f125bdadbcc846f5f848"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/save-sync.js",
+    "target": "runner/lib/save-sync.js",
+    "bytes": 12628,
+    "sha256": "0c26053d75655e1a5117cb635980c0a60df0b33f339dd64f3b6eb8718f260875"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/session-chips.js",
+    "target": "runner/lib/session-chips.js",
+    "bytes": 17448,
+    "sha256": "aa9d5103e3c53901a9d7c3e3e567c89b6a42d27843842cffceb6475d0cd81e5c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/shell-link.js",
+    "target": "runner/lib/shell-link.js",
+    "bytes": 3388,
+    "sha256": "a9db32724bf31dc754e8ea34d304f35420b22cf81440f28fca383cbbc9a34868"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/shutdown.js",
+    "target": "runner/lib/shutdown.js",
+    "bytes": 26778,
+    "sha256": "2ca9baa752f48f6f0c0346232ec86807d47e0728f99c3af4ca0364927e7f3a1e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/startup-clock.js",
+    "target": "runner/lib/startup-clock.js",
+    "bytes": 3363,
+    "sha256": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/storage.js",
+    "target": "runner/lib/storage.js",
+    "bytes": 80223,
+    "sha256": "92639c192ce2d34ed140e4e7312bcaa663acc0f4cb5bec33b6e97310e51e744a"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/surface.js",
+    "target": "runner/lib/surface.js",
+    "bytes": 14312,
+    "sha256": "78fc5304fe8a51aee13b65e6fef7dcb218c302716dfe46c61c22224fb33bb36b"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/thread-manager.js",
+    "target": "runner/lib/thread-manager.js",
+    "bytes": 226622,
+    "sha256": "268e3baebcbef4018cfc9fdf5cfcac18157bcb5ac952c5d57c8d4a248f1a684d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/thread-send-waits.js",
+    "target": "runner/lib/thread-send-waits.js",
+    "bytes": 14963,
+    "sha256": "6b6552898b00e7e5fa2a3ed293dc495107d15d6e3f6379dfab132f6105fe1747"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/tinysynth-offline.js",
+    "target": "runner/lib/tinysynth-offline.js",
+    "bytes": 11712,
+    "sha256": "3e1c857d4478cd6b6ac3dcae4bdca8fdd68e00269d4d136032961bd59ab32f53"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/touch-controls.js",
+    "target": "runner/lib/touch-controls.js",
+    "bytes": 116287,
+    "sha256": "a4277215c2521c16a28e0e8f6866a2d51c3a8c768fea298f0fc95633f2f18e28"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/touch-cursor.js",
+    "target": "runner/lib/touch-cursor.js",
+    "bytes": 26289,
+    "sha256": "56d3a1373d5a5dd4d984a793b94b6b85c2a52ff3cd040baa4da3d0544bc6a2c0"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/ultima4-gog-source.json",
+    "target": "runner/lib/ultima4-gog-source.json",
+    "bytes": 43547,
+    "sha256": "9b7f70edab883d7e9d6dd1edbc92f122b40a49671dcbc4c4db710b4ec48eebcf"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vendor/tweetnacl.js",
+    "target": "runner/lib/vendor/tweetnacl.js",
+    "bytes": 62737,
+    "sha256": "25b9f03f50183864436ccbf16d1d6ae72ed7cdf3330fa9eb0053d369e5962268"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vendor/webaudio-tinysynth.js",
+    "target": "runner/lib/vendor/webaudio-tinysynth.js",
+    "bytes": 62376,
+    "sha256": "65aa9b78b1bdc8cccc1a7e83eb6cfc24310a548cb6be4334096a8fb1d303a52c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vfs-export.js",
+    "target": "runner/lib/vfs-export.js",
+    "bytes": 4975,
+    "sha256": "7afac71e4a31059b03ebcc0e9ae5a2d49e716c9fa366d7c08f69e44430cf5b3d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vfs-host-files.js",
+    "target": "runner/lib/vfs-host-files.js",
+    "bytes": 3689,
+    "sha256": "7e120abc0ee5e945e478ee61cbecfd3e5186843cbfc238fbee0d4e39f2b785a7"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vfs-overlay.js",
+    "target": "runner/lib/vfs-overlay.js",
+    "bytes": 14961,
+    "sha256": "2d725c5ee5f05ef2f843083b895d4f5fce82223db1db0520db1515e11d28ebb5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vfs-persistence.js",
+    "target": "runner/lib/vfs-persistence.js",
+    "bytes": 16141,
+    "sha256": "b8a7803f2b0b8880f5b02a673f241f2e6b036c4468b950cf7b43ed38a289dca9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vfs-seed.js",
+    "target": "runner/lib/vfs-seed.js",
+    "bytes": 8258,
+    "sha256": "c4ea49c788a5c6331cc900742916315e4d5c68cc2a806b947ae26b4814489c1d"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vlan-lobby.js",
+    "target": "runner/lib/vlan-lobby.js",
+    "bytes": 12355,
+    "sha256": "a368f49ea1feb62107a3a01cd0fa76ccbe086d8b4c8475d3836b17e921db4326"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vlan-room.js",
+    "target": "runner/lib/vlan-room.js",
+    "bytes": 12461,
+    "sha256": "ab5a023cb10bc55ac0398b0a27a875abbc8fb86e915b32031386a3648d92afb8"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vlan-rtc.js",
+    "target": "runner/lib/vlan-rtc.js",
+    "bytes": 47377,
+    "sha256": "b88a9dea39d562f23cd4ea32b8ffed3fc7916f3f2564166d70726288e7f526ee"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vlan-star.js",
+    "target": "runner/lib/vlan-star.js",
+    "bytes": 19399,
+    "sha256": "73a712b009f28804fa33ade5ccc8d804eccefd72321e678bac5f1c326f97616f"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/vlan-wire.js",
+    "target": "runner/lib/vlan-wire.js",
+    "bytes": 13050,
+    "sha256": "d3d6eef27235b210519530aa746f29e29eb75558c3d8dcda79b8a72dd9faf659"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/wat-manifest.js",
+    "target": "runner/lib/wat-manifest.js",
+    "bytes": 2995,
+    "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/watx-compile-worker.js",
+    "target": "runner/lib/watx-compile-worker.js",
+    "bytes": 17721,
+    "sha256": "166b14a76feb5cef7281927421e085a7fb87c099f7116727df168c195f0143dc"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/watx-launcher.js",
+    "target": "runner/lib/watx-launcher.js",
+    "bytes": 34797,
+    "sha256": "c219f778dfa6de9086198b0b96edc364af1f3cdf31c70731bef3f1d4b61a5595"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/winboard-source.json",
+    "target": "runner/lib/winboard-source.json",
+    "bytes": 4655,
+    "sha256": "e1205b09cdb7f0dfcf610ad0c9b33e504c7b2d251a224ea21c4aa0fab6a88286"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/worker-imports.js",
+    "target": "runner/lib/worker-imports.js",
+    "bytes": 22458,
+    "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/x87-semantics.js",
+    "target": "runner/lib/x87-semantics.js",
+    "bytes": 14191,
+    "sha256": "bd8b361451703c37f1697c9ea9e6c307b849609c5220e68415fc1a8eea0c631c"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "lib/zip-mount.js",
+    "target": "runner/lib/zip-mount.js",
+    "bytes": 32525,
+    "sha256": "0992d15a85a3fa54dbcfe8bdecf2ce1a57e1922beba457f18af438e107e3d274"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "package-lock.json",
+    "target": "runner/package-lock.json",
+    "bytes": 22493,
+    "sha256": "0057c3be43c6b6dac68158f84a8c1b7831ccc44c8a92bd3d263df5fbc6425eef"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "package.json",
+    "target": "runner/package.json",
+    "bytes": 845,
+    "sha256": "d152eddf8e18958e6cfc13514339a54b0bcbb65d66d8d56d5aa7c75eb0960683"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "src/02-thread-table.wat",
+    "target": "runner/src/02-thread-table.wat",
+    "bytes": 33956,
+    "sha256": "e6b800c4df6b687bb7cf9769cacf85b3f5a6243dab04f6bc7999a826d68e2426"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "src/api_table.json",
+    "target": "runner/src/api_table.json",
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "src/win16-ordinals.generated.json",
+    "target": "runner/src/win16-ordinals.generated.json",
+    "bytes": 42442,
+    "sha256": "a61a6c67700cf35f29c75cdc5a2e3f5923f9ce6e39a69db433d04d524a8e21f4"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/binaries/tlbs/stdole2.tlb",
+    "target": "runner/test/binaries/tlbs/stdole2.tlb",
+    "bytes": 15088,
+    "sha256": "db456130e4b131aff27a6a3179464a28c9452f06eb6f2081d2aea38128d31895"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/compile-src.js",
+    "target": "runner/test/compile-src.js",
+    "bytes": 2508,
+    "sha256": "b727e225a76f45b1b4e609885f5eccee3cf45566ea7ed211601b9d6b2fa0fc76"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/run.js",
+    "target": "runner/test/run.js",
+    "bytes": 683435,
+    "sha256": "1b4d1a43fc6167ed51328b1cb13c66d5114e35955f505d935279f1ec8cf49799"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/runner-experiment-report.js",
+    "target": "runner/test/runner-experiment-report.js",
+    "bytes": 24188,
+    "sha256": "4a861fd90c1f6122cbf912b67cdf7758932e61a3fef83e28002e9dd2bad07408"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/runner-experiments.js",
+    "target": "runner/test/runner-experiments.js",
+    "bytes": 39152,
+    "sha256": "44641d2f9b807e448d10cada8a8702761c5fce497ada5e87e37890dab9f4b209"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "test/runner-win-census.js",
+    "target": "runner/test/runner-win-census.js",
+    "bytes": 7071,
+    "sha256": "0c8a90e38c90df07d970d1fff068a015ae697f2a04dda56df05e4ba5aba0dde5"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/build-page-translation-stats.js",
+    "target": "runner/tools/build-page-translation-stats.js",
+    "bytes": 6442,
+    "sha256": "65d9f4b968ec8d15b1de332195bc1f58672185155cfd2b672fa78be490aac0a9"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/diablo-gameplay-bench.js",
+    "target": "runner/tools/diablo-gameplay-bench.js",
+    "bytes": 10737,
+    "sha256": "873269b5b8713afd313aea3ef74b196e6e1e5a9587d5820518bb8c1435268c58"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/disasm.js",
+    "target": "runner/tools/disasm.js",
+    "bytes": 29904,
+    "sha256": "4d64e8b9b49a1901feb05df182a112f7f1eb4c5875a45d9f376172e8a2668166"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/dump_sprites.js",
+    "target": "runner/tools/dump_sprites.js",
+    "bytes": 3035,
+    "sha256": "e27a02645940ac5120f99127e6dabebd062b3c9b6e2873184d4bc770ee9ffe05"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/region-layout-hash.js",
+    "target": "runner/tools/region-layout-hash.js",
+    "bytes": 8031,
+    "sha256": "5bdbd6e5ee30c0facb821e78fc1de481c07839677796d09825573902ac8026ac"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/region-layout.js",
+    "target": "runner/tools/region-layout.js",
+    "bytes": 8174,
+    "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/simd-ops.js",
+    "target": "runner/tools/simd-ops.js",
+    "bytes": 8592,
+    "sha256": "7074fdaa3b026d976b7c995bbae37c7b64794b1f3329a5e03acea98620573e9e"
+  },
+  {
+    "kind": "git",
+    "donor": "/home/user/wine-assembly",
+    "revision": "72e7a30d6e36df896eb25007b6139d750e715720",
+    "path": "tools/watx-closure.js",
+    "target": "runner/tools/watx-closure.js",
+    "bytes": 5027,
+    "sha256": "60d2f039abeb4a940405c885cb507ee98649eb3659969580c336a7302e5bb86c"
+  },
+  {
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/runs/20261021-army-integrated-gameplay-scroll/provenance/wine-assembly.wasm",
+    "target": "runner/build/wine-assembly.wasm",
+    "bytes": 1878508,
+    "sha256": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/AUTHORS.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/AUTHORS.txt",
+    "bytes": 2048,
+    "sha256": "0b7f1770a6469fd6428fb64063a5cf58fa46cb0edb6693c31a945bbba5bf94fc"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/CHANGES.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/CHANGES.txt",
+    "bytes": 4863,
+    "sha256": "e88fef659124737403ac17cb9b620faa6115d6c95b76056a3de49b588b5c3fbf"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/COPYING.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/COPYING.txt",
+    "bytes": 18007,
+    "sha256": "dcc100d4161cc0b7177545ab6e47216f84857cda3843847c792a25289852dcaa"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/bar.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/bar.png",
+    "bytes": 243,
+    "sha256": "e4bfcda8695a86da13c865a70f2a275d80cfccf460bcf444b90210e666edae9d"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/background.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/background.png",
+    "bytes": 384459,
+    "sha256": "ee9084b6e6be0f7be073c6ff2c4bbc59c3a84301f54359554f3179ece0452629"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/bomb0.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb0.png",
+    "bytes": 563,
+    "sha256": "9486589da414eea71e85bf886795bbe494a30132797debae4073b16a7783ca1a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/bomb1.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb1.png",
+    "bytes": 1285,
+    "sha256": "ef0514b42d619c8484d0c2a6fc599d5927362539d35b4a1efb1b41675e4a1564"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/bomb2.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb2.png",
+    "bytes": 1282,
+    "sha256": "1933875431af82c8071cc526ba42eeae524677632e1285180431f4b84248576a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/bomb3.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb3.png",
+    "bytes": 1284,
+    "sha256": "0605bf8cef2193d122771e0b495658785a44d3e2b811193609e50fb3f1f2bbf4"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/explosion1.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/explosion1.png",
+    "bytes": 175,
+    "sha256": "bf10a0bd480f155ed706a4ccc50dfdd6e13b4a664ba32038de9eca8e5181e9db"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomb/explosion2.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomb/explosion2.png",
+    "bytes": 176,
+    "sha256": "3f312785f07ce128fc0f3b17e068721d3e81a06c2782f4403e567ec57f43deed"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomber/bomber-amazed.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-amazed.png",
+    "bytes": 841,
+    "sha256": "f88857ed0189eb30c2befa2f389f7f9cc9db23a303e001826dad17349249524d"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomber/bomber-happy.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-happy.png",
+    "bytes": 749,
+    "sha256": "1bb498bda51c22a08efb9c3ece06fae0d36d6401ced9f9ca2fcb16690f3d816a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bomber/bomber-sad.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-sad.png",
+    "bytes": 747,
+    "sha256": "36afa699eaa03d0a6d6b08acd2ffc4fbb5946759e1168e789cd983ae4d33be33"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket1.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket1.png",
+    "bytes": 1177,
+    "sha256": "ad0cd6ca4ab67aecaeafcd031378e76b2c4abddd9b0865008adf07ad24f86670"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket1red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket1red.png",
+    "bytes": 1216,
+    "sha256": "e3611625f4a5ac831c31eddf490a4ddbf7cc063dfe43113933f942216f00045b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket2.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket2.png",
+    "bytes": 1207,
+    "sha256": "16e47a126d4aeb4d32f7292d2a14b3323f55680f18187899d6a55cf031b7189a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket2red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket2red.png",
+    "bytes": 1252,
+    "sha256": "5c3a8ae18445390c533843f89c09a5ec9b6fe93c3bdfd38490a119c0c61fb064"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket3.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket3.png",
+    "bytes": 1252,
+    "sha256": "e9170faca097d4182a8894fcf437d9ae18042ea3583b6fcfdd00a9a9c7880d75"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/bucket3red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket3red.png",
+    "bytes": 1282,
+    "sha256": "3568cd67befd465be5a2e7db190c3ab1a4fe094c3f99ab409e1282eb871587a3"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket1.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket1.png",
+    "bytes": 987,
+    "sha256": "9387522f5c855c14eca57781ed7414ba84999756744dd74004e01fb5c7a2503c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket1red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket1red.png",
+    "bytes": 977,
+    "sha256": "eb0194740ec6894626ebbafd4a3769cb8c76e8e3b011f5e6cdd912b9b165dc47"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket2.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket2.png",
+    "bytes": 1008,
+    "sha256": "e8287e429dda96adf739b9726c726117eaae3c559445061ec379786ea3efc37e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket2red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket2red.png",
+    "bytes": 1005,
+    "sha256": "2f30b6be3c9bb7c8edb3cfcc54560634563775a00e2cbade70d3d28eb7cbbb80"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket3.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket3.png",
+    "bytes": 1024,
+    "sha256": "fbdf18e9f2be50f2f3dbc4f0cdc7b07bf5ee19fa3150e3d3c251416fc60a6cdf"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/bucket/small-bucket3red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket3red.png",
+    "bytes": 1023,
+    "sha256": "17c5d00ee56391aa2cda0d33d624b4b3609b7774f1d7d3501d6c4aeb6b423fc9"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-down.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-down.png",
+    "bytes": 178,
+    "sha256": "ab626c254cd3319a7788f8707d43354a658fcf971fd738a96888f536b8682c6b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-left-down.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left-down.png",
+    "bytes": 152,
+    "sha256": "520be6a4be87f3479b37cb75a782ef7b2ad8f03988c740b498c2faca595082c8"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-left-up.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left-up.png",
+    "bytes": 155,
+    "sha256": "b4ea75faf089ea613e13b5e687d87cbf1c71e15aa0f9dc39bd6e8c6899d6e74f"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-left.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left.png",
+    "bytes": 179,
+    "sha256": "2c528967ddeba853748d650ad2ef207afa6366ec0d72ee23ee14336742afdcd9"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-right-down.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right-down.png",
+    "bytes": 151,
+    "sha256": "2c033a2d660c4915e506e51492d13c0088f1f701b81c73ddc927035f219fb6f2"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-right-up.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right-up.png",
+    "bytes": 154,
+    "sha256": "291e04eb59f886f3aa5b6cff2ebca9a68b0d2a4401f8648b63e09207ad9a091d"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-right.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right.png",
+    "bytes": 179,
+    "sha256": "80869af505ae89a1dfcfec878ea725c14684568512d49b888d7cae3e89aeda10"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/drop/drop-up.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/drop/drop-up.png",
+    "bytes": 180,
+    "sha256": "91ca65198b4dc47b155328ffdf88f63f7039c30c7596a197501b6a3c1bcc4eb4"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/game-over.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/game-over.png",
+    "bytes": 2930,
+    "sha256": "87d8d8f3424733ce13915f4599bfbbc7b40f3791cc63c2dbf2f0d78c2014172e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/highscore.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/highscore.png",
+    "bytes": 5238,
+    "sha256": "150adc983a8ff5aa5bde9ddb26110c207cc68013e815bed1c89fff1c708b58a9"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/0.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/0.png",
+    "bytes": 153,
+    "sha256": "73eaa8736f7c421d59d6db336e70cb3596dce7e17531ca84d91747f9c2c81c89"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/0red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/0red.png",
+    "bytes": 153,
+    "sha256": "6aa78a6f82698b98b11f79166ec7f3233b7f7890a1255328597eeae378af69eb"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/1.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/1.png",
+    "bytes": 101,
+    "sha256": "a261c1cc4d6b5caa377bbf3ead4dcbe1c62fd2f2a5db706ec7dd8f608ee18fe1"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/1red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/1red.png",
+    "bytes": 101,
+    "sha256": "5f19667ca89cdbd43349e3fabeb61b7b23e9434b1b9d2e04c1dba2d4959a134b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/2.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/2.png",
+    "bytes": 158,
+    "sha256": "4dfc95751b1ae8fc46316b28796b94e15f1620b67d6e75fa163f5c310b2ed3ed"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/2red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/2red.png",
+    "bytes": 158,
+    "sha256": "0eb158636808591974416891fe21f70b3bee8e8ff8c44af8dcbda38910982d39"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/3.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/3.png",
+    "bytes": 162,
+    "sha256": "db981b614a3209c6ebc7b40c2185d220fd85b39bada1bcc1c4f1435ce283ba68"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/3red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/3red.png",
+    "bytes": 162,
+    "sha256": "8d17db8ca208d4b912d596c48fb42659f840e3b99a22f62177518d5b00da3d21"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/4.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/4.png",
+    "bytes": 154,
+    "sha256": "35d5432f1f12c1cbdbdf7cc3d5a3c9f0bf704164b13527e2a3841f745574d4e3"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/4red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/4red.png",
+    "bytes": 154,
+    "sha256": "5d25799bd6e037382b2d882cc28d62bdba3089a297f7e31efe59183123676c1c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/5.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/5.png",
+    "bytes": 159,
+    "sha256": "c435b75527d3337aae1ab25acc763978f90d3032e34055b4ce5aa181fd5d6854"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/5red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/5red.png",
+    "bytes": 159,
+    "sha256": "73bd9f983e0879d47f2651fc6022787f999e75de468487a3947969b98b9b387c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/6.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/6.png",
+    "bytes": 175,
+    "sha256": "92526d4bd35b0248149c5ca5277b088631c387e89d3d3b2ab17062c73d3a064a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/6red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/6red.png",
+    "bytes": 175,
+    "sha256": "9475471ddc19a6611972de031e7bb0e983a912e800ebbec17d4a6746ea8265b6"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/7.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/7.png",
+    "bytes": 143,
+    "sha256": "61e182c94bbb530439b1de92953cc0ca70d14a81dfc7d1e3fe72228fa63304f0"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/7red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/7red.png",
+    "bytes": 143,
+    "sha256": "4a402800e6ffa61cf01010ba0bf30f902b3dbba3e7327193f267e579009e8109"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/8.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/8.png",
+    "bytes": 163,
+    "sha256": "c6b9ea6a0607fde650219580687c55b74d681789b3339c8535700ed7b11392e7"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/8red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/8red.png",
+    "bytes": 163,
+    "sha256": "ede3e702951a7c5db80ecf300dfd571bdf032b28f77e4f66d577cded212b39f7"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/9.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/9.png",
+    "bytes": 173,
+    "sha256": "6765ea41e21ba743b72f5e125731138f95b86e36653ae0997ff33e5f8cbefa79"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/numbers/9red.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/numbers/9red.png",
+    "bytes": 173,
+    "sha256": "dff666f62a318803570912ac310e1bf48f15ed1e8b58533f26d03c33ce16e358"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/paused.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/paused.png",
+    "bytes": 2151,
+    "sha256": "455f230247bfc0bb17937342247c92f804f3b917369f9d2fbf99baa6b4f33964"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/press-escape.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/press-escape.png",
+    "bytes": 8151,
+    "sha256": "eb7a7340dedc2fbc43aef2494a90537182a3f6c5be28cc4dc62ec5f4a93868b4"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/game/press-fire.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/game/press-fire.png",
+    "bytes": 5744,
+    "sha256": "47eadeccea65b837500998a52a59a6a03bb30d88b4a6a93992ed174a02b4bc94"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/highscore/highscore.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/highscore/highscore.png",
+    "bytes": 118571,
+    "sha256": "2fa339673d318f36b7368abcc92c3b2408104e1e41bb42cf38a4c971bb71a8f8"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/highscore/letters.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/highscore/letters.png",
+    "bytes": 5842,
+    "sha256": "a9c3a3443b0ed99fd4b74f08a21b0ed13ea8eadc288008c73316e968cf573674"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/icon.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/icon.png",
+    "bytes": 2177,
+    "sha256": "05dc51279080261f55296b9f1bf77429cecff55a516d0c8b724aedbea63e5807"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/loading.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/loading.png",
+    "bytes": 13834,
+    "sha256": "b4abb6901628f943c912c125198eb3483347a52f2f1cc37cd5518edeb091d22b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/make-offs.sh",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/make-offs.sh",
+    "bytes": 517,
+    "sha256": "c17ea9fdb2b35c24aed1769332415f5a244ebf80f503b7ecc12bef45cba665b3"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/0percent-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/0percent-off.png",
+    "bytes": 436,
+    "sha256": "b270892a647096c0845ed969b88f0e6d2f98c0ee4d99c741e8d0d204f56ee123"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/0percent.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/0percent.png",
+    "bytes": 484,
+    "sha256": "5943785c0cf367d31f46a3f564bdb5222950c4b7e22ea720856586d3700d87e3"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/100percent-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/100percent-off.png",
+    "bytes": 546,
+    "sha256": "f462dd1096ee266972778e498f6dbaef133a19d6ec7253960df0046cdd906196"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/100percent.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/100percent.png",
+    "bytes": 629,
+    "sha256": "638cdcad8efded86d8d17c4698bb1b10e2c2bc46606a6165d2b855f7c7d80313"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/25percent-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/25percent-off.png",
+    "bytes": 534,
+    "sha256": "e0223afb3bd59c9d55757a0674f53635c9a87a59f4a5ffc8c5249ee8edfa6c71"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/25percent.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/25percent.png",
+    "bytes": 618,
+    "sha256": "5ea159041ff76ebad8596eb89d49357d17ac4c7542921bf05481ce316ce3ea68"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/50percent-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/50percent-off.png",
+    "bytes": 544,
+    "sha256": "2c7a26b3d04656f9098fa9d2ba8f2c28ccbbff1f98c477d1655ccd1834f9fa12"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/50percent.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/50percent.png",
+    "bytes": 630,
+    "sha256": "1a7472a3248901f5333e35dc36394f268a0ec28b32d48d64cb6d935f200f1ae6"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/75percent-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/75percent-off.png",
+    "bytes": 547,
+    "sha256": "ab95ff7384cba624711d80cf4ddce49058dddd90028dc6e36d9322b46c5f5e87"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/75percent.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/75percent.png",
+    "bytes": 633,
+    "sha256": "e9bf84c2868aa9431e026747f0aa9013da564088009d3c79dea34498883b9f07"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/detail.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/detail.png",
+    "bytes": 10396,
+    "sha256": "2ff463fe63ca68c97558c44275d0757744e8b32ed5095982609c19a2ff615f1c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/difficulty.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/difficulty.png",
+    "bytes": 14243,
+    "sha256": "28d34e1a39368ac964b12433e940fd4de98a1febcc7cf6d15d9da3663778166c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/effects.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/effects.png",
+    "bytes": 3857,
+    "sha256": "f2883cb448bded237afc7e65fd859dbfa800f9eae361748dc7caa42f388eecc0"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/hard-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/hard-off.png",
+    "bytes": 4718,
+    "sha256": "aa9c3b33b9ce1e1ed5d56c40fac0ff6ab54dfa3af765a71c6a96b83c4f215d8b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/hard.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/hard.png",
+    "bytes": 8049,
+    "sha256": "9062ff76eeb79b28437c81ec5af1fb7e898dec6785b2ec0547efcbb15859d44b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/music.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/music.png",
+    "bytes": 3335,
+    "sha256": "15109d66db9c733a5de0cc70e1a872e33d9bdf0215de7e641d82a656bc794a0c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/normal-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/normal-off.png",
+    "bytes": 6273,
+    "sha256": "b4684e17c805707d67fb230a68f742cd6cfc15fb6cc6c960e5b072bcc0aef440"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/normal.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/normal.png",
+    "bytes": 11189,
+    "sha256": "427cecf36250f227b614e2223d094336be90c87671d419d4d9a36b94328439f4"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/ok-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/ok-off.png",
+    "bytes": 3650,
+    "sha256": "32439dc24132ee447a9ebe4b801069517a87ce0918a8c9d2c3478e5a1651bac6"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/ok.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/ok.png",
+    "bytes": 6118,
+    "sha256": "acb685bb46661ac0d49a612eb041a4df04f4acd89c3a4b144b25f358d8b08e7e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/options.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/options.png",
+    "bytes": 28850,
+    "sha256": "81ed7d9997fa57956beddee5653600e71bcc8a100417b981989ef5c90f6f1020"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/player-one.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/player-one.png",
+    "bytes": 5961,
+    "sha256": "43eb41726d3a0077a629bafeb4e8a887d6f6d4ff3e2b7438aa9d32d74d1150f1"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/player-two.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/player-two.png",
+    "bytes": 5825,
+    "sha256": "c21a911276da97dde3a5ffb3265784f32eb586ce30f6ccf8fdd97f4046ffa648"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/volume.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/volume.png",
+    "bytes": 11933,
+    "sha256": "4eb6174a500b06cded434088d13dc648dd21ed694c4cafef5683dd821bb8ec6c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/zen-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/zen-off.png",
+    "bytes": 3793,
+    "sha256": "de00c63b32201dd55c1243dea4bb832f56555118dd3ac752b23dd7ab65b60c33"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/options/zen.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/options/zen.png",
+    "bytes": 6220,
+    "sha256": "c1f77a58b5684d226a0226e19b5dbd2ab201e06bc49fa3d79f4f717f764055fe"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/spray-black.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/spray-black.png",
+    "bytes": 116,
+    "sha256": "3a8560c9917512fdeec1fad6d966f703f6a10480abbebc623eccb9eacc428c7b"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/spray-blue.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/spray-blue.png",
+    "bytes": 134,
+    "sha256": "b393051e7679154d834a37786e857d4f7904ae55c7d8256ffa63d291c0563ddf"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/spray-cyan.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/spray-cyan.png",
+    "bytes": 134,
+    "sha256": "ee527dd638e8adc0915fbbc3d5e2e76464affff8595fd2d8bc1ac91e245d293e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/exit-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/exit-off.png",
+    "bytes": 4020,
+    "sha256": "efd2347403ba1d20d2df57071bde2f2777700c1ac99ecacab5cddb333f7170ea"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/exit.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/exit.png",
+    "bytes": 6879,
+    "sha256": "678e012ea74b124e0925366ff7706bf287999dba198c7821526b072c35a76892"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/highscore-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/highscore-off.png",
+    "bytes": 8330,
+    "sha256": "77d4217ec212fabaa62b568d7e83d88cac07e35952b20f97757beb0441c5e8e8"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/highscore.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/highscore.png",
+    "bytes": 15753,
+    "sha256": "f68f485af08bc40867f7458e4ee840b008c299369ee7cc0acb52fbcb1ee111c9"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/one-player-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/one-player-off.png",
+    "bytes": 8895,
+    "sha256": "bbb09dfd2230cd97813d0d6c0bacb228d732c603961e5d49bee5cc481a44092a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/one-player.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/one-player.png",
+    "bytes": 17028,
+    "sha256": "0da4b6e11d894965a1b29705cdc2f1b24491b8c6302f876bfd3e741fa2084b61"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/options-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/options-off.png",
+    "bytes": 7080,
+    "sha256": "28fe24a4fb3a0b41ac2fef383b8917b46a434a78af69226189c459b531a37c00"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/options.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/options.png",
+    "bytes": 13384,
+    "sha256": "3c0f9b2b3756f5dacaa78f1ae9f9983263756141640d3cafbfff8f46c6403c8f"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/title.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/title.png",
+    "bytes": 142611,
+    "sha256": "02c924715710659515e142a044a3083015b32f5607855da3e7f78a9a400fbe43"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/two-player-vs-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/two-player-vs-off.png",
+    "bytes": 10874,
+    "sha256": "88ed8875ac06f73e42090ce99c49245c3c43e3aa3ca618df9940eda5d089d452"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/two-player-vs.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/two-player-vs.png",
+    "bytes": 21040,
+    "sha256": "d4cc177f2b82d9974b4a81e604850900e1fccee60033bc4535184d88c53ab258"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/two-players-off.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/two-players-off.png",
+    "bytes": 9501,
+    "sha256": "ac8b4ffe2d07291f253cdf1201a022134ee013d775ee7edbcc69abd5b1923512"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/images/title/two-players.png",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/images/title/two-players.png",
+    "bytes": 18354,
+    "sha256": "9037afa5a93ac5c9bff0c2a4c533dd7accc4ab4e9478abd4e8f1e65fef27b3f3"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/music/astraltr.mod",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/music/astraltr.mod",
+    "bytes": 300204,
+    "sha256": "126cbf9a30f4a872d9df21392518456095d6bdcd161e81f571683474d75e32c5"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/music/bizjung.it",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/music/bizjung.it",
+    "bytes": 395581,
+    "sha256": "2f06a5e75177fc6bc842b675b6ce3f21ea1adc8c7ee28744cbd3bb4313c0f8f7"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/music/fdn-arab.s3m",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/music/fdn-arab.s3m",
+    "bytes": 149588,
+    "sha256": "4e25b2106d2784faa9d5d6ecdd62ec11b41b80e09ac8d8e175f552be214a5d70"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/music/gluppobe.mod",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/music/gluppobe.mod",
+    "bytes": 563682,
+    "sha256": "2a5ffc688977a8c62b1a126ea9a8e2ad700624d731eb53f158aa1cb7cfe195ac"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/music/waterfal.mod",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/music/waterfal.mod",
+    "bytes": 46160,
+    "sha256": "8b3e3d595b5ec6d72eb376b2c3f6fe1464faebbd3430fe74015dcdac866d7435"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/bigexplosion.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/bigexplosion.wav",
+    "bytes": 47424,
+    "sha256": "4726955f2e38b95db580c7d995b5375b0072d94bee38f819f792bb6801a82c5e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/can-shake.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/can-shake.wav",
+    "bytes": 198284,
+    "sha256": "aea90edb866af575a6516e625e1bb75e83a1ce4a5f2dbc1baf7d88f425e03c2d"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/confirm.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/confirm.wav",
+    "bytes": 2426,
+    "sha256": "96bc8dfe05f273b124d8771c24914dfbb2f8243b89913a58271fdbb6fb4d1d26"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/explosion.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/explosion.wav",
+    "bytes": 3814,
+    "sha256": "6d395e6469d43d06101a538ccb3d285c8b01d7b8dba22545ab32f8906dcfae15"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/fuse.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/fuse.wav",
+    "bytes": 10996,
+    "sha256": "4c2e800b36779944bb9c53cb880de92eaffc115641d2704bd3faadc40a2fac32"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/highscore.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/highscore.wav",
+    "bytes": 60493,
+    "sha256": "d48e78f196b31d65645bfbd2a402e5af8a2202c5e9440949bb546d9bec56384a"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/level8.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/level8.wav",
+    "bytes": 45680,
+    "sha256": "ad7ee64faa0244267e68c5a5cf7ab5c2677ba6e835e3358e484001488b11a558"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/oneup.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/oneup.wav",
+    "bytes": 39906,
+    "sha256": "e306855caefb522c2541042cfe777b789c896f01f7b66ee520379388011db6b8"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/select.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/select.wav",
+    "bytes": 5384,
+    "sha256": "291a675eab9f28e93465cd18b26c308c3a7ac98ec495ea23f65fc36c37b0838e"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash1.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash1.wav",
+    "bytes": 16262,
+    "sha256": "a16c250511d8ec398d277d31ec3bce1c00b1d929d74c0d825a1628a04d9da6ab"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash2.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash2.wav",
+    "bytes": 14538,
+    "sha256": "eae3c1c4179916d6e88497562d1a0e68a3b713c8f2beda032d3ce02d4004aa6c"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash3.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash3.wav",
+    "bytes": 12932,
+    "sha256": "4bb7948e11ab3ab6749a512d39c86ab2ee08407d97ef234744ebe7cb2b0cb717"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash4.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash4.wav",
+    "bytes": 11504,
+    "sha256": "fd0f55e13c244cbe3ee6c336ecebd5d1b796b4160e960a73668fc3344a00a7e5"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash5.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash5.wav",
+    "bytes": 10236,
+    "sha256": "28079f02b6825a77ead0a716f36c31b54e5662805a0e5fff5f7ebe3c96464fdb"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash6.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash6.wav",
+    "bytes": 9108,
+    "sha256": "02ee42d0da86a851b9f4683afc27651ea845e68ff8bd0f5e3326b879f1c5f244"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash7.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash7.wav",
+    "bytes": 8106,
+    "sha256": "306888ca4aab7b363813ab7fd951a124e38accfe7ec33a3a4605f6232961ab5d"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/splash8.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/splash8.wav",
+    "bytes": 7214,
+    "sha256": "35de20dd4078c6bd2aedf3312104a911d9bd49a90688a90fbfcfdd00b94f77a6"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/data/sounds/spray.wav",
+    "target": "runner/test/binaries/candidates/madbomber/original/data/sounds/spray.wav",
+    "bytes": 35404,
+    "sha256": "2e35cc94a2107aaea617b81d4a31443bcb455f99e94e1b6f29a6cfd905b1a144"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/INSTALL.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/INSTALL.txt",
+    "bytes": 6041,
+    "sha256": "e677e63e574f4d1195825a347bb43406f758857e76a1f08fffa6916310c4a437"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/jpeg.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/jpeg.dll",
+    "bytes": 89571,
+    "sha256": "37e38cee4955ee9a38e28b6f8bbde7c21b920dc14a518d39ca87004cc5f91131"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/libpng1.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/libpng1.dll",
+    "bytes": 47616,
+    "sha256": "646ff9f1e5a050eb329c4554349c3a5b35eb86812b2f572211113d35db1314db"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/madbomber.exe",
+    "target": "runner/test/binaries/candidates/madbomber/original/madbomber.exe",
+    "bytes": 19456,
+    "sha256": "72ad26d11ddabf72c668b69eda0c7c1daa634f5cade631303ba4e05eb5f5cc09"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/msvcr70.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/msvcr70.dll",
+    "bytes": 164864,
+    "sha256": "80ec1779b8026293d65598aa3b73e7491cde4a89450d09b333408a8fcd206b38"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/README.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/README.txt",
+    "bytes": 9274,
+    "sha256": "a1cf14d81752796400f0831c2e2a06976a3b36358b31cad004acb75449337e90"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/SDL_image.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/SDL_image.dll",
+    "bytes": 13824,
+    "sha256": "50c505ec8e9586c7445d8b6da5c074ce5c2deec6099e94b259341b63d3389156"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/SDL_mixer.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/SDL_mixer.dll",
+    "bytes": 122368,
+    "sha256": "e48583f82cd4a503e6ed9097da51399b05e4c5b92e66566e3b180321c6647165"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/SDL.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/SDL.dll",
+    "bytes": 86016,
+    "sha256": "55eced17cf8a9b7acc671cc307503de847a3c36fdafafe14cee7917433cfe410"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/TODO.txt",
+    "target": "runner/test/binaries/candidates/madbomber/original/TODO.txt",
+    "bytes": 587,
+    "sha256": "2492908087853a868b981b14cb58a499efcaa3cc798159bc984c0a33c379bb49"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "original/zlib.dll",
+    "target": "runner/test/binaries/candidates/madbomber/original/zlib.dll",
+    "bytes": 27648,
+    "sha256": "215d542025251e70a00ddc1cfa19fe00a7e5e24b67699e129fb8be0ff2972109"
+  },
+  {
+    "kind": "archive-member",
+    "source": "/home/user/wine-assembly/scratch/runs/20261020-madbomber-native-qualification/original-assets.tar.gz",
+    "member": "dependencies/msvcrt.dll",
+    "target": "runner/test/binaries/candidates/madbomber/dependencies/msvcrt.dll",
+    "bytes": 278581,
+    "sha256": "887eb5ce93edb7192ca3e9220f07f9ca0f94db02af5862ebcbdfcb852db99fd1"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitmapper.js",
+    "bytes": 6477,
+    "sha256": "3f2f720e3a2b4e41cdc03e9f58bb1794bec26dcd1b22568e41ce0b84ab20aeb5",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitmapper.js",
+    "dest": "runner/node_modules/pngjs/lib/bitmapper.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitpacker.js",
+    "bytes": 4670,
+    "sha256": "3f7bfabcbc82bedd0cc8551bc210b44dc1fb179fa2ce3b8b1d39fa307d8af204",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/bitpacker.js",
+    "dest": "runner/node_modules/pngjs/lib/bitpacker.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/chunkstream.js",
+    "bytes": 4249,
+    "sha256": "43c5507901554a29c5a29e555aaeb3c3987b84fb3aa8c681c1b30794a477aa85",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/chunkstream.js",
+    "dest": "runner/node_modules/pngjs/lib/chunkstream.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/constants.js",
+    "bytes": 662,
+    "sha256": "9e3b4f994ac93751e9ccb4d453e85e4f25a0b086a9f24ec92c7dcb06995bdf6c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/constants.js",
+    "dest": "runner/node_modules/pngjs/lib/constants.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/crc.js",
+    "bytes": 853,
+    "sha256": "57e2328cfa361fb54f1f4b3a59e071c1ccc864095e4f3759a957cd15aa2a8b65",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/crc.js",
+    "dest": "runner/node_modules/pngjs/lib/crc.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-pack.js",
+    "bytes": 4279,
+    "sha256": "500c1b3b34702c895e9e689143f44280687cac363447523679ec13d12bd564f6",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-pack.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-pack.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-async.js",
+    "bytes": 558,
+    "sha256": "328b6173f1a2a4d91425220a0fa421699552f254006a57ede9f4018ced50a7ee",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-async.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-sync.js",
+    "bytes": 483,
+    "sha256": "201a08dfab26a2903c0dabcbdfe0406b3fa33d60f59b591878329f590fac48ff",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse.js",
+    "bytes": 4798,
+    "sha256": "b8aad6f29371f5b13b232643781a7c49f7d36d565136ddda1ed7fbaca987ce2c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/filter-parse.js",
+    "dest": "runner/node_modules/pngjs/lib/filter-parse.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/format-normaliser.js",
+    "bytes": 2366,
+    "sha256": "c73989d85bef5d33ce571095bf0d96927261730d8b0f79c9d48f971fcbdd0be0",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/format-normaliser.js",
+    "dest": "runner/node_modules/pngjs/lib/format-normaliser.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/interlace.js",
+    "bytes": 2004,
+    "sha256": "3bb5d57153078ff586667e9a9d2c06db993c8ff1638e0521a9883cdeea6e1e3f",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/interlace.js",
+    "dest": "runner/node_modules/pngjs/lib/interlace.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-async.js",
+    "bytes": 1162,
+    "sha256": "f50df0610749ce7b1a99abbe9e4596df7c16f96efd3848f12dd632b22cb02b45",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-async.js",
+    "dest": "runner/node_modules/pngjs/lib/packer-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-sync.js",
+    "bytes": 1193,
+    "sha256": "1b516238168a42704e62ba44528406188864a6ddda2ae92d1b91e5e078cdaa2d",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/packer-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer.js",
+    "bytes": 3723,
+    "sha256": "b5f9956364c80d67c28d615ace639a5fb4d4d79d3acb235237f3050dca220e03",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/packer.js",
+    "dest": "runner/node_modules/pngjs/lib/packer.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/paeth-predictor.js",
+    "bytes": 372,
+    "sha256": "48555b909af708593dade8e8df75d18ecdffdb6577e362eac01eae357ef1e0e9",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/paeth-predictor.js",
+    "dest": "runner/node_modules/pngjs/lib/paeth-predictor.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-async.js",
+    "bytes": 4368,
+    "sha256": "a0299cad35220de62b7180b1f984b8f77b4c0f419a580fd3c86ea3b3e971ee30",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-async.js",
+    "dest": "runner/node_modules/pngjs/lib/parser-async.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-sync.js",
+    "bytes": 2580,
+    "sha256": "266c9fb230b90075022b3f54f5710a9cacb71ca565f83fce66e7cbd1b7e9b507",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/parser-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser.js",
+    "bytes": 7720,
+    "sha256": "574e43fea28a28cc6feb7ab62a480a86bb75411ee4bfaba76a7e9d7310b6e94c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/parser.js",
+    "dest": "runner/node_modules/pngjs/lib/parser.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png-sync.js",
+    "bytes": 252,
+    "sha256": "867b1a78dcd3e45458eb4f0af01acd48f38d3a31225bd7cb8dd8ee3966ab54be",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png-sync.js",
+    "dest": "runner/node_modules/pngjs/lib/png-sync.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png.js",
+    "bytes": 4418,
+    "sha256": "e02cecbd36327829758386dc3f0ca4a36a2339ccb5d5e824ca3556e2c3f89726",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/png.js",
+    "dest": "runner/node_modules/pngjs/lib/png.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-inflate.js",
+    "bytes": 3751,
+    "sha256": "08cb8afb79a4c0ab58e94601dab22261daf6638382b211d6a7f6bfbc16d27a0b",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-inflate.js",
+    "dest": "runner/node_modules/pngjs/lib/sync-inflate.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-reader.js",
+    "bytes": 1114,
+    "sha256": "437a99bf1bf739202ae85c3018cd9174d411597cf55e7064c36976de493368f1",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/lib/sync-reader.js",
+    "dest": "runner/node_modules/pngjs/lib/sync-reader.js"
+  },
+  {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/package.json",
+    "bytes": 1812,
+    "sha256": "85b17f2f852aece03e71edb4ed4d9fddf6a0a8f0b69ac75d7f00b6592d62d37c",
+    "kind": "file",
+    "source": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-codec-recovery-oct22/node_modules/pngjs/package.json",
+    "dest": "runner/node_modules/pngjs/package.json"
+  }
+]

@@ -1,0 +1,1208 @@
+{
+  "argv": [
+    "--app=madbomber",
+    "--no-build",
+    "--wasm=/home/user/madbomber-restart-oct27/runner/build/wine-assembly.wasm",
+    "--quiet-api",
+    "--no-close",
+    "--no-threads",
+    "--real-ticks",
+    "--time-scale=1",
+    "--real-calendar",
+    "--tz=UTC",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=120",
+    "--control-stdin",
+    "--trace-input",
+    "--png=/home/user/madbomber-restart-oct27/out/final.png"
+  ],
+  "parserSha256": "0be6705dcd46cd5ec5f7c122a791bd8bf6ec131326a59dc23e29e7453865cce2",
+  "parsedMounts": {
+    "vfs-mount": [],
+    "vfs-tree": [],
+    "vfs-include": [],
+    "zip": [],
+    "iso": [],
+    "media-mount": []
+  },
+  "registeredApp": {
+    "exe": "test/binaries/candidates/madbomber/original/madbomber.exe",
+    "exeGuestPath": "C:\\MADBOMBER\\madbomber.exe",
+    "workingDirectory": "C:\\MADBOMBER",
+    "threads": false,
+    "requiredFiles": true,
+    "dlls": [
+      "test/binaries/candidates/madbomber/original/jpeg.dll",
+      "test/binaries/candidates/madbomber/original/libpng1.dll",
+      "test/binaries/candidates/madbomber/original/msvcr70.dll",
+      "test/binaries/candidates/madbomber/original/SDL_image.dll",
+      "test/binaries/candidates/madbomber/original/SDL_mixer.dll",
+      "test/binaries/candidates/madbomber/original/SDL.dll",
+      "test/binaries/candidates/madbomber/original/zlib.dll",
+      "test/binaries/candidates/madbomber/dependencies/msvcrt.dll"
+    ],
+    "files": [
+      {
+        "url": "test/binaries/candidates/madbomber/original/AUTHORS.txt",
+        "vfsPath": "C:\\MADBOMBER\\AUTHORS.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/CHANGES.txt",
+        "vfsPath": "C:\\MADBOMBER\\CHANGES.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/COPYING.txt",
+        "vfsPath": "C:\\MADBOMBER\\COPYING.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/bar.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\bar.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/background.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\background.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb0.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\bomb0.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb1.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\bomb1.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb2.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\bomb2.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/bomb3.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\bomb3.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/explosion1.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\explosion1.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomb/explosion2.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomb\\explosion2.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-amazed.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomber\\bomber-amazed.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-happy.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomber\\bomber-happy.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bomber/bomber-sad.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bomber\\bomber-sad.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket1.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket1.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket1red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket1red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket2.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket2.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket2red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket2red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket3.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket3.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/bucket3red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\bucket3red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket1.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket1.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket1red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket1red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket2.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket2.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket2red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket2red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket3.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket3.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/bucket/small-bucket3red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\bucket\\small-bucket3red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-down.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-down.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left-down.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-left-down.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left-up.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-left-up.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-left.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-left.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right-down.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-right-down.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right-up.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-right-up.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-right.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-right.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/drop/drop-up.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\drop\\drop-up.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/game-over.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\game-over.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/highscore.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\highscore.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/0.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\0.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/0red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\0red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/1.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\1.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/1red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\1red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/2.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\2.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/2red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\2red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/3.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\3.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/3red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\3red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/4.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\4.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/4red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\4red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/5.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\5.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/5red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\5red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/6.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\6.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/6red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\6red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/7.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\7.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/7red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\7red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/8.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\8.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/8red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\8red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/9.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\9.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/numbers/9red.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\numbers\\9red.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/paused.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\paused.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/press-escape.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\press-escape.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/game/press-fire.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\game\\press-fire.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/highscore/highscore.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\highscore\\highscore.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/highscore/letters.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\highscore\\letters.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/icon.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\icon.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/loading.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\loading.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/make-offs.sh",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\make-offs.sh"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/0percent-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\0percent-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/0percent.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\0percent.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/100percent-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\100percent-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/100percent.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\100percent.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/25percent-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\25percent-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/25percent.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\25percent.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/50percent-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\50percent-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/50percent.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\50percent.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/75percent-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\75percent-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/75percent.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\75percent.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/detail.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\detail.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/difficulty.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\difficulty.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/effects.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\effects.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/hard-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\hard-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/hard.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\hard.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/music.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\music.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/normal-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\normal-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/normal.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\normal.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/ok-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\ok-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/ok.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\ok.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/options.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\options.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/player-one.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\player-one.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/player-two.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\player-two.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/volume.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\volume.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/zen-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\zen-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/options/zen.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\options\\zen.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/spray-black.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\spray-black.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/spray-blue.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\spray-blue.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/spray-cyan.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\spray-cyan.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/exit-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\exit-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/exit.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\exit.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/highscore-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\highscore-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/highscore.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\highscore.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/one-player-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\one-player-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/one-player.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\one-player.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/options-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\options-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/options.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\options.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/title.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\title.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/two-player-vs-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\two-player-vs-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/two-player-vs.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\two-player-vs.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/two-players-off.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\two-players-off.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/images/title/two-players.png",
+        "vfsPath": "C:\\MADBOMBER\\data\\images\\title\\two-players.png"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/music/astraltr.mod",
+        "vfsPath": "C:\\MADBOMBER\\data\\music\\astraltr.mod"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/music/bizjung.it",
+        "vfsPath": "C:\\MADBOMBER\\data\\music\\bizjung.it"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/music/fdn-arab.s3m",
+        "vfsPath": "C:\\MADBOMBER\\data\\music\\fdn-arab.s3m"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/music/gluppobe.mod",
+        "vfsPath": "C:\\MADBOMBER\\data\\music\\gluppobe.mod"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/music/waterfal.mod",
+        "vfsPath": "C:\\MADBOMBER\\data\\music\\waterfal.mod"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/bigexplosion.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\bigexplosion.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/can-shake.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\can-shake.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/confirm.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\confirm.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/explosion.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\explosion.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/fuse.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\fuse.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/highscore.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\highscore.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/level8.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\level8.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/oneup.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\oneup.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/select.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\select.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash1.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash1.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash2.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash2.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash3.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash3.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash4.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash4.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash5.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash5.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash6.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash6.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash7.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash7.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/splash8.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\splash8.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/data/sounds/spray.wav",
+        "vfsPath": "C:\\MADBOMBER\\data\\sounds\\spray.wav"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/INSTALL.txt",
+        "vfsPath": "C:\\MADBOMBER\\INSTALL.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/jpeg.dll",
+        "vfsPath": "C:\\MADBOMBER\\jpeg.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/libpng1.dll",
+        "vfsPath": "C:\\MADBOMBER\\libpng1.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/madbomber.exe",
+        "vfsPath": "C:\\MADBOMBER\\madbomber.exe"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/msvcr70.dll",
+        "vfsPath": "C:\\MADBOMBER\\msvcr70.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/README.txt",
+        "vfsPath": "C:\\MADBOMBER\\README.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/SDL_image.dll",
+        "vfsPath": "C:\\MADBOMBER\\SDL_image.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/SDL_mixer.dll",
+        "vfsPath": "C:\\MADBOMBER\\SDL_mixer.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/SDL.dll",
+        "vfsPath": "C:\\MADBOMBER\\SDL.dll"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/TODO.txt",
+        "vfsPath": "C:\\MADBOMBER\\TODO.txt"
+      },
+      {
+        "url": "test/binaries/candidates/madbomber/original/zlib.dll",
+        "vfsPath": "C:\\MADBOMBER\\zlib.dll"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "test/binaries/candidates/madbomber/original/madbomber.exe",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/jpeg.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/libpng1.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/msvcr70.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/SDL_image.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/SDL_mixer.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/SDL.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/original/zlib.dll",
+      "present": true
+    },
+    {
+      "path": "test/binaries/candidates/madbomber/dependencies/msvcrt.dll",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    },
+    {
+      "path": "",
+      "present": true
+    }
+  ],
+  "commaBearingFiles": [],
+  "pass": true
+}

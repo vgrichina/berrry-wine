@@ -1,0 +1,28 @@
+{
+  "result": "BLOCKED_LAUNCH_CAUSE_UNKNOWN",
+  "exactInputs": {
+    "files": 378,
+    "bytes": 18611136,
+    "manifestSha256": "13008013c325f602b4a9aa25f4d3ddfb5f2737d3e738a4e1c36e318612d118a1",
+    "allRemoteHashesPassed": true
+  },
+  "passed": [
+    "378 exact remote file size/hash checks",
+    "exact Node executable/flags/environment/supervisor startup",
+    "canonical pinned runner argument parser: no explicit mounts;149 registered asset paths present",
+    "read-only process/output check: no guest/controller/output directory"
+  ],
+  "remaining": [
+    "coordinator determine nonzero detached-launch cause using trusted diagnostics before deciding any new task",
+    "separately authorized single restart acceptance after launch blocker is understood",
+    "current-main qualification, audio and performance remain outside this task"
+  ],
+  "evidence": [
+    "transfer-receipt.json",
+    "startup-receipt.json",
+    "mount-check.json",
+    "launch-failure-readonly-check.json",
+    "guest-launch.json"
+  ],
+  "module": "728e1de80ec20a284fc41b339895ee8ac29f16e4ded83325b27576cfacd4466c"
+}

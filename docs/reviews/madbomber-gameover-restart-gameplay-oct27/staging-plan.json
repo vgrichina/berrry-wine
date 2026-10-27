@@ -1,0 +1,11 @@
+{
+  "closureBytes": 18611136,
+  "files": 378,
+  "compressedBytes": 8733073,
+  "sha256": "ca3d324b2f2becbd0b521e41ebc11a4040786de3922301c2911f89f929101719",
+  "remoteAllocation": 100663296,
+  "remoteReserve": 8388608,
+  "captures": 16777216,
+  "logs": 2097152,
+  "remoteProjectedPeak": 62995793
+}

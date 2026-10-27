@@ -1,0 +1,13 @@
+const fs=require('fs'),vm=require('vm'),path=require('path'),crypto=require('crypto');
+const base='/home/user/madbomber-restart-oct27',root=base+'/runner';
+const source=fs.readFileSync(root+'/test/run.js','utf8');
+const parser=source.slice(source.indexOf('const getArg ='),source.indexOf('const hasFlag ='));
+const args=['--app=madbomber','--no-build','--wasm='+root+'/build/wine-assembly.wasm','--quiet-api','--no-close','--no-threads','--real-ticks','--time-scale=1','--real-calendar','--tz=UTC','--batch-size=200000','--max-batches=10000000','--max-seconds=120','--control-stdin','--trace-input','--png='+base+'/out/final.png'];
+const mounts=vm.runInNewContext(parser+';Object.fromEntries(["vfs-mount","vfs-tree","vfs-include","zip","iso","media-mount"].map(n=>[n,getArgs(n)]))',{args});
+if(Object.values(mounts).some(x=>x.length))throw Error('unexpected mount argv');
+const {APPS,appFileUrl}=require(root+'/lib/apps.js'),app=APPS.madbomber;
+const files=[app.exe,...app.dlls,...app.files.map(f=>appFileUrl(app,typeof f==='string'?f:f.url))];
+const rows=files.map(f=>({path:f,present:fs.existsSync(path.join(root,f))}));
+if(rows.some(r=>!r.present))throw Error(JSON.stringify(rows.filter(r=>!r.present)));
+const receipt={argv:args,parserSha256:crypto.createHash('sha256').update(parser).digest('hex'),parsedMounts:mounts,registeredApp:app,files:rows,commaBearingFiles:rows.filter(r=>r.path.includes(',')),pass:true};
+fs.writeFileSync(base+'/mount-check.json',JSON.stringify(receipt,null,2));console.log(JSON.stringify({pass:true,files:rows.length,mounts,commaBearingFiles:receipt.commaBearingFiles}));
