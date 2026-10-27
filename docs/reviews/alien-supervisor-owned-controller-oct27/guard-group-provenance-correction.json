@@ -1,0 +1,33 @@
+{
+  "behavior": "5 methods PASS, execution exit0 cleanup true",
+  "wrapperAssertion": "broad before/after snapshot failed",
+  "cause": "coordinator worker changed two unloaded legacy fixtures while new-production group was running; subsequent finite validation/host constant hardening changed launcher after completion",
+  "duringRunChanges": [
+    "test/fixtures/alien-menu-controller/test_controller.py",
+    "test/fixtures/alien-menu-controller/test_process_owner.py"
+  ],
+  "loadedClosure": [
+    "tools/alien-supervised-gameplay.py",
+    "tools/alien-menu-gameplay-controller.py",
+    "test/fixtures/alien-menu-controller/test_supervised.py",
+    "test/fixtures/alien-menu-controller/child_server.py",
+    "test/fixtures/alien-menu-controller/inject/sitecustomize.py",
+    "test/alien-gameplay-sequence.py",
+    "test/helpers/alien-control-sequence.py"
+  ],
+  "currentDifferences": {
+    "tools/alien-supervised-gameplay.py": {
+      "before": "da50b1bdf531d17dbf80579970f2dddec4ff7b443f3e7916c24369d8e8e838c1",
+      "after": "2ee6f672a2255651733370bdd9c0a929b700b758851dc4dd17c226f741950fd8"
+    },
+    "test/fixtures/alien-menu-controller/test_controller.py": {
+      "before": "dc3eceb882b79549dcab33d4fb5a894d65120d71dedf6c24a35edc6a7545819f",
+      "after": "fed648ac38c788c1f1576a30577bd2a55c51e30faaafbeac815771c276d7d51b"
+    },
+    "test/fixtures/alien-menu-controller/test_process_owner.py": {
+      "before": "8c54c9d083ad7b943990fe3ddc247ee87501bda52aa1ed5f1ce2d84d204a1411",
+      "after": "3f7b13bf7fc2d72c66646c1158cf3de1fa77e69976bc57df10694cd2d9242404"
+    }
+  },
+  "policy": "preserve passing behavioral evidence and mismatch incident; final producer source changed afterward so rerun affected production path only"
+}

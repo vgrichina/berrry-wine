@@ -1,139 +1,120 @@
-# Alien Shooter reviewed menu controller
+# Alien original-supervisor menu controller
 
-Run the tracked production entry point on the control host, inside the **existing**
-supervisor-owned guest invocation. It starts no guest and creates no time allowance:
+Existing-guest attachment is retired. `tools/alien-menu-gameplay-controller.py`
+always exits 1 before reading configuration, creating authority claims, or sending
+HTTP. PID, start ticks, UUID, output directories, JSON, and possession of any
+listener FD cannot delegate control. Old registry receipts remain untouched.
 
-```sh
-python3 tools/alien-menu-gameplay-controller.py \
-  --invocation /absolute/existing-invocation \
-  --endpoint http://127.0.0.1:18129/ctl \
-  --terminal-file /absolute/existing-invocation/terminal.json \
-  --after-batches 128 --approve-new-game
-```
+Use `tools/alien-supervised-gameplay.py` to launch a genuinely NEW child. The
+launcher creates the actual `subprocess.Popen` handle, fixes the numeric endpoint,
+original start/deadline/reserves/capture credits, and invokes the menu controller
+once in process. That private continuation closes over the live child; no public
+authority constructor or serialized authority object exists. This is cooperative
+local orchestration, not isolation from arbitrary same-UID file/memory changes.
+Process/terminal observations are not atomic with socket writes.
 
-The supervisor supplies `budget.json` in that directory. Epoch seconds and capture
-counts describe the whole invocation, including startup and earlier captures:
-
-```json
-{
-  "runId": "unique-supervisor-invocation",
-  "startedAt": 1800000000,
-  "deadline": 1800000120,
-  "startupMaximum": 75,
-  "actionReserve": 30,
-  "cleanupReserve": 10,
-  "captureLimit": 8,
-  "capturesUsed": 5
-}
-```
-
-Those timestamps are examples, not a runnable admission. The deadline must be no
-more than 120 seconds after the original start; startup is at most 75 seconds,
-action/evidence reserve at least 30 seconds and cleanup at least 10 seconds.
-Smaller admitted windows and larger reserves are supported when they fit. The
-first approved attempt seals the supplied budget, including a refused attempt.
-No relative timeout, resume, ledger override or allowance-renewal option exists.
-
-Also supply `process.json` identifying the actual existing local control server:
-
-```json
-{
-  "pid": 12345,
-  "startTicks": "actual-proc-pid-stat-field-22",
-  "endpoint": "http://127.0.0.1:18129/ctl"
-}
-```
-
-The supervisor supplies the PID and start ticks of the existing control server.
-The CLI verifies that process owns the loopback listener through readonly procfs,
-then checks its identity again at each socket send. Missing/inaccessible identity
-stops control. A persistent flock and receipt under
-`/tmp/wine-ops-alien-menu-owners-UID/` bind boot ID, PID namespace, PID and start
-ticks. The verified endpoint is evidence, not part of the authority key. Alternate
-listeners of that process, evidence directories, run IDs, terminal paths and
-endpoint spellings cannot obtain a second owner for that process. Legacy
-listener-specific claims for the same boot/PID/start identity also remain consumed.
-The listener and live process identity are checked again before each socket write.
-Preserve these receipts
-with invocation evidence; do not delete them to retry.
-
-After a real frozen menu capture, the supervisor stores `menu-frame.json`:
-
-```json
-{
-  "runId": "unique-supervisor-invocation",
-  "batch": 4722,
-  "path": "/absolute/existing-invocation/reviewed-menu.png",
-  "sha256": "actual-full-image-sha256"
-}
-```
-
-Only after a person reviews that exact image and approves the New Game target,
-store `approval.json` and pass `--approve-new-game`:
-
-```json
-{
-  "runId": "unique-supervisor-invocation",
-  "batch": 4722,
-  "frameSHA256": "actual-full-image-sha256",
-  "humanReviewed": true,
-  "reviewId": "human-review-record",
-  "action": "New Game",
-  "command": "click:98:296"
-}
-```
-
-The current explicit target is the reviewed 640×480 Alien Shooter main menu.
-There is no image recognition, default approval or automatic coordinate selection.
-Review, capture path/hash, run identity and the first frozen response batch must
-match. Any other approved target requires a separately reviewed code change.
-
-On admission, the CLI immediately sends a frozen snapshot followed by **one**
-New Game click, using the accepted `test/alien-gameplay-sequence.py` controller
-and `HttpTransport`. There is no 1024-batch menu settling or duplicate menu PNG.
-Two bounded, snapshot-bracketed post-action steps produce response and subsequent
-observation PNG receipts; a third capture immediately precedes the final `quit`.
-`--after-batches` is explicit and bounded to 1..1024 per observation. Three capture
-credits must remain before any control. A receipt name does not prove mission or
-gameplay state. The supervisor must collect and visually inspect the actual images.
-
-Budget and durable-terminal checks run at the accepted socket-send boundary,
-including after connection establishment and before header/body writes. Every
-operation preserves the cleanup reserve; input also requires the full action
-reserve and startup bound at that boundary. HTTP timeouts are bounded by remaining
-time outside cleanup (Quit may use cleanup time). Time/capture blockers include
-the measured remaining quantity and required reserve. Wall-clock rollback cannot
-extend this process's deadline. External supervisor wall/CPU/capture enforcement
-remains necessary: future latency and HTTP response chunks are not predictable.
-
-One supervisor-owned directory belongs to one guest invocation and one controller
-owner; do not edit/reset receipts, use the old
-phase wrapper concurrently, or point another controller at that guest. The owner
-flock covers the entire CLI. `owner.json`, the process owner and sequence ledger survive
-process exit; a repeated invocation cannot issue another input. Capture and input
-intent are charged before potentially delivered bytes and never refunded after
-uncertainty. Preserve the directory on failure. The accepted transport's WAL,
-matching full-step ACKs, following frozen zero-credit snapshots, terminal latch
-and no-replay/no-reconnect behavior are unchanged. A later failure stops the
-sequence; there is no automatic cleanup reconnect after uncertain control. The
-supervisor retains lifecycle ownership and must end a stalled invocation within
-its original allowance. Socket observations are not atomic with an external
-terminal writer or changes by unauthorized external control clients.
-
-Offline verification, under the task's prescribed pool and physical supervisor:
+Example shape (replace all paths, port and absolute epoch deadline with admitted
+production inputs; this is NOT authorization to run a guest):
 
 ```sh
-python3 test/fixtures/alien-menu-controller/historical_reproduction.py /new/evidence/before
-python3 test/fixtures/alien-menu-controller/test_controller.py /new/evidence/after
+python3 tools/alien-supervised-gameplay.py \
+  --invocation /absolute/NEW-invocation \
+  --endpoint http://127.0.0.1:18129/ctl --cwd /absolute/runner \
+  --deadline ABSOLUTE_EPOCH_SECONDS --after-batches 128 \
+  --capture-limit 8 --captures-used 5 --capture-bytes 25165824 \
+  --rss-limit 3221225472 -- \
+  /absolute/node --max-old-space-size=2048 \
+  --require=/absolute/capture-wrapper.cjs /absolute/runner/test/run.js \
+  --app=alien_shooter --no-build --wasm=/absolute/current.wasm \
+  --d3d9-renderer=software --trace-render-wait --tick-ms-per-batch=5 \
+  --batch-size=200000 --max-seconds=110 --no-close --quiet-api \
+  --frozen --control=18129
 ```
 
-The first command runs byte-identical archived `drive.py`, `phase.py` and
-`newgame.py` against a local production-compatible HTTP server, modeling the
-recorded 19.6748-second redundant phase. Remote APIs/image fetching are replaced
-by offline boundaries. `package.py` is retained byte-identical as the historical
-incident record. The second command starts actual CLI subprocesses and supplies
-a controlled clock through the fixture-only `sitecustomize.py` in **only those
-subprocesses**. Production has no fake-clock option. Never add this fixture
-directory to a live controller's `PYTHONPATH`. These tests load no guest, game
-assets, Wasm, browser, native game code or Boat. They establish orchestration
-behavior, not gameplay acceptance.
+This uses the same Popen/monitor/controller path as the offline Python child
+fixtures. The argv shape comes from the original production
+`/tmp/alien-accepted-dispatch-menu-mission-oct27/ops/guest-args.json`; historical
+box paths and cutoff have been removed from the launcher. No Node/guest execution
+was performed for this implementation. Runtime closure, mount validation and
+actual gameplay acceptance remain separate gates. A child must itself serve the
+unused endpoint passed to its command. The launcher rejects an occupied port;
+that cooperative preflight is not an atomic network ownership proof.
+
+One new directory belongs to one original child. The supervisor writes
+`command.json` (actual argv/cwd/PID/runId/limits), `budget.json`, terminal and cleanup
+receipts. It waits locally for review publication without sending HTTP. The
+review must arrive inside the original startup bound (at most 75s) while retaining
+at least 30s action and 10s cleanup. The entire original lifetime is at most 120s.
+No changing output, deadline/config, terminal path or retry creates new credits.
+
+A reviewer supplies `menu-frame.json` after reviewing the exact frozen menu image:
+
+```json
+{"runId":"from-command.json","batch":4722,"path":"/absolute/NEW-invocation/menu.png","sha256":"full-image-sha256"}
+```
+
+Publish matching `approval.json` LAST, after the frame and review record are ready:
+
+```json
+{"runId":"from-command.json","batch":4722,"frameSHA256":"full-image-sha256","humanReviewed":true,"reviewId":"review-record","action":"New Game","command":"click:98:296"}
+```
+
+There is no default approval or image recognition. The specific target remains
+the reviewed 640x480 Alien Shooter main menu. The first snapshot must match that
+reviewed batch and confirm frozen/zero-credit/alive state. Approval authorizes
+only this original child; it cannot attach to another guest. Startup capture
+usage must be included in `--captures-used`; review publication grants no capture
+credits. Three credits must remain for after-action/observation/before-Quit frames.
+The launcher does not duplicate a completed startup/menu phase or grant new credits.
+
+For a newly frozen guest that still needs to reach its menu, explicitly supply
+`--startup-batches N` (0..8192). This ports the original drive's bounded serial
+snapshot/step/snapshot schedule into the owning launcher. It takes one before
+frame, hashes the actual local image and publishes `menu-frame.json`; review
+must still be supplied separately. Use initial capture usage that leaves FOUR
+credits (before plus three after), for example `--captures-used 4` with limit8.
+Startup time, CPU and capture usage are carried into the action phase unchanged.
+When this option is absent, no startup HTTP is sent. Readiness probes for the
+explicit startup schedule send no HTTP bytes and never retry a ctl command.
+
+Control remains serial through the unchanged gameplay-sequence and HTTP helpers:
+frozen snapshot, one approved New Game click, two snapshot-bracketed bounded fully
+ACKed steps, following frozen zero-credit checks, after-action and observation
+captures, before-Quit capture, final Quit. There are no overlapping commands,
+retries, automatic cleanup reconnects, or replay after uncertain delivery.
+Every socket header/body write checks the original live Popen, terminal latch and
+original budget, including after connect. Input/captures are charged before bytes.
+The durable sequence ledger retains pending intent after failure. A delegation is
+consumed before review/controller validation and never refunded. Any controller
+failure ends the original lifetime and cleans up the owned child/descendants.
+A new launcher cannot reuse an existing invocation or an occupied endpoint.
+
+The monitor retains the original production supervisor's subreaper/descendant
+tracking, physical RSS sampling, conservative per-identity CPU accounting,
+CPU90s, wall/deadline, file24MiB, output2MiB, allocated capture ceiling and host
+floors. Cleanup signals the original child through its retained pidfd and tracked descendant identities, escalates,
+waits and records `remainingOwnedLive`. RSS sampling remains a lower-bound
+observation between polls, not an exact physical peak guarantee. DATA/AS are not
+limited by this launcher: Node virtual reservation is not physical RSS.
+
+Offline commands (run inside the assigned pool/128MiB physical supervisor):
+
+```sh
+python3 test/fixtures/alien-menu-controller/test_supervised.py /NEW/production-evidence
+python3 test/fixtures/alien-menu-controller/test_controller.py /NEW/retired-cli-evidence
+python3 test/fixtures/alien-menu-controller/test_process_owner.py /NEW/retired-pid-evidence
+```
+
+`child_server.py` is an actual lightweight Python HTTP state child created by the
+production launcher. Its two listeners share handler/state; a sleeping descendant
+inherits only the alternate listener. Tests assert the actual Popen PID serves
+the requests. Competing standalone CLIs send zero HTTP and create no new claim
+while the original controller is live. Connection-boundary injection is confined
+to `inject/sitecustomize.py`; never put either fixture injection directory in a
+production PYTHONPATH. The legacy fixtures now explicitly test retirement rather
+than silently skipping old attach-success expectations. The historical incident
+reproduction remains unchanged and is reused, not rerun.
+
+These fixtures establish the cooperative supervisor/controller contract, not
+mission entry, playability, real image review, native guest execution, returned
+MSG behavior, or actual-game Quit acceptance.

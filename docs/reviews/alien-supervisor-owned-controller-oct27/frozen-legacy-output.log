@@ -1,0 +1,8 @@
+test_approved_menu_action_then_reserved_evidence_and_quit (__main__.Case.test_approved_menu_action_then_reserved_evidence_and_quit) ... ok
+test_changed_config_cannot_grant_attachment (__main__.Case.test_changed_config_cannot_grant_attachment) ... ok
+test_no_default_approval_sends_nothing (__main__.Case.test_no_default_approval_sends_nothing) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.512s
+
+OK

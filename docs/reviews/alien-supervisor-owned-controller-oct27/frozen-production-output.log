@@ -1,0 +1,14 @@
+test_after_action_keeps_cleanup_reserve (__main__.Supervised.test_after_action_keeps_cleanup_reserve) ... ok
+test_capture_and_startup_reserves (__main__.Supervised.test_capture_and_startup_reserves) ... ok
+test_completion_and_review_fail_closed (__main__.Supervised.test_completion_and_review_fail_closed) ... ok
+test_dispatch_guards_and_crash (__main__.Supervised.test_dispatch_guards_and_crash) ... ok
+test_distinct_new_children (__main__.Supervised.test_distinct_new_children) ... ok
+test_new_launcher_cannot_attach_or_replace_original (__main__.Supervised.test_new_launcher_cannot_attach_or_replace_original) ... ok
+test_original_startup_and_before_capture_share_budget (__main__.Supervised.test_original_startup_and_before_capture_share_budget) ... ok
+test_pending_failure_no_replay (__main__.Supervised.test_pending_failure_no_replay) ... ok
+test_positive_original_and_live_competitors (__main__.Supervised.test_positive_original_and_live_competitors) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 12.772s
+
+OK

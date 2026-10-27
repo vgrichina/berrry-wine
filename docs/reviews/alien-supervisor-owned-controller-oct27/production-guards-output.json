@@ -1,0 +1,6 @@
+{
+  "rawUTF8": "test_dispatch_guards_and_crash (__main__.Supervised.test_dispatch_guards_and_crash) ... \n  test_dispatch_guards_and_crash (__main__.Supervised.test_dispatch_guards_and_crash) (mode='death') ... ERROR\n",
+  "bytes": 200,
+  "sha256": "409e004f37beca97b6b70b8bf62bdd8ed47d0d5fb0e9048a293be3ad086bef44",
+  "original": "/tmp/alien-supervisor-owned-controller-implementation-oct27/ops/production-guards-output.log"
+}

@@ -1,0 +1,28 @@
+{
+  "new": [
+    {
+      "group": "production-guards",
+      "failure": "aggregate RSS 135700480 > 134217728, terminated and cleanupComplete true",
+      "cause": "fixture waited for child ready but not durable command receipt; early read failure left first launcher waiting and subtest admitted next",
+      "repair": "wait for command.json and ready.json, forbid new start while prior launcher live; same cap retained"
+    },
+    {
+      "group": "production-guards-corrected",
+      "failure": "wrapper broad pin assertion after 5 passing methods",
+      "cause": "two unloaded legacy fixtures edited during group; loaded production closure unchanged during execution",
+      "receipt": "guard-group-provenance-correction.json",
+      "resolution": "final source frozen, all 13 final methods have exact before/after hashes"
+    },
+    {
+      "group": "final-production",
+      "failure": "monitor lstat of atomically renamed .new file falsely terminalized owner",
+      "repair": "tolerate disappeared transient on sampled allocation walk; retained disk cap and monitor fail-closed on other errors"
+    },
+    {
+      "group": "publication-stage",
+      "failure": "git diff --cached --check rejects trailing whitespace in retained unittest failure log",
+      "repair": "compact review stores byte-exact decoded raw in escaped JSON plus original bytes/hash; raw ops log preserved; no source or test change"
+    }
+  ],
+  "previous": "Earlier cleanup/fsync timeout, mixed-source fixture/provenance and disk admission incidents remain in prior immutable ops/result. No arbitrary timeout increase, no historical failure relabeled passing."
+}

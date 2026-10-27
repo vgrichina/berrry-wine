@@ -1,0 +1,6 @@
+test_supplied_process_and_inherited_fd_cannot_attach (__main__.OwnerCase.test_supplied_process_and_inherited_fd_cannot_attach) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.506s
+
+OK

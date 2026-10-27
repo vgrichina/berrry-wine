@@ -1,0 +1,10 @@
+{
+  "exit": 1,
+  "stdout": "{\"error\": \"existing-guest attachment retired; launch a NEW child with tools/alien-supervised-gameplay.py (explicit command/cwd/endpoint/deadline); no replay/reconnect\", \"guestAcceptance\": \"unqualified\"}\n",
+  "HTTP": 0,
+  "newClaim": false,
+  "actualCLI": "/tmp/alien-menu-action-budget-controller-repair-oct27/repo/tools/alien-menu-gameplay-controller.py",
+  "sourceSHA": "f09bf08fe2d0296b54c17830023cf3bf706be60508924de3f217feab753ba8fc",
+  "fixture": "unchanged reproducer Case.run_cli scaffolding; original HTTP handler remains live",
+  "originalServerAlive": true
+}

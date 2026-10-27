@@ -135,175 +135,24 @@ class Case(unittest.TestCase):
         self.assertIn(text, result.stdout)
 
     def test_approved_menu_action_then_reserved_evidence_and_quit(self):
-        result = self.run_cli()
-        self.assertEqual(result.returncode, 0, (result.stdout, result.stderr))
-        cmds = self.commands()
-        self.assertEqual(cmds[:2], [dict(action='snapshot'), dict(cmd='click:98:296')])
-        self.assertEqual([c for c in cmds if 'cmd' in c], [dict(cmd='click:98:296')])
-        self.assertEqual([c['n'] for c in cmds if c.get('action') == 'step'], [128, 128])
-        self.assertEqual([Path(c['path']).name for c in cmds if c.get('action') == 'png'],
-                         ['new-game-response.png', 'mission-observation.png', 'before-quit.png'])
-        self.assertEqual(cmds[-1], dict(action='quit'))
-        self.assertEqual(json.loads((self.home/'usage.json').read_text())['capturesCharged'], 8)
-        self.assertEqual(json.loads(result.stdout)['guestAcceptance'], 'unqualified')
-        self.assert_blocked(self.run_cli(), 'existing invocation owner')
-        self.assertEqual(self.commands(), cmds)
-
-    def test_slow_startup_stops_before_any_control(self):
-        self.clock.write_text('{"now":1076}')
-        self.assert_blocked(self.run_cli(), 'startup elapsed 76.000000s exceeds 75.000000s')
+        # Historical method name retained for the unchanged rejection
+        # reproducer's setup. Positive attach semantics are explicitly retired;
+        # production positive coverage is now in test_supervised.py.
+        self.assert_blocked(self.run_cli(), 'attachment retired')
         self.assertEqual(self.commands(), [])
-
-    def test_insufficient_action_time_stops_before_any_control(self):
-        self.budget['deadline'] = 1105
-        self.assert_blocked(self.run_cli(), 'remaining 35.000000s < required 40.000000s')
-        self.assertEqual(self.commands(), [])
-
-    def test_insufficient_capture_credits_stops_before_any_control(self):
-        self.budget['capturesUsed'] = 6
-        self.assert_blocked(self.run_cli(), 'capture credits 2 < required 3')
-        self.assertEqual(self.commands(), [])
+        for name in ('owner.json', 'admitted-budget.json', 'usage.json', 'sequence-ledger.json'):
+            self.assertFalse((self.home/name).exists())
 
     def test_no_default_approval_sends_nothing(self):
-        self.assert_blocked(self.run_cli(approved=False), 'no explicit approval')
+        self.assert_blocked(self.run_cli(approved=False), 'attachment retired')
         self.assertEqual(self.commands(), [])
 
-    def test_unreviewed_or_changed_frame_stops_before_control(self):
-        self.frame.write_bytes(b'changed')
-        self.assert_blocked(self.run_cli(), 'frame identity changed')
-        self.assertEqual(self.commands(), [])
-
-    def test_wrong_review_authorization_stops_before_control(self):
-        self.approval['humanReviewed'] = False
-        self.assert_blocked(self.run_cli(), 'explicit matching human-reviewed')
-        self.assertEqual(self.commands(), [])
-
-    def test_wrong_frozen_snapshot_stops_before_input(self):
-        self.mode = 'wrong-frozen'
-        self.assert_blocked(self.run_cli(), 'snapshot not confirmed frozen/zero-credit/alive')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-
-    def test_changed_review_batch_stops_before_input(self):
-        self.mode = 'wrong-batch'
-        self.assert_blocked(self.run_cli(), 'frozen boundary differs from reviewed menu frame')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-
-    def test_wrong_step_ack_stops_before_capture_and_quit(self):
-        self.mode = 'wrong-step'
-        self.assert_blocked(self.run_cli(), 'lost/partial/inconsistent step ACK')
-        self.assertEqual(self.commands()[-1], dict(action='step', n=128))
-        self.assertFalse(any(c.get('action') == 'png' for c in self.commands()))
-
-    def test_uncertain_input_is_durable_and_never_replayed(self):
-        self.mode = 'uncertain'
-        self.assert_blocked(self.run_cli(), 'RemoteDisconnected')
-        ledger = json.loads((self.home / 'sequence-ledger.json').read_text())
-        self.assertEqual(ledger['pending']['command'], dict(cmd='click:98:296'))
-        self.assertEqual(ledger['status'], 'terminal')
-        before = self.commands()
-        self.assert_blocked(self.run_cli(), 'existing invocation owner')
-        self.assertEqual(self.commands(), before)
-        self.assertEqual(sum('cmd' in c for c in before), 1)
-
-    def test_terminal_before_control(self):
-        self.terminal.write_text('{"returncode":0,"reason":"already ended"}')
-        self.assert_blocked(self.run_cli(), 'known guest terminal receipt')
-        self.assertEqual(self.commands(), [])
-
-    def test_terminal_during_connection_stops_at_actual_send_boundary(self):
-        self.assert_blocked(self.run_cli(connect=dict(terminal=str(self.terminal))), 'known guest terminal receipt')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-        self.assertTrue(json.loads((self.home/'usage.json').read_text())['inputIssued'])
-
-    def test_time_exhausted_during_connection_stops_before_input(self):
-        self.assert_blocked(self.run_cli(connect=dict(now=1081)), 'budget blocker: startup elapsed')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-
-    def test_action_reserve_checked_again_at_socket_send(self):
-        self.budget['deadline'] = 1110
-        self.assert_blocked(self.run_cli(connect=dict(now=1074)), 'remaining 36.000000s < required 40.000000s')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-
-    def test_slow_initial_snapshot_stops_before_input(self):
-        self.mode = 'slow-snapshot'
-        self.assert_blocked(self.run_cli(), 'startup elapsed')
-        self.assertEqual(self.commands(), [dict(action='snapshot')])
-
-    def test_slow_action_stops_without_spending_cleanup_reserve(self):
-        self.mode = 'slow-after'
-        self.assert_blocked(self.run_cli(), 'remaining 9.000000s < required 10.000000s')
-        self.assertEqual(self.commands()[-1], dict(action='step', n=128))
-        # A completed step followed by budget refusal cannot be reconnected.
-        before = self.commands()
-        self.assert_blocked(self.run_cli(), 'existing invocation owner')
-        self.assertEqual(self.commands(), before)
-
-    def test_cleanup_reserved_with_last_three_capture_credits(self):
-        self.mode = 'cleanup-reserve'
-        self.assertEqual(self.run_cli().returncode, 0)
-        self.assertEqual(self.commands()[-1], dict(action='quit'))
-        self.assertEqual(len([c for c in self.commands() if c.get('action') == 'png']), 3)
-        self.assertEqual(self.requests[-1]['clock']['now'], 1110)
-
-    def test_allowance_cannot_be_renewed_after_refusal(self):
-        self.budget['deadline'] = 1105
-        self.assert_blocked(self.run_cli(), 'remaining 35.000000s')
-        self.budget['deadline'] = 1120
-        self.assert_blocked(self.run_cli(), 'existing invocation allowance changed')
-        self.assertEqual(self.commands(), [])
-
-    def test_second_directory_cannot_replay_issued_input(self):
-        self.assertEqual(self.run_cli().returncode, 0)
-        before = self.commands()
-        original = self.home
-        self.home = original / 'second-directory'
+    def test_changed_config_cannot_grant_attachment(self):
+        self.assert_blocked(self.run_cli(), 'attachment retired')
+        self.home = self.home/'different-output'
         self.home.mkdir()
-        try:
-            self.assert_blocked(self.run_cli(), 'existing control process owner')
-        finally:
-            self.home = original
-        self.assertEqual(self.commands(), before)
-
-    def test_second_directory_cannot_control_live_owner(self):
-        self.mode = 'live-owner'
-        first, record = self.run_cli(background=True)
-        original = self.home
-        try:
-            self.assertTrue(self.input_arrived.wait(3))
-            before = self.commands()
-            self.home = original / 'second-directory'
-            self.home.mkdir()
-            self.assert_blocked(self.run_cli(), 'existing control process owner')
-            self.assertEqual(self.commands(), before)
-        finally:
-            self.home = original
-            self.resume.set()
-            stdout, stderr = first.communicate(timeout=5)
-            record.update(returncode=first.returncode, stdout=stdout, stderr=stderr)
-        self.assertEqual(first.returncode, 0, record)
-        self.assertEqual(sum('cmd' in c for c in self.commands()), 1)
-
-    def test_endpoint_spelling_cannot_split_process_ownership(self):
-        self.assertEqual(self.run_cli().returncode, 0)
-        before = self.commands()
-        original = self.home
-        self.home = original / 'second-directory'
-        self.home.mkdir()
-        try:
-            alias = 'http://127.0.0.1:0%d/ctl' % self.server.server_port
-            self.assert_blocked(self.run_cli(endpoint=alias), 'existing control process owner')
-        finally:
-            self.home = original
-        self.assertEqual(self.commands(), before)
-
-    def test_wrong_process_start_identity_stops_before_control(self):
-        process = dict(pid=os.getpid(), startTicks='0', endpoint='http://127.0.0.1:%d/ctl' % self.server.server_port)
-        self.assert_blocked(self.run_cli(process=process), 'control process identity changed')
-        self.assertEqual(self.commands(), [])
-
-    def test_live_unrelated_process_cannot_claim_endpoint(self):
-        process = dict(pid=os.getppid(), startTicks=Path('/proc/%d/stat'%os.getppid()).read_text().rsplit(') ',1)[1].split()[19], endpoint='http://127.0.0.1:%d/ctl' % self.server.server_port)
-        self.assert_blocked(self.run_cli(process=process), 'endpoint listener not owned by control process')
+        self.budget.update(runId='new-config',startedAt=1070,deadline=1190,capturesUsed=0)
+        self.assert_blocked(self.run_cli(), 'attachment retired')
         self.assertEqual(self.commands(), [])
 
 
