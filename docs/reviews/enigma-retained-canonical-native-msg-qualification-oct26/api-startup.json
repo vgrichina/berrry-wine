@@ -1,0 +1,6 @@
+{
+  "argvBytes": 240,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_lem7doieeqme\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T23:58:18.744Z\",\"launcherFailed\":false,\"noticedMs\":19,\"oomKilled\":false,\"signal\":null,\"startMs\":20,\"startedAt\":\"2026-10-26T23:58:17.797Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"{\\\"label\\\": \\\"startup\\\", \\\"argv\\\": [\\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\", \\\"--expose-gc\\\", \\\"-e\\\", \\\"console.log(JSON.stringify({node:process.version,execPath:process.execPath,execArgv:process.execArgv,env:process.env,limits:require(\\\\\\\"fs\\\\\\\").readFileSync(\\\\\\\"/proc/self/limits\\\\\\\",\\\\\\\"utf8\\\\\\\"),startup:true}))\\\"], \\\"exit\\\": 0, \\\"reason\\\": \\\"natural\\\", \\\"peakRSS\\\": 49278976, \\\"physicalCap\\\": 3221225472, \\\"cpu\\\": 0.8, \\\"wall\\\": 0.06379970700004378, \\\"outputBytes\\\": 1921, \\\"maxDisk\\\": 35926016, \\\"inputHashesUnchanged\\\": true, \\\"supervisorIncluded\\\": true, \\\"trackedProcesses\\\": 2, \\\"ownedProcessGroup\\\": 34963, \\\"ownedGroupCleanup\\\": true}\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

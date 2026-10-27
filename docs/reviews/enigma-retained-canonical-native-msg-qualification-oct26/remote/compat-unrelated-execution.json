@@ -1,0 +1,26 @@
+{
+  "label": "compat-unrelated",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--expose-gc",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-unrelated.js",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-unrelated-result.json",
+    "unrelated"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 89092096,
+  "physicalCap": 3221225472,
+  "cpu": 0.35,
+  "wall": 0.15231281199999103,
+  "outputBytes": 172,
+  "maxDisk": 36913152,
+  "inputHashesUnchanged": true,
+  "supervisorIncluded": true,
+  "trackedProcesses": 2,
+  "ownedProcessGroup": 37726,
+  "ownedGroupCleanup": true
+}

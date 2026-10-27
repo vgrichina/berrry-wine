@@ -1,0 +1,6 @@
+{
+  "argvBytes": 15456,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_usbgmouz6tpb\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-27T00:00:00.298Z\",\"launcherFailed\":false,\"noticedMs\":17,\"oomKilled\":false,\"signal\":null,\"startMs\":18,\"startedAt\":\"2026-10-27T00:00:00.253Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"f9fac7abd314000427349714f79bda6b70c6aabbe51c07e1688ca93634c9021a\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

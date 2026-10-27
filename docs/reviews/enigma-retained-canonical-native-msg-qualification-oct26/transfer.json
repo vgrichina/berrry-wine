@@ -1,0 +1,8 @@
+{
+  "name": "harness.tar.gz",
+  "bytes": 10335,
+  "sha256": "63a98adcf8eabfc68c930685f3c3a8e07c3e5888294be0a56cbd99ee61df474d",
+  "chunks": 1,
+  "chunkBytes": 34000,
+  "maxConcurrent": 4
+}

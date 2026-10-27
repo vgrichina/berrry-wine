@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/run-group.py",
+    "compat"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 78725120,
+  "physicalCap": 134217728,
+  "cpu": 0.04,
+  "wall": 0.7315897000953555,
+  "outputBytes": 780,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 2,
+  "supervisorIncluded": true
+}

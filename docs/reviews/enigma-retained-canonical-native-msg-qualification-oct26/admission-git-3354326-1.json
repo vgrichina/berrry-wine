@@ -1,0 +1,44 @@
+{
+  "at": 1793058980.790728,
+  "stage": "git-3354326-1",
+  "actual": {
+    "own": 6430720,
+    "launcher": 475136,
+    "session": 753664,
+    "positiveWAL": 0
+  },
+  "used": 7659520,
+  "allocation": 67108864,
+  "ownRemaining": 59449344,
+  "peerRemaining": {},
+  "free": 3188346880,
+  "projectedFree": 3128897536,
+  "floor": 2982150144,
+  "memAvailable": 2916802560,
+  "requiredMemory": 1275068416,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 401899520
+    },
+    {
+      "pid": 3351840,
+      "rss": 195493888
+    },
+    {
+      "pid": 3354109,
+      "rss": 218341376
+    }
+  ],
+  "residentRSSAlreadyDeducted": true,
+  "positiveWALCountedOnce": true,
+  "allocationCategoriesMiB": {
+    "compressed": 8,
+    "git": 16,
+    "modulesReports": 16,
+    "sessionEventsWAL": 16,
+    "futurePublication": 16,
+    "reserve": 8
+  },
+  "pass": true
+}

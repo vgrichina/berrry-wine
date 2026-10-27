@@ -1,0 +1,6 @@
+{
+  "argvBytes": 239,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_iooszvvrexiv\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T23:58:30.653Z\",\"launcherFailed\":false,\"noticedMs\":18,\"oomKilled\":false,\"signal\":null,\"startMs\":18,\"startedAt\":\"2026-10-26T23:58:30.132Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"{\\\"label\\\": \\\"compat\\\", \\\"argv\\\": [\\\"/home/user/.nvm/versions/node/v24.22.1/bin/node\\\", \\\"--expose-gc\\\", \\\"/tmp/enigma-retained-canonical-native-msg-qualification-oct26/harness.js\\\", \\\"/tmp/enigma-reconciled-canonical-boat-build-oct26/source\\\", \\\"/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm\\\", \\\"/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops\\\", \\\"/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/compat-result.json\\\"], \\\"exit\\\": 0, \\\"reason\\\": \\\"natural\\\", \\\"peakRSS\\\": 96104448, \\\"physicalCap\\\": 3221225472, \\\"cpu\\\": 0.69, \\\"wall\\\": 0.3317478910000773, \\\"outputBytes\\\": 163, \\\"maxDisk\\\": 36052992, \\\"inputHashesUnchanged\\\": true, \\\"supervisorIncluded\\\": true, \\\"trackedProcesses\\\": 2, \\\"ownedProcessGroup\\\": 35050, \\\"ownedGroupCleanup\\\": true}\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

@@ -1,0 +1,17 @@
+{
+  "at": 1793059333.8212318,
+  "label": "compat-unrelated",
+  "used": 36900864,
+  "allocation": 1073741824,
+  "remaining": 1036840960,
+  "free": 48996405248,
+  "projectedFree": 47959564288,
+  "floor": 2982150144,
+  "memAvailable": 7256313856,
+  "required": 4093640704,
+  "physicalCompilerSubtree": 3221225472,
+  "hostFloor": 805306368,
+  "helpersReserve": 67108864,
+  "remoteReserveIncluded": 8388608,
+  "pass": true
+}

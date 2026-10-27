@@ -1,0 +1,6 @@
+{
+  "argvBytes": 289,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_es8v1y9afcjg\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T23:58:33.022Z\",\"launcherFailed\":false,\"noticedMs\":17,\"oomKilled\":false,\"signal\":null,\"startMs\":17,\"startedAt\":\"2026-10-26T23:58:32.973Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"{\\\"bytes\\\": 70094, \\\"sha256\\\": \\\"44c77ccca32304f21d2a5e30533bd482e7fa73ac19fa67e6804b2c338404fec7\\\"}\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

@@ -1,0 +1,17 @@
+{
+  "at": 1793059221.468225,
+  "label": "compat-hooks-thread",
+  "used": 36388864,
+  "allocation": 1073741824,
+  "remaining": 1037352960,
+  "free": 48997036032,
+  "projectedFree": 47959683072,
+  "floor": 2982150144,
+  "memAvailable": 7380267008,
+  "required": 4093640704,
+  "physicalCompilerSubtree": 3221225472,
+  "hostFloor": 805306368,
+  "helpersReserve": 67108864,
+  "remoteReserveIncluded": 8388608,
+  "pass": true
+}

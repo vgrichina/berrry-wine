@@ -1,0 +1,26 @@
+{
+  "label": "tail-hooks-thread",
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--expose-gc",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-hooks-thread.js",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+    "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+    "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/tail-hooks-thread-result.json",
+    "hooks"
+  ],
+  "exit": 0,
+  "reason": "natural",
+  "peakRSS": 98791424,
+  "physicalCap": 3221225472,
+  "cpu": 0.84,
+  "wall": 0.45123516700004984,
+  "outputBytes": 167,
+  "maxDisk": 36306944,
+  "inputHashesUnchanged": true,
+  "supervisorIncluded": true,
+  "trackedProcesses": 2,
+  "ownedProcessGroup": 36272,
+  "ownedGroupCleanup": true
+}

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from transport import *;print(api('import runpy,sys;sys.argv=[\"remote-unrelated.py\",\"compat-unrelated\"];runpy.run_path('+repr(REMOTE+'/transport/remote-unrelated.py')+',run_name=\"__main__\")','compat-unrelated',timeout=130)['stdout'])"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 78073856,
+  "physicalCap": 134217728,
+  "cpu": 0.04,
+  "wall": 0.5854423090349883,
+  "outputBytes": 834,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 2,
+  "supervisorIncluded": true
+}

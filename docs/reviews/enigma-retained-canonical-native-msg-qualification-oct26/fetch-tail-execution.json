@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "import sys;sys.path.insert(0,'/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops');from fetch import *; print(fetch(REMOTE+'/ops/tail-result.json',O/'remote-tail-result.json','tail-result'));j=json.load(open(O/'remote-tail-result.json'));print(dict(cases=len(j['cases']),incidents=j['incidents'],omission=j.get('omissionControl',{}).get('pass')))"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 96157696,
+  "physicalCap": 134217728,
+  "cpu": 0.07,
+  "wall": 1.0105209620669484,
+  "outputBytes": 144,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 18,
+  "supervisorIncluded": true
+}

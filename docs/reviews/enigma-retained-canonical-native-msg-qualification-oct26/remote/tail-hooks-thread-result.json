@@ -1,0 +1,3261 @@
+{
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "module": "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.wasm",
+  "sha256": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "backend": "wine-assembly.wasm",
+  "scope": "synthetic native canonical decoded execution",
+  "productionRunnerQualified": false,
+  "originalGame": false,
+  "cases": [
+    {
+      "name": "GetMessageA",
+      "edge": "CALL",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "GetMessageA",
+        "edge": "CALL",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageA",
+        "edge": "CALL",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageA",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            1,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageA",
+      "edge": "CALL",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "GetMessageA",
+        "edge": "CALL",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageA",
+        "edge": "CALL",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageA",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            1,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageA",
+      "edge": "JMP",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "GetMessageA",
+        "edge": "JMP",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageA",
+        "edge": "JMP",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageA",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            1,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageA",
+      "edge": "JMP",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "GetMessageA",
+        "edge": "JMP",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageA",
+        "edge": "JMP",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683392,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageA",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            1,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageW",
+      "edge": "CALL",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "GetMessageW",
+        "edge": "CALL",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageW",
+        "edge": "CALL",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageW",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            2,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageW",
+      "edge": "CALL",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "GetMessageW",
+        "edge": "CALL",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageW",
+        "edge": "CALL",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageW",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            2,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageW",
+      "edge": "JMP",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "GetMessageW",
+        "edge": "JMP",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageW",
+        "edge": "JMP",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageW",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            2,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "GetMessageW",
+      "edge": "JMP",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "GetMessageW",
+        "edge": "JMP",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "GetMessageW",
+        "edge": "JMP",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683400,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              0,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            0,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "GetMessageW",
+            "thread": 1,
+            "entryESP": 122683368,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": null,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 0,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            2,
+            1,
+            122683368,
+            4214784,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageA",
+      "edge": "CALL",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageA",
+        "edge": "CALL",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageA",
+        "edge": "CALL",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageA",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            3,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageA",
+      "edge": "CALL",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageA",
+        "edge": "CALL",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageA",
+        "edge": "CALL",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageA",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            3,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageA",
+      "edge": "JMP",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageA",
+        "edge": "JMP",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageA",
+        "edge": "JMP",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageA",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            3,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageA",
+      "edge": "JMP",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageA",
+        "edge": "JMP",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageA",
+        "edge": "JMP",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683408,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageA",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            3,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageW",
+      "edge": "CALL",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageW",
+        "edge": "CALL",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageW",
+        "edge": "CALL",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            4,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageW",
+      "edge": "CALL",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageW",
+        "edge": "CALL",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageW",
+        "edge": "CALL",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            4,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageW",
+      "edge": "JMP",
+      "nested": false,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageW",
+        "edge": "JMP",
+        "nested": false,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageW",
+        "edge": "JMP",
+        "nested": false,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            4,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    },
+    {
+      "name": "PeekMessageW",
+      "edge": "JMP",
+      "nested": true,
+      "pass": true,
+      "off": {
+        "name": "PeekMessageW",
+        "edge": "JMP",
+        "nested": true,
+        "on": false,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [],
+        "calls": []
+      },
+      "on": {
+        "name": "PeekMessageW",
+        "edge": "JMP",
+        "nested": true,
+        "on": true,
+        "first": {
+          "start": 4198912,
+          "thunk": 122683416,
+          "stack": 122683388,
+          "after": {
+            "eax": 1,
+            "esp": 122683352,
+            "eip": 4198400,
+            "yieldReason": 0,
+            "msg": [
+              0,
+              1025,
+              291,
+              1110,
+              123,
+              0,
+              0
+            ],
+            "queue": 0
+          }
+        },
+        "suspended": {
+          "eax": 1,
+          "esp": 122683352,
+          "eip": 4198400,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1025,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "state": {
+          "eax": 1,
+          "esp": 122683392,
+          "eip": 0,
+          "yieldReason": 0,
+          "msg": [
+            0,
+            1026,
+            291,
+            1110,
+            123,
+            0,
+            0
+          ],
+          "queue": 0
+        },
+        "records": [
+          {
+            "kind": "message-completion",
+            "sequence": 3,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 2,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683328,
+            "msgPointer": 4214848,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 0,
+            "pmRemove": true,
+            "successfulReturn": false,
+            "msg": null,
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          },
+          {
+            "kind": "message-completion",
+            "sequence": 4,
+            "batch": 0,
+            "correlation": "invocation-owned",
+            "invocation": 1,
+            "api": "PeekMessageW",
+            "thread": 1,
+            "entryESP": 122683364,
+            "msgPointer": 4214784,
+            "filterHwnd": 0,
+            "filterMin": 0,
+            "filterMax": 0,
+            "removeFlags": 1,
+            "result": 1,
+            "pmRemove": true,
+            "successfulReturn": true,
+            "msg": {
+              "hwnd": 0,
+              "message": 1026,
+              "wParam": 291,
+              "lParam": 1110,
+              "time": 123,
+              "pointX": 0,
+              "pointY": 0
+            },
+            "scope": "main-instance; canonical build/runtime qualification still required"
+          }
+        ],
+        "calls": [
+          [
+            "message_begin",
+            4,
+            1,
+            122683364,
+            4214784,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_bind",
+            1,
+            2,
+            122683368
+          ],
+          [
+            "message_begin",
+            4,
+            1,
+            122683328,
+            4214848,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "message_complete",
+            2,
+            0
+          ],
+          [
+            "message_resume",
+            2,
+            122683368
+          ],
+          [
+            "message_complete",
+            1,
+            1
+          ]
+        ]
+      }
+    }
+  ],
+  "incidents": [],
+  "remaining": []
+}

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from transport import *;print(send((R/'test/enigma-retained-canonical-native-msg.js').read_bytes(),'harness-hardware.js'));print(send((O/'remote-hardware.py').read_bytes(),'remote-hardware.py'));print(api('import runpy,sys;sys.argv=[\"remote-hardware.py\",\"tail-hardware\"];runpy.run_path('+repr(REMOTE+'/transport/remote-hardware.py')+',run_name=\"__main__\")','tail-hardware',timeout=130)['stdout'])"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 78475264,
+  "physicalCap": 134217728,
+  "cpu": 0.02,
+  "wall": 1.5078989418689162,
+  "outputBytes": 1173,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 6,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,9 @@
+{
+  "test/message-completion-owner.js": "5feb6cd914a7c93e58b719107887960783883d78af6c18ce7a45e79e1f077f0c",
+  "test/message-boundary-trace.js": "0ca2cca343cf1b0c14e12c1e3c6dfa518abba78ffef41c095b681f59e4449379",
+  "test/test-message-completion.js": "c29e290dd0ac280997470840657ebb12907c23675a6426cb40a29d727af93ceb",
+  "test/wat-completion-function-fixture.js": "5941a8ea9e1297745138a07c54814095d3714a43f0b940cb3f35c219afc5d1a3",
+  "test/fixtures/enigma-message-original-functions.json": "599f6818b039b6d44a9c3172dcb92c67d7dcc0fef5c71d0c8630fde13290b4cd",
+  "lib/host-imports.js": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347",
+  "test/run.js": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e"
+}

@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from transport import *;print(api('import runpy,sys;sys.argv=[\"remote-hooks.py\",\"compat-hooks-thread\"];runpy.run_path('+repr(REMOTE+'/transport/remote-hooks-thread.py')+',run_name=\"__main__\")','compat-hooks-thread',timeout=130)['stdout'])"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 0,
+  "reason": "natural",
+  "peakSampledRSS": 77938688,
+  "physicalCap": 134217728,
+  "cpu": 0.02,
+  "wall": 0.6723616779781878,
+  "outputBytes": 839,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 2,
+  "supervisorIncluded": true
+}

@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/collect.py", line 25, in <module>
+    j=api(code,'final-collect');save('remote-final-summary.json',json.loads(j['stdout']))
+      ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops/transport.py", line 18, in api
+    try:p=subprocess.run(cmd,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=timeout+10)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/usr/lib/python3.12/subprocess.py", line 1885, in _execute_child
+    self.pid = _fork_exec(
+               ^^^^^^^^^^^
+ValueError: embedded null byte

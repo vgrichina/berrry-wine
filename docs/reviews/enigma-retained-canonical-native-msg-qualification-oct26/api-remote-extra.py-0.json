@@ -1,0 +1,6 @@
+{
+  "argvBytes": 8232,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_sfzwla6feb8s\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-27T00:00:48.786Z\",\"launcherFailed\":false,\"noticedMs\":16,\"oomKilled\":false,\"signal\":null,\"startMs\":17,\"startedAt\":\"2026-10-27T00:00:48.737Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"a3de1057e3878c34d90f77a5e7fba8fbac72c0da4d573792a0edf24ca27906a3\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

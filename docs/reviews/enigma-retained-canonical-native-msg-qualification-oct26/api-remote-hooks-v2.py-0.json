@@ -1,0 +1,6 @@
+{
+  "argvBytes": 8235,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_ncjag5hgm0rq\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T23:59:20.712Z\",\"launcherFailed\":false,\"noticedMs\":16,\"oomKilled\":false,\"signal\":null,\"startMs\":16,\"startedAt\":\"2026-10-26T23:59:20.668Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"0fae22798dbd9c3a6dcd95f7c029db200869cf4648df2ff72344e5c9597ae83c\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

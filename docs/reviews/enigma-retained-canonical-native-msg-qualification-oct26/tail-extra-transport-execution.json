@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "python3",
+    "-c",
+    "from transport import *;print(send((R/'test/enigma-retained-canonical-native-msg.js').read_bytes(),'harness-extra.js'));print(send((O/'remote-extra.py').read_bytes(),'remote-extra.py'));print(api('import runpy,sys;sys.argv=[\"remote-extra.py\",\"tail-extra\"];runpy.run_path('+repr(REMOTE+'/transport/remote-extra.py')+',run_name=\"__main__\")','tail-extra',timeout=130)['stdout'])"
+  ],
+  "cwd": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+  "exit": 1,
+  "reason": "natural",
+  "peakSampledRSS": 85811200,
+  "physicalCap": 134217728,
+  "cpu": 0.07,
+  "wall": 1.2314666949678212,
+  "outputBytes": 3426,
+  "limits": {
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192,
+    "gitDATA": "unchanged inherited",
+    "nodeHeap64": "separate from physical cap"
+  },
+  "descendantsTracked": 6,
+  "supervisorIncluded": true
+}

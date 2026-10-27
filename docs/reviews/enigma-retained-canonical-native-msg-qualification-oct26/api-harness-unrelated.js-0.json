@@ -1,0 +1,6 @@
+{
+  "argvBytes": 21073,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_mqzhwxqfdsgq\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-27T00:02:04.576Z\",\"launcherFailed\":false,\"noticedMs\":21,\"oomKilled\":false,\"signal\":null,\"startMs\":21,\"startedAt\":\"2026-10-27T00:02:04.531Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"b62c76f898a8148c8f5a30d3fca774e2942cb3d7d64aa5bc6fdb2011b8f016c8\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

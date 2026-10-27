@@ -1,0 +1,6 @@
+{
+  "argvBytes": 361,
+  "returncode": 1,
+  "stdout": "{\"commandId\":\"cmd_fysmra0450hx\",\"cwd\":\".\",\"exitCode\":1,\"finishedAt\":\"2026-10-26T23:56:21.367Z\",\"launcherFailed\":false,\"noticedMs\":17,\"oomKilled\":false,\"signal\":null,\"startMs\":17,\"startedAt\":\"2026-10-26T23:56:21.018Z\",\"stderr\":\"  File \\\"<string>\\\", line 1\\n    import pathlib; p=pathlib.Path('/tmp/enigma-reconciled-canonical-boat-build-oct26/source'); print('\\n                                                                                                      ^\\nSyntaxError: unterminated string literal (detected at line 1)\\n\",\"stderrTruncated\":false,\"stdout\":\"\",\"stdoutTruncated\":false,\"success\":false,\"timedOut\":false}\n",
+  "stderr": ""
+}

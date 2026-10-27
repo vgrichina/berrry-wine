@@ -1,0 +1,18 @@
+{
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "module": "/tmp/enigma-reconciled-canonical-boat-build-oct26/source/build/wine-assembly.compat.wasm",
+  "sha256": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8",
+  "backend": "wine-assembly.compat.wasm",
+  "scope": "synthetic native canonical decoded execution",
+  "productionRunnerQualified": false,
+  "originalGame": false,
+  "cases": [],
+  "incidents": [
+    {
+      "message": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 4198939\n- 4198400\n      ^\n",
+      "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n+ actual - expected\n\n+ 4198939\n- 4198400\n      ^\n\n    at keyboard (/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-extra.js:135:72)\n    at Object.<anonymous> (/tmp/enigma-retained-canonical-native-msg-qualification-oct26/transport/harness-extra.js:142:15)\n    at Module._compile (node:internal/modules/cjs/loader:1929:14)\n    at Object..js (node:internal/modules/cjs/loader:2060:10)\n    at Module.load (node:internal/modules/cjs/loader:1651:32)\n    at Module._load (node:internal/modules/cjs/loader:1443:12)\n    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)\n    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)\n    at node:internal/main/run_main_module:33:47"
+    }
+  ],
+  "remaining": [],
+  "blocked": true
+}

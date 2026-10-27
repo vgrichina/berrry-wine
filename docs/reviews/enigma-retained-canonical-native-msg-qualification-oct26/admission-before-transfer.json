@@ -1,0 +1,48 @@
+{
+  "at": 1793059097.1139822,
+  "stage": "before-transfer",
+  "actual": {
+    "own": 6529024,
+    "launcher": 532480,
+    "session": 929792,
+    "positiveWAL": 0
+  },
+  "used": 7991296,
+  "allocation": 67108864,
+  "ownRemaining": 59117568,
+  "peerRemaining": {},
+  "free": 3179671552,
+  "projectedFree": 3120553984,
+  "floor": 2982150144,
+  "memAvailable": 3676938240,
+  "requiredMemory": 1342177280,
+  "clients": [
+    {
+      "pid": 752162,
+      "rss": 401408000
+    },
+    {
+      "pid": 3351840,
+      "rss": 192741376
+    },
+    {
+      "pid": 3354109,
+      "rss": 189644800
+    },
+    {
+      "pid": 3355833,
+      "rss": 278249472
+    }
+  ],
+  "residentRSSAlreadyDeducted": true,
+  "positiveWALCountedOnce": true,
+  "allocationCategoriesMiB": {
+    "compressed": 8,
+    "git": 16,
+    "modulesReports": 16,
+    "sessionEventsWAL": 16,
+    "futurePublication": 16,
+    "reserve": 8
+  },
+  "pass": true
+}

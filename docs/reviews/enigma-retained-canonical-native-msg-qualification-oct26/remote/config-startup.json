@@ -1,0 +1,40 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--expose-gc",
+    "-e",
+    "console.log(JSON.stringify({node:process.version,execPath:process.execPath,execArgv:process.execArgv,env:process.env,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),startup:true}))"
+  ],
+  "cwd": "/tmp/enigma-reconciled-canonical-boat-build-oct26/source",
+  "env": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "TMPDIR": "/tmp/enigma-retained-canonical-native-msg-qualification-oct26/ops",
+    "LC_ALL": "C",
+    "TZ": "UTC",
+    "NODE_OPTIONS": "--max-old-space-size=1536"
+  },
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "limits": {
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "physicalCap": 3221225472,
+  "wall": 120,
+  "aggregateOutput": 2097152,
+  "individualExcerpt": 8192
+}

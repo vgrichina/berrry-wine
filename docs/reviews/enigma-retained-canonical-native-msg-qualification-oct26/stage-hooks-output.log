@@ -1,0 +1,2 @@
+{'name': 'harness-hooks.js', 'bytes': 11287, 'sha256': '4a79ee64c8d052e7ef3fb9a355acf619b755275f3835ee803961f4ea5d9f9c77', 'chunks': 1, 'chunkBytes': 34000, 'maxConcurrent': 4}
+{'name': 'remote-hooks.py', 'bytes': 5883, 'sha256': 'dad7fb989a378c49bb148aa45de12519d9dd802071f08c7c67b9ab22ca47855b', 'chunks': 1, 'chunkBytes': 34000, 'maxConcurrent': 4}

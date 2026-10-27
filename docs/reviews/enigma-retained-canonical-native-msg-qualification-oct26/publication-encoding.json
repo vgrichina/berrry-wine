@@ -1,0 +1,21 @@
+[
+  "tail-unrelated-transport-output.log",
+  "compat-hardware-transport-output.log",
+  "inspect-hardware-output.log",
+  "inspect-hook-failure-output.log",
+  "inspect-hooks-thread-output.log",
+  "compat-transport-output.log",
+  "tail-hardware-transport-output.log",
+  "compat-hooks-thread-transport-output.log",
+  "tail-transport-output.log",
+  "tail-hooks-thread-transport-output.log",
+  "stage-output.log",
+  "inspect-extra-output.log",
+  "compat-unrelated-transport-output.log",
+  "remote/remote-run.py",
+  "versions/remote-extra.py",
+  "versions/remote-hardware.py",
+  "versions/remote-hooks-thread.py",
+  "versions/remote-hooks-v2.py",
+  "versions/remote-unrelated.py"
+]

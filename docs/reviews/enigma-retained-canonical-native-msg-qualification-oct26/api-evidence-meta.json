@@ -1,0 +1,6 @@
+{
+  "argvBytes": 284,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_wy3rnay2bonq\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-27T00:02:42.844Z\",\"launcherFailed\":false,\"noticedMs\":17,\"oomKilled\":false,\"signal\":null,\"startMs\":17,\"startedAt\":\"2026-10-27T00:02:42.800Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"{\\\"bytes\\\": 36825, \\\"sha256\\\": \\\"cd013955b59d499b9edcf87b4bb441f4f8f3d6aa7b5c62e0739ca11787b1f623\\\"}\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

@@ -1,0 +1,6 @@
+{
+  "argvBytes": 282,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_lxjdqoxvrcmt\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-26T23:58:17.675Z\",\"launcherFailed\":false,\"noticedMs\":21,\"oomKilled\":false,\"signal\":null,\"startMs\":21,\"startedAt\":\"2026-10-26T23:58:17.625Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"extracted bounded harness\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

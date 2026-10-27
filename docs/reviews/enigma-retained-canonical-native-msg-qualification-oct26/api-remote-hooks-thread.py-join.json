@@ -1,0 +1,6 @@
+{
+  "argvBytes": 373,
+  "returncode": 0,
+  "stdout": "{\"commandId\":\"cmd_jsmktuivxwaa\",\"cwd\":\".\",\"exitCode\":0,\"finishedAt\":\"2026-10-27T00:00:00.852Z\",\"launcherFailed\":false,\"noticedMs\":38,\"oomKilled\":false,\"signal\":null,\"startMs\":39,\"startedAt\":\"2026-10-27T00:00:00.786Z\",\"stderr\":\"\",\"stderrTruncated\":false,\"stdout\":\"ca0bed1598fb32eeec9f4886b53c0e8d5b530db4ea2fe8f4b2537713636df7fe\\n\",\"stdoutTruncated\":false,\"success\":true,\"timedOut\":false}\n",
+  "stderr": ""
+}

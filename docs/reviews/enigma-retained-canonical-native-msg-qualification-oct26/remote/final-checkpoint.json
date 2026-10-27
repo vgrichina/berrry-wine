@@ -1,0 +1,62 @@
+{
+  "candidate": "425755ee5ee9be0734c7aca187521100f5487674",
+  "groups": {
+    "tail": {
+      "cases": 20,
+      "pass_": true,
+      "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+    },
+    "compat": {
+      "cases": 20,
+      "pass_": true,
+      "module": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+    },
+    "tail-hooks-thread": {
+      "cases": 16,
+      "pass_": true,
+      "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+    },
+    "compat-hooks-thread": {
+      "cases": 16,
+      "pass_": true,
+      "module": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+    },
+    "tail-hardware": {
+      "cases": 20,
+      "pass_": true,
+      "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+    },
+    "compat-hardware": {
+      "cases": 20,
+      "pass_": true,
+      "module": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+    },
+    "tail-unrelated": {
+      "cases": 4,
+      "pass_": true,
+      "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b"
+    },
+    "compat-unrelated": {
+      "cases": 4,
+      "pass_": true,
+      "module": "ed7635d508f7e842afd3c6b8489ba133ac3ddea2fa305439fca60284ea5613a8"
+    }
+  },
+  "totalPairedCases": 120,
+  "perBackend": 60,
+  "scope": "synthetic native canonical decoded execution",
+  "productionRunnerQualified": false,
+  "originalGame": false,
+  "ownedNodeChildren": [],
+  "box": "bx_xw8d895f",
+  "state": "RUNNING coordinator owned",
+  "expiry": "2026-10-27T00:37:17.515Z",
+  "at": 1793059362.640975,
+  "memAvailable": 7397449728,
+  "free": 48996376576,
+  "remaining": [
+    "exact production-runner/native-game initializer wiring",
+    "step ACK all requested batches then frozen zero credits before input",
+    "original-game behavior"
+  ]
+}
