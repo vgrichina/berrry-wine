@@ -1,0 +1,162 @@
+{
+  "status": "SOURCE_CAUSE_ESTABLISHED_SEMANTIC_REPAIR_UNJUSTIFIED",
+  "observed": {
+    "status": "CAUSAL_RAW_RETURN_OBSERVED",
+    "at": 1793113753.4911163,
+    "guestInvocations": 1,
+    "rawEAX": "0x887600ff",
+    "rawUnsigned": 2289434879,
+    "rawSigned": -2005532417,
+    "apiSequence": 672,
+    "api": "IDirectDrawSurface_GetAttachedSurface",
+    "thisPointer": "0x08221038",
+    "vtable": "0x006fd7fc",
+    "capsPointer": "0x074ffe34",
+    "capsBytes16": "040000000100010030e1950000008f08",
+    "capsLittleEndianDwords": [
+      "0x00000004",
+      "0x00010001",
+      "0x0095e130",
+      "0x088f0000"
+    ],
+    "outPointer": "0x0087addc",
+    "callerReturn": "0x00953275",
+    "actualModuleBase": "0x00951000",
+    "preferredModuleBase": "0x01000000",
+    "moduleOffset": "0x2275",
+    "preferredCallerReturn": "0x01002275",
+    "observation": "entry-time memory dump plus raw log_api_exit EAX before guest caller resumes; correlated by uninterrupted API entry/exit pair",
+    "laterModeCheck": "TRACE-AT batch165 EAX1 ESI2 is separate and earlier in buffered output; displayed2 is requested mode, not HRESULT",
+    "runnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+    "runnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+    "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "guestSupervisor": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 168697856,
+      "sampledPeakRSS": 168697856,
+      "reapedPeakRSS": 140779520,
+      "cpuSeconds": 1.488856,
+      "wallSeconds": 0.40308075500001905,
+      "owned": [
+        [
+          28388,
+          "167656"
+        ],
+        [
+          28389,
+          "167663"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "remainingGuestAllowance": {
+      "cpuSeconds": 178.511144,
+      "wallSeconds": 239.59691924499998,
+      "invocations": 0
+    },
+    "cleanup": {
+      "at": 1793113606.1257105,
+      "ownedSurvivors": [],
+      "supervisor": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 168697856,
+        "sampledPeakRSS": 168697856,
+        "reapedPeakRSS": 140779520,
+        "cpuSeconds": 1.488856,
+        "wallSeconds": 0.40308075500001905,
+        "owned": [
+          [
+            28388,
+            "167656"
+          ],
+          [
+            28389,
+            "167663"
+          ]
+        ],
+        "cleanupComplete": true
+      },
+      "controllerPending": null,
+      "guestExit": {
+        "exit": 0,
+        "at": 1793113588.9485455
+      },
+      "remoteUsed": 114216960,
+      "box": "bx_w99qrvz9",
+      "state": "RUNNING: supported exec succeeded",
+      "lifecycleMutations": 0,
+      "expiry": "2026-10-27T15:47:01.657Z",
+      "shutdownOwner": "coordinator",
+      "cutoff": "15:30Z",
+      "handback": "15:34Z",
+      "shutdown": "15:39Z"
+    },
+    "limitations": [
+      "No gameplay acceptance",
+      "No fullscreen semantic repair",
+      "Controller quit acknowledged; no ordinary in-game Quit claim",
+      "Caps tail bytes are exact input, no initialized-field assumption",
+      "stderr missing optional PE DLL warnings preserved; exact registered71-file closure passed"
+    ]
+  },
+  "exactCompiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "moduleSHA256": "bf707aa41e2883e1407c71810a15fd5f1816961938c1103c8d1d5bd40cb701d9",
+  "productionRunnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+  "productionRunnerSHA256": "1655b299c95be6b2cd2ca8c951b880b0b8fbed81a0cd785300d3bed5f24ae39c",
+  "directxSourceSHA256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e",
+  "comparison": {
+    "revision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+    "directxMatchesCompiled": true,
+    "rootWorkingTreeNotSubstituted": true
+  },
+  "causalPath": [
+    {
+      "api": 668,
+      "observation": "full IID9c59509a-39bd-11d1-8c4a-00c04fd930c5; S_OK; output08332028",
+      "sourceInference": "kind4 selects dx_get_ddraw4_vtbl and a distinct wrapper"
+    },
+    {
+      "api": 671,
+      "observation": "this08332028; size124; flags00000021; backCount1; caps00006218; rawEAX0; returned next wrapper08221038 is observed as this at672",
+      "sourceInference": "dx_surface_vtbl_for_dd selects DX_VTBL_DDSURF4; dx_create_com_obj stores that vtable; observed entry vtable006fd7fc is therefore Surface4 by source/call-chain inference, not an independent registry dump",
+      "rootCaps": "0x6238",
+      "backCaps": "0x601c",
+      "creationAtomicity": "successful return requires linked requested child; allocation failure releases root and returns failure"
+    },
+    {
+      "api": 672,
+      "observation": "live this slot7; low caps4 plus exact nonzero trailing words",
+      "sourceInference": "dx_native_desc_size returns124 for Surface4; OR of caps words+4,+8,+12 is nonzero; handler zeroes output, stores887600ff, adds16 toESP and returns before misc0/metadata/matching lookup"
+    }
+  ],
+  "backbufferMatch": {
+    "requestedLowDWORD": 4,
+    "derivedBackCaps": "0x601c",
+    "allRequestedBitsMatch": true,
+    "kind": "source-derived creation state, not an observed DX_OBJECTS dump"
+  },
+  "unresolved": {
+    "question": "Whether rejecting the exact nonzero tail on this Surface4 call is a compatibility implementation defect or a caller request issue. Tail bytes are observed, but initialized/intentional field meanings are not established.",
+    "minimumMissingObservation": "Reference DirectDraw4/Surface4 GetAttachedSurface result for an otherwise valid matching flip chain and the exact 16 request bytes040000000100010030e1950000008f08. This distinguishes required compatibility from unsupported request rejection.",
+    "notAuthorizedHere": true
+  },
+  "repair": {
+    "implemented": false,
+    "reason": "No source/contract/reference evidence proves a concrete semantic defect; dropping the guard would also discard potentially requested extended caps."
+  },
+  "tests": {
+    "scope": "Unmodified exact handler + descriptor discriminator + DxObject layout extracted; synthetic surrounding helpers and distinct child; tiny source-only WebAssembly fixture, no guest/full build",
+    "result": "branch-probe-final.json",
+    "cases": 9,
+    "pass": true,
+    "independentAcceptance": false
+  },
+  "runtime": {
+    "newGuestInvocations": 0,
+    "boatOperations": 0,
+    "anotherRuntimeJustified": false,
+    "reason": "No repaired independently accepted candidate; sole invocation is spent. Source cause does not authorize runtime."
+  }
+}

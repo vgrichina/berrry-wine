@@ -1,0 +1,81 @@
+{
+  "status": "PASS_SOURCE_BRANCH_PROBE",
+  "limitations": "Extracted exact production handler; fixture helpers. No game, creation/lifetime acceptance or reference Windows behavior.",
+  "exactFormsSHA256": "82be9fcfda340f32a31bb8d3c96a743652a68c913bf19c0f73eae8c3b6df4410",
+  "compilerPath": "/home/user/wine-assembly/tools/watx.js",
+  "compilerSHA256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33",
+  "rows": [
+    {
+      "name": "observed16-Surface4",
+      "hr": 2289434879,
+      "output": 0,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    },
+    {
+      "name": "nonzero-tail-word-1",
+      "hr": 2289434879,
+      "output": 0,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    },
+    {
+      "name": "nonzero-tail-word-2",
+      "hr": 2289434879,
+      "output": 0,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    },
+    {
+      "name": "nonzero-tail-word-3",
+      "hr": 2289434879,
+      "output": 0,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    },
+    {
+      "name": "zero-tail-Surface4",
+      "hr": 0,
+      "output": 264,
+      "esp": 4112,
+      "lookups": 1,
+      "refs": 1
+    },
+    {
+      "name": "observed16-legacy-control",
+      "hr": 0,
+      "output": 264,
+      "esp": 4112,
+      "lookups": 1,
+      "refs": 1
+    },
+    {
+      "name": "zero-tail-no-attachment-control",
+      "hr": 2289434879,
+      "output": 0,
+      "esp": 4112,
+      "lookups": 2,
+      "refs": 0
+    },
+    {
+      "name": "invalid-object-control",
+      "hr": 2289434754,
+      "output": 3735928559,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    },
+    {
+      "name": "null-caps-control",
+      "hr": 2147942487,
+      "output": 3735928559,
+      "esp": 4112,
+      "lookups": 0,
+      "refs": 0
+    }
+  ]
+}
