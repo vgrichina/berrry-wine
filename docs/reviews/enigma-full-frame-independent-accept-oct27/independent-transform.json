@@ -1,0 +1,5 @@
+{
+  "original": "6761f917576bc9360066f39164fb91954677e8233180d090be8bc574a88cebb7",
+  "generated": "6f5ebeda1ebc3805f56082e20e78b752e4c3d4d69be77e1ce75c5a5881bf66f3",
+  "scope": "Only filesystem/HTTP clock/refusal injection. Production controller/supervisor unmodified."
+}

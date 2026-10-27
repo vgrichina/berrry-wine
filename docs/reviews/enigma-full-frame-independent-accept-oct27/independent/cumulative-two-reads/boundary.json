@@ -1,0 +1,116 @@
+{
+  "exit": 0,
+  "reviews": [
+    {
+      "bytes": 997,
+      "sha256": "a651482c579bdd5e4e53e0df8b912ca3d0f3f89b67e1be8416165fb85881d815",
+      "delay": 0,
+      "transferSeconds": 2,
+      "completed": true
+    },
+    {
+      "bytes": 994,
+      "sha256": "1816ed1c827942591d6929f63062641267fab7aa6872fed289870251b8d9f616",
+      "delay": 0,
+      "transferSeconds": 0,
+      "completed": false
+    }
+  ],
+  "independentEvents": [
+    {
+      "kind": "read",
+      "slot": 1,
+      "seconds": 0.6
+    },
+    {
+      "kind": "read",
+      "slot": 2,
+      "seconds": 0.6
+    }
+  ],
+  "clockLedger": [
+    {
+      "line": 479,
+      "value": 1793101526.871677
+    },
+    {
+      "line": 420,
+      "value": 1793101527.6332834
+    },
+    {
+      "line": 479,
+      "value": 1793101527.826589
+    },
+    {
+      "line": 420,
+      "value": 1793101528.498401
+    }
+  ],
+  "outcome": {
+    "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+    "batch": 3,
+    "captures": 2,
+    "clicked": false,
+    "pending": false,
+    "failed": false,
+    "at": 1793101528.5496774,
+    "apiBytes": 1820,
+    "captureBytes": 1991,
+    "reviewSecondsUsed": 1.4334182739257812,
+    "progress": {
+      "max_checkpoints": 2,
+      "total_seconds": 110.0,
+      "cpu_reserve": 6.666666666666667,
+      "api_bytes": 1048576,
+      "capture_total_bytes": 2100000
+    }
+  },
+  "childStarted": true,
+  "supervisor": {
+    "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+    "failed": false,
+    "reason": "controller-delegation-closed-no-reconnect",
+    "peakTreeRSS": 61919232,
+    "cpuSeconds": 0.06,
+    "outputBytes": 0,
+    "outputLimitExceeded": false,
+    "remainingOwnedLive": [],
+    "childReturncode": -15,
+    "owned": [
+      [
+        8353,
+        "114873556"
+      ],
+      [
+        8355,
+        "114873562"
+      ]
+    ],
+    "delegated": true,
+    "processDiagnostics": {
+      "startup": {
+        "status": "not-started",
+        "exit": null,
+        "stdout": "node-startup-stdout.log",
+        "stderr": "node-startup-stderr.log"
+      },
+      "command": {
+        "status": "exited",
+        "exit": -15,
+        "stdout": "output.log",
+        "stderr": "stderr.log",
+        "argv": [
+          "/usr/bin/python3",
+          "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+          "--port",
+          "37503",
+          "--root",
+          "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/cumulative-two-reads",
+          "--fault",
+          "loading-review"
+        ],
+        "pid": 8353
+      }
+    }
+  }
+}

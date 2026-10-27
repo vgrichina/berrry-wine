@@ -1,0 +1,135 @@
+{
+  "status": "ACCEPTED_OFFLINE_FULL_FRAME_ACCOUNTING",
+  "candidate": "37bad5b6a919a62b4e385b72219c2bb2b01a223b",
+  "producerReceipt": {
+    "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/receipt-manifest.json",
+    "sha256": "dbb7158a194b94a5860d8efcc19f27f0ce409ee5fd66b374ccb48356bae604fa"
+  },
+  "sourcePins": {
+    "tools/enigma-supervised-gameplay.py": "8da9bd8dd47ae03dea50c7f55c2f988906f95252a4d8ef95e0cfb62bd6e17858",
+    "tools/enigma-frozen-gameplay-controller.py": "78929d7f6dcf11f9481579b9f90eee9122c00b7088493e03c5ea7e76f4b50416",
+    "test/fixtures/enigma-controller/test_review_budget.py": "14341c8f37c35696365f8c262da2e163439e1affb4875e11e0757f3537150e95",
+    "test/fixtures/enigma-controller/test_progressive.py": "7f576bace1c8289b712d41bc44c1c183f14def613f7b28f2adfb244cb6754800",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_controller.py": "684dfe81c33deb6b813bf9f362c99479621aedbc4a1066b80a93ea99c53c78e5",
+    "test/fixtures/enigma-controller/test_full_frame_budget.py": "ebcbc79ba914f44231166d1731d8d8d102100d49f813ad1ba1aa2c0de2dc2a4f",
+    "test/fixtures/enigma-controller/independent-transfer.py": "6761f917576bc9360066f39164fb91954677e8233180d090be8bc574a88cebb7",
+    "test/fixtures/enigma-controller/child_server.py": "42823513355d78eaff9831fb57d1ccd3409dfb2188ef1ef0907cda37f0cdb1e5",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_supervised.py": "98473ed865fcc004efe709879ecb0c63896f672ef972d73c0814acf09e4b59a2",
+    "test/fixtures/enigma-controller/full-frame-boundary.py": "2571af35f2d51a3784a0457a1220504c585b58e9a66ae5542c02dd68249ae555",
+    "test/fixtures/enigma-controller/original-reproducer.py": "6665d61da745a7c33546b15b73f5311ccda51b6f978d6905f1e455ab06fea461"
+  },
+  "candidateGitBlobChecks": [
+    {
+      "path": "test/fixtures/enigma-controller/full-frame-boundary.py",
+      "gitBlob": "b077b56db760f72c81fcf489a43d8002b912acb4",
+      "sha256": "2571af35f2d51a3784a0457a1220504c585b58e9a66ae5542c02dd68249ae555"
+    },
+    {
+      "path": "test/fixtures/enigma-controller/independent-transfer.py",
+      "gitBlob": "3fef0cdf290ccfbe4e092838af20bd64ad17fa55",
+      "sha256": "6761f917576bc9360066f39164fb91954677e8233180d090be8bc574a88cebb7"
+    },
+    {
+      "path": "test/fixtures/enigma-controller/test_full_frame_budget.py",
+      "gitBlob": "8eaac4964b259af4c78a2e03aedd6a79fa8e78d7",
+      "sha256": "ebcbc79ba914f44231166d1731d8d8d102100d49f813ad1ba1aa2c0de2dc2a4f"
+    },
+    {
+      "path": "tools/enigma-frozen-gameplay-controller.py",
+      "gitBlob": "d5faf266cbf7177f576ab63ec259245f3fd218d5",
+      "sha256": "78929d7f6dcf11f9481579b9f90eee9122c00b7088493e03c5ea7e76f4b50416"
+    }
+  ],
+  "firstBoundary": {
+    "path": "first-boundary/boundary.json",
+    "sha256": "4cb70ef0c8e2faf92a45a5462f438e638dc288550f5175b09303bbfdb398924b",
+    "oracle": "Unchanged original production main reproducer, 34 seconds with slots .25/33.75; exit0, zero input, spent>=2s; failure oracle preserved"
+  },
+  "independent": {
+    "checkpoint": "acceptance-checkpoint.json",
+    "sha256": "21158bf1b81038a3d94e3655fb161761773fa596345d5f2cbb367406e27f93fb",
+    "cases": 12,
+    "positives": 2,
+    "clockLedger": "Exact capture start and terminal elapsed reads in unchanged production source prove once-only accounting on nine additional cases; first three completed cases retained without rerun, spent lower bound and zero input verified"
+  },
+  "wireCheck": {
+    "path": "wire-check.json",
+    "sha256": "754bba2260a2f4023228c4402727eda18050c22486a178027433263e32013e7a"
+  },
+  "reused": {
+    "checkpoint-test_full_frame_budget.json": {
+      "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/checkpoint-test_full_frame_budget.json",
+      "sha256": "7b5f9f3412cd574796476d61c34156742592ec6aa68f6bcc5bab2cc1b0fd73ba",
+      "scope": "Unchanged production and affected fixture dependency pins; other groups fixture files are unrelated inputs, not grounds for repeating successful tests"
+    },
+    "checkpoint-test_review_budget.json": {
+      "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/checkpoint-test_review_budget.json",
+      "sha256": "2be4751d753eeb66f208becbffcdafcb108cbd2bb0a811d42da453b0ce94c43c",
+      "scope": "Unchanged production and affected fixture dependency pins; other groups fixture files are unrelated inputs, not grounds for repeating successful tests"
+    },
+    "full-frame-final.json": {
+      "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/full-frame-final.json",
+      "sha256": "15f65dae435232e2a85e8f3ea764cce0a1d410a316bbd6f2f68df511a23f1fb1",
+      "scope": "Unchanged production and affected fixture dependency pins; other groups fixture files are unrelated inputs, not grounds for repeating successful tests"
+    },
+    "related-tests.json": {
+      "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/related-tests.json",
+      "sha256": "28e943c2e59c6478024e35cabc5c8e78b08177c8a6d1f8c0a0ff1fd3f10af79d",
+      "scope": "Unchanged production and affected fixture dependency pins; other groups fixture files are unrelated inputs, not grounds for repeating successful tests"
+    }
+  },
+  "sourceReview": {
+    "path": "independent-source-review.diff",
+    "sha256": "af26afe3513d094a5879b4b4e5f1ec6f75a8ab9642e893a2819d38993f8176e8",
+    "finding": "Capture starts before request/read/durable frame write; capture exceptions debit once, review finally debits same start; decision durability included before slot/cumulative guards; no future-slot reset. Failed I/O preserves uncertainty and owner cleanup."
+  },
+  "limits": {
+    "physicalPython": 134217728,
+    "physicalGit": 268435456,
+    "gitChildData": 536870912,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "display": 8192,
+    "cumulativeOutput": 1048576,
+    "actualPythonChildLimits": {
+      "0": [
+        90,
+        90
+      ],
+      "1": [
+        25165824,
+        25165824
+      ],
+      "2": [
+        -1,
+        -1
+      ],
+      "9": [
+        -1,
+        -1
+      ]
+    },
+    "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  },
+  "configuration": "configuration.json; no filename-bearing mount argv / no Node / no guest authorized",
+  "scope": "Offline real child/listener/HTTP synthetic640x480 only; independent acceptance supports scoped integration, does not claim gameplay or public deployment. Evidence orphan NEVER wholemerge.",
+  "incidents": [
+    "Initial combined display reads exceeded8192B, original launcher events/session retained and accounted. Subsequent diagnostic excerpts capped.",
+    "Independent third-case upper tolerance .8s rejected actual2.869734 vs injected2s due real I/O elapsed. Preserved failure streams; no candidate defect. First three behavioral outcomes reused. Nine remaining cases use exact production clock ledger instead of elapsed tolerance.",
+    "First three reused cases have original wrapper environment hash, not separately retained dynamic child PID hash. Reuse-only computed environment hashes removed; nine later cases retain hashes at execution. Behavior/source unchanged; no acceptance reruns."
+  ],
+  "rootReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-full-frame-independent-accept-oct27/root-ref-digest.json",
+  "publication": "Pending exact task branch; final canonical ops receipt will bind commit and verified remote ref.",
+  "cleanup": "All behavior supervisors remainingOwnedLive empty; each operation supervisor cleanupComplete. Board watcher to close at final.",
+  "boxes": {
+    "assigned": null,
+    "state": "none accessed",
+    "expiry": null,
+    "owner": "Coordinator retains all lifecycle authority"
+  }
+}

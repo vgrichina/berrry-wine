@@ -1,0 +1,111 @@
+{
+  "exit": 1,
+  "reviews": [
+    {
+      "bytes": 997,
+      "sha256": "a651482c579bdd5e4e53e0df8b912ca3d0f3f89b67e1be8416165fb85881d815",
+      "delay": 0,
+      "transferSeconds": 2,
+      "completed": true
+    },
+    {
+      "bytes": 994,
+      "sha256": "1816ed1c827942591d6929f63062641267fab7aa6872fed289870251b8d9f616",
+      "delay": 0,
+      "transferSeconds": 0,
+      "completed": true
+    }
+  ],
+  "independentEvents": [
+    {
+      "kind": "fsync",
+      "name": "review-002.json.tmp",
+      "seconds": 2
+    }
+  ],
+  "clockLedger": [
+    {
+      "line": 479,
+      "value": 1793101525.085927
+    },
+    {
+      "line": 420,
+      "value": 1793101525.205357
+    },
+    {
+      "line": 479,
+      "value": 1793101525.3165607
+    },
+    {
+      "line": 420,
+      "value": 1793101527.4065611
+    }
+  ],
+  "outcome": {
+    "status": "exhausted-budget: review-reservation",
+    "batch": 3,
+    "captures": 2,
+    "clicked": false,
+    "pending": false,
+    "failed": true,
+    "at": 1793101527.406595,
+    "apiBytes": 1753,
+    "captureBytes": 1991,
+    "reviewSecondsUsed": 2.209430456161499,
+    "progress": {
+      "max_checkpoints": 2,
+      "total_seconds": 110.0,
+      "cpu_reserve": 6.666666666666667,
+      "api_bytes": 1048576,
+      "capture_total_bytes": 2100000
+    }
+  },
+  "childStarted": true,
+  "supervisor": {
+    "status": "exhausted-budget: review-reservation",
+    "failed": true,
+    "reason": "controller-delegation-closed-no-reconnect",
+    "peakTreeRSS": 62459904,
+    "cpuSeconds": 0.07,
+    "outputBytes": 0,
+    "outputLimitExceeded": false,
+    "remainingOwnedLive": [],
+    "childReturncode": -15,
+    "owned": [
+      [
+        8317,
+        "114873397"
+      ],
+      [
+        8319,
+        "114873404"
+      ]
+    ],
+    "delegated": true,
+    "processDiagnostics": {
+      "startup": {
+        "status": "not-started",
+        "exit": null,
+        "stdout": "node-startup-stdout.log",
+        "stderr": "node-startup-stderr.log"
+      },
+      "command": {
+        "status": "exited",
+        "exit": -15,
+        "stdout": "output.log",
+        "stderr": "stderr.log",
+        "argv": [
+          "/usr/bin/python3",
+          "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+          "--port",
+          "49241",
+          "--root",
+          "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-review-fsync",
+          "--fault",
+          "loading-review"
+        ],
+        "pid": 8317
+      }
+    }
+  }
+}

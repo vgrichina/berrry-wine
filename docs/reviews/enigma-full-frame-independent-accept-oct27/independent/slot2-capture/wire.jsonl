@@ -1,0 +1,11 @@
+{"command": {"action": "snapshot"}, "pid": 7351, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 7351, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 7351, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 7351, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 7351, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-capture/launch/controller/menu-candidate.png"}, "pid": 7351, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 7351, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 7351, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 7351, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-capture/launch/controller/menu-candidate-002.png"}, "pid": 7351, "batch": 3}
+{"command": {"action": "quit"}, "pid": 7351, "batch": 3}

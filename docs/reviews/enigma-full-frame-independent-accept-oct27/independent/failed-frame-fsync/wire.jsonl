@@ -1,0 +1,6 @@
+{"command": {"action": "snapshot"}, "pid": 8382, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 8382, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 8382, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 8382, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 8382, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-frame-fsync/launch/controller/menu-candidate.png"}, "pid": 8382, "batch": 2}

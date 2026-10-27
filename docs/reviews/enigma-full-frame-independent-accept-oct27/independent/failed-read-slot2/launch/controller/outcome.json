@@ -1,0 +1,19 @@
+{
+  "status": "uncertain-request-or-evidence-failure: OSError('independent full-frame read refusal')",
+  "batch": 3,
+  "captures": 1,
+  "clicked": false,
+  "pending": false,
+  "failed": true,
+  "at": 1793101531.2955534,
+  "apiBytes": 1749,
+  "captureBytes": 997,
+  "reviewSecondsUsed": 2.1576201915740967,
+  "progress": {
+    "max_checkpoints": 2,
+    "total_seconds": 110.0,
+    "cpu_reserve": 6.666666666666667,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 2100000
+  }
+}

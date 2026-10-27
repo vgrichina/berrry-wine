@@ -1,0 +1,19 @@
+{
+  "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+  "batch": 3,
+  "captures": 2,
+  "clicked": false,
+  "pending": false,
+  "failed": false,
+  "at": 1793101528.5496774,
+  "apiBytes": 1820,
+  "captureBytes": 1991,
+  "reviewSecondsUsed": 1.4334182739257812,
+  "progress": {
+    "max_checkpoints": 2,
+    "total_seconds": 110.0,
+    "cpu_reserve": 6.666666666666667,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 2100000
+  }
+}

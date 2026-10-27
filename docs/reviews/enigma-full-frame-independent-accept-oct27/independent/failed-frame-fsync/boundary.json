@@ -1,0 +1,96 @@
+{
+  "exit": 1,
+  "reviews": [
+    {
+      "bytes": 997,
+      "sha256": "a651482c579bdd5e4e53e0df8b912ca3d0f3f89b67e1be8416165fb85881d815",
+      "delay": 0,
+      "transferSeconds": 2,
+      "completed": false
+    }
+  ],
+  "independentEvents": [
+    {
+      "kind": "fsync",
+      "name": "menu-candidate.png.json.tmp",
+      "seconds": 2
+    }
+  ],
+  "clockLedger": [
+    {
+      "line": 479,
+      "value": 1793101529.847234
+    },
+    {
+      "line": 484,
+      "value": 1793101531.8818066
+    }
+  ],
+  "outcome": {
+    "status": "uncertain-request-or-evidence-failure: OSError('independent durable evidence refusal')",
+    "batch": 2,
+    "captures": 1,
+    "clicked": false,
+    "pending": false,
+    "failed": true,
+    "at": 1793101531.8818629,
+    "apiBytes": 998,
+    "captureBytes": 997,
+    "reviewSecondsUsed": 2.0345726013183594,
+    "progress": {
+      "max_checkpoints": 2,
+      "total_seconds": 110.0,
+      "cpu_reserve": 6.666666666666667,
+      "api_bytes": 1048576,
+      "capture_total_bytes": 2100000
+    }
+  },
+  "childStarted": true,
+  "supervisor": {
+    "status": "uncertain-request-or-evidence-failure: OSError('independent durable evidence refusal')",
+    "failed": true,
+    "reason": "controller-delegation-closed-no-reconnect",
+    "peakTreeRSS": 62050304,
+    "cpuSeconds": 0.05,
+    "outputBytes": 0,
+    "outputLimitExceeded": false,
+    "remainingOwnedLive": [],
+    "childReturncode": -15,
+    "owned": [
+      [
+        8382,
+        "114873873"
+      ],
+      [
+        8384,
+        "114873879"
+      ]
+    ],
+    "delegated": true,
+    "processDiagnostics": {
+      "startup": {
+        "status": "not-started",
+        "exit": null,
+        "stdout": "node-startup-stdout.log",
+        "stderr": "node-startup-stderr.log"
+      },
+      "command": {
+        "status": "exited",
+        "exit": -15,
+        "stdout": "output.log",
+        "stderr": "stderr.log",
+        "argv": [
+          "/usr/bin/python3",
+          "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+          "--port",
+          "41219",
+          "--root",
+          "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-frame-fsync",
+          "--fault",
+          "loading-review"
+        ],
+        "pid": 8382
+      }
+    }
+  }
+}

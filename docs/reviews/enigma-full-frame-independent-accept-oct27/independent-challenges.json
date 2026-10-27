@@ -1,0 +1,81 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 99127296,
+  "sampledPeakRSS": 99127296,
+  "reapedPeakRSS": 31805440,
+  "cpuSeconds": 10.274077,
+  "wallSeconds": 4.268047754885629,
+  "owned": [
+    [
+      7343,
+      "114868608"
+    ],
+    [
+      7348,
+      "114868610"
+    ],
+    [
+      7351,
+      "114868621"
+    ],
+    [
+      7354,
+      "114868625"
+    ],
+    [
+      7372,
+      "114868687"
+    ],
+    [
+      7378,
+      "114868705"
+    ],
+    [
+      7381,
+      "114868710"
+    ],
+    [
+      7403,
+      "114868839"
+    ],
+    [
+      7404,
+      "114868849"
+    ],
+    [
+      7406,
+      "114868856"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-full-frame-independent-accept-oct27/ops/challenge.py"
+  ],
+  "commandSHA256": "29e13a01af2219e6db2121bfabf81478bddc8a64579c3647ceb4521f1f4f700a",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "37948bd8dd5e7f18cd446a77ce5cea4bee3c241c791d36ec1cafed13afee95d0",
+  "stdout": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent-challenges.stdout",
+  "stderr": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent-challenges.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

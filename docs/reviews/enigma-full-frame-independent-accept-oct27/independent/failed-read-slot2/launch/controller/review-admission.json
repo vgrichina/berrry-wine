@@ -1,0 +1,13 @@
+{
+  "plan": {
+    "checkpoint_seconds": [
+      30,
+      4
+    ],
+    "progress_seconds": 45
+  },
+  "controllerRequiredSeconds": 81.9,
+  "reviewCumulativeAllowance": 34.0,
+  "originalStartedAt": 1793101528.5722458,
+  "originalDeadlineAt": 1793101638.5722458
+}

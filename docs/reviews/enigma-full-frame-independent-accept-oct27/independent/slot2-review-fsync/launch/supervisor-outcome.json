@@ -1,0 +1,47 @@
+{
+  "status": "exhausted-budget: review-reservation",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 62459904,
+  "cpuSeconds": 0.07,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      8317,
+      "114873397"
+    ],
+    [
+      8319,
+      "114873404"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "49241",
+        "--root",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-review-fsync",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 8317
+    }
+  }
+}

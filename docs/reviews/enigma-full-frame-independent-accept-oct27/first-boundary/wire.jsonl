@@ -1,0 +1,7 @@
+{"command": {"action": "snapshot"}, "pid": 6335, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 6335, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 6335, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 6335, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 6335, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-full-frame-independent-accept-oct27/ops/first-boundary/launch/controller/menu-candidate.png"}, "pid": 6335, "batch": 2}
+{"command": {"action": "quit"}, "pid": 6335, "batch": 2}

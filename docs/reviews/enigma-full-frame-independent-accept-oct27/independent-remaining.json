@@ -1,0 +1,153 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 99553280,
+  "sampledPeakRSS": 99553280,
+  "reapedPeakRSS": 30912512,
+  "cpuSeconds": 27.906740000000003,
+  "wallSeconds": 8.074243122013286,
+  "owned": [
+    [
+      8315,
+      "114873386"
+    ],
+    [
+      8316,
+      "114873389"
+    ],
+    [
+      8317,
+      "114873397"
+    ],
+    [
+      8319,
+      "114873404"
+    ],
+    [
+      8324,
+      "114873460"
+    ],
+    [
+      8327,
+      "114873471"
+    ],
+    [
+      8331,
+      "114873476"
+    ],
+    [
+      8352,
+      "114873543"
+    ],
+    [
+      8353,
+      "114873556"
+    ],
+    [
+      8355,
+      "114873562"
+    ],
+    [
+      8360,
+      "114873665"
+    ],
+    [
+      8368,
+      "114873682"
+    ],
+    [
+      8370,
+      "114873690"
+    ],
+    [
+      8372,
+      "114873767"
+    ],
+    [
+      8373,
+      "114873784"
+    ],
+    [
+      8375,
+      "114873791"
+    ],
+    [
+      8381,
+      "114873859"
+    ],
+    [
+      8382,
+      "114873873"
+    ],
+    [
+      8384,
+      "114873879"
+    ],
+    [
+      8386,
+      "114873921"
+    ],
+    [
+      8387,
+      "114873934"
+    ],
+    [
+      8389,
+      "114873938"
+    ],
+    [
+      8391,
+      "114873983"
+    ],
+    [
+      8392,
+      "114873996"
+    ],
+    [
+      8394,
+      "114874002"
+    ],
+    [
+      8433,
+      "114874085"
+    ],
+    [
+      8435,
+      "114874096"
+    ],
+    [
+      8437,
+      "114874102"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-full-frame-independent-accept-oct27/ops/challenge.py"
+  ],
+  "commandSHA256": "29e13a01af2219e6db2121bfabf81478bddc8a64579c3647ceb4521f1f4f700a",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "cb67bdaf582f3a5baa05e77e0498cbfb75e1babecfc6feb93f85b852023d5208",
+  "stdout": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent-remaining.stdout",
+  "stderr": "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent-remaining.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

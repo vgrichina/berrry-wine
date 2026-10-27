@@ -1,0 +1,56 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 20316160,
+  "sampledPeakRSS": 20316160,
+  "reapedPeakRSS": 12673024,
+  "cpuSeconds": 0.05436100000000001,
+  "wallSeconds": 0.09384178603067994,
+  "owned": [
+    [
+      9571,
+      "114879069"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/enigma-full-frame-independent-accept-oct27/repo",
+    "ls-tree",
+    "-r",
+    "37bad5b6a919a62b4e385b72219c2bb2b01a223b",
+    "--",
+    "tools/enigma-frozen-gameplay-controller.py",
+    "tools/enigma-supervised-gameplay.py",
+    "test/fixtures/enigma-controller"
+  ],
+  "commandSHA256": "20a22f6f9af9468e5bee41e6cb3b1a3fad617d772744d972a175a1d51534c3df",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "8c4012d8852f3f5550e6a295e5b6b882c4d8ae319271f18b8e5bb573dd60fe92",
+  "stdout": "/tmp/enigma-full-frame-independent-accept-oct27/ops/candidate-tree.stdout",
+  "stderr": "/tmp/enigma-full-frame-independent-accept-oct27/ops/candidate-tree.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

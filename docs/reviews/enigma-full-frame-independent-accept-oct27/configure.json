@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 36569088,
+  "sampledPeakRSS": 36569088,
+  "reapedPeakRSS": 16908288,
+  "cpuSeconds": 0.458334,
+  "wallSeconds": 0.3508774731308222,
+  "owned": [
+    [
+      9434,
+      "114878272"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-full-frame-independent-accept-oct27/ops/configure.py"
+  ],
+  "commandSHA256": "0d2c9e520c41ade482bf792634af618acf2ee830181a9b1da1824da69513a888",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "786fee7100a08cc06082b8069c2503b9d7f0ef6f31ea0cb9c4bc46743377f9d1",
+  "stdout": "/tmp/enigma-full-frame-independent-accept-oct27/ops/configure.stdout",
+  "stderr": "/tmp/enigma-full-frame-independent-accept-oct27/ops/configure.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

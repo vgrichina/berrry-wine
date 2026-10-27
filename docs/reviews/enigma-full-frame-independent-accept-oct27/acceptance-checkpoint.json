@@ -1,0 +1,715 @@
+{
+  "candidate": "37bad5b6a919a62b4e385b72219c2bb2b01a223b",
+  "completed": [
+    {
+      "name": "slot2-capture",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101479.6115658,
+        "apiBytes": 1792,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 2.143988609313965,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "capture",
+          "slot": 2,
+          "seconds": 2
+        }
+      ],
+      "clockLedger": null,
+      "existingReceiptReused": true,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-capture",
+        "34",
+        "{\"checkpoint_seconds\": [30, 0.25], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": null,
+      "cleanup": [],
+      "originalEnvironmentReceipt": "independent-challenges.json environmentSHA256 identifies original supervisor environment; dynamic child-supervision PID not separately retained. Current reuse invocation hash intentionally omitted."
+    },
+    {
+      "name": "slot2-read",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101481.1369667,
+        "apiBytes": 1780,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 2.1561896800994873,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "read",
+          "slot": 2,
+          "seconds": 2
+        }
+      ],
+      "clockLedger": null,
+      "existingReceiptReused": true,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-read",
+        "34",
+        "{\"checkpoint_seconds\": [30, 0.25], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": null,
+      "cleanup": [],
+      "originalEnvironmentReceipt": "independent-challenges.json environmentSHA256 identifies original supervisor environment; dynamic child-supervision PID not separately retained. Current reuse invocation hash intentionally omitted."
+    },
+    {
+      "name": "slot2-frame-fsync",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101482.92468,
+        "apiBytes": 1808,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 2.869734048843384,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "fsync",
+          "name": "menu-candidate-002.png.json.tmp",
+          "seconds": 2
+        }
+      ],
+      "clockLedger": null,
+      "existingReceiptReused": true,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-frame-fsync",
+        "34",
+        "{\"checkpoint_seconds\": [30, 0.25], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": null,
+      "cleanup": [],
+      "originalEnvironmentReceipt": "independent-challenges.json environmentSHA256 identifies original supervisor environment; dynamic child-supervision PID not separately retained. Current reuse invocation hash intentionally omitted."
+    },
+    {
+      "name": "slot2-review-fsync",
+      "positive": false,
+      "outcome": {
+        "status": "exhausted-budget: review-reservation",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": true,
+        "at": 1793101527.406595,
+        "apiBytes": 1753,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 2.209430456161499,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "fsync",
+          "name": "review-002.json.tmp",
+          "seconds": 2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101525.085927
+        },
+        {
+          "line": 420,
+          "value": 1793101525.205357
+        },
+        {
+          "line": 479,
+          "value": 1793101525.3165607
+        },
+        {
+          "line": 420,
+          "value": 1793101527.4065611
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/slot2-review-fsync",
+        "34",
+        "{\"checkpoint_seconds\": [30, 0.25], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": "b3495b36fad87de541d17c28042809319efbe69ad09673fdfb867bd2f933221e",
+      "cleanup": []
+    },
+    {
+      "name": "cumulative-two-captures",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101527.3499196,
+        "apiBytes": 1832,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 1.3575201034545898,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "capture",
+          "slot": 1,
+          "seconds": 0.6
+        },
+        {
+          "kind": "capture",
+          "slot": 2,
+          "seconds": 0.6
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101525.8224583
+        },
+        {
+          "line": 420,
+          "value": 1793101526.5275934
+        },
+        {
+          "line": 479,
+          "value": 1793101526.662499
+        },
+        {
+          "line": 420,
+          "value": 1793101527.314884
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/cumulative-two-captures",
+        "1",
+        "null"
+      ],
+      "environmentSHA256": "ac12460af4609d2e2ee8ad6964f1f61faa8d17da21feaf6ab2656ce5c36442e6",
+      "cleanup": []
+    },
+    {
+      "name": "cumulative-two-reads",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101528.5496774,
+        "apiBytes": 1820,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 1.4334182739257812,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "read",
+          "slot": 1,
+          "seconds": 0.6
+        },
+        {
+          "kind": "read",
+          "slot": 2,
+          "seconds": 0.6
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101526.871677
+        },
+        {
+          "line": 420,
+          "value": 1793101527.6332834
+        },
+        {
+          "line": 479,
+          "value": 1793101527.826589
+        },
+        {
+          "line": 420,
+          "value": 1793101528.498401
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/cumulative-two-reads",
+        "1",
+        "null"
+      ],
+      "environmentSHA256": "a776fe94929e6d8e5ffe0f763cb5b053886b9ce84346bac4d0c770e278ad9656",
+      "cleanup": []
+    },
+    {
+      "name": "cumulative-two-fsyncs",
+      "positive": false,
+      "outcome": {
+        "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+        "batch": 3,
+        "captures": 2,
+        "clicked": false,
+        "pending": false,
+        "failed": false,
+        "at": 1793101529.5881548,
+        "apiBytes": 1824,
+        "captureBytes": 1991,
+        "reviewSecondsUsed": 1.3958735466003418,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "fsync",
+          "name": "menu-candidate.png.json.tmp",
+          "seconds": 0.6
+        },
+        {
+          "kind": "fsync",
+          "name": "menu-candidate-002.png.json.tmp",
+          "seconds": 0.6
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101527.979672
+        },
+        {
+          "line": 420,
+          "value": 1793101528.700677
+        },
+        {
+          "line": 479,
+          "value": 1793101528.8640215
+        },
+        {
+          "line": 420,
+          "value": 1793101529.5388901
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/cumulative-two-fsyncs",
+        "1",
+        "null"
+      ],
+      "environmentSHA256": "2fd0bbf7edba293f8458821f4911ba847864dc073cad34c1fb8cead0358fa66f",
+      "cleanup": []
+    },
+    {
+      "name": "failed-read-slot2",
+      "positive": false,
+      "outcome": {
+        "status": "uncertain-request-or-evidence-failure: OSError('independent full-frame read refusal')",
+        "batch": 3,
+        "captures": 1,
+        "clicked": false,
+        "pending": false,
+        "failed": true,
+        "at": 1793101531.2955534,
+        "apiBytes": 1749,
+        "captureBytes": 997,
+        "reviewSecondsUsed": 2.1576201915740967,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "read",
+          "slot": 2,
+          "seconds": 2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101528.9179966
+        },
+        {
+          "line": 420,
+          "value": 1793101529.0375776
+        },
+        {
+          "line": 479,
+          "value": 1793101529.2574592
+        },
+        {
+          "line": 484,
+          "value": 1793101531.2954984
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-read-slot2",
+        "34",
+        "{\"checkpoint_seconds\": [30, 4], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": "5b7b4be8dc652ea7d9c6985d72f16c6e0fb7e0aa576cfa8b45f96c4121b72373",
+      "cleanup": []
+    },
+    {
+      "name": "failed-frame-fsync",
+      "positive": false,
+      "outcome": {
+        "status": "uncertain-request-or-evidence-failure: OSError('independent durable evidence refusal')",
+        "batch": 2,
+        "captures": 1,
+        "clicked": false,
+        "pending": false,
+        "failed": true,
+        "at": 1793101531.8818629,
+        "apiBytes": 998,
+        "captureBytes": 997,
+        "reviewSecondsUsed": 2.0345726013183594,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "fsync",
+          "name": "menu-candidate.png.json.tmp",
+          "seconds": 2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101529.847234
+        },
+        {
+          "line": 484,
+          "value": 1793101531.8818066
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-frame-fsync",
+        "34",
+        "{\"checkpoint_seconds\": [4, 30], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": "9294096d18455c9bce2a3dad68fd67c22ba3e0fa2dfe1c23b4f4f7f675893fbd",
+      "cleanup": []
+    },
+    {
+      "name": "failed-review-fsync",
+      "positive": false,
+      "outcome": {
+        "status": "uncertain-request-or-evidence-failure: OSError('independent durable evidence refusal')",
+        "batch": 2,
+        "captures": 1,
+        "clicked": false,
+        "pending": false,
+        "failed": true,
+        "at": 1793101532.564316,
+        "apiBytes": 1000,
+        "captureBytes": 997,
+        "reviewSecondsUsed": 2.1306216716766357,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "fsync",
+          "name": "review-001.json.tmp",
+          "seconds": 2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101530.4336605
+        },
+        {
+          "line": 420,
+          "value": 1793101532.5642822
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-review-fsync",
+        "34",
+        "{\"checkpoint_seconds\": [4, 30], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": "bff943382531417d314b50d298def141b00ebd3e5d5db5642f34d3fd40420009",
+      "cleanup": []
+    },
+    {
+      "name": "positive-configured",
+      "positive": true,
+      "outcome": {
+        "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+        "batch": 4,
+        "captures": 3,
+        "clicked": true,
+        "pending": false,
+        "failed": false,
+        "at": 1793101532.8160932,
+        "apiBytes": 2634,
+        "captureBytes": 2985,
+        "reviewSecondsUsed": 1.4050147533416748,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "capture",
+          "slot": 1,
+          "seconds": 0.2
+        },
+        {
+          "kind": "read",
+          "slot": 1,
+          "seconds": 0.2
+        },
+        {
+          "kind": "fsync",
+          "name": "menu-candidate.png.json.tmp",
+          "seconds": 0.2
+        },
+        {
+          "kind": "capture",
+          "slot": 2,
+          "seconds": 0.2
+        },
+        {
+          "kind": "read",
+          "slot": 2,
+          "seconds": 0.2
+        },
+        {
+          "kind": "fsync",
+          "name": "review-002.json.tmp",
+          "seconds": 0.2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101531.0784554
+        },
+        {
+          "line": 420,
+          "value": 1793101531.7725892
+        },
+        {
+          "line": 479,
+          "value": 1793101531.8921633
+        },
+        {
+          "line": 420,
+          "value": 1793101532.6030443
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/positive-configured",
+        "34",
+        "{\"checkpoint_seconds\": [4, 30], \"progress_seconds\": 45}"
+      ],
+      "environmentSHA256": "f1405dea7ef430e1aad3256cd05a41064074ab72a3c67e8c20e23a2065a10d54",
+      "cleanup": []
+    },
+    {
+      "name": "positive-default",
+      "positive": true,
+      "outcome": {
+        "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+        "batch": 4,
+        "captures": 3,
+        "clicked": true,
+        "pending": false,
+        "failed": false,
+        "at": 1793101533.7914822,
+        "apiBytes": 2616,
+        "captureBytes": 2985,
+        "reviewSecondsUsed": 1.396362066268921,
+        "progress": {
+          "max_checkpoints": 2,
+          "total_seconds": 110.0,
+          "cpu_reserve": 6.666666666666667,
+          "api_bytes": 1048576,
+          "capture_total_bytes": 2100000
+        }
+      },
+      "events": [
+        {
+          "kind": "capture",
+          "slot": 1,
+          "seconds": 0.2
+        },
+        {
+          "kind": "read",
+          "slot": 1,
+          "seconds": 0.2
+        },
+        {
+          "kind": "fsync",
+          "name": "menu-candidate.png.json.tmp",
+          "seconds": 0.2
+        },
+        {
+          "kind": "capture",
+          "slot": 2,
+          "seconds": 0.2
+        },
+        {
+          "kind": "read",
+          "slot": 2,
+          "seconds": 0.2
+        },
+        {
+          "kind": "fsync",
+          "name": "review-002.json.tmp",
+          "seconds": 0.2
+        }
+      ],
+      "clockLedger": [
+        {
+          "line": 479,
+          "value": 1793101532.0417547
+        },
+        {
+          "line": 420,
+          "value": 1793101532.7291021
+        },
+        {
+          "line": 479,
+          "value": 1793101532.8461392
+        },
+        {
+          "line": 420,
+          "value": 1793101533.5551538
+        }
+      ],
+      "existingReceiptReused": false,
+      "command": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/independent-latency.py",
+        "--boundary",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/positive-default",
+        "4",
+        "null"
+      ],
+      "environmentSHA256": "f1405dea7ef430e1aad3256cd05a41064074ab72a3c67e8c20e23a2065a10d54",
+      "cleanup": []
+    }
+  ],
+  "remaining": []
+}

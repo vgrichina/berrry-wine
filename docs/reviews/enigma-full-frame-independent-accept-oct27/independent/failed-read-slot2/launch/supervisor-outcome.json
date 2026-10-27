@@ -1,0 +1,47 @@
+{
+  "status": "uncertain-request-or-evidence-failure: OSError('independent full-frame read refusal')",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 61915136,
+  "cpuSeconds": 0.07,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      8373,
+      "114873784"
+    ],
+    [
+      8375,
+      "114873791"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-full-frame-independent-accept-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "58719",
+        "--root",
+        "/tmp/enigma-full-frame-independent-accept-oct27/ops/independent/failed-read-slot2",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 8373
+    }
+  }
+}
