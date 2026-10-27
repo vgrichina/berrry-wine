@@ -1,0 +1,125 @@
+{
+  "status": "BLOCKED_AGGREGATE_CPU_AFTER_REVIEWED_MENU_CLICK",
+  "task": "alien-retained-staging-menu-mission-oct27",
+  "session": "01a17ca3-8a6f-7662-ae5a-0f0bfab92d2a",
+  "source": "ebf70036c96e0c3267b4943822a446a0b13e8336",
+  "branch": "task/alien-retained-staging-menu-mission-oct27",
+  "staging": {
+    "files": 617,
+    "hashSizeModePass": true,
+    "remaining": 0,
+    "missingOnly": true,
+    "maximumFilesPerGroup": 20,
+    "retainedRoot": "/tmp/alien-cleanup-menu-mission-oct27"
+  },
+  "startup": {
+    "node": "24.22.1",
+    "heapMiB": 2048,
+    "DATA": "unlimited",
+    "AS": "unlimited",
+    "CPU": 90,
+    "file": 25165824,
+    "registeredFiles": 431,
+    "wasmBytes": 1880280,
+    "wasmSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "canonicalParserPass": true,
+    "distinctStdoutStderr": true
+  },
+  "guest": {
+    "invocations": 1,
+    "commandId": "cmd_wcylrxz03bwn",
+    "runId": "2ce11262-e54a-4233-892d-a4cd03616fab",
+    "startedAt": "2026-10-27T09:20:17.754Z",
+    "reviewedMenu": true,
+    "menuBatch": 4722,
+    "menuSHA256": "52c354de883bf99e0d7ab65faae0d7dc6ae21e82dd07bacc0b101b32d0ec3fe5",
+    "approvalBeforeInput": true,
+    "actualInputLog": "[input] click 98,296 at batch 4722",
+    "newGameResponseBatch": 5234,
+    "newGameResponseIdenticalToMenu": true,
+    "mission": false,
+    "gameplay": false,
+    "ordinaryQuit": false,
+    "lastAcknowledgedBatch": 5490,
+    "lastFrozenBatch": 5490,
+    "pending": {
+      "command": {
+        "action": "step",
+        "n": 256
+      },
+      "index": 11
+    },
+    "supervisor": {
+      "exit": 1,
+      "stopReason": "aggregate CPU limit",
+      "peakRSS": 580911104,
+      "sampledPeakRSS": 580911104,
+      "reapedPeakRSS": 527171584,
+      "cpuSeconds": 193.815829,
+      "wallSeconds": 73.05199533199993,
+      "owned": [
+        [
+          45045,
+          "241961"
+        ],
+        [
+          45046,
+          "241966"
+        ]
+      ],
+      "cleanupComplete": true
+    },
+    "cleanup": {
+      "delegationConsumed": true,
+      "elapsed": 72.945754115,
+      "guestAcceptance": "unqualified",
+      "identities": {
+        "45046": {
+          "cpu": 47.34,
+          "ppid": 45045,
+          "rss": 494194688,
+          "start": "241966",
+          "state": "R"
+        }
+      },
+      "peaks": {
+        "cpu": 103.51,
+        "output": 0,
+        "rss": 561381376
+      },
+      "reason": "controller failure; no replay/reconnect",
+      "receiptErrors": [],
+      "remainingOwnedLive": [],
+      "returncode": 0
+    },
+    "generatedCaptures": 2,
+    "reviewedCaptures": 2
+  },
+  "API": {
+    "rawBytes": 712942,
+    "cap": 8388608,
+    "rawEachCap": 8192,
+    "terminalReserve": 1048576,
+    "noGuardReplay": true
+  },
+  "lifecycle": {
+    "box": "bx_yydnx5av",
+    "state": "RUNNING_API_EXEC_OBSERVED",
+    "owner": "coordinator",
+    "guestCutoff": "2026-10-27T09:30:00Z",
+    "handback": "2026-10-27T09:32:00Z",
+    "shutdown": "2026-10-27T09:35:00Z",
+    "expiry": "2026-10-27T09:43:30Z",
+    "workerStopResumeDelete": false
+  },
+  "sourceEdits": false,
+  "mainWrite": false,
+  "publicDeployment": false,
+  "workersSpawned": false,
+  "remaining": [
+    "Menu transition after actual acknowledged click",
+    "Mission selection and actual gameplay",
+    "Ordinary Quit"
+  ],
+  "incidents": "historical-incidents.json"
+}

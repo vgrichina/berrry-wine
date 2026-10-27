@@ -1,0 +1,22 @@
+{
+  "candidateId": "reflexive-alien-shooter",
+  "startedAt": "2026-10-27T09:20:17.754Z",
+  "outcome": "failed",
+  "verification": "reviewed",
+  "summary": "Reviewed main menu; actual New Game click logged, response identical; aggregate CPU stop before mission or gameplay.",
+  "route": "main-menu",
+  "screenshots": [
+    "menu-before.png",
+    "new-game-response.png"
+  ],
+  "build": {
+    "commit": "ebf70036c96e0c3267b4943822a446a0b13e8336",
+    "wasmSHA256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75"
+  },
+  "environment": {
+    "node": "24.22.1",
+    "renderer": "software D3D9",
+    "viewport": "640x480"
+  },
+  "artifacts": []
+}
