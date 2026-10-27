@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/report.py", line 11, in <module>
+    shutil.copytree(c.H/name,E/name,dirs_exist_ok=True)
+  File "/usr/lib/python3.12/shutil.py", line 600, in copytree
+    return _copytree(entries=entries, src=src, dst=dst, symlinks=symlinks,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/shutil.py", line 554, in _copytree
+    raise Error(errors)
+shutil.Error: [('/tmp/airstrike-caption-independent-accept-publication-oct27/ops/donor-evidence/owned-watcher-before.stat', '/tmp/airstrike-caption-independent-accept-publication-oct27/repo/docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/owned-watcher-before.stat', "[Errno 13] Permission denied: '/tmp/airstrike-caption-independent-accept-publication-oct27/repo/docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/owned-watcher-before.stat'")]

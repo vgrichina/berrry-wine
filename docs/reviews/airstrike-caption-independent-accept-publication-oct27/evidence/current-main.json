@@ -1,0 +1,25 @@
+{
+  "rootPackedMain": "fef550cf4706601b267ce7848d78a5681e57c843",
+  "coordinatorIntegrationMain": "not acquired or modified; root main may differ",
+  "paths": {
+    "tools/airstrike-menu-controller.py": {
+      "exit": 128,
+      "available": false,
+      "diagnostic": "evidence/main-source-0.stderr",
+      "candidateSHA256": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "exit": 128,
+      "available": false,
+      "diagnostic": "evidence/main-source-1.stderr",
+      "candidateSHA256": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "exit": 128,
+      "available": false,
+      "diagnostic": "evidence/main-source-2.stderr",
+      "candidateSHA256": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+    }
+  },
+  "closure": "Exact candidate controller/bridge use only stdlib plus hash-pinned dynamic Controller import. Candidate regression imports both and retained original review-request/image, all preserved. Historical25 including bridge12 receipts reused, not reexecuted. Locally inspected root main lacks all three candidate paths; future accepted repair requires predecessor source/test/recipe closure on coordinator-owned current integration main, exact diff and affected tests. No fetch permitted; no accepted integration claim."
+}

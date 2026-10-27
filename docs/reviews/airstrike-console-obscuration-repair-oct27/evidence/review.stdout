@@ -1,0 +1,5 @@
+runner archive renderer paths ['lib/renderer-input.js', 'lib/renderer.js']
+Candidate source pins and historical receipts recorded.
+lib/renderer-input.js 4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051
+lib/renderer.js 3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2
+Review diff retained, terminal/ownership/ACK/cleanup AST identities PASS.

@@ -1,0 +1,35 @@
+{
+  "argv": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/repo",
+    "init",
+    "--initial-branch=task/airstrike-caption-independent-accept-publication-oct27"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "environmentSHA256": "4a8b21be654ab3c930472e63b081acdf0b50738e53374a2b610ce756ba69158b",
+  "inheritedLimits": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "cwd": "/home/user/wine-assembly",
+  "mounts": [],
+  "mountValidation": "No guest/Node/API or mount argv in offline Python-only task"
+}

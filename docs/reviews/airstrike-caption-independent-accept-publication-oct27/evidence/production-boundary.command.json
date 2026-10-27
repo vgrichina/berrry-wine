@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/repo/test/test-airstrike-console-obscuration.py",
+    "Startup.test_actual_controller_cli_startup_contract",
+    "Startup.test_actual_bridge_entry_with_reviewed_startup_and_wrong_target"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "environmentSHA256": "a0033708efacacac76ebd7a6c7fbe6d6a5a2e4af2997be9b1ded102c1cc13bde",
+  "inheritedLimits": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "cwd": "/home/user/wine-assembly",
+  "mounts": [],
+  "mountValidation": "No guest/Node/API or mount argv in offline Python-only task"
+}

@@ -1,0 +1,1555 @@
+{
+  "status": "REJECTED_UNCHANGED_CANDIDATE",
+  "task": "airstrike-caption-independent-accept-publication-oct27",
+  "branch": "refs/heads/task/airstrike-caption-independent-accept-publication-oct27",
+  "reportOnlySparseOrphan": true,
+  "neverMergeWholeTree": true,
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e",
+    "tools/airstrike-observation-bridge.py": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "finding": {
+    "file": "tools/airstrike-menu-controller.py",
+    "function": "activation_command",
+    "missingCheck": "Airstrike main window height and vertical containment of candidate caption point",
+    "snapshot": "main x20 y20 w806 h8; Console unchanged; full fresh image/session/token/after bindings",
+    "actual": "Actual Controller CLI and Bridge.run both emit click:656:33",
+    "expected": "Refuse before input: candidate point y33 is outside main [20,28)",
+    "renderer": "Exact pinned normal renderer excludes main from sortedWins; Console also excludes x656. No window receives activation.",
+    "severity": "required failclosed no-safe-caption contract violated",
+    "repairPerformed": false
+  },
+  "evidenceKind": "Offline fake transport with exact unchanged production Python entrypoints; source-based exact renderer rectangle oracle. No Node/guest/gameplay evidence.",
+  "tests": {
+    "firstProductionBoundary": "production-boundary.json: actual Controller CLI then actual Bridge.run; unchanged 2 tests PASS incl normal/wrong/stale cases",
+    "independent": "independent-geometry.json and independent-rejection.json: rejecting reproducer confirms unsafe click through both entrypoints, expected rejecting oracle PASS",
+    "terminal": "fake transport terminates immediately after click: no keys/replay, complete cleanup",
+    "baselineReused": {
+      "externalPins": {
+        "/tmp/airstrike-accepted-frozen-dispatch-main-integrate-oct27/repo/docs/reviews/airstrike-accepted-frozen-dispatch-main-integrate-oct27/receipt.json": "4bc2009ac2c2a78b4ce192e5b4a95edcf12b96b02582115a542f2f90f26b999f",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/reused-regressions.json": "5abe6f0c6c5a7d4a0ab4c1c964489a68aa37e29a0292c7c96c8599bdb0b759aa",
+        "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/result.json": "31ba2cfa5e08c37645066a13997548515dac03af22b4dba66a1253c409d6aa2b"
+      },
+      "historicalCounts": {
+        "totalDispatchAndControllerAndBridge": 25,
+        "bridgeSubset": 12
+      },
+      "interpretation": "Unchanged runner protocol/test closure receipts reused as baseline; changed controller/bridge behavior qualified by new focused tests, not claimed same-hash historic source acceptance."
+    },
+    "remaining": "Candidate REJECTED: no accepted source/runtime claim; unchanged historical25 including bridge12 reused.",
+    "affectedControls": "affected-controls.json: remaining8 original focused tests PASS without repeating first2; exact original retained-image/protocol, no-repeat, stale pixels/window/batch/credits, wrong-target and fullACK/log controls",
+    "independentControls": "independent-controls-result.json:8 independent changed pixels/main geometry/focus/hidden main/extra window/partialACK/missing-log/terminal controls PASS"
+  },
+  "donorIdentity": "evidence/input-identities.json includes exact staged donor index/head and every retained source/evidence hash; donor uncommitted candidate was not remotely backed up before this task",
+  "priorIncidents": "evidence/donor-evidence/result.json and full original diagnostics retain publication resource denial, superseded minimize route and first-failure receipts",
+  "taskIncidents": [
+    "Initial combined policy display exceeded8192 bytes; original task transcript retained; bounded subsequent reads.",
+    "Configure ran before pooled Git init completed; FileNotFoundError retained configure.stderr; no donor changes. Retried only after actual init completion.",
+    "Read-only ls/cat of absent own .git/root loose main ref yielded nonzero; transcript retained; packed/worktree refs must be inspected through own Git.",
+    "Initial optional current-main inspection retained all source-path-not-present and nested-alternate diagnostics, then errored on presumed historical baseline test absent from sparse donor. No dependency mutation: complete necessary candidate closure is3 files/stdlib/retained fixture. Reused existing source results; own alternates narrowed to root immutable object store, no fetch/repack/donor mutation.",
+    "Report refresh initially encountered owned duplicate readonly watcher-stat evidence; retained report-final.stderr. Changed copy function to skip byte-identical existing evidence, preserving file modes and donor inputs.",
+    "First publication diff-check rejected intentional blank context lines in exact historical repair.patch/source-review.diff evidence. Original diff-check.stdout/stderr/publication receipts retained. Added narrowly scoped own .gitattributes -whitespace for those archived evidence filenames, preserving original bytes; source/test whitespace checks remain enabled. No acceptance repair performed.",
+    "Second diff-check correctly found the same literal patch-context whitespace echoed into retained first-failure stdout. Added only this task evidence/*diff-check.stdout to archival whitespace attributes. Both first-failure diagnostics remain byte-exact; production source/tests still checked normally."
+  ],
+  "scope": {
+    "mainOwnership": false,
+    "mainIntegration": false,
+    "fetch": false,
+    "repack": false,
+    "fullCheckout": false,
+    "publicDeployment": false,
+    "Node": false,
+    "guest": false,
+    "API": false,
+    "workers": false
+  },
+  "remainingGate": "Bounded source repair of caption geometry by coordinator assignment, new independent affected acceptance, explicit scoped main integration ownership, then separately authorized runtime. Existing runtime/cleanup/ACK and startup-image requirements remain.",
+  "lifecycle": {
+    "boxAssigned": false,
+    "boxTouched": false,
+    "historicalDonorBox": "bx_pphjt7jw",
+    "lastReportedState": "RUNNING",
+    "lastReportedExpiry": "2026-10-27T10:59:29Z",
+    "currentState": "not queried; coordinator owns lifecycle"
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-caption-independent-accept-publication-oct27/root-ref-digest.json",
+  "publication": "Exact commit and remote verified ref recorded separately in owned ops/publication.json and append-only messageboard after push",
+  "mainClosure": {
+    "rootPackedMain": "fef550cf4706601b267ce7848d78a5681e57c843",
+    "coordinatorIntegrationMain": "not acquired or modified; root main may differ",
+    "paths": {
+      "tools/airstrike-menu-controller.py": {
+        "exit": 128,
+        "available": false,
+        "diagnostic": "evidence/main-source-0.stderr",
+        "candidateSHA256": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e"
+      },
+      "tools/airstrike-observation-bridge.py": {
+        "exit": 128,
+        "available": false,
+        "diagnostic": "evidence/main-source-1.stderr",
+        "candidateSHA256": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9"
+      },
+      "test/test-airstrike-console-obscuration.py": {
+        "exit": 128,
+        "available": false,
+        "diagnostic": "evidence/main-source-2.stderr",
+        "candidateSHA256": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+      }
+    },
+    "closure": "Exact candidate controller/bridge use only stdlib plus hash-pinned dynamic Controller import. Candidate regression imports both and retained original review-request/image, all preserved. Historical25 including bridge12 receipts reused, not reexecuted. Locally inspected root main lacks all three candidate paths; future accepted repair requires predecessor source/test/recipe closure on coordinator-owned current integration main, exact diff and affected tests. No fetch permitted; no accepted integration claim."
+  },
+  "recovery": "RECOVERY.txt",
+  "files": {
+    ".gitattributes": {
+      "bytes": 275,
+      "sha256": "7df6ec2c15a7d7902165b55ce4fe184534dc75c18ac040ec9b1e2890785c5901"
+    },
+    "test/test-airstrike-console-obscuration.py": {
+      "bytes": 14578,
+      "sha256": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+    },
+    "tools/airstrike-menu-controller.py": {
+      "bytes": 11490,
+      "sha256": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e"
+    },
+    "tools/airstrike-observation-bridge.py": {
+      "bytes": 22318,
+      "sha256": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/RECOVERY.txt": {
+      "bytes": 1112,
+      "sha256": "e1dc11623c4ffb704d9e31aaebeefb78174f2338fde847811a148665eee8286f"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/receipt.json": {
+      "bytes": 6460,
+      "sha256": "5c30348c6cc190de3376fc3622a767cfe79440746e1bc70948582ef345e0a97a"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/README.md": {
+      "bytes": 2978,
+      "sha256": "887e61ea7a7b3a57a9b147aa8f7d9347938121fc4d07f084287be44e2016e654"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/payload-manifest.json": {
+      "bytes": 7527,
+      "sha256": "b216d9bda7971bb0c0dd3ee7822e9255efd1b36444d6d291901a266070e79557"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.command.json": {
+      "bytes": 712,
+      "sha256": "dc7aba5e73c40853c2e1b837acd4c74d95b932485c0ca5cdc1f3c31b10bf21ff"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/init.command.json": {
+      "bytes": 845,
+      "sha256": "5838c1514e3ea68c8c5de58bdfa7e2739d0dfc1158e199e0fb2df7649d7d49c1"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-rejection.json": {
+      "bytes": 2072,
+      "sha256": "426198a3f66acd99550359ca1d925849bcd9cd892ba942379f565e719a5053bf"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-initial.stdout": {
+      "bytes": 74,
+      "sha256": "dde4a68fc34469ef19415433a17687d7f3f3cc78db5adfbfedfea6c0311652ca"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report.py": {
+      "bytes": 9900,
+      "sha256": "4b5e5435dfea5c11c4daaba294015021205c51fb49287717865d7236160e0d00"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-initial.json": {
+      "bytes": 274,
+      "sha256": "5c4b04405cc1ce0a3d937cac532d4b427b2e3a6e6aee406930f626f2f88d5e9a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final-immutable-copy.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-initial.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-context.stdout": {
+      "bytes": 74,
+      "sha256": "dde4a68fc34469ef19415433a17687d7f3f3cc78db5adfbfedfea6c0311652ca"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-geometry.json": {
+      "bytes": 376,
+      "sha256": "ded6c5d15ce6d5c88b8d0b05f7ed44d88a282e3b6480982bfbdd110f6088de69"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-context.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-stage.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-1.stderr": {
+      "bytes": 7631,
+      "sha256": "285946308ce7c39eb47f3b551862113b5f95f75c1fe0b56adf8fb129cb211e74"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/init.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/accounting.json": {
+      "bytes": 399,
+      "sha256": "ca63d1a9b8d2a93b49286b4d667c0f4ee4da519dc467e2c8c3466bc96a8f4eb4"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final-immutable-copy.command.json": {
+      "bytes": 713,
+      "sha256": "4d51ab51210c8c2c70c960fa82f8ab0acbf8a94e2259457f757583202a8e79c7"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/inspect-main.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-0.command.json": {
+      "bytes": 514,
+      "sha256": "7db8ed23edb4fcb0a42feedfc224c852553185203fcf04d66b2e84b91a0ba255"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.py": {
+      "bytes": 1320,
+      "sha256": "f21a9542b3e2fdab4fbfaa3b3dc2645687df588ab9e3f23de7502ff56687f8f8"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/inspect-main.stderr": {
+      "bytes": 690,
+      "sha256": "ee6b8ea9545cf2aba18a401f9cb7f307c2c719a2ebe1b47c97cd29ed983edf0e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/gitops.py": {
+      "bytes": 3531,
+      "sha256": "e10754fd017734e824248c22484a7239c334c883caf2600418a4c34752a409e7"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/palette-browser-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-context.command.json": {
+      "bytes": 713,
+      "sha256": "346e93f2c361a53630012cc045658d7fcbdfc9f63edf8c50d81929e09ce76e88"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-2.status.json": {
+      "bytes": 190,
+      "sha256": "a83cad84ee5bd9078bfbf7dfb838420b55243217de6a9e5b203eef7cb980c70f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication-archive-context.stderr": {
+      "bytes": 449,
+      "sha256": "07c3510b195cc3e9651d7ec693d2342f04a69046a719a338125b75df94b54825"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final-immutable-copy.stdout": {
+      "bytes": 74,
+      "sha256": "dde4a68fc34469ef19415433a17687d7f3f3cc78db5adfbfedfea6c0311652ca"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.json": {
+      "bytes": 284,
+      "sha256": "feb955535b77af4524c5ad614092956339a1625401205bd027fd0cad06ee468a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.json": {
+      "bytes": 274,
+      "sha256": "83130a1866cee049d1144805753ed9b53e8e3a2ba038ef2c34c87fce5ee4af0e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-boundary.stderr": {
+      "bytes": 366,
+      "sha256": "16969431d3e9e486699be617a72b8e958bbf6b00e0a7426ec5049f8e4c100a4f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-1.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.stderr": {
+      "bytes": 801,
+      "sha256": "7e6ec2cad2912c2d09475ddb858d36a2633397e3ff571d4d3656135908478e29"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication.command.json": {
+      "bytes": 728,
+      "sha256": "59f52b7906b56f9ed088e442ee3ead4e2f620cf75c9a4ab3bf7ccc99b2bdab28"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/diff-check.stdout": {
+      "bytes": 3465,
+      "sha256": "aa811c1a6622b663f580e989802cb3de084314feeaf39d5485b0faf0cf989632"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication.stderr": {
+      "bytes": 433,
+      "sha256": "17e0a8dd91ebbf73fc31b2f3e79e5259cb54473c366a21c9ef049f5d53b89762"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/current-main.json": {
+      "bytes": 1429,
+      "sha256": "c0ba8c770869a668a0f2e1f5a53ed874bda3243001de529c6ec47f377c0f1f44"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-1.status.json": {
+      "bytes": 190,
+      "sha256": "0c9bba17b4f3ce446c84e2677570aec29949a1c036a7fda56205b8af7b28cd64"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final-immutable-copy.json": {
+      "bytes": 272,
+      "sha256": "75c098418d9d8384df6a3a7f8d1fc91fa1c29c51e3e9b9713f561de37a46f4a6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/input-identities.json": {
+      "bytes": 67396,
+      "sha256": "358cb73067e71cc0d7f360cb2203222564a8556d61b0390118541026855d1aca"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-root-object-only.stdout": {
+      "bytes": 95,
+      "sha256": "c8d0c68efd45fdbe14aa4f1c80fd85f85a5e9104ec35351be0b9538cd9ae9c58"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-after-init.stdout": {
+      "bytes": 95,
+      "sha256": "c8d0c68efd45fdbe14aa4f1c80fd85f85a5e9104ec35351be0b9538cd9ae9c58"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-boundary.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-after-init.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-stage.command.json": {
+      "bytes": 505,
+      "sha256": "c767c2db86c19c4b2407239c6e6b8ce3e35f2ad899ea7e7c61adfd701120430c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-after-init.json": {
+      "bytes": 285,
+      "sha256": "0e8a23851caee75f8f3f691aaf96ded8d271d6cd33a7e6e212f950158ff2da9e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-geometry.stdout": {
+      "bytes": 158,
+      "sha256": "c621aeb832bb8785dc04aec07c4dc47f7f0b9db4ecc11697276df63ded93e8a4"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/root-ref-digest.json": {
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.py": {
+      "bytes": 1563,
+      "sha256": "f9b8dbad01e0ebca944b80121e3dd80c194ba8eb3926b4343fdfb05964d5c03b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/inspect-main.command.json": {
+      "bytes": 728,
+      "sha256": "bc2cae2cd9a377b352ef6ab6ce2a14b898e2637e4551a4f658fed7753c9904e9"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/affected-controls.stderr": {
+      "bytes": 1158,
+      "sha256": "cfaa9363315e0eb765168a2b2bc7f09520fb613712088f873787e0657df1b4ef"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-initial.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls-result.json": {
+      "bytes": 1516,
+      "sha256": "3cbac19d012fafbfe0ff3e380bee880e0e0cf454bdce173ad9960aaf86c43113"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-3.command.json": {
+      "bytes": 518,
+      "sha256": "b0ba3f11d47afa54b1af3f863d1f191380222a823f4e675c3018735f0b4ef384"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.stdout": {
+      "bytes": 90,
+      "sha256": "b43c4e6bdabbf19503734b737d5ec4400e04ebefbc5588e04a734009c2962c8f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-boundary.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-boundary.command.json": {
+      "bytes": 885,
+      "sha256": "e2e6769d59d7e8b8b509a3b4a91f72f6f6de946a30385b5463d186c2b93331f2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-2.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/init.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-after-init.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication-archive-context.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/inspect-main.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-2.stderr": {
+      "bytes": 7636,
+      "sha256": "a14762b134a5c9d0f84779fd1e3868bd24e8301d297982a169afef647f29019a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-diagnostics.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/affected-controls.json": {
+      "bytes": 274,
+      "sha256": "70f6356a8f6186d7a7f1433b11655c0b46d9a696bc97b01b028c107d16c79afd"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-0.stderr": {
+      "bytes": 7628,
+      "sha256": "25893d718e7f9ae6e9a1b8af2869123d304a7bd85b937c4770287f57d5cdec39"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.json": {
+      "bytes": 274,
+      "sha256": "968346769bc37379cdefab1778501ad20b54cf9bc988bd0acebf35108b3f4dbb"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-root-object-only.command.json": {
+      "bytes": 716,
+      "sha256": "d1a5efd5d3e8c951ea58c32f0e220518e5794260ba6f4cb1bcc2b043aab081fe"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/init.stdout": {
+      "bytes": 107,
+      "sha256": "b22b0ac0f172f6c451dcc8228ad930fdbc0c07f6a298f3146b9384543c8b0da3"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-root-object-only.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-diagnostics.command.json": {
+      "bytes": 713,
+      "sha256": "008df3872f13c525009f28b4415ae7b3875c5c84c09d6c6801f04938daccd02f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-diff-check.command.json": {
+      "bytes": 462,
+      "sha256": "292f1f40e17bc842a4798f35f00d6a04ed9d74b65bbaa469c0a6d1ecd4a7cc4d"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/light-execution-pool-oct26.py": {
+      "bytes": 1151,
+      "sha256": "881b0bf09e2791ce85c757770efe27937f661e2934787f6c751d62075f5d761b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-renderer.js": {
+      "bytes": 214278,
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-3.status.json": {
+      "bytes": 190,
+      "sha256": "d106f1b60d0d5dc3c83bd3e83bc74d7f0aa79a5a3ca76d27073e066fb1e37c39"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.command.json": {
+      "bytes": 716,
+      "sha256": "61d4629fdcec8b667215883f1c42143f016fff0455028b9f68929e1b5d0f0734"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/run.py": {
+      "bytes": 3793,
+      "sha256": "cd29906227653d5899bfb2147e3331da5299e67cb0d6c12f34b0d78a6033e045"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-diff-check.status.json": {
+      "bytes": 188,
+      "sha256": "87db1abe56b4d156ce0314aee230313be60a3ad3a922e553c8a993c80bb572e2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/wal-baseline.json": {
+      "bytes": 315,
+      "sha256": "a19f534a8ddbcf96f0858bfd8f1d2edf0539c2057a9ccf08923c668576dfa8f7"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/reproduce.py": {
+      "bytes": 4109,
+      "sha256": "1c257e171582abb4e6ba1a5f54a0bfc9a30bd4f628f388a8a129fd9f5312b68d"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication-archive-context.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-3.stderr": {
+      "bytes": 7623,
+      "sha256": "b636d606cf17e6d2568e0ed492a36ad9eb4cdb604cb440b6adb0dc827e6b7adb"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/production-boundary.json": {
+      "bytes": 467,
+      "sha256": "0c88fda83b465c522535d98aceadf1afbdf46726ae0b862eaad5ed26d952fc90"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-diff-check.stdout": {
+      "bytes": 3344,
+      "sha256": "7a1f7e5306fbacde24b7c6d36d2589be85517205035e37a689c1c27166c54a2b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/affected-controls.command.json": {
+      "bytes": 1293,
+      "sha256": "70feb2f665b5fd0821bb79ddb359c56bea059b8f8eecaa8dc60eae9a12c3f77e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-0.status.json": {
+      "bytes": 190,
+      "sha256": "2a2f09300dcdd64d71f4f8b6e91081960bdde6b511a8b29c9c8ebe1cc387e37b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-context.json": {
+      "bytes": 273,
+      "sha256": "238c193a0cead9aeb5803ff6fbb416a3e2e772f8bac77dcf43b936bb66051e1b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication-archive-context.json": {
+      "bytes": 366,
+      "sha256": "b0bed99fcfffe9bd50fa96629ee1bfcb4934472fd72fa7959f61d5d67c5d1428"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-context.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final-immutable-copy.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-stage.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/setup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-root-object-only.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-3.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/reproducer-cli.stderr": {
+      "bytes": 60,
+      "sha256": "52ae3860b9609f30a0870ce638faee62237848d8397952cbb4e61bd9927a2cef"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/inspect-main.json": {
+      "bytes": 330,
+      "sha256": "825dc81f74f82feef334eb4137fb02749de44adc59ddfa53a99da1761ce15613"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.command.json": {
+      "bytes": 727,
+      "sha256": "61cea9d5f37b7c36e47e1ae60f98c149c9fbf8298d6a84a1c85549237bf630d4"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final.command.json": {
+      "bytes": 713,
+      "sha256": "dbff5ac953a56ce04a5f217d1c64c33426686052f6b5117f5ee7f84f951c7bc5"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-2.command.json": {
+      "bytes": 522,
+      "sha256": "f257c26807d7a9f8775d2e6c30d9269a313fad52b381911ed4271a5cf7b05f2c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/affected-controls.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/stage.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final.json": {
+      "bytes": 285,
+      "sha256": "c6151b803610d94519852d9d0e9f89299ed34df261e2ed267a020baa03708c4f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/stage.status.json": {
+      "bytes": 188,
+      "sha256": "29feb5a20f97bc5cbc5006da77b313e40f77466bc13afc02a0cf9669a3d11371"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/diff-check.status.json": {
+      "bytes": 188,
+      "sha256": "a340c7747a5cc9e64bc7c0bc2a23346856c9a5d630e0445506d9f92a91f4b9c4"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-0.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/reproducer-cli.stdout": {
+      "bytes": 45,
+      "sha256": "dbeff8fd87e4772f336eda2e0e7b77b97c1f922fecba67749ad830becd6fab51"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.stdout": {
+      "bytes": 131,
+      "sha256": "3c1a5e3fada6b6e153ee396675b94473c6e256eb4c24f3890bbd70073e880294"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication.json": {
+      "bytes": 375,
+      "sha256": "ebe2f60cf20a7697c227a805485c4e0ecf88754cf13c0cb7cc284bd4b4e6a250"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/alternates.json": {
+      "bytes": 378,
+      "sha256": "33bb6f42b6b930ab5878d11341166c09423e87e4990c36bd36deb27641049dbc"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/diff-check.command.json": {
+      "bytes": 462,
+      "sha256": "292f1f40e17bc842a4798f35f00d6a04ed9d74b65bbaa469c0a6d1ecd4a7cc4d"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/main-source-1.command.json": {
+      "bytes": 517,
+      "sha256": "0eb64d93270abb4ad682ae26616eb6b97b3f0ff32cb13046588aa7e1c4f00a65"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-geometry.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-geometry.command.json": {
+      "bytes": 716,
+      "sha256": "c86f7cb74c73f009d1b4ed198f4f0a8be41960e27e235a9a64fb47f02cbc6a27"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-diff-check.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-geometry.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-root-object-only.json": {
+      "bytes": 274,
+      "sha256": "4d97d80ac499cc49a17c378c3c1998befaea44fba597565b1bf1a4441caa9217"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/archive-context-stage.status.json": {
+      "bytes": 188,
+      "sha256": "29feb5a20f97bc5cbc5006da77b313e40f77466bc13afc02a0cf9669a3d11371"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/stage.command.json": {
+      "bytes": 483,
+      "sha256": "0dacf6990d68c3a2299244aa63c97eb678864bbfa0c8db66ec0e3ba236bf5078"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/configure-after-init.command.json": {
+      "bytes": 716,
+      "sha256": "6a44cd79fb345582e5d9d615d3be392ebb7bdebdbd6ab837a38864f038644eec"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-initial.command.json": {
+      "bytes": 713,
+      "sha256": "7c7559a6833e09af86a757c64205764c08d9d3f548160ef26cc447d4ac87af8c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-final.stderr": {
+      "bytes": 1024,
+      "sha256": "1b5fbc05b745af4d52ff24ef1ce72b26b8e808f430ebeaeb4690da1d224dddaf"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/stage.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.py": {
+      "bytes": 1984,
+      "sha256": "cdcbb402c3d4e069c6ca1c0c14b460a0b28576a2a61905309aaa72104f9ec994"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/alternates-original.json": {
+      "bytes": 5955,
+      "sha256": "6da58f172afe04c2887b9c3ab4fa70fe8ef81bc457f4879396e1eb9704410370"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/report-archive-diagnostics.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/affected-controls.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/init.json": {
+      "bytes": 285,
+      "sha256": "c01ca5f38ccede11075bc1fe725e7aa4cefac6032619424c1a73725378e39b27"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/publication-archive-context.command.json": {
+      "bytes": 744,
+      "sha256": "b0bcc141334571638206f3b051b636253a07d5c387c53e5d972d287b81cdd75d"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-controls.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/received.jsonl": {
+      "bytes": 597,
+      "sha256": "c3898d4a248f3d9e35070cbab8641f6a9cf1f794473c370585926059018886ea"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/startup-supervision.json": {
+      "bytes": 1761,
+      "sha256": "963537a8f774d9155f98efe0fddcfbd21cd8514d7487e42c535825eb2fd4ec38"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/abi-before.json": {
+      "bytes": 28018,
+      "sha256": "3a438aebac2708b6baf326eb5a0986162a69a0bd4235defb8d8a6d58c85dbbb2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/startup-accepted.json": {
+      "bytes": 1233,
+      "sha256": "39ffb7b9967495304fdda37b67033d1795d347893ca3069113737317eb0681b6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/startup.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/planned-argv.json": {
+      "bytes": 1265,
+      "sha256": "2e4444bee70135af1b9561445210efac88056f3cd1bbfda7c2efb8d4a131215e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/startup.stdout": {
+      "bytes": 3575,
+      "sha256": "720591f42150fd25aa5422c45b936ef2bea9ae27f81074c6301454ad78404d3e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/guest.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/guest-admission.json": {
+      "bytes": 1425,
+      "sha256": "cc563e5cecfd16b6cd0c7ef48b63b8f1d9c0b4cab5dcc2d91c1d02d867c10b27"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/guest-supervision.json": {
+      "bytes": 1800,
+      "sha256": "2223d45db57a44afd12e604855d17ea0ab813b58ec85253e87032d23cfb10c41"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/guest.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/startup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/abi-instantiated.json": {
+      "bytes": 28074,
+      "sha256": "4e6d70c5971e8785a37042b1cf49d7f8a76094b7104686d42cfe5b1af587d9ea"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/remote-closure.json": {
+      "bytes": 1400,
+      "sha256": "0217b24b8da46c38d33b99ced7e5834458d747e1ccb7410ee4f62bcee0440cdc"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/remote-inventory.json": {
+      "bytes": 4525,
+      "sha256": "2ca643fa7aad0cf4cb62ae462fb5cd880b16d7b391c5dcf2645cfcb29ee2abd6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/guest.stdout": {
+      "bytes": 541,
+      "sha256": "462a702f231016773c05c6f4492eeaea5324a492ed03dfe8eeb836258b14ddd2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-entry.stderr": {
+      "bytes": 1298,
+      "sha256": "75182ac61252723dd8df5a0293637eb371edbf8df788778fa60c38fa2dfd0706"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/before.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/control-preservation-pass.json": {
+      "bytes": 615,
+      "sha256": "0870333ea98aa042118e5a5029974a255ec953653f068872d29c57edcecd5133"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report.py": {
+      "bytes": 9932,
+      "sha256": "53901238c8eb29328324af94aa392a014acbcc944713fab6be8a7fc8d019e269"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-review.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/diff-check-admission.stderr": {
+      "bytes": 274,
+      "sha256": "695b83ee629031cf92cbda1fa31d3fc8c64db8909a193e2cdf21786cad8e7e80"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/accounting.json": {
+      "bytes": 572,
+      "sha256": "3cebbc0ec817ae8ccef5b1500a1ae6e9bb7efa42a734cb553d64e70fca28cac2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/review.json": {
+      "bytes": 1196,
+      "sha256": "217592c8125195ab8de52ce0547f7138c202d35f8006ff935d9e0e16dd8f9ea9"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/before-reproduction.json": {
+      "bytes": 666,
+      "sha256": "a5af67bbf397a5282c3ce4e7858aa71f9156e97628740077c34baed9f376b655"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/candidate-source-pins.json": {
+      "bytes": 338,
+      "sha256": "c8db7f60a02fe3f0a5bc19cc8126ef3099cdeae0faed75a8a717f0997e3f58fc"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/owned-watcher-before.stat": {
+      "bytes": 326,
+      "sha256": "84b93411bd9b96d257f90ca9d85b4d0f58419208c4b525b84dd11131d55eee07"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/setup.py": {
+      "bytes": 2184,
+      "sha256": "b3bb1b64bd441aa947c2ff32be422946f6480212032164de645e85860e095d60"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/publication-admission-denied.json": {
+      "bytes": 572,
+      "sha256": "3cebbc0ec817ae8ccef5b1500a1ae6e9bb7efa42a734cb553d64e70fca28cac2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report-pass.json": {
+      "bytes": 595,
+      "sha256": "ec342731d641c643a20a4002a6d1d7af901f774bf8bdf334e48ec8b73332a7c6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/setup.json": {
+      "bytes": 1183,
+      "sha256": "fe85f3b986598e0635f69fefb6f23ff7bf4260ca1283d1a47d54610ad99aa21a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/before.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/superseded-minimize-airstrike-observation-bridge.py": {
+      "bytes": 22259,
+      "sha256": "06ab71cb8f122a598f751fc7c6239d1f009eb0fbb5737e4b07c979d1e0f81a8b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/stage.json": {
+      "bytes": 1447,
+      "sha256": "ba59a52b8b7e6652b5a064c820bcd0641900096ee16eeee9fce186b057915a26"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-review.diff": {
+      "bytes": 12357,
+      "sha256": "bdfcd59400d2579fad284fd520a953b64b09f84651f7a5194f45f6b7ad9a498c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-regression.stderr": {
+      "bytes": 1427,
+      "sha256": "3ef769fb771123fb32daa6e338630cfa628a8e11decb9c661ec7f0a64f69c995"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-checkpoint.py": {
+      "bytes": 3537,
+      "sha256": "d02b27df5bd1ac5c56e824c244ad7f59a6813d05a3683a201d449b2e324ceb14"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original.stderr": {
+      "bytes": 1551,
+      "sha256": "bae44694dd35e4a076460e48791b0198fee4e38f970e0b11c87a90a08bbb0041"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression.stderr": {
+      "bytes": 2092,
+      "sha256": "51de79fa4b42f3a83b058be1481b7309c3b77afc642579b573d92cbc3dbbe11b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report.json": {
+      "bytes": 1196,
+      "sha256": "858bc878bf6e05d250cd68313c20ac07d1d06a316aa9453f6e854aea953f318e"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/use-activation.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/before.stdout": {
+      "bytes": 69,
+      "sha256": "13b70394f851e39044a0c85869312c224a0cfbe7f210b902279ddb0d65d867db"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-fixed.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-review.stdout": {
+      "bytes": 373,
+      "sha256": "e83de14f60052076ab0cb144ee7d3208714f749764a60ded60b1949e27181a91"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-fixed.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-final.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original-fixed.stderr": {
+      "bytes": 1151,
+      "sha256": "03715b35b503cb26c620c2acc1b2efcf965ec162d8e79da728428b41c96b8b7c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/setup.stdout": {
+      "bytes": 135,
+      "sha256": "f42f398dae7049aca8ab86c9b4b07c1ae69cde42f9f0bae069101eb1ed064aa9"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/input-pins.json": {
+      "bytes": 1229,
+      "sha256": "2c9971c364a25ad8c7e78606a338406f4c243935a91165f8dde83bf481828a12"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original-fixed.json": {
+      "bytes": 1231,
+      "sha256": "5927368c529bb1afe40be022e828721ab25dd5a0d1c2e5fe6074db8604e129bf"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/review.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/use-activation.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/failed-controller-shadowed-snapshot.py": {
+      "bytes": 10846,
+      "sha256": "3ed04e089f18dac76ff822d5899f1e610cffe677cfbb713c5425002b033f5b78"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-final.json": {
+      "bytes": 1433,
+      "sha256": "67f89883c7a644c20b4f5c67f78705f38833880c6ed20368c75d4b61c10ee948"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/use-activation.py": {
+      "bytes": 4128,
+      "sha256": "108ec13503bf7fe82138fed21472372df2a0e924775062c816406991776e0f78"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-regression.json": {
+      "bytes": 1432,
+      "sha256": "511f030002cefe6ee75a7f3d18080d4f37ac83b02febdedccdf20a7f2e02c767"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-negative-original.stdout": {
+      "bytes": 78,
+      "sha256": "84250e6549d3a8e1ec512e30427bb8e49a0a6c75abcc10d006888b5bef21048b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/setup.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/production-renderer.js": {
+      "bytes": 214278,
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/run.py": {
+      "bytes": 4392,
+      "sha256": "6ce406e2854a17b1c4b9c7feefc33ff45da91f89be37cc9411c1e6b448313f50"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/wal-baseline.json": {
+      "bytes": 315,
+      "sha256": "7a39bd8f31947a20145ae00e21fdd039790b1beeeeaa8dcafad6197af2926c65"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-checkpoint.json": {
+      "bytes": 1217,
+      "sha256": "e9d08c5a7fa597c3f163c1bb0c0e983c815145715be1651e075e0aac44d00735"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original.json": {
+      "bytes": 1219,
+      "sha256": "cdbe1c2d4221cefaaf17d1059f862452f658d3ef6302b99d4ce1ef3a64bae386"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original-fixed.stdout": {
+      "bytes": 78,
+      "sha256": "84250e6549d3a8e1ec512e30427bb8e49a0a6c75abcc10d006888b5bef21048b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/reproduce.py": {
+      "bytes": 1034,
+      "sha256": "bd2729ca3fb43f953acf93700f7a77bc8c8e0d273b291b8207896c2b93296c7a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original.py": {
+      "bytes": 862,
+      "sha256": "515f2d34ea40e47307e3f3e192bc2d832ed3c887a6c546aaf08439923e36cf84"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/diff-check-admission.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original-fixed.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/use-activation.json": {
+      "bytes": 1210,
+      "sha256": "f8be18bb610f5a262f22b602d5f828a9b25756bb0fe537d5ddaa9f706ec9bd03"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-negative-original.json": {
+      "bytes": 1240,
+      "sha256": "93210d3b0e8d547c90eb0616e909743a861e7a4023040ad7fd960c6a8da9f783"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-final.stderr": {
+      "bytes": 1413,
+      "sha256": "7c3cfc1c2fa575fa17e56aa054755c6891d199cb751fa49db20a2cc1ccd929cf"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/setup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-negative-original.stderr": {
+      "bytes": 1109,
+      "sha256": "53b1976e2e570d77bc67c0e30a9e6b02a649e288db69de565f24d244e23bd4a6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-regression.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-entry.json": {
+      "bytes": 1376,
+      "sha256": "8f99a28a8930502017360ba9ecf561c5a973fd40d443f7da385bd50ac77b0434"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/result.json": {
+      "bytes": 4791,
+      "sha256": "2fbb72e17730716af3c41bcf693eb4beba01507a5f49561d5294c1b7ac8bac0d"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/stage.stderr": {
+      "bytes": 130,
+      "sha256": "687d3cb91464b85461af39944c67dbe883f7a557af4670aa20a485cabe048f2b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-final.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/reused-baseline.json": {
+      "bytes": 851,
+      "sha256": "e76edd6ce2966730974ebd9047aa19625a2ca690bd28fdb45434ad427211b82a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/owned-cleanup.json": {
+      "bytes": 375,
+      "sha256": "cf4b94d64987cf3272eee60989105be104a9d6ad6fdf47adb641908bebdd7649"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-checkpoint.stdout": {
+      "bytes": 131,
+      "sha256": "10dc07e6ce054893c522522e5ab4eb28735df90803cf214d33a8e87fa4d923cd"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-entry.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-fixed.stderr": {
+      "bytes": 1144,
+      "sha256": "cdde03b10cd312cbaa85feac99895c641ed4793bf3848b6f29786584a7ed1657"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/diff-check-admission.command.json": {
+      "bytes": 747,
+      "sha256": "e30597463a271f3ff5b5b4b5729d32ae7cf6340485bfc216eab3c0140beee0c2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-negative-original.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/review.stdout": {
+      "bytes": 373,
+      "sha256": "e83de14f60052076ab0cb144ee7d3208714f749764a60ded60b1949e27181a91"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-regression.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/repair.patch": {
+      "bytes": 12357,
+      "sha256": "bdfcd59400d2579fad284fd520a953b64b09f84651f7a5194f45f6b7ad9a498c"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/superseded-minimize-test-airstrike-console-obscuration.py": {
+      "bytes": 13924,
+      "sha256": "dbde746f2d7d9bcba5c8be5f30fd00344c5507ee554bcbf5ed368a57ec0f5ae2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/stage.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/superseded-minimize-airstrike-menu-controller.py": {
+      "bytes": 10901,
+      "sha256": "00931dfdd9fbc4f99002c28fbae4b9a2620c275e0973e0e4cb77895d9f425aea"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/report.stdout": {
+      "bytes": 83,
+      "sha256": "216065d6db9710319c9902eacabbf1729ba5aadc863dd09f96251d6727667440"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-checkpoint.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/stage.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/source-checkpoint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression.json": {
+      "bytes": 1239,
+      "sha256": "9410722b82f11f03630ff3e0f72790594a38a1f313053014f2377eabc2231185"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-review.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/negative-original-pass.json": {
+      "bytes": 166,
+      "sha256": "1b73a712d73211ec2a2e0265ef7c5a9185b989d7806dd2f7bafc112696ca7bc2"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/before.json": {
+      "bytes": 1188,
+      "sha256": "6bd1b5b397cb561cc71e1ad3cec693e3aa65bd5cc3e731850c57c370252f7fd9"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-fixed.json": {
+      "bytes": 1251,
+      "sha256": "09c4c9b014b574c1fba853747090826c55f8c441ca0b268e9aa8db06936c14b8"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/review.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/use-activation.stdout": {
+      "bytes": 85,
+      "sha256": "ccdba77f827207834e188bf747eaa2868ced38a9f7335e01f43ae0540c141c35"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/regression-entry.supervisor-output": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/donor-evidence/activation-review.json": {
+      "bytes": 1219,
+      "sha256": "99e088078446ab75a14ea140af48a1d6b9aa40130f5fd38a9864be259373978f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/runner.stdout": {
+      "bytes": 2490,
+      "sha256": "43f6d4a7c8654a7c3f77199ec7ebfd5b9171de81ba8c5eaeeebf1355646f2e89"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/review-request.json": {
+      "bytes": 1620,
+      "sha256": "e8874aab463c79b0ca5cdff2e5cb8919e14e0564314d6a5d94ca01ae91841225"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/spawn-status.json": {
+      "bytes": 298,
+      "sha256": "b56eb51307c55f76516b9b3caa862999e224b7d287c9490859bf91054ff464ed"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/controller.stderr": {
+      "bytes": 71,
+      "sha256": "f002f1e96e92ca90d1698bdaf31f48fc5c425db64d9c751df6068f00c20a7a38"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/events.json": {
+      "bytes": 1610,
+      "sha256": "cfe8b1eb6c2a62e67a977cf726d24bcfd58a889a12083800cc37f8996cd684b8"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/terminal.json": {
+      "bytes": 3248,
+      "sha256": "aed04d6bccefbede0cce91dea309d8624f48d021c70ee526321d28d6c8b81863"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/result.json": {
+      "bytes": 371,
+      "sha256": "474ed4dd9c4efeb8cf4790b3c5ce4426bb483448f5b9960502b850f6d35b5a89"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/owned-cleanup.json": {
+      "bytes": 78,
+      "sha256": "fb8a2d54e81197ea1be7e90bb5e2658d0b82b8e2c570c9836bbf7fd13adb8e92"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/capture-4edc58dfc45844f7a5f182092379addd.png": {
+      "bytes": 33,
+      "sha256": "e6121cd784515ded35a7c1ffcecd38ad9c9a35e209dacc7b524f57548c17f6b7"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/capture-4edc58dfc45844f7a5f182092379addd-fresh.png": {
+      "bytes": 33,
+      "sha256": "e6121cd784515ded35a7c1ffcecd38ad9c9a35e209dacc7b524f57548c17f6b7"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/review-4edc58dfc45844f7a5f182092379addd.json": {
+      "bytes": 739,
+      "sha256": "2a7c11484456ad7ee6fea3860d9e28b2c932c46a41c90bc08b67627e8fd4edf0"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/independent-unsafe-height/evidence/runner.stderr": {
+      "bytes": 135,
+      "sha256": "0f9b385cb4701937b8ef2979ab58ffdec0579460eaaab0591bc0b99ebe39a2ad"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-startup/startup-supervision.json": {
+      "bytes": 1772,
+      "sha256": "f3b906b3484eb1292a480cbe5a21b989cad2a64494e93f62127d504b933de4a6"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-startup/remote.py": {
+      "bytes": 5196,
+      "sha256": "7e40e09d0256bf9836336a7cf2cf6efd138fa47ddc217e4470dc39434f8ab21a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-startup/startup.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-startup/startup.stderr": {
+      "bytes": 860,
+      "sha256": "ab303efe1c7f3239f73867cf8c3966795c7af1ef303a07bc941ef4338b3aa074"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-startup/startup.cjs": {
+      "bytes": 1694,
+      "sha256": "105eace6bba6eb26743ab355a155898c8eeffdfd35323fce0da9e132bf5164b1"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-pre-guest-guard/remote.py": {
+      "bytes": 5196,
+      "sha256": "7e40e09d0256bf9836336a7cf2cf6efd138fa47ddc217e4470dc39434f8ab21a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-pre-guest-guard/13007.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/failed-pre-guest-guard/13007.err.log": {
+      "bytes": 344,
+      "sha256": "dd154d14f6b504729a5ea6edb6860db8579ab50ab6ee2ae254c2b155974396ad"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/runner.stdout": {
+      "bytes": 6070,
+      "sha256": "eb461cdf59469f093f18fed1c25db520bb215ab83c4f3c1d5bda1245998e124f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/review-request.json": {
+      "bytes": 1587,
+      "sha256": "6f7f681d4cf07ccddd5e72c7c82dd9ea87fb80c6a652a31e7dbc3e5b3ed1d7de"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/spawn-status.json": {
+      "bytes": 1367,
+      "sha256": "32e4ecb861f5bd34336c194bf2f2a737c363b268444a82ab37381407b35a8a02"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/controller.stderr": {
+      "bytes": 269,
+      "sha256": "8d8a1e215539cfe0fd050239b795fcd31ef078cce00a2a293cf2ab5c45f2f72b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/events.json": {
+      "bytes": 1124,
+      "sha256": "26a8bdf42465aa9f6d548ffc1b75f7a85e6b3afbf6b9f622d1637817ddf873e5"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/review-9b55685e506a4124abd456510ebaf254.json": {
+      "bytes": 605,
+      "sha256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/capture-9b55685e506a4124abd456510ebaf254.png": {
+      "bytes": 144804,
+      "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/terminal.json": {
+      "bytes": 6870,
+      "sha256": "111bd2ee9c2314c13954ed062b4ed4d2733f6dad5ea5544fda30155e8d35764b"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/result.json": {
+      "bytes": 591,
+      "sha256": "9da322eccb980307f81faea95b13c8a4da30b0b0756ddb0a1bcbc7c29c66559f"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/owned-cleanup.json": {
+      "bytes": 95,
+      "sha256": "7c213fdb28772b12ba794d65c7c0bc9bd8b38c9f974572ba0459d2bc39e1249a"
+    },
+    "docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/retained/game-evidence/runner.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-entry.stderr": {
+      "bytes": 1298,
+      "sha256": "75182ac61252723dd8df5a0293637eb371edbf8df788778fa60c38fa2dfd0706"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/control-preservation-pass.json": {
+      "bytes": 615,
+      "sha256": "0870333ea98aa042118e5a5029974a255ec953653f068872d29c57edcecd5133"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/report.py": {
+      "bytes": 9932,
+      "sha256": "53901238c8eb29328324af94aa392a014acbcc944713fab6be8a7fc8d019e269"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/accounting.json": {
+      "bytes": 628,
+      "sha256": "44cee65ddc46270e73170634d0ad862410e56fe99209a5f0768e31e63f17693a"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/review.json": {
+      "bytes": 1196,
+      "sha256": "217592c8125195ab8de52ce0547f7138c202d35f8006ff935d9e0e16dd8f9ea9"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/before-reproduction.json": {
+      "bytes": 666,
+      "sha256": "a5af67bbf397a5282c3ce4e7858aa71f9156e97628740077c34baed9f376b655"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/candidate-source-pins.json": {
+      "bytes": 338,
+      "sha256": "c8db7f60a02fe3f0a5bc19cc8126ef3099cdeae0faed75a8a717f0997e3f58fc"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/setup.py": {
+      "bytes": 2184,
+      "sha256": "b3bb1b64bd441aa947c2ff32be422946f6480212032164de645e85860e095d60"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/production-run.js": {
+      "bytes": 685960,
+      "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/setup.json": {
+      "bytes": 1183,
+      "sha256": "fe85f3b986598e0635f69fefb6f23ff7bf4260ca1283d1a47d54610ad99aa21a"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/before.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/superseded-minimize-airstrike-observation-bridge.py": {
+      "bytes": 22259,
+      "sha256": "06ab71cb8f122a598f751fc7c6239d1f009eb0fbb5737e4b07c979d1e0f81a8b"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/source-review.diff": {
+      "bytes": 12357,
+      "sha256": "bdfcd59400d2579fad284fd520a953b64b09f84651f7a5194f45f6b7ad9a498c"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-regression.stderr": {
+      "bytes": 1427,
+      "sha256": "3ef769fb771123fb32daa6e338630cfa628a8e11decb9c661ec7f0a64f69c995"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/source-checkpoint.py": {
+      "bytes": 3537,
+      "sha256": "d02b27df5bd1ac5c56e824c244ad7f59a6813d05a3683a201d449b2e324ceb14"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original.stderr": {
+      "bytes": 1551,
+      "sha256": "bae44694dd35e4a076460e48791b0198fee4e38f970e0b11c87a90a08bbb0041"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression.stderr": {
+      "bytes": 2092,
+      "sha256": "51de79fa4b42f3a83b058be1481b7309c3b77afc642579b573d92cbc3dbbe11b"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/use-activation.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/before.stdout": {
+      "bytes": 69,
+      "sha256": "13b70394f851e39044a0c85869312c224a0cfbe7f210b902279ddb0d65d867db"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-fixed.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-review.stdout": {
+      "bytes": 373,
+      "sha256": "e83de14f60052076ab0cb144ee7d3208714f749764a60ded60b1949e27181a91"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original-fixed.stderr": {
+      "bytes": 1151,
+      "sha256": "03715b35b503cb26c620c2acc1b2efcf965ec162d8e79da728428b41c96b8b7c"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/setup.stdout": {
+      "bytes": 135,
+      "sha256": "f42f398dae7049aca8ab86c9b4b07c1ae69cde42f9f0bae069101eb1ed064aa9"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/input-pins.json": {
+      "bytes": 1229,
+      "sha256": "2c9971c364a25ad8c7e78606a338406f4c243935a91165f8dde83bf481828a12"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original-fixed.json": {
+      "bytes": 1231,
+      "sha256": "5927368c529bb1afe40be022e828721ab25dd5a0d1c2e5fe6074db8604e129bf"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/review.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/failed-controller-shadowed-snapshot.py": {
+      "bytes": 10846,
+      "sha256": "3ed04e089f18dac76ff822d5899f1e610cffe677cfbb713c5425002b033f5b78"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-final.json": {
+      "bytes": 1433,
+      "sha256": "67f89883c7a644c20b4f5c67f78705f38833880c6ed20368c75d4b61c10ee948"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/use-activation.py": {
+      "bytes": 4128,
+      "sha256": "108ec13503bf7fe82138fed21472372df2a0e924775062c816406991776e0f78"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-regression.json": {
+      "bytes": 1432,
+      "sha256": "511f030002cefe6ee75a7f3d18080d4f37ac83b02febdedccdf20a7f2e02c767"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-negative-original.stdout": {
+      "bytes": 78,
+      "sha256": "84250e6549d3a8e1ec512e30427bb8e49a0a6c75abcc10d006888b5bef21048b"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/production-renderer-input.js": {
+      "bytes": 177069,
+      "sha256": "4ea9ba14249a361b6c498c8e019cc27b761bc080af755eab04616b85af5ca051"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/production-renderer.js": {
+      "bytes": 214278,
+      "sha256": "3b7b3efb1dc48b73de6d24d0c01e10650b0cc84b0b8cd80df2b49baa3680b2b2"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/run.py": {
+      "bytes": 4392,
+      "sha256": "6ce406e2854a17b1c4b9c7feefc33ff45da91f89be37cc9411c1e6b448313f50"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/wal-baseline.json": {
+      "bytes": 315,
+      "sha256": "7a39bd8f31947a20145ae00e21fdd039790b1beeeeaa8dcafad6197af2926c65"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/source-checkpoint.json": {
+      "bytes": 1217,
+      "sha256": "e9d08c5a7fa597c3f163c1bb0c0e983c815145715be1651e075e0aac44d00735"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original.json": {
+      "bytes": 1219,
+      "sha256": "cdbe1c2d4221cefaaf17d1059f862452f658d3ef6302b99d4ce1ef3a64bae386"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original-fixed.stdout": {
+      "bytes": 78,
+      "sha256": "84250e6549d3a8e1ec512e30427bb8e49a0a6c75abcc10d006888b5bef21048b"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/reproduce.py": {
+      "bytes": 1034,
+      "sha256": "bd2729ca3fb43f953acf93700f7a77bc8c8e0d273b291b8207896c2b93296c7a"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original.py": {
+      "bytes": 862,
+      "sha256": "515f2d34ea40e47307e3f3e192bc2d832ed3c887a6c546aaf08439923e36cf84"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/use-activation.json": {
+      "bytes": 1210,
+      "sha256": "f8be18bb610f5a262f22b602d5f828a9b25756bb0fe537d5ddaa9f706ec9bd03"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-negative-original.json": {
+      "bytes": 1240,
+      "sha256": "93210d3b0e8d547c90eb0616e909743a861e7a4023040ad7fd960c6a8da9f783"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-final.stderr": {
+      "bytes": 1413,
+      "sha256": "7c3cfc1c2fa575fa17e56aa054755c6891d199cb751fa49db20a2cc1ccd929cf"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/setup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-negative-original.stderr": {
+      "bytes": 1109,
+      "sha256": "53b1976e2e570d77bc67c0e30a9e6b02a649e288db69de565f24d244e23bd4a6"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-regression.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-entry.json": {
+      "bytes": 1376,
+      "sha256": "8f99a28a8930502017360ba9ecf561c5a973fd40d443f7da385bd50ac77b0434"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-final.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/reused-baseline.json": {
+      "bytes": 851,
+      "sha256": "e76edd6ce2966730974ebd9047aa19625a2ca690bd28fdb45434ad427211b82a"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/source-checkpoint.stdout": {
+      "bytes": 131,
+      "sha256": "10dc07e6ce054893c522522e5ab4eb28735df90803cf214d33a8e87fa4d923cd"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-entry.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-fixed.stderr": {
+      "bytes": 1144,
+      "sha256": "cdde03b10cd312cbaa85feac99895c641ed4793bf3848b6f29786584a7ed1657"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/review.stdout": {
+      "bytes": 373,
+      "sha256": "e83de14f60052076ab0cb144ee7d3208714f749764a60ded60b1949e27181a91"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/superseded-minimize-test-airstrike-console-obscuration.py": {
+      "bytes": 13924,
+      "sha256": "dbde746f2d7d9bcba5c8be5f30fd00344c5507ee554bcbf5ed368a57ec0f5ae2"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/superseded-minimize-airstrike-menu-controller.py": {
+      "bytes": 10901,
+      "sha256": "00931dfdd9fbc4f99002c28fbae4b9a2620c275e0973e0e4cb77895d9f425aea"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/report.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/report.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/source-checkpoint.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression.json": {
+      "bytes": 1239,
+      "sha256": "9410722b82f11f03630ff3e0f72790594a38a1f313053014f2377eabc2231185"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-review.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/negative-original-pass.json": {
+      "bytes": 166,
+      "sha256": "1b73a712d73211ec2a2e0265ef7c5a9185b989d7806dd2f7bafc112696ca7bc2"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/before.json": {
+      "bytes": 1188,
+      "sha256": "6bd1b5b397cb561cc71e1ad3cec693e3aa65bd5cc3e731850c57c370252f7fd9"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/regression-fixed.json": {
+      "bytes": 1251,
+      "sha256": "09c4c9b014b574c1fba853747090826c55f8c441ca0b268e9aa8db06936c14b8"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/use-activation.stdout": {
+      "bytes": 85,
+      "sha256": "ccdba77f827207834e188bf747eaa2868ced38a9f7335e01f43ae0540c141c35"
+    },
+    "docs/reviews/airstrike-console-obscuration-repair-oct27/evidence/activation-review.json": {
+      "bytes": 1219,
+      "sha256": "99e088078446ab75a14ea140af48a1d6b9aa40130f5fd38a9864be259373978f"
+    }
+  },
+  "canonicalCompletionManifest": "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/receipt-manifest.json binds this report to exact eventual commit/remote ref/cleanup"
+}

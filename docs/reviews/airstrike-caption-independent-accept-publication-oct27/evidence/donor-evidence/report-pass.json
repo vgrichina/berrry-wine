@@ -1,0 +1,10 @@
+{
+  "payloads": 72,
+  "report": "/tmp/airstrike-console-obscuration-repair-oct27/repo/docs/reviews/airstrike-console-obscuration-repair-oct27",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e",
+    "tools/airstrike-observation-bridge.py": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "receiptSHA256": "5c30348c6cc190de3376fc3622a767cfe79440746e1bc70948582ef345e0a97a"
+}

@@ -1,0 +1,28 @@
+test_bridge_caption_frozen_completion_uses_actual_log (__main__.Startup.test_bridge_caption_frozen_completion_uses_actual_log) ... ok
+test_bridge_dispatches_only_exact_reviewed_action (__main__.Startup.test_bridge_dispatches_only_exact_reviewed_action) ... ok
+test_bridge_rejects_stale_image_window_batch_and_credit_state (__main__.Startup.test_bridge_rejects_stale_image_window_batch_and_credit_state) ... ok
+test_exact_original_observation_remains_failclosed (__main__.Startup.test_exact_original_observation_remains_failclosed) ... ok
+test_no_repeat_or_key_after_uncertain_minimize (__main__.Startup.test_no_repeat_or_key_after_uncertain_minimize) ... ok
+test_retained_image_and_production_caption_contract (__main__.Startup.test_retained_image_and_production_caption_contract) ... ok
+test_reviewed_minimize_then_fresh_startup_before_any_key (__main__.Startup.test_reviewed_minimize_then_fresh_startup_before_any_key) ... FAIL
+test_wrong_unknown_window_target_and_geometry (__main__.Startup.test_wrong_unknown_window_target_and_geometry) ... ok
+
+======================================================================
+FAIL: test_reviewed_minimize_then_fresh_startup_before_any_key (__main__.Startup.test_reviewed_minimize_then_fresh_startup_before_any_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-console-obscuration-repair-oct27/repo/test/test-airstrike-console-obscuration.py", line 64, in test_reviewed_minimize_then_fresh_startup_before_any_key
+    self.assertEqual([x['cmd'] for x in commands],['caption-click:0x10002:min','keydown:32','keyup:32','keydown:27'])
+AssertionError: Lists differ: ['caption-click:0x10002:min'] != ['caption-click:0x10002:min', 'keydown:32', 'keyup:32', 'keydown:27']
+
+Second list contains 3 additional elements.
+First extra element 1:
+'keydown:32'
+
+- ['caption-click:0x10002:min']
++ ['caption-click:0x10002:min', 'keydown:32', 'keyup:32', 'keydown:27']
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.017s
+
+FAILED (failures=1)

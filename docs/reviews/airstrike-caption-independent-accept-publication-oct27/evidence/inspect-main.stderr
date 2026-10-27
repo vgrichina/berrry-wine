@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/gitops.py", line 23, in <module>
+    own=(c.R/p).read_bytes()
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1021, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1015, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/airstrike-caption-independent-accept-publication-oct27/repo/test/test-airstrike-menu-controller.py'

@@ -1,0 +1,4 @@
+# Preserve byte-exact historical patch context, including blank context lines.
+docs/reviews/**/repair.patch -whitespace
+docs/reviews/**/source-review.diff -whitespace
+docs/reviews/airstrike-caption-independent-accept-publication-oct27/evidence/*diff-check.stdout -whitespace

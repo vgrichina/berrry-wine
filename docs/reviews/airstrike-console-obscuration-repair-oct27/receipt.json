@@ -1,0 +1,95 @@
+{
+  "status": "PASS_SOURCE_TEST_REPAIR_PENDING_INDEPENDENT_ACCEPTANCE_AND_RUNTIME",
+  "scope": "Airstrike startup Console obscuration only",
+  "reportOnlySparseOrphan": true,
+  "neverMergeWholeTree": true,
+  "branch": "refs/heads/task/airstrike-console-obscuration-repair-oct27",
+  "acceptedMainPredecessor": "c220ffccd69932bb2e5f05189f4845581de0d723",
+  "sourcePins": {
+    "tools/airstrike-menu-controller.py": "131d42d0df5459fbd42d683d1db0220994ffe8fb29fb9b32f376bf1a81e5336e",
+    "tools/airstrike-observation-bridge.py": "2596d04c93dc2bbd7b5c9c5c853473d929565c1a00e7c3fc36077bf9b46126c9",
+    "test/test-airstrike-console-obscuration.py": "e6434f2955fd31a1bab33d5dd6ae5f3cecf818b0ffb8ecddbcae47edd62cbf2c"
+  },
+  "productionEntry": {
+    "controller": "tools/airstrike-menu-controller.py:Controller.run",
+    "bridge": "tools/airstrike-observation-bridge.py:Bridge.run",
+    "controllerCLI": "tools/airstrike-menu-controller.py:main",
+    "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "runnerRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+    "runnerRebuilt": false,
+    "guestExecuted": false
+  },
+  "before": {
+    "image": "9b55685e506a4124abd456510ebaf254.png",
+    "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+    "observed": "Console overlays startup; Press any key to start visible; no menu/gameplay accepted",
+    "batch": 5000,
+    "keys": 0,
+    "reproducer": "evidence/before-reproduction.json"
+  },
+  "after": {
+    "evidenceKind": "Offline source/protocol fixture, not guest after image",
+    "route": "One reviewed click on exposed Airstrike titlebar, derived from full matching two-window snapshot; retained geometry gives click:656:33. Actual renderer hit-test/normal activation route. Fresh unobscured focus observation is required before Space32 startup key, then new gameplay/menu observation before Esc/navigation.",
+    "ack": "Queued input requires exact serial full1 step ACK, matching frozen-zero snapshot and exactly one real execution log; timeout/terminal never replayed.",
+    "noConsoleAction": true,
+    "menuAccepted": false,
+    "ordinaryQuit": false
+  },
+  "tests": {
+    "focused": 10,
+    "supervision": "evidence/activation-regression.json",
+    "stderr": "evidence/activation-regression.stderr",
+    "originalRejectedByNewRegression": "evidence/negative-original-pass.json",
+    "unchangedOriginalObservationStillRefused": true,
+    "controls": [
+      "wrong/unknown Console target",
+      "unrelated/third window",
+      "main window as obstruction",
+      "child/hidden target",
+      "unsafe/no exposed caption",
+      "stale review token/after",
+      "changed pixels/windows/batch/credits",
+      "expired dispatch lease",
+      "unreviewed/wrong click",
+      "partial ACK/missing actual log/uncertain terminal",
+      "no repeated activation or startup key"
+    ],
+    "preservation": "evidence/control-preservation-pass.json",
+    "baselineReused": "evidence/reused-baseline.json",
+    "baselineTotal25IncludesBridge12": true,
+    "baselineNotClaimedAsNewSourceHashAcceptance": true
+  },
+  "nextRuntimePrerequisites": [
+    "Independent acceptance of exact repaired source/test pins and scoped integration by assigned owner; main belongs Ricochet.",
+    "Fresh coordinator assignment, box/API authorization, finite cutoff/handback/shutdown/expiry; do not reuse or touch bx_pphjt7jw from this offline task.",
+    "Fresh aggregate disk/physical RAM/task admission; unchanged startup diagnostics, stdout/stderr from creation, exact Node executable/flags/env/limits, module/runner/assets/source closure, canonical filename-bearing mount parser receipt.",
+    "One new guest attempt with single bridge control owner and frozen-zero ACK gate. Human inspect new startup capture and explicitly approve consoleObstruction as the exact full snapshot window record, startupPrompt Press any key to start, keysReleased true, unobscured false, evidence current capture path; preserve session/token/sha256/after binding.",
+    "Controller/bridge derives one safe exposed Airstrike titlebar click. Revalidate image and whole frozen snapshot immediately before dispatch. After completion require NEW reviewed unobscured Airstrike focus/startup evidence before Space32; after release require NEW gameplay/menu evidence; retain every row and normal Quit proof.",
+    "Unknown/moved/extra/stale window, absent safe exposed caption, focus loss, partial or uncertain completion, terminal/fault/timeout stops with no retry. No screenshot or fixture is gameplay acceptance."
+  ],
+  "externalPins": {
+    "/tmp/airstrike-accepted-frozen-dispatch-main-integrate-oct27/repo/docs/reviews/airstrike-accepted-frozen-dispatch-main-integrate-oct27/receipt.json": "4bc2009ac2c2a78b4ce192e5b4a95edcf12b96b02582115a542f2f90f26b999f",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/reused-regressions.json": "5abe6f0c6c5a7d4a0ab4c1c964489a68aa37e29a0292c7c96c8599bdb0b759aa",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/result.json": "31ba2cfa5e08c37645066a13997548515dac03af22b4dba66a1253c409d6aa2b"
+  },
+  "incidents": [
+    "Initial exploratory combined read display exceeded8192 bytes; original tool transcript retained; subsequent bounded displays used.",
+    "First minimize regression failed because completion snapshot shadowed pre-dispatch snapshot; source reconstructed with observed SHA3ed04e08 and retained stderr; corrected before passing tests.",
+    "First original-candidate negative wrapper errored because it used candidate execution_log to manufacture fixture logs; failed stderr retained, independent literal fixture logs corrected; discriminating assertion failure then verified.",
+    "Passing minimize fixture superseded after actual renderer source review revealed focus transfer to Console. All superseded source and receipts retained. No guest executed."
+  ],
+  "runtime": {
+    "assigned": false,
+    "box": "bx_pphjt7jw",
+    "lastDonorState": "RUNNING",
+    "lastDonorExpiry": "2026-10-27T10:59:29Z",
+    "shutdown": "10:52 UTC coordinator-owned",
+    "stateRequeried": false,
+    "touched": false
+  },
+  "publication": "Exact commit/remote ref/cleanup receipts in owned ops/result.json after push; no main/public deployment.",
+  "rootAndDonorsReadOnly": true,
+  "initialRootDigestReused": true,
+  "workerSpawns": 0
+}

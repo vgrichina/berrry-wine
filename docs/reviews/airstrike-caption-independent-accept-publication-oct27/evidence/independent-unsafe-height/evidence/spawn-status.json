@@ -1,0 +1,11 @@
+{
+  "state": "started",
+  "pid": 4145087,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/reproduce.py",
+    "--fake-transport",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/independent-unsafe-height"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 254259200,
+  "sampledPeakRSS": 254259200,
+  "reapedPeakRSS": 212578304,
+  "cpuSeconds": 16.095887,
+  "wallSeconds": 28.980218472999923,
+  "owned": [
+    [
+      13807,
+      "72820"
+    ],
+    [
+      13808,
+      "72829"
+    ]
+  ],
+  "cleanupComplete": true,
+  "configuration": {
+    "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+    "base": [
+      "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/abi-preload.cjs"
+    ],
+    "argvSHA256": "e21381e400f80f3b824d778cd69b3dba65e296b2addb1dc49894fcf076bdd334",
+    "environmentSHA256": "d4be93ad3269740f272def95636c3ee2ef0e1834601c6d420fb32d9097d53581",
+    "cwd": "/tmp/airstrike-accepted-dispatch-quit-oct27/runner",
+    "preloadSHA256": "9800128f951324742fd3bd9b5da4c083fbc284e38537e511555540892f91ed3d",
+    "startupSHA256": "a65e4a0e30717195cd30a9171848730c8f3094738cef76585dc74acb7e7c3ebd",
+    "limits": {
+      "rss": 2147483648,
+      "heap": 536870912,
+      "cpu": 90,
+      "wall": 120,
+      "file": 25165824,
+      "output": 2097152
+    },
+    "inherited": {
+      "2": [
+        -1,
+        -1
+      ],
+      "9": [
+        -1,
+        -1
+      ],
+      "0": [
+        -1,
+        -1
+      ],
+      "1": [
+        -1,
+        -1
+      ]
+    },
+    "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+    "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+  },
+  "stdout": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/guest.stdout",
+  "stderr": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/guest.stderr"
+}

@@ -1,0 +1,23 @@
+test_reviewed_minimize_then_fresh_startup_before_any_key (regression.Startup.test_reviewed_minimize_then_fresh_startup_before_any_key) ... ERROR
+
+======================================================================
+ERROR: test_reviewed_minimize_then_fresh_startup_before_any_key (regression.Startup.test_reviewed_minimize_then_fresh_startup_before_any_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-console-obscuration-repair-oct27/repo/test/test-airstrike-console-obscuration.py", line 104, in test_reviewed_minimize_then_fresh_startup_before_any_key
+    commands,reason=drive([dict(observation=approved()),queued(1,'caption-click:0x10002:min',SNAPSHOT),
+                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/airstrike-console-obscuration-repair-oct27/repo/test/test-airstrike-console-obscuration.py", line 35, in queued
+    log = m.execution_log(command, batch, snapshot)
+          ^^^^^^^^^^^^^^^
+AttributeError: module 'original' has no attribute 'execution_log'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (errors=1)
+Traceback (most recent call last):
+  File "/tmp/airstrike-console-obscuration-repair-oct27/ops/negative-original.py", line 6, in <module>
+    assert len(result.failures)==1 and len(result.errors)==0 and result.testsRun==1
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

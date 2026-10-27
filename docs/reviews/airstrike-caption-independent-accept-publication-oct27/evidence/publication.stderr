@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/gitops.py", line 29, in <module>
+    git('diff-check',['diff','--cached','--check'])
+  File "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/gitops.py", line 12, in git
+    assert not required or r.returncode==0,(label,r.returncode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('diff-check', 2)

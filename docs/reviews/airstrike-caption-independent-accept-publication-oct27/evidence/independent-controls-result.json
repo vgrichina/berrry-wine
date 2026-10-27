@@ -1,0 +1,63 @@
+{
+  "kind": "OFFLINE actual Bridge.send/Controller protocol controls; not gameplay",
+  "results": [
+    {
+      "control": "pixels",
+      "inputs": [],
+      "reason": "reviewed image/focus no longer current; no input"
+    },
+    {
+      "control": "main-geometry",
+      "inputs": [],
+      "reason": "reviewed startup snapshot no longer current; no activation input"
+    },
+    {
+      "control": "focus",
+      "inputs": [],
+      "reason": "reviewed image/focus no longer current; no input"
+    },
+    {
+      "control": "hidden-main",
+      "inputs": [],
+      "reason": "reviewed startup snapshot no longer current; no activation input"
+    },
+    {
+      "control": "extra-window",
+      "inputs": [],
+      "reason": "reviewed startup snapshot no longer current; no activation input"
+    },
+    {
+      "control": "partialACK",
+      "inputs": [
+        {
+          "id": "airstrike-1",
+          "cmd": "click:656:33"
+        }
+      ],
+      "reason": "uncertain frozen completion; no replay or further input",
+      "noKeys": true
+    },
+    {
+      "control": "missing-log",
+      "inputs": [
+        {
+          "id": "airstrike-1",
+          "cmd": "click:656:33"
+        }
+      ],
+      "reason": "missing actual frozen input log; no further input",
+      "noKeys": true
+    },
+    {
+      "control": "terminal-after-click",
+      "inputs": [
+        {
+          "id": "airstrike-1",
+          "cmd": "click:656:33"
+        }
+      ],
+      "reason": "{'exit': 0}",
+      "noKeys": true
+    }
+  ]
+}

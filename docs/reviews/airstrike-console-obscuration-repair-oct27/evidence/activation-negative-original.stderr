@@ -1,0 +1,21 @@
+test_reviewed_activation_then_fresh_startup_before_any_key (regression.Startup.test_reviewed_activation_then_fresh_startup_before_any_key) ... FAIL
+
+======================================================================
+FAIL: test_reviewed_activation_then_fresh_startup_before_any_key (regression.Startup.test_reviewed_activation_then_fresh_startup_before_any_key)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-console-obscuration-repair-oct27/repo/test/test-airstrike-console-obscuration.py", line 134, in test_reviewed_activation_then_fresh_startup_before_any_key
+    self.assertEqual([x['cmd'] for x in commands],['click:656:33','keydown:32','keyup:32','keydown:27'])
+AssertionError: Lists differ: [] != ['click:656:33', 'keydown:32', 'keyup:32', 'keydown:27']
+
+Second list contains 4 additional elements.
+First extra element 0:
+'click:656:33'
+
+- []
++ ['click:656:33', 'keydown:32', 'keyup:32', 'keydown:27']
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

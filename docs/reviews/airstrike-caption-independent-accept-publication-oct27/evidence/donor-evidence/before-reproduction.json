@@ -1,0 +1,9 @@
+{
+  "status": "EXPECTED_REFUSAL",
+  "reason": "insufficient-observation: Fresh unobscured desktop capture identifying Airstrike and its input focus, plus Airstrike menu header, all seven labels and selected '*' row after the last dispatched key release. ACKs are not observations.",
+  "commands": [],
+  "sourceSHA256": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+  "reviewSHA256": "3a53e8666f1218d8edf44bb826fedad40cccbd219011ddf028f83d9bb82dc470",
+  "imageSHA256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+  "productionBoundary": "Actual Controller.run(observation), exact retained first review; no guest/Node."
+}

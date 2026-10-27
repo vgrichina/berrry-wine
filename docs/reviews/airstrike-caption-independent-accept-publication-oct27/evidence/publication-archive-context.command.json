@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/ops/gitops.py",
+    "publish-archive-context"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "environmentSHA256": "72bbf61dd4e1ef294c1ee061d0456af329740e912a95a475f783f376ab07984e",
+  "inheritedLimits": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ]
+  },
+  "cwd": "/home/user/wine-assembly",
+  "mounts": [],
+  "mountValidation": "No guest/Node/API or mount argv in offline Python-only task"
+}

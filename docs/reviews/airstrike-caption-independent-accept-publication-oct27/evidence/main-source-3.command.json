@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "-C",
+    "/tmp/airstrike-caption-independent-accept-publication-oct27/repo",
+    "show",
+    "fef550cf4706601b267ce7848d78a5681e57c843:test/test-airstrike-menu-controller.py"
+  ],
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "DATA": "Git child only 512MiB",
+  "parentDATA": [
+    -1,
+    -1
+  ]
+}

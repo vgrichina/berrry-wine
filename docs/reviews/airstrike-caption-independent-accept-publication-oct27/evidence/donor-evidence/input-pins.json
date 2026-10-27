@@ -1,0 +1,15 @@
+{
+  "pins": {
+    "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+    "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+    "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+    "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+    "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811"
+  },
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "runnerRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "acceptedMain": "c220ffccd69932bb2e5f05189f4845581de0d723",
+  "image": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/retained/9b55685e506a4124abd456510ebaf254.png",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountValidation": "No guest invocation or filename-bearing mounts in source/test task; retained unchanged prior configuration only."
+}

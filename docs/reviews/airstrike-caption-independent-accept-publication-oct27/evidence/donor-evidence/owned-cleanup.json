@@ -1,0 +1,1 @@
+{"ownedWatcher":{"pid":4112846,"parent":4111341,"argv":"tail -n 0 -f messageboard.txt","identityBefore":"owned-watcher-before.stat","signal":"SIGTERM","absentVerified":true},"allStartedSupervisedOperationsCleanupComplete":true,"rejectedPublicationOperationStartedNoChild":true,"peersUntouched":true,"boxesUntouched":true,"rootAndDonorsUntouched":true,"cleanupComplete":true}

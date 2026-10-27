@@ -1,0 +1,12 @@
+{
+  "externalPins": {
+    "/tmp/airstrike-accepted-frozen-dispatch-main-integrate-oct27/repo/docs/reviews/airstrike-accepted-frozen-dispatch-main-integrate-oct27/receipt.json": "4bc2009ac2c2a78b4ce192e5b4a95edcf12b96b02582115a542f2f90f26b999f",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/reused-regressions.json": "5abe6f0c6c5a7d4a0ab4c1c964489a68aa37e29a0292c7c96c8599bdb0b759aa",
+    "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/result.json": "31ba2cfa5e08c37645066a13997548515dac03af22b4dba66a1253c409d6aa2b"
+  },
+  "historicalCounts": {
+    "totalDispatchAndControllerAndBridge": 25,
+    "bridgeSubset": 12
+  },
+  "interpretation": "Unchanged runner protocol/test closure receipts reused as baseline; changed controller/bridge behavior qualified by new focused tests, not claimed same-hash historic source acceptance."
+}

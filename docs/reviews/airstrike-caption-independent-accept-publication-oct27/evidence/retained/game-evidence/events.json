@@ -1,0 +1,56 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0022765590000517477,
+    "command": {
+      "id": "bridge-1",
+      "action": "step",
+      "n": 5000
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 1.203354986000022,
+    "command": {
+      "id": "bridge-2",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 1.20509276100006,
+    "command": {
+      "id": "bridge-3",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 1.2062410600000248,
+    "command": {
+      "id": "bridge-4",
+      "action": "png",
+      "path": "/tmp/airstrike-accepted-dispatch-quit-oct27/ops/game-evidence/capture-9b55685e506a4124abd456510ebaf254.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 1.3007399420000638,
+    "command": {
+      "id": "bridge-5",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "review-start",
+    "elapsed": 1.3054441030000135,
+    "token": "9b55685e506a4124abd456510ebaf254",
+    "after": null
+  },
+  {
+    "kind": "response-start",
+    "elapsed": 28.60555811000006,
+    "token": "9b55685e506a4124abd456510ebaf254",
+    "seconds": 10
+  }
+]

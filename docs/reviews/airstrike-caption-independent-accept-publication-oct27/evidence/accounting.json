@@ -1,0 +1,16 @@
+{
+  "at": 1793098991.2958372,
+  "MemAvailable": 2529918976,
+  "required": 1409286144,
+  "existingPeerRSS": "already in MemAvailable",
+  "clientCountedOnce": 335544320,
+  "sharedPoolCountedOnce": 268435456,
+  "used": 12386304,
+  "events": 1454080,
+  "allocation": 134217728,
+  "publicationGrowth": 25165824,
+  "reserve": 8388608,
+  "free": 7292153856,
+  "projectedFree": 7157936128,
+  "pass": true
+}

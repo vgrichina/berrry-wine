@@ -1,0 +1,1 @@
+Admission assertion failed before subprocess creation: memAvailable1765949440 < requiredRemainingRAM1995235328; complete original traceback and exact accounting object retained in task events.jsonl. Git was not started. No diff-check result, commit or remote backup exists.

@@ -1,0 +1,7 @@
+{
+  "readOnly": true,
+  "objectStores": [
+    "/home/user/wine-assembly/.git/objects"
+  ],
+  "semantics": "Immutable content-addressed root donor objects only; no donor checkout/index/ref/object writes, no fetch/repack. Original overinclusive nested alternate graph retained in alternates-original.json; unnecessary stores removed to eliminate demonstrated nesting warnings."
+}
