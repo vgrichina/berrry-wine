@@ -37,3 +37,39 @@ Reports and losslessly compressed raw stdout/stderr are under `reports/generally
 No guest, Boat, compiler, module instantiation/rebuild, native recompilation, download, main integration or public deployment occurred. Retained passed modules remain untouched. No test box is assigned; existing boxes and their expiry/shutdown lifecycle remain coordinator-owned and untouched. There is no filename-bearing mount argv in this offline task; the canonical mount gate remains required for a later authorized runtime.
 
 The real loading-delay cause remains unknown. This repair closes the demonstrated ownership bypass; it does not establish game loading or playability. Runtime is not justified until independent acceptance of this exact repair, later current-main reconciliation, fresh coordinator assignment/admission, retained module/input verification, exact startup/mount diagnostics and complete finite lifecycle/queue/time/capture/wire/staging allowances. Historical uncertain request12 must never be replayed or inferred complete. Stop at this source handoff; the coordinator assigns any next work.
+
+
+### Cursor integrity transaction repair (2026-10-27)
+
+The independent consumed-reply scenario rejected candidate4616ccf2: after valid
+ACK62, changed consumed ACK61 was discovered only after snapshot63 had reserved
+next64. Request63 never dispatched. This was cursor advancement, not duplicate
+dispatch.
+
+The transport now owns a bound exchange boundary with reservation and dispatch
+callbacks. Mailbox checks history, owner state, ID bounds and existing files before
+calling the durable cursor reservation. It checks integrity again after that write
+and after the durable transport pending journal, before publication. Stdio likewise
+checks for unsolicited replies before and after reservation. The controller tracks
+whether publication has been attempted. A refusal before publication restores the
+last acknowledged next/last identity and marks it pending+failed (terminal history
+uncertainty, without a new request). A publication attempt, including a partial or
+failed write, keeps the new durable pending cursor; it can never be resumed or
+replayed. Poisoned transport ownership still forbids handoff.
+
+The owner lock excludes cooperating controllers, not external file writers. Checks
+observe integrity at the final prepublication boundary; they cannot make arbitrary
+external writes atomic with a later filesystem operation. Mutation during either
+durable reservation write is caught and the tentative cursor is abandoned. Mutation
+after publication remains dispatch uncertainty, retaining its pending record. No
+cursor rollback is permitted once publication is attempted. Existing ACK completion,
+frozen-zero, deadline, terminal, inventory and clean-handoff rules remain in force.
+
+The unchanged production-fixture no-advance assertions now retain next63 and only
+requests61,62. Only helper/source identity bindings changed in that oracle. A mutant
+with the old reservation-before-check ordering and no abort rollback is rejected by
+the same assertions with next64. Separate deterministic tests cover known mutation,
+mutation during cursor and journal writes, stdio unsolicited ACK during reservation,
+and postdispatch uncertainty. Evidence and reused predecessor receipts are in
+reports/generally-cursor-preflight-integrity-repair-oct27. This is source-only repair,
+awaiting independent acceptance; no guest completion or runtime authorization.

@@ -27,7 +27,7 @@ if a.reproduce:
 else:
     case = Path(a.case)
 helper = Path(__file__).resolve().parents[1] / 'tools/generally-loading-controller.py'
-assert hashlib.sha256(helper.read_bytes()).hexdigest() == 'e41251b8e976a28957cb44c9b5398bf90aa9cd74b6fcb504301e6dbc89bbbe2b'
+assert hashlib.sha256(helper.read_bytes()).hexdigest() == '2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5'
 receipt = json.loads((case / 'seed.receipt').read_text())
 cursor = json.loads((case / 'original.cursor').read_text())
 cleanup = json.loads((case / 'cleanup.json').read_text())
@@ -37,7 +37,7 @@ assert [e['request']['id'] for e in receipt['events']] == [61, 62]
 requests = sorted(q.name for q in (case / 'mailbox/requests').iterdir())
 assert requests == ['0061.json', '0062.json']
 expected_next = receipt['events'][-1]['request']['id'] + 1
-diagnostic = dict(candidate='4616ccf2e6ce700114c8c6db3642f4aac3065827',
+diagnostic = dict(candidate='helper-sha256:2da5e423b9c18b90463a2bf4f3dce8e35780e5d6452b43a5771d575c5dbf95c5',
                   fixtureSHA256=hashlib.sha256(fixture.read_bytes()).hexdigest(),
                   lastAcknowledged=62, expectedNextAtMost=expected_next,
                   actualCursor=cursor, requests=requests,

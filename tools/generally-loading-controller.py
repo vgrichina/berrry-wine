@@ -156,7 +156,7 @@ class Mailbox:
             if not path.exists() or hashlib.sha256(path.read_bytes()).hexdigest() != digest:
                 raise Refusal('consumed ACK changed or removed')
 
-    def exchange(self, request, deadline):
+    def exchange(self, request, deadline, reserve, dispatched):
         self.check()
         name = f"{request['id']:04}.json"
         if not self.started or self.journal['status'] != 'active':
@@ -167,8 +167,22 @@ class Mailbox:
         reply = self.replies / name
         if dest.exists() or reply.exists():
             raise Refusal('existing request/reply: no replay')
+        # Bind validation, cursor reservation and dispatch to this exchange.
+        # External writers do not honor our owner lock: revalidate after each
+        # durable write. A pre-dispatch refusal lets the controller abandon the
+        # tentative reservation; an attempted dispatch must retain it forever.
+        reserve()
+        self.check()
         self.journal.update(status='pending', pending=request)
         self.save()  # durable transport uncertainty BEFORE dispatch
+        try:
+            self.check()
+        except Exception:
+            self.journal.update(status='active')
+            self.journal.pop('pending', None)
+            self.save()
+            raise
+        dispatched()  # before publish: a failed/partial publish is uncertain too
         atomic(dest, request)
         while not reply.exists():
             if time.monotonic() >= deadline:
@@ -195,8 +209,11 @@ class Stdio:
         if select.select([sys.stdin.fileno()], [], [], 0)[0]:
             raise Refusal('unsolicited/duplicate ACK or guest EOF')
 
-    def exchange(self, request, deadline):
+    def exchange(self, request, deadline, reserve, dispatched):
         self.check()
+        reserve()
+        self.check()
+        dispatched()  # a partial write is already uncertain
         print(json.dumps(request), flush=True)
         line = bytearray()
         while True:
@@ -239,10 +256,20 @@ class LoadingController:
         if time.monotonic() >= self.deadline:
             raise Refusal('global deadline; no later request')
         request = dict(command, id=self.cursor['next'])
-        self.cursor = dict(next=request['id'] + 1, pending=True, request=request)
-        atomic(self.path, self.cursor)  # durable BEFORE dispatch; never cleared on uncertainty
+        previous = self.cursor
+        dispatch_started = False
+
+        def reserve():
+            self.cursor = dict(next=request['id'] + 1, pending=True, request=request)
+            atomic(self.path, self.cursor)  # durable BEFORE any dispatch attempt
+
+        def dispatched():
+            nonlocal dispatch_started
+            dispatch_started = True
+
         try:
-            reply = self.transport.exchange(request, min(self.deadline, time.monotonic() + self.timeout))
+            reply = self.transport.exchange(
+                request, min(self.deadline, time.monotonic() + self.timeout), reserve, dispatched)
             if time.monotonic() >= self.deadline:
                 raise Refusal('global deadline during ACK')
             if (type(reply) is not dict or type(reply.get('id')) is not int
@@ -255,6 +282,10 @@ class LoadingController:
             self.events.append(dict(request=request, reply=reply))
             return reply['value']
         except Exception:
+            if not dispatch_started:
+                # No new ID escaped this transaction. Keep the last ACK/next
+                # identity, but retain terminal uncertainty: never resume it.
+                self.cursor = dict(previous, pending=True)
             self.cursor['failed'] = True
             atomic(self.path, self.cursor)
             raise
