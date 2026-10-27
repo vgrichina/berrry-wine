@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/diagnostic-check.py"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 54530048,
+    "sampledPeakRSS": 54530048,
+    "reapedPeakRSS": 22417408,
+    "cpuSeconds": 0.20044800000000002,
+    "wallSeconds": 0.10330578009597957,
+    "owned": [
+      [
+        124778,
+        "115439118"
+      ],
+      [
+        124781,
+        "115439120"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

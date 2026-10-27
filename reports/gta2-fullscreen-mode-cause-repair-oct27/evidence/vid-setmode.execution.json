@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/objdump",
+    "-d",
+    "-Mintel",
+    "--start-address=0x1001d30",
+    "--stop-address=0x1002050",
+    "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/Dmavideo.dll"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 32374784,
+    "sampledPeakRSS": 32374784,
+    "reapedPeakRSS": 13107200,
+    "cpuSeconds": 0.06205299999999999,
+    "wallSeconds": 0.04769536596722901,
+    "owned": [
+      [
+        121914,
+        "115423868"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

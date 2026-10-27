@@ -1,0 +1,37 @@
+{
+  "at": 1793106963.347891,
+  "actual": 3612672,
+  "allocation": 268435456,
+  "reserve": 8388608,
+  "walPositiveCountedOnce": 0,
+  "clients": [
+    {
+      "pid": 117959,
+      "rss": 200224768
+    },
+    {
+      "pid": 117960,
+      "rss": 205004800
+    },
+    {
+      "pid": 117961,
+      "rss": 202620928
+    }
+  ],
+  "memAvailable": 3520983040,
+  "requiredRemainingRAM": 2009395200,
+  "freeDisk": 6394933248,
+  "reservedIncrementalGrowth": 805306368,
+  "projectedFree": 5589626880,
+  "diskFloor": 2982150144,
+  "taskProjection": {
+    "sourceGit": 16777216,
+    "staging": 8388608,
+    "evidence": 16777216,
+    "sessionEventsWAL": 100663296,
+    "publication": 16777216,
+    "growth": 100663296,
+    "reserve": 8388608
+  },
+  "pass": true
+}

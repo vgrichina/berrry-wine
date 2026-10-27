@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/bin/objdump",
+    "-d",
+    "-Mintel",
+    "--start-address=0x5dc200",
+    "--stop-address=0x5dc400",
+    "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2.exe"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 32112640,
+    "sampledPeakRSS": 32112640,
+    "reapedPeakRSS": 13107200,
+    "cpuSeconds": 0.053548,
+    "wallSeconds": 0.047857887810096145,
+    "owned": [
+      [
+        123763,
+        "115434366"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

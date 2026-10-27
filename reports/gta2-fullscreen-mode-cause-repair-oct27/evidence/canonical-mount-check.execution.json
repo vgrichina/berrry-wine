@@ -1,0 +1,28 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/mount-check.cjs"
+  ],
+  "kind": "node",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 74665984,
+    "sampledPeakRSS": 74665984,
+    "reapedPeakRSS": 49131520,
+    "cpuSeconds": 0.23391699999999999,
+    "wallSeconds": 0.11963040987029672,
+    "owned": [
+      [
+        121428,
+        "115419245"
+      ],
+      [
+        121430,
+        "115419248"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

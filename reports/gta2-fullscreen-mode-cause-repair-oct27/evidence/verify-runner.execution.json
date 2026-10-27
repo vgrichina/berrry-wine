@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/verify-runner.py"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 51609600,
+    "sampledPeakRSS": 51609600,
+    "reapedPeakRSS": 20668416,
+    "cpuSeconds": 0.156818,
+    "wallSeconds": 0.08182972902432084,
+    "owned": [
+      [
+        120776,
+        "115417260"
+      ],
+      [
+        120777,
+        "115417261"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

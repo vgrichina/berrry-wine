@@ -1,0 +1,8 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "console.log(JSON.stringify({ok:true,version:process.version,execPath:process.execPath,heap:require(\"v8\").getHeapStatistics().heap_size_limit,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "sha256": "b3ecedece555fc11f4089e2e0acc098eaa17546c091a173cfefcdbf545881637"
+}

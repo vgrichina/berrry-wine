@@ -1,0 +1,21 @@
+{
+  "sourceRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "runner": {
+    "path": "test/run.js",
+    "oid": "f52b03a096a9a614b681cdf0f912ce20ca19fcba",
+    "bytes": 688295,
+    "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+  },
+  "rootRunnerRejected": true,
+  "rootRunnerReason": "installed root runner differs from pinned immutable source; retrieved exact donor blob instead",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "knownHostsSHA256": "c73ac5d045cd2a359d2202b79b551fb22a638463d5ddbe5ed59b1b3998869c88",
+  "rootRefReceipt": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  }
+}

@@ -1,0 +1,712 @@
+[
+  {
+    "name": "build-command.json",
+    "size": 138,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-command.json",
+    "size": 28829,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-start.json",
+    "size": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-startup-environment.json",
+    "size": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-suffix.json",
+    "size": 274,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation-supervisor.json",
+    "size": 1174,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.stderr",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.stdout",
+    "size": 1004,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-continuation.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-remaining-budget.json",
+    "size": 149,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-start.json",
+    "size": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-command.json",
+    "size": 385,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-environment.json",
+    "size": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-start.json",
+    "size": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-startup-environment.json",
+    "size": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup-supervisor.json",
+    "size": 324,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.stderr",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.stdout",
+    "size": 1464,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-startup.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "build-supervisor.json",
+    "size": 1706,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.stderr",
+    "size": 1083,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.stdout",
+    "size": 4123,
+    "type": "b'0'"
+  },
+  {
+    "name": "build.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "captures/menu.png",
+    "size": 6210,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.reply.json",
+    "size": 439,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/1.request.json",
+    "size": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/10.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/11.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/12.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/13.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/14.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.dispatch.json",
+    "size": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/15.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/16.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.dispatch.json",
+    "size": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/17.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/18.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.dispatch.json",
+    "size": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.reply.json",
+    "size": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/19.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.reply.json",
+    "size": 178,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/2.request.json",
+    "size": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/20.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/21.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.reply.json",
+    "size": 180,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/22.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.dispatch.json",
+    "size": 106,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.reply.json",
+    "size": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/23.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.reply.json",
+    "size": 178,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/24.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.reply.json",
+    "size": 881,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/25.request.json",
+    "size": 32,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.dispatch.json",
+    "size": 188,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.reply.json",
+    "size": 254,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/26.request.json",
+    "size": 112,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.dispatch.json",
+    "size": 107,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.reply.json",
+    "size": 142,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/27.request.json",
+    "size": 34,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/28.dispatch.json",
+    "size": 116,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/28.request.json",
+    "size": 38,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.reply.json",
+    "size": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/3.request.json",
+    "size": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.reply.json",
+    "size": 176,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/4.request.json",
+    "size": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.reply.json",
+    "size": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/5.request.json",
+    "size": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.dispatch.json",
+    "size": 115,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.reply.json",
+    "size": 177,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/6.request.json",
+    "size": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.reply.json",
+    "size": 879,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/7.request.json",
+    "size": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.dispatch.json",
+    "size": 114,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.reply.json",
+    "size": 179,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/8.request.json",
+    "size": 37,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.dispatch.json",
+    "size": 105,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.reply.json",
+    "size": 880,
+    "type": "b'0'"
+  },
+  {
+    "name": "control/9.request.json",
+    "size": 31,
+    "type": "b'0'"
+  },
+  {
+    "name": "game-pins.json",
+    "size": 16276,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-command.json",
+    "size": 412,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-controller-terminal.json",
+    "size": 712,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-start.json",
+    "size": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-command.json",
+    "size": 385,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-environment.json",
+    "size": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-start.json",
+    "size": 65,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-startup-environment.json",
+    "size": 1950,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup-supervisor.json",
+    "size": 272,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.stderr",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.stdout",
+    "size": 1464,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-startup.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest-supervisor.json",
+    "size": 321,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.stderr",
+    "size": 658,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.stdout",
+    "size": 8582,
+    "type": "b'0'"
+  },
+  {
+    "name": "guest.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-command.json",
+    "size": 230,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-exit.json",
+    "size": 44,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-result.json",
+    "size": 45654,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-start.json",
+    "size": 66,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-startup-environment.json",
+    "size": 1951,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-supervisor.json",
+    "size": 324,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight-v2.js",
+    "size": 3028,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.js",
+    "size": 3028,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.stderr",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.stdout",
+    "size": 157,
+    "type": "b'0'"
+  },
+  {
+    "name": "preflight.supervisor.log",
+    "size": 0,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-job-v2.py",
+    "size": 5308,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-job.py",
+    "size": 4219,
+    "type": "b'0'"
+  },
+  {
+    "name": "remote-supervisor.py",
+    "size": 23269,
+    "type": "b'0'"
+  }
+]

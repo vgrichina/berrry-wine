@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/pe-inventory.py"
+  ],
+  "kind": "python",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 51511296,
+    "sampledPeakRSS": 51511296,
+    "reapedPeakRSS": 20709376,
+    "cpuSeconds": 0.18067299999999997,
+    "wallSeconds": 0.09673092397861183,
+    "owned": [
+      [
+        121682,
+        "115421823"
+      ],
+      [
+        121683,
+        "115421825"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

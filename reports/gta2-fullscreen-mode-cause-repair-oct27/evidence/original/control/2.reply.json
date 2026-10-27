@@ -1,0 +1,13 @@
+{
+  "reply": {
+    "ok": true,
+    "id": 2,
+    "value": {
+      "batch": 256,
+      "ran": 256,
+      "steps": 256,
+      "frozen": true
+    }
+  },
+  "at": 1793105698.6457658
+}

@@ -1,0 +1,32 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-C",
+    "/tmp/gta2-fullscreen-mode-cause-repair-oct27/repo",
+    "diff",
+    "--cached",
+    "--check"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 2,
+    "stopReason": null,
+    "peakRSS": 32374784,
+    "sampledPeakRSS": 32374784,
+    "reapedPeakRSS": 13107200,
+    "cpuSeconds": 0.09131699999999998,
+    "wallSeconds": 0.07178360805846751,
+    "owned": [
+      [
+        127049,
+        "115450662"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

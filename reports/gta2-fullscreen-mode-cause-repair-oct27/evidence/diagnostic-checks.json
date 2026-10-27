@@ -1,0 +1,30 @@
+{
+  "kind": "static PE/source evidence consistency; no guest execution, compilation, or API behavioral acceptance",
+  "passed": 18,
+  "checks": [
+    "original executable pinned",
+    "exact exported Vid_SetMode entry",
+    "caller invokes resolved Vid_SetMode",
+    "caller branches on actual EAX return",
+    "printed argument is mode in ESI",
+    "printed argument is NOT EAX HRESULT",
+    "error ID1037 passed by caller",
+    "format error string is fullscreen mode",
+    "SetDisplayMode HRESULT failure collapses to one",
+    "GetAttachedSurface HRESULT failure collapses to same one",
+    "ambiguous failure controls have distinct COM slots",
+    "v4 IID exact words",
+    "retained dialog establishes only high-level failure",
+    "actual invocation suppresses unconditional API lines",
+    "enumeration callbacks continued for all actual raw mode rows",
+    "retained ordinary error-dismissal exit is1037",
+    "module preserved original module untouched",
+    "compat preserved original module untouched"
+  ],
+  "rejectedControls": [
+    "The formatted number is an HRESULT",
+    "Successful EnumDisplayModes callbacks prove SetDisplayMode success",
+    "A generic Vid_SetMode failure identifies which DirectDraw call failed",
+    "A DDSCAPS2 extended-word rejection proves those guest words were nonzero"
+  ]
+}

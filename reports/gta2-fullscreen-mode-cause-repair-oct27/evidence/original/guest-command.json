@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "test/run.js",
+    "--app=gta2_demo",
+    "--no-build",
+    "--control-stdin",
+    "--frozen",
+    "--batch-size=1000",
+    "--max-batches=200000",
+    "--max-seconds=230",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--dx-slot=7",
+    "--trace-input"
+  ],
+  "sha256": "ea4b5097d495bd5c5047b57e568c87e4911318161e1ce31b73431f78a157c090"
+}

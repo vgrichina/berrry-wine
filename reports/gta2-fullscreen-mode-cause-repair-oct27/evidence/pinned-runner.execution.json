@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "/usr/bin/prlimit",
+    "--data=536870912:536870912",
+    "--",
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-C",
+    "/tmp/generally-census-accepted-main-integration-oct27/repo",
+    "show",
+    "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba:test/run.js"
+  ],
+  "kind": "git",
+  "result": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 32243712,
+    "sampledPeakRSS": 32243712,
+    "reapedPeakRSS": 13107200,
+    "cpuSeconds": 0.07444600000000001,
+    "wallSeconds": 0.06505191489122808,
+    "owned": [
+      [
+        120772,
+        "115417242"
+      ]
+    ],
+    "cleanupComplete": true
+  }
+}

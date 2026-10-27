@@ -1,0 +1,17 @@
+{
+  "at": 1793105483.939597,
+  "cwd": "/tmp/gta2-compressed-retained-staging-driving-oct27/repo",
+  "env": {
+    "HOME": "/home/user",
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_OPTIONS": "--max-old-space-size=2048"
+  },
+  "envSHA256": "75171c21947cfb3b6d16e18dab2a56b9f203aec8296fcb9febcfcb66cfb76fc8",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "nodeVersion": "v24.22.1",
+  "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              180                  180                  seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             63749                63749                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       63749                63749                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "nodeOptions": "--max-old-space-size=2048"
+}

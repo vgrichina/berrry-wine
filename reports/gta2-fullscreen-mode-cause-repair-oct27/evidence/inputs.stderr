@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/inputs.py", line 18, in <module>
+    row=next(x for x in j['sourceFiles'] if x['path']=='test/run.js');b=(ROOT/row['path']).read_bytes();oid=hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest();assert oid==row['oid'];(O/'canonical-runner.txt').write_bytes(b)
+                                                                                                                                                                                   ^^^^^^^^^^^^^^^
+AssertionError

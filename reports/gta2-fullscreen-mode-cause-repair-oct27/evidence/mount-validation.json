@@ -1,0 +1,303 @@
+{
+  "args": [
+    "--app=gta2_demo",
+    "--vfs-tree=/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files"
+  ],
+  "parsed": {
+    "trees": [
+      "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files"
+    ],
+    "app": "gta2_demo"
+  },
+  "parserSHA256": "0be6705dcd46cd5ec5f7c122a791bd8bf6ec131326a59dc23e29e7453865cce2",
+  "files": [
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/3dfx.dll",
+      "bytes": 62976
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/D3DPoly.dll",
+      "bytes": 56832
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/DMAGlide.dll",
+      "bytes": 66048
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/Dmavideo.dll",
+      "bytes": 60416
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/Polygon.dll",
+      "bytes": 452188
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/d3ddll.dll",
+      "bytes": 80896
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/FSTYLE.RAW",
+      "bytes": 411876
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/FSTYLE.SDT",
+      "bytes": 384
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.lst",
+      "bytes": 16204
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.raw",
+      "bytes": 3680608
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/bil.sdt",
+      "bytes": 5136
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/dmaudio.dma",
+      "bytes": 317
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Audio/fstyle.lst",
+      "bytes": 1157
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/ENG_KB.cfg",
+      "bytes": 2056
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/FRE_KB.cfg",
+      "bytes": 2055
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/GER_KB.cfg",
+      "bytes": 2053
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/ITA_KB.cfg",
+      "bytes": 2051
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/POR_KB.cfg",
+      "bytes": 2050
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/Keyboard/SPA_KB.cfg",
+      "bytes": 2053
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/bob_e.gxt",
+      "bytes": 5740
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/e.gxt",
+      "bytes": 140138
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1.tga",
+      "bytes": 347564
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Options.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Play.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/1_Quit.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2.tga",
+      "bytes": 347564
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus1.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus2.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Bonus3.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_League.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level1.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level2.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Level3.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Name.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/2_Restart.tga",
+      "bytes": 266924
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/3.tga",
+      "bytes": 347564
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/3_Tables.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Credits.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/DemoInfo.tga",
+      "bytes": 614939
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/GameComplete.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/LevelComplete.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/MPLose.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask.tga",
+      "bytes": 104300
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask2.tga",
+      "bytes": 53594
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/Mask3.tga",
+      "bytes": 130427
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/frontend/PlayerDead.tga",
+      "bytes": 614444
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/fstyle.sty",
+      "bytes": 767912
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/nyc.gci",
+      "bytes": 38669
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/test1.seq",
+      "bytes": 1418
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wil.sty",
+      "bytes": 6483078
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_le1.SCR",
+      "bytes": 6048
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_le2.SCR",
+      "bytes": 5260
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ye1.SCR",
+      "bytes": 7340
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ye2.SCR",
+      "bytes": 9916
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ze1.SCR",
+      "bytes": 7844
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo/wil_ze2.SCR",
+      "bytes": 5656
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo.SCR",
+      "bytes": 84156
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/data/wildemo.gmp",
+      "bytes": 1175441
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2 manager.exe",
+      "bytes": 492544
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2.exe",
+      "bytes": 2893824
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/mss32.dll",
+      "bytes": 331776
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/hiscores.hsc",
+      "bytes": 3264
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot0.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot1.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot2.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot3.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot4.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot5.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot6.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/player/plyslot7.dat",
+      "bytes": 126
+    },
+    {
+      "path": "/home/user/wine-assembly/test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/readme.txt",
+      "bytes": 3714
+    }
+  ],
+  "commaFiles": [],
+  "actualTaskMountArgv": [],
+  "runtimeAuthorized": false,
+  "explanation": "Offline static analysis task; canonical tree parser validated against intended retained game tree, no guest invocation"
+}

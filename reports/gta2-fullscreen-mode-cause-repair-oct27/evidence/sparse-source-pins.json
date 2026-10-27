@@ -1,0 +1,36 @@
+{
+  "revision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "immutableDonorObjects": "/tmp/generally-census-accepted-main-integration-oct27/repo/.git/objects",
+  "files": [
+    {
+      "path": "src/main.watx",
+      "oid": "40594738b9ba200821c3bb44442e89067353f380",
+      "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974",
+      "bytes": 5893
+    },
+    {
+      "path": "src/09a3-handlers-audio.wat",
+      "oid": "1d3ca0005de2f9bc361ffe7919835ba1b27d4c7f",
+      "sha256": "77e82f1cfae122553adf97f31f56e6bd16e05faedbfd83163433f94b9df3dd08",
+      "bytes": 277811
+    },
+    {
+      "path": "src/09a8-handlers-directx.wat",
+      "oid": "262805db23c10088ff2afa7c857b0192cc3594eb",
+      "sha256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e",
+      "bytes": 1057680
+    },
+    {
+      "path": "src/api_table.json",
+      "oid": "285f81e4b392839549bc2cf549b4826890c1e18f",
+      "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+      "bytes": 723350
+    },
+    {
+      "path": "docs/re-notes/gta2-demo.md",
+      "oid": "5b8e10f89b112694b1e88a09e6dbb632cecfefb4",
+      "sha256": "2697065f797c94ec65cf8e44e817cd9c725c4c85abf4fffc13f56df80096fa3e",
+      "bytes": 4396
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "reply": {
+    "ok": true,
+    "id": 26,
+    "value": {
+      "batch": 3000,
+      "frozen": true,
+      "path": "/tmp/gta2-compressed-retained-staging-driving-oct27/ops/captures/menu.png",
+      "bytes": 6210
+    }
+  },
+  "at": 1793105719.8271816
+}
