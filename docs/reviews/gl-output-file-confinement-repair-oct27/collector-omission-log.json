@@ -1,0 +1,3 @@
+{
+  "log": "PASS collector late-leaf substitution; single safe-read call removal mutant REJECTED before external read\n"
+}

@@ -1,0 +1,50 @@
+{
+  "at": 1793060128.5388882,
+  "charges": {
+    "/tmp/gl-output-file-confinement-repair-oct27": 2494464,
+    "launcher": 253952,
+    "session": 970752,
+    "positiveWALOnce": 0
+  },
+  "projection": 37273600,
+  "allocation": 62914560,
+  "futureGitPublication": 8388608,
+  "futureEventsSession": 16777216,
+  "reserve": 8388608,
+  "peers": {
+    "enigma-retained-canonical-native-msg-qualification-oct26": 0,
+    "alien-terminal-dispatch-boundary-repair-oct26": 0
+  },
+  "projectedFree": 3081498624,
+  "floor": 2982150144,
+  "clients": [
+    {
+      "pid": 265632,
+      "rss": 18337792
+    },
+    {
+      "pid": 752162,
+      "rss": 414576640
+    },
+    {
+      "pid": 1789179,
+      "rss": 52195328
+    },
+    {
+      "pid": 3366268,
+      "rss": 192364544
+    },
+    {
+      "pid": 3368900,
+      "rss": 195907584
+    },
+    {
+      "pid": 3372378,
+      "rss": 192987136
+    }
+  ],
+  "clientGrowthOnce": 402653184,
+  "memAvailable": 3726688256,
+  "required": 1476395008,
+  "pass": true
+}

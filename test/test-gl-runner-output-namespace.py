@@ -75,7 +75,13 @@ def exercise(source, fault=None, boundary='admission', child_failure=None):
                 b=p.read_bytes();p.write_bytes(bytes([b[0]^1])+b[1:])
             events.append('fault:'+target+':'+action)
         def replace(a,b):
-            writes.append(dict(temp=str(P(a).relative_to(h)),output=str(P(b).relative_to(h)),bytes=allocated(h)))
+            # Production publishes through verified directory descriptors. Map
+            # procfs parents for observation only; do not resolve mutable leaves.
+            def observed(p):
+                p=P(p)
+                return P(os.readlink(p.parent))/p.name if str(p.parent).startswith('/proc/self/fd/') else p
+            observed_a,observed_b=observed(a),observed(b)
+            writes.append(dict(temp=str(observed_a.relative_to(h)),output=str(observed_b.relative_to(h)),bytes=allocated(h)))
             if fault is None and 'E' in ns and ledgers and ledgers[-1].receipt['samples']>0:
                 self_bytes=ledgers[-1].allocated()
                 assert self_bytes==allocated(h),'atomic temp or other output bytes excluded'
@@ -121,10 +127,12 @@ def exercise(source, fault=None, boundary='admission', child_failure=None):
         # Collect from the production evidence contract (legacy O, repaired E).
         output=ns.get('E',ops)
         artifacts={p.name:json.loads(p.read_text()) for p in output.glob('*.json')}
-        collected=None
+        collected=None;collector_error=None
         if 'E' in ns:
-            cs=original_spec('collector',RUNNER.with_name('collect-evidence.py'));cm=importlib.util.module_from_spec(cs);cs.loader.exec_module(cm);collected=cm.collect(h)
-        return dict(error=error,events=events,children=children,samples=samples,writes=writes,artifacts=artifacts,collected=collected,outputRelative=str(output.relative_to(h)),actualBytes=allocated(h),files=[str(p.relative_to(h)) for p in h.rglob('*') if p.is_file()],lastLedger=ledgers[-1].receipt if ledgers else None)
+            cs=original_spec('collector',RUNNER.with_name('collect-evidence.py'));cm=importlib.util.module_from_spec(cs);cs.loader.exec_module(cm)
+            try:collected=cm.collect(h)
+            except Exception as exc:collector_error=repr(exc)
+        return dict(error=error,collectorError=collector_error,events=events,children=children,samples=samples,writes=writes,artifacts=artifacts,collected=collected,outputRelative=str(output.relative_to(h)),actualBytes=allocated(h),files=[str(p.relative_to(h)) for p in h.rglob('*') if p.is_file()],lastLedger=ledgers[-1].receipt if ledgers else None)
 
 class Entry(unittest.TestCase):
     def test_unchanged_published_failure(self):

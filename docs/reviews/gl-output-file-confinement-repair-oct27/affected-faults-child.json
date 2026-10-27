@@ -1,0 +1,173 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 81362944,
+  "sampledPeakRSS": 81362944,
+  "reapedPeakRSS": 39944192,
+  "cpuSeconds": 6.3369930000000005,
+  "wallSeconds": 2.849338280968368,
+  "owned": [
+    [
+      3376864,
+      "110724673"
+    ],
+    [
+      3376910,
+      "110724751"
+    ],
+    [
+      3376913,
+      "110724759"
+    ],
+    [
+      3376916,
+      "110724767"
+    ],
+    [
+      3376919,
+      "110724776"
+    ],
+    [
+      3376923,
+      "110724786"
+    ],
+    [
+      3376926,
+      "110724794"
+    ],
+    [
+      3376929,
+      "110724802"
+    ],
+    [
+      3376932,
+      "110724811"
+    ],
+    [
+      3376935,
+      "110724819"
+    ],
+    [
+      3376938,
+      "110724827"
+    ],
+    [
+      3376941,
+      "110724835"
+    ],
+    [
+      3376944,
+      "110724843"
+    ],
+    [
+      3376947,
+      "110724853"
+    ],
+    [
+      3376951,
+      "110724862"
+    ],
+    [
+      3376954,
+      "110724871"
+    ],
+    [
+      3376957,
+      "110724880"
+    ],
+    [
+      3376960,
+      "110724889"
+    ],
+    [
+      3376963,
+      "110724901"
+    ],
+    [
+      3376966,
+      "110724910"
+    ],
+    [
+      3376969,
+      "110724919"
+    ],
+    [
+      3376972,
+      "110724928"
+    ],
+    [
+      3376976,
+      "110724940"
+    ],
+    [
+      3376977,
+      "110724946"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/gl-output-file-confinement-repair-oct27/repo/test/test-gl-runner-output-namespace.py",
+    "Entry.test_required_faults_refuse_next_child",
+    "Entry.test_child_failure_cleanup_and_known_final_bytes"
+  ],
+  "limits": {
+    "physical": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "excerpt": 8192
+  },
+  "admission": {
+    "at": 1793060037.4828715,
+    "charges": {
+      "/tmp/gl-output-file-confinement-repair-oct27": 2396160,
+      "launcher": 237568,
+      "session": 892928,
+      "positiveWALOnce": 0
+    },
+    "projection": 37081088,
+    "allocation": 62914560,
+    "futureGitPublication": 8388608,
+    "futureEventsSession": 16777216,
+    "reserve": 8388608,
+    "peers": {
+      "enigma-retained-canonical-native-msg-qualification-oct26": 0,
+      "alien-terminal-dispatch-boundary-repair-oct26": 0
+    },
+    "projectedFree": 3082625024,
+    "floor": 2982150144,
+    "clients": [
+      {
+        "pid": 265632,
+        "rss": 18337792
+      },
+      {
+        "pid": 752162,
+        "rss": 418758656
+      },
+      {
+        "pid": 1789179,
+        "rss": 54452224
+      },
+      {
+        "pid": 3366268,
+        "rss": 193474560
+      },
+      {
+        "pid": 3368900,
+        "rss": 194945024
+      },
+      {
+        "pid": 3372378,
+        "rss": 190373888
+      }
+    ],
+    "clientGrowthOnce": 402653184,
+    "memAvailable": 3601600512,
+    "required": 1476395008,
+    "pass": true
+  },
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1024                 1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n"
+}

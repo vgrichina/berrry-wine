@@ -1,0 +1,3 @@
+{
+  "log": "PASS exact entry preserves original exception when diagnostic/final writes refuse the namespace\n"
+}

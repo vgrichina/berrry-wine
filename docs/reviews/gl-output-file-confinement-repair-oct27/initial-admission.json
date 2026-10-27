@@ -1,0 +1,57 @@
+{
+  "at": "2026-10-27T00:05:09.724492+00:00",
+  "sourcePins": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": "a520830a87b04086cd1994b9513e43314df91942b18295c4d8227bde69eba6ab",
+    "test/fixtures/gl-transient-accounting/remote-run-before.py": "3ccde695a00edd757c05d7f1ec3d5d646d4b26baf4e60ea0abdcd3e5da901f4c",
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": "39a4fe1f31d6ed3b2f8b410b9089747906c872e623e691d790cceed5b01ae676",
+    "test/test-palette-disk-accounting.py": "ec251f5e44a6727d1f9ba705837a5ff0de24f14944ad6bb27322be6772e48597",
+    "test/test-palette-disk-accounting-omissions.py": "746af4f664a910b1713a03228fd9280e155c8d8164837442aa15e2499f5447d3",
+    "test/test-gl-runner-output-namespace.py": "5aeff5790e98ee23ea7e2e427e6b8d1d18661e6ca0b80b1fe3b5ec897116e299",
+    "test/test-gl-runner-output-namespace-omissions.py": "c98aa4e833e4818721aae0c0e5eb08a3e836a23143a887063c793744e6d3ba32",
+    "test/test-gl-output-namespace-independent.py": "c2af1d21e96800230e2bd7b266936979feb3d011fec8797e13c21c4203a5b628",
+    "test/test-gl-output-namespace-controls.py": "fcaede8c1de2ab95914b6cdd327addf28c319bb5ba0762861541602a11922d52",
+    "docs/reviews/gl-output-namespace-independent-publication-oct26/independent-boundary-report.json": "3a53f7c92f0981246702647063652e7c00ed7540bfb1d0e4f09b03345fd72b3d",
+    "docs/reviews/gl-output-namespace-independent-publication-oct26/independent-controls-report.json": "f6358f13c28bdece3f1ef894305595e235f62959241eb2ecb49da57dc8322594"
+  },
+  "sourceChecks": {
+    "test/fixtures/gl-transient-accounting/remote-run.py": true,
+    "test/fixtures/gl-transient-accounting/remote-run-before.py": true,
+    "test/fixtures/gl-transient-accounting/collect-evidence.py": true,
+    "test/test-palette-disk-accounting.py": true,
+    "test/test-palette-disk-accounting-omissions.py": true,
+    "test/test-gl-runner-output-namespace.py": true,
+    "test/test-gl-runner-output-namespace-omissions.py": true
+  },
+  "donor": "/tmp/gl-output-namespace-independent-publication-oct26/repo",
+  "memAvailable": 3825561600,
+  "requiredRAM": 1543503872,
+  "free": 3163418624,
+  "peerReservations": {
+    "enigma-retained-canonical-native-msg-qualification-oct26": {
+      "measuredAllocatedLowerBound": 12029952,
+      "remainingUpperBound": 55078912
+    },
+    "alien-terminal-dispatch-boundary-repair-oct26": {
+      "measuredAllocatedLowerBound": 7507968,
+      "remainingUpperBound": 59600896
+    }
+  },
+  "newCompleteAllocation": 62914560,
+  "projectedFree": 2985824256,
+  "diskFloor": 2982150144,
+  "pass": true,
+  "additional64MiBLaneWouldPass": false,
+  "initial64MiBDecision": {
+    "at": "2026-10-27T00:05:09.724492+00:00",
+    "newCompleteAllocation": 67108864,
+    "projectedFree": 2981629952,
+    "pass": false
+  },
+  "allocationPlan": {
+    "sourceGitTempsAndEvidence": 29360128,
+    "sessionEventsAndWALGrowthCountedOnce": 16777216,
+    "publicationGrowth": 8388608,
+    "reserve": 8388608
+  },
+  "sizingReason": "Previous same-scope independent task complete projection41754624B; source repair sparse owned closure fits28MiB plus explicit32MiB session/publication/reserve; no runtime assets or tool copies."
+}

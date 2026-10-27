@@ -1,0 +1,203 @@
+{
+  "normalCollectorAudit": "PASS",
+  "misroutedInvocationGuardRejected": true,
+  "mutation": {
+    "old": "save('invocation-start.json',",
+    "new": "save('invocation-start-misrouted.json',"
+  },
+  "audits": [
+    {
+      "files": {
+        "executables.json": {
+          "bytes": 967,
+          "sha256": "24e2665cf2f47e347ba048ad609d055d60ee2ba4b66fa0abdfddbaba9d8fcdf2"
+        },
+        "integrity-after.json": {
+          "bytes": 162,
+          "sha256": "2ac1955468ca0920af4d1648007fce486b50dfb8418853d84eab23b7ccaba897"
+        },
+        "test.log": {
+          "bytes": 52,
+          "sha256": "85bbc319265451b73cec3a5c512d4f88428cc16be41708c2f4b2261c7dc6b657"
+        },
+        "checkpoint.json": {
+          "bytes": 583,
+          "sha256": "ef4b9f3fbabaa71e8f5fe398197f22b6cbffa18faaa00e6338fec24bf6e2361a"
+        },
+        "invocation-start.json": {
+          "bytes": 339,
+          "sha256": "19bb61448d2e3bfe00e588ee78c0f249b0469bd9fc528b34607f8e7df435ebb4"
+        },
+        "remote-final-accounting.json": {
+          "bytes": 342,
+          "sha256": "ad9a0231b4e7fb2d536e5de78a4fcca88dd751f6e28a61d7832c3a540129df00"
+        },
+        "node-startup.json": {
+          "bytes": 2474,
+          "sha256": "b73434de5747611ea59a1df2f41209bf844a8a253933f1963a2f23c9089c3a94"
+        },
+        "integrity-before.json": {
+          "bytes": 162,
+          "sha256": "2ac1955468ca0920af4d1648007fce486b50dfb8418853d84eab23b7ccaba897"
+        },
+        "node-startup.log": {
+          "bytes": 2358,
+          "sha256": "ead7babfcd353849b6b72d1e7f38e9b5f9b22d999acf9e5b050b2d01aa5d81fd"
+        },
+        "node-startup-receipt.json": {
+          "bytes": 1132,
+          "sha256": "81a4eaf3e5f9a9f34489cf090c138a1310c55c6dbcb5f1d58d83de0175d0b087"
+        },
+        "remote-admission.json": {
+          "bytes": 2414,
+          "sha256": "721d020e7f06a2f9cdb7da433188ca9ef98fbb93227b9e241029a7a4a6a22e8f"
+        },
+        "test-result.json": {
+          "bytes": 74,
+          "sha256": "3f046f3ec2b6fe4dbf9e81da7da1c755edc58667cae0a0fc73ec491a743ad919"
+        },
+        "test-receipt.json": {
+          "bytes": 737,
+          "sha256": "5b4c1d9eab75f34c37ab13cc5274c1f15e2672afaae4cf8d359403ba07e8aa86"
+        }
+      },
+      "receiptCount": 2,
+      "cleanupComplete": true,
+      "testInvoked": true
+    },
+    {
+      "files": {
+        "invocation-start-misrouted.json": {
+          "bytes": 339,
+          "sha256": "44519caa592661526ff25850d911de9464df6de7ecf6e16190d2ddc47b65f848"
+        },
+        "executables.json": {
+          "bytes": 967,
+          "sha256": "24e2665cf2f47e347ba048ad609d055d60ee2ba4b66fa0abdfddbaba9d8fcdf2"
+        },
+        "integrity-after.json": {
+          "bytes": 162,
+          "sha256": "2ac1955468ca0920af4d1648007fce486b50dfb8418853d84eab23b7ccaba897"
+        },
+        "test.log": {
+          "bytes": 52,
+          "sha256": "85bbc319265451b73cec3a5c512d4f88428cc16be41708c2f4b2261c7dc6b657"
+        },
+        "checkpoint.json": {
+          "bytes": 583,
+          "sha256": "ef4b9f3fbabaa71e8f5fe398197f22b6cbffa18faaa00e6338fec24bf6e2361a"
+        },
+        "remote-final-accounting.json": {
+          "bytes": 342,
+          "sha256": "c255029c709ca223eff8afa18f77b2cfebee635b204356767808a0bb792c78cd"
+        },
+        "node-startup.json": {
+          "bytes": 2474,
+          "sha256": "f1a7fa41bcb98159893773600a060571a94c53d4b5549d71472a4f623f1fa95f"
+        },
+        "integrity-before.json": {
+          "bytes": 162,
+          "sha256": "2ac1955468ca0920af4d1648007fce486b50dfb8418853d84eab23b7ccaba897"
+        },
+        "node-startup.log": {
+          "bytes": 2358,
+          "sha256": "1e75d5e6becdfeca6b685db8f1be2f3f5875c6484fa3be09c84038a5ccce36ef"
+        },
+        "node-startup-receipt.json": {
+          "bytes": 1144,
+          "sha256": "6b017b0230d6c91d0bc4835ee8f4de4afd3419dec146e1e0af4206d8d0ee2811"
+        },
+        "remote-admission.json": {
+          "bytes": 2414,
+          "sha256": "22a37692f1a08514eb4fbc5727a06947b8dc84333f90ce646e87190eefa6fb89"
+        },
+        "test-result.json": {
+          "bytes": 74,
+          "sha256": "3f046f3ec2b6fe4dbf9e81da7da1c755edc58667cae0a0fc73ec491a743ad919"
+        },
+        "test-receipt.json": {
+          "bytes": 736,
+          "sha256": "8ec824bd4e2d640b73880564e214a09c0d463efbe77f76849daaff8f9fb1fa7f"
+        }
+      },
+      "receiptCount": 2,
+      "cleanupComplete": true,
+      "testInvoked": false
+    }
+  ],
+  "nodeStartup": [
+    {
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "-e",
+        "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,environment:process.env,controlledStartup:true}));"
+      ],
+      "result": {
+        "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "version": "v24.18.1",
+        "execArgv": [
+          "--max-old-space-size=512",
+          "-e",
+          "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,environment:process.env,controlledStartup:true}));"
+        ],
+        "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+        "heapLimit": 738197504,
+        "environment": {
+          "PATH": "/usr/bin:/bin",
+          "HOME": "/home/user",
+          "LANG": "C.UTF-8",
+          "NODE_PATH": "/tmp/gl-entry-_opgmx07/deps/node_modules",
+          "CHROME": "/usr/bin/true",
+          "TMPDIR": "/tmp/gl-entry-_opgmx07/tmp",
+          "PALETTE_GPU_SOURCE_ROOT": "/tmp/gl-entry-_opgmx07/source",
+          "PALETTE_GPU_EVIDENCE": "/tmp/gl-entry-_opgmx07/ops/output/test-result.json",
+          "PALETTE_BROWSER_RESOURCE_CONFIG": "{\"explicitTaskAccounting\":\"2048MiB physical runtime;1024MiB complete remote task disk\"}",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PALETTE_BROWSER_SUPERVISED": "3378975"
+        },
+        "controlledStartup": true
+      },
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    },
+    {
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "-e",
+        "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,environment:process.env,controlledStartup:true}));"
+      ],
+      "result": {
+        "execPath": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+        "version": "v24.18.1",
+        "execArgv": [
+          "--max-old-space-size=512",
+          "-e",
+          "const fs=require(\"fs\"),v8=require(\"v8\");console.log(JSON.stringify({execPath:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\"),heapLimit:v8.getHeapStatistics().heap_size_limit,environment:process.env,controlledStartup:true}));"
+        ],
+        "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            1048576              1048576              files     \nMax locked memory         1040887808           1040887808           bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+        "heapLimit": 738197504,
+        "environment": {
+          "PATH": "/usr/bin:/bin",
+          "HOME": "/home/user",
+          "LANG": "C.UTF-8",
+          "NODE_PATH": "/tmp/gl-entry-o7cfe98x/deps/node_modules",
+          "CHROME": "/usr/bin/true",
+          "TMPDIR": "/tmp/gl-entry-o7cfe98x/tmp",
+          "PALETTE_GPU_SOURCE_ROOT": "/tmp/gl-entry-o7cfe98x/source",
+          "PALETTE_GPU_EVIDENCE": "/tmp/gl-entry-o7cfe98x/ops/output/test-result.json",
+          "PALETTE_BROWSER_RESOURCE_CONFIG": "{\"explicitTaskAccounting\":\"2048MiB physical runtime;1024MiB complete remote task disk\"}",
+          "PYTHONDONTWRITEBYTECODE": "1",
+          "PALETTE_BROWSER_SUPERVISED": "3378975"
+        },
+        "controlledStartup": true
+      },
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true
+    }
+  ],
+  "runtimeObservations": 0
+}
