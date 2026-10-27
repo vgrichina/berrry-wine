@@ -1,0 +1,134 @@
+{
+  "status": "STOP_FIRST_OBSERVED_STARTUP_BOUNDARY",
+  "sourceRevision": "097f3b2904d833ca8fb152e686032c156c16e39a",
+  "historicalRunnerRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "controllerAndBridgeUnchanged": true,
+  "reusedTests": 32,
+  "offlineReplay": false,
+  "guestInvocations": 1,
+  "inspectedOriginalPNGs": 3,
+  "captures": 5,
+  "captureBytes": 842349,
+  "observedBatch": [
+    5000,
+    5001,
+    5003
+  ],
+  "actualInputRoute": [
+    "accepted guarded caption activation",
+    "Space keydown",
+    "Space keyup"
+  ],
+  "menuEstablished": false,
+  "ordinaryQuit": false,
+  "guestResult": {
+    "status": "refused",
+    "reason": "overall guest deadline; no replay",
+    "elapsed": 115.09100895799997,
+    "cleanup": {
+      "remaining": [],
+      "signals": [
+        "SIGTERM"
+      ],
+      "runnerExit": 0,
+      "complete": true
+    },
+    "controllerSHA256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662",
+    "responseSeconds": 10,
+    "guestSeconds": 115,
+    "wallSeconds": 120
+  },
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": 0,
+    "complete": true
+  },
+  "supervision": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 259125248,
+    "sampledPeakRSS": 259125248,
+    "reapedPeakRSS": 217444352,
+    "cpuSeconds": 51.792706,
+    "wallSeconds": 115.23553601200001,
+    "owned": [
+      [
+        19485,
+        "132873"
+      ],
+      [
+        19486,
+        "132885"
+      ]
+    ],
+    "cleanupComplete": true,
+    "configuration": {
+      "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+      "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+      "base": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--max-old-space-size=512",
+        "--require",
+        "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/abi-preload.cjs"
+      ],
+      "argvSHA256": "714ff54a052f0442f1b11ccb433e47a77d7f9d6f8cf75e5b4a0367a3403f3865",
+      "environmentSHA256": "d4be93ad3269740f272def95636c3ee2ef0e1834601c6d420fb32d9097d53581",
+      "cwd": "/tmp/airstrike-measured-capture-focus-quit-oct27/runner",
+      "preloadSHA256": "436635b1f9a05e1a3dfd3f024087e6f5f2caacbe3ed25411a254e8e8f036be1e",
+      "startupSHA256": "a65e4a0e30717195cd30a9171848730c8f3094738cef76585dc74acb7e7c3ebd",
+      "limits": {
+        "rss": 2147483648,
+        "heap": 536870912,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152
+      },
+      "inherited": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+      "moduleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686"
+    },
+    "stdout": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest.stdout",
+    "stderr": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest.stderr"
+  },
+  "apiLedger": {
+    "charged": 1391730,
+    "pending": {},
+    "limit": 8388608,
+    "reserve": 1048576,
+    "priorProbeCharged": true
+  },
+  "reason": "New inspected fullPNG after acknowledged Space press/release still displays Press any key to start; no menu/gameplay observation. Stop without Esc/Down/Enter, replay or repair.",
+  "limitations": [
+    "Time projection used measured admitted API service and review estimates; shared permit queue delay was not reserved. Original overall watchdog retained; exact terminal result is authoritative.",
+    "Initial oversized policy displays, missing optional recipe reads, erroneous bounded ELF display, missing accepted controller entries in historical tar, and pending factual-refusal pool delay retained; no retrospective claim of perfect setup."
+  ],
+  "box": {
+    "id": "bx_ffsw74qe",
+    "state": "last supported exec succeeded; leave running, no lifecycle mutation",
+    "expiry": "2026-10-27T13:11:07.294Z",
+    "shutdown": "2026-10-27T13:05:00Z",
+    "owner": "coordinator",
+    "watcherUntouched": true
+  }
+}

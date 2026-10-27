@@ -1,0 +1,12 @@
+{
+  "syntax": "PASS",
+  "runtimePins": 265,
+  "acceptedTestsReused": 32,
+  "notClaimed": [
+    "menu",
+    "ordinaryQuit",
+    "current-main emulator"
+  ],
+  "cleanupComplete": true,
+  "sourceUnchanged": true
+}

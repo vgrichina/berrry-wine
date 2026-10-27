@@ -1,0 +1,12 @@
+const fs=require('fs'),path=require('path'),assert=require('assert'),crypto=require('crypto');
+const R=process.argv[2],planned=JSON.parse(fs.readFileSync(R+'/ops/planned-argv.json')),args=planned.slice(4),source=fs.readFileSync(R+'/runner/test/run.js','utf8');
+const a=source.indexOf('const getArgs = name => {'),b=source.indexOf('const hasFlag =',a);assert(a>0&&b>a);
+const parser=new Function('args',source.slice(a,b)+';return getArgs;')(args);assert.deepStrictEqual(parser('vfs-tree'),[R+'/game']);assert.equal(parser('dlls').length,8);
+for(const f of parser('dlls'))assert(fs.statSync(f).isFile());
+const {expandIncludePatterns}=require(R+'/runner/lib/vfs-host-files');
+const files=expandIncludePatterns(parser('vfs-tree')[0],['**/*']);
+const m=JSON.parse(fs.readFileSync(R+'/ops/runtime-map.json')).files;
+const expected=m.filter(x=>x.target.startsWith('game/')).map(x=>x.target.slice(5)).sort(),actual=files.map(x=>path.relative(R+'/game',x.hostPath)).sort();assert.deepStrictEqual(actual,expected);assert.deepStrictEqual(actual.filter(x=>x.includes(',')),expected.filter(x=>x.includes(',')));
+const wasm=fs.readFileSync(R+'/runner/build/wine-assembly.wasm');assert(WebAssembly.validate(wasm));const mod=new WebAssembly.Module(wasm);
+const apis=JSON.parse(fs.readFileSync(R+'/runner/src/api_table.json'));assert(Array.isArray(apis));
+console.log(JSON.stringify({node:process.execPath,version:process.version,execArgv:process.execArgv,limits:fs.readFileSync('/proc/self/limits','utf8'),environmentSHA256:crypto.createHash('sha256').update(JSON.stringify(Object.entries(process.env).sort())).digest('hex'),files:actual,commas:actual.filter(x=>x.includes(',')),imports:WebAssembly.Module.imports(mod).length,apiEntries:apis.length,pass:true}));

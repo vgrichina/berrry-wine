@@ -1,0 +1,46 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 52625408,
+  "sampledPeakRSS": 52625408,
+  "reapedPeakRSS": 33619968,
+  "cpuSeconds": 0.337488,
+  "wallSeconds": 0.2912055088672787,
+  "owned": [
+    [
+      79241,
+      "115229957"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/prepare.py"
+  ],
+  "commandSHA256": "ed0ca3891c59d07d1aca0d6a7ab868251de69e237b1119b6575700f53cf85944",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "5fcc05dd8f675ea042270d952542ec20b3c1894f3978119367e2bab64f586a38",
+  "stdout": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/prepare.stdout",
+  "stderr": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/prepare.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

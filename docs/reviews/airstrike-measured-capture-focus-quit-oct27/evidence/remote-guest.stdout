@@ -1,0 +1,1 @@
+{"status": "refused", "reason": "overall guest deadline; no replay", "elapsed": 115.09100895799997, "cleanup": {"remaining": [], "signals": ["SIGTERM"], "runnerExit": 0, "complete": true}, "controllerSHA256": "a3425f91a36eef1ed1413e6ddb3cb814617a924d8a1e23cb78a00c65b951c662", "responseSeconds": 10, "guestSeconds": 115, "wallSeconds": 120}

@@ -1,0 +1,39 @@
+{
+  "authorizedCaptures": 24,
+  "minimum": 18,
+  "withGameplay": 20,
+  "observedLosslessBytes": 144804,
+  "observedSHA256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61",
+  "chunkBytes": 5700,
+  "rawResponseCap": 8192,
+  "envelopePerResponseProjected": 700,
+  "responsesPerFrame": 26,
+  "wireAll24Projected": 6381248,
+  "wireLimit": 8388608,
+  "cleanupIncluded": 1048576,
+  "setupStatusIncluded": 262144,
+  "latencies": [
+    0.12355367699638009,
+    0.13069637399166822,
+    0.13476084289141
+  ],
+  "timeProjection": {
+    "reviewedOriginals": 10,
+    "parallelChunkReaders": 2,
+    "transferSeconds": 17.5189095758833,
+    "reviewSeconds": 60,
+    "startupSeconds": 10,
+    "actionsSeconds": 10,
+    "total": 97.5189095758833,
+    "wall": 120
+  },
+  "passWire": true,
+  "passTime": true,
+  "qualification": "Projection at actual retained size, not guaranteed future sizes. Guard actual charged bytes before every API operation; no resets. Freshness PNGs preserved remotely then collected after guest; every reviewed original inspected during guest.",
+  "guest": 0,
+  "incidents": [
+    "Initial oversized policy displays retained in session",
+    "Missing optional preflight.json and proxy.py reads retained; not launched",
+    "Mistaken head of installed ELF produced bounded binary display; no executable copy or mutation"
+  ]
+}

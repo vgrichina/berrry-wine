@@ -1,0 +1,107 @@
+[
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/review-acc084c26a66499f94652bda2d9ea955.json",
+    "bytes": 476,
+    "sha256": "110f1cd7d918ebddfd97e62c1e81087d6b4158806110afb910b03ae3042dbc07"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/runner.stdout",
+    "bytes": 13100,
+    "sha256": "3443ed529dc7ee801155a3d5555eba047921f7bf181cc33c30c2b7335151e0f7"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/review-db7934d4de8d4a1b8743b785a04c5ded.json",
+    "bytes": 606,
+    "sha256": "60416b5330e4fba42b1272b2b16b2c49f63ba3ee7bae24bc1d079744bbff93a2"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/review-33dd2d3ad8f94dfe9e1274423897a1cf.json",
+    "bytes": 476,
+    "sha256": "75109ca5f917a2434f05b46b666271e28e676ee3116cd0010472308f2a9f0067"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/review-request.json",
+    "bytes": 1601,
+    "sha256": "786d55c62de6d5761cc879ba68aa7f60208dec12166046420411ee2857933ceb"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/spawn-status.json",
+    "bytes": 1432,
+    "sha256": "2820c5527b2674892a45e38eb16cc8fa4dce8ebda711f238e3e1d08b66f22df3"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-33dd2d3ad8f94dfe9e1274423897a1cf-fresh.png",
+    "bytes": 184247,
+    "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/controller.stderr",
+    "bytes": 69,
+    "sha256": "e4d59e9c6c4f868d3998f00111febf4c8a3fc7b5d747a3124408547c46b230af"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/events.json",
+    "bytes": 9549,
+    "sha256": "2e115d82f92aabdd473cc401876f1695fdf511bfe694c7ef94cea2315795836b"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-33dd2d3ad8f94dfe9e1274423897a1cf.png",
+    "bytes": 184247,
+    "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/terminal.json",
+    "bytes": 15096,
+    "sha256": "6eb605e0359ea8a4b20bac9a10468270d56d42a4aaa7c4cc13086cab5af92049"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/result.json",
+    "bytes": 391,
+    "sha256": "dee661aa3fb40585147e0fc0805371fe884a08f81686b6baa462b75c57c4dc75"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/owned-cleanup.json",
+    "bytes": 95,
+    "sha256": "7c213fdb28772b12ba794d65c7c0bc9bd8b38c9f974572ba0459d2bc39e1249a"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-db7934d4de8d4a1b8743b785a04c5ded.png",
+    "bytes": 144804,
+    "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-acc084c26a66499f94652bda2d9ea955.png",
+    "bytes": 184247,
+    "sha256": "f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/capture-db7934d4de8d4a1b8743b785a04c5ded-fresh.png",
+    "bytes": 144804,
+    "sha256": "a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/game-evidence/runner.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest-supervision.json",
+    "bytes": 1822,
+    "sha256": "4583f1fd3909b60d48759b310d00317ece115ffd85e2e4acbe9779bebc4897c5"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest.stdout",
+    "bytes": 341,
+    "sha256": "d638e9eeaec7c229374549ae93c7b23e518a9775be183822d33bb68b51d61a07"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/guest-admission.json",
+    "bytes": 1434,
+    "sha256": "1c50f80db3c7d8cd3f7b13203cc91cb67073ef1c5e61b5384ee542622b6c8e38"
+  }
+]

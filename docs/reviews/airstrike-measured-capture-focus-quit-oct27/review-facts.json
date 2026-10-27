@@ -1,0 +1,9 @@
+{
+  "reviewer": "worker model inspected each actual full800x600 lossless PNG through view_image",
+  "frames": [
+    {"file":"db7934d4de8d4a1b8743b785a04c5ded.png","sha256":"a0d213dfefdda68876792c1819711dd3c470dfece91b0d9280f6462ce01aee61","batch":5000,"inspection":"Console covers Airstrike startup. Press any key to start visible below Console. Two windows and geometry match actual snapshot. Airstrike caption exposed to right of Console; accepted controller alone derives and guards activation point. Frame is obscured, never labeled unobscured."},
+    {"file":"33dd2d3ad8f94dfe9e1274423897a1cf.png","sha256":"f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95","batch":5001,"after":"airstrike-1","inspection":"Airstrike caption and full available client visibly in front of Console; startup prompt Press any key to start visible unobscured. Actual snapshot focus mainHwnd0x10001. This is a new post-ACK frame, distinct from initial activation request."},
+    {"file":"acc084c26a66499f94652bda2d9ea955.png","sha256":"f093faf45c55c2cd1805fb71ebfe1b7cd31565c798161284aa4ee547ee1ead95","batch":5003,"after":"airstrike-3","inspection":"Actual new reviewed frame after acknowledged Space down/up still shows Airstrike startup prompt, same image hash as prior unobscured startup. No menu rows or gameplay observed. No claim Space was rejected by game; only progression absent at this boundary. No Esc/Down/Enter, replay or source repair."}
+  ],
+  "lateFactualSubmission": "Startup observation submission waited for shared pool and arrived after original guest deadline; it did not cause an accepted controller dispatch or change the recorded terminal reason."
+}

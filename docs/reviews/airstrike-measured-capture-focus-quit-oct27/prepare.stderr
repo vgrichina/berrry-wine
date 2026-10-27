@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-measured-capture-focus-quit-oct27/ops/prepare.py", line 10, in <module>
+    b=t.extractfile(x['source']).read() if x['kind']=='git' else pathlib.Path(x['source']).read_bytes()
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tarfile.py", line 2492, in extractfile
+    tarinfo = self.getmember(member)
+              ^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/tarfile.py", line 2065, in getmember
+    raise KeyError("filename %r not found" % name)
+KeyError: "filename 'tools/airstrike-menu-controller.py' not found"
