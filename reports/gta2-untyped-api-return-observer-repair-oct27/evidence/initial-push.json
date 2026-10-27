@@ -1,0 +1,41 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 67182592,
+  "sampledPeakRSS": 67182592,
+  "reapedPeakRSS": 23199744,
+  "cpuSeconds": 1.837852,
+  "wallSeconds": 2.638939921045676,
+  "owned": [
+    [
+      189832,
+      "115772614"
+    ],
+    [
+      189833,
+      "115772615"
+    ],
+    [
+      189834,
+      "115772615"
+    ],
+    [
+      189854,
+      "115772780"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "-C",
+    "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo",
+    "push",
+    "--porcelain",
+    "--no-follow-tags",
+    "origin",
+    "HEAD:refs/heads/task/gta2-untyped-api-return-observer-repair-oct27"
+  ],
+  "kind": "git",
+  "at": 1793110519.535831
+}

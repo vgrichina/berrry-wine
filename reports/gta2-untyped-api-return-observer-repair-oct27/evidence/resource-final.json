@@ -1,0 +1,80 @@
+{
+  "at": 1793110471.7260375,
+  "ownedTree": 4272128,
+  "events": 270336,
+  "session": 917504,
+  "fullWALChargedOnce": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "allocated": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "allocated": 4288512
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "allocated": 4612096
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "allocated": 4251648
+    }
+  ],
+  "measured": 35020800,
+  "futureIncludingPublication": 67108864,
+  "reserve": 8388608,
+  "projected": 110518272,
+  "allocation": 268435456,
+  "freeDisk": 6151753728,
+  "remainingSharedGrowth": 805306368,
+  "projectedFree": 5346447360,
+  "floor": 2982150144,
+  "memAvailable": 3403513856,
+  "actualClients": [
+    {
+      "pid": 178243,
+      "rss": 191299584,
+      "remainingGrowth": 144244736
+    },
+    {
+      "pid": 182583,
+      "rss": 0,
+      "remainingGrowth": 335544320
+    }
+  ],
+  "remainingClientPlusTestGrowth": 1620639744,
+  "headroom": 805306368,
+  "standingReadOnly": [
+    {
+      "path": "/tmp/gta2-fullscreen-mode-cause-repair-oct27/ops/canonical-runner.txt",
+      "bytes": 688295,
+      "sha256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+    },
+    {
+      "path": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  ],
+  "sshTrustFiles": [
+    {
+      "path": "/home/user/.ssh/wine_github_ed25519",
+      "exists": true
+    },
+    {
+      "path": "/home/user/.ssh/wine_github_known_hosts",
+      "exists": true
+    }
+  ],
+  "mounts": "No mount/guest argv; parser has no filename-bearing operation to validate",
+  "rootRef": "reused unchanged launcher root-ref-digest.json; no root Git mutation"
+}

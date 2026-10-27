@@ -1,0 +1,28 @@
+{
+  "exit": 128,
+  "stopReason": null,
+  "peakRSS": 35274752,
+  "sampledPeakRSS": 35274752,
+  "reapedPeakRSS": 20152320,
+  "cpuSeconds": 0.09247899999999999,
+  "wallSeconds": 0.06928753689862788,
+  "owned": [
+    [
+      189785,
+      "115772582"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "-C",
+    "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo",
+    "commit",
+    "--quiet",
+    "-m",
+    "Preserve authoritative untyped API exit EAX in CLI tracing"
+  ],
+  "kind": "git",
+  "at": 1793110516.652798
+}

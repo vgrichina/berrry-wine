@@ -1,0 +1,24 @@
+{
+  "at": 1793110223.431276,
+  "sourceSHA256": "0ae0c1abf3f626e38a3d66bf9f7f586e1aeb7b532c752152e348bcea8538d1dd",
+  "fixtureSHA256": "5cae87793962aeed1fbc6c3a8ceee8020221eef8a1a060c53ce20018d08346e9",
+  "passed": [
+    "repaired-boundary production repro + group1 raw matrix",
+    "repaired-remaining groups2..10 including six rejected controls"
+  ],
+  "receipts": [
+    "base-repro",
+    "repaired-boundary",
+    "repaired-remaining"
+  ],
+  "incident": "LPDWORD fixture decimal oracle corrected to existing hex rendering; source unchanged, completed raw groups not repeated",
+  "remaining": [
+    "publication"
+  ],
+  "runtimeGate": "independent acceptance and future coordinator assignment/admission; raw real GTA2 HRESULT still unknown",
+  "groups": 11,
+  "rejectedControls": 6,
+  "allSourceAcceptancePassed": true,
+  "affectedLegacy": "affected-legacy.json",
+  "syntax": "syntax-runner.json"
+}

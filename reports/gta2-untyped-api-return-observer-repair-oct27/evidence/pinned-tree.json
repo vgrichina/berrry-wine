@@ -1,0 +1,32 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 25952256,
+  "sampledPeakRSS": 25952256,
+  "reapedPeakRSS": 11100160,
+  "cpuSeconds": 0.147098,
+  "wallSeconds": 0.18715092702768743,
+  "owned": [
+    [
+      180408,
+      "115720471"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "-C",
+    "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo",
+    "ls-tree",
+    "-l",
+    "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "test/run.js",
+    "lib/api-format.js",
+    "api_table.json",
+    "docs/tracing.md",
+    "test/helpers/airstrike-runner-controller.js"
+  ],
+  "kind": "git",
+  "at": 1793109995.6544225
+}

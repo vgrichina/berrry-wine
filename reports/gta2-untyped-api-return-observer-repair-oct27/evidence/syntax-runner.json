@@ -1,0 +1,25 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 61227008,
+  "sampledPeakRSS": 61227008,
+  "reapedPeakRSS": 47988736,
+  "cpuSeconds": 0.083201,
+  "wallSeconds": 0.06034916499629617,
+  "owned": [
+    [
+      185234,
+      "115748095"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "--check",
+    "/tmp/gta2-untyped-api-return-observer-repair-oct27/repo/test/run.js"
+  ],
+  "kind": "node",
+  "at": 1793110271.7681015
+}

@@ -1811,6 +1811,7 @@ async function main() {
   let lastApiName = null;  // track last API name for return value correlation
   let lastApiEntry = null; // typed metadata for last API (for return formatting)
   let lastApiArgs = null;  // raw dword args captured at entry, used for out-param dump on return
+  let lastApiTraced = false; // selected entry, independent of --esp-delta correlation
   let lastTreeItemTrace = null;
   let lastApiEsp = 0;      // ESP at API entry, for --esp-delta audit
   let pendingComApiId = -1; // COM api_id from 0xC0DE0000 marker emitted just BEFORE the '<ord>' name log
@@ -3345,6 +3346,14 @@ async function main() {
     }
     apiCount++;
     if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
+    if (TRACE_API) {
+      // A filtered/new call must never inherit an earlier call's metadata.
+      lastApiTraced = false;
+      lastApiName = null;
+      lastApiEntry = null;
+      lastApiArgs = null;
+      lastTreeItemTrace = null;
+    }
 
     if (TRACE_CRITICAL && (t === 'EnterCriticalSection' || t === 'LeaveCriticalSection')) {
       try {
@@ -3465,6 +3474,7 @@ async function main() {
       const fmtCtx = { dv, g2w, memory: memory.buffer, readStr, hex };
 
       const entry = apiByName.get(t);
+      lastApiTraced = true;
       lastApiName = t;
       lastApiEntry = entry || null;
       // Snapshot arg dwords at entry so out-param decoding survives stack churn
@@ -3872,15 +3882,13 @@ async function main() {
       const delta = (espAfter - lastApiEsp) | 0;
       logs.push(`[ESP] ${lastApiName}: ${hex(lastApiEsp)} -> ${hex(espAfter)} delta=${delta >= 0 ? '+' : ''}${delta}`);
     }
-    if (TRACE_API && lastApiName) {
+    if (TRACE_API && lastApiTraced) {
       if (!lastApiEntry || !lastApiEntry.ret) {
-        // Legacy untyped path. Typed entries are formatted in log_api_exit
-        // using EAX, which is authoritative — skip here to avoid duplicate lines.
+        // An arbitrary integer diagnostic is not a final API return. Keep it
+        // visible, but leave correlation for log_api_exit's authoritative EAX.
+        // Typed entries still skip this diagnostic as before.
         flushDedup();
-        logs.push(`  => ${hex(val)}`);
-        lastApiName = null;
-        lastApiEntry = null;
-        lastApiArgs = null;
+        logs.push('[i32] ' + hex(val));
       }
     } else {
       logs.push('[i32] ' + hex(val));
@@ -3942,12 +3950,13 @@ async function main() {
         const delta = (espAfter - lastApiEsp) | 0;
         logs.push(`[ESP] ${lastApiName}: ${hex(lastApiEsp)} -> ${hex(espAfter)} delta=${delta >= 0 ? '+' : ''}${delta}`);
       }
-      if (TRACE_API && lastApiEntry) {
+      if (TRACE_API && lastApiTraced) {
         const dv = new DataView(memory.buffer);
         const imageBase = instance.exports.get_image_base();
         const fmtCtx = { dv, g2w: addr => translateGuest(addr, imageBase, memory.buffer), memory: memory.buffer, readStr, hex };
         const eax = instance.exports.get_eax();
-        const typedRet = fmtApiRet(lastApiEntry, eax, fmtCtx);
+        const typedRet = fmtApiRet(lastApiEntry, eax, fmtCtx) ||
+          `=> ${hex(eax)} (raw EAX; ${lastApiName})`;
         const outInfo = lastApiArgs ? fmtApiOutParams(lastApiEntry, lastApiArgs, fmtCtx) : '';
         if (typedRet || outInfo) flushDedup();
         if (typedRet) logs.push(`  ${typedRet.trim()}`);
@@ -3965,6 +3974,7 @@ async function main() {
       lastApiName = null;
       lastApiEntry = null;
       lastApiArgs = null;
+      lastApiTraced = false;
     };
   }
 

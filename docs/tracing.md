@@ -2,6 +2,18 @@
 
 Ad-hoc `console.log` / `DBG_*` env vars rot. Use the built-in flags first; extend them when they fall short.
 
+For the main CLI host, `--trace-api` records the return at `log_api_exit`,
+reading EAX before the caller resumes. When an entry has no `ret` metadata
+(including an unknown API name), the line is `=> 0x887600ff (raw EAX; ApiName)`.
+This is an unsigned register bit pattern, not an inferred HRESULT meaning.
+The preceding `[API #N]` header retains the existing call identity. Integer
+diagnostics during an untyped call remain `[i32]` lines and do not consume
+the exit correlation. Typed return formatting and entry-snapshotted out-parameter
+decoding remain on the same exit callback. No new tracing is enabled by default.
+
+`node test/test-api-exit-observer.js` exercises the production callback wiring
+with stubbed guest exports, without starting a guest or compiling a module.
+
 | Flag | What it prints |
 |---|---|
 | `--trace-api` (`=Name1,Name2`) | Every Win32 API call with args + return; with `=NAMES` filter, only those APIs. Args/returns are typed via `args:[{name,type[,out:true]}]` / `ret` fields in `src/api_table.json` (LPCSTR, HWND, LPMSG, flags:WS, etc.) — untyped entries fall back to an `nargs`-sized hex dump (or 6 dwords if `nargs` is unknown). Args flagged `out:true` are decoded **after** the handler runs (e.g. `LoadStringA buf=`, `GetMessageA msg=`) on a separate `out:` line. |

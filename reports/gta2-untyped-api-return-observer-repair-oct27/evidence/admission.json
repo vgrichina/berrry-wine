@@ -1,0 +1,69 @@
+{
+  "at": 1793109984.4098878,
+  "allocation": 268435456,
+  "projection": {
+    "sparseGitSource": 25165824,
+    "evidencePublication": 16777216,
+    "sessionEvents": 25165824,
+    "fullWAL": 29560832,
+    "futureGrowth": 67108864,
+    "reserve": 8388608
+  },
+  "wal": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 4288512
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4612096
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4251648
+    }
+  ],
+  "clients": [
+    {
+      "pid": 162478,
+      "rss": 0,
+      "remaining": 335544320
+    },
+    {
+      "pid": 163998,
+      "rss": 0,
+      "remaining": 335544320
+    },
+    {
+      "pid": 178243,
+      "rss": 190992384,
+      "remaining": 144551936
+    }
+  ],
+  "memAvailable": 3780354048,
+  "requiredRemaining": 2426253312,
+  "freeDisk": 6175772672,
+  "reservedIncrementalGrowth": 805306368,
+  "projectedFree": 5370466304,
+  "floor": 2982150144,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gta2-untyped-api-return-observer-repair-oct27/root-ref-digest.json",
+  "mounts": {
+    "argv": [],
+    "files": [],
+    "reason": "No guest/mount operation authorized or used; Git sparse local objects only"
+  },
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "incident": "Initial shell python alias unavailable exit127, no child execution; installed python3 used"
+}

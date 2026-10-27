@@ -1,0 +1,61 @@
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+reports/gta2-untyped-api-return-observer-repair-oct27/README.md
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/admission.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/affected-legacy.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/affected-legacy.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/affected-legacy.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/airstrike-pin.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/airstrike-pin.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/airstrike-pin.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/base-repro.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/base-repro.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/base-repro.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/checkout.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/checkout.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/checkout.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/checkpoint-accepted.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/checkpoint.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/child.py
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/fixture-affected-legacy.js
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/fixture-base-repro.js
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/fixture-repaired-boundary.js
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/fixture-repaired-remaining.js
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/git-init.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/git-init.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/git-init.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/node-startup.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/node-startup.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/node-startup.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/package.py
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-final-inputs.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-final-inputs.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-final-inputs.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-tree.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-tree.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/pinned-tree.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-boundary.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-boundary.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-boundary.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-remaining.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-remaining.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/repaired-remaining.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/resource-final.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/review-diff.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/review-diff.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/review-diff.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/root-ref-digest.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/run.py
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/sparse-update.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/sparse-update.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/sparse-update.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/startup.js
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/syntax-runner.json
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/syntax-runner.stderr
+reports/gta2-untyped-api-return-observer-repair-oct27/evidence/syntax-runner.stdout
+reports/gta2-untyped-api-return-observer-repair-oct27/receipt-manifest.json
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config advice.updateSparsePath false"
