@@ -1,0 +1,10 @@
+{
+  "original": "/tmp/enigma-listener-retained-independent-publication-oct27/ops/inherited-alternate-listener.py",
+  "sha256": "60b7619bb8910d4ab71df9e34e7fe543167fa0c935a0a239a48f59a1124919c2",
+  "copiedSHA256": "60b7619bb8910d4ab71df9e34e7fe543167fa0c935a0a239a48f59a1124919c2",
+  "behavioralFileChanged": false,
+  "delta": "Only imported admin module resolves output O to owned ops; R stays exact pinned donor. No original-owner CLI substitution.",
+  "mountArgv": [],
+  "mountValidation": "No mounts or guest runner executed; not applicable",
+  "trustedGitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

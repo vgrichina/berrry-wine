@@ -1,0 +1,84 @@
+{
+  "status": "BLOCKED_MANDATORY_UNCHANGED_ORIGINAL_LIVE_PREREQUISITE",
+  "candidate": "f7d14e7d965a9671e4ea18da461df85b90affdad",
+  "tree": "884ce1d52de3a6fb4cb7f334c632efd01dc02fb4",
+  "sourcePins": {
+    "tools/enigma-frozen-gameplay-controller.py": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+    "tools/enigma-supervised-gameplay.py": "6f00afae565b32114cc6b78d9b806348d2195ff69122e345aabaf09493b5960c",
+    "test/fixtures/enigma-controller/child_server.py": "aec2de6694a5979ea90831bbb8b9b4756e043bda3d785a55979777314edb285a",
+    "test/fixtures/enigma-controller/original-operate.py": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58",
+    "test/fixtures/enigma-controller/test_controller.py": "70187afa1e763b996e80f3f9b0881ffa00ddc4c9afeba7eaed34fafad4d0c1dd",
+    "test/fixtures/enigma-controller/test_listener.py": "39edcca9ec96e40a09deb85ae01536ca3c74d9e2f8d4d49644dc3bcdb556e124",
+    "test/fixtures/enigma-controller/test_ownership.py": "d1d1558dad3d9bb547233bbecab7d4c7787a15cf110967d278884a7000c588b2",
+    "test/fixtures/enigma-controller/test_supervised.py": "a76bb50eb8e4d29731b8e0c368b02a2c4806df68a50d95e4acf173c6871d9130"
+  },
+  "newTests": {
+    "unchangedFirstBoundary": "assertion at line39; original exits1 before HTTP; competitor not started",
+    "execution": {
+      "exit": 1,
+      "stopReason": null,
+      "peakRSS": 85004288,
+      "sampledPeakRSS": 85004288,
+      "reapedPeakRSS": 26009600,
+      "cpuSeconds": 0.453473,
+      "wallSeconds": 0.23265415499918163,
+      "owned": [
+        [
+          3562962,
+          "111609652"
+        ],
+        [
+          3562966,
+          "111609662"
+        ],
+        [
+          3562968,
+          "111609662"
+        ],
+        [
+          3562970,
+          "111609663"
+        ]
+      ],
+      "cleanupComplete": true,
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-supervisor-owned-independent-accept-oct27/ops/observe-boundary.py"
+      ]
+    }
+  },
+  "reused": {
+    "methods": 28,
+    "result": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/result.json",
+    "resultSHA256": "c88c7e7f9b273aa3878bbe58faa2f1df2e12bb6191a15c412244e8abad19be31",
+    "manifest": "/tmp/enigma-supervisor-owned-controller-implementation-oct27/ops/evidence-manifest.json",
+    "manifestSHA256": "5bced9ea0a3485ed8c5738d8b80e46e00d9d0856deb4871517152a3055494aa0",
+    "rootVerified611payloads8pins": "/home/user/wine-assembly/scratch/usage-watch/enigma-supervisor-owned-root-closeout-oct27.json",
+    "rootReceiptSHA256": "140deaf62edbd5ad2aec4db09c7774d4c0160768d60dbb1ec1b9b2b17d1b4b66",
+    "historical7Commands": "retained only, no replay"
+  },
+  "productionContractObserved": "Source inspection only: legacy entry refuses; NEW Popen child retained by actual supervisor; local one-use OwnedHandoff; no new CLI behavior established",
+  "minimalFailure": "unchanged-boundary-outcome.json",
+  "remaining": [
+    "Coordinator resolution of unchanged reproducer setup versus retired original-owner legacy CLI",
+    "New actual supervisor CLI behavioral acceptance",
+    "Separate main integration and admitted Node/real Enigma gameplay"
+  ],
+  "ownedProcessCleanup": true,
+  "boxes": [],
+  "lifecycleOwner": "coordinator",
+  "runtimeQualification": false,
+  "sourceChanged": false,
+  "mainTouched": false,
+  "publication": {
+    "branch": "task/enigma-supervisor-owned-independent-accept-oct27",
+    "pending": true
+  },
+  "constraints": {
+    "noWorkers": true,
+    "AlienUntouched": true,
+    "ClaudeIdle": true,
+    "HeroesIILaptopOwned": true,
+    "providerRestrictionsUnchanged": true
+  }
+}
