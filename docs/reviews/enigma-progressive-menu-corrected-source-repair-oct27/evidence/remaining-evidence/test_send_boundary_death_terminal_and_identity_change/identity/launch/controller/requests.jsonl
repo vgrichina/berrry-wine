@@ -1,0 +1,2 @@
+{"at": 1793094429.0150933, "request": {"action": "snapshot"}, "startingBatch": null, "originalResponse": "{\"ok\": true, \"value\": {\"batch\": 0, \"quit\": false, \"yieldReason\": 0, \"frozen\": {\"frozen\": true, \"credits\": 0, \"recording\": false}}}", "ended": 1793094429.0302024}
+{"at": 1793094429.0384681, "request": {"action": "step", "n": 1}, "startingBatch": 0, "error": "Refusal('terminal-owned-child-identity')", "ended": 1793094429.0422683}

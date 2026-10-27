@@ -1,0 +1,22 @@
+[
+  {
+    "operation": "initial read-only discovery",
+    "detail": "Overbroad rg filename glob returned excessive/truncated output; no mutation. Bounded explicit paths thereafter; launcher events retain original tool diagnostics."
+  },
+  {
+    "operation": "checkout",
+    "detail": "Git checkout completed, accounting traversal raced a disappearing ref lock. Supervisor stopped/reaped its owned processes. Fixed missing-file race, read-only isolated status clean; no repeated checkout."
+  },
+  {
+    "operation": "boundary-red",
+    "detail": "Unchanged production Python entry reproducer failed before repair: reviewed loading frame followed by quit, zero click; exact JS source full-file pin retained."
+  },
+  {
+    "operation": "verify-progress",
+    "detail": "Two new test oracles initially wrong: identical old decision is intentionally ignored; two wall seconds still cover 1.1-second cleanup. Corrected to distinct stale approval and .2-second exhausted reserve; affected methods passed."
+  },
+  {
+    "operation": "regressions",
+    "detail": "Guard stopped aggregate RSS139202560 >134217728 in competing-supervisor test. Completed ok methods reused. Non-Git capture shim now execs test, eliminating redundant Python waiter with unchanged limits. Remaining7 passed peak133058560; final affected5 peak103776256."
+  }
+]

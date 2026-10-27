@@ -1,0 +1,47 @@
+{
+  "status": "step-ack-mismatch",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57729024,
+  "cpuSeconds": 0.02,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4044930,
+      "114159363"
+    ],
+    [
+      4044932,
+      "114159366"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "55915",
+        "--root",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_failure_no_reconnect_timeout_caps_and_terminal_child/wrong-ack",
+        "--fault",
+        "wrong-ack"
+      ],
+      "pid": 4044930
+    }
+  }
+}

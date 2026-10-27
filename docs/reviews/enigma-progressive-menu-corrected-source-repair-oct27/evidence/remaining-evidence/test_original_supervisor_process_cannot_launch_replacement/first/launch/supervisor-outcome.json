@@ -1,0 +1,47 @@
+{
+  "status": "NO_REVIEWED_ACTION_NO_INPUT",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 56090624,
+  "cpuSeconds": 0.03,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4046075,
+      "114163674"
+    ],
+    [
+      4046079,
+      "114163682"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "57821",
+        "--root",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/remaining-evidence/test_original_supervisor_process_cannot_launch_replacement/first",
+        "--fault",
+        ""
+      ],
+      "pid": 4046075
+    }
+  }
+}

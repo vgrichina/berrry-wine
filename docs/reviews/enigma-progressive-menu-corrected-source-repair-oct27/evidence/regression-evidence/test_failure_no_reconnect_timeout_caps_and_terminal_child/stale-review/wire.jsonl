@@ -1,0 +1,6 @@
+{"command": {"action": "snapshot"}, "pid": 4044980, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4044980, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4044980, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4044980, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4044980, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_failure_no_reconnect_timeout_caps_and_terminal_child/stale-review/launch/controller/menu-candidate.png"}, "pid": 4044980, "batch": 2}

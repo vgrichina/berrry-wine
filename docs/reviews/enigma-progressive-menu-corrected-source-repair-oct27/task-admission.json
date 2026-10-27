@@ -1,0 +1,20 @@
+{
+  "at": 1793094039.4303427,
+  "sourceRevision": "b160b5403e69f28e92e218849cc8165c67776bd2",
+  "tree": "a5e301efefcdc881816f5686e9e12cc57252b764",
+  "pinsVerifiedFromCommit": {
+    "tools/enigma-frozen-gameplay-controller.py": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+    "tools/enigma-supervised-gameplay.py": "ed3cfbb659a3ed6bdc6e218293579613a1709da1ab283f87a0b59de706048aa9"
+  },
+  "memAvailable": 3912261632,
+  "incrementalClient": 335544320,
+  "sharedChildPoolConservative": 268435456,
+  "hostHeadroom": 805306368,
+  "requiredRAM": 1409286144,
+  "diskFree": 7851958272,
+  "taskAllocation": 134217728,
+  "additionalReserve": 16777216,
+  "diskFloor": 2982150144,
+  "runtimeAuthorized": false,
+  "reason": "Coordinator corrected unavailable commit pin; exact source blobs unchanged."
+}

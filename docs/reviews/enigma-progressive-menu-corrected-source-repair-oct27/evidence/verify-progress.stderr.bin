@@ -1,0 +1,29 @@
+test_loading_to_menu_production_boundary (test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary) ... ok
+test_never_ready_quits_with_after_capture_reserved (test_progressive.ProgressEntryTests.test_never_ready_quits_with_after_capture_reserved) ... ok
+test_later_pending_step_stops_original_owner_no_replay (test_progressive.ProgressEntryTests.test_later_pending_step_stops_original_owner_no_replay) ... ok
+test_exhausted_wall_during_review_closes_without_wire_cleanup (test_progressive.ProgressReserveTests.test_exhausted_wall_during_review_closes_without_wire_cleanup) ... FAIL
+test_old_loading_decision_is_not_reused_for_new_frame (test_progressive.ProgressReserveTests.test_old_loading_decision_is_not_reused_for_new_frame) ... ok
+test_reserves_stop_loading_with_quit_and_no_input (test_progressive.ProgressReserveTests.test_reserves_stop_loading_with_quit_and_no_input) ... ok
+test_stale_second_review_and_listener_identity_refuse_input (test_progressive.ProgressReserveTests.test_stale_second_review_and_listener_identity_refuse_input) ... 
+  test_stale_second_review_and_listener_identity_refuse_input (test_progressive.ProgressReserveTests.test_stale_second_review_and_listener_identity_refuse_input) (mode='stale') ... FAIL
+
+======================================================================
+FAIL: test_exhausted_wall_during_review_closes_without_wire_cleanup (test_progressive.ProgressReserveTests.test_exhausted_wall_during_review_closes_without_wire_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/test_progressive.py", line 127, in test_exhausted_wall_during_review_closes_without_wire_cleanup
+    self.assertTrue(driver.failed,status)
+AssertionError: False is not true : LOADING_REVIEWED_RESERVE_STOP_NO_INPUT
+
+======================================================================
+FAIL: test_stale_second_review_and_listener_identity_refuse_input (test_progressive.ProgressReserveTests.test_stale_second_review_and_listener_identity_refuse_input) (mode='stale')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/test_progressive.py", line 105, in test_stale_second_review_and_listener_identity_refuse_input
+    self.assertTrue(driver.failed,status)
+AssertionError: False is not true : LOADING_REVIEWED_RESERVE_STOP_NO_INPUT
+
+----------------------------------------------------------------------
+Ran 7 tests in 2.870s
+
+FAILED (failures=2)

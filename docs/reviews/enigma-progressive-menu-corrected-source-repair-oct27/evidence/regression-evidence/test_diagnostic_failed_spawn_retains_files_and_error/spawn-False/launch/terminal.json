@@ -1,0 +1,4 @@
+{
+  "reason": "supervisor-or-controller-failure: [Errno 13] Permission denied: '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_failed_spawn_retains_files_and_error/spawn-False/command-fixture'",
+  "at": 1793094382.369973
+}

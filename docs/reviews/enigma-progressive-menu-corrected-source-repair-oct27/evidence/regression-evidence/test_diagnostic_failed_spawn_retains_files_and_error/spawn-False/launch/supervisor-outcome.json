@@ -1,0 +1,31 @@
+{
+  "status": "[Errno 13] Permission denied: '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_failed_spawn_retains_files_and_error/spawn-False/command-fixture'",
+  "failed": true,
+  "reason": "supervisor-or-controller-failure: [Errno 13] Permission denied: '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_failed_spawn_retains_files_and_error/spawn-False/command-fixture'",
+  "peakTreeRSS": 23986176,
+  "cpuSeconds": 0,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": null,
+  "owned": [],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "spawn-failed",
+      "exit": null,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_failed_spawn_retains_files_and_error/spawn-False/command-fixture"
+      ],
+      "error": "[Errno 13] Permission denied: '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_failed_spawn_retains_files_and_error/spawn-False/command-fixture'"
+    }
+  }
+}

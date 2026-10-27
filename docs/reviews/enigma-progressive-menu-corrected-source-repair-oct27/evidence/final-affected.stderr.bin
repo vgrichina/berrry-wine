@@ -1,0 +1,10 @@
+test_invalid_progress_limits_reject_before_child (test_progressive.ProgressEntryTests.test_invalid_progress_limits_reject_before_child) ... ok
+test_later_pending_step_stops_original_owner_no_replay (test_progressive.ProgressEntryTests.test_later_pending_step_stops_original_owner_no_replay) ... ok
+test_loading_to_menu_production_boundary (test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary) ... ok
+test_never_ready_quits_with_after_capture_reserved (test_progressive.ProgressEntryTests.test_never_ready_quits_with_after_capture_reserved) ... ok
+test_reviewed_menu_still_requires_action_reserves (test_progressive.ProgressReserveTests.test_reviewed_menu_still_requires_action_reserves) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.727s
+
+OK

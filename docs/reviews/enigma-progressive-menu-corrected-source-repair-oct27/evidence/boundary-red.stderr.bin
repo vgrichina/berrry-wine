@@ -1,0 +1,14 @@
+test_loading_to_menu_production_boundary (test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary) ... FAIL
+
+======================================================================
+FAIL: test_loading_to_menu_production_boundary (test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/test_progressive.py", line 23, in test_loading_to_menu_production_boundary
+    self.assertEqual(len(clicks),1,wire)
+AssertionError: 0 != 1 : [{'command': {'action': 'snapshot'}, 'pid': 4041292, 'batch': 0}, {'command': {'action': 'step', 'n': 1}, 'pid': 4041292, 'batch': 0}, {'command': {'action': 'snapshot'}, 'pid': 4041292, 'batch': 1}, {'command': {'action': 'step', 'n': 1}, 'pid': 4041292, 'batch': 1}, {'command': {'action': 'snapshot'}, 'pid': 4041292, 'batch': 2}, {'command': {'action': 'png', 'path': '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/boundary-red-evidence/test_loading_to_menu_production_boundary/one/launch/controller/menu-candidate.png'}, 'pid': 4041292, 'batch': 2}, {'command': {'action': 'quit'}, 'pid': 4041292, 'batch': 2}]
+
+----------------------------------------------------------------------
+Ran 1 test in 0.271s
+
+FAILED (failures=1)

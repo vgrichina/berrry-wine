@@ -218,6 +218,8 @@ def scheduler_unit_controller(config, *, clock=time.time, sleep=time.sleep):
             self.listener = ctl.ListenerIdentity(config)
         def live(self):
             ctl.require(not Path(config['terminal_path']).exists(), 'terminal-supervisor')
+        def budget(self):
+            return dict(cpu_left=config.get('test_cpu_left', 90), wall_left=config['deadline_at']-clock())
         def record(self, row):
             pass
         def close(self):

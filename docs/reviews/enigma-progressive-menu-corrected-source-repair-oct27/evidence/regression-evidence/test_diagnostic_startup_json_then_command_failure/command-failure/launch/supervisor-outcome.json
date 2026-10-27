@@ -1,0 +1,47 @@
+{
+  "status": "terminal-owned-child",
+  "failed": true,
+  "reason": "supervisor-or-controller-failure: terminal-owned-child",
+  "peakTreeRSS": 33030144,
+  "cpuSeconds": 0,
+  "outputBytes": 18023,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": 29,
+  "owned": [
+    [
+      4044914,
+      "114159191"
+    ],
+    [
+      4044915,
+      "114159194"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "exited",
+      "exit": 0,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_startup_json_then_command_failure/command-failure/node",
+        "-e",
+        "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+      ],
+      "pid": 4044914
+    },
+    "command": {
+      "status": "exited",
+      "exit": 29,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_startup_json_then_command_failure/command-failure/node"
+      ],
+      "pid": 4044915,
+      "error": "terminal-owned-child"
+    }
+  }
+}

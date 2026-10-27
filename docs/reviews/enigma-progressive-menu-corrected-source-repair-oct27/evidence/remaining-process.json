@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/remaining.py"
+  ],
+  "cwd": null,
+  "envSHA256": "e01ab49a3c14f7a7af682b65aee65b4407cfea9babd68be141df133cdee6f719",
+  "inheritedLimits": {
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

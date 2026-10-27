@@ -1,0 +1,2 @@
+{"at": 1793094385.2241077, "request": {"action": "snapshot"}, "startingBatch": null, "originalResponse": "{\"ok\": true, \"value\": {\"batch\": 0, \"quit\": false, \"yieldReason\": 0, \"frozen\": {\"frozen\": true, \"credits\": 0, \"recording\": false}}}", "ended": 1793094385.2391849}
+{"at": 1793094385.247037, "request": {"action": "step", "n": 1}, "startingBatch": 0, "error": "RemoteDisconnected('Remote end closed connection without response')", "ended": 1793094385.2550192}

@@ -1,0 +1,7 @@
+{"command": {"action": "snapshot"}, "pid": 4044890, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4044890, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4044890, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4044890, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4044890, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_cleanup_tail_cap_cannot_report_success/cleanup-tail/launch/controller/menu-candidate.png"}, "pid": 4044890, "batch": 2}
+{"command": {"action": "quit"}, "pid": 4044890, "batch": 2}

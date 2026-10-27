@@ -148,6 +148,9 @@ class Controller:
         self.pending = False
         self.failed = False
         self.captures = 0
+        self.capture_bytes = 0
+        self.api_bytes = 0
+        self.review_used = 0
         self.clicked = False
         self.save('config.json', dict(self.c))
 
@@ -173,6 +176,30 @@ class Controller:
                 and 0 < limits['physical'] <= 3221225472, 'invalid-supervisor-limits')
         require(Path(c['terminal_path']).is_absolute() and Path(c['evidence_dir']).is_absolute(), 'absolute-evidence-path-required')
         require(str(c['process_start_ticks']) == process_identity(c['pid']), 'terminal-process-identity')
+        # Optional tuning stays inside the original, nonrenewable allowance.
+        # A loading review consumes a checkpoint, never input authorization.
+        p = c.get('progress', {})
+        require(isinstance(p, dict) and not (set(p) - {
+            'max_checkpoints', 'total_seconds', 'cpu_reserve', 'api_bytes', 'capture_total_bytes'}),
+            'invalid-progress-fields')
+        self.progress = dict(max_checkpoints=c['max_captures']-1,
+            total_seconds=c['deadline_at']-c['started_at'],
+            cpu_reserve=min(15, limits['cpu']/3), api_bytes=1048576,
+            capture_total_bytes=c['max_captures']*c['capture_bytes'])
+        self.progress.update(p)
+        p = self.progress
+        require(type(p['max_checkpoints']) is int and 1 <= p['max_checkpoints'] < c['max_captures'],
+                'invalid-progress-checkpoints')
+        for key in ('total_seconds', 'cpu_reserve'):
+            require(type(p[key]) in (int, float) and math.isfinite(p[key]) and p[key] > 0,
+                    'invalid-progress-' + key)
+        require(p['total_seconds'] <= c['deadline_at']-c['started_at']
+                and p['cpu_reserve'] < limits['cpu'], 'invalid-progress-reserve')
+        require(type(p['api_bytes']) is int and 131072 <= p['api_bytes'] <= 1048576,
+                'invalid-progress-api-bytes')
+        require(type(p['capture_total_bytes']) is int
+                and 2*c['capture_bytes'] <= p['capture_total_bytes'] <= c['max_captures']*c['capture_bytes'],
+                'invalid-progress-capture-bytes')
 
     def save(self, name, value):
         tmp = self.out / (name + '.tmp')
@@ -202,6 +229,12 @@ class Controller:
         require(not self.pending, 'pending-request-no-replay')
         timeout = min(self.c['request_timeout'], self.time_left())
         require(timeout > 0, 'exhausted-budget: request-time')
+        data = json.dumps(command).encode()
+        # Reserve a whole bounded response before sending. Keep one quit API
+        # operation even when progress stops at its byte ceiling.
+        reserve = 0 if command.get('action') == 'quit' else 16384
+        require(self.api_bytes + len(data) + 8192 + reserve <= self.progress['api_bytes'],
+                'exhausted-budget: api-reserve')
         row = dict(at=self.clock(), request=command, startingBatch=self.batch)
         # Persist intent BEFORE the socket. A disconnect or validation failure
         # poisons this controller; process ownership poisons every CLI restart.
@@ -210,13 +243,14 @@ class Controller:
                                    captures=self.captures, clicked=self.clicked))
         self.save('request-intent.json', row)
         try:
-            req = urllib.request.Request(self.listener.url, data=json.dumps(command).encode(),
+            req = urllib.request.Request(self.listener.url, data=data,
                                          headers={'Content-Type': 'application/json'})
             # Evidence/intent I/O may take time. Recheck at the send boundary;
             # failure leaves the intent latched and cannot buy another claim.
             self.live()
             with self.http.open(req, timeout=timeout) as response:
                 raw = response.read(8193)
+            self.api_bytes += len(data) + len(raw)
             require(len(raw) <= 8192, 'oversize-response')
             row['originalResponse'] = raw.decode()
             if command.get('action') != 'quit':
@@ -266,6 +300,8 @@ class Controller:
         require(self.captures + 1 + reserve_captures <= self.c['max_captures'], 'exhausted-budget: capture-reserve')
         require(self.batch < self.c['max_batches'], 'exhausted-budget: capture-batch')
         require(self.time_left() >= self.c['request_timeout'] + reserve_seconds, 'exhausted-budget: capture-time')
+        require(self.capture_bytes + (1+reserve_captures)*self.c['capture_bytes']
+                <= self.progress['capture_total_bytes'], 'exhausted-budget: capture-byte-reserve')
         path = self.out / name
         ack = self.request({'action': 'png', 'path': str(path)})
         require(ack.get('batch') == self.batch and ack.get('frozen') is True
@@ -277,13 +313,31 @@ class Controller:
                 and int.from_bytes(raw[20:24], 'big') == self.c['height']
                 and ack.get('bytes') == len(raw), 'invalid-capture')
         self.captures += 1
+        self.capture_bytes += len(raw)
         frame = dict(path=str(path), batch=self.batch, sha256=hashlib.sha256(raw).hexdigest(), bytes=len(raw))
         self.save(name + '.json', frame)
         return frame
 
-    def advance(self, target, until, reserve_batches, reserve_seconds):
+    def resources(self, reserve_cpu):
+        # Only the original supervisor can measure cumulative tree CPU. Never
+        # infer remaining CPU from elapsed wall time or reset it at a checkpoint.
+        remaining = self.owner.budget()
+        require(remaining['cpu_left'] >= reserve_cpu, 'exhausted-budget: cpu-reserve')
+        return remaining
+
+    def api_room(self, operations):
+        # 8 KiB response plus up to 8 KiB command/path per operation. Actual
+        # bytes, not this conservative projection, debit the cumulative cap.
+        return self.api_bytes + operations*16384 <= self.progress['api_bytes']
+
+    def advance(self, target, until, reserve_batches, reserve_seconds, reserve_cpu=0):
         while self.batch < target and self.clock() < until:
             self.live()
+            remaining = self.resources(0)
+            if remaining['cpu_left'] < reserve_cpu + 2*self.c['request_timeout']:
+                break
+            if not self.api_room(9 if not self.clicked else 5):
+                break
             available = self.c['max_batches'] - self.batch - reserve_batches - 1
             n = min(256, target - self.batch, available)
             if n <= 0:
@@ -291,6 +345,43 @@ class Controller:
             if self.time_left() < 2 * self.c['request_timeout'] + reserve_seconds:
                 break
             self.step(n, reserve_batches, reserve_seconds)
+
+    def review(self, frame, action_time):
+        c = self.c
+        self.save('phase.json', dict(phase='AWAIT_IMAGE_REVIEW', frame=frame,
+            checkpoint=self.captures, remainingCheckpoints=self.progress['max_checkpoints']-self.captures,
+            reviewSecondsLeft=max(0, c['review_seconds']-self.review_used),
+            decisions='safeStartGame OR continueLoading; reviewed, frameSHA256 and batch required'))
+        decision_path = Path(c['decision_path']) if c.get('decision_path') else None
+        start = self.clock()
+        until = min(start + max(0, c['review_seconds']-self.review_used), c['deadline_at']-action_time)
+        try:
+            while decision_path is not None:
+                self.live()
+                if decision_path.exists():
+                    with decision_path.open('rb') as f:
+                        raw = f.read(8193)
+                    require(len(raw) <= 8192, 'oversize-review-decision')
+                    decision = json.loads(raw)
+                    # A reviewer replaces one file atomically for each frame.
+                    # Ignore only the previously consumed exact decision. A new
+                    # stale/contradictory authorization is a hard rejection.
+                    if decision != getattr(self, 'last_decision', None):
+                        require(decision.get('reviewed') is True
+                            and decision.get('frameSHA256') == frame['sha256']
+                            and type(decision.get('batch')) is int and decision['batch'] == self.batch,
+                            'unreviewed-or-stale-frame')
+                        require(not (decision.get('safeStartGame') is True
+                                     and decision.get('continueLoading') is True), 'conflicting-frame-decision')
+                        self.last_decision = decision
+                        self.save(f'review-{self.captures:03}.json', decision)
+                        return decision
+                if self.clock() >= until:
+                    break
+                self.sleep(min(.05, until-self.clock()))
+        finally:
+            self.review_used += max(0, self.clock()-start)
+        return None
 
     def drive(self):
         c = self.c
@@ -305,24 +396,49 @@ class Controller:
         self.snapshot()
         require(self.batch + menu_batches + 1 < c['max_batches'], 'exhausted-budget: action-reserve')
         require(self.time_left() >= menu_time, 'exhausted-budget: action-time-reserve')
+        self.resources(self.progress['cpu_reserve'])
         self.step(1, menu_batches, menu_time)
         self.save('first-n1-completion-gate.json', dict(batch=self.batch, acknowledged=True, noOutstandingCredits=True))
-        target = min(self.batch + c['checkpoint_batches'], c['max_batches'] - menu_batches - 1)
-        until = min(c['started_at'] + c['checkpoint_seconds'], c['deadline_at'] - menu_time - 2 * rt)
-        self.advance(target, until, menu_batches, menu_time)
-        frame = self.capture('menu-candidate.png', 1, action_time)
-        self.save('phase.json', dict(phase='AWAIT_IMAGE_REVIEW', frame=frame))
-        decision_path = Path(c['decision_path']) if c.get('decision_path') else None
-        review_until = min(self.clock() + c['review_seconds'], c['deadline_at'] - action_time)
         decision = None
-        while decision_path is not None:
+        progress_until = min(c['started_at'] + self.progress['total_seconds'],
+                             c['deadline_at'] - menu_time - 2*rt)
+        window = min(c['checkpoint_seconds'], max(0, progress_until-c['started_at'])
+                     / self.progress['max_checkpoints'])
+        self.save('budget-plan.json', dict(startedAt=c['started_at'], deadlineAt=c['deadline_at'],
+            supervisorLimits=c['supervisor_limits'], progress=self.progress,
+            progressUntil=progress_until, checkpointWindowSeconds=window,
+            reviewTotalSeconds=c['review_seconds'], actionReserveSeconds=action_time,
+            cleanupReserveSeconds=cleanup_time, actionCleanupReserveBatches=menu_batches,
+            captureCountTotal=c['max_captures'], afterActionCaptureReserve=1,
+            apiActionReserveOperations=6, apiOperationCeilingBytes=16384,
+            resources=self.owner.budget()))
+        stop = 'NO_REVIEWED_ACTION_NO_INPUT'
+        for checkpoint in range(1, self.progress['max_checkpoints']+1):
+            # Subsequent windows may use remaining original time, never renew
+            # the launch deadline, total progress limit or review allowance.
+            target = min(self.batch + c['checkpoint_batches'], c['max_batches'] - menu_batches - 1)
+            until = min((c['started_at'] if checkpoint == 1 else self.clock()) + window,
+                        progress_until)
+            self.advance(target, until, menu_batches, menu_time, self.progress['cpu_reserve'])
+            name = 'menu-candidate.png' if checkpoint == 1 else f'menu-candidate-{checkpoint:03}.png'
+            frame = self.capture(name, 1, action_time)
+            decision = self.review(frame, action_time)
+            if not decision or decision.get('continueLoading') is not True:
+                break
+            stop = 'LOADING_REVIEWED_RESERVE_STOP_NO_INPUT'
             self.live()
-            if decision_path.exists():
-                decision = json.loads(decision_path.read_text())
+            # Loading is not a menu. Another serial window requires all
+            # reserves, including one after-action capture and orderly quit.
+            if (checkpoint >= self.progress['max_checkpoints']
+                    or self.batch + menu_batches + 1 >= c['max_batches']
+                    or self.clock() >= progress_until
+                    or self.time_left() < menu_time + 2*rt
+                    or self.captures + 2 > c['max_captures']
+                    or self.capture_bytes + 2*c['capture_bytes'] > self.progress['capture_total_bytes']
+                    or not self.api_room(10)
+                    or self.owner.budget()['cpu_left'] < self.progress['cpu_reserve'] + 2*rt):
                 break
-            if self.clock() >= review_until:
-                break
-            self.sleep(min(.05, review_until - self.clock()))
+            self.snapshot(self.batch)
         if decision and decision.get('safeStartGame') is True:
             require(decision.get('reviewed') is True and decision.get('frameSHA256') == frame['sha256']
                     and type(decision.get('batch')) is int and decision['batch'] == self.batch,
@@ -332,9 +448,13 @@ class Controller:
             require(self.batch + menu_batches < c['max_batches'] and self.time_left() >= action_time,
                     'exhausted-budget: click-action-reserve')
             require(self.captures + 1 <= c['max_captures'], 'exhausted-budget: after-action-capture')
+            require(self.api_room(6), 'exhausted-budget: action-api-reserve')
+            require(self.capture_bytes + c['capture_bytes'] <= self.progress['capture_total_bytes'],
+                    'exhausted-budget: after-action-bytes')
             # Refresh the completion gate immediately before input, including
             # any time spent waiting for human review.
             require(self.time_left() >= action_time, 'exhausted-budget: review-refresh')
+            self.resources(self.progress['cpu_reserve'])
             self.snapshot(self.batch)
             ack = self.request({'cmd': f'click:{x}:{y}'})
             require(ack.get('queued') is True and ack.get('batch') == self.batch, 'input-ack-mismatch')
@@ -343,11 +463,12 @@ class Controller:
             target = self.batch + c['after_action_batches']
             self.step(1, c['cleanup_batches'], rt + cleanup_time)
             until = min(self.clock() + c['after_action_seconds'], c['deadline_at'] - cleanup_time - 3 * rt)
-            self.advance(target, until, c['cleanup_batches'], rt + cleanup_time)
+            self.advance(target, until, c['cleanup_batches'], rt + cleanup_time,
+                         self.progress['cpu_reserve']/3)
             self.capture('after-action.png', 0, cleanup_time)
             status = 'ACTION_ACKNOWLEDGED_REQUIRES_REVIEW'
         else:
-            status = 'NO_REVIEWED_ACTION_NO_INPUT'
+            status = stop
         require(self.time_left() >= cleanup_time, 'exhausted-budget: cleanup-time')
         ack = self.request({'action': 'quit'})
         require(ack.get('quitting') is True, 'cleanup-ack-mismatch')
@@ -363,6 +484,8 @@ class Controller:
             outcome = dict(status=locals().get('status', 'controller-failure'),
                       batch=self.batch, captures=self.captures, clicked=self.clicked,
                       pending=self.pending, failed=self.failed, at=self.clock())
+            outcome.update(apiBytes=self.api_bytes, captureBytes=self.capture_bytes,
+                           reviewSecondsUsed=self.review_used, progress=self.progress)
             try:
                 self.ownership.record(dict(event='closed', **outcome))
                 self.save('outcome.json', outcome)

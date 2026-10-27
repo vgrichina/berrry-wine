@@ -1,0 +1,37 @@
+{
+  "status": "terminal-supervisor",
+  "failed": true,
+  "reason": "aggregate-resource-limit",
+  "peakTreeRSS": 36413440,
+  "cpuSeconds": 0,
+  "outputBytes": 1025,
+  "outputLimitExceeded": true,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4044895,
+      "114159141"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_combined_output_cap/cap/command-fixture"
+      ],
+      "pid": 4044895,
+      "error": "terminal-supervisor"
+    }
+  }
+}

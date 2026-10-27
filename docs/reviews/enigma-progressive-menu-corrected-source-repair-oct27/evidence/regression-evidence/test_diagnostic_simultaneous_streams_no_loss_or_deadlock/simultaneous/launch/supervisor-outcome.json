@@ -1,0 +1,37 @@
+{
+  "status": "terminal-owned-child",
+  "failed": true,
+  "reason": "supervisor-or-controller-failure: terminal-owned-child",
+  "peakTreeRSS": 36651008,
+  "cpuSeconds": 0.02,
+  "outputBytes": 393246,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": 29,
+  "owned": [
+    [
+      4044905,
+      "114159167"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": 29,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_simultaneous_streams_no_loss_or_deadlock/simultaneous/command-fixture"
+      ],
+      "pid": 4044905,
+      "error": "terminal-owned-child"
+    }
+  }
+}

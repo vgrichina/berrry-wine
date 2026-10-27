@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "python3",
+    "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regressions.py"
+  ],
+  "cwd": null,
+  "envSHA256": "44d7d1177d931238bfbf72b8464de6493a78df956070e0005339326e0fa26080",
+  "inheritedLimits": {
+    "RLIMIT_CPU": [
+      90,
+      90
+    ],
+    "RLIMIT_FSIZE": [
+      25165824,
+      25165824
+    ],
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ]
+  },
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+}

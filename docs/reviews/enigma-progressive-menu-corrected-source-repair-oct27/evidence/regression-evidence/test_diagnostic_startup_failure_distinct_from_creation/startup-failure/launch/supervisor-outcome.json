@@ -1,0 +1,39 @@
+{
+  "status": "node-startup-failed",
+  "failed": true,
+  "reason": "supervisor-or-controller-failure: node-startup-failed",
+  "peakTreeRSS": 32768000,
+  "cpuSeconds": 0,
+  "outputBytes": 30,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": 23,
+  "owned": [
+    [
+      4044910,
+      "114159182"
+    ]
+  ],
+  "delegated": false,
+  "processDiagnostics": {
+    "startup": {
+      "status": "exited",
+      "exit": 23,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log",
+      "argv": [
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_startup_failure_distinct_from_creation/startup-failure/node",
+        "-e",
+        "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+      ],
+      "pid": 4044910,
+      "error": "node-startup-failed"
+    },
+    "command": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "output.log",
+      "stderr": "stderr.log"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4046152, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4046152, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/remaining-evidence/test_never_ready_quits_with_after_capture_reserved/one/launch/controller/menu-candidate.png"}, "pid": 4046152, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4046152, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/remaining-evidence/test_never_ready_quits_with_after_capture_reserved/one/launch/controller/menu-candidate-002.png"}, "pid": 4046152, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 3}
+{"command": {"action": "step", "n": 1}, "pid": 4046152, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4046152, "batch": 4}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/remaining-evidence/test_never_ready_quits_with_after_capture_reserved/one/launch/controller/menu-candidate-003.png"}, "pid": 4046152, "batch": 4}
+{"command": {"action": "quit"}, "pid": 4046152, "batch": 4}

@@ -1,0 +1,18 @@
+{
+  "mapPath": "/home/user/wine-assembly/scratch/usage-watch/enigma-cleanup-verified-runtime-map-oct27.json",
+  "mapSHA256": "06a72d86b409850d73a8158d4f12d974b517ed0c9532652a1fc5f0ee2cb09f83",
+  "expectedMapSHA256": "06a72d86b409850d73a8158d4f12d974b517ed0c9532652a1fc5f0ee2cb09f83",
+  "originalRefDigest": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "priorOriginalTaskSHA256": "8288030ec248f03ec4092a3a8167e54beef2caaaeadb719714e8ce24f8158c32",
+  "freshTaskSHA256": "b988a8554d29b0e325a23a14a04547c093d9dff3335ce7b781bd54619ce9b3e2",
+  "sourceUnchanged": true,
+  "noBuild": true,
+  "noCopyOfStagedClosure": true
+}

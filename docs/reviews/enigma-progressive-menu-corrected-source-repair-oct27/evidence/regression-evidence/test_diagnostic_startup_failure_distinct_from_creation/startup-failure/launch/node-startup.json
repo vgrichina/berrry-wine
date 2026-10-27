@@ -1,0 +1,22 @@
+{
+  "status": "exited",
+  "exit": 23,
+  "stdout": "node-startup-stdout.log",
+  "stderr": "node-startup-stderr.log",
+  "argv": [
+    "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/regression-evidence/test_diagnostic_startup_failure_distinct_from_creation/startup-failure/node",
+    "-e",
+    "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "pid": 4044910,
+  "error": "node-startup-failed",
+  "output": "STARTUP-STDOUT\n",
+  "sameEnvironment": true,
+  "limits": {
+    "cpu": 20,
+    "wall": 15,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  }
+}

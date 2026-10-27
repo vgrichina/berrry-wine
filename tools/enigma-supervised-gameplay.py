@@ -96,7 +96,7 @@ def validate_launch(value):
     expected = {'max_batches', 'checkpoint_batches', 'after_action_batches', 'cleanup_batches',
                 'max_captures', 'capture_bytes', 'width', 'height', 'checkpoint_seconds',
                 'after_action_seconds', 'review_seconds', 'request_timeout', 'cleanup_seconds', 'decision_path'}
-    require(set(schedule) == expected, 'invalid-controller-schedule-no-attach')
+    require(set(schedule) in (expected, expected | {'progress'}), 'invalid-controller-schedule-no-attach')
     # Validate ALL controller limits before starting any child. Synthetic self
     # identity is used only for validation, never passed to a running controller.
     probe = object.__new__(controller.Controller)
@@ -369,6 +369,13 @@ def supervise_new(value):
 
             def live(self):
                 live()
+
+            def budget(self):
+                with lock:
+                    rows = account()
+                    require(reason is None, 'terminal-supervisor')
+                    used = sum(cpu.values()) + max(0, rows.get(os.getpid(), {}).get('cpu', self_cpu)-self_cpu)
+                    return dict(cpu_left=max(0, limits['cpu']-used), wall_left=max(0, deadline-time.time()))
 
             def record(self, row):
                 record(row)

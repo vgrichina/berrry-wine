@@ -1,0 +1,2 @@
+{"at": 1793094384.4761977, "request": {"action": "snapshot"}, "startingBatch": null, "originalResponse": "{\"ok\": true, \"value\": {\"batch\": 0, \"quit\": false, \"yieldReason\": 0, \"frozen\": {\"frozen\": true, \"credits\": 0, \"recording\": false}}}", "ended": 1793094384.490314}
+{"at": 1793094384.4980729, "request": {"action": "step", "n": 1}, "startingBatch": 0, "originalResponse": "{\"ok\": true, \"value\": {\"ran\": 0, \"steps\": 1, \"batch\": 1, \"frozen\": true}}", "ended": 1793094384.5084417}

@@ -1,0 +1,24 @@
+{
+  "exit": -15,
+  "stopReason": "accounting check failed: [Errno 2] No such file or directory: '/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/.git/refs/heads/task/enigma-progressive-menu-corrected-source-repair-oct27.lock'",
+  "peakRSS": 55033856,
+  "sampledPeakRSS": 55033856,
+  "reapedPeakRSS": 18481152,
+  "cpuSeconds": 0.238372,
+  "wallSeconds": 0.1266195410862565,
+  "owned": [
+    [
+      4039285,
+      "114131872"
+    ],
+    [
+      4039286,
+      "114131873"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "taskBytes": 2932736,
+  "eventBytes": 1298432,
+  "trustedSupervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

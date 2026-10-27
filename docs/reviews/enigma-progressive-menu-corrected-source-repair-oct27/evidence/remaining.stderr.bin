@@ -1,0 +1,12 @@
+test_live_original_competitors_and_changed_outputs_cannot_attach (test_supervised.SupervisedTests.test_live_original_competitors_and_changed_outputs_cannot_attach) ... ok
+test_original_supervisor_process_cannot_launch_replacement (test_supervised.SupervisedTests.test_original_supervisor_process_cannot_launch_replacement) ... ok
+test_positive_real_entry_ack_zero_and_reviewed_input (test_supervised.SupervisedTests.test_positive_real_entry_ack_zero_and_reviewed_input) ... ok
+test_send_boundary_death_terminal_and_identity_change (test_supervised.SupervisedTests.test_send_boundary_death_terminal_and_identity_change) ... ok
+test_loading_to_menu_production_boundary (test_progressive.ProgressEntryTests.test_loading_to_menu_production_boundary) ... ok
+test_never_ready_quits_with_after_capture_reserved (test_progressive.ProgressEntryTests.test_never_ready_quits_with_after_capture_reserved) ... ok
+test_later_pending_step_stops_original_owner_no_replay (test_progressive.ProgressEntryTests.test_later_pending_step_stops_original_owner_no_replay) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 7.757s
+
+OK

@@ -1,0 +1,19 @@
+{
+  "status": "uncertain-request-or-evidence-failure: TimeoutError('timed out')",
+  "batch": 2,
+  "captures": 1,
+  "clicked": false,
+  "pending": true,
+  "failed": true,
+  "at": 1793094430.768459,
+  "apiBytes": 1266,
+  "captureBytes": 997,
+  "reviewSecondsUsed": 0.00586700439453125,
+  "progress": {
+    "max_checkpoints": 2,
+    "total_seconds": 12.0,
+    "cpu_reserve": 6.666666666666667,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 6291456
+  }
+}

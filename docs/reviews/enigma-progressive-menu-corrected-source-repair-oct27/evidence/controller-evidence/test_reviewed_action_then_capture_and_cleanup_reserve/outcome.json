@@ -1,0 +1,19 @@
+{
+  "status": "ACTION_ACKNOWLEDGED_REQUIRES_REVIEW",
+  "batch": 19998,
+  "captures": 2,
+  "clicked": true,
+  "pending": false,
+  "failed": false,
+  "at": 1793094380.3439283,
+  "apiBytes": 1969,
+  "captureBytes": 1944,
+  "reviewSecondsUsed": 0,
+  "progress": {
+    "max_checkpoints": 7,
+    "total_seconds": 110.0,
+    "cpu_reserve": 15,
+    "api_bytes": 1048576,
+    "capture_total_bytes": 16777216
+  }
+}

@@ -66,6 +66,55 @@ are sampled; there is no atomic procfs check-and-send or protection from arbitra
 same-UID memory/file/internal-code forgery. The endpoint bind check is not an
 atomic port reservation.
 
+Loading review now permits bounded serial progress through several checkpoints.
+Each capture has a unique path and a `phase.json` frame hash/batch. Inspect the
+complete current image and atomically replace `decision_path` with exactly one
+of these decisions (fill in the actual hash/batch):
+
+```json
+{"reviewed":true,"frameSHA256":"actual hash","batch":123,"continueLoading":true}
+```
+
+```json
+{"reviewed":true,"frameSHA256":"actual menu hash","batch":456,"safeStartGame":true,"x":100,"y":200}
+```
+
+`continueLoading` never queues input. Only a separately reviewed actual menu
+permits `safeStartGame`; loading text or a title is insufficient. The previous
+consumed decision can remain on disk while a new frame is inspected; it cannot
+authorize that frame. New stale or conflicting decisions refuse input. Missing
+review stops without input. Images are not automatically classified as menus.
+
+The optional controller `progress` object may set `max_checkpoints`,
+`total_seconds`, `cpu_reserve`, `api_bytes`, and `capture_total_bytes`.
+Defaults use at most `max_captures - 1` candidate images, the original launch
+wall allowance, `min(15, supervisor CPU / 3)` CPU seconds for action/cleanup,
+1 MiB cumulative control request/response bytes, and the original total capture
+allowance. `total_seconds` is an absolute limit from original launch start,
+including startup/review; no checkpoint renews it. Progress windows divide the
+remaining original wall budget while preserving menu, action and cleanup socket
+reserves; `checkpoint_seconds` bounds an individual window. `review_seconds` is
+one cumulative allowance shared by all frames. `budget-plan.json` records the
+explicit totals and reserves. For the historical four-capture/110-second recipe,
+three candidates and one after-action image fit the unchanged ceilings; actual
+available CPU/time and human review may stop it earlier.
+
+Every window keeps the serial <=256-batch protocol and frozen-zero gate.
+Continuation also requires fresh original listener identity, measured cumulative
+CPU from the original supervisor, batch headroom, capture count/byte headroom,
+API bytes and action/cleanup time. One after-action capture always remains
+reserved. Normal loading exhaustion sends quit; a pending/uncertain request or
+failed identity never sends another command and returns cleanup to the original
+supervisor. CPU observations remain sampled, rather than a guarantee of future
+guest throughput. These offline tests do not qualify actual Enigma startup,
+menu rendering, gameplay or ordinary Quit.
+
+Run `python3 -m unittest test_progressive` under the required resource wrapper.
+Its first method exercises the actual production Python new-launch entry with
+the full unchanged JS runner pin and controlled loading-to-menu transport state;
+it executes no Node engine or guest. The retained pre-repair failure and repaired
+passes distinguish this entry test from private scheduler unit tests.
+
 `test_supervised.py` invokes the actual production CLI or its new-launch API.
 `child_server.py` is an offline Python transport child that actually serves its
 own state, including an alternate listener with the same handler/state and a

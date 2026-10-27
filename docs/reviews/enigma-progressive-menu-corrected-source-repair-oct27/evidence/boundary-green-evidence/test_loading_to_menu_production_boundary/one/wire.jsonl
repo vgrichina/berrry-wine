@@ -1,0 +1,16 @@
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4042384, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4042384, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/boundary-green-evidence/test_loading_to_menu_production_boundary/one/launch/controller/menu-candidate.png"}, "pid": 4042384, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 2}
+{"command": {"action": "step", "n": 1}, "pid": 4042384, "batch": 2}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 3}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/boundary-green-evidence/test_loading_to_menu_production_boundary/one/launch/controller/menu-candidate-002.png"}, "pid": 4042384, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 3}
+{"command": {"cmd": "click:10:20"}, "pid": 4042384, "batch": 3}
+{"command": {"action": "step", "n": 1}, "pid": 4042384, "batch": 3}
+{"command": {"action": "snapshot"}, "pid": 4042384, "batch": 4}
+{"command": {"action": "png", "path": "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/boundary-green-evidence/test_loading_to_menu_production_boundary/one/launch/controller/after-action.png"}, "pid": 4042384, "batch": 4}
+{"command": {"action": "quit"}, "pid": 4042384, "batch": 4}

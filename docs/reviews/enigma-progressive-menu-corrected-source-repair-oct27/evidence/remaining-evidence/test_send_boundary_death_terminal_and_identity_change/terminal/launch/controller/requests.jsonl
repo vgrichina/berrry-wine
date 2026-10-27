@@ -1,0 +1,2 @@
+{"at": 1793094428.7512329, "request": {"action": "snapshot"}, "startingBatch": null, "originalResponse": "{\"ok\": true, \"value\": {\"batch\": 0, \"quit\": false, \"yieldReason\": 0, \"frozen\": {\"frozen\": true, \"credits\": 0, \"recording\": false}}}", "ended": 1793094428.7738526}
+{"at": 1793094428.7928143, "request": {"action": "step", "n": 1}, "startingBatch": 0, "error": "Refusal('terminal-supervisor')", "ended": 1793094428.7991683}

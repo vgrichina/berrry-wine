@@ -26,6 +26,7 @@ if a.fault == 'output':
     os.write(1, b'x'*4096)
 batch = 0
 credits = 0
+captures = 0
 wire = (a.root/'wire.jsonl').open('x')
 
 
@@ -41,14 +42,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
         pass
 
     def do_POST(self):
-        global batch, credits
+        global batch, credits, captures
         c = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
         wire.write(json.dumps(dict(command=c,pid=os.getpid(),batch=batch))+'\n')
         wire.flush()
         op = c.get('action')
         if op == 'step':
             credits = c['n']
-            if a.fault == 'timeout':
+            if a.fault == 'timeout' or (a.fault == 'loading-timeout' and captures):
                 time.sleep(2)
             if a.fault == 'die':
                 os._exit(7)
@@ -63,12 +64,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if batch and a.fault == 'credits':
                 v['frozen']['credits'] = 1
         elif op == 'png':
-            Path(c['path']).write_bytes(png)
-            v = dict(batch=batch,frozen=True,path=c['path'],bytes=len(png))
-            frame = dict(safeStartGame=True,reviewed=True,frameSHA256=hashlib.sha256(png).hexdigest(),batch=batch,x=10,y=20)
+            captures += 1
+            # Distinct offline loading/menu states, not real Enigma images.
+            image = png
+            if a.fault in ('loading-review', 'loading-timeout', 'never-ready'):
+                image = png[:-12]+chunk(b'tEXt', b'state\0'+(b'loading' if captures == 1 or a.fault == 'never-ready' else b'menu'))+png[-12:]
+            Path(c['path']).write_bytes(image)
+            v = dict(batch=batch,frozen=True,path=c['path'],bytes=len(image))
+            frame = dict(safeStartGame=True,reviewed=True,frameSHA256=hashlib.sha256(image).hexdigest(),batch=batch,x=10,y=20)
+            if a.fault in ('never-ready','loading-timeout') or (a.fault == 'loading-review' and captures == 1):
+                frame.pop('safeStartGame')
+                frame['continueLoading'] = True
             if a.fault == 'stale-review':
                 frame['batch'] += 1
-            if a.fault in ('review','stale-review') and 'menu-candidate' in c['path']:
+            if a.fault in ('review','stale-review','loading-review','loading-timeout','never-ready') and 'menu-candidate' in c['path']:
                 (a.root/'decision.json').write_text(json.dumps(frame))
         elif op == 'quit':
             v = dict(quitting=True)

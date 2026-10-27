@@ -1,0 +1,47 @@
+{
+  "status": "uncertain-request-or-evidence-failure: TimeoutError('timed out')",
+  "failed": true,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 57237504,
+  "cpuSeconds": 0.02,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4047828,
+      "114174482"
+    ],
+    [
+      4047830,
+      "114174485"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "55467",
+        "--root",
+        "/tmp/enigma-progressive-menu-corrected-source-repair-oct27/ops/final-affected-evidence/test_later_pending_step_stops_original_owner_no_replay/one",
+        "--fault",
+        "loading-timeout"
+      ],
+      "pid": 4047828
+    }
+  }
+}
