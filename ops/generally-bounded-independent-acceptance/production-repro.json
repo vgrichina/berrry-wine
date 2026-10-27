@@ -1,0 +1,46 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 97284096,
+  "sampledPeakRSS": 97284096,
+  "reapedPeakRSS": 57176064,
+  "cpuSeconds": 0.33758,
+  "wallSeconds": 0.24734246614389122,
+  "owned": [
+    [
+      145418,
+      "115550892"
+    ],
+    [
+      145419,
+      "115550897"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-bounded-controller-independent-accept-oct27/repo/test/independent-generally-repro-driver.py",
+    "--group",
+    "repro",
+    "--evidence",
+    "/tmp/generally-bounded-controller-independent-accept-oct27/ops/production-repro"
+  ],
+  "stdout": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/production-repro.stdout",
+  "stderr": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/production-repro.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

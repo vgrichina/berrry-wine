@@ -1,0 +1,25 @@
+test_02_mailbox_production_entry_and_nonmultiple_total (__main__.Acceptance.test_02_mailbox_production_entry_and_nonmultiple_total) ... ok
+test_03_stdio_preserves_original_requested_total100000 (__main__.Acceptance.test_03_stdio_preserves_original_requested_total100000) ... FAIL
+test_04_rejected_acks_stop (__main__.Acceptance.test_04_rejected_acks_stop) ... ok
+test_05_global_deadline_is_not_reset_per_chunk (__main__.Acceptance.test_05_global_deadline_is_not_reset_per_chunk) ... ok
+test_06_historical_uncertain_request12_cannot_be_replayed (__main__.Acceptance.test_06_historical_uncertain_request12_cannot_be_replayed) ... ok
+test_07_cannot_expand_original_timeout (__main__.Acceptance.test_07_cannot_expand_original_timeout) ... ok
+
+======================================================================
+FAIL: test_03_stdio_preserves_original_requested_total100000 (__main__.Acceptance.test_03_stdio_preserves_original_requested_total100000)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/generally-bounded-loading-dispatch-repair-oct27/repo/test/test-generally-loading-controller.py", line 223, in test_03_stdio_preserves_original_requested_total100000
+    self.check_pass('total100000', total=100000)
+  File "/tmp/generally-bounded-loading-dispatch-repair-oct27/repo/test/test-generally-loading-controller.py", line 194, in check_pass
+    self.assertEqual(code, 0, (directory / 'controller.stderr').read_text())
+AssertionError: 1 != 0 : {"completed": 1000, "total": 100000, "batch": 1000, "stepID": 13, "snapshotID": 14}
+{"completed": 2000, "total": 100000, "batch": 2000, "stepID": 15, "snapshotID": 16}
+{"completed": 3000, "total": 100000, "batch": 3000, "stepID": 17, "snapshotID": 18}
+uncertain ACK timeout; no replay
+
+
+----------------------------------------------------------------------
+Ran 6 tests in 8.466s
+
+FAILED (failures=1)

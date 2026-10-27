@@ -1,0 +1,6 @@
+test_03_stdio_preserves_original_requested_total100000 (__main__.Acceptance.test_03_stdio_preserves_original_requested_total100000) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 10.891s
+
+OK

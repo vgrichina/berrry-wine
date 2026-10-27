@@ -1,0 +1,71 @@
+[
+  {
+    "name": "owner",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/mailbox",
+      "--state",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/cursor.json",
+      "--receipt",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/owner.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 145999
+  },
+  {
+    "name": "same-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/mailbox",
+      "--state",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/cursor.json",
+      "--receipt",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/same-cursor.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 146000
+  },
+  {
+    "name": "alternate-cursor",
+    "argv": [
+      "/usr/bin/python3",
+      "-B",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/repo/tools/generally-loading-controller.py",
+      "--mailbox",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/mailbox",
+      "--state",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/alternate-cursor.json",
+      "--receipt",
+      "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/alternate-cursor.receipt.json",
+      "--total",
+      "2501",
+      "--timeout-seconds",
+      "38",
+      "--deadline-seconds",
+      "20",
+      "--after",
+      "[{\"action\": \"png\", \"path\": \"/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli/forbidden.png\"}, {\"action\": \"input-message\", \"hwnd\": 1, \"msg\": 256, \"wParam\": 38, \"lParam\": 0}]"
+    ],
+    "pid": 146001
+  }
+]

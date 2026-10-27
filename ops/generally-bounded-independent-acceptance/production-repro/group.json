@@ -1,0 +1,14 @@
+{
+  "group": "repro",
+  "pass_": true,
+  "tests": 1,
+  "failures": 0,
+  "errors": 0,
+  "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "pins": {
+    "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+    "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+    "test/independent-generally-repro-driver.py": "1edb8dcfd78d9e70798048ba23838580c2369bb0e07ffc7f61097e006b7ff3e7",
+    "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 62861312,
+  "sampledPeakRSS": 62861312,
+  "reapedPeakRSS": 47394816,
+  "cpuSeconds": 0.090627,
+  "wallSeconds": 0.07046399801038206,
+  "owned": [
+    [
+      145097,
+      "115550286"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/generally-bounded-controller-independent-accept-oct27/ops/startup.js"
+  ],
+  "stdout": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/node-startup.stdout",
+  "stderr": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/node-startup.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

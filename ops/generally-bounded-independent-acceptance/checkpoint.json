@@ -1,0 +1,35 @@
+{
+  "candidate": "e954f74d815795fbb715f54a312746f47f8e7157",
+  "decision": "REJECTED",
+  "source": {
+    "candidate": "e954f74d815795fbb715f54a312746f47f8e7157",
+    "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "runnerSHA256": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e",
+    "boundary": {
+      "start": 389135,
+      "end": 405094,
+      "bytes": 15959,
+      "sha256": "96de2e3dbd35b5059e05e7a346a65f2926d643acf03b7af5cd9760255d1e2bf7"
+    },
+    "transform": "byte-exact contiguous production control closure and stdin adapter; no source rewrite",
+    "dependencies": "observation exports and synthetic batch cost; no guest/compiler",
+    "driverChange": "only installed NODE path; unchanged request12 reproducer",
+    "driverSHA256": "1edb8dcfd78d9e70798048ba23838580c2369bb0e07ffc7f61097e006b7ff3e7"
+  },
+  "completed": [
+    "Node exact executable/heap/limits startup",
+    "unchanged request12 production boundary reproduction",
+    "same-cursor actual CLI exclusion control",
+    "alternate-cursor actual mailbox exclusion FAIL"
+  ],
+  "remaining": "No broader challenges after concrete rejection; prior exact-source passing groups reused only as qualified historical evidence; no acceptance claim",
+  "blocker": "mailbox lacks shared ownership lock; state pathname lock can be bypassed with alternate path/nextID",
+  "evidence": [
+    "production-repro/group.json",
+    "competing-cli/result.json",
+    "competing-cli/observations.json",
+    "competing-cli.json"
+  ],
+  "nodeIdentityMatches": true,
+  "candidateUnmodified": true
+}

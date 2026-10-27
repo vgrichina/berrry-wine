@@ -1,0 +1,10 @@
+[
+  {
+    "error": "initial authoritative donor sparse test/run.js absent",
+    "correction": "candidate donor exact pinned runner verified, sparse Git object identity checked"
+  },
+  {
+    "error": "display-only cat path split before group.json",
+    "correction": "read and validated exact owned production-repro/group.json; no execution retry"
+  }
+]

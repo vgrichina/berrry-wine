@@ -1,0 +1,112 @@
+{
+  "pass_": true,
+  "helperSHA256": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+  "fixtureSHA256": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+  "productionSource": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "groups": {
+    "repro": {
+      "group": "repro",
+      "pass_": true,
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "945717e4aecc68fe02b11606bb530ecf3834c15ace943af49a3843509e418b01",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "60a7f6ff83f98c9d49b78df7596e9c2b6f9dbe1502e7fe496fb75cc0cfab2a6a",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    },
+    "acceptance": {
+      "group": "acceptance",
+      "pass_": true,
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "945717e4aecc68fe02b11606bb530ecf3834c15ace943af49a3843509e418b01",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "60a7f6ff83f98c9d49b78df7596e9c2b6f9dbe1502e7fe496fb75cc0cfab2a6a",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    },
+    "hardening": {
+      "group": "hardening",
+      "pass_": true,
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "945717e4aecc68fe02b11606bb530ecf3834c15ace943af49a3843509e418b01",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "6f923a1f1ee94ef9e88ff8e1e0c7161b742782aac3872e08c15d67cb9ebb7775",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    },
+    "final/acceptance": {
+      "group": "acceptance",
+      "pass_": false,
+      "tests": 6,
+      "failures": 1,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "861dd43102d7147af24ad1a01193cfc140936f0902d1a5d7ac70eaff2dda3529",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    },
+    "final/hardening": {
+      "group": "hardening",
+      "pass_": true,
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "861dd43102d7147af24ad1a01193cfc140936f0902d1a5d7ac70eaff2dda3529",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    },
+    "positive-total-recovery": {
+      "group": "total",
+      "pass_": true,
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "source": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+      "pins": {
+        "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+        "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+        "test/test-generally-loading-controller.py": "ae2654cf7131075a51ebf2229416cb47d8c3a6d116948d6ead83295439f7f7d9",
+        "test/run.js": "6dc104b3c10db701c0b1aec5954dd00cc29a7b6009970a5876ccc27426e7fa9e"
+      }
+    }
+  },
+  "effectiveCoverage": {
+    "repro": "repro/group.json unchanged production boundary",
+    "acceptedCurrentHelper": "final/acceptance/group.json cases02,04..07 plus final/hardening/group.json cases08,08a,09",
+    "correctedPositive": "positive-total-recovery/group.json case03; real38s response allowance/global20s test allowance, same userCPU90/wall120/RSS/output caps",
+    "preservedFailure": "final/acceptance total100000 stopped uncertain snapshot20 under synthetic0.5s per-ACK; no replay or input; all descendants reaped",
+    "oneOutstandingAndFrozenZeroFull100000Trace": true,
+    "allOwnedScenarioChildrenReaped": true
+  },
+  "installedNode": {
+    "path": "/home/user/.nvm/versions/node/v24.18.1/bin/node",
+    "sha256": "f3432a45b03b2da0d270095fdd8813dc34cbea73f5fc8b18c7a384b7cf9b333a",
+    "bytes": 123656816,
+    "startupReceipt": "node-startup-installed.json",
+    "startupStdout": "node-startup-installed.stdout",
+    "heapMiB": 512,
+    "AS": "unlimited inherited",
+    "DATA": "unlimited inherited",
+    "standingInputNotCopied": true
+  },
+  "interpretation": "Repair meets bounded controller protocol; no real game, emulator or module execution. Synthetic success limit corrected within imposed user guards; failed evidence retained; only affected positive case repeated."
+}

@@ -1,0 +1,50 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 115159040,
+  "sampledPeakRSS": 115159040,
+  "reapedPeakRSS": 57094144,
+  "cpuSeconds": 6.825264999999999,
+  "wallSeconds": 10.98425291897729,
+  "owned": [
+    [
+      135335,
+      "115497040"
+    ],
+    [
+      135337,
+      "115497046"
+    ],
+    [
+      135338,
+      "115497046"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-bounded-loading-dispatch-repair-oct27/repo/test/test-generally-loading-controller.py",
+    "--group",
+    "total",
+    "--evidence",
+    "/tmp/generally-bounded-loading-dispatch-repair-oct27/ops/positive-total-recovery"
+  ],
+  "stdout": "/tmp/generally-bounded-loading-dispatch-repair-oct27/ops/positive-total-recovery.stdout",
+  "stderr": "/tmp/generally-bounded-loading-dispatch-repair-oct27/ops/positive-total-recovery.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}

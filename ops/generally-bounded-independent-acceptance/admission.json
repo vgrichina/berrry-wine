@@ -1,0 +1,59 @@
+{
+  "timestamp": 1793108254.697653,
+  "pins": {
+    "tools/generally-loading-controller.py": "bfc3a764ddba00a59fe7681a771edde320a36afd1f5434f9567c38424131c9fb",
+    "test/fixtures/generally-loading-protocol.cjs": "c6ed222015469b099ee6e5c7ba5215c35a8d8f11e7f6960dc97376326a9d37a6",
+    "test/test-generally-loading-controller.py": "ae2654cf7131075a51ebf2229416cb47d8c3a6d116948d6ead83295439f7f7d9",
+    "docs/generally-bounded-loading-controller.md": "625dd3f442d937718806a4806b303b0a3b71679b0385fb14212e5ecb6648598a"
+  },
+  "canonicalReuse": {
+    "manifest": "/tmp/generally-bounded-loading-dispatch-repair-oct27/ops/receipt-manifest.json",
+    "sha256": "b329730100c9963b883269322fab05d75d2c0704741ac4b74d4e6e4533dbe81b",
+    "verifiedPayloads": 709,
+    "reverified": false
+  },
+  "clients": [
+    {
+      "pid": 138959,
+      "rss": 199077888
+    },
+    {
+      "pid": 142908,
+      "rss": 195014656
+    },
+    {
+      "pid": 265632,
+      "rss": 17690624
+    },
+    {
+      "pid": 1789179,
+      "rss": 81969152
+    }
+  ],
+  "remainingGrowth": 848424960,
+  "available": 3421048832,
+  "required": 2459037696,
+  "diskFree": 6345388032,
+  "aggregateFuture": 1006632960,
+  "projectedFree": 5338755072,
+  "ownProjection": {
+    "sparseGit": 16777216,
+    "source": 4194304,
+    "ops": 16777216,
+    "external": 50331648,
+    "publication": 16777216,
+    "growth": 33554432,
+    "reserve": 8388608
+  },
+  "walBaseline": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12251136,
+    "/home/user/.codex/queue_1.sqlite-wal": 4157440,
+    "/home/user/.codex/goals_1.sqlite-wal": 4288512,
+    "/home/user/.codex/state_5.sqlite-wal": 4612096,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4251648
+  },
+  "mount": "No filename-bearing mount argv or runtime in this offline task; canonical runtime mount gate remains deferred",
+  "ssh": "exact user-provided SSH string will be used",
+  "pass_": true
+}

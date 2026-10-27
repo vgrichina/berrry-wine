@@ -1,0 +1,47 @@
+[
+  {
+    "control": "live owner has durable pending request12",
+    "request": {
+      "action": "snapshot",
+      "id": 12
+    },
+    "cursor": {
+      "next": 13,
+      "pending": true,
+      "request": {
+        "action": "snapshot",
+        "id": 12
+      }
+    },
+    "pid": 145999
+  },
+  {
+    "control": "same cursor competing CLI correctly refuses",
+    "exit": 1,
+    "receipt": {
+      "error": "[Errno 11] Resource temporarily unavailable",
+      "events": [],
+      "gameplay": "unknown; protocol-only controller",
+      "ok": false
+    }
+  },
+  {
+    "challenge": "alternate cursor competing CLI",
+    "firstStillAlive": true,
+    "firstCursorUnchanged": true,
+    "secondDispatched": true,
+    "request": {
+      "action": "snapshot",
+      "id": 13
+    },
+    "secondCursor": {
+      "next": 14,
+      "pending": true,
+      "request": {
+        "action": "snapshot",
+        "id": 13
+      }
+    },
+    "repliesWritten": 0
+  }
+]

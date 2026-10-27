@@ -1,0 +1,52 @@
+{
+  "exit": 1,
+  "stopReason": null,
+  "peakRSS": 72876032,
+  "sampledPeakRSS": 72876032,
+  "reapedPeakRSS": 18087936,
+  "cpuSeconds": 0.310933,
+  "wallSeconds": 0.14014497818425298,
+  "owned": [
+    [
+      145998,
+      "115555514"
+    ],
+    [
+      145999,
+      "115555516"
+    ],
+    [
+      146000,
+      "115555519"
+    ],
+    [
+      146001,
+      "115555522"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-B",
+    "/tmp/generally-bounded-controller-independent-accept-oct27/repo/test/independent-generally-bounded-acceptance.py",
+    "--evidence",
+    "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli"
+  ],
+  "stdout": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli.stdout",
+  "stderr": "/tmp/generally-bounded-controller-independent-accept-oct27/ops/competing-cli.stderr",
+  "inheritedLimits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "ssh": null
+}
