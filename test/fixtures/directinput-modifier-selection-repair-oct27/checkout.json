@@ -1,0 +1,54 @@
+{
+  "exit": -15,
+  "stopReason": "aggregate RSS limit",
+  "peakRSS": 269172736,
+  "sampledPeakRSS": 269172736,
+  "reapedPeakRSS": 217530368,
+  "cpuSeconds": 11.62048,
+  "wallSeconds": 7.065460137790069,
+  "owned": [
+    [
+      463548,
+      "117325563"
+    ],
+    [
+      463550,
+      "117325565"
+    ],
+    [
+      463551,
+      "117325565"
+    ],
+    [
+      463552,
+      "117325568"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "checkout",
+    "-b",
+    "task/airstrike-directinput-modifier-selection-repair-oct27",
+    "3f829a7963ec297023de4760593587b18b15994f"
+  ],
+  "cwd": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/checkout.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

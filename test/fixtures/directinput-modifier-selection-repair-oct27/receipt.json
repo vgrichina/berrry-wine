@@ -1,0 +1,2185 @@
+{
+  "task": "airstrike-directinput-modifier-selection-repair-oct27",
+  "at": 1793126403.852127,
+  "candidate": "a1af2860361539639cb1ce1f307c83cb2276c307",
+  "parent": "3f829a7963ec297023de4760593587b18b15994f",
+  "verdict": "bounded source repair tests pass; independent acceptance pending",
+  "cause": "Unconditional duplicate suppression excluded right-only acquired objects; removing suppression alone still stopped at the first omitted VK alias. One format-aware representative helper now serves acquisition registration and FIFO collection.",
+  "semantics": "Host buffered events identify aggregate VK transitions only. Lowest requested strict DIK receives one record per shared VK edge; both sides selected choose the left DIK, even when its output offset or caller descriptor order is greater. Right-only selection receives either physical side. No side fidelity is claimed. Return/NumPadEnter follows the same rule.",
+  "sourceAndTestPins": {
+    "src/09a8-handlers-directx.wat": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/src/09a8-handlers-directx.wat",
+      "bytes": 1056613,
+      "sha256": "a11f697934756f4b8e2b87f86983f9c9c498f714f4e643b77ef76d5409ea7b7b"
+    },
+    "test/test-directinput-modifier-selection.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-modifier-selection.js",
+      "bytes": 6879,
+      "sha256": "1e4cf3fd68437d54b1e89635e4caf237780ac980fe4f96f4fae30743b9267ac5"
+    },
+    "test/test-directinput-independent-modifier-format.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-independent-modifier-format.js",
+      "bytes": 4148,
+      "sha256": "69a3a1c4c958b534b9de71fcbad826eb6559cab9b4c9cb6dac7331650c903661"
+    },
+    "test/test-directinput-independent-custom-capacity.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-independent-custom-capacity.js",
+      "bytes": 3293,
+      "sha256": "6d4e47187d417e5d81c11039eaa104a38d16a177aae94d745664468945b56cd0"
+    },
+    "test/test-directinput-buffered-keyboard.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-buffered-keyboard.js",
+      "bytes": 17062,
+      "sha256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a"
+    },
+    "test/run.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/run.js",
+      "bytes": 690638,
+      "sha256": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7"
+    },
+    "lib/renderer-input.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/lib/renderer-input.js",
+      "bytes": 185229,
+      "sha256": "643fb191891803e6200cb83fdbc106d542459b4a21ee43941d97bd22a98b9bb8"
+    },
+    "lib/host-window.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/lib/host-window.js",
+      "bytes": 64156,
+      "sha256": "299951506c4d44d58ef2ffeafd821d05f1d7f0861535ac11ea753012808b5aa9"
+    },
+    "lib/guest-rpc.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/lib/guest-rpc.js",
+      "bytes": 59680,
+      "sha256": "39c0d671833330c71964c2f7ca4e24b1fc841b79e8eb54027d7889a9d2d306a1"
+    },
+    "lib/renderer.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/lib/renderer.js",
+      "bytes": 214846,
+      "sha256": "b1f6f1abbee443875e5d6d2cfcc67c4a077f89b522631749fe226b294cb9de03"
+    },
+    "tools/watx.js": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/tools/watx.js",
+      "bytes": 2663,
+      "sha256": "d04ed1d5ca74fc1b6f10357576a38e726d58f0ad908ccf34a29de35052aa1a33"
+    }
+  },
+  "baseline": {
+    "operation": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/baseline-right.json",
+        "bytes": 1185,
+        "sha256": "b5523e0b50d3ac3e8e57cb3109a3d2727e36c846eaf853c3591b49b1d332a630"
+      },
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 125956096,
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/baseline-right.stdout",
+        "bytes": 10176,
+        "sha256": "2f49ac341078a6800991b3411b707e42fd03bfd3ff6adeef5cdfc980245ec50c"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/baseline-right.stderr",
+        "bytes": 3234,
+        "sha256": "24e0b83b00518853c5b3de1784869c549f4e2ce7e9b61d220fbf357966b04b44"
+      }
+    },
+    "observed": {
+      "group": "accepted modifier-only custom format",
+      "requestedDIK": 54,
+      "formatAccepted": true,
+      "installedMapOffset": 7,
+      "callerFormatMutated": true,
+      "input": [
+        "VK_SHIFT right down",
+        "VK_SHIFT right up"
+      ],
+      "observed": {
+        "hr": 0,
+        "count": 0,
+        "records": []
+      },
+      "expected": {
+        "hr": 0,
+        "count": 2,
+        "pairs": [
+          [
+            7,
+            128
+          ],
+          [
+            7,
+            0
+          ]
+        ]
+      },
+      "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+    }
+  },
+  "tests": {
+    "right-direct": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-direct.json",
+          "bytes": 1170,
+          "sha256": "e0fd8eaa97ca4bca78b901f586e419071ec97d600232a717cb50159aec6c69d3"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 123162624,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-direct.stdout",
+          "bytes": 10206,
+          "sha256": "7593a64cde18a82a87e58e818baee85964f89f8909157fc8a3bafd48208cfbeb"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-direct.stderr",
+          "bytes": 2134,
+          "sha256": "a88d52ea89d89db310d7ed7d21b0bca8db62db3f0bc98467392a6e81b482974b"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "27260fe3fb0a24bd9c97626a385b69ff98307ddc594b1753748e195061e4073a",
+          "challengeSHA256": "2551d5228fcfab9a29a231f7b87866a7d45c68cc8fe453eb3d1166247baf1b19",
+          "transformation": "pinned fixture prefix + explicit SetDataFormat closure and fixture allocator + independent modifier challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 54,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                215,
+                1
+              ],
+              [
+                7,
+                0,
+                215,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ]
+    },
+    "right-rpc": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-rpc.json",
+          "bytes": 1177,
+          "sha256": "d8838259e94c678bcf93ff05194bbe921ecb01bbc48bcba5d01e5ffe124f3343"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 128335872,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-rpc.stdout",
+          "bytes": 10206,
+          "sha256": "1b56f3dcac263f22cbd5b6ef47837fc8939f886f8c81c71fbd92a6c1f126f4b1"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/right-rpc.stderr",
+          "bytes": 2134,
+          "sha256": "a88d52ea89d89db310d7ed7d21b0bca8db62db3f0bc98467392a6e81b482974b"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "27260fe3fb0a24bd9c97626a385b69ff98307ddc594b1753748e195061e4073a",
+          "challengeSHA256": "2551d5228fcfab9a29a231f7b87866a7d45c68cc8fe453eb3d1166247baf1b19",
+          "transformation": "pinned fixture prefix + explicit SetDataFormat closure and fixture allocator + independent modifier challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 54,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                188,
+                1
+              ],
+              [
+                7,
+                0,
+                188,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ]
+    },
+    "left-direct": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-direct.json",
+          "bytes": 1159,
+          "sha256": "0ae21612c7cee3550ec0526c71e8758082aa395a5e6889729bb8041c8a22ad7a"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 125829120,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-direct.stdout",
+          "bytes": 10206,
+          "sha256": "4cfd457318a14d87a3f77a9329026aa87d4b125f90b03055ab97854657eb005b"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-direct.stderr",
+          "bytes": 2134,
+          "sha256": "a88d52ea89d89db310d7ed7d21b0bca8db62db3f0bc98467392a6e81b482974b"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "27260fe3fb0a24bd9c97626a385b69ff98307ddc594b1753748e195061e4073a",
+          "challengeSHA256": "2551d5228fcfab9a29a231f7b87866a7d45c68cc8fe453eb3d1166247baf1b19",
+          "transformation": "pinned fixture prefix + explicit SetDataFormat closure and fixture allocator + independent modifier challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 42,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                168,
+                1
+              ],
+              [
+                7,
+                0,
+                169,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ]
+    },
+    "left-rpc": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-rpc.json",
+          "bytes": 1156,
+          "sha256": "5bb76ac600527b0baf21df0215b41750cd770147f71e3ec4e3ecea8707049672"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 122777600,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-rpc.stdout",
+          "bytes": 10206,
+          "sha256": "24db0c7e81893f995d3d5d85683f5f33550fbabd5ab8550c6ea7889804a2edc2"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/left-rpc.stderr",
+          "bytes": 2134,
+          "sha256": "a88d52ea89d89db310d7ed7d21b0bca8db62db3f0bc98467392a6e81b482974b"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "27260fe3fb0a24bd9c97626a385b69ff98307ddc594b1753748e195061e4073a",
+          "challengeSHA256": "2551d5228fcfab9a29a231f7b87866a7d45c68cc8fe453eb3d1166247baf1b19",
+          "transformation": "pinned fixture prefix + explicit SetDataFormat closure and fixture allocator + independent modifier challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "accepted modifier-only custom format",
+          "requestedDIK": 42,
+          "formatAccepted": true,
+          "installedMapOffset": 7,
+          "callerFormatMutated": true,
+          "input": [
+            "VK_SHIFT right down",
+            "VK_SHIFT right up"
+          ],
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                136,
+                1
+              ],
+              [
+                7,
+                0,
+                136,
+                2
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "allocationFixture": "bounded private bump allocator and no-op free; production format validation/matching/install, acquire, renderer, host, collect unchanged"
+        }
+      ]
+    },
+    "capacity-direct": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-direct.json",
+          "bytes": 1156,
+          "sha256": "43a0a3cf93773741dd380f8324a89fc5417f23734abed192610056cf6bc1a1d9"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 124739584,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-direct.stdout",
+          "bytes": 8853,
+          "sha256": "f5ae98714fc60380dd026cfd1ec4f79226a75f63637ec378910d24f3f59416a9"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-direct.stderr",
+          "bytes": 1768,
+          "sha256": "d8bd16e19a1f4d12e89dd4ebaaf7aebd90f838ebaadbaf4b8d21ad4ff071517d"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "ce03876b60d2d11533ab628b3452ab750021b802a7faddd73ef1c73843da0801",
+          "challengeSHA256": "b72c7c50ffb1e4a493d807dfcc9c6d5c072801d5f5731321068cba3b433390d4",
+          "transformation": "exact fixture prefix before const events=[]; + independent challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "independent oracle controls",
+          "pass": true,
+          "positive": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                188,
+                1
+              ],
+              [
+                7,
+                0,
+                188,
+                2
+              ]
+            ]
+          },
+          "rejected": [
+            "lost requested edge",
+            "reversed requested edges",
+            "spurious overflow"
+          ]
+        },
+        {
+          "group": "omitted-key saturation",
+          "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+          "input": [
+            "A down",
+            "A up",
+            "Space down",
+            "Space up"
+          ],
+          "configuredSize": 3,
+          "effectiveCapacity": 2,
+          "customFormat": {
+            "57": 7,
+            "others": "omitted"
+          },
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                191,
+                5
+              ],
+              [
+                7,
+                0,
+                191,
+                6
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "noGameplayClaim": true
+        }
+      ]
+    },
+    "capacity-rpc": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-rpc.json",
+          "bytes": 1162,
+          "sha256": "32578d7107e35df4c45a3fb238e57c618298ed131c961d29c21db5870be16701"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 126144512,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-rpc.stdout",
+          "bytes": 8853,
+          "sha256": "be5696cb7fba0d3e25b381c9265e70f8608487fe450f0310dc6da0757913dcdf"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/capacity-rpc.stderr",
+          "bytes": 1768,
+          "sha256": "d8bd16e19a1f4d12e89dd4ebaaf7aebd90f838ebaadbaf4b8d21ad4ff071517d"
+        }
+      },
+      "results": [
+        {
+          "fixtureSHA256": "ea5c710903a5ef181df4c516b36bd3a66d919ad5127c8e667b91927853a3b98a",
+          "setupSHA256": "ce03876b60d2d11533ab628b3452ab750021b802a7faddd73ef1c73843da0801",
+          "challengeSHA256": "b72c7c50ffb1e4a493d807dfcc9c6d5c072801d5f5731321068cba3b433390d4",
+          "transformation": "exact fixture prefix before const events=[]; + independent challenge",
+          "productionSources": "unchanged; fixture compiles original WAT forms, unrelated dependencies trap"
+        },
+        {
+          "group": "independent oracle controls",
+          "pass": true,
+          "positive": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                151,
+                1
+              ],
+              [
+                7,
+                0,
+                151,
+                2
+              ]
+            ]
+          },
+          "rejected": [
+            "lost requested edge",
+            "reversed requested edges",
+            "spurious overflow"
+          ]
+        },
+        {
+          "group": "omitted-key saturation",
+          "candidate": "24212b72fdedf2ff0274b156ed1503c76edc5b96",
+          "input": [
+            "A down",
+            "A up",
+            "Space down",
+            "Space up"
+          ],
+          "configuredSize": 3,
+          "effectiveCapacity": 2,
+          "customFormat": {
+            "57": 7,
+            "others": "omitted"
+          },
+          "observed": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                7,
+                128,
+                154,
+                5
+              ],
+              [
+                7,
+                0,
+                154,
+                6
+              ]
+            ]
+          },
+          "expected": {
+            "hr": 0,
+            "count": 2,
+            "pairs": [
+              [
+                7,
+                128
+              ],
+              [
+                7,
+                0
+              ]
+            ]
+          },
+          "noGameplayClaim": true
+        }
+      ]
+    },
+    "final-matrix-direct": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-direct.json",
+          "bytes": 1155,
+          "sha256": "2c089afc4d8a948f1b9d86f1ed2df3adf2d278956492f611cc12bd86d28e2b0b"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 126357504,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-direct.stdout",
+          "bytes": 11625,
+          "sha256": "34650c96c910f7c38d5a2fbda1f45b9a84a80af34483b05c6ea48a2e2e1858ac"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-direct.stderr",
+          "bytes": 2134,
+          "sha256": "2786de1526899d67e5b0943c5aa957b2c6e550d8d2278d77c047fa05ce53097b"
+        }
+      },
+      "results": [
+        {
+          "group": "acquired-format shared-VK representative selection",
+          "results": [
+            {
+              "alias": "Shift",
+              "selection": "left",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "right",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "both",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "left",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "right",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "both",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "left",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "right",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "both",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "left",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "right",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "both",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            }
+          ],
+          "overlappingModifierOwners": 3,
+          "rejectedOracleControls": [
+            "duplicate amplification",
+            "wrong representative offset",
+            "reordered edges",
+            "suppressed overflow"
+          ],
+          "semantics": "one FIFO record per aggregate VK edge at the lowest requested DIK; no physical-side fidelity in the buffered host contract",
+          "boundary": "exact pinned production WAT SetDataFormat/Acquire/GetDeviceData and renderer/host; optional in-process production sync RPC, not OS Worker"
+        }
+      ],
+      "compiledClosure": {
+        "pins": [
+          {
+            "file": "09a8-handlers-directx.wat",
+            "sha256": "a11f697934756f4b8e2b87f86983f9c9c498f714f4e643b77ef76d5409ea7b7b"
+          },
+          {
+            "file": "01-header.wat",
+            "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+          },
+          {
+            "file": "03-registers.wat",
+            "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+          },
+          {
+            "file": "03a-page-watch.wat",
+            "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+          },
+          {
+            "file": "10-helpers.wat",
+            "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+          }
+        ],
+        "focusedWasm": "26cea3805981ba25383296a4fdde47c80aa1118d9d518729c16927582be43c74",
+        "functionsSHA256": "11272b8482b57c2fc8ca27b206c932351e9c446a456a11fca90517e18e47a315",
+        "trapOnlyStubs": [
+          "$g2w_slow",
+          "$code_write_hit",
+          "$page_watch_bump",
+          "$invalidate_code_write",
+          "$di_mouse_event_count",
+          "$di_mouse_event_take",
+          "$di_mouse_event_peek",
+          "$di_mouse_event_is_button",
+          "$di_mouse_object_index",
+          "$di_mouse_data_write",
+          "$di_mouse_event_stamp",
+          "$di_mouse_button_commit_state",
+          "$d3dim_lazy_access",
+          "$guest_page_affine_span",
+          "$uwc_bulk_note",
+          "$di_mouse_delta_take_x",
+          "$di_mouse_delta_take_y",
+          "$di_mouse_wheel_take"
+        ]
+      }
+    },
+    "final-matrix-rpc": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-rpc.json",
+          "bytes": 1173,
+          "sha256": "63598ff4b6d199a7b1898d4cf2b47bf0ad9d09101ee309480ee648c141f3eb48"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 132567040,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-rpc.stdout",
+          "bytes": 11625,
+          "sha256": "34650c96c910f7c38d5a2fbda1f45b9a84a80af34483b05c6ea48a2e2e1858ac"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/final-matrix-rpc.stderr",
+          "bytes": 2134,
+          "sha256": "2786de1526899d67e5b0943c5aa957b2c6e550d8d2278d77c047fa05ce53097b"
+        }
+      },
+      "results": [
+        {
+          "group": "acquired-format shared-VK representative selection",
+          "results": [
+            {
+              "alias": "Shift",
+              "selection": "left",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "right",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "both",
+              "registeredVKs": [
+                16,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Shift",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "left",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "right",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "both",
+              "registeredVKs": [
+                17,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Ctrl",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "left",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "right",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "both",
+              "registeredVKs": [
+                18,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Alt",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "left",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "right",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  7,
+                  128
+                ],
+                [
+                  7,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "both",
+              "registeredVKs": [
+                13,
+                32
+              ],
+              "expected": [
+                [
+                  11,
+                  128
+                ],
+                [
+                  11,
+                  0
+                ]
+              ],
+              "capacity": 2,
+              "pass": true
+            },
+            {
+              "alias": "Return",
+              "selection": "omitted",
+              "registeredVKs": [
+                32
+              ],
+              "expected": [],
+              "capacity": 2,
+              "pass": true
+            }
+          ],
+          "overlappingModifierOwners": 3,
+          "rejectedOracleControls": [
+            "duplicate amplification",
+            "wrong representative offset",
+            "reordered edges",
+            "suppressed overflow"
+          ],
+          "semantics": "one FIFO record per aggregate VK edge at the lowest requested DIK; no physical-side fidelity in the buffered host contract",
+          "boundary": "exact pinned production WAT SetDataFormat/Acquire/GetDeviceData and renderer/host; optional in-process production sync RPC, not OS Worker"
+        }
+      ],
+      "compiledClosure": {
+        "pins": [
+          {
+            "file": "09a8-handlers-directx.wat",
+            "sha256": "a11f697934756f4b8e2b87f86983f9c9c498f714f4e643b77ef76d5409ea7b7b"
+          },
+          {
+            "file": "01-header.wat",
+            "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+          },
+          {
+            "file": "03-registers.wat",
+            "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+          },
+          {
+            "file": "03a-page-watch.wat",
+            "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+          },
+          {
+            "file": "10-helpers.wat",
+            "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+          }
+        ],
+        "focusedWasm": "26cea3805981ba25383296a4fdde47c80aa1118d9d518729c16927582be43c74",
+        "functionsSHA256": "11272b8482b57c2fc8ca27b206c932351e9c446a456a11fca90517e18e47a315",
+        "trapOnlyStubs": [
+          "$g2w_slow",
+          "$code_write_hit",
+          "$page_watch_bump",
+          "$invalidate_code_write",
+          "$di_mouse_event_count",
+          "$di_mouse_event_take",
+          "$di_mouse_event_peek",
+          "$di_mouse_event_is_button",
+          "$di_mouse_object_index",
+          "$di_mouse_data_write",
+          "$di_mouse_event_stamp",
+          "$di_mouse_button_commit_state",
+          "$d3dim_lazy_access",
+          "$guest_page_affine_span",
+          "$uwc_bulk_note",
+          "$di_mouse_delta_take_x",
+          "$di_mouse_delta_take_y",
+          "$di_mouse_wheel_take"
+        ]
+      }
+    },
+    "buffered-direct": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-direct.json",
+          "bytes": 1146,
+          "sha256": "8219405307ef6bb51a3986fa1baaf6f6af955e65b19e97a7cbe52d35aab46d56"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 125431808,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-direct.stdout",
+          "bytes": 9830,
+          "sha256": "c337c256a0b794a12023bbaf30cd1d7c33fb5d851687d65c83c376ad805e8128"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-direct.stderr",
+          "bytes": 1768,
+          "sha256": "d8bd16e19a1f4d12e89dd4ebaaf7aebd90f838ebaadbaf4b8d21ad4ff071517d"
+        }
+      },
+      "results": [
+        {
+          "test": "rapid down/up dispatched before poll",
+          "runnerSHA": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+          "wiring": "  h.get_key_down_state = (vKey) =>\n    (renderer && renderer.peekAsyncKeyState ? renderer.peekAsyncKeyState(vKey) : 0);",
+          "wiringSHA": "7bda943f0f4088f8d8c42d88069fbf7b3f9c968cc299672cd581c5cb3c08a346",
+          "events": [
+            {
+              "down": true,
+              "physical": 32768,
+              "queued": [
+                {
+                  "msg": 256,
+                  "wParam": 32
+                }
+              ]
+            },
+            {
+              "down": false,
+              "physical": 0,
+              "queued": [
+                {
+                  "msg": 256,
+                  "wParam": 32
+                },
+                {
+                  "msg": 257,
+                  "wParam": 32
+                }
+              ]
+            }
+          ],
+          "delivered": [
+            {
+              "type": "key",
+              "hwnd": 0,
+              "wParam": 32,
+              "asyncPressPublished": true,
+              "msg": 256,
+              "lParam": 3735553
+            },
+            {
+              "type": "key",
+              "hwnd": 0,
+              "wParam": 32,
+              "msg": 257,
+              "lParam": 3224961025
+            }
+          ],
+          "result": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                57,
+                128,
+                136,
+                1
+              ],
+              [
+                57,
+                0,
+                136,
+                2
+              ]
+            ]
+          },
+          "expected": [
+            [
+              57,
+              128
+            ],
+            [
+              57,
+              0
+            ]
+          ],
+          "contractPass": true
+        },
+        {
+          "test": "slow positive control",
+          "held": {
+            "hr": 0,
+            "count": 1,
+            "records": [
+              [
+                57,
+                128,
+                137,
+                3
+              ]
+            ]
+          },
+          "duplicate": {
+            "hr": 0,
+            "count": 0,
+            "records": []
+          },
+          "released": {
+            "hr": 0,
+            "count": 1,
+            "records": [
+              [
+                57,
+                0,
+                137,
+                4
+              ]
+            ]
+          }
+        },
+        {
+          "pass": 14,
+          "checks": [
+            "held key and typematic do not duplicate buffered transitions",
+            "peek identity, null count query, partial consume, null flush",
+            "arrival timestamps, sequences and cross-key order survive peeks",
+            "capacity minus one, overflow sticky on peek, consume clears overflow",
+            "acquire is not reference counted; reset discards stale edges",
+            "buffer disabled preserves immediate state; oversized size clamps to supported maximum",
+            "two acquired keyboard devices have independent read cursors",
+            "host contexts sharing a renderer retain separate device buffers",
+            "aggregate storage admission rejects and recovers without consuming another device",
+            "unchanged strict DIK mapping avoids aliases and modifier duplicates",
+            "custom buffered format offset and omitted-key filtering",
+            "immediate state is independent from queued peek and consume",
+            "invalid record size and null count are still rejected",
+            "fixture rejects out-of-scope memory and mouse dependencies"
+          ],
+          "mode": "direct production host",
+          "noGameplayClaim": true
+        }
+      ],
+      "compiledClosure": {
+        "pins": [
+          {
+            "file": "09a8-handlers-directx.wat",
+            "sha256": "a11f697934756f4b8e2b87f86983f9c9c498f714f4e643b77ef76d5409ea7b7b"
+          },
+          {
+            "file": "01-header.wat",
+            "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+          },
+          {
+            "file": "03-registers.wat",
+            "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+          },
+          {
+            "file": "03a-page-watch.wat",
+            "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+          },
+          {
+            "file": "10-helpers.wat",
+            "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+          }
+        ],
+        "focusedWasm": "7a651077424293c2717557ad5859734f5b01e50c3d6985cf075b5c974acfe33f",
+        "functionsSHA256": "a36eba10b9cf07be63ffed1e1799d41d88a1cd0f0e810176c9e89a41f97c1834",
+        "trapOnlyStubs": [
+          "$g2w_slow",
+          "$code_write_hit",
+          "$page_watch_bump",
+          "$invalidate_code_write",
+          "$di_mouse_event_count",
+          "$di_mouse_event_take",
+          "$di_mouse_event_peek",
+          "$di_mouse_event_is_button",
+          "$di_mouse_object_index",
+          "$di_mouse_data_write",
+          "$di_mouse_event_stamp",
+          "$di_mouse_button_commit_state",
+          "$d3dim_lazy_access",
+          "$guest_page_affine_span",
+          "$uwc_bulk_note",
+          "$di_custom_device_state",
+          "$di_mouse_delta_take_x",
+          "$di_mouse_delta_take_y",
+          "$di_mouse_wheel_take"
+        ]
+      }
+    },
+    "buffered-rpc": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-rpc.json",
+          "bytes": 1153,
+          "sha256": "1fec81e78987ae675f3b532f975362db01f64febcde7236015f1f5652ec73c7e"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 127356928,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-rpc.stdout",
+          "bytes": 9846,
+          "sha256": "386434bf5845338ae01e003b887c05f936dc6e986f288e95efea709652a33164"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/buffered-rpc.stderr",
+          "bytes": 1768,
+          "sha256": "d8bd16e19a1f4d12e89dd4ebaaf7aebd90f838ebaadbaf4b8d21ad4ff071517d"
+        }
+      },
+      "results": [
+        {
+          "test": "rapid down/up dispatched before poll",
+          "runnerSHA": "a8187d18402d223e1f411008620bf13b611c3e703739594a9b7abb80749942c7",
+          "wiring": "  h.get_key_down_state = (vKey) =>\n    (renderer && renderer.peekAsyncKeyState ? renderer.peekAsyncKeyState(vKey) : 0);",
+          "wiringSHA": "7bda943f0f4088f8d8c42d88069fbf7b3f9c968cc299672cd581c5cb3c08a346",
+          "events": [
+            {
+              "down": true,
+              "physical": 32768,
+              "queued": [
+                {
+                  "msg": 256,
+                  "wParam": 32
+                }
+              ]
+            },
+            {
+              "down": false,
+              "physical": 0,
+              "queued": [
+                {
+                  "msg": 256,
+                  "wParam": 32
+                },
+                {
+                  "msg": 257,
+                  "wParam": 32
+                }
+              ]
+            }
+          ],
+          "delivered": [
+            {
+              "type": "key",
+              "hwnd": 0,
+              "wParam": 32,
+              "asyncPressPublished": true,
+              "msg": 256,
+              "lParam": 3735553
+            },
+            {
+              "type": "key",
+              "hwnd": 0,
+              "wParam": 32,
+              "msg": 257,
+              "lParam": 3224961025
+            }
+          ],
+          "result": {
+            "hr": 0,
+            "count": 2,
+            "records": [
+              [
+                57,
+                128,
+                126,
+                1
+              ],
+              [
+                57,
+                0,
+                126,
+                2
+              ]
+            ]
+          },
+          "expected": [
+            [
+              57,
+              128
+            ],
+            [
+              57,
+              0
+            ]
+          ],
+          "contractPass": true
+        },
+        {
+          "test": "slow positive control",
+          "held": {
+            "hr": 0,
+            "count": 1,
+            "records": [
+              [
+                57,
+                128,
+                127,
+                3
+              ]
+            ]
+          },
+          "duplicate": {
+            "hr": 0,
+            "count": 0,
+            "records": []
+          },
+          "released": {
+            "hr": 0,
+            "count": 1,
+            "records": [
+              [
+                57,
+                0,
+                127,
+                4
+              ]
+            ]
+          }
+        },
+        {
+          "pass": 14,
+          "checks": [
+            "held key and typematic do not duplicate buffered transitions",
+            "peek identity, null count query, partial consume, null flush",
+            "arrival timestamps, sequences and cross-key order survive peeks",
+            "capacity minus one, overflow sticky on peek, consume clears overflow",
+            "acquire is not reference counted; reset discards stale edges",
+            "buffer disabled preserves immediate state; oversized size clamps to supported maximum",
+            "two acquired keyboard devices have independent read cursors",
+            "host contexts sharing a renderer retain separate device buffers",
+            "aggregate storage admission rejects and recovers without consuming another device",
+            "unchanged strict DIK mapping avoids aliases and modifier duplicates",
+            "custom buffered format offset and omitted-key filtering",
+            "immediate state is independent from queued peek and consume",
+            "invalid record size and null count are still rejected",
+            "fixture rejects out-of-scope memory and mouse dependencies"
+          ],
+          "mode": "production GuestRpc synchronous broker",
+          "noGameplayClaim": true
+        }
+      ],
+      "compiledClosure": {
+        "pins": [
+          {
+            "file": "09a8-handlers-directx.wat",
+            "sha256": "a11f697934756f4b8e2b87f86983f9c9c498f714f4e643b77ef76d5409ea7b7b"
+          },
+          {
+            "file": "01-header.wat",
+            "sha256": "e2c991bb211a46b9940f20e190d71d8dcdd35916ece96859266ced30b667b3d4"
+          },
+          {
+            "file": "03-registers.wat",
+            "sha256": "79af81b863df64afd86e3ee885df99639e44d8876d2add77dc6011e487b1610d"
+          },
+          {
+            "file": "03a-page-watch.wat",
+            "sha256": "37c1e48365c7a0f9c4bf7df10d3c90939c3d3dbc768e18d9cb6eafe7cf791612"
+          },
+          {
+            "file": "10-helpers.wat",
+            "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+          }
+        ],
+        "focusedWasm": "7a651077424293c2717557ad5859734f5b01e50c3d6985cf075b5c974acfe33f",
+        "functionsSHA256": "a36eba10b9cf07be63ffed1e1799d41d88a1cd0f0e810176c9e89a41f97c1834",
+        "trapOnlyStubs": [
+          "$g2w_slow",
+          "$code_write_hit",
+          "$page_watch_bump",
+          "$invalidate_code_write",
+          "$di_mouse_event_count",
+          "$di_mouse_event_take",
+          "$di_mouse_event_peek",
+          "$di_mouse_event_is_button",
+          "$di_mouse_object_index",
+          "$di_mouse_data_write",
+          "$di_mouse_event_stamp",
+          "$di_mouse_button_commit_state",
+          "$d3dim_lazy_access",
+          "$guest_page_affine_span",
+          "$uwc_bulk_note",
+          "$di_custom_device_state",
+          "$di_mouse_delta_take_x",
+          "$di_mouse_delta_take_y",
+          "$di_mouse_wheel_take"
+        ]
+      }
+    },
+    "fragment-parens": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/fragment-parens.json",
+          "bytes": 1199,
+          "sha256": "6aaa98da0c3118135fa5b3c100e441cad9d2e4205050d5aba33b59b74e4acbcf"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 158183424,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/fragment-parens.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/fragment-parens.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "results": []
+    },
+    "boolean-gate": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/boolean-gate.json",
+          "bytes": 1124,
+          "sha256": "3127c49ca450b4745d5d5375c5d13922487216096336fbc028b7c66b75f767c3"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 225873920,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/boolean-gate.stdout",
+          "bytes": 58,
+          "sha256": "987a2e65c399693ec3090f487d9d77ed5ee2134528ace1a2ff6902cdd14284e6"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/boolean-gate.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "results": []
+    },
+    "git-whitespace": {
+      "operation": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/git-whitespace.json",
+          "bytes": 1115,
+          "sha256": "1cbbac5f8aaec597d622ad335a094a2519ff05d1d989156067729e3ed5db150b"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 64380928,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/git-whitespace.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/git-whitespace.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "results": []
+    }
+  },
+  "sourceRejectingControls": [
+    {
+      "name": "reject-left-swap",
+      "source": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/reject-left-skipped.wat",
+      "sha256": "3a24aedd6cac98f7caaadc87fe56669b11e6121e8cb95a934d20bb183fde3fd1",
+      "rejected": true,
+      "reason": "registration omits selected Shift VK"
+    },
+    {
+      "name": "reject-first-omitted-match",
+      "source": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/diagnostic-no-duplicate-skip.wat",
+      "sha256": "997a6d374b5fee3309e586f76d85937814123301a22bf924e276f6eaa5d8389e",
+      "rejected": true,
+      "reason": "collection loses selected modifier records: count0 expected2"
+    }
+  ],
+  "controlOperations": {
+    "reject-left-swap": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-left-swap.json",
+        "bytes": 1259,
+        "sha256": "7c37f84b7c56b49eca7e8a61cf703fc5d351f0e47b7e94a0c927e8282329490d"
+      },
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 126246912,
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-left-swap.stdout",
+        "bytes": 9336,
+        "sha256": "a49ad93382be97637b2a3f98c414195224434fe97ebba3856ffda955156446c6"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-left-swap.stderr",
+        "bytes": 3360,
+        "sha256": "ea9f8a30f249c1825e962f3e02314108a7062cf50f7f587e2ffbdfca642c851b"
+      }
+    },
+    "reject-first-omitted-match": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-first-omitted-match.json",
+        "bytes": 1288,
+        "sha256": "33cfed81457454902a156f9e975e591d39d501dc508df3f10dc217b774e7a3cb"
+      },
+      "exit": 1,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 126271488,
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-first-omitted-match.stdout",
+        "bytes": 9336,
+        "sha256": "b19d34a806ebd88a12ceedc9de57f963a38ea09eb8614471647bce6935ec7cc6"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/reject-first-omitted-match.stderr",
+        "bytes": 3291,
+        "sha256": "cc00f9777bba61b3f83e122bb97a07b0137c196b0f7135e0a9a749d63ae29de1"
+      }
+    }
+  },
+  "reuse": {
+    "canonical": {
+      "path": "/tmp/airstrike-directinput-format-independent-accept-oct27/ops/receipt-manifest.json",
+      "bytes": 25306,
+      "sha256": "d7e04cfc8625df140c97e4453ca5c0aebcc48536712e8c3bf6b6adf2eaed6844"
+    },
+    "coordinatorVerified": {
+      "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-format-accept-coordinator-verified.json",
+      "bytes": 825,
+      "sha256": "4400ec5c2499d76b6d3ca302831768d92f30c4e1c4f7d0c731d8b72068a18dd3"
+    },
+    "unchangedGroups": "Nine original lightweight host/input regression groups reused; fourteen buffered tests per mode rerun because acquired registration and collection changed.",
+    "module": "Historical full module predates these imports and is not compatibility evidence."
+  },
+  "incidents": [
+    {
+      "name": "setup-parser",
+      "detail": "Duplicate donor core section rejected strict ConfigParser; corrected owned setup to strict=False.",
+      "receipt": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/setup.json",
+          "bytes": 1046,
+          "sha256": "cc63cb65980ac870190b0b0792fe0ae249c0c5ba44ddde1bb6ed85b4290eb65c"
+        },
+        "exit": 1,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 82538496,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/setup.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/setup.stderr",
+          "bytes": 712,
+          "sha256": "3e3fc7a9b9de74ebc50278d19119004328d2a2e16476a046625344e745f68a49"
+        }
+      }
+    },
+    {
+      "name": "predecessor-order",
+      "detail": "Initial shell improperly continued after setup failure; unsparsed checkout hit aggregate Git RSS cap, was killed/reaped; node admission then denied projected allocation. Aborted owned checkout cleaned, sparse config applied, corrected checkout passed unchanged limits. No identical denied operation retried.",
+      "checkout": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/checkout.json",
+          "bytes": 1236,
+          "sha256": "e42b3bedd6f163e2057676df36bb90acd846ee892e7948a875ea3656851aca8f"
+        },
+        "exit": -15,
+        "stopReason": "aggregate RSS limit",
+        "cleanupComplete": true,
+        "peakRSS": 269172736,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/checkout.stdout",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/checkout.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      },
+      "deniedAdmission": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/node-startup.admission.json",
+        "bytes": 2018,
+        "sha256": "9bbfa438796b1cc07c15b13be1ef3cf645856845b957a15ceb4590d6b12bd9f7"
+      },
+      "cleanup": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/cleanup-partial.json",
+          "bytes": 1068,
+          "sha256": "4dc1f0c55404fb031b24be2845b5f512722a0d775de1c4d5fd8ca9a9925427cb"
+        },
+        "exit": 0,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 64225280,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/cleanup-partial.stdout",
+          "bytes": 76,
+          "sha256": "717284af88e4c6f368c3f393fcf2959af0527a03ee78de78af91e90357b83675"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/cleanup-partial.stderr",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    },
+    {
+      "name": "repair-parenthesis",
+      "detail": "First repair had one excess closing parenthesis; focused fixture rejected it; balanced before successful tests.",
+      "receipt": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/repair-right.json",
+          "bytes": 1165,
+          "sha256": "457177227832e37839e0e594c04513489698ecda536d43d33f393f4a804543d5"
+        },
+        "exit": 1,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 99983360,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/repair-right.stdout",
+          "bytes": 478,
+          "sha256": "b180ac0d11fe48cd29bac6059d84b6b17dcfe87c3c0e3760b1fdee85db37efe1"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/repair-right.stderr",
+          "bytes": 1086,
+          "sha256": "37837f9a8f70533e9da8b7248c4c69183211818bf39cc45bbfa41dffe3e99c68"
+        }
+      }
+    },
+    {
+      "name": "custom-state-fixture",
+      "detail": "Matrix immediate-state branch initially reached a trap-only fixture dependency. Explicitly included the unchanged production custom-state form; corrected matrix passes.",
+      "receipt": {
+        "receipt": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/matrix-direct.json",
+          "bytes": 1143,
+          "sha256": "eee0d97e57eb884f23b11cf9c62c13784e95013fc41b27e5740e768addbe02ac"
+        },
+        "exit": 1,
+        "stopReason": null,
+        "cleanupComplete": true,
+        "peakRSS": 127266816,
+        "stdout": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/matrix-direct.stdout",
+          "bytes": 9256,
+          "sha256": "dd7dec98e89c81373cac8acc2872f1aec18b7c9aa713de6fc16f2ef074cccd6e"
+        },
+        "stderr": {
+          "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/matrix-direct.stderr",
+          "bytes": 3059,
+          "sha256": "1b45087392c67bf53f6516895d2bc3477857e01bf3cfc1ea41e49e3574dd78d0"
+        }
+      }
+    },
+    {
+      "name": "control-expectation",
+      "detail": "Control validator initially expected collection rejection, but swap control rejected earlier at wrong acquisition registration set; reused the original rejection after correcting validator. No control replay."
+    },
+    {
+      "name": "terminal-read-cap",
+      "detail": "Initial policy/reference reads used tool truncation above the requested 8192-byte per-operation terminal ceiling. Subsequent operation summaries are bounded; complete session remains charged and retained. Aggregate terminal output below 1MiB."
+    }
+  ],
+  "resources": {
+    "latestAdmission": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/git-whitespace.admission.json",
+      "bytes": 2017,
+      "sha256": "1ba9f4d9b89df81b52ce9388c53affa90ef1c0bef1c39e4f05ce6b1338bd63ff"
+    },
+    "latest": {
+      "at": 1793126339.0557137,
+      "ownAllocated": 42811392,
+      "launcherAllocated": 290816,
+      "sessionAndConservativeFullWAL": 30330880,
+      "externalFiles": [
+        {
+          "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T18-33-19-01a17ea3-63a4-7ae2-a75f-8d3bbefb19bb.jsonl",
+          "logical": 855266,
+          "allocated": 856064
+        },
+        {
+          "path": "/home/user/.codex/memories_1.sqlite-wal",
+          "logical": 0,
+          "allocated": 0
+        },
+        {
+          "path": "/home/user/.codex/logs_2.sqlite-wal",
+          "logical": 12244672,
+          "allocated": 12251136
+        },
+        {
+          "path": "/home/user/.codex/queue_1.sqlite-wal",
+          "logical": 4152992,
+          "allocated": 4157440
+        },
+        {
+          "path": "/home/user/.codex/goals_1.sqlite-wal",
+          "logical": 4280712,
+          "allocated": 4288512
+        },
+        {
+          "path": "/home/user/.codex/state_5.sqlite-wal",
+          "logical": 4606192,
+          "allocated": 4612096
+        },
+        {
+          "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+          "logical": 4161232,
+          "allocated": 4165632
+        }
+      ],
+      "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+      "clients": [
+        {
+          "pid": 462827,
+          "rss": 206995456
+        }
+      ],
+      "memAvailable": 3768881152,
+      "remainingClientGrowth": 128548864,
+      "sharedChild": 805306368,
+      "hostHeadroom": 805306368,
+      "requiredRemaining": 1739161600,
+      "allocation": 536870912,
+      "futureBreakdown": {
+        "sourceReportsGitSessionEvents": 100663296,
+        "controls": 25165824,
+        "publication": 16777216,
+        "reserve": 33554432,
+        "margin": 8388608
+      },
+      "projectedTask": 257982464,
+      "freeDisk": 5461086208,
+      "projectedDisk": 4588670976,
+      "diskFloor": 2982150144,
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "mountArgv": [],
+      "mountExecution": "no guest/mount invocation authorized",
+      "pass": true
+    },
+    "wrapper": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/run.py",
+      "bytes": 5603,
+      "sha256": "ccb81bc57ee60127255416e5f7ed462101d6b2d13982f2ebb9c8c7b38700d5a4"
+    },
+    "supervisor": {
+      "path": "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py",
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "startup": {
+      "receipt": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/node-startup-fixed.json",
+        "bytes": 1294,
+        "sha256": "0bfa17b1bbf991d33909dae4d895479e85a1a5d27ab67dd5bc1b42a4858259d4"
+      },
+      "exit": 0,
+      "stopReason": null,
+      "cleanupComplete": true,
+      "peakRSS": 88342528,
+      "stdout": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/node-startup-fixed.stdout",
+        "bytes": 1638,
+        "sha256": "e814799cb1729494d17fe15d07c30757c85187bf347d599dbc74e6c1abcd3746"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/node-startup-fixed.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "startupOutput": {
+      "path": "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/node-startup-fixed.stdout",
+      "bytes": 1638,
+      "sha256": "e814799cb1729494d17fe15d07c30757c85187bf347d599dbc74e6c1abcd3746"
+    },
+    "limits": "Git child only DATA512MiB/RSS256MiB; Python RSS128MiB; Node DATA/AS unlimited, heap512MiB/RSS768MiB; trusted supervisor CPU90/wall120/file24MiB/output2MiB; one light execution slot; Git flock; no mounts"
+  },
+  "rootRefInitial": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/airstrike-directinput-modifier-selection-repair-oct27/root-ref-digest.json",
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "recovery": {
+    "commands": "python3 OWN_OPS/run.py NAME node OWN_REPO /usr/bin/node --max-old-space-size=512 TEST [--rpc]; run unchanged modifier oracle both with/without --right-only, custom-capacity oracle, modifier-selection matrix, buffered-keyboard regression; controls use immutable controls-source.json pins.",
+    "nextGate": "Coordinator-owned independent source acceptance of exact published repair; production full-module/import compatibility and actual OS Worker remain unqualified before any later authorized runtime.",
+    "runtime": "No original game, full-module build, browser, Boat, mount, allowance reset, main integration or workers. No box assigned/accessed; coordinator owns future lifecycle."
+  }
+}

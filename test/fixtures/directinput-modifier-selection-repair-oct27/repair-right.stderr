@@ -1,0 +1,23 @@
+node:assert:90
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: -1 == 0
+    at forms (/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-buffered-keyboard.js:17:9)
+    at Array.flatMap (<anonymous>)
+    at Object.<anonymous> (/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-buffered-keyboard.js:23:19)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Object.<anonymous> (/tmp/airstrike-directinput-modifier-selection-repair-oct27/repo/test/test-directinput-independent-modifier-format.js:63:7)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: -1,
+  expected: 0,
+  operator: '=='
+}
+
+Node.js v20.20.2

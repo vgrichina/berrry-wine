@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-directinput-modifier-selection-repair-oct27/ops/setup.py", line 16, in <module>
+    c=configparser.ConfigParser();c.read(donor/'.git/config');user=dict(c['user']);remote=c['remote "origin"']['url']
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/configparser.py", line 684, in read
+    self._read(fp, filename)
+  File "/usr/lib/python3.12/configparser.py", line 1049, in _read
+    raise DuplicateSectionError(sectname, fpname,
+configparser.DuplicateSectionError: While reading from PosixPath('/tmp/airstrike-directinput-format-independent-accept-oct27/repo/.git/config') [line 12]: section 'core' already exists

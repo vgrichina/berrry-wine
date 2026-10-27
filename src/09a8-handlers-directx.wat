@@ -10725,32 +10725,39 @@
       (then (return (i32.const 0))))
     (i32.load8_u (i32.add (global.get $DI_DIK_VK_TABLE) (local.get $dik))))
 
-  ;; The right-hand duplicates of keys that share one VK with their left-hand
-  ;; twin. Reporting both would deliver every Shift press twice.
-  (func $di_kbd_scan_skip (param $dik i32) (result i32)
-    (i32.or
-      (i32.or (i32.eq (local.get $dik) (i32.const 0x36))   ;; RSHIFT  -> VK_SHIFT
-              (i32.eq (local.get $dik) (i32.const 0x9C)))  ;; NUMPADENTER -> VK_RETURN
-      (i32.or (i32.eq (local.get $dik) (i32.const 0x9D))   ;; RCONTROL -> VK_CONTROL
-              (i32.eq (local.get $dik) (i32.const 0xB8))))) ;; RMENU -> VK_MENU
+  ;; Buffered host events carry VK, not physical-side/scan-code identity.
+  ;; Choose the lowest DIK in the acquired format for each shared VK. Thus a
+  ;; right-only format receives the shared modifier, while a format naming
+  ;; both sides receives one event at the left DIK's offset. Return/NumPadEnter
+  ;; follows the same alias rule. Never amplify one arrival into two records.
+  ;; Registration and collection use this same selection, including omissions.
+  (func $di_kbd_representative (param $entry i32) (param $vk i32) (result i32)
+    (local $dik i32)
+    (if (i32.eqz (local.get $vk)) (then (return (i32.const -1))))
+    (block $done (loop $keys
+      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))
+      (if (i32.and
+            (i32.eq (call $di_dik_to_vk_strict (local.get $dik)) (local.get $vk))
+            (i32.ge_s (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik))
+                      (i32.const 0)))
+        (then (return (local.get $dik))))
+      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
+      (br $keys)))
+    (i32.const -1))
 
   ;; An acquired format is immutable. Register exactly the objects collect
   ;; can report, before input is admitted to this device's bounded FIFO.
   ;; Keep the mapping here: the host must not duplicate the DIK/format rules.
   (func $di_kbd_buffer_format (param $entry i32)
-    (local $dik i32) (local $vk i32)
+    (local $vk i32)
+    (local.set $vk (i32.const 1))
     (block $done (loop $keys
-      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))
-      (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))
-      (if (i32.and (i32.ne (local.get $vk) (i32.const 0))
-                   (i32.eqz (call $di_kbd_scan_skip (local.get $dik))))
-        (then
-          (if (i32.ge_s
-                (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik))
-                (i32.const 0))
-            (then (drop (call $host_di_keyboard_buffer
-              (local.get $entry) (i32.const 9) (local.get $vk)))))))
-      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
+      (br_if $done (i32.ge_u (local.get $vk) (i32.const 256)))
+      (if (i32.ge_s (call $di_kbd_representative (local.get $entry) (local.get $vk))
+                    (i32.const 0))
+        (then (drop (call $host_di_keyboard_buffer
+          (local.get $entry) (i32.const 9) (local.get $vk)))))
+      (local.set $vk (i32.add (local.get $vk) (i32.const 1)))
       (br $keys))))
 
   ;; Live host state for one scan code, as 0 or 1.
@@ -10773,14 +10780,9 @@
       (br_if $done (i32.ge_u (local.get $index) (local.get $available)))
       (br_if $done (i32.ge_u (local.get $count) (local.get $max)))
       (local.set $event (call $host_di_keyboard_buffer (local.get $entry) (i32.const 3) (local.get $index)))
-      (local.set $dik (i32.const 0))
-      (block $mapped (loop $keys
-        (br_if $mapped (i32.ge_u (local.get $dik) (i32.const 256)))
-        (if (i32.and
-              (i32.eqz (call $di_kbd_scan_skip (local.get $dik)))
-              (i32.and (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0))
-                       (i32.eq (call $di_dik_to_vk_strict (local.get $dik))
-                               (i32.and (local.get $event) (i32.const 255)))))
+      (local.set $dik (call $di_kbd_representative (local.get $entry)
+        (i32.and (local.get $event) (i32.const 255))))
+        (if (i32.ge_s (local.get $dik) (i32.const 0))
           (then
             (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))
             (if (i32.ge_s (local.get $ofs) (i32.const 0))
@@ -10794,10 +10796,7 @@
                     (call $host_di_keyboard_buffer (local.get $entry) (i32.const 4) (local.get $index)))
                   (call $gs32 (i32.add (local.get $rec) (i32.const 12))
                     (call $host_di_keyboard_buffer (local.get $entry) (i32.const 5) (local.get $index)))))
-                (local.set $count (i32.add (local.get $count) (i32.const 1)))))
-            (br $mapped)))
-        (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
-        (br $keys)))
+                (local.set $count (i32.add (local.get $count) (i32.const 1)))))))
       (local.set $index (i32.add (local.get $index) (i32.const 1)))
       (br $events)))
     (if (local.get $commit) (then
