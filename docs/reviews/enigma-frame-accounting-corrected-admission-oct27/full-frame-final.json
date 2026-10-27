@@ -1,0 +1,178 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 103043072,
+  "sampledPeakRSS": 103043072,
+  "reapedPeakRSS": 30867456,
+  "cpuSeconds": 30.458372,
+  "wallSeconds": 8.2615197498817,
+  "owned": [
+    [
+      4189509,
+      "114807435"
+    ],
+    [
+      4189510,
+      "114807440"
+    ],
+    [
+      4189511,
+      "114807450"
+    ],
+    [
+      4189513,
+      "114807454"
+    ],
+    [
+      4189515,
+      "114807491"
+    ],
+    [
+      4189516,
+      "114807503"
+    ],
+    [
+      4189518,
+      "114807508"
+    ],
+    [
+      4189537,
+      "114807549"
+    ],
+    [
+      4189538,
+      "114807558"
+    ],
+    [
+      4189540,
+      "114807565"
+    ],
+    [
+      4189542,
+      "114807609"
+    ],
+    [
+      4189543,
+      "114807617"
+    ],
+    [
+      4189545,
+      "114807623"
+    ],
+    [
+      4189547,
+      "114807666"
+    ],
+    [
+      4189548,
+      "114807673"
+    ],
+    [
+      4189550,
+      "114807678"
+    ],
+    [
+      4189552,
+      "114807714"
+    ],
+    [
+      4189553,
+      "114807723"
+    ],
+    [
+      4189555,
+      "114807729"
+    ],
+    [
+      4189557,
+      "114807762"
+    ],
+    [
+      4189558,
+      "114807771"
+    ],
+    [
+      4189560,
+      "114807777"
+    ],
+    [
+      4189562,
+      "114807816"
+    ],
+    [
+      4189564,
+      "114807827"
+    ],
+    [
+      4189566,
+      "114807832"
+    ],
+    [
+      4189573,
+      "114807869"
+    ],
+    [
+      4189594,
+      "114807881"
+    ],
+    [
+      4189596,
+      "114807886"
+    ],
+    [
+      4189609,
+      "114807987"
+    ],
+    [
+      4189610,
+      "114807996"
+    ],
+    [
+      4189612,
+      "114808002"
+    ],
+    [
+      4189631,
+      "114808114"
+    ],
+    [
+      4189632,
+      "114808130"
+    ],
+    [
+      4189634,
+      "114808137"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/test-groups.py",
+    "test_full_frame_budget"
+  ],
+  "commandSHA256": "cba80306113fffd3d6faa80ec4c57d8ccafa09ab3e079e0d76ba3b6466889c42",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "ad1521441c68205b0d153cc73466a42a2ab0aea0e9b6bcf88c30ff0c8344b901",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/full-frame-final.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/full-frame-final.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

@@ -1,0 +1,40 @@
+{
+  "max_batches": 200000,
+  "checkpoint_batches": 1,
+  "after_action_batches": 1,
+  "cleanup_batches": 1,
+  "max_captures": 3,
+  "capture_bytes": 700000,
+  "width": 640,
+  "height": 480,
+  "checkpoint_seconds": 5,
+  "after_action_seconds": 1,
+  "review_seconds": 34.0,
+  "request_timeout": 0.15,
+  "cleanup_seconds": 0.5,
+  "decision_path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests-final/slot-4/decision.json",
+  "progress": {
+    "max_checkpoints": 2
+  },
+  "review_plan": {
+    "checkpoint_seconds": [
+      0.25,
+      33.75
+    ],
+    "progress_seconds": 45
+  },
+  "url": "http://127.0.0.1:33005/ctl",
+  "pid": 4189548,
+  "process_start_ticks": "114807673",
+  "started_at": 1793100867.4829302,
+  "deadline_at": 1793100977.4829302,
+  "supervisor_limits": {
+    "cpu": 20,
+    "wall": 120,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "terminal_path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests-final/slot-4/launch/terminal.json",
+  "evidence_dir": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests-final/slot-4/launch/controller"
+}

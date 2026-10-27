@@ -1,0 +1,49 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 19398656,
+  "sampledPeakRSS": 19398656,
+  "reapedPeakRSS": 11923456,
+  "cpuSeconds": 0.03576700000000001,
+  "wallSeconds": 0.059162582037970424,
+  "owned": [
+    [
+      4185793,
+      "114788840"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "prlimit",
+    "--data=536870912",
+    "--",
+    "git",
+    "init",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/repo"
+  ],
+  "commandSHA256": "bf04948044547ea771c2eb6eabd9579196298d07806f443c0e1dfca81e50f2b8",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "731f294655da0ffd3589ad149a59540ce77935506812ddd28c664b17b8a5f7f8",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/git-init.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/git-init.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

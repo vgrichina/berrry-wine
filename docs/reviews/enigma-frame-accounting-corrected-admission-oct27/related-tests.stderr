@@ -1,0 +1,9 @@
+test_original_measured_transport_exhausts_review_without_click (test_review_budget.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click) ... ok
+test_admitted_measured_transport_reviews_both_then_clicks_once (test_review_budget.ReviewBudgetTests.test_admitted_measured_transport_reviews_both_then_clicks_once) ... ok
+test_slow_first_frame_cannot_spend_later_review_reservation (test_review_budget.ReviewBudgetTests.test_slow_first_frame_cannot_spend_later_review_reservation) ... ok
+test_review_evidence_io_debits_the_same_slot_and_cumulative_guard (test_review_budget.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 9.461s
+
+OK

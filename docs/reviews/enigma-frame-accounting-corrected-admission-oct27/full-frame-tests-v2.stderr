@@ -1,0 +1,8 @@
+test_capture_read_and_persistence_cannot_steal_later_slot (test_full_frame_budget.FullFrameBudgetTests.test_capture_read_and_persistence_cannot_steal_later_slot) ... ok
+test_full_read_and_persistence_debit_cumulative_without_plan (test_full_frame_budget.FullFrameBudgetTests.test_full_read_and_persistence_debit_cumulative_without_plan) ... ok
+test_sufficient_slots_full_read_and_all_evidence_click_once (test_full_frame_budget.FullFrameBudgetTests.test_sufficient_slots_full_read_and_all_evidence_click_once) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 5.087s
+
+OK

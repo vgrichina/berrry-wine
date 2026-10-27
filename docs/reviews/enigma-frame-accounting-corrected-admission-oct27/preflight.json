@@ -1,0 +1,46 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 25427968,
+  "sampledPeakRSS": 25427968,
+  "reapedPeakRSS": 11816960,
+  "cpuSeconds": 0.057527,
+  "wallSeconds": 0.059710561065003276,
+  "owned": [
+    [
+      4184947,
+      "114784898"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "-c",
+    "import resource; print({str(k):resource.getrlimit(k) for k in (resource.RLIMIT_DATA,resource.RLIMIT_AS,resource.RLIMIT_FSIZE)})"
+  ],
+  "commandSHA256": "e526f63092ea48e52ee585e6e4870c13152cea1881da618a4716b17bf80a4ca1",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "b8ff261c0a58fbbdb253c256c123ea5c06782dcea964372c13b677b5d5ba5d03",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/preflight.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/preflight.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

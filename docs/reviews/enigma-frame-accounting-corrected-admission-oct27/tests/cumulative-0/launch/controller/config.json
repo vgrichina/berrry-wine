@@ -1,0 +1,33 @@
+{
+  "max_batches": 200000,
+  "checkpoint_batches": 1,
+  "after_action_batches": 1,
+  "cleanup_batches": 1,
+  "max_captures": 3,
+  "capture_bytes": 700000,
+  "width": 640,
+  "height": 480,
+  "checkpoint_seconds": 5,
+  "after_action_seconds": 1,
+  "review_seconds": 1.0,
+  "request_timeout": 0.15,
+  "cleanup_seconds": 0.5,
+  "decision_path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests/cumulative-0/decision.json",
+  "progress": {
+    "max_checkpoints": 2
+  },
+  "url": "http://127.0.0.1:38717/ctl",
+  "pid": 4187680,
+  "process_start_ticks": "114799156",
+  "started_at": 1793100782.311371,
+  "deadline_at": 1793100892.311371,
+  "supervisor_limits": {
+    "cpu": 20,
+    "wall": 120,
+    "physical": 100663296,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "terminal_path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests/cumulative-0/launch/terminal.json",
+  "evidence_dir": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests/cumulative-0/launch/controller"
+}

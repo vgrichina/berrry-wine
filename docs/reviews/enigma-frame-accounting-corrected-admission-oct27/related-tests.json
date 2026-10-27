@@ -1,0 +1,93 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 108658688,
+  "sampledPeakRSS": 108658688,
+  "reapedPeakRSS": 31387648,
+  "cpuSeconds": 32.003539,
+  "wallSeconds": 9.581645393976942,
+  "owned": [
+    [
+      4187751,
+      "114799531"
+    ],
+    [
+      4187752,
+      "114799538"
+    ],
+    [
+      4187753,
+      "114799545"
+    ],
+    [
+      4187755,
+      "114799549"
+    ],
+    [
+      4187799,
+      "114799847"
+    ],
+    [
+      4187805,
+      "114799854"
+    ],
+    [
+      4187822,
+      "114799859"
+    ],
+    [
+      4188248,
+      "114800368"
+    ],
+    [
+      4188252,
+      "114800382"
+    ],
+    [
+      4188255,
+      "114800394"
+    ],
+    [
+      4188266,
+      "114800468"
+    ],
+    [
+      4188269,
+      "114800478"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/test-groups.py",
+    "test_review_budget.ReviewBudgetTests.test_original_measured_transport_exhausts_review_without_click",
+    "test_review_budget.ReviewBudgetTests.test_admitted_measured_transport_reviews_both_then_clicks_once",
+    "test_review_budget.ReviewBudgetTests.test_slow_first_frame_cannot_spend_later_review_reservation",
+    "test_review_budget.ReviewBudgetTests.test_review_evidence_io_debits_the_same_slot_and_cumulative_guard"
+  ],
+  "commandSHA256": "46eedca16bc6a77929f3f6e0920a9543836bdc0030cf719ba94ba371c480585a",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "3bd3001528d5f4b36779464636a6bb0f0078b5b799c9ad6e9a0e4ea41af969aa",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/related-tests.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/related-tests.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

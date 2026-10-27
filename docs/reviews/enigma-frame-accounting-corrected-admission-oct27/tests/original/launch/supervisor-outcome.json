@@ -1,0 +1,47 @@
+{
+  "status": "LOADING_REVIEWED_RESERVE_STOP_NO_INPUT",
+  "failed": false,
+  "reason": "controller-delegation-closed-no-reconnect",
+  "peakTreeRSS": 62685184,
+  "cpuSeconds": 0.04,
+  "outputBytes": 0,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": -15,
+  "owned": [
+    [
+      4187753,
+      "114799545"
+    ],
+    [
+      4187755,
+      "114799549"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "not-started",
+      "exit": null,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log"
+    },
+    "command": {
+      "status": "exited",
+      "exit": -15,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/usr/bin/python3",
+        "/tmp/enigma-frame-accounting-corrected-admission-oct27/repo/test/fixtures/enigma-controller/child_server.py",
+        "--port",
+        "36359",
+        "--root",
+        "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests/original",
+        "--fault",
+        "loading-review"
+      ],
+      "pid": 4187753
+    }
+  }
+}

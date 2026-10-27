@@ -1,0 +1,57 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 80744448,
+  "sampledPeakRSS": 80744448,
+  "reapedPeakRSS": 30527488,
+  "cpuSeconds": 1.777689,
+  "wallSeconds": 0.8205376488622278,
+  "owned": [
+    [
+      4185390,
+      "114787620"
+    ],
+    [
+      4185421,
+      "114787627"
+    ],
+    [
+      4185467,
+      "114787635"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/repo/test/fixtures/enigma-controller/independent-transfer.py",
+    "--boundary",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/first-boundary",
+    "34",
+    "{\"checkpoint_seconds\":[0.25,33.75],\"progress_seconds\":45}"
+  ],
+  "commandSHA256": "c5dab60de6f8b6b8bd6bdf87cc6c66103fce119651d6536d7a006e6dddb09ec2",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "69c4a7532f6146ec722462878acce81d9913f79ac6d9760f62c5a653f6cb2063",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/first-boundary.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/first-boundary.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

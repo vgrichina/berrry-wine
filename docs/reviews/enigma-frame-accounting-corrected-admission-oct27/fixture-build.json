@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 31719424,
+  "sampledPeakRSS": 31719424,
+  "reapedPeakRSS": 12451840,
+  "cpuSeconds": 0.183103,
+  "wallSeconds": 0.12381656002253294,
+  "owned": [
+    [
+      4187239,
+      "114795866"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "python3",
+    "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/build-fixture.py"
+  ],
+  "commandSHA256": "a00aee8dd062ea27e98ddbafdcf19206eb82aa965378cb8020eb185371e402ed",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "environmentSHA256": "1a9ac968a4955f956e0e44687ab3a3aa8709732ce72890419d1ad30f6d662c91",
+  "stdout": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/fixture-build.stdout",
+  "stderr": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/fixture-build.stderr",
+  "mount": "N/A: no runtime/mount argv authorized"
+}

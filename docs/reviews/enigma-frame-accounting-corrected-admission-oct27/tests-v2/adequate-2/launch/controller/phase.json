@@ -1,0 +1,13 @@
+{
+  "phase": "AWAIT_IMAGE_REVIEW",
+  "frame": {
+    "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests-v2/adequate-2/launch/controller/menu-candidate-002.png",
+    "batch": 3,
+    "sha256": "1816ed1c827942591d6929f63062641267fab7aa6872fed289870251b8d9f616",
+    "bytes": 994
+  },
+  "checkpoint": 2,
+  "remainingCheckpoints": 0,
+  "reviewSecondsLeft": 33.30816173553467,
+  "decisions": "safeStartGame OR continueLoading; reviewed, frameSHA256 and batch required"
+}

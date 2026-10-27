@@ -1,0 +1,7 @@
+{"command": {"action": "snapshot"}, "pid": 4187680, "batch": 0}
+{"command": {"action": "step", "n": 1}, "pid": 4187680, "batch": 0}
+{"command": {"action": "snapshot"}, "pid": 4187680, "batch": 1}
+{"command": {"action": "step", "n": 1}, "pid": 4187680, "batch": 1}
+{"command": {"action": "snapshot"}, "pid": 4187680, "batch": 2}
+{"command": {"action": "png", "path": "/tmp/enigma-frame-accounting-corrected-admission-oct27/ops/tests/cumulative-0/launch/controller/menu-candidate.png"}, "pid": 4187680, "batch": 2}
+{"command": {"action": "quit"}, "pid": 4187680, "batch": 2}
