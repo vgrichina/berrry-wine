@@ -1,0 +1,9 @@
+{
+  "at": 1793112826.8778796,
+  "candidateDecision": "ACCEPT_SOURCE_TRANSACTION_BOUNDARY",
+  "qualification": "Read-only policy/source inspection output was displayed above the prescribed 8192-byte per-operation ceiling before bounded child execution. The receipt limits string describes intended display controls, not universal enforcement for those initial inspection calls.",
+  "affected": "Initial CLAUDE/coordinator-policy, producer manifest/source/history and wrapper inspection tool calls; retained in this task session JSONL. Exact displayed byte counts were not independently captured.",
+  "scope": "No test stdout/stderr was discarded or assertion weakened; supervised behavior, Node startup, resource admissions, distinct child output limits, cleanup and source identities remain valid. No denied access, runtime or source repair.",
+  "canonicalUnchanged": "d8e5b6c3fbea877df09b2042b329b944023a1684da664ebe2b3f5cbaf839046f",
+  "correction": "Subsequent inspection output bounded. Original session evidence and canonical receipt retained without rewriting."
+}
