@@ -1,0 +1,73 @@
+{
+  "status": "BLOCKED_BEFORE_GUEST",
+  "outcome": "first blocker",
+  "guestInvocations": 0,
+  "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "plannedRunnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+  "result": {
+    "status": "BLOCKED_LOCAL_PROJECTED_ALLOCATION_BEFORE_HELPER_TRANSFER",
+    "guestInvocations": 0,
+    "rawReturnedEAX": null,
+    "capsBytes": null,
+    "at": 1793112953.5069857,
+    "firstBlocker": "transfer-helpers.admission.json",
+    "projected": 339529728,
+    "allocation": 335544320,
+    "over": 3985408,
+    "measuredTaskFiles": 107466752,
+    "launcher": 307200,
+    "sessionAndFullWAL": 30429184,
+    "futureReserved": 201326592,
+    "hostRAMPassed": true,
+    "hostDiskPassed": true,
+    "interpretation": "Conservative remaining-growth projection rejected; this does not claim measured files exhausted320MiB. No guest or startup/preflight attempted. Do not substitute predecessor values.",
+    "sourceTransferGroups": 120,
+    "helperTransferAttempted": false,
+    "compiledRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "plannedRunnerRevision": "3370a4e72a72ef54ebcbcde5264b768a47e98590",
+    "gameplay": false,
+    "normalQuit": false,
+    "box": "bx_w99qrvz9",
+    "lifecycleOwner": "coordinator",
+    "expiry": "2026-10-27T15:47:01.657Z"
+  },
+  "handback": {
+    "at": 1793112967.5712864,
+    "ownedGuestProcesses": [],
+    "guestLaunched": false,
+    "sourceGroupsStaged": 120,
+    "stagedAllocated": 113393664,
+    "box": "bx_w99qrvz9",
+    "state": "RUNNING (supported exec succeeded)",
+    "expiry": "2026-10-27T15:47:01.657Z",
+    "expirySource": "assigned finiteTTL receipt, no lifecycle mutations",
+    "shutdownOwner": "coordinator",
+    "watcherUntouched": true,
+    "lifecycleMutations": 0
+  },
+  "archive": {
+    "path": "evidence.tar.gz",
+    "bytes": 1153932,
+    "sha256": "39c2df32745800dc49cc0745d857967345abf4697a582225c6c8ff1f4df6a9dc"
+  },
+  "indexSHA256": "8d9bb525f7b577bab2847bb601687143939fab31eff6fcc31b3356ca023aeb5f",
+  "reused": {
+    "sourcePlan": "/tmp/gta2-streamed-estimate-directdraw-trace-oct27/ops/transfer-plan.json",
+    "sourcePlanSHA256": "ebd63d570d93d5eab08c71edfee13be693d8041036a008fd4ef6bb5e832922d3",
+    "acceptedIntegration": "/tmp/gta2-accepted-raw-exit-main-integrate-oct27/ops/receipt-manifest.json",
+    "acceptedIntegrationSHA256": "228f4b3bad86f0e62425b8a8f36aadbdc169728a025e3394e762875543ee4483"
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/gta2-accepted-raw-return-causal-trace-oct27/root-ref-digest.json",
+  "publication": "External ops/publication-closeout.json binds commit and exact remote task ref after commit; no main mutation",
+  "limitations": [
+    "No actual raw EAX/HRESULT or new DDSCAPS input bytes observed",
+    "Base source archives extracted, actual staged-file hash/preflight validation not reached",
+    "No helper overlay transfer or Node startup or guest launch",
+    "No gameplay/fullscreen/input/normalQuit acceptance"
+  ],
+  "incidents": [
+    "Initial sparse Git wrapper used one light pool slot while holding Git flock; DATA applied to each Git child, aggregate128MiB stricter than256MiB; no concurrent owned Git",
+    "Handback first request failed Popen locally on embedded-null command before transmission; corrected to bytes([0]) and sent once; original stderr retained"
+  ],
+  "checks": "Archive hashes verified while streaming;120 extraction receipts; new guest/acceptance tests intentionally not run"
+}
