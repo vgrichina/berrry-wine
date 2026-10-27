@@ -1,0 +1,104 @@
+{
+  "candidate": "03b1c12fb6edd1ca88ff51658fea811f26c740ec",
+  "sourceTestPins": {
+    "test/ricochet-consumed-independent.test.py": {
+      "blob": "a578a633c5687bc2c023540ffaaeb530cc7abd12",
+      "bytes": 11757,
+      "sha256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551"
+    },
+    "test/ricochet-final-inventory-independent.test.py": {
+      "blob": "178b362950f527da6e74ac3d027e1427e20cfb59",
+      "bytes": 1363,
+      "sha256": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0"
+    },
+    "test/ricochet-final-reopen-version.test.py": {
+      "blob": "80dc02df98dcc44cefb6f3c5d93298251e43c9f8",
+      "bytes": 4633,
+      "sha256": "32affcf4bc03ba4dad476d923e58e02820f7f0cf39f6964da24e28ef6b456a04"
+    },
+    "test/ricochet-pinned-unlinked-version.test.py": {
+      "blob": "da2ce254d71cb91af94c4f56f16cbc40d100fba8",
+      "bytes": 5229,
+      "sha256": "4c58a3d483aa8349bd717af39e5e06a5d92f0a860707aef9abae0804c8e6a186"
+    },
+    "test/ricochet-runtime-accounting.test.py": {
+      "blob": "d980d91258a226fd2030494f99f558d286f03af8",
+      "bytes": 15622,
+      "sha256": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c"
+    },
+    "tools/ricochet/control-publisher.py": {
+      "blob": "830753c7340062ead17e01876afd24ee4158d1c9",
+      "bytes": 3970,
+      "sha256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654"
+    },
+    "tools/ricochet/production-commands.py": {
+      "blob": "10d22ad8d8c99cc63b7930c4eea18ca80953d152",
+      "bytes": 2730,
+      "sha256": "3aa4012ae350eed2d4120e86f358ab93e555d58506ef38656448c7fc1c0a7c5e"
+    },
+    "tools/ricochet/runtime-accounting.py": {
+      "blob": "ca424767a9b4449ee6b4ea48dc85ca5f563284e4",
+      "bytes": 14705,
+      "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4"
+    }
+  },
+  "donorManifestSHA256": "b18750774bd580af0a96234531a9a0c0a4f068263e6b4c593137a5446abb7520",
+  "source": "/tmp/ricochet-pinned-unlink-independent-accept-oct27/repo/tools/ricochet/runtime-accounting.py",
+  "originalScriptSHA256": "7662740500f056178a7b8c993c7d75bba9401535ae564ce73581b6c65710620f",
+  "adaptedScriptSHA256": "d3efea677471f39c7af23e7332d5bc80dd539f17c6fdd1bad3250db69013cab7",
+  "pathRetarget": "RICOCHET_ACCEPT_OPS owned env before import; TMPDIR owned fixtures",
+  "reuse": {
+    "finalWriter16": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.command.json": {
+          "bytes": 1152,
+          "sha256": "e764aa052da3866abe58744ff0d74495cf98f882ba28da16c291e4bf24382be6"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.result.json": {
+          "bytes": 785,
+          "sha256": "e7e4d4f933bc62e7ee6fc9762459cb3ec0a3c01e0338f57fd95542dcb3a0f0c0"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095470715695403.stderr": {
+          "bytes": 115,
+          "sha256": "86f4d6bcb0a5fce7c6fad3be1a66a077e94338826c194033651cd123f24dd8c8"
+        }
+      }
+    },
+    "finalProducerCommandsMetadataAndWiring": {
+      "reason": "unchanged writer/CLI implementation and fixtures",
+      "payloads": {
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.command.json": {
+          "bytes": 1232,
+          "sha256": "05967a20544163a625667c6cd20f725e41adedba2249d443ac4b85e1a7486e13"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.result.json": {
+          "bytes": 566,
+          "sha256": "8470e843bfb5e96c74cb4a727c78d23512c76921b2630db984177f4b841f411d"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stdout": {
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/ops/1793095613358309985.stderr": {
+          "bytes": 98,
+          "sha256": "8c48a33d2c359464395f74f0b2034ed8bf3608b2775d4035d227ae6fba0e0ce0"
+        }
+      }
+    },
+    "actualProductionCLI4": {
+      "reportCommit": "3bec7b92972e580c2cf35813cbfeb40c5d9cb29e",
+      "checkpoint": "/tmp/ricochet-final-writer-independent-accept-oct27/repo/docs/reviews/ricochet-final-writer-independent-accept-oct27/evidence/boundary-checkpoint.json",
+      "bytes": 2182,
+      "sha256": "4ab3c10290fb0143e418a7f81a4213a22cfbdcc0dc479f576b0bc445ceeb65a1",
+      "reason": "all four actual production writer CLI dispatch/prefix/payload/tail gates and original-writer negative controls unchanged; accounting helper not used by these intercepted writer prefixes"
+    }
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-pinned-unlink-independent-accept-oct27/root-ref-digest.json",
+  "mountValidation": "No mounts or runtime in source/Python-only task; not applicable",
+  "ssh": "Exact prescribed driver GIT_SSH_COMMAND before every child"
+}

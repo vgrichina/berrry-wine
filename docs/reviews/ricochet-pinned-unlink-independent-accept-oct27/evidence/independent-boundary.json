@@ -1,0 +1,769 @@
+{
+  "source": "/tmp/ricochet-pinned-unlink-independent-accept-oct27/repo/tools/ricochet/runtime-accounting.py",
+  "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4",
+  "controlReserve": 25165824,
+  "ceiling": 268435456,
+  "results": [
+    {
+      "case": "absent",
+      "expectedReject": false,
+      "passed": true,
+      "opens": 0,
+      "error": null,
+      "accepted": {
+        "bytes": 25169920,
+        "sizes": {}
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407075125933,
+        "ctime_ns": 1793099407075125933,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": []
+    },
+    {
+      "case": "unchanged",
+      "expectedReject": false,
+      "passed": true,
+      "opens": 2,
+      "error": null,
+      "accepted": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmp0_zotm6z/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407076125930,
+        "ctime_ns": 1793099407076125930,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407076125930,
+            "ctime_ns": 1793099407076125930,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407076125930,
+            "ctime_ns": 1793099407076125930,
+            "mode": 33204,
+            "nlink": 1
+          }
+        }
+      ]
+    },
+    {
+      "case": "unlink-before-second",
+      "expectedReject": false,
+      "passed": true,
+      "opens": 2,
+      "error": null,
+      "accepted": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmp_a0a9foj/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340762,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407077125927,
+        "ctime_ns": 1793099407077125927,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340762,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407077125927,
+            "ctime_ns": 1793099407077125927,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "unlink-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340762,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407077125927,
+            "ctime_ns": 1793099407077125927,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-open-failed",
+          "ordinal": 2,
+          "errno": 2
+        }
+      ]
+    },
+    {
+      "case": "unlink-after-second",
+      "expectedReject": false,
+      "passed": true,
+      "opens": 2,
+      "error": null,
+      "accepted": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpfc3iedfl/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407079125920,
+        "ctime_ns": 1793099407079125920,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407079125920,
+            "ctime_ns": 1793099407079125920,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407079125920,
+            "ctime_ns": 1793099407079125920,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "unlink-after-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407079125920,
+            "ctime_ns": 1793099407079125920,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        }
+      ]
+    },
+    {
+      "case": "consumed-before-final",
+      "expectedReject": false,
+      "passed": true,
+      "opens": 1,
+      "error": null,
+      "accepted": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpp2l7v667/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407081125913,
+        "ctime_ns": 1793099407081125913,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407081125913,
+            "ctime_ns": 1793099407081125913,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "legitimate-consumption-before-final-enumeration"
+        }
+      ]
+    },
+    {
+      "case": "grow-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpt_h47_ha/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407082125910,
+        "ctime_ns": 1793099407082125910,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407082125910,
+            "ctime_ns": 1793099407082125910,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "grow-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 33,
+            "blocks": 8,
+            "mtime_ns": 1793099407082125910,
+            "ctime_ns": 1793099407082125910,
+            "mode": 33204,
+            "nlink": 1
+          },
+          "namedExists": true
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 33,
+            "blocks": 8,
+            "mtime_ns": 1793099407082125910,
+            "ctime_ns": 1793099407082125910,
+            "mode": 33204,
+            "nlink": 1
+          }
+        }
+      ]
+    },
+    {
+      "case": "rewrite-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmps9ruyp0z/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407083125906,
+        "ctime_ns": 1793099407083125906,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407083125906,
+            "ctime_ns": 1793099407083125906,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "rewrite-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407084125906,
+            "ctime_ns": 1793099407083125906,
+            "mode": 33204,
+            "nlink": 1
+          },
+          "namedExists": true
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407084125906,
+            "ctime_ns": 1793099407083125906,
+            "mode": 33204,
+            "nlink": 1
+          }
+        }
+      ]
+    },
+    {
+      "case": "mode-after-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpsl7e5kil/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407084125903,
+        "ctime_ns": 1793099407084125903,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407084125903,
+            "ctime_ns": 1793099407084125903,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407084125903,
+            "ctime_ns": 1793099407084125903,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "mode-after-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407084125903,
+            "ctime_ns": 1793099407084125903,
+            "mode": 33152,
+            "nlink": 1
+          },
+          "namedExists": true
+        }
+      ]
+    },
+    {
+      "case": "hardlink-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "entry replaced/linked during open: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpd4xhyt0p/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407085125899,
+        "ctime_ns": 1793099407085125899,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407085125899,
+            "ctime_ns": 1793099407085125899,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "hardlink-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407085125899,
+            "ctime_ns": 1793099407085125899,
+            "mode": 33204,
+            "nlink": 2
+          },
+          "namedExists": true
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407085125899,
+            "ctime_ns": 1793099407085125899,
+            "mode": 33204,
+            "nlink": 2
+          }
+        }
+      ]
+    },
+    {
+      "case": "symlink-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "OSError",
+        "message": "[Errno 40] Too many levels of symbolic links: 'continue.json'"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407086125896,
+        "ctime_ns": 1793099407086125896,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407086125896,
+            "ctime_ns": 1793099407086125896,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "symlink-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407086125896,
+            "ctime_ns": 1793099407086125896,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-open-failed",
+          "ordinal": 2,
+          "errno": 40
+        }
+      ]
+    },
+    {
+      "case": "replace-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "entry replaced/linked during open: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpg99dutui/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407090125882,
+        "ctime_ns": 1793099407090125882,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407090125882,
+            "ctime_ns": 1793099407090125882,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "replace-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407090125882,
+            "ctime_ns": 1793099407090125882,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": true
+        },
+        {
+          "event": "real-open-return",
+          "ordinal": 2,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340764,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407090125882,
+            "ctime_ns": 1793099407090125882,
+            "mode": 33204,
+            "nlink": 1
+          }
+        }
+      ]
+    },
+    {
+      "case": "grow-unlink-before-second",
+      "expectedReject": true,
+      "passed": true,
+      "opens": 2,
+      "error": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmp7i1p7_65/continue.json"
+      },
+      "accepted": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "before": {
+        "dev": 64769,
+        "ino": 2340763,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099407093125872,
+        "ctime_ns": 1793099407093125872,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "real-open-return",
+          "ordinal": 1,
+          "observed": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099407093125872,
+            "ctime_ns": 1793099407093125872,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "boundary-action",
+          "case": "grow-unlink-before-second",
+          "pinnedInode": {
+            "dev": 64769,
+            "ino": 2340763,
+            "size": 33,
+            "blocks": 8,
+            "mtime_ns": 1793099407094125868,
+            "ctime_ns": 1793099407094125868,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-open-failed",
+          "ordinal": 2,
+          "errno": 2
+        }
+      ]
+    }
+  ],
+  "fixtures": "TemporaryDirectory cleanup on each case"
+}

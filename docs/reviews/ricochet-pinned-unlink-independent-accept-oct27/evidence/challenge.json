@@ -1,0 +1,320 @@
+{
+  "source": "/tmp/ricochet-pinned-unlink-independent-accept-oct27/repo/tools/ricochet/runtime-accounting.py",
+  "sourceSHA256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4",
+  "results": [
+    {
+      "case": "unchanged-unlink",
+      "expectedReject": false,
+      "passed": true,
+      "before": {
+        "ino": 1185544,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099428676051592,
+        "ctime_ns": 1793099428676051592,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "before-unlink",
+          "actualContent": "{}",
+          "version": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428676051592,
+            "ctime_ns": 1793099428676051592,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "after-unlink",
+          "pinned": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428676051592,
+            "ctime_ns": 1793099428677051589,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-os-open-ENOENT",
+          "errno": 2,
+          "ordinal": 2
+        }
+      ],
+      "opens": 2,
+      "actualError": null,
+      "actualResult": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpz61elxsk/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "fdsBefore": 4,
+      "fdsAfter": 4,
+      "cleanupComplete": true
+    },
+    {
+      "case": "grow-unlink",
+      "expectedReject": true,
+      "passed": true,
+      "before": {
+        "ino": 1185544,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099428679051582,
+        "ctime_ns": 1793099428679051582,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "before-unlink",
+          "actualContent": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "version": {
+            "ino": 1185544,
+            "size": 33,
+            "blocks": 8,
+            "mtime_ns": 1793099428680051579,
+            "ctime_ns": 1793099428680051579,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "after-unlink",
+          "pinned": {
+            "ino": 1185544,
+            "size": 33,
+            "blocks": 8,
+            "mtime_ns": 1793099428680051579,
+            "ctime_ns": 1793099428680051579,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-os-open-ENOENT",
+          "errno": 2,
+          "ordinal": 2
+        }
+      ],
+      "opens": 2,
+      "actualError": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpk1xqy6hr/continue.json"
+      },
+      "actualResult": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "fdsBefore": 4,
+      "fdsAfter": 4,
+      "cleanupComplete": true
+    },
+    {
+      "case": "shrink-unlink",
+      "expectedReject": true,
+      "passed": true,
+      "before": {
+        "ino": 1185544,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099428683051568,
+        "ctime_ns": 1793099428683051568,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "before-unlink",
+          "actualContent": "x",
+          "version": {
+            "ino": 1185544,
+            "size": 1,
+            "blocks": 8,
+            "mtime_ns": 1793099428685051561,
+            "ctime_ns": 1793099428685051561,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "after-unlink",
+          "pinned": {
+            "ino": 1185544,
+            "size": 1,
+            "blocks": 8,
+            "mtime_ns": 1793099428685051561,
+            "ctime_ns": 1793099428686051558,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-os-open-ENOENT",
+          "errno": 2,
+          "ordinal": 2
+        }
+      ],
+      "opens": 2,
+      "actualError": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpfdcubzer/continue.json"
+      },
+      "actualResult": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "fdsBefore": 4,
+      "fdsAfter": 4,
+      "cleanupComplete": true
+    },
+    {
+      "case": "same-size-rewrite-unlink",
+      "expectedReject": true,
+      "passed": true,
+      "before": {
+        "ino": 1185544,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099428686051558,
+        "ctime_ns": 1793099428686051558,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "before-unlink",
+          "actualContent": "[]",
+          "version": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428687051554,
+            "ctime_ns": 1793099428687051554,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "after-unlink",
+          "pinned": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428687051554,
+            "ctime_ns": 1793099428687051554,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-os-open-ENOENT",
+          "errno": 2,
+          "ordinal": 2
+        }
+      ],
+      "opens": 2,
+      "actualError": {
+        "type": "AccountingError",
+        "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmp2mtpz1rk/continue.json"
+      },
+      "actualResult": null,
+      "receipt": {
+        "samples": 0,
+        "failures": 1,
+        "peakBytes": 25169920,
+        "lastBytes": null
+      },
+      "fdsBefore": 4,
+      "fdsAfter": 4,
+      "cleanupComplete": true
+    },
+    {
+      "case": "same-size-restored-mtime-unlink",
+      "expectedReject": true,
+      "passed": false,
+      "before": {
+        "ino": 1185544,
+        "size": 2,
+        "blocks": 8,
+        "mtime_ns": 1793099428689051547,
+        "ctime_ns": 1793099428689051547,
+        "mode": 33204,
+        "nlink": 1
+      },
+      "events": [
+        {
+          "event": "before-unlink",
+          "actualContent": "[]",
+          "version": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428689051547,
+            "ctime_ns": 1793099428689051547,
+            "mode": 33204,
+            "nlink": 1
+          }
+        },
+        {
+          "event": "after-unlink",
+          "pinned": {
+            "ino": 1185544,
+            "size": 2,
+            "blocks": 8,
+            "mtime_ns": 1793099428689051547,
+            "ctime_ns": 1793099428689051547,
+            "mode": 33204,
+            "nlink": 0
+          },
+          "namedExists": false
+        },
+        {
+          "event": "real-os-open-ENOENT",
+          "errno": 2,
+          "ordinal": 2
+        }
+      ],
+      "opens": 2,
+      "actualError": null,
+      "actualResult": {
+        "bytes": 25169920,
+        "sizes": {
+          "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpe0_18cb1/continue.json": 2
+        }
+      },
+      "receipt": {
+        "samples": 1,
+        "failures": 0,
+        "peakBytes": 25169920,
+        "lastBytes": 25169920
+      },
+      "fdsBefore": 4,
+      "fdsAfter": 4,
+      "cleanupComplete": true
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "at": 1793099570.6543632,
+  "candidate": "03b1c12fb6edd1ca88ff51658fea811f26c740ec",
+  "source": {
+    "bytes": 14705,
+    "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4"
+  },
+  "originalReproducer": {
+    "bytes": 4002,
+    "sha256": "7662740500f056178a7b8c993c7d75bba9401535ae564ce73581b6c65710620f"
+  },
+  "adaptedReproducer": {
+    "bytes": 4002,
+    "sha256": "d3efea677471f39c7af23e7332d5bc80dd539f17c6fdd1bad3250db69013cab7"
+  },
+  "status": "REJECT",
+  "firstBoundary": "12 PASS",
+  "challenge": "4 controls PASS, restored-mtime rewrite+unlink REJECTS candidate",
+  "minimal": "independent deterministic ctime-changing content rewrite accepted; expected test exit1",
+  "remaining": "Stop acceptance at first defect; no remaining broad tests run; integration/runtime blocked"
+}

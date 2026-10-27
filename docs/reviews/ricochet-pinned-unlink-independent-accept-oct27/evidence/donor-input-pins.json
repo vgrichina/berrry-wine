@@ -1,0 +1,67 @@
+{
+  "donorCommit": "ee9f80d87a36256ed1d5d3e37635ff4d5d09e570",
+  "sourceTestPins": {
+    "test/ricochet-final-reopen-version.test.py": {
+      "bytes": 4633,
+      "sha256": "32affcf4bc03ba4dad476d923e58e02820f7f0cf39f6964da24e28ef6b456a04"
+    },
+    "test/ricochet-consumed-independent.test.py": {
+      "bytes": 11757,
+      "sha256": "d8fceb1cbf2d08eb7550998aa52d4eff245d0c684c82dff14376ad956c631551"
+    },
+    "test/ricochet-runtime-accounting.test.py": {
+      "bytes": 15622,
+      "sha256": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c"
+    },
+    "test/ricochet-final-inventory-independent.test.py": {
+      "bytes": 1363,
+      "sha256": "59038f347a34657a74a16cd30f3e8ffa0686b2edf24a959fe2818f47e03222c0"
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/producer-manifest.json": {
+      "bytes": 1607,
+      "sha256": "d2e28e40862c71ff54f47d9edb5676ee77a26311cdf37dc5c72f1000e866faef"
+    },
+    "docs/reviews/ricochet-final-inventory-writer-contract-repair-oct27/integrate.py": {
+      "bytes": 3003,
+      "sha256": "8b5bc22fb520480403c479dbc094dc91e99af04d0ad4472a6740568404711ba9"
+    },
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": {
+      "bytes": 2997,
+      "sha256": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b"
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": {
+      "bytes": 1974,
+      "sha256": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63"
+    },
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "tools/ricochet/control-publisher.py": {
+      "bytes": 3970,
+      "sha256": "cef04f96b7d8ecc15ad9e8a466f4c3e00c731ad19e7a1f664b2e1ca4f6120654"
+    },
+    "tools/ricochet/runtime-accounting.py": {
+      "bytes": 13814,
+      "sha256": "6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732"
+    },
+    "tools/ricochet/production-commands.py": {
+      "bytes": 2730,
+      "sha256": "3aa4012ae350eed2d4120e86f358ab93e555d58506ef38656448c7fc1c0a7c5e"
+    }
+  },
+  "predecessorManifest": {
+    "bytes": 48423,
+    "sha256": "c15745359e8e05256ed211c63e4ed6a776d3b90df5697e07da2160b49751c9b3"
+  },
+  "rejectionManifest": {
+    "bytes": 9443,
+    "sha256": "659cdfb42d35c61103c3f877ab198394e41de7c0bcdeb1e4689d8c4bfa375b61"
+  },
+  "reproducer": {
+    "bytes": 4002,
+    "sha256": "7662740500f056178a7b8c993c7d75bba9401535ae564ce73581b6c65710620f"
+  },
+  "ssh": "Strict launcher SSH set before every supervised command",
+  "mountValidation": "Not applicable: source/Python only, no mounts"
+}

@@ -1,0 +1,55 @@
+{
+  "at": 1793099570.5424097,
+  "session": "01a17d0c-35fd-7a60-8a3a-28e8929c8579",
+  "parts": {
+    "ownedRepoOps": 577536,
+    "externalLaunchEvents": 266240,
+    "session": 720896,
+    "fullCurrentWAL": 4612096
+  },
+  "walAccounting": "Unknown baseline; full WAL charged once",
+  "clients": [
+    {
+      "pid": 4114088,
+      "rss": 105689088,
+      "prospective": 229855232
+    },
+    {
+      "pid": 4159952,
+      "rss": 185253888,
+      "prospective": 150290432
+    },
+    {
+      "pid": 4164193,
+      "rss": 219062272,
+      "prospective": 116482048
+    },
+    {
+      "pid": 4164380,
+      "rss": 222449664,
+      "prospective": 113094656
+    },
+    {
+      "pid": 4164551,
+      "rss": 218566656,
+      "prospective": 116977664
+    }
+  ],
+  "MemAvailable": 3482140672,
+  "requiredRAM": 1800441856,
+  "sharedPool": 268435456,
+  "headroom": 805306368,
+  "clientCeiling": 335544320,
+  "allocation": 134217728,
+  "localReserve": 8388608,
+  "controlReserve": 25165824,
+  "reportGitAndGrowth": 33554432,
+  "margin": 8388608,
+  "accounted": 81674240,
+  "projectedFree": 7195254784,
+  "diskFloor": 2982150144,
+  "sessionFiles": [
+    "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T11-08-34-01a17d0c-35fd-7a60-8a3a-28e8929c8579.jsonl"
+  ],
+  "passed": true
+}

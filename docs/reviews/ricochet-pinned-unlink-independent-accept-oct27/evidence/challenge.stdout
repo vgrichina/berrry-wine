@@ -1,0 +1,5 @@
+{"case": "unchanged-unlink", "passed": true, "error": null, "lastBytes": 25169920, "fdsClean": true}
+{"case": "grow-unlink", "passed": true, "error": {"type": "AccountingError", "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpk1xqy6hr/continue.json"}, "lastBytes": null, "fdsClean": true}
+{"case": "shrink-unlink", "passed": true, "error": {"type": "AccountingError", "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmpfdcubzer/continue.json"}, "lastBytes": null, "fdsClean": true}
+{"case": "same-size-rewrite-unlink", "passed": true, "error": {"type": "AccountingError", "message": "control version changed during scan: /tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/fixtures/tmp2mtpz1rk/continue.json"}, "lastBytes": null, "fdsClean": true}
+{"case": "same-size-restored-mtime-unlink", "passed": false, "error": null, "lastBytes": 25169920, "fdsClean": true}

@@ -1,0 +1,11 @@
+--- immutable-original
++++ candidate-source-pin-only
+@@ -1,7 +1,7 @@
+ import pathlib,os,json,hashlib,importlib.util,tempfile,stat
+ from unittest import mock
+ O=pathlib.Path(os.environ['RICOCHET_ACCEPT_OPS']);P=O.parent/'repo/tools/ricochet/runtime-accounting.py'
+-assert hashlib.sha256(P.read_bytes()).hexdigest()=='6f260e812cdfa6c1695a73cf11fd7f9516c690e7f4c111737276bd7b6359d732'
++assert hashlib.sha256(P.read_bytes()).hexdigest()=='eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4'
+ s=importlib.util.spec_from_file_location('actual_accounting',P);m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+ def version(s):return dict(dev=s.st_dev,ino=s.st_ino,size=s.st_size,blocks=s.st_blocks,mtime_ns=s.st_mtime_ns,ctime_ns=s.st_ctime_ns,mode=s.st_mode,nlink=s.st_nlink)
+ results=[]

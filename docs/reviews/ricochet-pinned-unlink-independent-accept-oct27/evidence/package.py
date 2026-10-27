@@ -1,0 +1,42 @@
+import pathlib,json,hashlib,shutil,ast,time
+O=pathlib.Path('/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops');R=O.parent/'repo';B=R/'docs/reviews/ricochet-pinned-unlink-independent-accept-oct27';B.mkdir(parents=True,exist_ok=True);E=B/'evidence';E.mkdir(exist_ok=True)
+def pin(p):b=p.read_bytes();return dict(bytes=len(b),sha256=hashlib.sha256(b).hexdigest())
+assert pin(O/'candidate-source.stdout')==dict(bytes=14705,sha256='eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4')
+first=json.loads((O/'independent-boundary.json').read_text());assert len(first['results'])==12 and all(r['passed'] for r in first['results'])
+c=json.loads((O/'challenge.json').read_text());assert len(c['results'])==5 and all(r['passed'] for r in c['results'][:4]) and not c['results'][-1]['passed']
+r=json.loads((O/'minimal-reproducer.json').read_text());assert r['actualError'] is None and r['receipt']['lastBytes']==25169920 and r['actualInventory'] is not None and r['fdsBefore']==r['fdsAfter']==4
+assert r['events'][0]['version']['ctime']!=r['initial']['ctime'] and r['events'][0]['version']['mtime']==r['initial']['mtime'];assert r['events'][-1]['errno']==2
+for f in O.glob('*.py'):ast.parse(f.read_text(),filename=str(f))
+for f in O.glob('*.result.json'):
+ rr=json.loads(f.read_text());assert rr['stopReason'] is None and rr['cleanupComplete'];assert rr['exit']==(1 if f.name in ('challenge.result.json','minimal-reproducer.result.json') else 0)
+assert not list((O/'fixtures').iterdir())
+checkpoint=dict(at=time.time(),candidate='03b1c12fb6edd1ca88ff51658fea811f26c740ec',source=pin(O/'candidate-source.stdout'),originalReproducer=pin(O/'original-independent-boundary.py'),adaptedReproducer=pin(O/'independent-boundary.py'),status='REJECT',firstBoundary='12 PASS',challenge='4 controls PASS, restored-mtime rewrite+unlink REJECTS candidate',minimal='independent deterministic ctime-changing content rewrite accepted; expected test exit1',remaining='Stop acceptance at first defect; no remaining broad tests run; integration/runtime blocked')
+tmp=O/'checkpoint.tmp';tmp.write_text(json.dumps(checkpoint,indent=2));tmp.replace(O/'acceptance-checkpoint.json')
+report='''# Ricochet pinned-unlinked-version independent acceptance: REJECT
+
+Candidate `03b1c12fb6edd1ca88ff51658fea811f26c740ec` on `refs/heads/task/ricochet-pinned-unlinked-version-repair-oct27` fails the pinned-inode content-version boundary. The actual 14,705-byte production source is SHA256 `eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4`; Git candidate blob bytes equal the tested source.
+
+The unchanged original first-boundary script (SHA256 `7662740500f056178a7b8c993c7d75bba9401535ae564ce73581b6c65710620f`) was preserved and adapted only by changing the source hash. RICOCHET_ACCEPT_OPS/TMPDIR select owned source/output/fixtures before import. All 12 cases passed, including grow 2->33 then unlink before the second genuine os.open and five legitimate unchanged/absent/consumption cases. Targeted11/reopen8 and the four production writer CLI gates are reused unchanged from the canonical donor manifest, not rerun.
+
+Independent challenges passed unchanged unlink, grow+unlink, shrink+unlink and ordinary same-size rewrite+unlink controls. The fifth case rejects the candidate: write `{}` initially, allow its first production open, rewrite the same pinned inode to `[]`, restore the original mtime with os.utime, and unlink before the second genuine os.open. That real open returns ENOENT. Production sample incorrectly returns bytes=25169920 and sizes[continue.json]=2, with receipt samples=1/failures=0/lastBytes=25169920. Expected AccountingError, no returned inventory and lastBytes=null.
+
+`evidence/minimal-reproducer.py` is the smaller exact reproducer. Its 20ms separation ensures visibly different ctime before and after unlink, while size/allocation/mode/mtime stay equal. It reproduces the same false acceptance. Only os.open is wrapped to schedule actual filesystem writes/unlink and then calls the original os.open; RuntimeAccounting.sample and all accounting methods are unmodified actual candidate code. No mocks bypass accounting. Both test exit1 receipts are expected rejecting evidence, with distinct original stdout/stderr retained.
+
+Source review: sample's final control-FD check accepts the 1->0 link transition by comparing version slices that omit ctime. _file's consumption branch also ignores ctime across that transition. Retaining an FD protects identity/recycling, but this metadata comparison does not establish unchanged content when mtime is restored. The sample finally closes each retained duplicate, _file closes its opened FD, and root/fresh/verification/directory FDs have finally blocks. All five challenges and the minimal reproducer return from four FDs to four; supervised descendants are cleaned and temporary fixtures are empty. Legitimate unlink is independently accepted; no blanket rejection is proposed.
+
+Acceptance stopped on this defect. Rename/link/hardlink late-swap/nonregular/symlink/overlimit/final-vs-ephemeral groups beyond retained unchanged receipts were not newly completed. No semantic repair or source publication. This report-only sparse orphan branch must never be merged as a whole tree.
+
+Current-main integration is forbidden here: main ownership is unassigned, the root accounting path is absent, and complete current-main producer/dependency closure is not coordinator-verified. Coordinator must resolve the defect, obtain independent acceptance, verify current-main source/test/dependency integration closure and ownership, then perform conditional scoped integration. Production startup, gameplay and ordinary Quit remain unqualified. No Node/native/guest/build/API/Boat operations or public deployment occurred. No box was assigned/touched; lifecycle belongs to coordinator.
+
+Resource receipts cover task allocation128MiB, local reserve8MiB, control reserve24MiB, report/Git/growth32MiB and margin8MiB; launch events, session and full current WAL are counted once. Pool1 Python uses the exact pinned trusted supervisor physical128MiB/CPU90/wall120/file24MiB/output2MiB. Pool2/flock Git uses physical256MiB and DATA512MiB only on Git subprocesses; parent Python/Codex limits are not changed. Strict prescribed Git SSH configuration is recorded in command receipts. No runtime mounts are applicable. Read-only immutable donor alternates; no fetch/full checkout/repack.
+
+Incidents: initial combined read-only tool display exceeded8192B and was truncated, and initial policy/bootstrap shell probes lacked distinct retained disk streams; original tool/session transcript remains, with no retrospective compliance claim. All task behavior, setup and Git commands thereafter have distinct supervised stdout/stderr from creation. The two intentional test failures are preserved. First admission used shell MemAvailable/free-space check followed by supervised complete allocation/session/events/WAL admission. Later operations refresh admission before children/publication. Root initial ref digest is reused; root/donor tracked/index/refs remain read only except append-only root messageboard.
+'''
+(B/'README.md').write_text(report)
+files={}
+for f in O.iterdir():
+ if f.is_file() and f.name!='candidate-source.stdout':
+  shutil.copyfile(f,E/f.name);files['evidence/'+f.name]=pin(E/f.name)
+files['README.md']=pin(B/'README.md')
+manifest=dict(status='REJECT',candidate=checkpoint['candidate'],reportOnly=True,source=checkpoint['source'],inputPins='evidence/input-pins.json',donorCanonicalManifest='evidence/donor-receipt-manifest.json',firstBoundary=checkpoint['firstBoundary'],counterexample='evidence/minimal-reproducer.json',reproducer='evidence/minimal-reproducer.py',expected=r['expected'],actual=r['actualInventory'],receipt=r['receipt'],reusedReceipts=json.loads((O/'input-pins.json').read_text())['reuse'],files=files,rootRefReceipt='/home/user/wine-assembly/scratch/usage-watch/ricochet-pinned-unlink-independent-accept-oct27/root-ref-digest.json',publication='Own report branch only; final exact remote receipt in canonical ops/receipt-manifest.json',remaining=checkpoint['remaining'],boxes=[],lifecycleOwner='coordinator')
+(B/'manifest.json').write_text(json.dumps(manifest,indent=2));(O/'report-pin.json').write_text(json.dumps(pin(B/'manifest.json'),indent=2));print(json.dumps(dict(status='REJECT',packagedFiles=len(files)+1,manifest=pin(B/'manifest.json'),fixtureCleanup=True)))

@@ -1,0 +1,12 @@
+{"case": "absent", "passed": true, "rejected": false, "opens": 0, "lastBytes": 25169920}
+{"case": "unchanged", "passed": true, "rejected": false, "opens": 2, "lastBytes": 25169920}
+{"case": "unlink-before-second", "passed": true, "rejected": false, "opens": 2, "lastBytes": 25169920}
+{"case": "unlink-after-second", "passed": true, "rejected": false, "opens": 2, "lastBytes": 25169920}
+{"case": "consumed-before-final", "passed": true, "rejected": false, "opens": 1, "lastBytes": 25169920}
+{"case": "grow-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "rewrite-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "mode-after-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "hardlink-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "symlink-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "replace-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}
+{"case": "grow-unlink-before-second", "passed": true, "rejected": true, "opens": 2, "lastBytes": null}

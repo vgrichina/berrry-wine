@@ -1,0 +1,43 @@
+{
+  "branch": "refs/heads/task/ricochet-pinned-unlink-independent-accept-oct27",
+  "strategy": "Isolated sparse orphan REPORT ONLY; never merge whole tree",
+  "alternates": [
+    {
+      "path": "/tmp/ricochet-pinned-unlinked-version-repair-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "8629c7db6c0fbe4b7a805d994a7611f1bd7164d2c93cb9e042a3b550a06c05e6"
+    },
+    {
+      "path": "/tmp/ricochet-final-reopen-version-repair-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "7c08316666095a5ae1458c7128019632a8a90a05f9d123633e3eadf21f76f0aa"
+    },
+    {
+      "path": "/tmp/ricochet-final-inventory-writer-contract-repair-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "877427100434679e0dca615039515bb17d5b11b714dfea5c02b3de17a5d2e988"
+    },
+    {
+      "path": "/tmp/ricochet-consumed-control-accounting-repair-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "29c91bf93e83bab2a54284c688929634a65b6b8ede9c73a8960376184cd2a7e6"
+    },
+    {
+      "path": "/tmp/ricochet-measured-cpu-round-gameplay-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "5820e932c060535073f7aebda582a6a282f34040b7971f21acb9bdd694aa7aac"
+    },
+    {
+      "path": "/tmp/ricochet-accepted-cleanup-merged-integration-oct26/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": null
+    },
+    {
+      "path": "/tmp/ricochet-consumed-accounting-independent-accept-oct27/repo/.git/objects",
+      "readOnly": true,
+      "alternatesSHA256": "d83df109cb74673ee6fd5ce8b3e9df84fb48cda905fb14ca4cdd1b3124197819"
+    }
+  ],
+  "configSHA256": "8a65ef3bd6acf0cb73d75ade77e6b0e2df6b3482260eb297bff408e44a0a0b3c",
+  "noCheckoutFetchRepack": true
+}

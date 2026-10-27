@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/minimal-reproducer.py", line 27, in <module>
+    (O/'minimal-reproducer.json').write_text(json.dumps(r,indent=2));print(json.dumps(r));assert error is not None and answer is None and a.receipt['lastBytes'] is None,'REJECT: changed pinned content accepted after genuine ENOENT'
+                                                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: REJECT: changed pinned content accepted after genuine ENOENT
