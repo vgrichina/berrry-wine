@@ -1,0 +1,69 @@
+{
+  "at": 1793091324.844229,
+  "ownMaterialized": 700416,
+  "sessionAllocated": 1032192,
+  "positiveWAL": 53248,
+  "used": 1785856,
+  "allocation": 100663296,
+  "peerRemaining": [
+    {
+      "task": "enigma-cleanup-startgame-oct27",
+      "actual": 6569984,
+      "remaining": 94093312
+    },
+    {
+      "task": "alien-cleanup-menu-mission-oct27",
+      "actual": 33996800,
+      "remaining": 66666496
+    },
+    {
+      "task": "ricochet-cleanup-round-play-oct27",
+      "actual": 46813184,
+      "remaining": 53850112
+    }
+  ],
+  "completedPenguinReservationReleased": true,
+  "coordinatorAndDrift": 16777216,
+  "future": 330264576,
+  "free": 7967625216,
+  "projectedFree": 7637360640,
+  "floor": 2982150144,
+  "memAvailable": 3457826816,
+  "requiredRemainingRAM": 1740734464,
+  "peers": [
+    {
+      "pid": 3965837,
+      "rss": 200040448,
+      "argvSHA256": "8e409169da437acf0f9ab43ac4e4ab001677e3ea77adbf2b80c8187801be5416"
+    },
+    {
+      "pid": 3965838,
+      "rss": 205115392,
+      "argvSHA256": "a6881a019d2e2fa94b7e901ef8df52b6d54f921536f290a9eb5085e498c1ded7"
+    },
+    {
+      "pid": 3965839,
+      "rss": 200364032,
+      "argvSHA256": "bf15c71915d190d6a51929cd90cd216610126592adab1e814abd80259405f2c7"
+    },
+    {
+      "pid": 3965845,
+      "rss": 204587008,
+      "argvSHA256": "d78cdc32ca68d2f094f2fc63737d8aaa61ab0dbad45e07d0c582b92125d42573"
+    },
+    {
+      "pid": 3967555,
+      "rss": 200622080,
+      "argvSHA256": "cc373c537c713e41cf0bb185c7791a7c0db6baf3ec2d0650d5737a68150a9ccf"
+    }
+  ],
+  "buckets": {
+    "sourceGit": 20971520,
+    "events": 16777216,
+    "ops": 20971520,
+    "reserve": 41943040
+  },
+  "sourceGit": 126976,
+  "ops": 176128,
+  "pass": true
+}

@@ -1,0 +1,39 @@
+{
+  "session": "5b7fe987bc504c8587e056b4d2439429",
+  "token": "a7f1e391a2e34bda941f585826825807",
+  "after": "airstrike-6",
+  "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-a7f1e391a2e34bda941f585826825807.png",
+  "sha256": "b1c02a37ab36e469340ad23e559022257d80ea8899c5634a15cb0feb90840022",
+  "snapshot": {
+    "batch": 12,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "quit": false,
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "title": "Airstrike FAKE",
+        "visible": true
+      }
+    ]
+  }
+}

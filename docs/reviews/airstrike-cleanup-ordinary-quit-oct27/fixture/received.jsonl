@@ -1,0 +1,37 @@
+{"id": "bridge-1", "action": "snapshot"}
+{"id": "bridge-2", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-106317dfdbb742aaa9a1ff1ed3bebba9.png"}
+{"id": "bridge-3", "action": "snapshot"}
+{"id": "bridge-4", "action": "snapshot"}
+{"id": "bridge-5", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-106317dfdbb742aaa9a1ff1ed3bebba9-fresh.png"}
+{"id": "bridge-6", "action": "snapshot"}
+{"id": "airstrike-1", "cmd": "keydown:27"}
+{"id": "bridge-7", "action": "snapshot"}
+{"id": "airstrike-2", "cmd": "keyup:27"}
+{"id": "bridge-8", "action": "snapshot"}
+{"id": "bridge-9", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-daa1b9fee8424cc9a0c8e5f3d4d52519.png"}
+{"id": "bridge-10", "action": "snapshot"}
+{"id": "bridge-11", "action": "snapshot"}
+{"id": "bridge-12", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-daa1b9fee8424cc9a0c8e5f3d4d52519-fresh.png"}
+{"id": "bridge-13", "action": "snapshot"}
+{"id": "airstrike-3", "cmd": "keydown:40"}
+{"id": "bridge-14", "action": "snapshot"}
+{"id": "airstrike-4", "cmd": "keyup:40"}
+{"id": "bridge-15", "action": "snapshot"}
+{"id": "bridge-16", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-4eeed6f637314734ace4b44942aa5268.png"}
+{"id": "bridge-17", "action": "snapshot"}
+{"id": "bridge-18", "action": "snapshot"}
+{"id": "bridge-19", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-4eeed6f637314734ace4b44942aa5268-fresh.png"}
+{"id": "bridge-20", "action": "snapshot"}
+{"id": "airstrike-5", "cmd": "keydown:40"}
+{"id": "bridge-21", "action": "snapshot"}
+{"id": "airstrike-6", "cmd": "keyup:40"}
+{"id": "bridge-22", "action": "snapshot"}
+{"id": "bridge-23", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-a7f1e391a2e34bda941f585826825807.png"}
+{"id": "bridge-24", "action": "snapshot"}
+{"id": "bridge-25", "action": "snapshot"}
+{"id": "bridge-26", "action": "png", "path": "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac/evidence/capture-a7f1e391a2e34bda941f585826825807-fresh.png"}
+{"id": "bridge-27", "action": "snapshot"}
+{"id": "airstrike-7", "cmd": "keydown:40"}
+{"id": "bridge-28", "action": "snapshot"}
+{"id": "airstrike-8", "cmd": "keyup:40"}
+{"id": "bridge-29", "action": "snapshot"}

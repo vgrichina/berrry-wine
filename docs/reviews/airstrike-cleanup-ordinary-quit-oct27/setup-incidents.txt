@@ -1,0 +1,6 @@
+Read-only discovery incidents before controlled execution:
+- Initially looked for launcher runtime.json; actual authoritative sibling is airstrike-cleanup-ordinary-quit-oct27.task.runtime.json. Read actual schedule; no runtime executed.
+- Discovery attempted underscore test filename; accepted fixture uses test-airstrike-observation-bridge.py. Corrected exact path before execution; source pins passed.
+- Read-only donor .git inspection reported that .git is a directory. No donor mutations.
+- Publication package was queued while Git init waited for both pool permits. Canceled exact owned pool PID3971957 before it acquired a slot or spawned package, to preserve operation dependency order. No package setup ran or files changed. Init continues under authorized shared pool; no bypass.
+- No API/SSH/runtime request issued, no guest attempt or access denial.

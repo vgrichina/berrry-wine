@@ -1,0 +1,17 @@
+{
+  "status": "refused",
+  "reason": "task eight-capture ceiling: ninth PNG refused before dispatch",
+  "elapsed": 0.8262364601250738,
+  "cleanup": {
+    "remaining": [],
+    "signals": [
+      "SIGTERM"
+    ],
+    "runnerExit": -15,
+    "complete": true
+  },
+  "controllerSHA256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+  "responseSeconds": 10,
+  "guestSeconds": 10,
+  "wallSeconds": 150
+}

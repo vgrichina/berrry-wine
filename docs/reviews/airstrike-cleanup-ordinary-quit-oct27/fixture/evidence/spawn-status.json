@@ -1,0 +1,12 @@
+{
+  "state": "started",
+  "pid": 3969685,
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/airstrike-complete-controller-main-integration-oct27/repo/test/test-airstrike-observation-bridge.py",
+    "--fake-runner",
+    "/tmp/airstrike-cleanup-ordinary-quit-oct27/ops/exact-production-eight-cap-ms1ho1ac",
+    "normal"
+  ]
+}
