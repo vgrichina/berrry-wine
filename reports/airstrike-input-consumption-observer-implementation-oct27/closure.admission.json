@@ -1,0 +1,72 @@
+{
+  "at": 1793108079.3717074,
+  "ownAllocated": 2871296,
+  "launcherAllocated": 229376,
+  "sessionAndConservativeFullWAL": 30179328,
+  "externalFiles": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T13-32-50-01a17d90-498f-7912-82e6-c2dec674a4c9.jsonl",
+      "logical": 618429,
+      "allocated": 618496
+    },
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "logical": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "logical": 12244672,
+      "allocated": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "logical": 4280712,
+      "allocated": 4288512
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "logical": 4606192,
+      "allocated": 4612096
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "logical": 4243632,
+      "allocated": 4251648
+    }
+  ],
+  "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+  "clients": [
+    {
+      "pid": 117959,
+      "rss": 115580928
+    },
+    {
+      "pid": 135699,
+      "rss": 194056192
+    },
+    {
+      "pid": 138959,
+      "rss": 198709248
+    }
+  ],
+  "memAvailable": 3382448128,
+  "remainingClientGrowth": 498286592,
+  "sharedChild": 805306368,
+  "hostHeadroom": 805306368,
+  "requiredRemaining": 2108899328,
+  "allocation": 268435456,
+  "projectedTask": 142331904,
+  "freeDisk": 6347857920,
+  "projectedDisk": 5542551552,
+  "diskFloor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountExecution": "no guest/mount invocation authorized",
+  "pass": true
+}

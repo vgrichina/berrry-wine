@@ -1,0 +1,19 @@
+{
+  "environmentSHA256": "0c55bc688179ad6e4ac1516287f8974bb89853dde93f068c68d887d48037ec57",
+  "allowlist": {
+    "PATH": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0fYr9Tx:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "NODE_OPTIONS": null,
+    "NODE_PATH": null,
+    "LANG": "en_US.UTF-8",
+    "TZ": null
+  },
+  "node": "/usr/local/bin/node",
+  "flags": [
+    "--max-old-space-size=512"
+  ],
+  "environmentQualification": "same caller environment used for all Node children; supervisor adds its changing PID only; Git SSH command fixed in child wrapper",
+  "startupReceipt": "node-startup.json",
+  "mountArgv": [],
+  "mountValidation": "not applicable: no mount or guest invocation in this source-only assignment",
+  "rootRefInitialReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-input-consumption-observer-implementation-oct27/root-ref-digest.json"
+}

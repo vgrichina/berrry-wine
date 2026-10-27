@@ -1,0 +1,91 @@
+ .../acceptance-checkpoint.json                     |   26 +
+ .../branch.admission.json                          |   72 +
+ .../branch.json                                    |   49 +
+ .../branch.stderr                                  |    0
+ .../branch.stdout                                  |    0
+ .../branch.supervisor-output                       |    0
+ .../clock-regression.admission.json                |   68 +
+ .../clock-regression.json                          |   44 +
+ .../clock-regression.stderr                        |    0
+ .../clock-regression.stdout                        |    6 +
+ .../clock-regression.supervisor-output             |    0
+ .../closure.admission.json                         |   72 +
+ .../closure.json                                   |   49 +
+ .../closure.stderr                                 |    0
+ .../closure.stdout                                 |    0
+ .../closure.supervisor-output                      |    0
+ .../dependencies.admission.json                    |   64 +
+ .../dependencies.json                              |   49 +
+ .../dependencies.stderr                            |    0
+ .../dependencies.stdout                            |    0
+ .../dependencies.supervisor-output                 |    0
+ .../diff.admission.json                            |   68 +
+ .../diff.json                                      |   48 +
+ .../diff.stderr                                    |    0
+ .../diff.stdout                                    |    0
+ .../diff.supervisor-output                         |    0
+ .../execution-configuration.json                   |   19 +
+ .../getters.admission.json                         |   72 +
+ .../getters.json                                   |   53 +
+ .../getters.stderr                                 |    0
+ .../getters.stdout                                 |    4 +
+ .../getters.supervisor-output                      |    0
+ .../init.admission.json                            |   72 +
+ .../init.json                                      |   44 +
+ .../init.stderr                                    |   10 +
+ .../init.stdout                                    |    1 +
+ .../init.supervisor-output                         |    0
+ .../node-startup.admission.json                    |   68 +
+ .../node-startup.json                              |   45 +
+ .../node-startup.stderr                            |    0
+ .../node-startup.stdout                            |    1 +
+ .../node-startup.supervisor-output                 |    0
+ .../paths.admission.json                           |   72 +
+ .../paths.json                                     |   52 +
+ .../paths.stderr                                   |    0
+ .../paths.stdout                                   | 2750 ++++++++++++++++++++
+ .../paths.supervisor-output                        |    0
+ .../pins.admission.json                            |   72 +
+ .../pins.json                                      |   46 +
+ .../pins.stderr                                    |    0
+ .../pins.stdout                                    |    2 +
+ .../pins.supervisor-output                         |    0
+ .../production-gap-fixture.js                      |   61 +
+ .../production-gap.admission.json                  |   68 +
+ .../production-gap.json                            |   45 +
+ .../production-gap.stderr                          |    0
+ .../production-gap.stdout                          |    1 +
+ .../production-gap.supervisor-output               |    0
+ .../production-state-passing-fixture.js            |  201 ++
+ ...roduction-state-syntax-corrected.admission.json |   68 +
+ .../production-state-syntax-corrected.json         |   44 +
+ .../production-state-syntax-corrected.stderr       |    0
+ .../production-state-syntax-corrected.stdout       |    3 +
+ ...uction-state-syntax-corrected.supervisor-output |    0
+ .../production-state.admission.json                |   68 +
+ .../production-state.json                          |   44 +
+ .../production-state.stderr                        |   15 +
+ .../production-state.stdout                        |    0
+ .../production-state.supervisor-output             |    0
+ .../receipt-manifest.json                          |  752 ++++++
+ .../remaining-boundaries.admission.json            |   72 +
+ .../remaining-boundaries.json                      |   45 +
+ .../remaining-boundaries.stderr                    |    0
+ .../remaining-boundaries.stdout                    |    1 +
+ .../remaining-boundaries.supervisor-output         |    0
+ .../review.admission.json                          |   72 +
+ .../review.json                                    |   48 +
+ .../review.stderr                                  |    0
+ .../review.stdout                                  |    3 +
+ .../review.supervisor-output                       |    0
+ .../run.py                                         |   60 +
+ .../sparse.admission.json                          |   72 +
+ .../sparse.json                                    |   49 +
+ .../sparse.stderr                                  |    0
+ .../sparse.stdout                                  |    0
+ .../sparse.supervisor-output                       |    0
+ test/fixtures/input-consumption-state/README.md    |   73 +
+ test/input-consumption-trace.js                    |  109 +-
+ test/run.js                                        |    4 +
+ test/test-input-consumption-state.js               |  250 ++
+ 90 files changed, 6217 insertions(+), 9 deletions(-)

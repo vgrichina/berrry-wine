@@ -7279,6 +7279,10 @@ async function main() {
       };
     }
     if (cmd.action === 'snapshot') return controlSnapshot();
+    if (cmd.action === 'input-state') return inputConsumptionTrace.frozenState(cmd,
+      { frozen: controlFrozen, credits: controlRunCredits, batch: tickState.batch | 0 },
+      () => ({ scheduledInput, inputEvent, crossThreadMsgs, inputQueue, renderer,
+        threadManager, exports: instance.exports }));
     if (cmd.action === 'trace-api') {
       if (!TRACE_API || !TRACE_API_PAUSED) throw new Error('trace-api needs --trace-api[=NAMES] --trace-api-paused');
       const on = cmd.on !== false;

@@ -1,0 +1,4 @@
+1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba:src/13-exports.wat:429:  (func (export "get_eip") (result i32) (global.get $eip))
+1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba:src/13-exports.wat:1892:  (func (export "get_yield_reason") (result i32) (global.get $yield_reason))
+1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba:src/13-exports.wat:1893:  (func (export "get_wait_handle") (result i32) (global.get $wait_handle))
+1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba:src/13-exports.wat:1896:  (func (export "get_wait_timeout") (result i32) (global.get $wait_timeout))

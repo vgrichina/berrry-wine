@@ -1,0 +1,26 @@
+{
+  "baseRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "source": {
+    "test/run.js": "f81747fefe987ff85bbe1e34d37d7ba86649e0930a788c401a534331f99208c4",
+    "test/input-consumption-trace.js": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe",
+    "test/test-input-consumption-state.js": "d203f45fa5bc41cf2873172aa6de4a013c78110ef2ba37a13c783da2c6393cee",
+    "test/test-input-consumption-clock-domain.js": "c779562ac22b47648f2dfe8a38c7639a647b4e8fa0dd441956d0d303e5cf4d52",
+    "lib/host-window.js": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d",
+    "lib/batch-clock.js": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+    "lib/guest-clock.js": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+    "lib/startup-clock.js": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+  },
+  "passingGroups": [
+    "production-gap",
+    "production-state-syntax-corrected",
+    "clock-regression",
+    "remaining-boundaries"
+  ],
+  "originalFailure": "production-state.stderr (test syntax error corrected before behavioral acceptance)",
+  "remaining": [
+    "independent acceptance",
+    "fresh coordinator-assigned runtime gate"
+  ],
+  "guestRuns": 0,
+  "compilerInvocations": 0
+}

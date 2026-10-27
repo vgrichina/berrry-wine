@@ -1,0 +1,837 @@
+{
+  "kind": "source-only input consumption observer implementation",
+  "status": "targeted acceptance passed; independent acceptance/runtime pending",
+  "baseRevision": "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+  "testedSource": {
+    "test/run.js": "f81747fefe987ff85bbe1e34d37d7ba86649e0930a788c401a534331f99208c4",
+    "test/input-consumption-trace.js": "c8c85b12cfb76825ed64d2bc7a4a0afaea453ac5f3d1ba68f3db181ab4b146fe",
+    "test/test-input-consumption-state.js": "d203f45fa5bc41cf2873172aa6de4a013c78110ef2ba37a13c783da2c6393cee",
+    "test/test-input-consumption-clock-domain.js": "c779562ac22b47648f2dfe8a38c7639a647b4e8fa0dd441956d0d303e5cf4d52",
+    "lib/host-window.js": "64a88ff88d204ad78a063137ba8b14c685f1fcb49fff02e91fe7b8c7637b717d",
+    "lib/batch-clock.js": "06d08aba14f550954f13d0efc9049394bb9c4ead8e9c4b44317365e218fa817a",
+    "lib/guest-clock.js": "f2866f172126e35e0ae17555c32d2fb08aaccd6092e8fa9fe12f0ea09a2afc91",
+    "lib/startup-clock.js": "6810d24149720e60ce6f70366eddf338532af78f6b63ac8eeb4c4c7adc79bcf7"
+  },
+  "pins": {
+    "test/run.js": "f52b03a096a9a614b681cdf0f912ce20ca19fcba",
+    "test/input-consumption-trace.js": "3152c3974fc2c0aa702b26ba2bfc521917ae281f"
+  },
+  "historicalRunner": {
+    "revision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+    "sha256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809"
+  },
+  "retainedCausalEvidence": {
+    "manifest": "/tmp/airstrike-space-startup-boundary-repair-oct27/ops/receipt-manifest.json",
+    "sha256": "9aca5b02421586e2572b3db4b7854400f1059c3cb7996ffb33fef9b832375531",
+    "coordinatorVerifiedPayloads": 51,
+    "replaySHA256": "f994c20a88ae44549bf355eddd2d1e69a16671c07025578581278db17177a573",
+    "report": "96e9d04041007471056509af14df270bc66a16eb"
+  },
+  "firstCheckpoint": "production-gap.json: pinned production control snapshot lacks queue/key/wait/counter observations",
+  "results": {
+    "production-gap": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 83435520,
+      "sampledPeakRSS": 83435520,
+      "reapedPeakRSS": 49086464,
+      "cpuSeconds": 0.19878,
+      "wallSeconds": 0.11609059711918235,
+      "owned": [
+        [
+          143161,
+          "115538499"
+        ],
+        [
+          143167,
+          "115538502"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "test/test-input-consumption-state.js",
+        "--gap"
+      ],
+      "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+      "limits": {
+        "rss": 805306368,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "gitDataOnly": false
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.stdout",
+        "bytes": 103,
+        "sha256": "403a43e45f4a484e94628edd7f1c9332323f3b0328fa6f7c50e81cd4dd82ebc9"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "production-state-syntax-corrected": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 87121920,
+      "sampledPeakRSS": 87121920,
+      "reapedPeakRSS": 53043200,
+      "cpuSeconds": 0.166848,
+      "wallSeconds": 0.0970377849880606,
+      "owned": [
+        [
+          145801,
+          "115553099"
+        ],
+        [
+          145802,
+          "115553101"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "test/test-input-consumption-state.js"
+      ],
+      "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+      "limits": {
+        "rss": 805306368,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "gitDataOnly": false
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stdout",
+        "bytes": 315,
+        "sha256": "99e680d1b05566a6a86416543b64be288eb4af28c4c5559fe06857ec9874c135"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "clock-regression": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 88727552,
+      "sampledPeakRSS": 88727552,
+      "reapedPeakRSS": 54910976,
+      "cpuSeconds": 0.153906,
+      "wallSeconds": 0.08281258679926395,
+      "owned": [
+        [
+          146138,
+          "115556514"
+        ],
+        [
+          146142,
+          "115556516"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "test/test-input-consumption-clock-domain.js"
+      ],
+      "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+      "limits": {
+        "rss": 805306368,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "gitDataOnly": false
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.stdout",
+        "bytes": 397,
+        "sha256": "013d4984831bfb935acec355b9babd3aeab62f3cd2d63b50709c73e0dd61d82c"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "remaining-boundaries": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 91430912,
+      "sampledPeakRSS": 91430912,
+      "reapedPeakRSS": 54730752,
+      "cpuSeconds": 0.256196,
+      "wallSeconds": 0.1039250809699297,
+      "owned": [
+        [
+          148142,
+          "115565364"
+        ],
+        [
+          148143,
+          "115565367"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/local/bin/node",
+        "--max-old-space-size=512",
+        "test/test-input-consumption-state.js",
+        "--remaining"
+      ],
+      "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+      "limits": {
+        "rss": 805306368,
+        "cpu": 90,
+        "wall": 120,
+        "file": 25165824,
+        "output": 2097152,
+        "gitDataOnly": false
+      },
+      "stdout": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stdout",
+        "bytes": 154,
+        "sha256": "07b57256f42dfbd71bd9b913fe962efa2602987242a3ebe55273bec843ca7e57"
+      },
+      "stderr": {
+        "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  },
+  "rejectedControls": [
+    "detached production input-state branch",
+    "guest clock probe",
+    "scheduled queue drain",
+    "raw-state clock label",
+    "remapped tick history",
+    "trace spending tick probe",
+    "detached host clock reader",
+    "missing last tick",
+    "malformed request/options",
+    "nonfrozen/nonzero credits"
+  ],
+  "originalDiagnostic": "production-state.stderr: extra closing brace in new test, corrected; original exit1 retained; no guard exhausted",
+  "publicationCheck": "full staged diff check flags three original git init stderr hint lines with trailing spaces; raw diagnostic bytes preserved. Source/test/README-only staged whitespace check passes; no source rejection.",
+  "method": "byte-exact production regions and actual helper/host routing, no guest initialization or module execution",
+  "disabledDefault": "legacy snapshots unchanged; request rejects without existing trace flag; disabled hooks emit no output or clock probes",
+  "preservation": "read-only donor objects; no emulator/WAT edit, compiler/build, download, guest/game/Boat call or ignored tree copy; retained compiled modules untouched",
+  "lifecycle": {
+    "box": null,
+    "operations": 0,
+    "owner": "coordinator; no assigned box"
+  },
+  "remaining": [
+    "independent exact-source acceptance",
+    "later coordinator-assigned diagnostic runtime with fresh admission; SDL consumption remains unknown",
+    "any main publication requires independent current-main reconciliation"
+  ],
+  "cleanup": "all completed supervised operations record cleanupComplete=true; only own messageboard watcher remains until closeout",
+  "resourceManifest": "per-operation *.admission.json: current own/source/Git + launcher + session/full WAL once +96MiB growth/publication +8MiB reserve within256MiB; remaining client growth only; shared child768MiB; host floor2982150144",
+  "payloads": [
+    {
+      "path": "acceptance-checkpoint.json",
+      "sha256": "c6261866e49bda431631c538f150d1f32a7690853a991c7c37f2f990a9bf9c2d",
+      "bytes": 1277,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/acceptance-checkpoint.json"
+    },
+    {
+      "path": "branch.admission.json",
+      "sha256": "f04dce731e902905871e0174fc59cf6cc69d4d679dc3a3bfb14af67a5266bd7d",
+      "bytes": 1949,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/branch.admission.json"
+    },
+    {
+      "path": "branch.json",
+      "sha256": "67a908e2cf60f3d48a84b0dd70816f9e5a3f2af5f63c57d5717911671edb32f4",
+      "bytes": 1186,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/branch.json"
+    },
+    {
+      "path": "branch.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/branch.stderr"
+    },
+    {
+      "path": "branch.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/branch.stdout"
+    },
+    {
+      "path": "branch.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/branch.supervisor-output"
+    },
+    {
+      "path": "clock-regression.admission.json",
+      "sha256": "824508075b936abae52b41d22b33ec54ea0216b5507c6f11399f0ba5c77273f3",
+      "bytes": 1895,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.admission.json"
+    },
+    {
+      "path": "clock-regression.json",
+      "sha256": "1782306b787f6525893f59e90d9a1b3839dfb1b7336a2739583f10dad71e335f",
+      "bytes": 1116,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.json"
+    },
+    {
+      "path": "clock-regression.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.stderr"
+    },
+    {
+      "path": "clock-regression.stdout",
+      "sha256": "013d4984831bfb935acec355b9babd3aeab62f3cd2d63b50709c73e0dd61d82c",
+      "bytes": 397,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.stdout"
+    },
+    {
+      "path": "clock-regression.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/clock-regression.supervisor-output"
+    },
+    {
+      "path": "closure.admission.json",
+      "sha256": "300cbaaeec20bfd6970375663c575d18f010ce0947a238b114aa2385bf890ea4",
+      "bytes": 1952,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/closure.admission.json"
+    },
+    {
+      "path": "closure.json",
+      "sha256": "f1485dc7571973e127bf0c6477fd9d3ce36d2ae2d9d55a6d92e9619a8d87da2b",
+      "bytes": 1092,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/closure.json"
+    },
+    {
+      "path": "closure.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/closure.stderr"
+    },
+    {
+      "path": "closure.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/closure.stdout"
+    },
+    {
+      "path": "closure.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/closure.supervisor-output"
+    },
+    {
+      "path": "dependencies.admission.json",
+      "sha256": "2d5bc2a7535628d518507395b667161ba5b33930e3916ad64316e79832522dc4",
+      "bytes": 1838,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/dependencies.admission.json"
+    },
+    {
+      "path": "dependencies.json",
+      "sha256": "10c21952254204819ae3c4637218a693c0c9e268d3447477580ac123ded9d571",
+      "bytes": 1091,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/dependencies.json"
+    },
+    {
+      "path": "dependencies.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/dependencies.stderr"
+    },
+    {
+      "path": "dependencies.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/dependencies.stdout"
+    },
+    {
+      "path": "dependencies.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/dependencies.supervisor-output"
+    },
+    {
+      "path": "diff.admission.json",
+      "sha256": "534578eb0e6032807b07fdb7fcae19d1b202def497eef9cb28759670e7bb8df0",
+      "bytes": 1895,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/diff.admission.json"
+    },
+    {
+      "path": "diff.json",
+      "sha256": "e7c2f7449c43a1ae657801764c18317978654398709280267647eb4713bf3936",
+      "bytes": 1062,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/diff.json"
+    },
+    {
+      "path": "diff.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/diff.stderr"
+    },
+    {
+      "path": "diff.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/diff.stdout"
+    },
+    {
+      "path": "diff.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/diff.supervisor-output"
+    },
+    {
+      "path": "execution-configuration.json",
+      "sha256": "362e129cbca996e616fe1f14c22a40ccf39e5dd22797e5919ab26145de5a4b9c",
+      "bytes": 1795,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/execution-configuration.json"
+    },
+    {
+      "path": "getters.admission.json",
+      "sha256": "7b3c9aa9bd8f412c85acecc0d376c4e0fa74c6fd9eccdbbcab4f8a217b054b4b",
+      "bytes": 1952,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/getters.admission.json"
+    },
+    {
+      "path": "getters.json",
+      "sha256": "ef9f27d0d3760200bc426ae089c9bb32543fba2b4288082bb44de1ef12df94ab",
+      "bytes": 1225,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/getters.json"
+    },
+    {
+      "path": "getters.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/getters.stderr"
+    },
+    {
+      "path": "getters.stdout",
+      "sha256": "3f5ab89364104929802336a1c2e370a164607a31862da2825313c8bcd90c5962",
+      "bytes": 547,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/getters.stdout"
+    },
+    {
+      "path": "getters.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/getters.supervisor-output"
+    },
+    {
+      "path": "init.admission.json",
+      "sha256": "0e45eccb2104c2bedeccf9f7395c6c91fb6c90a0250a26314f0051b43a5eed93",
+      "bytes": 1950,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/init.admission.json"
+    },
+    {
+      "path": "init.json",
+      "sha256": "26ddf1746dba425bc699ec11e14fa02644a5defedb9aaee0c3c2fa7666991b68",
+      "bytes": 1013,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/init.json"
+    },
+    {
+      "path": "init.stderr",
+      "sha256": "7cc74f74cc8a8f9938bd00571e2c171ce3c59d048f2242a836ccca722182d430",
+      "bytes": 485,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/init.stderr"
+    },
+    {
+      "path": "init.stdout",
+      "sha256": "a6610393683717cc39e36f57d74768d9c2c3abdc9a7daf6da919e708b0050854",
+      "bytes": 110,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/init.stdout"
+    },
+    {
+      "path": "init.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/init.supervisor-output"
+    },
+    {
+      "path": "node-startup.admission.json",
+      "sha256": "cbd3bbb87df7ba716a51fc7922d8420831de744edb83395b9addc7e6b12b6c79",
+      "bytes": 1895,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/node-startup.admission.json"
+    },
+    {
+      "path": "node-startup.json",
+      "sha256": "194bfed867d05f422a858544702c2cf487c744cd9fb8402bd28496a8ca5a471a",
+      "bytes": 1281,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/node-startup.json"
+    },
+    {
+      "path": "node-startup.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/node-startup.stderr"
+    },
+    {
+      "path": "node-startup.stdout",
+      "sha256": "42bbbf7536e35b3759ab0534ca0f2ccf68415d498be0b67d867b306e765b4f9c",
+      "bytes": 1766,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/node-startup.stdout"
+    },
+    {
+      "path": "node-startup.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/node-startup.supervisor-output"
+    },
+    {
+      "path": "package-final.admission.json",
+      "sha256": "5cbabf230fbe40e71e979713e9322867e65bb4713b9e7999c9ccf4225a5351a2",
+      "bytes": 1953,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/package-final.admission.json"
+    },
+    {
+      "path": "package-final.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/package-final.stderr"
+    },
+    {
+      "path": "package-final.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/package-final.stdout"
+    },
+    {
+      "path": "package.py",
+      "sha256": "2f94ad9ab2fe4e5e39f1094c12e8d1a1779022f0fc4f6d36bfed4a64b944b4e0",
+      "bytes": 4055,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/package.py"
+    },
+    {
+      "path": "paths.admission.json",
+      "sha256": "47f8bbd7fa5332a671e04964d63ef8119e4375a88416e0ced4fff015deceaa08",
+      "bytes": 1951,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/paths.admission.json"
+    },
+    {
+      "path": "paths.json",
+      "sha256": "893d49f1cda75a14ef73e56705cdd8a708e6ce59235951732a2eb36a335e0ffe",
+      "bytes": 1121,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/paths.json"
+    },
+    {
+      "path": "paths.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/paths.stderr"
+    },
+    {
+      "path": "paths.stdout",
+      "sha256": "d7255ae4541eef51c98db2fdbff72594e4d894bc0b3213445368562d9e649769",
+      "bytes": 100352,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/paths.stdout"
+    },
+    {
+      "path": "paths.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/paths.supervisor-output"
+    },
+    {
+      "path": "pins.admission.json",
+      "sha256": "48fe51d19b4f14672db4df2505721bbaba1df456766f9e23c461957a497dd4a7",
+      "bytes": 1949,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.admission.json"
+    },
+    {
+      "path": "pins.json",
+      "sha256": "90c7dc5816766b89df03eccae027cf39099c9eed0492bf6a03ccaf9e5271c65f",
+      "bytes": 1103,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.json"
+    },
+    {
+      "path": "pins.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.stderr"
+    },
+    {
+      "path": "pins.stdout",
+      "sha256": "ad8a7f17c471852293a6e4fd1edf4ad6251fd5a719591a4c2e7852ac96995e4a",
+      "bytes": 150,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.stdout"
+    },
+    {
+      "path": "pins.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.supervisor-output"
+    },
+    {
+      "path": "production-gap-fixture.js",
+      "sha256": "084b9cbb22f62e3c5e9fa7179c681db893c0e4e9eb246d112bd25c58a7434cd8",
+      "bytes": 3407,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap-fixture.js"
+    },
+    {
+      "path": "production-gap.admission.json",
+      "sha256": "9d4c6cf1604140c824ec231fa7a7cf336bdea1b6e9c3eec28f136ec7573576fe",
+      "bytes": 1894,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.admission.json"
+    },
+    {
+      "path": "production-gap.json",
+      "sha256": "4c3c3a8c48e433dd23ec6eb31e58afec6ec71b0359a8eff3f9d5c3c17f194325",
+      "bytes": 1117,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.json"
+    },
+    {
+      "path": "production-gap.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.stderr"
+    },
+    {
+      "path": "production-gap.stdout",
+      "sha256": "403a43e45f4a484e94628edd7f1c9332323f3b0328fa6f7c50e81cd4dd82ebc9",
+      "bytes": 103,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.stdout"
+    },
+    {
+      "path": "production-gap.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-gap.supervisor-output"
+    },
+    {
+      "path": "production-state-passing-fixture.js",
+      "sha256": "3c87c7d516c5387287614a948593813244862d0d15b4d2ea0bb927973537224c",
+      "bytes": 11711,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-passing-fixture.js"
+    },
+    {
+      "path": "production-state-syntax-corrected.admission.json",
+      "sha256": "876118154955b97a57a9d9bdf8abf49646e81df8dc5e5b2cffe90e57f3782893",
+      "bytes": 1895,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.admission.json"
+    },
+    {
+      "path": "production-state-syntax-corrected.json",
+      "sha256": "3db15dcd7f1f752e1a7ece13958b4ee1205682aebb9546ce9962daa7f17cd58c",
+      "bytes": 1142,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.json"
+    },
+    {
+      "path": "production-state-syntax-corrected.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stderr"
+    },
+    {
+      "path": "production-state-syntax-corrected.stdout",
+      "sha256": "99e680d1b05566a6a86416543b64be288eb4af28c4c5559fe06857ec9874c135",
+      "bytes": 315,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stdout"
+    },
+    {
+      "path": "production-state-syntax-corrected.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.supervisor-output"
+    },
+    {
+      "path": "production-state.admission.json",
+      "sha256": "b1e2ae94b2c0bc21ffe5bb9fdb82dd633102b9ae4136657781350118f9c31208",
+      "bytes": 1894,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state.admission.json"
+    },
+    {
+      "path": "production-state.json",
+      "sha256": "cd76284d61caa8fb332f27edefdd6a087313ddedaaae21dc14bb015f5e79aeaf",
+      "bytes": 1109,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state.json"
+    },
+    {
+      "path": "production-state.stderr",
+      "sha256": "82fb2f2b4b3979997812abd769ec2453e0d0394774ac5c6245f21da14f6d6e93",
+      "bytes": 677,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state.stderr"
+    },
+    {
+      "path": "production-state.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state.stdout"
+    },
+    {
+      "path": "production-state.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state.supervisor-output"
+    },
+    {
+      "path": "remaining-boundaries.admission.json",
+      "sha256": "c0ff1d298a45d1ae2291f9455135cde1e84f55ac0f81c0f594db0f137ff2c725",
+      "bytes": 1952,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.admission.json"
+    },
+    {
+      "path": "remaining-boundaries.json",
+      "sha256": "b582fbb2ee0ed6b87f3d19d13f162e810e94457601f7c175922697bd58d46f4f",
+      "bytes": 1135,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.json"
+    },
+    {
+      "path": "remaining-boundaries.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stderr"
+    },
+    {
+      "path": "remaining-boundaries.stdout",
+      "sha256": "07b57256f42dfbd71bd9b913fe962efa2602987242a3ebe55273bec843ca7e57",
+      "bytes": 154,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stdout"
+    },
+    {
+      "path": "remaining-boundaries.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.supervisor-output"
+    },
+    {
+      "path": "review.admission.json",
+      "sha256": "810c7be10e25cc9d57803d6d6bc4e234599393e8347739f2199cce42b4c9c087",
+      "bytes": 1952,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/review.admission.json"
+    },
+    {
+      "path": "review.json",
+      "sha256": "cdb6ec091edf11ff848450ee09ca583f1f79171a2fcf6477d022a5959e993ee8",
+      "bytes": 1067,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/review.json"
+    },
+    {
+      "path": "review.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/review.stderr"
+    },
+    {
+      "path": "review.stdout",
+      "sha256": "c46fb4624d172da5738d301d0c471dd30ce4ca53253ccc012e39d56e85ca24f3",
+      "bytes": 174,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/review.stdout"
+    },
+    {
+      "path": "review.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/review.supervisor-output"
+    },
+    {
+      "path": "run.py",
+      "sha256": "9b09e4b501b0eaa02e67a233b44ae357bd76525d961626a4c89d7ca8f3b85743",
+      "bytes": 4965,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/run.py"
+    },
+    {
+      "path": "sparse.admission.json",
+      "sha256": "ba466245a7aa5e59fcf68aa60c4bf76c934b32695a7f616ec1dc0edd3d5ab462",
+      "bytes": 1951,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/sparse.admission.json"
+    },
+    {
+      "path": "sparse.json",
+      "sha256": "5909c0079abd493670f9e0541f6fe6f48305f9fa45d7aa9d6f38c20ff7126a60",
+      "bytes": 1079,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/sparse.json"
+    },
+    {
+      "path": "sparse.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/sparse.stderr"
+    },
+    {
+      "path": "sparse.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/sparse.stdout"
+    },
+    {
+      "path": "sparse.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/sparse.supervisor-output"
+    },
+    {
+      "path": "staged-source.admission.json",
+      "sha256": "4a525917849ecf1fc489e10ffda4b60f611c158c1e6bcc37206c1acb814357b8",
+      "bytes": 1954,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.admission.json"
+    },
+    {
+      "path": "staged-source.json",
+      "sha256": "20fb7142ac153ff25745947130fd9cca12b7418bcb7fe80ea0fd462053aa4693",
+      "bytes": 1274,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.json"
+    },
+    {
+      "path": "staged-source.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.stderr"
+    },
+    {
+      "path": "staged-source.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.stdout"
+    },
+    {
+      "path": "staged-source.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.supervisor-output"
+    },
+    {
+      "path": "staged-summary.admission.json",
+      "sha256": "7ca85209af733ae4f0fb83f0a9eb87028daf70c3fe3b4db16c4905b3d11b1cf6",
+      "bytes": 1954,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-summary.admission.json"
+    },
+    {
+      "path": "staged-summary.json",
+      "sha256": "4fb574dbd036a5db0e5d432d8755c45b50237e58f39de282abe460d3cec535c0",
+      "bytes": 1098,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-summary.json"
+    },
+    {
+      "path": "staged-summary.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-summary.stderr"
+    },
+    {
+      "path": "staged-summary.stdout",
+      "sha256": "30b4b41370b275c5bca97ce87b4ce6e238dcfa5ff85ddbf6e62a8800ced98ec9",
+      "bytes": 5499,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-summary.stdout"
+    },
+    {
+      "path": "staged-summary.supervisor-output",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "original": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-summary.supervisor-output"
+    }
+  ],
+  "publication": "external ops/publication.json and remote-verify.json bind final commit; canonical manifest cannot contain its own commit"
+}

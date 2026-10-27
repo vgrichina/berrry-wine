@@ -1,0 +1,44 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 87121920,
+  "sampledPeakRSS": 87121920,
+  "reapedPeakRSS": 53043200,
+  "cpuSeconds": 0.166848,
+  "wallSeconds": 0.0970377849880606,
+  "owned": [
+    [
+      145801,
+      "115553099"
+    ],
+    [
+      145802,
+      "115553101"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "test/test-input-consumption-state.js"
+  ],
+  "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stdout",
+    "bytes": 315,
+    "sha256": "99e680d1b05566a6a86416543b64be288eb4af28c4c5559fe06857ec9874c135"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/production-state-syntax-corrected.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

@@ -1,0 +1,3 @@
+PASS production flag/init/ACK/control/check_input/route/DispatchMessage boundary; disabled legacy and no-work guards
+PASS validation/no side effects, pending/dequeued/routed/dispatched, empty queues, size bounds, saturation, unknown waits/SDL
+PASS rejecting detached wiring, clock probe and queue-draining controls

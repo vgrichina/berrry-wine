@@ -1,0 +1,54 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 50008064,
+  "sampledPeakRSS": 50008064,
+  "reapedPeakRSS": 17825792,
+  "cpuSeconds": 0.12761199999999998,
+  "wallSeconds": 0.07155442191287875,
+  "owned": [
+    [
+      150567,
+      "115578507"
+    ],
+    [
+      150568,
+      "115578507"
+    ],
+    [
+      150569,
+      "115578509"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "diff",
+    "--cached",
+    "--check",
+    "--",
+    "test/run.js",
+    "test/input-consumption-trace.js",
+    "test/test-input-consumption-state.js",
+    "test/fixtures/input-consumption-state/README.md"
+  ],
+  "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/staged-source.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

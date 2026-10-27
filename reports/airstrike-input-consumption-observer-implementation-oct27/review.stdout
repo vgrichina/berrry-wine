@@ -1,0 +1,3 @@
+ test/input-consumption-trace.js | 109 ++++++++++++++++++++++++++++++++++++----
+ test/run.js                     |   4 ++
+ 2 files changed, 104 insertions(+), 9 deletions(-)

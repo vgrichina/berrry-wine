@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 91430912,
+  "sampledPeakRSS": 91430912,
+  "reapedPeakRSS": 54730752,
+  "cpuSeconds": 0.256196,
+  "wallSeconds": 0.1039250809699297,
+  "owned": [
+    [
+      148142,
+      "115565364"
+    ],
+    [
+      148143,
+      "115565367"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=512",
+    "test/test-input-consumption-state.js",
+    "--remaining"
+  ],
+  "cwd": "/tmp/airstrike-input-consumption-observer-implementation-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stdout",
+    "bytes": 154,
+    "sha256": "07b57256f42dfbd71bd9b913fe962efa2602987242a3ebe55273bec843ca7e57"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/remaining-boundaries.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

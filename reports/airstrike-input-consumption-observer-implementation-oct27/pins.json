@@ -1,0 +1,46 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 39452672,
+  "sampledPeakRSS": 39452672,
+  "reapedPeakRSS": 17956864,
+  "cpuSeconds": 0.097881,
+  "wallSeconds": 0.0649573931004852,
+  "owned": [
+    [
+      140278,
+      "115523687"
+    ],
+    [
+      140279,
+      "115523687"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "ls-tree",
+    "1e4fdb06f64e5f14ddec582111dfe7ecb71df6ba",
+    "test/run.js",
+    "test/input-consumption-trace.js"
+  ],
+  "cwd": "/tmp/generally-census-accepted-main-integration-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.stdout",
+    "bytes": 150,
+    "sha256": "ad8a7f17c471852293a6e4fd1edf4ad6251fd5a719591a4c2e7852ac96995e4a"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-input-consumption-observer-implementation-oct27/ops/pins.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}
