@@ -1,0 +1,85 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 91074560,
+  "sampledPeakRSS": 91074560,
+  "reapedPeakRSS": 34729984,
+  "cpuSeconds": 3.240121,
+  "wallSeconds": 1.672506291884929,
+  "owned": [
+    [
+      3980148,
+      "113854054"
+    ],
+    [
+      3980149,
+      "113854057"
+    ],
+    [
+      3980150,
+      "113854062"
+    ],
+    [
+      3980151,
+      "113854065"
+    ],
+    [
+      3980153,
+      "113854074"
+    ],
+    [
+      3980154,
+      "113854079"
+    ],
+    [
+      3980155,
+      "113854082"
+    ],
+    [
+      3980156,
+      "113854091"
+    ],
+    [
+      3980172,
+      "113854103"
+    ],
+    [
+      3980173,
+      "113854107"
+    ],
+    [
+      3980176,
+      "113854175"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/penguin-causal-independent-accept-cleanup-oct27/ops/boundaries.py"
+  ],
+  "commandSHA256": "1cdfb998f6775aecb5b7c55f6ce3120fe6697281c53eabee31a95cdf9979933b",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "inheritedLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "stdout": "/tmp/penguin-causal-independent-accept-cleanup-oct27/ops/boundaries.stdout",
+  "stderr": "/tmp/penguin-causal-independent-accept-cleanup-oct27/ops/boundaries.stderr",
+  "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+}

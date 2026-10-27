@@ -1,0 +1,14 @@
+{
+  "candidate": "584f66ff25908a247464f92d3c500a91a6f4a5b4",
+  "pins": {
+    "tools/penguin_capture_contract.py": "9ec154496d10053252701d786f26e821fc226db3bdcb0e948f45e68ab0045cb0",
+    "test/test_penguin_capture_contract.py": "ae9827feb0a5da2a8657b14fa0d2b1c9300aebf6340f504f5c9e23b692b032f5"
+  },
+  "remote": "584f66ff25908a247464f92d3c500a91a6f4a5b4\trefs/heads/task/penguin-stream-open-causal-repair-oct27",
+  "donor": "/tmp/penguin-stream-open-causal-repair-oct27/repo",
+  "alternates": "read-only; no repack/full checkout",
+  "transform": "none; exact Git blobs",
+  "SSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mount": "N/A: offline Python subprocesses; no mount argv or Node",
+  "at": 1793091319.4107769
+}
