@@ -1,0 +1,40 @@
+{
+  "sourceSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "extracts": [
+    {
+      "name": "parseInputEntries",
+      "start": 121357,
+      "end": 150524,
+      "bytes": 29231,
+      "sha256": "a7ba59ef1c31e29d683d2e783b94003ba91a46c537b60af21be5589045fa8a2a"
+    },
+    {
+      "name": "step bookkeeping",
+      "start": 385919,
+      "end": 387787,
+      "bytes": 1868,
+      "sha256": "db468212cb825ffbe18c53dfafb2efc880f962735f0d6d7d650eeb28160a5ce1"
+    },
+    {
+      "name": "safe/snapshot",
+      "start": 387787,
+      "end": 389119,
+      "bytes": 1332,
+      "sha256": "9b68514d9f03744d72fabf2a25f93a964143ea31e044647a4575c75e3d6bc594"
+    },
+    {
+      "name": "handleControlCommand",
+      "start": 390475,
+      "end": 399640,
+      "bytes": 9165,
+      "sha256": "126c480fad208d3bfc704e85aedec31c567a3e0ba30b90ab48511821a13a8741"
+    },
+    {
+      "name": "key actions",
+      "start": 533337,
+      "end": 533715,
+      "bytes": 378,
+      "sha256": "0728c6611be8ba2372152e358c548e5b6f1581fcd417df87bf94e936fc5c77c7"
+    }
+  ]
+}

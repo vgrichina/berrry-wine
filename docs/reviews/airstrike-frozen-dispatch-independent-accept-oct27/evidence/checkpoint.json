@@ -1,0 +1,24 @@
+{
+  "candidate": "06f50dfa9a29cf94b8a7c9aa3bca7db6d8e52091",
+  "candidatePins": {
+    "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+    "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+    "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+    "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+    "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811",
+    "test/fixtures/airstrike-frozen-dispatch.cjs": "cd7a7a0d9c4f2a2cbeed95dac43223d24d375b5fc623970efcc82e16f4d68752"
+  },
+  "independentPins": {
+    "test/test-airstrike-independent-accept-oct27.py": "26c8f535aaafd3ef004c982d53bfd989f488d2157c6b472d69602fec9779ceb4",
+    "test/test-airstrike-independent-flow-oct27.py": "149f1ceb463e8574395e125a96dca1be9313523f3059a8e78de0f202ea5df39f",
+    "test/test-airstrike-independent-cli-oct27.py": "dd1b47b4312f9bda5b9e4a6eea7849dea9da8be64c06c7a5a63bca4c056097ee",
+    "test/fixtures/airstrike-independent-accept-oct27.cjs": "629364351e959229edfe1a5d57c2d8864c2d4c1b9bc757f47a72a8e704a83df8"
+  },
+  "completed": "mandatory earliest boundary, independent guards, external review/focus/menu binding, full16 protocol+capture+cleanup, actual executable CLI and negative mutations",
+  "decision": "ACCEPT_SOURCE_ONLY",
+  "remaining": [
+    "Separately authorized exact-runner actual Airstrike menu/normal-Quit qualification, external factual image/focus/menu approval, fresh immutable guest closure/resource/lifecycle admission and measured <=1MiB/image x16 capture profile plus cleanup reservation. Never replay uncertain input or infer ordinary Quit from cleanup/timeout. This report approves source protocol only.",
+    "task branch commit/push/exact remote verification"
+  ],
+  "evidenceRoot": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops"
+}

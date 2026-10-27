@@ -1,0 +1,12 @@
+{"id":"bridge-1","action":"snapshot"}
+{"id":"bridge-2","action":"snapshot"}
+{"id":"bridge-3","action":"png","path":"/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent/prior-snapshot/capture-initial.png"}
+{"id":"bridge-4","action":"snapshot"}
+{"id":"bridge-5","action":"snapshot"}
+{"id":"airstrike-1","cmd":"keyup:27"}
+{"id":"bridge-6","action":"step","n":1}
+{"id":"bridge-7","action":"snapshot"}
+{"id":"bridge-8","action":"snapshot"}
+{"id":"airstrike-2","cmd":"keyup:27"}
+{"id":"bridge-9","action":"step","n":1}
+{"id":"bridge-10","action":"snapshot"}

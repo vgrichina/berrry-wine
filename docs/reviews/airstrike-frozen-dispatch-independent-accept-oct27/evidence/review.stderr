@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/review.py", line 10, in <module>
+    assert gate() is None
+           ^^^^^^
+  File "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/run.py", line 38, in gate
+    dump('accounting.json',q)
+  File "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/run.py", line 9, in dump
+    p=H/(n+'.tmp');p.write_text(json.dumps(v,indent=2)+'\n');p.replace(H/n)
+                                                             ^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/pathlib.py", line 1378, in replace
+    os.replace(self, target)
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/accounting.json.tmp' -> '/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/accounting.json'

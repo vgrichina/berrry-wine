@@ -1,0 +1,31 @@
+test_00_independent_exact_completion_order_and_actual_log (__main__.Independent.test_00_independent_exact_completion_order_and_actual_log) ... FAIL
+test_changed_focus_rejects_before_input (__main__.Independent.test_changed_focus_rejects_before_input) ... ok
+test_changed_image_rejects_before_input (__main__.Independent.test_changed_image_rejects_before_input) ... ok
+test_duplicate_step_ack_rejected (__main__.Independent.test_duplicate_step_ack_rejected) ... ok
+test_late_step_ack_rejected (__main__.Independent.test_late_step_ack_rejected) ... ok
+test_prior_identical_action_log_rejected (__main__.Independent.test_prior_identical_action_log_rejected) ... ok
+test_prior_identical_action_snapshot_rejected (__main__.Independent.test_prior_identical_action_snapshot_rejected) ... ok
+test_terminal_during_input_rejected (__main__.Independent.test_terminal_during_input_rejected) ... ok
+test_terminal_during_snapshot_rejected (__main__.Independent.test_terminal_during_snapshot_rejected) ... ok
+test_terminal_during_step_rejected (__main__.Independent.test_terminal_during_step_rejected) ... ok
+test_wrong_batch_step_rejected (__main__.Independent.test_wrong_batch_step_rejected) ... ok
+
+======================================================================
+FAIL: test_00_independent_exact_completion_order_and_actual_log (__main__.Independent.test_00_independent_exact_completion_order_and_actual_log)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/repo/test/test-airstrike-independent-accept-oct27.py", line 69, in test_00_independent_exact_completion_order_and_actual_log
+    self.assertEqual((snap['value']['batch'],snap['value']['frozen']),(batch+1,{'frozen':True,'credits':0}))
+AssertionError: Tuples differ: (13, {'frozen': True, 'tickMs': 16, 'credits': 0, 'recording': False}) != (13, {'frozen': True, 'credits': 0})
+
+First differing element 1:
+{'frozen': True, 'tickMs': 16, 'credits': 0, 'recording': False}
+{'frozen': True, 'credits': 0}
+
+- (13, {'credits': 0, 'frozen': True, 'recording': False, 'tickMs': 16})
++ (13, {'credits': 0, 'frozen': True})
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.124s
+
+FAILED (failures=1)

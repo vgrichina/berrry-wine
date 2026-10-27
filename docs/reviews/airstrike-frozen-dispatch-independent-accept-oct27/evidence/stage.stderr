@@ -1,0 +1,9 @@
+The following paths and/or pathspecs matched paths that exist
+outside of your sparse-checkout definition, so will not be
+updated in the index:
+test/test-airstrike-independent-cli-oct27.py
+test/test-airstrike-independent-flow-oct27.py
+hint: If you intend to update such entries, try one of the following:
+hint: * Use the --sparse option.
+hint: * Disable or modify the sparsity rules.
+hint: Disable this message with "git config advice.updateSparsePath false"

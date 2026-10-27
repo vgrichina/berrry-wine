@@ -1,0 +1,19 @@
+{
+  "session": "8fec83241a99491c997108a8859bfd83",
+  "token": "ec9b1faed4c94333a2e27a17c8de3d8a",
+  "sha256": "45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
+  "after": "airstrike-2",
+  "observation": {
+    "after": "airstrike-2",
+    "focus": "airstrike",
+    "unobscured": true,
+    "evidence": "SYNTHETIC 45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
+    "keysReleased": true,
+    "state": "menu",
+    "selected": 0,
+    "items": [
+      "Quit game"
+    ],
+    "header": "Airstrike menu"
+  }
+}

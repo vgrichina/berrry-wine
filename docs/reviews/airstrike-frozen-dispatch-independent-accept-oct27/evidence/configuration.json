@@ -1,0 +1,40 @@
+{
+  "pins": {
+    "/tmp/gl-required-version-independent-integrate-oct26/repo/test/helpers/palette-browser-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/run.py": "8bda3c2e0f50a9c55b1d3ed74d0f1caca17c1ffb22745d9e1b87cf84d3573277",
+    "/home/user/wine-assembly/scratch/usage-watch/light-execution-pool-oct26.py": "881b0bf09e2791ce85c757770efe27937f661e2934787f6c751d62075f5d761b",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/repo/.git/config": "91665903c5baaf958b9ec9821b589a00ac239beb83ffdffa8dcb10cecc4f4522",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/repo/.git/info/sparse-checkout": "cab8a27fc18d22497c75f04a9d49f93fc66e87a2f73d35699c3685e5a8160587",
+    "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/repo/.git/objects/info/alternates": "822961acb255987dd1da33afa5694ba9b018babe5f319140278a43a551d34920",
+    "/usr/bin/node": "6295488653f0d93b0a157841746fef7e72cc4328cfb60c4bbe0ca2668a836ffd"
+  },
+  "CWD": "/home/user/wine-assembly",
+  "module": "No Wasm/guest/module execution; only exact source excerpts and actual Python controller CLI",
+  "mount": "not applicable: no mounts, guest or boxes",
+  "GitChildLimits": {
+    "RSS": 268435456,
+    "DATA": 536870912
+  },
+  "testProcessTreeLimits": {
+    "RSS": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152
+  },
+  "Node": {
+    "executable": "/usr/bin/node",
+    "flags": [
+      "--max-old-space-size=32"
+    ],
+    "startupReceipts": [
+      "first-boundary/startup.stdout",
+      "independent/startup.stdout",
+      "independent-normal-corrected/startup.stdout",
+      "flow/startup.stdout"
+    ],
+    "DATA": "unlimited inherited; Git DATA not applied",
+    "AS": "unlimited inherited; RSS supervised physically"
+  },
+  "donor": "read-only immutable alternates /tmp/airstrike-frozen-dispatch-protocol-repair-oct27/repo/.git/objects"
+}

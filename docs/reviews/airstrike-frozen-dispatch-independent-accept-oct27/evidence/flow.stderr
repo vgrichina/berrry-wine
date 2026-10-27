@@ -1,0 +1,9 @@
+test_external_image_approval_binding (__main__.Flow.test_external_image_approval_binding) ... ok
+test_full16_action_capture_cleanup_contract (__main__.Flow.test_full16_action_capture_cleanup_contract) ... ok
+test_menu_binding_prevents_enter (__main__.Flow.test_menu_binding_prevents_enter) ... ok
+test_timeout_exit0_and_cleanup_not_normal_quit (__main__.Flow.test_timeout_exit0_and_cleanup_not_normal_quit) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 3.213s
+
+OK

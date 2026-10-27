@@ -1,0 +1,57 @@
+{
+  "session": "f7f81387d2b547e39144458f818d2332",
+  "token": "d664afcdec1d479db85355bc20f2fb0b",
+  "after": "airstrike-14",
+  "path": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/flow/timeout-exit0/capture-d664afcdec1d479db85355bc20f2fb0b.png",
+  "sha256": "45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
+  "snapshot": {
+    "batch": 26,
+    "eip": "0x1",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 16,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "visible": true,
+        "isChild": false,
+        "title": "Airstrike FAKE"
+      }
+    ]
+  },
+  "focus": {
+    "focus": "0x10001",
+    "mainHwnd": "0x10001",
+    "screen": {
+      "w": 800,
+      "h": 600
+    },
+    "windows": [
+      {
+        "hwnd": "0x10001",
+        "x": 0,
+        "y": 0,
+        "w": 0,
+        "h": 0,
+        "visible": true,
+        "isChild": false,
+        "title": "Airstrike FAKE"
+      }
+    ]
+  }
+}

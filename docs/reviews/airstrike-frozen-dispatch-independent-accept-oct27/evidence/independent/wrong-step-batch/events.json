@@ -1,0 +1,77 @@
+[
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0017393610905855894,
+    "command": {
+      "id": "bridge-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.030414422042667866,
+    "command": {
+      "id": "bridge-2",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.030824400950223207,
+    "command": {
+      "id": "bridge-3",
+      "action": "png",
+      "path": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent/wrong-step-batch/capture-initial.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.031259615905582905,
+    "command": {
+      "id": "bridge-4",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.0316122779622674,
+    "command": {
+      "id": "bridge-5",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.031882303999736905,
+    "command": {
+      "id": "bridge-6",
+      "action": "png",
+      "path": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent/wrong-step-batch/capture-initial-fresh.png"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.03229235298931599,
+    "command": {
+      "id": "bridge-7",
+      "action": "snapshot"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.03261402598582208,
+    "command": {
+      "id": "airstrike-1",
+      "cmd": "keydown:27"
+    }
+  },
+  {
+    "kind": "dispatch",
+    "elapsed": 0.033314188942313194,
+    "command": {
+      "id": "bridge-8",
+      "action": "step",
+      "n": 1
+    }
+  }
+]

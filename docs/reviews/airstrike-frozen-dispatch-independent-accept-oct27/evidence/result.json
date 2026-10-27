@@ -1,0 +1,798 @@
+{
+  "status": "ACCEPT_SOURCE_ONLY_FROZEN_DISPATCH",
+  "decision": "ACCEPT",
+  "candidate": "06f50dfa9a29cf94b8a7c9aa3bca7db6d8e52091",
+  "sourceRunnerRevision": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "sourceRunnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "sourceRunnerGitBlob": "423b40d4c00f01e3dbfa9ba1bcfdcfa249d07e2e",
+  "candidatePins": {
+    "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+    "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+    "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+    "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+    "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811",
+    "test/fixtures/airstrike-frozen-dispatch.cjs": "cd7a7a0d9c4f2a2cbeed95dac43223d24d375b5fc623970efcc82e16f4d68752"
+  },
+  "independentPins": {
+    "test/test-airstrike-independent-accept-oct27.py": "26c8f535aaafd3ef004c982d53bfd989f488d2157c6b472d69602fec9779ceb4",
+    "test/test-airstrike-independent-flow-oct27.py": "149f1ceb463e8574395e125a96dca1be9313523f3059a8e78de0f202ea5df39f",
+    "test/test-airstrike-independent-cli-oct27.py": "dd1b47b4312f9bda5b9e4a6eea7849dea9da8be64c06c7a5a63bca4c056097ee",
+    "test/fixtures/airstrike-independent-accept-oct27.cjs": "629364351e959229edfe1a5d57c2d8864c2d4c1b9bc757f47a72a8e704a83df8"
+  },
+  "groups": {
+    "first-boundary": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 87023616,
+      "sampledPeakRSS": 87023616,
+      "reapedPeakRSS": 43937792,
+      "cpuSeconds": 0.439986,
+      "wallSeconds": 0.27392681292258203,
+      "owned": [
+        [
+          4041479,
+          "114141949"
+        ],
+        [
+          4041480,
+          "114141952"
+        ],
+        [
+          4041487,
+          "114141964"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/first.py"
+      ],
+      "commandSHA256": "0f1fd65b9315b4500e318e6558208772368f182f524c4c0099e3bb52e25ba101",
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "inheritedLimits": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "environmentSHA256": "431f8821a4141221dc419bc0d212562ffaff64073ae713eabb4a0db36d270703",
+      "stdout": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/first-boundary.stdout",
+      "stderr": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/first-boundary.stderr"
+    },
+    "independent": {
+      "exit": 1,
+      "stopReason": null,
+      "peakRSS": 87969792,
+      "sampledPeakRSS": 87969792,
+      "reapedPeakRSS": 44351488,
+      "cpuSeconds": 2.710753,
+      "wallSeconds": 1.2098157708533108,
+      "owned": [
+        [
+          4043338,
+          "114151966"
+        ],
+        [
+          4043339,
+          "114151970"
+        ],
+        [
+          4043346,
+          "114151973"
+        ],
+        [
+          4043353,
+          "114151982"
+        ],
+        [
+          4043360,
+          "114151990"
+        ],
+        [
+          4043367,
+          "114151998"
+        ],
+        [
+          4043374,
+          "114152005"
+        ],
+        [
+          4043381,
+          "114152031"
+        ],
+        [
+          4043388,
+          "114152041"
+        ],
+        [
+          4043395,
+          "114152051"
+        ],
+        [
+          4043402,
+          "114152059"
+        ],
+        [
+          4043409,
+          "114152067"
+        ],
+        [
+          4043416,
+          "114152075"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent.py"
+      ],
+      "commandSHA256": "753b7d6c446d3d5683b32b1363df5931b197ca723581f3cfb67d7a4dbf05e8d7",
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "inheritedLimits": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "environmentSHA256": "d121d0f60e49c1912ad0c5d0f4cc6bb9c15f08a7601ee05554345861012d98fd",
+      "stdout": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent.stdout",
+      "stderr": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent.stderr"
+    },
+    "independent-normal-corrected": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 87834624,
+      "sampledPeakRSS": 87834624,
+      "reapedPeakRSS": 44085248,
+      "cpuSeconds": 0.397187,
+      "wallSeconds": 0.18064853199757636,
+      "owned": [
+        [
+          4043631,
+          "114153970"
+        ],
+        [
+          4043633,
+          "114153973"
+        ],
+        [
+          4043642,
+          "114153977"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent.py"
+      ],
+      "commandSHA256": "753b7d6c446d3d5683b32b1363df5931b197ca723581f3cfb67d7a4dbf05e8d7",
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "inheritedLimits": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "environmentSHA256": "9b6426ab598905b881cd619132d970fc2389ca22e34c1056e0e6323a4a1a49e5",
+      "stdout": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent-normal-corrected.stdout",
+      "stderr": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/independent-normal-corrected.stderr"
+    },
+    "flow": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 90189824,
+      "sampledPeakRSS": 90189824,
+      "reapedPeakRSS": 46051328,
+      "cpuSeconds": 3.61856,
+      "wallSeconds": 3.284908863948658,
+      "owned": [
+        [
+          4045009,
+          "114159595"
+        ],
+        [
+          4045010,
+          "114159598"
+        ],
+        [
+          4045019,
+          "114159602"
+        ],
+        [
+          4045027,
+          "114159612"
+        ],
+        [
+          4045035,
+          "114159621"
+        ],
+        [
+          4045043,
+          "114159630"
+        ],
+        [
+          4045051,
+          "114159639"
+        ],
+        [
+          4045075,
+          "114159842"
+        ],
+        [
+          4045083,
+          "114159869"
+        ],
+        [
+          4045091,
+          "114159880"
+        ],
+        [
+          4045099,
+          "114159892"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/flow.py"
+      ],
+      "commandSHA256": "509b19309106467c524e6155f11429cf27f37e78d761383431614a1e80d3200f",
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "inheritedLimits": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "environmentSHA256": "f0727b5a402b1e4d5c58d3efa473c8f15f7f5da5a51fb188b9c96e5f76558a16",
+      "stdout": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/flow.stdout",
+      "stderr": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/flow.stderr"
+    },
+    "cli": {
+      "exit": 0,
+      "stopReason": null,
+      "peakRSS": 53866496,
+      "sampledPeakRSS": 53866496,
+      "reapedPeakRSS": 21884928,
+      "cpuSeconds": 1.1556309999999999,
+      "wallSeconds": 0.5800873169209808,
+      "owned": [
+        [
+          4046220,
+          "114164458"
+        ],
+        [
+          4046221,
+          "114164462"
+        ],
+        [
+          4046222,
+          "114164466"
+        ],
+        [
+          4046223,
+          "114164469"
+        ],
+        [
+          4046225,
+          "114164474"
+        ],
+        [
+          4046227,
+          "114164479"
+        ],
+        [
+          4046228,
+          "114164482"
+        ],
+        [
+          4046229,
+          "114164486"
+        ],
+        [
+          4046230,
+          "114164489"
+        ],
+        [
+          4046231,
+          "114164492"
+        ],
+        [
+          4046232,
+          "114164495"
+        ],
+        [
+          4046234,
+          "114164500"
+        ],
+        [
+          4046235,
+          "114164502"
+        ],
+        [
+          4046238,
+          "114164507"
+        ]
+      ],
+      "cleanupComplete": true,
+      "command": [
+        "/usr/bin/python3",
+        "-B",
+        "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/cli.py"
+      ],
+      "commandSHA256": "e0122f42c667f0ddd75aaa51f0057616f803a4d6d971851f5d0678d67d1ebd87",
+      "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+      "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+      "inheritedLimits": {
+        "2": [
+          -1,
+          -1
+        ],
+        "9": [
+          -1,
+          -1
+        ],
+        "0": [
+          -1,
+          -1
+        ],
+        "1": [
+          -1,
+          -1
+        ]
+      },
+      "environmentSHA256": "8a06419c775269b5879a8db45c778a80188d6b5d012731cd189c839281be79be",
+      "stdout": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/cli.stdout",
+      "stderr": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/cli.stderr"
+    }
+  },
+  "reusedRegressionGroups": {
+    "production-corrected": {
+      "count": 7,
+      "receipt": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 86409216,
+        "sampledPeakRSS": 86409216,
+        "reapedPeakRSS": 44056576,
+        "cpuSeconds": 2.080546,
+        "wallSeconds": 1.593566401163116,
+        "owned": [
+          [
+            4032594,
+            "114096813"
+          ],
+          [
+            4032600,
+            "114096816"
+          ],
+          [
+            4032608,
+            "114096819"
+          ],
+          [
+            4032615,
+            "114096826"
+          ],
+          [
+            4032622,
+            "114096833"
+          ],
+          [
+            4032629,
+            "114096841"
+          ],
+          [
+            4032636,
+            "114096848"
+          ],
+          [
+            4032643,
+            "114096854"
+          ],
+          [
+            4032667,
+            "114096961"
+          ]
+        ],
+        "cleanupComplete": true,
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/accept.py"
+        ],
+        "commandSHA256": "7e209482705c4ff331f7dd88414bba6304fb8df256f27cb740b62cb83e3f3643",
+        "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+        "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "inheritedLimits": {
+          "2": [
+            -1,
+            -1
+          ],
+          "9": [
+            -1,
+            -1
+          ],
+          "0": [
+            -1,
+            -1
+          ],
+          "1": [
+            -1,
+            -1
+          ]
+        },
+        "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-corrected.stdout",
+        "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-corrected.stderr",
+        "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+      },
+      "paths": {
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-corrected.json": "dd814487cb1765dd30004226fd3f70bc6c65796514cecffa49c795059a6d1b20",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-corrected.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/production-corrected.stderr": "770f24c91cb5105ecc3a9d26cbaadc89f87ce029bd35e6be6c1ee11de72be331"
+      },
+      "candidatePins": {
+        "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+        "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+        "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+        "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+        "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811",
+        "test/fixtures/airstrike-frozen-dispatch.cjs": "cd7a7a0d9c4f2a2cbeed95dac43223d24d375b5fc623970efcc82e16f4d68752"
+      }
+    },
+    "controller-queue-regress": {
+      "count": 6,
+      "receipt": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 48488448,
+        "sampledPeakRSS": 48488448,
+        "reapedPeakRSS": 16900096,
+        "cpuSeconds": 1.0572249999999999,
+        "wallSeconds": 0.4505724720656872,
+        "owned": [
+          [
+            4033723,
+            "114103008"
+          ],
+          [
+            4033727,
+            "114103012"
+          ],
+          [
+            4033729,
+            "114103015"
+          ],
+          [
+            4033731,
+            "114103018"
+          ],
+          [
+            4033733,
+            "114103020"
+          ],
+          [
+            4033735,
+            "114103023"
+          ],
+          [
+            4033739,
+            "114103025"
+          ],
+          [
+            4033776,
+            "114103030"
+          ],
+          [
+            4033778,
+            "114103032"
+          ],
+          [
+            4033780,
+            "114103035"
+          ],
+          [
+            4033782,
+            "114103037"
+          ],
+          [
+            4033784,
+            "114103040"
+          ],
+          [
+            4033786,
+            "114103043"
+          ],
+          [
+            4033788,
+            "114103045"
+          ],
+          [
+            4033790,
+            "114103047"
+          ]
+        ],
+        "cleanupComplete": true,
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/regress.py",
+          "test-airstrike-menu-controller.py"
+        ],
+        "commandSHA256": "f2af628bd13629e156fb2d8597df8caedaf9206f48ce6c442425780d692dd82d",
+        "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+        "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "inheritedLimits": {
+          "2": [
+            -1,
+            -1
+          ],
+          "9": [
+            -1,
+            -1
+          ],
+          "0": [
+            -1,
+            -1
+          ],
+          "1": [
+            -1,
+            -1
+          ]
+        },
+        "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stdout",
+        "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stderr",
+        "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+      },
+      "paths": {
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.json": "2d315a0f8645a375e189cf5da6ce004c314e448537f75bb526c94e34fc7a722e",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/controller-queue-regress.stderr": "1d7df56e7991220ed9af8cddf020dda327beb181c336bd13735f73d78110843b"
+      },
+      "candidatePins": {
+        "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+        "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+        "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+        "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+        "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811",
+        "test/fixtures/airstrike-frozen-dispatch.cjs": "cd7a7a0d9c4f2a2cbeed95dac43223d24d375b5fc623970efcc82e16f4d68752"
+      }
+    },
+    "bridge-regress": {
+      "count": 12,
+      "receipt": {
+        "exit": 0,
+        "stopReason": null,
+        "peakRSS": 63700992,
+        "sampledPeakRSS": 63700992,
+        "reapedPeakRSS": 23199744,
+        "cpuSeconds": 17.047293,
+        "wallSeconds": 23.209362630965188,
+        "owned": [
+          [
+            4031259,
+            "114088224"
+          ],
+          [
+            4031261,
+            "114088227"
+          ],
+          [
+            4031263,
+            "114088239"
+          ],
+          [
+            4031265,
+            "114088249"
+          ],
+          [
+            4031267,
+            "114088257"
+          ],
+          [
+            4031338,
+            "114089388"
+          ],
+          [
+            4031512,
+            "114090399"
+          ],
+          [
+            4031531,
+            "114090445"
+          ],
+          [
+            4031534,
+            "114090483"
+          ],
+          [
+            4031536,
+            "114090511"
+          ],
+          [
+            4031538,
+            "114090521"
+          ],
+          [
+            4031540,
+            "114090530"
+          ]
+        ],
+        "cleanupComplete": true,
+        "command": [
+          "/usr/bin/python3",
+          "-B",
+          "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/regress.py",
+          "test-airstrike-observation-bridge.py"
+        ],
+        "commandSHA256": "44ff904369faec2b8dac93317412e7a8ae27d5fdb6d944c47eedfc5c0f42da05",
+        "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+        "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+        "inheritedLimits": {
+          "2": [
+            -1,
+            -1
+          ],
+          "9": [
+            -1,
+            -1
+          ],
+          "0": [
+            -1,
+            -1
+          ],
+          "1": [
+            -1,
+            -1
+          ]
+        },
+        "stdout": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bridge-regress.stdout",
+        "stderr": "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bridge-regress.stderr",
+        "environmentIdentitySHA256": "3425ae76314d1fac14d2a5cfe9ceb8b667ae8906890ef535d515738840c15292"
+      },
+      "paths": {
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bridge-regress.json": "7d05052b1ca468dd1d7d237a48ea2f1ac56dd462b58c58beb2680bf87a6183ae",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bridge-regress.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "/tmp/airstrike-frozen-dispatch-protocol-repair-oct27/ops/bridge-regress.stderr": "fc96f02ef8188e8e13e59d367a5075646ff9c69c6f5acc7f77e37c2951f40bca"
+      },
+      "candidatePins": {
+        "tools/airstrike-menu-controller.py": "c4fb61b1ad21e22d5fe744e8ce55461246e6c5c8cead2b63a979732b2b25aa6d",
+        "tools/airstrike-observation-bridge.py": "3d2cc3e3fb01c099b07260a3130a88dbb957519ec3fe43d4a13de0d78a1296ee",
+        "test/test-airstrike-menu-controller.py": "beb8090dd81843509bcfa49ec2faddfca41b96831517acebbdcb586f5a9145e7",
+        "test/test-airstrike-observation-bridge.py": "c562351c185554f174a3c48cbc36199133586bda2c72414b44df670b88f888dc",
+        "test/test-airstrike-frozen-dispatch.py": "ac17585b7d3754bc16aa07bd1e9f8623c4f117835232c497cbce92e2f8948811",
+        "test/fixtures/airstrike-frozen-dispatch.cjs": "cd7a7a0d9c4f2a2cbeed95dac43223d24d375b5fc623970efcc82e16f4d68752"
+      }
+    }
+  },
+  "newPassingTests": 19,
+  "uniqueIndependentMethods": 18,
+  "countsExplanation": "1 unchanged mandatory earliest reproducer + 11 independent boundary methods (normal corrected once) + 4 external/full-flow methods + 3 actual CLI methods = 19 passing test executions; 18 newly authored methods. Ten passing boundary methods not rerun.",
+  "mutationCoverage": {
+    "transport": [
+      "duplicate step ACK",
+      "late step ACK",
+      "wrong completion batch",
+      "prior identical action snapshot",
+      "prior identical action execution log",
+      "terminal input",
+      "terminal step",
+      "terminal snapshot",
+      "focus change",
+      "image mismatch"
+    ],
+    "reusedProduction": [
+      "partial ACK",
+      "wrong-ID ACK",
+      "credits nonzero",
+      "missing actual execution log",
+      "timeout"
+    ],
+    "externalApproval": [
+      "wrong session",
+      "wrong token",
+      "wrong image SHA",
+      "wrong after",
+      "absent approval"
+    ],
+    "menu": [
+      "wrong selected row",
+      "wrong labels"
+    ],
+    "CLI": [
+      "partial",
+      "steps",
+      "wrong-batch",
+      "unfrozen",
+      "credits",
+      "stale-snapshot",
+      "stale-log",
+      "missing-log",
+      "wrong-input",
+      "duplicate-id",
+      "step-reject",
+      "snapshot-reject"
+    ],
+    "terminal": [
+      "cleanup signal",
+      "timeout",
+      "controlquit",
+      "wmclose",
+      "missing host exit"
+    ]
+  },
+  "fullFlow": {
+    "actions": 16,
+    "serialSteps": 16,
+    "captures": 16,
+    "syntheticBytesPerCapture": 18,
+    "totalCaptureBytes": 288,
+    "sourceFixtureOnly": true,
+    "actualPNGQualification": false,
+    "cleanupReserveInsideAllocation": 41943040
+  },
+  "actualGuestStarts": 0,
+  "boxes": "none assigned or accessed",
+  "main": false,
+  "deployed": false,
+  "implementationModified": false,
+  "remainingActualGameGate": "Separately authorized exact-runner actual Airstrike menu/normal-Quit qualification, external factual image/focus/menu approval, fresh immutable guest closure/resource/lifecycle admission and measured <=1MiB/image x16 capture profile plus cleanup reservation. Never replay uncertain input or infer ordinary Quit from cleanup/timeout. This report approves source protocol only.",
+  "rootRefs": "initial launcher digest reused; no later root ref comparison claimed",
+  "historicalIncidents": "/tmp/airstrike-frozen-dispatch-independent-accept-oct27/ops/incidents.txt"
+}

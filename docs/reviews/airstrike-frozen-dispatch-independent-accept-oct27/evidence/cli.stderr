@@ -1,0 +1,8 @@
+test_frozen_full16_cli (__main__.CLI.test_frozen_full16_cli) ... ok
+test_quit_provenance_mutations (__main__.CLI.test_quit_provenance_mutations) ... ok
+test_rejecting_frozen_completion_mutations (__main__.CLI.test_rejecting_frozen_completion_mutations) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.483s
+
+OK

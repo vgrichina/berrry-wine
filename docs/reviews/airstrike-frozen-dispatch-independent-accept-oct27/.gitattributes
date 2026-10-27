@@ -1,0 +1,3 @@
+# Preserve exact Git diagnostic bytes, including original trailing whitespace.
+evidence/init.stderr -diff
+evidence/diff-check*.stdout -diff

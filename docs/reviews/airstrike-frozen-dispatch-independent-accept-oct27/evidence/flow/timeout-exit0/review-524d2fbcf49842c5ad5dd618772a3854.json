@@ -1,0 +1,14 @@
+{
+  "session": "f7f81387d2b547e39144458f818d2332",
+  "token": "524d2fbcf49842c5ad5dd618772a3854",
+  "sha256": "45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
+  "after": null,
+  "observation": {
+    "after": null,
+    "focus": "airstrike",
+    "unobscured": true,
+    "evidence": "SYNTHETIC 45b1f730ba5ef9571398d4b7e3cae140941df0515cf784aaeedc5ada51dbd73e",
+    "keysReleased": true,
+    "state": "gameplay"
+  }
+}
