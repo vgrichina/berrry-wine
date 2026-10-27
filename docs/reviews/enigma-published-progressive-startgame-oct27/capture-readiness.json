@@ -1,0 +1,16 @@
+{
+  "at": 1793096753.3048189,
+  "usedAPI": 184408,
+  "imagesMax": 4,
+  "perImage": 700000,
+  "perImageFullEnvelope": 1400832,
+  "totalImageEnvelope": 5603328,
+  "operationsReserve": 524288,
+  "cleanupReserve": 1048576,
+  "cap": 8388608,
+  "reviewSeconds": 28,
+  "actionSeconds": 30,
+  "cleanupSeconds": 10,
+  "guestSeconds": 110,
+  "pass": true
+}

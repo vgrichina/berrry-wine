@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-published-progressive-startgame-oct27/ops/control.py", line 73, in <module>
+    elif mode=='git':print(git(sys.argv[2],sys.argv[3:]))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/enigma-published-progressive-startgame-oct27/ops/control.py", line 64, in git
+    save(label+'.json',dict(argv=argv,exit=r,ssh=SSH,GitChildDATA=536870912));assert r==0,(label,r)
+                                                                                     ^^^^
+AssertionError: ('init', 129)

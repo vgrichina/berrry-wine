@@ -1,0 +1,19 @@
+{
+  "box": "bx_pa3bb5zc",
+  "localAllocation": 134217728,
+  "remoteAllocation": 268435456,
+  "guestPhysical": 3221225472,
+  "cpu": 90,
+  "wall": 110,
+  "heap": 2048,
+  "apiTotal": 8388608,
+  "apiResponse": 8192,
+  "cleanupReserve": 1048576,
+  "cutoff": "2026-10-27T10:55:00Z",
+  "handback": "2026-10-27T10:57:00Z",
+  "shutdown": "2026-10-27T11:00:00Z",
+  "expiry": "2026-10-27T11:06:11Z",
+  "shutdownOwner": "coordinator",
+  "noWorkers": true,
+  "noSourceRepair": true
+}

@@ -1,0 +1,17 @@
+{
+  "argv": [
+    "git",
+    "-c",
+    "gc.auto=0",
+    "-c",
+    "pack.threads=1",
+    "-c",
+    "pack.window=0",
+    "-b",
+    "task/enigma-published-progressive-startgame-oct27",
+    "/tmp/enigma-published-progressive-startgame-oct27/repo"
+  ],
+  "exit": 129,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "GitChildDATA": 536870912
+}

@@ -1,0 +1,53 @@
+{
+  "at": 1793096749.7924786,
+  "rows": [
+    {
+      "task": "enigma-published-progressive-startgame-oct27",
+      "actual": 34770944,
+      "remaining": 99446784
+    },
+    {
+      "task": "airstrike-accepted-dispatch-quit-oct27",
+      "actual": 34476032,
+      "remaining": 99741696
+    },
+    {
+      "task": "ricochet-final-writer-independent-accept-oct27",
+      "actual": 4247552,
+      "remaining": 0
+    },
+    {
+      "task": "penguin-accepted-explicit-budget-main-integrate-oct27",
+      "actual": 5701632,
+      "remaining": 128516096
+    }
+  ],
+  "walPositiveOnce": 77824,
+  "own": 34770944,
+  "reserve": 41943040,
+  "free": 7657668608,
+  "future": 344481792,
+  "projectedFree": 7313186816,
+  "diskFloor": 2982150144,
+  "memAvailable": 3491753984,
+  "requiredRAM": 1614589952,
+  "clients": [
+    {
+      "pid": 4078961,
+      "rss": 193548288
+    },
+    {
+      "pid": 4082069,
+      "rss": 197636096
+    },
+    {
+      "pid": 4087668,
+      "rss": 196980736
+    },
+    {
+      "pid": 4092476,
+      "rss": 213164032
+    }
+  ],
+  "pass": true
+}

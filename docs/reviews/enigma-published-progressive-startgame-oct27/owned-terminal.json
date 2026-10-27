@@ -1,0 +1,15 @@
+{
+  "terminal": {
+    "exit": 0,
+    "at": 1793096890.738623
+  },
+  "ownedAbsent": true,
+  "archive": {
+    "path": "/tmp/enigma-published-progressive-startgame-oct27/ops/terminal-evidence.tar.gz",
+    "bytes": 833995,
+    "sha256": "bdd8a54ec4648be1927ba6160392072ba977646cc09576e99046d8df30126e23"
+  },
+  "actual": 50200576,
+  "state": "RUNNING_API_EXEC_OBSERVED",
+  "box": "bx_pa3bb5zc"
+}

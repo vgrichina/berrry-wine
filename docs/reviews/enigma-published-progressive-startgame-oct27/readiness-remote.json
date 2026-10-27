@@ -1,0 +1,36 @@
+{
+  "at": 1793096753.135244,
+  "files": 2666,
+  "bytes": 39412911,
+  "bad": [],
+  "actual": 47149056,
+  "allocation": 268435456,
+  "reserve": 100663296,
+  "free": 48990851072,
+  "memAvailable": 7342510080,
+  "mount": {
+    "PASS": true,
+    "fileCount": 2460,
+    "commaBearingCount": 0,
+    "enumerationSHA256": "4a39bc0606bf3a8a9398e046360352ba92514f9e00925d608de36fdbf397fc18",
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e"
+  },
+  "environment": {
+    "HOME": "/home/user",
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "environmentSHA256": "19f73df0f52f73f5141a4b45fe09e1ccd95c212a2b3ca00c43c63f64b745e9ed",
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "nodePath": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "nodeFlags": [
+    "--max-old-space-size=2048"
+  ],
+  "nodeVersion": "v24.22.1",
+  "startupBeforeGuest": "accepted supervisor performs exact-configuration startup before command; startup distinct streams and limits required",
+  "owner": "new original supervised process only",
+  "listener": "127.0.0.1:18127 validated by accepted supervisor"
+}

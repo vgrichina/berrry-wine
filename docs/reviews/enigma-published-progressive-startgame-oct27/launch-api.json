@@ -1,0 +1,11 @@
+{
+  "command": "timeout 120 python3 /tmp/enigma-published-progressive-startgame-oct27/ops/remote-launch.py",
+  "commandId": "cmd_jxu0shil2dmf",
+  "cwd": ".",
+  "errLogPath": "/home/user/.ascii/processes/11877.err.log",
+  "logPath": "/home/user/.ascii/processes/11877.log",
+  "pid": 11877,
+  "processId": 11877,
+  "startedAt": "2026-10-27T10:27:06.301Z",
+  "success": true
+}

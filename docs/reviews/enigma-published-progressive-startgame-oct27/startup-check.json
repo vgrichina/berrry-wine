@@ -1,0 +1,41 @@
+{
+  "receipt": {
+    "exit": 0,
+    "stopReason": null,
+    "peakRSS": 79167488,
+    "sampledPeakRSS": 79167488,
+    "reapedPeakRSS": 48627712,
+    "cpuSeconds": 0.071482,
+    "wallSeconds": 0.05082785799999101,
+    "owned": [
+      [
+        11478,
+        "48315"
+      ],
+      [
+        11479,
+        "48316"
+      ]
+    ],
+    "cleanupComplete": true
+  },
+  "stdout": {
+    "version": "v24.22.1",
+    "execArgv": [
+      "--max-old-space-size=2048",
+      "-e",
+      "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\"),environmentSHA256:require(\"crypto\").createHash(\"sha256\").update(JSON.stringify(Object.fromEntries(Object.entries(process.env).sort()))).digest(\"hex\")}))"
+    ],
+    "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              90                   90                   seconds   \nMax file size             25165824             25165824             bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+    "environmentSHA256": "578f6cd7c1d94a91c883a717abcc01c567db645d9835ac888d37f710ddc288c3"
+  },
+  "stderr": "",
+  "configSHA256": "d14eb0b9021f3431590925429436b1fc9493063a776be6db940f37b3c40cc4b2",
+  "environment": {
+    "HOME": "/home/user",
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  }
+}
