@@ -1,0 +1,16 @@
+{
+  "at": 1793062174.2550573,
+  "box": "bx_c7m7bu48",
+  "apiState": "idle",
+  "availableRunning": true,
+  "expiry": "2026-10-27T01:22:31.959Z",
+  "guestCutoff": "2026-10-27T00:55:00Z",
+  "handback": "2026-10-27T01:00:00Z",
+  "shutdown": "2026-10-27T01:05:00Z",
+  "shutdownOwner": "coordinator",
+  "rootWatcherPID": 3388545,
+  "rootWatcherUnmodified": true,
+  "ownGuestDescendants": [],
+  "ownAPILaunchPID": 44195,
+  "apiLaunchExited": true
+}

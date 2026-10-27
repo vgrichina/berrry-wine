@@ -1,0 +1,10 @@
+{
+  "at": 1793062046.3992193,
+  "free": 3097100288,
+  "measuredTask": 1572864,
+  "remainingAllocation": 61341696,
+  "peerFuture": 50331648,
+  "projected": 2985426944,
+  "mem": 3839188992,
+  "memRequired": 1610612736
+}

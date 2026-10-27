@@ -1,0 +1,11 @@
+{
+  "status": "EXACT_PRODUCTION_RUNTIME_BLOCKER",
+  "steps": 79,
+  "acknowledgedBatches": 19969,
+  "requests": 160,
+  "pending": true,
+  "lastBatch": 19969,
+  "captures": 0,
+  "clicked": false,
+  "elapsed": 4.525983371999928
+}

@@ -1,0 +1,73 @@
+{
+  "phase": "STOPPED_CONTROL_TERMINAL_NO_REPLAY",
+  "production": "425755ee5ee9be0734c7aca187521100f5487674",
+  "acceptedSource": "facebcb2e6d04b84e80211a7814654e528566b0f",
+  "builds": "c654f37bd6e3c17fd442bc38fbc189c1fb4b26bc",
+  "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "initialization": true,
+  "firstStepACK": {
+    "batch": 1,
+    "ran": 1,
+    "steps": 1,
+    "frozen": true
+  },
+  "followingSnapshot": {
+    "batch": 1,
+    "eip": "0xb0de5c",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x0",
+    "mainHwnd": "0x0",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 200,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": []
+  },
+  "acknowledgedStepRequests": 79,
+  "acknowledgedBatches": 19969,
+  "lastRequest": {
+    "action": "step",
+    "n": 256,
+    "startingBatch": 19969,
+    "outcome": "uncertain terminal disconnect; no replay"
+  },
+  "finalRunnerBatches": 20000,
+  "guestInvocations": 1,
+  "restarts": 0,
+  "inputDispatches": 0,
+  "captures": 0,
+  "remaining": [
+    "menu pixels",
+    "Start Game",
+    "after-action gameplay",
+    "normalQuit"
+  ],
+  "blocker": "Controller reached configured production --max-batches=20000 at ~4s before wall-based 35s capture point. Final request cannot complete within remaining 31 batches. Harness batch-cap exhaustion, not a game fault.",
+  "box": {
+    "id": "bx_c7m7bu48",
+    "state": "RUNNING",
+    "expiry": "2026-10-27T01:22:31.959Z",
+    "shutdownOwner": "coordinator",
+    "ownedDescendantsRemaining": []
+  },
+  "qualification": {
+    "initializers": true,
+    "productionCLI": true,
+    "stepACKFrozenGate": true,
+    "returnedMSG": false,
+    "menu": false,
+    "gameplay": false,
+    "normalQuit": false,
+    "native": false,
+    "browser": false,
+    "worker": false,
+    "WebGL": false
+  }
+}

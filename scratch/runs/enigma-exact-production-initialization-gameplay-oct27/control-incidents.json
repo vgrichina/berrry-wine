@@ -1,0 +1,7 @@
+{
+  "stagingEmptyFiles": "Missing zero-byte files restored before guest.",
+  "manifestModule": "Removed duplicate historical module manifest row before guest; canonical module verified.",
+  "apiFailureFilename": "Initial reused helper overwritten first-api-failure.json with second readback error; first diagnostic reconstructed explicitly in empty-file-readback-incident.json from original captured tool output.",
+  "statusSyntax": "--status commandId rejected locally; corrected supported integer processId44195, no guest operation repeated.",
+  "acceptanceFailure": "Worker configured --max-batches=20000 but progression stopped by wall35s; at4847 batches/s runner limit exhausted in4.127s. No second guest invocation authorized or attempted."
+}

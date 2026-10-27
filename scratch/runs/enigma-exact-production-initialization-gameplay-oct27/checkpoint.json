@@ -1,0 +1,13 @@
+{
+  "phase": "initialized-ACKall-frozen0",
+  "at": 1793062047.2711444,
+  "batch": 1,
+  "steps": 1,
+  "total": 1,
+  "remaining": [
+    "menu",
+    "Start Game",
+    "after-action",
+    "normalQuit"
+  ]
+}

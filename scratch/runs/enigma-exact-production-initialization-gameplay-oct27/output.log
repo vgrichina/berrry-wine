@@ -1,0 +1,127 @@
+PE loaded. Entry: 0x004012a0
+DLL: msvcrt.dll at 0xb0b000, DllMain=0xb0e428, thunks=2187, origBase=0x78000000
+DLL: zlib1.dll at 0xc4f000, DllMain=0xc50060, thunks=2190, origBase=0x62e80000
+DLL: libpng12-0.dll at 0xd68000, DllMain=0xd69060, thunks=2193, origBase=0x69c80000
+DLL: SDL.dll at 0xe8e000, DllMain=0xe8f000, thunks=2341, origBase=0x68100000
+DLL: SDL_image.dll at 0xfe9000, DllMain=0xfea060, thunks=2344, origBase=0x62e40000
+DLL: SDL_mixer.dll at 0x110a000, DllMain=0x110b060, thunks=2356, origBase=0x61700000
+DLL: libfreetype-6.dll at 0x1255000, DllMain=0x1256060, thunks=2359, origBase=0x6fbc0000
+DLL: SDL_ttf.dll at 0x13c7000, DllMain=0x13c8060, thunks=2362, origBase=0x6f4c0000
+Patching EXE imports: libpng12-0.dll -> DLL #2 (libpng12-0.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching EXE imports: SDL.dll -> DLL #3 (SDL.dll)
+Patching EXE imports: SDL_image.dll -> DLL #4 (SDL_image.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #5 (SDL_mixer.dll)
+Patching EXE imports: SDL_ttf.dll -> DLL #7 (SDL_ttf.dll)
+Patching EXE imports: zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: zlib1.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libpng12-0.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #3 (SDL.dll)
+Patching DLL imports: libfreetype-6.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: libfreetype-6.dll→zlib1.dll -> DLL #1 (zlib1.dll)
+Patching DLL imports: SDL_ttf.dll→libfreetype-6.dll -> DLL #6 (libfreetype-6.dll)
+Patching DLL imports: SDL_ttf.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: SDL_ttf.dll→SDL.dll -> DLL #3 (SDL.dll)
+After patching: 2382 thunks
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xb46edc] = 0x13d557c
+Patched __p__environ [0xb45be4] = 0x13d555c
+Patched __p___winitenv [0xb470ec] = 0x13d557c
+Patched __p___initenv [0xb49c9c] = 0x13d555c
+Calling MSVCRT!_set_sbh_threshold(0) at 0xb1799d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\enigma-1.01
+[control] listening on http://127.0.0.1:18127/ctl
+[message-boundary] {"kind":"capabilities","sequence":1,"batch":0,"correlation":"unknown","maxRecords":128,"maxBytes":65536,"hostDequeue":true,"dispatchEntry":true,"successfulReturnMSG":false,"reason":"module completion wire not yet qualified; runtime qualification separate","scope":"main-instance API; shared host dequeue has unknown polling thread"}
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+[SetWindowText] ""
+[SetWindowText] "Enigma v1.01"
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Patching DLL imports: mikmod.dll→msvcrt.dll -> DLL #0 (MSVCRT.dll)
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+[waveOut] open: 22050Hz 2ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0xb0e7c5 param=0x14c1b1c flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0xb0e7c5 ESP=0x7efffff8
+Calling DllMain at 0xb0e428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xc50060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xd69060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xe8f000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xfea060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x110b060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x1256060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x13c8060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x15d4060...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x16f4060...
+DllMain returned, EAX=0x1
+
+--- Final state ---
+EIP=0x00d702c6 EAX=0x00000000 ECX=0x00000076 EDX=0x024a1cf3 EBX=0x024a1cef ESP=0x074fef30 EBP=0x074fef78 ESI=0x024a1c7d EDI=0x00000080
+wndproc: 0x00000000
+thunk_base: 0x07500000 thunk_end: 0x07505970 num_thunks: 2862
+heap_ptr: 0x024bd088
+free_list: 0x024a8b38
+heap stats: allocs=104345 frees=41500 steps=383509 (3.7/alloc) misses=9191 missSteps=313203 freeList=5395 [16:3729 256:331 512:350 1024:341 2048:104 4096:87 8192:447 16384:6]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7ec70000
+heap_base: 0x01735000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 171 evicted-live 12 | pages compiled 28 index-arena-full 11 | invalidations 0 dropped 11 last 0x00e8f000
+cache: block decodes 46039 of which evicted a live block 523
+cache: page evictions by cause: index arena full 515 | directory slot collision 8
+pages: compiled 1062 | index hits 22045386 misses 88691 (99.6% hit) | desk trips skipped 19446686
+runs:  extended 4977 | blocks chained 8673 | free fall-throughs 1997231
+       fall-through branches 2705321 | free 1997231 | paid 708090 (26.2% of fall-throughs are the defrag headroom)
+chunks: samples 550 | used mean 2081 max 16344 | <=4K 466 <=8K 538 <=12K 549 <=16K 550 | grows 246 reuses 697 unpublished 1
+cache: page invalidations 11385 that dropped a block 2718 last 0x00eb5000
+       blocks retired one at a time 2718 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 5 / 512   dc_mark 3
+gdi: dib arena pages used 785 free 15343 largest free run 15342 of 16128
+uop: installs=1005 kills=79 retired-poor=79 enters=3703797 blocks=44080962 head-exits=0 reguards=3566104 rg-pages=57050156 rg-nonadj=0 win-kept=3699608 win-reset=4189 gen=9 | compiled=1005 declined=414 insns=72185 uops=338586 flushes=6 traces=542
+  declines: no-backedge=299 loop-too-big=51 head-unsupported=48 call-indirect=34
+uop nobump: skips=8239248
+uop hot: decays=2790369 halvings=343
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=10 kills=2 enters=61157 blocks=748278
+
+Stats: 142880 API calls, 20000 batches in 4.127s (4847 batches/s)
+MMX: 18054 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0xecdee0 esp=0x7effff44 ebp=0x7effff50 yield=1 waitH=0xe0004 sleepCount=0 csPark/steal=0/0

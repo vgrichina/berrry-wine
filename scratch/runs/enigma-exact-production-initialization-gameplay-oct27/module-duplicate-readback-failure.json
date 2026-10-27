@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_nnzbjzwb67cl",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-27T00:46:57.184Z",
+  "launcherFailed": false,
+  "noticedMs": 17,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 17,
+  "startedAt": "2026-10-27T00:46:57.017Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 6, in <module>\nAssertionError\n",
+  "stderrTruncated": false,
+  "stdout": "{\"rows\": 2664, \"bytes\": 39367546, \"bad\": [\"runtime/build/wine-assembly.wasm\"]}\n",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

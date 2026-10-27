@@ -1,0 +1,207 @@
+[
+  {
+    "path": "evidence-check.json",
+    "bytes": 158,
+    "sha256": "e0ce009db1d56f82deec31aa79db754bbe42b8fab2b091d0f9ecdc1ff35c7f6c"
+  },
+  {
+    "path": "verify-transfer.py",
+    "bytes": 922,
+    "sha256": "35358ec3e8e35ba19b825b925cf62ed216cec3d9a527104e0c5ca5e031d3215b"
+  },
+  {
+    "path": "output.log",
+    "bytes": 7043,
+    "sha256": "fa130cf682151fa6b958273e052b7cd1dedbc59b43b17ec25301287f7fb7cfd1"
+  },
+  {
+    "path": "checkpoint.json",
+    "bytes": 202,
+    "sha256": "47b2bcb2d505c91538ccb4dc8e7236b40c86c6c4dd582d235c32eb9cb13285f0"
+  },
+  {
+    "path": "work.py",
+    "bytes": 3132,
+    "sha256": "90daa7d035f8afe02535a48489dfda225b75f7bd735ee7d9017c970966c91fc0"
+  },
+  {
+    "path": "first-n1-completion-gate.json",
+    "bytes": 385,
+    "sha256": "0d55e6c475b4772a2b1207b90b122d59cadf17e075c623b03a077365e627a0d0"
+  },
+  {
+    "path": "requests.jsonl",
+    "bytes": 60281,
+    "sha256": "71b0ff97d376640c98a7d9c6be4a4d8e21ed3c17bf9135edf14063e64f25d195"
+  },
+  {
+    "path": "module-duplicate-readback-failure.json",
+    "bytes": 570,
+    "sha256": "45a869be1d77f88e07f12a5a951a49471abf3728dce03e2aa0480f72ac7f670d"
+  },
+  {
+    "path": "initial-snapshot.json",
+    "bytes": 275,
+    "sha256": "c801e67c5e0817df51c6f115acbd99c93252dfc6d1aededd88c4c5a0094c69c1"
+  },
+  {
+    "path": "control-incidents.json",
+    "bytes": 749,
+    "sha256": "a988c2ac0d66fca957184470869df21af914040ffe8d4914ed7695cee5657ceb"
+  },
+  {
+    "path": "serial-evidence-review.json",
+    "bytes": 196,
+    "sha256": "85d7b2afdc0fa408d559e86b2bf200d762f77a96120826ab2a29fdc1fdb2526a"
+  },
+  {
+    "path": "trusted-ssh-config.json",
+    "bytes": 213,
+    "sha256": "2b335e1f1b76dc5c5e7c5225d42a78ac2a37b20220e1905212c14c77833647fd"
+  },
+  {
+    "path": "outcome.json",
+    "bytes": 226,
+    "sha256": "e9c627dc805b3932a702cbb4d0dbe720d1c71861f63f0c320be81108ca8b826a"
+  },
+  {
+    "path": "staging-correction.json",
+    "bytes": 566,
+    "sha256": "5259900190711f699fe0640eee5897eaab755e15e8663fb6c673a5127806796c"
+  },
+  {
+    "path": "empty-file-readback-incident.json",
+    "bytes": 224,
+    "sha256": "8167f29fe547836a6d1cfa105025b657557978f856516ea0a1eac8537b4b3aa5"
+  },
+  {
+    "path": "api-terminal.json",
+    "bytes": 558,
+    "sha256": "0e81f318b85c353f8efb2b7b2baa43304547592f8b9bf551c7accbf26c8bdb8f"
+  },
+  {
+    "path": "parser-enumeration.json",
+    "bytes": 138266,
+    "sha256": "7a96c39d90659c5ac796dee8079f56b9b1145bc2cb785ab1e27630ccee54d6c1"
+  },
+  {
+    "path": "prep.py",
+    "bytes": 4835,
+    "sha256": "afd1de9689982af3f17a1968a64c76afce3ccb7c2eca082cd48f8eeb43420543"
+  },
+  {
+    "path": "operate.py",
+    "bytes": 8277,
+    "sha256": "61c62560161fbe7f5ed4850eb9f66cf84b74e76b6e0ded27495c533ae3cb8f58"
+  },
+  {
+    "path": "remote-integrity.json",
+    "bytes": 439,
+    "sha256": "1595a51e039e6a2a1d502fb2363429d04641f20d9c86149d2c06ede425124c66"
+  },
+  {
+    "path": "remote-preguest-admission.json",
+    "bytes": 565,
+    "sha256": "b9c6fc10aad1514227349923e747049648de6bfb8f8b53c1e3cf74bb6284d760"
+  },
+  {
+    "path": "launch.py",
+    "bytes": 1844,
+    "sha256": "f2f97de6c7530415868bfb7192d73c407c7ea1890634a70d720bce1d5e427b99"
+  },
+  {
+    "path": "acceptance-checkpoint.json",
+    "bytes": 1887,
+    "sha256": "133d286a258d3874fefa7eed9447828375a1299ad81071118cebd27258d50e79"
+  },
+  {
+    "path": "manifest.json",
+    "bytes": 1164031,
+    "sha256": "fa5bcab6c5749157cb656645258b74c882c0fb389c9085bce7e4bce22c5edcfd"
+  },
+  {
+    "path": "node-startup.json",
+    "bytes": 1665,
+    "sha256": "13df8f33a67d54bca6c3b28701b9190cd54f88143c3fba3d668691fb33f1fede"
+  },
+  {
+    "path": "first-runtime-rejection.json",
+    "bytes": 169,
+    "sha256": "31af1ff2303761b635dae58bdc56bcbf2f46c06d7daccc55dce4b06b761af7b1"
+  },
+  {
+    "path": "transfer-probes.json",
+    "bytes": 123,
+    "sha256": "8dc89fc5a2ca5b301b5c9107ceae74dbf0e94c71a2101f416169efa46b2c056d"
+  },
+  {
+    "path": "session-paths.json",
+    "bytes": 1542,
+    "sha256": "0b1a56d83db452a9d7e5743a5abf5107f169ec1a51c715d5b132b0627ddffd6c"
+  },
+  {
+    "path": "guest-file-manifest.json",
+    "bytes": 1419,
+    "sha256": "48b08b5d2ca45cee29d4d63737c64372849c0c6b9bd1fa06ceb47cb0983c60e7"
+  },
+  {
+    "path": "preguest-admission.json",
+    "bytes": 218,
+    "sha256": "ccf399d8ac9edbb6ab4431473c269208ea55edb312bfb754829f730ef992c584"
+  },
+  {
+    "path": "terminal.json",
+    "bytes": 566,
+    "sha256": "c58528506278a9c81e0e47df3e7049513f939da7fd838a743eb90c703d0711c0"
+  },
+  {
+    "path": "remote-final-footprint.json",
+    "bytes": 467,
+    "sha256": "3d69341ee58336823cb6117b4e27b51a401e20ab094c41bf04cc7b40275b4ee6"
+  },
+  {
+    "path": "lifecycle-handback.json",
+    "bytes": 442,
+    "sha256": "e22d79cdf459b64e9fcdaa6d700e61a9ebd65c59299850d651d65290c6695803"
+  },
+  {
+    "path": "prestage-admission.json",
+    "bytes": 433,
+    "sha256": "acffaa80ebe61236ffb2fb6a649f98a2c9eacb3f94d3e98c7b0076f166c15a0f"
+  },
+  {
+    "path": "collect.py",
+    "bytes": 810,
+    "sha256": "c242dcda3d200e8725de2c051d8eb1875d7c7c20cff3d40dc76fd0824370473d"
+  },
+  {
+    "path": "live-worker-flags.json",
+    "bytes": 485,
+    "sha256": "7f9710ac7e5663d931a5d63e1e004b518db32f3a1ba86afb6c1a91739c13ffee"
+  },
+  {
+    "path": "module-manifest-correction.json",
+    "bytes": 152,
+    "sha256": "5ada580275d9d09792a0911561fbdc58cf2bbf8d49471aee3ccfe1327e0b7858"
+  },
+  {
+    "path": "command.json",
+    "bytes": 1819,
+    "sha256": "a067197b5f2c5e516edaa116fbc2754fdc857a92fcf794f79890041dea88694f"
+  },
+  {
+    "path": "final-accounting.json",
+    "bytes": 1794,
+    "sha256": "5e8198a81f5a072fd7dde0fc6f5b5a5257d907e8e81649ed95960d19b565aec5"
+  },
+  {
+    "path": "launch-configuration.json",
+    "bytes": 1134,
+    "sha256": "da572d29e417b193e3df5e0c2e68d8d4cd9ea9c1287a52bb34ee6b5cb4fd6914"
+  },
+  {
+    "path": "canonical-parser.json",
+    "bytes": 120,
+    "sha256": "91aa42311ffef16e83455cbaa32c2b842638cc5f6ba6f7287716bb17bb2f0ab4"
+  }
+]

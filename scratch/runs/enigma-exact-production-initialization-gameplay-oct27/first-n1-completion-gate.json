@@ -1,0 +1,23 @@
+{
+  "snapshot": {
+    "batch": 1,
+    "eip": "0xb0de5c",
+    "quit": false,
+    "yieldReason": 0,
+    "focus": "0x0",
+    "mainHwnd": "0x0",
+    "screen": {
+      "w": 640,
+      "h": 480
+    },
+    "frozen": {
+      "frozen": true,
+      "tickMs": 200,
+      "credits": 0,
+      "recording": false
+    },
+    "windows": []
+  },
+  "acknowledged": true,
+  "noOutstandingCredits": true
+}

@@ -1,0 +1,17 @@
+{
+  "cause": "recipe transfer omitted zero-byte files",
+  "files": [
+    {
+      "kind": "file",
+      "path": "/tmp/enigma-original-win32-closure-oct24/original/Enigma-1.01/data/enigma_conf.lua",
+      "target": "vfs/Enigma-1.01/data/enigma_conf.lua",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "originalSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diagnosticOverlay": false,
+      "mode": 436
+    }
+  ],
+  "guestInvocationsSpent": 0,
+  "accessDenial": false
+}

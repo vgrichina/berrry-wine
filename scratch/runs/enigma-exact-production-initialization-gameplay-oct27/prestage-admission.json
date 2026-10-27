@@ -1,0 +1,19 @@
+{
+  "at": 1793061841.1092196,
+  "free": 3099136000,
+  "new": 62914560,
+  "peerFuture": 50331648,
+  "projected": 2985889792,
+  "floor": 2982150144,
+  "mem": 3149160448,
+  "memRequired": 1610612736,
+  "localAllocation": 62914560,
+  "remoteAllocation": 268435456,
+  "projection": {
+    "sourceGitOpsDashboard": 20971520,
+    "sessionEventsWAL": 16777216,
+    "staging": 8388608,
+    "publication": 8388608,
+    "reserve": 8388608
+  }
+}

@@ -1,0 +1,52 @@
+[
+  {
+    "name": "output.log",
+    "bytes": 7043,
+    "sha256": "fa130cf682151fa6b958273e052b7cd1dedbc59b43b17ec25301287f7fb7cfd1"
+  },
+  {
+    "name": "checkpoint.json",
+    "bytes": 202,
+    "sha256": "47b2bcb2d505c91538ccb4dc8e7236b40c86c6c4dd582d235c32eb9cb13285f0"
+  },
+  {
+    "name": "first-n1-completion-gate.json",
+    "bytes": 385,
+    "sha256": "0d55e6c475b4772a2b1207b90b122d59cadf17e075c623b03a077365e627a0d0"
+  },
+  {
+    "name": "requests.jsonl",
+    "bytes": 60281,
+    "sha256": "71b0ff97d376640c98a7d9c6be4a4d8e21ed3c17bf9135edf14063e64f25d195"
+  },
+  {
+    "name": "initial-snapshot.json",
+    "bytes": 275,
+    "sha256": "c801e67c5e0817df51c6f115acbd99c93252dfc6d1aededd88c4c5a0094c69c1"
+  },
+  {
+    "name": "outcome.json",
+    "bytes": 226,
+    "sha256": "e9c627dc805b3932a702cbb4d0dbe720d1c71861f63f0c320be81108ca8b826a"
+  },
+  {
+    "name": "node-startup.json",
+    "bytes": 1665,
+    "sha256": "13df8f33a67d54bca6c3b28701b9190cd54f88143c3fba3d668691fb33f1fede"
+  },
+  {
+    "name": "first-runtime-rejection.json",
+    "bytes": 169,
+    "sha256": "31af1ff2303761b635dae58bdc56bcbf2f46c06d7daccc55dce4b06b761af7b1"
+  },
+  {
+    "name": "terminal.json",
+    "bytes": 566,
+    "sha256": "c58528506278a9c81e0e47df3e7049513f939da7fd838a743eb90c703d0711c0"
+  },
+  {
+    "name": "command.json",
+    "bytes": 1819,
+    "sha256": "a067197b5f2c5e516edaa116fbc2754fdc857a92fcf794f79890041dea88694f"
+  }
+]

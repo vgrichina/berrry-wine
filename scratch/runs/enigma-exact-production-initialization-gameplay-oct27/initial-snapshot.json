@@ -1,0 +1,19 @@
+{
+  "batch": 0,
+  "eip": "0x4012a0",
+  "quit": false,
+  "yieldReason": 0,
+  "focus": "0x0",
+  "mainHwnd": "0x0",
+  "screen": {
+    "w": 640,
+    "h": 480
+  },
+  "frozen": {
+    "frozen": true,
+    "tickMs": 200,
+    "credits": 0,
+    "recording": false
+  },
+  "windows": []
+}

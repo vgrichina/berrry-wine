@@ -1,0 +1,35 @@
+{
+  "at": 1793062046.7194183,
+  "pid": 3416360,
+  "argv": [
+    "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+    "exec",
+    "--profile",
+    "wine-worker",
+    "-c",
+    "model_auto_compact_token_limit=200000",
+    "-c",
+    "model_auto_compact_token_limit_scope=\"total\"",
+    "-m",
+    "gpt-6.1-sol",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "--json",
+    "--output-last-message",
+    "/home/user/wine-assembly/scratch/usage-watch/enigma-exact-production-initialization-gameplay-oct27/final.txt",
+    "-",
+    ""
+  ],
+  "runtime": {
+    "box": "bx_c7m7bu48",
+    "guestCutoff": "2026-10-27T00:55:00Z",
+    "handback": "2026-10-27T01:00:00Z",
+    "shutdown": "2026-10-27T01:05:00Z",
+    "expiry": "2026-10-27T01:22:31.959Z",
+    "owner": "coordinator"
+  },
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/enigma-exact-production-initialization-gameplay-oct27/root-ref-digest.json",
+  "source": "425755ee5ee9be0734c7aca187521100f5487674",
+  "module": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+  "guestInvocations": 1
+}

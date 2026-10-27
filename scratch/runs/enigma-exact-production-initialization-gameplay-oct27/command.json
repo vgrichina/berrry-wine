@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/enigma-exact-production-initialization-gameplay-oct27/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/enigma-exact-production-initialization-gameplay-oct27/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/enigma.exe",
+    "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+    "--cwd=C:\\Enigma-1.01",
+    "--dlls=/tmp/enigma-exact-production-initialization-gameplay-oct27/system/msvcrt.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs/Enigma-1.01/SDL_ttf.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--memory-mb=512",
+    "--screen=640x480",
+    "--vfs-tree=/tmp/enigma-exact-production-initialization-gameplay-oct27/vfs",
+    "--quiet-fs",
+    "--control=18127",
+    "--trace-input",
+    "--frozen",
+    "--max-seconds=110",
+    "--max-batches=20000",
+    "--trace-message-boundary"
+  ],
+  "pid": 44208,
+  "at": 1793062046.843657,
+  "memAvailable": 7318020096,
+  "limits": {
+    "cpuTree": 90,
+    "wall": 120,
+    "rssTree": 3221225472,
+    "file": 25165824,
+    "output": 2097152,
+    "captures": 8,
+    "captureBytes": 2097152
+  },
+  "environment": {}
+}
