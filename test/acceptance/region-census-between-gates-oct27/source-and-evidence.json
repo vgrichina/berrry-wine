@@ -1,0 +1,149 @@
+{
+  "candidateInput": "66436f785bbe3166a992402f95abf083ca0d6736",
+  "base": "1cf9788cc3ac807027206c39fcbf1d2771599845",
+  "rejection": "a4765f6347b9bbb94274c2bce9ca37c07c779954",
+  "inheritedVerifiedManifest": {
+    "path": "test/acceptance/region-census-independent-oct27/source-and-evidence.json",
+    "sha256": "27de6f07ac2c987bb6f6d1bccb64f4a80e7ffe1f0cd7d3242a9adcba864c9eae",
+    "scope": "coordinator critical hashes and remote refs; no full inherited payload sweep claimed"
+  },
+  "unchangedReproducer": {
+    "sha256": "fc237edbf04b7e0f735aee352a9774515b3b4cfde4ad3cdcf43d73ae45930b21",
+    "outcome": "REJECT reproduced before edits, eight actual CLI invocations"
+  },
+  "newEvidence": {
+    "boundaryCases": 17,
+    "legacyInvocations": 147,
+    "measurementRepetitions": 3,
+    "rejectingControls": [
+      "stale declaration cache",
+      "stale layout memo",
+      "stale manifest targets"
+    ],
+    "remaining": "fresh independent acceptance required before integration/runtime"
+  },
+  "delta": [
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/boundary-results.json",
+      "bytes": 20348,
+      "sha256": "cbe06b3898fdc3d7ac9fa792190e757222d9332fc6b011f5cb7a5e55ac082746"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/final-stale-targets-control.stderr.txt",
+      "bytes": 4017,
+      "sha256": "897e1265dba090308f40fd46e2f8942d33032eba0bca06a2132aa223fbbaa0ac"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/measure-preload.cjs",
+      "bytes": 1311,
+      "sha256": "8e676608f3c4e728954f9a88d168db1324a1d394685b2bf8ac2610279ee75c36"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/measure.cjs",
+      "bytes": 3551,
+      "sha256": "8de68bc75fcc8c51a8d1a956237c6c6eaf695ad7537f9f01fd089b073fd1eb7c"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/measurements.json",
+      "bytes": 5214,
+      "sha256": "b597bedc43b1e7ffb654f428269f1d513154cb4dfc59b2435d9a630f8818d43e"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/original-rejection.json",
+      "bytes": 2894,
+      "sha256": "d0f27dbabaa2ae8837987b8c57b614e6f454bd569509f52cd32cb1fcdc6b44fb"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/repair.cjs",
+      "bytes": 9438,
+      "sha256": "0c4a6094fa4210a1b0782c204b0d588fdd4d3b4cc29a7d1e8f837ee4aceb9a11"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/stale-declarations-control.stderr.txt",
+      "bytes": 2607,
+      "sha256": "1c20fc389a92f1eb34b32877d8646869f3283e6cb5c9e5645ca01e8d1310d37a"
+    },
+    {
+      "path": "test/acceptance/region-census-between-gates-oct27/stale-layout-control.stderr.txt",
+      "bytes": 2897,
+      "sha256": "f827310241d356160c1458cbc955803da30b6ab160e3633b5208e8f241800439"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/00-regions.wat.txt",
+      "bytes": 68743,
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/01-header.wat.txt",
+      "bytes": 26079,
+      "sha256": "cc79b282d2bc257161567c7ec36b49336ee49fdd7fa4f558fdb44d324a33f2b0"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/baseline.json",
+      "bytes": 1610,
+      "sha256": "fa42171ea2ac6755c6efa1446dbde9e32f63d21576c6867093f32122427494e4"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/host.js.txt",
+      "bytes": 17,
+      "sha256": "ccaf64015d7074d368d360da2665a277bf0debdbf98a7807415121c1f3738017"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/main.watx.txt",
+      "bytes": 53,
+      "sha256": "b51fd6645689c6c71106934fe834f12e0dc81c7b48b72bb7efddf8476efc2428"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/original-check-region-decls.js.txt",
+      "bytes": 21836,
+      "sha256": "f30ff1b422037828cea6fade3ab04b44323830c31298554ece06aa37e2948b61"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/original-region-census.js.txt",
+      "bytes": 42851,
+      "sha256": "58bf809d531f908341874bb72b2a6faed37903dc2f34e98bb288bb1e5fa781a2"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/original-region-layout.js.txt",
+      "bytes": 8174,
+      "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139"
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/origins.json",
+      "bytes": 19500,
+      "sha256": "18998cec304d7d3346f6daeda8e756c72f7308950e66797a1104ec968002a8c1"
+    },
+    {
+      "path": "test/test-region-census-build-gates.js",
+      "bytes": 12967,
+      "sha256": "4354b417370017c1ca09724057b4a1fc104efd6f37bfc85d3df1f29625853fc6"
+    },
+    {
+      "path": "tools/build.sh",
+      "bytes": 38528,
+      "sha256": "5a144b6a02a2b13150d57c6b0eb84e8eb29718c666f7bcbc590687fd97c0c5af"
+    },
+    {
+      "path": "tools/check-region-decls.js",
+      "bytes": 22234,
+      "sha256": "1c8c9ad097dbfdcbcda9327e144371e921f9868e6631491e7f3e229a10132919"
+    },
+    {
+      "path": "tools/region-census.js",
+      "bytes": 44810,
+      "sha256": "7fc8f6fa42485b1d0973708ff9ebe61c0bcaf074b47e97f6847fdb9e940acc8b"
+    },
+    {
+      "path": "tools/region-layout.js",
+      "bytes": 8616,
+      "sha256": "c781bbb5b3b5d31412bac1d6cb60329ca9612ba2a06d09e52d2c1854b62a8e30"
+    }
+  ],
+  "incidents": [
+    "initial policy/inspection terminal captures exceeded intended8192B operation ceiling; retained in session/events",
+    "new-law-provider setup initially sorted after existing provider; corrected to earlier filename",
+    "new-JS-target initial sample lacked recognized extraWat appender; corrected to real allocated address and recognized WAT fragment",
+    "manifest-error comparison refined for compile-wat loader wrapper while preserving causal error, status and output order; all original stdout/stderr retained"
+  ],
+  "limits": "CPU90 wall120 file24MiB output2MiB; Node RSS768MiB heap512MiB DATA/ASunlimited; Python128MiB Git256MiB DATA512MiB Git child only; slots1 wait20 Gitflock; each operation fresh aggregate admission"
+}

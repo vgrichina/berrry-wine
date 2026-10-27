@@ -1,0 +1,312 @@
+[
+  {
+    "name": "unchanged-invalid-align",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two"
+      ]
+    }
+  },
+  {
+    "name": "added-valid-declaration",
+    "pass": true,
+    "original": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 255 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    },
+    "candidate": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 255 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    }
+  },
+  {
+    "name": "changed-size",
+    "pass": true,
+    "original": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 255 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    },
+    "candidate": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 255 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    }
+  },
+  {
+    "name": "removed-declaration",
+    "pass": true,
+    "original": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    },
+    "candidate": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    }
+  },
+  {
+    "name": "malformed-declaration",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $BROKEN: (size no_number) is not an integer literal",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $BROKEN: (size no_number) is not an integer literal"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $BROKEN: (size no_number) is not an integer literal",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $BROKEN: (size no_number) is not an integer literal"
+      ]
+    }
+  },
+  {
+    "name": "removed-declaration-file",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: ENOENT: no such file or directory, open '<ROOT>/src/00-regions.wat'"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: ENOENT: no such file or directory, open '<ROOT>/src/00-regions.wat'"
+      ]
+    }
+  },
+  {
+    "name": "law-global-changed",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)"
+      ]
+    }
+  },
+  {
+    "name": "law-provider-removed",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: region-layout: src/00-regions.wat names $CLASS_EXTRA_STRIDE, $WND_EXTRA_STRIDE, $MAX_WINDOWS, $PAINT_SCRATCH_SLOTS, $TIMER_ENTRY_SIZE, $TIMER_MAX, $ACCEL_TABLE_STRIDE, $ACCEL_TABLE_COUNT, $CS_MASK, $MM_TIMER_ENTRY, $WIN16_APP_DLL_STRIDE, $REGFILE_THREADS, $DLL_TABLE_CAPACITY, $WIN16_FILE_MAX, $THREAD_MSG_QUEUE_STRIDE, $GDI_NEAREST_CACHE_SLOTS, $WIN16_THUNK_MAX, $CONSOLE_MAX_CELLS, $GDI_DC_CLIP_COUNT, $GDI_DC_SAVE_COUNT, $GDI_DC_STATE_STRIDE, $GDI_DC_STATE_COUNT, $GDI_OBJECT_STRIDE, $GDI_OBJECT_COUNT, $GDI_WINDOW_SURFACE_STRIDE, $GDI_WINDOW_SURFACE_COUNT, $GDI_DC_AUX_STRIDE, $GDI_DC_AUX_COUNT, $CURSOR_TABLE_STRIDE, $MAX_MAPPED_VIEWS, $MAX_VIRTUAL_RESERVES, $MAX_VIRTUAL_HOLES, $GDI_BITMAP_FONT_STRIDE, $GDI_BITMAP_FONT_COUNT, $GDI_DC_SYSTEM_CLIP_COUNT, $CS_TABLE_ENTRIES, $TV_VIEW_COUNT, $GDI_DC_PATH_STRIDE, $GDI_DC_PATH_COUNT, $TV_SLOT_COUNT, $DX_MAX, $DX_ENTRY_SIZE, $HOT_BLOCK_HIST_COUNT, $SIB_CONSUMER_HIST_COUNT, $D3DIM_EB_CACHE_MAX, $D3DIM_MATRIX_MAX, $VSOCK_REC_SIZE, $VSOCK_MAX, $SETUPDI_INFO_SET_COUNT, $DEVICE_NOTIFY_RECORD_COUNT in a (stride)/(count)/(mask) law, but no src/*.wat declares it as (global NAME i32 (i32.const N))"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: region-layout: src/00-regions.wat names $CLASS_EXTRA_STRIDE, $WND_EXTRA_STRIDE, $MAX_WINDOWS, $PAINT_SCRATCH_SLOTS, $TIMER_ENTRY_SIZE, $TIMER_MAX, $ACCEL_TABLE_STRIDE, $ACCEL_TABLE_COUNT, $CS_MASK, $MM_TIMER_ENTRY, $WIN16_APP_DLL_STRIDE, $REGFILE_THREADS, $DLL_TABLE_CAPACITY, $WIN16_FILE_MAX, $THREAD_MSG_QUEUE_STRIDE, $GDI_NEAREST_CACHE_SLOTS, $WIN16_THUNK_MAX, $CONSOLE_MAX_CELLS, $GDI_DC_CLIP_COUNT, $GDI_DC_SAVE_COUNT, $GDI_DC_STATE_STRIDE, $GDI_DC_STATE_COUNT, $GDI_OBJECT_STRIDE, $GDI_OBJECT_COUNT, $GDI_WINDOW_SURFACE_STRIDE, $GDI_WINDOW_SURFACE_COUNT, $GDI_DC_AUX_STRIDE, $GDI_DC_AUX_COUNT, $CURSOR_TABLE_STRIDE, $MAX_MAPPED_VIEWS, $MAX_VIRTUAL_RESERVES, $MAX_VIRTUAL_HOLES, $GDI_BITMAP_FONT_STRIDE, $GDI_BITMAP_FONT_COUNT, $GDI_DC_SYSTEM_CLIP_COUNT, $CS_TABLE_ENTRIES, $TV_VIEW_COUNT, $GDI_DC_PATH_STRIDE, $GDI_DC_PATH_COUNT, $TV_SLOT_COUNT, $DX_MAX, $DX_ENTRY_SIZE, $HOT_BLOCK_HIST_COUNT, $SIB_CONSUMER_HIST_COUNT, $D3DIM_EB_CACHE_MAX, $D3DIM_MATRIX_MAX, $VSOCK_REC_SIZE, $VSOCK_MAX, $SETUPDI_INFO_SET_COUNT, $DEVICE_NOTIFY_RECORD_COUNT in a (stride)/(count)/(mask) law, but no src/*.wat declares it as (global NAME i32 (i32.const N))"
+      ]
+    }
+  },
+  {
+    "name": "newly-discovered-law-provider",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $CLASS_EXTRA_TABLE (size 0x00000100) is not (stride 0x00000003) x (count 64)"
+      ]
+    }
+  },
+  {
+    "name": "new-js-target",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "region-census: test/new-between.js:1 addresses 0x03C92001 directly, which is inside ALLOCATED $TITLE_TABLE (+0x00000001)",
+        "region-census: a WAT fragment embedded in JS is compiled by our own compiler, so region.addr resolves inside it. A bare address there is a copy of a map the allocator re-places on every layout change — and it goes stale silently, landing in whatever region moved on top of it (docs/watx-region-safety-design.md)."
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "region-census: test/new-between.js:1 addresses 0x03C92001 directly, which is inside ALLOCATED $TITLE_TABLE (+0x00000001)",
+        "region-census: a WAT fragment embedded in JS is compiled by our own compiler, so region.addr resolves inside it. A bare address there is a copy of a map the allocator re-places on every layout change — and it goes stale silently, landing in whatever region moved on top of it (docs/watx-region-safety-design.md)."
+      ]
+    }
+  },
+  {
+    "name": "new-manifest-target",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\n",
+      "errors": [
+        "region-census: $CLASS_EXTRA declares \"between\" at 2 addresses:",
+        "    src/99-between.wat:1  +0",
+        "    src/99-between.wat:2  +16",
+        "region-census: two copies of the same bytes in ONE region have one lifetime and one set of readers between them, so the second copy is storage that can only ever drift. Point the readers at the first address and delete the second (the block is addressed by explicit offset, so the hole costs nothing and nothing reflows). Cross-region mirrors are NOT this — see 01-header.wat:1120-1129, where the low copies exist because an app can disturb that page. Ratchet baseline: tools/region-census.baseline.json dupPayloads (--dup-payloads --record)."
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\n",
+      "errors": [
+        "region-census: $CLASS_EXTRA declares \"between\" at 2 addresses:",
+        "    src/99-between.wat:1  +0",
+        "    src/99-between.wat:2  +16",
+        "region-census: two copies of the same bytes in ONE region have one lifetime and one set of readers between them, so the second copy is storage that can only ever drift. Point the readers at the first address and delete the second (the block is addressed by explicit offset, so the hole costs nothing and nothing reflows). Cross-region mirrors are NOT this — see 01-header.wat:1120-1129, where the low copies exist because an app can disturb that page. Ratchet baseline: tools/region-census.baseline.json dupPayloads (--dup-payloads --record)."
+      ]
+    }
+  },
+  {
+    "name": "removed-manifest-target",
+    "pass": true,
+    "original": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    },
+    "candidate": {
+      "status": 0,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+      "errors": []
+    }
+  },
+  {
+    "name": "malformed-manifest",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\n",
+      "errors": [
+        "Error: <ROOT>/src/main.watx:4: neither a comment nor an (include \"name\") form:"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\n",
+      "errors": [
+        "Error: <ROOT>/src/main.watx:4: neither a comment nor an (include \"name\") form:"
+      ]
+    }
+  },
+  {
+    "name": "late-invalid-layout",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $LATE_BAD: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $LATE_BAD: (align 3) is not a power of two"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $LATE_BAD: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $LATE_BAD: (align 3) is not a power of two"
+      ]
+    }
+  },
+  {
+    "name": "same-stat-alignment",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $SAMESTAT: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $SAMESTAT: (align 3) is not a power of two"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (265 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "[watx] [WATX] Compilation failed at stage EMIT: region.declare $SAMESTAT: (align 3) is not a power of two",
+        "Error: region-layout: src/00-regions.wat does not compile: region.declare $SAMESTAT: (align 3) is not a power of two"
+      ]
+    }
+  },
+  {
+    "name": "early-malformed-manifest",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: <ROOT>/src/main.watx:4: neither a comment nor an (include \"name\") form:"
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: <ROOT>/src/main.watx:4: neither a comment nor an (include \"name\") form:"
+      ]
+    }
+  },
+  {
+    "name": "removed-manifest",
+    "pass": true,
+    "original": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: lib/wat-manifest.js: cannot read src/main.watx (ENOENT). It is the root of the (include ...) closure — the build has no source order without it."
+      ]
+    },
+    "candidate": {
+      "status": 1,
+      "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+      "errors": [
+        "Error: lib/wat-manifest.js: cannot read src/main.watx (ENOENT). It is the root of the (include ...) closure — the build has no source order without it."
+      ]
+    }
+  }
+]
