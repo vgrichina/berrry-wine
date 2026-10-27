@@ -1,0 +1,1857 @@
+{
+  "accepted-boundary.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-boundary.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.command.json",
+    "bytes": 1396,
+    "sha256": "51764de28d639a64924a8eaf744b6d77f596a6f1bc4392416dcea7fe8265c522"
+  },
+  "accepted-boundary.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-boundary.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "7d07558a55ab869bfa962e06604f1fc7821563b14a32ad6c6ff9c4f99bf278be"
+  },
+  "accepted-boundary.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.result.json",
+    "bytes": 340,
+    "sha256": "a94c37ce10217445d22229a4cc8014ae97ddf0f9461b750e743c09a88073b3de"
+  },
+  "accepted-boundary.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-boundary.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-boundary.stdout",
+    "bytes": 1181,
+    "sha256": "4130a0e865685b5b284f6e4f13732d8356615e784669ea2df95e8202e8320a53"
+  },
+  "accepted-consumed.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-consumed.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.command.json",
+    "bytes": 1400,
+    "sha256": "2b0d6f2257989058580ae3c154e766e74192e50d34c69e883a65387fffb5dd4c"
+  },
+  "accepted-consumed.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-consumed.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "7dd6d2b83f6df5dd968d03906c10df8dc520a49f0fa592ece8d69c5337ede255"
+  },
+  "accepted-consumed.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.result.json",
+    "bytes": 415,
+    "sha256": "acce7e09036c74d9ef1cf1b81846a9f23df607739055bcebef2571e480d745a3"
+  },
+  "accepted-consumed.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.stderr",
+    "bytes": 1198,
+    "sha256": "5fea65538b150b33a35058fbe1c1f42b9b71b9bdcef28139ea331686c1e7f76a"
+  },
+  "accepted-consumed.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-consumed.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-final-matrix.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-final-matrix.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.command.json",
+    "bytes": 1432,
+    "sha256": "d2b1e5665b636fa648a69272740590ac8a241b9abb4e6bca48aefd5d8f36d072"
+  },
+  "accepted-final-matrix.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-final-matrix.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "cb0a86f9805ed9865e091da12da4f6c1737aedcc6ca6e641aa8a8a121c6b33bf"
+  },
+  "accepted-final-matrix.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.result.json",
+    "bytes": 327,
+    "sha256": "2977afc5d75532cbaa7f577b648da0321c912552a32bf8a2865d810edebf1be0"
+  },
+  "accepted-final-matrix.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.stderr",
+    "bytes": 672,
+    "sha256": "f5a3c0d0c68dd8909ae8b65d0644d94e006b560efda1859753166f442266aa9e"
+  },
+  "accepted-final-matrix.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-final-matrix.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-matrix.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-matrix.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.command.json",
+    "bytes": 1432,
+    "sha256": "d2b1e5665b636fa648a69272740590ac8a241b9abb4e6bca48aefd5d8f36d072"
+  },
+  "accepted-matrix.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-matrix.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "958510a1f9bd3e64b5176960403b4407f60f7b4228d365d09b26c408b32f788c"
+  },
+  "accepted-matrix.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.result.json",
+    "bytes": 335,
+    "sha256": "fb3d838281f13fd642851cbbf42a8147ae4ca6dca701964679ec8ae7ed37d492"
+  },
+  "accepted-matrix.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.stderr",
+    "bytes": 672,
+    "sha256": "aca4289c1445cfa91d79c6d21185cb9b3e6a10540735b8f55e2bdd2feabb9d2c"
+  },
+  "accepted-matrix.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-matrix.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-original.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-original.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.command.json",
+    "bytes": 1403,
+    "sha256": "ddcc08daef80883d58931204d761461d1c1e01376802aee785c28926304b029f"
+  },
+  "accepted-original.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-original.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "4b20b48b111620adb00297e67d73f3e783fc33f176a81f3383ede1653637620b"
+  },
+  "accepted-original.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.result.json",
+    "bytes": 329,
+    "sha256": "055c1d5bba902d4cbde78006b04280b21157012d258945158e2da377ad5430ac"
+  },
+  "accepted-original.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.stderr",
+    "bytes": 798,
+    "sha256": "7bde029e1a8d13da38557f9bf328d5f9479f8286424f0d533ee1f5ee68b0b804"
+  },
+  "accepted-original.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-original.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-pinned.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-pinned.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.command.json",
+    "bytes": 1438,
+    "sha256": "17f88829c6f98bf04810e42e24a28c85895fa5d9aff396b8b1da04df0c21834c"
+  },
+  "accepted-pinned.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-pinned.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "6dc6f19bdfa00d79e15f946f54733c406efa808f9f9a12199951a19c13738d04"
+  },
+  "accepted-pinned.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.result.json",
+    "bytes": 326,
+    "sha256": "23daaf54fa0a8f7a7cf1e6d99e379990a16d65e3bf2271fd4880c6574afca9c8"
+  },
+  "accepted-pinned.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.stderr",
+    "bytes": 110,
+    "sha256": "e1780b97ca703b132ec5d6d31631fdc52d403152b5b417e49e6e25ba95c226d5"
+  },
+  "accepted-pinned.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-pinned.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-reopen.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-reopen.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.command.json",
+    "bytes": 1435,
+    "sha256": "ee26c6ad782184a04d58e2c3e924e94141fcdfa3bac157c8211cff755044e8c5"
+  },
+  "accepted-reopen.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-reopen.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "58bfb8988f12cccc98c4e39e7abedbb6bb2ae117fa0ac0e0d80f4126f6294d82"
+  },
+  "accepted-reopen.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.result.json",
+    "bytes": 327,
+    "sha256": "d84ba05a31379bf256d05702db4fc7b4bc93d69caa47d99d737c4431f53e3e4d"
+  },
+  "accepted-reopen.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.stderr",
+    "bytes": 106,
+    "sha256": "d052c8e5db27d50fcf27d93c1378db3afabffcc76ba6286309d383883ff7d02e"
+  },
+  "accepted-reopen.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reopen.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-reproducer.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-reproducer.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.command.json",
+    "bytes": 1408,
+    "sha256": "0ef71589c80d556b987f1d098fc1ba0884a7210be67bf5946d9dcd3b285b6cc7"
+  },
+  "accepted-reproducer.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-reproducer.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "0b992db9c083a9177d6b3c69d85ac5ea35867dbff1127cfcf1018594b87bbf09"
+  },
+  "accepted-reproducer.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.result.json",
+    "bytes": 328,
+    "sha256": "429d5921a185b5a3993108aff9a0bd0ba07f914a2f3c5491b856b5b8f7085433"
+  },
+  "accepted-reproducer.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-reproducer.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-reproducer.stdout",
+    "bytes": 1039,
+    "sha256": "94778cb7ae270ae85d216bdeaaac9ebf84dc91d5198524aaf85d2e198aef728d"
+  },
+  "accepted-setup.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "accepted-setup.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.command.json",
+    "bytes": 1393,
+    "sha256": "067218c1c6995b902d4993aa47f445603994e71fe0e4bcbfe3e515f4040d7291"
+  },
+  "accepted-setup.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-setup.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "5c74a113852d9c3c39baa3ae8b26fc83a817b236e87cefb16d1bcb3ab9af96cd"
+  },
+  "accepted-setup.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.result.json",
+    "bytes": 340,
+    "sha256": "dee2241df1b7b9ac11304bb13188d88944151b5ed54e4a1822828bc6bf75fb55"
+  },
+  "accepted-setup.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "accepted-setup.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/accepted-setup.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "admission-1793100507064920442.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100507064920442.json",
+    "bytes": 1179,
+    "sha256": "b0332a6b2e601f5ffc0475260fd752bfeec82e5b055252ac111964d16b60ca1a"
+  },
+  "admission-1793100522526503261.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100522526503261.json",
+    "bytes": 1179,
+    "sha256": "580e203f9bf5bd402607ac6fce52c249c1d8de42f85fa96b21c69a01b2b0cabd"
+  },
+  "admission-1793100522749695987.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100522749695987.json",
+    "bytes": 1180,
+    "sha256": "15107a8b3f9b08562dbc6fde0a7ed3cdf6d0cf32061e9f2c8a6481d42ac44428"
+  },
+  "admission-1793100582535466696.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100582535466696.json",
+    "bytes": 999,
+    "sha256": "067ac79e8a500232d0877f1261643e6f79055f6021104815ef33ddeb8ab0fc4f"
+  },
+  "admission-1793100603494138496.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100603494138496.json",
+    "bytes": 1000,
+    "sha256": "ff51d455e850cbc254ec7a6df8066d574d00915f9e79e5e152fc223891dca0a2"
+  },
+  "admission-1793100603737996975.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100603737996975.json",
+    "bytes": 1000,
+    "sha256": "797da657ed3bbabafdd248d465512f2ac372ccc3baa84cebddc5bbeb18a05bed"
+  },
+  "admission-1793100604000357241.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100604000357241.json",
+    "bytes": 1000,
+    "sha256": "121d887101c110cf8c7bbf75205da162b98a800af9022168c192e8cd41e42db9"
+  },
+  "admission-1793100657759478652.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100657759478652.json",
+    "bytes": 1180,
+    "sha256": "6cb7cc849cfae76e19358411f0e9788140eee0081d3d8d7e5325a57b0b34c7d8"
+  },
+  "admission-1793100711398045830.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100711398045830.json",
+    "bytes": 1179,
+    "sha256": "218b1f6de103d8343c97369d59c8beeecabe2afa679372345754de647d23dd91"
+  },
+  "admission-1793100711652442151.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100711652442151.json",
+    "bytes": 1179,
+    "sha256": "bf20305aa2bcf13ba591a798cb339974101b8d01888e4fe749174f91725fec77"
+  },
+  "admission-1793100751598286638.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100751598286638.json",
+    "bytes": 1181,
+    "sha256": "0f875f830917818ed88fcab3f929e8efb0a86c467505ee844fa0221b81edf556"
+  },
+  "admission-1793100751696719157.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100751696719157.json",
+    "bytes": 1181,
+    "sha256": "976744b9a192eb525aa01e0a77cf2c06c0a9493c340aebdb40d31cbf08d0fb15"
+  },
+  "admission-1793100751773340852.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100751773340852.json",
+    "bytes": 1181,
+    "sha256": "ced8ba29bd5fcf04501a83f5911a6ba149f6eb124ccb5c235474b0b78f9a9e9f"
+  },
+  "admission-1793100847017698355.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100847017698355.json",
+    "bytes": 1180,
+    "sha256": "ae32a26e533879e69019f079e60748cb483ad525ef4db17e03b8f4421d0bc2d7"
+  },
+  "admission-1793100847213354103.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100847213354103.json",
+    "bytes": 1180,
+    "sha256": "165967ef9245f7e4158990f550bbb7d8394bde6a4aa3bbbedffd43b9091e8f0b"
+  },
+  "admission-1793100847484569102.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100847484569102.json",
+    "bytes": 1180,
+    "sha256": "c002f0a4d291aeb4e5af0035cb9f4dab84c66b453b16d5238432e23d437270d6"
+  },
+  "admission-1793100881312980489.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100881312980489.json",
+    "bytes": 1179,
+    "sha256": "e8c61adc60544cb83cb2f25a194f08562d80692657c18ae52a308a275f66913c"
+  },
+  "admission-1793100881554871080.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100881554871080.json",
+    "bytes": 1180,
+    "sha256": "872943afbb552fdec911c64cd67614c783c961ae76f2659e24995ba3fa7ddb57"
+  },
+  "admission-1793100912125608034.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100912125608034.json",
+    "bytes": 1179,
+    "sha256": "d2b2985e40e0e6c22d24f22919f38770b1430760554eea5a4505893660135197"
+  },
+  "admission-1793100912366812896.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100912366812896.json",
+    "bytes": 1180,
+    "sha256": "9900949bba0642a1a9121a58062c313da490776ef6ab076f965d9fcb58f34f99"
+  },
+  "admission-1793100939996794549.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100939996794549.json",
+    "bytes": 1181,
+    "sha256": "35a40943d307bd352be7d17b6bba8bbfae17e9692d690feb4e010029c0e706f1"
+  },
+  "admission-1793100940122242203.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100940122242203.json",
+    "bytes": 1181,
+    "sha256": "055494393f4d832f099dfb702e0bdb4729de5321396bb8a96c7d21afee5663e1"
+  },
+  "admission-1793100940278224702.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100940278224702.json",
+    "bytes": 1181,
+    "sha256": "53a0ef7111513d579c21ea2a6010cd125d129ab05061cd2a33d841e7f52d7dc6"
+  },
+  "admission-1793100940375087030.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100940375087030.json",
+    "bytes": 1181,
+    "sha256": "7d1dbdc63c08c5ee91717a22089ba6ee789c52c303b97179152a903c6a12a33a"
+  },
+  "admission-1793100940496438182.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793100940496438182.json",
+    "bytes": 1180,
+    "sha256": "b46610065fc775dce1d7afe65dc7ab68407fd6d804a2755d4bceb212b74c381c"
+  },
+  "admission-1793101028369776472.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101028369776472.json",
+    "bytes": 1090,
+    "sha256": "087889ded030dce5a7bad4ccdafaa60f497152b414f723d77800f25d6bb031e2"
+  },
+  "admission-1793101029015890261.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101029015890261.json",
+    "bytes": 1090,
+    "sha256": "cf9039304cfa083da602e4684bc30ae614b326eaf904b0bcf81f74974bc9dd63"
+  },
+  "admission-1793101029311464919.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101029311464919.json",
+    "bytes": 1090,
+    "sha256": "3d696f6d8032f2641927f2560e515ad8595d45c941991ce01e560ba2cedd8cf2"
+  },
+  "admission-1793101048549816710.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101048549816710.json",
+    "bytes": 1091,
+    "sha256": "488351f7de548b5eb193de11b77b3a10e47582d816e2b63556e929582c972b6c"
+  },
+  "admission-1793101048779269819.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101048779269819.json",
+    "bytes": 1091,
+    "sha256": "06f8cba11242ae28b041f1ccbaf92525ce53f0676c252e3ecb882486d485de64"
+  },
+  "admission-1793101049113581947.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101049113581947.json",
+    "bytes": 1090,
+    "sha256": "3c91a92f30ef66e4a89de48bbd59802457d1a447de1b330dda38d6e441dcc8bc"
+  },
+  "admission-1793101049423568416.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101049423568416.json",
+    "bytes": 1091,
+    "sha256": "92d66afdc68734a8fb0927b31eea5500c72fb1533fae1bba3fed67cdd6d042ce"
+  },
+  "admission-1793101127922712045.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101127922712045.json",
+    "bytes": 1001,
+    "sha256": "8e3d5c956422d933b88b24006162960336327d5697fabfd379da20c0354c9fab"
+  },
+  "admission-1793101129324987462.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101129324987462.json",
+    "bytes": 1001,
+    "sha256": "22f4ab86b858e87b6150ca78773d6ba545f6ff28ddbdce64ba1cc4a0d5d42cfc"
+  },
+  "admission-1793101129713352421.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101129713352421.json",
+    "bytes": 1001,
+    "sha256": "c0a1388e4b6be57c14c0c9904370b0ec1352abe18bb72bb65b85fbab0370c849"
+  },
+  "admission-1793101173094831699.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101173094831699.json",
+    "bytes": 1001,
+    "sha256": "b92acf87de5681878dec26c7200951fb23b1242f11b7ce290fa5b2255b40003f"
+  },
+  "admission-1793101173331763966.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101173331763966.json",
+    "bytes": 1002,
+    "sha256": "306412965ac1491d0d3df736d0e781f9afc7a3436b841d770eb3acaade68fe2b"
+  },
+  "admission-1793101173653609009.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101173653609009.json",
+    "bytes": 1002,
+    "sha256": "0f493c48e54c41eb1fe220d23f99ed1d55c6c172eb98dbf1b5dd905914442aa6"
+  },
+  "admission-1793101173983325242.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101173983325242.json",
+    "bytes": 1002,
+    "sha256": "01ad15a30cb149e9d1a87533a6352f67268871bd80c1f60ee75e4383993a2c90"
+  },
+  "admission-1793101174258405134.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101174258405134.json",
+    "bytes": 1001,
+    "sha256": "b1855bfe83c28b4f228064d401c223434d910db8161986584664fb97c75e6ad5"
+  },
+  "admission-1793101174793235300.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101174793235300.json",
+    "bytes": 1002,
+    "sha256": "2c50bca2a12659eca68943787b7a725031d558f7e1a197a7cb41a75c1dd3728a"
+  },
+  "admission-1793101205760456164.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101205760456164.json",
+    "bytes": 1002,
+    "sha256": "7a9e45c3588ae075bca640d07add7f6bab4cd708fe199645fdd18117a9f20cf3"
+  },
+  "admission-1793101206522149905.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101206522149905.json",
+    "bytes": 1002,
+    "sha256": "d3be3bdb8b1c2965a213963637126ebcf645b6562ebe7875f49db18614887cad"
+  },
+  "admission-1793101206803261321.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101206803261321.json",
+    "bytes": 1002,
+    "sha256": "4aeb8f24dc1e7a63faab2abd1fe4c2e32a086f10fa1c217e74ef75cbf845b240"
+  },
+  "admission-1793101228569313029.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101228569313029.json",
+    "bytes": 1001,
+    "sha256": "8545219686821aaf162a48177512f74f1cdc287513916b5d1e72c09a1195f3c8"
+  },
+  "admission-1793101228757186259.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101228757186259.json",
+    "bytes": 1001,
+    "sha256": "bf43962b1fdb0857d3e9bfa6af6bc7439600b53a89576ad0ac5b12b6874a2b50"
+  },
+  "admission-1793101301791795047.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admission-1793101301791795047.json",
+    "bytes": 1002,
+    "sha256": "724de267f8fd944b42ac990b73d01dc9c8ac13e34cf3c45b3dc56e2545cd8062"
+  },
+  "admit.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/admit.py",
+    "bytes": 2098,
+    "sha256": "20827cb6f8cf8a53ec4c0fade7738b697b607804c3bca93990074e3d905fec3e"
+  },
+  "affected-adaptation.diff": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-adaptation.diff",
+    "bytes": 1531,
+    "sha256": "2ba34fdf4e3821306245bd09d2d7bde1c80f39f86bcc3f277de84f4bacabe2a7"
+  },
+  "affected-consumed-capacity-recovered.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "affected-consumed-capacity-recovered.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.command.json",
+    "bytes": 1403,
+    "sha256": "c37149d960a8afc95c8282dae0f9f9bcc1d9b7d537851980e35784ab2b720186"
+  },
+  "affected-consumed-capacity-recovered.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-consumed-capacity-recovered.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "ca35a54b046ec72674ab13751c761389c05470c3857579ef6974c7a1e6a53ec7"
+  },
+  "affected-consumed-capacity-recovered.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.result.json",
+    "bytes": 427,
+    "sha256": "2633bbc129e316d98b88256c787cced53727af026fa52b2ee112c915ad0ff5c4"
+  },
+  "affected-consumed-capacity-recovered.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.stderr",
+    "bytes": 1198,
+    "sha256": "858dea6e20350fefbfc8389f48aa2fe9a0fbfe38aebfca59d3bddeb7d5045593"
+  },
+  "affected-consumed-capacity-recovered.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-capacity-recovered.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-consumed-run.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed-run.py",
+    "bytes": 698,
+    "sha256": "742a0269e69cac776fd2935b3b8121cc1afd595608ece217f157a1dbef197fa8"
+  },
+  "affected-consumed.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-consumed.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "3654f08656cd758ec4b627bea5f8ccecae75e200a4d49f5fc1089218adf88813"
+  },
+  "affected-consumed.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-consumed.py",
+    "bytes": 11747,
+    "sha256": "073295289be7e737f5136c86533586813618fac6e5add3f0458793982a245d49"
+  },
+  "affected-original-capacity-recovered.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "affected-original-capacity-recovered.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.command.json",
+    "bytes": 1403,
+    "sha256": "e9bb6aac384c750fca06700fcc9b17ab9d44ef7b94437e73b11274ea65725ec7"
+  },
+  "affected-original-capacity-recovered.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-original-capacity-recovered.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "7f51e41ce333f5ff16672c90c67ce80c0802ed208778e9a9c23f726c20219988"
+  },
+  "affected-original-capacity-recovered.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.result.json",
+    "bytes": 334,
+    "sha256": "4338eb4c1c23db447d8d0638ee2f556f0c26bb934518fbdf3edc70ab10563002"
+  },
+  "affected-original-capacity-recovered.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.stderr",
+    "bytes": 798,
+    "sha256": "c08da2bdc3488c5ad6efcdf4875701ca7b53c85e77a33d788ac3da15194fda7c"
+  },
+  "affected-original-capacity-recovered.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-capacity-recovered.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-original-run.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original-run.py",
+    "bytes": 531,
+    "sha256": "dbad77c26015b53eb96e41928d8cf11b41204fb21f8eab2519417cf69e9904d2"
+  },
+  "affected-original.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "affected-original.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/affected-original.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "873a1245cdc0f057faec759e78ff246472aefb5740cf08d8aa0782ff4e017389"
+  },
+  "attribute-proof.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "attribute-proof.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.command.json",
+    "bytes": 1397,
+    "sha256": "cd5615dde852910ab995ae99315534ac35c4208a50a75d685cb7db0093478989"
+  },
+  "attribute-proof.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "attribute-proof.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "7d4a01e4e0165db016c494e5d75674e52946d4f84eb5597bbcc5e3e534af10d3"
+  },
+  "attribute-proof.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.py",
+    "bytes": 334,
+    "sha256": "283dc2f1dbe2640b1a7c40715b9b837da96ace43d61a7aec976733e342f30128"
+  },
+  "attribute-proof.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.result.json",
+    "bytes": 335,
+    "sha256": "045fc1e1ac3af57302f07634bb4f5deed6e08312d3498c93ce82f422705adb04"
+  },
+  "attribute-proof.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "attribute-proof.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/attribute-proof.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate-object.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.child-limits.json",
+    "bytes": 86,
+    "sha256": "729c3163a23e12a3f12b8458bd90840346fb036d203d92fc1da11461e42ad367"
+  },
+  "candidate-object.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.command.json",
+    "bytes": 1432,
+    "sha256": "3613d691659a68964c4491a4df087611f8ec5914df8047b5a34e4239c0089726"
+  },
+  "candidate-object.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate-object.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "19437be0a0ff24f721b5479fe0f4a93e486283d78196e87fceba867154191592"
+  },
+  "candidate-object.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.result.json",
+    "bytes": 328,
+    "sha256": "5669606ecb63b048eec3225f2eae8c36da808fdfcfaac1ba22d31c75a24deb0f"
+  },
+  "candidate-object.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate-object.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-object.stdout",
+    "bytes": 7,
+    "sha256": "50836eee574ecff79dea3b4fd40673d7d000f7a5f177d8a6a3000b59c78383b8"
+  },
+  "candidate-source.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.child-limits.json",
+    "bytes": 86,
+    "sha256": "729c3163a23e12a3f12b8458bd90840346fb036d203d92fc1da11461e42ad367"
+  },
+  "candidate-source.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.command.json",
+    "bytes": 1455,
+    "sha256": "6091c1bc63ec36246710d7af28d6b6b27a671fbf4e7dc402e62c930da073e6ce"
+  },
+  "candidate-source.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate-source.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.preadmission.stdout",
+    "bytes": 872,
+    "sha256": "956bab2d6c91c0818f816e71f96561ffdc55477a4bcce63d5c4aef69a4a6d3fc"
+  },
+  "candidate-source.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.result.json",
+    "bytes": 297,
+    "sha256": "d005571042efbba41e7dbe00e371c0378a95a7705c18008c99d5706d0352d820"
+  },
+  "candidate-source.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "candidate-source.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/candidate-source.stdout",
+    "bytes": 14705,
+    "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4"
+  },
+  "cleanup-supervision.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/cleanup-supervision.json",
+    "bytes": 1097,
+    "sha256": "a6f3e8098f02680ae780e28c6a4866a0170253418ec32ac190473c090a2fcc3d"
+  },
+  "cleanup.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/cleanup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "cleanup.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/cleanup.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "content-proof.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "content-proof.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.command.json",
+    "bytes": 1395,
+    "sha256": "bbe6b6c9ef4b35b649801f23f1d1233b51034903a313b30feb611e452606582c"
+  },
+  "content-proof.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "content-proof.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "14ceda15173f84c090b8003a2e23a63f12795337ba3018d777b55a9e0dc0f360"
+  },
+  "content-proof.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.py",
+    "bytes": 2249,
+    "sha256": "5dc77cd63108d5dac19031a74e0386fe7bbdda02e4453f059ebb7dcd57d372ec"
+  },
+  "content-proof.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.result.json",
+    "bytes": 334,
+    "sha256": "a0a032d9e2c0c960b0153fdb00f4233b324f2a62e09618d3f4790bed8d0dd421"
+  },
+  "content-proof.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "content-proof.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/content-proof.stdout",
+    "bytes": 93,
+    "sha256": "6921890abd6a90aa152d71bb5065dbc9866bf74b888b6d0ef9cdb57002fe648e"
+  },
+  "dependency-pins.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/dependency-pins.json",
+    "bytes": 1915,
+    "sha256": "d35b7593bd7f0813565cff23cc72bf9241c914e1241a284261aaeab2167fe246"
+  },
+  "edit.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "edit.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.command.json",
+    "bytes": 1386,
+    "sha256": "1b893565b8720e46f82b4ea80144b9a793ee6bc47568579fe59cffc8604eb325"
+  },
+  "edit.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "edit.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.preadmission.stdout",
+    "bytes": 870,
+    "sha256": "01a6d567fcc218b2dce8ec98e8fb9d7d9b2d58094686f80dea2473ed5a2564cd"
+  },
+  "edit.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.py",
+    "bytes": 4138,
+    "sha256": "c2144e86d4940947f636f731c1c7fca63572b42154c95ee01f6b9bc1967475ad"
+  },
+  "edit.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.result.json",
+    "bytes": 346,
+    "sha256": "e548b32864f99c56c0f3908d753b233ec26dfb777bba3e5464f071a10430d068"
+  },
+  "edit.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "edit.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/edit.stdout",
+    "bytes": 90,
+    "sha256": "53d3261674a598b28325e8219c971632f9d64869808ce95fc50d88404b190ad6"
+  },
+  "final-affected-adaptation.diff": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-adaptation.diff",
+    "bytes": 1531,
+    "sha256": "1f1974beb194dbaacae2d8ab96f318daef0a8913962415a5a686cda53c397a54"
+  },
+  "final-affected-consumed.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-affected-consumed.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.command.json",
+    "bytes": 1400,
+    "sha256": "2b0d6f2257989058580ae3c154e766e74192e50d34c69e883a65387fffb5dd4c"
+  },
+  "final-affected-consumed.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-affected-consumed.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.preadmission.stdout",
+    "bytes": 934,
+    "sha256": "eb9751d28f3aa4969a4f1f1120e3f4c0aaf1645625205e7922ef88eb28594145"
+  },
+  "final-affected-consumed.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.py",
+    "bytes": 11747,
+    "sha256": "22e67ec7e25630d8554d25bf7030d102feffa7f49bf637901c198bc7bffc3b62"
+  },
+  "final-affected-consumed.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.result.json",
+    "bytes": 426,
+    "sha256": "14371d8b2b36487c129d80ac1bc525b4a41653d5d2ff45b5c52bc28b98dfe69c"
+  },
+  "final-affected-consumed.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.stderr",
+    "bytes": 1198,
+    "sha256": "cc085f5e834ccf87292fb4cc5bb4dd106f9ee631c7f4d23888a043bcdc773e5d"
+  },
+  "final-affected-consumed.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-consumed.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-affected-original.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-affected-original.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.command.json",
+    "bytes": 1403,
+    "sha256": "ddcc08daef80883d58931204d761461d1c1e01376802aee785c28926304b029f"
+  },
+  "final-affected-original.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-affected-original.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.preadmission.stdout",
+    "bytes": 933,
+    "sha256": "f4c3cef6f07a9ee606a11b7e0a5e1360abf9ec887b5b0a358b2277631e142f8d"
+  },
+  "final-affected-original.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.result.json",
+    "bytes": 335,
+    "sha256": "7cc9c18f2dab89e55b880890ab86aaaff5e7b373ed50ff3f334d403f7a96c20d"
+  },
+  "final-affected-original.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.stderr",
+    "bytes": 798,
+    "sha256": "82a55a2e4069184098fa6ee3d3a058d457c047984c852d9c52ebcf0d4bd292ce"
+  },
+  "final-affected-original.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-original.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-affected-run.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-affected-run.py",
+    "bytes": 704,
+    "sha256": "3939b99441a5cdadfa62bf1bfff7cc24b689c06873181868c67620ebcc1fe82f"
+  },
+  "final-boundary-adaptation.diff": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary-adaptation.diff",
+    "bytes": 763,
+    "sha256": "d06113d963e6265610b42a8c6b1a6b4c8407ab1abb9a17be6c6e124c54c1fb7a"
+  },
+  "final-boundary.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-boundary.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.command.json",
+    "bytes": 1396,
+    "sha256": "51764de28d639a64924a8eaf744b6d77f596a6f1bc4392416dcea7fe8265c522"
+  },
+  "final-boundary.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-boundary.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.preadmission.stdout",
+    "bytes": 934,
+    "sha256": "4eced9672aabc81d4ee54270db0995dd5a1252bf22d3f269c296d9abc49c5c43"
+  },
+  "final-boundary.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.py",
+    "bytes": 4002,
+    "sha256": "678499dc9b10836650540a51311edda21fdf6d88c113924cee16a51795d170cb"
+  },
+  "final-boundary.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.result.json",
+    "bytes": 335,
+    "sha256": "c29495ad79cec4b2c390ebf65bf9ed1411f258cb289b196c63a29ceac4ca999b"
+  },
+  "final-boundary.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-boundary.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-boundary.stdout",
+    "bytes": 1181,
+    "sha256": "4130a0e865685b5b284f6e4f13732d8356615e784669ea2df95e8202e8320a53"
+  },
+  "final-edit.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-edit.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-edit.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-edit.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "34af80c47dcdf2990bb4c5ab9bcadb7b2c243e4eb0412f5e59a67a0fb0b79b59"
+  },
+  "final-edit.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-edit.py",
+    "bytes": 1972,
+    "sha256": "04a6d86c91ab3a5287da0365617656db55d7c576e4f2ff31301db7c3a1ade5e6"
+  },
+  "final-matrix-admitted.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-matrix-admitted.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.command.json",
+    "bytes": 1432,
+    "sha256": "d2b1e5665b636fa648a69272740590ac8a241b9abb4e6bca48aefd5d8f36d072"
+  },
+  "final-matrix-admitted.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-matrix-admitted.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.preadmission.stdout",
+    "bytes": 933,
+    "sha256": "32a28c79ed6525a856125ca06d2057334c104364652e8d90bcc66a5305b5dc01"
+  },
+  "final-matrix-admitted.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.result.json",
+    "bytes": 334,
+    "sha256": "6c46aa39ac424f25e28a3d268b47388ca63a499e51bc717867dd9b624c0a78b0"
+  },
+  "final-matrix-admitted.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.stderr",
+    "bytes": 672,
+    "sha256": "fcb88440e11f0577c220c361efe77186d13bbc024f0322e7dcbcbd740a812011"
+  },
+  "final-matrix-admitted.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix-admitted.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-matrix.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-matrix.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-matrix.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "9827954523c43025d109f007c3488bb9155b90a8115b6f433bb1c07ec640ff8c"
+  },
+  "final-pinned-admitted.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-pinned-admitted.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.command.json",
+    "bytes": 1438,
+    "sha256": "17f88829c6f98bf04810e42e24a28c85895fa5d9aff396b8b1da04df0c21834c"
+  },
+  "final-pinned-admitted.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-pinned-admitted.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.preadmission.stdout",
+    "bytes": 933,
+    "sha256": "511740c5e921c0b0353ce2d02a48a89d0af5581f60b024670b204bf8a684a890"
+  },
+  "final-pinned-admitted.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.result.json",
+    "bytes": 334,
+    "sha256": "bac46548248809b4ddad633dabacc80bf25baeb88e53863866f34e38a3ee8426"
+  },
+  "final-pinned-admitted.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.stderr",
+    "bytes": 8024,
+    "sha256": "4d6c650216e2c18de77cc71f537bbfc3e32828dcf117d8587daa0d78aaf151cb"
+  },
+  "final-pinned-admitted.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned-admitted.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-pinned.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-pinned.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-pinned.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "2e18cd36a25ab373db1c56bca5b212995808e044d5d7ab94ec705f26d515b222"
+  },
+  "final-reopen.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reopen.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-reopen.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reopen.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "6192ec155d757edc25772aae30b406fb99bc9182ea9c52c24e306c3cd46d5b47"
+  },
+  "final-reproducer-admitted.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-reproducer-admitted.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.command.json",
+    "bytes": 1408,
+    "sha256": "0ef71589c80d556b987f1d098fc1ba0884a7210be67bf5946d9dcd3b285b6cc7"
+  },
+  "final-reproducer-admitted.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-reproducer-admitted.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.preadmission.stdout",
+    "bytes": 933,
+    "sha256": "b204503a5a937f5e5535c445bf82ab4d0b94204972fe2f33020fea60287718be"
+  },
+  "final-reproducer-admitted.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.result.json",
+    "bytes": 335,
+    "sha256": "cf89d848d05196845938f18ddb28af2760f62df1432c887219ec54fb57e469fb"
+  },
+  "final-reproducer-admitted.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-reproducer-admitted.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer-admitted.stdout",
+    "bytes": 1029,
+    "sha256": "fbfc0b87c78219ef29a3f25457e9c6e05fbd1d2b626ac24211cbdbc1adde1997"
+  },
+  "final-reproducer.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-reproducer.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-reproducer.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "a096538643e110e79c50fb1760846c727f09743f90568e1ffc5f63eb63e13cbb"
+  },
+  "final-setup.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "final-setup.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.command.json",
+    "bytes": 1393,
+    "sha256": "067218c1c6995b902d4993aa47f445603994e71fe0e4bcbfe3e515f4040d7291"
+  },
+  "final-setup.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-setup.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.preadmission.stdout",
+    "bytes": 934,
+    "sha256": "c715d5b9feab8a84678578e00dfbb1454f78dd33a92a4c306895ddb980b07549"
+  },
+  "final-setup.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.py",
+    "bytes": 1750,
+    "sha256": "a737b91a4a426ba36a9aad80f1e34ba187173725233c028353f69f9acffdae4f"
+  },
+  "final-setup.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.result.json",
+    "bytes": 334,
+    "sha256": "32bc4606ae982fa2247170cc2d83f2572c4f722662b78689669bc188b46c4615"
+  },
+  "final-setup.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "final-setup.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/final-setup.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "first-unchanged-counterexample.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged-counterexample.json",
+    "bytes": 1332,
+    "sha256": "cbf1f42d2a8ea4431c3e8f8abb58a80f1bf65b007553910e3bb3931b54da8bc8"
+  },
+  "first-unchanged.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "first-unchanged.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.command.json",
+    "bytes": 1400,
+    "sha256": "2ca94ec7c25d530aa62fd2d8b60ea85ba7201dee38a79a47c9dfbd396c391d8d"
+  },
+  "first-unchanged.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "first-unchanged.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "29045e78dca3bb7dbfa1538ed8de725f2a5f9cc467f845d70c41a0e7668eb962"
+  },
+  "first-unchanged.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.result.json",
+    "bytes": 345,
+    "sha256": "9e1aeb42da86ff86fb46fc723329164652804f769374972761f19cbf3eb98cc6"
+  },
+  "first-unchanged.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.stderr",
+    "bytes": 615,
+    "sha256": "8abb5556e0edca20ccb8982ada8581281f2e4f7858cb10a951677f1e3d0435e0"
+  },
+  "first-unchanged.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged.stdout",
+    "bytes": 1029,
+    "sha256": "ecfe4ac0f04236a861ae328df161734eeb8f80db7d0ca8afb4ee46b7400aa3e9"
+  },
+  "git.sh": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/git.sh",
+    "bytes": 291,
+    "sha256": "a0a9a044ad6683a1909690e1e3ac4d09cf2822244e4e4a3ccf8f95e6b0c7ed58"
+  },
+  "independent-boundary.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/independent-boundary.json",
+    "bytes": 19563,
+    "sha256": "66f154b2293ac7f30d6738fbba881a80d4e55c40c8565918b6450898ee6c94be"
+  },
+  "init.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.child-limits.json",
+    "bytes": 86,
+    "sha256": "729c3163a23e12a3f12b8458bd90840346fb036d203d92fc1da11461e42ad367"
+  },
+  "init.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.command.json",
+    "bytes": 1439,
+    "sha256": "c88af42ebc3190d729bebc551da7e601c7b2ea59d19eff3ad1648646eec37849"
+  },
+  "init.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "init.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "bccffefc47b12ed2c7746a79ada4dfbb819d398a74fbc7c639b771c452057890"
+  },
+  "init.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.result.json",
+    "bytes": 334,
+    "sha256": "1ae02aca3e99b116ab894fa93f0364fb2d592d0510b863858019b91bceb335b3"
+  },
+  "init.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "init.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/init.stdout",
+    "bytes": 92,
+    "sha256": "4373739dea264934350b528b86e4a2486da0b778850ccdce36e777b73fd36920"
+  },
+  "input-pins.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/input-pins.json",
+    "bytes": 5388,
+    "sha256": "686664621ba4ba7c8a858878dcbe83004bb6c493fbadd3023c60878aaa757786"
+  },
+  "late-final-hardlink.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/late-final-hardlink.json",
+    "bytes": 362,
+    "sha256": "b4793b827c75277f68c21d41500deb4eddf8927d62c9632317d714da20aed409"
+  },
+  "late-final-symlink.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/late-final-symlink.json",
+    "bytes": 361,
+    "sha256": "42393bdf8246e82b41f1ee6e02fbe1bc30ed22ddc760c6237c895f89630153d0"
+  },
+  "minimal-reproducer.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/minimal-reproducer.json",
+    "bytes": 1318,
+    "sha256": "e395dab716f4161b6b6f57c333296cd4f73fc17b65f6b9f7bb1a41a2feaafc69"
+  },
+  "minimal-reproducer.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/minimal-reproducer.py",
+    "bytes": 2567,
+    "sha256": "a07ccf88520edf056cf3cd71bcdb88299b425ef297ee09b789f25db27687d12e"
+  },
+  "mutation-controls.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/mutation-controls.json",
+    "bytes": 71,
+    "sha256": "8aa702750fd54859dad13e27c00a509201c2b0f1e592b640b348e452c76ec7d0"
+  },
+  "negative-check.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-check.py",
+    "bytes": 1071,
+    "sha256": "e351a877b1d1be82f9060957e2a73ef34f5424e4aa09301dcf48d3b84772f07d"
+  },
+  "negative-control-compatible.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "negative-control-compatible.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.command.json",
+    "bytes": 1396,
+    "sha256": "7f9770f042a40a3967585bf711b8a2de57c56fcc88fb95850a559c5d822842d3"
+  },
+  "negative-control-compatible.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negative-control-compatible.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "f11b4d4eee863eaf1c13b2238c34963b800282b0869082949332a4834e391a2d"
+  },
+  "negative-control-compatible.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.result.json",
+    "bytes": 328,
+    "sha256": "78fd3cf48875965c5c6a3cffc016a81c42aa03de4b52223a693d17d161913531"
+  },
+  "negative-control-compatible.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.stderr",
+    "bytes": 1776,
+    "sha256": "1100b138f0817ea4790ef5b2b27f7d18345cb7280c89825db480aad3af8a5594"
+  },
+  "negative-control-compatible.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control-compatible.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negative-control.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "negative-control.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.command.json",
+    "bytes": 1396,
+    "sha256": "7f9770f042a40a3967585bf711b8a2de57c56fcc88fb95850a559c5d822842d3"
+  },
+  "negative-control.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.json",
+    "bytes": 212,
+    "sha256": "96c2e9183ede66b14a1db01505e5f9fa642238a5f5d031f80bae506f1b8755d7"
+  },
+  "negative-control.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negative-control.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "5ff7b84831dce802c118544a5682ed8fce07053e0f741ce2f7a96967eb520174"
+  },
+  "negative-control.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.result.json",
+    "bytes": 328,
+    "sha256": "c7908afa732902dc058f271b1a5b41c38ae0a1e4242898b73a9b02dd81a30afb"
+  },
+  "negative-control.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.stderr",
+    "bytes": 2195,
+    "sha256": "4c8f5911958f110108f6db06a5acdbe12b6dd8f71694bdbdcaf8971f0539188a"
+  },
+  "negative-control.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative-control.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "negative.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/negative.py",
+    "bytes": 390,
+    "sha256": "b9e6f2d619fef86defd1aa28d0ebfaf9f943448b813f693094b95b55580c4f94"
+  },
+  "new-matrix-v2.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "new-matrix-v2.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.command.json",
+    "bytes": 1432,
+    "sha256": "4385fc28b9a5f19a7c1d5d43ee22e181e8abc843e6651dfb1488a6c411ad5a9a"
+  },
+  "new-matrix-v2.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix-v2.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "73b2709c9f1fa10fbdbd6a0b8a0212b37eb8ed0fee25aed1214f6acfdeb7e9e2"
+  },
+  "new-matrix-v2.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.result.json",
+    "bytes": 334,
+    "sha256": "dfabc882f0226636a89776cfeac71b2370d88e63ab75b014fc05760609fd7d6e"
+  },
+  "new-matrix-v2.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.stderr",
+    "bytes": 484,
+    "sha256": "d366f139fd43b5792f5c4a1804287a2323fb2b16978ee3e4f44b6463568504fe"
+  },
+  "new-matrix-v2.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v2.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix-v3.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "new-matrix-v3.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.command.json",
+    "bytes": 1432,
+    "sha256": "4385fc28b9a5f19a7c1d5d43ee22e181e8abc843e6651dfb1488a6c411ad5a9a"
+  },
+  "new-matrix-v3.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix-v3.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "c441698fbf6e915ec3befd8e93839fc4794228ea97061974723d38005b521257"
+  },
+  "new-matrix-v3.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.result.json",
+    "bytes": 334,
+    "sha256": "090af73ae5679d71aa8891950deb18789eeb7c5c7bb66492de63b505b828e667"
+  },
+  "new-matrix-v3.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.stderr",
+    "bytes": 3128,
+    "sha256": "87f448cdd34b099bdbb108f7b40502da4dc82ba52a11734f4dd4044fa2820b62"
+  },
+  "new-matrix-v3.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v3.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix-v4.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "new-matrix-v4.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.command.json",
+    "bytes": 1432,
+    "sha256": "4385fc28b9a5f19a7c1d5d43ee22e181e8abc843e6651dfb1488a6c411ad5a9a"
+  },
+  "new-matrix-v4.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix-v4.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "503bee0fd2e798e80311e7e7cfe3df24141ea523ec044a47a5db585503b6fa95"
+  },
+  "new-matrix-v4.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.result.json",
+    "bytes": 334,
+    "sha256": "c3c82904b673698abf240f2ccffc112610691b444f0ddbcb80f6d8a183c9489b"
+  },
+  "new-matrix-v4.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.stderr",
+    "bytes": 484,
+    "sha256": "b57bc7e053a86f744778cd1ce7cedbddbc9ca678bd190f114bc27de78b0db282"
+  },
+  "new-matrix-v4.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix-v4.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "new-matrix.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.command.json",
+    "bytes": 1432,
+    "sha256": "4385fc28b9a5f19a7c1d5d43ee22e181e8abc843e6651dfb1488a6c411ad5a9a"
+  },
+  "new-matrix.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "new-matrix.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "2dc10be3cd6c9c3884a7c5db2bc31d0948730b457ff45d0dca2cc37ae38a8407"
+  },
+  "new-matrix.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.result.json",
+    "bytes": 334,
+    "sha256": "6bf93b7a55b7e30e5e37bbda1b9564a8e78993e04acff1e8b8c30cb874d33c6d"
+  },
+  "new-matrix.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.stderr",
+    "bytes": 3138,
+    "sha256": "2443e59d6445f72cdcfc37284218061438e8cdfcd4ebbab7ddf738b42e6046a3"
+  },
+  "new-matrix.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/new-matrix.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "original-runtime-accounting.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/original-runtime-accounting.py",
+    "bytes": 14705,
+    "sha256": "eda4947b2e96b115fcc92deecf147cb8fdeb03189f4600fdb9be82b45a18dae4"
+  },
+  "prepare-regressions-capacity-recovered.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "prepare-regressions-capacity-recovered.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.command.json",
+    "bytes": 1401,
+    "sha256": "0884cd56e9273c92d2f1aaa8d27fbbeb3c307e4cf2051e936f369ba2121eff14"
+  },
+  "prepare-regressions-capacity-recovered.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prepare-regressions-capacity-recovered.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.preadmission.stdout",
+    "bytes": 995,
+    "sha256": "ec6bd4f21d4c5800334486ee9300f64d4584f304b9155b4eb3102bcdc24410a5"
+  },
+  "prepare-regressions-capacity-recovered.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.result.json",
+    "bytes": 334,
+    "sha256": "aaa1d1189c195859f57849bc153d69a561106e7bb913afc92423b9447b186974"
+  },
+  "prepare-regressions-capacity-recovered.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prepare-regressions-capacity-recovered.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions-capacity-recovered.stdout",
+    "bytes": 102,
+    "sha256": "915a40602e8e50902dbb50012f763aee7888fafcc9e2f3db533ad2cdf947d368"
+  },
+  "prepare-regressions.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prepare-regressions.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions.preadmission.stdout",
+    "bytes": 996,
+    "sha256": "62f89ddd21a4a6929e226e38946f833927a3519bef88d6b50c95ead02bc37951"
+  },
+  "prepare-regressions.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/prepare-regressions.py",
+    "bytes": 1844,
+    "sha256": "35f2817497e963d184f77cf4c9124637b0b8a8a83487b7cfeda3ffdbc6ef8d4b"
+  },
+  "previous-pinned.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "previous-pinned.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.command.json",
+    "bytes": 1438,
+    "sha256": "2bfb7c442284fe0ef70078cf6e46fd9c1bb30a5322d3e75ee25feb89f72b4829"
+  },
+  "previous-pinned.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "previous-pinned.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.preadmission.stdout",
+    "bytes": 871,
+    "sha256": "12412c7bbbdb82a6b0ae3d482fc49fc42a97a5f6dc56777029bac50fffe99f43"
+  },
+  "previous-pinned.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.result.json",
+    "bytes": 335,
+    "sha256": "48093c5623e4076c73c54a1a3565042df1454900c291f257d3fbd25fb241f03e"
+  },
+  "previous-pinned.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.stderr",
+    "bytes": 110,
+    "sha256": "a74854b58927d50f48f1bf9bfee51635b5688f562679538d7a39aa294421e65f"
+  },
+  "previous-pinned.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-pinned.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "previous-reopen.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "previous-reopen.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.command.json",
+    "bytes": 1435,
+    "sha256": "5b17bbdaca1a16fa813a644b599826103229fb9fdacf2ff0460f97d40482f472"
+  },
+  "previous-reopen.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "previous-reopen.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.preadmission.stdout",
+    "bytes": 871,
+    "sha256": "9798f35d8a4be2be340307bf48b0a3c53d52a8763f152f9adc58dfc9104be920"
+  },
+  "previous-reopen.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.result.json",
+    "bytes": 335,
+    "sha256": "547f249d1c4ebb565b1575568f1a569d747b01cf57a853ece082e40bf9fe26d7"
+  },
+  "previous-reopen.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.stderr",
+    "bytes": 106,
+    "sha256": "833af8ba6fd734ac45299e0d9055beaf978ada37598f7c54df8d6ea27b95c9f1"
+  },
+  "previous-reopen.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/previous-reopen.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "production-transform.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "production-transform.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.command.json",
+    "bytes": 1502,
+    "sha256": "02a98b0186dd76a55ee39c32934dd552a0742d5acdec47f7b8e85e415e5e1eb7"
+  },
+  "production-transform.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "production-transform.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.preadmission.stdout",
+    "bytes": 873,
+    "sha256": "a24553220f2727b19d2edf6a91440d532312f6cee013b341cc519e18cdb5aeff"
+  },
+  "production-transform.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.result.json",
+    "bytes": 372,
+    "sha256": "417d35cc1b55ee7fff4c7540b9d110abe39acdb44effa38d784d98bcb21f9598"
+  },
+  "production-transform.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.stderr",
+    "bytes": 223,
+    "sha256": "30e4aa5189c8463d7b08b3d28c352829eab4fcc74f5387f93ffcbce2df3ed31d"
+  },
+  "production-transform.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/production-transform.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "py.sh": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/py.sh",
+    "bytes": 251,
+    "sha256": "2e7a65f97c758ca2b1b2d04fb240a6ac741b0166a49e0328a0a534ae0b68b4f6"
+  },
+  "repaired-first.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "repaired-first.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.command.json",
+    "bytes": 1408,
+    "sha256": "c5b029f92004952934a01f3539e5f2bcec9b17158b133d2300c6eca86e410ea8"
+  },
+  "repaired-first.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "repaired-first.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.preadmission.stdout",
+    "bytes": 871,
+    "sha256": "e028b548c8e45d85e59622ab42c897bf56ef0a20d49a500f42b8dbdb4c26e646"
+  },
+  "repaired-first.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.result.json",
+    "bytes": 335,
+    "sha256": "f63e94b88001958f47096096abce513bbb5f273185d7d87cc0170c6f271baa1d"
+  },
+  "repaired-first.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "repaired-first.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-first.stdout",
+    "bytes": 1026,
+    "sha256": "5e60ad4bbff6ec40d60d719a02d900dce4455193ad9488a76743d45e35bd38ab"
+  },
+  "repaired-reproducer.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/repaired-reproducer.py",
+    "bytes": 2567,
+    "sha256": "1de2b742661cf9a42c0701f3a241938e1fa38b8d3a128b960ce956bf7ab4bbee"
+  },
+  "reproducer-adaptation.diff": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/reproducer-adaptation.diff",
+    "bytes": 825,
+    "sha256": "d811aae79cda0bbaadcfe2d20283dd2d377f17520bb7bcb4069a3e83fa16abd9"
+  },
+  "reused-receipts.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/reused-receipts.json",
+    "bytes": 5047,
+    "sha256": "08991dc23349ed4ec335aacdd50bcea6dda929865d5a7c72e4665e2d639731fd"
+  },
+  "run.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/run.py",
+    "bytes": 3564,
+    "sha256": "b589af8584540c30014cbb62a6a8af4942b4e855473517f9abfad0b57bd186ba"
+  },
+  "same-size-cases.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/same-size-cases.json",
+    "bytes": 37784,
+    "sha256": "bb9b02d1d39c4dfae686712e1ec800617bd84413a4dddf481ef26f174e9da695"
+  },
+  "setup.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "setup.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.command.json",
+    "bytes": 1387,
+    "sha256": "3149ba03491c1618b97b95a5fbf0b49f9087fb822319e9be46e5d730d10ec36e"
+  },
+  "setup.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "setup.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "e9339582354c3ff9cdce972f6d13183198330b2c2bcd32033ba2627397c5e0ad"
+  },
+  "setup.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.py",
+    "bytes": 2089,
+    "sha256": "0fe876910be60c706d99c5850152187db5f896b40851c013472623759aff4d2d"
+  },
+  "setup.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.result.json",
+    "bytes": 335,
+    "sha256": "895bc246cada32721cd873a605f6b47d0d5bb480fb80cbd068f3354b2007871a"
+  },
+  "setup.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "setup.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/setup.stdout",
+    "bytes": 92,
+    "sha256": "1c0269b03bacb659e64cfa42d519df782152af1ce12cfa512f287c188bcd685c"
+  },
+  "test-run.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/test-run.py",
+    "bytes": 812,
+    "sha256": "226f74d61d3ade61273449608bbc7e7bfa7ce2834ec2cf80433eac046ae6157f"
+  },
+  "tighten.child-limits.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.child-limits.json",
+    "bytes": 72,
+    "sha256": "d9b2db24f4e58ed70eb029ef4eb0056091b82e66c0ebda5b02885bf766f748fb"
+  },
+  "tighten.command.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.command.json",
+    "bytes": 1389,
+    "sha256": "616571c8e59e3c3eb036cc6f977a91953a05e918884dcc7ee999e6c274f5811a"
+  },
+  "tighten.preadmission.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.preadmission.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tighten.preadmission.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.preadmission.stdout",
+    "bytes": 994,
+    "sha256": "5be59cd76fad6048a67e5558f3a8165bf4493c58c3b0053089634fe65c5eef73"
+  },
+  "tighten.py": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.py",
+    "bytes": 612,
+    "sha256": "f13377a3407a64baafc6ba2183196e34cdfb9062d66f79adc4d194425f79b178"
+  },
+  "tighten.result.json": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.result.json",
+    "bytes": 346,
+    "sha256": "94755ca09fd57ace5266ad555cf4340c712481135b43be089f4d4fd1a4e0db33"
+  },
+  "tighten.stderr": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "tighten.stdout": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/tighten.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

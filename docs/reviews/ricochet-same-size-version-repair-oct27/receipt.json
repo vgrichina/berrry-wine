@@ -1,0 +1,139 @@
+{
+  "status": "TESTED_REPAIR_PENDING_PUBLICATION_AND_INDEPENDENT_ACCEPTANCE",
+  "task": "ricochet-same-size-version-repair-oct27",
+  "candidate": "03b1c12fb6edd1ca88ff51658fea811f26c740ec",
+  "source": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/tools/ricochet/runtime-accounting.py",
+    "bytes": 19032,
+    "sha256": "42c01fee55908621934b6b23c759fc5e2862479573468f9b1cfbc85b8bb285a1"
+  },
+  "test": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/test/ricochet-same-size-version.test.py",
+    "bytes": 9000,
+    "sha256": "6fac8a760107eba45361a8aade1dabcb89f42a13d42a4597ba75deee2ec490b9"
+  },
+  "sourceTestPins": {
+    "tools/ricochet/runtime-accounting.py": {
+      "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/tools/ricochet/runtime-accounting.py",
+      "bytes": 19032,
+      "sha256": "42c01fee55908621934b6b23c759fc5e2862479573468f9b1cfbc85b8bb285a1"
+    },
+    "test/ricochet-same-size-version.test.py": {
+      "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/test/ricochet-same-size-version.test.py",
+      "bytes": 9000,
+      "sha256": "6fac8a760107eba45361a8aade1dabcb89f42a13d42a4597ba75deee2ec490b9"
+    }
+  },
+  "inputPins": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/input-pins.json",
+    "bytes": 5388,
+    "sha256": "686664621ba4ba7c8a858878dcbe83004bb6c493fbadd3023c60878aaa757786"
+  },
+  "dependencyPins": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/dependency-pins.json",
+    "bytes": 1915,
+    "sha256": "d35b7593bd7f0813565cff23cc72bf9241c914e1241a284261aaeab2167fe246"
+  },
+  "rejectedAcceptance": {
+    "path": "/tmp/ricochet-pinned-unlink-independent-accept-oct27/ops/receipt-manifest.json",
+    "bytes": 46119,
+    "sha256": "4e1758254162b349be83eef7277f61349df46846ed30a312e81fd1f69c4cea56"
+  },
+  "firstCounterexample": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/first-unchanged-counterexample.json",
+    "bytes": 1332,
+    "sha256": "cbf1f42d2a8ea4431c3e8f8abb58a80f1bf65b007553910e3bb3931b54da8bc8"
+  },
+  "repairedCounterexample": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/minimal-reproducer.json",
+    "bytes": 1318,
+    "sha256": "e395dab716f4161b6b6f57c333296cd4f73fc17b65f6b9f7bb1a41a2feaafc69"
+  },
+  "reusedReceipts": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/ops/reused-receipts.json",
+    "bytes": 5047,
+    "sha256": "08991dc23349ed4ec335aacdd50bcea6dda929865d5a7c72e4665e2d639731fd"
+  },
+  "results": {
+    "matrixScenarios": 96,
+    "matrixMethods": 6,
+    "pinned": 11,
+    "reopen": 8,
+    "boundary": 12,
+    "affectedOriginal": 6,
+    "affectedConsumed": 9,
+    "productionSyntheticChild": 1,
+    "originalAttackAssertionsFailAsExpected": 2
+  },
+  "testLabels": [
+    "accepted-final-matrix",
+    "accepted-pinned",
+    "accepted-reopen",
+    "accepted-reproducer",
+    "accepted-boundary",
+    "accepted-original",
+    "accepted-consumed",
+    "negative-control-compatible",
+    "production-transform",
+    "candidate-object",
+    "candidate-source"
+  ],
+  "incidents": [
+    "Initial broad tool reads exceeded8192B display; full session/event transcripts retained and bounded reads used thereafter",
+    "Missing optional admission.py filename corrected to admit.py; no behavioral execution",
+    "Initial matrix exposed three namespace escapes, corrected with creation-event rejection; all failed streams retained",
+    "Mmap challenge exposed three inotify-only escapes; content+directory attribute proof added; all failed streams retained",
+    "Two batches continued to preadmission-only rejections after first admission failure; no child ran; subsequent batches use set-e; driver now retains admission traceback in distinct stderr",
+    "RAM admission failed at MemAvailable2586464256/required2841923584 and later2464608256/2914824192; resumed only after measured capacity changes, same limits",
+    "Pinned regression rejected correctly but7 expected message assertions failed; established control-version wording restored",
+    "First original-source negative control hit missing private monitor hook; test adapter now leaves the unmodified original unpatched for absent monitor, both vulnerability assertions fail as expected",
+    "Reproducer writes fixed JSON filename; original stdout preserved and independently decoded into first-unchanged-counterexample.json before packaging"
+  ],
+  "scope": "Source/Python fixtures only; no Node/main/build/runtime/API/Boat/guest/deployment/workers",
+  "remaining": "Independent acceptance; authorized scoped integration; separately admitted production startup/gameplay/ordinary Quit",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/ricochet-same-size-version-repair-oct27/root-ref-digest.json",
+  "rootAndDonors": "Tracked/index/refs read only; initial root receipt reused, no later comparison required",
+  "mountValidation": "No mounts or filename-bearing runtime argv; source-only task",
+  "publication": {
+    "branch": "refs/heads/task/ricochet-same-size-version-repair-oct27",
+    "commit": null,
+    "exactRemoteVerified": false,
+    "strategy": "Sparse orphan report; select source/test patch only"
+  },
+  "resources": {
+    "allocation": 201326592,
+    "futureControlGrowth": 25165824,
+    "publicationPeak": 16777216,
+    "reserve": 8388608,
+    "margin": 8388608,
+    "extraReserve": 8388608,
+    "diskFloor": 2982150144,
+    "client": 335544320,
+    "fourFutureClients": 1342177280,
+    "sharedChildren": 536870912,
+    "hostHeadroom": 805306368,
+    "gitPhysical": 268435456,
+    "gitChildDATA": 536870912,
+    "pythonPhysical": 134217728,
+    "CPU": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitPool": 2,
+    "pythonPool": 1
+  },
+  "boxes": [],
+  "lifecycleOwner": "coordinator",
+  "checkpointAt": 1793101301.883595,
+  "archive": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/docs/reviews/ricochet-same-size-version-repair-oct27/causal-evidence.tar.gz",
+    "bytes": 77467,
+    "sha256": "70e8560f7789679648eb534d5d79518ea720656555b85f204ca0d2b21ed0456c"
+  },
+  "archiveManifest": {
+    "path": "/tmp/ricochet-same-size-version-repair-oct27/repo/docs/reviews/ricochet-same-size-version-repair-oct27/evidence-manifest.json",
+    "bytes": 87904,
+    "sha256": "31070135b64edafa1127fb953516abc0a30e90bb7deaa93c7354158d6146aa21"
+  },
+  "recovery": "Inspect tar members with tarfile; extract into a new owned directory only. Never execute archived predecessor wrappers or write donor paths. Command/source pins and raw stdout/stderr preserve failed setup and tests."
+}
