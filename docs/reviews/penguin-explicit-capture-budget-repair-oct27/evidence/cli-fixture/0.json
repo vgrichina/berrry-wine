@@ -1,0 +1,18 @@
+{
+ "timedOut": false,
+ "success": true,
+ "stdoutTruncated": false,
+ "stdout": "{\"chunk_bytes\":8192,\"images\":[{\"chunks\":1,\"compressed\":293,\"name\":\"fixture.png\",\"sha256\":\"a9c8a46924afca4e56d7d0dc843f8d78c0e821bbdaa0e303b2607fa55aa7d799\",\"size\":1032}],\"kind\":\"manifest\"}\n",
+ "stderrTruncated": false,
+ "stderr": "",
+ "startedAt": "2026-10-27T03:35:02.552Z",
+ "startMs": 0,
+ "signal": null,
+ "oomKilled": false,
+ "noticedMs": 1,
+ "launcherFailed": false,
+ "finishedAt": "2026-10-27T03:35:02.603Z",
+ "exitCode": 0,
+ "cwd": ".",
+ "commandId": "cmd_offline_0"
+}

@@ -1,0 +1,31 @@
+{
+  "command": [
+    "git",
+    "init",
+    "-b",
+    "task/penguin-explicit-capture-budget-repair-oct27",
+    "/tmp/penguin-explicit-capture-budget-repair-oct27/repo"
+  ],
+  "commandSHA256": "4ceba2bb2717af4478abd4ba08e22ddfacdd0e98db81b92112fecb8c7aada562",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 3634937856,
+  "free": 7806140416,
+  "at": 1793094718.4974973,
+  "kind": "git",
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 28180480,
+  "sampledPeakRSS": 28180480,
+  "reapedPeakRSS": 12451840,
+  "cpuSeconds": 0.035563,
+  "wallSeconds": 0.04720652801916003,
+  "owned": [
+    [
+      4051449,
+      "114192774"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

@@ -1,0 +1,3 @@
+{
+  "rawUTF8": "Traceback (most recent call last):\n  File \"/tmp/penguin-explicit-capture-budget-repair-oct27/ops/omission-controls.py\", line 23, in <module>\n    assert not result.errors,name+' test setup error instead of rejecting assertion'\n           ^^^^^^^^^^^^^^^^^\nAssertionError: budget-pin test setup error instead of rejecting assertion\n"
+}

@@ -1,0 +1,13 @@
+F
+======================================================================
+FAIL: test_used_reserves_poll_overflow_and_late_error_poison_both_profiles (tests.ExplicitBudgetTests.test_used_reserves_poll_overflow_and_late_error_poison_both_profiles)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 745, in test_used_reserves_poll_overflow_and_late_error_poison_both_profiles
+    with self.assertRaisesRegex(c.ContractError, 'reserve'): capture.account(b'x'*18)
+AssertionError: ContractError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

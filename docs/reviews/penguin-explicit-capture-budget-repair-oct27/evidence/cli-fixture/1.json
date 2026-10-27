@@ -1,0 +1,18 @@
+{
+ "timedOut": false,
+ "success": true,
+ "stdoutTruncated": false,
+ "stdout": "{\"data\":\"eNrrDPBz5+WS4mJgZGJmYWVj5+Dk4ubh5eMXEBQSFhEVE5eQlJKWkZWTV1BUUlZRVVPX0NTS1tHV0zcwNDI2MTUzt7C0sraxtbN3cHRydnF1c/fw9PL28fXzDwgMCg4JDQuPiIyKjomNi09ITEpOSU1Lz8jMys7JzcsvKCwqLiktK6+orKquqa2rb2hsam5pbWvv6Ozq7unt658wcdLkKVOnTZ8xc9bsOXPnzV+wcNHiJUuXLV+xctXqNWvXrd+wcdPmLVu3bd+xc9fuPXv37T9w8NDhI0ePHT9x8tTpM2fPnb9w8dLlK1evXb9x89btO3fv3X/w8NHjJ0+fPX/x8tXrN2/fvf/w8dPnL1+/ff/x89fvP3///R/1/6j/R7L/AZN5/7k=\",\"image\":0,\"index\":0,\"kind\":\"chunk\"}\n",
+ "stderrTruncated": false,
+ "stderr": "",
+ "startedAt": "2026-10-27T03:35:02.552Z",
+ "startMs": 1,
+ "signal": null,
+ "oomKilled": false,
+ "noticedMs": 2,
+ "launcherFailed": false,
+ "finishedAt": "2026-10-27T03:35:02.603Z",
+ "exitCode": 0,
+ "cwd": ".",
+ "commandId": "cmd_offline_1"
+}

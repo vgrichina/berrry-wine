@@ -1,0 +1,21 @@
+FF
+======================================================================
+FAIL: test_invalid_profiles_and_default_stability (tests.ExplicitBudgetTests.test_invalid_profiles_and_default_stability) (value=8388609, planner='plan_images')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 692, in test_invalid_profiles_and_default_stability
+    with self.subTest(value=value, planner=planner.__name__), self.assertRaises(c.ContractError):
+AssertionError: ContractError not raised
+
+======================================================================
+FAIL: test_invalid_profiles_and_default_stability (tests.ExplicitBudgetTests.test_invalid_profiles_and_default_stability) (value=8388609, planner='plan_provider_images')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 692, in test_invalid_profiles_and_default_stability
+    with self.subTest(value=value, planner=planner.__name__), self.assertRaises(c.ContractError):
+AssertionError: ContractError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=2)

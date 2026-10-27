@@ -1,0 +1,13 @@
+F
+======================================================================
+FAIL: test_plan_pins_mismatch_and_collector_cannot_upgrade_midstream (tests.ExplicitBudgetTests.test_plan_pins_mismatch_and_collector_cannot_upgrade_midstream)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 717, in test_plan_pins_mismatch_and_collector_cannot_upgrade_midstream
+    with self.assertRaisesRegex(c.ContractError, 'mismatch'):
+AssertionError: ContractError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)

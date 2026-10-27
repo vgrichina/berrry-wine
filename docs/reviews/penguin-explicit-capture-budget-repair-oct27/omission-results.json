@@ -1,0 +1,46 @@
+[
+  {
+    "name": "max-budget",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "f77c57e916f51bfd530e9805e1815da70d7b4664257364bfee9977f366e3ba25",
+    "old": "type(value) is int and 0 < value <= MAX_CAPTURE_BYTES",
+    "new": "type(value) is int and 0 < value",
+    "test": "test_invalid_profiles_and_default_stability",
+    "tests": 1,
+    "failures": 2,
+    "errors": 0
+  },
+  {
+    "name": "budget-pin",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "00708255ce47d0a9ae098fbc242cfb08b535555c8492b4856c97e7bfceb181df",
+    "old": "require(budget == plan._capture_budget, 'capture plan budget mismatch')",
+    "new": "pass # omitted construction pin",
+    "test": "test_plan_pins_mismatch_and_collector_cannot_upgrade_midstream",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0
+  },
+  {
+    "name": "raw-charge",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "e9b219cc1cb538d2c9857fc75547a67f683e439de51294dd9f93402114b17f09",
+    "old": "self.charged += len(raw)",
+    "new": "self.charged += 0",
+    "test": "test_exact_and_one_byte_over_both_planners_and_profiles",
+    "tests": 1,
+    "failures": 2,
+    "errors": 0
+  },
+  {
+    "name": "remaining-reserve",
+    "originalSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+    "transformedSHA256": "aece92c60bf3f975da31344ee7d6900cd819eb941a8bb1ba13d78376eba53cd6",
+    "old": "require(self.charged + sum(p['frame_limits'][self.cursor:]) + self.tail <= self.capture_budget,\n                    'remaining capture/tail reserve exceeds API budget')",
+    "new": "pass # omitted remaining reserve",
+    "test": "test_used_reserves_poll_overflow_and_late_error_poison_both_profiles",
+    "tests": 1,
+    "failures": 1,
+    "errors": 0
+  }
+]

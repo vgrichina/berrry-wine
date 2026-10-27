@@ -1,0 +1,35 @@
+{
+  "command": [
+    "python3",
+    "tools/penguin_capture_contract.py",
+    "plan",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b39999.png",
+    "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b40060.png",
+    "--used",
+    "0",
+    "--tail-reserve",
+    "1048576"
+  ],
+  "commandSHA256": "b5618f76c7f1fc2f6d69fc0fd9b49e9a883e30c95d259272c82e556d922e512e",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 3276181504,
+  "free": 7804170240,
+  "at": 1793094741.968123,
+  "kind": "python",
+  "exit": 2,
+  "stopReason": null,
+  "peakRSS": 44777472,
+  "sampledPeakRSS": 44777472,
+  "reapedPeakRSS": 27082752,
+  "cpuSeconds": 0.183211,
+  "wallSeconds": 0.10457915998995304,
+  "owned": [
+    [
+      4052233,
+      "114195121"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

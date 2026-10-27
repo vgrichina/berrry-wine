@@ -1,0 +1,26 @@
+{
+  "pins": {
+    "tools/penguin_capture_contract.py": "9ec154496d10053252701d786f26e821fc226db3bdcb0e948f45e68ab0045cb0",
+    "test/test_penguin_capture_contract.py": "ae9827feb0a5da2a8657b14fa0d2b1c9300aebf6340f504f5c9e23b692b032f5"
+  },
+  "images": {
+    "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b39999.png": {
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972",
+      "bytes": 806077
+    },
+    "/tmp/penguin-visible-projectile-gameplay-oct27/repo/docs/re-notes/penguin-visible-projectile-gameplay-20261027/decision/b40060.png": {
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754",
+      "bytes": 811393
+    }
+  },
+  "results": [
+    {
+      "planner": "plan_images",
+      "error": "UNSUPPORTED_PLAN: lossless payload + base64 + ALL JSON framing exceeds remaining API budget; used=0 transfer=2104362 tail=1048576 cap=1048576"
+    },
+    {
+      "planner": "plan_provider_images",
+      "error": "UNSUPPORTED_PLAN: lossless payload + base64 + ALL JSON framing exceeds remaining API budget; used=0 transfer=2075947 tail=1048576 cap=1048576"
+    }
+  ]
+}

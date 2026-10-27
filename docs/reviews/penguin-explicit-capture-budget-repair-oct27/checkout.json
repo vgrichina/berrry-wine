@@ -1,0 +1,32 @@
+{
+  "command": [
+    "git",
+    "checkout",
+    "f78bca4820c5de96afe46d81e5583d71e39d1882",
+    "--",
+    "tools/penguin_capture_contract.py",
+    "test/test_penguin_capture_contract.py"
+  ],
+  "commandSHA256": "f4cfe4d4a4bf6712a86df4faaa6018695b56501aace9a65fd9efa12b79aadb98",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 2512125952,
+  "free": 7804997632,
+  "at": 1793094736.6334534,
+  "kind": "git",
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 28311552,
+  "sampledPeakRSS": 28311552,
+  "reapedPeakRSS": 12582912,
+  "cpuSeconds": 0.038156999999999996,
+  "wallSeconds": 0.034157069865614176,
+  "owned": [
+    [
+      4052100,
+      "114194588"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

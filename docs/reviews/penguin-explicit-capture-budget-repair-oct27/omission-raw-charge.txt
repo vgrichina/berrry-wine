@@ -1,0 +1,21 @@
+FF
+======================================================================
+FAIL: test_exact_and_one_byte_over_both_planners_and_profiles (tests.ExplicitBudgetTests.test_exact_and_one_byte_over_both_planners_and_profiles) (budget=1048576, planner='plan_provider_images')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 685, in test_exact_and_one_byte_over_both_planners_and_profiles
+    self.assertEqual(charged, budget)
+AssertionError: 1044784 != 1048576
+
+======================================================================
+FAIL: test_exact_and_one_byte_over_both_planners_and_profiles (tests.ExplicitBudgetTests.test_exact_and_one_byte_over_both_planners_and_profiles) (budget=8388608, planner='plan_provider_images')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/penguin-explicit-capture-budget-repair-oct27/repo/test/test_penguin_capture_contract.py", line 685, in test_exact_and_one_byte_over_both_planners_and_profiles
+    self.assertEqual(charged, budget)
+AssertionError: 8384816 != 8388608
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=2)

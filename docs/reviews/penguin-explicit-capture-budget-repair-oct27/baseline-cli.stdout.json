@@ -1,0 +1,3 @@
+{
+  "rawUTF8": "{\"status\": \"REJECT\", \"error\": \"UNSUPPORTED_PLAN: lossless payload + base64 + ALL JSON framing exceeds remaining API budget; used=0 transfer=2104362 tail=1048576 cap=1048576\"}\n"
+}

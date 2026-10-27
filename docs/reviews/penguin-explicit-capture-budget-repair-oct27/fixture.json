@@ -1,0 +1,31 @@
+{
+  "command": [
+    "git",
+    "checkout",
+    "f78bca4820c5de96afe46d81e5583d71e39d1882",
+    "--",
+    "test/fixtures/penguin-wire-envelope.json"
+  ],
+  "commandSHA256": "c7f21276b39bc42536aa39f5c02957fd8f895368aa8ebc35b71d314a487f2cff",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 3385888768,
+  "free": 7803928576,
+  "at": 1793094754.0959187,
+  "kind": "git",
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 27918336,
+  "sampledPeakRSS": 27918336,
+  "reapedPeakRSS": 12582912,
+  "cpuSeconds": 0.038425999999999995,
+  "wallSeconds": 0.04532677307724953,
+  "owned": [
+    [
+      4052426,
+      "114196334"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

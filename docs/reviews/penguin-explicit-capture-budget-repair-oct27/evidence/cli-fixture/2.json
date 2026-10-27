@@ -1,0 +1,18 @@
+{
+ "timedOut": false,
+ "success": true,
+ "stdoutTruncated": false,
+ "stdout": "{\"images\":1,\"kind\":\"end\"}\n",
+ "stderrTruncated": false,
+ "stderr": "",
+ "startedAt": "2026-10-27T03:35:02.552Z",
+ "startMs": 2,
+ "signal": null,
+ "oomKilled": false,
+ "noticedMs": 3,
+ "launcherFailed": false,
+ "finishedAt": "2026-10-27T03:35:02.603Z",
+ "exitCode": 0,
+ "cwd": ".",
+ "commandId": "cmd_offline_2"
+}

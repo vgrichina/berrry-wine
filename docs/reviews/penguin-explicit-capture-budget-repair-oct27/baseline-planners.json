@@ -1,0 +1,28 @@
+{
+  "command": [
+    "python3",
+    "/tmp/penguin-explicit-capture-budget-repair-oct27/ops/baseline.py"
+  ],
+  "commandSHA256": "1d7fcf3f1dffc58dfac4a35f859e8636891fd39b18508891ca7d17632c4070de",
+  "sshSHA256": "7570a8da6269c11b0711ad8cc9ae4a39cbfb5678b263d10f79f4c3ba40b5db4f",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "memAvailable": 3393384448,
+  "free": 7803899904,
+  "at": 1793094754.219967,
+  "kind": "python",
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 43958272,
+  "sampledPeakRSS": 43958272,
+  "reapedPeakRSS": 25239552,
+  "cpuSeconds": 0.25034199999999995,
+  "wallSeconds": 0.13699089083820581,
+  "owned": [
+    [
+      4052429,
+      "114196346"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}
