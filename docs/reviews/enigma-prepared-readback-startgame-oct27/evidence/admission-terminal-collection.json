@@ -1,0 +1,15 @@
+{
+  "at": 1793075602.184623,
+  "own": 4726784,
+  "walPositive": 0,
+  "allocation": 25165824,
+  "reserve": 8388608,
+  "peerMaterial": 3829760,
+  "peerRemaining": 29724672,
+  "free": 3041685504,
+  "projected": 2983133184,
+  "floor": 2982150144,
+  "memAvailable": 3838316544,
+  "required": 1610612736,
+  "pass": true
+}

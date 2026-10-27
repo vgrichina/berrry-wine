@@ -1,0 +1,12 @@
+{
+  "exactCommandUnchanged": true,
+  "receipt": {
+    "PASS": true,
+    "fileCount": 2460,
+    "commaBearingCount": 0,
+    "enumerationSHA256": "db45e33dd0872ecceb89f56b3acff449d4ad2bd3de3bb7c4600bf61191b7753d",
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e"
+  },
+  "enumerationSHA256": null,
+  "parserSHA256": "bfc856bfc21c01ec02f92eb39186704ca84e29ce411a82b0e0a39d132f1e1a52"
+}

@@ -1,0 +1,18 @@
+{
+  "at": 1793075670.629213,
+  "phase": "BLOCKED_TRANSPORT_502_ATTEMPT_SPENT",
+  "guestInvocations": 1,
+  "restarts": 0,
+  "inputs": 0,
+  "gameplay": false,
+  "ordinaryQuit": false,
+  "readbackGate": true,
+  "readbackSeconds": 4.630762290908024,
+  "readbackBytes": 389913,
+  "readbackSHA256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+  "cause": "Supported API read-only new-frame metadata poll returned HTTP 502 with empty response; no unchanged retry, decision, input, restart or replay. Supervisor handles original bounded no-review cleanup.",
+  "commandId": "cmd_ao080xgrytd4",
+  "box": "bx_nmvbu5c7",
+  "shutdownOwner": "coordinator",
+  "expiry": "2026-10-27T05:12:05Z"
+}

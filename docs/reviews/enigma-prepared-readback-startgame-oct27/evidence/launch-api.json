@@ -1,0 +1,1 @@
+{"command":"timeout 120 python3 /tmp/enigma-prepared-readback-startgame-oct27/ops/launch.py","commandId":"cmd_ao080xgrytd4","cwd":".","errLogPath":"/home/user/.ascii/processes/34399.err.log","logPath":"/home/user/.ascii/processes/34399.log","pid":34399,"processId":34399,"startedAt":"2026-10-27T04:31:14.894Z","success":true}

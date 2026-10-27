@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/enigma-prepared-readback-startgame-oct27/ops/control.py", line 57, in <module>
+    elif a[0]=='script':exec(pathlib.Path(a[1]).read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 9, in <module>
+  File "/tmp/enigma-prepared-readback-startgame-oct27/ops/control.py", line 30, in py
+    j=json.loads(raw);assert p.returncode==0 and j.get('exitCode')==0 and not j.get('stdoutTruncated') and not j.get('stderrTruncated'),j
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'code': None, 'error': 'request failed (502): <empty response>', 'event': 'error', 'status': 502}

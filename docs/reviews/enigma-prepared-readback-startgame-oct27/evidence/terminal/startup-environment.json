@@ -1,0 +1,21 @@
+{
+  "at": 1793075474.9507768,
+  "environment": {
+    "HOME": "/home/user",
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/local/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "environmentSHA256": "19f73df0f52f73f5141a4b45fe09e1ccd95c212a2b3ca00c43c63f64b745e9ed",
+  "inheritedLimits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "configSHA256": "08dcd096e7d2b3c4acf8809961d0cee71b6112e5c9c5c5c27fdf9067cb7dd237",
+  "identities": {
+    "runner/test/run.js": "55be42cbcaedee9d7f56f578cd7d36841bba86861b38bf5d61a7a0415a880c2e",
+    "runner/lib/host-imports.js": "0d2dc6eff2b2ff9153f0b6b8b3caca69f71ae02bd62fe58599786d0d8f500347",
+    "modules/wine-assembly.wasm": "af202eea3c5c11aadb117b5c8eed1851d50ce2ce4246a4122845699b472fcc2b",
+    "runner/tools/enigma-supervised-gameplay.py": "ed3cfbb659a3ed6bdc6e218293579613a1709da1ab283f87a0b59de706048aa9",
+    "runner/tools/enigma-frozen-gameplay-controller.py": "77997362d75f9873cd8b022b4840606ed1b66780171e7c82d8f8a6f20b304f26",
+    "vfs/Enigma-1.01/enigma.exe": "5885e29ac9c1bdfe7f36e0d7fba76a56b74bc99558e1e6debf8425febe35fa45"
+  }
+}

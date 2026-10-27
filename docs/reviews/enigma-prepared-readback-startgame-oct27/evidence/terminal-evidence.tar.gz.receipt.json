@@ -1,0 +1,11 @@
+{
+  "path": "/tmp/enigma-prepared-readback-startgame-oct27/ops/terminal-evidence.tar.gz",
+  "bytes": 33486,
+  "wireBytes": 32047,
+  "sha256": "dadaa28a5a7549538ffa2ca0cae03714f4b869722335d91fd70554143779ef6e",
+  "elapsed": 0.2681826548650861,
+  "chunk": 4096,
+  "maxInflight": 4,
+  "responses": 581919,
+  "passGate": true
+}

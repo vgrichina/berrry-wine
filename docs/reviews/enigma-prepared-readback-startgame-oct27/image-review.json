@@ -1,0 +1,15 @@
+{
+  "at": 1793075670.6721866,
+  "tool": "view_image",
+  "actualFrame": {
+    "path": "/tmp/enigma-prepared-readback-startgame-oct27/ops/launch/controller/menu-candidate.png",
+    "batch": 65537,
+    "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5",
+    "bytes": 389913
+  },
+  "reviewed": true,
+  "afterTerminal": true,
+  "visual": "Actual Enigma main menu with Start Game, Level Pack, Options, Credits, Quit; no gameplay field.",
+  "inputAuthorized": false,
+  "reason": "Transport 502 had already ended attempt; terminal capture inspection authorizes no replay."
+}

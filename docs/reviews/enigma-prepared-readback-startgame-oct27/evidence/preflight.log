@@ -1,0 +1,3 @@
+manifest type dict
+{"bytes": 389913, "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5", "compressedBytes": 370938, "memAvailable": 7415820288, "oldProcesses": {"25292": false, "25293": false, "25300": false}}
+{"path": "/tmp/enigma-separated-stream-runtime-oct27/ops/launch/controller/menu-candidate.png", "bytes": 389913, "wireBytes": 370938, "sha256": "8ffead1b04adbe5fac8d82c5a374375f5883898b29e87962d72c3c3e26da18d5", "elapsed": 4.630762290908024, "chunk": 4096, "maxInflight": 4, "responses": 524852, "passGate": true}

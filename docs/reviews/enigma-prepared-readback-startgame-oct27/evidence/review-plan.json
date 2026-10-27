@@ -1,0 +1,24 @@
+{
+  "historicalInspected": true,
+  "historicalPreauthorizesNothing": true,
+  "coordinatesCandidate": [
+    343,
+    213
+  ],
+  "decisionSchema": {
+    "reviewed": true,
+    "safeStartGame": true,
+    "frameSHA256": "actual-new-capture SHA256",
+    "batch": "actual-new-capture integer",
+    "x": 343,
+    "y": 213
+  },
+  "pollSeconds": 0.25,
+  "transportSeconds": 4.630762290908024,
+  "reviewSeconds": 25,
+  "aggregateSeconds": 110,
+  "cleanupSeconds": 10,
+  "remainingSerializedResponseBytes": 523724,
+  "dedup": "New capture may use exact bytes from hash-addressed retained local PNG only after actual remote metadata proves byte length and SHA256; inspect new local path before decision.",
+  "ordinaryQuit": "Exact accepted controller exposes Start Game then after-action capture and harness cleanup only; ordinary guest Quit remains unqualified unless reachable under that unchanged path. No custom controller or direct extra requests."
+}

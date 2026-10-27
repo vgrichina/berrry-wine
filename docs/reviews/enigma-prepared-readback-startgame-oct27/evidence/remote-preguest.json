@@ -1,0 +1,12 @@
+{
+  "at": 1793075474.76529,
+  "memAvailable": 7409909760,
+  "free": 48963690496,
+  "requiredRAM": 4563402752,
+  "oldProcesses": {
+    "25292": false,
+    "25293": false,
+    "25300": false
+  },
+  "newAllocation": 67108864
+}

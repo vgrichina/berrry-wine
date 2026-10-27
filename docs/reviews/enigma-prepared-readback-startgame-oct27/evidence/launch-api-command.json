@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "exec",
+    "--no-update",
+    "--json",
+    "--detach",
+    "bx_nmvbu5c7",
+    "timeout 120 python3 /tmp/enigma-prepared-readback-startgame-oct27/ops/launch.py"
+  ],
+  "exit": 0,
+  "at": 1793075474.9518676,
+  "responseBytes": 326
+}

@@ -1,0 +1,67 @@
+{
+  "status": "NO_REVIEWED_ACTION_NO_INPUT",
+  "failed": false,
+  "reason": "control-listener-identity-changed",
+  "peakTreeRSS": 360595456,
+  "cpuSeconds": 18.81,
+  "outputBytes": 6744,
+  "outputLimitExceeded": false,
+  "remainingOwnedLive": [],
+  "childReturncode": 0,
+  "owned": [
+    [
+      34406,
+      "126104"
+    ],
+    [
+      34416,
+      "126108"
+    ]
+  ],
+  "delegated": true,
+  "processDiagnostics": {
+    "startup": {
+      "status": "exited",
+      "exit": 0,
+      "stdout": "node-startup-stdout.log",
+      "stderr": "node-startup-stderr.log",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--max-old-space-size=2048",
+        "-e",
+        "console.log(JSON.stringify({version:process.version,execArgv:process.execArgv,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+      ],
+      "pid": 34406
+    },
+    "command": {
+      "status": "exited",
+      "exit": 0,
+      "stdout": "output.log",
+      "stderr": "stderr.log",
+      "argv": [
+        "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+        "--max-old-space-size=2048",
+        "/tmp/enigma-separated-stream-runtime-oct27/runner/test/run.js",
+        "--no-build",
+        "--wasm=/tmp/enigma-separated-stream-runtime-oct27/modules/wine-assembly.wasm",
+        "--exe=/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/enigma.exe",
+        "--exe-guest-path=C:\\Enigma-1.01\\enigma.exe",
+        "--cwd=C:\\Enigma-1.01",
+        "--dlls=/tmp/enigma-separated-stream-runtime-oct27/system/msvcrt.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/zlib1.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/libpng12-0.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/SDL.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/SDL_image.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/SDL_mixer.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/libfreetype-6.dll,/tmp/enigma-separated-stream-runtime-oct27/vfs/Enigma-1.01/SDL_ttf.dll",
+        "--quiet-api",
+        "--quiet-blocks",
+        "--no-close",
+        "--memory-mb=512",
+        "--screen=640x480",
+        "--vfs-tree=/tmp/enigma-separated-stream-runtime-oct27/vfs",
+        "--quiet-fs",
+        "--control=18127",
+        "--trace-input",
+        "--frozen",
+        "--max-seconds=110",
+        "--max-batches=2000000"
+      ],
+      "pid": 34416
+    }
+  }
+}
