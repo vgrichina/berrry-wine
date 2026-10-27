@@ -1,0 +1,28 @@
+const fs=require('fs'),path=require('path'),crypto=require('crypto'),vm=require('vm');
+const H='/tmp/gta2-ordinary-driving-gameplay-oct27',R=H+'/runner';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const args=JSON.parse(fs.readFileSync(H+'/guest-args.json'));
+const source=fs.readFileSync(R+'/test/run.js','utf8');
+const parser=source.slice(source.indexOf('const getArg ='),source.indexOf('const hasFlag ='));
+const parsed=vm.runInNewContext(parser+'({app:getArg("app",null),trees:getArgs("vfs-tree")})',{args});
+if(parsed.app!=='gta2_demo'||parsed.trees.length!==1)throw Error('actual argv parser');
+const {APPS}=require(R+'/lib/apps'),app=APPS.gta2_demo;
+if(app.requiredFiles!==true)throw Error('registered requiredFiles changed');
+const manifest=JSON.parse(fs.readFileSync(H+'/stage-manifest.json'));
+const game=manifest.filter(x=>x.kind==='game');
+const {expandIncludePatterns}=require(R+'/lib/vfs-host-files');
+const rows=expandIncludePatterns(parsed.trees[0],['**/*']);
+const actual=new Map(rows.map(x=>[path.relative(H,x.hostPath),x]));
+if(rows.length!==game.length)throw Error('actual tree file count');
+for(const g of game){const x=actual.get(g.target);if(!x||sha(fs.readFileSync(x.hostPath))!==g.sha256)throw Error('game hash '+g.target);}
+const registered=[app.exe,...app.dlls,...app.files.map(x=>typeof x==='string'?x:x.url)];
+for(const p of registered)if(!fs.statSync(R+'/'+p).isFile())throw Error('registered missing '+p);
+const api=JSON.parse(fs.readFileSync(R+'/src/api_table.json'));
+const sig=JSON.parse(fs.readFileSync(R+'/lib/host-import-sigs.generated.json'));
+if(!Array.isArray(api)||!sig.sigs)throw Error('actual API/signatures');
+const bytes=fs.readFileSync(R+'/build/wine-assembly.wasm');
+const compiledModule= new WebAssembly.Module(bytes);
+const imports=WebAssembly.Module.imports(compiledModule);
+const result={status:'PASS_EXACT_NODE_STARTUP_REGISTERED_ROUTE_ACTUAL_PARSER',at:new Date().toISOString(),node:process.execPath,version:process.version,execArgv:process.execArgv,env:process.env,limits:fs.readFileSync('/proc/self/limits','utf8'),argv:args,runnerSHA256:sha(Buffer.from(source)),parserSHA256:sha(Buffer.from(parser)),manifestSHA256:sha(fs.readFileSync(H+'/stage-manifest.json')),moduleSHA256:sha(bytes),apiTableSHA256:sha(fs.readFileSync(R+'/src/api_table.json')),signatureSHA256:sha(fs.readFileSync(R+'/lib/host-import-sigs.generated.json')),apiEntries:api.length,moduleImports:imports,registered,treeFiles:rows,commaFiles:rows.filter(x=>x.hostPath.includes(',')),memoryUsage:process.memoryUsage()};
+fs.writeFileSync(H+'/startup-mount-receipt.json',JSON.stringify(result,null,2));
+console.log(JSON.stringify({status:result.status,gameFiles:rows.length,registeredFiles:registered.length,commaFiles:result.commaFiles.length,moduleSHA256:result.moduleSHA256,node:result.node,version:result.version}));
