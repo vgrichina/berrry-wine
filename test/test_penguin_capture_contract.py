@@ -32,6 +32,147 @@ def retain(name, value):
 
 
 class LaunchTests(unittest.TestCase):
+    def stream_fixture(self, root, startup=(b'startup-OUT\n', b'startup-ERR\n'),
+                       guest=(b'guest-OUT\n', b'guest-ERR\n'), fail=0, remove_cwd=False):
+        path, p = self.fixture(root)
+        script = root/'tiny.py'
+        script.write_text('import os,sys\n'
+                          f'out,err={dict(startup=startup, guest=guest)!r}[sys.argv[1]]\n'
+                          'os.write(1,out);os.write(2,err)\n'
+                          f'if sys.argv[1]=="startup":\n'
+                          f' if {remove_cwd!r}:os.rmdir(os.getcwd())\n'
+                          f' sys.exit({fail!r})\n')
+        p['artifacts'][str(script)] = c.sha(script.read_bytes())
+        if remove_cwd:
+            cwd = root/'empty-cwd';cwd.mkdir();p['cwd'] = str(cwd)
+        path.write_bytes(c.wire(p))
+        return path, p
+
+    def assert_stream_receipt(self, root, receipt):
+        total = 0
+        for phase in receipt['phases']:
+            self.assertEqual(set(phase['streams']), {'stdout', 'stderr'})
+            for name, record in phase['streams'].items():
+                path = root/'out'/f'{phase["stage"]}.{name}'
+                data = path.read_bytes();total += len(data)
+                self.assertEqual(record, dict(path=str(path), bytes=len(data), sha256=c.sha(data)))
+        self.assertEqual(receipt['text_bytes'], total)
+        self.assertFalse(list((root/'out').glob('*.log')))
+
+    def test_distinct_streams_from_production_cli_and_startup_failure(self):
+        for fail in (0, 7):
+            with self.subTest(fail=fail), tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+                root=Path(d);path,p=self.stream_fixture(root, fail=fail)
+                result=self.invoke(root,path)
+                self.assertEqual(result.returncode, 2 if fail else 0, result.stdout+result.stderr)
+                receipt=json.loads((root/'out/receipt.json').read_bytes())
+                self.assertEqual(receipt['guest_starts'], 0 if fail else 1)
+                self.assertEqual(len(receipt['phases']), 1 if fail else 2)
+                for phase in receipt['phases']:
+                    stage=phase['stage']
+                    self.assertEqual((root/'out'/f'{stage}.stdout').read_bytes(), f'{stage}-OUT\n'.encode())
+                    self.assertEqual((root/'out'/f'{stage}.stderr').read_bytes(), f'{stage}-ERR\n'.encode())
+                    self.assertTrue(phase['owned_group_absent'])
+                    self.assertEqual(phase['status'], 'failed' if fail else 'passed')
+                self.assert_stream_receipt(root,receipt)
+
+    def test_spawn_failures_have_diagnostics_without_invented_pid(self):
+        for case in ('executable', 'cwd', 'guest_cwd', 'bounded_diagnostic'):
+            with self.subTest(case=case), tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+                root=Path(d);path,p=self.stream_fixture(root, remove_cwd=case=='guest_cwd')
+                if case in ('executable', 'bounded_diagnostic'):
+                    exe=root/'not-executable';exe.write_bytes(b'pinned non-executable\n');exe.chmod(0o600)
+                    p['executable']=str(exe);p['executable_sha256']=c.sha(exe.read_bytes())
+                if case=='cwd':p['cwd']=str(root/'missing-cwd')
+                if case=='bounded_diagnostic':p['resources']['text']=1
+                path.write_bytes(c.wire(p))
+                result=self.invoke(root,path)
+                self.assertEqual(result.returncode,2,result.stdout+result.stderr)
+                receipt=json.loads((root/'out/receipt.json').read_bytes())
+                self.assertEqual(receipt['guest_starts'],0)
+                failed=receipt['phases'][-1]
+                self.assertEqual(failed['stage'],'guest' if case=='guest_cwd' else 'startup')
+                self.assertEqual(failed['status'],'failed')
+                self.assertEqual(failed['reason'],'spawn')
+                self.assertIn('error',failed);self.assertNotIn('pid',failed)
+                self.assertNotIn('returncode',failed)
+                self.assertEqual((root/'out'/f'{failed["stage"]}.stdout').read_bytes(),b'')
+                diagnostic=(root/'out'/f'{failed["stage"]}.stderr').read_bytes()
+                self.assertTrue(diagnostic)
+                if case=='bounded_diagnostic':self.assertEqual(len(diagnostic),1)
+                else:self.assertIn(b'Error',diagnostic)
+                self.assert_stream_receipt(root,receipt)
+
+    def test_combined_stream_budget_exact_boundary_and_failure_paths(self):
+        # All four contributions matter; no per-stream or per-phase reset.
+        for limit, fail, expected_starts in ((18,0,1),(17,0,1),(6,0,0),(7,7,0),(6,7,0)):
+            with self.subTest(limit=limit,fail=fail), tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+                root=Path(d);path,p=self.stream_fixture(root,(b'abc',b'defg'),(b'hijkl',b'mnopqr'),fail)
+                p['resources']['text']=limit;path.write_bytes(c.wire(p))
+                result=self.invoke(root,path)
+                self.assertEqual(result.returncode,0 if limit==18 and not fail else 2)
+                receipt=json.loads((root/'out/receipt.json').read_bytes())
+                self.assertEqual(receipt['guest_starts'],expected_starts)
+                self.assert_stream_receipt(root,receipt)
+                if receipt['text_bytes']>limit:
+                    self.assertEqual(receipt['phases'][-1]['reason'],'text')
+                    self.assertIn('text guard',receipt['error'])
+                self.assertTrue(all(x['owned_group_absent'] for x in receipt['phases']))
+
+    def test_initial_pipe_setup_failure_has_owned_streams_and_receipt(self):
+        # Independent fault injection at the initial setup boundary, without
+        # weakening profile validation or changing the production implementation.
+        from unittest import mock
+        with tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+            root=Path(d);path,p=self.stream_fixture(root)
+            with mock.patch.object(c.os,'pipe',side_effect=OSError('injected pipe setup failure')):
+                with self.assertRaisesRegex(OSError,'injected pipe setup failure'):
+                    c.supervise(path,c.sha(path.read_bytes()),root/'out')
+            receipt=json.loads((root/'out/receipt.json').read_bytes())
+            self.assertEqual(receipt['guest_starts'],0)
+            self.assertEqual(receipt['status'],'REJECT')
+            phase=receipt['phases'][0]
+            self.assertEqual(phase['status'],'failed');self.assertEqual(phase['reason'],'setup')
+            self.assertNotIn('pid',phase)
+            self.assertIn(b'injected pipe setup failure',(root/'out/startup.stderr').read_bytes())
+            self.assert_stream_receipt(root,receipt)
+
+    def test_preexec_setup_failure_retains_child_cause_without_pid(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+            root=Path(d);path,p=self.stream_fixture(root)
+            with mock.patch.object(c.resource,'setrlimit',side_effect=OSError('injected child limit failure')):
+                with self.assertRaises(subprocess.SubprocessError):
+                    c.supervise(path,c.sha(path.read_bytes()),root/'out')
+            receipt=json.loads((root/'out/receipt.json').read_bytes())
+            self.assertEqual(receipt['guest_starts'],0)
+            self.assertEqual(receipt['phases'][0]['status'],'failed')
+            self.assertNotIn('pid',receipt['phases'][0])
+            self.assertIn(b'child setup: injected child limit failure',(root/'out/startup.stderr').read_bytes())
+            self.assert_stream_receipt(root,receipt)
+
+    def test_final_cleanup_writes_are_charged_before_guest(self):
+        from unittest import mock
+        with tempfile.TemporaryDirectory(dir=MODULE.parent.parent/'test') as d:
+            root=Path(d);path,p=self.stream_fixture(root,(b'abc',b'defg'))
+            p['resources']['text']=7;path.write_bytes(c.wire(p))
+            reap=c.reap_group
+            def late_write(proc):
+                cleaned=reap(proc)
+                # Deterministic control for a descendant's last write after
+                # the polling sample, before cleanup has fully returned.
+                with (root/'out/startup.stderr').open('ab') as stream:stream.write(b'!')
+                return cleaned
+            with mock.patch.object(c,'reap_group',side_effect=late_write):
+                with self.assertRaisesRegex(c.ContractError,'startup text guard'):
+                    c.supervise(path,c.sha(path.read_bytes()),root/'out')
+            receipt=json.loads((root/'out/receipt.json').read_bytes())
+            self.assertEqual(receipt['guest_starts'],0)
+            self.assertEqual(receipt['text_bytes'],8)
+            self.assertEqual(receipt['phases'][0]['reason'],'text')
+            self.assertTrue(receipt['phases'][0]['owned_group_absent'])
+            self.assert_stream_receipt(root,receipt)
+
     def fixture(self, root, mutation=None, fail=False, guard=None):
         script = root / 'tiny.py'
         code = '''import sys,os,json,resource,pathlib

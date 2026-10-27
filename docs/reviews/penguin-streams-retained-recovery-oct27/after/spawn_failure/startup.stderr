@@ -1,0 +1,1 @@
+PermissionError: [Errno 13] Permission denied: '/tmp/penguin-streams-retained-recovery-oct27/ops/after/spawn_failure/not-executable'

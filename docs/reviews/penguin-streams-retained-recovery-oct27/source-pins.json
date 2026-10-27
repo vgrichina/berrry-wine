@@ -1,0 +1,10 @@
+{
+  "tools/penguin_capture_contract.py": {
+    "bytes": 28974,
+    "sha256": "93e192ef2512a62ca00102d6a90d9d9999dec4e2989a53e89c8458dca29711eb"
+  },
+  "test/test_penguin_capture_contract.py": {
+    "bytes": 33637,
+    "sha256": "82adfd104c8bd3fdfa42c7239cf253ef4f8fe1778619c74d0f918c66444fd735"
+  }
+}

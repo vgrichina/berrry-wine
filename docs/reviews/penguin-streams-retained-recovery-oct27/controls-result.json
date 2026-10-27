@@ -1,0 +1,43 @@
+{
+  "unchangedFunctions": [
+    "ContractError",
+    "require",
+    "wire",
+    "sha",
+    "limits_now",
+    "exact_keys",
+    "validate_profile",
+    "check_files",
+    "group_rss",
+    "kill_group",
+    "reap_group",
+    "response",
+    "plan_images",
+    "restore_images",
+    "restore_records",
+    "strict_json",
+    "provider_stdout",
+    "plan_provider_images",
+    "ProviderCapture",
+    "restore_provider_transcript",
+    "main"
+  ],
+  "controls": [
+    {
+      "name": "merged_stderr",
+      "sourceSHA256": "54147be35065fc860cf72cbf354bd242e5ee082388c8e36be3106bc8bd4fc136",
+      "test": "test_distinct_streams_from_production_cli_and_startup_failure",
+      "failures": 2,
+      "errors": 0,
+      "status": "REJECTED_OMISSION"
+    },
+    {
+      "name": "omitted_stderr_budget",
+      "sourceSHA256": "622ddbedee1df8759b290e8166fbca9297521a41b387c5b8a0d795085d601c85",
+      "test": "test_combined_stream_budget_exact_boundary_and_failure_paths",
+      "failures": 5,
+      "errors": 0,
+      "status": "REJECTED_OMISSION"
+    }
+  ]
+}

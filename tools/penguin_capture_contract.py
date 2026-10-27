@@ -7,6 +7,7 @@ Node startup/mount acceptance must be qualified separately before remote use.
 import argparse
 import base64
 import copy
+import contextlib
 import ctypes
 import datetime
 import hashlib
@@ -167,39 +168,48 @@ def supervise(profile_path, expected_sha, output_dir):
             validate_profile(p)
             require(time.monotonic() - start < p['resources']['total_wall'], 'total wall exhausted')
             argv = [p['executable'], *p['flags'], *p[stage]]
-            read_fd, write_fd = os.pipe()
+            paths = {name: out / (stage + '.' + name) for name in ('stdout', 'stderr')}
+            phase = dict(stage=stage, argv=argv, status='setup',
+                         environment_sha256=receipt['environment_sha256'])
+            receipt['phases'].append(phase)
+            proc = None
+            read_fd = write_fd = None
+            peak, applied, reason = 0, None, 'setup'
+            phase_start = time.monotonic()
+            try:
+                with contextlib.ExitStack() as files:
+                    # Both files exist before any pipe/pre-exec/spawn attempt.
+                    stdout = files.enter_context(paths['stdout'].open('wb'))
+                    stderr = files.enter_context(paths['stderr'].open('wb'))
+                    read_fd, write_fd = os.pipe()
 
-            def child_limits():
-                for n, pair in p['limits'].items():
-                    resource.setrlimit(getattr(resource, 'RLIMIT_' + n), tuple(pair))
-                # Pre-exec audit of actual applied limits; Popen replaces environment
-                # with the explicit mapping at execve. No ambient environment is logged.
-                os.write(write_fd, wire(limits_now()))
-                os.close(write_fd)
+                    def child_limits():
+                        try:
+                            for n, pair in p['limits'].items():
+                                resource.setrlimit(getattr(resource, 'RLIMIT_' + n), tuple(pair))
+                            # Audit only limits, never the inherited environment.
+                            os.write(write_fd, wire(limits_now()))
+                            os.close(write_fd)
+                        except Exception as exc:
+                            os.write(2, ('child setup: ' + str(exc) + '\n').encode()[:8192])
+                            raise
 
-            log_path = out / (stage + '.log')
-            with log_path.open('wb') as log:
-                phase_start = time.monotonic()
-                try:
+                    reason = 'spawn'
                     proc = subprocess.Popen(argv, cwd=p['cwd'], env=p['env'],
-                                            stdin=subprocess.DEVNULL, stdout=log, stderr=log,
+                                            stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
                                             start_new_session=True, pass_fds=(write_fd,),
                                             preexec_fn=child_limits)
-                except Exception:
-                    os.close(read_fd)
-                    raise
-                finally:
                     os.close(write_fd)
-                if stage == 'guest':
-                    receipt['guest_starts'] += 1
-                peak = 0
-                reason = 'natural'
-                applied = None
-                try:
+                    write_fd = None
+                    phase.update(pid=proc.pid, status='running')
+                    if stage == 'guest':
+                        receipt['guest_starts'] += 1
+                    reason = 'natural'
                     try:
                         applied = json.loads(os.read(read_fd, 8192))
                     finally:
                         os.close(read_fd)
+                        read_fd = None
                     require(applied == p['limits'], 'actual child limits mismatch')
                     while True:
                         peak = max(peak, group_rss(proc.pid))
@@ -208,23 +218,48 @@ def supervise(profile_path, expected_sha, output_dir):
                         reason = ('rss' if peak > p['resources']['rss'] else
                                   'wall' if time.monotonic() - phase_start > p['resources'][stage + '_wall']
                                   or time.monotonic() - start > p['resources']['total_wall'] else
-                                  'text' if text_used + log_path.stat().st_size > p['resources']['text'] else
+                                  'text' if text_used + sum(x.stat().st_size for x in paths.values())
+                                  > p['resources']['text'] else
                                   'image' if any(n > p['resources']['png'] for n in sizes)
                                   or sum(sizes) > p['resources']['remote'] else 'natural')
                         require(reason == 'natural', stage + ' ' + reason + ' guard')
                         if proc.poll() is not None:
                             break
                         time.sleep(.01)
-                finally:
+            except Exception as exc:
+                phase.update(status='failed', error=str(exc))
+                if proc is None and paths['stderr'].exists():
+                    # Popen failures have no returned PID. Keep their causal
+                    # diagnostic within the same combined text budget.
+                    used = text_used + sum(x.stat().st_size for x in paths.values() if x.exists())
+                    diagnostic = (type(exc).__name__ + ': ' + str(exc) + '\n').encode()
+                    with paths['stderr'].open('ab') as stderr:
+                        stderr.write(diagnostic[:min(8192, max(0, p['resources']['text'] - used))])
+                raise
+            finally:
+                for fd in (read_fd, write_fd):
+                    if fd is not None:
+                        os.close(fd)
+                if proc is not None:
                     cleaned = reap_group(proc)
-                    text_used += log_path.stat().st_size
-                    receipt['phases'].append(dict(stage=stage, argv=argv, pid=proc.pid,
-                                                  returncode=proc.returncode, peak_rss=peak,
-                                                  actual_limits=applied, reason=reason,
-                                                  owned_group_absent=cleaned,
-                                                  environment_sha256=receipt['environment_sha256']))
-                require(cleaned, 'owned group cleanup incomplete')
-                require(proc.returncode == 0, stage + ' failed')
+                    phase.update(returncode=proc.returncode, peak_rss=peak,
+                                 actual_limits=applied, owned_group_absent=cleaned)
+                phase['streams'] = {name: dict(path=str(path), bytes=path.stat().st_size,
+                                               sha256=sha(path.read_bytes()))
+                                    for name, path in paths.items() if path.exists()}
+                text_used += sum(x['bytes'] for x in phase['streams'].values())
+                phase['reason'] = reason
+                # Include final descendant writes and failed-spawn diagnostics,
+                # charging each stream once even when an earlier check failed.
+                if text_used > p['resources']['text']:
+                    phase.update(status='failed', reason='text', error=stage + ' text guard')
+                    raise ContractError(phase['error'])
+            if proc is not None:
+                if not cleaned or proc.returncode != 0:
+                    phase.update(status='failed', error=('owned group cleanup incomplete'
+                                 if not cleaned else stage + ' failed'))
+                    raise ContractError(phase['error'])
+                phase['status'] = 'passed'
         receipt['status'] = 'PASS_OFFLINE_RECIPE'
     except Exception as exc:
         receipt['status'] = 'REJECT'
