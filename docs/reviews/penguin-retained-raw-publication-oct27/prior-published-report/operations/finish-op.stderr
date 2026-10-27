@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/penguin-published-projectile-gameplay-oct27/ops/finish.py", line 10, in <module>
+    assert len(files)==len(manifest)+1 and all(x.startswith('docs/reviews/penguin-published-projectile-gameplay-oct27/') for x in files)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

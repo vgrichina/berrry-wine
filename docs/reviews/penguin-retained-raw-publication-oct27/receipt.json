@@ -1,0 +1,126 @@
+{
+  "status": "ARTIFACT_PRESERVATION_ONLY_NO_CAPTURE_OR_RUNTIME_ACCEPTANCE",
+  "task": "penguin-retained-raw-publication-oct27",
+  "sourceCommit": "a1240d3e0ed3ceb22a8ebce58113939459effb0a",
+  "sourceReceipt": "operations/result.json",
+  "sourceReceiptIdentity": {
+    "bytes": 4111,
+    "sha256": "1e12ab44ee5c401c938669bb93dfbee1ce382de4c1f17e08f05f82cf5973339e"
+  },
+  "helperSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+  "capture": {
+    "startCursor": 379,
+    "retainedCursor": 756,
+    "totalRecords": 756,
+    "newRecords": 377,
+    "passedRecordsRefetched": false,
+    "priorAPIBytes": 2481875,
+    "finalAPIBytes": 4673088,
+    "originalAPIBudget": 8388608,
+    "terminalReserve": 1048576,
+    "budgetRemaining": 3715520,
+    "rawResponses": "api/<index>.raw and api/<index>.err",
+    "captureMap": "capture-map.jsonl",
+    "history": "api-history.jsonl",
+    "cursor": "capture-cursor.json",
+    "allRawRecordHashesVerifiedByPackagingBeforeGuard": true,
+    "allFourCompletePNGsRestored": false,
+    "productionFinishAndRoundtrip": "NOT EXECUTED after CPU rejection",
+    "visualInspection": "NOT PERFORMED",
+    "projectileAccepted": false
+  },
+  "firstRejection": {
+    "operation": "collect-remaining-1.json",
+    "reason": "aggregate CPU limit",
+    "cpuSeconds": 92.07370500000002,
+    "limitSeconds": 90,
+    "wallSeconds": 67.98365557310171,
+    "peakRSS": 49635328,
+    "childExit": 0,
+    "cleanupComplete": true,
+    "noRetry": true
+  },
+  "priorPublicationRejection": {
+    "operation": "package-blocker-op.json",
+    "reason": "aggregate admission rejected",
+    "firstGuard": "resource-first-guard.json",
+    "peerPID": 4142538,
+    "peerRSS": 341233664,
+    "peerCap": 335544320,
+    "MemAvailable": 3256549376,
+    "requiredRemainingRAM": 1822539776,
+    "cleanupComplete": true,
+    "noRetry": true,
+    "partialArchiveNotAcceptanceEvidence": true
+  },
+  "incidents": [
+    "Initial combined read-only displays and later collector JSON display exceeded8192B; retained original tool session, no retrospective compliance claim.",
+    "Collection child exited0 with cursor756, but trusted unchanged supervisor rejects aggregateCPU92.073705 over90. No restore, decode, view_image or further API call followed.",
+    "Publication-only packaging stopped on peer RSS cap; partially copied report retained without acceptance claim.",
+    "Git init was mistakenly issued after failed packaging before checking its result. Its fresh gate observed peer264699904 below cap and initialized only owned empty repository. No subsequent Git operation, commit or push; no repeated failed operation.",
+    "package.py drafted before collection result was known was never executed. Actual packaging attempt package-blocker.py retained distinct stdout/stderr and supervisor receipt.",
+    "This publication worker initial policy displays exceeded8192B; later root config/mount combined display also exceeded8192B. Full original session retained; no retrospective compliance claim."
+  ],
+  "remainingGates": "Production ProviderCapture.finish and exact roundtrip plus all four original complete PNG hashes are required before view_image. Historical module qualification only; visual projectile, current-main qualification and ordinary Quit remain unproven.",
+  "originalMappings": [
+    "operations/original-copy-manifest.json",
+    "operations/prior-report-copy-manifest.json"
+  ],
+  "rawMapping": "operations/capture-map.jsonl",
+  "history": "operations/api-history.jsonl",
+  "cursor": "operations/capture-cursor.json",
+  "rawManifest": "api-manifest.json",
+  "rawArchive": "all-original-and-recovered-api.tar.gz",
+  "archiveIntegrity": {
+    "status": "PASS_ARTIFACT_HASHES_ONLY",
+    "members": 2484,
+    "rawBytes": 4673088,
+    "archive": {
+      "bytes": 3260975,
+      "sha256": "5551177dd0c8cf31db36b561f8e620a6a9de3c52a9c5985ce1d92aa97377c537"
+    },
+    "reuse": {
+      "candidate": "/tmp/penguin-retained-frame-recovery-oct27/repo/docs/reviews/penguin-retained-frame-recovery-oct27/all-original-and-recovered-api.tar.gz",
+      "exists": true,
+      "accepted": true,
+      "verifiedMembers": 2484,
+      "identity": {
+        "bytes": 3260975,
+        "sha256": "5551177dd0c8cf31db36b561f8e620a6a9de3c52a9c5985ce1d92aa97377c537"
+      }
+    },
+    "maxHashChunk": 65536,
+    "extractedToFilesystem": false,
+    "pngDecode": false
+  },
+  "noRuntimeOrAcceptanceExecuted": true,
+  "noSourceRepair": true,
+  "noCollectionRetry": true,
+  "publication": {
+    "ref": "refs/heads/task/penguin-retained-raw-publication-oct27",
+    "reportOnlyOrphan": true,
+    "neverMergeOrphanTree": true,
+    "mainTouched": false,
+    "publicDeployment": false,
+    "finalCanonicalReceipt": "/tmp/penguin-retained-raw-publication-oct27/ops/result.json",
+    "remoteBackup": "Pending exact remote-ref verification, recorded in finalCanonicalReceipt"
+  },
+  "cleanup": {
+    "original": {
+      "allSupervisedExecutedOperationsCleanupComplete": true,
+      "boardWatcher": "owned-cleanup.json",
+      "noNewGuestLaunchInputReplayBuildOrSourceIntegration": true,
+      "box": "bx_5pu4jynk",
+      "lastState": "RUNNING_API_EXEC_OBSERVED at final retained transport record",
+      "leftRunning": true,
+      "lifecycleOwner": "coordinator",
+      "shutdown": "2026-10-27T11:07:00Z",
+      "expiry": "2026-10-27T11:14:33.925Z",
+      "lifecycleMutated": false
+    },
+    "boxState": "Historical last-observed RUNNING only; no current-state assertion or lifecycle operation",
+    "lifecycleOwner": "coordinator",
+    "expiry": "2026-10-27T11:14:33.925Z",
+    "ownedBoardWatcher": "Cleaned at final publication closeout; see finalCanonicalReceipt"
+  }
+}

@@ -1,0 +1,21 @@
+[
+  "/tmp/penguin-published-projectile-gameplay-oct27/runner/test/run.js",
+  "--no-build",
+  "--wasm=/tmp/penguin-published-projectile-gameplay-oct27/runtime/build/wine-assembly.wasm",
+  "--exe=/tmp/penguin-published-projectile-gameplay-oct27/game/penguin-command.exe",
+  "--exe-guest-path=C:\\penguin-command.exe",
+  "--cwd=C:\\",
+  "--args=--windowed --nosound",
+  "--dlls=/tmp/penguin-published-projectile-gameplay-oct27/game/msvcrt.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/zlib1.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/libpng12-0.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/jpeg.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL_image.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL_mixer.dll",
+  "--quiet-api",
+  "--quiet-blocks",
+  "--no-close",
+  "--max-seconds=60",
+  "--max-batches=43000",
+  "--memory-mb=512",
+  "--tick-ms-per-batch=200",
+  "--screen=840x660",
+  "--trace-input-dispatch",
+  "--vfs-tree=/tmp/penguin-published-projectile-gameplay-oct27/game",
+  "--input=33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34800:mousemove:260:220,39999:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b39999.png,40000:keydown:65,40060:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40060.png,40100:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40100.png,40200:keyup:65,40295:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40295.png"
+]

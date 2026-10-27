@@ -1,0 +1,22 @@
+{
+  "status": "PASS_ARTIFACT_HASHES_ONLY",
+  "members": 2484,
+  "rawBytes": 4673088,
+  "archive": {
+    "bytes": 3260975,
+    "sha256": "5551177dd0c8cf31db36b561f8e620a6a9de3c52a9c5985ce1d92aa97377c537"
+  },
+  "reuse": {
+    "candidate": "/tmp/penguin-retained-frame-recovery-oct27/repo/docs/reviews/penguin-retained-frame-recovery-oct27/all-original-and-recovered-api.tar.gz",
+    "exists": true,
+    "accepted": true,
+    "verifiedMembers": 2484,
+    "identity": {
+      "bytes": 3260975,
+      "sha256": "5551177dd0c8cf31db36b561f8e620a6a9de3c52a9c5985ce1d92aa97377c537"
+    }
+  },
+  "maxHashChunk": 65536,
+  "extractedToFilesystem": false,
+  "pngDecode": false
+}

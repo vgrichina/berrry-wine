@@ -1,0 +1,46 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "helper": {
+    "bytes": 33302,
+    "sha256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b"
+  },
+  "reusedConfiguration": {
+    "bytes": 772,
+    "sha256": "2d33a8e4fd27cb3e397ebc6193b561a4a94e9f91708c3cfa502ce250f74af300"
+  },
+  "rootRefDigest": {
+    "command": "git show-ref",
+    "sha256": "42c8d0a6446327cc6732de150fac5cf9537275cd663e8fb8f0880031522a7d69",
+    "streamedBytes": 148965,
+    "capturedListingBytes": 0,
+    "maxChunkBytes": 8192,
+    "exitCode": 0
+  },
+  "mountValidation": "No checkout or runtime/mount invocation. Unchanged original canonical filename-bearing tree enumeration receipt preserved under prior-published-report/runtime/startup-mount-receipt.json; no runtime acceptance repeated.",
+  "inheritedChildLimits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "packager": {
+    "bytes": 8469,
+    "sha256": "85b85f430d7a4dfd260db5a8379fb04713addbe1d63feee845a60f13def80726"
+  },
+  "supervisor": {
+    "bytes": 23268,
+    "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "box": "bx_5pu4jynk",
+  "node": "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+  "guestArgs": [
+    "/tmp/penguin-published-projectile-gameplay-oct27/runner/test/run.js",
+    "--no-build",
+    "--wasm=/tmp/penguin-published-projectile-gameplay-oct27/runtime/build/wine-assembly.wasm",
+    "--exe=/tmp/penguin-published-projectile-gameplay-oct27/game/penguin-command.exe",
+    "--exe-guest-path=C:\\penguin-command.exe",
+    "--cwd=C:\\",
+    "--args=--windowed --nosound",
+    "--dlls=/tmp/penguin-published-projectile-gameplay-oct27/game/msvcrt.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/zlib1.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/libpng12-0.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/jpeg.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL_image.dll,/tmp/penguin-published-projectile-gameplay-oct27/game/SDL_mixer.dll",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--no-close",
+    "--max-seconds=60",
+    "--max-batches=43000",
+    "--memory-mb=512",
+    "--tick-ms-per-batch=200",
+    "--screen=840x660",
+    "--trace-input-dispatch",
+    "--vfs-tree=/tmp/penguin-published-projectile-gameplay-oct27/game",
+    "--input=33000:mousemove:420:360,34000:mousedown:420:360,34500:mouseup:420:360,34800:mousemove:260:220,39999:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b39999.png,40000:keydown:65,40060:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40060.png,40100:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40100.png,40200:keyup:65,40295:png:/tmp/penguin-published-projectile-gameplay-oct27/captures/b40295.png"
+  ],
+  "env": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8",
+    "TZ": "UTC"
+  },
+  "helperSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+  "historicalRunner": true,
+  "productionCaptureContractIntegrated": "4a2bec145ef34b0d084b96b09a682a16e89703fd",
+  "reusedTests": "16 targeted +10 independent; no rerun",
+  "captureSlots": [
+    39999,
+    40060,
+    40100,
+    40295
+  ],
+  "taskCaptureBudget": 8388608,
+  "terminalReserve": 1048576,
+  "priorUsed": 140276,
+  "plannedTotal": 6117224,
+  "bounds": "actual images max4MiB each16MiB remote; provider plan must fit8MiB; no unbounded stdout or loading captures"
+}

@@ -1,0 +1,815 @@
+{
+  "commit": "a1240d3e0ed3ceb22a8ebce58113939459effb0a",
+  "files": [
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/api-manifest.json",
+      "archivePath": "prior-published-report/api-manifest.json",
+      "sha256": "3ab9736a7ecea283994bdbed0d6ee6bae884f5fc37140620d10a64c70b5ed04f",
+      "bytes": 204324
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/manifest.json",
+      "archivePath": "prior-published-report/manifest.json",
+      "sha256": "98d6c8c902e6e09b4c39370921bd6acfd937ebe1a2ef65c0036701be68c6ebc9",
+      "bytes": 18827
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/receipt.json",
+      "archivePath": "prior-published-report/receipt.json",
+      "sha256": "825f0578156f046363a3fc28b7c7be4028b9c2dcc05eca5ce0e3a7a3df1c9bf9",
+      "bytes": 8679
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/README.md",
+      "archivePath": "prior-published-report/README.md",
+      "sha256": "7cdc648e4aafc80174ec67e28aab63b92667c61d62cf3a79aab7b9621e379d23",
+      "bytes": 1176
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/original-api-responses.tar.gz",
+      "archivePath": "prior-published-report/original-api-responses.tar.gz",
+      "sha256": "c3d930070c959ed4a2100aa375c35c248a161a0893f74a122865e9167ece8237",
+      "bytes": 1679085
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/input-identity.json",
+      "archivePath": "prior-published-report/operations/input-identity.json",
+      "sha256": "66ace5eea743668eff2f0770d3e1812927f64243f9694273ba216a623c22c775",
+      "bytes": 6603
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/fetch-diagnostics.stderr",
+      "archivePath": "prior-published-report/operations/fetch-diagnostics.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/launch-once.stderr",
+      "archivePath": "prior-published-report/operations/launch-once.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-input.json",
+      "archivePath": "prior-published-report/operations/init-input.json",
+      "sha256": "9fe02c056009ba9aef9b639d8e0736dd94175fe2d2c29bca24db857e2a516a77",
+      "bytes": 2622
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/accounting.json",
+      "archivePath": "prior-published-report/operations/accounting.json",
+      "sha256": "161207e8e5f77d5dfa47599437ff25468e896357ae7995fd8ca08eaa10a40217",
+      "bytes": 690
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/actual-capture-plan.json",
+      "archivePath": "prior-published-report/operations/actual-capture-plan.json",
+      "sha256": "49206333fe7c1d7670a7fe78bd37f194b27d49e9c4ba0df9aa94ec68d8040ad5",
+      "bytes": 8740
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-op.stdout",
+      "archivePath": "prior-published-report/operations/package-blocker-op.stdout",
+      "sha256": "277b69b37caeb98469ef719d02919b5064b28fd244624b75a3242ff3457f62fc",
+      "bytes": 98
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/finish-op.stdout",
+      "archivePath": "prior-published-report/operations/finish-op.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/read-input.stdout",
+      "archivePath": "prior-published-report/operations/read-input.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime.stdout",
+      "archivePath": "prior-published-report/operations/prepare-runtime.stdout",
+      "sha256": "8bc89f8099ad954f546e951787d45bc0e49ce34447a0ba53e193394dc5c75825",
+      "bytes": 159
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/finish-op.json",
+      "archivePath": "prior-published-report/operations/finish-op.json",
+      "sha256": "506f13ba7232998f26c2108489656dc7cb63318faf9e55a85f65ee18a6c76d75",
+      "bytes": 2541
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-initial.json",
+      "archivePath": "prior-published-report/operations/remote-initial.json",
+      "sha256": "5f1beef6f4a70cda29ab97cceb720d8c41c2afa0362a73696f90fd4881536bc8",
+      "bytes": 2615
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-assigned.stderr",
+      "archivePath": "prior-published-report/operations/remote-assigned.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-name.stderr",
+      "archivePath": "prior-published-report/operations/task-name.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-inspect.stderr",
+      "archivePath": "prior-published-report/operations/runtime-inspect.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-input.stdout",
+      "archivePath": "prior-published-report/operations/init-input.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/resource-first-guard.json",
+      "archivePath": "prior-published-report/operations/resource-first-guard.json",
+      "sha256": "1073aac72174b4b215f2463e79b63f2bb0014bdcf19726587c5739b918fcd3e2",
+      "bytes": 574
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/launch-once.stdout",
+      "archivePath": "prior-published-report/operations/launch-once.stdout",
+      "sha256": "88816c8454913140254876c3cb052ac0585dd45b2860f50c59dc3d92938dd0ce",
+      "bytes": 55
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-2.stdout",
+      "archivePath": "prior-published-report/operations/stage-2.stdout",
+      "sha256": "5baa6ea8fc37f8b4896e7c0cbca08fa1b5785bffeed14950e571b97a100710a4",
+      "bytes": 76
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-assigned.json",
+      "archivePath": "prior-published-report/operations/remote-assigned.json",
+      "sha256": "2404b71192b4e48d8d355acc6fbd82cafffd711ddf2497cf508200120e1f7bf2",
+      "bytes": 2620
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-email.json",
+      "archivePath": "prior-published-report/operations/task-email.json",
+      "sha256": "4518c185785e75e72a86e41a011de57f5e6fc8eb5469f3527f0b856affb32f19",
+      "bytes": 2673
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-1.stderr",
+      "archivePath": "prior-published-report/operations/stage-1.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/api-history.jsonl",
+      "archivePath": "prior-published-report/operations/api-history.jsonl",
+      "sha256": "2b62278268dfd4dee67bec6acfd41dfd33ad7df2f8856b8d2fdde8da45f2d0c2",
+      "bytes": 185365
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/recover-plan-op.json",
+      "archivePath": "prior-published-report/operations/recover-plan-op.json",
+      "sha256": "59c051ab355b3381e4716ea2e68e96a3dc063bef5dd6de8b131a6bf4ae9999e6",
+      "bytes": 2628
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/launch-ack.json",
+      "archivePath": "prior-published-report/operations/launch-ack.json",
+      "sha256": "615db52e7f98b8460643e8d3b0fef6363a68c427cf469590009a9d3e93729200",
+      "bytes": 446
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/sparse.stdout",
+      "archivePath": "prior-published-report/operations/sparse.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/guest-args.json",
+      "archivePath": "prior-published-report/operations/guest-args.json",
+      "sha256": "5d09341e109dc654b54bc0aaef6d5e1afb1e77d6fa0501d4133713c54c3d325f",
+      "bytes": 1562
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-assigned.stdout",
+      "archivePath": "prior-published-report/operations/remote-assigned.stdout",
+      "sha256": "9928c4a4bfccf6d9a9cba65ecdcc19e0505e1f6a447daec8208028cebcc61fe8",
+      "bytes": 221
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-head.stderr",
+      "archivePath": "prior-published-report/operations/task-head.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-head.stdout",
+      "archivePath": "prior-published-report/operations/task-head.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime-final.stdout",
+      "archivePath": "prior-published-report/operations/prepare-runtime-final.stdout",
+      "sha256": "9539bc0ea743c53daa70a9f911dc7efec72a27c2a6207722e885f5acc06bcb00",
+      "bytes": 160
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/restore.py",
+      "archivePath": "prior-published-report/operations/restore.py",
+      "sha256": "f5cfcaf9fe0318a1befc5054e2bb8db4fb8f7b909be865911d60b59c16d682f0",
+      "bytes": 2660
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-name.stdout",
+      "archivePath": "prior-published-report/operations/task-name.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime-final.stderr",
+      "archivePath": "prior-published-report/operations/prepare-runtime-final.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker.py",
+      "archivePath": "prior-published-report/operations/package-blocker.py",
+      "sha256": "974137b3e752aa0648b0bee5e4578dbe84c05eb662a9d28a9c66f2ab4a864407",
+      "bytes": 8459
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-1.stdout",
+      "archivePath": "prior-published-report/operations/stage-1.stdout",
+      "sha256": "2a69d860d52035cc15b0ede6db275bc9a852eaf3367820e18308bd75a34f007f",
+      "bytes": 74
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/publication-capacity-change.txt",
+      "archivePath": "prior-published-report/operations/publication-capacity-change.txt",
+      "sha256": "0f78e2c163411febf1df4e1eae7e8e30048eab768a6e7a68487a59d719b1c4bb",
+      "bytes": 106
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-sparse.stdout",
+      "archivePath": "prior-published-report/operations/task-sparse.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-inspection.json",
+      "archivePath": "prior-published-report/operations/runtime-inspection.json",
+      "sha256": "3882fec2e72811dbd8f97dea216a77b92d30c4757c5c5dec15c0f5f798ec2944",
+      "bytes": 2354
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-remote.json",
+      "archivePath": "prior-published-report/operations/task-remote.json",
+      "sha256": "4290d07da4eeaf915a2af099e143718d2665ccadf62a33531567a5db42a3cc4a",
+      "bytes": 2691
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/actual-capture-plan.stderr",
+      "archivePath": "prior-published-report/operations/actual-capture-plan.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-op.stderr",
+      "archivePath": "prior-published-report/operations/package-blocker-op.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-rehash.stdout",
+      "archivePath": "prior-published-report/operations/remote-rehash.stdout",
+      "sha256": "cfdd572f4d51cbe254c4d57a581346a0e5dad2b2bd6fea8370da9a9caf26ecf5",
+      "bytes": 53
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-rehash.json",
+      "archivePath": "prior-published-report/operations/remote-rehash.json",
+      "sha256": "f332b727bccb60361eb254441d20c8575afcdd947f2e1e6ead8b929608eca198",
+      "bytes": 2900
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-sparse.stderr",
+      "archivePath": "prior-published-report/operations/task-sparse.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-op.json",
+      "archivePath": "prior-published-report/operations/package-blocker-op.json",
+      "sha256": "03bfea6ad39119d65b847e4431a2acb43d6cc680d9bb9715c35ffa4b5f0f813b",
+      "bytes": 2576
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prep.stdout",
+      "archivePath": "prior-published-report/operations/prep.stdout",
+      "sha256": "880fe89a1bdfbc82fad5927ff37308cbd0454b1c2689461c95f743595b0032c7",
+      "bytes": 233
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-2.json",
+      "archivePath": "prior-published-report/operations/collect-2.json",
+      "sha256": "25fded245228248e5203d0a8eb58ea64389898ac2829a7e532b0f3ae3ce4dece",
+      "bytes": 20049
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-1.json",
+      "archivePath": "prior-published-report/operations/collect-1.json",
+      "sha256": "36ff3eb42b4b4a543c364212c712e3fc98f349fa182cc4d49db85da8a93bb654",
+      "bytes": 2542
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prep.py",
+      "archivePath": "prior-published-report/operations/prep.py",
+      "sha256": "57edbd23251f29a2ad39ad70290118267f14d1aa8d16d816e169fe2aaef7e51d",
+      "bytes": 1763
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/launch-once.json",
+      "archivePath": "prior-published-report/operations/launch-once.json",
+      "sha256": "989b641fe09187d6a26977e10f553af98281dfc6cb208387b7b138a7e6ce9e75",
+      "bytes": 2613
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-config.json",
+      "archivePath": "prior-published-report/operations/runtime-config.json",
+      "sha256": "58f4f102440a7ccf43398990309a9b992a1ab81ebd9e9da79089a5ea0dff1771",
+      "bytes": 2418
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-report.stdout",
+      "archivePath": "prior-published-report/operations/init-report.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-2.stdout",
+      "archivePath": "prior-published-report/operations/collect-2.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-report.stderr",
+      "archivePath": "prior-published-report/operations/init-report.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-helpers.json",
+      "archivePath": "prior-published-report/operations/stage-helpers.json",
+      "sha256": "f034eb07bc0334e051a302fb74f28590337e92cdfe00c00f9fdbf69d2915da19",
+      "bytes": 2854
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-remote.stdout",
+      "archivePath": "prior-published-report/operations/task-remote.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-check.py",
+      "archivePath": "prior-published-report/operations/remote-check.py",
+      "sha256": "617acd93ffc62dbe4b3ec5c76592c7d9cf16ff9b739323acb3722f5f53799610",
+      "bytes": 1164
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/run.py",
+      "archivePath": "prior-published-report/operations/run.py",
+      "sha256": "f2052b6b16e9e3990a6ceb07ad2623c886ecae0a95049e23b3a16bb3f7d18e71",
+      "bytes": 4341
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/wal-baseline.json",
+      "archivePath": "prior-published-report/operations/wal-baseline.json",
+      "sha256": "35e15d45adeca0966fb36251d17c5afba217d9cc125ed82f22cca10ea5da3084",
+      "bytes": 315
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/launch.py",
+      "archivePath": "prior-published-report/operations/launch.py",
+      "sha256": "0b0940631dc406973e023d330f1668815e2b8a3f282518f1c4281d9ca10c981e",
+      "bytes": 1837
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/sparse.stderr",
+      "archivePath": "prior-published-report/operations/sparse.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-inspect.stdout",
+      "archivePath": "prior-published-report/operations/runtime-inspect.stdout",
+      "sha256": "5a937c9ffe08b2e1cbf978ce3c15d99e71494b33c7896a7b9436a4928147d803",
+      "bytes": 1801
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-head.json",
+      "archivePath": "prior-published-report/operations/task-head.json",
+      "sha256": "87da400c2bd25e7ec101e800ad1153e3fc738ff00415d6081233d7f60c8af1ea",
+      "bytes": 2697
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/fix-manifest-coverage.py",
+      "archivePath": "prior-published-report/operations/fix-manifest-coverage.py",
+      "sha256": "e358c75958b99154faee9ec0d202f396c5a8ad08d855bdc37607aa80b376d015",
+      "bytes": 1046
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime.json",
+      "archivePath": "prior-published-report/operations/prepare-runtime.json",
+      "sha256": "68158612dfc8e27e80fb63bfa8efd9e98fe369ee07ab371cfdfd8535c3c51517",
+      "bytes": 2561
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/sparse.json",
+      "archivePath": "prior-published-report/operations/sparse.json",
+      "sha256": "e902f03d4b896e91e34c614cc60ff118b56ac4cfb9fb9f46bb5b1fc0973a0d62",
+      "bytes": 2643
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/startup.js",
+      "archivePath": "prior-published-report/operations/startup.js",
+      "sha256": "b65e1d4c101dc1f85e50abb213331ab1438a10ea39c952a4377d8e1832ecc669",
+      "bytes": 2013
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-transport.py",
+      "archivePath": "prior-published-report/operations/remote-transport.py",
+      "sha256": "5ad75694c3303b2a165b530632df95f3ae00f6e9cc0af169d1dc5f4e923a0a8a",
+      "bytes": 1049
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-input.stderr",
+      "archivePath": "prior-published-report/operations/init-input.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/manifest.json",
+      "archivePath": "prior-published-report/operations/manifest.json",
+      "sha256": "4141f5ff9e95ad35f8891394d79706a9a9a4792fe8dffce8f0f59bc4633ed5fd",
+      "bytes": 100134
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/capture-ledger-start.json",
+      "archivePath": "prior-published-report/operations/capture-ledger-start.json",
+      "sha256": "1ab35099abafbe3ef535ba7281246c00d230b768f81eb72e514432060d502792",
+      "bytes": 88
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/read-input.stderr",
+      "archivePath": "prior-published-report/operations/read-input.stderr",
+      "sha256": "264b058f0d77c2b27ff6e6debda379d90cd298510c204af886f7dad0fc917a5a",
+      "bytes": 7639
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-name.json",
+      "archivePath": "prior-published-report/operations/task-name.json",
+      "sha256": "c6fbe36e584065872becfb31d445b763539ca7e08ff5d6e38488dcec74b6594c",
+      "bytes": 2653
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package.py",
+      "archivePath": "prior-published-report/operations/package.py",
+      "sha256": "462708f5561478e0076c41beaf8e2f7d177b4e6911aee2b89be09979d59dd7de",
+      "bytes": 5746
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-2.stderr",
+      "archivePath": "prior-published-report/operations/collect-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/recover-plan-op.stderr",
+      "archivePath": "prior-published-report/operations/recover-plan-op.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-final-op.stdout",
+      "archivePath": "prior-published-report/operations/package-blocker-final-op.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-control.py",
+      "archivePath": "prior-published-report/operations/runtime-control.py",
+      "sha256": "029cd860d751ea414b66e5472874fb652111785e4cd33b86a8402b8acfed0783",
+      "bytes": 3711
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/runtime-inspect.json",
+      "archivePath": "prior-published-report/operations/runtime-inspect.json",
+      "sha256": "9f3041b1c1e15643b126651c29c8dacff76e2a80375d8b25b3db3db4867a93ed",
+      "bytes": 2634
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/verify-report.py",
+      "archivePath": "prior-published-report/operations/verify-report.py",
+      "sha256": "fe7f1e3ffcb90b6e601aa96ded21db2d53fd7e2b50ce7cfd52fc1cff5e063e5f",
+      "bytes": 1185
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime.stderr",
+      "archivePath": "prior-published-report/operations/prepare-runtime.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-cursor.json",
+      "archivePath": "prior-published-report/operations/stage-cursor.json",
+      "sha256": "f0dd776ebabd235ef65d171f40604e99b8a3c256e2ff5873e9226f82f6133982",
+      "bytes": 72
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/recover-plan-op.stdout",
+      "archivePath": "prior-published-report/operations/recover-plan-op.stdout",
+      "sha256": "5f862d6463849adfd18c075ce086cd03d77d7a6ed33d403c4205f390a5765dc4",
+      "bytes": 72
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-helpers.stdout",
+      "archivePath": "prior-published-report/operations/stage-helpers.stdout",
+      "sha256": "3fac12a1d130fb629efda9ea47ab6860c34b0cedf54d0c1c690bee319c1f7f75",
+      "bytes": 61
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-1.json",
+      "archivePath": "prior-published-report/operations/stage-1.json",
+      "sha256": "3781c2bc624a6cb6f2e307e97a40ce3f80efcace37f880de04167cf9553d16da",
+      "bytes": 16151
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prep.json",
+      "archivePath": "prior-published-report/operations/prep.json",
+      "sha256": "12fa46673f9844e686d021adae03f107868a96d21a43aa7cc20e294103ef24f6",
+      "bytes": 2529
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-admission.json",
+      "archivePath": "prior-published-report/operations/remote-admission.json",
+      "sha256": "551c1071ddefa10162fb9bcbff3f1280064e5a10177a302c0a84eb070920dfb0",
+      "bytes": 507
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-initial.stdout",
+      "archivePath": "prior-published-report/operations/remote-initial.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-email.stdout",
+      "archivePath": "prior-published-report/operations/task-email.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-initial.stderr",
+      "archivePath": "prior-published-report/operations/remote-initial.stderr",
+      "sha256": "25429cefcdf6aee9b613c43e2eda944024672bef1c176968237252c2d94667b2",
+      "bytes": 896
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect.py",
+      "archivePath": "prior-published-report/operations/collect.py",
+      "sha256": "8dc040f17de92626ed1f4e189da102887c3d28b9108bc1e5a208f378fd5b52a3",
+      "bytes": 948
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-1.stdout",
+      "archivePath": "prior-published-report/operations/collect-1.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/capture-plan-operation-receipt.json",
+      "archivePath": "prior-published-report/operations/capture-plan-operation-receipt.json",
+      "sha256": "28f9c1b6f9c09edabec63f0857f6a99e53aba18a563cbdb401737b58c2341c5f",
+      "bytes": 2635
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-2.json",
+      "archivePath": "prior-published-report/operations/stage-2.json",
+      "sha256": "5386af9c30bd9b1e36667676f3fe72d711cae43bbec6767e2c5ada1d8af696ad",
+      "bytes": 8791
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/actual-capture-plan.stdout",
+      "archivePath": "prior-published-report/operations/actual-capture-plan.stdout",
+      "sha256": "8081f5e8499c30af2063f4bbed3a1b963e17b6cd7cf1a253f051e37ba7363728",
+      "bytes": 671
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage.py",
+      "archivePath": "prior-published-report/operations/stage.py",
+      "sha256": "26d1820f5027889c516a0b9f11b2409e9126feba56ac5c7941d8b08932d145e2",
+      "bytes": 1172
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-helpers.stderr",
+      "archivePath": "prior-published-report/operations/stage-helpers.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-remote.stderr",
+      "archivePath": "prior-published-report/operations/task-remote.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/stage-2.stderr",
+      "archivePath": "prior-published-report/operations/stage-2.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/read-input.json",
+      "archivePath": "prior-published-report/operations/read-input.json",
+      "sha256": "f8841a56dba667fa03066cac1f841d519bad007866ae72986f1f255470b446bf",
+      "bytes": 2673
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/local-pins.json",
+      "archivePath": "prior-published-report/operations/local-pins.json",
+      "sha256": "4da7583681f78e1335a03d9e31872c729871508fedb3abbef9a43775165d8b59",
+      "bytes": 115947
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime.py",
+      "archivePath": "prior-published-report/operations/prepare-runtime.py",
+      "sha256": "b7e066e0394437921c8c17d5d26fe56d29e41b77f28c8aca4227ccc0d429ddac",
+      "bytes": 6264
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/common.py",
+      "archivePath": "prior-published-report/operations/common.py",
+      "sha256": "0068b296271829271844c5984d0c7751b06e341e0a54a6ece1eff8a2cee7c9af",
+      "bytes": 2729
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/pre-guest-capture-plan.json",
+      "archivePath": "prior-published-report/operations/pre-guest-capture-plan.json",
+      "sha256": "cd413c1ae3584345429ef0903bc847e264f7695d950f1e98630eadcbcb721615",
+      "bytes": 7747
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prep.stderr",
+      "archivePath": "prior-published-report/operations/prep.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/api-pending.json",
+      "archivePath": "prior-published-report/operations/api-pending.json",
+      "sha256": "63e24229f1af9c38a0fb9a7284b0a7087c3946cc7bcd5fb56d7b01d39a976713",
+      "bytes": 212
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-email.stderr",
+      "archivePath": "prior-published-report/operations/task-email.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/capture-cursor.json",
+      "archivePath": "prior-published-report/operations/capture-cursor.json",
+      "sha256": "045014d29388343caeadcf59eb29e8f983fe6c771a16237f5a3ba1167eb7eccc",
+      "bytes": 55
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/fetch-diagnostics.stdout",
+      "archivePath": "prior-published-report/operations/fetch-diagnostics.stdout",
+      "sha256": "575188a681b862fdd6aa0bc6b80ba2367d4550382e4584c3eddde8a9e0e32ecd",
+      "bytes": 38
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-receipt.json",
+      "archivePath": "prior-published-report/operations/package-blocker-receipt.json",
+      "sha256": "8f6158abf918ebcd0ed561fc3e5d2afd940864217fdf49e0e698d7b1396af768",
+      "bytes": 253
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/fetch-diagnostics.json",
+      "archivePath": "prior-published-report/operations/fetch-diagnostics.json",
+      "sha256": "6ed8d0a73b2a5c64164352fc7f3815be5d6ba1aa2bfe278889bc8667d875f736",
+      "bytes": 4150
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/finish-op.stderr",
+      "archivePath": "prior-published-report/operations/finish-op.stderr",
+      "sha256": "c91b50dc53a0187b8b9bcb2fc7f5513aefe10e88e2657c5ff18285f4c0d6e8d4",
+      "bytes": 418
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/task-sparse.json",
+      "archivePath": "prior-published-report/operations/task-sparse.json",
+      "sha256": "6151aa3f0f6fc4ff72cef980131e8ff5ec1527c23514952f3b11615f4e0b3714",
+      "bytes": 2644
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/collect-1.stderr",
+      "archivePath": "prior-published-report/operations/collect-1.stderr",
+      "sha256": "917bb19de7a6e91214a3addc84e15d407a9c60f978b264c8000ef4e743f4c214",
+      "bytes": 254
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/init-report.json",
+      "archivePath": "prior-published-report/operations/init-report.json",
+      "sha256": "d062d1e6fb71140467bf3605cf32f93121f7d552558f655c0388093e2a5930b6",
+      "bytes": 2603
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/remote-rehash.stderr",
+      "archivePath": "prior-published-report/operations/remote-rehash.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/prepare-runtime-final.json",
+      "archivePath": "prior-published-report/operations/prepare-runtime-final.json",
+      "sha256": "72c3e1ee4947fb2fac490f7667ee853dd97f38f0f6a69ea3797be1883b385072",
+      "bytes": 2574
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/package-blocker-final-op.stderr",
+      "archivePath": "prior-published-report/operations/package-blocker-final-op.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/operations/capture-map.jsonl",
+      "archivePath": "prior-published-report/operations/capture-map.jsonl",
+      "sha256": "7c9c43d849270ce003fe2d5f45e043b94fc16ab4ad975a7f4a389e5243ba6ebc",
+      "bytes": 49918
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/launcher.stderr",
+      "archivePath": "prior-published-report/runtime/launcher.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/launcher-pid.json",
+      "archivePath": "prior-published-report/runtime/launcher-pid.json",
+      "sha256": "6bf27ac07682b083bf1d28b2e1bdca374b45f1031e597cc4307466654c3bead6",
+      "bytes": 29
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/launcher.stdout",
+      "archivePath": "prior-published-report/runtime/launcher.stdout",
+      "sha256": "41b902f4e02483f77251bf058e878f9bb5def93341c1a46e3eb168be684336f3",
+      "bytes": 117
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/startup-mount-receipt.json",
+      "archivePath": "prior-published-report/runtime/startup-mount-receipt.json",
+      "sha256": "75fe216287455858f13dcf4c2a82a8175de669512def75b312d29db9c576a77a",
+      "bytes": 20448
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/profile.json",
+      "archivePath": "prior-published-report/runtime/profile.json",
+      "sha256": "fc5dda6392d21a627d0db7d1887e5c8bbb1d9870fd2e85cc2776c7ded7287af7",
+      "bytes": 46103
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/execution/startup.stdout",
+      "archivePath": "prior-published-report/runtime/execution/startup.stdout",
+      "sha256": "f802bf7573b91bbe74bb4a09ae43eb0bb557d925a402eb02f3585c3c720f7a96",
+      "bytes": 176
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/execution/guest.stderr",
+      "archivePath": "prior-published-report/runtime/execution/guest.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/execution/startup.stderr",
+      "archivePath": "prior-published-report/runtime/execution/startup.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/execution/receipt.json",
+      "archivePath": "prior-published-report/runtime/execution/receipt.json",
+      "sha256": "52172b27b0f509bdb4f9f52cda2f7cedc9eaa9dc1d955188ba88ff07bfcc0ebc",
+      "bytes": 3940
+    },
+    {
+      "original": "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/runtime/execution/guest.stdout",
+      "archivePath": "prior-published-report/runtime/execution/guest.stdout",
+      "sha256": "9e6abf8365dfdf869c9d9a278988871289fb8388c6e506a1813235fb4770b095",
+      "bytes": 10627
+    }
+  ]
+}

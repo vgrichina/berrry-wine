@@ -1,0 +1,9 @@
+{
+  "index": 864,
+  "used": 2481875,
+  "reserve": 6550,
+  "terminalReserve": 1048576,
+  "budget": 8388608,
+  "commandSHA256": "c4ddfe957b79d5494b2d6db0be359d03cc9d60ffb8187da297aa31c98ed240cd",
+  "timeout": 30
+}

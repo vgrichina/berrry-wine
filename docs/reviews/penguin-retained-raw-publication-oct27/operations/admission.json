@@ -1,0 +1,21 @@
+{
+  "time": "2026-10-27T10:54:07.755239+00:00",
+  "materialChange": "over-cap peer4111341 exited; /proc absent",
+  "MemAvailable": 3200724992,
+  "incrementalRequiredRAM": 1409286144,
+  "futureClient": 335544320,
+  "childPool": 268435456,
+  "headroom": 805306368,
+  "actualPeerRSS": "already deducted from MemAvailable",
+  "freeDisk": 7397941248,
+  "futureDisk": 134217728,
+  "floor": 2982150144,
+  "verifiedPins": {
+    "/tmp/penguin-published-projectile-gameplay-oct27/repo/docs/reviews/penguin-published-projectile-gameplay-oct27/receipt.json": "825f0578156f046363a3fc28b7c7be4028b9c2dcc05eca5ce0e3a7a3df1c9bf9",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/collect.py": "8dc040f17de92626ed1f4e189da102887c3d28b9108bc1e5a208f378fd5b52a3",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/restore.py": "f5cfcaf9fe0318a1befc5054e2bb8db4fb8f7b909be865911d60b59c16d682f0",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/actual-capture-plan.json": "49206333fe7c1d7670a7fe78bd37f194b27d49e9c4ba0df9aa94ec68d8040ad5",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/capture-cursor.json": "045014d29388343caeadcf59eb29e8f983fe6c771a16237f5a3ba1167eb7eccc",
+    "/tmp/penguin-published-projectile-gameplay-oct27/ops/capture-map.jsonl": "7c9c43d849270ce003fe2d5f45e043b94fc16ab4ad975a7f4a389e5243ba6ebc"
+  }
+}

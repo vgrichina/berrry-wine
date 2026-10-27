@@ -1,0 +1,5 @@
+Penguin historical runtime: capture blocked
+
+The single real guest passed startup, mounts and ordinary A dispatch, and exited naturally. All four full840x660 PNGs remain on bx_5pu4jynk under /tmp/penguin-published-projectile-gameplay-oct27/captures. Their remote hashes are in receipt.json. The local resource guard stopped the lossless four-image transport at379/756 records. No images were exposed or visually inspected, so visible-projectile acceptance is NOT established. No guest or capture replay occurred.
+
+receipt.json binds runtime/config/input/resource evidence. original-api-responses.tar.gz preserves original serialized API stdout and distinct CLI stderr; api-manifest.json records exact hashes. Untar into an owned directory and verify those hashes before analysis. Runtime streams remain distinct in runtime/execution/. Recovery must retain the original capture plan, chronology and8MiB ledger; do not reset used bytes or rerun the guest. Coordinator owns the running Boat and shutdown11:07UTC before expiry11:14:33.925UTC. Historical emulator only; accepted capture helper is production4a2bec145ef34b0d084b96b09a682a16e89703fd. Ordinary Quit remains unproven.

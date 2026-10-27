@@ -1,0 +1,88 @@
+{
+  "launcher.stdout": {
+    "bytes": 117,
+    "sha256": "41b902f4e02483f77251bf058e878f9bb5def93341c1a46e3eb168be684336f3"
+  },
+  "launcher.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "execution/receipt.json": {
+    "bytes": 3940,
+    "sha256": "52172b27b0f509bdb4f9f52cda2f7cedc9eaa9dc1d955188ba88ff07bfcc0ebc"
+  },
+  "execution/startup.stdout": {
+    "bytes": 176,
+    "sha256": "f802bf7573b91bbe74bb4a09ae43eb0bb557d925a402eb02f3585c3c720f7a96"
+  },
+  "execution/startup.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "execution/guest.stdout": {
+    "bytes": 10627,
+    "sha256": "9e6abf8365dfdf869c9d9a278988871289fb8388c6e506a1813235fb4770b095"
+  },
+  "execution/guest.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "startup-mount-receipt.json": {
+    "bytes": 20448,
+    "sha256": "75fe216287455858f13dcf4c2a82a8175de669512def75b312d29db9c576a77a"
+  },
+  "profile.json": {
+    "bytes": 46103,
+    "sha256": "fc5dda6392d21a627d0db7d1887e5c8bbb1d9870fd2e85cc2776c7ded7287af7"
+  },
+  "captures": [
+    {
+      "name": "b40100.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "name": "b40060.png",
+      "bytes": 811393,
+      "sha256": "de65fbced5b3e255433a7c80dfde87a956f427dbc3287aab05c8e66d1a6c5754"
+    },
+    {
+      "name": "b40295.png",
+      "bytes": 813208,
+      "sha256": "e07475bcdd75a7947623c06f8ea19ff43269201d2fe76edc2b1ecbaa25d95606"
+    },
+    {
+      "name": "b39999.png",
+      "bytes": 806077,
+      "sha256": "95112041c84196db00873e676117ac51d58562a21cabe06f5498d1f4b0504972"
+    }
+  ],
+  "receipt": {
+    "status": "PASS_OFFLINE_RECIPE",
+    "error": null,
+    "guest_starts": 1,
+    "text_bytes": 10803
+  },
+  "phases": [
+    {
+      "stage": "startup",
+      "status": "passed",
+      "pid": 11073,
+      "reason": "natural",
+      "error": null,
+      "returncode": 0,
+      "peak_rss": 66199552,
+      "cleaned": null
+    },
+    {
+      "stage": "guest",
+      "status": "passed",
+      "pid": 11080,
+      "reason": "natural",
+      "error": null,
+      "returncode": 0,
+      "peak_rss": 353173504,
+      "cleaned": null
+    }
+  ]
+}

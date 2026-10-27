@@ -1,0 +1,23 @@
+{
+  "boardWatcherPID": 4150464,
+  "parentPID": 4148928,
+  "startTicks": "114602379",
+  "exactArgv": [
+    "tail",
+    "-n",
+    "0",
+    "-f",
+    "/home/user/wine-assembly/messageboard.txt"
+  ],
+  "identityVerified": true,
+  "signal": "SIGTERM",
+  "procAbsent": true,
+  "otherWatchersUntouched": true,
+  "packageSupervisorCleanupComplete": true,
+  "runtimeAccess": false,
+  "box": "bx_5pu4jynk",
+  "boxState": "Historical last-observed RUNNING only; no lifecycle operation or shutdown claim",
+  "coordinatorOwnsLifecycle": true,
+  "shutdown": "2026-10-27T11:07:00Z",
+  "expiry": "2026-10-27T11:14:33.925Z"
+}

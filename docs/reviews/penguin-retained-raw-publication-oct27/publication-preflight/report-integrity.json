@@ -1,0 +1,16 @@
+{
+  "status": "PASS_HASH_ARCHIVE_ONLY_NOT_ACCEPTANCE",
+  "payloadCount": 192,
+  "rawStreams": 2484,
+  "records": 756,
+  "sourceReceipt": {
+    "bytes": 4111,
+    "sha256": "1e12ab44ee5c401c938669bb93dfbee1ce382de4c1f17e08f05f82cf5973339e"
+  },
+  "manifest": {
+    "bytes": 31988,
+    "sha256": "e224a11b823893f2674baa4d80a63e64f94eb994cf71cda2907c03a0e7921662"
+  },
+  "report": "/tmp/penguin-retained-raw-publication-oct27/repo/docs/reviews/penguin-retained-raw-publication-oct27",
+  "completed": 1793098903.3795063
+}

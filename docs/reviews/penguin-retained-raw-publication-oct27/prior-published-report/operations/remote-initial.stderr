@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/tmp/penguin-published-projectile-gameplay-oct27/ops/remote-check.py", line 4, in <module>
+    j,raw=py(code);q=json.loads(j['stdout']);assert q['free']-256*M>=2982150144 and q['memAvailable']>=2560*M;save('remote-admission.json',dict(**q,allocation=256*M,closure=15760340,temp=32*M,captures=16*M,logs=2*M,reserve=8*M,passAdmission=True))
+          ^^^^^^^^
+  File "/tmp/penguin-published-projectile-gameplay-oct27/ops/common.py", line 25, in py
+    def py(code,timeout=30):return remote('python3 -c '+shlex.quote(code),timeout)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/penguin-published-projectile-gameplay-oct27/ops/common.py", line 22, in remote
+    assert p.returncode==0 and not error,('CLI failed',i,p.returncode)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('CLI failed', 0, 1)

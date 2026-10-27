@@ -1,0 +1,52 @@
+{
+  "at": 1793098902.7211747,
+  "memAvailable": 3282518016,
+  "requiredRemainingRAM": 2092695552,
+  "clientCap": 335544320,
+  "childPool": 268435456,
+  "headroom": 805306368,
+  "peers": [
+    {
+      "pid": 4114007,
+      "rss": 104865792
+    },
+    {
+      "pid": 4114088,
+      "rss": 106479616
+    },
+    {
+      "pid": 4137219,
+      "rss": 193753088
+    },
+    {
+      "pid": 4142538,
+      "rss": 193679360
+    },
+    {
+      "pid": 4146425,
+      "rss": 199675904
+    },
+    {
+      "pid": 4148928,
+      "rss": 195858432
+    }
+  ],
+  "livePeersAlreadyReflectedInMemAvailable": true,
+  "footprint": {
+    "donorRepo": 7593984,
+    "donorOps": 12206080,
+    "reportRepo": 4096,
+    "ops": 28672,
+    "events": 221184,
+    "sessions": 585728,
+    "positiveWAL": 0
+  },
+  "used": 20639744,
+  "future": 50331648,
+  "reserve": 8388608,
+  "allocation": 134217728,
+  "freeDisk": 7315410944,
+  "projectedFree": 7256690688,
+  "diskFloor": 2982150144,
+  "pass": true
+}

@@ -1,0 +1,8 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "unchangedPriorReceiptSHA256": "d062d1e6fb71140467bf3605cf32f93121f7d552558f655c0388093e2a5930b6",
+  "mounts": "No mount/checkout/runtime launch requested or performed; reuse original canonical production mount receipt in prior-published-report/runtime/startup-mount-receipt.json",
+  "rootReceipt": "/home/user/wine-assembly/scratch/usage-watch/penguin-retained-frame-recovery-oct27/root-ref-digest.json",
+  "helperSHA256": "efcf3c5656a40800a4add90f1882d24830b8cb142626161dd3535d0027491c0b",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}
