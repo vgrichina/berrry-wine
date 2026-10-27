@@ -1,0 +1,60 @@
+{
+  "steps": 13,
+  "serial256ACKFrozenZero": "PASS",
+  "closure537": "PASS",
+  "exactStartupParser": "PASS",
+  "captureHashes": {
+    "menu.png": "f638855b6e9a1ea751a6d10c6707444c9932ae4c5f7d63873e256414f50f0b3d",
+    "round-before.png": "b01bedf7f565afdf3827eee096382cc90ea0773c5427d70afc441ea97c567f0e"
+  },
+  "inputs": [
+    {
+      "command": "mousemove:445:55",
+      "batch": 1537
+    },
+    {
+      "command": "mousedown:445:55",
+      "batch": 1537
+    },
+    {
+      "command": "mouseup:445:55",
+      "batch": 1541
+    },
+    {
+      "command": "mousemove:320:234",
+      "batch": 1573
+    },
+    {
+      "command": "mousedown:320:234",
+      "batch": 1573
+    },
+    {
+      "command": "mouseup:320:234",
+      "batch": 1577
+    },
+    {
+      "command": "mousemove:75:170",
+      "batch": 1609
+    },
+    {
+      "command": "mousedown:75:170",
+      "batch": 1609
+    },
+    {
+      "command": "mouseup:75:170",
+      "batch": 1613
+    },
+    {
+      "command": "relmousemove:220:0",
+      "batch": 1869
+    },
+    {
+      "command": "mousedown:300:400",
+      "batch": 1869
+    }
+  ],
+  "roundBatch": 1869,
+  "afterInputCompletion": "UNCERTAIN",
+  "paddleBallResponse": "NOT_VERIFIED",
+  "ordinaryQuit": false
+}

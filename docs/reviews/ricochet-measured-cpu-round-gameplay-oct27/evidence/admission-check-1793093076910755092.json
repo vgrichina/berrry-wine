@@ -1,0 +1,47 @@
+{
+  "at": 1793093076.9023952,
+  "clients": [
+    {
+      "pid": 4002021,
+      "task": "penguin-accepted-causal-main-integration-oct27",
+      "rss": 98631680
+    },
+    {
+      "pid": 4003114,
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "rss": 106516480
+    },
+    {
+      "pid": 4003272,
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "rss": 106008576
+    }
+  ],
+  "peers": [
+    {
+      "task": "penguin-accepted-causal-main-integration-oct27",
+      "used": 5201920,
+      "remaining": 129015808
+    },
+    {
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "used": 20647936,
+      "remaining": 113569792
+    },
+    {
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "used": 15826944,
+      "remaining": 118390784
+    }
+  ],
+  "remainingFutures": 360976384,
+  "positiveWAL": 28672,
+  "memAvailable": 3639222272,
+  "requiredRAM": 1744830464,
+  "actualRSSAlreadyIncluded": true,
+  "free": 7880675328,
+  "projected": 7502893056,
+  "floor": 2982150144,
+  "own": 13488128,
+  "cap": 134217728
+}

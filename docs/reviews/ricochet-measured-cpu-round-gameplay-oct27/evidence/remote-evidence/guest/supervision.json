@@ -1,0 +1,30 @@
+{
+  "exit": -15,
+  "stopReason": "accounting check failed: [Errno 2] No such file or directory: '/tmp/ricochet-measured-cpu-round-gameplay-oct27/serial/continue.json'",
+  "peakRSS": 365461504,
+  "sampledPeakRSS": 365461504,
+  "reapedPeakRSS": 306991104,
+  "cpuSeconds": 215.686451,
+  "wallSeconds": 132.1464888370001,
+  "owned": [
+    [
+      47097,
+      "239303"
+    ],
+    [
+      47098,
+      "239305"
+    ],
+    [
+      47099,
+      "239305"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "box": "bx_e9mecsag",
+  "boxState": "RUNNING",
+  "shutdownOwner": "coordinator",
+  "at": 1793092867.4277709,
+  "elapsed": 132.15814037600012
+}

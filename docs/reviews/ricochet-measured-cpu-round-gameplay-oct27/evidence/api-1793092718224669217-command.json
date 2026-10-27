@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "30",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,base64,hashlib;p=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27/remote-supervisor.py'\"'\"');p.parent.mkdir(parents=True,exist_ok=True);b=base64.b64decode('\"'\"'aW1wb3J0IHBhdGhsaWIsb3Msc3lzLGpzb24sdGltZSxyZXNvdXJjZSxoYXNobGliLHN1YnByb2Nlc3MsaW1wb3J0bGliLnV0aWwsc2h1dGlsCkg9cGF0aGxpYi5QYXRoKF9fZmlsZV9fKS5wYXJlbnQ7bW9kZT1zeXMuYXJndlsxXTtFPUgvbW9kZTtFLm1rZGlyKGV4aXN0X29rPVRydWUpCmVudj17J1BBVEgnOicvdXNyL2xvY2FsL2JpbjovdXNyL2JpbjovYmluJywnSE9NRSc6Jy9ob21lL3VzZXInLCdMQU5HJzonQy5VVEYtOCcsJ1RaJzonVVRDJywnTk9ERV9QQVRIJzpzdHIoSC8ncnVubmVyL25vZGVfbW9kdWxlcycpfQpvcy5lbnZpcm9uLmNsZWFyKCk7b3MuZW52aXJvbi51cGRhdGUoZW52KQpwPUgvJ3RydXN0ZWQtc3VwZXJ2aXNvci5weSc7YXNzZXJ0IGhhc2hsaWIuc2hhMjU2KHAucmVhZF9ieXRlcygpKS5oZXhkaWdlc3QoKT09JzlkMTBmN2M4Yzc1YjVmMGRmZWJmZjIyOTllZWY4ZGRjMjc5ODhjZjExMmUwZTljMjU1ZTg5Zjc3MmMyY2VlODUnCnM9aW1wb3J0bGliLnV0aWwuc3BlY19mcm9tX2ZpbGVfbG9jYXRpb24oJ3RydXN0ZWQnLHApO209aW1wb3J0bGliLnV0aWwubW9kdWxlX2Zyb21fc3BlYyhzKTtzLmxvYWRlci5leGVjX21vZHVsZShtKQpzdGFydD10aW1lLm1vbm90b25pYygpCmRlZiBjaGVjaygpOgogZmlsZXM9W3AgZm9yIHJvb3QgaW4gW0gscGF0aGxpYi5QYXRoKCcvdG1wL3JpY29jaGV0LWNsZWFudXAtcm91bmQtcGxheS1vY3QyNycpXSBmb3IgcCBpbiByb290LnJnbG9iKCcqJykgaWYgcC5pc19maWxlKCldO2FsbG9jYXRlZD1zdW0ocC5zdGF0KCkuc3RfYmxvY2tzKjUxMiBmb3IgcCBpbiBmaWxlcyk7c3RyZWFtcz1zdW0ocC5zdGF0KCkuc3Rfc2l6ZSBmb3IgcCBpbiBFLmdsb2IoJyouc3Rkb3V0JykpK3N1bShwLnN0YXQoKS5zdF9zaXplIGZvciBwIGluIEUuZ2xvYignKi5zdGRlcnInKSk7cG5ncz1saXN0KChILydzZXJpYWwnKS5nbG9iKCcqLnBuZycpKSBpZiAoSC8nc2VyaWFsJykuZXhpc3RzKCkgZWxzZSBbXQogaWYgc3RyZWFtcz4yMDk3MTUyOnJldHVybiAnY29tYmluZWQtb3V0cHV0JwogaWYgbGVuKHBuZ3MpPjYgb3Igc3VtKHAuc3RhdCgpLnN0X3NpemUgZm9yIHAgaW4gcG5ncyk+MTI1ODI5MTIgb3IgYW55KHAuc3RhdCgpLnN0X3NpemU+MjA5NzE1MiBmb3IgcCBpbiBwbmdzKTpyZXR1cm4gJ2NhcHR1cmUtYnVkZ2V0JwogaWYgYWxsb2NhdGVkPjI2ODQzNTQ1NiBvciBzaHV0aWwuZGlza191c2FnZShIKS5mcmVlLW1heCgwLDI2ODQzNTQ1Ni1hbGxvY2F0ZWQpPDI5ODIxNTAxNDQ6cmV0dXJuICdyZW1vdGUtZGlzaycKIGlmIGludChwYXRobGliLlBhdGgoJy9wcm9jL21lbWluZm8nKS5yZWFkX3RleHQoKS5zcGxpdCgnTWVtQXZhaWxhYmxlOicpWzFdLnNwbGl0KClbMF0pKjEwMjQ8ODA1MzA2MzY4OnJldHVybiAnaG9zdC1tZW1vcnknCiBpZiB0aW1lLnRpbWUoKT49MTc5MzA5MzQwMDpyZXR1cm4gJ2d1ZXN0LWN1dG9mZicKIHJldHVybiBOb25lCmFzc2VydCBub3QgY2hlY2soKTthc3NlcnQgcmVzb3VyY2UuZ2V0cmxpbWl0KHJlc291cmNlLlJMSU1JVF9BUyk9PSgtMSwtMSkgYW5kIHJlc291cmNlLmdldHJsaW1pdChyZXNvdXJjZS5STElNSVRfREFUQSk9PSgtMSwtMSkKcj1tLnN1cGVydmlzZShbc3lzLmV4ZWN1dGFibGUsJy1TJyxzdHIoSC8ncmVtb3RlLWNoaWxkLnB5JyksbW9kZV0scnNzX2xpbWl0PTMyMjEyMjU0NzIsY3B1X2xpbWl0PTMwMCx3YWxsX2xpbWl0PTE4MCxvdXRwdXRfbGltaXQ9MjA5NzE1MixjaGVjaz1jaGVjaykKclsnb3V0cHV0J109clsnb3V0cHV0J10uZGVjb2RlKCd1dGY4JywncmVwbGFjZScpO3IudXBkYXRlKGJveD0nYnhfZTltZWNzYWcnLGJveFN0YXRlPSdSVU5OSU5HJyxzaHV0ZG93bk93bmVyPSdjb29yZGluYXRvcicsYXQ9dGltZS50aW1lKCksZWxhcHNlZD10aW1lLm1vbm90b25pYygpLXN0YXJ0KQooRS8nc3VwZXJ2aXNpb24uanNvbicpLndyaXRlX3RleHQoanNvbi5kdW1wcyhyLGluZGVudD0yKSkK'\"'\"');assert hashlib.sha256(b).hexdigest()=='\"'\"'eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63'\"'\"';p.write_bytes(b)'"
+  ],
+  "commandSHA256": "b06615dfcc0e2f15278e09cf99a789f6d2b2aa279e4e486aad2d7f95112b2664",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

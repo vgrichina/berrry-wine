@@ -1,0 +1,1 @@
+{"at": 1793092729.140997, "closure": 537, "bytes": 53313381, "bad": [], "mem": 7408668672, "free": 48986423296, "allocated": 56057856, "limits": {"9": [-1, -1], "2": [-1, -1], "0": [-1, -1], "1": [-1, -1]}, "perProcessCPU": 90, "aggregateCPU": 300, "wall": 180, "physical": 3221225472, "APIFrameReservation": 6291456, "APIterminalReserve": 1048576}

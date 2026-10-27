@@ -1,0 +1,14 @@
+{
+  "bytes": 388174,
+  "identity": [
+    64769,
+    141417,
+    388174,
+    1793092851092649952,
+    1793092851092649952
+  ],
+  "sha256": "b01bedf7f565afdf3827eee096382cc90ea0773c5427d70afc441ea97c567f0e",
+  "chunks": 87,
+  "maxActive": 4,
+  "fullResponseBytes": 546610
+}

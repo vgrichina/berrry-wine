@@ -1,0 +1,11 @@
+{
+  "phase": "runtime terminal and evidence collected; no replay",
+  "tests": "acceptance-tests.json",
+  "cpu": "cpu-accounting.json",
+  "remaining": [
+    "report checker",
+    "commit/push/exactref",
+    "own watcher cleanup",
+    "coordinator handback"
+  ]
+}

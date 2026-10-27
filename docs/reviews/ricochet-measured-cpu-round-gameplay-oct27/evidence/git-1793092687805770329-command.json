@@ -1,0 +1,12 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/ricochet-measured-cpu-round-gameplay-oct27/repo",
+    "update-ref",
+    "refs/heads/task/ricochet-measured-cpu-round-gameplay-oct27",
+    "f461584655aa36f1ca30686cbd1428757b232b3c"
+  ],
+  "trustedSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "gitChildDATA": 536870912
+}

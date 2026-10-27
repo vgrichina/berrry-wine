@@ -1,0 +1,67 @@
+{
+  "at": 1793092841.345464,
+  "clients": [
+    {
+      "pid": 4002021,
+      "task": "penguin-accepted-causal-main-integration-oct27",
+      "rss": 131420160
+    },
+    {
+      "pid": 4002816,
+      "task": "airstrike-sixteen-capture-ordinary-quit-oct27",
+      "rss": 129855488
+    },
+    {
+      "pid": 4002953,
+      "task": "enigma-full-frame-terminal-startgame-oct27",
+      "rss": 132210688
+    },
+    {
+      "pid": 4003114,
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "rss": 132984832
+    },
+    {
+      "pid": 4003272,
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "rss": 139268096
+    }
+  ],
+  "peers": [
+    {
+      "task": "penguin-accepted-causal-main-integration-oct27",
+      "used": 1540096,
+      "remaining": 132677632
+    },
+    {
+      "task": "airstrike-sixteen-capture-ordinary-quit-oct27",
+      "used": 2539520,
+      "remaining": 131678208
+    },
+    {
+      "task": "enigma-full-frame-terminal-startgame-oct27",
+      "used": 6184960,
+      "remaining": 128032768
+    },
+    {
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "used": 14336000,
+      "remaining": 119881728
+    },
+    {
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "used": 5685248,
+      "remaining": 128532480
+    }
+  ],
+  "remainingFutures": 640802816,
+  "positiveWAL": 12288,
+  "memAvailable": 3477331968,
+  "requiredRAM": 1073741824,
+  "actualRSSAlreadyIncluded": true,
+  "free": 7908241408,
+  "projected": 7250649088,
+  "floor": 2982150144,
+  "own": 4104192,
+  "cap": 134217728
+}

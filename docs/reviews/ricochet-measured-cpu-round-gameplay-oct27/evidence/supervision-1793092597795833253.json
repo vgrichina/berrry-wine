@@ -1,0 +1,17 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 37617664,
+  "sampledPeakRSS": 37617664,
+  "reapedPeakRSS": 19005440,
+  "cpuSeconds": 0.096482,
+  "wallSeconds": 0.06500010006129742,
+  "owned": [
+    [
+      4006734,
+      "113980697"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true
+}

@@ -1,0 +1,26 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 80027648,
+  "sampledPeakRSS": 80027648,
+  "reapedPeakRSS": 45162496,
+  "cpuSeconds": 0.279905,
+  "wallSeconds": 0.13963808800008337,
+  "owned": [
+    [
+      47028,
+      "238694"
+    ],
+    [
+      47029,
+      "238699"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "box": "bx_e9mecsag",
+  "boxState": "RUNNING",
+  "shutdownOwner": "coordinator",
+  "at": 1793092729.3270845,
+  "elapsed": 0.1472932519995993
+}

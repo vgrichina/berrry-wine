@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "30",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,base64,hashlib;p=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27/startup-args.json'\"'\"');p.parent.mkdir(parents=True,exist_ok=True);b=base64.b64decode('\"'\"'WyIvaG9tZS91c2VyLy5udm0vdmVyc2lvbnMvbm9kZS92MjQuMjIuMS9iaW4vbm9kZSIsICItLW1heC1vbGQtc3BhY2Utc2l6ZT0yMDQ4IiwgIi1lIiwgImNvbnN0IGZzPXJlcXVpcmUoJ2ZzJyksYXJncz1bXCItLWFwcD1yaWNvY2hldF94dHJlbWVcIiwgXCItLW5vLWJ1aWxkXCIsIFwiLS13YXNtPS90bXAvcmljb2NoZXQtY2xlYW51cC1yb3VuZC1wbGF5LW9jdDI3L2N1cnJlbnQud2FzbVwiLCBcIi0tZGxsLXNlZWQ9SUZDMjIuZGxsXCIsIFwiLS1kM2Q5LXJlbmRlcmVyPXNvZnR3YXJlXCIsIFwiLS1uby1jbG9zZVwiLCBcIi0tc3R1Y2stYWZ0ZXI9MFwiLCBcIi0tcXVpZXQtYXBpXCIsIFwiLS1xdWlldC1ibG9ja3NcIiwgXCItLWJhdGNoLXNpemU9MjAwMDAwXCIsIFwiLS1tYXgtYmF0Y2hlcz0xMDAwMDAwMFwiLCBcIi0tbWF4LXNlY29uZHM9MTc2XCIsIFwiLS1jb250cm9sPTgxMjhcIiwgXCItLWZyb3plblwiXTtjb25zdCBnZXRBcmcgPSAobmFtZSwgZGVmKSA9PiB7XG4gIGNvbnN0IHByZWZpeCA9IGAtLSR7bmFtZX09YDtcbiAgY29uc3QgYXJnID0gYXJncy5maW5kKHZhbHVlID0+IHZhbHVlLnN0YXJ0c1dpdGgocHJlZml4KSk7XG4gIHJldHVybiBhcmcgPyBhcmcuc2xpY2UocHJlZml4Lmxlbmd0aCkgOiBkZWY7XG59O1xuY29uc3QgZ2V0QXJncyA9IG5hbWUgPT4ge1xuICBjb25zdCBwcmVmaXggPSBgLS0ke25hbWV9PWA7XG4gIHJldHVybiBhcmdzLmZpbHRlcih2YWx1ZSA9PiB2YWx1ZS5zdGFydHNXaXRoKHByZWZpeCkpXG4gICAgLmZsYXRNYXAodmFsdWUgPT4gdmFsdWUuc2xpY2UocHJlZml4Lmxlbmd0aCkuc3BsaXQoJywnKSlcbiAgICAubWFwKHZhbHVlID0+IHZhbHVlLnRyaW0oKSkuZmlsdGVyKEJvb2xlYW4pO1xufTtcbmNvbnN0IGhhc0ZsYWcgPSBuYW1lID0+IGFyZ3MuaW5jbHVkZXMoYC0tJHtuYW1lfWApO1xuO2lmKGdldEFyZygnYXBwJykhPT0ncmljb2NoZXRfeHRyZW1lJ3x8Z2V0QXJnKCd3YXNtJykhPT1cIi90bXAvcmljb2NoZXQtY2xlYW51cC1yb3VuZC1wbGF5LW9jdDI3L2N1cnJlbnQud2FzbVwifHxnZXRBcmcoJ2QzZDktcmVuZGVyZXInKSE9PSdzb2Z0d2FyZSd8fCFoYXNGbGFnKCdmcm96ZW4nKXx8IWhhc0ZsYWcoJ25vLWJ1aWxkJyl8fGdldEFyZ3MoJ3Zmcy1tb3VudCcpLmxlbmd0aCl0aHJvdyBFcnJvcignY2Fub25pY2FsIHBhcnNlciBtaXNtYXRjaCcpO2NvbnNvbGUubG9nKEpTT04uc3RyaW5naWZ5KHtleGVjOnByb2Nlc3MuZXhlY1BhdGgsZmxhZ3M6cHJvY2Vzcy5leGVjQXJndi5zbGljZSgwLDEpLGxpbWl0czpmcy5yZWFkRmlsZVN5bmMoJy9wcm9jL3NlbGYvbGltaXRzJywndXRmOCcpLHBhcnNlcjonUEFTUycsbWVtb3J5OnByb2Nlc3MubWVtb3J5VXNhZ2UoKSx2ZXJzaW9uczpwcm9jZXNzLnZlcnNpb25zfSkpOyJd'\"'\"');assert hashlib.sha256(b).hexdigest()=='\"'\"'6087eab0f259f682375a9321ceec960a1da82b8861a4e6e3c6b59d4d7e257600'\"'\"';p.write_bytes(b)'"
+  ],
+  "commandSHA256": "7e09ec3d91fe9011afa95e8adf2915cd68691fde8638fe93f875b70cb0960733",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

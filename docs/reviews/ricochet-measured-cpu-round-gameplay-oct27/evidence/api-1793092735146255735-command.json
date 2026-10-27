@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "5",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,json,subprocess,time,shutil\nh=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');s=json.loads((h/'\"'\"'preflight.json'\"'\"').read_text());assert s['\"'\"'startup'\"'\"']=='\"'\"'PASS'\"'\"' and not (h/'\"'\"'guest'\"'\"').exists();assert time.time()+190<1793093400\np=subprocess.Popen(['\"'\"'python3'\"'\"','\"'\"'-S'\"'\"',str(h/'\"'\"'remote-supervisor.py'\"'\"'),'\"'\"'guest'\"'\"'],stdout=open(h/'\"'\"'guest-supervisor.stdout'\"'\"','\"'\"'wb'\"'\"'),stderr=open(h/'\"'\"'guest-supervisor.stderr'\"'\"','\"'\"'wb'\"'\"'),start_new_session=True)\nprint(json.dumps(dict(supervisorPID=p.pid,start=time.time(),state='\"'\"'STARTING'\"'\"',noReplay=True,box='\"'\"'bx_e9mecsag'\"'\"')))\n'"
+  ],
+  "commandSHA256": "7ee491cd96f8e9505e70ce198fc872fcc6648a3131edf5ecae782538f1eee8ee",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

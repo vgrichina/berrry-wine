@@ -1,0 +1,96 @@
+{
+  "candidateId": "reflexive-ricochet-xtreme",
+  "taskId": "ricochet-measured-cpu-round-gameplay-oct27",
+  "agentId": "codex:ricochet-measured-cpu-round-gameplay-oct27",
+  "startedAt": "2026-10-27T09:18:55.298082+00:00",
+  "finishedAt": "2026-10-27T09:21:07.427771+00:00",
+  "outcome": "harness-error",
+  "route": "round-entry",
+  "command": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/ricochet-cleanup-round-play-oct27/runner/test/run.js",
+    "--app=ricochet_xtreme",
+    "--no-build",
+    "--wasm=/tmp/ricochet-cleanup-round-play-oct27/current.wasm",
+    "--dll-seed=IFC22.dll",
+    "--d3d9-renderer=software",
+    "--no-close",
+    "--stuck-after=0",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=176",
+    "--control=8128",
+    "--frozen"
+  ],
+  "build": {
+    "commit": "754c97d3ff22ce0a0cd06d08ac06dc0446fbcbb2",
+    "wasmSha256": "f3f3cd439c50a2bc441de67c5f138e32cc060186d84d37d85de2b200ca806d75",
+    "apiTableSha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486",
+    "acceptedHelperCommit": "f461584655aa36f1ca30686cbd1428757b232b3c"
+  },
+  "environment": {
+    "host": "bx_e9mecsag",
+    "mode": "CLI",
+    "renderer": "software",
+    "node": "24.22.1",
+    "viewport": [
+      640,
+      480
+    ]
+  },
+  "summary": "Fresh main menu and Round1-1 entry visually verified at batch1869; running timer/bricks/shield visible. Relative movement and normal mousedown queued and seen in Node input logs; following4-batch step interrupted by accounting scan FileNotFoundError on consumed serial/continue.json. Supervisor SIGTERM cleanup completed. No after-input frame, paddle/ball-response acceptance or ordinary Quit. One invocation; no replay.",
+  "verification": "reviewed",
+  "artifacts": [
+    "acceptance-tests.json",
+    "cpu-accounting.json",
+    "profile.json",
+    "remote-owned-cleanup.json"
+  ],
+  "acceptance": {
+    "closurePins": true,
+    "remoteHashes": true,
+    "nodeStartup": true,
+    "canonicalParser": true,
+    "freshMenu": true,
+    "round": true,
+    "paddleBallResponse": false,
+    "ordinaryQuit": false
+  },
+  "termination": {
+    "exit": -15,
+    "stopReason": "accounting check failed: [Errno 2] No such file or directory: '/tmp/ricochet-measured-cpu-round-gameplay-oct27/serial/continue.json'",
+    "peakRSS": 365461504,
+    "sampledPeakRSS": 365461504,
+    "reapedPeakRSS": 306991104,
+    "cpuSeconds": 215.686451,
+    "wallSeconds": 132.1464888370001,
+    "owned": [
+      [
+        47097,
+        "239303"
+      ],
+      [
+        47098,
+        "239305"
+      ],
+      [
+        47099,
+        "239305"
+      ]
+    ],
+    "output": "",
+    "cleanupComplete": true,
+    "box": "bx_e9mecsag",
+    "boxState": "RUNNING",
+    "shutdownOwner": "coordinator",
+    "at": 1793092867.4277709,
+    "elapsed": 132.15814037600012
+  },
+  "screenshots": [
+    "menu.png",
+    "round-before.png"
+  ]
+}

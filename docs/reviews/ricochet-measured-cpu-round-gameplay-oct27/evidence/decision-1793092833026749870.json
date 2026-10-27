@@ -1,0 +1,33 @@
+{
+  "request": {
+    "commands": [
+      {
+        "cmd": "mousemove:320:234"
+      },
+      {
+        "cmd": "mousedown:320:234"
+      }
+    ],
+    "release": "mouseup:320:234",
+    "step": 32,
+    "id": 1793092833026749870
+  },
+  "response": {
+    "commandId": "cmd_m2xneibgwgxx",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-27T09:20:34.472Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-27T09:20:33.095Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"id\": 1793092833026749870, \"batch\": 1609, \"elapsed\": 99.09666698199999}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "totalConservativeChargedIncludingCleanup": 215.686451,
+  "wallIncludingCleanup": 132.1464888370001,
+  "activeAndCleanupSplit": null,
+  "splitLimitation": "Pinned trusted supervisor exposes final charged total only; no pre-cleanup CPU sample was retained. No exact active/cleanup split can be reconstructed.",
+  "cleanupComplete": true,
+  "physicalPeakRSS": 365461504,
+  "cause": "accounting check failed: [Errno 2] No such file or directory: '/tmp/ricochet-measured-cpu-round-gameplay-oct27/serial/continue.json'"
+}

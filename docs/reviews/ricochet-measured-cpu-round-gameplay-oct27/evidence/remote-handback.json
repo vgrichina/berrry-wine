@@ -1,0 +1,94 @@
+{
+  "manifest": {
+    "fresh-admission.json": {
+      "bytes": 348,
+      "sha256": "735583a4e236adf4c662e591fa4af7deae61d83676bd22376389d2c1075b42bb"
+    },
+    "preflight.json": {
+      "bytes": 534,
+      "sha256": "a7d0c844ee51c4ef8f047b1dba648d0195bbfad70cf911aabe1de258bda3aace"
+    },
+    "startup/command.json": {
+      "bytes": 1998,
+      "sha256": "44898d90b63bc24d7e08840c2ac115ddc498e54b80089f6c85b8d2a8f20796dc"
+    },
+    "startup/node.stdout": {
+      "bytes": 2077,
+      "sha256": "e9d9030feee01fd217d8550b32e1d1a221ddbb74d4f445e8123ce50f2995bbc7"
+    },
+    "startup/node.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "startup/terminal.json": {
+      "bytes": 2047,
+      "sha256": "420d235c651dd5addfdea4b58b95589b825afdda8a3bf33fff865bd4e6e4ab6a"
+    },
+    "startup/supervision.json": {
+      "bytes": 469,
+      "sha256": "923965603ad8cbf8d40274252e43ae629a3339e0838829069b72296844ddad01"
+    },
+    "startup-supervisor.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "startup-supervisor.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/command.json": {
+      "bytes": 1112,
+      "sha256": "4fed416057948b7b6a110e6aaaab32a6c3534b926e7785a93d0bf58a8afa5a15"
+    },
+    "guest/node.stdout": {
+      "bytes": 4022,
+      "sha256": "75e70f27fd37dcf20741ae386549cc128dfc91e00eb464ae062bfd87f72a248d"
+    },
+    "guest/node.stderr": {
+      "bytes": 652,
+      "sha256": "4abf17a254acd4af8de8bf55fcf7bb423d69615ee58b9f71e9ae750729169183"
+    },
+    "guest/controller.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/controller.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest/supervision.json": {
+      "bytes": 645,
+      "sha256": "eda204fe548e344c182f4212ae7ae73e270dfa1ec2995e3f59d20fbbba00358c"
+    },
+    "guest-supervisor.stdout": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "guest-supervisor.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "serial/checkpoint.json": {
+      "bytes": 470,
+      "sha256": "a4d34664f44bc97050cd308d2657fc5386369c278ec85ab369b2674f7fd548f0"
+    },
+    "serial/paused.json": {
+      "bytes": 77,
+      "sha256": "c34b6865256c80053187f2a8f5e95612daf5e69f86a7a4e2469d5c87c1c829cd"
+    },
+    "serial/decision-done.json": {
+      "bytes": 73,
+      "sha256": "1e4565983c7c89f97ef34370f33fd16aa189f1a10216c20bca97611e70ed43b9"
+    },
+    "serial/control.jsonl": {
+      "bytes": 14006,
+      "sha256": "b53f0071d6ae5267a3477f594f2b716d2334067856aaae0d6b9d5465adbc5f18"
+    }
+  },
+  "mem": 7364046848,
+  "free": 48985247744,
+  "allocated": 954368,
+  "box": "bx_e9mecsag",
+  "state": "RUNNING",
+  "at": 1793092919.595057
+}

@@ -1,0 +1,34 @@
+{
+  "request": {
+    "commands": [
+      {
+        "cmd": "mousemove:75:170"
+      },
+      {
+        "cmd": "mousedown:75:170"
+      }
+    ],
+    "release": "mouseup:75:170",
+    "step": 256,
+    "png": "round-before.png",
+    "id": 1793092841347238229
+  },
+  "response": {
+    "commandId": "cmd_m0aam8ymxgoq",
+    "cwd": ".",
+    "exitCode": 0,
+    "finishedAt": "2026-10-27T09:20:51.101Z",
+    "launcherFailed": false,
+    "noticedMs": 1,
+    "oomKilled": false,
+    "signal": null,
+    "startMs": 1,
+    "startedAt": "2026-10-27T09:20:41.386Z",
+    "stderr": "",
+    "stderrTruncated": false,
+    "stdout": "{\"id\": 1793092841347238229, \"batch\": 1869, \"elapsed\": 115.74172387599992}\n",
+    "stdoutTruncated": false,
+    "success": true,
+    "timedOut": false
+  }
+}

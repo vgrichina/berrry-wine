@@ -1,0 +1,38 @@
+{
+  "at": 1793093126.9246109,
+  "clients": [
+    {
+      "pid": 4003114,
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "rss": 105226240
+    },
+    {
+      "pid": 4003272,
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "rss": 102273024
+    }
+  ],
+  "peers": [
+    {
+      "task": "alien-retained-staging-menu-mission-oct27",
+      "used": 22450176,
+      "remaining": 111767552
+    },
+    {
+      "task": "ricochet-measured-cpu-round-gameplay-oct27",
+      "used": 15888384,
+      "remaining": 118329344
+    }
+  ],
+  "remainingFutures": 230096896,
+  "positiveWAL": 32768,
+  "positiveWALAlreadyMaterializedInFree": true,
+  "memAvailable": 3793899520,
+  "requiredRAM": 2080374784,
+  "actualRSSAlreadyIncluded": true,
+  "free": 7878828032,
+  "projected": 7631953920,
+  "floor": 2982150144,
+  "own": 13520896,
+  "cap": 134217728
+}

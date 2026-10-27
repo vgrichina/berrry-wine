@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "30",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,hashlib,json,resource,subprocess,time,shutil\nh=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');old=pathlib.Path('\"'\"'/tmp/ricochet-cleanup-round-play-oct27'\"'\"')\nassert resource.getrlimit(resource.RLIMIT_AS)==(-1,-1) and resource.getrlimit(resource.RLIMIT_DATA)==(-1,-1)\nj=json.loads((old/'\"'\"'inputs.json'\"'\"').read_text());bad=[]\nfor x in j['\"'\"'files'\"'\"']:\n p=old/x['\"'\"'target'\"'\"']\n if p.stat().st_size!=x['\"'\"'bytes'\"'\"'] or hashlib.file_digest(p.open('\"'\"'rb'\"'\"'),'\"'\"'sha256'\"'\"').hexdigest()!=x['\"'\"'sha256'\"'\"']:bad.append(x['\"'\"'target'\"'\"'])\nv=dict(at=time.time(),closure=len(j['\"'\"'files'\"'\"']),bytes=sum(x['\"'\"'bytes'\"'\"'] for x in j['\"'\"'files'\"'\"']),bad=bad,mem=int(pathlib.Path('\"'\"'/proc/meminfo'\"'\"').read_text().split('\"'\"'MemAvailable:'\"'\"')[1].split()[0])*1024,free=shutil.disk_usage(h).free,allocated=sum(p.stat().st_blocks*512 for root in [old,h] for p in root.rglob('\"'\"'*'\"'\"') if p.is_file()),limits={str(k):resource.getrlimit(k) for k in [resource.RLIMIT_AS,resource.RLIMIT_DATA,resource.RLIMIT_CPU,resource.RLIMIT_FSIZE]},perProcessCPU=90,aggregateCPU=300,wall=180,physical=3221225472,APIFrameReservation=6291456,APIterminalReserve=1048576)\n(h/'\"'\"'fresh-admission.json'\"'\"').write_text(json.dumps(v));assert not bad and v['\"'\"'closure'\"'\"']==537 and v['\"'\"'bytes'\"'\"']==53313381 and v['\"'\"'mem'\"'\"']>=4563402752 and v['\"'\"'free'\"'\"']-max(0,268435456-v['\"'\"'allocated'\"'\"'])>=2982150144 and v['\"'\"'allocated'\"'\"']<=268435456\nassert time.time()+240<1793093400\np=subprocess.run(['\"'\"'python3'\"'\"','\"'\"'-S'\"'\"',str(h/'\"'\"'remote-supervisor.py'\"'\"'),'\"'\"'startup'\"'\"'],stdout=open(h/'\"'\"'startup-supervisor.stdout'\"'\"','\"'\"'wb'\"'\"'),stderr=open(h/'\"'\"'startup-supervisor.stderr'\"'\"','\"'\"'wb'\"'\"'),timeout=20)\ns=json.loads((h/'\"'\"'startup/supervision.json'\"'\"').read_text());t=json.loads((h/'\"'\"'startup/terminal.json'\"'\"').read_text());out=(h/'\"'\"'startup/node.stdout'\"'\"').read_text();err=(h/'\"'\"'startup/node.stderr'\"'\"').read_text()\nassert p.returncode==0 and not s['\"'\"'stopReason'\"'\"'] and s['\"'\"'exit'\"'\"']==0 and s['\"'\"'cleanupComplete'\"'\"'] and t['\"'\"'returncode'\"'\"']==0 and '\"'\"'\"parser\":\"PASS\"'\"'\"' in out and not err\nv.update(startup='\"'\"'PASS'\"'\"',startupSHA256=hashlib.sha256(out.encode()).hexdigest(),exactNode=json.loads(out)['\"'\"'exec'\"'\"'],parser='\"'\"'PASS'\"'\"');(h/'\"'\"'preflight.json'\"'\"').write_text(json.dumps(v));print(json.dumps(v))\n'"
+  ],
+  "commandSHA256": "2e16df1e9003990e658e052c1b789cf42f5d4f2d6b719a9853836816750f9349",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

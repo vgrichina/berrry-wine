@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "30",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,base64,hashlib;p=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27/remote-child.py'\"'\"');p.parent.mkdir(parents=True,exist_ok=True);b=base64.b64decode('\"'\"'aW1wb3J0IHBhdGhsaWIsc3lzLG9zLGpzb24sc3VicHJvY2Vzcyx0aW1lLHJlc291cmNlLGhhc2hsaWIKSD1wYXRobGliLlBhdGgoX19maWxlX18pLnBhcmVudDttb2RlPXN5cy5hcmd2WzFdO0U9SC9tb2RlO2FyZ3Y9anNvbi5sb2FkcygoSC8obW9kZSsnLWFyZ3MuanNvbicpKS5yZWFkX3RleHQoKSkKaj1kaWN0KGFyZ3Y9YXJndixjd2Q9Jy90bXAvcmljb2NoZXQtY2xlYW51cC1yb3VuZC1wbGF5LW9jdDI3L3J1bm5lcicsYXQ9dGltZS50aW1lKCksZW52aXJvbm1lbnQ9ZGljdChvcy5lbnZpcm9uKSxsaW1pdHM9e3N0cihrKTpyZXNvdXJjZS5nZXRybGltaXQoaykgZm9yIGsgaW4gW3Jlc291cmNlLlJMSU1JVF9BUyxyZXNvdXJjZS5STElNSVRfREFUQSxyZXNvdXJjZS5STElNSVRfQ1BVLHJlc291cmNlLlJMSU1JVF9GU0laRV19LHN0YXRlPSdzcGF3bmluZycpCihFLydjb21tYW5kLmpzb24nKS53cml0ZV90ZXh0KGpzb24uZHVtcHMoaixpbmRlbnQ9MikpCndpdGggKEUvJ25vZGUuc3Rkb3V0Jykub3Blbignd2InKSBhcyBvdXQsKEUvJ25vZGUuc3RkZXJyJykub3Blbignd2InKSBhcyBlcnI6CiB0cnk6CiAgaWYgbW9kZT09J2d1ZXN0JzoKICAgY3RsPXN1YnByb2Nlc3MuUG9wZW4oW3N5cy5leGVjdXRhYmxlLCctUycsc3RyKEgvJ3NlcmlhbC5weScpXSxzdGRvdXQ9b3BlbihFLydjb250cm9sbGVyLnN0ZG91dCcsJ3diJyksc3RkZXJyPW9wZW4oRS8nY29udHJvbGxlci5zdGRlcnInLCd3YicpKQogIHA9c3VicHJvY2Vzcy5Qb3Blbihhcmd2LGN3ZD1wYXRobGliLlBhdGgoJy90bXAvcmljb2NoZXQtY2xlYW51cC1yb3VuZC1wbGF5LW9jdDI3L3J1bm5lcicpLHN0ZG91dD1vdXQsc3RkZXJyPWVycik7ai51cGRhdGUocGlkPXAucGlkLHN0YXRlPSdzdGFydGVkJyk7KEUvJ2NvbW1hbmQuanNvbicpLndyaXRlX3RleHQoanNvbi5kdW1wcyhqLGluZGVudD0yKSk7cmM9cC53YWl0KCk7ai51cGRhdGUocmV0dXJuY29kZT1yYyxzdGF0ZT0ndGVybWluYWwnLGVuZD10aW1lLnRpbWUoKSk7KEUvJ3Rlcm1pbmFsLmpzb24nKS53cml0ZV90ZXh0KGpzb24uZHVtcHMoaixpbmRlbnQ9MikpOwogIGlmIG1vZGU9PSdndWVzdCc6Y3RsLndhaXQodGltZW91dD0yKQogIHN5cy5leGl0KHJjKQogZXhjZXB0IEJhc2VFeGNlcHRpb24gYXMgZToKICBqLnVwZGF0ZShleGNlcHRpb249cmVwcihlKSxhdD10aW1lLnRpbWUoKSk7KEUvJ3NwYXduLW9yLXdhaXQtZXhjZXB0aW9uLmpzb24nKS53cml0ZV90ZXh0KGpzb24uZHVtcHMoaixpbmRlbnQ9MikpO3JhaXNlCg=='\"'\"');assert hashlib.sha256(b).hexdigest()=='\"'\"'a1c04ee5d14054e0129a45a7968c01971a106e512eba9524f61c1d4659b665f3'\"'\"';p.write_bytes(b)'"
+  ],
+  "commandSHA256": "bbaa98d00f25484ceb8b4bdec0ec673940d73af2cba05e5a63bba686ab3473b2",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

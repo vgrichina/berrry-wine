@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "30",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,base64,hashlib;p=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27/guest-args.json'\"'\"');p.parent.mkdir(parents=True,exist_ok=True);b=base64.b64decode('\"'\"'WyIvaG9tZS91c2VyLy5udm0vdmVyc2lvbnMvbm9kZS92MjQuMjIuMS9iaW4vbm9kZSIsICItLW1heC1vbGQtc3BhY2Utc2l6ZT0yMDQ4IiwgIi90bXAvcmljb2NoZXQtY2xlYW51cC1yb3VuZC1wbGF5LW9jdDI3L3J1bm5lci90ZXN0L3J1bi5qcyIsICItLWFwcD1yaWNvY2hldF94dHJlbWUiLCAiLS1uby1idWlsZCIsICItLXdhc209L3RtcC9yaWNvY2hldC1jbGVhbnVwLXJvdW5kLXBsYXktb2N0MjcvY3VycmVudC53YXNtIiwgIi0tZGxsLXNlZWQ9SUZDMjIuZGxsIiwgIi0tZDNkOS1yZW5kZXJlcj1zb2Z0d2FyZSIsICItLW5vLWNsb3NlIiwgIi0tc3R1Y2stYWZ0ZXI9MCIsICItLXF1aWV0LWFwaSIsICItLXF1aWV0LWJsb2NrcyIsICItLWJhdGNoLXNpemU9MjAwMDAwIiwgIi0tbWF4LWJhdGNoZXM9MTAwMDAwMDAiLCAiLS1tYXgtc2Vjb25kcz0xNzYiLCAiLS1jb250cm9sPTgxMjgiLCAiLS1mcm96ZW4iXQ=='\"'\"');assert hashlib.sha256(b).hexdigest()=='\"'\"'ff924e7f084e3708abd8f983a4d07d176ec893ec2b7b1a03bf14acab56a5be95'\"'\"';p.write_bytes(b)'"
+  ],
+  "commandSHA256": "3d586aeec68227566d5df7b1e36838f9808228276bd8a6d2557aefc65c7578da",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

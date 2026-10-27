@@ -1,0 +1,9 @@
+{
+  "status": "BLOCKED_ACCOUNTING_SCAN_RACE",
+  "summary": "Fresh main menu and Round1-1 entry visually verified at batch1869; running timer/bricks/shield visible. Relative movement and normal mousedown queued and seen in Node input logs; following4-batch step interrupted by accounting scan FileNotFoundError on consumed serial/continue.json. Supervisor SIGTERM cleanup completed. No after-input frame, paddle/ball-response acceptance or ordinary Quit. One invocation; no replay.",
+  "remaining": [
+    "verified completed post-input step and paddle/ball before-after response",
+    "ordinary in-game Quit"
+  ],
+  "cause": "accounting check failed: [Errno 2] No such file or directory: '/tmp/ricochet-measured-cpu-round-gameplay-oct27/serial/continue.json'"
+}

@@ -1,0 +1,31 @@
+{
+  "argv": [
+    "boat",
+    "--no-update",
+    "--json",
+    "exec",
+    "--timeout",
+    "10",
+    "bx_e9mecsag",
+    "python3 -c 'import pathlib,json,time\nh=pathlib.Path('\"'\"'/tmp/ricochet-measured-cpu-round-gameplay-oct27'\"'\"');out={}\nfor name in ['\"'\"'serial/checkpoint.json'\"'\"','\"'\"'serial/paused.json'\"'\"','\"'\"'serial/first-failure.json'\"'\"','\"'\"'guest/supervision.json'\"'\"','\"'\"'guest/terminal.json'\"'\"','\"'\"'guest/spawn-or-wait-exception.json'\"'\"']:\n p=h/name\n if p.exists():\n  j=json.loads(p.read_text());out[name]=j if name!='\"'\"'serial/checkpoint.json'\"'\"' else {k:v for k,v in j.items() if k!='\"'\"'snapshot'\"'\"'}\nfor name in ['\"'\"'guest/node.stderr'\"'\"','\"'\"'guest/controller.stderr'\"'\"']:\n p=h/name\n if p.exists():out[name]=p.read_text()[-1200:]\nprint(json.dumps(out))\n'"
+  ],
+  "commandSHA256": "01d0ff28a9d3e3324aecdd48f46d4ad0fdce7ed47a94b4249571b32b1ccbada1",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

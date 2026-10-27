@@ -1,0 +1,27 @@
+{
+  "argv": [
+    "/usr/local/bin/node",
+    "--max-old-space-size=128",
+    "/home/user/wine-assembly/ops/check-run-evidence.js",
+    "/tmp/ricochet-measured-cpu-round-gameplay-oct27/repo"
+  ],
+  "sha256": "48dc34e9174c9be98c12f0ae7bf84d00f898d54d2cbec179ce5afb54a82b5925",
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  }
+}

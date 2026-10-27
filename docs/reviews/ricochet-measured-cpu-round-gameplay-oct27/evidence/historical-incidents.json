@@ -1,0 +1,8 @@
+{
+  "originalCPUStop": "CPU90 aggregate;61.25wall;batch1281;no gameplay",
+  "initialReadDisplayOverage": "Initial shell reads exceeded requested8192B display; outputs retained in session; no retrospective compliance. Subsequent outputs constrained.",
+  "checkerMissingLocalNode": "Checker first attempted Boat-only Node24.22.1 path locally: FileNotFoundError, distinct streams/traceback retained. Corrected to installed localNode24.18.1; exact local startup and checker passed. Guest remains exactNode24.22.1.",
+  "unwrappedVersionProbe": "One local node --version identification probe was outside the prescribed supervisor; no retrospective compliance claimed.",
+  "priorWALProjection": "Early admission conservatively subtracted positiveWAL a second time from measured free. Final formula corrects this: actual WAL materialization is already reflected in free; positivegrowth recorded once for footprint, remainingfutures deducted once.",
+  "CPUAccountingLimitation": "Trusted supervisor final charged total includes cleanup; separate precleanup and cleanupCPU counters unavailable. Explicit limitation in cpu-accounting.json."
+}

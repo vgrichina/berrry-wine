@@ -1,0 +1,51 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "--max-old-space-size=2048",
+    "/tmp/ricochet-cleanup-round-play-oct27/runner/test/run.js",
+    "--app=ricochet_xtreme",
+    "--no-build",
+    "--wasm=/tmp/ricochet-cleanup-round-play-oct27/current.wasm",
+    "--dll-seed=IFC22.dll",
+    "--d3d9-renderer=software",
+    "--no-close",
+    "--stuck-after=0",
+    "--quiet-api",
+    "--quiet-blocks",
+    "--batch-size=200000",
+    "--max-batches=10000000",
+    "--max-seconds=176",
+    "--control=8128",
+    "--frozen"
+  ],
+  "cwd": "/tmp/ricochet-cleanup-round-play-oct27/runner",
+  "at": 1793092735.2980816,
+  "environment": {
+    "PATH": "/usr/local/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "NODE_PATH": "/tmp/ricochet-measured-cpu-round-gameplay-oct27/runner/node_modules",
+    "PALETTE_BROWSER_SUPERVISED": "47096"
+  },
+  "limits": {
+    "9": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ],
+    "0": [
+      90,
+      90
+    ],
+    "1": [
+      25165824,
+      25165824
+    ]
+  },
+  "state": "started",
+  "pid": 47099
+}
