@@ -1,0 +1,8 @@
+{
+  "test/ricochet-runtime-accounting.test.py": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+  "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b",
+  "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/serial.py": "983f8e627f3a5bb6eaf4ffaf664badf693621d5728808f0afb54bddb57ee2496",
+  "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+  "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+  "tools/ricochet/runtime-accounting.py": "857e30508c1e4db1c943b765a0e7551842973032cc5431eb08235dabda903364"
+}

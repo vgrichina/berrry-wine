@@ -1,0 +1,18 @@
+{
+  "source": "/tmp/ricochet-measured-cpu-round-gameplay-oct27/repo/docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/evidence/api-1793092841347248549-command.json",
+  "sourceSHA256": "3bf575e52d3c835489387129056fe69f33c1019f90fa8f0bd380429cf56ff8ff",
+  "prefix": "import pathlib,json,time;h=pathlib.Path('/tmp/ricochet-measured-cpu-round-gameplay-oct27');o=h/\"serial\";p=o/\"continue.json\";assert not p.exists() and not (o/\"done.json\").exists();j={'commands': [{'cmd': 'mousemove:75:170'}, {'cmd': 'mousedown:75:170'}], 'release': 'mouseup:75:170', 'step': 256, 'png': 'round-before.png', 'id': 1793092841347238229};p.write_text(json.dumps(j))",
+  "prefixSHA256": "9051f0b6cf49ec7abe3769d981c963f49687ca3daba85a03546f009b1ec3135a",
+  "swaps": [
+    "symlink between exists and publication"
+  ],
+  "symlinkAtReturn": true,
+  "retainedChanged": true,
+  "recordedLimitsScope": "local API client, not proof of remote writer inherited limits",
+  "missing": [
+    "single-outstanding atomic publication",
+    "regular single-link no-follow enforcement",
+    "logical AND allocated <=24MiB before publication",
+    "remote writer RLIMIT_FSIZE <=24MiB wiring"
+  ]
+}

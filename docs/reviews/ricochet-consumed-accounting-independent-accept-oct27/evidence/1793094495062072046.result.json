@@ -1,0 +1,28 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 56545280,
+  "sampledPeakRSS": 56545280,
+  "reapedPeakRSS": 28835840,
+  "cpuSeconds": 0.233131,
+  "wallSeconds": 0.1610221501905471,
+  "owned": [
+    [
+      4047376,
+      "114170431"
+    ],
+    [
+      4047378,
+      "114170436"
+    ],
+    [
+      4047379,
+      "114170441"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "stdout": "/tmp/ricochet-consumed-accounting-independent-accept-oct27/ops/1793094495062072046.stdout",
+  "stderr": "/tmp/ricochet-consumed-accounting-independent-accept-oct27/ops/1793094495062072046.stderr",
+  "commandReceipt": "1793094495062072046.command.json"
+}

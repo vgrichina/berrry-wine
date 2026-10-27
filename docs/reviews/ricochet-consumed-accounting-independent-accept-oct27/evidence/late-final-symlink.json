@@ -1,0 +1,21 @@
+{
+  "swaps": [
+    "symlink"
+  ],
+  "accepted": {
+    "bytes": 25178112,
+    "sizes": {
+      "/tmp/ricochet-consumed-accounting-independent-accept-oct27/ops/fixture-6xa_swgq/retained": 8,
+      "/tmp/ricochet-consumed-accounting-independent-accept-oct27/ops/fixture-6xa_swgq/serial/continue.json": 2
+    }
+  },
+  "error": null,
+  "receipt": {
+    "samples": 1,
+    "failures": 0,
+    "peakBytes": 25178112,
+    "lastBytes": 25178112
+  },
+  "controlMode": 41471,
+  "controlLinks": 1
+}

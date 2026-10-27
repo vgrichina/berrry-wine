@@ -1,0 +1,124 @@
+{
+  "candidate": "e8cfe229416c4076f68f18c9806a07dd50848cd7",
+  "pins": {
+    "test/ricochet-runtime-accounting.test.py": "4612689c7f6658d48c7c82ac17fa1d1604f9267dc95705c8b47d9145bc6a020c",
+    "docs/reviews/ricochet-consumed-control-accounting-repair-oct27/integrate.py": "9e41b139b423154a663e96a3f8e5617b65812c89a0d2e38f97ec7d025d76251b",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/serial.py": "983f8e627f3a5bb6eaf4ffaf664badf693621d5728808f0afb54bddb57ee2496",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/remote-supervisor.py": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+    "docs/reviews/ricochet-measured-cpu-round-gameplay-oct27/remote-tools/trusted-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85",
+    "tools/ricochet/runtime-accounting.py": "857e30508c1e4db1c943b765a0e7551842973032cc5431eb08235dabda903364"
+  },
+  "methods": [
+    {
+      "method": "test_00_exact_transformed_production_boundary",
+      "methodSHA256": "63b83b6704ce5c77715070f8a2d9cd5238652668312c59b9ae94e10ad7e57b96",
+      "receipt": "1793094011518506732"
+    },
+    {
+      "method": "test_consumption_after_descriptor_open",
+      "methodSHA256": "e0b285ac1d23ea8f4de8ba46f4c4313400db8ba19d1c8938f958679e4965f42a",
+      "receipt": "1793093773002351570"
+    },
+    {
+      "method": "test_consumption_immediately_after_open",
+      "methodSHA256": "9b37867975fed7bc02852610f557aa6afc4500a123d1c4b1a96a7f79849fb18c",
+      "receipt": "1793093815108437900"
+    },
+    {
+      "method": "test_missing_retained_between_enumeration_and_stat_rejects",
+      "methodSHA256": "51b7ea253d4271f90c6b56275dc5c2ff2eaf947ae9ea1a6558b246fa7a91e56d",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_missing_retained_between_samples_rejects",
+      "methodSHA256": "5bba542705a7b502a0fe2184b70dd921e8ad7a22f15940a58e2bf07ccee24912",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_immutable_change_and_missing_reject",
+      "methodSHA256": "351cbdc89860c231525862798424952a1cd0742e414f8580e501e0d01c474d3e",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_immutable_metadata_only_change_rejects",
+      "methodSHA256": "fb85ffedb86bc565bcaa38bb001d4655b895e00c7dc0316fe652389a96966c71",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_live_growth_and_peak_ceiling",
+      "methodSHA256": "cc95073029a1d504b8c0b6cbc379b855887b8d1e771d09618dd43f8143ec0555",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_growth_during_descriptor_sample_charged",
+      "methodSHA256": "039a0feedbd69ca44ae1fa514960de076e0ef8c64c9d0f26aec6421196044405",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_sparse_logical_growth_above_cap_rejects",
+      "methodSHA256": "2eb5f97da43ba48682c2efc4cef8e1ef9c0fcb12c5d076e82e1b4acf3da2e502",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_unexpected_replacement_between_samples",
+      "methodSHA256": "021d06728a471f39c07092bc88a3c5c023f978ca965b7f79f11949d81484ce84",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_replace_between_stat_and_open_rejects",
+      "methodSHA256": "71bb0047b493538c55bfe7a818299d97d391a645f84b1e7282740d53217b0883",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_replace_after_descriptor_open_rejects",
+      "methodSHA256": "b52c9a879155024d889aa0fac4ce4565e4f88445cec7b0de2532e44090dfe3a7",
+      "receipt": "1793093815108437900"
+    },
+    {
+      "method": "test_symlink_and_hardlink_confinement",
+      "methodSHA256": "3f49e1024b962898f664839e5d716ea9c42b0c66cb9015b7338975f0da1013f0",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_control_link_and_replacement_races",
+      "methodSHA256": "f2ccdc1217859ac0e98476433490a56d65bf5565369b26877db82de732dc22bc",
+      "receipt": "1793093773002351570"
+    },
+    {
+      "method": "test_control_reservation_and_recreation",
+      "methodSHA256": "e0be37bf3f7406e82efd0f636ecfca02bb3d2249bcad1c03dbb94f58ba770199",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_root_and_parent_symlink_rejected",
+      "methodSHA256": "366b832306efa9ea93a1aa2de9201719d796acd396a44d8550bd4ca24c625edc",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_mandatory_root_replacement_rejected",
+      "methodSHA256": "221e51ab89fefeda6e11c41064055a8cf5caf34c81a5da08cb186c09e54256d3",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_bounds_and_configuration",
+      "methodSHA256": "4879c4d0e772c91436a984b64096b8f4e66ded476a21b453f0773aaa26224c3b",
+      "receipt": "1793093877288782354"
+    },
+    {
+      "method": "test_integration_rejects_wrong_source_or_missing_closure",
+      "methodSHA256": "5286685a7fa89443ff6d46985c4d86c443300f4a3769c0a1bf341351847878c6",
+      "receipt": "1793094011518506732"
+    },
+    {
+      "method": "test_unchanged_supervisor_enforces_cpu_wall_rss_and_cleanup",
+      "methodSHA256": "1424458b283fe353a592144fafe9362526df22e9f14c843cd1a69e19b12235af",
+      "receipt": "1793093815108437900"
+    },
+    {
+      "method": "test_accounting_rejection_cleans_synthetic_guest_tree",
+      "methodSHA256": "c3e179bffc6c2beda7de2cad68f93d7155c1f0b9232c509dcfd4f0c0e71c43e7",
+      "receipt": "1793093815108437900"
+    }
+  ],
+  "rerun": "only required exact boundary; all other original passing groups reused by method and source identity"
+}

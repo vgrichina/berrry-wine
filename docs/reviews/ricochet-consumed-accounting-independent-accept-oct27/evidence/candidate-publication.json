@@ -1,0 +1,11 @@
+{
+  "commit": "e8cfe229416c4076f68f18c9806a07dd50848cd7",
+  "remote": "origin",
+  "exactRef": "refs/heads/task/ricochet-consumed-control-accounting-repair-oct27",
+  "verified": true,
+  "remoteReceipt": "1793094153861186359",
+  "pushReceipt": "1793094145082160693",
+  "cleanReceipt": "1793094155595800865",
+  "orphanReport": true,
+  "integrationAllowed": false
+}
