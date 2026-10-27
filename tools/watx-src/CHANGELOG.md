@@ -1,3 +1,16 @@
+## 2026-10-27 — build-scoped immutable lexical range reuse
+
+compiler.js and tools/watx.js expose a private build-owned exact-source cache
+of frozen successful top-level ranges and heads. Failures are not cached;
+include resolution and every mutable parse/macro/check/layout/emit stage run
+independently. No persistent cache. Production wires one scope across tail,
+transformed compatibility and optional named compiles; WINE_WAT_FRONTEND_REUSE=0
+keeps a no-reuse control. Small fixture CLI and invalidation regressions live
+in test/watx-compiler-frontend-reuse.test.js. This demonstrates reduced range
+scans, not a production bottleneck or full-build speedup.
+
+Manifest-sha256: 06e7077098dc34c9aa54b8069c32126b051be423e84869aba268c1a17440d77d
+
 ## 2026-10-20 — bounded source-location capacity for the 129-source closure
 
 The callback ownership census on ScreenSaver reconciliation f37815f4 failed at

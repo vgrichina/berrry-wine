@@ -65,7 +65,7 @@ function watxSourceClosure() {
 // deliberate NON-canonical build (docs/watx-region-safety-design.md §8) whose
 // whole purpose is to move the memory map and see what breaks, and it reaches
 // the region allocator and nothing else. Absent, it is not passed at all.
-function compileClosure(closure, { tailCalls, regionShake, nameSection } = {}) {
+function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse } = {}) {
   const { compile } = require(path.join(__dirname, 'watx.js'));
   const options = {
     mode: 'production',
@@ -92,6 +92,7 @@ function compileClosure(closure, { tailCalls, regionShake, nameSection } = {}) {
   // bytes, and byte-identity against the canonical artifact is the instrument
   // every compiler change here is proved with.
   if (nameSection) options.nameSection = nameSection;
+  if (frontendReuse) options.frontendReuse = frontendReuse;
   return compile(closure.source, closure.vfs, options);
 }
 

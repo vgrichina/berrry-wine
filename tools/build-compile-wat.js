@@ -153,6 +153,10 @@ function compileWatx(replicatedDispatch) {
   }
   const { watxSourceClosure, compileClosure } = require(path.join(__dirname, 'watx-closure.js'));
   const closure = watxSourceClosure();
+  // One invocation owns this cache. Set WINE_WAT_FRONTEND_REUSE=0 for the
+  // independent no-reuse control; no emitted artifact or validation is shared.
+  const frontendReuse = process.env.WINE_WAT_FRONTEND_REUSE === '0' ? null
+    : require(path.join(__dirname, 'watx.js')).createFrontendReuse();
   const shake = selectedRegionShake();
   console.log(`WATX entry: ${closure.entry}`);
   if (shake) console.log(`WATX region shake: ${shake.value} (from ${shake.source})`);
@@ -171,7 +175,7 @@ function compileWatx(replicatedDispatch) {
   const compatClosure = Object.assign({}, closure, { vfs: applyToVfs(new Map(closure.vfs)) });
   for (const [key, tailCalls] of [['bytes', true], ['compatBytes', false]]) {
     const r = compileClosure(tailCalls ? closure : compatClosure,
-      { tailCalls, regionShake: shake ? shake.value : null });
+      { tailCalls, regionShake: shake ? shake.value : null, frontendReuse });
     if (tailCalls && r && r.success) reportRegionLayout(r.regions, shake);
     if (r && r.success && r.regions && !stamp) {
       stamp = layoutHash(r.regions.regions);
@@ -203,7 +207,7 @@ function compileWatx(replicatedDispatch) {
   // canonical files are compiled without the option and are unaffected.
   if (WANT_NAMES) {
     const r = compileClosure(closure, {
-      tailCalls: true, regionShake: shake ? shake.value : null, nameSection: 'wine-assembly',
+      tailCalls: true, regionShake: shake ? shake.value : null, nameSection: 'wine-assembly', frontendReuse,
     });
     if (!r || !r.success || !r.wasmBinary) {
       console.error('WATX name-section compile failed: ' +

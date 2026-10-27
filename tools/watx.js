@@ -37,6 +37,7 @@ for (const f of FILES) {
 }
 
 module.exports = {
+  createFrontendReuse: ctx.createFrontendReuse,
   compile: ctx.compile,
   compileAsync: ctx.compileAsync,
   tokenize: ctx.tokenize,
