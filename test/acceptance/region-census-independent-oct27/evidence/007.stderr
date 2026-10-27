@@ -1,0 +1,18 @@
+[watx] [WATX] Compilation failed at stage EMIT: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two
+/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-layout.js:104
+    throw new Error(`region-layout: src/00-regions.wat does not compile: ${r.error}`);
+    ^
+
+Error: region-layout: src/00-regions.wat does not compile: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two
+    at Object.layout (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-layout.js:104:11)
+    at collectDeclarations (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/check-region-decls.js:111:48)
+    at embeddedWat (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:618:17)
+    at main (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:769:15)
+    at Object.<anonymous> (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:894:30)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+
+Node.js v20.20.2

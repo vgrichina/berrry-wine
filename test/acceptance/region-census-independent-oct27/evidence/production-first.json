@@ -1,0 +1,19 @@
+{
+  "pass": true,
+  "commands": [
+    "node tools/region-census.js --gate",
+    "node tools/gen-region-map.js --check",
+    "node tools/region-census.js --build-gates"
+  ],
+  "original": {
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+    "stderr": ""
+  },
+  "candidate": {
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+    "stderr": ""
+  },
+  "sourceSHA256": "86de689e82f7d942a6d81d3db78b8a77dbd67aebac44b65e8acbedbc9973b5b1"
+}

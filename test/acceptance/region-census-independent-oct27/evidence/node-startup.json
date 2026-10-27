@@ -1,0 +1,45 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 68550656,
+  "sampledPeakRSS": 68550656,
+  "reapedPeakRSS": 39190528,
+  "cpuSeconds": 0.36151200000000006,
+  "wallSeconds": 0.3683680419344455,
+  "owned": [
+    [
+      727385,
+      "118895493"
+    ],
+    [
+      727386,
+      "118895495"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "-e",
+    "console.log(JSON.stringify({execPath:process.execPath,version:process.version,argv:process.execArgv,environment:process.env,limits:require(\"fs\").readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "cwd": "/tmp/airstrike-census-shared-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/node-startup.stdout",
+    "bytes": 2048,
+    "sha256": "3e106d1d8ccf80457a2edcfa0697b43c040365ff5cd5060840c962c64ef9e3f3"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/node-startup.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

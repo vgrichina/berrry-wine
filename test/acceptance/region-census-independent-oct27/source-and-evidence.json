@@ -1,0 +1,320 @@
+{
+  "candidate": "66436f785bbe3166a992402f95abf083ca0d6736",
+  "base": "1cf9788cc3ac807027206c39fcbf1d2771599845",
+  "verdict": "REJECT",
+  "donorManifest": {
+    "path": "/tmp/airstrike-region-census-shared-setup-oct27/ops/receipt-manifest.json",
+    "sha256": "9693662725dce3624586288ca70386122463bb1454fa59e8d7b2c4154f28040c",
+    "verification": "manifest hash verified; earlier payloads not replayed/rehash-censused"
+  },
+  "sourcePins": [
+    {
+      "path": "tools/region-census.js",
+      "available": true,
+      "sha256": "86de689e82f7d942a6d81d3db78b8a77dbd67aebac44b65e8acbedbc9973b5b1",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/build.sh",
+      "available": true,
+      "sha256": "5a144b6a02a2b13150d57c6b0eb84e8eb29718c666f7bcbc590687fd97c0c5af",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/region-census-shared-setup-oct27.md",
+      "available": false,
+      "sha256": "0e63d6f61bfaf5e1302824cac382f97c63272aa1c99f1ce7227342576a4cd2ec",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/test-region-census-build-gates.js",
+      "available": true,
+      "sha256": "4354b417370017c1ca09724057b4a1fc104efd6f37bfc85d3df1f29625853fc6",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/helpers/region-census-cli-fixture.js",
+      "available": true,
+      "sha256": "b03e365818e4aba1049965c3ad11bc32339513fd0f87c1f774801d55490d1d75",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/00-regions.wat.txt",
+      "available": true,
+      "sha256": "f678e69c7c9366c8ddf2f1682f5a0ab42badc9cf444c5534368f348bf64d7557",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/01-header.wat.txt",
+      "available": true,
+      "sha256": "cc79b282d2bc257161567c7ec36b49336ee49fdd7fa4f558fdb44d324a33f2b0",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/baseline.json",
+      "available": true,
+      "sha256": "fa42171ea2ac6755c6efa1446dbde9e32f63d21576c6867093f32122427494e4",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/host.js.txt",
+      "available": true,
+      "sha256": "ccaf64015d7074d368d360da2665a277bf0debdbf98a7807415121c1f3738017",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/main.watx.txt",
+      "available": true,
+      "sha256": "b51fd6645689c6c71106934fe834f12e0dc81c7b48b72bb7efddf8476efc2428",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/original-region-census.js.txt",
+      "available": true,
+      "sha256": "58bf809d531f908341874bb72b2a6faed37903dc2f34e98bb288bb1e5fa781a2",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "test/fixtures/region-census-build-gates/origins.json",
+      "available": true,
+      "sha256": "18998cec304d7d3346f6daeda8e756c72f7308950e66797a1104ec968002a8c1",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "lib/compile-wat.js",
+      "available": true,
+      "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "lib/wat-manifest.js",
+      "available": true,
+      "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/check-region-decls.js",
+      "available": true,
+      "sha256": "f30ff1b422037828cea6fade3ab04b44323830c31298554ece06aa37e2948b61",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/region-layout.js",
+      "available": true,
+      "sha256": "47ad1a95db10b36ef723e0eebcaab4a9872ae28dfdffdc0a979dfe4c68364139",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/watx.js",
+      "available": true,
+      "sha256": "ee40a923fa71a63b06a5333df179957614bdfc1ee73ba187d514dc98db8599e1",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/watx-src/compiler-parser.js",
+      "available": true,
+      "sha256": "ef37c325225a95aaf8ddb5186a9c6cea1aa00fb4040e9077767e432011800236",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/watx-src/compiler-stages.js",
+      "available": true,
+      "sha256": "b2d79b473ac8d3083c33d9d6e635f04aeae2c33c35a2907767f503f38ecb0a03",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/watx-src/compiler-codegen.js",
+      "available": true,
+      "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    },
+    {
+      "path": "tools/watx-src/compiler.js",
+      "available": true,
+      "sha256": "17dc72e99753c15d5e2914696be167ece4005df8bcb100d9aa49effea7e2b6f8",
+      "verification": "Coordinator-verified source pins reused; own exact checkout from candidate object. Driver independently verifies production census and original CLI SHA."
+    }
+  ],
+  "delta": [
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/001.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/001.stdout",
+      "bytes": 110,
+      "sha256": "ec29bba57cc852d44fe531362b8befebf17ac9942548594382855ccd6a9b26ac"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/002.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/002.stdout",
+      "bytes": 110,
+      "sha256": "4b3d8004833519d606a02caaa3508242055d590f146fe94e360a01f1dd377fcc"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/003.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/003.stdout",
+      "bytes": 107,
+      "sha256": "748e1e52a97ac04302552d1fd5a172ced1666792c13a03e6a81e82b8daff1cb5"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/004.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/004.stdout",
+      "bytes": 131,
+      "sha256": "d190daf344078d11bab127d2383b8ad84533a2dc3b15db081f0e41679c47f4d0"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/005.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/005.stdout",
+      "bytes": 458,
+      "sha256": "4c67a8fd52ea30b4f1b44b44c6a9d001fdd196352540c8613061d7a09b11caca"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/006.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/006.stdout",
+      "bytes": 110,
+      "sha256": "ec29bba57cc852d44fe531362b8befebf17ac9942548594382855ccd6a9b26ac"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/007.stderr",
+      "bytes": 1483,
+      "sha256": "175098d34d248cf28a29201aaed0b8cd7d5e30a0e1dfec97a5fbed187551705e"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/007.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/008.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/008.stdout",
+      "bytes": 458,
+      "sha256": "4c67a8fd52ea30b4f1b44b44c6a9d001fdd196352540c8613061d7a09b11caca"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/base-oracle.json",
+      "bytes": 1018,
+      "sha256": "5281cad244d1e087614a7185c1f29fcbc1ec0a43c7e1c8790bdcab231e30e247"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/candidate-diff.json",
+      "bytes": 1122,
+      "sha256": "059aae0f062bcc68d9dc921466e40205792842d3f85b725d7098dd5d3ac03747"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/candidate-diff.stdout",
+      "bytes": 7289,
+      "sha256": "c7b93c1d1fc12fb8a2ab36f4af276469953863e8884b7c570a5b48bbf838c0b7"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/candidate-mutation-fired.json",
+      "bytes": 241,
+      "sha256": "d2450278037759353e3371eb1a8717fb483799fad194ae1a7f571dc276275632"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/change-declarations.cjs",
+      "bytes": 667,
+      "sha256": "ca9017b7756a516f53a44accc53a73b61f8081953d29781cd3bbd937d876b63f"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/checkout.json",
+      "bytes": 1151,
+      "sha256": "2aed5687b462ac7c7769a200aae933e71e6ce61c50f7a72765621e370b5f9223"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/invocations.json",
+      "bytes": 5922,
+      "sha256": "d1c7b7509845937bb26e0de260291690eb8aed2c1ef83ea71d64a717c7c39895"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/launch-configuration.json",
+      "bytes": 551,
+      "sha256": "3f7689c4c704f25cd9270cf88ad3cb0892d4f4fb3994b60827431280af98739d"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/node-startup.json",
+      "bytes": 1247,
+      "sha256": "f291a5eb2d20d093bf4589436272ccb594b4f24a05ef13162f5f33e170aa124f"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/node-startup.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/node-startup.stdout",
+      "bytes": 2048,
+      "sha256": "3e106d1d8ccf80457a2edcfa0697b43c040365ff5cd5060840c962c64ef9e3f3"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/original-mutation-fired.json",
+      "bytes": 240,
+      "sha256": "77778c447f64769467a6fd7e8a61fbae5d88cb1719f1ac04d81792eef434ad95"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/production-and-declarations.admission.json",
+      "bytes": 2015,
+      "sha256": "392063d389fc617ecc12f3dbdfb11aaa1da1e9a4278da7956d616253f55c900a"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/production-and-declarations.json",
+      "bytes": 1333,
+      "sha256": "041e4c965ab18598bd30a8567564e6793894f3b4f1e45dd7064de28fe557fe92"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/production-and-declarations.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/production-and-declarations.stdout",
+      "bytes": 102,
+      "sha256": "b4ca7d4dd7f35cf8d9b9f1b639a4f8e98fa4c1c6f937cb3eb74d6aeddb4e2e47"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/production-first.json",
+      "bytes": 1331,
+      "sha256": "12b53d80aa7976e87a428de3de3259a5a2966c1be26aea498c9f94b1bdfc5169"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/evidence/verdict.json",
+      "bytes": 2924,
+      "sha256": "d5dca0f3435d22889a94fc208fe9d548e76b2d2cfd08807fe9d4e0c3263246f7"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/independent-accept.cjs",
+      "bytes": 5475,
+      "sha256": "fc237edbf04b7e0f735aee352a9774515b3b4cfde4ad3cdcf43d73ae45930b21"
+    },
+    {
+      "path": "test/acceptance/region-census-independent-oct27/run.py",
+      "bytes": 5526,
+      "sha256": "799161e335ad97685f79a371c0c4bbdce89429d751d21807385f4bc765443232"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+[
+  {
+    "label": "001",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--js-copies"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+    "stderr": ""
+  },
+  {
+    "label": "002",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--embedded-wat"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\n",
+    "stderr": ""
+  },
+  {
+    "label": "003",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--dup-payloads"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\n",
+    "stderr": ""
+  },
+  {
+    "label": "004",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--hand-rolled"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+    "stderr": ""
+  },
+  {
+    "label": "005",
+    "root": "candidate",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/candidate/tools/region-census.js",
+      "--build-gates"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+    "stderr": ""
+  },
+  {
+    "label": "006",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/change-declarations.cjs",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--js-copies"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\n",
+    "stderr": ""
+  },
+  {
+    "label": "007",
+    "root": "original",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/change-declarations.cjs",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js",
+      "--embedded-wat"
+    ],
+    "status": 1,
+    "stdout": "",
+    "stderr": "[watx] [WATX] Compilation failed at stage EMIT: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two\n/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-layout.js:104\n    throw new Error(`region-layout: src/00-regions.wat does not compile: ${r.error}`);\n    ^\n\nError: region-layout: src/00-regions.wat does not compile: region.declare $INDEPENDENT_INVALID: (align 3) is not a power of two\n    at Object.layout (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-layout.js:104:11)\n    at collectDeclarations (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/check-region-decls.js:111:48)\n    at embeddedWat (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:618:17)\n    at main (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:769:15)\n    at Object.<anonymous> (/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/original/tools/region-census.js:894:30)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n\nNode.js v20.20.2\n"
+  },
+  {
+    "label": "008",
+    "root": "candidate",
+    "command": [
+      "/usr/bin/node",
+      "--max-old-space-size=512",
+      "--require",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/change-declarations.cjs",
+      "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/candidate/tools/region-census.js",
+      "--build-gates"
+    ],
+    "status": 0,
+    "stdout": "region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)\nregion-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))\nregion-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline\nregion-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)\n",
+    "stderr": ""
+  }
+]

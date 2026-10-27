@@ -1,0 +1,4 @@
+region-census OK: no JS file copies an allocated region address (264 value(s) checked at or above 0x00020000)
+region-census OK: no embedded WAT fragment addresses the map by hand (1 fragment(s), 254 allocated region(s))
+region-census OK: 0 within-region duplicate payload(s) across 100 declared payload(s), none above baseline
+region-census OK: 0 hand-rolled region address(es) in 0 file(s), none above the 12-site baseline (268 region base globals checked)

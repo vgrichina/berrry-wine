@@ -1,0 +1,60 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 135176192,
+  "sampledPeakRSS": 135176192,
+  "reapedPeakRSS": 64303104,
+  "cpuSeconds": 3.5339720000000003,
+  "wallSeconds": 0.9574869100470096,
+  "owned": [
+    [
+      728256,
+      "118899664"
+    ],
+    [
+      728257,
+      "118899666"
+    ],
+    [
+      728264,
+      "118899670"
+    ],
+    [
+      728271,
+      "118899685"
+    ],
+    [
+      728298,
+      "118899700"
+    ],
+    [
+      728312,
+      "118899719"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "/usr/bin/node",
+    "--max-old-space-size=512",
+    "/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent-accept.cjs"
+  ],
+  "cwd": "/tmp/airstrike-census-shared-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 805306368,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": false
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/production-and-declarations.stdout",
+    "bytes": 102,
+    "sha256": "b4ca7d4dd7f35cf8d9b9f1b639a4f8e98fa4c1c6f937cb3eb74d6aeddb4e2e47"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/production-and-declarations.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

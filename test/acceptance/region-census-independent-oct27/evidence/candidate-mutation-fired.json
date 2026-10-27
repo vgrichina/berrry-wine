@@ -1,0 +1,1 @@
+{"trigger":"host.js read after declarations/layout","target":"/tmp/airstrike-census-shared-independent-accept-oct27/ops/independent/candidate/src/00-regions.wat","mutation":"\n(region.declare $INDEPENDENT_INVALID (size 0x1000) (align 3))\n"}

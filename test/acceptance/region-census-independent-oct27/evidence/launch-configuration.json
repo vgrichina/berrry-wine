@@ -1,0 +1,8 @@
+{
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "intendedMountedFiles": [],
+  "validation": "N/A: no mount or runtime execution authorized or planned",
+  "rootInitialRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/airstrike-census-shared-independent-accept-oct27/root-ref-digest.json",
+  "donorManifestSHA256": "9693662725dce3624586288ca70386122463bb1454fa59e8d7b2c4154f28040c"
+}

@@ -1,0 +1,50 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 60268544,
+  "sampledPeakRSS": 60268544,
+  "reapedPeakRSS": 21471232,
+  "cpuSeconds": 2.403776,
+  "wallSeconds": 1.5430367370136082,
+  "owned": [
+    [
+      727302,
+      "118894531"
+    ],
+    [
+      727303,
+      "118894531"
+    ],
+    [
+      727304,
+      "118894535"
+    ]
+  ],
+  "cleanupComplete": true,
+  "command": [
+    "git",
+    "checkout",
+    "-b",
+    "task/airstrike-census-shared-independent-accept-oct27",
+    "66436f785bbe3166a992402f95abf083ca0d6736"
+  ],
+  "cwd": "/tmp/airstrike-census-shared-independent-accept-oct27/repo",
+  "limits": {
+    "rss": 268435456,
+    "cpu": 90,
+    "wall": 120,
+    "file": 25165824,
+    "output": 2097152,
+    "gitDataOnly": true
+  },
+  "stdout": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/checkout.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "stderr": {
+    "path": "/tmp/airstrike-census-shared-independent-accept-oct27/ops/checkout.stderr",
+    "bytes": 81,
+    "sha256": "cbe0a61e397b51a887c7b88461f1ee2c11a4ad065f0a7aba3cf215919d45734a"
+  }
+}

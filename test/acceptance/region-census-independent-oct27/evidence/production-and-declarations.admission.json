@@ -1,0 +1,71 @@
+{
+  "at": 1793141787.3942163,
+  "ownAllocated": 73244672,
+  "launcherAllocated": 741376,
+  "sessionAndConservativeFullWAL": 25939968,
+  "externalFiles": [
+    {
+      "path": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T22-54-52-01a17f92-d875-7642-91b0-e64382cb1aff.jsonl",
+      "logical": 737006,
+      "allocated": 737280
+    },
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "logical": 0,
+      "allocated": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "logical": 12244672,
+      "allocated": 12251136
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "logical": 383192,
+      "allocated": 389120
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "logical": 4152992,
+      "allocated": 4157440
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "logical": 4239512,
+      "allocated": 4247552
+    }
+  ],
+  "walAccounting": "full current WAL once because no initial baseline; shared current RSS not double counted",
+  "clients": [
+    {
+      "pid": 726206,
+      "rss": 176054272
+    }
+  ],
+  "memAvailable": 2865807360,
+  "remainingClientGrowth": 159490048,
+  "sharedChild": 805306368,
+  "hostHeadroom": 805306368,
+  "requiredRemaining": 1770102784,
+  "allocation": 536870912,
+  "futureBreakdown": {
+    "sourceReportsGitSessionEvents": 100663296,
+    "controls": 25165824,
+    "publication": 16777216,
+    "reserve": 33554432,
+    "margin": 8388608
+  },
+  "projectedTask": 284475392,
+  "freeDisk": 4344246272,
+  "projectedDisk": 3471831040,
+  "diskFloor": 2982150144,
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "mountArgv": [],
+  "mountExecution": "no guest/mount invocation authorized",
+  "pass": true
+}
