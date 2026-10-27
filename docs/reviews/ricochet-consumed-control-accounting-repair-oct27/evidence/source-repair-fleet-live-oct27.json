@@ -1,0 +1,82 @@
+{
+  "at": 1793093463.1127374,
+  "workers": [
+    {
+      "task": "airstrike-frozen-dispatch-protocol-repair-oct27",
+      "session": "01a17cb2-39cd-7892-966c-d96dd03cb823",
+      "clientPID": 4026311,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/airstrike-frozen-dispatch-protocol-repair-oct27/final.txt",
+        "-"
+      ]
+    },
+    {
+      "task": "enigma-progressive-menu-readiness-repair-oct27",
+      "session": "01a17cb2-3d04-7d83-ad62-9e3caa1513fa",
+      "clientPID": 4026471,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/enigma-progressive-menu-readiness-repair-oct27/final.txt",
+        "-"
+      ]
+    },
+    {
+      "task": "ricochet-consumed-control-accounting-repair-oct27",
+      "session": "01a17cb2-4124-79b0-89b1-cdfdc4d99381",
+      "clientPID": 4026607,
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/ricochet-consumed-control-accounting-repair-oct27/final.txt",
+        "-"
+      ]
+    }
+  ],
+  "actualActive": 3,
+  "target": "5-7",
+  "missingSlots": {
+    "4": "GL platform restriction: independent production acceptance forbidden pending platform access; no alternate model/box retry",
+    "5": "Alien needs a new bounded diagnostic hypothesis after acknowledged click had identical frame and aggregate CPU stop; unchanged run prohibited. CivII requires complete fresh readiness and lifecycle; not yet admitted."
+  },
+  "Claude": "idle",
+  "boats": "no new allocations; four existing shutdown watchers armed09:35"
+}

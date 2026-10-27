@@ -1,0 +1,37 @@
+{
+  "command": [
+    "-C",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/repo",
+    "update-ref",
+    "-d",
+    "refs/heads/task/ricochet-consumed-control-accounting-repair-oct27",
+    "66dafb1db3dfc97395edb14a81532a06f3226008"
+  ],
+  "mode": "git",
+  "at": 1793093509.8859923,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "bbee54e5a0dc1c371264fe0705bb6de6c9804bff5c9ec9fc9defed1766f58991",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3609157632,
+  "free": 7862210560,
+  "used": 2240512,
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

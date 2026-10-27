@@ -1,0 +1,45 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/ops/package.py"
+  ],
+  "mode": "run",
+  "at": 1793094107.5111356,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "9fc05d57d39812d6766be14250ace10e85c5cc750ce503530f651c8c601af338",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3904172032,
+  "free": 7849607168,
+  "used": 5468160,
+  "clientsAlreadyInMemAvailable": [
+    {
+      "pid": 4026607,
+      "rss": 105144320
+    }
+  ],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

@@ -1,0 +1,50 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/repo/test/ricochet-runtime-accounting.test.py",
+    "AccountingTests.test_00_exact_transformed_production_boundary"
+  ],
+  "mode": "run",
+  "at": 1793093933.505342,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "e213292bce93e4458d9c533d48fb9361d3ac31a5b2eeeda2b3694a403bb60f3a",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3882610688,
+  "free": 7852646400,
+  "used": 5406720,
+  "clientsAlreadyInMemAvailable": [
+    {
+      "pid": 4026311,
+      "rss": 108040192
+    },
+    {
+      "pid": 4026607,
+      "rss": 102838272
+    }
+  ],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

@@ -1,0 +1,20 @@
+{
+  "exit": 0,
+  "stopReason": null,
+  "peakRSS": 45350912,
+  "sampledPeakRSS": 45350912,
+  "reapedPeakRSS": 26214400,
+  "cpuSeconds": 0.109242,
+  "wallSeconds": 0.08312476403079927,
+  "owned": [
+    [
+      4032336,
+      "114094233"
+    ]
+  ],
+  "output": "",
+  "cleanupComplete": true,
+  "stdout": "/tmp/ricochet-consumed-control-accounting-repair-oct27/ops/1793093733085007082.stdout",
+  "stderr": "/tmp/ricochet-consumed-control-accounting-repair-oct27/ops/1793093733085007082.stderr",
+  "commandReceipt": "1793093733085007082.command.json"
+}

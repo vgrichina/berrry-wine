@@ -1,0 +1,9 @@
+{
+  "passExpectedRejection": true,
+  "sourceSHA256": "eebc983956aa092b71a527f41f5516c51376c1acf19872cb808025833953ba63",
+  "functionSHA256": "174c5d4fe4bcc0b21ebfce4c349fe885702763358f11f09c0dd80ac5c56e6ff9",
+  "failure": "FileNotFoundError(2, 'No such file or directory')",
+  "controlOnlyConsumed": true,
+  "guestExecuted": false,
+  "notes": "exact pinned AST check; only second root mapping, no guest/startup/top-level execution"
+}

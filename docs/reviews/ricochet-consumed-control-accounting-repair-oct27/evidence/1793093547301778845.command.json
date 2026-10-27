@@ -1,0 +1,34 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/ops/boundary.py"
+  ],
+  "mode": "run",
+  "at": 1793093547.3023653,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "ae4c61d16dfe0571eee022cdda86e21e52d845c4132a44c36996b823cb5ac7a7",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3462348800,
+  "free": 7862611968,
+  "used": 266240,
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

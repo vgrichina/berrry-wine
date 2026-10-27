@@ -1,0 +1,64 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/repo/test/ricochet-runtime-accounting.test.py",
+    "AccountingTests.test_immutable_change_and_missing_reject",
+    "AccountingTests.test_immutable_metadata_only_change_rejects",
+    "AccountingTests.test_live_growth_and_peak_ceiling",
+    "AccountingTests.test_growth_during_descriptor_sample_charged",
+    "AccountingTests.test_missing_retained_between_enumeration_and_stat_rejects",
+    "AccountingTests.test_missing_retained_between_samples_rejects",
+    "AccountingTests.test_sparse_logical_growth_above_cap_rejects",
+    "AccountingTests.test_unexpected_replacement_between_samples",
+    "AccountingTests.test_replace_between_stat_and_open_rejects",
+    "AccountingTests.test_symlink_and_hardlink_confinement",
+    "AccountingTests.test_control_reservation_and_recreation",
+    "AccountingTests.test_root_and_parent_symlink_rejected",
+    "AccountingTests.test_mandatory_root_replacement_rejected",
+    "AccountingTests.test_bounds_and_configuration",
+    "AccountingTests.test_integration_rejects_wrong_source_or_missing_closure"
+  ],
+  "mode": "run",
+  "at": 1793093877.2895744,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "40cbf556c3053f72727fe68248709d87deb91cd22ee237c551e0a713677b061c",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3735781376,
+  "free": 7854014464,
+  "used": 5390336,
+  "clientsAlreadyInMemAvailable": [
+    {
+      "pid": 4026311,
+      "rss": 111517696
+    },
+    {
+      "pid": 4026607,
+      "rss": 104755200
+    }
+  ],
+  "futureClients": 0,
+  "required": 1073741824,
+  "walCharge": 4612096,
+  "walBaseline": "unknown: charge entire current WAL once, conservative",
+  "pythonSHA256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118",
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}

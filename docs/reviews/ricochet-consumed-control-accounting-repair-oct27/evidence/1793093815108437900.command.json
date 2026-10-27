@@ -1,0 +1,38 @@
+{
+  "command": [
+    "python3",
+    "-S",
+    "/tmp/ricochet-consumed-control-accounting-repair-oct27/repo/test/ricochet-runtime-accounting.test.py",
+    "AccountingTests.test_consumption_immediately_after_open",
+    "AccountingTests.test_replace_after_descriptor_open_rejects",
+    "AccountingTests.test_unchanged_supervisor_enforces_cpu_wall_rss_and_cleanup",
+    "AccountingTests.test_accounting_rejection_cleans_synthetic_guest_tree"
+  ],
+  "mode": "run",
+  "at": 1793093815.108994,
+  "cwd": "/home/user/wine-assembly",
+  "envHash": "3e312c130480e4442a63ef8070394dbfb63ff1e6cd5aad5558ed7ed276cc04bd",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "inheritedLimits": {
+    "RLIMIT_DATA": [
+      -1,
+      -1
+    ],
+    "RLIMIT_AS": [
+      -1,
+      -1
+    ],
+    "RLIMIT_CPU": [
+      -1,
+      -1
+    ],
+    "RLIMIT_FSIZE": [
+      -1,
+      -1
+    ]
+  },
+  "memAvailable": 3816693760,
+  "free": 7858851840,
+  "used": 368640,
+  "supervisorSHA256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+}
