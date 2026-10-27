@@ -1,0 +1,76 @@
+{
+  "status": "CAUSE_NOT_ESTABLISHED_NO_FIX",
+  "newFinding": "Retained input steps never test the ordinary batch-clock main run path at or beyond its recorded sleep deadline. Scheduler admission was not observed; sleep causality is not asserted.",
+  "sourcePinCount": 14,
+  "sourceBytes": 2551220,
+  "retainedWindow": {
+    "executedInputBatches": [
+      5000,
+      5001,
+      5002
+    ],
+    "frozenBoundary": 5003,
+    "observedScheduleClockMs": [
+      25000,
+      25005,
+      25010
+    ],
+    "normalBatchClockAtFrozen": 25015,
+    "recordedMainSleepUntil": 25021,
+    "firstOrdinaryBatchBaseAtOrAfterDeadline": 5005,
+    "firstOrdinaryBaseMs": 25025,
+    "firstCompletingBoundary": 5006,
+    "arithmeticQualification": "Source-derived ordinary clock arithmetic, not an observed wake, a request to step, or proof no other guest callback ran. lastGuestTick is last observed guest clock import, not scheduler now."
+  },
+  "schedules": [
+    {
+      "line": "[input-schedule] scheduledBatch=5000 action=click correlation=unavailable batch=5000 guestMs=25000 clock=batch lastGuestTick=24991",
+      "scheduledBatch": 5000,
+      "action": "click",
+      "correlation": "unavailable",
+      "batch": 5000,
+      "guestMs": 25000,
+      "clock": "batch",
+      "lastGuestTick": 24991
+    },
+    {
+      "line": "[input-schedule] scheduledBatch=5001 action=keydown correlation=unavailable batch=5001 guestMs=25005 clock=batch lastGuestTick=25001",
+      "scheduledBatch": 5001,
+      "action": "keydown",
+      "correlation": "unavailable",
+      "batch": 5001,
+      "guestMs": 25005,
+      "clock": "batch",
+      "lastGuestTick": 25001
+    },
+    {
+      "line": "[input-schedule] scheduledBatch=5002 action=keyup correlation=unavailable batch=5002 guestMs=25010 clock=batch lastGuestTick=25001",
+      "scheduledBatch": 5002,
+      "action": "keyup",
+      "correlation": "unavailable",
+      "batch": 5002,
+      "guestMs": 25010,
+      "clock": "batch",
+      "lastGuestTick": 25001
+    }
+  ],
+  "proven": {
+    "mainWaitFieldsInactiveAtYieldZero": true,
+    "threadOneWaitIsActiveButObjectResultUnknown": true,
+    "sleepYieldGetterConsumesFlag": true,
+    "renderQueueEnqueueEstablishedByOriginalEvidence": true
+  },
+  "unresolved": {
+    "firstBranch": "test/run.js mainExecutionSuspended(): noteMainSleep(); no-live-thread fast-forward guard; isMainSleeping() return -> skip instance.exports.run(BATCH_SIZE), including interleaved main slices.",
+    "missing": "Invocation-owned actual scheduler gate decision and numeric clock/deadline at that decision; no retained record proves whether main entered guest run or reached the WAT input poll during these steps.",
+    "smallestObservation": "Retain the actual decision already made at the ordinary main run gate: batch, decision/reason, numeric scheduler now used, _mainSleepUntil, hasLiveThreads, yieldReason; include a run-entry and host_check_input-entry marker for that same permitted slice. Do not call get_sleep_yielded/get_ticks for diagnostics. Observe an ordinary due slice before diagnosing a stalled poll.",
+    "nextIfGateAllowsButNoPoll": "Identify guest main run entry and Get/PeekMessage fetch entry versus pending_input_packed cache; retained guestPostQueue and cached pending input were not sampled. Thread1 wait needs waitSingle result/object state only if it becomes the blocker."
+  },
+  "implementationChanged": false,
+  "runtimeAuthorized": false,
+  "newGuestInvocations": 0,
+  "compileInvocations": 0,
+  "nodeInvocations": 0,
+  "behavioralAcceptanceRun": false,
+  "checks": "Exact source hashes, retained schedule/step/snapshot consistency, source gate and destructive getter checks; static evidence audit only, no emulator regression or runtime acceptance."
+}
