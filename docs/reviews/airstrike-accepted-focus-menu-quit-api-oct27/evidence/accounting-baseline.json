@@ -1,0 +1,9 @@
+{
+  "launcher": "/home/user/wine-assembly/scratch/usage-watch/airstrike-retained-stage-focus-quit-recovery-oct27",
+  "session": "/home/user/.codex/sessions/2026/10/27/rollout-2026-10-27T03-32-47-01a17b6a-ed8a-70b3-92a3-d917a1242a04.jsonl",
+  "walBaseline": {
+    "/home/user/.codex/state_5.sqlite-wal": 4403200,
+    "/home/user/.codex/state_5.sqlite-shm": 32768,
+    "/home/user/.codex/state_5.sqlite": 27033600
+  }
+}

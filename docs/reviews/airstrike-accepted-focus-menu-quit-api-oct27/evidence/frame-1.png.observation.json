@@ -1,0 +1,21 @@
+{
+  "observation": {
+    "focus": "airstrike",
+    "unobscured": true,
+    "keysReleased": true,
+    "state": "menu",
+    "header": "Airstrike menu",
+    "items": [
+      "Resume game",
+      "Players setup",
+      "Toggle fullscreen",
+      "About the game",
+      "Release notes",
+      "Toggle debug mode",
+      "Quit game"
+    ],
+    "selected": 0,
+    "after": "airstrike-2",
+    "evidence": "frame-1.png sha256:619682934d1919f2244d79152b121cec5583ed8d2d83bef2e8000891175a6bbb; inspected actual capture and correlated snapshot"
+  }
+}

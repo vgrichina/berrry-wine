@@ -1,0 +1,104 @@
+{
+  "status": "FAILED_OBSERVATION_DEADLINE_AFTER_ACTUAL_MENU",
+  "objectiveMet": false,
+  "candidate": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "acceptance": "2a4b5de2e135c567d1f0f854ad4ff2982982bcf4",
+  "historicalRuntimeSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "historicalModuleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "reused": [
+    "261 closure hashes/17345286bytes",
+    "exact Node startup + canonical89file mount/eight DLLs",
+    "14 CLI cases +5groups",
+    "historical37ACK play, not repeated"
+  ],
+  "actualRun": {
+    "launch": {
+      "box": "bx_yqcwfqqf",
+      "processId": 30654,
+      "commandId": "cmd_4hmrwzt9wgri",
+      "startedAt": "2026-10-27T03:34:36.866Z",
+      "finishedAt": "2026-10-27T03:34:59.335Z",
+      "status": "exited",
+      "exitCode": 0,
+      "running": false,
+      "stderr": "",
+      "stdout": {
+        "normalQuit": false,
+        "reason": "factual observation absent",
+        "runnerExit": 0,
+        "remaining": []
+      }
+    },
+    "guestSeconds": 22.05512593399999,
+    "peakGroupRSS": 280862720,
+    "controllerCommands": [
+      {
+        "id": "airstrike-1",
+        "cmd": "keydown:27"
+      },
+      {
+        "id": "airstrike-2",
+        "cmd": "keyup:27"
+      }
+    ],
+    "captures": [
+      {
+        "path": "frame-0.png",
+        "sha256": "a405056ea030d92e808d2e968582a84b586c88061b11a2c5507f546926157ba6",
+        "bytes": 198562,
+        "inspected": true
+      },
+      {
+        "path": "frame-1.png",
+        "sha256": "619682934d1919f2244d79152b121cec5583ed8d2d83bef2e8000891175a6bbb",
+        "bytes": 261576,
+        "inspected": true
+      }
+    ],
+    "focusObserved": true,
+    "sevenRowMenuObserved": true,
+    "selected": 0,
+    "quitObserved": false,
+    "terminal": {
+      "reason": "factual observation absent",
+      "guestExitCode": null,
+      "runnerExitCode": 0,
+      "signals": [
+        "TERM after failed contract"
+      ],
+      "cleanupComplete": true,
+      "evidence": "terminal.json/output.log",
+      "timeout": false,
+      "controlQuit": false,
+      "wmClose": false,
+      "fault": false,
+      "hostExitObserved": false,
+      "remaining": [],
+      "elapsed": 22.05512593399999,
+      "peakGroupRSS": 280862720
+    },
+    "controllerExit": 2
+  },
+  "cause": "Parent waitObservation deadline8seconds expired before externally inspected menu observation returned; failure cleanup SIGTERM. Controller terminal refusal correct. No Down/Enter dispatch, no normal Quit proof.",
+  "cleanup": {
+    "ownedRemoteProcesses": [],
+    "runningBox": true,
+    "box": "bx_yqcwfqqf",
+    "expiry": "2026-10-27T04:16:03.293Z",
+    "shutdownOwner": "coordinator",
+    "shutdown": "2026-10-27T04:00:00Z",
+    "boxLifecycleActions": []
+  },
+  "remainingGates": [
+    "source-backed ordinary Quit same-run terminal evidence",
+    "parent observation timing fit within unchanged controller10second receive budget before any separately authorized future run",
+    "separate current-main qualification"
+  ],
+  "publication": {
+    "branch": "task/airstrike-accepted-focus-menu-quit-api-oct27",
+    "commit": null,
+    "remoteVerified": false
+  },
+  "stop": true
+}

@@ -1,0 +1,5 @@
+{
+  "exit": 2,
+  "stderr": "{\"status\": \"refused\", \"reason\": \"terminal before observed Quit activation\"}\n",
+  "remaining": []
+}

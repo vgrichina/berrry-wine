@@ -1,0 +1,12 @@
+[
+  {
+    "observation": {
+      "focus": "airstrike",
+      "unobscured": true,
+      "keysReleased": true,
+      "state": "gameplay",
+      "after": null,
+      "evidence": "frame-0.png sha256:a405056ea030d92e808d2e968582a84b586c88061b11a2c5507f546926157ba6; inspected actual capture and correlated snapshot"
+    }
+  }
+]

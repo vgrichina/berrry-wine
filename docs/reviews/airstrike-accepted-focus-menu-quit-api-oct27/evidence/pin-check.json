@@ -1,0 +1,16 @@
+{
+  "pass": true,
+  "pins": {
+    "tools/airstrike-menu-controller.py": {
+      "sha256": "e96344c2a89dba87c28eba0aba9cd3ea5b400cc0245734b2bbc9248e110e7ebb",
+      "bytes": 6030,
+      "blob": "825e608c690de4935875ace94e68beb6804406e2"
+    },
+    "test/test-airstrike-menu-controller.py": {
+      "sha256": "0dbcef01a53836b7acd2127d93087ae154225b519d16fe4cca1172b964f8bfb6",
+      "bytes": 4652,
+      "blob": "46a3fb1e29cf1a58805cb903de6f8a44c10c24ea"
+    }
+  },
+  "failedRunConsistency": true
+}

@@ -1,0 +1,134 @@
+[threads] guest threads will use the cooperative scheduler (--no-threads)
+PE loaded. Entry: 0x0041138e
+DLL: SDL.dll at 0x536000, DllMain=0x5609af, thunks=1941, origBase=0x10000000
+DLL: SDL_image.dll at 0x675000, DllMain=0x6796cb, thunks=1985, origBase=0x10000000
+DLL: SDL_mixer.dll at 0x78e000, DllMain=0x7bc167, thunks=2038, origBase=0x10000000
+DLL: jpeg.dll at 0x8d6000, DllMain=0x8d7000, thunks=2052, origBase=0x64f40000
+DLL: libpng1.dll at 0x9fd000, DllMain=0xa10740, thunks=2076, origBase=0x10000000
+DLL: msvcr70.dll at 0xb18000, DllMain=0xb19357, thunks=2225, origBase=0x5d000000
+DLL: msvcrt.dll at 0xc64000, DllMain=0xc67428, thunks=2369, origBase=0x78000000
+DLL: zlib.dll at 0xda8000, DllMain=0xdb27b0, thunks=2390, origBase=0x10000000
+Patching EXE imports: SDL.dll -> DLL #0 (SDL.dll)
+Patching EXE imports: SDL_mixer.dll -> DLL #2 (SDL_mixer.dll)
+Patching EXE imports: SDL_image.dll -> DLL #1 (SDL_image.dll)
+Patching EXE imports: MSVCR70.dll -> DLL #5 (MSVCR70.dll)
+Patching DLL imports: SDL.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: SDL_image.dll→SDL.dll -> DLL #0 (SDL.dll)
+Patching DLL imports: SDL_image.dll→jpeg.dll -> DLL #3 (jpeg.dll)
+Patching DLL imports: SDL_image.dll→libpng1.dll -> DLL #4 (libpng1.dll)
+Patching DLL imports: SDL_image.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: SDL_mixer.dll→SDL.dll -> DLL #0 (SDL.dll)
+Patching DLL imports: SDL_mixer.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: jpeg.dll→msvcrt.dll -> DLL #6 (MSVCRT.dll)
+Patching DLL imports: libpng1.dll→zlib.dll -> DLL #7 (zlib.dll)
+Patching DLL imports: libpng1.dll→MSVCRT.dll -> DLL #6 (MSVCRT.dll)
+After patching: 2400 thunks
+Calling DllMain at 0xc67428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x5609af...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x8d7000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xdb27b0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xa10740...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x6796cb...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x7bc167...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb19357...
+DllMain returned, EAX=0x1
+Patched __p__wenviron [0xc9fedc] = 0xdbf854
+Patched __p__environ [0xc9ebe4] = 0xdbf834
+Patched __p___winitenv [0xca00ec] = 0xdbf854
+Patched __p___initenv [0xca2c9c] = 0xdbf834
+Calling MSVCRT!_set_sbh_threshold(0) at 0xc7099d...
+MSVCRT small-block heap disabled through _set_sbh_threshold(0)
+[vfs] working directory: c:\
+[CreateWindow] hwnd=0x10001 title="SDL_app" style=0xca0000 pos=20,20 size=0x0 menu=0
+[ShowWindow] hwnd=0x10001 cmd=0
+[i32] 0x0ed00001
+[i32] 0x0ed00101
+[i32] 0x0ed00201
+[i32] 0x0ed00301
+[i32] 0x0ed00401
+[i32] 0x0ed00501
+[i32] 0x0ed00601
+[i32] 0x0ed00701
+[i32] 0x0ed00801
+[i32] 0x0ed00901
+[i32] 0x0ed00a01
+[i32] 0x0ed00b01
+[i32] 0x0ed00c01
+[i32] 0x0ed00d01
+[i32] 0x0ed00e01
+[i32] 0x0ed00f01
+[i32] 0x0ed01001
+[i32] 0x0ed01101
+[i32] 0x0ed01201
+[i32] 0x0ed01501
+[i32] 0x0ed01601
+[i32] 0x0ed01701
+[i32] 0x0ed01801
+[i32] 0x0ed01901
+[i32] 0x0ed01a01
+[i32] 0x0ed01b01
+[i32] 0x0ed01c01
+[i32] 0x0ed01d01
+[SetWindowText] "Airstrike 1.0 pre6"
+[ShowWindow] hwnd=0x10001 cmd=5
+[waveOut] open: 22050Hz 1ch 16bit -> voice#720897
+[ThreadManager] CreateThread handle=0xe1000 start=0x559840 param=0xddc7f4 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x559840 ESP=0x7ec3fff8
+Calling DllMain at 0xc67428...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x8d7000...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xdb27b0...
+DllMain returned, EAX=0x1
+Calling DllMain at 0xb19357...
+DllMain returned, EAX=0x1
+[CreateWindow] hwnd=0x10002 title="Console" style=0x10cf0000 pos=0,8 size=648x328 menu=0
+[input] keydown vk=13 at batch 39431
+[ctl] {"ok":true,"id":"parent-start-0","value":{"batch":39431,"logs":["[input] keydown vk=13 at batch 39431"]}}
+[check_input] msg=0x100 wParam=0xd lParam=0x1c0001 packed=0xd0100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=13 at batch 39576
+[ctl] {"ok":true,"id":"parent-start-1","value":{"batch":39576,"logs":["[input] keyup vk=13 at batch 39576"]}}
+[input-route] down 600,21 candidates: 0x10002@0,8 648x328 0x10001@20,20 806x608
+[input-route] up 600,21 enter: outside=0 directDown=none btnDrag=none resizing=0 dragging=0
+[input] click 600,21 at batch 39620
+[ctl] {"ok":true,"id":"parent-start-2","value":{"batch":39620,"logs":["[input] click 600,21 at batch 39620"]}}
+[check_input] msg=0x101 wParam=0xd lParam=0xc01c0001 packed=0xd0101
+[check_input_hwnd] keyboard → focus 0x10002
+[input-route] down 700,31 candidates: 0x10001@20,20 806x608
+[input-route] up 700,31 enter: outside=0 directDown=none btnDrag=none resizing=0 dragging=1
+[input] click 700,31 at batch 39789
+[ctl] {"ok":true,"id":"parent-start-3","value":{"batch":39789,"logs":["[input] click 700,31 at batch 39789"]}}
+[ctl] {"ok":true,"id":"parent-png-1","value":{"batch":39943,"frozen":false,"path":"/home/user/airstrike-menu-quit-oct27/evidence/frame-0.png","bytes":198562}}
+[ctl] {"ok":true,"id":"parent-snapshot-1","value":{"batch":39944,"eip":"0x542000","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":false,"tickMs":5,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":806,"h":608,"visible":true,"isChild":false,"title":"Airstrike 1.0 pre6"},{"hwnd":"0x10002","x":0,"y":8,"w":648,"h":328,"visible":true,"isChild":false,"title":"Console"}]}}
+[check_input] msg=0xf wParam=0x0 lParam=0x0 packed=0xf
+[check_input_hwnd] explicit hwnd=0x10001
+[input] keydown vk=27 at batch 42283
+[ctl] {"ok":true,"id":"airstrike-1","value":{"batch":42283,"logs":["[input] keydown vk=27 at batch 42283"]}}
+[check_input] msg=0x100 wParam=0x1b lParam=0x10001 packed=0x1b0100
+[check_input_hwnd] keyboard → focus 0x10001
+[input] keyup vk=27 at batch 42296
+[ctl] {"ok":true,"id":"airstrike-2","value":{"batch":42296,"logs":["[input] keyup vk=27 at batch 42296"]}}
+[check_input] msg=0x101 wParam=0x1b lParam=0xc0010001 packed=0x1b0101
+[check_input_hwnd] keyboard → focus 0x10001
+[ctl] {"ok":true,"id":"parent-png-2","value":{"batch":42301,"frozen":false,"path":"/home/user/airstrike-menu-quit-oct27/evidence/frame-1.png","bytes":261576}}
+[ctl] {"ok":true,"id":"parent-snapshot-2","value":{"batch":42327,"eip":"0x55995b","quit":false,"yieldReason":0,"focus":"0x10001","mainHwnd":"0x10001","screen":{"w":800,"h":600},"frozen":{"frozen":false,"tickMs":5,"credits":0,"recording":false},"windows":[{"hwnd":"0x10001","x":20,"y":20,"w":806,"h":608,"visible":true,"isChild":false,"title":"Airstrike 1.0 pre6"},{"hwnd":"0x10002","x":0,"y":8,"w":648,"h":328,"visible":true,"isChild":false,"title":"Console"}]}}
+[signal] SIGTERM requested orderly shutdown
+uop: installs=347 kills=14 retired-poor=14 enters=1587932 blocks=126058384 head-exits=0 reguards=8538886 rg-pages=127774510 rg-nonadj=744244 win-kept=1587340 win-reset=592 gen=5 | compiled=347 declined=165 insns=25626 uops=115046 flushes=2 traces=195
+  declines: no-backedge=137 call-indirect=31 head-unsupported=20
+uop nobump: skips=2568908
+uop hot: decays=677790 halvings=116
+uop[thread 0xe1000]: tid=1 arena=0x533d000 installs=10 kills=1 enters=24423 blocks=1047837
+
+Stats: 334908 API calls, 251665 batches in 21.059s (11951 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x546a50 esp=0x7ec3ffa0 ebp=0xdda454 yield=1 waitH=0xe0004 sleepCount=0 csPark/steal=0/0

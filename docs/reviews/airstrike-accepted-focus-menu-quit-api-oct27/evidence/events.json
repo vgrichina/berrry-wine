@@ -1,0 +1,74 @@
+[
+  {
+    "at": 1793072082.2679062,
+    "command": {
+      "id": "parent-start-0",
+      "cmd": "keydown:13"
+    }
+  },
+  {
+    "at": 1793072082.5541153,
+    "command": {
+      "id": "parent-start-1",
+      "cmd": "keyup:13"
+    }
+  },
+  {
+    "at": 1793072082.9851534,
+    "command": {
+      "id": "parent-start-2",
+      "cmd": "click:600:21"
+    }
+  },
+  {
+    "at": 1793072083.4251242,
+    "command": {
+      "id": "parent-start-3",
+      "cmd": "click:700:31"
+    }
+  },
+  {
+    "at": 1793072083.710091,
+    "command": {
+      "id": "parent-png-1",
+      "action": "png",
+      "path": "/home/user/airstrike-menu-quit-oct27/evidence/frame-0.png"
+    }
+  },
+  {
+    "at": 1793072083.81083,
+    "command": {
+      "id": "parent-snapshot-1",
+      "action": "snapshot"
+    }
+  },
+  {
+    "at": 1793072090.8118126,
+    "command": {
+      "id": "airstrike-1",
+      "cmd": "keydown:27"
+    }
+  },
+  {
+    "at": 1793072090.8262649,
+    "command": {
+      "id": "airstrike-2",
+      "cmd": "keyup:27"
+    }
+  },
+  {
+    "at": 1793072090.8399444,
+    "command": {
+      "id": "parent-png-2",
+      "action": "png",
+      "path": "/home/user/airstrike-menu-quit-oct27/evidence/frame-1.png"
+    }
+  },
+  {
+    "at": 1793072091.0965858,
+    "command": {
+      "id": "parent-snapshot-2",
+      "action": "snapshot"
+    }
+  }
+]

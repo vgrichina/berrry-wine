@@ -1,0 +1,81 @@
+{
+  "status": "BLOCKED_LOCAL_DISK_BEFORE_GUEST_NO_TASK_COMMIT",
+  "objectiveMet": false,
+  "candidate": "565ceadbe8e63c88754bda4590df156cbba6bf85",
+  "acceptance": "2a4b5de2e135c567d1f0f854ad4ff2982982bcf4",
+  "historicalRuntimeSource": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "historicalModuleSHA256": "8fac39936b6df2418ad86cab118cef19a65a727f649fbc14c412b37818904686",
+  "runnerSHA256": "4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809",
+  "closure": {
+    "files": 261,
+    "bytes": 17345286,
+    "remoteReadback": "remote-all-hashes.json"
+  },
+  "passed": [
+    "261 exact closure hashes on remote",
+    "exact Node startup/flags/environment/inherited limits",
+    "canonical actual tree mount argv and89files/eightDLLs",
+    "light supervised bridge AST parse only"
+  ],
+  "notExecuted": [
+    "original game",
+    "controller runtime CLI",
+    "focus/menu observations",
+    "ordinary Quit",
+    "normal terminal acceptance"
+  ],
+  "incidents": [
+    "incident-e2big.log",
+    "guest-launch.log",
+    "state-1793071635165680295.json"
+  ],
+  "resourceDenial": {
+    "at": 1793071646.2312562,
+    "own": 4603904,
+    "sourceGit": 1134592,
+    "events": 1290240,
+    "positiveWalGrowth": 16384,
+    "projectedTask": 14299136,
+    "free": 3085234176,
+    "future": 103141376,
+    "projectedFree": 2982092800,
+    "memAvailable": 3828318208
+  },
+  "publication": {
+    "branch": "task/airstrike-accepted-focus-menu-quit-api-oct27",
+    "initialBorrowedCommit": "2a4b5de2e135c567d1f0f854ad4ff2982982bcf4",
+    "taskCommit": null,
+    "pushAttempted": false,
+    "exactRemoteRefVerified": false,
+    "reason": "disk floor denial; no Git retry"
+  },
+  "box": {
+    "id": "bx_yqcwfqqf",
+    "state": "RUNNING via last successful API exec; not re-queried after denial",
+    "guestProcess": "not launched; CLI rejected before API call",
+    "expiry": "2026-10-27T04:16:03.293Z",
+    "coordinatorShutdown": "2026-10-27T04:00:00Z",
+    "lifecycleOwner": "coordinator",
+    "leftRunning": true
+  },
+  "cleanup": {
+    "at": 1793071798.6498914,
+    "watchersTerminated": [
+      3616733,
+      3617194
+    ],
+    "watchersRemaining": [],
+    "guestLaunched": false,
+    "remoteBridgeLaunched": false,
+    "remoteQueryCompletion": "not read back after local disk denial;12-second bounded read-only query",
+    "boxLifecycleActions": []
+  },
+  "report": "/tmp/airstrike-accepted-focus-menu-quit-api-oct27/repo/docs/reviews/airstrike-accepted-focus-menu-quit-api-oct27/REPORT.md",
+  "remainingGates": [
+    "capacity/reservation change and fresh admission",
+    "corrected API launch plus factual focus/menu/Quit/terminal evidence",
+    "task commit/push/exact remote ref verification",
+    "separate current-main qualification"
+  ],
+  "stop": true
+}
