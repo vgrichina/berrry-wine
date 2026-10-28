@@ -21,38 +21,42 @@ let assertions = 0;
 function check(condition, message) { assert.ok(condition, message); assertions++; }
 function fixture(installer = install, options = {}) {
   const memory = new Map(), records = [], reads = [];
+  const backing = new ArrayBuffer(1024 * 1024), offsets = new Map();
+  let nextOffset = 256;
   const r = { eax: 0, esp: 0x7401000, ecx: 0, esi: 0x5000000, thread: 1 };
   const e = { get_image_base: () => options.base || 0x400000,
     set_trace_eip_range: (...a) => { e.range = a; }, set_api_log: x => { e.apiLog = x; },
     get_current_thread_id: () => r.thread };
   for (const name of ['eax', 'esp', 'ecx', 'esi']) e['get_' + name] = () => r[name];
-  function put(p, bytes) { for (let i = 0; i < bytes.length; i++) memory.set(p + i, bytes[i]); }
+  function put(p, bytes) { for (let i = 0; i < bytes.length; i++) {
+    memory.set(p + i, bytes[i]);
+    if (offsets.has(p + i)) new Uint8Array(backing)[offsets.get(p + i)] = bytes[i];
+  } }
   function u32(p, value) { const b = Buffer.alloc(4); b.writeUInt32LE(value >>> 0); put(p, b); }
-  function read(p, n) {
-    reads.push([p, n]);
-    const b = Buffer.alloc(n);
-    for (let i = 0; i < n; i++) {
-      if (memory.has(p + i)) b[i] = memory.get(p + i);
-      else {
-        const off = pe.va2off(p + i);
-        if (off < 0) throw Error('unmapped fixture memory');
-        b[i] = exeBytes[off];
-      }
+  function mapAddress(p) {
+    reads.push([p, 1]);
+    if (!offsets.has(p)) {
+      const off = pe.va2off(p);
+      if (!memory.has(p) && off < 0) return 0xf0;
+      const offset = nextOffset++;
+      assert(offset < backing.byteLength);
+      offsets.set(p, offset);
+      new Uint8Array(backing)[offset] = memory.has(p) ? memory.get(p) : exeBytes[off];
+      if (options.corruptLoaded && p === 0x406923) new Uint8Array(backing)[offset] ^= 1;
     }
-    if (options.corruptLoaded && p === 0x406923) b[0] ^= 1;
-    return b;
+    return offsets.get(p);
   }
   const host = {}, logs = [];
   const context = { hasFlag: name => name === 'observe-morrowind-name' && options.enabled !== false,
     h: host, morrowindNameObserver: null, TRACE_EIP_RANGE: options.trace || null,
-    instance: { exports: e }, memory: { buffer: new ArrayBuffer(1024) }, exeBytes,
+    instance: { exports: e }, memory: { buffer: backing }, exeBytes,
     Buffer, logs, apiNameCache: new Map(), pendingComApiId: -1,
     apiTable: [{ id: 0, name: 'IDirectInputDevice_GetDeviceData' }], apiCount: 0, apiCounts: null,
     TRACE_API: false, TRACE_CRITICAL: false, TRACE_INPUT_DISPATCH: false, TRACE_API_MEM: [],
     ESP_DELTA: false, QUIET_API: true, breakApis: [], criticalTracePending: null, lastApiName: null,
     require: name => {
-      assert.equal(name, '../lib/morrowind-name-observer'); return { install: args => installer({ ...args, read }) };
-    }, translateGuest: () => { throw Error('test reader supplied to installed production hook'); } };
+      assert.equal(name, '../lib/morrowind-name-observer'); return { install: installer };
+    }, translateGuest: mapAddress };
   // Execute the exact production installation statements, including their
   // default-off guard. Record the only transformation: isolation by markers.
   for (const marker of ['IMPORT', 'ATTACH']) {

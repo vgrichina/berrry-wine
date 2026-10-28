@@ -71,7 +71,8 @@ node --max-old-space-size=320 tools/probes/morrowind-name-observer-contracts.js 
 The test executes the exact production IMPORT/ATTACH regions, complete `h.log`,
 `h.log_i32` and `h.log_api_exit` function source in isolation, recording the runner
 and transformation hashes. It checks initializer-route ordering, uses the real
-ordinal name decoder and tests actual installed hook functions. These are
+ordinal name decoder and the unchanged production byte reader against synthetic
+mapped memory, and tests actual installed hook functions. These are
 synthetic source contracts, **not full-runner or original game execution**.
 Controls cover disabled defaults, matching/nested/other-caller invocations,
 wrong thread/target/generation, failed HRESULT/zero/excess count with stale
