@@ -1,0 +1,11 @@
+changed producer src/05-alu.wat:$th_pop_run_ret (sha256); review its lifetime
+changed producer src/05-alu.wat:$th_pop_run_ret (targets); review its lifetime
+changed producer src/05-alu.wat:$th_ret (sha256); review its lifetime
+changed producer src/05-alu.wat:$th_ret (targets); review its lifetime
+changed producer src/05-alu.wat:$th_ret_imm (sha256); review its lifetime
+changed producer src/05-alu.wat:$th_ret_imm (targets); review its lifetime
+changed producer src/09b-dispatch.wat:$win32_dispatch (sha256); review its lifetime
+changed producer src/09b-dispatch.wat:$win32_dispatch_inner (sha256); review its lifetime
+unknown producer src/13-exports.wat:$null_transfer_check
+unknown producer src/13-exports.wat:$null_transfer_record
+changed producer src/13-exports.wat:$run (sha256); review its lifetime

@@ -1,0 +1,8 @@
+{
+  "free": 3403112448,
+  "otherTasksReservation": 268435456,
+  "taskCap": 67108864,
+  "reserve": 8388608,
+  "postProjection": 3067568128,
+  "floor": 2982150144
+}

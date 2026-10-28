@@ -1,0 +1,28 @@
+node:assert:90
+  throw new AssertionError(obj);
+  ^
+
+AssertionError [ERR_ASSERTION]: Values have same structure but are not reference-equal:
+
+[
+  [
+    'local.get',
+    '$ret'
+  ]
+]
+
+    at Object.<anonymous> (/tmp/shadow-man-callback-census-correction-oct28/repo/test/test-shadow-man-callback-census.js:43:12)
+    at Module._compile (node:internal/modules/cjs/loader:1521:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)
+    at Module.load (node:internal/modules/cjs/loader:1266:32)
+    at Module._load (node:internal/modules/cjs/loader:1091:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: [ [ 'local.get', '$ret' ] ],
+  expected: [ [ 'local.get', '$ret' ] ],
+  operator: 'deepStrictEqual'
+}
+
+Node.js v20.20.2

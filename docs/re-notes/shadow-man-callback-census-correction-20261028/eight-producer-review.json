@@ -1,0 +1,1279 @@
+[
+  {
+    "name": "$th_ret",
+    "before": {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "24c4708c5cda3c82bb6fbd231c6e9086923271eab794573c2210b54d11c1196c",
+      "kind": "guest-control",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "sha256": "5019445c6c322e8e01ee52ba7f7f6587e02dcfe5d4b59fad615612ca36acc595",
+      "kind": "guest-control",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: RET reads guest ESP/return word into locals once after guard16, snapshots kind2 before EIP assignment from that same local and ESP+=4; cs_pop is diagnostic depth only. No invocation enter/leave or retained callback owner. Guest return word origin/writer and lifetime remain unproven. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$th_ret_imm",
+    "before": {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret_imm",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "7dcc3405d12c0e636ce34b165e0c243ca883488af65f6cbaf767276cdd8f4f83",
+      "kind": "guest-control",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret_imm",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "sha256": "767441e740fbf303e6dd85205bf6c9ff9cb9bc5957fdfc614497cda00e2d8297",
+      "kind": "guest-control",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: RET imm reads guest ESP/return word into locals once after guard16, snapshots kind3 before EIP from that same local and ESP+=4+op. No callback owner acquired or released; return word provenance/lifetime remain unproven. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$th_pop_run_ret",
+    "before": {
+      "file": "src/05-alu.wat",
+      "name": "$th_pop_run_ret",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "if",
+          [
+            "result",
+            "i32"
+          ],
+          [
+            "global.get",
+            "$sr_fast"
+          ],
+          [
+            "then",
+            [
+              "i32.load",
+              [
+                "i32.add",
+                [
+                  "local.get",
+                  "$cur"
+                ],
+                [
+                  "global.get",
+                  "$sr_delta"
+                ]
+              ]
+            ]
+          ],
+          [
+            "else",
+            [
+              "call",
+              "$gl32",
+              [
+                "local.get",
+                "$cur"
+              ]
+            ]
+          ]
+        ]
+      ],
+      "sha256": "d80fd4a0f5e742772922e433cc7556857d66d8dab0f563d7eb98187885983e7e",
+      "kind": "guest-control",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/05-alu.wat",
+      "name": "$th_pop_run_ret",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "sha256": "e2fd6de10102d83e033e4be8085fd779d88aff9adfa2e2af3bcdffe2aa3699c5",
+      "kind": "guest-control",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: Fused POP/RET preserves stack_run_pop early return and guard16; loads return local via existing sr_fast/sr_delta or gl32 path, snapshots kind4 before EIP from same local and ESP=cur+4+imm. No retained callback ownership; guest word origin remains unproven. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$win32_dispatch",
+    "before": {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch",
+      "writes": 2,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "i32.add",
+          [
+            "global.get",
+            "$thunk_guest_base"
+          ],
+          [
+            "i32.shl",
+            [
+              "local.get",
+              "$thunk_idx"
+            ],
+            [
+              "i32.const",
+              "3"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$return_eip"
+        ]
+      ],
+      "sha256": "9b09762a3951c003930b834e138a0c22b29d0d16ef71b440923cb39490bf93a5",
+      "kind": "mixed-dispatch",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch",
+      "writes": 2,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "i32.add",
+          [
+            "global.get",
+            "$thunk_guest_base"
+          ],
+          [
+            "i32.shl",
+            [
+              "local.get",
+              "$thunk_idx"
+            ],
+            [
+              "i32.const",
+              "3"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$return_eip"
+        ]
+      ],
+      "sha256": "a158a87a4d7e940449c8f2eca5d36ec789367247571da88ef3ddf09b011a373b",
+      "kind": "mixed-dispatch",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: Dispatcher retains existing resource-pin save/restore and callback-continuation redirects. Only added operation clears diagnostic kind before deferred DLL unload can redirect after inner handler. No new owner or EIP target; existing callback/continuation lifetimes remain pending. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$win32_dispatch_inner",
+    "before": {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "writes": 63,
+      "boundaryCalls": [
+        "$crt_callback_continue",
+        "$crt_callback_continue",
+        "$crt_callback_continue"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "i32.load",
+          [
+            "call",
+            "$g2w",
+            [
+              "local.get",
+              "$esp"
+            ]
+          ]
+        ],
+        [
+          "i32.load",
+          "offset=0",
+          [
+            "global.get",
+            "$reg_base"
+          ]
+        ],
+        [
+          "global.get",
+          "$delphi_resume_eip"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "global.get",
+          "$child_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$child_cbt_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_proc"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$createwnd_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "i32.const",
+          "0"
+        ],
+        [
+          "global.get",
+          "$modal_ret_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "12"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "8"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.sub",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "24"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "ce60f3207d2c300d2e351958b83052cb43900c049ef38a8a9fe4e093e5b36500",
+      "kind": "mixed-dispatch",
+      "reason": "Final SIZE lifetime correction 2026-10-21: allocate and synchronize CACA003D; retain target/destruction-result cells until final WM_SIZE returns, then validate the invocation target and release once. ShowWindow retains prior visibility; placement/implicit creation select zero on destruction. Exact dispatcher source-slice fixture passes 156 cases and rejects baseline plus four mutants. Maintained actual-guest extensions and full runtime qualification are UNEXECUTED; other mixed-dispatch/private invocation-token lifetimes remain pending. ShadowMan diagnostic review 2026-10-23: modal-frame-consume after sentinel adjustment/teardown/reentry, before consuming current frame; saved return is retiring local, saved ESP is consumed frame, not original API entry. Complete after previous pump restoration and EAX/EIP/ESP update, before ended/result/quit reset. No modal behavior or frame lifetime changed; earlier final SIZE lifetime review remains applicable. Scripted prefix only; ownership remains pending.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "writes": 63,
+      "boundaryCalls": [
+        "$crt_callback_continue",
+        "$crt_callback_continue",
+        "$crt_callback_continue"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "i32.load",
+          [
+            "call",
+            "$g2w",
+            [
+              "local.get",
+              "$esp"
+            ]
+          ]
+        ],
+        [
+          "i32.load",
+          "offset=0",
+          [
+            "global.get",
+            "$reg_base"
+          ]
+        ],
+        [
+          "global.get",
+          "$delphi_resume_eip"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "global.get",
+          "$child_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$child_cbt_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_proc"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$createwnd_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "i32.const",
+          "0"
+        ],
+        [
+          "global.get",
+          "$modal_ret_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "12"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "8"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.sub",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "24"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "1249c33efa4e18ab2d6a53ff75ec13d66539788b50caabb2a5e23b2e652052ea",
+      "kind": "mixed-dispatch",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: CACA0005 remains intentional EIP=0 nested-run completion with handler_set_eip=1, no ESP pop here. Added kind1 snapshot precedes zero assignment, requires run thunk-entry route and matching current EIP/thunk in helper. Other EIP targets and lifetime boundaries unchanged; sender context restoration still belongs to enclosing synchronous caller, not this diagnostic record. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$null_transfer_record",
+    "before": null,
+    "after": {
+      "file": "src/13-exports.wat",
+      "name": "$null_transfer_record",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "35dc60ab9de8207bf6d503c45d3fe6ba216a13dfd734a83dd82136c024c24f0f",
+      "kind": "context-restore",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: Diagnostic snapshot only, instance-local and overwriteable: mode2 guard; clear kind, reject nonzero target; kind1 requires explicit run thunk-entry and matching EIP/thunk. Copies already-read return word/address and predicted post-ESP, modal fields, validated invocation_current token and root without retaining or changing them; publishes kind last. No EIP/ESP or invocation ownership write, run/host call or callback. Reads may trap on invalid context; no proof of return-word writer or global retained lifetime. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$null_transfer_check",
+    "before": null,
+    "after": {
+      "file": "src/13-exports.wat",
+      "name": "$null_transfer_check",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "916aedc721854fb4359d8e91b4cc35130d0f6f5219fc1186e4ac06d2f3d3cae6",
+      "kind": "context-restore",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: Diagnostic invalidator before first-zero event: mode2 guard; count/depth/current-token/root/post-ESP mismatch clears kind. invocation_current validates and reads, never retains. No EIP/ESP or ownership write, run/host call or callback; a matching record is bounded diagnostic correlation, not proof of original writer or callback lifetime. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  },
+  {
+    "name": "$run",
+    "before": {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "run"
+      ],
+      "targets": [
+        [
+          "call",
+          "$gl32",
+          [
+            "local.get",
+            "$prev_esp"
+          ]
+        ]
+      ],
+      "sha256": "2d6c995221eed1681b62680cd24e01b74e2856b4ac5e2fc55cca37df93649929",
+      "kind": "host-entry",
+      "reason": "External execution/context entry or wrapper; callback lifetime cannot be inferred from run depth. ShadowMan diagnostic review 2026-10-23: first-zero observer is synchronous at loop entry before last_run_halt and enclosing sender restoration; zero saved fields are N/A. Legitimate CACA0005 also reaches it. OFF adds no context write; ON terminates even with returning observer. No zero-writer or invocation-ownership proof; lifetime remains pending.",
+      "ownership": "pending"
+    },
+    "after": {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "run"
+      ],
+      "targets": [
+        [
+          "call",
+          "$gl32",
+          [
+            "local.get",
+            "$prev_esp"
+          ]
+        ]
+      ],
+      "sha256": "a42e9ad55b65ae1b134d022679b1373bc6487ebdec660873917481800dbc7a9d",
+      "kind": "host-entry",
+      "reason": "Shadow Man exact-candidate source review 2026-10-28: Reentrant host entry retains existing budget/API-depth save/restore and thunk auto-pop target. Clears kind/thunk-entry at fresh run and each nonzero loop boundary; brackets explicit thunk dispatch with entry flag; zero branch checks record before null_diag_event increments count and notifies synchronous host observer (return traps). Nested run or deferred unload invalidates attribution; diagnostic globals are not a retained per-invocation stack. No new EIP target/ownership retain; source inventory only, reentry/runtime and original writer remain unqualified. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  }
+]
