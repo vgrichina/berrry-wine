@@ -783,7 +783,7 @@
           "into": "cd"
         }
       ],
-      "notes": "Full Special Edition: NFS2SEA.EXE (3Dfx Glide), NFS2SEN.EXE, with NFS2SEA/SEN/SER.ICO at the CD root. No app entry yet: reference/source fixture only."
+      "notes": "Original Special Edition retail CD: NFS2SEA.EXE is the Glide variant; NFS2SEN.EXE is the software variant. Recovery verified 2026-10-28 against the pinned ISO SHA-1: 1543 files, including original INSTALL.NFS but no INSTALL.WIN. NFS2SEN.EXE checks INSTALL.WIN during startup; SETUP/ENGLISH/SETUP.INS names both INSTALL.NFS and INSTALL.WIN. Installation is a prerequisite: preserve the original CD fixture and capture the original installer's output before adding an app/browser/CLI route. No direct-launch registration or gameplay qualification. See docs/re-notes/nfs2se-retail-recovery-20261028.md."
     },
     {
       "id": "dxball",
