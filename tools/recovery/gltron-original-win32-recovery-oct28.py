@@ -246,48 +246,63 @@ def pe_machine(data):
 
 
 def publish_analysis(root, inventory, closure):
-    """Stage a validated pair, rolling back ordinary write/replace failures.
+    """Commit only after staging cleanup succeeds; roll back ordinary failures.
 
-    Single writer only. Two renames are not atomic to concurrent readers and
-    this is not a power-loss/crash transaction. If rollback itself fails, retain
-    the staging directory for recovery and report its path with the cause.
+    Single writer only; neither concurrent-reader atomicity nor crash safety.
+    Keep prior bytes through cleanup, which may partially delete the backups.
+    If recovery itself fails, report the cause and retain available backups.
     """
     names = ('inventory.json', 'closure.json')
-    # Serialize both before touching the existing pair.
     contents = [json.dumps(value, indent=2).encode() for value in (inventory, closure)]
     stage = Path(tempfile.mkdtemp(prefix='.analysis-pair-', dir=root))
+    prior = {}
     changed = []
-    keep = False
+    cleaning = False
     try:
-        existed = {}
         for name, content in zip(names, contents):
             target = root/name
-            existed[name] = target.exists()
-            if existed[name]:
-                (stage/(name+'.old')).write_bytes(target.read_bytes())
+            prior[name] = target.read_bytes() if target.exists() else None
+            if prior[name] is not None:
+                (stage/(name+'.old')).write_bytes(prior[name])
             (stage/name).write_bytes(content)
-        try:
-            for name in names:
-                os.replace(stage/name, root/name)
-                changed.append(name)
-        except OSError as error:
-            failures = []
+        for name in names:
+            os.replace(stage/name, root/name)
+            changed.append(name)
+        cleaning = True
+        shutil.rmtree(stage)
+    except Exception as error:
+        failures = []
+        if changed:
+            # rmtree can remove some or all backups before reporting failure.
+            # Recreate recovery evidence from memory; never consume .old files.
+            try:
+                stage.mkdir(exist_ok=True)
+                for name, content in prior.items():
+                    if content is not None:
+                        (stage/(name+'.old')).write_bytes(content)
+            except OSError as recovery_error:
+                failures.append(f'backup recovery: {recovery_error}')
             for name in reversed(changed):
                 try:
-                    if existed[name]:
-                        os.replace(stage/(name+'.old'), root/name)
+                    if prior[name] is None:
+                        (root/name).unlink(missing_ok=True)
                     else:
-                        (root/name).unlink()
+                        restore = stage/(name+'.restore')
+                        restore.write_bytes(prior[name])
+                        os.replace(restore, root/name)
                 except OSError as rollback_error:
                     failures.append(f'{name}: {rollback_error}')
-            if failures:
-                keep = True
-                raise RuntimeError(f'analysis publication rollback failed; recovery in {stage}: '
-                                   + '; '.join(failures)) from error
-            raise
-    finally:
-        if not keep:
-            shutil.rmtree(stage)
+        if failures:
+            raise RuntimeError(f'analysis publication rollback failed; recovery in {stage}: '
+                               + '; '.join(failures)) from error
+        if cleaning:
+            error.add_note(f'prior publication restored; recovery evidence in {stage}')
+        else:
+            try:
+                shutil.rmtree(stage)
+            except OSError as cleanup_error:
+                error.add_note(f'staging cleanup failed; recovery in {stage}: {cleanup_error}')
+        raise
 
 
 def analyze(archive):

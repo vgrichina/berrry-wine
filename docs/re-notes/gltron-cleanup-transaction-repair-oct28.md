@@ -1,0 +1,11 @@
+# GLTron publication cleanup repair
+
+The unchanged production CLI acceptance at base `af2e5d5b940c423edb29db01d5e6ba7c1feddcc6` rejected source SHA-256 `409404d936f6a146860bea29daf19c5104732369e1549f290ccdc6a9065f3956`: a staging cleanup PermissionError after both replacements reported failure while leaving generation B published over A.
+
+`publish_analysis` now commits only when staging cleanup returns successfully. It retains prior bytes in memory until that point, restores the prior pair or initial absence on cleanup failure, and re-raises the causal exception with the retained recovery path. Partial or complete deletion of staged backups cannot prevent restoration while filesystem recovery remains available. Rollback uses separate restore files and leaves `.old` backups intact. If recovery also fails, the explicit rollback error chains the causal publication/cleanup exception and retains available evidence. A secondary cleanup error no longer masks a replacement failure.
+
+This remains a single-writer ordinary-exception transaction. It provides neither atomic visibility to concurrent readers nor crash/power-loss safety. Persistent filesystem denial can prevent rollback; that condition remains an explicit recovery failure, never success.
+
+Validation uses tiny owned synthetic fixtures, with no original media or runtime. The unchanged CLI reproducer rejects the old source and passes all 16 checks on the repair. The affected eight transaction tests and four new tests pass, including six prior-pair/absence/destructive-cleanup subcases, recovery failure after total stage deletion, absent-pair unlink failure and causal-error preservation. Running the new tests against the unchanged old production source rejects it. The predecessor's eight order-reproducer checks and eleven unchanged original recovery tests are reused by exact file pins and canonical receipt; the affected transaction suite is rerun once.
+
+Canonical task evidence: `/tmp/gltron-two-lane-cleanup-repair-oct28/receipt.json`; first failure is retained separately under `first-failure/`, and final CLI evidence under `unchanged-after/`. Donor evidence remains unchanged. Task-branch publication does not authorize main integration; fresh independent acceptance is required.
