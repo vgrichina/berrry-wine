@@ -1645,6 +1645,10 @@
   (global $fault_raising (mut i32) (i32.const 0))
   (global $API_HASH_TABLE i32 (region.addr $API_HASH_TABLE 0))
   (global $API_HASH_TABLE_SIZE i32 (region.size $API_HASH_TABLE))
+  (global $BIG5_DECODE_TABLE i32 (region.addr $BIG5_DECODE_TABLE 0))
+  (global $BIG5_DECODE_TABLE_SIZE i32 (region.size $BIG5_DECODE_TABLE))
+  (global $BIG5_ENCODE_TABLE i32 (region.addr $BIG5_ENCODE_TABLE 0))
+  (global $BIG5_ENCODE_TABLE_SIZE i32 (region.size $BIG5_ENCODE_TABLE))
   ;; Window/class/parent tables (below GUEST_BASE, above the API hash table).
   ;; All four tables live in the 0x7000..0xC000 region; the old 0x2000..0x4000
   ;; layout is now unused and free for future scratch use.
@@ -3758,6 +3762,11 @@
   ;; TextOutW, etc.). WAT-private so guest writes cannot corrupt it.
   (global $TEXT_SCRATCH i32 (region.addr $TEXT_SCRATCH 0))
   (global $TEXT_SCRATCH_SIZE i32 (region.size $TEXT_SCRATCH))
+  ;; Decoded-WCHAR scratch for the GDI text funnels (DBCS stage 2): an ANSI
+  ;; string in a table-backed DBCS page is decoded here once and handed to
+  ;; the wide pipeline, so the pipeline itself stays byte-source-agnostic.
+  (global $TEXT_DECODE_SCRATCH i32 (region.addr $TEXT_DECODE_SCRATCH 0))
+  (global $TEXT_DECODE_SCRATCH_SIZE i32 (region.size $TEXT_DECODE_SCRATCH))
   ;; Console screen buffer. This used to sit at 0x7000/0x7FA0, which is
   ;; WND_RECORDS — every WriteConsole overwrote the window table, so a console
   ;; app corrupted windows it never touched. Cells are capped by
