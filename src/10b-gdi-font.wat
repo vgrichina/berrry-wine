@@ -180,6 +180,30 @@
       (then (return (global.get $GDI_FONT_MAPPER_COMIC_SANS))))
     (local.get $face))
 
+  ;; The face the scalable mapper should rasterize for this font. The
+  ;; requested name wins whenever it resolves to a font of its own — an
+  ;; installed file, a substitution, an alias. Only when it resolves to
+  ;; nothing does the LOGFONT charset answer, the way real GDI matched an
+  ;; uninstalled face by charset, pitch and family: a Traditional Chinese
+  ;; guest asking for its UI face in Big5 bytes can never byte-match the
+  ;; Latin-keyed substitution tables, and without this it silently lands on
+  ;; the Latin default, whose strike has no glyphs for the text at all.
+  ;; Unnamed fonts keep the mapper face untouched: an empty LOGFONT face is
+  ;; the font-selection layer's question, not this one's.
+  (func $gdi_font_effective_face (param $handle i32) (result i32)
+    (local $face i32) (local $fallback i32)
+    (local.set $face (call $gdi_font_mapper_face (local.get $handle)))
+    (if (i32.or (i32.eqz (local.get $face))
+          (i32.eqz (i32.load8_u (local.get $face))))
+      (then (return (local.get $face))))
+    (if (call $tt_subst_named_path (local.get $face)
+          (call $gdi_font_weight (local.get $handle))
+          (call $gdi_font_italic (local.get $handle)))
+      (then (return (local.get $face))))
+    (local.set $fallback
+      (call $tt_charset_fallback_face (call $gdi_font_charset (local.get $handle))))
+    (select (local.get $fallback) (local.get $face) (local.get $fallback)))
+
   (func $gdi_bitmap_font_face_matches (param $requested i32) (param $installed i32)
         (result i32)
     (if (call $gdi_bitmap_font_face_equal (local.get $requested) (local.get $installed))
@@ -1359,7 +1383,7 @@
                     (i32.const 0)))
               (then
                 (local.set $substitute (call $tt_strike_ensure
-                  (call $gdi_font_mapper_face (local.get $handle))
+                  (call $gdi_font_effective_face (local.get $handle))
                   (call $gdi_font_strike_height_for_dc
                     (local.get $hdc) (local.get $handle))
                   (call $gdi_font_weight (local.get $handle))
@@ -1402,7 +1426,7 @@
     ;; without a strike is a LOGFONT that named no face at all, or a font file
     ;; that failed to load.
     (local.set $substitute (call $tt_strike_ensure
-      (call $gdi_font_mapper_face (local.get $handle))
+      (call $gdi_font_effective_face (local.get $handle))
       (call $gdi_font_strike_height_for_dc (local.get $hdc) (local.get $handle))
       (call $gdi_font_weight (local.get $handle))
       (call $gdi_font_italic (local.get $handle))))
@@ -1846,14 +1870,22 @@
 
   (func $gdi_font_character_width (param $hdc i32) (param $character i32)
         (param $wide i32) (result i32)
-    (local $strike i32) (local $glyph i32) (local $height i32)
+    (local $strike i32) (local $glyph i32) (local $height i32) (local $overflow i32)
     (local.set $strike (call $gdi_bitmap_font_selected (local.get $hdc)))
     (if (local.get $strike)
       (then
-        (local.set $glyph (call $gdi_bitmap_font_glyph
-          (local.get $strike) (i32.and (local.get $character) (i32.const 0xFF))))
         (local.set $height (call $gdi_bitmap_font_height
           (local.get $hdc) (local.get $strike)))
+        ;; A character outside the strike's coverage measures through the
+        ;; scalable face when the strike has one; the byte clamp below is
+        ;; the installed-.FON answer and stays exactly as it was.
+        (local.set $overflow (call $gdi_font_overflow_width
+          (local.get $hdc) (local.get $strike) (local.get $character)
+          (local.get $height)))
+        (if (i32.ge_s (local.get $overflow) (i32.const 0))
+          (then (return (local.get $overflow))))
+        (local.set $glyph (call $gdi_bitmap_font_glyph
+          (local.get $strike) (i32.and (local.get $character) (i32.const 0xFF))))
         (return (call $gdi_bitmap_font_scaled_width
           (local.get $hdc) (local.get $strike) (local.get $glyph) (local.get $height)))))
     (if (local.get $wide)
@@ -2021,6 +2053,7 @@
   (func $gdi_bitmap_text_measure (param $hdc i32) (param $text i32)
         (param $count i32) (param $wide i32) (result i32)
     (local $strike i32) (local $height i32) (local $i i32) (local $code i32) (local $width i32)
+    (local $overflow i32)
     (local.set $strike (call $gdi_bitmap_font_selected (local.get $hdc)))
     (if (i32.eqz (local.get $strike)) (then (return (i32.const -1))))
     (if (i32.or (i32.lt_s (local.get $count) (i32.const 0))
@@ -2034,11 +2067,15 @@
       (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
       (local.set $code (select
         (i32.load8_u (i32.add (local.get $text) (local.get $i)))
-        (i32.and (i32.load16_u (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1)))) (i32.const 0xFF))
+        (i32.load16_u (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1))))
         (i32.eqz (local.get $wide))))
+      (local.set $overflow (call $gdi_font_overflow_width
+        (local.get $hdc) (local.get $strike) (local.get $code) (local.get $height)))
       (local.set $width (i32.add (local.get $width)
-        (call $gdi_bitmap_font_scaled_width (local.get $hdc) (local.get $strike)
-          (call $gdi_bitmap_font_glyph (local.get $strike) (local.get $code)) (local.get $height))))
+        (select (local.get $overflow)
+          (call $gdi_bitmap_font_scaled_width (local.get $hdc) (local.get $strike)
+            (call $gdi_bitmap_font_glyph (local.get $strike) (local.get $code)) (local.get $height))
+          (i32.ge_s (local.get $overflow) (i32.const 0)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
     (local.get $width))
@@ -2807,6 +2844,60 @@
     (if (local.get $indexed) (then (return (call $tt_entry_width (local.get $glyph)))))
     (call $gdi_bitmap_font_glyph_ink_width (local.get $strike) (local.get $glyph)))
 
+  ;; The third glyph source for the text loop, beside the strike itself and
+  ;; the ETO_GLYPH_INDEX cache: a character the selected strike does not
+  ;; cover, resolved through the selected font's cmap and rasterized on
+  ;; demand into the same cache-entry shape the indexed path consumes, so
+  ;; the blit below cannot tell the two apart. Only a synthetic strike
+  ;; (state 2) has a scalable face behind it; an installed .FON strike
+  ;; answers 0 here and the caller keeps the strike's default character,
+  ;; which is what a machine without the face installed draws. Face and
+  ;; ppem come from the same resolution ETO_GLYPH_INDEX uses, so the entry
+  ;; is rasterized at the strike's own size from the strike's own face.
+  (func $gdi_text_overflow_glyph (param $hdc i32) (param $strike i32)
+        (param $code i32) (result i32)
+    (local $packed i32) (local $face i32) (local $data i32) (local $size i32)
+    (if (i32.ne (i32.load (local.get $strike)) (i32.const 2))
+      (then (return (i32.const 0))))
+    (if (i32.and (i32.ge_u (local.get $code) (i32.load offset=36 (local.get $strike)))
+          (i32.le_u (local.get $code) (i32.load offset=40 (local.get $strike))))
+      (then (return (i32.const 0))))
+    (local.set $packed (call $tt_gdi_index_face (local.get $hdc)))
+    (if (i32.eqz (local.get $packed)) (then (return (i32.const 0))))
+    (local.set $face
+      (i32.sub (i32.and (local.get $packed) (i32.const 0xFFFF)) (i32.const 1)))
+    (local.set $data (call $tt_face_data (local.get $face)))
+    (local.set $size (call $tt_face_size (local.get $face)))
+    (if (i32.eqz (local.get $data)) (then (return (i32.const 0))))
+    (call $tt_glyph_ensure (local.get $face)
+      (call $tt_glyph_index (local.get $data) (local.get $size) (local.get $code))
+      (i32.shr_u (local.get $packed) (i32.const 16))))
+
+  ;; The advance of an out-of-coverage character, in the same scaled units
+  ;; the strike path reports, or -1 when $gdi_text_overflow_glyph would not
+  ;; answer either — the two must agree exactly, or a string would measure
+  ;; to one width and draw to another. An unmapped character takes glyph 0's
+  ;; advance through $tt_char_advance_px, matching GDI's .notdef answer.
+  (func $gdi_font_overflow_width (param $hdc i32) (param $strike i32)
+        (param $code i32) (param $height i32) (result i32)
+    (local $packed i32) (local $face i32) (local $data i32) (local $size i32)
+    (if (i32.ne (i32.load (local.get $strike)) (i32.const 2))
+      (then (return (i32.const -1))))
+    (if (i32.and (i32.ge_u (local.get $code) (i32.load offset=36 (local.get $strike)))
+          (i32.le_u (local.get $code) (i32.load offset=40 (local.get $strike))))
+      (then (return (i32.const -1))))
+    (local.set $packed (call $tt_gdi_index_face (local.get $hdc)))
+    (if (i32.eqz (local.get $packed)) (then (return (i32.const -1))))
+    (local.set $face
+      (i32.sub (i32.and (local.get $packed) (i32.const 0xFFFF)) (i32.const 1)))
+    (local.set $data (call $tt_face_data (local.get $face)))
+    (local.set $size (call $tt_face_size (local.get $face)))
+    (if (i32.eqz (local.get $data)) (then (return (i32.const -1))))
+    (call $gdi_bitmap_font_scaled_ink_value (local.get $hdc) (local.get $strike)
+      (call $tt_char_advance_px (local.get $data) (local.get $size) (local.get $code)
+        (i32.shr_u (local.get $packed) (i32.const 16)))
+      (local.get $height)))
+
   (func $gdi_text_index_glyph (param $strike i32) (param $code i32) (param $indexed i32) (param $face i32) (param $ppem i32) (result i32)
     (if (local.get $indexed) (then (return (call $tt_glyph_ensure (local.get $face) (local.get $code) (local.get $ppem)))))
     (call $gdi_bitmap_font_glyph (local.get $strike) (local.get $code)))
@@ -2832,6 +2923,7 @@
     (local $path_open i32) (local $path_entry i32) (local $path_points i64)
     (local $path_origin_x i32) (local $path_origin_y i32)
     (local $indexed i32) (local $tt_face i32) (local $tt_ppem i32)
+    (local $glyph_tt i32)
     (local $sx_end i32)
     (call $gdi_clip_row_reset)
     (local.set $strike (call $gdi_bitmap_font_selected (local.get $hdc)))
@@ -2973,19 +3065,27 @@
             (i32.load8_u (i32.add (local.get $text) (local.get $i)))
             (i32.load16_u (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1))))
             (i32.eqz (local.get $wide))))
-          (local.set $code (i32.and (local.get $raw_code) (select (i32.const 65535) (i32.const 255) (local.get $indexed))))
+          (local.set $code (i32.and (local.get $raw_code) (select (i32.const 65535) (i32.const 255) (i32.or (local.get $indexed) (local.get $wide)))))
           (local.set $is_tab (i32.and
             (i32.ne (global.get $gdi_bitmap_text_active_tab_width) (i32.const 0))
             (i32.eq (local.get $code) (i32.const 9))))
           (if (local.get $indexed) (then (local.set $is_tab (i32.const 0))))
-          (local.set $glyph (call $gdi_text_index_glyph (local.get $strike) (local.get $code) (local.get $indexed) (local.get $tt_face) (local.get $tt_ppem)))
+          (local.set $glyph_tt (local.get $indexed))
+          (local.set $glyph (i32.const 0))
+          (if (i32.eqz (local.get $indexed))
+            (then
+              (local.set $glyph (call $gdi_text_overflow_glyph
+                (local.get $hdc) (local.get $strike) (local.get $code)))
+              (if (local.get $glyph) (then (local.set $glyph_tt (i32.const 1))))))
+          (if (i32.eqz (local.get $glyph))
+            (then (local.set $glyph (call $gdi_text_index_glyph (local.get $strike) (local.get $code) (local.get $indexed) (local.get $tt_face) (local.get $tt_ppem)))))
           (if (i32.eqz (local.get $glyph)) (then (return (i32.const 0))))
           (local.set $glyph_width (call $gdi_text_index_width
-            (local.get $hdc) (local.get $strike) (local.get $glyph) (local.get $height) (local.get $indexed)))
+            (local.get $hdc) (local.get $strike) (local.get $glyph) (local.get $height) (local.get $glyph_tt)))
           (local.set $ink_width (call $gdi_bitmap_font_scaled_ink_value
             (local.get $hdc) (local.get $strike)
             (call $gdi_text_index_ink_width
-              (local.get $strike) (local.get $glyph) (local.get $indexed)) (local.get $height)))
+              (local.get $strike) (local.get $glyph) (local.get $glyph_tt)) (local.get $height)))
           (if (i32.eqz (local.get $is_tab))
             (then
               (local.set $path_points (i64.add (local.get $path_points)
@@ -3034,17 +3134,25 @@
         (i32.load8_u (i32.add (local.get $text) (local.get $i)))
         (i32.load16_u (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1))))
         (i32.eqz (local.get $wide))))
-      (local.set $code (i32.and (local.get $raw_code) (select (i32.const 65535) (i32.const 255) (local.get $indexed))))
+      (local.set $code (i32.and (local.get $raw_code) (select (i32.const 65535) (i32.const 255) (i32.or (local.get $indexed) (local.get $wide)))))
       (local.set $is_tab (i32.and
         (i32.ne (global.get $gdi_bitmap_text_active_tab_width) (i32.const 0))
         (i32.eq (local.get $code) (i32.const 9))))
       (if (local.get $indexed) (then (local.set $is_tab (i32.const 0))))
-      (local.set $glyph (call $gdi_text_index_glyph (local.get $strike) (local.get $code) (local.get $indexed) (local.get $tt_face) (local.get $tt_ppem)))
+      (local.set $glyph_tt (local.get $indexed))
+      (local.set $glyph (i32.const 0))
+      (if (i32.eqz (local.get $indexed))
+        (then
+          (local.set $glyph (call $gdi_text_overflow_glyph
+            (local.get $hdc) (local.get $strike) (local.get $code)))
+          (if (local.get $glyph) (then (local.set $glyph_tt (i32.const 1))))))
+      (if (i32.eqz (local.get $glyph))
+        (then (local.set $glyph (call $gdi_text_index_glyph (local.get $strike) (local.get $code) (local.get $indexed) (local.get $tt_face) (local.get $tt_ppem)))))
       (if (i32.eqz (local.get $glyph)) (then (return (i32.const 0))))
       (local.set $glyph_width (call $gdi_text_index_width
-        (local.get $hdc) (local.get $strike) (local.get $glyph) (local.get $height) (local.get $indexed)))
+        (local.get $hdc) (local.get $strike) (local.get $glyph) (local.get $height) (local.get $glyph_tt)))
       (local.set $native_ink_width (call $gdi_text_index_ink_width
-        (local.get $strike) (local.get $glyph) (local.get $indexed)))
+        (local.get $strike) (local.get $glyph) (local.get $glyph_tt)))
       (local.set $ink_width (call $gdi_bitmap_font_scaled_ink_value
         (local.get $hdc) (local.get $strike) (local.get $native_ink_width)
         (local.get $height)))
@@ -3052,7 +3160,7 @@
         (local.get $hdc) (local.get $strike)
         (call $gdi_bitmap_font_glyph_ink_left
           (local.get $strike) (local.get $glyph)) (local.get $height)))
-      (if (local.get $indexed) (then (local.set $ink_left (call $gdi_bitmap_font_scaled_ink_value
+      (if (local.get $glyph_tt) (then (local.set $ink_left (call $gdi_bitmap_font_scaled_ink_value
         (local.get $hdc) (local.get $strike) (call $tt_entry_left (local.get $glyph)) (local.get $height)))))
       (if (local.get $is_tab)
         (then (local.set $glyph_width (i32.sub
@@ -3109,7 +3217,7 @@
           (block $span_done (loop $span
             (br_if $span_done (i32.ge_u (local.get $sx) (local.get $sx_end)))
             (br_if $span_done (i32.ne (local.get $bit) (i32.const 0)))
-            (if (local.get $indexed) (then
+            (if (local.get $glyph_tt) (then
               (local.set $bit (call $tt_entry_pixel (local.get $glyph) (local.get $sx)
                 (i32.sub (local.get $sy) (i32.sub (i32.load offset=24 (local.get $strike)) (call $tt_entry_top (local.get $glyph)))))))
             (else (local.set $bit (i32.and (i32.load8_u (i32.add

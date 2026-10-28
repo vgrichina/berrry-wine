@@ -4,7 +4,10 @@
 # The full fonts are 4.2 MB of Liberation plus ~0.4 MB of Wine faces, fetched
 # by the browser before a guest can draw its first character. Win98 apps in the
 # corpus are CP1252 (or symbol-encoded), so the emulator can only ever ask for
-# ~220 codepoints per face - everything else is payload nobody reads.
+# ~220 codepoints per face - everything else is payload nobody reads. The one
+# exception is the Traditional Chinese face: a Big5 guest asks in characters,
+# so its subset is the Big5 repertoire selection in
+# fonts/noto-sans-tc/subset-chars.txt (see tools/big5_charset.js).
 #
 # Runtime grid fitting needs `fpgm`, `prep`, `cvt `, and each retained glyph's
 # instruction stream. fontTools rewrites point references while subsetting;
@@ -48,6 +51,19 @@ print(','.join(codes))
 PY
 )
 
+# The Big5 face's repertoire: committed data, derived by
+# tools/big5_charset.js (CP1252 set + Big5 symbols and first-level kanji +
+# the characters the reference Big5 corpus uses).
+BIG5_UNICODES=$(python3 - <<'PY'
+codes = []
+for line in open('fonts/noto-sans-tc/subset-chars.txt'):
+    line = line.strip()
+    if line.startswith('U+'):
+        codes.append(line)
+print(','.join(codes))
+PY
+)
+
 subset() {
   local src="$1" charset="$2"
   local name unicodes
@@ -77,7 +93,11 @@ subset() {
     fi
     return
   fi
-  unicodes="$ANSI_UNICODES"
+  if [ "$charset" = "big5" ]; then
+    unicodes="$BIG5_UNICODES"
+  else
+    unicodes="$ANSI_UNICODES"
+  fi
 
   python3 -m fontTools.subset "$src" \
     --unicodes="$unicodes" \
@@ -111,6 +131,14 @@ subset() {
     printf '  %-34s %8s bytes (from %s)\n' "$name" \
       "$(wc -c <"$dest" | tr -d ' ')" "$(wc -c <"$src" | tr -d ' ')"
   fi
+
+  # The WAT cmap path ($tt_cmap_best + formats 0/4/6 only) must resolve
+  # every character the subset promises. Desktop tools would happily read
+  # a format 12 (3,1) subtable that the emulator resolves nothing through,
+  # so this is asserted with the WAT's own algorithm, not fontTools'.
+  if [ "$charset" = "big5" ]; then
+    python3 tools/check_tt_cmap.py "$dest" fonts/noto-sans-tc/subset-chars.txt
+  fi
 }
 
 # Kept in step with fonts/substitutions.json; test/test-font-subsets.js fails
@@ -125,11 +153,14 @@ subset fonts/wine/marlett.ttf      symbol
 subset fonts/wine/symbol.ttf       symbol
 subset fonts/wine/wingding.ttf     symbol
 subset fonts/wine/webdings.ttf     symbol
+subset fonts/noto-sans-tc/NotoSansTC-Regular.ttf big5
+subset fonts/noto-sans-tc/NotoSansTC-Bold.ttf    big5
 
 full=$(cat fonts/liberation/Liberation*.ttf fonts/comic-relief/ComicRelief-*.ttf \
   fonts/wine/tahoma.ttf \
   fonts/wine/tahomabd.ttf fonts/wine/marlett.ttf \
   fonts/wine/symbol.ttf fonts/wine/wingding.ttf fonts/wine/webdings.ttf \
+  fonts/noto-sans-tc/NotoSansTC-Regular.ttf fonts/noto-sans-tc/NotoSansTC-Bold.ttf \
   | wc -c | tr -d ' ')
 sub=$(cat "$OUT"/*.ttf | wc -c | tr -d ' ')
 echo "total: $sub bytes deployed, from $full bytes vendored"

@@ -36,8 +36,8 @@ for (const face of manifest.faces) {
   assert.ok(manifest.tiers[String(face.tier)], `${where} tier must be described`);
   assert.ok(face.substitute, `${where} must name its substitute`);
   assert.ok(face.license, `${where} must record a license`);
-  assert.ok(['ANSI', 'SYMBOL'].includes(face.charset),
-    `${where} charset must be ANSI or SYMBOL`);
+  assert.ok(['ANSI', 'SYMBOL', 'CHINESEBIG5'].includes(face.charset),
+    `${where} charset must be ANSI, SYMBOL or CHINESEBIG5`);
 
   // The private-name rule is the whole determinism argument. A family
   // registered under its Win98 name would let the host's own copy win the
