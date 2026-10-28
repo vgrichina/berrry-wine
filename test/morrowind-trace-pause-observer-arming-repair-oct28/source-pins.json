@@ -1,0 +1,47 @@
+{
+  "candidateParent": "e627e71ed960c4ba4905bd6ac9ff9496daad8a3d",
+  "originalBase": "efa0f32e9dbe7fac2c863737810755473cb458c6",
+  "runnerSHA256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d",
+  "exeSHA256": "f48300e194c6917cd98d235d259ebc3ab5d7c2071e9b41d798b996a8ce4d0676",
+  "exeBytes": 3907584,
+  "canonicalPredecessorReceipt": "/home/user/wine-assembly/scratch/usage-watch/morrowind-quiet-arming-independent-accept-oct28/receipt.json",
+  "canonicalCoordinatorReview": "/home/user/wine-assembly/scratch/usage-watch/morrowind-quiet-arming-independent-accept-oct28/coordinator-review.json",
+  "inputs": {
+    "src/04-cache.wat": {
+      "sha256": "42297da850a44dcaa41a6a94924eb1236b73a10c9b4dde4423802ea8d0806dbd",
+      "gitBlob": "8bdc18b56ef54388d6d33497930b36eacf8900dd"
+    },
+    "src/06b-core-handlers.wat": {
+      "sha256": "e8c04a58a5a6c7e15d8d6fb7f2c9c4a39bfe38b3178da41f746df8c457294f21",
+      "gitBlob": "b84716b91caf51cf3e889973c99fdf6fe9cabfcd"
+    },
+    "src/07-decoder.wat": {
+      "sha256": "fec7b2413c972eca6ce666cd5300308047cdc08f7ca6a4542edfea98f02a3837",
+      "gitBlob": "40d54f194eb3ac1e235aae416d0834b54e1961c8"
+    },
+    "src/09a8-handlers-directx.wat": {
+      "sha256": "d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e",
+      "gitBlob": "262805db23c10088ff2afa7c857b0192cc3594eb"
+    },
+    "src/09b-dispatch.wat": {
+      "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce",
+      "gitBlob": "6f4df6673a7117ed50e0a4d1960d36693697882b"
+    },
+    "src/13-exports.wat": {
+      "sha256": "bf07357361b6d6f1e9c6bd93953d2ca14ccbb55c68f8647149d2a47eaefbb51e",
+      "gitBlob": "e775571b6c5fda3820de5446d3f69cdf35485fb2"
+    },
+    "lib/morrowind-name-observer.js": {
+      "sha256": "a2bbe6d15de3fc46d65f6e72e365e82cd223b5db5486dc3cdbc585aad9d75799"
+    },
+    "lib/pe.js": {
+      "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+    },
+    "lib/worker-imports.js": {
+      "sha256": "2e0833f9e867f97bd9574cfdc7c8109e3f16b682fbc2a5664949bbbd4c09c1f9"
+    },
+    "tools/probes/morrowind-name-observer-contracts.js": {
+      "sha256": "09a9a3254dc35a050f8d5e28f7d00d90295cb53e6e311477d03e0407ef0358e6"
+    }
+  }
+}

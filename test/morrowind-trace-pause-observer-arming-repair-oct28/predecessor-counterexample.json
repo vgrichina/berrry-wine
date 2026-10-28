@@ -1,0 +1,130 @@
+{
+  "verdict": "REJECTED",
+  "reason": "Existing trace-api pause control disables logging required by installed observer",
+  "runnerSHA256": "d06dbc85f92e1e9e8516f726f848204256460dd2d2553a4abee8ea2fa08ed7de",
+  "passedStartupCases": [
+    {
+      "argv": [],
+      "sequence": []
+    },
+    {
+      "argv": [
+        "--observe-morrowind-name"
+      ],
+      "sequence": [
+        1
+      ]
+    },
+    {
+      "argv": [
+        "--quiet-api"
+      ],
+      "sequence": [
+        0
+      ]
+    },
+    {
+      "argv": [
+        "--quiet-api",
+        "--observe-morrowind-name"
+      ],
+      "sequence": [
+        1
+      ]
+    },
+    {
+      "consumer": {
+        "TRACE_API": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "TRACE_API_COUNTS": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "TRACE_CRITICAL": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "TRACE_INPUT_DISPATCH": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "ESP_DELTA": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "ESP_AUDIT": true
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "breakApis": [
+          "x"
+        ]
+      },
+      "sequence": []
+    },
+    {
+      "consumer": {
+        "TRACE_API_MEM": [
+          "x"
+        ]
+      },
+      "sequence": []
+    }
+  ],
+  "mutation": {
+    "sequence": [
+      1,
+      0
+    ],
+    "rejected": true
+  },
+  "counterexample": {
+    "argv": [
+      "--quiet-api",
+      "--observe-morrowind-name",
+      "--trace-api",
+      "--trace-api-paused"
+    ],
+    "control": {
+      "action": "trace-api",
+      "on": false
+    },
+    "sequence": [
+      1,
+      0
+    ],
+    "observerInstalled": true,
+    "finalApiLog": 0,
+    "apiLogOff": true,
+    "inheritWasm": [
+      [
+        "set_api_log",
+        0
+      ]
+    ]
+  },
+  "source": {
+    "parserSHA256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+    "predicateSHA256": "6a16a0137e4a917e270a57715c6138f4f03fce650e572d053fd143cb525e824b",
+    "traceControlSHA256": "a8aded48abf005a101238802289f3d89abc2b08d5550d674fc089827c1d0b224",
+    "fixturePrefixSHA256": "55d1757113415d0be34e675b30ec555f8dfe23d4868a09bb6189d8fc7e9c29cd",
+    "scaffoldSHA256": "d8ea1d1a85eee89cd967af92f60573198b42ca17bec8a6ca42c2f66f432da98e",
+    "controlLine": 7344,
+    "attachBeforeDllMain": true
+  },
+  "boundary": "Exact production argv parser, predicate, import/attachment, late reset, control branch executed in pinned synthetic fixture. Actual observer install and source/EXE verification executed. No whole runner, initializers, WAT/module or guest execution; no correlation groups."
+}
