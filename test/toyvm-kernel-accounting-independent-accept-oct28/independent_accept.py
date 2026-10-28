@@ -6,7 +6,7 @@ sys.path.insert(0,str(HERE.parent/'toyvm-kernel-profile-accounting-backend-oct28
 import supervise_accounted as adapter
 RESULTS=[]
 def run(name,body,**kw):
- with tempfile.TemporaryDirectory(prefix='independent-',dir=str(HERE.parents[2]/'fixtures')) as d:
+ with tempfile.TemporaryDirectory(prefix='independent-',dir=str(HERE.parent.parent/'fixtures')) as d:
   root=pathlib.Path(d)/'domain'
   code='import os,pathlib,errno,json,mmap;root=pathlib.Path('+repr(str(root))+');'+body
   r=adapter.supervise_accounted([sys.executable,'-B','-c',code],d,rss_limit=96*1024**2,cpu_limit=90,wall_limit=5,output_limit=65536,**kw)
@@ -14,7 +14,7 @@ def run(name,body,**kw):
   assert r['filesystemCleanup']['remainingMounts']==[] and r['cleanupComplete'],r
   assert r['filesystemCleanup']['serverExit'] is not None,r
   RESULTS.append(r);return r
-(HERE.parents[2]/'fixtures').mkdir(exist_ok=True)
+(HERE.parent.parent/'fixtures').mkdir(exist_ok=True)
 # Production boundary first: exact pinned adapter, exact pinned supervisor and confiner.
 r=run('production-entry-defaults',"(root/'entry').write_bytes(b'entry');print('entry-ok')")
 assert r['exit']==0 and r['stopReason'] is None and r['filesystem']['written']==5,r
@@ -22,7 +22,7 @@ assert r['filesystem']['live']==12288 and r['filesystem']['openHandles']==0,r
 try:adapter.supervise_accounted([],None,backend='pathname-stat')
 except ValueError as e:RESULTS.append({'name':'entry-unsafe-backend','error':str(e)})
 else:raise AssertionError('unsafe backend accepted')
-with tempfile.TemporaryDirectory(dir=str(HERE.parents[2]/'fixtures')) as d:
+with tempfile.TemporaryDirectory(dir=str(HERE.parent.parent/'fixtures')) as d:
  (pathlib.Path(d)/'domain').mkdir()
  try:adapter.supervise_accounted(['/bin/true'],d)
  except RuntimeError as e:

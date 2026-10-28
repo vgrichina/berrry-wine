@@ -29,8 +29,8 @@ Eight new independent checks passed, in this order:
 8. Own-sandbox path write, descriptor reopen, memfd and IPC creation rejected;
    writable file mmap rejected; ordinary accounted write still succeeded.
 
-The fresh outer guard reported exit 0, no resource stop, 67104768 bytes peak
-aggregate Python RSS, 0.5511 seconds wall time, and all children gone. Every
+The fresh outer guard reported exit 0, no resource stop, 67764224 bytes peak
+aggregate Python RSS, 0.5871 seconds wall time, and all children gone. Every
 adapter result had zero remaining mounts and zero open handles. A separate
 post-run inspection found no remaining task mounts or other task processes.
 Remote task allocation was 98304 bytes. Fixtures were at most 8194 cumulative
@@ -65,3 +65,10 @@ Boat lifecycle remains coordinator-owned: leave `bx_wc3aaxdc` available (API
 state `idle`, no stop requested), execution cutoff 22:50 UTC, handback by
 22:51 UTC, coordinator shutdown 22:52 UTC, expiry 22:58:15.483 UTC. No browser,
 main push, public deployment, other game work, or worker launch occurred.
+
+Fixture-path correction: the initial independent run used an empty
+`/tmp/fixtures` staging base outside the owned task directory. Its temporary
+children were removed. The corrected fixture base is inside the task root;
+all eight affected checks passed again. Original evidence is retained. The
+empty old base is retained with a 4096-byte task charge because prior ownership
+was not proven; no mount or process remains there.
