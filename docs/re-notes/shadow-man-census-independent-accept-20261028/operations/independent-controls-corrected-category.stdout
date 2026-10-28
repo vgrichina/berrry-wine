@@ -1,0 +1,1563 @@
+{
+  "verdict": "PASS_BOUNDED_SOURCE_INVENTORY",
+  "changed": [
+    "src/05-alu.wat:$th_pop_run_ret",
+    "src/05-alu.wat:$th_ret",
+    "src/05-alu.wat:$th_ret_imm",
+    "src/09b-dispatch.wat:$win32_dispatch",
+    "src/09b-dispatch.wat:$win32_dispatch_inner",
+    "src/13-exports.wat:$run"
+  ],
+  "added": [
+    "src/13-exports.wat:$null_transfer_check",
+    "src/13-exports.wat:$null_transfer_record"
+  ],
+  "untouched": 402,
+  "unchangedEntriesSHA256": "e96c36ff6100a06772327c9f52b090523df02d1b65e0269b3282beb0e4f6c430",
+  "inputPins": 276,
+  "contracts": [
+    {
+      "file": "src/05-alu.wat",
+      "name": "$th_pop_run_ret",
+      "kind": "guest-control",
+      "sha256": "e2fd6de10102d83e033e4be8085fd779d88aff9adfa2e2af3bcdffe2aa3699c5",
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "boundaryCalls": [],
+      "directCalls": [
+        "$stack_run_pop",
+        "$th_ret_guard16",
+        "$gl32",
+        "$null_transfer_record",
+        "$cs_pop",
+        "$branch_end"
+      ]
+    },
+    {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret",
+      "kind": "guest-control",
+      "sha256": "5019445c6c322e8e01ee52ba7f7f6587e02dcfe5d4b59fad615612ca36acc595",
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "boundaryCalls": [],
+      "directCalls": [
+        "$th_ret_guard16",
+        "$gl32",
+        "$null_transfer_record",
+        "$cs_pop",
+        "$branch_end"
+      ]
+    },
+    {
+      "file": "src/05-alu.wat",
+      "name": "$th_ret_imm",
+      "kind": "guest-control",
+      "sha256": "767441e740fbf303e6dd85205bf6c9ff9cb9bc5957fdfc614497cda00e2d8297",
+      "targets": [
+        [
+          "local.get",
+          "$ret"
+        ]
+      ],
+      "boundaryCalls": [],
+      "directCalls": [
+        "$th_ret_guard16",
+        "$gl32",
+        "$null_transfer_record",
+        "$cs_pop",
+        "$branch_end"
+      ]
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch",
+      "kind": "mixed-dispatch",
+      "sha256": "a158a87a4d7e940449c8f2eca5d36ec789367247571da88ef3ddf09b011a373b",
+      "targets": [
+        [
+          "i32.add",
+          [
+            "global.get",
+            "$thunk_guest_base"
+          ],
+          [
+            "i32.shl",
+            [
+              "local.get",
+              "$thunk_idx"
+            ],
+            [
+              "i32.const",
+              "3"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$return_eip"
+        ]
+      ],
+      "boundaryCalls": [],
+      "directCalls": [
+        "$thunk_metadata_addr",
+        "$mm_callback_check",
+        "$thunk_metadata_addr",
+        "$mm_timer_thread_check",
+        "$thunk_patch_changed",
+        "$gl32",
+        "$win32_dispatch_inner",
+        "$pop_rsrc_ctx",
+        "$rsrc_release_api_pins",
+        "$dll_unload_yield"
+      ]
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "kind": "mixed-dispatch",
+      "sha256": "1249c33efa4e18ab2d6a53ff75ec13d66539788b50caabb2a5e23b2e652052ea",
+      "targets": [
+        [
+          "i32.load",
+          [
+            "call",
+            "$g2w",
+            [
+              "local.get",
+              "$esp"
+            ]
+          ]
+        ],
+        [
+          "i32.load",
+          "offset=0",
+          [
+            "global.get",
+            "$reg_base"
+          ]
+        ],
+        [
+          "global.get",
+          "$delphi_resume_eip"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg4"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "global.get",
+          "$createwnd_ret_thunk"
+        ],
+        [
+          "global.get",
+          "$child_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$child_cbt_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "local.get",
+            "$arg0"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "local.get",
+          "$arg0"
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_proc"
+        ],
+        [
+          "global.get",
+          "$dialog_cbt_saved_ret"
+        ],
+        [
+          "call",
+          "$wnd_table_get",
+          [
+            "global.get",
+            "$createwnd_saved_hwnd"
+          ]
+        ],
+        [
+          "global.get",
+          "$wndproc_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "local.get",
+          "$arg1"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "local.get",
+          "$arg3"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "local.get",
+          "$arg4"
+        ],
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ],
+        [
+          "i32.const",
+          "0"
+        ],
+        [
+          "global.get",
+          "$modal_ret_addr"
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "12"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "4"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.add",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "8"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.load",
+            "offset=16",
+            [
+              "global.get",
+              "$reg_base"
+            ]
+          ]
+        ],
+        [
+          "call",
+          "$gl32",
+          [
+            "i32.sub",
+            [
+              "i32.load",
+              "offset=16",
+              [
+                "global.get",
+                "$reg_base"
+              ]
+            ],
+            [
+              "i32.const",
+              "24"
+            ]
+          ]
+        ]
+      ],
+      "boundaryCalls": [
+        "$crt_callback_continue",
+        "$crt_callback_continue",
+        "$crt_callback_continue"
+      ],
+      "directCalls": [
+        "$dx_sync_thread_vtables_if_needed",
+        "$edge_hist_record",
+        "$thunk_metadata_addr",
+        "$thunk_metadata_addr",
+        "$spin_is_clock_read",
+        "$dialog_proc_result",
+        "$g2w",
+        "$g2w",
+        "$g2w",
+        "$g2w",
+        "$g2w",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$seh_pop_dispatch_node",
+        "$delphi_seh_continue_search",
+        "$dispatch_delphi_exception_handler",
+        "$seh_terminate_unhandled",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$create_window_abort",
+        "$gl32",
+        "$startup_create_show",
+        "$gl32",
+        "$gl32",
+        "$dialog_apply_init_focus",
+        "$gl32",
+        "$gl32",
+        "$wnd_get_style",
+        "$gl32",
+        "$show_window_activate_top_level",
+        "$gl32",
+        "$host_activate_window",
+        "$wnd_table_get",
+        "$dialog_default_proc",
+        "$dialog_default_proc",
+        "$dialog_default_proc",
+        "$paint_scratch_take",
+        "$host_get_window_rect",
+        "$dialog_default_proc",
+        "$dialog_default_proc",
+        "$host_invalidate",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gl32",
+        "$dlg_record_for_hwnd",
+        "$paint_drain_native_control_paints",
+        "$paint_flush_shown_native_children",
+        "$gl32",
+        "$gl32",
+        "$wnd_table_find",
+        "$gl32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_min_get",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$host_invalidate",
+        "$paint_scratch_take",
+        "$host_get_window_rect",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$defwndproc_do_nccalcsize",
+        "$wnd_min_get",
+        "$client_rect_wh_packed",
+        "$gs32",
+        "$gs32",
+        "$wnd_max_get",
+        "$wnd_min_get",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$nc_flags_set",
+        "$invalidate_hwnd",
+        "$wnd_table_get",
+        "$gl32",
+        "$hook_dispatch_leave",
+        "$gl32",
+        "$wnd_table_get",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_scratch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$gl32",
+        "$create_window_abort",
+        "$gl32",
+        "$gs32",
+        "$gs32",
+        "$wnd_scratch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$gl32",
+        "$gl32",
+        "$create_window_abort",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gs32",
+        "$wnd_is_effectively_visible",
+        "$nc_flags_set",
+        "$defwndproc_do_nccalcsize",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$ctrl_table_get_class",
+        "$wnd_get_parent",
+        "$mdi_client_register_child",
+        "$gl32",
+        "$gl32",
+        "$create_window_abort",
+        "$gl32",
+        "$gs32",
+        "$gs32",
+        "$wnd_scratch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$gl32",
+        "$hook_dispatch_leave",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$hook_dispatch_leave",
+        "$gl32",
+        "$wnd_table_get",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_scratch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$dialog_first_init_tabstop",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gl32",
+        "$hook_dispatch_leave",
+        "$gl32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_scratch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$dialog_apply_init_focus",
+        "$dlg_show_now",
+        "$wnd_get_owner",
+        "$wnd_table_get",
+        "$wnd_destroy_children",
+        "$wnd_table_remove",
+        "$host_destroy_window",
+        "$focus_restore_after_modal",
+        "$wnd_table_get",
+        "$activate_window_with_host",
+        "$null_diag_event",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$null_diag_event",
+        "$nc_flags_test",
+        "$nc_flags_clear",
+        "$defwndproc_do_ncpaint",
+        "$nc_flags_clear",
+        "$host_erase_background",
+        "$paint_flag_any",
+        "$paint_flag_take",
+        "$wnd_table_get",
+        "$ctrl_table_get_class",
+        "$control_wndproc_dispatch",
+        "$wat_wndproc_dispatch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$post_queue_base",
+        "$post_queue_base",
+        "$post_queue_base",
+        "$post_queue_base",
+        "$post_queue_remove_at",
+        "$shared_post_queue_read",
+        "$wnd_table_get",
+        "$dialog_proc_get",
+        "$wat_wndproc_dispatch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$host_check_input",
+        "$host_check_input_lparam",
+        "$host_check_input_hwnd",
+        "$wnd_table_get",
+        "$dialog_proc_get",
+        "$wat_wndproc_dispatch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$w2g",
+        "$paint_scratch_take",
+        "$timer_check_due",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$wnd_table_get",
+        "$wat_wndproc_dispatch",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$gs32",
+        "$null_transfer_record",
+        "$dialog_extra_get",
+        "$heap_free",
+        "$modal_done",
+        "$modal_pump_step",
+        "$crt_callback_continue",
+        "$crt_callback_continue",
+        "$crt_callback_continue",
+        "$bsearch_continue",
+        "$qsort_continue",
+        "$gl32",
+        "$dd_enum_surfaces_continue",
+        "$gl32",
+        "$dsound_enum_continue",
+        "$gl32",
+        "$acm_driver_enum_continue",
+        "$gl32",
+        "$enum_modes_continue",
+        "$d3d_enum_devices_continue",
+        "$monitor_enum_continue",
+        "$seh_raw_continue",
+        "$seh_dispatch_node_handler",
+        "$rtl_unwind_continue",
+        "$enum_child_continue",
+        "$enum_rsrc_continue",
+        "$io_apc_continue",
+        "$beep_continue",
+        "$com_activate_after_gco",
+        "$com_activate_after_create",
+        "$com_activate_after_release",
+        "$d3d_enum_zbuf_continue",
+        "$d3d_enum_tex_continue",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$dp_enum_continue",
+        "$gl32",
+        "$dpn_enum_sessions_continue",
+        "$gl32",
+        "$di_enum_continue",
+        "$gl32",
+        "$gl32",
+        "$dpl_enum_continue",
+        "$gl32",
+        "$console_ctrl_continue",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$keyboard_hook_finish",
+        "$gl32",
+        "$getmessage_hook_continue",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gdi_font_enum_continue",
+        "$gl32",
+        "$gdi_metafile_enum_continue",
+        "$gl32",
+        "$ole_guest_callback_continue",
+        "$gl32",
+        "$heap_free",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$line_dda_advance",
+        "$mm_timer_thread_step",
+        "$mm_callback_finish",
+        "$host_log",
+        "$crash_unimplemented",
+        "$host_log_i32",
+        "$host_log",
+        "$g2w",
+        "$host_log",
+        "$strlen",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$handle_PeekMessageA",
+        "$restore_win32_nonvolatile",
+        "$host_log_api_exit",
+        "$handle_PeekMessageW",
+        "$restore_win32_nonvolatile",
+        "$host_log_api_exit",
+        "$host_wait_multiple",
+        "$g2w",
+        "$msgwait_idle_result",
+        "$restore_win32_nonvolatile",
+        "$host_log_api_exit",
+        "$gl32",
+        "$handle__EH_prolog",
+        "$restore_win32_nonvolatile",
+        "$host_log_api_exit",
+        "$dispatch_api_table",
+        "$restore_win32_nonvolatile",
+        "$host_log_api_exit"
+      ]
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "kind": "host-entry",
+      "sha256": "a42e9ad55b65ae1b134d022679b1373bc6487ebdec660873917481800dbc7a9d",
+      "targets": [
+        [
+          "call",
+          "$gl32",
+          [
+            "local.get",
+            "$prev_esp"
+          ]
+        ]
+      ],
+      "boundaryCalls": [],
+      "directCalls": [
+        "$win16_task_boot",
+        "$anim_service",
+        "$apc_resume_alert_sleep",
+        "$null_transfer_check",
+        "$null_diag_event",
+        "$next",
+        "$page_chunk_reclaim_deferred",
+        "$thread_arena_flush_if_safe",
+        "$thread_arena_rewind",
+        "$clear_cache",
+        "$watch_load",
+        "$watch_load",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$gl32",
+        "$win16_arena_base",
+        "$win16_arena_base",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$host_log_i32",
+        "$win16_dispatch",
+        "$win32_dispatch",
+        "$gl32",
+        "$wndproc_marker_direct_call",
+        "$host_log_block",
+        "$host_log_eip",
+        "$hot_block_hist_record",
+        "$fast_msvc_sbh_scan",
+        "$page_resolve",
+        "$decode_run",
+        "$next",
+        "$page_chunk_reclaim_deferred"
+      ]
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$null_transfer_check",
+      "kind": "context-restore",
+      "sha256": "916aedc721854fb4359d8e91b4cc35130d0f6f5219fc1186e4ac06d2f3d3cae6",
+      "targets": [],
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "directCalls": [
+        "$invocation_current"
+      ]
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$null_transfer_record",
+      "kind": "context-restore",
+      "sha256": "35dc60ab9de8207bf6d503c45d3fe6ba216a13dfd734a83dd82136c024c24f0f",
+      "targets": [],
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "directCalls": [
+        "$invocation_current"
+      ]
+    }
+  ],
+  "rejectingControls": 80,
+  "results": [
+    {
+      "label": "$th_pop_run_ret: unknown",
+      "errors": [
+        "unknown producer src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: body drift",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_pop_run_ret (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: missing provenance",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_pop_run_ret"
+      ]
+    },
+    {
+      "label": "$th_pop_run_ret: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_pop_run_ret (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$th_ret: unknown",
+      "errors": [
+        "unknown producer src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: body drift",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_ret (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$th_ret: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: missing provenance",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_ret"
+      ]
+    },
+    {
+      "label": "$th_ret: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_ret (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: unknown",
+      "errors": [
+        "unknown producer src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: body drift",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_ret_imm (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: missing provenance",
+      "errors": [
+        "unreviewed producer src/05-alu.wat:$th_ret_imm"
+      ]
+    },
+    {
+      "label": "$th_ret_imm: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/05-alu.wat:$th_ret_imm (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: unknown",
+      "errors": [
+        "unknown producer src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: body drift",
+      "errors": [
+        "changed producer src/09b-dispatch.wat:$win32_dispatch (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: missing provenance",
+      "errors": [
+        "unreviewed producer src/09b-dispatch.wat:$win32_dispatch"
+      ]
+    },
+    {
+      "label": "$win32_dispatch: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/09b-dispatch.wat:$win32_dispatch (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: unknown",
+      "errors": [
+        "unknown producer src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: body drift",
+      "errors": [
+        "changed producer src/09b-dispatch.wat:$win32_dispatch_inner (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: missing provenance",
+      "errors": [
+        "unreviewed producer src/09b-dispatch.wat:$win32_dispatch_inner"
+      ]
+    },
+    {
+      "label": "$win32_dispatch_inner: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/09b-dispatch.wat:$win32_dispatch_inner (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$run: unknown",
+      "errors": [
+        "unknown producer src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: body drift",
+      "errors": [
+        "changed producer src/13-exports.wat:$run (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$run: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: missing provenance",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$run"
+      ]
+    },
+    {
+      "label": "$run: stale target after body-only refresh",
+      "errors": [
+        "changed producer src/13-exports.wat:$run (targets); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: unknown",
+      "errors": [
+        "unknown producer src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: body drift",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: missing provenance",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 3",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 4",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 5",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 6",
+      "errors": [
+        "stale producer src/13-exports.wat:$null_transfer_check"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 7",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_check: removed guard 8",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_check (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: unknown",
+      "errors": [
+        "unknown producer src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: body drift",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_record (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: ownership undefined",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: ownership proven",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: ownership accepted",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: ownership owned",
+      "errors": [
+        "unsupported ownership assertion src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: invalid lifetime kind",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: missing provenance",
+      "errors": [
+        "unreviewed producer src/13-exports.wat:$null_transfer_record"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: removed guard 10",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_record (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: removed guard 12",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_record (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: removed guard 13",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_record (sha256); review its lifetime"
+      ]
+    },
+    {
+      "label": "$null_transfer_record: removed guard 14",
+      "errors": [
+        "changed producer src/13-exports.wat:$null_transfer_record (sha256); review its lifetime"
+      ]
+    }
+  ],
+  "ownership": "PENDING",
+  "writer": "UNPROVEN",
+  "historical61e1ea2d": "REJECTED",
+  "runtime": "UNQUALIFIED"
+}

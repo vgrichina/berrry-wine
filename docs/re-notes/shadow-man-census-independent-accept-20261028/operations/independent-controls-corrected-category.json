@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=320",
+    "tools/shadow-man-census-independent-accept-oct28.test.js"
+  ],
+  "cwd": "/tmp/shadow-man-census-independent-accept-oct28/repo",
+  "environment": {
+    "HOME": "/home/user",
+    "LANG": "en_US.UTF-8",
+    "USER": "user",
+    "LC_ALL": "en_US.UTF-8",
+    "PATH": "/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.codex/tmp/arg0-linux/codex-arg0ErG44K:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "memAvailable": 3236634624,
+  "clientsBaseline": {
+    "1970989": 198172672,
+    "1973242": 193687552,
+    "1973461": 195469312
+  },
+  "cpu": 90,
+  "wall": 120,
+  "groupRSSCap": 536870912,
+  "pythonRSSCap": 134217728,
+  "fileCap": 1048576,
+  "outputCap": 2097152,
+  "gitDataChildOnly": 268435456,
+  "exit": 0,
+  "reason": null,
+  "peakGroupRSS": 119713792,
+  "aggregateClientGrowthPeak": 0,
+  "bytes": 36373,
+  "elapsed": 0.20623948285356164,
+  "reaped": true
+}

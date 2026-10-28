@@ -1,0 +1,100 @@
+[
+  {
+    "operation": "corrected-tree",
+    "baselineClientGrowth": 4190208,
+    "withinOperationGrowth": 0,
+    "childPeak": 10342400,
+    "observedBound": 14532608
+  },
+  {
+    "operation": "checkout",
+    "baselineClientGrowth": 4513792,
+    "withinOperationGrowth": 0,
+    "childPeak": 34836480,
+    "observedBound": 39350272
+  },
+  {
+    "operation": "original-tree",
+    "baselineClientGrowth": 3301376,
+    "withinOperationGrowth": 0,
+    "childPeak": 8101888,
+    "observedBound": 11403264
+  },
+  {
+    "operation": "mount",
+    "baselineClientGrowth": 0,
+    "withinOperationGrowth": 0,
+    "childPeak": 38273024,
+    "observedBound": 38273024
+  },
+  {
+    "operation": "corrected-production",
+    "baselineClientGrowth": 4190208,
+    "withinOperationGrowth": 0,
+    "childPeak": 366780416,
+    "observedBound": 370970624
+  },
+  {
+    "operation": "startup-current-rss",
+    "baselineClientGrowth": 0,
+    "withinOperationGrowth": 0,
+    "childPeak": 37748736,
+    "observedBound": 37748736
+  },
+  {
+    "operation": "sparse-refresh",
+    "baselineClientGrowth": 3301376,
+    "withinOperationGrowth": 0,
+    "childPeak": 12627968,
+    "observedBound": 15929344
+  },
+  {
+    "operation": "independent-controls",
+    "baselineClientGrowth": 3735552,
+    "withinOperationGrowth": 0,
+    "childPeak": 95395840,
+    "observedBound": 99131392
+  },
+  {
+    "operation": "identity-delta",
+    "baselineClientGrowth": 2232320,
+    "withinOperationGrowth": 73728,
+    "childPeak": 0,
+    "observedBound": 2306048
+  },
+  {
+    "operation": "original-production",
+    "baselineClientGrowth": 3301376,
+    "withinOperationGrowth": 0,
+    "childPeak": 367026176,
+    "observedBound": 370327552
+  },
+  {
+    "operation": "sparse",
+    "baselineClientGrowth": 4513792,
+    "withinOperationGrowth": 0,
+    "childPeak": 0,
+    "observedBound": 4513792
+  },
+  {
+    "operation": "independent-controls-corrected-category",
+    "baselineClientGrowth": 4841472,
+    "withinOperationGrowth": 0,
+    "childPeak": 119713792,
+    "observedBound": 124555264
+  },
+  {
+    "operation": "startup",
+    "baselineClientGrowth": 0,
+    "withinOperationGrowth": 0,
+    "childPeak": 9175040,
+    "observedBound": 9175040
+  },
+  {
+    "operation": "init",
+    "baselineClientGrowth": 0,
+    "withinOperationGrowth": 0,
+    "childPeak": 0,
+    "observedBound": 0
+  }
+]

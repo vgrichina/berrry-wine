@@ -1,0 +1,117 @@
+{
+  "memAvailable": 3215962112,
+  "diskFree": 3321274368,
+  "codex": [
+    {
+      "pid": 265632,
+      "exe": "/home/user/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/bin/codex",
+      "argv": [
+        "/home/user/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/bin/codex",
+        "app-server",
+        "daemon",
+        "pid-update-loop"
+      ],
+      "rss": 18403328
+    },
+    {
+      "pid": 598545,
+      "exe": "/home/user/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/bin/codex",
+      "argv": [
+        "/home/user/.codex/packages/app-server-daemon/releases/0.165.0-x86_64-unknown-linux-musl/bin/codex",
+        "app-server",
+        "--listen",
+        "unix://",
+        "--analytics-default-enabled",
+        "--managed-daemon"
+      ],
+      "rss": 52224000
+    },
+    {
+      "pid": 1970989,
+      "exe": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/morrowind-observer-invocation-correlation-accept-oct28/final.txt",
+        "-"
+      ],
+      "rss": 193331200
+    },
+    {
+      "pid": 1973242,
+      "exe": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/morrowind-quiet-arming-independent-accept-oct28/final.txt",
+        "-"
+      ],
+      "rss": 284835840
+    },
+    {
+      "pid": 1973461,
+      "exe": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+      "argv": [
+        "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+        "exec",
+        "--profile",
+        "wine-worker",
+        "-c",
+        "model_auto_compact_token_limit=200000",
+        "-c",
+        "model_auto_compact_token_limit_scope=\"total\"",
+        "-m",
+        "gpt-6.1-sol",
+        "-c",
+        "model_reasoning_effort=\"medium\"",
+        "--json",
+        "--output-last-message",
+        "/home/user/wine-assembly/scratch/usage-watch/shadow-man-census-independent-accept-oct28/final.txt",
+        "-"
+      ],
+      "rss": 252981248
+    }
+  ],
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "5": [
+      -1,
+      -1
+    ]
+  }
+}

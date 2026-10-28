@@ -1,0 +1,38 @@
+{
+  "argv": [
+    "/usr/bin/node",
+    "--max-old-space-size=320",
+    "/tmp/shadow-man-census-independent-accept-oct28/ops/startup.cjs"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "environment": {
+    "HOME": "/home/user",
+    "LANG": "en_US.UTF-8",
+    "USER": "user",
+    "LC_ALL": "en_US.UTF-8",
+    "PATH": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0ErG44K:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_NO_LAZY_FETCH": "1",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "memAvailable": 3565584384,
+  "clientsBaseline": {
+    "1970989": 193060864,
+    "1973242": 212021248,
+    "1973461": 203423744
+  },
+  "cpu": 90,
+  "wall": 120,
+  "groupRSSCap": 536870912,
+  "pythonRSSCap": 134217728,
+  "fileCap": 1048576,
+  "outputCap": 2097152,
+  "gitDataChildOnly": 268435456,
+  "exit": -9,
+  "reason": "python RSS",
+  "peakGroupRSS": 9175040,
+  "aggregateClientGrowthPeak": 0,
+  "bytes": 0,
+  "elapsed": 0.015100203920155764,
+  "reaped": true
+}
