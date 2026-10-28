@@ -13,7 +13,9 @@ from pathlib import Path, PurePosixPath
 import re
 import stat
 import struct
+import shutil
 import sys
+import tempfile
 import time
 import urllib.error
 import urllib.parse
@@ -244,7 +246,7 @@ def pe(path):
     optsize, = unpack('<H', at+20)
     opt = at+24
     magic, = unpack('<H', opt)
-    if magic != 0x10b or not 0 < sections <= 96 or optsize < 112:
+    if machine != 0x14c or magic != 0x10b or not 0 < sections <= 96 or optsize < 112:
         raise Rejected('unsupported PE layout')
     table = opt+optsize
     maps = []
@@ -291,10 +293,125 @@ def closure(directory, inventory):
             report['windows'] = [x for x in report['imports'] if x not in names and x.removesuffix('.dll') in SYSTEM]
             report['unresolved'] = [x for x in report['imports'] if x not in names and x.removesuffix('.dll') not in SYSTEM]
             modules[item['path']] = report
+    unresolved = {name: row['unresolved'] for name, row in modules.items() if row['unresolved']}
+    if unresolved:
+        raise Rejected('unresolved non-system DLL imports: ' + json.dumps(unresolved, sort_keys=True))
+    if not modules:
+        raise Rejected('no validated PE modules')
+    data = literal_sources(d, inventory)
     licenses = [x for x in inventory['files'] if re.search(r'(?i)(copying|license|licence|copyright)', x['path'])]
     return {'modules': modules, 'licenseFiles': licenses,
-            'scope': 'static direct imports only; dynamic loads/data references/runtime unverified',
+            'literalSources': data,
+            'scope': 'validated static direct DLL imports and recognized literal Tcl source references only; computed Tcl, dynamic loads and runtime unknown',
             'dataFiles': [x['path'] for x in inventory['files'] if not Path(x['path']).suffix.casefold() in ('.exe', '.dll')]}
+
+
+def literal_sources(directory, inventory):
+    """Conservative lexical audit, never a Tcl interpreter or a runtime proof.
+
+    Recognize standalone source commands at line/semicolon boundaries. Relative
+    literals are checked against root and script directory (CWD is not known).
+    Substitution, continuations and unrecognized command forms remain unknown.
+    """
+    paths = {x['path'].casefold() for x in inventory['files']}
+    checked, unknown = [], []
+    for item in inventory['files']:
+        name = item['path']
+        if Path(name).suffix.casefold() != '.tcl':
+            continue
+        text = (directory / name).read_text(encoding='utf8', errors='replace')
+        for match in re.finditer(r'(?:^|[;\n])[ \t]*source[ \t]+([^;\n]*)', text):
+            word = match.group(1).strip()
+            if word.startswith('-encoding '):
+                option = re.fullmatch(r'-encoding\s+[A-Za-z0-9_-]+\s+(.+)', word)
+                if option:
+                    word = option.group(1)
+            literal = re.fullmatch(r'(?:\{([^{}]*)\}|"([^"$\[\\]*)"|([^\s{}"$\[\\]+))', word)
+            if not literal or '\\' in word or '$' in word or '[' in word:
+                unknown.append({'script': name, 'expression': word[:1024]})
+                continue
+            target = next(x for x in literal.groups() if x is not None)
+            # Absolute, drive and parent-relative paths depend on runtime CWD.
+            if not target or target.startswith('/') or ':' in target or '..' in PurePosixPath(target).parts:
+                unknown.append({'script': name, 'expression': word[:1024]})
+                continue
+            candidates = [PurePosixPath(target).as_posix(), (PurePosixPath(name).parent / target).as_posix()]
+            found = sorted({p for p in candidates if p.casefold() in paths})
+            if not found:
+                raise Rejected('missing literal Tcl source: ' + name + ' -> ' + target)
+            checked.append({'script': name, 'literal': target, 'candidatesPresent': found})
+    return {'checked': checked, 'unknown': unknown,
+            'limitations': 'lexical command subset; root/script-directory candidates only; computed and other Tcl forms/runtime unknown'}
+
+
+def publish_extract(archive, destination, expanded_limit):
+    """Validate in owned staging, then publish; roll back synchronous errors.
+
+    Two sibling reports cannot be replaced atomically for concurrent readers.
+    This transaction guarantees rollback on ordinary exceptions, not power-loss
+    atomicity. On rollback I/O failure retain the recovery directory and report
+    its path; never print a success receipt. Callers must serialize publication.
+    """
+    destination = Path(destination)
+    # Preserve the production pin before creating staging or any output.
+    pin(archive)
+    metadata(archive, expanded_limit)
+    if destination.exists() or destination.is_symlink() or any(p.is_symlink() for p in destination.parents):
+        raise Rejected('destination exists or symlink ancestor')
+    parent = destination.parent
+    if not parent.is_dir():
+        raise Rejected('publication parent must already exist')
+    reports = [parent / 'inventory.json', parent / 'closure.json']
+    for path in reports:
+        if path == destination or path.is_symlink() or (path.exists() and (not path.is_file() or path.stat().st_size > MAX_FILE)):
+            raise Rejected('unsafe preexisting report: ' + str(path))
+    staging = Path(tempfile.mkdtemp(prefix='.tuxracer-stage-', dir=parent))
+    replaced, backups, moved = [], {}, False
+    recovery_needed = False
+    try:
+        result = extract(archive, staging / 'payload', expanded_limit)
+        report = closure(staging / 'payload', result)
+        for path, value in zip(reports, (result, report)):
+            (staging / ('new-' + path.name)).write_text(json.dumps(value, indent=2) + '\n')
+            if path.exists():
+                backup = staging / ('old-' + path.name)
+                shutil.copyfile(path, backup)
+                backups[path] = backup
+        # No complete report is published until all validation and writes pass.
+        os.rename(staging / 'payload', destination)
+        moved = True
+        for path in reports:
+            os.replace(staging / ('new-' + path.name), path)
+            replaced.append(path)
+    except BaseException as cause:
+        failures = []
+        for path in reversed(replaced):
+            try:
+                if path in backups:
+                    os.replace(backups[path], path)
+                else:
+                    path.unlink()
+            except OSError as error:
+                failures.append(str(error))
+        if moved:
+            try:
+                os.rename(destination, staging / 'payload')
+            except OSError as error:
+                failures.append(str(error))
+        if failures:
+            recovery_needed = True
+            raise Rejected('publication failed; rollback incomplete; recovery retained at ' + str(staging) + ': ' + '; '.join(failures)) from cause
+        raise
+    finally:
+        if not recovery_needed:
+            try:
+                shutil.rmtree(staging)
+            except OSError as error:
+                # Commit is the final report replacement. Cleanup cannot turn a
+                # committed transaction into a failed stage with success files.
+                # Before commit the original exception remains authoritative.
+                print('staging cleanup pending at ' + str(staging) + ': ' + str(error), file=sys.stderr)
+    return result, report
 
 
 def main():
@@ -317,10 +434,7 @@ def main():
     elif args.action == 'inspect':
         print(json.dumps(guarded(lambda: pin(args.archive), lambda: metadata(args.archive, args.max_expanded_bytes)), indent=2))
     else:
-        result = extract(args.archive, args.destination, args.max_expanded_bytes)
-        (args.destination.parent / 'inventory.json').write_text(json.dumps(result, indent=2)+'\n')
-        report = closure(args.destination, result)
-        (args.destination.parent / 'closure.json').write_text(json.dumps(report, indent=2)+'\n')
+        result, report = publish_extract(args.archive, args.destination, args.max_expanded_bytes)
         print(json.dumps({'files': len(result['files']), 'metadata': result['metadata'], 'modules': report['modules'], 'licenseFiles': report['licenseFiles']}, indent=2))
 
 
