@@ -1,0 +1,47 @@
+{
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "parent": "b41a7c5f4b752d1f0bdab1141a11d4fed4dc6f9a",
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "buildBlob": "5407cb296ee6cdab2e30a226d1188206beb852af",
+  "buildSHA256": "5ca2278e733bea26d8c261b993006424b845bc9328753d1b1506119e4608b5ef",
+  "closure": {
+    "files": 3126,
+    "bytes": 59897543,
+    "scannerFiles": 3104,
+    "includeFiles": 127,
+    "combinedBytes": 20705035,
+    "combinedSHA256": "a41d0bcadd03da05a7505825a43ece40c4c6c1ac47fe1d0c2558798ff21f1214",
+    "manifest": "candidate-inputs.json.gz",
+    "missing": []
+  },
+  "compiler": {
+    "path": "tools/watx-src/compiler-codegen.js",
+    "blob": "71d05cb80f8d87d3d879d6b1d6329a5c5eeaca8c",
+    "sha256": "84744dbdef3897f589f1c1465cc6d3025448250df09b1254369fdb16f73fa94d",
+    "excerptRanges": [
+      [
+        1759,
+        1810
+      ],
+      [
+        1890,
+        2006
+      ],
+      [
+        2161,
+        2200
+      ]
+    ],
+    "excerptBytes": 11191,
+    "excerptSHA256": "9aee170db719a6bcc979c007091635f7c537f2e2333471cc9a0ee4b015c98b12",
+    "recipe": "splitlines(keepends=True); concatenate inclusive ranges in given order"
+  },
+  "nativeGuard": {
+    "path": "/home/user/wine-assembly-shadow-man-native-bound-canonical-oct23/docs/re-notes/shadow-man-native-bound-canonical-20261023/native-module-bound.cjs",
+    "sha256": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+    "status": "UNCHANGED; exact accepted enforcement retained; NOT invoked in this task"
+  }
+}

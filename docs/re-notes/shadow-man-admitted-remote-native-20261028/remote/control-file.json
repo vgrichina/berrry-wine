@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "try{require(\"fs\").writeFileSync(\"/tmp/shadow-task/repo/oversize-control\",Buffer.alloc(25165825))}catch(e){console.error(e.code);process.exit(1)}"
+  ],
+  "cwd": "/tmp/shadow-task/repo",
+  "pid": 10954,
+  "exit": 1,
+  "reason": null,
+  "elapsed": 0.06372044900001583,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 6
+  },
+  "aggregateLogMax": 524288,
+  "retained": 6,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 47255552
+}

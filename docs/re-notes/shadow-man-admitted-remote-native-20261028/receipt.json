@@ -1,0 +1,53 @@
+{
+  "at": "2026-10-28T21:06:19.445073+00:00",
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "taskBranch": "task/shadow-man-admitted-remote-native-oct28",
+  "verdict": "BLOCKED_MANDATORY_CALLBACK_OWNERSHIP_CENSUS",
+  "buildAttempts": 1,
+  "command": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "canonicalExit": 1,
+  "elapsedSeconds": 2.47102483499998,
+  "completeModuleProduced": false,
+  "compiledABI": "NOT REACHED",
+  "nativeAttempts": 0,
+  "fixtureImplemented": false,
+  "firstMissingEvidence": "passing mandatory callback-ownership producer census on this exact candidate; no producer refresh or source repair authorized",
+  "historicalSource61e1ea2d": "REJECTED",
+  "historicalWriter": "UNPROVEN",
+  "historicalModule8fac3993": "NOT USED",
+  "layoutSourceReceipt": "9a3bc9149d58209c;269records; reused dispatch seals, not compiled ABI",
+  "nodeVersion": "v24.22.1",
+  "nodeSHA256": "e32e2d16081cf644f88392934288086e7662529d0d43277c34f7aad2207cfafb",
+  "box": {
+    "boxID": "bx_k4htahnf",
+    "state": "stopped",
+    "created": "2026-10-28T20:59:23.435Z",
+    "expiry": "2026-10-28T21:34:23.435Z",
+    "cutoff": "2026-10-28T21:30:00Z",
+    "shutdownOwner": "worker delegated snapshot-stop; coordinator ultimate/fallback",
+    "receipt": "create.stdout",
+    "stoppedAt": "2026-10-28T21:05:09.595Z",
+    "stop": {
+      "endedAt": "2026-10-28T21:05:09.614Z",
+      "error": null,
+      "id": "stop_67ca966ffacff422",
+      "lastAttemptAt": "2026-10-28T21:05:09.614Z",
+      "requestedAt": null,
+      "status": "completed"
+    },
+    "snapshotCompletedAt": "2026-10-28T21:04:48.666Z",
+    "snapshotVerifiedAt": "2026-10-28T21:04:48.666Z",
+    "snapshotAvailable": true,
+    "handback": "coordinator ultimate owner; no running compute; do not resume under this task"
+  },
+  "scope": "qualification attempt only; no source changes, original guest capture, integration, gameplay acceptance, retry or replacement task",
+  "incidents": [
+    "Initial instruction/search terminal output exceeded8192B; raw own session retained; no claim of whole-task output-budget PASS.",
+    "Control API checker initially expected CLI0 although Boat propagated correct rejection125/1; reconciled existing exact receipts without rerun.",
+    "Third transfer invocation found completed cursor and sent zero files; no accepted source/control replay."
+  ],
+  "durableRecovery": "This committed focused manifest and receipts are taskbranch-backed. Recreate exact source from immutable candidate plus reused manifest; no Wasm exists to retain. Snapshot stopped box retains staged exact sources under provider retention; no resume authorized."
+}

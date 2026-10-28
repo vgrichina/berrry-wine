@@ -1,0 +1,5 @@
+{"event":"created","hostedPorts":null,"id":"bx_k4htahnf","org":null,"team":null,"ttlSeconds":2100}
+{"event":"state","id":"bx_k4htahnf","state":"starting"}
+{"event":"state","id":"bx_k4htahnf","state":"cloning"}
+{"event":"state","id":"bx_k4htahnf","state":"idle"}
+{"archiveAfter":"2026-10-28T21:34:23.435Z","commands":{"forward":"boat forward bx_k4htahnf --remote 3000 --local 3000","ssh":"boat ssh bx_k4htahnf"},"desktopUrl":null,"event":"ready","id":"bx_k4htahnf","ip":"2001:41d0:8:8176:100::3c","state":"idle","url":"https://box-node-73ce438b80f476ae.on.boat.dev"}

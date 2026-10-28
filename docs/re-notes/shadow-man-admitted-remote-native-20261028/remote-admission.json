@@ -1,0 +1,17 @@
+{
+  "remoteMemAvailable": 7412871168,
+  "remoteMemTotal": 8327106560,
+  "nodeStanding": {
+    "path": "/home/user/.nvm/versions/node/v24.22.1/bin/node"
+  },
+  "copiedNodeBytes": 0,
+  "source": 59897543,
+  "buildExtra": 51606820,
+  "sourceBindingManifest": 1560000,
+  "apiCommandsAndHistory": 25000000,
+  "chunkScratchMax": 4000000,
+  "helpersNativeFixtureEvidenceAndGrowth": 12000000,
+  "reserve": 16777216,
+  "cap": 268435456,
+  "projection": 170841579
+}

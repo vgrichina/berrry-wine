@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-28T20:59:23.308654+00:00",
+  "dispatch": "/home/user/wine-assembly/scratch/usage-watch/shadow-man-admitted-remote-native-oct28-dispatch.json",
+  "manifest": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/candidate-inputs.json.gz",
+  "sourceFiles": 3126,
+  "sourceBytes": 59897543,
+  "remoteProjection": {
+    "canonicalStandingProjection": 111504363,
+    "optionalExactNodeCopy": 123656816,
+    "oneTransferChunk": 262144,
+    "helpersFixtureLogsGitAndGrowth": 12000000,
+    "reserve": 16777216
+  },
+  "remoteTotal": 264200539,
+  "remoteCap": 268435456,
+  "local": {
+    "allocation": 67108864,
+    "reserve": 8388608,
+    "existingReservations": 402653184,
+    "newRemainingWorstCase": 67108864
+  },
+  "hostFree": 3477139456,
+  "hostAfterAllReservations": 3007377408,
+  "hostFloor": 2982150144,
+  "MemAvailable": 3633111040,
+  "actualMountArgv": [],
+  "intendedMountFiles": [],
+  "plan": "one complete bash tools/build.sh; corrected static helper/guard unchanged; one fixed512MiB native arena serial; no guest mount; source/compiler receipts reused",
+  "PASS": true
+}

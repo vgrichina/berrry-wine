@@ -1,0 +1,9 @@
+{
+  "PASS": true,
+  "fileControl": "EFBIG under actual24MiB RLIMIT_FSIZE, exit1; correctly rejected",
+  "outputControl": "supervisor125",
+  "wallControl": "supervisor125",
+  "bookkeeping": "API CLI propagates remote status; no controls rerun",
+  "compiledABI": "not yet executed",
+  "sourceReceipt": "coordinator exact candidate269records layout9a3bc9149d58209c reused; staged3126 exact-source manifest matched"
+}

@@ -1,0 +1,22 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "try{require(\"fs\").writeFileSync(\"/tmp/shadow-task/repo/oversize-control\",Buffer.alloc(25165825))}catch(e){console.error(e.code);process.exit(1)}"
+  ],
+  "cwd": "/tmp/shadow-task/repo",
+  "environment": {
+    "PATH": "/home/user/.nvm/versions/node/v24.22.1/bin:/usr/bin:/bin",
+    "HOME": "/home/user",
+    "LANG": "C.UTF-8",
+    "TZ": "UTC",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "NODE_OPTIONS": "--max-old-space-size=2048 --require=/tmp/shadow-task/ops/native-module-bound.cjs"
+  },
+  "memAvailable": 7329370112,
+  "minimum": 805306368,
+  "limits": "Limit                     Soft Limit           Hard Limit           Units     \nMax cpu time              unlimited            unlimited            seconds   \nMax file size             unlimited            unlimited            bytes     \nMax data size             unlimited            unlimited            bytes     \nMax stack size            8388608              unlimited            bytes     \nMax core file size        0                    unlimited            bytes     \nMax resident set          unlimited            unlimited            bytes     \nMax processes             31546                31546                processes \nMax open files            524288               524288               files     \nMax locked memory         8388608              8388608              bytes     \nMax address space         unlimited            unlimited            bytes     \nMax file locks            unlimited            unlimited            locks     \nMax pending signals       31546                31546                signals   \nMax msgqueue size         819200               819200               bytes     \nMax nice priority         0                    0                    \nMax realtime priority     0                    0                    \nMax realtime timeout      unlimited            unlimited            us        \n",
+  "cpu": 60,
+  "wall": 60,
+  "wrapperSHA256": "c485d96e599193c758adcb10dd53b5cfd25a94f4b5ff7a72b0f3854ede9b0d88"
+}

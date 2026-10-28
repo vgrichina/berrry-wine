@@ -1,0 +1,25 @@
+{
+  "argv": [
+    "bash",
+    "tools/build.sh"
+  ],
+  "cwd": "/tmp/shadow-task/repo",
+  "pid": 11637,
+  "exit": 1,
+  "reason": null,
+  "elapsed": 2.47102483499998,
+  "streamBytes": {
+    "stdout": 232,
+    "stderr": 807
+  },
+  "aggregateLogMax": 524288,
+  "retained": 1039,
+  "fileMax": 25165824,
+  "cpuSeconds": 900,
+  "wallSeconds": 900,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 466493440
+}

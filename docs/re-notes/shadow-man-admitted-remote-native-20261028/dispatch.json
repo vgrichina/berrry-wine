@@ -1,0 +1,109 @@
+{
+  "at": "2026-10-28T20:55:59.577058+00:00",
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "staticCompatibility": "PASS_BOUND_EXACT_RETAINED_RECEIPTS",
+  "layoutFingerprint": "9a3bc9149d58209c",
+  "records": 269,
+  "checks": [
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/candidate-inputs.json.gz",
+      "sha256": "eb7293f43a284c4ade78bc9a32524c17806bc9b389d908a5b1e7a84fc35d4cdb",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.command.json",
+      "sha256": "18394d6823451f40e30c7b71ecb0ff4340ed284c887a9c5dd0d8770d625f38e8",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.json",
+      "sha256": "d5f9bc8f0d041a3acac717aeadaf6694573a8b373de023dd4035b1d2b1d2d679",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.py",
+      "sha256": "e150711c37088e81ec07cf3a65924e61e149750223dbea33dcece7b01c5c9144",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/checkpoint.receipt.json",
+      "sha256": "c05f7bf3ae26b1e4bcf5009e2d2a8a11101d5554378fc01580ad32750f9b0f4a",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/guard.py",
+      "sha256": "3254541429a1775deba83673a8217d2916bc626c5f3f23caae26b0c95fc1956b",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/measurement-admission.json",
+      "sha256": "61c7f21891e294db13be33059eef4e2582daa963babb3823ee920aa2cbd15877",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/remote-context.command.json",
+      "sha256": "7b99d8254d48c93fd1b4de0f19a01754dd30da906c08b883d7850280e5273cf6",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/remote-context.receipt.json",
+      "sha256": "7a7454202d3f1d05bb67ccd3ab5cbe7bfb6ab08d420a3c77e1758c16f1b20e61",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/reused-controls-identities.json",
+      "sha256": "00de4036041c32fbe0d212d1095f7de07bda45df82e7edc60c25a50f42d1e516",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023/static-source-binding.json",
+      "sha256": "fbcfeac84651e2741e9abf77c70cc4040970099526cfa3dd2b5ae7f1ea3210b3",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-zero-transfer-canonical-native-oct23/docs/re-notes/shadow-man-zero-transfer-canonical-native-20261023.md",
+      "sha256": "8d64d1f4bbc6c7c291e1879dea53769abaa89297965e0d3fe6db27d1653514f7",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/test-static-abi.py",
+      "sha256": "50dc79c48bc81ad9513f6ff6d282bc124d3f794ce51894805edc790f1292cc86",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/static-abi.py",
+      "sha256": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.json",
+      "sha256": "16e162f9dcf5f7793258dc96b5056e8af3384a4edfdc3e28a0195ba623b968ff",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/focused-tests.stderr",
+      "sha256": "610a61452146c50fcc0e9b14f87c2cbb9bd0769a9471284af2ffe941aeff273e",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-static-declaration-laws-repair-oct23/docs/re-notes/shadow-man-static-declaration-laws-repair-20261023/source-bindings.json",
+      "sha256": "8734efcab8da2d024f1962062e037a8fab355efc62f1753f79f2f0901f6528bf",
+      "match": true
+    },
+    {
+      "path": "/home/user/wine-assembly-shadow-man-complete-gate-data-readiness-oct23/docs/re-notes/shadow-man-complete-gate-data-readiness-20261023/standing-identities.json",
+      "sha256": "e46309e4f91b8239d35f639530bc2cc9a08ed8c0fabb1fe6fad36d3305944604",
+      "match": true
+    }
+  ],
+  "availableDiskBytes": 3484213248,
+  "existingReservations": 402653184,
+  "newLocalAllocation": 67108864,
+  "newRemoteAllocation": 268435456,
+  "floor": 2982150144,
+  "remainingAboveFloor": 32301056,
+  "memAvailableBytes": 3423805440,
+  "allocationVerdict": "PASS",
+  "objective": "One exact-candidate canonical build plus native zero-transfer attribution qualification on a separately authorized finite-TTL Boat; no Airstrike build retry",
+  "CPUControls": "Preserve Shadow Man historical build900s/native150s and cheap60s bounds; no override of platform limits. Airstrike CPU90 rejection remains separate and binding."
+}

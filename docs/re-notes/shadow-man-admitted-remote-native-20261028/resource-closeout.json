@@ -1,0 +1,30 @@
+{
+  "charges": {
+    "owned": 16256334,
+    "launcher": 900984,
+    "ownSession": 1196034,
+    "wholeCurrentSharedWALConservative": 25449400,
+    "futurePublicationSessionWALGrowth": 4194304,
+    "reserve": 8388608
+  },
+  "walPaths": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 552112,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4185952
+  },
+  "baselinePolicy": "No start WAL baseline retained; entire current WAL charged conservatively instead of invented positive-growth value",
+  "total": 56385664,
+  "cap": 67108864,
+  "PASS": true,
+  "hostFree": 3447369728,
+  "remainingFutureAfterReservations": 3032133632,
+  "hostFloor": 2982150144,
+  "remoteMeasuredFinalTaskBytes": 60530501,
+  "remoteCaptureTransientFilePeak": 25165824,
+  "remoteTransportHistoryBudget": 25000000,
+  "remoteProjection": 170841579,
+  "remoteCap": 268435456
+}

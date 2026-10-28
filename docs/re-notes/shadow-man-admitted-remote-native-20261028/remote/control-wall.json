@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "setInterval(()=>{},1000)"
+  ],
+  "cwd": "/tmp/shadow-task/repo",
+  "pid": 10943,
+  "exit": -15,
+  "reason": "wall timeout",
+  "elapsed": 1.0651086499999565,
+  "streamBytes": {
+    "stdout": 0,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 0,
+  "fileMax": 25165824,
+  "cpuSeconds": 1,
+  "wallSeconds": 1,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 44630016
+}

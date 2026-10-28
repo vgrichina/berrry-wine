@@ -1,0 +1,17 @@
+{
+  "historicalWrapper": "/home/user/wine-assembly-shadow-man-span-static-canonical-oct23/docs/re-notes/shadow-man-span-static-canonical-20261023/recipe.py",
+  "unchangedBoundedFunctionSHA256": "cefed2a75fca68b42e17cbcb905eb9c2fc422d79184f53255071625589e193c0",
+  "adaptations": [
+    "task-owned paths",
+    "remote standing executable",
+    "explicit required environment and heap",
+    "startup command receipts",
+    "one-shot canonical latch",
+    "strict rejecting controls"
+  ],
+  "helperHashes": {
+    "remote-guard.py": "c485d96e599193c758adcb10dd53b5cfd25a94f4b5ff7a72b0f3854ede9b0d88",
+    "native-module-bound.cjs": "47ce2e2b835be33eab6b2b24f027ecaab8ceb61c559890e51548c78199beb197",
+    "static-abi.py": "2507d350af9a96cb7dea47ab03df36674f07bd89ecc6c740acd37b4fc85d1bd8"
+  }
+}

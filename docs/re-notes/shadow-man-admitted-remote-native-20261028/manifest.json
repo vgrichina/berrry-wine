@@ -1,0 +1,275 @@
+{
+  "candidate": "2e6f5984d3f64d7781fb02da09bbb8d564302123",
+  "files": [
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/RECOVERY.md",
+      "bytes": 758,
+      "sha256": "1f60c046dd02fa86d348664e9b2397ac0281b36cc1e14597234c9871c3b930c6"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/api.py",
+      "bytes": 776,
+      "sha256": "1cd379e23c2740ca5c0f3dda8d88c997387475d01527b8024b68da4d4b2a73a6"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/canonical-build.api.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/canonical-build.api.stdout",
+      "bytes": 167,
+      "sha256": "f968ed86cbb46f289bc0afb85899c837a048262896803a04d1d0727804461a1e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/controls-reconciled.json",
+      "bytes": 413,
+      "sha256": "abb7b0a0467b7bc7537b1b2702e351f73ff362aec355ee72657eba69c519b16c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/create.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/create.stdout",
+      "bytes": 566,
+      "sha256": "32b8aff8d0d03cb80a7d463f24e2062aaa63f961a748c03385cb3d7c80ceab68"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/dispatch.json",
+      "bytes": 6139,
+      "sha256": "f5c2371a76e49031b53fb2231033fa702c6da5cde746ac2b72a0468fb1afde05"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/final-info.json",
+      "bytes": 1310,
+      "sha256": "de52cf7b4c7add4352be5bfc322d21caa2673ee831603b95baf1bf44ce30b17f"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/lifecycle.json",
+      "bytes": 768,
+      "sha256": "67d9415c8bc080b5afff67d63ef9d8c928e189384532f39862285854aadd13dc"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/mount-check.cjs",
+      "bytes": 1127,
+      "sha256": "1e07f1faf29e631a5dbf70251eb0d5386c429152c8dacb40465296c6c4a39edc"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/package.py",
+      "bytes": 2196,
+      "sha256": "43e0983c60280c5d04687ab2eca6eb7b39f6da6beeb7b360e96da099c622ddff"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/package.stdout",
+      "bytes": 328,
+      "sha256": "2f7b72cbafc1a2f1f6f88c8b1dfaac741c9aeeb843dc27574811e6388a950191"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/preallocation.json",
+      "bytes": 1180,
+      "sha256": "646903e2eeef01fff4036ebc8d0e256982d876d1a4f0bd2eedaeb0721b598a77"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/preflight.py",
+      "bytes": 2045,
+      "sha256": "29a1ad6d86bf9313d5577d9cf353bb08b73d8999030065e3349c5097e160ae34"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/receipt.json",
+      "bytes": 2636,
+      "sha256": "d776f518d0a19ce0d498791105e142cfbbd76334b581f6f6a356b70d41603e92"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/canonical-build-attempted",
+      "bytes": 22,
+      "sha256": "28d7f1a37d961a495fcc0f5ee1a00d7136b69a58d753759f441512f1e1c5aa45"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/canonical-build.command.json",
+      "bytes": 1915,
+      "sha256": "502611f5248af61baa54ba82458f866d1af9cf5c62c7761d1867d98e95ec3cfb"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/canonical-build.json",
+      "bytes": 465,
+      "sha256": "f40bb10e965606d96dcaa7f7630065951335fb52d7983d6c652312d310422c33"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/canonical-build.stderr",
+      "bytes": 807,
+      "sha256": "1a92435802194c48e8b5449e6320851f0f5821c510247dfa09d8e7c971f02cf5"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/canonical-build.stdout",
+      "bytes": 232,
+      "sha256": "1717f487daa78f7b8133b29c9d406d1095f4daab7d3d53ff31355de468d1e59e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-file.command.json",
+      "bytes": 2099,
+      "sha256": "61f9d756908b137214af137809d50fc3702384d70de71c29c30db822edb6cd9c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-file.json",
+      "bytes": 645,
+      "sha256": "a790f4576b5534441007e1b765869b8bb52f91823ea14206311967b69f11877c"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-file.stderr",
+      "bytes": 6,
+      "sha256": "5f23e20214795c3bd82b70940040e182bcb73d0f9b40def42fafd4acf5fbd2f7"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-file.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-output.command.json",
+      "bytes": 1991,
+      "sha256": "b12a49f52769283ee192c565001945c7ba94bf74202dc98d09931df93c8a20df"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-output.json",
+      "bytes": 567,
+      "sha256": "da8e485b7a87272e740f7b83d5fc37e51fc5905fe29ed8a9b80e093e6bc09dc2"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-output.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-output.stdout",
+      "bytes": 32,
+      "sha256": "c62e4615bd39e222572f3a1bf7c2132ea1e65b17ec805047bd6b2842c593493f"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-wall.command.json",
+      "bytes": 1973,
+      "sha256": "81297d8f0b7da6aac14911295adc745a5007bfdaf024c29a2e42c8edb0273c96"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-wall.json",
+      "bytes": 530,
+      "sha256": "7bd2cf965a651dc1b8a845000c43eea0157dbc0507d7323d82a10cff7b7415f0"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-wall.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/control-wall.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/startup.command.json",
+      "bytes": 2293,
+      "sha256": "daa340778eca3805d70394b2705fa8999eeacddbf87cbeaf7cc99178eb87fc54"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/startup.json",
+      "bytes": 845,
+      "sha256": "fb7d7e8c46113a91d079ad0d765844df0ae2b900d5985428c5757f26eb46bcba"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/startup.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote/startup.stdout",
+      "bytes": 1969,
+      "sha256": "2a7ce0f2755e12c2073fd919fb92905eedb239872aea638efe02a4517cf8d388"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote-admission.json",
+      "bytes": 455,
+      "sha256": "09b188ad9a9842aeb027f5c7689a942d01a5a5f1a006442a589f371af9530a16"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote-final-inventory.json",
+      "bytes": 74,
+      "sha256": "fc3d697012344a33f06b51d4674ca149fea256675ba2a0d56b3e7bf8ce759576"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote-guard.py",
+      "bytes": 4528,
+      "sha256": "c485d96e599193c758adcb10dd53b5cfd25a94f4b5ff7a72b0f3854ede9b0d88"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote-source.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/remote-source.stdout",
+      "bytes": 206,
+      "sha256": "22ca62d429b9a30e8223bc104d274d4a9a23655386a847ea8b089a8d9408dbee"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/root-ref-digest.json",
+      "bytes": 196,
+      "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/stop.stderr",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/stop.stdout",
+      "bytes": 1580,
+      "sha256": "5b24998560eedab3702735ba750f3f4dd403cb9f5da2ada197d409c491c60952"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/supervise.py",
+      "bytes": 3622,
+      "sha256": "8260025e425224298ffcb291089fa141f535abfa4128bb1a52bdc9cb94dfbd36"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/transfer-1.stdout",
+      "bytes": 102,
+      "sha256": "ec42577ca85805cf6903b9e63fd2a8d01dbc2cd47d4d4f8cff036d062da354f4"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/transfer-2.stdout",
+      "bytes": 103,
+      "sha256": "efa792d6c307be59079266ecce3b8179894beab645434761c2afc229e9b564d0"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/transfer-results.jsonl",
+      "bytes": 220490,
+      "sha256": "4761f54072b45395bb6c0b3dc015a26d599aad3b7af1596154ffd9987912a87f"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/transfer.py",
+      "bytes": 2911,
+      "sha256": "8d061de276458226d48ef4c595fa4fd6f23826bcaacaa8a4efd1c02801d5dd89"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/wrapper-binding.json",
+      "bytes": 790,
+      "sha256": "698b4706b198cf10d0a232967f0de05e730ecc0370770c427176d984bed35b8e"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028.md",
+      "bytes": 3078,
+      "sha256": "410ca4046faa993ae8629b2a4af86f90b7b9878bcf7d6048bf93129164cb32b7"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/dependency-binding.json",
+      "bytes": 1540,
+      "sha256": "bfa36e8bdfe334f72f5172838fe6e515e359698d1dfb62089af5838bc75caa07"
+    },
+    {
+      "path": "docs/re-notes/shadow-man-admitted-remote-native-20261028/resource-closeout.json",
+      "bytes": 1055,
+      "sha256": "06abcffd174c85f8b299efa6b945dbec2e88cc8b79776d74e6dca6a252778cbd"
+    }
+  ]
+}

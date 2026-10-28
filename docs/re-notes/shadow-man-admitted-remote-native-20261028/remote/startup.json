@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "/home/user/.nvm/versions/node/v24.22.1/bin/node",
+    "-e",
+    "const fs=require(\"fs\"),crypto=require(\"crypto\");console.log(JSON.stringify({execPath:process.execPath,sha256:crypto.createHash(\"sha256\").update(fs.readFileSync(process.execPath)).digest(\"hex\"),version:process.version,flags:process.execArgv,nodeOptions:process.env.NODE_OPTIONS,limits:fs.readFileSync(\"/proc/self/limits\",\"utf8\")}))"
+  ],
+  "cwd": "/tmp/shadow-task/repo",
+  "pid": 10888,
+  "exit": 0,
+  "reason": null,
+  "elapsed": 0.4488788339999701,
+  "streamBytes": {
+    "stdout": 1969,
+    "stderr": 0
+  },
+  "aggregateLogMax": 524288,
+  "retained": 1969,
+  "fileMax": 25165824,
+  "cpuSeconds": 60,
+  "wallSeconds": 60,
+  "termThenKillSeconds": 5,
+  "subreaper": true,
+  "reaped": true,
+  "remainingGroup": [],
+  "maxChildRSSBytes": 176484352
+}

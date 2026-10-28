@@ -1,0 +1,22 @@
+{
+  "boxID": "bx_k4htahnf",
+  "state": "stopped",
+  "created": "2026-10-28T20:59:23.435Z",
+  "expiry": "2026-10-28T21:34:23.435Z",
+  "cutoff": "2026-10-28T21:30:00Z",
+  "shutdownOwner": "worker delegated snapshot-stop; coordinator ultimate/fallback",
+  "receipt": "create.stdout",
+  "stoppedAt": "2026-10-28T21:05:09.595Z",
+  "stop": {
+    "endedAt": "2026-10-28T21:05:09.614Z",
+    "error": null,
+    "id": "stop_67ca966ffacff422",
+    "lastAttemptAt": "2026-10-28T21:05:09.614Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "snapshotCompletedAt": "2026-10-28T21:04:48.666Z",
+  "snapshotVerifiedAt": "2026-10-28T21:04:48.666Z",
+  "snapshotAvailable": true,
+  "handback": "coordinator ultimate owner; no running compute; do not resume under this task"
+}
