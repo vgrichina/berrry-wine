@@ -3297,6 +3297,7 @@ async function main() {
   for (const name of profileHostNames) wrapProfileHost(h, name);
 
   // --- Override logging ---
+  let morrowindNameObserver = null;
   let criticalTracePending = null;
   // Decoded API names, keyed by the guest pointer they were read from. This
   // runs on EVERY api call -- 904,207 of them in a 55s Black & White 2 window --
@@ -3344,6 +3345,7 @@ async function main() {
       comOrdRaw = true;
       pendingComApiId = -1;
     }
+    if (morrowindNameObserver) morrowindNameObserver.apiEnter(t);
     apiCount++;
     if (apiCounts) apiCounts.set(t, (apiCounts.get(t) || 0) + 1);
     if (TRACE_API) {
@@ -3935,8 +3937,9 @@ async function main() {
     };
   }
 
-  if (ESP_DELTA || TRACE_API || TRACE_CRITICAL) {
+  if (ESP_DELTA || TRACE_API || TRACE_CRITICAL || hasFlag('observe-morrowind-name')) {
     h.log_api_exit = () => {
+      if (morrowindNameObserver) morrowindNameObserver.apiExit();
       if (criticalTracePending) {
         try {
           const after = criticalTracePending.state();
@@ -4898,6 +4901,15 @@ async function main() {
     }
   }
 
+  // MORROWIND_NAME_IMPORT_BEGIN: before instantiation captures import references.
+  if (hasFlag('observe-morrowind-name')) {
+    const legacyEip = h.log_eip;
+    h.log_eip = pc => {
+      if (morrowindNameObserver) morrowindNameObserver.onEip(pc);
+      if (legacyEip) legacyEip(pc);
+    };
+  }
+  // MORROWIND_NAME_IMPORT_END
   const instance = await WebAssembly.instantiate(wasmModule, imports);
   ctx.exports = instance.exports;
   // Quiet runs silence the per-call API log from the first instruction, DLL
@@ -5568,6 +5580,27 @@ async function main() {
 
   applyStartupShow(instance.exports, getArg('startup-show', undefined));
   const { entry } = stageAndLoadPe(instance.exports, memory.buffer, exeBytes, console.log);
+  // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
+  if (hasFlag('observe-morrowind-name')) {
+    morrowindNameObserver = require('../lib/morrowind-name-observer').install({
+      enabled: true, exeBytes, exports: instance.exports,
+      parallel: hasFlag('threads'), traceConflict: !!TRACE_EIP_RANGE,
+      read: (address, length) => {
+        if (!Number.isInteger(address) || address <= 0 || address + length > 0x100000000)
+          throw Error('invalid guest span');
+        const bytes = Buffer.alloc(length);
+        for (let i = 0; i < length; i++) {
+          const offset = translateGuest(address + i, instance.exports.get_image_base(), memory.buffer);
+          if (offset === 0xf0 || offset < 0 || offset >= memory.buffer.byteLength)
+            throw Error('unmapped guest span');
+          bytes[i] = new Uint8Array(memory.buffer)[offset];
+        }
+        return bytes;
+      },
+      emit: record => logs.push('[morrowind-name] ' + JSON.stringify(record)),
+    });
+  }
+  // MORROWIND_NAME_ATTACH_END
   applyVirtualAllocTop(instance.exports, VIRTUAL_ALLOC_TOP_ARG !== null
     ? Number(VIRTUAL_ALLOC_TOP_ARG) : (APP_ENTRY && APP_ENTRY.virtualAllocTop));
   if (CS_STEAL_AFTER && instance.exports.set_cs_steal_after) {
