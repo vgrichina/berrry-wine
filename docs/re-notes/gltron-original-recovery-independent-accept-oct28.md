@@ -23,9 +23,9 @@ sdl_sound.dll and MSVCR70.dll are absent from the deliberately reduced fixture.
 `analyze` exits 1 with `unresolved non-system static imports`, but an inventory
 has already been published. No CLI success was observed or inferred.
 
-Cause: `analyze()` calls the writing `inspect_payload()` at line 248;
-`inspect_payload()` writes inventory at line 216. Import validation and its
-failure occur later, at lines 250–276. Integrity validation of extracted bytes
+Cause: `analyze()` calls the writing `inspect_payload()` at line 250;
+`inspect_payload()` writes inventory at line 225. Import validation and its
+failure occur later, at lines 252–276. Integrity validation of extracted bytes
 passes; closure validation fails after publication. The original full payload's
 reported zero unresolved imports is not disputed by this reduced fixture.
 
