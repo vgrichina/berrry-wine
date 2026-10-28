@@ -4905,6 +4905,21 @@ async function main() {
   // were logged (and so counted twice, by h.log and by $api_calls) and a
   // --trace-api-paused run printed them before it was switched on.
   if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);
+  // Process ANSI code page, applied before the PE is staged below:
+  // --codepage=<cp> wins, else the registry entry's `ansiCodePage`
+  // (lib/apps.js) — the same precedence as the browser host. The WAT
+  // setter validates the page; pages without conversion tables keep the
+  // historical identity conversion, so this is observable only for
+  // CP950 today.
+  {
+    const cpFlag = getArg('codepage', null);
+    const cp = cpFlag !== null ? parseInt(cpFlag, 10)
+      : (APP_ENTRY && Number.isFinite(APP_ENTRY.ansiCodePage) ? APP_ENTRY.ansiCodePage : 0);
+    if (cp && instance.exports.set_ansi_code_page) {
+      instance.exports.set_ansi_code_page(cp);
+      console.log(`[run] ANSI code page: ${cp}`);
+    }
+  }
   // Apply the app's page-index layout before decoding or creating threads.
   // Positive CLI flags override app defaults (expanded wins if both are set).
   // Each --no-* flag disables that app default; an explicit positive wins

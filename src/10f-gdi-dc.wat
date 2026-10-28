@@ -1717,9 +1717,29 @@
   ;; no strike could be selected at all — no DC, or the bundled MS Sans Serif
   ;; .FON failed to load — and with no host font path left underneath, the
   ;; honest answer to "draw this" is that nothing was drawn.
+  ;;
+  ;; DBCS stage 2: the five funnels below are where ANSI text enters that
+  ;; pipeline. When the process ANSI page has conversion tables (today
+  ;; CP950), an ANSI string is a byte string in that page, not one
+  ;; character per byte — so the funnel decodes it once into
+  ;; $TEXT_DECODE_SCRATCH and hands the pipeline the decoded buffer with
+  ;; wide=1 and a character count. The pipeline (10b) is untouched, and on
+  ;; pages without tables $text_decode_code_page returns 0 and every
+  ;; funnel takes its historical path byte-for-byte.
   (func $gdi_native_text_out (param $hdc i32) (param $x i32) (param $y i32)
         (param $text i32) (param $count i32) (param $wide i32) (result i32)
-    (local $bitmap_result i32)
+    (local $bitmap_result i32) (local $decode_cp i32)
+    (local.set $decode_cp (call $text_decode_code_page))
+    (if (i32.and (i32.eqz (local.get $wide))
+          (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
+            (i32.ne (local.get $text) (i32.const 0))))
+      (then
+        (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
+          (local.get $text) (local.get $count)
+          (global.get $TEXT_DECODE_SCRATCH)
+          (i32.shr_u (global.get $TEXT_DECODE_SCRATCH_SIZE) (i32.const 1))))
+        (local.set $text (global.get $TEXT_DECODE_SCRATCH))
+        (local.set $wide (i32.const 1))))
     (local.set $bitmap_result (call $gdi_bitmap_text_out
       (local.get $hdc) (local.get $x) (local.get $y) (i32.const 0) (i32.const 0)
       (local.get $text) (local.get $count) (i32.const 0) (local.get $wide)))
@@ -1733,9 +1753,22 @@
   ;; of these are now thin wrappers over it.
   (func $host_measure_text (param $hdc i32) (param $text i32)
         (param $count i32) (param $wide i32) (result i32)
-    (local $bitmap_result i32)
+    (local $bitmap_result i32) (local $decode_cp i32)
     (if (i32.le_s (local.get $count) (i32.const 0))
       (then (return (i32.const 0))))
+    ;; Stage-2 decode, as at $gdi_native_text_out: a measured DBCS string
+    ;; is measured by its characters, not by its bytes.
+    (local.set $decode_cp (call $text_decode_code_page))
+    (if (i32.and (i32.eqz (local.get $wide))
+          (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
+            (i32.ne (local.get $text) (i32.const 0))))
+      (then
+        (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
+          (local.get $text) (local.get $count)
+          (global.get $TEXT_DECODE_SCRATCH)
+          (i32.shr_u (global.get $TEXT_DECODE_SCRATCH_SIZE) (i32.const 1))))
+        (local.set $text (global.get $TEXT_DECODE_SCRATCH))
+        (local.set $wide (i32.const 1))))
     (local.set $bitmap_result (call $gdi_bitmap_text_measure
       (local.get $hdc) (local.get $text) (local.get $count) (local.get $wide)))
     (select (local.get $bitmap_result) (i32.const 0)
@@ -1753,7 +1786,7 @@
         (param $count i32) (param $max_extent i32) (param $fit i32)
         (param $dx i32) (param $size i32) (param $wide i32) (result i32)
     (local $metrics i32) (local $height i32) (local $i i32)
-    (local $width i32) (local $fit_count i32)
+    (local $width i32) (local $fit_count i32) (local $decode_cp i32)
     (if (i32.or (i32.eqz (local.get $size))
           (i32.or (i32.lt_s (local.get $count) (i32.const 0))
             (i32.or (i32.gt_u (local.get $count) (i32.const 65536))
@@ -1763,6 +1796,22 @@
     (local.set $metrics (call $host_get_text_metrics (local.get $hdc)))
     (if (i32.eqz (local.get $metrics)) (then (return (i32.const 0))))
     (local.set $height (i32.and (local.get $metrics) (i32.const 0xFFFF)))
+    ;; Stage-2 decode, before the walk: the loop below then counts what
+    ;; Windows counts — characters. Prefix widths, the dx entries and the
+    ;; fit count all fall out of the same per-character walk, now over
+    ;; WCHARs, so a two-byte character is one step with one dx entry.
+    (local.set $decode_cp (call $text_decode_code_page))
+    (if (i32.and (i32.eqz (local.get $wide))
+          (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
+            (i32.and (i32.ne (local.get $text) (i32.const 0))
+              (i32.gt_s (local.get $count) (i32.const 0)))))
+      (then
+        (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
+          (local.get $text) (local.get $count)
+          (global.get $TEXT_DECODE_SCRATCH)
+          (i32.shr_u (global.get $TEXT_DECODE_SCRATCH_SIZE) (i32.const 1))))
+        (local.set $text (global.get $TEXT_DECODE_SCRATCH))
+        (local.set $wide (i32.const 1))))
     ;; One advance per character, accumulated — the same arithmetic Windows 98
     ;; does, and the same arithmetic GetCharWidth reports one entry at a time.
     ;; Measuring each prefix from scratch instead would ask the font provider
@@ -1951,7 +2000,25 @@
   (func $gdi_native_ext_text_out (param $hdc i32) (param $x i32) (param $y i32)
         (param $options i32) (param $rect i32) (param $text i32) (param $count i32)
         (param $dx_array i32) (param $wide i32) (result i32)
-    (local $bitmap_result i32)
+    (local $bitmap_result i32) (local $decode_cp i32)
+    ;; Stage-2 decode, with the one exception: ETO_GLYPH_INDEX (0x10)
+    ;; makes $text an array of glyph indices, not characters, and decoding
+    ;; it would mangle the indices — the bit turns the decode off. $dx_array
+    ;; needs no transformation either way: it is indexed by character on
+    ;; both sides of the decode, one entry per character, a two-byte
+    ;; character included, exactly as Win32 defines it.
+    (local.set $decode_cp (call $text_decode_code_page))
+    (if (i32.and (i32.eqz (local.get $wide))
+          (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
+            (i32.and (i32.ne (local.get $text) (i32.const 0))
+              (i32.eqz (i32.and (local.get $options) (i32.const 16))))))
+      (then
+        (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
+          (local.get $text) (local.get $count)
+          (global.get $TEXT_DECODE_SCRATCH)
+          (i32.shr_u (global.get $TEXT_DECODE_SCRATCH_SIZE) (i32.const 1))))
+        (local.set $text (global.get $TEXT_DECODE_SCRATCH))
+        (local.set $wide (i32.const 1))))
     (local.set $bitmap_result (call $gdi_bitmap_text_out
       (local.get $hdc) (local.get $x) (local.get $y)
       (local.get $options) (local.get $rect) (local.get $text)
@@ -1960,6 +2027,21 @@
       (i32.ge_s (local.get $bitmap_result) (i32.const 0))))
   (func $gdi_native_draw_text (param $hdc i32) (param $text i32) (param $count i32)
         (param $rect i32) (param $format i32) (param $wide i32) (result i32)
+    (local $decode_cp i32)
+    ;; Stage-2 decode, as at $gdi_native_text_out. A negative count
+    ;; decodes to the terminator and comes back as a character count —
+    ;; the same length the wide path computes for itself downstream.
+    (local.set $decode_cp (call $text_decode_code_page))
+    (if (i32.and (i32.eqz (local.get $wide))
+          (i32.and (i32.ne (local.get $decode_cp) (i32.const 0))
+            (i32.ne (local.get $text) (i32.const 0))))
+      (then
+        (local.set $count (call $ansi_counted_to_wide_wa (local.get $decode_cp)
+          (local.get $text) (local.get $count)
+          (global.get $TEXT_DECODE_SCRATCH)
+          (i32.shr_u (global.get $TEXT_DECODE_SCRATCH_SIZE) (i32.const 1))))
+        (local.set $text (global.get $TEXT_DECODE_SCRATCH))
+        (local.set $wide (i32.const 1))))
     (call $gdi_bitmap_draw_text
       (local.get $hdc) (local.get $text) (local.get $count)
       (local.get $rect) (local.get $format) (local.get $wide)))

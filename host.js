@@ -3146,6 +3146,17 @@ class WineAssembly {
     if (this.instance.exports.set_desktop_color_depth) {
       this.instance.exports.set_desktop_color_depth(this.desktopColorDepth === 8 ? 8 : 32);
     }
+    // A registry entry may pin the process ANSI code page (`ansiCodePage`
+    // in lib/apps.js): every A-surface conversion — MultiByteToWideChar,
+    // the GDI text funnels — keys off this one global, and a DBCS app's
+    // text is one-byte-per-character mojibake under the CP1252 default.
+    // The WAT setter validates against the supported set, so an unknown
+    // page is ignored rather than fatal. init() precedes loadExe, so the
+    // PE and everything the loader converts see the pinned page.
+    const ansiCodePage = Number.isFinite(this.ansiCodePage) ? this.ansiCodePage | 0 : 0;
+    if (ansiCodePage && this.instance.exports.set_ansi_code_page) {
+      this.instance.exports.set_ansi_code_page(ansiCodePage);
+    }
     this._wasmModule = wasmModule;
     // Kept so an experimental guest worker can be handed the SAME host import
     // table this instance uses — the point of the broker is that there is one
@@ -3191,6 +3202,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_present_pace_mode) {
         await this.guestWorker.callExport('set_present_pace_mode', presentPaceMode);
+      }
+      if (ansiCodePage && this.instance.exports.set_ansi_code_page) {
+        await this.guestWorker.callExport('set_ansi_code_page', ansiCodePage);
       }
     }
     if (this.renderer) {
