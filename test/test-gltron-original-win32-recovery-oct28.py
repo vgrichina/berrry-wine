@@ -146,9 +146,8 @@ class AnalysisPublication(unittest.TestCase):
                         self.assertFalse((root/'inventory.json').exists())
                     self.assertEqual((root/'unrelated.txt').read_bytes(), b'preserve me')
                     if stage == 'closure':
-                        self.assertEqual(json.loads((root/'closure.json').read_text())['unresolved'], [{'module':'app/gltron.exe', 'dll':'missing.dll'}])
-                    else:
-                        self.assertFalse((root/'closure.json').exists())
+                        self.assertEqual(json.loads((root/'rejected-closure.json').read_text())['unresolved'], [{'module':'app/gltron.exe', 'dll':'missing.dll'}])
+                    self.assertFalse((root/'closure.json').exists())
 
     def test_success_publishes_consistent_inventory_and_closure(self):
         with tempfile.TemporaryDirectory() as tmp:

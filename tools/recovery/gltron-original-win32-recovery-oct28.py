@@ -10,6 +10,7 @@ import json
 import os
 import re
 import selectors
+import shutil
 import subprocess
 import zlib
 from pathlib import Path, PurePosixPath
@@ -17,6 +18,7 @@ import stat
 import struct
 import sys
 import time
+import tempfile
 import urllib.error
 import urllib.request
 
@@ -243,6 +245,51 @@ def pe_machine(data):
     return {'machine': '0x014c (Intel 80386)', 'optionalMagic':'0x010b (PE32)'}
 
 
+def publish_analysis(root, inventory, closure):
+    """Stage a validated pair, rolling back ordinary write/replace failures.
+
+    Single writer only. Two renames are not atomic to concurrent readers and
+    this is not a power-loss/crash transaction. If rollback itself fails, retain
+    the staging directory for recovery and report its path with the cause.
+    """
+    names = ('inventory.json', 'closure.json')
+    # Serialize both before touching the existing pair.
+    contents = [json.dumps(value, indent=2).encode() for value in (inventory, closure)]
+    stage = Path(tempfile.mkdtemp(prefix='.analysis-pair-', dir=root))
+    changed = []
+    keep = False
+    try:
+        existed = {}
+        for name, content in zip(names, contents):
+            target = root/name
+            existed[name] = target.exists()
+            if existed[name]:
+                (stage/(name+'.old')).write_bytes(target.read_bytes())
+            (stage/name).write_bytes(content)
+        try:
+            for name in names:
+                os.replace(stage/name, root/name)
+                changed.append(name)
+        except OSError as error:
+            failures = []
+            for name in reversed(changed):
+                try:
+                    if existed[name]:
+                        os.replace(stage/(name+'.old'), root/name)
+                    else:
+                        (root/name).unlink()
+                except OSError as rollback_error:
+                    failures.append(f'{name}: {rollback_error}')
+            if failures:
+                keep = True
+                raise RuntimeError(f'analysis publication rollback failed; recovery in {stage}: '
+                                   + '; '.join(failures)) from error
+            raise
+    finally:
+        if not keep:
+            shutil.rmtree(stage)
+
+
 def analyze(archive):
     archive = Path(archive).resolve()
     verify(archive)
@@ -275,10 +322,11 @@ def analyze(archive):
             if kind == 'unresolved':
                 result['unresolved'].append({'module':row['path'],'dll':name})
         result['modules'].append({'path':row['path'],**machine,'imports':closure})
-    (root/'closure.json').write_text(json.dumps(result,indent=2))
     if result['unresolved']:
-        raise ValueError('unresolved non-system static imports; inspect closure.json')
-    (root/'inventory.json').write_text(json.dumps(inventory,indent=2))
+        # Failure evidence must never replace a previously successful closure.
+        (root/'rejected-closure.json').write_text(json.dumps(result,indent=2))
+        raise ValueError('unresolved non-system static imports; inspect rejected-closure.json')
+    publish_analysis(root, inventory, result)
     return result
 
 
