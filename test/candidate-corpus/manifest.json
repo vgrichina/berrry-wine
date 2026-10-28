@@ -755,7 +755,8 @@
           "into": "cd"
         }
       ],
-      "notes": "Full original (non-SE) release, same NFSW.EXE name as the nfs2_demo payload. The CD root carries NFS2.ICO, the icon EA shipped for it; nfsw.exe has no icon resource. No app entry yet: reference/source fixture only."
+      "manual": "Source CD only, not an accepted installed game. The original README documents AUTORUN.EXE > INSTALL and SETUP/ENGLISH/SETUP.EXE is the original NE installer bootstrap with its adjacent setup bundle. NFSW.EXE checks the working drive and has an install-first error for CD-ROM execution. Qualify the original installer and its resulting INSTALL.WIN/file layout before registering a game route; a copied fixed-drive tree has not been accepted. See docs/re-notes/need-for-speed-2-retail.md.",
+      "notes": "Full original (non-SE) release, same NFSW.EXE name as the nfs2_demo payload. Original CD recovered and hash-verified on 2026-10-28: 549926912 ISO bytes, 1123 extracted files. The CD root carries NFS2.ICO. No app entry or browser launch manifest: reference/source fixture only, with installation/direct-launch qualification still pending. Do not substitute the demo or SE."
     },
     {
       "id": "need-for-speed-2-se-full",
