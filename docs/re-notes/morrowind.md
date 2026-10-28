@@ -987,6 +987,15 @@ Immutable run: `scratch/runs/20261005-morrowind-prison-movement/result.json`, wi
 
 ## 2026-10-27 — bounded ordinary-name production input checkpoint
 
+Follow-up original-consumer evidence (2026-10-28):
+[Name buffered-keyboard consumer and targeted observation plan](morrowind-name-consumer-20261028.md).
+The original executable statically connects NameSpace to DirectInput
+`GetDeviceData`, requesting one 20-byte record, and to edit callback `0x638050`.
+The first unobserved boundary is its actual API completion at `0x406926`;
+matching scan translation and before/after text writes discriminate lost edges
+from edit rejection or later overwrite. This is static evidence only: no
+transport replay, original guest run or production input repair was performed.
+
 Source `be0eb25fc33f3b057847d6c4e2c4fe5a6a9a426c` did **not** reproduce
 the documented Codex → cox loss at the portable browser/renderer/Worker
 boundary. `test/test-morrowind-ordered-name-input.js` executes unchanged
