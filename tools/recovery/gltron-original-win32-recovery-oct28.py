@@ -198,7 +198,7 @@ def normalize_dump(folder, listing):
         directory.rmdir()
 
 
-def inspect_payload(destination, listing, root):
+def inspect_payload(destination, listing, root, *, publish=True):
     actual, inventory = set(), []
     expected = {row['path']:row for row in listing['files']}
     for path in sorted(destination.rglob('*')):
@@ -222,7 +222,8 @@ def inspect_payload(destination, listing, root):
     if actual != set(expected):
         raise ValueError('incomplete extracted payload')
     result = {'files':inventory,'count':len(inventory),'bytes':sum(r['bytes'] for r in inventory)}
-    (root/'inventory.json').write_text(json.dumps(result,indent=2))
+    if publish:
+        (root/'inventory.json').write_text(json.dumps(result,indent=2))
     return result
 
 
@@ -247,7 +248,10 @@ def analyze(archive):
     verify(archive)
     root = archive.parent
     listing = inno_plan((root/'inno-list.txt').read_text())
-    inventory = inspect_payload(root/'extracted', listing, root)
+    # Inventory validity alone does not establish a complete static closure.
+    # Keep it in memory until every analysis validation has succeeded. Rejected
+    # runs must neither publish a success inventory nor unlink an older one.
+    inventory = inspect_payload(root/'extracted', listing, root, publish=False)
     bundled = {Path(row['path']).name.casefold() for row in inventory['files']}
     result = {'modules':[], 'unresolved':[], 'scope':'static PE imports, not runtime LoadLibrary or gameplay',
               'license':'extracted/app/docs/README.html', 'fullGPLTextBundled':False,
@@ -274,6 +278,7 @@ def analyze(archive):
     (root/'closure.json').write_text(json.dumps(result,indent=2))
     if result['unresolved']:
         raise ValueError('unresolved non-system static imports; inspect closure.json')
+    (root/'inventory.json').write_text(json.dumps(inventory,indent=2))
     return result
 
 

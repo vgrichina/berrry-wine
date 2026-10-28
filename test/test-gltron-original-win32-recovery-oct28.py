@@ -3,6 +3,10 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+import json
+import struct
+import zlib
 
 spec = importlib.util.spec_from_file_location('recovery', Path(__file__).parents[1] / 'tools/recovery/gltron-original-win32-recovery-oct28.py')
 r = importlib.util.module_from_spec(spec)
@@ -91,6 +95,88 @@ class RecoveryGuards(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'link'):
                 r.inspect_payload(folder,listing,root)
             self.assertFalse((root/'inventory.json').exists())
+
+
+class AnalysisPublication(unittest.TestCase):
+    """Tiny owned fixtures isolate validation; immutable CLI is checked separately."""
+
+    def fixture(self, root):
+        folder = root/'extracted/app'
+        folder.mkdir(parents=True)
+        pe = bytearray(128)
+        pe[:2] = b'MZ'
+        struct.pack_into('<I', pe, 60, 64)
+        pe[64:68] = b'PE\0\0'
+        struct.pack_into('<H', pe, 68, 0x14c)
+        struct.pack_into('<H', pe, 88, 0x10b)
+        (folder/'gltron.exe').write_bytes(pe)
+        (root/'inno-list.txt').write_text(
+            'Listing "GLtron version 0.70" - setup data version 2.0.18\n'
+            f' - "app/gltron.exe" (128 B) Adler32 0x{zlib.adler32(pe):08x}\nDone.\n')
+        (root/'unrelated.txt').write_bytes(b'preserve me')
+        return folder/'gltron.exe'
+
+    def test_all_validation_failures_leave_no_new_inventory(self):
+        for stage in ('hash', 'listing', 'payload', 'pe', 'tool', 'imports', 'closure'):
+            for preexisting in (False, True):
+                with self.subTest(stage=stage, preexisting=preexisting), tempfile.TemporaryDirectory() as tmp:
+                    root = Path(tmp)
+                    pe = self.fixture(root)
+                    old = b'unrelated existing inventory'
+                    if preexisting:
+                        (root/'inventory.json').write_bytes(old)
+                    if stage == 'listing':
+                        (root/'inno-list.txt').write_text('invalid listing')
+                    if stage == 'payload':
+                        pe.write_bytes(b'tampered')
+                    if stage == 'pe':
+                        original = pe.read_bytes()
+                        data = original.replace(b'MZ', b'XX', 1)
+                        pe.write_bytes(data)
+                        listing = root/'inno-list.txt'
+                        listing.write_text(listing.read_text().replace(
+                            f'0x{zlib.adler32(original):08x}', f'0x{zlib.adler32(data):08x}'))
+                    text = '' if stage == 'imports' else ' DLL Name: missing.dll\n' if stage == 'closure' else ' DLL Name: KERNEL32.dll\n'
+                    with patch.object(r, 'verify', side_effect=ValueError('archive SHA256 rejected') if stage == 'hash' else None), patch.object(r, 'tool', side_effect=ValueError('static tool rejected') if stage == 'tool' else None, return_value=text):
+                        with self.assertRaises(ValueError):
+                            r.analyze(root/'original.exe')
+                    if preexisting:
+                        self.assertEqual((root/'inventory.json').read_bytes(), old)
+                    else:
+                        self.assertFalse((root/'inventory.json').exists())
+                    self.assertEqual((root/'unrelated.txt').read_bytes(), b'preserve me')
+                    if stage == 'closure':
+                        self.assertEqual(json.loads((root/'closure.json').read_text())['unresolved'], [{'module':'app/gltron.exe', 'dll':'missing.dll'}])
+                    else:
+                        self.assertFalse((root/'closure.json').exists())
+
+    def test_success_publishes_consistent_inventory_and_closure(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            pe = self.fixture(root)
+            def tool(*args):
+                # No output may be published before the last validation step.
+                self.assertFalse((root/'inventory.json').exists())
+                self.assertFalse((root/'closure.json').exists())
+                return ' DLL Name: KERNEL32.dll\n'
+            with patch.object(r, 'verify'), patch.object(r, 'tool', side_effect=tool):
+                result = r.analyze(root/'original.exe')
+            inventory = json.loads((root/'inventory.json').read_text())
+            closure = json.loads((root/'closure.json').read_text())
+            self.assertEqual(closure, result)
+            self.assertEqual(closure['unresolved'], [])
+            self.assertEqual(inventory['count'], 1)
+            self.assertEqual(inventory['files'][0]['path'], closure['modules'][0]['path'])
+            self.assertEqual(inventory['files'][0]['sha256'], r.hashlib.sha256(pe.read_bytes()).hexdigest())
+            self.assertEqual(closure['modules'][0]['imports'][0]['resolution'], 'Windows system')
+
+    def test_extraction_inventory_contract_is_preserved(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.fixture(root)
+            listing = r.inno_plan((root/'inno-list.txt').read_text())
+            inventory = r.inspect_payload(root/'extracted', listing, root)
+            self.assertEqual(json.loads((root/'inventory.json').read_text()), inventory)
 
 
 if __name__ == '__main__':
