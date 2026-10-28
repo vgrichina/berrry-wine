@@ -1,0 +1,21 @@
+{
+  "boxID": "bx_va5ee9q2",
+  "state": "stopped",
+  "expiry": "2026-10-28T21:13:39.669Z",
+  "guestCutoff": "2026-10-28T21:10:00Z",
+  "shutdownDelegated": true,
+  "owner": "toyvm-browser-pointer-qualification-oct28",
+  "ultimateOwner": "coordinator",
+  "creationReceipt": "/tmp/toyvm-browser-pointer-qualification-oct28/evidence/boat-create.stdout",
+  "stoppedAt": "2026-10-28T20:52:11.820Z",
+  "snapshotVerifiedAt": "2026-10-28T20:52:11.755Z",
+  "stop": {
+    "endedAt": "2026-10-28T20:52:11.851Z",
+    "error": null,
+    "id": "stop_0714b2fb2672d746",
+    "lastAttemptAt": "2026-10-28T20:52:11.851Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "receipt": "/tmp/toyvm-browser-pointer-qualification-oct28/evidence/boat-final-info.stdout"
+}

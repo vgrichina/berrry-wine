@@ -1,0 +1,68 @@
+{
+  "verifiedFiles": 118,
+  "portableFiles": 4,
+  "portableBytes": 2398629,
+  "diskFree": 3556745216,
+  "memAvailable": "2402300 KiB",
+  "codexRSS": [
+    {
+      "pid": 265398,
+      "rssKiB": "1199508 kB"
+    },
+    {
+      "pid": 265632,
+      "rssKiB": "17104 kB"
+    },
+    {
+      "pid": 598545,
+      "rssKiB": "49604 kB"
+    },
+    {
+      "pid": 752162,
+      "rssKiB": "473792 kB"
+    },
+    {
+      "pid": 857107,
+      "rssKiB": "20368 kB"
+    },
+    {
+      "pid": 1917573,
+      "rssKiB": "200972 kB"
+    },
+    {
+      "pid": 1917574,
+      "rssKiB": "206276 kB"
+    },
+    {
+      "pid": 1917575,
+      "rssKiB": "206064 kB"
+    },
+    {
+      "pid": 1918118,
+      "rssKiB": "23924 kB"
+    },
+    {
+      "pid": 1918136,
+      "rssKiB": "25412 kB"
+    },
+    {
+      "pid": 1918162,
+      "rssKiB": "24412 kB"
+    }
+  ],
+  "plan": {
+    "allocation": 134217728,
+    "reserve": 16777216,
+    "portableAndArchive": 12582912,
+    "repoIndexObjectsPublication": 25165824,
+    "evidenceAndEvents": 25165824,
+    "tempAndGrowth": 16777216,
+    "captureCount": 8,
+    "captureEach": 1048576,
+    "captureTotal": 8388608,
+    "remoteRSS": 1610612736,
+    "cpuSeconds": 90,
+    "wallSeconds": 120,
+    "terminalIncident": "initial read-only policy and manifest reads exceeded 8192B; no execution acceptance inferred"
+  }
+}

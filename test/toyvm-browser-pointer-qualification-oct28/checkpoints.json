@@ -1,0 +1,459 @@
+[
+  {
+    "name": "dashboard-production-first-press",
+    "at": "2026-10-28T20:45:50.425Z",
+    "details": {
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 1,
+          "cx": 320,
+          "dx": 100
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            null,
+            null,
+            null
+          ],
+          "x": 320,
+          "y": 100,
+          "buttons": 1,
+          "dx": 0,
+          "dy": 4,
+          "pressed": [
+            1,
+            0,
+            0
+          ],
+          "released": [
+            0,
+            0,
+            0
+          ],
+          "reads": 1,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      },
+      "calls": [
+        {
+          "name": "bindKeyboard",
+          "stack": "Error\n    at L.<computed> (http://127.0.0.1:8765/observe.js:6:35)\n    at Object.start (http://127.0.0.1:8765/toyvm/live.js:214:31)\n    at Object.launch (http://127.0.0.1:8765/toyvm/live.js:118:32)"
+        },
+        {
+          "name": "bindPointer",
+          "stack": "Error\n    at L.<computed> (http://127.0.0.1:8765/observe.js:6:35)\n    at Object.start (http://127.0.0.1:8765/toyvm/live.js:214:64)\n    at Object.launch (http://127.0.0.1:8765/toyvm/live.js:118:32)"
+        }
+      ]
+    }
+  },
+  {
+    "name": "demo-capture-release-mode13",
+    "at": "2026-10-28T20:47:42.286Z",
+    "details": {
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 0,
+          "cx": 638,
+          "dx": 199
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            {
+              "x": 638,
+              "y": 199
+            },
+            null,
+            null
+          ],
+          "x": 638,
+          "y": 199,
+          "buttons": 0,
+          "dx": 318,
+          "dy": 103,
+          "pressed": [
+            0,
+            0,
+            0
+          ],
+          "released": [
+            0,
+            0,
+            0
+          ],
+          "reads": 4,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": true,
+        "mode": 19
+      },
+      "press": {
+        "ax": 1,
+        "bx": 1,
+        "cx": 320,
+        "dx": 100
+      }
+    }
+  },
+  {
+    "name": "canvas-blur-held-key",
+    "at": "2026-10-28T20:48:31.406Z",
+    "details": {
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 0,
+          "cx": 320,
+          "dx": 100
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            {
+              "x": 320,
+              "y": 100
+            },
+            null
+          ],
+          "releaseAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            {
+              "x": 320,
+              "y": 100
+            },
+            null
+          ],
+          "x": 320,
+          "y": 100,
+          "buttons": 0,
+          "dx": 0,
+          "dy": 4,
+          "pressed": [
+            2,
+            1,
+            0
+          ],
+          "released": [
+            2,
+            1,
+            0
+          ],
+          "reads": 5,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      }
+    }
+  },
+  {
+    "name": "lost-capture-cancellation",
+    "at": "2026-10-28T20:51:16.484Z",
+    "details": {
+      "outcome": "unqualified",
+      "reason": "actual browser capture precondition false; no lostpointercapture was generated",
+      "calls": [
+        {
+          "name": "bindPointer",
+          "stack": "Error\n    at L.<computed> [as bindPointer] (http://127.0.0.1:8765/observe.js:11:35)\n    at http://127.0.0.1:8765/site.js:421:46"
+        },
+        {
+          "name": "bindKeyboard",
+          "stack": "Error\n    at L.<computed> [as bindKeyboard] (http://127.0.0.1:8765/observe.js:11:35)\n    at HTMLCanvasElement.<anonymous> (http://127.0.0.1:8765/site.js:505:49)\n    at http://127.0.0.1:8765/site.js:491:52"
+        },
+        {
+          "name": "setPointerCapture",
+          "target": "lb-canvas",
+          "id": 1,
+          "success": true,
+          "hasCapture": true
+        }
+      ],
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 1,
+          "cx": 322,
+          "dx": 101
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            null,
+            null,
+            null
+          ],
+          "x": 322,
+          "y": 101,
+          "buttons": 1,
+          "dx": 2,
+          "dy": 5,
+          "pressed": [
+            1,
+            0,
+            0
+          ],
+          "released": [
+            0,
+            0,
+            0
+          ],
+          "reads": 1,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      }
+    }
+  },
+  {
+    "name": "window-focus-loss",
+    "at": "2026-10-28T20:51:16.731Z",
+    "details": {
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 0,
+          "cx": 320,
+          "dx": 100
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "x": 320,
+          "y": 100,
+          "buttons": 0,
+          "dx": 0,
+          "dy": 4,
+          "pressed": [
+            2,
+            0,
+            0
+          ],
+          "released": [
+            2,
+            0,
+            0
+          ],
+          "reads": 3,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      },
+      "documentHasFocus": false
+    }
+  },
+  {
+    "name": "teardown-negative-control",
+    "at": "2026-10-28T20:51:16.779Z",
+    "details": {
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 0,
+          "cx": 320,
+          "dx": 100
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "x": 320,
+          "y": 100,
+          "buttons": 0,
+          "dx": 0,
+          "dy": 4,
+          "pressed": [
+            3,
+            0,
+            0
+          ],
+          "released": [
+            3,
+            0,
+            0
+          ],
+          "reads": 5,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      }
+    }
+  },
+  {
+    "name": "production-run-replacement",
+    "at": "2026-10-28T20:51:18.276Z",
+    "details": {
+      "oldButtons": 0,
+      "state": {
+        "int33": {
+          "ax": 3,
+          "bx": 0,
+          "cx": 320,
+          "dx": 100
+        },
+        "mouse": {
+          "minX": 0,
+          "maxX": 639,
+          "minY": 0,
+          "maxY": 199,
+          "pressAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "releaseAt": [
+            {
+              "x": 320,
+              "y": 100
+            },
+            null,
+            null
+          ],
+          "x": 320,
+          "y": 100,
+          "buttons": 0,
+          "dx": 0,
+          "dy": 4,
+          "pressed": [
+            1,
+            0,
+            0
+          ],
+          "released": [
+            1,
+            0,
+            0
+          ],
+          "reads": 4,
+          "standardGeometry": true,
+          "width": 640,
+          "height": 200,
+          "cellX": 2,
+          "cellY": 1
+        },
+        "held": [],
+        "inputStopped": false,
+        "mode": 19
+      }
+    }
+  }
+]

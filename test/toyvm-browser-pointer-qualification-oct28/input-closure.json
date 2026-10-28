@@ -1,0 +1,592 @@
+[
+  {
+    "path": "baseline/docs/dos-corpus/live/toyvm-bundle.js",
+    "bytes": 2348789,
+    "sha256": "5a3f0440a25e8339c91c4bc6a0c7630d31b01b1c3b45df3c1dadd3fc1e52cfa3"
+  },
+  {
+    "path": "baseline/docs/dos-corpus/live/toyvm-jit-bundle.js",
+    "bytes": 2316478,
+    "sha256": "ff7189919729ff8aea037c5648a9b79581a162bf25597ddd7998d3813d661e41"
+  },
+  {
+    "path": "baseline/docs/dos-corpus/site.css",
+    "bytes": 16137,
+    "sha256": "c654cbd2f5939fff47bb652ffbef88ed953ec32db46dd1a63270222c0e0df13f"
+  },
+  {
+    "path": "baseline/docs/dos-corpus/site.js",
+    "bytes": 25924,
+    "sha256": "580208409c04e924e376a9eca00983792fd8bd3b8c3857c9fd3e67d3cdf02aba"
+  },
+  {
+    "path": "baseline/fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+  },
+  {
+    "path": "baseline/lib/compile-wat.js",
+    "bytes": 72471,
+    "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52"
+  },
+  {
+    "path": "baseline/lib/wat-manifest.js",
+    "bytes": 2995,
+    "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656"
+  },
+  {
+    "path": "baseline/ops/toyvm-live/index.html",
+    "bytes": 1576,
+    "sha256": "f53279cba6eed62aab2de51901dd327dd03d74a846e0996740b79bb012e715a2"
+  },
+  {
+    "path": "baseline/ops/toyvm-live/live.js",
+    "bytes": 14829,
+    "sha256": "bb1bfc419756881d569f392fe74ecb84023974821ec9c810ead791e474202200"
+  },
+  {
+    "path": "baseline/test/test-toyvm-held-keys.js",
+    "bytes": 5173,
+    "sha256": "ca8920a30136055fbb9ff96a0331a83d3e25591875cceede6b751a52f961bfbc"
+  },
+  {
+    "path": "baseline/test/test-toyvm-pointer-input.js",
+    "bytes": 9305,
+    "sha256": "2c3d72c219c91a82a21fc3b1818f993f58e62265b16c3f0b8b646b1c9c4ae48e"
+  },
+  {
+    "path": "baseline/tools/disasm.js",
+    "bytes": 29884,
+    "sha256": "2a7b4ad723537d4e4482a29f3eed3ddcb08b67944f631c7ffb7e3c042c49561b"
+  },
+  {
+    "path": "baseline/tools/fnt-read.js",
+    "bytes": 9875,
+    "sha256": "f43c9f3f805d80e424d1ef1d9948f6e63c1a5f750d155f8edf51dea72adbd95e"
+  },
+  {
+    "path": "baseline/tools/ne-dump.js",
+    "bytes": 16198,
+    "sha256": "7d310382da40b808e5ef4cc2e761a834942d7c0c6f28a9937d925331022cc43a"
+  },
+  {
+    "path": "baseline/tools/simd-ops.js",
+    "bytes": 8572,
+    "sha256": "7c4bc1af9f4e2e36cfcbe6df34742d5386fd70d7ca235b678473720e6106d2c3"
+  },
+  {
+    "path": "baseline/tools/toyvm/audio.js",
+    "bytes": 16346,
+    "sha256": "5f368ff439040d3f548965ef7f88264fae372da30da19b68651a0ecc5ddcc012"
+  },
+  {
+    "path": "baseline/tools/toyvm/bundle-browser.js",
+    "bytes": 15927,
+    "sha256": "e3106cc53a4d01bea1751a8dea998585f36e9bc2ce22e3a7d1d741f3c0efaa77"
+  },
+  {
+    "path": "baseline/tools/toyvm/compile.js",
+    "bytes": 84053,
+    "sha256": "8bc68ef352abfac237fb1e4e383a1ff0a81ea89052fd9bd6546829e7aa99a2e5"
+  },
+  {
+    "path": "baseline/tools/toyvm/decode.js",
+    "bytes": 59235,
+    "sha256": "af1d217d68e1f8fa52eebbdb63b609d8be4b9b6cd93920ae651f12a62a2b98f3"
+  },
+  {
+    "path": "baseline/tools/toyvm/demo-status.js",
+    "bytes": 10513,
+    "sha256": "9d318a80f38cf8a378c2ab46166e3d113b9bbbc522cfd30c8a82885dd40d4f88"
+  },
+  {
+    "path": "baseline/tools/toyvm/dos-loop.js",
+    "bytes": 142508,
+    "sha256": "24db957b7085b7c375513e30933db7ed0838cf9f503e23918bcbee80ee7ae2f4"
+  },
+  {
+    "path": "baseline/tools/toyvm/dos.js",
+    "bytes": 303277,
+    "sha256": "eb60e2775196edd80113836830a36482ac50a1d425f3e505d09c4bac68b0f4bc"
+  },
+  {
+    "path": "baseline/tools/toyvm/emit-decoder.js",
+    "bytes": 39318,
+    "sha256": "919627d04a6626a20e6fa98c993bde2a04bf1439e46cd3694944b80dac3942b8"
+  },
+  {
+    "path": "baseline/tools/toyvm/emit.js",
+    "bytes": 350088,
+    "sha256": "9a29a59cbbb04038d9c3423779e52b0dacd2fb04174e31cc5c6c48df1a4f7077"
+  },
+  {
+    "path": "baseline/tools/toyvm/expr-fold-census.js",
+    "bytes": 54443,
+    "sha256": "08d210a76d876d85d95614f97bd3601ba22bb1028fb3f4e656079315f68255d4"
+  },
+  {
+    "path": "baseline/tools/toyvm/extras.js",
+    "bytes": 3552,
+    "sha256": "ff59eb2dea8675d97abbdf5e28e6604a7f563bfe068cf7320ad1efd8e44c985d"
+  },
+  {
+    "path": "baseline/tools/toyvm/framebuffer.js",
+    "bytes": 20207,
+    "sha256": "35d617513682cb90bb6eeed3a7aed64b6714ec505842760ed2065287f54cde04"
+  },
+  {
+    "path": "baseline/tools/toyvm/gus.js",
+    "bytes": 19882,
+    "sha256": "3195385a96b4f82e3a9ec1f2b4bc1a4568c75b93ec2d1ffb5cbf3c14e25bbe0b"
+  },
+  {
+    "path": "baseline/tools/toyvm/handler-effects.js",
+    "bytes": 12500,
+    "sha256": "a68d63581da3c2784b47b2d92aa1c22ffdef5716cc124c50d82590c2371d799e"
+  },
+  {
+    "path": "baseline/tools/toyvm/handler-hist.js",
+    "bytes": 5702,
+    "sha256": "9ef05d0ace430f7175b40a0051a9325a4028f405ada013ad497b5264b334bedd"
+  },
+  {
+    "path": "baseline/tools/toyvm/isa.js",
+    "bytes": 20729,
+    "sha256": "c0531f2a0d2e1551b2c629e133a3a59d140d26be02422eb19f3fc44b0ef8d664"
+  },
+  {
+    "path": "baseline/tools/toyvm/live.js",
+    "bytes": 31588,
+    "sha256": "4f71b391dd492c6427ea3b10f71af4640b6a11a97f825c8b8239bf9aa6782723"
+  },
+  {
+    "path": "baseline/tools/toyvm/opl.js",
+    "bytes": 13745,
+    "sha256": "5644acc7ec2eaa9957b19a1c9d3d455dddb14921b7bcf64ee457f2567fe3e4e6"
+  },
+  {
+    "path": "baseline/tools/toyvm/paging-exec.js",
+    "bytes": 11797,
+    "sha256": "f6a227acc382883bab145d486064282ce13e16fd935f1860c03159f52e5e8b75"
+  },
+  {
+    "path": "baseline/tools/toyvm/paging.js",
+    "bytes": 15303,
+    "sha256": "506aa659f721ccad412000424d445b2f8478e6bf7f2142d0a201fd2346f5a153"
+  },
+  {
+    "path": "baseline/tools/toyvm/pm-transfer.js",
+    "bytes": 26590,
+    "sha256": "fee2bfbd7566d08763dda34c8957f8f3aa79be208dbc4f684a66a497c632541a"
+  },
+  {
+    "path": "baseline/tools/toyvm/program-config.js",
+    "bytes": 2871,
+    "sha256": "52aca49d9025c640de86435f2fe1fd2d06160e9efd282da8abf713d53a96933a"
+  },
+  {
+    "path": "baseline/tools/toyvm/reg-spec-set.js",
+    "bytes": 2718,
+    "sha256": "eca0e7025cad04eda55caf2421709ee1b777cf8c10c9b49c9025d472a510e1f8"
+  },
+  {
+    "path": "baseline/tools/toyvm/region-jit.js",
+    "bytes": 161628,
+    "sha256": "0632a3dd533c7f6b773658c0d968aee68153614b18316ee3f8e445c46bbf37b3"
+  },
+  {
+    "path": "baseline/tools/toyvm/region-live.js",
+    "bytes": 41466,
+    "sha256": "0e618060cbb0909e79721ae23f8c79f76b9a274bc74e386dd5692cec47e92160"
+  },
+  {
+    "path": "baseline/tools/toyvm/region-prepare.js",
+    "bytes": 11880,
+    "sha256": "9705848ac865a473f823b0e186f0a418808d9ccc902daa1b09db03bd2d652e52"
+  },
+  {
+    "path": "baseline/tools/toyvm/region-sep.js",
+    "bytes": 5815,
+    "sha256": "5731e6b928726b2a5adc64ea34b879c54758c4869e7a5bff768c004d231dfae1"
+  },
+  {
+    "path": "baseline/tools/toyvm/run-dos.js",
+    "bytes": 120728,
+    "sha256": "520a2e6bcd221915b226256eda0507e5d8fd7ce27febab8da080adeda9d34bfd"
+  },
+  {
+    "path": "baseline/tools/toyvm/save-files.js",
+    "bytes": 1500,
+    "sha256": "ad543bcf4d8d05555c5738d609ec7d5d3896a4907f18c510455787317740ff21"
+  },
+  {
+    "path": "baseline/tools/toyvm/site.js",
+    "bytes": 73091,
+    "sha256": "a9f85937fc45ac95aab52058be7c59e5109f43b0a89d461ed91dbd9ff35c53f2"
+  },
+  {
+    "path": "baseline/tools/toyvm/trace-jit.js",
+    "bytes": 101286,
+    "sha256": "41af64a7005edec4c45da4426af6de90e61290873ababa6be6dfbd5dceca93dd"
+  },
+  {
+    "path": "baseline/tools/toyvm/tree-fold.js",
+    "bytes": 86654,
+    "sha256": "349104d1c2ff5fa0d316b44f84d851e40c4081cb0983fb58892de3f423a784f9"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-ir.js",
+    "bytes": 42074,
+    "sha256": "efc9e0ca369e3d5907455f52eaebf19cbf62eb946589df3a801d3c8ed5e7146b"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-live.js",
+    "bytes": 32488,
+    "sha256": "19dc1eea51a8fd5771a99d04a2c2de5cfd4326c3fb2f685ee678519990380e28"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-only.js",
+    "bytes": 38902,
+    "sha256": "c3833b46bc149aa42b7cc77efd2e07eb22252729145f2471c457077559884cbe"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-opt.js",
+    "bytes": 109157,
+    "sha256": "b00f96cea93892f7a0065df22054400b90b959a4e1010dcfe35f4f469a494c6a"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-ref.js",
+    "bytes": 25284,
+    "sha256": "35ecb0185305584a24e8bb586fafb8c7f86c8c7b2bfd72cbd988f0475548fde2"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-wasm.js",
+    "bytes": 90942,
+    "sha256": "ad5bc0379f4ed940d954df20a5c374559e8c2d620c738222c9ed3d26b8b4bb7c"
+  },
+  {
+    "path": "baseline/tools/toyvm/uop-x86.js",
+    "bytes": 18412,
+    "sha256": "9728cf0b59d7f781ce8e84697462602c4f298e0c06d61a8168bada19b19a388a"
+  },
+  {
+    "path": "baseline/tools/toyvm/vm.js",
+    "bytes": 10623,
+    "sha256": "a14f1370b502c15475662efff33b9575ac2fe4fe366a66cdede3cfec2d564b81"
+  },
+  {
+    "path": "candidate/docs/dos-corpus/live/toyvm-bundle.js",
+    "bytes": 2355976,
+    "sha256": "2532ba8014bb426b3ae1b5423bc628e9447e94c73fe9d12c5fed7895a76096ec"
+  },
+  {
+    "path": "candidate/docs/dos-corpus/live/toyvm-jit-bundle.js",
+    "bytes": 2320303,
+    "sha256": "23a4045f8d7ead1a6c4bb584cad8ef7c7ddc6357f1da11ea80f5a7cd86d8804f"
+  },
+  {
+    "path": "candidate/docs/dos-corpus/site.css",
+    "bytes": 16137,
+    "sha256": "c654cbd2f5939fff47bb652ffbef88ed953ec32db46dd1a63270222c0e0df13f"
+  },
+  {
+    "path": "candidate/docs/dos-corpus/site.js",
+    "bytes": 26189,
+    "sha256": "24a611661b65e2af73239f13993850353056cf1cad4dadd7f92c3f3feb05bdca"
+  },
+  {
+    "path": "candidate/fonts/Terminal.fon",
+    "bytes": 5168,
+    "sha256": "dccca736742e4c1bf0b6a98393417c07f6e46ef0ecb2030cec0ebddb2369d4e1"
+  },
+  {
+    "path": "candidate/lib/compile-wat.js",
+    "bytes": 72471,
+    "sha256": "4aae3c6ecd7949c37fcea28c9d5678b8f24038fdef9ff5bb63458cc08a198f52"
+  },
+  {
+    "path": "candidate/lib/wat-manifest.js",
+    "bytes": 2995,
+    "sha256": "37ee6b9a0a29d6445102b81cd462c8a0692a8ab81ea22e909fcdcf34fa148656"
+  },
+  {
+    "path": "candidate/ops/toyvm-live/index.html",
+    "bytes": 1571,
+    "sha256": "2808dabc771ebd2a6bca6dd265374570900e325e88cab08d87ec92e4d361fffd"
+  },
+  {
+    "path": "candidate/ops/toyvm-live/live.js",
+    "bytes": 14893,
+    "sha256": "a0db97e34dea2f0d38fcf1095ee09141c7712540e97b284b7abe08e7b35c2cbd"
+  },
+  {
+    "path": "candidate/test/test-toyvm-held-keys.js",
+    "bytes": 5173,
+    "sha256": "ca8920a30136055fbb9ff96a0331a83d3e25591875cceede6b751a52f961bfbc"
+  },
+  {
+    "path": "candidate/test/test-toyvm-pointer-input.js",
+    "bytes": 9305,
+    "sha256": "2c3d72c219c91a82a21fc3b1818f993f58e62265b16c3f0b8b646b1c9c4ae48e"
+  },
+  {
+    "path": "candidate/tools/disasm.js",
+    "bytes": 29884,
+    "sha256": "2a7b4ad723537d4e4482a29f3eed3ddcb08b67944f631c7ffb7e3c042c49561b"
+  },
+  {
+    "path": "candidate/tools/fnt-read.js",
+    "bytes": 9875,
+    "sha256": "f43c9f3f805d80e424d1ef1d9948f6e63c1a5f750d155f8edf51dea72adbd95e"
+  },
+  {
+    "path": "candidate/tools/ne-dump.js",
+    "bytes": 16198,
+    "sha256": "7d310382da40b808e5ef4cc2e761a834942d7c0c6f28a9937d925331022cc43a"
+  },
+  {
+    "path": "candidate/tools/simd-ops.js",
+    "bytes": 8572,
+    "sha256": "7c4bc1af9f4e2e36cfcbe6df34742d5386fd70d7ca235b678473720e6106d2c3"
+  },
+  {
+    "path": "candidate/tools/toyvm/audio.js",
+    "bytes": 16346,
+    "sha256": "5f368ff439040d3f548965ef7f88264fae372da30da19b68651a0ecc5ddcc012"
+  },
+  {
+    "path": "candidate/tools/toyvm/bundle-browser.js",
+    "bytes": 15927,
+    "sha256": "e3106cc53a4d01bea1751a8dea998585f36e9bc2ce22e3a7d1d741f3c0efaa77"
+  },
+  {
+    "path": "candidate/tools/toyvm/compile.js",
+    "bytes": 84053,
+    "sha256": "8bc68ef352abfac237fb1e4e383a1ff0a81ea89052fd9bd6546829e7aa99a2e5"
+  },
+  {
+    "path": "candidate/tools/toyvm/decode.js",
+    "bytes": 59235,
+    "sha256": "af1d217d68e1f8fa52eebbdb63b609d8be4b9b6cd93920ae651f12a62a2b98f3"
+  },
+  {
+    "path": "candidate/tools/toyvm/demo-status.js",
+    "bytes": 10513,
+    "sha256": "9d318a80f38cf8a378c2ab46166e3d113b9bbbc522cfd30c8a82885dd40d4f88"
+  },
+  {
+    "path": "candidate/tools/toyvm/dos-loop.js",
+    "bytes": 142508,
+    "sha256": "24db957b7085b7c375513e30933db7ed0838cf9f503e23918bcbee80ee7ae2f4"
+  },
+  {
+    "path": "candidate/tools/toyvm/dos.js",
+    "bytes": 307026,
+    "sha256": "1cebbc098e467054eb363a0b8eff5bc6f5d0b7ee4c5ff5842a1d1c1704d8bf59"
+  },
+  {
+    "path": "candidate/tools/toyvm/emit-decoder.js",
+    "bytes": 39318,
+    "sha256": "919627d04a6626a20e6fa98c993bde2a04bf1439e46cd3694944b80dac3942b8"
+  },
+  {
+    "path": "candidate/tools/toyvm/emit.js",
+    "bytes": 350088,
+    "sha256": "9a29a59cbbb04038d9c3423779e52b0dacd2fb04174e31cc5c6c48df1a4f7077"
+  },
+  {
+    "path": "candidate/tools/toyvm/expr-fold-census.js",
+    "bytes": 54443,
+    "sha256": "08d210a76d876d85d95614f97bd3601ba22bb1028fb3f4e656079315f68255d4"
+  },
+  {
+    "path": "candidate/tools/toyvm/extras.js",
+    "bytes": 3552,
+    "sha256": "ff59eb2dea8675d97abbdf5e28e6604a7f563bfe068cf7320ad1efd8e44c985d"
+  },
+  {
+    "path": "candidate/tools/toyvm/framebuffer.js",
+    "bytes": 20207,
+    "sha256": "35d617513682cb90bb6eeed3a7aed64b6714ec505842760ed2065287f54cde04"
+  },
+  {
+    "path": "candidate/tools/toyvm/gus.js",
+    "bytes": 19882,
+    "sha256": "3195385a96b4f82e3a9ec1f2b4bc1a4568c75b93ec2d1ffb5cbf3c14e25bbe0b"
+  },
+  {
+    "path": "candidate/tools/toyvm/handler-effects.js",
+    "bytes": 12500,
+    "sha256": "a68d63581da3c2784b47b2d92aa1c22ffdef5716cc124c50d82590c2371d799e"
+  },
+  {
+    "path": "candidate/tools/toyvm/handler-hist.js",
+    "bytes": 5702,
+    "sha256": "9ef05d0ace430f7175b40a0051a9325a4028f405ada013ad497b5264b334bedd"
+  },
+  {
+    "path": "candidate/tools/toyvm/isa.js",
+    "bytes": 20729,
+    "sha256": "c0531f2a0d2e1551b2c629e133a3a59d140d26be02422eb19f3fc44b0ef8d664"
+  },
+  {
+    "path": "candidate/tools/toyvm/live.js",
+    "bytes": 34882,
+    "sha256": "85725793f35211f893480e57af4f01b92e33adf6730cfedbed3c28eceb0c74b5"
+  },
+  {
+    "path": "candidate/tools/toyvm/opl.js",
+    "bytes": 13745,
+    "sha256": "5644acc7ec2eaa9957b19a1c9d3d455dddb14921b7bcf64ee457f2567fe3e4e6"
+  },
+  {
+    "path": "candidate/tools/toyvm/paging-exec.js",
+    "bytes": 11797,
+    "sha256": "f6a227acc382883bab145d486064282ce13e16fd935f1860c03159f52e5e8b75"
+  },
+  {
+    "path": "candidate/tools/toyvm/paging.js",
+    "bytes": 15303,
+    "sha256": "506aa659f721ccad412000424d445b2f8478e6bf7f2142d0a201fd2346f5a153"
+  },
+  {
+    "path": "candidate/tools/toyvm/pm-transfer.js",
+    "bytes": 26590,
+    "sha256": "fee2bfbd7566d08763dda34c8957f8f3aa79be208dbc4f684a66a497c632541a"
+  },
+  {
+    "path": "candidate/tools/toyvm/program-config.js",
+    "bytes": 2871,
+    "sha256": "52aca49d9025c640de86435f2fe1fd2d06160e9efd282da8abf713d53a96933a"
+  },
+  {
+    "path": "candidate/tools/toyvm/reg-spec-set.js",
+    "bytes": 2718,
+    "sha256": "eca0e7025cad04eda55caf2421709ee1b777cf8c10c9b49c9025d472a510e1f8"
+  },
+  {
+    "path": "candidate/tools/toyvm/region-jit.js",
+    "bytes": 161628,
+    "sha256": "0632a3dd533c7f6b773658c0d968aee68153614b18316ee3f8e445c46bbf37b3"
+  },
+  {
+    "path": "candidate/tools/toyvm/region-live.js",
+    "bytes": 41466,
+    "sha256": "0e618060cbb0909e79721ae23f8c79f76b9a274bc74e386dd5692cec47e92160"
+  },
+  {
+    "path": "candidate/tools/toyvm/region-prepare.js",
+    "bytes": 11880,
+    "sha256": "9705848ac865a473f823b0e186f0a418808d9ccc902daa1b09db03bd2d652e52"
+  },
+  {
+    "path": "candidate/tools/toyvm/region-sep.js",
+    "bytes": 5815,
+    "sha256": "5731e6b928726b2a5adc64ea34b879c54758c4869e7a5bff768c004d231dfae1"
+  },
+  {
+    "path": "candidate/tools/toyvm/run-dos.js",
+    "bytes": 120728,
+    "sha256": "520a2e6bcd221915b226256eda0507e5d8fd7ce27febab8da080adeda9d34bfd"
+  },
+  {
+    "path": "candidate/tools/toyvm/save-files.js",
+    "bytes": 1500,
+    "sha256": "ad543bcf4d8d05555c5738d609ec7d5d3896a4907f18c510455787317740ff21"
+  },
+  {
+    "path": "candidate/tools/toyvm/site.js",
+    "bytes": 73356,
+    "sha256": "12ceb06534e65f9b790c828c5cee1a63692ddb0c80f56816f558021e1f20419d"
+  },
+  {
+    "path": "candidate/tools/toyvm/trace-jit.js",
+    "bytes": 101286,
+    "sha256": "41af64a7005edec4c45da4426af6de90e61290873ababa6be6dfbd5dceca93dd"
+  },
+  {
+    "path": "candidate/tools/toyvm/tree-fold.js",
+    "bytes": 86654,
+    "sha256": "349104d1c2ff5fa0d316b44f84d851e40c4081cb0983fb58892de3f423a784f9"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-ir.js",
+    "bytes": 42074,
+    "sha256": "efc9e0ca369e3d5907455f52eaebf19cbf62eb946589df3a801d3c8ed5e7146b"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-live.js",
+    "bytes": 32488,
+    "sha256": "19dc1eea51a8fd5771a99d04a2c2de5cfd4326c3fb2f685ee678519990380e28"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-only.js",
+    "bytes": 38902,
+    "sha256": "c3833b46bc149aa42b7cc77efd2e07eb22252729145f2471c457077559884cbe"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-opt.js",
+    "bytes": 109157,
+    "sha256": "b00f96cea93892f7a0065df22054400b90b959a4e1010dcfe35f4f469a494c6a"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-ref.js",
+    "bytes": 25284,
+    "sha256": "35ecb0185305584a24e8bb586fafb8c7f86c8c7b2bfd72cbd988f0475548fde2"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-wasm.js",
+    "bytes": 90942,
+    "sha256": "ad5bc0379f4ed940d954df20a5c374559e8c2d620c738222c9ed3d26b8b4bb7c"
+  },
+  {
+    "path": "candidate/tools/toyvm/uop-x86.js",
+    "bytes": 18412,
+    "sha256": "9728cf0b59d7f781ce8e84697462602c4f298e0c06d61a8168bada19b19a388a"
+  },
+  {
+    "path": "candidate/tools/toyvm/vm.js",
+    "bytes": 10623,
+    "sha256": "a14f1370b502c15475662efff33b9575ac2fe4fe366a66cdede3cfec2d564b81"
+  },
+  {
+    "path": "REPORT.txt",
+    "bytes": 7832,
+    "sha256": "10f9fd04f1a350092970e030bac1291e1ce8a0a5eb786158ef1aad562ff76aa2"
+  },
+  {
+    "path": "pointer-delivery.patch",
+    "bytes": 24425,
+    "sha256": "99a02c421ad8db103d74532ce16610b8644489da2c48aa32228a14d4ecd6e737"
+  },
+  {
+    "path": "launcher-copy-ancillary.patch",
+    "bytes": 716,
+    "sha256": "bf07d0deb886fb7ba4fe6055eaf4c95b2c3365535124d8ebb5520584e8ea6331"
+  },
+  {
+    "path": "generated-site.patch",
+    "bytes": 1031,
+    "sha256": "a8d822148f9567ea5c249d86779c5b268286b1e1c51f08ebed935ae3cff0a24f"
+  },
+  {
+    "path": "source-hashes.json",
+    "bytes": 16152,
+    "sha256": "9b113ccb82f2bfd3b7baa52ba6978f459814f7c0876dcc0eef0364936a4d933e"
+  },
+  {
+    "path": "result.json",
+    "bytes": 1174,
+    "sha256": "005dd251eec8e5619ab895c6514305d6357d703b9e5d9dffb6d6b1aaeeb74e0d"
+  },
+  {
+    "path": "test-results.json",
+    "bytes": 560,
+    "sha256": "f55e72e874a55c7cbdddb66fcfa1e5bb33d103aa3ae5aabf6decec84930f7096"
+  },
+  {
+    "path": "validate.cjs",
+    "bytes": 1834,
+    "sha256": "581d729f574cf151f9e826953ed5de694ae1cdd8611a1731a50bb415986174ad"
+  }
+]
