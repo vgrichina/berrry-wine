@@ -1,0 +1,201 @@
+{
+  "verdict": "ACCEPTED_SOURCE_BOUNDARY_ONLY",
+  "candidate": "1b5c93b2cb998094034cdce7f3eda497cf3c9006",
+  "runnerSHA256": "f96e9bb924700ee571e2904e097f80742ff55638399898ae1dc32454af05b02d",
+  "earliest": {
+    "argv": [
+      "--quiet-api",
+      "--observe-morrowind-name",
+      "--trace-api",
+      "--trace-api-paused"
+    ],
+    "control": {
+      "action": "trace-api",
+      "on": false
+    },
+    "writes": [
+      1,
+      1
+    ],
+    "observerInstalled": true,
+    "apiLog": 1,
+    "apiLogOff": false
+  },
+  "mutation": {
+    "boundary": "control",
+    "replacement": [
+      "!!apiLogRequired(on)",
+      "on"
+    ],
+    "writes": [
+      1,
+      0
+    ],
+    "rejected": true
+  },
+  "cases": [
+    "earliest sequence and rejecting real-boundary mutation",
+    "parse/startup/late reset/control []",
+    "parse/startup/late reset/control [\"--trace-api=ExampleApi\",\"--trace-api-paused\"]",
+    "parse/startup/late reset/control [\"--observe-morrowind-name\"]",
+    "parse/startup/late reset/control [\"--observe-morrowind-name\",\"--trace-api=ExampleApi\",\"--trace-api-paused\"]",
+    "parse/startup/late reset/control [\"--quiet-api\"]",
+    "parse/startup/late reset/control [\"--quiet-api\",\"--trace-api=ExampleApi\",\"--trace-api-paused\"]",
+    "parse/startup/late reset/control [\"--quiet-api\",\"--observe-morrowind-name\"]",
+    "parse/startup/late reset/control [\"--quiet-api\",\"--observe-morrowind-name\",\"--trace-api=ExampleApi\",\"--trace-api-paused\"]",
+    "main and complete Worker factory default policy",
+    "main actual detailed entry/exit/memory and marker while observer is armed",
+    "pause between main entry/exit drops pending detail",
+    "actual observer entry/exit survives pause without repeating correlation groups",
+    "complete Worker factory filtered detail across pause/resume quiet=false",
+    "complete Worker factory filtered detail across pause/resume quiet=true",
+    "required consumer {\"TRACE_API_COUNTS\":true}",
+    "required consumer {\"TRACE_CRITICAL\":true}",
+    "required consumer {\"TRACE_INPUT_DISPATCH\":true}",
+    "required consumer {\"ESP_DELTA\":true}",
+    "required consumer {\"ESP_AUDIT\":true}",
+    "required consumer {\"breakApis\":[\"unused\"]}",
+    "memory-only legacy and coupled memory tracing",
+    "disabled observer and failed installs cannot produce accepted observer",
+    "counter folding independent of detail toggles with required observer"
+  ],
+  "boundaries": {
+    "parser": {
+      "startByte": 7038,
+      "endByte": 7489,
+      "startLine": 146,
+      "sha256": "aa2d16119b2edc62abc08862fc7c3ea28a98bdc7fb4d28161937a1f705e4621e",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "trace-flags": {
+      "startByte": 17082,
+      "endByte": 18179,
+      "startLine": 295,
+      "sha256": "d1c0503bb89838607c207cc76cd0192cfc3a27ef6a85e928533103cc810f4381",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "trace-state": {
+      "startByte": 112015,
+      "endByte": 112065,
+      "startLine": 1806,
+      "sha256": "016376a60a58e9565b35023de8a82900ce37b736b183d0f0780cad611f715e49",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "dedup-state": {
+      "startByte": 113810,
+      "endByte": 114276,
+      "startLine": 1830,
+      "sha256": "62ab8104aac9a9a9c936161e3e216c3475324646a1bbb1b35913eac38655f8c8",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "arbitration": {
+      "startByte": 195741,
+      "endByte": 196278,
+      "startLine": 3322,
+      "sha256": "7945bca81e07d5d4c107cd037dbe08567c9bce9749cbd0871563306323d44953",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "control": {
+      "startByte": 398271,
+      "endByte": 399357,
+      "startLine": 7348,
+      "sha256": "45bb0dda1ff6054348bf06f15b72586b7b7a25b56ec9975e8c57b8c3dd4a988f",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "worker-factory": {
+      "startByte": 292513,
+      "endByte": 295483,
+      "startLine": 5235,
+      "sha256": "c3a161df5fbb70343d9d4aa73ab1802178a5d197256e9f08df14e2d409980f62",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "main-api-hooks": {
+      "startByte": 196279,
+      "endByte": 223789,
+      "startLine": 3330,
+      "sha256": "4a1c02e8b1659a6c5d6808bb514b202f1b2612a959c245955d57fa5eb0f963c9",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "main-exit-hook": {
+      "startByte": 225445,
+      "endByte": 227577,
+      "startLine": 3944,
+      "sha256": "c12768626d93801ef86a58c8515cfe4857bbc91607b176e6805bf9435b790f3d",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "resets": [
+      {
+        "startByte": 275652,
+        "endByte": 275731,
+        "sha256": "21007f0cc95485589f69e5ffb8a0ed8e1faafcda5d5319efcb86e6738d56be63"
+      },
+      {
+        "startByte": 362240,
+        "endByte": 362319,
+        "sha256": "21007f0cc95485589f69e5ffb8a0ed8e1faafcda5d5319efcb86e6738d56be63"
+      }
+    ],
+    "inherited-reset": {
+      "startByte": 306026,
+      "endByte": 306073,
+      "startLine": 5515,
+      "sha256": "47094342ccf18fdb2ce54dd895fced07f77f943ff948f97f335e829e3f4bf6bb",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "scaffold": {
+      "prefixSHA256": "55d1757113415d0be34e675b30ec555f8dfe23d4868a09bb6189d8fc7e9c29cd",
+      "transformedSHA256": "03aea44599f8e0617c6cd0c2e6f15895d6e1258d3f54b09ddf0cad7def3faf23",
+      "transformations": [
+        "configure before IMPORT",
+        "first reset before ATTACH",
+        "expose context"
+      ]
+    },
+    "IMPORT": {
+      "startByte": 274923,
+      "endByte": 275219,
+      "startLine": 4908,
+      "sha256": "5eea76573e29eeb4b57cc6be556f88a560fb3871d5010b0df59a9510c709a342",
+      "transformation": "contiguous unchanged source slice"
+    },
+    "ATTACH": {
+      "startByte": 310018,
+      "endByte": 311031,
+      "startLine": 5588,
+      "sha256": "fa0f88f382d0ce5539957128f7cb028a31fed5ed27ad4470dab1d52ec17a93ef",
+      "transformation": "contiguous unchanged source slice"
+    }
+  },
+  "setters": [
+    {
+      "line": 4923,
+      "source": "if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);"
+    },
+    {
+      "line": 5515,
+      "source": "if (apiLogOff) inheritWasm('set_api_log', 0);"
+    },
+    {
+      "line": 6645,
+      "source": "if (apiLogOff && instance.exports.set_api_log) instance.exports.set_api_log(0);"
+    },
+    {
+      "line": 7362,
+      "source": "const setLog = exports => { if (exports && exports.set_api_log) exports.set_api_log(logOn ? 1 : 0); };"
+    },
+    {
+      "line": 7365,
+      "source": "inheritWasm('set_api_log', logOn ? 1 : 0);"
+    }
+  ],
+  "order": {
+    "import": 274923,
+    "instantiate": 275250,
+    "attachEnd": 311031,
+    "dllInitializer": 321389,
+    "lateReset": 362240
+  },
+  "firstMissingAcceptanceEvidence": "Actual whole-runner and initializer execution with the exact module and game: source slicing/synthetic guest state cannot establish this. Successful source acceptance permits a later separately authorized full-runner acceptance only.",
+  "scope": "Actual production parser, trace flags/state, arbitration, import/observer attach, two reset statements, inherited reset, control, main API hooks and entire Worker logger factory executed in synthetic memory/exports. Source ordering only for initializers; no initializer, whole runner, module, game, browser, build or Boat execution. Unchanged 49 correlation groups reused, not repeated.",
+  "historicalResourceIncidents": "Preserved by reference to repair and predecessor receipts; this verdict promotes no operation/resource or gameplay qualification."
+}
