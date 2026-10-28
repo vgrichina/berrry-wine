@@ -1,0 +1,34 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/shadow-man-callback-census-correction-oct28/repo",
+    "diff-tree",
+    "--no-commit-id",
+    "--name-status",
+    "-r",
+    "fa9f8069936a16093896ddb07ca6b4c85b1ead5e"
+  ],
+  "cwd": "/home/user/wine-assembly",
+  "environment": {
+    "HOME": "/home/user",
+    "LANG": "en_US.UTF-8",
+    "USER": "user",
+    "LC_ALL": "en_US.UTF-8",
+    "PATH": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.codex/tmp/arg0-linux/codex-arg07kougu:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/home/user/.local/bin:/usr/local/bin:/usr/local/cargo/bin:/usr/local/go/bin:/home/user/.local/bin:/home/user/.ascii:/usr/local/cargo/bin:/home/user/.nvm/versions/node/v24.18.1/bin:/home/user/.codex/tmp/arg0-linux/codex-arg0jndwfX:/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/codex-path:/home/user/.ascii:/usr/local/cargo/bin:/usr/local/cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/user/.dotnet/tools",
+    "PYTHONDONTWRITEBYTECODE": "1",
+    "GIT_OPTIONAL_LOCKS": "0",
+    "GIT_NO_LAZY_FETCH": "1",
+    "BOAT_NO_UPDATE": "1",
+    "GIT_SSH_COMMAND": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes"
+  },
+  "memAvailable": 3284451328,
+  "diskAvailable": 3316301824,
+  "cpu": 90,
+  "wall": 120,
+  "rssCap": 402653184,
+  "pythonRSSCap": 134217728,
+  "outputCap": 2097152,
+  "gitDataChildOnly": 268435456,
+  "started": 1793223679.6115932
+}

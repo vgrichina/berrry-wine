@@ -1,0 +1,36 @@
+{
+  "utc": "2026-10-28T21:39:43Z",
+  "codexPID": 1988354,
+  "executable": "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+  "argv": [
+    "/opt/ascii-agent/node_modules/@openai/codex-linux-x64/vendor/x86_64-unknown-linux-musl/bin/codex",
+    "exec",
+    "--profile",
+    "wine-worker",
+    "-c",
+    "model_auto_compact_token_limit=200000",
+    "-c",
+    "model_auto_compact_token_limit_scope=\"total\"",
+    "-m",
+    "gpt-6.1-sol",
+    "-c",
+    "model_reasoning_effort=\"medium\"",
+    "--json",
+    "--output-last-message",
+    "/home/user/wine-assembly/scratch/usage-watch/shadow-man-census-cleared-canonical-native-oct28/final.txt",
+    "-",
+    ""
+  ],
+  "baselineWAL": {
+    "/home/user/.codex/memories_1.sqlite-wal": 0,
+    "/home/user/.codex/logs_2.sqlite-wal": 12244672,
+    "/home/user/.codex/queue_1.sqlite-wal": 4152992,
+    "/home/user/.codex/goals_1.sqlite-wal": 1108312,
+    "/home/user/.codex/state_5.sqlite-wal": 4313672,
+    "/home/user/.codex/thread_history_1.sqlite-wal": 4185952
+  },
+  "sessionFiles": [
+    "/home/user/.codex/sessions/2026/10/28/rollout-2026-10-28T21-37-58-01a18472-cd70-7151-a392-f1c3a268d74a.jsonl",
+    "/home/user/.codex/sessions/2026/10/28/rollout-2026-10-28T21-37-59-01a18472-d1d3-7111-95ed-443249179e0e.jsonl"
+  ]
+}

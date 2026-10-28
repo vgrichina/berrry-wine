@@ -1,0 +1,10 @@
+const fs=require('fs'),vm=require('vm'),assert=require('assert'),crypto=require('crypto');
+const p='/home/user/wine-assembly-shadow-man-zero-transfer-provenance-oct23/test/run.js',s=fs.readFileSync(p,'utf8');
+assert.equal(crypto.createHash('sha256').update(s).digest('hex'),'4d7b9587676db38fcf3314807acb2b2a42b5f09d2c98fcf3dccb8a6cde9e1809');
+const a=s.indexOf('const getArg = (name, def) => {'),b=s.indexOf('const hasFlag',a);assert(a>0&&b>a);
+const root=__dirname+'/mount-control';fs.mkdirSync(root,{recursive:true});fs.writeFileSync(root+'/comma,bearing.txt','control');
+const actualArgv=[],controlArgv=['--vfs-tree='+root];
+assert.deepEqual(Array.from(vm.runInNewContext(s.slice(a,b)+';getArgs("vfs-tree")',{args:actualArgv})),[]);
+assert.deepEqual(Array.from(vm.runInNewContext(s.slice(a,b)+';getArgs("vfs-tree")',{args:controlArgv})),[root]);
+assert.deepEqual(fs.readdirSync(root),['comma,bearing.txt']);
+console.log(JSON.stringify({parser:p,sha256:crypto.createHash('sha256').update(s).digest('hex'),actualArgv,actualMounts:[],controlArgv,enumeratedControlFiles:fs.readdirSync(root),pass:true,scope:'canonical build/native fixture has no guest file mounts'}));

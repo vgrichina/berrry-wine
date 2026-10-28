@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-28T21:42:14Z",
+  "box": null,
+  "state": "NOT_ALLOCATED",
+  "cutoff": "2026-10-28T22:20:00Z",
+  "handback": "2026-10-28T22:23:00Z",
+  "shutdown": "2026-10-28T22:26:00Z",
+  "expiry": "2026-10-28T22:30:00Z",
+  "shutdownDelegated": true,
+  "action": "NONE; no task box exists; no other box affected",
+  "snapshotStopReceipt": "NOT_APPLICABLE_NO_BOX"
+}
