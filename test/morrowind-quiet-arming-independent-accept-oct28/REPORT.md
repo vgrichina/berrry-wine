@@ -1,0 +1,15 @@
+# Rejected: remaining logging setter disables installed observer
+
+Exact candidate `e627e71ed960c4ba4905bd6ac9ff9496daad8a3d`; runner SHA256 `d06dbc85f92e1e9e8516f726f848204256460dd2d2553a4abee8ea2fa08ed7de`.
+
+The unchanged original reproducer on base `efa0f32e9dbe7fac2c863737810755473cb458c6` exits 0 and reports REJECTED. This proves the old quiet startup defect; it does not accept the correction.
+
+The correction passes four quiet/enabled startup combinations and eight existing logger-consumer cases in this independent source fixture. Removing only the observer predicate exposes the required rejecting mutation: logging changes 1 -> 0 at the late reset.
+
+The first new counterexample uses `--quiet-api --observe-morrowind-name --trace-api --trace-api-paused`, then the existing control command `{"action":"trace-api","on":false}`. Actual observer installation sets logging to 1; the corrected late startup reset preserves it. The exact production control branch at test/run.js:7344 subsequently sets `apiLogOff = true`, calls `set_api_log(0)` on the main instance, and inherits that value. The observer remains installed. This violates retention of its required API logging. The command has no observer-aware consumer guard. This is a source correctness rejection of the requested comprehensive arming acceptance; the startup predicate repair itself works.
+
+Run: `node --max-old-space-size=320 test/morrowind-quiet-arming-independent-accept-oct28/acceptance.js /path/to/Morrowind.exe`. Exit 0 verifies the recorded REJECTION, not acceptance. `counterexample.json` contains exact source/scaffold hashes and outcomes. The fixture reuses only the pinned scaffold prefix; no inherited behavioral or correlation groups execute. Its two transformations expose context and configure production argv/predicate before attachment. Actual production parser, predicate, import/attach fragments, late reset and trace control execute without substituted predicates except the explicitly labeled rejecting mutation. Actual observer library and its source/EXE verification execute unchanged.
+
+Initializer ordering is source-observed only (attachment before callDllMain); no initializer, whole runner, WAT/module, build, guest, browser or Boat ran. Installed-observer failure behavior and additional setter investigations were not run after this first counterexample. Separate correlation acceptance and later source-matched full runner/runtime qualification remain required. No production repair or integration performed.
+
+Resource admission and per-operation monitoring include actual executable-verified Codex PID 1973242, current worker/coordinator client growth, 512MiB child budget, session/full WAL allocation, Git/index/evidence and other task reservations. Node startup records exact executable/environment/heap flags/inherited limits; Git DATA limits apply only to Git. Historical aggregate enforcement is UNQUALIFIED and not promoted. Initial terminal reads exceeded the 8192B capture gate; no whole-task operation/resource PASS is claimed.
