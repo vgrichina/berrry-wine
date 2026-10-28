@@ -311,6 +311,10 @@ def literal_sources(directory, inventory):
 
     Recognize standalone source commands at line/semicolon boundaries. Relative
     literals are checked against root and script directory (CWD is not known).
+    Normalize dot components lexically, dropping any candidate that escapes the
+    extraction root. If both candidates escape, retain an explicit unknown.
+    Candidate presence is not runtime source resolution (including symlink/CWD
+    semantics); candidate checking never opens a literal target.
     Substitution, continuations and unrecognized command forms remain unknown.
     """
     paths = {x['path'].casefold() for x in inventory['files']}
@@ -331,17 +335,32 @@ def literal_sources(directory, inventory):
                 unknown.append({'script': name, 'expression': word[:1024]})
                 continue
             target = next(x for x in literal.groups() if x is not None)
-            # Absolute, drive and parent-relative paths depend on runtime CWD.
-            if not target or target.startswith('/') or ':' in target or '..' in PurePosixPath(target).parts:
+            # Absolute and drive paths are outside the supported candidate subset.
+            if not target or target.startswith('/') or ':' in target:
                 unknown.append({'script': name, 'expression': word[:1024]})
                 continue
-            candidates = [PurePosixPath(target).as_posix(), (PurePosixPath(name).parent / target).as_posix()]
+            candidates = []
+            for base in (PurePosixPath('.'), PurePosixPath(name).parent):
+                parts = []
+                for part in (base / target).parts:
+                    if part == '..':
+                        if not parts:
+                            break  # Never inspect an out-of-root candidate.
+                        parts.pop()
+                    else:
+                        parts.append(part)
+                else:
+                    candidates.append(PurePosixPath(*parts).as_posix())
+            if not candidates:
+                unknown.append({'script': name, 'expression': word[:1024],
+                                'reason': 'all lexical candidates escape extraction root; runtime CWD unknown'})
+                continue
             found = sorted({p for p in candidates if p.casefold() in paths})
             if not found:
                 raise Rejected('missing literal Tcl source: ' + name + ' -> ' + target)
             checked.append({'script': name, 'literal': target, 'candidatesPresent': found})
     return {'checked': checked, 'unknown': unknown,
-            'limitations': 'lexical command subset; root/script-directory candidates only; computed and other Tcl forms/runtime unknown'}
+            'limitations': 'lexical command subset; normalized in-root root/script-directory candidates only; candidate presence is not runtime resolution; all-escaping literals, computed and other Tcl forms/runtime CWD unknown'}
 
 
 def publish_extract(archive, destination, expanded_limit):
