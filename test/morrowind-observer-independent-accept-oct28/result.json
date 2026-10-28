@@ -1,0 +1,65 @@
+{
+  "verdict": "REJECTED",
+  "finding": "Quiet API startup disables enabled observer COM entry/completion imports",
+  "outcomes": [
+    {
+      "quiet": true,
+      "enabled": false,
+      "mutation": false,
+      "apiLogOff": true,
+      "armedAtAttach": null,
+      "finalApiLog": 0,
+      "installedRecords": 0,
+      "fullRunnerExecuted": false,
+      "wasmExecuted": false
+    },
+    {
+      "quiet": false,
+      "enabled": true,
+      "mutation": false,
+      "apiLogOff": false,
+      "armedAtAttach": 1,
+      "finalApiLog": 1,
+      "installedRecords": 1,
+      "fullRunnerExecuted": false,
+      "wasmExecuted": false
+    },
+    {
+      "quiet": true,
+      "enabled": true,
+      "mutation": false,
+      "apiLogOff": true,
+      "armedAtAttach": 1,
+      "finalApiLog": 0,
+      "installedRecords": 1,
+      "fullRunnerExecuted": false,
+      "wasmExecuted": false
+    },
+    {
+      "quiet": true,
+      "enabled": true,
+      "mutation": true,
+      "apiLogOff": false,
+      "armedAtAttach": 1,
+      "finalApiLog": 1,
+      "installedRecords": 1,
+      "fullRunnerExecuted": false,
+      "wasmExecuted": false
+    }
+  ],
+  "production": {
+    "runnerSHA256": "dbf2493b75f5584e3c46810d5379a07394c12c27cef80753dcdc329a24872de6",
+    "observerSHA256": "a2bbe6d15de3fc46d65f6e72e365e82cd223b5db5486dc3cdbc585aad9d75799",
+    "predicateSHA256": "8499bb7b806365a631da45e0d90f8c17f8da1235e276b87ed9302cb8e85ffe5b",
+    "resetSHA256": "21007f0cc95485589f69e5ffb8a0ed8e1faafcda5d5319efcb86e6738d56be63",
+    "predicateLine": 3319,
+    "attachEndLine": 5603,
+    "initializerRouteLine": 5810,
+    "lateResetLine": 6640,
+    "fixtureScaffoldSHA256": "55d1757113415d0be34e675b30ec555f8dfe23d4868a09bb6189d8fc7e9c29cd",
+    "transformedScaffoldSHA256": "56518d7d07bc643707a2bbd46c348bae748eb8a99acb1ca9754ad7732586501b",
+    "transformation": "fixture prefix only; expose context in returned scaffold; isolate exact production predicate and post-attach reset by literal boundaries"
+  },
+  "assertions": "disabled default, enabled nonquiet control, enabled quiet rejection, predicate-only mutation control, actual WAT logger guards",
+  "limitation": "No full production runner, module, initializers, WAT or original guest execution. WAT dispatch suppression is source-backed, not an executed guest observation."
+}
