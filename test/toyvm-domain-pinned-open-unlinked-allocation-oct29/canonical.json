@@ -1,0 +1,135 @@
+{
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 1,
+  "controlsReused": "/tmp/toyvm-domain-pinned-open-unlinked-allocation-oct29/prelaunch-controls.json",
+  "descriptorCheckpoint": "{\"checkpoint\": \"before-B-write\", \"Afd\": 3, \"Bfd\": 4, \"Aopen\": true, \"Alinks\": 0, \"Asize\": 16384, \"Ainode\": 2}\n",
+  "descriptorProof": "Pinned single-thread fixture holds Afd without close through os.write(Bfd,16384); fstat nlink=0/size16384 and pread asserted immediately before B attempt.",
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem allocation limit",
+    "fileLimit": 16384,
+    "inodes": 2,
+    "live": 8192,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 16,
+    "peak": 28672,
+    "writeLimit": 65536,
+    "written": 16384
+  },
+  "filesystemFinalPresent": false,
+  "gatePASS": false,
+  "lifecycle": {
+    "box": "bx_gfk8k88g",
+    "createdAt": "2026-10-29T04:36:59.412Z",
+    "creationExpiry": "2026-10-29T05:06:59.426Z",
+    "cutoffUTC": "2026-10-29T05:15:00Z",
+    "effectiveExpiry": "2026-10-29T05:06:59.426Z",
+    "snapshotVerifiedAt": "2026-10-29T04:37:48.377Z",
+    "state": "stopped",
+    "stop": {
+      "endedAt": "2026-10-29T04:37:48.431Z",
+      "error": null,
+      "id": "stop_5795337774e73b2c",
+      "lastAttemptAt": "2026-10-29T04:37:48.431Z",
+      "requestedAt": null,
+      "status": "completed"
+    }
+  },
+  "limitations": [
+    "Live at rejection was not independently sampled. Final receipt live8192/peak28672/written16384/openHandles0. Exact gate requires live28672 and separate filesystemFinal.openHandles, which production does not emit.",
+    "Production supervise_accounted.py assigns post-reap snapshot to filesystem; do not relabel final live8192 as live28672.",
+    "Peak28672 and rejected B growth support the open-unlinked charge lifetime, but the exact requested canonical live value was not observed.",
+    "Historical ef4ccbdb783b7d532baf3b64f0a894fcc434be79 had EACCES before accounting; retained unchanged. Older socket observer historical actual25 text is wrong; corrected path is27 bytes.",
+    "Prior observer/procedural/publication limitations retained. No browser/gameplay/arbitrary-descendant claims. Browser CPU35.353183 wall101.495550694 captures1 unchanged.",
+    "Mount argv empty: direct production FUSE CLI; canonical guest mount parser not invoked. Boat --file enumeration retained separately."
+  ],
+  "limits": {
+    "GitDATAchild": 268435456,
+    "PythonDATAchild": 134217728,
+    "allocationBytes": 25165824,
+    "captureBytes": 2097152,
+    "cpu": 90,
+    "evidenceBytes": 1048576,
+    "fileBytes": 12582912,
+    "groupPhysicalRSS": 536870912,
+    "parentDATAsoft": 134217728,
+    "parentPhysicalRSS": 134217728,
+    "wall": 120
+  },
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.04,
+      "finalState": null,
+      "pid": 5909,
+      "ppid": 5901,
+      "rss": 0,
+      "start": "5664",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 5910,
+      "ppid": 5909,
+      "rss": 14286848,
+      "start": "5666",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.02,
+      "finalState": null,
+      "pid": 5913,
+      "ppid": 5909,
+      "rss": 0,
+      "start": "5669",
+      "state": "Z"
+    }
+  ],
+  "outcome": "EXACT ORACLE REJECTED; no replay or source repair",
+  "productionInvocationCount": 1,
+  "reason": "filesystem allocation limit",
+  "remainingMounts": [],
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-domain-pinned-open-unlinked-allocation-oct29/root-ref-digest.json",
+  "runtimeFixturePin": {
+    "bytes": 542,
+    "sha256": "c67e20af26a7e69203460bc8259d262b12f68ea22291c797a564dcf923c8032c"
+  },
+  "runtimeObserverPin": {
+    "bytes": 5912,
+    "sha256": "1ba633cf94a8f4ce04ed5374be0539396bffad89017e596e57f928bf25bacbd8"
+  },
+  "safetyCleanup": null,
+  "socketPath": "/tmp/tvunlink/w/status.sock",
+  "socketPathBytes": 27,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "task": "toyvm-domain-pinned-open-unlinked-allocation-oct29"
+}

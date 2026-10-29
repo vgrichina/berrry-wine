@@ -1,0 +1,6 @@
+One production CLI/FUSE invocation; exact oracle REJECTED.
+CLI exit1: filesystem allocation limit. A was open, unlinked, size16384, readable immediately before B write; fixture contains no close or catch. B inode was created. Rejected second write retained total written16384 and peak28672.
+The authoritative filesystem receipt is post-reap: live8192, peak28672, written16384, openHandles0; no filesystemFinal field exists. Pinned observer expected live28672 and filesystemFinal.openHandles0, therefore gatePASS=false. No rerun, modification, or repair.
+All three sampled PID/start identities absent after cleanup; FUSE unmounted; cleanupComplete=true; outer safety unused.
+Boat bx_gfk8k88g snapshot completed and actual stopped verified 2026-10-29T04:37:48.377Z. Creation expiry2026-10-29T05:06:59.426Z (earlier than05:15 cutoff).
+No production changes, main integration, public deploy, browser/gameplay or arbitrary-descendant claims. See canonical.json for pins, original limitations and controls.

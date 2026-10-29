@@ -1,0 +1,14 @@
+{
+  "box": "bx_gfk8k88g",
+  "snapshotStatus": "completed",
+  "snapshotVerifiedAt": "2026-10-29T04:37:48.377Z",
+  "state": "stopped",
+  "stop": {
+    "endedAt": "2026-10-29T04:37:48.431Z",
+    "error": null,
+    "id": "stop_5795337774e73b2c",
+    "lastAttemptAt": "2026-10-29T04:37:48.431Z",
+    "requestedAt": null,
+    "status": "completed"
+  }
+}
