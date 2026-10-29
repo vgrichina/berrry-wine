@@ -1,0 +1,47 @@
+{
+  "prior-results.json": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-tests/results.json",
+    "bytes": 4376,
+    "sha256": "e1bcfb6767df364d3ee1b9802a1d054077e85e81a412dea7b992296b24422dae"
+  },
+  "prior-oracle.py": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-tests/oracle.py",
+    "bytes": 11307,
+    "sha256": "7584783f2d818433eb5a800730a9e3a9561bb41e62119709cc516d171daf11a7"
+  },
+  "prior-completion-receipt.json": {
+    "original": "/home/user/wine-assembly/scratch/usage-watch/toyvm-transitive-namespace-pair-independent-accept-oct29/coordinator-retained/completion-receipt.json",
+    "bytes": 12886,
+    "sha256": "2fb783d4632e41c32cec0f991c6044a4adcc0cb14fde65c6a9cb1e8dd40ff843"
+  },
+  "preflight.json": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/control-behavior-preflight.json",
+    "bytes": 1825,
+    "sha256": "2ae2ef291a0d659e0bbd991e75cee44dc31fd01157a2d85867e22c049246bbb8"
+  },
+  "prior-independent-oracle.stdout": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-evidence/independent-oracle.stdout",
+    "bytes": 3099,
+    "sha256": "966f5264e2a0cbb75c1dd0eeff8e367ff1ae9151c63b9861b95f2e0a1eaba07f"
+  },
+  "prior-independent-oracle.stderr": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-evidence/independent-oracle.stderr",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prior-legacy-caller-loader-control.stdout": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-evidence/legacy-caller-loader-control.stdout",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "prior-legacy-caller-loader-control.stderr": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-evidence/legacy-caller-loader-control.stderr",
+    "bytes": 138,
+    "sha256": "082125b2986dd9c4101830075298774e21b83098c4df147e62edc3552e763725"
+  },
+  "prior-diagnose-control-identity.stdout": {
+    "original": "/tmp/toyvm-transitive-pair-genuine-control-accept-oct29/inputs/prior-independent-evidence/diagnose-control-identity.stdout",
+    "bytes": 112,
+    "sha256": "54ba48727ee3deb7a9cb7a1ddd2b662f3aa6dcd7058ecd69dc9cf85ec2c86881"
+  }
+}

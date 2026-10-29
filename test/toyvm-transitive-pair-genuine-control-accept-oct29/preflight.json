@@ -1,0 +1,57 @@
+{
+  "scope": "pre-dispatch distinguishing-control smoke only; no full independent acceptance or runtime qualification",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "legacyPin": {
+    "bytes": 8310,
+    "sha256": "9559f5ec6e5ca61cdb9285839756950f9f60caf6764fd5e2c9661b3794171e9b"
+  },
+  "oracleSha256": "7584783f2d818433eb5a800730a9e3a9561bb41e62119709cc516d171daf11a7",
+  "loadBackendAstDiffers": true,
+  "cases": [
+    {
+      "variant": "candidate",
+      "mode": "normal",
+      "pass": true
+    },
+    {
+      "variant": "legacy-caller",
+      "mode": "normal",
+      "pass": true
+    },
+    {
+      "variant": "candidate",
+      "mode": "timestamp",
+      "pass": true
+    },
+    {
+      "variant": "legacy-caller",
+      "mode": "timestamp",
+      "rejected": true,
+      "reason": "hostile bytecode executed"
+    }
+  ],
+  "childInvocations": 0,
+  "returnedAdapterInvocations": 0,
+  "pass": true
+}
