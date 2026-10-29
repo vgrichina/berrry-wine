@@ -1,0 +1,115 @@
+{
+  "task": "toyvm-directory-metadata-runtime-independent-accept-oct29",
+  "outcome": "PASS_SCOPED_RETAINED_RUNTIME_ACCEPTANCE",
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "fixturePin": {
+    "bytes": 499,
+    "sha256": "7b452a24219520c527283883861e9c31b48edf83d3aae82d07b7566bcbedd222"
+  },
+  "canonicalPin": {
+    "bytes": 3288,
+    "sha256": "8aed67477c0e0663773c0303c27a5b47b8dbd1d44ac55af17e80f052bc82b663"
+  },
+  "retainedRawPin": {
+    "bytes": 27589,
+    "sha256": "e5af33af3203b0012572612073f99a44931ae74f735ea1d610d816f01dd20527"
+  },
+  "measuredPostReap": {
+    "live": 12288,
+    "peak": 12288,
+    "written": 0,
+    "inodes": 3,
+    "openHandles": 0
+  },
+  "independentlyInferred": {
+    "inferredLive": [
+      4096,
+      8192,
+      12288
+    ],
+    "rejectedWouldRequire": 16384,
+    "nextMetadataCharge": 4096,
+    "rejectionBefore": "inode allocation, inode insertion and parent entry mutation"
+  },
+  "controlsRejected": [
+    "wrong-perfile-gate",
+    "wrong-write-gate",
+    "missing-marker",
+    "wrong-argv",
+    "wrong-source-before",
+    "wrong-source-after",
+    "stale-owned-start",
+    "stale-observed-start",
+    "missing-backend-identity",
+    "unreaped-identity",
+    "still-mounted",
+    "forged-accepted",
+    "external-safety-cleanup",
+    "wrong-live",
+    "wrong-peak",
+    "wrong-written",
+    "wrong-inodes",
+    "wrong-openHandles",
+    "late-metadata-charge",
+    "write-instead-of-live-gate",
+    "unconditional-collection",
+    "missing-metadata-reclaim"
+  ],
+  "newProductionInvocations": 0,
+  "historicalManifest": {
+    "unchangedEntries": 42,
+    "changed": {
+      "admissions.jsonl": {
+        "expected": {
+          "bytes": 5418,
+          "sha256": "d45f6c0036c93057cae12ed5649022de583437ec959af445b4a8773efc166065"
+        },
+        "actual": {
+          "bytes": 12536,
+          "sha256": "cc31512560f3e43602fbf7800f962236b8c03597873bf81a805625b3d2bc9740"
+        }
+      }
+    },
+    "sealedAdmissionPrefixMatches": true,
+    "appendedRows": 17,
+    "scopedAcceptanceAffected": false
+  },
+  "lifecycle": {
+    "box": "bx_489jsaq6",
+    "retainedState": "stopped",
+    "snapshotAvailable": true,
+    "originalExpiry": "2026-10-29T05:43:31.559Z",
+    "owner": "coordinator",
+    "newAPICalls": 0
+  },
+  "limitations": [
+    "No new runtime invocation or acceptance claim",
+    "No direct errno or instantaneous/realtime counters",
+    "No RMDIR reuse runtime tested or claimed in this assigned case",
+    "No gameplay/browser/general-resource acceptance",
+    "Original helper validation error corrected before passing; historical diagnostics preserved",
+    "Full historical raw manifest does not match: admission log appended after seal"
+  ]
+}
