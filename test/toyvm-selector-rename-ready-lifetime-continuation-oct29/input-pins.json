@@ -1,0 +1,90 @@
+{
+  "selector-backend.py": {
+    "bytes": 11824,
+    "sha256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc"
+  },
+  "prior-tests/private-remove-destination-guard.py.txt": {
+    "bytes": 12815,
+    "sha256": "f6614d24f75f82760cd00e3826eda99d0a06c297fa7d1acba9f70832b13a72b9"
+  },
+  "prior-tests/wire.py": {
+    "bytes": 10626,
+    "sha256": "339132d7f1a56ba3988a4b91453533b55cbe0abb28c279709d0b54937f7d610f"
+  },
+  "prior-tests/diagnostic.json": {
+    "bytes": 4028,
+    "sha256": "d40e766e07ac9006f4d222d439b54639bedd8726f0d1c91f498474abbe8c895e"
+  },
+  "prior-tests/lifetime.py": {
+    "bytes": 16786,
+    "sha256": "0cc4599968c3aec0c182f766278e49f1937099e205e4d55f75e1c118963eeae2"
+  },
+  "prior-tests/production-pins.json": {
+    "bytes": 904,
+    "sha256": "da5308528591fde91baada7b674aad23bb97c559709acc3a3ee1cd8be32696e4"
+  },
+  "prior-tests/private-remove-source-guard.py.txt": {
+    "bytes": 12818,
+    "sha256": "ee51e021ffa637341fd875e6c205176f2f8cdfc41c8e8f5e14dabf7b640c1ba7"
+  },
+  "prior-tests/provenance.json": {
+    "bytes": 1113,
+    "sha256": "691f47144453b4caad465003bf311cf7213eec4585dc4d70e26cf4c5fb166713"
+  },
+  "prior-tests/README.md": {
+    "bytes": 1978,
+    "sha256": "60ed47432bf916e71b4072e8ed78ca09ed5879523033f473bc433c3e21ad7b3d"
+  },
+  "prior-tests/results.json": {
+    "bytes": 151274,
+    "sha256": "20edf9647c46fbbf4b69b00d080b14b39cee397e7ddb59d1f0cd066f4c7c80d6"
+  },
+  "prior-tests/provenance/source.diff": {
+    "bytes": 876,
+    "sha256": "0219937cc9a56b7c5626c0f3281dd47d0ef95a04b22503f751bf20dca0bc4688"
+  },
+  "prior-tests/provenance/attempted-combined-backend.py.txt": {
+    "bytes": 12821,
+    "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+  },
+  "prior-tests/provenance/original-rename-wire.py.txt": {
+    "bytes": 10759,
+    "sha256": "9e2641965da39f5ba9b71912a6b251d23e24b571453e4df16aa928ff04ffe1b0"
+  },
+  "prior-tests/provenance/accepted-selector-backend.py.txt": {
+    "bytes": 11824,
+    "sha256": "5d8384416042115189995a0aa80ad9de4d2695112b87da8d3d1124e5736d6bfc"
+  },
+  "prior-tests/provenance/original-selector-wire.py.txt": {
+    "bytes": 16164,
+    "sha256": "ba9a400ff97727ecd26673f792b3e9a3ee576a71cb065fc1759bf8d67323f26a"
+  },
+  "prior-tests/provenance/original-backend.py.txt": {
+    "bytes": 12580,
+    "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+  },
+  "prior-tests/lifetime-results/supported.json": {
+    "bytes": 12603,
+    "sha256": "94fd464d246d992bf678355c1e4dc45ac59e13a95268a683320fe0ce0f15393d"
+  },
+  "prior-tests/lifetime-results/life-0.json": {
+    "bytes": 2104,
+    "sha256": "6d7ea9253ca59fba40b06bf220f447b712d050a6d6e02b901bd45d09e90ccf8e"
+  },
+  "prior-tests/lifetime-results/malformed.json": {
+    "bytes": 3936,
+    "sha256": "19d98bf55df860b1655ccf12030e4bba80689974603aac36fbf62d0cadc06724"
+  },
+  "prior-tests/lifetime-results/life-1.json": {
+    "bytes": 998,
+    "sha256": "494dc7a7d4a7fa7c65881aa8c67392bbee84a669daf4b5657f4860e62c56d220"
+  },
+  "prior-tests/lifetime-results/acquisition-register.json": {
+    "bytes": 1046,
+    "sha256": "a8c593db0ceef2e30594ba6400f9a962f5c329556593d7ad28c0e65a080a6e99"
+  },
+  "prior-tests/lifetime-results/acquisition-bind.json": {
+    "bytes": 1048,
+    "sha256": "2f3cd093bdf4a8ef81f37ca18bd9021592f25ba74c5c8f466e9cb8afa46a382d"
+  }
+}

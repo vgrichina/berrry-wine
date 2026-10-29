@@ -1,0 +1,19 @@
+--- RENAME-parent
++++ combined
+@@ -215,2 +215 @@
+-        control=socket.socket(socket.AF_UNIX);control.bind(str(status_path));control.listen(1)
+-        sel=selectors.DefaultSelector();sel.register(control,selectors.EVENT_READ);sel.register(self.fd,selectors.EVENT_READ)
++        control=None;sel=None
+@@ -217,0 +217,2 @@
++            control=socket.socket(socket.AF_UNIX);control.bind(str(status_path));control.listen(1)
++            sel=selectors.DefaultSelector();sel.register(control,selectors.EVENT_READ);sel.register(self.fd,selectors.EVENT_READ)
+@@ -234 +235,8 @@
+-            control.close();os.close(self.fd)
++            try:
++                if sel is not None:
++                    sel.close()
++            finally:
++                try:
++                    if control is not None:control.close()
++                finally:
++                    os.close(self.fd)

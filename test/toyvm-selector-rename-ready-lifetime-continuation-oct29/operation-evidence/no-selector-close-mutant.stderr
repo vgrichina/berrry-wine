@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py", line 375, in <module>
+    main()
+  File "/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py", line 360, in main
+    lifecycle(load(mutant,path)['Backend'],'peerclosed',99)
+  File "/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py", line 330, in lifecycle
+    assert identities(before) == identities(record['afterFDs'])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

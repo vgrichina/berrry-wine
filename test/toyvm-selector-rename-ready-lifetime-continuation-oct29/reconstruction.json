@@ -1,0 +1,14 @@
+{
+  "before": {
+    "bytes": 12580,
+    "sha256": "3ff02988e444348fc12ccf9b4e6f16db1918b532a10152538afbafa96b2108bb"
+  },
+  "after": {
+    "bytes": 12821,
+    "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+  },
+  "handleUnchanged": true,
+  "method": "replace ONLY serve AST line span",
+  "mountArgv": null,
+  "mountValidation": "not applicable: no mount/provider/checkout; owned prelaunch and trusted SSH reused"
+}

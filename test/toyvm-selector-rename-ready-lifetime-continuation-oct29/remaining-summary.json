@@ -1,0 +1,207 @@
+{
+  "PASS": true,
+  "serials": [
+    {
+      "serial": 1,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 2,
+      "kind": "eof",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 3,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 4,
+      "kind": "eof",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 5,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 6,
+      "kind": "eof",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 7,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 8,
+      "kind": "eof",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 9,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 10,
+      "kind": "eof",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    },
+    {
+      "serial": 11,
+      "kind": "peerclosed",
+      "joined": true,
+      "ownedClosed": true,
+      "baselineBorrowedIdentitiesPreserved": true,
+      "noFDDrift": true,
+      "statusRemovedByFixture": true,
+      "readiness": {
+        "transportRegistered": true,
+        "controlRegistered": true,
+        "acceptconn": 1,
+        "controlFD": 5,
+        "selectorFD": 6,
+        "transportFD": 3,
+        "witness": "real register returned; real SO_ACCEPTCONN=1"
+      }
+    }
+  ],
+  "retainedExceptions": 6,
+  "gcDisabled": true,
+  "mutantRejected": true,
+  "statusRemoval": "fixture explicitly unlinks after real serve; production has no unlink requirement"
+}

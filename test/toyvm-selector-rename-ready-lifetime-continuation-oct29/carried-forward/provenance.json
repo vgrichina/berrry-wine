@@ -1,0 +1,25 @@
+{
+  "parent": "dfbe290db97d4a7efb746538805cee94eaa3f9ad",
+  "selectorCandidate": "ab3b04e107f5be6611ea2fd616ffef8ed32b56cd",
+  "selectorAcceptance": "d9b7547ad429e8a64178767442aad8ebca125694",
+  "combined": {
+    "bytes": 12821,
+    "sha256": "e78b4f06715db96c3403aa821dc2008e7986fa9e9ec9fbacbc3744a8bb7eebc8"
+  },
+  "handleUnchanged": true,
+  "walGrowth": {
+    "before": 4096,
+    "after": 8192
+  },
+  "fixtures": {
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-production-wire-qualification-oct29/retained-evidence/test/wire.py": {
+      "bytes": 10759,
+      "sha256": "9e2641965da39f5ba9b71912a6b251d23e24b571453e4df16aa928ff04ffe1b0"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-selector-cleanup-independent-accept-oct29/retained-evidence/test/wire.py": {
+      "bytes": 16164,
+      "sha256": "ba9a400ff97727ecd26673f792b3e9a3ee576a71cb065fc1759bf8d67323f26a"
+    }
+  },
+  "scope": "Only serve selector ownership/acquisition cleanup. No early SETATTR guard; supported SETATTR and malformed fixtures only. Fresh independent combined acceptance remains required."
+}

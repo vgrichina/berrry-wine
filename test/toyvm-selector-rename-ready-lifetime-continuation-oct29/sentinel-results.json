@@ -1,0 +1,16 @@
+{
+  "PASS": true,
+  "pathBeforeListen": true,
+  "readyBeforeListen": false,
+  "readyBeforeRegistration": false,
+  "joined": true,
+  "witness": {
+    "transportRegistered": true,
+    "controlRegistered": true,
+    "acceptconn": 1,
+    "controlFD": 5,
+    "selectorFD": 6,
+    "transportFD": 3,
+    "witness": "real register returned; real SO_ACCEPTCONN=1"
+  }
+}

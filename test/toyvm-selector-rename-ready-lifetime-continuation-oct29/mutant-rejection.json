@@ -1,0 +1,14 @@
+{
+  "PASS": true,
+  "exit": 1,
+  "oracle": "exact FD identities after joined serve",
+  "survivingFDs": {
+    "6": "anon_inode:[eventpoll]"
+  },
+  "borrowedPreserved": true,
+  "controlTransportClosed": true,
+  "statusRemovedByFixture": true,
+  "realEPIPE": true,
+  "gcDisabled": true,
+  "stderr": "Traceback (most recent call last):\n  File \"/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py\", line 375, in <module>\n    main()\n  File \"/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py\", line 360, in main\n    lifecycle(load(mutant,path)['Backend'],'peerclosed',99)\n  File \"/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29/lifetime.py\", line 330, in lifecycle\n    assert identities(before) == identities(record['afterFDs'])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}
