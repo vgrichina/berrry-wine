@@ -1,0 +1,22 @@
+{
+  "mode": "accept",
+  "sourcePin": {
+    "bytes": 11583,
+    "sha256": "f25724c57b163417b07b6775a9bb05985a5ae8968498887d5e64e56fbf70ae4e"
+  },
+  "invalidCases": 151,
+  "validControls": 24,
+  "focusedRegressions": 5,
+  "unchangedBinaryReproducer": true,
+  "mutants": {
+    "guard-removed": {
+      "rejected": true,
+      "assertion": "unsupported flags accepted"
+    },
+    "late-check": {
+      "rejected": true,
+      "assertion": "('invalid flags mutated state', 11, 3, 4097)"
+    }
+  },
+  "PASS": true
+}

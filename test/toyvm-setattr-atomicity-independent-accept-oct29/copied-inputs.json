@@ -1,0 +1,12 @@
+{
+  "verify.py": {
+    "bytes": 8768,
+    "sha256": "433710323c7141982ba39c14c3506ec0016b4cee34c952b9eb5f77555498fdef",
+    "from": "/tmp/toyvm-setattr-rejected-flags-atomicity-oct29/repo/test/toyvm-setattr-rejected-flags-atomicity-oct29/verify.py"
+  },
+  "baseline.json": {
+    "bytes": 21857,
+    "sha256": "e085e2c575fd87a11b990c5b17b07adaf1a3981aeffe21e3206e1467bfe42a39",
+    "from": "/tmp/toyvm-setattr-rejected-flags-atomicity-oct29/repo/test/toyvm-setattr-rejected-flags-atomicity-oct29/baseline.json"
+  }
+}
