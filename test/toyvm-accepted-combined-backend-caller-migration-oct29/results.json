@@ -1,0 +1,29 @@
+{
+  "PASS": true,
+  "checks": [
+    "normal",
+    "backend-mismatch",
+    "timestamp-pyc",
+    "unchecked-pyc",
+    "checked-read-replacement",
+    "stale-pin-control-rejected",
+    "legacy-loader-control-rejected"
+  ],
+  "interaction": {
+    "serve": "exact production source, synthetic selector/read/write only",
+    "initFirst": true,
+    "namespaceRejections": 3,
+    "postRejectionReadWrite": true,
+    "cleanup": [
+      "selector-close",
+      "listener-close",
+      [
+        "fd-close",
+        13579
+      ]
+    ]
+  },
+  "children": 0,
+  "adapterInvocations": 0,
+  "scope": "source and synthetic local dispatch only; no mount/kernel/CLI/browser or transitive adapter acceptance"
+}

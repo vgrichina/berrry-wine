@@ -1,0 +1,207 @@
+{
+  "outcome": "ACCEPTED exact pinned combined backend; independent source/local-wire scope only",
+  "candidate": "203828dd05034e228cc92dd3fbc90b310116edc6",
+  "beforeSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "afterSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12982,
+      "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "productionUnchanged": true,
+  "skipWorktreePreserved": true,
+  "provenance": {
+    "PASS": true,
+    "candidate": "203828dd05034e228cc92dd3fbc90b310116edc6",
+    "sourcePins": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+        "bytes": 8105,
+        "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+        "bytes": 3457,
+        "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+        "bytes": 12982,
+        "sha256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822"
+      },
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+        "bytes": 4058,
+        "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+      },
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+        "bytes": 23268,
+        "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+      }
+    },
+    "canonicalReceipt": {
+      "bytes": 11612,
+      "sha256": "c8b7576118a0f749e0fc0357ee658017a77c8f5acef647dabb84a734a387917f"
+    },
+    "manifest": {
+      "bytes": 9997,
+      "sha256": "0984470491cc4a7c8423fd9e2206f0456353e1152ba1097714747e99a0a8b7cc"
+    },
+    "artifactsVerified": 63,
+    "namespaceAcceptance": {
+      "bytes": 13310,
+      "sha256": "ee7a410f52086d4f9bc81608611f245657fcea232ede50ea6bb59b18a934d765"
+    },
+    "namespaceAcceptanceCommit": "a18fbb80f0b22a8935d24a589bf2e8f69d2d97c3",
+    "selectorAcceptance": {
+      "bytes": 11428,
+      "sha256": "91ebbd32cf40492efc4bac3084eda9b2c93310992a9da20b58e3efa95137005c"
+    },
+    "outsideServeBytesEqual": true,
+    "nonServeASTEqual": true,
+    "serveBytesEqual": true,
+    "mount": "N/A no mount argv",
+    "node": "N/A no Node",
+    "rootRef": "reuse coordinator initial digest",
+    "controls": "reuse unchanged prelaunch-controls.json"
+  },
+  "behavior": {
+    "operations": 52,
+    "rejections": 10,
+    "guards": "six namespace guards plus missing/type validation for both RENAME parents",
+    "fullInstanceInvariant": "all vars(backend) deeply compared except operations counter, which must increment once",
+    "positive": "successful WRITE/READ/LOOKUP after every rejection; cross-parent RENAME/RENAME2, READDIR parent, RMDIR, open orphan UNLINK/READ/RELEASE and exact final accounting",
+    "controls": [
+      {
+        "guard": "create-parent-type",
+        "detected": true,
+        "reason": "('create-parent-type', 'errno', None, 20)"
+      },
+      {
+        "guard": "unlink-directory",
+        "detected": true,
+        "reason": "('unlink-directory', 'errno', None, 21)"
+      },
+      {
+        "guard": "rmdir-file",
+        "detected": true,
+        "reason": "('rmdir-file', 'errno', None, 20)"
+      },
+      {
+        "guard": "replace-directory-with-file",
+        "detected": true,
+        "reason": "('replace-directory-with-file', 'errno', 39, 21)"
+      },
+      {
+        "guard": "replace-file-with-directory",
+        "detected": true,
+        "reason": "('replace-file-with-directory', 'errno', None, 20)"
+      },
+      {
+        "guard": "directory-cycle",
+        "detected": true,
+        "reason": "('directory-cycle', 'errno', None, 22)"
+      },
+      {
+        "guard": "rename-parent-missing",
+        "detected": true,
+        "reason": "999"
+      },
+      {
+        "guard": "rename-parent-type",
+        "detected": true,
+        "reason": "('rename-parent-9', 'errno', 2, 20)"
+      }
+    ],
+    "transport": [
+      {
+        "kind": "eof",
+        "witness": [
+          "listener selected and returned exact state; INIT reply validated"
+        ],
+        "ownedBeforeFixtureCleanup": [
+          "backend:EBADF",
+          "listener:EBADF",
+          "selector:EBADF"
+        ],
+        "borrowedIdentitiesPreserved": true,
+        "GCDisabled": true,
+        "retainedExceptions": 0,
+        "retainedObjects": 2
+      },
+      {
+        "kind": "epipe",
+        "witness": [
+          "listener selected and returned exact state; INIT reply validated"
+        ],
+        "ownedBeforeFixtureCleanup": [
+          "backend:EBADF",
+          "listener:EBADF",
+          "selector:EBADF"
+        ],
+        "borrowedIdentitiesPreserved": true,
+        "GCDisabled": true,
+        "retainedExceptions": 1,
+        "retainedObjects": 2
+      }
+    ],
+    "noCloseControls": [
+      {
+        "kind": "eof",
+        "detected": true,
+        "reason": "('owned descriptor survived', 'eof', 'backend', 5, (8, 178403494, 49663), (8, 178403494, 49663))"
+      },
+      {
+        "kind": "epipe",
+        "detected": true,
+        "reason": "('owned descriptor survived', 'epipe', 'backend', 5, (8, 178403497, 49663), (8, 178403497, 49663))"
+      }
+    ]
+  },
+  "remainingAcceptanceGates": [
+    "caller migration and adapter invocation",
+    "actual subprocess backend and CLI confinement/lifecycle",
+    "mounted/kernel FUSE accounting",
+    "browser/runtime execution"
+  ],
+  "exclusions": "No broad namespace133 checks, prior44 wire replay, mount, kernel, CLI, browser, Boat, subprocess backend, caller/adapter execution, main integration or deployment",
+  "fixtureCorrections": "Receipt field schema corrected before behavioral tests; 74-byte relative AF_UNIX path selected before execution; originals preserved",
+  "publication": "task branch only; final exact SHA and delivery receipts retained by coordinator in completion receipt",
+  "box": null,
+  "shutdownOwner": "coordinator",
+  "resourcePolicy": "unchanged task supervisor: parent DATA soft128/hard inherited; Git child256; Python child128; parentRSS128/group512; CPU90/wall120/file12MiB/capture2MiB/evidence1MiB; no denial",
+  "suppliedCanonicalReceipt": "input is immutable and preserved; independent completion receipt must not overwrite candidate provenance"
+}
