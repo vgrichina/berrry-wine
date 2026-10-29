@@ -1,0 +1,20 @@
+{
+  "status": "BLOCKED_FIRST_ADMISSION_DENIAL",
+  "task": "toyvm-six-plus-rename-independent-accept-oct29",
+  "candidate": "9faac38993abe6433115dcfbdafb5ed23c7c7ffb",
+  "expectedBackendSha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+  "operation": "inspect-inputs",
+  "wrapper": "/tmp/toyvm-six-plus-rename-independent-accept-oct29/ops.py",
+  "cwd": "/tmp/toyvm-six-plus-rename-independent-accept-oct29/repo",
+  "observedExit": 1,
+  "failure": "AssertionError: ('first admission denial; stop all operations', {'allocation': True, 'disk': True, 'forecast': True, 'memory': False})",
+  "failureLocation": "ops.py admission line 18; run line 36; main line 60",
+  "previousOperations": ["read-host", "read-claude", "read-policy"],
+  "inspectionChildStarted": false,
+  "retries": 0,
+  "limitChanges": false,
+  "laterSampleSubstitution": false,
+  "sourcePinsVerified": false,
+  "acceptance": "NOT_RUN",
+  "relaunch": "Coordinator decision required after a real admission prerequisite change. Preserve this first failure; do not treat a later sample as this operation's evidence."
+}

@@ -1,0 +1,23 @@
+# Independent combined SIX + RENAME-parent acceptance
+
+ACCEPTED for exact production `Backend.handle` behavior. Candidate `9faac38993abe6433115dcfbdafb5ed23c7c7ffb`; backend SHA-256 `b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40`.
+
+The five production source pins match before and after testing. Independently removing exactly the three added RENAME parent-check lines yields accepted SIX SHA-256 `cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105`. All other bytes, including serve, therefore remain unchanged. All 16 supplied construction artifacts match their authenticated canonical receipt hashes. They were inspected as retained evidence and were never executed.
+
+Two newly written interleaved sequences passed: 90 requests/54 rejections and 43 requests/17 rejections, for 133 requests and 71 rejections. Each sequence imports the exact production file without transformation and calls INIT first. The first behavioral challenge is missing-source-parent RENAME op12, using that production handle. This qualifies direct handle dispatch only.
+
+Both op12 and op45 cover missing and file-valued source/destination parents, source-before-destination precedence, flags-before-names (op45), names-before-parents, parents-before-source lookup, same-name no-ops and successful renames after rejected groups. CREATE/MKDIR test parent guards and name precedence. SETATTR combines unsupported flags with ordinary and enormous size changes, requiring EOPNOTSUPP before any allocation/write mutation. Replacement types, descendant cycles, nonempty replacements, UNLINK/RMDIR types and relocated READDIR parent entries are challenged. A retained open unlinked directory rejects READDIR for ambiguous/missing parent with EIO.
+
+Every rejected request snapshots and compares the entire instance dictionary, including root, limits, nodes, data, names, links, opens, next inode, live/peak/written/failure, operations and handles. Exactly the operations increment is allowed. Every request additionally checks namespace references/link counts, all open topology and aggregate handles, and exact per-inode metadata plus rounded-payload charge. Traces preserve complete before/after snapshots. Open overwritten files retain contents, charge and opens until release; detached open files remain invalid directory parents. The second sequence writes and reads distinctive retained payload and returns to one root inode, zero handles and 4096 live bytes.
+
+Thirteen in-memory guard-removal mutants were rejected: source/destination parent existence, combined and individually bypassed parent types, CREATE parent existence/type, SETATTR early flags, RENAME cycle/replacement type, UNLINK/RMDIR types and READDIR parent. Mutants never edit disk production sources. Mutation results identify the first oracle failure. These tests were written independently; the supplied construction harness and historical completed suites were not rerun. Historical unavailable raw samples remain unavailable; this report makes no new execution claim for unchanged boundaries outside this scope.
+
+The original admission failure is preserved verbatim in original-RAM-denial.json: no input inspection or behavior occurred on that attempt. This is a new capacity-authorized attempt under the unchanged supervisor controls. Every subprocess used the task supervisor from the original shell, /usr/bin/python3, owned cwd and fixed trust configuration. Python DATA 128 MiB, Git DATA 256 MiB only on Git, CPU 90 seconds, wall 120 seconds, file 12 MiB, capture 2 MiB and physical parent/group RSS 128/512 MiB monitoring remain active. No current admission or limit denial occurred. Node startup and mount-argv checks are inapplicable because neither is executed. No Boat is assigned.
+
+Reproduce with separate supervised operations from the owned repository:
+```
+/usr/bin/python3 /tmp/toyvm-six-rename-capacity-recovered-accept-oct29/ops.py independent-accept /usr/bin/python3 test/toyvm-six-rename-capacity-recovered-accept-oct29/accept.py
+/usr/bin/python3 /tmp/toyvm-six-rename-capacity-recovered-accept-oct29/ops.py supplemental-accept /usr/bin/python3 test/toyvm-six-rename-capacity-recovered-accept-oct29/supplement.py
+```
+
+Remaining gates: separate selector/caller pin migration and review, real caller/CLI confinement and descendant lifecycle, production serve/transport, mounted kernel FUSE accounting, and browser/runtime execution where required. This pass supplies none of those claims. No production edits, selector changes, main integration or public deployment occurred. Publication identity and exact remote verification are recorded in the final completion receipt and bounded coordinator note.

@@ -1,0 +1,78 @@
+{
+  "before": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "/tmp/toyvm-six-rename-capacity-recovered-accept-oct29/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "/tmp/toyvm-six-rename-capacity-recovered-accept-oct29/ops.py": {
+      "bytes": 3701,
+      "sha256": "8ffa79f05fc23e139f58ef8b2b5ff2f53829e561083b0e4dd9145435a154d0bc"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-plus-rename-parent-candidate-oct29/coordinator-retained/completion-receipt.json": {
+      "bytes": 15711,
+      "sha256": "f395a25b85d192fd5c513d990e9853626596b6e5deded34352b6b77a21bf1f63"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  },
+  "after": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "/tmp/toyvm-six-rename-capacity-recovered-accept-oct29/limit_contract.py": {
+      "bytes": 2510,
+      "sha256": "6ede2700da915980aa9b12a9b310d3008cdbbfbbac468b4d69bf83b5972aa387"
+    },
+    "/tmp/toyvm-six-rename-capacity-recovered-accept-oct29/ops.py": {
+      "bytes": 3701,
+      "sha256": "8ffa79f05fc23e139f58ef8b2b5ff2f53829e561083b0e4dd9145435a154d0bc"
+    },
+    "/home/user/wine-assembly/scratch/usage-watch/toyvm-six-plus-rename-parent-candidate-oct29/coordinator-retained/completion-receipt.json": {
+      "bytes": 15711,
+      "sha256": "f395a25b85d192fd5c513d990e9853626596b6e5deded34352b6b77a21bf1f63"
+    },
+    "/usr/bin/python3": {
+      "bytes": 8020928,
+      "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "outcome": "PASS",
+  "sourceSHA256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40",
+  "requests": 90,
+  "rejections": 54,
+  "snapshot": "all instance fields; operations alone increments on errno rejection",
+  "mutants": [
+    {
+      "mutant": "rename-source-missing",
+      "detected": true,
+      "reason": "('rename-12', 'errno', 2, 'KeyError')"
+    },
+    {
+      "mutant": "rename-destination-missing",
+      "detected": true,
+      "reason": "('rename-12', 'errno', 2, 'KeyError')"
+    },
+    {
+      "mutant": "rename-parent-type",
+      "detected": true,
+      "reason": "('rename-12', 'errno', 20, 2)"
+    },
+    {
+      "mutant": "create-parent-type",
+      "detected": true,
+      "reason": "('create-parent', 'errno', 20, None)"
+    },
+    {
+      "mutant": "create-parent-missing",
+      "detected": true,
+      "reason": "('create-parent', 'errno', 2, 'TypeError')"
+    },
+    {
+      "mutant": "setattr-early-flags",
+      "detected": true,
+      "reason": "('setattr', 'errno', 95, None)"
+    },
+    {
+      "mutant": "rename-cycle",
+      "detected": true,
+      "reason": "('rename-12', 'errno', 22, None)"
+    },
+    {
+      "mutant": "rename-replacement-type",
+      "detected": true,
+      "reason": "('rename-12', 'errno', 21, 39)"
+    },
+    {
+      "mutant": "unlink-type",
+      "detected": true,
+      "reason": "('unlink-dir', 'errno', 21, None)"
+    },
+    {
+      "mutant": "rmdir-type",
+      "detected": true,
+      "reason": "('rmdir-file', 'errno', 20, None)"
+    },
+    {
+      "mutant": "readdir-parent",
+      "detected": true,
+      "reason": ""
+    }
+  ],
+  "limits": {
+    "DATA": [
+      134217728,
+      134217728
+    ],
+    "CPU": [
+      90,
+      90
+    ],
+    "FSIZE": [
+      12582912,
+      12582912
+    ]
+  },
+  "boundary": "exact production Backend.handle; INIT first; no serve/transport/kernel/CLI/browser"
+}

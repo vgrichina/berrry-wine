@@ -1,0 +1,17 @@
+{
+  "outcome": "PASS",
+  "requests": 43,
+  "rejections": 17,
+  "mutants": [
+    {
+      "mutant": "source-type-only",
+      "detected": true,
+      "reason": "('rename-45', 'errno', 20, 2)"
+    },
+    {
+      "mutant": "destination-type-only",
+      "detected": true,
+      "reason": "('rename-45', 'errno', 20, 2)"
+    }
+  ]
+}
