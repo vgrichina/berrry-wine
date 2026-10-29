@@ -147,6 +147,9 @@ class Backend:
             newdir=unpack('Q',data)[0];offset=8 if op==12 else 16
             if op==45 and unpack('I',data,8)[0]:raise OSError(errno.EOPNOTSUPP,'rename flags')
             old,new=data[offset:].split(b'\0')[:2];self.valid_name(old);self.valid_name(new)
+            for parent in (ino,newdir):
+                if parent not in self.nodes:raise OSError(errno.ENOENT,'rename parent missing')
+                if not stat.S_ISDIR(self.nodes[parent]['mode']):raise OSError(errno.ENOTDIR,'rename parent not directory')
             source=self.nodes[ino]['names'];dest=self.nodes[newdir]['names']
             if old not in source:raise OSError(errno.ENOENT,'rename source')
             if ino==newdir and old==new:return b''

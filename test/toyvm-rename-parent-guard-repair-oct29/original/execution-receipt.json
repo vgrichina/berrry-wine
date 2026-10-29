@@ -1,0 +1,99 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "test/toyvm-rename-parent-validation-contract-oct29/reproduce.py"
+  ],
+  "cwd": "/tmp/toyvm-rename-parent-validation-contract-oct29/repo",
+  "exit": 1,
+  "elapsed": 0.04371129395440221,
+  "admission": {
+    "free": 4407349248,
+    "MemAvailable": 3240919040,
+    "allocated": 2306048,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 231,
+  "stderrBytes": 0,
+  "startupReceipt": {
+    "path": "/tmp/toyvm-rename-parent-validation-contract-oct29/prelaunch-controls.json",
+    "sha256": "a8889a5f555d57b0044822ccf459e584fca7afcf9a743bfb1cd9f44e723f5a00",
+    "reused": true
+  },
+  "checkpointReceipt": {
+    "argv": [
+      "python3",
+      "-B",
+      "/tmp/toyvm-rename-parent-validation-contract-oct29/checkpoint.py"
+    ],
+    "cwd": "/tmp/toyvm-rename-parent-validation-contract-oct29/repo",
+    "exit": 0,
+    "elapsed": 0.04379487899132073,
+    "admission": {
+      "free": 4408467456,
+      "MemAvailable": 3256786944,
+      "allocated": 2174976,
+      "budget": 25165824,
+      "componentsMiB": {
+        "sourceGit": 3,
+        "evidence": 1,
+        "WAL": 8,
+        "publication": 3,
+        "uncertainty": 9
+      },
+      "positiveWALGrowthCountedOnce": true,
+      "parentLimits": {
+        "inheritedDATA": [
+          -1,
+          -1
+        ],
+        "parentDATA": [
+          134217728,
+          -1
+        ],
+        "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+      }
+    },
+    "stdoutBytes": 28,
+    "stderrBytes": 0
+  },
+  "artifacts": {
+    "source-pins.json": {
+      "bytes": 1702,
+      "sha256": "61d820c21dbfa096a5e6db7ab29045d898bf8552c5eb345855ba7c6fd3b016d5"
+    },
+    "reproduce.py": {
+      "bytes": 7595,
+      "sha256": "99ba997bb2bbaaa4c7713dcecd7e42b1bfb1fc25fd73ae31a7c08153436621a2"
+    },
+    "README.md": {
+      "bytes": 3158,
+      "sha256": "5b944934eff1c1fbe6edf877e02abd0965bc2445f03d2603b20dd5763e485242"
+    },
+    "results.json": {
+      "bytes": 9185,
+      "sha256": "212a351eec2cb3fb20327f3db1d94707423429b962670ac57c2401c5a94f389b"
+    }
+  },
+  "result": "COUNTEREXAMPLE; no further behavioral execution",
+  "box": null
+}

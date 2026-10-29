@@ -1,0 +1,37 @@
+{
+  "task": "toyvm-rename-parent-validation-contract-oct29",
+  "candidate": "5cf7cfc01864d6a2b94a9a3b1fe6e1533f214bca",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12321,
+      "sha256": "d129d1a4d42d9dd4077941927fa57220a32580667a1fef226de11dec2a411171"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "dispatch": {
+    "path": "/home/user/wine-assembly/scratch/usage-watch/toyvm-rename-parent-validation-contract-oct29-dispatch.json",
+    "bytes": 2981,
+    "sha256": "2254073214c9ba7b2bf949fd794d753b02c01b5f94aef30867c25a8843475c5b"
+  },
+  "readonlySnapshotReference": {
+    "path": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/original-contract.py",
+    "bytes": 8235,
+    "sha256": "e85608a11c074104a6bdeb0df0e886dc6595a7c778710a73b56a04e9beca1c9b",
+    "identityRole": "historical normalization provenance only; not a production pin"
+  }
+}
