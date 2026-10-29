@@ -1,0 +1,117 @@
+{
+  "outcome": "PASS_SCOPED_INDEPENDENT_ACCEPTANCE",
+  "candidate": "7efaa617c593f2ab3e7532c7085f16969fe7e03d",
+  "checks": [
+    "canonical receipt hash",
+    "limitModule pin",
+    "taskSupervisor pin",
+    "pythonExecutable pin",
+    "all five exact production pins",
+    "immutable migration artifact source-pins.json",
+    "immutable migration artifact accept.py",
+    "immutable migration artifact REPORT.md",
+    "immutable migration artifact results.json",
+    "namespace receipt hash",
+    "independently accepted namespace identity",
+    "accepted byte-safe caller hash",
+    "caller ONLY backend SHA delta",
+    "actual production load_backend genuine identity",
+    "failclosed tamper toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "failclosed tamper toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "failclosed tamper toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "failclosed tamper toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "external caller pin rejects tamper",
+    "timestamp pyc cannot substitute",
+    "unchecked-hash pyc cannot substitute",
+    "sys.modules poison cannot substitute",
+    "replacement after checked read cannot substitute",
+    "same oracle rejects legacy timestamp cache loader",
+    "same oracle rejects legacy unchecked-hash cache loader",
+    "same oracle rejects legacy reread loader",
+    "stale backend pin rejected",
+    "INIT first protocol",
+    "directory cycle full state invariant",
+    "invalid dot destination full state invariant",
+    "rename to file parent full state invariant",
+    "file replaces directory full state invariant",
+    "missing source full state invariant",
+    "nonzero rename flags full state invariant",
+    "wrong release handle full state invariant",
+    "positive cross-parent namespace selection",
+    "positive lookup selected destination",
+    "unlinked open inode retained",
+    "release collects unlinked inode",
+    "all production files unchanged after",
+    "no actual child or mount attempted"
+  ],
+  "beforeSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "afterSourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "artifactPins": {
+    "/tmp/toyvm-seven-guards-caller-fresh-independent-accept-oct29/inputs/migration-tests/source-pins.json": {
+      "bytes": 4126,
+      "sha256": "bffad6f12f30ebf59ceb668aca6142dd29d38933a8d67638fc0af1150f938368"
+    },
+    "/tmp/toyvm-seven-guards-caller-fresh-independent-accept-oct29/inputs/migration-tests/accept.py": {
+      "bytes": 7999,
+      "sha256": "504a4c78fa5195179c0ab3fb15a1065769a15fa91f3b77ecdac52c0772aa19d0"
+    },
+    "/tmp/toyvm-seven-guards-caller-fresh-independent-accept-oct29/inputs/migration-tests/REPORT.md": {
+      "bytes": 2177,
+      "sha256": "4529f33e410bddc06c41911ad0e92a17958e9a38b48d41d9e4105836f5e255d7"
+    },
+    "/tmp/toyvm-seven-guards-caller-fresh-independent-accept-oct29/inputs/migration-tests/results.json": {
+      "bytes": 628,
+      "sha256": "d60f7c206736c462b729f7cbfb5bff88d64bb822cec3fcaf8c9d1ae0d796afa3"
+    }
+  },
+  "actualChildAttempts": [],
+  "adapterInvocations": 0,
+  "transitiveAcceptance": false,
+  "priorBroadChecks": {
+    "requests": 133,
+    "replayed": false
+  },
+  "scope": "exact load_backend and INIT-first source/local-wire handles only"
+}
