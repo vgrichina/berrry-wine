@@ -1,0 +1,111 @@
+{
+  "before": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "d52afa6788e1f584aaff8a3c1d076b74e9f9c033cf95bfd0d0b5fcc01a8d4a80"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12482,
+      "sha256": "cc2dc7ab2f9b5d1b84b755c61e7a6ffc3e226d52ffe008edf7ace5310cbdc105"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "after": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "exactCallerOnePinDelta": true,
+  "backendExactDonor": true,
+  "unchanged": [
+    "adapter",
+    "confine",
+    "pinned-supervisor"
+  ],
+  "inputArtifacts": {
+    "source-pins.json": {
+      "bytes": 3457,
+      "sha256": "add95a0237abeee04812440e3565b21d6b1d6e6dc221c62bcf4f3055ba32ae4d"
+    },
+    "accept.py": {
+      "bytes": 9786,
+      "sha256": "013f450e29c4d9ee8e08140d7f1b8a0abed79b658e0ca2bfc00dcc616ef32d7c"
+    },
+    "production-trace.json.gz": {
+      "bytes": 5507,
+      "sha256": "b3c25ddddebb00d755a68000bea547d0f64c2dac8413dca1e9a7a8de52b42393"
+    },
+    "original-RAM-denial.json": {
+      "bytes": 1105,
+      "sha256": "74c86002cdaf1c8d98eecf22f5ff8c2f55ec1e61cd940333fda7055a2cddf68a"
+    },
+    "production-index-flags.stdout": {
+      "bytes": 349,
+      "sha256": "27a68b4514c333e3edb3f8e037e1649e45e45dff4865a001743beb1b9b7a9132"
+    },
+    "artifact-gate.json": {
+      "bytes": 4689,
+      "sha256": "703c5f5f6f78a4c639134beb71d5911a7da1d1e43ddb075f249a281e731ac73f"
+    },
+    "supplement.py": {
+      "bytes": 3023,
+      "sha256": "ce69dadff1c351b26713c2ce930de3ceb8fb1f820ad64f88ed6d6fa989543029"
+    },
+    "REPORT.md": {
+      "bytes": 4696,
+      "sha256": "8b3b4596da235a92fea55d7f52d6a37bb097a75eb23058f2d759dfec27c5f3b3"
+    },
+    "supplement-trace.json.gz": {
+      "bytes": 1560,
+      "sha256": "3da0b876238cf1dd9402b3aa637921f664d43be62043554aae93bc0769e77fc1"
+    },
+    "supplement-results.json": {
+      "bytes": 327,
+      "sha256": "dea543e43ccceecdb64a7de6977904d1eff1a1f9877a1a8975948f1424d2953d"
+    },
+    "controls.json": {
+      "bytes": 8072,
+      "sha256": "e8d8745cf66cec66f3e47bbefd09c82a99684a40e34803331a3971a8dc1b8fae"
+    },
+    "results.json": {
+      "bytes": 1883,
+      "sha256": "099296b8753c4f91cbf7982fa7112067d7d9678678704b3430e2e6b0da2618f4"
+    }
+  },
+  "namespaceAcceptanceReceipt": {
+    "path": "/tmp/toyvm-accepted-seven-guards-caller-migration-oct29/inputs/namespace-acceptance-receipt.json",
+    "sha256": "ee7a410f52086d4f9bc81608611f245657fcea232ede50ea6bb59b18a934d765"
+  },
+  "repairedLoaderAcceptanceReceipt": {
+    "bytes": 11877,
+    "sha256": "3ecc5e6eca51b69020ac655ea639aaf5066231d85547861368764ae28cb108bf"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "groups": [
+    "production load_backend binds accepted adapter with namespace pin",
+    "tampered backend, adapter, confine, pinned-supervisor rejected",
+    "private stale backend pin rejects accepted namespace bytes",
+    "exact loader ignores stale cached adapter; private legacy control executes it",
+    "checked bytes survive replacement; private reread control executes replacement",
+    "INIT-first Backend.handle: 4 positives and 8 full-state-preserving rejections"
+  ],
+  "actualSubprocessCalls": 0,
+  "sentinelPrivateControlCalls": 1,
+  "scope": "source-only; adapter returned, never called"
+}
