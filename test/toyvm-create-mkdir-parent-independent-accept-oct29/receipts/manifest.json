@@ -1,0 +1,30 @@
+{
+  "independent-gate.json": {
+    "bytes": 942,
+    "sha256": "34a4efaba0946da89af704218040bbad5a6afcf637ffcc65acaf6fd37b182d3b"
+  },
+  "prelaunch-controls.json": {
+    "bytes": 553,
+    "sha256": "d7fa8631a1c6f1c25d304c632b39c3b26368a1eabc008471648d430c62c18ef0"
+  },
+  "retained-gate.json": {
+    "bytes": 954,
+    "sha256": "3357f04785e1b5d5e761366b5bde7b3fa1136ae8f5af4f73a84f985a254b88a9"
+  },
+  "quota-preflight.json": {
+    "bytes": 338,
+    "sha256": "9e807dcef053c655fa1276de938def3d9d0eeab2090110024809dac2a40f87af"
+  },
+  "root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "dispatch-preflight.json": {
+    "bytes": 523,
+    "sha256": "87853c882ac873676e34da76a87142609afad082ffe5e80f580bc136ef830c89"
+  },
+  "git-readiness.json": {
+    "bytes": 311,
+    "sha256": "932447a3a4555567f61e099c36acdb6f317d2b81c6a021608399b03994b98905"
+  }
+}

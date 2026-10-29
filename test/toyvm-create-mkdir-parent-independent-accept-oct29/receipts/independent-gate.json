@@ -1,0 +1,37 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo/test/toyvm-create-mkdir-parent-independent-accept-oct29/independent.py"
+  ],
+  "cwd": "/tmp/toyvm-create-mkdir-parent-independent-accept-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.10543723101727664,
+  "admission": {
+    "free": 4443582464,
+    "MemAvailable": 3096588288,
+    "allocated": 2269184,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 80,
+  "stderrBytes": 0
+}

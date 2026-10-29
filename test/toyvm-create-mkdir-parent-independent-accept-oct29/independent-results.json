@@ -1,0 +1,274 @@
+{
+  "PASS": true,
+  "candidate": "a09932adab2510eb1bb1367617708a0b459412b8",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11272,
+      "sha256": "e32f69eddb107eede61ee6bbd23a1b8530bfb6b996ee14f098f5655a82ffe7ee"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "cases": [
+    {
+      "case": "valid-directory",
+      "op": 35,
+      "parent": 1
+    },
+    {
+      "case": "valid-directory",
+      "op": 35,
+      "parent": 2
+    },
+    {
+      "case": "regular-file-parent",
+      "op": 35,
+      "full": false
+    },
+    {
+      "case": "collected-directory-parent",
+      "op": 35,
+      "full": false
+    },
+    {
+      "case": "unknown-parent",
+      "op": 35,
+      "full": false
+    },
+    {
+      "case": "existing-name",
+      "op": 35,
+      "nameHex": "7061796c6f6164",
+      "full": false
+    },
+    {
+      "case": "existing-name",
+      "op": 35,
+      "nameHex": "6469726563746f7279",
+      "full": false
+    },
+    {
+      "case": "regular-file-parent",
+      "op": 35,
+      "full": true
+    },
+    {
+      "case": "collected-directory-parent",
+      "op": 35,
+      "full": true
+    },
+    {
+      "case": "unknown-parent",
+      "op": 35,
+      "full": true
+    },
+    {
+      "case": "existing-name",
+      "op": 35,
+      "nameHex": "7061796c6f6164",
+      "full": true
+    },
+    {
+      "case": "existing-name",
+      "op": 35,
+      "nameHex": "6469726563746f7279",
+      "full": true
+    },
+    {
+      "case": "valid-after-errors",
+      "op": 35
+    },
+    {
+      "case": "valid-directory",
+      "op": 9,
+      "parent": 1
+    },
+    {
+      "case": "valid-directory",
+      "op": 9,
+      "parent": 2
+    },
+    {
+      "case": "regular-file-parent",
+      "op": 9,
+      "full": false
+    },
+    {
+      "case": "collected-directory-parent",
+      "op": 9,
+      "full": false
+    },
+    {
+      "case": "unknown-parent",
+      "op": 9,
+      "full": false
+    },
+    {
+      "case": "existing-name",
+      "op": 9,
+      "nameHex": "7061796c6f6164",
+      "full": false
+    },
+    {
+      "case": "existing-name",
+      "op": 9,
+      "nameHex": "6469726563746f7279",
+      "full": false
+    },
+    {
+      "case": "regular-file-parent",
+      "op": 9,
+      "full": true
+    },
+    {
+      "case": "collected-directory-parent",
+      "op": 9,
+      "full": true
+    },
+    {
+      "case": "unknown-parent",
+      "op": 9,
+      "full": true
+    },
+    {
+      "case": "existing-name",
+      "op": 9,
+      "nameHex": "7061796c6f6164",
+      "full": true
+    },
+    {
+      "case": "existing-name",
+      "op": 9,
+      "nameHex": "6469726563746f7279",
+      "full": true
+    },
+    {
+      "case": "valid-after-errors",
+      "op": 9
+    }
+  ],
+  "mutations": [
+    {
+      "name": "removed-missing-guard",
+      "rejected": true,
+      "source": {
+        "bytes": 11206,
+        "sha256": "f4970357f5dcc02502a062c74a667a8ade713c5076a62e7ab2b0c4c3dadaa4da"
+      },
+      "firstCounterexample": {
+        "case": "collected-directory-parent",
+        "op": 35,
+        "parent": 4,
+        "nameHex": "6368696c64",
+        "expectedErrno": 2,
+        "actual": {
+          "type": "TypeError",
+          "errno": null
+        },
+        "statePreserved": true,
+        "liveBefore": 24576,
+        "liveAfter": 24576,
+        "nextBefore": 7,
+        "nextAfter": 7,
+        "failureBefore": null,
+        "failureAfter": null
+      }
+    },
+    {
+      "name": "removed-directory-guard",
+      "rejected": true,
+      "source": {
+        "bytes": 11181,
+        "sha256": "2a8041a0fe03ebf24d9aebd99afa108ffb4f491af2ab956f119d7414913e382c"
+      },
+      "firstCounterexample": {
+        "case": "regular-file-parent",
+        "op": 35,
+        "parent": 3,
+        "nameHex": "6368696c64",
+        "expectedErrno": 20,
+        "actual": {
+          "type": "success",
+          "errno": null
+        },
+        "statePreserved": false,
+        "liveBefore": 24576,
+        "liveAfter": 28672,
+        "nextBefore": 7,
+        "nextAfter": 8,
+        "failureBefore": null,
+        "failureAfter": null
+      }
+    },
+    {
+      "name": "charge-before-missing-guard",
+      "rejected": true,
+      "source": {
+        "bytes": 11280,
+        "sha256": "884204d8ec2141af11282be60a02a1fdc1d6a8503be61a464e04aced3e4130e5"
+      },
+      "firstCounterexample": {
+        "case": "regular-file-parent",
+        "op": 35,
+        "parent": 3,
+        "nameHex": "6368696c64",
+        "expectedErrno": 20,
+        "actual": {
+          "type": "NotADirectoryError",
+          "errno": 20
+        },
+        "statePreserved": false,
+        "liveBefore": 24576,
+        "liveAfter": 28672,
+        "nextBefore": 7,
+        "nextAfter": 7,
+        "failureBefore": null,
+        "failureAfter": null
+      }
+    },
+    {
+      "name": "directory-guard-after-allocation",
+      "rejected": true,
+      "source": {
+        "bytes": 11272,
+        "sha256": "95a5adfe5e3b0a223dc3f6d06ead9a989eff38ac3c6514c61bb0b7721642774a"
+      },
+      "firstCounterexample": {
+        "case": "regular-file-parent",
+        "op": 35,
+        "parent": 3,
+        "nameHex": "6368696c64",
+        "expectedErrno": 20,
+        "actual": {
+          "type": "NotADirectoryError",
+          "errno": 20
+        },
+        "statePreserved": false,
+        "liveBefore": 24576,
+        "liveAfter": 28672,
+        "nextBefore": 7,
+        "nextAfter": 8,
+        "failureBefore": null,
+        "failureAfter": null
+      }
+    }
+  ],
+  "scope": "direct Backend.handle CREATE35/MKDIR9 wire bodies; no mount or kernel execution",
+  "staleParentContract": "ENOENT is an internal stale-node expectation; public kernel behavior is unqualified",
+  "stateComparison": "all Backend instance fields except operations, checked separately for one dispatch",
+  "remainingGate": "combined repairs, caller backend pin, full CLI qualification"
+}

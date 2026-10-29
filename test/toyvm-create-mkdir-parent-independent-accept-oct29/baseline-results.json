@@ -1,0 +1,178 @@
+{
+  "scope": "direct Backend.handle only; no mounted/kernel/browser/gameplay claims",
+  "candidate": "1fa831cbde34a5943fd7888b30409bd8e918663a",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 11111,
+      "sha256": "b273dceaf1d648415fdc1c2aca54ab3d511c81b94bb911e6588a81e1b63c14dc"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "results": [
+    {
+      "case": "collision-and-controls",
+      "passed": true,
+      "details": {
+        "rejected": 8,
+        "successful": 8,
+        "rootCharge": 4096,
+        "inodeCharge": 4096
+      }
+    },
+    {
+      "case": "35-missing-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 35,
+          "parent": 999,
+          "name": "child",
+          "expectedErrno": 2,
+          "actual": {
+            "type": "KeyError",
+            "detail": "999"
+          },
+          "statePreserved": true,
+          "before": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          },
+          "after": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "35-nondirectory-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 35,
+          "parent": 2,
+          "name": "child",
+          "expectedErrno": 20,
+          "actual": {
+            "type": "success",
+            "responseBytes": 144
+          },
+          "statePreserved": false,
+          "before": {
+            "live": 8192,
+            "next": 3,
+            "inodes": 2,
+            "handles": 1
+          },
+          "after": {
+            "live": 12288,
+            "next": 4,
+            "inodes": 3,
+            "handles": 2
+          }
+        }
+      ]
+    },
+    {
+      "case": "9-missing-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 9,
+          "parent": 999,
+          "name": "child",
+          "expectedErrno": 2,
+          "actual": {
+            "type": "KeyError",
+            "detail": "999"
+          },
+          "statePreserved": true,
+          "before": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          },
+          "after": {
+            "live": 4096,
+            "next": 2,
+            "inodes": 1,
+            "handles": 0
+          }
+        }
+      ]
+    },
+    {
+      "case": "9-nondirectory-parent",
+      "passed": false,
+      "counterexample": [
+        {
+          "op": 9,
+          "parent": 2,
+          "name": "child",
+          "expectedErrno": 20,
+          "actual": {
+            "type": "success",
+            "responseBytes": 128
+          },
+          "statePreserved": false,
+          "before": {
+            "live": 8192,
+            "next": 3,
+            "inodes": 2,
+            "handles": 1
+          },
+          "after": {
+            "live": 12288,
+            "next": 4,
+            "inodes": 3,
+            "handles": 1
+          }
+        }
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "name": "omit-collision-check",
+      "rejected": true,
+      "sha256": "53d5270761a55cdef207bb852ab861ec7747bf407288d77ef96bd673b1ce65bf"
+    },
+    {
+      "name": "wrong-collision-errno",
+      "rejected": true,
+      "sha256": "e7ee049e02e604af2da3952694b4298f5f8a687458059c92484e1e150261f45a"
+    },
+    {
+      "name": "charge-before-collision",
+      "rejected": true,
+      "sha256": "ac25e822c7fcfb67525df39531e276a20dd86ab26d476e680877c8168eaeb47b"
+    },
+    {
+      "name": "consume-inode-before-collision",
+      "rejected": true,
+      "sha256": "12c0f791efe85c9bc2a0fc92adb6e3473b44ec90e93d28f2c28eeab4ca5a79b1"
+    }
+  ],
+  "productionUnchanged": true,
+  "remainingGate": "combined repairs, caller backend pin, full CLI qualification"
+}
