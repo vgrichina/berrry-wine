@@ -1,5 +1,5 @@
 'use strict';
-const { FIELDS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, DIAGNOSTIC_FIELDS, REJECTION_REASONS, GUARD_REJECTION_REASONS } = require('./maelstrom-native-errno-latch.cjs');
+const { FIELDS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, DIAGNOSTIC_FIELDS, MODE_SWITCH_DIAGNOSTIC_FIELDS, REJECTION_REASONS, GUARD_REJECTION_REASONS } = require('./maelstrom-native-errno-latch.cjs');
 const owners = new WeakSet();
 const SELECT_FIELDS = Object.freeze(['started','phase','token','entries','parks','completions','fault','capped','active','thread','regs','pre','post','ret','result']);
 function scalars(e, prefix, fields, label, validate) {
@@ -28,7 +28,7 @@ function validateNativeState(native, previous) {
     throw Error('invalid native status/event transition');
 }
 // Decode only immutable scalar rejection exports, never guest memory or errno.
-function decodeRejection(native, diagnostic) {
+function decodeRejection(native, diagnostic, modeSwitch = null) {
   for (const k of FIELDS)
     if (!Number.isInteger(native[k]) || native[k] < 0 || native[k] > 0xffffffff)
       throw Error('invalid native rejection context: ' + k);
@@ -36,6 +36,24 @@ function decodeRejection(native, diagnostic) {
     if (!Number.isInteger(diagnostic[k]) || diagnostic[k] < 0 || diagnostic[k] > 0xffffffff)
       throw Error('invalid native rejection diagnostic: ' + k);
   const d = diagnostic, reason = d.rejectReason;
+  let switchContext;
+  if (modeSwitch !== null) {
+    for (const k of MODE_SWITCH_DIAGNOSTIC_FIELDS)
+      if (!Number.isInteger(modeSwitch[k]) || modeSwitch[k] < 0 || modeSwitch[k] > 0xffffffff)
+        throw Error('invalid native mode-switch diagnostic: ' + k);
+    if (reason !== 15) {
+      if (MODE_SWITCH_DIAGNOSTIC_FIELDS.some(k => modeSwitch[k] !== 0))
+        throw Error('invalid native mode-switch diagnostic: nonzero without switch rejection');
+    } else {
+      const s = modeSwitch;
+      if (s.rejectRequestedMode > 1 || s.rejectLatchedMode > 1 ||
+          s.rejectRequestedMode === s.rejectLatchedMode || s.rejectStatus < 1 ||
+          s.rejectStatus > 3 || native.event !== s.rejectStatus - 1)
+        throw Error('invalid native mode-switch diagnostic: guard context');
+      switchContext = {requestedMode:s.rejectRequestedMode, latchedMode:s.rejectLatchedMode,
+        boundaryPC:s.rejectPC, thread:s.rejectThread, regs:s.rejectRegs, statusBeforeRejection:s.rejectStatus};
+    }
+  }
   if (reason === 0) {
     if (DIAGNOSTIC_FIELDS.some(k => d[k] !== 0)) throw Error('invalid native rejection diagnostic: nonzero without reason');
     return null; // Legacy reasonless rejection, not errno/caller zero.
@@ -53,7 +71,8 @@ function decodeRejection(native, diagnostic) {
       throw Error('invalid native rejection diagnostic: guard context');
     return {schema:'maelstrom-native-guard-rejection/v1', reason, predicate:GUARD_REJECTION_REASONS[reason],
       modeBits:d.rejectModes, expectedReturn:d.rejectExpectedRet, observedReturn:d.rejectObservedRet,
-      phase:d.rejectPhase, completions:d.rejectCompletions, fault:d.rejectFault, active:d.rejectActive, capped:d.rejectCapped};
+      phase:d.rejectPhase, completions:d.rejectCompletions, fault:d.rejectFault, active:d.rejectActive, capped:d.rejectCapped,
+      ...(switchContext ? {modeSwitch:switchContext} : {})};
   }
   if (!Object.hasOwn(REJECTION_REASONS, reason) || native.status !== 5 || native.event !== 0 ||
       FIELDS.some(k => k !== 'status' && native[k] !== 0) || d.rejectModes > 7 || d.rejectExpectedRet !== SELECT_RETURN)
@@ -94,11 +113,18 @@ function createAdapter(instance, {persist, readLive}) {
   const hasDiagnostic=DIAGNOSTIC_FIELDS.some(k=>Object.hasOwn(e,'mne_'+k));
   if(hasDiagnostic)for(const k of DIAGNOSTIC_FIELDS)
     if(typeof e['mne_'+k]!=='function')throw Error('missing mne_'+k);
+  const hasModeSwitch=MODE_SWITCH_DIAGNOSTIC_FIELDS.some(k=>Object.hasOwn(e,'mne_'+k));
+  if(hasModeSwitch) {
+    if(!hasDiagnostic)throw Error('missing native rejection diagnostic');
+    for(const k of MODE_SWITCH_DIAGNOSTIC_FIELDS)
+      if(typeof e['mne_'+k]!=='function')throw Error('missing mne_'+k);
+  }
   owners.add(instance);let started=false,closed=false,last='',previous=null;
   function snapshot() {
     try {
       const native=scalars(e,'mne_',FIELDS,'scalar',raw=>validateNativeState(raw,previous));
-      const rejection=hasDiagnostic ? decodeRejection(native,scalars(e,'mne_',DIAGNOSTIC_FIELDS,'rejection diagnostic')) : null;
+      const rejection=hasDiagnostic ? decodeRejection(native,scalars(e,'mne_',DIAGNOSTIC_FIELDS,'rejection diagnostic'),
+        hasModeSwitch ? scalars(e,'mne_',MODE_SWITCH_DIAGNOSTIC_FIELDS,'mode-switch diagnostic') : null) : null;
       const msc=scalars(e,'msc_',SELECT_FIELDS,'select scalar');
       previous={status:native.status,event:native.event};
       return {native,rejection,msc};

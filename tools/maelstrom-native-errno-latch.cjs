@@ -41,6 +41,10 @@ const GUARD_REJECTION_REASONS = Object.freeze({
 });
 const DIAGNOSTIC_FIELDS = Object.freeze(['rejectReason', 'rejectModes', 'rejectExpectedRet',
   'rejectObservedRet', 'rejectPhase', 'rejectCompletions', 'rejectFault', 'rejectActive', 'rejectCapped']);
+// Separate additive ABI: snapshots from older modules remain decodable.
+// PC is the emulator EIP at the set_uop boundary, not a causal instruction claim.
+const MODE_SWITCH_DIAGNOSTIC_FIELDS = Object.freeze(['rejectRequestedMode', 'rejectLatchedMode',
+  'rejectPC', 'rejectThread', 'rejectRegs', 'rejectStatus']);
 // These VAs are hypotheses until verifyBinaries binds every consumed byte.
 const NET_ANCHORS = Object.freeze({
   0x100012b0: '81ec1401000033c9538b9c241c0100005556', // locals + EBX/EBP/ESI
@@ -152,8 +156,8 @@ function storage(a, crtBase, uopNativeBoundaries = false) {
     ne(m('result'), g('result')), ne(m('thread'), g('thread')), ne(m('regs'), g('regs'))]);
   const wa = ga => `(call $mne_wa ${ga} ${c(4)})`;
   return (uopNativeBoundaries ? `(global $mne_uopMode (mut i32) ${c(0)})\n` : '') +
-    [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
-    [...FIELDS, ...DIAGNOSTIC_FIELDS].map(n => `(func (export "mne_${n}") (result i32) ${g(n)})`).join('\n') + `
+    [...FIELDS, ...DIAGNOSTIC_FIELDS, ...MODE_SWITCH_DIAGNOSTIC_FIELDS].map(n => `(global $mne_${n} (mut i32) ${c(0)})`).join('\n') + '\n' +
+    [...FIELDS, ...DIAGNOSTIC_FIELDS, ...MODE_SWITCH_DIAGNOSTIC_FIELDS].map(n => `(func (export "mne_${n}") (result i32) ${g(n)})`).join('\n') + `
 ;; Status: 0 inert, 1 awaiting select, 2 completed, 3 native call, 4 captured,
 ;; 5 rejected. No reset. Event 3 means completion -> authentic CALL -> RET.
 (func (export "mne_start")
@@ -166,7 +170,14 @@ ${uopNativeBoundaries ? `(func $mne_uop_switch (param $on i32)
   (if (i32.and (i32.and (i32.ge_u ${g('status')} ${c(1)})
                         (i32.le_u ${g('status')} ${c(3)}))
                 ${ne('(local.get $on)', g('uopMode'))})
-    (then ${completionReject(15)})))` : ''}
+    (then
+      ${set('rejectRequestedMode', '(local.get $on)')}
+      ${set('rejectLatchedMode', g('uopMode'))}
+      ${set('rejectPC', '(global.get $eip)')}
+      ${set('rejectThread', '(global.get $current_thread_id)')}
+      ${set('rejectRegs', '(global.get $reg_base)')}
+      ${set('rejectStatus', g('status'))}
+      ${completionReject(15)})))` : ''}
 ;; Direct-window only. NEVER call g2w/gl32: their miss/lazy paths can write,
 ;; raise or execute callbacks. Unsupported mapping is a rejection, not errno 0.
 (func $mne_wa (param $ga i32) (param $len i32) (result i32)
@@ -223,6 +234,12 @@ ${uopNativeBoundaries ? `(func $mne_uop_switch (param $on i32)
   ${set('event', c(3))} ${set('status', c(4))})
 `;
 }
+// Shared by the production transform and the source-only executable boundary test.
+function instrumentUopSwitch(source) {
+  const anchor = '(global.set $uop_enabled (i32.ne (local.get $on) (i32.const 0)))';
+  return once(source, anchor,
+    '(call $mne_uop_switch (i32.ne (local.get $on) (i32.const 0)))\n    ' + anchor);
+}
 function transform(sources, options = {}) {
   if (options.enabled !== true) return sources; // Inert: no pins/options inspected.
   const uopNativeBoundaries = options.uopNativeBoundaries === true;
@@ -251,9 +268,7 @@ function transform(sources, options = {}) {
       anchor + `\n    (if (i32.or (i32.eq (local.get $addr) ${c(a.successor - 2)})
         (i32.eq (local.get $addr) ${c(base + a.crtRetRva)}))
       (then (call $uc_unsup (local.get $R)) (return)))`);
-    const switchAnchor = '(global.set $uop_enabled (i32.ne (local.get $on) (i32.const 0)))';
-    out['src/07d-uop-engine.wat'] = once(input['src/07d-uop-engine.wat'], switchAnchor,
-      '(call $mne_uop_switch (i32.ne (local.get $on) (i32.const 0)))\n    ' + switchAnchor);
+    out['src/07d-uop-engine.wat'] = instrumentUopSwitch(input['src/07d-uop-engine.wat']);
   }
   let w = out['src/09d-winsock.wat'];
   // Give the existing start export a callable internal name; behavior unchanged.
@@ -276,7 +291,7 @@ function transform(sources, options = {}) {
   out['src/05-alu.wat'] = alu.slice(0, start) + ret + alu.slice(end);
   return out;
 }
-module.exports = { transform, verifyBinaries, PINS, UOP_PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, REJECTION_REASONS, GUARD_REJECTION_REASONS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, pe, once, storage };
+module.exports = { transform, instrumentUopSwitch, verifyBinaries, PINS, UOP_PINS, BINARY_PINS, FIELDS, DIAGNOSTIC_FIELDS, MODE_SWITCH_DIAGNOSTIC_FIELDS, REJECTION_REASONS, GUARD_REJECTION_REASONS, NET_ANCHORS, NET_LAYOUT, SELECT_RETURN, pe, once, storage };
 
 if (require.main === module) {
   const fs = require('node:fs'), path = require('node:path');
