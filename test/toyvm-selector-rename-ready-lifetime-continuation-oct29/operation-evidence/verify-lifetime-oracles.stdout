@@ -1,0 +1,1 @@
+{"PASS": true, "serials": 11, "mutantSurvivors": {"6": "anon_inode:[eventpoll]"}, "borrowedDescriptors": ["0", "1", "2"], "evidenceBytes": 412806}

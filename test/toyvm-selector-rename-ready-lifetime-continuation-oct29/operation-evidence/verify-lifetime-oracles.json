@@ -1,0 +1,87 @@
+{
+  "argv": [
+    "/usr/bin/python3",
+    "-c",
+    "from pathlib import Path\nimport json,hashlib,shutil\nr=Path(\"/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29\"); p=r/\"repo/test/toyvm-selector-rename-ready-lifetime-continuation-oct29\"\nread=lambda n:json.loads((p/n).read_text())\nidentity=lambda d:{fd:v[\"target\"] for fd,v in d[\"live\"].items()}\nresults=[]\nfor serial in range(1,12):\n d=read(\"lifetime-results/life-\"+str(serial)+\".json\")\n assert d[\"joined\"] and d[\"statusRemoved\"]\n assert identity(d[\"beforeFDs\"])==identity(d[\"afterFDs\"])\n assert all(str(fd) not in d[\"afterFDs\"][\"live\"] for fd in d[\"ownedFDs\"].values())\n assert d[\"readiness\"][\"acceptconn\"]==1 and d[\"readiness\"][\"transportRegistered\"]\n assert len(d[\"exceptions\"])==serial%2\n if serial%2: assert d[\"exceptions\"][0][\"errno\"]==32\n results.append(dict(serial=serial,kind=d[\"kind\"],joined=True,ownedClosed=True,baselineBorrowedIdentitiesPreserved=True,noFDDrift=True,statusRemovedByFixture=True,readiness=d[\"readiness\"]))\nm=read(\"lifetime-results/life-99.json\"); before=identity(m[\"beforeFDs\"]); after=identity(m[\"afterFDs\"])\nsurviving={fd:target for fd,target in after.items() if before.get(fd)!=target}\nassert surviving=={str(m[\"ownedFDs\"][\"selector\"]):\"anon_inode:[eventpoll]\"}\nassert all(after.get(fd)==target for fd,target in before.items())\nassert m[\"joined\"] and m[\"statusRemoved\"] and m[\"exceptions\"][0][\"errno\"]==32\nfor key in (\"transport\",\"control\"): assert str(m[\"ownedFDs\"][key]) not in after\nrec=json.loads((r/\"e/no-selector-close-mutant.json\").read_text()); stderr=(r/\"e/no-selector-close-mutant.stderr\").read_text()\nassert rec[\"exit\"]==1 and \"assert identities(before) == identities(record['afterFDs'])\" in stderr\n(p/\"mutant-rejection.json\").write_text(json.dumps(dict(PASS=True,exit=1,oracle=\"exact FD identities after joined serve\",survivingFDs=surviving,borrowedPreserved=True,controlTransportClosed=True,statusRemovedByFixture=True,realEPIPE=True,gcDisabled=True,stderr=stderr),indent=2))\n(p/\"remaining-summary.json\").write_text(json.dumps(dict(PASS=True,serials=results,retainedExceptions=6,gcDisabled=True,mutantRejected=True,statusRemoval=\"fixture explicitly unlinks after real serve; production has no unlink requirement\"),indent=2))\ne=p/\"operation-evidence\"; e.mkdir()\nfor name in (\"delayed-listen-sentinel\",\"pin-corrected-fixture\",\"remaining-lifetime\",\"no-selector-close-mutant\"):\n for ext in (\"json\",\"stdout\",\"stderr\"):\n  shutil.copyfile(r/\"e\"/(name+\".\"+ext),e/(name+\".\"+ext))\nfor name in (\"prelaunch-controls.json\",\"latest-successful-admission-pinned-relaunch.json\",\"git-readiness.json\"):\n shutil.copyfile(r/name,e/name)\nassert not (r/\"first-failed-admission-pinned-relaunch.json\").exists()\nprint(json.dumps(dict(PASS=True,serials=len(results),mutantSurvivors=surviving,borrowedDescriptors=list(before),evidenceBytes=sum(f.stat().st_size for f in p.rglob(\"*\") if f.is_file()))))\n"
+  ],
+  "cwd": "/tmp/toyvm-selector-rename-ready-lifetime-continuation-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.10682491213083267,
+  "admission": {
+    "at": 1793260233.3998537,
+    "device": 1680253000807562931,
+    "f_bavail": 878746,
+    "blockSize": 4096,
+    "free": 3599343616,
+    "MemAvailable": 3087122432,
+    "allocated": 3227648,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T07:45:59.146786+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-accepted-six-caller-pin-migration-oct29": 25165824,
+        "toyvm-six-plus-rename-parent-candidate-oct29": 25165824,
+        "toyvm-selector-rename-ready-lifetime-continuation-oct29": 25165824
+      },
+      "aggregate": 176160768,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 150994944,
+      "freeBytes": 4307185664,
+      "remainingAfterForecast": 4156190720,
+      "MemAvailable": 3715170304,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1063445,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      },
+      "clientForecast": {
+        "at": "2026-10-29T07:45:59.146786+00:00",
+        "MemAvailable": 3715170304,
+        "additionalClients": 2,
+        "additionalClientBytes": 805306368,
+        "remaining": 2909863936,
+        "floor": 2147483648,
+        "changedPrerequisite": "two predecessor clients exited; accepted RENAME parent and source-demonstrated bind-before-listen fixture race",
+        "PASS": true
+      }
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "stdoutBytes": 147,
+  "stderrBytes": 0
+}
