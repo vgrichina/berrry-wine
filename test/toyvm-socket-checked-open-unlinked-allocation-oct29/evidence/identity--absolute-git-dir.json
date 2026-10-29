@@ -1,0 +1,15 @@
+{
+  "argv": [
+    "git",
+    "-C",
+    "/tmp/toyvm-socket-checked-open-unlinked-allocation-oct29/repo",
+    "rev-parse",
+    "--absolute-git-dir"
+  ],
+  "cwd": "/tmp/toyvm-socket-checked-open-unlinked-allocation-oct29/repo",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 67,
+  "wall": 0.025375677971169353
+}

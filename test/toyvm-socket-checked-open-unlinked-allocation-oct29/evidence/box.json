@@ -1,0 +1,6 @@
+{
+  "cutoff": "2026-10-29T05:10:00Z",
+  "id": "bx_q9j4kf3n",
+  "shutdownOwner": "worker explicitly delegated snapshot-stop before handback",
+  "ttl": 1800
+}

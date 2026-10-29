@@ -1,0 +1,20 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_q9j4kf3n",
+    "--timeout",
+    "20",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvunlink/remote_test.py"
+  ],
+  "cwd": "/tmp/toyvm-socket-checked-open-unlinked-allocation-oct29",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 33926,
+  "wall": 0.3414968338329345
+}

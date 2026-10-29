@@ -1,0 +1,8 @@
+{
+  "canonicalGuestParserInvoked": false,
+  "gitSSH": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "intendedMountFiles": [],
+  "mountArgv": [],
+  "reason": "No guest runner or guest mount flags; production FUSE CLI only",
+  "socketBytes": 27
+}

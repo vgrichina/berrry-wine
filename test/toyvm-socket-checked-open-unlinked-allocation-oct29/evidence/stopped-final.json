@@ -1,0 +1,14 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "info",
+    "bx_q9j4kf3n"
+  ],
+  "cwd": "/tmp/toyvm-socket-checked-open-unlinked-allocation-oct29",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1324,
+  "wall": 0.05139030399732292
+}

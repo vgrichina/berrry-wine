@@ -1,0 +1,18 @@
+{
+  "argv": [
+    "/home/user/.ascii/boat",
+    "--json",
+    "exec",
+    "bx_q9j4kf3n",
+    "--timeout",
+    "20",
+    "--",
+    "/usr/bin/python3 -B -c 'import pathlib,json,hashlib,os,ast\np=pathlib.Path('\"'\"'/tmp/tvunlink'\"'\"');d=json.loads((p/'\"'\"'dispatch.json'\"'\"').read_text());r={}\nfor rel,pin in d['\"'\"'sourcePins'\"'\"'].items():\n b=(p/'\"'\"'repo'\"'\"'/rel).read_bytes();assert len(b)==pin['\"'\"'bytes'\"'\"'] and hashlib.sha256(b).hexdigest()==pin['\"'\"'sha256'\"'\"'];r[rel]=pin\nfor file,key in [('\"'\"'remote_test.py'\"'\"','\"'\"'runtimeObserverPin'\"'\"'),('\"'\"'fixture.py'\"'\"','\"'\"'runtimeFixturePin'\"'\"')]:\n b=(p/file).read_bytes();ast.parse(b);assert len(b)==d[key]['\"'\"'bytes'\"'\"'] and hashlib.sha256(b).hexdigest()==d[key]['\"'\"'sha256'\"'\"']\nassert hashlib.sha256((p/'\"'\"'cancellation.json'\"'\"').read_bytes()).hexdigest()==d['\"'\"'originalCancellationReceiptPin'\"'\"']['\"'\"'sha256'\"'\"']\nx={}\nfor file in ['\"'\"'/usr/bin/python3'\"'\"','\"'\"'/usr/bin/fusermount3'\"'\"']:\n assert os.access(file,os.X_OK);x[file]=dict(realpath=os.path.realpath(file),sha256=hashlib.sha256(pathlib.Path(file).read_bytes()).hexdigest())\nassert pathlib.Path('\"'\"'/dev/fuse'\"'\"').exists();assert len(os.fsencode('\"'\"'/tmp/tvunlink/w/status.sock'\"'\"'))<108\nprint(json.dumps(dict(PASS=True,pins=r,executables=x,socketBytes=len(os.fsencode('\"'\"'/tmp/tvunlink/w/status.sock'\"'\"')))))'"
+  ],
+  "cwd": "/tmp/toyvm-socket-checked-open-unlinked-allocation-oct29",
+  "exit": 0,
+  "incident": null,
+  "stderrBytes": 0,
+  "stdoutBytes": 1556,
+  "wall": 0.12300466606393456
+}

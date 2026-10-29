@@ -1,0 +1,813 @@
+{
+  "admission": {
+    "MemAvailable": 6942474240,
+    "blockSize": 4096,
+    "f_bavail": 14271794
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvunlink/cancellation.json",
+    "--work",
+    "/tmp/tvunlink/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino)),flush=True)\nos.write(b,b\"b\"*16384)\nraise AssertionError(\"B allocation unexpectedly succeeded\")\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 1,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": false, \"accountingAccepted\": true, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.16169299999999998, \"exit\": 1, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": null, \"fileLimit\": 16384, \"inodes\": 1, \"live\": 4096, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 1, \"peak\": 4096, \"writeLimit\": 65536, \"written\": 0}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"VHJhY2ViYWNrIChtb3N0IHJlY2VudCBjYWxsIGxhc3QpOgogIEZpbGUgIjxzdHJpbmc+IiwgbGluZSAyLCBpbiA8bW9kdWxlPgpQZXJtaXNzaW9uRXJyb3I6IFtFcnJubyAxM10gUGVybWlzc2lvbiBkZW5pZWQ6ICdBJwo=\", \"encoding\": \"base64\"}, \"owned\": [[17263, \"259081\"]], \"peakRSS\": 52953088, \"reapedPeakRSS\": 31862784, \"sampledPeakRSS\": 52953088, \"stopReason\": null, \"wallSeconds\": 0.13869453100005558}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": false, \"cleanupComplete\": true, \"failures\": [\"child did not succeed\"]}\n",
+  "decodedOutput": "Traceback (most recent call last):\n  File \"<string>\", line 2, in <module>\nPermissionError: [Errno 13] Permission denied: 'A'\n",
+  "elapsed": 0.20050882800023828,
+  "executable": {
+    "path": "/usr/bin/python3",
+    "realpath": "/usr/bin/python3.12",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "fixtureSHA256": "c89c6b16f9e5082f704fe58a796a0d4e767bcd6d4b8c436c4b964a0caa895849",
+  "gatePASS": false,
+  "guestMountParserInvoked": false,
+  "mountArgv": [],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.05,
+      "finalState": null,
+      "pid": 17260,
+      "ppid": 16925,
+      "rss": 0,
+      "start": "259076",
+      "state": "R"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 17261,
+      "ppid": 17260,
+      "rss": 14286848,
+      "start": "259079",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.06,
+      "finalState": null,
+      "pid": 17263,
+      "ppid": 17260,
+      "rss": 0,
+      "start": "259081",
+      "state": "Z"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "remainingMounts": [],
+  "report": {
+    "accepted": false,
+    "accountingAccepted": true,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.16169299999999998,
+      "exit": 1,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": null,
+        "fileLimit": 16384,
+        "inodes": 1,
+        "live": 4096,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 1,
+        "peak": 4096,
+        "writeLimit": 65536,
+        "written": 0
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "VHJhY2ViYWNrIChtb3N0IHJlY2VudCBjYWxsIGxhc3QpOgogIEZpbGUgIjxzdHJpbmc+IiwgbGluZSAyLCBpbiA8bW9kdWxlPgpQZXJtaXNzaW9uRXJyb3I6IFtFcnJubyAxM10gUGVybWlzc2lvbiBkZW5pZWQ6ICdBJwo=",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          17263,
+          "259081"
+        ]
+      ],
+      "peakRSS": 52953088,
+      "reapedPeakRSS": 31862784,
+      "sampledPeakRSS": 52953088,
+      "stopReason": null,
+      "wallSeconds": 0.13869453100005558
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": false,
+    "cleanupComplete": true,
+    "failures": [
+      "child did not succeed"
+    ]
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.0,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 9043968,
+          "start": "259076",
+          "state": "R"
+        }
+      ],
+      "t": 0.0046730590001970995
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.0,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 11796480,
+          "start": "259076",
+          "state": "R"
+        }
+      ],
+      "t": 0.013192135000281269
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.01,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 18743296,
+          "start": "259076",
+          "state": "R"
+        }
+      ],
+      "t": 0.02158538399999088
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21233664,
+          "start": "259076",
+          "state": "S"
+        }
+      ],
+      "t": 0.030073653000272316
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21233664,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.0,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 12582912,
+          "start": "259079",
+          "state": "R"
+        }
+      ],
+      "t": 0.03863799300006576
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21233664,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        }
+      ],
+      "t": 0.04718164499990962
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvunlink/w/domain /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\np",
+          "cpu": 0.0,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 9830400,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.05564014700030384
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.01,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 524288,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.06394903899990823
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.01,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 11403264,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.07217887200022233
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.02,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.02,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 12976128,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.0804591710002569
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.02,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 17956864,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.08868645000029574
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.03,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 19398656,
+          "start": "259081",
+          "state": "D"
+        }
+      ],
+      "t": 0.09697222900013003
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.03,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 21102592,
+          "start": "259081",
+          "state": "D"
+        }
+      ],
+      "t": 0.10720115899994198
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.03,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 22806528,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.115419421000297
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.03,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 25690112,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.12386886600006619
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.04,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 27131904,
+          "start": "259081",
+          "state": "D"
+        }
+      ],
+      "t": 0.1321449560000474
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.04,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 28704768,
+          "start": "259081",
+          "state": "D"
+        }
+      ],
+      "t": 0.14053248600021107
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.03,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.04,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 29884416,
+          "start": "259081",
+          "state": "D"
+        }
+      ],
+      "t": 0.14864167299992914
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.04,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.05,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 31195136,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.15672401100027855
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.04,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)\nassert os.write(fd,b\"a\"*16384)==16384\nos.unlink(\"A\")\nb=os.open(\"B\",os.O_CREAT|os.O_WRONLY,0o600)\ns=os.fstat(fd)\nassert s.st_nlink==0 and s.st_size==16384\nassert os.pread(fd,16384,0)==b\"a\"*16384\nprint(json.dumps(dict(checkpoint=\"before-B-write\",Afd=fd,Bfd=b,Aopen=True,Alinks=s.st_nlink,Asize=s.st_size,Ainode=s.st_ino))",
+          "cpu": 0.06,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 31588352,
+          "start": "259081",
+          "state": "R"
+        }
+      ],
+      "t": 0.165041138000106
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.04,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.06,
+          "pid": 17263,
+          "ppid": 17260,
+          "rss": 0,
+          "start": "259081",
+          "state": "Z"
+        }
+      ],
+      "t": 0.17327016099989123
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.05,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        }
+      ],
+      "t": 0.1812878969999474
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvunlink/cancellation.json --work /tmp/tvunlink/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os,json\nfd=os.open(\"A\",os.O_CREAT|os.O_RDWR,0o600)",
+          "cpu": 0.05,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 21364736,
+          "start": "259076",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvunlink/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvunlink/w/domain /tmp/tvunlink/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 17261,
+          "ppid": 17260,
+          "rss": 14286848,
+          "start": "259079",
+          "state": "S"
+        }
+      ],
+      "t": 0.18921314899989738
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cpu": 0.05,
+          "pid": 17260,
+          "ppid": 16925,
+          "rss": 0,
+          "start": "259076",
+          "state": "R"
+        }
+      ],
+      "t": 0.19744775200024378
+    }
+  ],
+  "task": "toyvm-socket-checked-open-unlinked-allocation-oct29"
+}
