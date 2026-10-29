@@ -1,0 +1,18 @@
+{
+  "archiveAfter": null,
+  "id": "bx_md8v2xjf",
+  "lastSnapshotStatus": "completed",
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T03:53:50.168Z",
+  "snapshotVerifiedAt": "2026-10-29T03:53:50.168Z",
+  "state": "stopped",
+  "stop": {
+    "endedAt": "2026-10-29T03:53:50.222Z",
+    "error": null,
+    "id": "stop_37541a3ff5c4d4e0",
+    "lastAttemptAt": "2026-10-29T03:53:50.222Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "stoppedAt": "2026-10-29T03:53:50.203Z"
+}

@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-29T03:50:31.998779+00:00",
+  "owners": {
+    "coordinator": 25165824,
+    "gltron-eager-integrity-independent-accept-oct29": 50331648,
+    "tuxracer-retained-texcoord2dv-review-publication-oct29": 50331648,
+    "toyvm-real-descendant-cpu-limit-oct29": 25165824,
+    "toyvm-real-cli-output-limit-oct29": 25165824
+  },
+  "aggregate": 176160768,
+  "requiredBytes": 3225419776,
+  "futureGrowthIncludingUncertaintyBuffer": 176160768,
+  "freeBytes": 4787560448,
+  "remainingAfterForecast": 4641140736,
+  "MemAvailable": 3563421696,
+  "memRequired": 2147483648,
+  "device": 64769,
+  "f_bavail": 1168838,
+  "blockSize": 4096,
+  "PASS": true,
+  "forecast": "Tux transferred48MiB: retained media counted once13.23MB; source/Git8MiB, events/WAL8MiB,evidence1MiB,publish3MiB,remaining uncertainty. Other reservations unchanged; no media copy.",
+  "previousAllocationCloseout": {
+    "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+    "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+  },
+  "transfers": {
+    "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+    "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+  },
+  "transfer": {
+    "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+  }
+}
