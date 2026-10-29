@@ -1,0 +1,80 @@
+{
+  "outcome": "PASS_CANDIDATE_LOCAL_INTERACTION_ONLY",
+  "checks": [
+    "normal exact caller/adapter/supervisor provenance and strict Popen sentinel",
+    "timestamp substitution resisted at test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "unchecked substitution resisted at test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "poison substitution resisted at test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "replacement substitution resisted at test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "timestamp substitution resisted at test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "unchecked substitution resisted at test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "poison substitution resisted at test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "replacement substitution resisted at test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "tampered caller dependency fail closed: test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py",
+    "tampered caller dependency fail closed: test/toyvm-kernel-profile-accounting-backend-oct28/confine.py",
+    "tampered caller dependency fail closed: test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py",
+    "tampered caller dependency fail closed: test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py",
+    "tampered supervisor after caller check fails at adapter before child",
+    "INIT-first namespace positive rename/lookup plus dot rejection full-state invariant"
+  ],
+  "controls": [
+    {
+      "control": "old-caller-loader",
+      "mode": "timestamp",
+      "rejected": true,
+      "reason": "SUBSTITUTED UNCHECKED SOURCE"
+    },
+    {
+      "control": "old-caller-loader",
+      "mode": "replacement",
+      "rejected": true,
+      "reason": "SUBSTITUTED UNCHECKED SOURCE"
+    },
+    {
+      "control": "old-adapter-loader",
+      "mode": "unchecked",
+      "rejected": true,
+      "reason": "SUBSTITUTED UNCHECKED SOURCE"
+    },
+    {
+      "control": "old-adapter-loader",
+      "mode": "replacement",
+      "rejected": true,
+      "reason": "SUBSTITUTED UNCHECKED SOURCE"
+    },
+    {
+      "control": "old-adapter-pin",
+      "mode": "normal",
+      "rejected": true,
+      "reason": "accepted backend identity mismatch: toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py"
+    }
+  ],
+  "strictSentinels": 9,
+  "actualChildren": 0,
+  "forbiddenAttempts": [],
+  "independentCombinedAcceptance": false,
+  "scope": "source/local-wire through strict Popen sentinel only",
+  "broadSuitesReplayed": false,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8392,
+      "sha256": "bc674160f1c7ced2a369f7b82067891e1fe51447121db8fcd543e881f7552b58"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4241,
+      "sha256": "e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 12741,
+      "sha256": "b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  }
+}

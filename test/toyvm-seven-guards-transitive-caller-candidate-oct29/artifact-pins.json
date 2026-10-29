@@ -1,0 +1,26 @@
+{
+  "source-pins.json": {
+    "bytes": 3887,
+    "sha256": "991a0d46c63d1fc50ae4d4951a3d42746a3eb881da398d7dd4c33f13abb733ff"
+  },
+  "base-adapter.txt": {
+    "bytes": 4058,
+    "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+  },
+  "base-caller.txt": {
+    "bytes": 8392,
+    "sha256": "292dead0e3e75143e898bbbfef3ebb386e9a0a1e4ec7348274c66acf2a47a7fc"
+  },
+  "REPORT.md": {
+    "bytes": 3670,
+    "sha256": "3b723aba3d69f584c4a9f7781771d8dfd657d951abcdf5a77bba0580f811c0af"
+  },
+  "interaction.py": {
+    "bytes": 11424,
+    "sha256": "3f3556c6938a2bef608f1c0d13b55aa36ff9744b7a1ad89d685bfb8f79ac1bb8"
+  },
+  "results.json": {
+    "bytes": 3736,
+    "sha256": "750ea0b48fc583dfb79d47f3c4880b4ea724724a88ba2a8df7d6f9467d265352"
+  }
+}

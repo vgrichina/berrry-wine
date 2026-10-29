@@ -11,7 +11,7 @@ import pathlib
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 RECEIPT_SHA256 = '543b076948699e1607179782b472f4863125064cdfa3a4632351e8a1f6ed7870'
 BACKEND_PINS = {
-    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': '5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf',
+    'toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py': 'e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb',
     'toyvm-kernel-profile-accounting-backend-oct28/confine.py': '0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8',
     'toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py': 'b8201b2c4a1d0e1fd653bb02fda7870f626d3781bed014657fb974cc24e41c40',
     'toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py': '9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85',

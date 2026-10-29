@@ -1,0 +1,18 @@
+# Minimal transitive caller candidate
+
+Base: 8242750ad130cb3e9ad0df6738db21a4154e0075. Adapter donor: a33f06c2df04f5b6770b293088f335578c5c8699.
+
+Production changes are exclusively the exact supplied 4241-byte adapter (SHA256 e45f6f6d1eaf24a06e92ffe2521ee4026fcc1cdccf22a15be4c7e99911424acb) and the caller's matching adapter SHA entry. The accepted b820 backend, confine, and pinned supervisor remain byte-identical. Caller single textual pin replacement and normalized AST equality are asserted; adapter exact byte and AST provenance was checked against the immutable supplied repair. source-pins.json records all five before/after pins, input hashes and receipt provenance. base-caller.txt/base-adapter.txt are private fixture/control snapshots, never imported into production.
+
+One compact independent interaction oracle exercised the actual pinned caller load_backend, its returned adapter, and the adapter's checked supervisor loader. Nine strict Popen sentinels verified genuine supervisor module/function code, defaults and file/module provenance and exact backend launch argv; no process was launched. Both boundaries resisted stale timestamp pyc, unchecked-hash pyc, sys.modules poisoning and replacement after checked read. All four checked caller dependencies failed closed when tampered; supervisor tampering after the caller's read failed closed at the adapter. Five negative controls passed through the same oracle: old caller cache/second-read loader and old adapter cache/second-read loader each executed the substitution payload and were rejected, and the old adapter pin rejected the repaired adapter. The private old adapter control pins only its fixture source to isolate its supervisor-loader defect.
+
+INIT was the first local-wire request. A valid cross-parent rename and destination lookup preserved a distinct same-name entry; invalid dot destination rejected with the entire backend state invariant except its operation counter. No broad 41/133 suites were replayed. Fifteen scoped checks and five controls passed in one run; nine exact sentinels, zero actual children or other forbidden attempts.
+
+Run from this owned checkout through the prescribed wrapper:
+/usr/bin/python3 /tmp/toyvm-seven-guards-transitive-caller-candidate-oct29/ops.py interaction /usr/bin/python3 test/toyvm-seven-guards-transitive-caller-candidate-oct29/interaction.py
+
+The test patches process/system/spawn/exec entry points, adds an OS process audit denial, and only allows its strict in-memory Popen sentinel. Fixtures are fresh task-owned copies per case and removed on exit. Source files are rehashed after the test. No mount argv exists, and no mount, child, CLI, kernel, browser, Boat, main integration or public deployment was attempted.
+
+This is candidate-local interaction evidence, not fresh independent acceptance of the newly combined pair. The earlier standalone transitive local tests had separate publication ownership pending at dispatch; no remote acceptance is inferred here. Fresh independent combined caller acceptance is required before integration. Runtime qualification remains separate. Coordinator retains lifecycle ownership; no box was assigned or changed.
+
+The exact wrapper, limit module, Python executable, canonical accepted caller receipt and all supplied accepted-caller artifacts were hash-verified before production mutation. Git was checked for matching explicit -C toplevel/gitdir, base and branch. The pinned wrapper supplies the required trusted SSH command and enforces per-operation disk, memory, CPU, wall, file and capture limits. Initial root-ref digest is the coordinator-provided receipt; no full ref listing was captured.
