@@ -1,0 +1,453 @@
+{
+  "admission": {
+    "MemAvailable": 7393558528,
+    "blockSize": 4096,
+    "f_bavail": 14267000
+  },
+  "argv": [
+    "/usr/bin/python3",
+    "-B",
+    "/tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py",
+    "--domain",
+    "tiny-fixture",
+    "--receipt",
+    "/tmp/tvlive/cancellation.json",
+    "--work",
+    "/tmp/tvlive/w",
+    "--live-limit",
+    "32768",
+    "--write-limit",
+    "65536",
+    "--file-limit",
+    "16384",
+    "--rss-limit",
+    "134217728",
+    "--cpu-limit",
+    "2",
+    "--wall-limit",
+    "5",
+    "--output-limit",
+    "4096",
+    "--",
+    "/usr/bin/python3",
+    "-B",
+    "-c",
+    "import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)\nn=os.write(f,b'a'*16384)\nos.close(f)\nos.write(1,('first-write='+str(n)+'\\n').encode())\nif n!=16384: raise SystemExit(3)\nf=os.open(p+'second',os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)\ntry:\n n=os.write(f,b'b'*16384)\n os.write(1,('second-write='+str(n)+'\\n').encode())\nexcept OSError as e:\n os.write(1,('second-rejected='+str(e.errno)+'\\n').encode())\nfinally:\n os.close(f)\n"
+  ],
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cliExit": 1,
+  "cliStderr": "",
+  "cliStdout": "{\"accepted\": false, \"accountingAccepted\": false, \"backendReceipt\": {\"cleanupComplete\": true, \"cpuSeconds\": 0.040373000000000006, \"exit\": 0, \"filesystem\": {\"accounting\": \"synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload\", \"failure\": \"filesystem allocation limit\", \"fileLimit\": 16384, \"inodes\": 3, \"live\": 28672, \"liveLimit\": 32768, \"openHandles\": 0, \"operations\": 11, \"peak\": 28672, \"writeLimit\": 65536, \"written\": 16384}, \"filesystemCleanup\": {\"remainingMounts\": [], \"serverExit\": -15, \"serverStderr\": \"\", \"serverStdout\": \"\", \"unmountExit\": 0, \"unmountStderr\": \"\", \"unmountStdout\": \"\"}, \"output\": {\"data\": \"Zmlyc3Qtd3JpdGU9MTYzODQKc2Vjb25kLXJlamVjdGVkPTI4Cg==\", \"encoding\": \"base64\"}, \"owned\": [[6473, \"17606\"]], \"peakRSS\": 30408704, \"reapedPeakRSS\": 13955072, \"sampledPeakRSS\": 30408704, \"stopReason\": \"filesystem allocation limit\", \"wallSeconds\": 0.04039059900000552}, \"browserAllowanceRemaining\": {\"captures\": 1, \"cpuSeconds\": 35.353183, \"wallSeconds\": 101.495550694}, \"browserAllowed\": false, \"childSucceeded\": true, \"cleanupComplete\": true, \"failures\": [\"authoritative filesystem receipt rejected\", \"supervisor stopped or stop receipt missing\"]}\n",
+  "elapsed": 0.10567249099997866,
+  "executable": {
+    "path": "/usr/bin/python3",
+    "realpath": "/usr/bin/python3.12",
+    "sha256": "1643dacd9feaedc58f3cc581e4d22577dfe25c09b10282936186ccf0f2e61118"
+  },
+  "fixtureOutput": "first-write=16384\nsecond-rejected=28\n",
+  "fixtureSHA256": "12404dbd30800e887dc34855e6245181fe7e9494ad6283ddf44cfd1a68cedddb",
+  "gatePASS": true,
+  "guestMountParserInvoked": false,
+  "mountArgv": [],
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.03,
+      "finalState": null,
+      "pid": 6469,
+      "ppid": 6408,
+      "rss": 0,
+      "start": "17602",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6470,
+      "ppid": 6469,
+      "rss": 14286848,
+      "start": "17604",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6473,
+      "ppid": 6469,
+      "rss": 0,
+      "start": "17606",
+      "state": "Z"
+    }
+  ],
+  "pins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "remainingMounts": [],
+  "report": {
+    "accepted": false,
+    "accountingAccepted": false,
+    "backendReceipt": {
+      "cleanupComplete": true,
+      "cpuSeconds": 0.040373000000000006,
+      "exit": 0,
+      "filesystem": {
+        "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+        "failure": "filesystem allocation limit",
+        "fileLimit": 16384,
+        "inodes": 3,
+        "live": 28672,
+        "liveLimit": 32768,
+        "openHandles": 0,
+        "operations": 11,
+        "peak": 28672,
+        "writeLimit": 65536,
+        "written": 16384
+      },
+      "filesystemCleanup": {
+        "remainingMounts": [],
+        "serverExit": -15,
+        "serverStderr": "",
+        "serverStdout": "",
+        "unmountExit": 0,
+        "unmountStderr": "",
+        "unmountStdout": ""
+      },
+      "output": {
+        "data": "Zmlyc3Qtd3JpdGU9MTYzODQKc2Vjb25kLXJlamVjdGVkPTI4Cg==",
+        "encoding": "base64"
+      },
+      "owned": [
+        [
+          6473,
+          "17606"
+        ]
+      ],
+      "peakRSS": 30408704,
+      "reapedPeakRSS": 13955072,
+      "sampledPeakRSS": 30408704,
+      "stopReason": "filesystem allocation limit",
+      "wallSeconds": 0.04039059900000552
+    },
+    "browserAllowanceRemaining": {
+      "captures": 1,
+      "cpuSeconds": 35.353183,
+      "wallSeconds": 101.495550694
+    },
+    "browserAllowed": false,
+    "childSucceeded": true,
+    "cleanupComplete": true,
+    "failures": [
+      "authoritative filesystem receipt rejected",
+      "supervisor stopped or stop receipt missing"
+    ]
+  },
+  "safetyCleanup": null,
+  "samples": [
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.0,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 9437184,
+          "start": "17602",
+          "state": "R"
+        }
+      ],
+      "t": 0.006106354999985797
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.01,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 16384000,
+          "start": "17602",
+          "state": "R"
+        }
+      ],
+      "t": 0.014427510999979631
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.01,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 19398656,
+          "start": "17602",
+          "state": "R"
+        }
+      ],
+      "t": 0.022434647999972412
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21233664,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.0,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 9699328,
+          "start": "17604",
+          "state": "R"
+        }
+      ],
+      "t": 0.030507938999988937
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21233664,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 13369344,
+          "start": "17604",
+          "state": "R"
+        }
+      ],
+      "t": 0.03867905299998142
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21233664,
+          "start": "17602",
+          "state": "R"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        }
+      ],
+      "t": 0.04673973099997397
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21364736,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/confine.py /tmp/tvlive/w/domain /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)\nn=os.write(f,b'a'*16384)\nos.close(f)\nos.write(1,('first-write='+str(n)+'\\n').encode())\nif n!=16384: raise SystemExit(3)\nf=os.open(p+'second',os.O_CREAT|os.O_EXCL",
+          "cpu": 0.0,
+          "pid": 6473,
+          "ppid": 6469,
+          "rss": 9830400,
+          "start": "17606",
+          "state": "R"
+        }
+      ],
+      "t": 0.05481336099998657
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21364736,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)\nn=os.write(f,b'a'*16384)\nos.close(f)\nos.write(1,('first-write='+str(n)+'\\n').encode())\nif n!=16384: raise SystemExit(3)\nf=os.open(p+'second',os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)\ntry:\n n=os.write(f,b'b'*16384)\n os.write(1,('second-write='+str(n)+'\\n').encode())\nexcept OSError as",
+          "cpu": 0.01,
+          "pid": 6473,
+          "ppid": 6469,
+          "rss": 5373952,
+          "start": "17606",
+          "state": "R"
+        }
+      ],
+      "t": 0.0629184819999864
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21364736,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        },
+        {
+          "cmd": "",
+          "cpu": 0.01,
+          "pid": 6473,
+          "ppid": 6469,
+          "rss": 0,
+          "start": "17606",
+          "state": "Z"
+        }
+      ],
+      "t": 0.07090563999997812
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21364736,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        }
+      ],
+      "t": 0.07878751199999101
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.02,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21364736,
+          "start": "17602",
+          "state": "S"
+        },
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+          "cpu": 0.01,
+          "pid": 6470,
+          "ppid": 6469,
+          "rss": 14286848,
+          "start": "17604",
+          "state": "S"
+        }
+      ],
+      "t": 0.08678870800000027
+    },
+    {
+      "rows": [
+        {
+          "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py --domain tiny-fixture --receipt /tmp/tvlive/cancellation.json --work /tmp/tvlive/w --live-limit 32768 --write-limit 65536 --file-limit 16384 --rss-limit 134217728 --cpu-limit 2 --wall-limit 5 --output-limit 4096 -- /usr/bin/python3 -B -c import os\np='/tmp/tvlive/w/domain/'\nf=os.open(p+'first',os.O_CR",
+          "cpu": 0.03,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 21495808,
+          "start": "17602",
+          "state": "R"
+        }
+      ],
+      "t": 0.09479938999999149
+    },
+    {
+      "rows": [
+        {
+          "cmd": "",
+          "cpu": 0.03,
+          "pid": 6469,
+          "ppid": 6408,
+          "rss": 0,
+          "start": "17602",
+          "state": "Z"
+        }
+      ],
+      "t": 0.10271220899997502
+    }
+  ],
+  "task": "toyvm-real-cli-live-allocation-limit-oct29"
+}

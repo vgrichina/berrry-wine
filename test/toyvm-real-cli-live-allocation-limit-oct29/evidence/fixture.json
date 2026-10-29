@@ -1,0 +1,7 @@
+{
+  "bytesPerWrite": 16384,
+  "files": 2,
+  "ordinarySingleProcess": true,
+  "sha256": "12404dbd30800e887dc34855e6245181fe7e9494ad6283ddf44cfd1a68cedddb",
+  "totalRequested": 32768
+}

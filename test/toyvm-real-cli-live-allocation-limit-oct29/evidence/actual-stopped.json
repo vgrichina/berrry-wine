@@ -1,0 +1,19 @@
+{
+  "box": "bx_h5574x3f",
+  "cutoffUTC": "2026-10-29T04:45:00Z",
+  "expiryAtCreation": "2026-10-29T04:46:49.152Z",
+  "infoSHA256": "d7361a25677574683c7254288da67819c119c5afab4bd4d91f31176f31f8b562",
+  "snapshotAvailable": true,
+  "snapshotCompletedAt": "2026-10-29T04:17:49.919Z",
+  "state": "stopped",
+  "stop": {
+    "endedAt": "2026-10-29T04:17:49.978Z",
+    "error": null,
+    "id": "stop_71e6ccbbd923fc82",
+    "lastAttemptAt": "2026-10-29T04:17:49.978Z",
+    "requestedAt": null,
+    "status": "completed"
+  },
+  "stoppedAt": "2026-10-29T04:17:49.960Z",
+  "verified": true
+}

@@ -1,0 +1,100 @@
+{
+  "apiEnvelopeSHA256": "81c8fe690614ab1118ebf2abd57d95a99857e0697ad5e8804a2346f820ec1b53",
+  "box": "bx_h5574x3f",
+  "browserAllowance": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "browserAllowed": false,
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanupComplete": true,
+  "cliExit": 1,
+  "expiryAtCreation": "2026-10-29T04:46:49.152Z",
+  "filesystem": {
+    "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload",
+    "failure": "filesystem allocation limit",
+    "fileLimit": 16384,
+    "inodes": 3,
+    "live": 28672,
+    "liveLimit": 32768,
+    "openHandles": 0,
+    "operations": 11,
+    "peak": 28672,
+    "writeLimit": 65536,
+    "written": 16384
+  },
+  "fixtureOutput": "first-write=16384\nsecond-rejected=28\n",
+  "gatePASS": true,
+  "lifecycleReceipt": "actual-stopped.json",
+  "observedIdentities": [
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.03,
+      "finalState": null,
+      "pid": 6469,
+      "ppid": 6408,
+      "rss": 0,
+      "start": "17602",
+      "state": "Z"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "/usr/bin/python3 -B /tmp/tvlive/repo/test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py /tmp/tvlive/w/domain /tmp/tvlive/w/status.sock 32768 65536 16384 ",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6470,
+      "ppid": 6469,
+      "rss": 14286848,
+      "start": "17604",
+      "state": "S"
+    },
+    {
+      "absentOrReused": true,
+      "cmd": "",
+      "cpu": 0.01,
+      "finalState": null,
+      "pid": 6473,
+      "ppid": 6469,
+      "rss": 0,
+      "start": "17606",
+      "state": "Z"
+    }
+  ],
+  "proceduralLimitations": [
+    "First explicit WAL baseline measured post-runtime; earlier admission did not separately record WAL growth.",
+    "No guest mount arguments or Node process in this task; those parsers/startup checks were not invoked."
+  ],
+  "productionInvocations": 1,
+  "remainingMounts": [],
+  "runtimeResult": "runtime-result.json",
+  "runtimeSHA256": "8cc99b234d12b52fdbd4222212fa2ce202203951ab4049c5b5c4c17bea0c45d8",
+  "safetyCleanup": null,
+  "scope": "aggregate live filesystem allocation across two files only; fullresource/browser/gameplay UNKNOWN",
+  "shutdownVerified": true,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "stopReason": "filesystem allocation limit",
+  "task": "toyvm-real-cli-live-allocation-limit-oct29"
+}
