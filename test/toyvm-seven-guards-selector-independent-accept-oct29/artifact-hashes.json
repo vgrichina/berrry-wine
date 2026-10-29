@@ -1,0 +1,74 @@
+{
+  "acceptance-report.json": {
+    "bytes": 8115,
+    "sha256": "2caa2b919ba8f6a1054548382d87a414c51198a387782e64acf4d8f4127ea736"
+  },
+  "preflight.json": {
+    "bytes": 1911,
+    "sha256": "949f6c5782399f8d6d972ff006e74e52dde301a18f7d6e647b193627404aaa26"
+  },
+  "oracle.py": {
+    "bytes": 9697,
+    "sha256": "3e39ef413ed50148b5706859edd55fd4cde2b80b2005ee7ce224e6e1615f1b03"
+  },
+  "fixture-correction.txt": {
+    "bytes": 262,
+    "sha256": "5379632668ab8ea6ba6e136ef380553af491966a646397b06f7f0ed3695cef9f"
+  },
+  "README.md": {
+    "bytes": 1380,
+    "sha256": "cf276115baebb17b0304bb69effe5359db02cbd1b1ad4f18056cbd2a14fe3f0d"
+  },
+  "preflight.py": {
+    "bytes": 3277,
+    "sha256": "3e684e7a31673e6e10521a9e22749637ed64ed3fb1190d4e8df455e957d18a18"
+  },
+  "results.json": {
+    "bytes": 7203,
+    "sha256": "ca1cf13b95f3930a8688b4b26e58fb72751003821347836786e25995ca872cec"
+  },
+  "operation-evidence/production-index.stdout": {
+    "bytes": 349,
+    "sha256": "27a68b4514c333e3edb3f8e037e1649e45e45dff4865a001743beb1b9b7a9132"
+  },
+  "operation-evidence/provenance-passing.json": {
+    "bytes": 3497,
+    "sha256": "de3c2c73eef1e8be2ca8c47beeac5d0ad9356028aff9fb47d4b5d5d7cfdb1b02"
+  },
+  "operation-evidence/prelaunch-controls.json": {
+    "bytes": 555,
+    "sha256": "aa692c1c815d6a32c1485017ab53efabc0274025cce4d33097932f6fc514daff"
+  },
+  "operation-evidence/root-ref-digest.json": {
+    "bytes": 196,
+    "sha256": "b63d8b0cba9538876e7c49b1dda44537bad0c10bab2465e157b6ad574f83a8c3"
+  },
+  "operation-evidence/trusted-remote.stdout": {
+    "bytes": 115,
+    "sha256": "4a4aa37ff52c8b6f76fae25d9c8ba23d5b0a4f96d6f51ba670bc87fbe4634821"
+  },
+  "operation-evidence/verify-provenance.json": {
+    "bytes": 3496,
+    "sha256": "9612647472dc6993dce86e16087dc9f306cc817e1f36fcaebc8499ca49a210f2"
+  },
+  "operation-evidence/git-identity.stdout": {
+    "bytes": 230,
+    "sha256": "011c0cd7dce6ac5b2f80226109143df8685de3aad7311e4b6b46b66cdb38a7c6"
+  },
+  "operation-evidence/independent-oracle.json": {
+    "bytes": 3495,
+    "sha256": "4fef388d5c74ca480a0d10c621c6895576d5d5682926c8ca0d91951c0e2b522b"
+  },
+  "operation-evidence/independent-oracle.stdout": {
+    "bytes": 1852,
+    "sha256": "c98ac3cdaf5fd3091f8eaf61bb83b6ee6e901fe021c89cf488918c50f23f74ee"
+  },
+  "operation-evidence/independent-oracle.stderr": {
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "operation-evidence/verify-provenance.stderr": {
+    "bytes": 375,
+    "sha256": "3fbabf1c16b901517f15567a35da39f0087a7906e3976df7589a6b6ea2a80541"
+  }
+}

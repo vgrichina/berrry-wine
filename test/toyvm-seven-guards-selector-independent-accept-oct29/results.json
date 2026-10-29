@@ -1,0 +1,368 @@
+{
+  "backendSHA256": "75842ffafd6ebd0c29fa2889a463bfd6f5245634096f4dfef9a3fd69f703e822",
+  "transport": [
+    {
+      "kind": "eof",
+      "witness": [
+        "listener selected and returned exact state; INIT reply validated"
+      ],
+      "ownedBeforeFixtureCleanup": [
+        "backend:EBADF",
+        "listener:EBADF",
+        "selector:EBADF"
+      ],
+      "borrowedIdentitiesPreserved": true,
+      "GCDisabled": true,
+      "retainedExceptions": 0,
+      "retainedObjects": 2
+    },
+    {
+      "kind": "epipe",
+      "witness": [
+        "listener selected and returned exact state; INIT reply validated"
+      ],
+      "ownedBeforeFixtureCleanup": [
+        "backend:EBADF",
+        "listener:EBADF",
+        "selector:EBADF"
+      ],
+      "borrowedIdentitiesPreserved": true,
+      "GCDisabled": true,
+      "retainedExceptions": 1,
+      "retainedObjects": 2
+    }
+  ],
+  "interactions": {
+    "trace": [
+      {
+        "label": "valid",
+        "op": 26,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 9,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 35,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 9,
+        "errno": null
+      },
+      {
+        "label": "create-parent-type",
+        "op": 35,
+        "errno": 20
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "unlink-directory",
+        "op": 10,
+        "errno": 21
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "rmdir-file",
+        "op": 11,
+        "errno": 20
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "replace-directory-with-file",
+        "op": 12,
+        "errno": 21
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "replace-file-with-directory",
+        "op": 45,
+        "errno": 20
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "directory-cycle",
+        "op": 12,
+        "errno": 22
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "rename-parent-7",
+        "op": 12,
+        "errno": 2
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "rename-parent-8",
+        "op": 12,
+        "errno": 2
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "rename-parent-9",
+        "op": 12,
+        "errno": 20
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "rename-parent-10",
+        "op": 12,
+        "errno": 20
+      },
+      {
+        "label": "valid",
+        "op": 16,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 1,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 12,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 28,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 45,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 11,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 11,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 10,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 15,
+        "errno": null
+      },
+      {
+        "label": "valid",
+        "op": 18,
+        "errno": null
+      }
+    ],
+    "rejected": 10,
+    "finalState": {
+      "live": 4096,
+      "peak": 20480,
+      "written": 141,
+      "failure": null,
+      "inodes": 1,
+      "openHandles": 0,
+      "operations": 52,
+      "liveLimit": 262144,
+      "writeLimit": 262144,
+      "fileLimit": 65536,
+      "accounting": "synchronous FUSE, direct_io, no writeback cache; 4096 metadata charge per inode plus rounded dense payload"
+    }
+  },
+  "guardControls": [
+    {
+      "guard": "create-parent-type",
+      "detected": true,
+      "reason": "('create-parent-type', 'errno', None, 20)"
+    },
+    {
+      "guard": "unlink-directory",
+      "detected": true,
+      "reason": "('unlink-directory', 'errno', None, 21)"
+    },
+    {
+      "guard": "rmdir-file",
+      "detected": true,
+      "reason": "('rmdir-file', 'errno', None, 20)"
+    },
+    {
+      "guard": "replace-directory-with-file",
+      "detected": true,
+      "reason": "('replace-directory-with-file', 'errno', 39, 21)"
+    },
+    {
+      "guard": "replace-file-with-directory",
+      "detected": true,
+      "reason": "('replace-file-with-directory', 'errno', None, 20)"
+    },
+    {
+      "guard": "directory-cycle",
+      "detected": true,
+      "reason": "('directory-cycle', 'errno', None, 22)"
+    },
+    {
+      "guard": "rename-parent-missing",
+      "detected": true,
+      "reason": "999"
+    },
+    {
+      "guard": "rename-parent-type",
+      "detected": true,
+      "reason": "('rename-parent-9', 'errno', 2, 20)"
+    }
+  ],
+  "noCloseControls": [
+    {
+      "kind": "eof",
+      "detected": true,
+      "reason": "('owned descriptor survived', 'eof', 'backend', 5, (8, 178403494, 49663), (8, 178403494, 49663))"
+    },
+    {
+      "kind": "epipe",
+      "detected": true,
+      "reason": "('owned descriptor survived', 'epipe', 'backend', 5, (8, 178403497, 49663), (8, 178403497, 49663))"
+    }
+  ],
+  "PASS": true
+}

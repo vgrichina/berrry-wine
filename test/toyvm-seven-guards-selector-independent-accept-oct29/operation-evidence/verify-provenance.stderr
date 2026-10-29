@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/tmp/toyvm-seven-guards-selector-independent-accept-oct29/repo/test/toyvm-seven-guards-selector-independent-accept-oct29/preflight.py", line 37, in <module>
+    assert nsa["commit"].startswith("a18fbb80") and nsa["remoteVerified"]
+                                                    ~~~^^^^^^^^^^^^^^^^^^
+KeyError: 'remoteVerified'

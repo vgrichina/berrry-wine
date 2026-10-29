@@ -1,0 +1,1 @@
+Before behavioral testing: namespace receipt uses remote.exactRemoteConfirmed, not remoteVerified. Original preflight KeyError retained in operation evidence. No source defect or admission denial. Assertions retain exact a18fbb80 commit and remote SHA equality.
