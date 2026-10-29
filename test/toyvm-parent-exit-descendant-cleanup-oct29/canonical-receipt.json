@@ -1,0 +1,70 @@
+{
+  "actualCLIExit": null,
+  "actualCLIReason": null,
+  "admissionSHA": "7004f982cc54e1656b9a4693d6c53e2854901702a1aaed556c318e6ec512bad9",
+  "allocationRetainedThroughCoordinatorCloseout": true,
+  "authoritativeBackendReceipt": null,
+  "box": null,
+  "boxState": "NOT CREATED",
+  "browserAllowanceUnchanged": {
+    "captures": 1,
+    "cpuSeconds": 35.353183,
+    "wallSeconds": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "cleanup": "No runtime, mount or fixture process created",
+  "dispatchSHA": "4197e86f18c18030b7b54531a24c69ef4600c18a99596c2e5d5b77c460d7efca",
+  "evidenceRoot": "/tmp/toyvm-parent-exit-descendant-cleanup-oct29/e",
+  "limitations": "See REPORT.md; static-only rejection, no behavioral acceptance",
+  "mountArgv": [],
+  "mountValidation": "No mounts or runtime; dependent parser checkpoint not executed",
+  "outcome": "BLOCKED: required ordinary setsid excluded by pinned seccomp policy",
+  "ownedPIDCleanupObserved": false,
+  "productionInvocations": 0,
+  "publication": "Exact commit/remote SHA retained in external publication receipt after push",
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-parent-exit-descendant-cleanup-oct29/root-ref-digest.json",
+  "sessionID": "01a185bd-8bed-79a0-ad84-e5b655851013",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "staticTest": {
+    "allowed": false,
+    "alsoDeniedIdentityQueries": {
+      "__NR_getpgid": 121,
+      "__NR_getsid": 124
+    },
+    "behavioralAcceptance": false,
+    "productionInvocations": 0,
+    "setsidSyscall": 112,
+    "sourcePins": {
+      "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60",
+      "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8",
+      "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41",
+      "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf",
+      "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    },
+    "staticCheckPassed": true,
+    "unlistedAction": "SECCOMP_RET_ERRNO | EPERM"
+  },
+  "task": "toyvm-parent-exit-descendant-cleanup-oct29",
+  "workloadTruncated": null
+}

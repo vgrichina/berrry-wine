@@ -1,0 +1,94 @@
+{
+  "WAL": [
+    {
+      "bytes": 0,
+      "path": "/home/user/.codex/memories_1.sqlite-wal"
+    },
+    {
+      "bytes": 12244672,
+      "path": "/home/user/.codex/logs_2.sqlite-wal"
+    },
+    {
+      "bytes": 4152992,
+      "path": "/home/user/.codex/queue_1.sqlite-wal"
+    },
+    {
+      "bytes": 0,
+      "path": "/home/user/.codex/goals_1.sqlite-wal"
+    },
+    {
+      "bytes": 4330152,
+      "path": "/home/user/.codex/state_5.sqlite-wal"
+    },
+    {
+      "bytes": 4255992,
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal"
+    }
+  ],
+  "allocation": {
+    "MemAvailable": 2656878592,
+    "PASS": true,
+    "aggregate": 176160768,
+    "at": "2026-10-29T03:39:07.068236+00:00",
+    "blockSize": 4096,
+    "device": 64769,
+    "f_bavail": 1177779,
+    "forecast": "Tux transferred48MiB: retained media counted once13.23MB; source/Git8MiB, events/WAL8MiB,evidence1MiB,publish3MiB,remaining uncertainty. Other reservations unchanged; no media copy.",
+    "freeBytes": 4824182784,
+    "futureGrowthIncludingUncertaintyBuffer": 176160768,
+    "memRequired": 2147483648,
+    "owners": {
+      "coordinator": 25165824,
+      "gltron-eager-integrity-independent-accept-oct29": 50331648,
+      "toyvm-current-main-closure-integration-oct29": 25165824,
+      "toyvm-parent-exit-descendant-cleanup-oct29": 25165824,
+      "tuxracer-glvertex2dv-independent-accept-oct29": 50331648
+    },
+    "previousAllocationCloseout": {
+      "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+      "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+    },
+    "remainingAfterForecast": 4648022016,
+    "requiredBytes": 3225419776,
+    "transfer": {
+      "toyvm-orphan-descendant-cleanup-oct29": "toyvm-parent-exit-descendant-cleanup-oct29"
+    },
+    "transfers": {
+      "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+      "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+    }
+  },
+  "inherited": {
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ],
+    "2": [
+      -1,
+      -1
+    ]
+  },
+  "limits": {
+    "inheritedDATA": [
+      -1,
+      -1
+    ],
+    "parentDATA": [
+      134217728,
+      -1
+    ],
+    "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+  },
+  "positiveSharedWALCountedOnce": true,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/toyvm-parent-exit-descendant-cleanup-oct29/root-ref-digest.json",
+  "session": [
+    {
+      "bytes": 489088,
+      "path": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-39-14-01a185bd-8bed-79a0-ad84-e5b655851013.jsonl"
+    }
+  ]
+}
