@@ -1,0 +1,26 @@
+{
+  "src/api_table.json": {
+    "bytes": 723350,
+    "sha256": "562acd9c5870750d29cc88ed1ec12112c9da7164b8d9c3fe470a109842d39486"
+  },
+  "lib/pe.js": {
+    "bytes": 4787,
+    "sha256": "ef4116c14eb53850cd6b06d88b00ecd173b3dd3e9c90087a092a3aef00038853"
+  },
+  "tools/pe-imports.js": {
+    "bytes": 2702,
+    "sha256": "e1ed7e584af5df4393158af8621810b8e7bc90b6ef46d2d82a03fdb3d265c61d"
+  },
+  "tools/unimplemented-imports.js": {
+    "bytes": 6296,
+    "sha256": "bee35baff84b724bbfb89f402709304e3944dabaf3f32ee67142009f73964582"
+  },
+  "lib/apps.js": {
+    "bytes": 414349,
+    "sha256": "ccd6feeb360ed289f5b6dce729e988e10157722fc11d43fc3363bdfc6e0c8f6a"
+  },
+  "test/candidate-corpus/tuxracer-original-files.json": {
+    "bytes": 29432,
+    "sha256": "2c2d29a9dc7e5f9bc9e972b408fd83dbb17e8ca48a6aed09ffd375830284d8d8"
+  }
+}

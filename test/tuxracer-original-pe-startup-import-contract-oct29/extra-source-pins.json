@@ -1,0 +1,50 @@
+{
+  "src/main.watx": {
+    "bytes": 5893,
+    "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+  },
+  "src/08-pe-loader.wat": {
+    "bytes": 392432,
+    "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433"
+  },
+  "src/08b-dll-loader.wat": {
+    "bytes": 108860,
+    "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b"
+  },
+  "src/09b-dispatch.wat": {
+    "bytes": 113594,
+    "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+  },
+  "src/09b2-dispatch-table.generated.wat": {
+    "bytes": 1375748,
+    "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+  },
+  "host.js": {
+    "bytes": 369423,
+    "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+  },
+  "lib/dll-loader.js": {
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+  },
+  "src/09a8b-handlers-opengl.wat": {
+    "bytes": 16197,
+    "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae"
+  },
+  "src/09a6-handlers-crt.wat": {
+    "bytes": 246055,
+    "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88"
+  },
+  "src/09a-handlers.wat": {
+    "bytes": 63111,
+    "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7"
+  },
+  "src/10-helpers.wat": {
+    "bytes": 533986,
+    "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+  },
+  "src/01b-api-hashes.generated.wat": {
+    "bytes": 289426,
+    "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad"
+  }
+}

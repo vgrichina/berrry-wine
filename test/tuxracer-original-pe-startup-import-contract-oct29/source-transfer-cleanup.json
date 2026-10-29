@@ -1,0 +1,62 @@
+[
+  {
+    "name": "source-src_01b-api-hashes.generated.wat.stdout",
+    "bytes": 289426,
+    "sha256": "a783e485ffde9a6194b90a91c0e092b039c3bbb442f65fe8353050e9d5c261ad"
+  },
+  {
+    "name": "source-src_09a6-handlers-crt.wat.stdout",
+    "bytes": 246055,
+    "sha256": "bef449ab0bb1734802d384325fbfb1dc2246d5afdfc4f8e723401b396ab39f88"
+  },
+  {
+    "name": "source-src_08b-dll-loader.wat.stdout",
+    "bytes": 108860,
+    "sha256": "d801558c9904671344321285991fc1674ce5a8e2487db6390ff944fe718d4e4b"
+  },
+  {
+    "name": "source-src_09a-handlers.wat.stdout",
+    "bytes": 63111,
+    "sha256": "a1609ea58833a211be97da6fece5948a3e41b45ef954b299b0d1c6317e5354f7"
+  },
+  {
+    "name": "source-src_09b2-dispatch-table.generated.wat.stdout",
+    "bytes": 1375748,
+    "sha256": "5067cb4767d5e4dc092dfba12942c36f546cbbeb1874f97e5c3033dac632eb3e"
+  },
+  {
+    "name": "source-src_09a8b-handlers-opengl.wat.stdout",
+    "bytes": 16197,
+    "sha256": "f2dd5ff3a9874dc5f93de1764d37daef3e82ea60ba0fcfa3251a29905ddfbaae"
+  },
+  {
+    "name": "source-src_10-helpers.wat.stdout",
+    "bytes": 533986,
+    "sha256": "99dffb7a02f1db7a0a66eedac7ba43ce91170c9331ee06013e522ad30f3e2a5d"
+  },
+  {
+    "name": "source-lib_dll-loader.js.stdout",
+    "bytes": 98961,
+    "sha256": "8dde0a569d1c8a10b4c12119ac5fde37e4aeb45629290fd1feb24fb6291a6145"
+  },
+  {
+    "name": "source-src_08-pe-loader.wat.stdout",
+    "bytes": 392432,
+    "sha256": "ff07dec04916243590350dfcdf0c55825966dbea5c87cab4998a2fb58115c433"
+  },
+  {
+    "name": "source-src_main.watx.stdout",
+    "bytes": 5893,
+    "sha256": "406483c69fb56dde99e1d161113a567268251fd09c3a088cb71eb7b51ec9a974"
+  },
+  {
+    "name": "source-host.js.stdout",
+    "bytes": 369423,
+    "sha256": "7154fbbcfb3381cddfecaeb07dbf4301e6a68fc43850b4f085264b6cb412e993"
+  },
+  {
+    "name": "source-src_09b-dispatch.wat.stdout",
+    "bytes": 113594,
+    "sha256": "d8f3ac461c9dca62cdf074cb28b3324080718bd98e5ba696de15577c598dbcce"
+  }
+]

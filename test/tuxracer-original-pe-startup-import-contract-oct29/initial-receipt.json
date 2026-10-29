@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-29T03:13:34.084224+00:00",
+  "sessionEvents": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-pe-startup-import-contract-oct29/events.jsonl",
+  "limits": {
+    "2": [
+      -1,
+      -1
+    ],
+    "9": [
+      -1,
+      -1
+    ],
+    "0": [
+      -1,
+      -1
+    ],
+    "1": [
+      -1,
+      -1
+    ]
+  },
+  "sharedWALBaselineCountedOnce": [
+    {
+      "path": "/home/user/.codex/memories_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/logs_2.sqlite-wal",
+      "bytes": 12244672
+    },
+    {
+      "path": "/home/user/.codex/queue_1.sqlite-wal",
+      "bytes": 4152992
+    },
+    {
+      "path": "/home/user/.codex/goals_1.sqlite-wal",
+      "bytes": 0
+    },
+    {
+      "path": "/home/user/.codex/state_5.sqlite-wal",
+      "bytes": 4235392
+    },
+    {
+      "path": "/home/user/.codex/thread_history_1.sqlite-wal",
+      "bytes": 4198312
+    }
+  ],
+  "sharedWALBytes": 24831368,
+  "mountArgv": [],
+  "runtimeAllowed": false,
+  "dispatchSha256": "f60e0cb3da558d0f1239f1f5e3d478545b8af72e0637e1ae75b557cf2a2c7bf7",
+  "admissionSha256": "e16c361030fd3c703709b53854e008c88aecbe2defc3c670204623e603eb8220",
+  "allocationBytes": 50331648,
+  "retainedPayloadBytesApprox": 13230000,
+  "rootRefReceipt": "/home/user/wine-assembly/scratch/usage-watch/tuxracer-original-pe-startup-import-contract-oct29/root-ref-digest.json",
+  "session": "/home/user/.codex/sessions/2026/10/29/rollout-2026-10-29T03-12-57-01a185a5-7c29-7210-bad2-d05ce2e529d1.jsonl",
+  "sharedWALAccounting": "standing shared baseline counted once, only positive growth charged against event/WAL allowance; no baseline duplicates",
+  "mountValidation": "empty argv; no mounts, checkout or runtime operation requested"
+}
