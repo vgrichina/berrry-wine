@@ -1,0 +1,8 @@
+{
+  "box": "bx_dngjt3zd",
+  "actualExpiry": "2026-10-29T05:22:48.732Z",
+  "absoluteCutoff": "2026-10-29T05:22:00Z",
+  "scheduledEarlierCutoffEpoch": 1793249715.1536503,
+  "owner": "worker explicit delegation",
+  "preservation": "retrieve bounded result then snapshot-stop; stop API snapshots retained files"
+}

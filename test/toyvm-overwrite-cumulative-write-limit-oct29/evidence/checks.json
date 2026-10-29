@@ -1,0 +1,1 @@
+{"PASS": true, "offlineOnly": true, "productionInvocationsAdded": 0, "rejectingControls": ["third write accepted", "different failure", "overwrite not charged", "live growth", "checkpoint missing", "source changed", "external cleanup", "owned identity remains"]}

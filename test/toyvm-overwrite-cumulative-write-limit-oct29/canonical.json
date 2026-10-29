@@ -1,0 +1,148 @@
+{
+  "accepted": false,
+  "browserAllowanceUnchanged": {
+    "captures": 1,
+    "cpu": 35.353183,
+    "wall": 101.495550694
+  },
+  "candidate": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "canonicalPath": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-overwrite-cumulative-write-limit-oct29/canonical.json",
+  "cliExit": 1,
+  "evidencePath": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo/test/toyvm-overwrite-cumulative-write-limit-oct29/evidence",
+  "historicalFailuresPreserved": true,
+  "lifecycle": {
+    "box": "bx_dngjt3zd",
+    "expiry": null,
+    "snapshotVerifiedAt": "2026-10-29T04:53:49.647Z",
+    "state": "stopped",
+    "stopCompleted": true
+  },
+  "manifest": {
+    "REPORT.md": {
+      "bytes": 2865,
+      "sha256": "bface0bcfa3073ab8eb47c93d3d27a58ea996ae8d2160f9f71cb8943eee1d71e"
+    },
+    "check.py": {
+      "bytes": 3366,
+      "sha256": "0b6543df3f2d6d66ce70a71f3792351ade5ca62e443e26c8845dfd30cbfb7a0e"
+    },
+    "evidence/box-create.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/box-create.stdout": {
+      "bytes": 568,
+      "sha256": "f9b4f4d549b7b885902ff8a488c7c093100816bc3f5d6ee1ad7daff3a734ee04"
+    },
+    "evidence/box-stop.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/box-stop.stdout": {
+      "bytes": 1590,
+      "sha256": "4ea959bf47eb06a94ccb5538c7a824b7d38e2a4be2d9d3a0678e763a8afb1cb2"
+    },
+    "evidence/checks.json": {
+      "bytes": 263,
+      "sha256": "6b640c58499fc378c3d43c1e31bded05791955003164895e15e6ee46165b7296"
+    },
+    "evidence/final-startup-controls.json": {
+      "bytes": 477,
+      "sha256": "6998a0369ead44afcb7001873d902b9b11cb63f654aea163312374ee204b1d71"
+    },
+    "evidence/lifecycle.json": {
+      "bytes": 1665,
+      "sha256": "97cfa0b55359248833549faf4f3e4f57ced854828a1059e4a6f1dba5a5ec2ebc"
+    },
+    "evidence/operation-admission.jsonl": {
+      "bytes": 2651,
+      "sha256": "6f994ba7c0b88c7fc0d78ab0155eea43ba5314596a661ebbc11fdeeca8e48172"
+    },
+    "evidence/remote-startup.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/remote-startup.stdout": {
+      "bytes": 549,
+      "sha256": "220773bae83cf8a657ea247c270bfcd49180e895b4a7c626a8d33b5a4070a92c"
+    },
+    "evidence/runtime-api.stderr": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evidence/runtime-api.stdout": {
+      "bytes": 24035,
+      "sha256": "851a4393b13ab89cfbc42b94855456250b840a05e029ccfdf3ad66557096809c"
+    },
+    "evidence/runtime-result.json": {
+      "bytes": 26495,
+      "sha256": "971be2913fafcba09f015417e02d07f952c3bf5dbdfe7594a6f6bc0a20dbb35a"
+    },
+    "evidence/runtime-schedule.json": {
+      "bytes": 309,
+      "sha256": "a001a70d1374eae12ee1bbf7e8669bad4fd2f8d4029742e1ed064e2abcb7584c"
+    },
+    "evidence/worker-prelaunch.json": {
+      "bytes": 3600,
+      "sha256": "33b8450f849714ebf6cbbd7b9717f99a17b9ab6e4d11be283348c511db19a1aa"
+    },
+    "evidence/worker-startup-controls.json": {
+      "bytes": 261,
+      "sha256": "4cb2e1007e6723c3fa4330256ab4097ff0086021942663c23d5e622f93b55b4b"
+    },
+    "fixture.py": {
+      "bytes": 374,
+      "sha256": "79a79a6e410d741a323983c2aaf315efe3e7f84e531d4121229fedf20f88f66a"
+    },
+    "limit_contract.py": {
+      "bytes": 5342,
+      "sha256": "0ee1575cef9baca8c6b92758c43a897bad55ce8b361463ac1d821d3432a26966"
+    },
+    "runtime-observer.py": {
+      "bytes": 6847,
+      "sha256": "9d301cb95ae17b699c7c5378373306d8e9ffaecea7f2e04e7409ac550d3e3bb3"
+    }
+  },
+  "observed": {
+    "fileSize": 8192,
+    "inodes": 2,
+    "live": 16384,
+    "openHandles": 0,
+    "peak": 16384,
+    "successfulWriteBytes": 16384,
+    "written": 16384
+  },
+  "outcome": "PASS: cumulative overwrite writes rejected without live growth",
+  "ownedRepo": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29/repo",
+  "ownedRoot": "/tmp/toyvm-overwrite-cumulative-write-limit-oct29",
+  "publication": "task branch; exact verified SHA/ref retained separately after commit to avoid self-reference",
+  "reason": "filesystem cumulative write limit",
+  "remainingGate": "coordinator review and append delegated root messageboard note; no main/public deployment",
+  "remoteRoot": "/tmp/tvow",
+  "runtimeInvocations": 1,
+  "scope": "one pinned tiny overwrite fixture; no general-resource/browser/gameplay claim",
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  },
+  "sourceUnchanged": true,
+  "task": "toyvm-overwrite-cumulative-write-limit-oct29"
+}
