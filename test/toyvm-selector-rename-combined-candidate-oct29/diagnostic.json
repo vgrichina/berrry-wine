@@ -1,0 +1,107 @@
+{
+  "status": "blocked-fixture-control-connect",
+  "candidateAccepted": false,
+  "productionBackendRestored": true,
+  "firstFailure": {
+    "operation": "lifetime",
+    "exit": 1,
+    "fixture": "lifetime.py",
+    "line": 304,
+    "error": "ConnectionRefusedError",
+    "errno": 111,
+    "phase": "control.connect after status path exists",
+    "alternatingSerial": 1
+  },
+  "failedOperationResourceSample": {
+    "at": 1793259398.4201488,
+    "device": 1680253000807562931,
+    "f_bavail": 1054244,
+    "blockSize": 4096,
+    "free": 4318183424,
+    "MemAvailable": 3172950016,
+    "allocated": 2826240,
+    "budget": 25165824,
+    "aggregate": {
+      "at": "2026-10-29T07:31:50.395218+00:00",
+      "owners": {
+        "coordinator": 25165824,
+        "gltron-eager-integrity-independent-accept-oct29": 50331648,
+        "toyvm-six-guards-complete-fixtures-continuation-oct29": 25165824,
+        "toyvm-rename-parent-independent-accept-oct29": 25165824,
+        "toyvm-selector-rename-combined-candidate-oct29": 25165824
+      },
+      "aggregate": 176160768,
+      "requiredBytes": 3200253952,
+      "futureGrowthIncludingUncertaintyBuffer": 150994944,
+      "freeBytes": 4342255616,
+      "remainingAfterForecast": 4191260672,
+      "MemAvailable": 3512811520,
+      "memRequired": 2147483648,
+      "device": 1680253000807562931,
+      "f_bavail": 1065312,
+      "blockSize": 4096,
+      "PASS": true,
+      "forecast": "Transferred24MiB predecessor allocation: sourceGit3 evidence1 WAL8 publication3 uncertainty9; other active owners retained through closeout. Current aggregate and unchanged per-operation floors.",
+      "previousAllocationCloseout": {
+        "publication": "original hard128 topology incident retained; 133 files unchanged; no Git exec",
+        "timeout": "verified remote bcbc4ded68659a30373eda632d2b4c432bc0a513; actual139byte AF_UNIX failure; fixture never ran; bx_axf3v3mg verified snapshot-stopped; procedural limitations retained"
+      },
+      "transfers": {
+        "toyvm-pinned-log-acceptance-publication-oct29": "toyvm-child-limit-acceptance-publication-oct29",
+        "toyvm-real-cli-descendant-timeout-qualification-oct29": "toyvm-shortpath-descendant-timeout-oct29"
+      },
+      "transfer": {
+        "tuxracer-glvertex2dv-independent-accept-oct29": "tuxracer-gltexcoord2dv-dispatch-repair-oct29"
+      },
+      "changedPrerequisite": "all prior workers exited; current capacity recovered; executable and Git alternate recursion corrected",
+      "shortfalls": {
+        "diskBytes": 0,
+        "memoryBytes": 0
+      }
+    },
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    },
+    "checks": {
+      "allocation": true,
+      "disk": true,
+      "forecast": true,
+      "memory": true
+    }
+  },
+  "rawFailure": {
+    "path": "/tmp/toyvm-selector-rename-combined-candidate-oct29/e/lifetime.stderr",
+    "bytes": 655,
+    "sha256": "265677494b0821f552d49c05b7703b8555bb01e657a666aa05490eadf8449816"
+  },
+  "passing": {
+    "renameWireCases": 44,
+    "parentGuardMutantsRejected": 2,
+    "supportedSETATTR": true,
+    "malformedRequest": true,
+    "acquisitionBind": true,
+    "acquisitionRegister": true,
+    "eofSerial0": true
+  },
+  "notCompleted": [
+    "EPIPE serial1",
+    "remaining alternating lifetime groups",
+    "no-selector-close mutant"
+  ],
+  "interpretation": "Fixture connection failure; no source behavioral failure established. No retry or fixture repair attempted.",
+  "historicalFirstFailedResourceSample": "unavailable as recorded in original completion-receipt.json; not replaced by this operation sample",
+  "remainingGates": [
+    "resolve control socket fixture readiness in a newly assigned task",
+    "finish exact combined-source qualification",
+    "fresh independent combined acceptance"
+  ],
+  "box": null
+}
