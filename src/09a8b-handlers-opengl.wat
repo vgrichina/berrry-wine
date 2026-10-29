@@ -235,6 +235,22 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
+  ;; glVertex2dv(const GLdouble *v): Tux Racer's two-component double vector.
+  ;; Use guest loads for each component (including non-affine page crossings),
+  ;; then the same packed-float vertex pipeline as glVertex2f/glVertex2fv.
+  ;; Supply z=0; gl_append_vertex supplies w=1 and preserves current attributes
+  ;; and the existing outside-Begin behavior. No new command-stream opcode.
+  (func $handle_glVertex2dv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
+    (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
+    (call $gl_append_vertex
+      (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (local.get $arg0))))
+      (f32.demote_f64 (f64.reinterpret_i64 (call $gl64 (i32.add (local.get $arg0) (i32.const 8)))))
+      (f32.const 0))
+    (i32.store (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base)
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
   ;; The OpenGL 1.1 surface outside the measured set. Unreal-engine OpenGlDrv
   ;; resolves its whole GL table through GetProcAddress and refuses to bind if
   ;; a single name is missing, so every GL 1.1 entry point is an api_table

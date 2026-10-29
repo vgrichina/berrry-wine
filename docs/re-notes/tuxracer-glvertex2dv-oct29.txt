@@ -1,0 +1,56 @@
+Tux Racer glVertex2dv dispatch repair — 2026-10-29
+
+Base: 3239df2388ec1599deb229b22ea1fb1e2b8f03fa
+Scope: only API 4448 glVertex2dv, its native availability and generated route.
+The API row now selects handle_glVertex2dv. The production generator emits the
+native call and exposes it to WGL lookup without adding a stream opcode.
+
+Contract: /usr/include/GL/gl.h declares GLdouble as double (line129) and
+glVertex2dv(const GLdouble *v) (line944). Primary Khronos reference:
+https://raw.githubusercontent.com/KhronosGroup/OpenGL-Refpages/main/gl2.1/xhtml/glVertex.xml
+The vector contains x,y; z defaults to0 and w to1. Current attributes belong
+to each vertex; behavior outside Begin/End is undefined by OpenGL.
+
+Implementation uses gl64 for each component, including split guest pages,
+reinterprets the IEEE754 bits and demotes only at the existing f32 packing
+boundary. gl_wat_init and gl_append_vertex/gl_append_vertex4 retain allocation,
+current attributes and existing outside-Begin behavior. EAX follows the common
+bridge's zero convention; ESP consumes return address plus one pointer (8bytes).
+No change to error handling or unsupported APIs; allocation failure still traps.
+
+Reproduction (installed Node20.20.2, no full-module build):
+node --max-old-space-size=128 test/test-gl-vertex2dv-dispatch.js
+node --max-old-space-size=128 tools/gen_dispatch.js --check
+Run under the task CPU90s/wall120s/file12MiB/capture2MiB/RSS512MiB supervisor.
+The heap flag is not a total physical-memory cap. The retained Node startup
+receipt proves its separate unlimited DATA/AS profile; Git alone uses DATA256MiB.
+
+PASS: actual generated dispatch entry and entire page17, native handler,
+production gl64/gl32, initializer and packed append functions compiled and run
+using the candidate's pinned WATX compiler. Four vectors cover negative and
+fractional doubles, PI, signed zero, sub-f32 precision and large/small values;
+unaligned pointers and non-affine guest-page crossings; current color/normal/
+texture preservation; z0/w1; exact stack cleanup with stack bytes unchanged;
+existing adjacent three/four-component packing and outside-Begin behavior;
+allocation failure; seven unsupported entries still trap. Restoring the old
+unimplemented route in memory makes the same behavioral acceptance reject.
+Generator freshness and Git whitespace checks pass.
+
+Fixture limits: heap allocation/address translation are explicit seams; unused
+dispatch handlers are trap fixtures. The production functions and dispatch page
+are extracted byte-for-byte. Only region.end DIRECT_WINDOW in gl64 is lowered
+to the test window constant65536; original and transformed hashes are retained.
+This tests production fragments, not the full canonical module or guest startup.
+No browser/game/EXE/DLL/Tcl/installer/Boat/FUSE execution or media copy occurred.
+
+Remaining unsupported: glTexCoord2dv, glTexCoord2d, glColor3dv, glMultMatrixd,
+glGetBooleanv, glRectf, glColor4dv; gluScaleImage remains unresolved. Full startup
+and gameplay remain NOT QUALIFIED. Earlier PE/registration acceptance is reused
+from the dispatched canonical receipt, not rerun. This branch is not main.
+
+Evidence: /tmp/tuxracer-glvertex2dv-dispatch-repair-oct29/canonical-receipt.json
+The coordinator owns board publication and allocation closeout. No box assigned.
+Historical initial inspection-output incident is retained; this is not a claim
+of full envelope compliance. Initial fixture-only failures (memory export syntax,
+missing fallback seam and missing generator dependencies) were corrected in-task;
+no resource or access rejection was retried.

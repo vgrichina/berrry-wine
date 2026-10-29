@@ -37904,7 +37904,7 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3714975380,
-    "handler": "gl_unimplemented"
+    "handler": "glVertex2dv"
   },
   {
     "id": 4449,
