@@ -1,0 +1,1418 @@
+{
+  "baseline": "5a88ca099b962e946160afd2d4d71a950bf46db3",
+  "boundary": "actual production Backend.handle, no mount",
+  "callback": "UNPROVEN",
+  "cases": [
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 21,
+      "name": "unlink-empty-directory",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 21, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 21,
+      "name": "unlink-nonempty-directory",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 21, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 0,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 21,
+      "name": "unlink-open-empty-directory",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 21, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 0,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 21,
+      "name": "unlink-open-nonempty-directory",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 21, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "expectedErrno": 20,
+      "name": "rmdir-regular-file",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 20, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 0,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "contract": "FAIL",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "expectedErrno": 20,
+      "name": "rmdir-open-regular-file",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [
+        "errno: expected 20, observed 0",
+        "namespace/node/accounting state differs"
+      ],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "contract": "PASS",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "expectedErrno": 0,
+      "name": "unlink-regular-file",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 0,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 1,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "contract": "PASS",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "636f6e74726163742d64617461",
+            "links": 0,
+            "mode": 33216,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 13
+      },
+      "expectedErrno": 0,
+      "name": "unlink-open-regular-file",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 0,
+      "name": "rmdir-empty-directory",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 0,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": "",
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 0,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 8192,
+        "live_limit": 12288,
+        "next": 3,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 0,
+            "mode": 16832,
+            "names": {},
+            "opens": 1
+          }
+        },
+        "peak": 8192,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 0,
+      "name": "rmdir-open-empty-directory",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": null,
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 2,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 2,
+      "name": "unlink-missing",
+      "opcode": 10,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": null,
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 2,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 4096,
+        "live_limit": 12288,
+        "next": 2,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 4096,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 2,
+      "name": "rmdir-missing",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": null,
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 39,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 0,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 0
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 39,
+      "name": "rmdir-nonempty-directory",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    },
+    {
+      "after": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "answerHex": null,
+      "before": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "contract": "PASS",
+      "errno": 39,
+      "expectedAfter": {
+        "failure": null,
+        "file_limit": 8192,
+        "handles": 1,
+        "live": 12288,
+        "live_limit": 12288,
+        "next": 4,
+        "nodes": {
+          "1": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "76696374696d": 2
+            },
+            "opens": 0
+          },
+          "2": {
+            "data": "",
+            "links": 1,
+            "mode": 16832,
+            "names": {
+              "6c656166": 3
+            },
+            "opens": 1
+          },
+          "3": {
+            "data": "",
+            "links": 1,
+            "mode": 33152,
+            "names": {},
+            "opens": 0
+          }
+        },
+        "peak": 12288,
+        "write_limit": 65536,
+        "written": 0
+      },
+      "expectedErrno": 39,
+      "name": "rmdir-open-nonempty-directory",
+      "opcode": 11,
+      "operationsDelta": 1,
+      "parent": 1,
+      "problems": [],
+      "requestHex": "76696374696d00"
+    }
+  ],
+  "contract": "FAIL",
+  "failed": 6,
+  "mountedOrGameplayClaim": false,
+  "oracle": {
+    "rejectedMutations": 12,
+    "scope": "result oracle only; no production replacement",
+    "status": "PASS"
+  },
+  "passed": 8,
+  "schema": 1,
+  "sourcePins": {
+    "test/toyvm-bounded24-caller-wiring-oct28/qualify_accounted.py": {
+      "bytes": 8105,
+      "sha256": "73c5bd33eb8af3887f5c6f21a8c6354aef591baf2d41589eb673c9d275448b60"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/confine.py": {
+      "bytes": 3457,
+      "sha256": "0b10df6497f359f9684f1dbb0752eba3816d0e6568c492c39f62ba3a3f2076d8"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/fuse_backend.py": {
+      "bytes": 10877,
+      "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+    },
+    "test/toyvm-kernel-profile-accounting-backend-oct28/supervise_accounted.py": {
+      "bytes": 4058,
+      "sha256": "5ac463e9168b1162b47b784e919a6f71830d5581c5fbde14597f8e1e866eb3bf"
+    },
+    "test/toyvm-transient-profile-accounting-repair-oct28/pinned-supervisor.py": {
+      "bytes": 23268,
+      "sha256": "9d10f7c8c75b5f0dfebff2299eef8ddc27988cf112e0e9c255e89f772c2cee85"
+    }
+  }
+}

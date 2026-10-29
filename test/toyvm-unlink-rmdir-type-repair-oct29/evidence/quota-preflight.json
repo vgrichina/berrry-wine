@@ -1,0 +1,14 @@
+{
+  "quotas": {
+    "live_limit": 12288,
+    "write_limit": 65536,
+    "file_limit": 8192
+  },
+  "backendPin": {
+    "bytes": 10877,
+    "sha256": "e281eb058cee5e65797566c738d0330d2449ec6fe84572d572cfbf181c32ec41"
+  },
+  "predicate": "8192<=live<=1048576; 1<=write<=1048576; 1<=file<=live<=1048576",
+  "PASS": true,
+  "noRuntime": true
+}
