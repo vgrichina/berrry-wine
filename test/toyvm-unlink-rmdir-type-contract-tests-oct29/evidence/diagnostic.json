@@ -1,0 +1,39 @@
+{
+  "argv": [
+    "python3",
+    "-B",
+    "test/toyvm-unlink-rmdir-type-contract-tests-oct29/regression.py",
+    "--diagnose",
+    "test/toyvm-unlink-rmdir-type-contract-tests-oct29/canonical.json"
+  ],
+  "cwd": "/tmp/toyvm-unlink-rmdir-type-contract-tests-oct29/repo",
+  "exit": 0,
+  "elapsed": 0.053961061872541904,
+  "admission": {
+    "free": 4508475392,
+    "MemAvailable": 2363314176,
+    "allocated": 2252800,
+    "budget": 25165824,
+    "componentsMiB": {
+      "sourceGit": 3,
+      "evidence": 1,
+      "WAL": 8,
+      "publication": 3,
+      "uncertainty": 9
+    },
+    "positiveWALGrowthCountedOnce": true,
+    "parentLimits": {
+      "inheritedDATA": [
+        -1,
+        -1
+      ],
+      "parentDATA": [
+        134217728,
+        -1
+      ],
+      "policy": "parent soft128; inherited hard unchanged; Git child256 only; Python child128; physical parentRSS128 monitored by task supervisor"
+    }
+  },
+  "stdoutBytes": 92,
+  "stderrBytes": 0
+}
