@@ -1,0 +1,50 @@
+{
+  "recipe.json": {
+    "bytes": 11810,
+    "sha256": "407e805921fe8d659d3cd075d1ef2e7dcf952c094929fd076cd6178ee3bfa535"
+  },
+  "source-pins.json": {
+    "bytes": 904,
+    "sha256": "dc3ef461c61e29c01148fece74fdebb94c475a9cf5bd9f61d831c6bb36a08bed"
+  },
+  "runtime-prerequisites.json": {
+    "bytes": 228,
+    "sha256": "df1f85230f6e6b998d05b02344f8cb884070bd9ae412decadd93f938782d1e80"
+  },
+  "boat-stop-status.json": {
+    "bytes": 1950,
+    "sha256": "928fc468af7d1ceab9e8692644b141663a753c3b15d9f17fe0e73c2a83935797"
+  },
+  "lifecycle.json": {
+    "bytes": 573,
+    "sha256": "e9f04bdbd0fdd811de31d378d682f87d2102c058d98b64f4b6305874cc08cf96"
+  },
+  "verify_evidence.py": {
+    "bytes": 2135,
+    "sha256": "a70d0ff1eff44faed512d0c9d0364eb5b07adc259458c7fb3183d7cd89820f2e"
+  },
+  "initial-preflight-error.json": {
+    "bytes": 1222,
+    "sha256": "d65e927ac18f8d8bb64de828d4c7709c247766885c8610f6a3d4c1634c87afcb"
+  },
+  "case1-result.json": {
+    "bytes": 4287,
+    "sha256": "cd4aa2da8c4dc9903cd4ea204fc18a0f44d05ae5c9e86c8134eba2859e4ec38f"
+  },
+  "remote-preflight.json": {
+    "bytes": 1361,
+    "sha256": "d0c0af62a4db581c73b7c878fe269958498440555c3c4407b59c08ed02aff2c4"
+  },
+  "case1-api.json": {
+    "bytes": 4425,
+    "sha256": "c1f1bde5a2d3b981633a00ff6fce2d5ee6fe973a9743ff518e7d6faf6ba4c0bc"
+  },
+  "REPORT.md": {
+    "bytes": 3576,
+    "sha256": "aa898cfdcfbc3f6ca91cddaf967aaa03bbc7c080936884229bfef523a4188b24"
+  },
+  "mount-configuration.json": {
+    "bytes": 972,
+    "sha256": "bc38914a67d30d72573d7c38a46fedcf704ad0554f3fcd5a2fcc49e2f06f62fe"
+  }
+}

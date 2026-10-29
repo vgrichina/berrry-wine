@@ -1,0 +1,14 @@
+{
+  "boxID": "bx_pfvpxxu2",
+  "creation": "2026-10-29T17:18:13.422Z",
+  "expiry": "2026-10-29T17:48:13.439Z",
+  "cutoff": "2026-10-29T17:40:54.963034+00:00",
+  "owner": "toyvm-integrated-combined-mounted-cli-oct29 worker: explicitly delegated snapshot-stop",
+  "state": "stopped",
+  "snapshotStoppedVerified": true,
+  "snapshotCompletedAt": "2026-10-29T17:20:12.800Z",
+  "snapshotVerifiedAt": "2026-10-29T17:20:12.800Z",
+  "stopOperationID": "stop_3fce35e32442de92",
+  "stopCompletedAt": "2026-10-29T17:20:12.882Z",
+  "verificationAt": "2026-10-29T17:21:11.094053+00:00"
+}

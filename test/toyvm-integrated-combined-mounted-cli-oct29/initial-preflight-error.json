@@ -1,0 +1,18 @@
+{
+  "commandId": "cmd_8ydu1oy0nvfc",
+  "cwd": ".",
+  "exitCode": 1,
+  "finishedAt": "2026-10-29T17:18:57.851Z",
+  "launcherFailed": false,
+  "noticedMs": 1,
+  "oomKilled": false,
+  "signal": null,
+  "startMs": 1,
+  "startedAt": "2026-10-29T17:18:57.736Z",
+  "stderr": "Traceback (most recent call last):\n  File \"<string>\", line 12, in <module>\n  File \"<string>\", line 12, in <genexpr>\n  File \"/usr/lib/python3.12/ast.py\", line 112, in literal_eval\n    return _convert(node_or_string)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/ast.py\", line 111, in _convert\n    return _convert_signed_num(node)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/ast.py\", line 85, in _convert_signed_num\n    return _convert_num(node)\n           ^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/ast.py\", line 76, in _convert_num\n    _raise_malformed_node(node)\n  File \"/usr/lib/python3.12/ast.py\", line 73, in _raise_malformed_node\n    raise ValueError(msg + f': {node!r}')\nValueError: malformed node or string on line 20: <ast.Call object at 0x7c5e71f22110>\n",
+  "stderrTruncated": false,
+  "stdout": "",
+  "stdoutTruncated": false,
+  "success": false,
+  "timedOut": false
+}

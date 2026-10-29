@@ -1,0 +1,14 @@
+{
+  "python": true,
+  "fuse": true,
+  "fuseAccess": true,
+  "libfuse": "libfuse3.so.3",
+  "landlockABI": 4,
+  "landlockErrno": 0,
+  "proc": true,
+  "status": [
+    "NoNewPrivs:\t0",
+    "Seccomp:\t0"
+  ],
+  "fusermount": true
+}

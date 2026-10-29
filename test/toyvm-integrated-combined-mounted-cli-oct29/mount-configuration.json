@@ -1,0 +1,19 @@
+{
+  "PASS": true,
+  "checkpointTiming": "verified after isolated checkout; no mount or runtime command executed",
+  "intendedFiles": [],
+  "mountArgv": [],
+  "parsed": [
+    [],
+    [],
+    []
+  ],
+  "parserSHA256": "7f040a5878092775a865f092b6c7559143df17156ef5e295fe45803d414bbbc0",
+  "receiptSHA256": "c81bc0b24e200950631583c4ee647cbef078cc3c98b82357f6ffc9999f10c587",
+  "reusedExactEmptyArgvReceipt": "/home/user/wine-assembly/scratch/usage-watch/gltron-integrated-real-media-analysis-oct29/retained-evidence/mount-parser.json",
+  "revalidatedAt": "2026-10-29T17:18:03.179706+00:00",
+  "runtimeAllowed": true,
+  "source": "/home/user/wine-assembly/test/run.js",
+  "ssh": "ssh -i /home/user/.ssh/wine_github_ed25519 -o BatchMode=yes -o IdentitiesOnly=yes -o UserKnownHostsFile=/home/user/.ssh/wine_github_known_hosts -o StrictHostKeyChecking=yes",
+  "scope": "unchanged empty production game mount argv; native FUSE is created by pinned backend, not game mount parser"
+}
